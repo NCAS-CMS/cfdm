@@ -8,7 +8,7 @@ from enum import Enum
 import numpy
 
 
-'''A dictionary of useful constants.
+"""A dictionary of useful constants.
 
 Whilst the dictionary may be modified directly, it is safer to
 retrieve and set the values with the dedicated get-and-set functions.
@@ -27,11 +27,11 @@ retrieve and set the values with the dedicated get-and-set functions.
       The minimal level of seriousness for which log messages are
       shown.  See `cfdm.log_level`.
 
-'''
+"""
 CONSTANTS = {
-    'ATOL': sys.float_info.epsilon,
-    'RTOL': sys.float_info.epsilon,
-    'LOG_LEVEL': logging.getLevelName(logging.getLogger().level),
+    "ATOL": sys.float_info.epsilon,
+    "RTOL": sys.float_info.epsilon,
+    "LOG_LEVEL": logging.getLevelName(logging.getLogger().level),
 }
 
 
@@ -49,7 +49,7 @@ class ValidLogLevels(Enum):
 # --------------------------------------------------------------------
 # masked
 # --------------------------------------------------------------------
-'''A constant that allows data values to be masked by direct
+"""A constant that allows data values to be masked by direct
 assignment. This is consistent with the behaviour of numpy masked
 arrays.
 
@@ -58,5 +58,5 @@ could be done as follows:
 
 >>> f[...] = cfdm.masked
 
-'''
+"""
 masked = numpy.ma.masked

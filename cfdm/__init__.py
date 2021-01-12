@@ -1,4 +1,4 @@
-'''cfdm is a reference implementation of the CF data model, that
+"""cfdm is a reference implementation of the CF data model, that
 identifies the fundamental elements of the CF conventions and shows
 how they relate to each other, independently of the netCDF encoding.
 
@@ -33,7 +33,7 @@ The cfdm package can
 Note that cfdm enables the creation of CF field constructs, but it's
 up to the user to use them in a CF-compliant way.
 
-'''
+"""
 import logging
 import sys
 
@@ -46,37 +46,39 @@ __date__ = core.__date__
 __cf_version__ = core.__cf_version__
 __version__ = core.__version__
 
-_requires = ('cftime',
-             'netcdf_flattener')
+_requires = ("cftime", "netcdf_flattener")
 
-_error0 = 'cfdm requires the modules {}. '.format(', '.join(_requires))
+_error0 = "cfdm requires the modules {}. ".format(", ".join(_requires))
 
 try:
     import cftime
 except ImportError as error1:
-    raise ImportError(_error0+str(error1))
+    raise ImportError(_error0 + str(error1))
 
 # Check the version of cftime
-_minimum_vn = '1.3.0'
+_minimum_vn = "1.3.0"
 if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     raise ValueError(
         "Bad cftime version: cfdm requires cftime>={}. "
-        "Got {} at {}".format(
-            _minimum_vn, cftime.__version__, cftime.__file__))
+        "Got {} at {}".format(_minimum_vn, cftime.__version__, cftime.__file__)
+    )
 
 try:
     import netcdf_flattener
 except ImportError as error1:
-    raise ImportError(_error0+str(error1))
+    raise ImportError(_error0 + str(error1))
 
 # Check the version of netcdf_flattener
-_minimum_vn = '1.2.0'
+_minimum_vn = "1.2.0"
 if LooseVersion(netcdf_flattener.__version__) < LooseVersion(_minimum_vn):
     raise ValueError(
         "Bad netcdf_flattener version: cfdm requires netcdf_flattener>={}. "
         "Got {} at {}".format(
             _minimum_vn,
-            netcdf_flattener.__version__, netcdf_flattener.__file__))
+            netcdf_flattener.__version__,
+            netcdf_flattener.__file__,
+        )
+    )
 
 from .constants import masked
 
@@ -113,44 +115,44 @@ from .decorators import (
 
 from .constructs import Constructs
 
-from .data import (Data,
-                   Array,
-                   CompressedArray,
-                   NumpyArray,
-                   NetCDFArray,
-                   GatheredArray,
-                   RaggedContiguousArray,
-                   RaggedIndexedArray,
-                   RaggedIndexedContiguousArray)
+from .data import (
+    Data,
+    Array,
+    CompressedArray,
+    NumpyArray,
+    NetCDFArray,
+    GatheredArray,
+    RaggedContiguousArray,
+    RaggedIndexedArray,
+    RaggedIndexedContiguousArray,
+)
 
-from .count                   import Count
-from .index                   import Index
-from .list                    import List
-from .nodecountproperties     import NodeCountProperties
+from .count import Count
+from .index import Index
+from .list import List
+from .nodecountproperties import NodeCountProperties
 from .partnodecountproperties import PartNodeCountProperties
 
-from .bounds               import Bounds
+from .bounds import Bounds
 from .coordinateconversion import CoordinateConversion
-from .datum                import Datum
-from .domain               import Domain
-from .interiorring         import InteriorRing
+from .datum import Datum
+from .domain import Domain
+from .interiorring import InteriorRing
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
-from .cellmeasure         import CellMeasure
-from .cellmethod          import CellMethod
+from .cellmeasure import CellMeasure
+from .cellmethod import CellMethod
 from .coordinatereference import CoordinateReference
 from .dimensioncoordinate import DimensionCoordinate
-from .domainancillary     import DomainAncillary
-from .domainaxis          import DomainAxis
-from .field               import Field
-from .fieldancillary      import FieldAncillary
+from .domainancillary import DomainAncillary
+from .domainaxis import DomainAxis
+from .field import Field
+from .fieldancillary import FieldAncillary
 
-from .abstract           import Implementation
-from .cfdmimplementation import (CFDMImplementation,
-                                 implementation)
+from .abstract import Implementation
+from .cfdmimplementation import CFDMImplementation, implementation
 
-from .read_write import (read,
-                         write)
+from .read_write import read, write
 
 from .examplefield import example_field
 
@@ -162,8 +164,8 @@ from .abstract import Container
 # Configure the root logger which all module loggers inherit from:
 logging.basicConfig(
     stream=sys.stdout,
-    style='{',              # default is old style ('%') string formatting
-    format='{message}',     # no module names or datetimes etc. for basic case
+    style="{",  # default is old style ('%') string formatting
+    format="{message}",  # no module names or datetimes etc. for basic case
     level=logging.WARNING,  # default but change level via log_level()
 )
 
@@ -171,7 +173,7 @@ logging.basicConfig(
 # value see:
 # https://docs.python.org/3.8/howto/logging.html#logging-levels
 logging.DETAIL = 15  # set value as an attribute as done for built-in levels
-logging.addLevelName(logging.DETAIL, 'DETAIL')
+logging.addLevelName(logging.DETAIL, "DETAIL")
 
 
 def detail(self, message, *args, **kwargs):

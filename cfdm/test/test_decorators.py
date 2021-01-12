@@ -25,10 +25,10 @@ WARNING_MSG = "Best pay attention to this!"
 
 @cfdm.decorators._manage_log_level_via_verbosity
 def decorated_logging_func(verbose=None):
-    '''Dummy function to log messages at various log levels via decorator.
+    """Dummy function to log messages at various log levels via decorator.
 
     See also dummyClass.decorated_logging_method to do the same for a method.
-    '''
+    """
     logger.debug(DEBUG_MSG)
     logger.detail(DETAIL_MSG)
     logger.info(INFO_MSG)
@@ -36,9 +36,10 @@ def decorated_logging_func(verbose=None):
 
 
 class dummyClass:
-    '''Dummy class acting as container to test methods as proper instance
-       methods, mirroring their context in the codebase.
-    '''
+    """Dummy class acting as container to test methods as proper instance
+    methods, mirroring their context in the codebase.
+    """
+
     def __init__(self):
         self._list = [1]
 
@@ -53,9 +54,9 @@ class dummyClass:
         return copy.deepcopy(self)  # note a shallow copy is not sufficient
 
     def func(self, inplace):
-        '''Dummy function to do something trivial to a mutable object,
-           potentially in-place as toggled by an in-place flag.
-        '''
+        """Dummy function to do something trivial to a mutable object,
+        potentially in-place as toggled by an in-place flag.
+        """
         if inplace:
             d = self
         else:
@@ -69,19 +70,19 @@ class dummyClass:
 
     @cfdm.decorators._inplace_enabled(False)
     def decorated_func(self, inplace):
-        '''Dummy function equivalent to 'func' but a decorator manages the
-           logic to specify and conduct in-place operation.
-        '''
+        """Dummy function equivalent to 'func' but a decorator manages the
+        logic to specify and conduct in-place operation.
+        """
         d = cfdm.decorators._inplace_enabled_define_and_cleanup(self)
         d._list.append(2)
         return d
 
     def print_or_return_string(self, display=True):
-        '''Dummy function to either print or return a given string.
+        """Dummy function to either print or return a given string.
 
-           It prints the string if the display argument is True, else
-           it returns it.
-        '''
+        It prints the string if the display argument is True, else
+        it returns it.
+        """
         string = self.dummy_string
 
         if display:
@@ -91,21 +92,22 @@ class dummyClass:
 
     @cfdm.decorators._display_or_return
     def print_or_return_string_by_decorator(self, display=True):
-        '''Dummy function equivalent to 'print_or_return_string' but a
-           decorator manages the logic to print if display argument is True.
-        '''
+        """Dummy function equivalent to 'print_or_return_string' but a
+        decorator manages the logic to print if display argument is True.
+        """
         return self.dummy_string
 
     @cfdm.decorators._manage_log_level_via_verbosity
     def decorated_logging_method(self, verbose=None):
-        '''Dummy function to log messages at various log levels via decorator.
+        """Dummy function to log messages at various log levels via decorator.
 
         See also decorated_logging_func to do the same for a function.
-        '''
+        """
         logger.debug(self.debug_message)
         logger.detail(self.detail_message)
         logger.info(self.info_message)
         logger.warning(self.warning_message)
+
 
 # --- End: class
 
@@ -145,16 +147,16 @@ class DecoratorsTest(unittest.TestCase):
             return
 
         # Order of decreasing severity/verbosity is crucial to one test below
-        levels = ['WARNING', 'INFO', 'DETAIL', 'DEBUG']
+        levels = ["WARNING", "INFO", "DETAIL", "DEBUG"]
 
         # Note we test assertions on the root logger object, which is the
         # one output overall at runtime, but the specific module logger name
         # should be registered within the log message:
         log_message = [
-            'WARNING:{}:{}'.format(log_name, WARNING_MSG),
-            'INFO:{}:{}'.format(log_name, INFO_MSG),
-            'DETAIL:{}:{}'.format(log_name, DETAIL_MSG),
-            'DEBUG:{}:{}'.format(log_name, DEBUG_MSG)
+            "WARNING:{}:{}".format(log_name, WARNING_MSG),
+            "INFO:{}:{}".format(log_name, INFO_MSG),
+            "DETAIL:{}:{}".format(log_name, DETAIL_MSG),
+            "DEBUG:{}:{}".format(log_name, DEBUG_MSG),
         ]
 
         test_class = dummyClass()
@@ -166,8 +168,7 @@ class DecoratorsTest(unittest.TestCase):
         ]
 
         for level, function_to_call_to_test in itertools.product(
-                levels,
-                functions_to_call_to_test
+            levels, functions_to_call_to_test
         ):
             cfdm.log_level(level)  # reset to level
 
@@ -186,7 +187,7 @@ class DecoratorsTest(unittest.TestCase):
 
             # Highest verbosity case (note -1 == 'DEBUG', highest verbosity):
             # all messages should appear, regardless of global log_level:
-            for argument in (-1, 'DEBUG', 'debug', 'Debug', 'DeBuG'):
+            for argument in (-1, "DEBUG", "debug", "Debug", "DeBuG"):
                 with self.assertLogs(level=cfdm.log_level().value) as catch:
                     function_to_call_to_test(verbose=argument)
                     for msg in log_message:
@@ -195,11 +196,11 @@ class DecoratorsTest(unittest.TestCase):
             # Lowest verbosity case ('WARNING' / 1) excluding special case of
             # 'DISABLE' (see note above): only warning messages should appear,
             # regardless of global log_level value set:
-            for argument in (1, 'WARNING', 'warning', 'Warning', 'WaRning'):
+            for argument in (1, "WARNING", "warning", "Warning", "WaRning"):
                 with self.assertLogs(level=cfdm.log_level().value) as catch:
                     function_to_call_to_test(verbose=argument)
                     for msg in log_message:
-                        if msg.split(":")[0] == 'WARNING':
+                        if msg.split(":")[0] == "WARNING":
                             self.assertIn(msg, catch.output)
                         else:
                             self.assertNotIn(msg, catch.output)
@@ -210,7 +211,7 @@ class DecoratorsTest(unittest.TestCase):
             with self.assertLogs(level=cfdm.log_level().value) as catch:
                 function_to_call_to_test(verbose=True)
                 for msg in log_message:
-                    if msg.split(":")[0] == 'DEBUG':
+                    if msg.split(":")[0] == "DEBUG":
                         self.assertNotIn(msg, catch.output)
                     else:
                         self.assertIn(msg, catch.output)
@@ -221,27 +222,28 @@ class DecoratorsTest(unittest.TestCase):
             # Special 'DISABLE' (0) case: note this needs to be last as we
             # reset the log_level to it but need to use 'NOTSET' for the
             # assertLogs level, which sends all log messages through:
-            for argument in (0, 'DISABLE', 'disable', 'Disable', 'DisAblE'):
-                with self.assertLogs(level='NOTSET') as catch:
+            for argument in (0, "DISABLE", "disable", "Disable", "DisAblE"):
+                with self.assertLogs(level="NOTSET") as catch:
                     # Note: get 'AssertionError' if don't log anything at all,
                     # so to avoid this and allow check for disabled logging,
                     # first log something then disable and check that no other
                     # messages emerge:
                     logger.info(
-                        "Purely to keep 'assertLog' happy: see comment!")
-                    cfdm.log_level('DISABLE')
+                        "Purely to keep 'assertLog' happy: see comment!"
+                    )
+                    cfdm.log_level("DISABLE")
                     function_to_call_to_test(verbose=argument)
                     for msg in log_message:  # nothing else should be logged
                         self.assertNotIn(msg, catch.output)
 
             # verbose=False should be equivalent in behaviour to verbose=0
-            with self.assertLogs(level='NOTSET') as catch:
+            with self.assertLogs(level="NOTSET") as catch:
                 logger.info("Purely to keep 'assertLog' happy: see previous!")
                 function_to_call_to_test(verbose=False)
                 for msg in log_message:  # nothing else should be logged
                     self.assertNotIn(msg, catch.output)
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_display_or_return(self, mock_print):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -267,11 +269,12 @@ class DecoratorsTest(unittest.TestCase):
         mock_print.assert_called_with(new_string)
         self.assertEqual(res_4, None)
 
+
 # --- End: class
 
 
-if __name__ == '__main__':
-    print('Run date:', datetime.datetime.now())
+if __name__ == "__main__":
+    print("Run date:", datetime.datetime.now())
     cfdm.environment()
-    print('')
+    print("")
     unittest.main(verbosity=2)

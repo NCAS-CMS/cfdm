@@ -4,7 +4,7 @@ from . import abstract
 
 
 class DimensionCoordinate(abstract.Coordinate):
-    '''A dimension coordinate construct of the CF data model.
+    """A dimension coordinate construct of the CF data model.
 
     A dimension coordinate construct provides information which locate
     the cells of the domain and which depend on a subset of the domain
@@ -33,83 +33,86 @@ class DimensionCoordinate(abstract.Coordinate):
 
     .. versionadded:: (cfdm) 1.7.0
 
-    '''
+    """
+
     @property
     def construct_type(self):
-        '''Return a description of the construct type.
+        """Return a description of the construct type.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The construct type.
+            `str`
+                The construct type.
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.construct_type
-    'dimension_coordinate'
+        >>> c = {{package}}.{{class}}()
+        >>> c.construct_type
+        'dimension_coordinate'
 
-        '''
-        return 'dimension_coordinate'
+        """
+        return "dimension_coordinate"
 
     def set_data(self, data, copy=True, inplace=True):
-        '''Set the data.
+        """Set the data.
 
-    The units, calendar and fill value of the incoming `Data` instance
-    are removed prior to insertion.
+        The units, calendar and fill value of the incoming `Data` instance
+        are removed prior to insertion.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `data`, `del_data`, `get_data`, `has_data`
+        .. seealso:: `data`, `del_data`, `get_data`, `has_data`
 
-    :Parameters:
+        :Parameters:
 
-        data: data_like
-            The data to be inserted. Must be 1-dimensional,
-            i.e. scalar or multidimensional data is not allowed.
+            data: data_like
+                The data to be inserted. Must be 1-dimensional,
+                i.e. scalar or multidimensional data is not allowed.
 
-            {{data_like}}
+                {{data_like}}
 
-        copy: `bool`, optional
-            If False then do not copy the data prior to insertion. By
-            default the data are copied.
+            copy: `bool`, optional
+                If False then do not copy the data prior to insertion. By
+                default the data are copied.
 
-        {{inplace: `bool`, optional (default True)}}
+            {{inplace: `bool`, optional (default True)}}
 
-            .. versionadded:: (cfdm) 1.8.7.0
+                .. versionadded:: (cfdm) 1.8.7.0
 
-    :Returns:
+        :Returns:
 
-        `None` or `{{class}}`
-            If the operation was in-place then `None` is returned,
-            otherwise return a new `{{class}}` instance containing the
-            new data.
+            `None` or `{{class}}`
+                If the operation was in-place then `None` is returned,
+                otherwise return a new `{{class}}` instance containing the
+                new data.
 
-    **Examples:**
+        **Examples:**
 
-    >>> d = {{package}}.Data(range(10))
-    >>> f.set_data(d)
-    >>> f.has_data()
-    True
-    >>> f.get_data()
-    <{{repr}}Data(10): [0, ..., 9]>
-    >>> f.del_data()
-    <{{repr}}Data(10): [0, ..., 9]>
-    >>> f.has_data()
-    False
-    >>> print(f.get_data(None))
-    None
-    >>> print(f.del_data(None))
-    None
+        >>> d = {{package}}.Data(range(10))
+        >>> f.set_data(d)
+        >>> f.has_data()
+        True
+        >>> f.get_data()
+        <{{repr}}Data(10): [0, ..., 9]>
+        >>> f.del_data()
+        <{{repr}}Data(10): [0, ..., 9]>
+        >>> f.has_data()
+        False
+        >>> print(f.get_data(None))
+        None
+        >>> print(f.del_data(None))
+        None
 
-        '''
+        """
         if numpy.ndim(data) != 1:
             raise ValueError(
                 "Dimension coordinate construct must have 1-dimensional data. "
-                "Got {!r}".format(data))
+                "Got {!r}".format(data)
+            )
 
         return super().set_data(data, copy=copy, inplace=inplace)
+
 
 # --- End: class

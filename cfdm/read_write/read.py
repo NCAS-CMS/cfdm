@@ -8,10 +8,17 @@ from .netcdf import NetCDFRead
 _implementation = implementation()
 
 
-def read(filename, external=None, extra=None, verbose=None,
-         warnings=False, warn_valid=False, mask=True,
-         _implementation=_implementation):
-    '''Read field constructs from a dataset.
+def read(
+    filename,
+    external=None,
+    extra=None,
+    verbose=None,
+    warnings=False,
+    warn_valid=False,
+    mask=True,
+    _implementation=_implementation,
+):
+    """Read field constructs from a dataset.
 
     The dataset may be a netCDF file on disk or on an OPeNDAP server,
     or a CDL file on disk (see below).
@@ -262,7 +269,7 @@ def read(filename, external=None, extra=None, verbose=None,
     >>> i = cfdm.read('parent.nc', external='external.nc')
     >>> j = cfdm.read('parent.nc', external=['external1.nc', 'external2.nc'])
 
-    '''
+    """
     # Parse the field parameter
     if extra is None:
         extra = ()
@@ -292,15 +299,21 @@ def read(filename, external=None, extra=None, verbose=None,
         filename = netcdf.cdl_to_netcdf(filename)
 
     if netcdf.is_netcdf_file(filename):
-        fields = netcdf.read(filename, external=external, extra=extra,
-                             verbose=verbose, warnings=warnings,
-                             warn_valid=warn_valid, mask=mask,
-                             extra_read_vars=None)
+        fields = netcdf.read(
+            filename,
+            external=external,
+            extra=extra,
+            verbose=verbose,
+            warnings=warnings,
+            warn_valid=warn_valid,
+            mask=mask,
+            extra_read_vars=None,
+        )
     elif cdl:
         raise IOError(
             "Can't determine format of file {} "
-            "generated from CDL file {}".format(
-                filename, cdl_filename))
+            "generated from CDL file {}".format(filename, cdl_filename)
+        )
     else:
         raise IOError("Can't determine format of file {}".format(filename))
 

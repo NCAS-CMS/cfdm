@@ -4,7 +4,7 @@ from . import abstract
 
 
 class CellMethod(abstract.Container):
-    '''A cell method construct of the CF data model.
+    """A cell method construct of the CF data model.
 
     One or more cell method constructs describe how the cell values of
     the field construct represent the variation of the physical
@@ -22,71 +22,73 @@ class CellMethod(abstract.Container):
 
     .. versionadded:: (cfdm) 1.7.0
 
-    '''
-    def __init__(self, axes=None, method=None, qualifiers=None,
-                 source=None, copy=True):
-        '''**Initialisation**
+    """
 
-    :Parameters:
+    def __init__(
+        self, axes=None, method=None, qualifiers=None, source=None, copy=True
+    ):
+        """**Initialisation**
 
-        axes: (sequence of) `str`, optional
-            Set the axes of the cell method construct, specified
-            either by the construct identifiers of domain axis
-            constructs, standard names, or the special string
-            ``'area'``.
+        :Parameters:
 
-            The axes may also be set after initialisation with the
-            `set_axes` method.
+            axes: (sequence of) `str`, optional
+                Set the axes of the cell method construct, specified
+                either by the construct identifiers of domain axis
+                constructs, standard names, or the special string
+                ``'area'``.
 
-            *Parameter example:*
-              ``axes='domainaxis0'``
+                The axes may also be set after initialisation with the
+                `set_axes` method.
 
-            *Parameter example:*
-              ``axes=['domainaxis0']``
+                *Parameter example:*
+                  ``axes='domainaxis0'``
 
-            *Parameter example:*
-              ``axes=('domainaxis0', 'domainaxis1')``
+                *Parameter example:*
+                  ``axes=['domainaxis0']``
 
-            *Parameter example:*
-              ``axes='area'``
+                *Parameter example:*
+                  ``axes=('domainaxis0', 'domainaxis1')``
 
-            *Parameter example:*
-              ``axes=['domainaxis2', 'time']``
+                *Parameter example:*
+                  ``axes='area'``
 
-        method: `str`, optional
-            Set the axes of the cell method construct. Either one or
-            more domain axis construct identifiers or standard
-            names. Ignored if the *source* parameter is set.
+                *Parameter example:*
+                  ``axes=['domainaxis2', 'time']``
 
-            The method may also be set after initialisation with the
-            `set_method` method.
+            method: `str`, optional
+                Set the axes of the cell method construct. Either one or
+                more domain axis construct identifiers or standard
+                names. Ignored if the *source* parameter is set.
 
-            *Parameter example:*
-              ``method='mean'``
+                The method may also be set after initialisation with the
+                `set_method` method.
 
-        qualifiers: `dict`, optional
-            Set descriptive qualifiers. The dictionary keys are
-            qualifier names, with corresponding values. Ignored if the
-            *source* parameter is set.
+                *Parameter example:*
+                  ``method='mean'``
 
-            Qualifiers may also be set after initialisation with the
-            `qualifiers` and `set_qualifier` methods.
+            qualifiers: `dict`, optional
+                Set descriptive qualifiers. The dictionary keys are
+                qualifier names, with corresponding values. Ignored if the
+                *source* parameter is set.
 
-            *Parameter example:*
-              ``qualifiers={'comment': 'sampled instantaneously'}``
+                Qualifiers may also be set after initialisation with the
+                `qualifiers` and `set_qualifier` methods.
 
-            *Parameter example:*
-              ``qualifiers={'where': 'sea', ''over': 'ice'}``
+                *Parameter example:*
+                  ``qualifiers={'comment': 'sampled instantaneously'}``
 
-        source: optional
-            Initialize the axes, method and qualifiers from those of
-            *source*.
+                *Parameter example:*
+                  ``qualifiers={'where': 'sea', ''over': 'ice'}``
 
-            {{init source}}
+            source: optional
+                Initialize the axes, method and qualifiers from those of
+                *source*.
 
-        {{init copy: `bool`, optional}}
+                {{init source}}
 
-        '''
+            {{init copy: `bool`, optional}}
+
+        """
         super().__init__()
 
         if source:
@@ -115,483 +117,491 @@ class CellMethod(abstract.Container):
         if qualifiers is None:
             qualifiers = {}
 
-        self._set_component('qualifiers', qualifiers, copy=copy)
+        self._set_component("qualifiers", qualifiers, copy=copy)
 
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
     @property
     def construct_type(self):
-        '''Return a description of the construct type.
+        """Return a description of the construct type.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The construct type.
+            `str`
+                The construct type.
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.construct_type
-    'cell_method'
+        >>> c = {{package}}.{{class}}()
+        >>> c.construct_type
+        'cell_method'
 
-        '''
-        return 'cell_method'
+        """
+        return "cell_method"
 
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
     def del_axes(self, default=ValueError()):
-        '''Remove the axes of the cell method.
+        """Remove the axes of the cell method.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `get_axes`, `has_axes`, `set_axes`
+        .. seealso:: `get_axes`, `has_axes`, `set_axes`
 
-    :Parameters:
+        :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if axes have
-            not been set.
+            default: optional
+                Return the value of the *default* parameter if axes have
+                not been set.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-        `tuple`
-            The removed axes, identified by domain axis construct key
-            or standard name.
+            `tuple`
+                The removed axes, identified by domain axis construct key
+                or standard name.
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.set_axes('domainaxis1')
-    >>> c.has_axes()
-    True
-    >>> c.get_axes()
-    ('domainaxis1',)
-    >>> c.del_axes()
-    >>> c.has_axes()
-    False
-    >>> c.get_axes('NO AXES')
-    'NO AXES'
-    >>> c.del_axes('NO AXES')
-    'NO AXES'
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_axes('domainaxis1')
+        >>> c.has_axes()
+        True
+        >>> c.get_axes()
+        ('domainaxis1',)
+        >>> c.del_axes()
+        >>> c.has_axes()
+        False
+        >>> c.get_axes('NO AXES')
+        'NO AXES'
+        >>> c.del_axes('NO AXES')
+        'NO AXES'
 
-        '''
+        """
         try:
-            return self._del_component('axes')
+            return self._del_component("axes")
         except ValueError:
-            return self._default(default,
-                                 "{!r} has no axes".format(
-                                     self.__class__.__name__))
+            return self._default(
+                default, "{!r} has no axes".format(self.__class__.__name__)
+            )
 
     def del_method(self, default=ValueError()):
-        '''Remove the method of the cell method.
+        """Remove the method of the cell method.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `get_method`, `has_method`, `set_method`
+        .. seealso:: `get_method`, `has_method`, `set_method`
 
-    :Parameters:
+        :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the method
-            has not been set.
+            default: optional
+                Return the value of the *default* parameter if the method
+                has not been set.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The removed method.
+            `str`
+                The removed method.
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.set_method('minimum')
-    >>> c.has_method()
-    True
-    >>> c.get_method()
-    ('time',)
-    >>> c.del_method()
-    >>> c.has_method()
-    False
-    >>> c.get_method('NO METHOD')
-    'NO METHOD'
-    >>> c.del_method('NO METHOD')
-    'NO METHOD'
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_method('minimum')
+        >>> c.has_method()
+        True
+        >>> c.get_method()
+        ('time',)
+        >>> c.del_method()
+        >>> c.has_method()
+        False
+        >>> c.get_method('NO METHOD')
+        'NO METHOD'
+        >>> c.del_method('NO METHOD')
+        'NO METHOD'
 
-        '''
+        """
         try:
-            return self._del_component('method')
+            return self._del_component("method")
         except ValueError:
-            return self._default(default,
-                                 "{!r} has no method".format(
-                                     self.__class__.__name__))
+            return self._default(
+                default, "{!r} has no method".format(self.__class__.__name__)
+            )
 
     def del_qualifier(self, qualifier, default=ValueError()):
-        '''Remove a qualifier of the cell method.
+        """Remove a qualifier of the cell method.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `get_qualifier`, `has_qualifier`, `qualifiers`,
-                 `set_qualifier`
+        .. seealso:: `get_qualifier`, `has_qualifier`, `qualifiers`,
+                     `set_qualifier`
 
-    :Parameters:
+        :Parameters:
 
-        qualifier:
-            The name of the qualifier to be removed.
+            qualifier:
+                The name of the qualifier to be removed.
 
-            *Parameter example:*
-              ``qualifier='where'``
+                *Parameter example:*
+                  ``qualifier='where'``
 
-        default: optional
-            Return the value of the *default* parameter if the
-            qualifier has not been set.
+            default: optional
+                Return the value of the *default* parameter if the
+                qualifier has not been set.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-            The removed qualifier.
+                The removed qualifier.
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.set_qualifier('where', 'land')
-    >>> c.get_qualifier('where', 'no qualifier')
-    'land'
-    >>> c.del_qualifier('where')
-    'land'
-    >>> c.get_qualifier('where')
-    ValueError: 'CellMethod' has no 'where' qualifier
-    >>> c.del_qualifier('where', 'no qualifier')
-    'no qualifier'
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_qualifier('where', 'land')
+        >>> c.get_qualifier('where', 'no qualifier')
+        'land'
+        >>> c.del_qualifier('where')
+        'land'
+        >>> c.get_qualifier('where')
+        ValueError: 'CellMethod' has no 'where' qualifier
+        >>> c.del_qualifier('where', 'no qualifier')
+        'no qualifier'
 
-        '''
+        """
         try:
-            return self._get_component('qualifiers').pop(qualifier)
+            return self._get_component("qualifiers").pop(qualifier)
         except KeyError:
-            return self._default(default, "{!r} has no {!r} qualifier".format(
-                self.__class__.__name__, qualifier))
+            return self._default(
+                default,
+                "{!r} has no {!r} qualifier".format(
+                    self.__class__.__name__, qualifier
+                ),
+            )
 
     def get_axes(self, default=ValueError()):
-        '''Return the axes of the cell method.
+        """Return the axes of the cell method.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_axes`, `has_axes`, `set_axes`
+        .. seealso:: `del_axes`, `has_axes`, `set_axes`
 
-    :Parameters:
+        :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if axes have
-            not been set.
+            default: optional
+                Return the value of the *default* parameter if axes have
+                not been set.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-        `tuple`
-            The axes.
+            `tuple`
+                The axes.
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.set_axes('domainaxis1')
-    >>> c.has_axes()
-    True
-    >>> c.get_axes()
-    ('domainaxis1',)
-    >>> c.del_axes()
-    >>> c.has_axes()
-    False
-    >>> c.get_axes('NO AXES')
-    'NO AXES'
-    >>> c.del_axes('NO AXES')
-    'NO AXES'
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_axes('domainaxis1')
+        >>> c.has_axes()
+        True
+        >>> c.get_axes()
+        ('domainaxis1',)
+        >>> c.del_axes()
+        >>> c.has_axes()
+        False
+        >>> c.get_axes('NO AXES')
+        'NO AXES'
+        >>> c.del_axes('NO AXES')
+        'NO AXES'
 
-        '''
+        """
         try:
-            return self._get_component('axes')
+            return self._get_component("axes")
         except ValueError:
-            return self._default(default,
-                                 "{!r} has no axes".format(
-                                     self.__class__.__name__))
+            return self._default(
+                default, "{!r} has no axes".format(self.__class__.__name__)
+            )
 
     def get_method(self, default=ValueError()):
-        '''Return the method of the cell method.
+        """Return the method of the cell method.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_method`, `has_method`, `set_method`
+        .. seealso:: `del_method`, `has_method`, `set_method`
 
-    :Parameters:
+        :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the method
-            has not been set.
+            default: optional
+                Return the value of the *default* parameter if the method
+                has not been set.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The method.
+            `str`
+                The method.
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.set_method('minimum')
-    >>> c.has_method()
-    True
-    >>> c.get_method()
-    'minimum'
-    >>> c.del_method()
-    >>> c.has_method()
-    False
-    >>> c.get_method('NO METHOD')
-    'NO METHOD'
-    >>> c.del_method('NO METHOD')
-    'NO METHOD'
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_method('minimum')
+        >>> c.has_method()
+        True
+        >>> c.get_method()
+        'minimum'
+        >>> c.del_method()
+        >>> c.has_method()
+        False
+        >>> c.get_method('NO METHOD')
+        'NO METHOD'
+        >>> c.del_method('NO METHOD')
+        'NO METHOD'
 
-        '''
+        """
         try:
-            return self._get_component('method')
+            return self._get_component("method")
         except ValueError:
-            return self._default(default,
-                                 "{!r} has no method".format(
-                                     self.__class__.__name__))
+            return self._default(
+                default, "{!r} has no method".format(self.__class__.__name__)
+            )
 
     def get_qualifier(self, qualifier, default=ValueError()):
-        '''Return a qualifier of the cell method.
+        """Return a qualifier of the cell method.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_qualifier`, `has_qualifier`, `qualifiers`,
-                 `set_qualifier`
+        .. seealso:: `del_qualifier`, `has_qualifier`, `qualifiers`,
+                     `set_qualifier`
 
-    :Parameters:
+        :Parameters:
 
-        qualifier:
-            The name of the qualifier to be returned.
+            qualifier:
+                The name of the qualifier to be returned.
 
-            *Parameter example:*
-              ``qualifier='where'``
+                *Parameter example:*
+                  ``qualifier='where'``
 
-        default: optional
-            Return the value of the *default* parameter if the
-            qualifier has not been set.
+            default: optional
+                Return the value of the *default* parameter if the
+                qualifier has not been set.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-            The value of the qualifier.
+                The value of the qualifier.
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.set_qualifier('where', 'land')
-    >>> c.get_qualifier('where', 'no qualifier')
-    'land'
-    >>> c.del_qualifier('where')
-    'land'
-    >>> c.get_qualifier('where')
-    ValueError: 'CellMethod' has no 'where' qualifier
-    >>> c.get_qualifier('where', 'no qualifier')
-    'no qualifier'
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_qualifier('where', 'land')
+        >>> c.get_qualifier('where', 'no qualifier')
+        'land'
+        >>> c.del_qualifier('where')
+        'land'
+        >>> c.get_qualifier('where')
+        ValueError: 'CellMethod' has no 'where' qualifier
+        >>> c.get_qualifier('where', 'no qualifier')
+        'no qualifier'
 
-        '''
+        """
         try:
-            return self._get_component('qualifiers')[qualifier]
+            return self._get_component("qualifiers")[qualifier]
         except KeyError:
-            return self._default(default, "{!r} has no {!r} qualifier".format(
-                self.__class__.__name__, qualifier))
+            return self._default(
+                default,
+                "{!r} has no {!r} qualifier".format(
+                    self.__class__.__name__, qualifier
+                ),
+            )
 
     def has_axes(self):
-        '''Whether the axes of the cell method have been set.
+        """Whether the axes of the cell method have been set.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_axes`, `get_axes`, `set_axes`
+        .. seealso:: `del_axes`, `get_axes`, `set_axes`
 
-    :Returns:
+        :Returns:
 
-        `bool`
-            `True` if the axes have been set, otherwise `False`.
+            `bool`
+                `True` if the axes have been set, otherwise `False`.
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.set_axes('domainaxis1')
-    >>> c.has_axes()
-    True
-    >>> c.get_axes()
-    ('domainaxis1',)
-    >>> c.del_axes()
-    >>> c.has_axes()
-    False
-    >>> c.get_axes('NO AXES')
-    'NO AXES'
-    >>> c.del_axes('NO AXES')
-    'NO AXES'
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_axes('domainaxis1')
+        >>> c.has_axes()
+        True
+        >>> c.get_axes()
+        ('domainaxis1',)
+        >>> c.del_axes()
+        >>> c.has_axes()
+        False
+        >>> c.get_axes('NO AXES')
+        'NO AXES'
+        >>> c.del_axes('NO AXES')
+        'NO AXES'
 
-        '''
-        return self._has_component('axes')
+        """
+        return self._has_component("axes")
 
     def has_method(self):
-        '''Whether the method of the cell method has been set.
+        """Whether the method of the cell method has been set.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_axes`, `get_method`, `set_method`
+        .. seealso:: `del_axes`, `get_method`, `set_method`
 
-    :Returns:
+        :Returns:
 
-        `bool`
-            `True` if the method has been set, otherwise `False`.
+            `bool`
+                `True` if the method has been set, otherwise `False`.
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.set_method('minimum')
-    >>> c.has_method()
-    True
-    >>> c.get_method()
-    'minimum'
-    >>> c.del_method()
-    >>> c.has_method()
-    False
-    >>> c.get_method('NO METHOD')
-    'NO METHOD'
-    >>> c.del_method('NO METHOD')
-    'NO METHOD'
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_method('minimum')
+        >>> c.has_method()
+        True
+        >>> c.get_method()
+        'minimum'
+        >>> c.del_method()
+        >>> c.has_method()
+        False
+        >>> c.get_method('NO METHOD')
+        'NO METHOD'
+        >>> c.del_method('NO METHOD')
+        'NO METHOD'
 
-        '''
-        return self._has_component('method')
+        """
+        return self._has_component("method")
 
     def has_qualifier(self, qualifier):
-        '''Whether a qualifier of the cell method has been set.
+        """Whether a qualifier of the cell method has been set.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_qualifier`, `get_qualifier`, `qualifiers`,
-                 `set_qualifier`
+        .. seealso:: `del_qualifier`, `get_qualifier`, `qualifiers`,
+                     `set_qualifier`
 
-    :Parameters:
+        :Parameters:
 
-        qualifier: `str`
-            The name of the qualifier.
+            qualifier: `str`
+                The name of the qualifier.
 
-    :Returns:
+        :Returns:
 
-        `bool`
-            `True` if the qualifier has been set, otherwise `False`.
+            `bool`
+                `True` if the qualifier has been set, otherwise `False`.
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.set_qualifier('where', 'land')
-    >>> c.has_qualifier('where')
-    True
-    >>> c.del_qualifier('where')
-    'land'
-    >>> c.has_qualifier('where')
-    False
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_qualifier('where', 'land')
+        >>> c.has_qualifier('where')
+        True
+        >>> c.del_qualifier('where')
+        'land'
+        >>> c.has_qualifier('where')
+        False
 
-        '''
-        return qualifier in self._get_component('qualifiers')
+        """
+        return qualifier in self._get_component("qualifiers")
 
     def qualifiers(self):
-        '''Return all qualifiers of the cell method.
+        """Return all qualifiers of the cell method.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_qualifier`, `get_qualifier`, `has_qualifier`,
-                 `set_qualifier`
+        .. seealso:: `del_qualifier`, `get_qualifier`, `has_qualifier`,
+                     `set_qualifier`
 
-    :Returns:
+        :Returns:
 
-        `dict`
-            The qualifiers.
+            `dict`
+                The qualifiers.
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.set_qualifier('where', 'land')
-    >>> c.qualifiers()
-    {'where': 'land'}
-    >>> c.del_qualifier('where')
-    'land'
-    >>> c.qualifiers()
-    {}
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_qualifier('where', 'land')
+        >>> c.qualifiers()
+        {'where': 'land'}
+        >>> c.del_qualifier('where')
+        'land'
+        >>> c.qualifiers()
+        {}
 
-        '''
-        return self._get_component('qualifiers').copy()
+        """
+        return self._get_component("qualifiers").copy()
 
     def set_axes(self, value, copy=True):
-        '''Set the axes of the cell method.
+        """Set the axes of the cell method.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_axes`, `get_axes`, `has_axes`
+        .. seealso:: `del_axes`, `get_axes`, `has_axes`
 
-    :Parameters:
+        :Parameters:
 
-        value: (sequence of) `str`
-            The axes, specified either by the construct identifiers of
-            domain axis constructs, standard names, or the special
-            string ``'area'``.
+            value: (sequence of) `str`
+                The axes, specified either by the construct identifiers of
+                domain axis constructs, standard names, or the special
+                string ``'area'``.
 
-            *Parameter example:*
-              ``axes='domainaxis0'``
+                *Parameter example:*
+                  ``axes='domainaxis0'``
 
-            *Parameter example:*
-              ``axes='time'``
+                *Parameter example:*
+                  ``axes='time'``
 
-            *Parameter example:*
-              ``axes='area'``
+                *Parameter example:*
+                  ``axes='area'``
 
-            *Parameter example:*
-              ``axes=['domainaxis0', 'domainaxis2']``
+                *Parameter example:*
+                  ``axes=['domainaxis0', 'domainaxis2']``
 
-            *Parameter example:*
-              ``axes=['time', 'area']``
+                *Parameter example:*
+                  ``axes=['time', 'area']``
 
-            *Parameter example:*
-              ``axes=['domainaxis0', 'time']``
+                *Parameter example:*
+                  ``axes=['domainaxis0', 'time']``
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.set_axes('domainaxis1')
-    >>> c.has_axes()
-    True
-    >>> c.get_axes()
-    ('domainaxis1',)
-    >>> c.del_axes()
-    >>> c.has_axes()
-    False
-    >>> c.get_axes('NO AXES')
-    'NO AXES'
-    >>> c.del_axes('NO AXES')
-    'NO AXES'
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_axes('domainaxis1')
+        >>> c.has_axes()
+        True
+        >>> c.get_axes()
+        ('domainaxis1',)
+        >>> c.del_axes()
+        >>> c.has_axes()
+        False
+        >>> c.get_axes('NO AXES')
+        'NO AXES'
+        >>> c.del_axes('NO AXES')
+        'NO AXES'
 
-    >>> c.set_axes(['domainaxis1', 'domainaxis0'])
+        >>> c.set_axes(['domainaxis1', 'domainaxis0'])
 
-    >>> c.set_axes(['time', 'domainaxis0'])
+        >>> c.set_axes(['time', 'domainaxis0'])
 
-    >>> c.set_axes('time')
+        >>> c.set_axes('time')
 
-        '''
+        """
         if copy:
             value = deepcopy(value)
 
@@ -600,80 +610,81 @@ class CellMethod(abstract.Container):
         else:
             value = tuple(value)
 
-        return self._set_component('axes', value, copy=False)
+        return self._set_component("axes", value, copy=False)
 
     def set_method(self, value, copy=True):
-        '''Set the method of the cell method.
+        """Set the method of the cell method.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_method`, `get_method`, `has_method`
+        .. seealso:: `del_method`, `get_method`, `has_method`
 
-    :Parameters:
+        :Parameters:
 
-        value: `str`
-            The value for the method.
+            value: `str`
+                The value for the method.
 
-        copy: `bool`, optional
-            If True then set a deep copy of *value*.
+            copy: `bool`, optional
+                If True then set a deep copy of *value*.
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.set_method('minimum')
-    >>> c.has_method()
-    True
-    >>> c.get_method()
-    'minimum'
-    >>> c.del_method()
-    >>> c.has_method()
-    False
-    >>> c.get_method('NO METHOD')
-    'NO METHOD'
-    >>> c.del_method('NO METHOD')
-    'NO METHOD'
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_method('minimum')
+        >>> c.has_method()
+        True
+        >>> c.get_method()
+        'minimum'
+        >>> c.del_method()
+        >>> c.has_method()
+        False
+        >>> c.get_method('NO METHOD')
+        'NO METHOD'
+        >>> c.del_method('NO METHOD')
+        'NO METHOD'
 
-        '''
-        return self._set_component('method', value, copy=copy)
+        """
+        return self._set_component("method", value, copy=copy)
 
     def set_qualifier(self, qualifier, value, copy=True):
-        '''Set a qualifier of the cell method.
+        """Set a qualifier of the cell method.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_qualifier`, `get_qualifier`, `has_qualifier`,
-                 `qualifiers`
+        .. seealso:: `del_qualifier`, `get_qualifier`, `has_qualifier`,
+                     `qualifiers`
 
-    :Parameters:
+        :Parameters:
 
-        qualifier: `str`
-            The name of the qualifier to be set.
+            qualifier: `str`
+                The name of the qualifier to be set.
 
-        value:
-            The value for the qualifier.
+            value:
+                The value for the qualifier.
 
-        copy: `bool`, optional
-            If True then set a deep copy of *value*.
+            copy: `bool`, optional
+                If True then set a deep copy of *value*.
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.set_qualifier('where', 'land')
-    >>> c.get_qualifier('where')
-    'land'
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_qualifier('where', 'land')
+        >>> c.get_qualifier('where')
+        'land'
 
-        '''
+        """
         if copy:
             value = deepcopy(value)
 
-        self._get_component('qualifiers')[qualifier] = value
+        self._get_component("qualifiers")[qualifier] = value
+
 
 # --- End: class

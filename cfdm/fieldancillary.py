@@ -2,10 +2,10 @@ from . import mixin
 from . import core
 
 
-class FieldAncillary(mixin.NetCDFVariable,
-                     mixin.PropertiesData,
-                     core.FieldAncillary):
-    '''A field ancillary construct of the CF data model.
+class FieldAncillary(
+    mixin.NetCDFVariable, mixin.PropertiesData, core.FieldAncillary
+):
+    """A field ancillary construct of the CF data model.
 
     The field ancillary construct provides metadata which are
     distributed over the same sampling domain as the field itself. For
@@ -38,63 +38,88 @@ class FieldAncillary(mixin.NetCDFVariable,
 
     .. versionadded:: (cfdm) 1.7.0
 
-    '''
-    def __init__(self, properties=None, data=None, source=None,
-                 copy=True, _use_data=True):
+    """
 
-        '''**Initialization**
+    def __init__(
+        self,
+        properties=None,
+        data=None,
+        source=None,
+        copy=True,
+        _use_data=True,
+    ):
 
-    :Parameters:
+        """**Initialization**
 
-        {{init properties: `dict`, optional}}
+        :Parameters:
 
-           *Parameter example:*
-              ``properties={'standard_name': 'altitude'}``
+            {{init properties: `dict`, optional}}
 
-        {{init data: data_like, optional}}
+               *Parameter example:*
+                  ``properties={'standard_name': 'altitude'}``
 
-        source: optional
-            Initialize the properties and data from those of *source*.
+            {{init data: data_like, optional}}
 
-            {{init source}}
+            source: optional
+                Initialize the properties and data from those of *source*.
 
-        {{init copy: `bool`, optional}}
-            If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.
+                {{init source}}
 
-        '''
-        super().__init__(properties=properties, data=data,
-                         source=source, copy=copy,
-                         _use_data=_use_data)
+            {{init copy: `bool`, optional}}
+                If False then do not deep copy input parameters prior to
+                initialization. By default arguments are deep copied.
+
+        """
+        super().__init__(
+            properties=properties,
+            data=data,
+            source=source,
+            copy=copy,
+            _use_data=_use_data,
+        )
 
         self._initialise_netcdf(source)
 
-    def dump(self, display=True, _omit_properties=None, _key=None,
-             _level=0, _title=None, _axes=None, _axis_names=None):
-        '''A full description of the field ancillary construct.
+    def dump(
+        self,
+        display=True,
+        _omit_properties=None,
+        _key=None,
+        _level=0,
+        _title=None,
+        _axes=None,
+        _axis_names=None,
+    ):
+        """A full description of the field ancillary construct.
 
-    Returns a description of all properties, including those of
-    components, and provides selected values of all data arrays.
+        Returns a description of all properties, including those of
+        components, and provides selected values of all data arrays.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Parameters:
+        :Parameters:
 
-        display: `bool`, optional
-            If False then return the description as a string. By
-            default the description is printed.
+            display: `bool`, optional
+                If False then return the description as a string. By
+                default the description is printed.
 
-    :Returns:
+        :Returns:
 
-        {{returns dump}}
+            {{returns dump}}
 
-        '''
+        """
         if _title is None:
-            _title = 'Field Ancillary: ' + self.identity(default='')
+            _title = "Field Ancillary: " + self.identity(default="")
 
-        return super().dump(display=display, _key=_key,
-                            _omit_properties=_omit_properties,
-                            _level=_level, _title=_title, _axes=_axes,
-                            _axis_names=_axis_names)
+        return super().dump(
+            display=display,
+            _key=_key,
+            _omit_properties=_omit_properties,
+            _level=_level,
+            _title=_title,
+            _axes=_axes,
+            _axis_names=_axis_names,
+        )
+
 
 # --- End: class

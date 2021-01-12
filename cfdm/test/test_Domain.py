@@ -14,7 +14,7 @@ import cfdm
 class DomainTest(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
-        cfdm.LOG_LEVEL('DISABLE')
+        cfdm.LOG_LEVEL("DISABLE")
         # Note: to enable all messages for given methods, lines or
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
@@ -25,9 +25,10 @@ class DomainTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
         self.filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
+            os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
+        )
         f = cfdm.read(self.filename)
-        self.assertEqual(len(f), 1, 'f={!r}'.format(f))
+        self.assertEqual(len(f), 1, "f={!r}".format(f))
         self.f = f[0]
 
         self.test_only = []
@@ -55,11 +56,12 @@ class DomainTest(unittest.TestCase):
         self.assertTrue(d.equals(e, verbose=3))
         self.assertTrue(e.equals(d, verbose=3))
 
+
 # --- End: class
 
 
-if __name__ == '__main__':
-    print('Run date:', datetime.datetime.now())
+if __name__ == "__main__":
+    print("Run date:", datetime.datetime.now())
     cfdm.environment()
-    print('')
+    print("")
     unittest.main(verbosity=2)

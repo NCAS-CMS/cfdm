@@ -2,10 +2,10 @@ from . import mixin
 from . import core
 
 
-class AuxiliaryCoordinate(mixin.NetCDFVariable,
-                          mixin.Coordinate,
-                          core.AuxiliaryCoordinate):
-    '''An auxiliary coordinate construct of the CF data model.
+class AuxiliaryCoordinate(
+    mixin.NetCDFVariable, mixin.Coordinate, core.AuxiliaryCoordinate
+):
+    """An auxiliary coordinate construct of the CF data model.
 
     An auxiliary coordinate construct provides information which
     locate the cells of the domain and which depend on a subset of the
@@ -43,69 +43,98 @@ class AuxiliaryCoordinate(mixin.NetCDFVariable,
 
     .. versionadded:: (cfdm) 1.7.0
 
-    '''
-    def __init__(self, properties=None, data=None, bounds=None,
-                 geometry=None, interior_ring=None, source=None,
-                 copy=True, _use_data=True):
-        '''**Initialization**
+    """
 
-    :Parameters:
+    def __init__(
+        self,
+        properties=None,
+        data=None,
+        bounds=None,
+        geometry=None,
+        interior_ring=None,
+        source=None,
+        copy=True,
+        _use_data=True,
+    ):
+        """**Initialization**
 
-        {{init properties: `dict`, optional}}
+        :Parameters:
 
-           *Parameter example:*
-              ``properties={'standard_name': 'latitude'}``
+            {{init properties: `dict`, optional}}
 
-        {{init data: data_like, optional}}
+               *Parameter example:*
+                  ``properties={'standard_name': 'latitude'}``
 
-        {{init bounds: `Bounds`, optional}}
+            {{init data: data_like, optional}}
 
-        {{init geometry: `str`, optional}}
+            {{init bounds: `Bounds`, optional}}
 
-        {{init interior_ring: `InteriorRing`, optional}}
+            {{init geometry: `str`, optional}}
 
-        source: optional
-            Initialize the properties, data and bounds from those of
-            *source*.
+            {{init interior_ring: `InteriorRing`, optional}}
 
-            {{init source}}
+            source: optional
+                Initialize the properties, data and bounds from those of
+                *source*.
 
-        {{init copy: `bool`, optional}}
+                {{init source}}
 
-        '''
-        super().__init__(properties=properties, data=data,
-                         bounds=bounds, geometry=geometry,
-                         interior_ring=interior_ring, source=source,
-                         copy=copy, _use_data=_use_data)
+            {{init copy: `bool`, optional}}
+
+        """
+        super().__init__(
+            properties=properties,
+            data=data,
+            bounds=bounds,
+            geometry=geometry,
+            interior_ring=interior_ring,
+            source=source,
+            copy=copy,
+            _use_data=_use_data,
+        )
 
         self._initialise_netcdf(source)
 
-    def dump(self, display=True, _omit_properties=None, _key=None,
-             _level=0, _title=None, _axes=None, _axis_names=None):
-        '''A full description of the auxiliary coordinate construct.
+    def dump(
+        self,
+        display=True,
+        _omit_properties=None,
+        _key=None,
+        _level=0,
+        _title=None,
+        _axes=None,
+        _axis_names=None,
+    ):
+        """A full description of the auxiliary coordinate construct.
 
-    Returns a description of all properties, including those of
-    components, and provides selected values of all data arrays.
+        Returns a description of all properties, including those of
+        components, and provides selected values of all data arrays.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Parameters:
+        :Parameters:
 
-        display: `bool`, optional
-            If False then return the description as a string. By
-            default the description is printed.
+            display: `bool`, optional
+                If False then return the description as a string. By
+                default the description is printed.
 
-    :Returns:
+        :Returns:
 
-        {{returns dump}}
+            {{returns dump}}
 
-        '''
+        """
         if _title is None:
-            _title = 'Auxiliary coordinate: ' + self.identity(default='')
+            _title = "Auxiliary coordinate: " + self.identity(default="")
 
-        return super().dump(display=display, _key=_key, _level=_level,
-                            _title=_title,
-                            _omit_properties=_omit_properties,
-                            _axes=_axes, _axis_names=_axis_names)
+        return super().dump(
+            display=display,
+            _key=_key,
+            _level=_level,
+            _title=_title,
+            _omit_properties=_omit_properties,
+            _axes=_axes,
+            _axis_names=_axis_names,
+        )
+
 
 # --- End: class

@@ -2,18 +2,17 @@ import abc
 
 
 class Implementation(metaclass=abc.ABCMeta):
-    '''Store an implementation of the CF data model.
+    """Store an implementation of the CF data model."""
 
-    '''
     def __init__(self, cf_version=None, **kwargs):
-        '''**Initialisation**
+        """**Initialisation**
 
-    :Parameters:
+        :Parameters:
 
-        kwargs:
-            The concrete objects required to represent a Field.
+            kwargs:
+                The concrete objects required to represent a Field.
 
-        '''
+        """
         self._cf_version = cf_version
         self._class = kwargs.copy()
         for key, value in kwargs.items():
@@ -21,120 +20,119 @@ class Implementation(metaclass=abc.ABCMeta):
                 del self._class[key]
 
     def classes(self):
-        '''Return all the classes of the implmeentation.
+        """Return all the classes of the implmeentation.
 
-    :Returns:
+        :Returns:
 
-        `dict`
-            The class objects, keyed by their class name.
+            `dict`
+                The class objects, keyed by their class name.
 
-    **Examples:**
+        **Examples:**
 
-    >>> sorted(i.classes())
-    ['AuxiliaryCoordinate',
-     'Bounds',
-     'CellMeasure',
-     'CellMethod',
-     'CoordinateConversion',
-     'CoordinateReference',
-     'Count',
-     'Data',
-     'Datum',
-     'DimensionCoordinate',
-     'DomainAncillary',
-     'DomainAxis',
-     'Field',
-     'FieldAncillary',
-     'GatheredArray',
-     'Index',
-     'InteriorRing',
-     'List',
-     'NetCDFArray',
-     'NodeCountProperties',
-     'PartNodeCountProperties',
-     'RaggedContiguousArray',
-     'RaggedIndexedArray',
-     'RaggedIndexedContiguousArray']
+        >>> sorted(i.classes())
+        ['AuxiliaryCoordinate',
+         'Bounds',
+         'CellMeasure',
+         'CellMethod',
+         'CoordinateConversion',
+         'CoordinateReference',
+         'Count',
+         'Data',
+         'Datum',
+         'DimensionCoordinate',
+         'DomainAncillary',
+         'DomainAxis',
+         'Field',
+         'FieldAncillary',
+         'GatheredArray',
+         'Index',
+         'InteriorRing',
+         'List',
+         'NetCDFArray',
+         'NodeCountProperties',
+         'PartNodeCountProperties',
+         'RaggedContiguousArray',
+         'RaggedIndexedArray',
+         'RaggedIndexedContiguousArray']
 
-        '''
+        """
         return self._class.copy()
 
     def copy(self):
-        '''Copy
-
-        '''
-        return type(self)(cf_version=self.get_cf_version(),
-                          **self._class)
+        """Copy"""
+        return type(self)(cf_version=self.get_cf_version(), **self._class)
 
     def get_class(self, name):
-        '''Return a class of the implementation.
+        """Return a class of the implementation.
 
-    :Parameters:
+        :Parameters:
 
-        name: `str`
-            The name of the class.
+            name: `str`
+                The name of the class.
 
-            *Parameter example:*
-              ``name='Field'``
+                *Parameter example:*
+                  ``name='Field'``
 
-    :Returns:
+        :Returns:
 
-            The class object.
+                The class object.
 
-    **Examples:**
+        **Examples:**
 
-    >>> Field = i.get_class('Field')
-    >>> f = Field()
+        >>> Field = i.get_class('Field')
+        >>> f = Field()
 
-        '''
+        """
         try:
             return self._class[name]
         except KeyError:
             raise ValueError(
-                "Implementation does not have class {!r}".format(name))
+                "Implementation does not have class {!r}".format(name)
+            )
 
     def get_cf_version(self):
-        '''Return the CF version of the implementation.
+        """Return the CF version of the implementation.
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The version.
+            `str`
+                The version.
 
-    **Examples:**
+        **Examples:**
 
-    >>> i.get_cf_version()
-    '1.8'
+        >>> i.get_cf_version()
+        '1.8'
 
-        '''
+        """
         return self._cf_version
 
     def set_class(self, name, cls):
-        '''Set a class of the implementation.
+        """Set a class of the implementation.
 
-    :Parameters:
+        :Parameters:
 
-        name: `str`
-            The name of the class.
+            name: `str`
+                The name of the class.
 
-            *Parameter example:*
-              ``name='Field'``
+                *Parameter example:*
+                  ``name='Field'``
 
-        cls:
-            The class object.
+            cls:
+                The class object.
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-    **Examples:**
+        **Examples:**
 
-    >>> from . import Field
-    >>> i.set_class('Field', Field)
-    >>> field_class = i.get_class('Field')
-    >>> f = field_class()
+        >>> from . import Field
+        >>> i.set_class('Field', Field)
+        >>> field_class = i.get_class('Field')
+        >>> f = field_class()
 
-        '''
+        """
         self._class[name] = cls
+
 
 # --- End: class

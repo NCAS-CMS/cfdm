@@ -6,38 +6,39 @@ from .container import Container
 
 
 class Parameters(Container):
-    '''Mixin class for a collection of named parameters.
+    """Mixin class for a collection of named parameters.
 
     .. versionadded:: (cfdm) 1.7.0
 
-    '''
+    """
+
     def __init__(self, parameters=None, source=None, copy=True):
-        '''**Initialization**
+        """**Initialization**
 
-    :Parameters:
+        :Parameters:
 
-        parameters: `dict`, optional
-           Set parameters. The dictionary keys are parameter names,
-           with corresponding values. Ignored if the *source*
-           parameter is set.
+            parameters: `dict`, optional
+               Set parameters. The dictionary keys are parameter names,
+               with corresponding values. Ignored if the *source*
+               parameter is set.
 
-           Parameters may also be set after initialisation with the
-           `set_parameters` and `set_parameter` methods.
+               Parameters may also be set after initialisation with the
+               `set_parameters` and `set_parameter` methods.
 
-           *Parameter example:*
-             ``parameters={'earth_radius': 6371007.}``
+               *Parameter example:*
+                 ``parameters={'earth_radius': 6371007.}``
 
-        source: optional
-            Initialize the parameters from those of *source*.
+            source: optional
+                Initialize the parameters from those of *source*.
 
-            {{init source}}
+                {{init source}}
 
-        {{init copy: `bool`, optional}}
+            {{init copy: `bool`, optional}}
 
-        '''
+        """
         super().__init__(source=source, copy=copy)
 
-        self._set_component('parameters', {}, copy=False)
+        self._set_component("parameters", {}, copy=False)
 
         if source:
             try:
@@ -53,281 +54,288 @@ class Parameters(Container):
         self.set_parameters(parameters, copy=copy)
 
     def clear_parameters(self):
-        '''Remove all parameters.
+        """Remove all parameters.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_parameter`, `parameters`, `set_parameters`
+        .. seealso:: `del_parameter`, `parameters`, `set_parameters`
 
-    :Returns:
+        :Returns:
 
-        `dict`
-            The parameters that have been removed.
+            `dict`
+                The parameters that have been removed.
 
-    **Examples:**
+        **Examples:**
 
-    >>> old = f.clear_parameters()
-    >>> old
-    {'standard_parallel': 25.0;
-     'longitude_of_central_meridian': 265.0,
-     'latitude_of_projection_origin': 25.0}
-    >>> f.parameters()
-    {}
-    >>> f.set_parameters(old)
-    >>> f.parameters()
-    {'standard_parallel': 25.0;
-     'longitude_of_central_meridian': 265.0,
-     'latitude_of_projection_origin': 25.0}
+        >>> old = f.clear_parameters()
+        >>> old
+        {'standard_parallel': 25.0;
+         'longitude_of_central_meridian': 265.0,
+         'latitude_of_projection_origin': 25.0}
+        >>> f.parameters()
+        {}
+        >>> f.set_parameters(old)
+        >>> f.parameters()
+        {'standard_parallel': 25.0;
+         'longitude_of_central_meridian': 265.0,
+         'latitude_of_projection_origin': 25.0}
 
-        '''
-        out = self._get_component('parameters')
-        self._set_component('parameters', {})
+        """
+        out = self._get_component("parameters")
+        self._set_component("parameters", {})
         return out.copy()
 
     def del_parameter(self, parameter, default=ValueError()):
-        '''Delete a parameter.
+        """Delete a parameter.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `get_parameter`, `has_parameter`, `parameters`,
-                 `set_parameter`
+        .. seealso:: `get_parameter`, `has_parameter`, `parameters`,
+                     `set_parameter`
 
-    :Parameters:
+        :Parameters:
 
-        parameter: `str`
-            The name of the parameter to be deleted.
+            parameter: `str`
+                The name of the parameter to be deleted.
 
-        default: optional
-            Return the value of the *default* parameter if the
-            parameter has not been set.
+            default: optional
+                Return the value of the *default* parameter if the
+                parameter has not been set.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-            The removed parameter value.
+                The removed parameter value.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f = {{package}}.{{class}}()
-    >>> f.set_parameter('earth_radius', 6371007)
-    >>> f.has_parameter('earth_radius')
-    True
-    >>> f.get_parameter('earth_radius')
-    6371007
-    >>> f.del_parameter('earth_radius')
-    6371007
-    >>> f.has_parameter('earth_radius')
-    False
-    >>> print(f.del_parameter('earth_radius', None))
-    None
-    >>> print(f.get_paramete('earth_radius', None))
-    None
+        >>> f = {{package}}.{{class}}()
+        >>> f.set_parameter('earth_radius', 6371007)
+        >>> f.has_parameter('earth_radius')
+        True
+        >>> f.get_parameter('earth_radius')
+        6371007
+        >>> f.del_parameter('earth_radius')
+        6371007
+        >>> f.has_parameter('earth_radius')
+        False
+        >>> print(f.del_parameter('earth_radius', None))
+        None
+        >>> print(f.get_paramete('earth_radius', None))
+        None
 
-        '''
+        """
         try:
-            return self._get_component('parameters').pop(parameter)
+            return self._get_component("parameters").pop(parameter)
         except KeyError:
-            return self._default(default,
-                                 "{!r} has no {!r} parameter".format(
-                                     self.__class__.__name__, parameter))
+            return self._default(
+                default,
+                "{!r} has no {!r} parameter".format(
+                    self.__class__.__name__, parameter
+                ),
+            )
 
     def get_parameter(self, parameter, default=ValueError()):
-        '''Get a parameter value.
+        """Get a parameter value.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Parameters:
+        :Parameters:
 
-        parameter: `str`
-            The name of the parameter.
+            parameter: `str`
+                The name of the parameter.
 
-        default: optional
-            Return the value of the *default* parameter if the
-            parameter has not been set.
+            default: optional
+                Return the value of the *default* parameter if the
+                parameter has not been set.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-            The value of the parameter.
+                The value of the parameter.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f = {{package}}.{{class}}()
-    >>> f.set_parameter('earth_radius', 6371007)
-    >>> f.has_parameter('earth_radius')
-    True
-    >>> f.get_parameter('earth_radius')
-    6371007
-    >>> f.del_parameter('earth_radius')
-    6371007
-    >>> f.has_parameter('earth_radius')
-    False
-    >>> print(f.del_parameter('earth_radius', None))
-    None
-    >>> print(f.get_parameter('earth_radius', None))
-    None
+        >>> f = {{package}}.{{class}}()
+        >>> f.set_parameter('earth_radius', 6371007)
+        >>> f.has_parameter('earth_radius')
+        True
+        >>> f.get_parameter('earth_radius')
+        6371007
+        >>> f.del_parameter('earth_radius')
+        6371007
+        >>> f.has_parameter('earth_radius')
+        False
+        >>> print(f.del_parameter('earth_radius', None))
+        None
+        >>> print(f.get_parameter('earth_radius', None))
+        None
 
-        '''
+        """
         try:
-            return self._get_component('parameters')[parameter]
+            return self._get_component("parameters")[parameter]
         except KeyError:
-            return self._default(default,
-                                 "{!r} has no {!r} parameter".format(
-                                     self.__class__.__name__, parameter))
+            return self._default(
+                default,
+                "{!r} has no {!r} parameter".format(
+                    self.__class__.__name__, parameter
+                ),
+            )
 
     def has_parameter(self, parameter):
-        '''Whether a parameter has been set.
+        """Whether a parameter has been set.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_parameter`, `get_parameter`, `parameters`,
-                 `set_parameter`
+        .. seealso:: `del_parameter`, `get_parameter`, `parameters`,
+                     `set_parameter`
 
-    :Parameters:
+        :Parameters:
 
-        parameter: `str`
-            The name of the parameter.
+            parameter: `str`
+                The name of the parameter.
 
-            *Parameter example:*
-               ``parameter='geoid_name'``
+                *Parameter example:*
+                   ``parameter='geoid_name'``
 
-    :Returns:
+        :Returns:
 
-         `bool`
-            True if the parameter has been set, otherwise False.
+             `bool`
+                True if the parameter has been set, otherwise False.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f = {{package}}.{{class}}()
-    >>> f.set_parameter('earth_radius', 6371007)
-    >>> f.has_parameter('earth_radius')
-    True
-    >>> f.get_parameter('earth_radius')
-    6371007
-    >>> f.del_parameter('earth_radius')
-    6371007
-    >>> f.has_parameter('earth_radius')
-    False
-    >>> print(f.del_parameter('earth_radius', None))
-    None
-    >>> print(f.get_parameter('earth_radius', None))
-    None
+        >>> f = {{package}}.{{class}}()
+        >>> f.set_parameter('earth_radius', 6371007)
+        >>> f.has_parameter('earth_radius')
+        True
+        >>> f.get_parameter('earth_radius')
+        6371007
+        >>> f.del_parameter('earth_radius')
+        6371007
+        >>> f.has_parameter('earth_radius')
+        False
+        >>> print(f.del_parameter('earth_radius', None))
+        None
+        >>> print(f.get_parameter('earth_radius', None))
+        None
 
-        '''
-        return parameter in self._get_component('parameters')
+        """
+        return parameter in self._get_component("parameters")
 
     def parameters(self):
-        '''Return all parameters.
+        """Return all parameters.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `clear_parameters`, `get_parameter`, `has_parameter`
-                 `set_parameters`
+        .. seealso:: `clear_parameters`, `get_parameter`, `has_parameter`
+                     `set_parameters`
 
-    :Returns:
+        :Returns:
 
-        `dict`
-            The parameters.
+            `dict`
+                The parameters.
 
-    **Examples:**
+        **Examples:**
 
-    >>> old = f.clear_parameters()
-    >>> old
-    {'standard_parallel': 25.0;
-     'longitude_of_central_meridian': 265.0,
-     'latitude_of_projection_origin': 25.0}
-    >>> f.parameters()
-    {}
-    >>> f.set_parameters(old)
-    >>> f.parameters()
-    {'standard_parallel': 25.0;
-     'longitude_of_central_meridian': 265.0,
-     'latitude_of_projection_origin': 25.0}
+        >>> old = f.clear_parameters()
+        >>> old
+        {'standard_parallel': 25.0;
+         'longitude_of_central_meridian': 265.0,
+         'latitude_of_projection_origin': 25.0}
+        >>> f.parameters()
+        {}
+        >>> f.set_parameters(old)
+        >>> f.parameters()
+        {'standard_parallel': 25.0;
+         'longitude_of_central_meridian': 265.0,
+         'latitude_of_projection_origin': 25.0}
 
-        '''
-        return self._get_component('parameters').copy()
+        """
+        return self._get_component("parameters").copy()
 
     def set_parameters(self, parameters, copy=True):
-        '''Set parameters.
+        """Set parameters.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `clear_parameters`, `parameters`, `set_parameter`
+        .. seealso:: `clear_parameters`, `parameters`, `set_parameter`
 
-    :Parameters:
+        :Parameters:
 
-        parameters: `dict`
-            Store the parameters from the dictionary supplied.
+            parameters: `dict`
+                Store the parameters from the dictionary supplied.
 
-            *Parameter example:*
-              ``parameters={'earth_radius': 6371007}``
+                *Parameter example:*
+                  ``parameters={'earth_radius': 6371007}``
 
-        copy: `bool`, optional
-            If False then any parameter values provided by the
-            *parameters* parameter are not copied before insertion. By
-            default they are deep copied.
+            copy: `bool`, optional
+                If False then any parameter values provided by the
+                *parameters* parameter are not copied before insertion. By
+                default they are deep copied.
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-    **Examples:**
+        **Examples:**
 
-    >>> old = f.clear_parameters()
-    >>> old
-    {'standard_parallel': 25.0;
-     'longitude_of_central_meridian': 265.0,
-     'latitude_of_projection_origin': 25.0}
-    >>> f.parameters()
-    {}
-    >>> f.set_parameters(old)
-    >>> f.parameters()
-    {'standard_parallel': 25.0;
-     'longitude_of_central_meridian': 265.0,
-     'latitude_of_projection_origin': 25.0}
+        >>> old = f.clear_parameters()
+        >>> old
+        {'standard_parallel': 25.0;
+         'longitude_of_central_meridian': 265.0,
+         'latitude_of_projection_origin': 25.0}
+        >>> f.parameters()
+        {}
+        >>> f.set_parameters(old)
+        >>> f.parameters()
+        {'standard_parallel': 25.0;
+         'longitude_of_central_meridian': 265.0,
+         'latitude_of_projection_origin': 25.0}
 
-        '''
+        """
         if copy:
             parameters = deepcopy(parameters)
         else:
             parameters = parameters.copy()
 
-        self._get_component('parameters').update(parameters)
+        self._get_component("parameters").update(parameters)
 
     def set_parameter(self, term, value, copy=True):
-        '''Set a parameter-valued term.
+        """Set a parameter-valued term.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `parameters`
+        .. seealso:: `parameters`
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-    **Examples:**
+        **Examples:**
 
-    >>> f = {{package}}.{{class}}()
-    >>> f.set_parameter('earth_radius', 6371007)
-    >>> f.has_parameter('earth_radius')
-    True
-    >>> f.get_parameter('earth_radius')
-    6371007
-    >>> f.del_parameter('earth_radius')
-    6371007
-    >>> f.has_parameter('earth_radius')
-    False
-    >>> print(f.del_parameter('earth_radius', None))
-    None
-    >>> print(f.get_parameter('earth_radius', None))
-    None
+        >>> f = {{package}}.{{class}}()
+        >>> f.set_parameter('earth_radius', 6371007)
+        >>> f.has_parameter('earth_radius')
+        True
+        >>> f.get_parameter('earth_radius')
+        6371007
+        >>> f.del_parameter('earth_radius')
+        6371007
+        >>> f.has_parameter('earth_radius')
+        False
+        >>> print(f.del_parameter('earth_radius', None))
+        None
+        >>> print(f.get_parameter('earth_radius', None))
+        None
 
-     '''
+        """
         if copy:
             value = deepcopy(value)
 
-        self._get_component('parameters')[term] = value
+        self._get_component("parameters")[term] = value
+
 
 # --- End: class

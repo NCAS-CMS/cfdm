@@ -12,15 +12,29 @@ import cfdm
 
 class DimensionCoordinateTest(unittest.TestCase):
     filename = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
+        os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
+    )
 
     dim = cfdm.DimensionCoordinate()
-    dim.set_property('standard_name', 'latitude')
+    dim.set_property("standard_name", "latitude")
     a = numpy.array(
-        [-30, -23.5, -17.8123, -11.3345, -0.7, -0.2, 0, 0.2, 0.7, 11.30003,
-         17.8678678, 23.5, 30]
+        [
+            -30,
+            -23.5,
+            -17.8123,
+            -11.3345,
+            -0.7,
+            -0.2,
+            0,
+            0.2,
+            0.7,
+            11.30003,
+            17.8678678,
+            23.5,
+            30,
+        ]
     )
-    dim.set_data(cfdm.Data(a, 'degrees_north'))
+    dim.set_data(cfdm.Data(a, "degrees_north"))
     bounds = cfdm.Bounds()
     b = numpy.empty(a.shape + (2,))
     b[:, 0] = a - 0.1
@@ -30,7 +44,7 @@ class DimensionCoordinateTest(unittest.TestCase):
 
     def setUp(self):
         # Disable log messages to silence expected warnings
-        cfdm.log_level('DISABLE')
+        cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
@@ -42,15 +56,15 @@ class DimensionCoordinateTest(unittest.TestCase):
 
     def test_DimensionCoordinate__repr__str__dump(self):
         f = cfdm.read(self.filename)[0]
-        x = f.dimension_coordinates('grid_latitude').value()
+        x = f.dimension_coordinates("grid_latitude").value()
 
         _ = repr(x)
         _ = str(x)
         self.assertIsInstance(x.dump(display=False), str)
-        self.assertIsInstance(x.dump(display=False, _key='qwerty'), str)
+        self.assertIsInstance(x.dump(display=False, _key="qwerty"), str)
 
     def test_DimensionCoordinate__init__(self):
-        c = cfdm.DimensionCoordinate(source='qwerty')
+        c = cfdm.DimensionCoordinate(source="qwerty")
 
     def test_DimensionCoordinate_set_data(self):
         x = cfdm.DimensionCoordinate()
@@ -87,11 +101,12 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertTrue(x.del_climatology())
         self.assertIsNone(x.del_climatology(None))
 
+
 # --- End: class
 
 
 if __name__ == "__main__":
-    print('Run date:', datetime.datetime.now())
+    print("Run date:", datetime.datetime.now())
     cfdm.environment()
     print()
     unittest.main(verbosity=2)

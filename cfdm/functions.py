@@ -15,14 +15,13 @@ import netcdf_flattener
 
 from . import core
 
-from . import (__version__,
-               __cf_version__,
-               __file__)
+from . import __version__, __cf_version__, __file__
 
 from .core import DocstringRewriteMeta
 
-from .core.docstring import (_docstring_substitution_definitions
-                             as _core_docstring_substitution_definitions)
+from .core.docstring import (
+    _docstring_substitution_definitions as _core_docstring_substitution_definitions,
+)
 
 from .docstring import _docstring_substitution_definitions
 
@@ -41,7 +40,7 @@ del _subs
 
 
 def configuration(atol=None, rtol=None, log_level=None):
-    '''View or set any number of constants in the project-wide configuration.
+    """View or set any number of constants in the project-wide configuration.
 
     The full list of global constants that are provided in a dictionary to
     view, and can be set in any combination, are:
@@ -157,17 +156,14 @@ def configuration(atol=None, rtol=None, log_level=None):
      'rtol': 2.220446049250313e-16,
      'log_level': 'WARNING'}
 
-    '''
+    """
     return _configuration(
-        Configuration,
-        new_atol=atol,
-        new_rtol=rtol,
-        new_log_level=log_level
+        Configuration, new_atol=atol, new_rtol=rtol, new_log_level=log_level
     )
 
 
 def _configuration(_Configuration, **kwargs):
-    '''Internal helper function to provide the logic for `cfdm.configuration`.
+    """Internal helper function to provide the logic for `cfdm.configuration`.
 
     We delegate from the user-facing `cfdm.configuration` for two main reasons:
 
@@ -191,7 +187,7 @@ def _configuration(_Configuration, **kwargs):
             to the change, or the current names and values if no new
             values are specified.
 
-    '''
+    """
     old = {name.lower(): val for name, val in CONSTANTS.items()}
 
     # Filter out 'None' kwargs from configuration() defaults. Note that this
@@ -201,9 +197,9 @@ def _configuration(_Configuration, **kwargs):
 
     # Note values are the functions not the keyword arguments of same name:
     reset_mapping = {
-        'new_atol': atol,
-        'new_rtol': rtol,
-        'new_log_level': log_level,
+        "new_atol": atol,
+        "new_rtol": rtol,
+        "new_log_level": log_level,
     }
 
     old_values = {}
@@ -212,7 +208,7 @@ def _configuration(_Configuration, **kwargs):
         # Run the corresponding func for all input kwargs
         for setting_alias, new_value in kwargs.items():
             reset_mapping[setting_alias](new_value)
-            setting = setting_alias.replace('new_', '', 1)
+            setting = setting_alias.replace("new_", "", 1)
             old_values[setting_alias] = old[setting]
     except ValueError:
         # Reset any constants that were changed prior to the exception
@@ -226,16 +222,12 @@ def _configuration(_Configuration, **kwargs):
 
 
 def LOG_LEVEL(*new_log_level):
-    '''Alias for `cfdm.log_level`.
-
-    '''
+    """Alias for `cfdm.log_level`."""
     return log_level(*new_log_level)
 
 
 def _is_valid_log_level_int(int_log_level):
-    '''Return a Boolean stating if input is a ValidLogLevels Enum integer.
-
-    '''
+    """Return a Boolean stating if input is a ValidLogLevels Enum integer."""
     try:
         ValidLogLevels(int_log_level)
     except KeyError:  # if verbose int not in Enum int constants
@@ -245,7 +237,7 @@ def _is_valid_log_level_int(int_log_level):
 
 
 def _reset_log_emergence_level(level, logger=None):
-    '''Re-set minimum level for displayed log messages of a logger.
+    """Re-set minimum level for displayed log messages of a logger.
 
     This may correspond to a change, otherwise will re-set to the same
     value (which is harmless, & as costly as checking to avoid this in
@@ -262,7 +254,7 @@ def _reset_log_emergence_level(level, logger=None):
     disables the logging; the responsibility to re-enable it once the
     need for deactivation is over lies with methods that call this.
 
-    '''
+    """
     try:
         # Check for Constants instance
         level = level.value
@@ -277,17 +269,17 @@ def _reset_log_emergence_level(level, logger=None):
     if isinstance(level, int) and _is_valid_log_level_int(level):
         level = ValidLogLevels(level).name  # convert to string ID if valid
 
-    if level == 'DISABLE':
+    if level == "DISABLE":
         _disable_logging()
     else:
         # First must (re-)enable in case logging previously was
         # disabled:
-        _disable_logging(at_level='NOTSET')
+        _disable_logging(at_level="NOTSET")
         use_logger.setLevel(getattr(logging, level))
 
 
 def _disable_logging(at_level=None):
-    '''Disable log messages at and below a given level, else completely.
+    """Disable log messages at and below a given level, else completely.
 
     This is an overriding level for all loggers.
 
@@ -301,7 +293,7 @@ def _disable_logging(at_level=None):
     disactivation level previously set with this method, so the logger
     regains its original level.
 
-    '''
+    """
     if at_level:
         logging.disable(getattr(logging, at_level))
     else:
@@ -312,7 +304,7 @@ def _disable_logging(at_level=None):
 
 
 def environment(display=True, paths=True):
-    '''Return the names, versions and paths of all dependencies.
+    """Return the names, versions and paths of all dependencies.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -354,38 +346,40 @@ def environment(display=True, paths=True):
     numpy: 1.16.2
     cfdm: 1.8.8.0
 
-    '''
+    """
     out = core.environment(display=False, paths=paths)  # get all core env
 
     try:
         netcdf_flattener_version = netcdf_flattener.__version__
     except AttributeError:
-        netcdf_flattener_version = 'unknown version'
+        netcdf_flattener_version = "unknown version"
 
     dependency_version_paths_mapping = {
-        'cftime': (cftime.__version__, os.path.abspath(cftime.__file__)),
-        'netcdf_flattener': (
+        "cftime": (cftime.__version__, os.path.abspath(cftime.__file__)),
+        "netcdf_flattener": (
             netcdf_flattener_version,
-            os.path.abspath(netcdf_flattener.__file__)
+            os.path.abspath(netcdf_flattener.__file__),
         ),
-        'cfdm': (__version__, os.path.abspath(__file__)),
+        "cfdm": (__version__, os.path.abspath(__file__)),
     }
-    string = '{0}: {1!s}'
+    string = "{0}: {1!s}"
     if paths:  # include path information, else exclude, when unpacking tuple
-        string += ' {2!s}'
+        string += " {2!s}"
     out.extend(
-        [string.format(dep, *info)
-         for dep, info in dependency_version_paths_mapping.items()]
+        [
+            string.format(dep, *info)
+            for dep, info in dependency_version_paths_mapping.items()
+        ]
     )
 
     if display:
-        print('\n'.join(out))  # pragma: no cover
+        print("\n".join(out))  # pragma: no cover
     else:
         return out
 
 
 def CF():
-    '''The version of the CF conventions.
+    """The version of the CF conventions.
 
     This indicates which version of the CF conventions are represented
     by this release of the cfdm package, and therefore the version can
@@ -404,12 +398,12 @@ def CF():
     >>> cfdm.CF()
     '1.8'
 
-    '''
+    """
     return __cf_version__
 
 
 def abspath(filename):
-    '''Return a normalised absolute version of a file name.
+    """Return a normalised absolute version of a file name.
 
     If a string containing URL is provided then it is returned
     unchanged.
@@ -438,9 +432,9 @@ def abspath(filename):
     >>> cfdm.abspath('http://data/archive/file.nc')
     'http://data/archive/file.nc'
 
-    '''
+    """
     u = urllib.parse.urlparse(filename)
-    if u.scheme != '':
+    if u.scheme != "":
         return filename
 
     return os.path.abspath(filename)
@@ -448,7 +442,7 @@ def abspath(filename):
 
 @total_ordering
 class Constant(metaclass=DocstringRewriteMeta):
-    '''A container for a constant with context manager support.
+    """A container for a constant with context manager support.
 
     The constant value is accessed via the `value` attribute:
 
@@ -575,77 +569,75 @@ class Constant(metaclass=DocstringRewriteMeta):
 
     .. versionadded:: (cfdm) 1.8.8.0
 
-    '''
-    __slots__ = ('_func',  'value', '_type')
+    """
+
+    __slots__ = ("_func", "value", "_type")
 
     def __init__(self, value, _func=None):
-        '''**Initialization**
+        """**Initialization**
 
-    :Parameters:
+        :Parameters:
 
-        value:
-            A value for the constant.
+            value:
+                A value for the constant.
 
-        _func: function, optional
-            A function that that is executed upon exit from a context
-            manager, that takes the *value* parameter as its argument.
+            _func: function, optional
+                A function that that is executed upon exit from a context
+                manager, that takes the *value* parameter as its argument.
 
-        '''
+        """
         self.value = value
         self._func = _func
 
     def __docstring_substitutions__(self):
-        '''Define docstring substitutions that apply to this class and all of
-    its subclasses.
+        """Define docstring substitutions that apply to this class and all of
+        its subclasses.
 
-    These are in addtion to, and take precendence over, docstring
-    substitutions defined by the base classes of this class.
+        These are in addtion to, and take precendence over, docstring
+        substitutions defined by the base classes of this class.
 
-    See `_docstring_substitutions` for details.
+        See `_docstring_substitutions` for details.
 
-    .. versionaddedd:: (cfdm) 1.8.8.0
+        .. versionaddedd:: (cfdm) 1.8.8.0
 
-    :Returns:
+        :Returns:
 
-        `dict`
-            The docstring substitutions that have been applied.
+            `dict`
+                The docstring substitutions that have been applied.
 
-        '''
+        """
         return _docstring_substitution_definitions
 
     def __docstring_package_depth__(self):
-        '''Return the package depth for {{package}} docstring substitutions.
+        """Return the package depth for {{package}} docstring substitutions.
 
-    See `_docstring_package_depth` for details.
+        See `_docstring_package_depth` for details.
 
-    .. versionaddedd:: (cfdm) 1.8.8.0
+        .. versionaddedd:: (cfdm) 1.8.8.0
 
-        '''
+        """
         return 0
 
     def __enter__(self):
-        '''Enter the runtime context.
-
-        '''
-        if getattr(self, '_func', None) is None:
+        """Enter the runtime context."""
+        if getattr(self, "_func", None) is None:
             raise AttributeError(
                 "Can't use {!r} as a context manager because the '_func' "
-                "attribute is not defined".format(self))
+                "attribute is not defined".format(self)
+            )
 
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        '''Exit the runtime context.
-
-        '''
+        """Exit the runtime context."""
         self._func(self.value)
 
     def __deepcopy__(self, memo):
-        '''Called by the `copy.deepcopy` function.
+        """Called by the `copy.deepcopy` function.
 
-    x.__deepcopy__() <==> copy.deepcopy(x)
+        x.__deepcopy__() <==> copy.deepcopy(x)
 
-        '''
+        """
         return self.copy()
 
     def __bool__(self):
@@ -723,49 +715,44 @@ class Constant(metaclass=DocstringRewriteMeta):
         return other / self.value
 
     def __hash__(self):
-        return hash((self.value, getattr(self, '_func', None)))
+        return hash((self.value, getattr(self, "_func", None)))
 
     def __repr__(self):
-        '''Called by the `repr` built-in function.
-
-        '''
-        return "<{0}: {1!r}>".format(
-            self.__class__.__name__, self.value
-        )
+        """Called by the `repr` built-in function."""
+        return "<{0}: {1!r}>".format(self.__class__.__name__, self.value)
 
     def __str__(self):
-        '''Called by the `str` built-in function.
-
-        '''
+        """Called by the `str` built-in function."""
         return str(self.value)
 
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
     def copy(self):
-        '''Return a deep copy.
+        """Return a deep copy.
 
-    ``c.copy()`` is equivalent to ``copy.deepcopy(c)``.
+        ``c.copy()`` is equivalent to ``copy.deepcopy(c)``.
 
-    .. versionadded:: (cfdm) 1.8.8.0
+        .. versionadded:: (cfdm) 1.8.8.0
 
-    :Returns:
+        :Returns:
 
-        `{{class}}`
-            The deep copy.
+            `{{class}}`
+                The deep copy.
 
-        '''
-        out = type(self)(value=deepcopy(self.value),
-                         _func=getattr(self, '_func', None))
+        """
+        out = type(self)(
+            value=deepcopy(self.value), _func=getattr(self, "_func", None)
+        )
 
-        if not hasattr(self, '_func'):
+        if not hasattr(self, "_func"):
             del out._func
 
         return out
 
 
 class Configuration(dict, metaclass=DocstringRewriteMeta):
-    '''A dictionary-like container for the global constants with context
+    """A dictionary-like container for the global constants with context
     manager support.
 
     Initialization is as for a `dict`, and nearly all of the `dict`
@@ -798,71 +785,62 @@ class Configuration(dict, metaclass=DocstringRewriteMeta):
 
     .. versionadded:: (cfdm) 1.8.8.0
 
-    '''
-    def __new__(cls, *args, **kwargs):
-        '''Must override this method in subclasses.
+    """
 
-        '''
+    def __new__(cls, *args, **kwargs):
+        """Must override this method in subclasses."""
         instance = super().__new__(cls)
         instance._func = configuration
         return instance
 
     def __docstring_substitutions__(self):
-        '''Define docstring substitutions that apply to this class and all of
-    its subclasses.
+        """Define docstring substitutions that apply to this class and all of
+        its subclasses.
 
-    These are in addtion to, and take precendence over, docstring
-    substitutions defined by the base classes of this class.
+        These are in addtion to, and take precendence over, docstring
+        substitutions defined by the base classes of this class.
 
-    See `_docstring_substitutions` for details.
+        See `_docstring_substitutions` for details.
 
-    .. versionaddedd:: (cfdm) 1.8.8.0
+        .. versionaddedd:: (cfdm) 1.8.8.0
 
-    :Returns:
+        :Returns:
 
-        `dict`
-            The docstring substitutions that have been applied.
+            `dict`
+                The docstring substitutions that have been applied.
 
-        '''
+        """
         return _docstring_substitution_definitions
 
     def __docstring_package_depth__(self):
-        '''Return the package depth for {{package}} docstring substitutions.
+        """Return the package depth for {{package}} docstring substitutions.
 
-    See `_docstring_package_depth` for details.
+        See `_docstring_package_depth` for details.
 
-    .. versionaddedd:: (cfdm) 1.8.8.0
+        .. versionaddedd:: (cfdm) 1.8.8.0
 
-        '''
+        """
         return 0
 
     def __deepcopy__(self, memo):
-        '''Called by the `copy.deepcopy` function.
+        """Called by the `copy.deepcopy` function.
 
-    x.__deepcopy__() <==> copy.deepcopy(x)
+        x.__deepcopy__() <==> copy.deepcopy(x)
 
-        '''
+        """
         return self.copy()
 
     def __enter__(self):
-        '''Enter the runtime context.
-
-        '''
+        """Enter the runtime context."""
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        '''Exit the runtime context.
-
-        '''
+        """Exit the runtime context."""
         self._func(**self)
 
     def __repr__(self):
-        '''Called by the `repr` built-in function.
-
-        '''
-        return "<{0}: {1}>".format(
-            self.__class__.__name__, super().__repr__()
-        )
+        """Called by the `repr` built-in function."""
+        return "<{0}: {1}>".format(self.__class__.__name__, super().__repr__())
 
     def __str__(self):
         return super().__repr__()
@@ -871,22 +849,21 @@ class Configuration(dict, metaclass=DocstringRewriteMeta):
     # Methods
     # ----------------------------------------------------------------
     def copy(self):
-        '''Return a deep copy.
+        """Return a deep copy.
 
-    ``c.copy()`` is equivalent to ``copy.deepcopy(c)``.
+        ``c.copy()`` is equivalent to ``copy.deepcopy(c)``.
 
-    .. versionadded:: (cfdm) 1.8.8.0
+        .. versionadded:: (cfdm) 1.8.8.0
 
-    :Returns:
+        :Returns:
 
-        `{{class}}`
-            The deep copy.
+            `{{class}}`
+                The deep copy.
 
-        '''
-        out = type(self)(**deepcopy(self),
-                         _func=getattr(self, '_func', None))
+        """
+        out = type(self)(**deepcopy(self), _func=getattr(self, "_func", None))
 
-        if not hasattr(self, '_func'):
+        if not hasattr(self, "_func"):
             del out._func
 
         return out
@@ -918,6 +895,7 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
            """
 
     '''
+
     # Define the dictionary that stores the constant values
     _CONSTANTS = CONSTANTS
 
@@ -929,9 +907,7 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
     _name = None
 
     def __new__(cls, *arg):
-        '''Return a `Constant` instance during class creation.
-
-        '''
+        """Return a `Constant` instance during class creation."""
         old = cls._CONSTANTS[cls._name]
         if arg:
             arg = arg[0]
@@ -946,37 +922,37 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
         return cls._Constant(old, _func=cls)
 
     def __docstring_substitutions__(self):
-        '''Define docstring substitutions that apply to this class and all of
-    its subclasses.
+        """Define docstring substitutions that apply to this class and all of
+        its subclasses.
 
-    These are in addtion to, and take precendence over, docstring
-    substitutions defined by the base classes of this class.
+        These are in addtion to, and take precendence over, docstring
+        substitutions defined by the base classes of this class.
 
-    See `_docstring_substitutions` for details.
+        See `_docstring_substitutions` for details.
 
-    .. versionaddedd:: (cfdm) 1.8.8.0
+        .. versionaddedd:: (cfdm) 1.8.8.0
 
-    :Returns:
+        :Returns:
 
-        `dict`
-            The docstring substitutions that have been applied.
+            `dict`
+                The docstring substitutions that have been applied.
 
-        '''
+        """
         return _docstring_substitution_definitions
 
     def __docstring_package_depth__(self):
-        '''Return the package depth for {{package}} docstring substitutions.
+        """Return the package depth for {{package}} docstring substitutions.
 
-    See `_docstring_package_depth` for details.
+        See `_docstring_package_depth` for details.
 
-    .. versionaddedd:: (cfdm) 1.8.8.0
+        .. versionaddedd:: (cfdm) 1.8.8.0
 
-        '''
+        """
         return 0
 
 
 class atol(ConstantAccess):
-    '''The tolerance on absolute differences when testing for numerically
+    """The tolerance on absolute differences when testing for numerically
     tolerant equality.
 
     Two real numbers ``x`` and ``y`` are considered equal if
@@ -1035,33 +1011,34 @@ class atol(ConstantAccess):
     >>> print({{package}}.{{class}}())
     2.220446049250313e-16
 
-    '''
-    _name = 'ATOL'
+    """
+
+    _name = "ATOL"
 
     def _parse(cls, arg):
-        '''Parse a new constant value.
+        """Parse a new constant value.
 
-    .. versionaddedd:: (cfdm) 1.8.8.0
+        .. versionaddedd:: (cfdm) 1.8.8.0
 
-    :Parameters:
+        :Parameters:
 
-        cls:
-            This class.
+            cls:
+                This class.
 
-        arg:
-            The given new constant value.
+            arg:
+                The given new constant value.
 
-    :Returns:
+        :Returns:
 
-            A version of the new constant value suitable for insertion
-            into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for insertion
+                into the `CONSTANTS` dictionary.
 
-        '''
+        """
         return float(arg)
 
 
 class rtol(ConstantAccess):
-    '''The tolerance on relative differences when testing for numerically
+    """The tolerance on relative differences when testing for numerically
     tolerant equality.
 
     Two real numbers ``x`` and ``y`` are considered equal if
@@ -1120,33 +1097,34 @@ class rtol(ConstantAccess):
     >>> print({{package}}.{{class}}())
     2.220446049250313e-16
 
-    '''
-    _name = 'RTOL'
+    """
+
+    _name = "RTOL"
 
     def _parse(cls, arg):
-        '''Parse a new constant value.
+        """Parse a new constant value.
 
-    .. versionaddedd:: (cfdm) 1.8.8.0
+        .. versionaddedd:: (cfdm) 1.8.8.0
 
-    :Parameters:
+        :Parameters:
 
-        cls:
-            This class.
+            cls:
+                This class.
 
-        arg:
-            The given new constant value.
+            arg:
+                The given new constant value.
 
-    :Returns:
+        :Returns:
 
-            A version of the new constant value suitable for insertion
-            into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for insertion
+                into the `CONSTANTS` dictionary.
 
-        '''
+        """
         return float(arg)
 
 
 class log_level(ConstantAccess):
-    '''The minimal level of seriousness of log messages which are shown.
+    """The minimal level of seriousness of log messages which are shown.
 
     This can be adjusted to filter out potentially-useful log messages
     generated by cfdm at runtime, such that any messages marked as
@@ -1215,8 +1193,9 @@ class log_level(ConstantAccess):
     >>> print({{package}}.{{class}}())
     WARNING
 
-    '''
-    _name = 'LOG_LEVEL'
+    """
+
+    _name = "LOG_LEVEL"
 
     # Define the valid log levels
     _ValidLogLevels = ValidLogLevels
@@ -1230,27 +1209,27 @@ class log_level(ConstantAccess):
     _reset_log_emergence_level = _reset_log_emergence_level
 
     def _parse(cls, arg):
-        '''Parse a new constant value.
+        """Parse a new constant value.
 
-    It is assumed that the `_is_valid_log_level_int` and
-    `_reset_log_emergence_level` are defined within the namespace.
+        It is assumed that the `_is_valid_log_level_int` and
+        `_reset_log_emergence_level` are defined within the namespace.
 
-    .. versionaddedd:: (cfdm) 1.8.8.0
+        .. versionaddedd:: (cfdm) 1.8.8.0
 
-    :Parameters:
+        :Parameters:
 
-        cls:
-            This class.
+            cls:
+                This class.
 
-        arg:
-            The given new constant value.
+            arg:
+                The given new constant value.
 
-    :Returns:
+        :Returns:
 
-            A version of the new constant value suitable for insertion
-            into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for insertion
+                into the `CONSTANTS` dictionary.
 
-        '''
+        """
         # Ensuring it is a valid level specifier to set & use, either
         # a case-insensitive string of valid log level or
         # dis/en-abler, or an integer 0 to 5 corresponding to one of
@@ -1266,8 +1245,13 @@ class log_level(ConstantAccess):
                 "Logging level {!r} is not one of the valid values '{}', "
                 "where either the string or the corrsponding integer is "
                 "accepted. Value remains as it was.".format(
-                    arg, ", '".join([val.name + "' = " + str(val.value)
-                                     for val in cls._ValidLogLevels])
+                    arg,
+                    ", '".join(
+                        [
+                            val.name + "' = " + str(val.value)
+                            for val in cls._ValidLogLevels
+                        ]
+                    ),
                 )
             )
 
@@ -1278,14 +1262,10 @@ class log_level(ConstantAccess):
 
 
 def ATOL(*new_atol):
-    '''Alias for `cfdm.atol`.
-
-    '''
+    """Alias for `cfdm.atol`."""
     return atol(*new_atol)
 
 
 def RTOL(*new_rtol):
-    '''Alias for `cfdm.rtol`.
-
-    '''
+    """Alias for `cfdm.rtol`."""
     return rtol(*new_rtol)

@@ -2,7 +2,7 @@ from . import abstract
 
 
 class DomainAncillary(abstract.PropertiesDataBounds):
-    '''A domain ancillary construct of the CF data model.
+    """A domain ancillary construct of the CF data model.
 
     A domain ancillary construct provides information which is needed
     for computing the location of cells in an alternative coordinate
@@ -21,25 +21,27 @@ class DomainAncillary(abstract.PropertiesDataBounds):
 
     .. versionadded:: (cfdm) 1.7.0
 
-    '''
+    """
+
     @property
     def construct_type(self):
-        '''Return a description of the construct type.
+        """Return a description of the construct type.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The construct type.
+            `str`
+                The construct type.
 
-    **Examples:**
+        **Examples:**
 
-    >>> d = {{package}}.{{class}}()
-    >>> d.construct_type
-    'domain_ancillary'
+        >>> d = {{package}}.{{class}}()
+        >>> d.construct_type
+        'domain_ancillary'
 
-    '''
-        return 'domain_ancillary'
+        """
+        return "domain_ancillary"
+
 
 # --- End: class

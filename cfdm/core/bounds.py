@@ -2,7 +2,7 @@ from . import abstract
 
 
 class Bounds(abstract.PropertiesData):
-    '''A cell bounds component of a coordinate or domain ancillary
+    """A cell bounds component of a coordinate or domain ancillary
     construct of the CF data model.
 
     An array of cell bounds spans the same domain axes as its
@@ -15,30 +15,39 @@ class Bounds(abstract.PropertiesData):
 
     .. versionadded:: (cfdm) 1.7.0
 
-    '''
-    def __init__(self, properties=None, data=None, source=None,
-                 copy=True, _use_data=True):
-        '''**Initialization**
+    """
 
-    :Parameters:
+    def __init__(
+        self,
+        properties=None,
+        data=None,
+        source=None,
+        copy=True,
+        _use_data=True,
+    ):
+        """**Initialization**
 
-        {{init properties: `dict`, optional}}
+        :Parameters:
 
-            *Parameter example:*
-               ``properties={'standard_name': 'longitude'}``
+            {{init properties: `dict`, optional}}
 
-        {{init data: data_like, optional}}
+                *Parameter example:*
+                   ``properties={'standard_name': 'longitude'}``
 
-        source: optional
-            Initialize the properties and data from those of *source*.
-            respectively.
+            {{init data: data_like, optional}}
 
-            {{init source}}
+            source: optional
+                Initialize the properties and data from those of *source*.
+                respectively.
 
-        {{init copy: `bool`, optional}}
+                {{init source}}
 
-        '''
-        super().__init__(properties=properties, data=data,
-                         source=source, copy=copy)
+            {{init copy: `bool`, optional}}
+
+        """
+        super().__init__(
+            properties=properties, data=data, source=source, copy=copy
+        )
+
 
 # --- End: class

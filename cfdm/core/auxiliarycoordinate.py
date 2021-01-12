@@ -2,7 +2,7 @@ from . import abstract
 
 
 class AuxiliaryCoordinate(abstract.Coordinate):
-    '''An auxiliary coordinate construct of the CF data model.
+    """An auxiliary coordinate construct of the CF data model.
 
     An auxiliary coordinate construct provides information which
     locate the cells of the domain and which depend on a subset of the
@@ -30,25 +30,27 @@ class AuxiliaryCoordinate(abstract.Coordinate):
 
     .. versionadded:: (cfdm) 1.7.0
 
-    '''
+    """
+
     @property
     def construct_type(self):
-        '''Return a description of the construct type.
+        """Return a description of the construct type.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The construct type.
+            `str`
+                The construct type.
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.construct_type
-    'auxiliary_coordinate'
+        >>> c = {{package}}.{{class}}()
+        >>> c.construct_type
+        'auxiliary_coordinate'
 
-        '''
-        return 'auxiliary_coordinate'
+        """
+        return "auxiliary_coordinate"
+
 
 # --- End: class

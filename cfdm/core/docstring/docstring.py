@@ -1,4 +1,4 @@
-'''Define docstring substitutions.
+"""Define docstring substitutions.
 
 Text to be replaced is specified as a key in the returned dictionary,
 with the replacement text defined by the corresponding value.
@@ -25,18 +25,14 @@ Keys must be `str` or `re.Pattern` objects:
 
 .. versionaddedd:: (cfdm) 1.8.7.0
 
-'''
+"""
 _docstring_substitution_definitions = {
-    '{{repr}}':
-    '',
-
+    "{{repr}}": "",
     # ----------------------------------------------------------------
     # Keyword parameter descriptions
     # ----------------------------------------------------------------
-
     # axes int examples
-    '{{axes int examples}}':
-    '''Each axis is identified by its integer position in the
+    "{{axes int examples}}": """Each axis is identified by its integer position in the
             data. Negative integers counting from the last position
             are allowed.
 
@@ -47,52 +43,40 @@ _docstring_substitution_definitions = {
               ``axes=-1``
 
             *Parameter example:*
-              ``axes=[1, -2]``''',
-
+              ``axes=[1, -2]``""",
     # default Exception
-    '{{default Exception}}':
-    '''If set to an `Exception` instance then it will be raised
-            instead.''',
-
+    "{{default Exception}}": """If set to an `Exception` instance then it will be raised
+            instead.""",
     # inplace: `bool`, optional (default True)
-    '{{inplace: `bool`, optional (default True)}}':
-    '''inplace: `bool`, optional:
+    "{{inplace: `bool`, optional (default True)}}": """inplace: `bool`, optional:
             If False then do not do the operation in-place and return
             a new, modified `{{class}}` instance. By default the
-            operation is in-place and `None` is returned.''',
-
+            operation is in-place and `None` is returned.""",
     # init properties
-    '{{init properties: `dict`, optional}}':
-    '''properties: `dict`, optional
+    "{{init properties: `dict`, optional}}": """properties: `dict`, optional
             Set descriptive properties. The dictionary keys are
             property names, with corresponding values. Ignored if the
             *source* parameter is set.
 
             Properties may also be set after initialisation with the
-            `set_properties` and `set_property` methods.''',
-
+            `set_properties` and `set_property` methods.""",
     # init data
-    '{{init data: data_like, optional}}':
-    '''data: data_like, optional
+    "{{init data: data_like, optional}}": """data: data_like, optional
             Set the data. Ignored if the *source* parameter is set.
 
             {{data_like}}
 
             The data also may be set after initialisation with the
-            `set_data` method.''',
-
+            `set_data` method.""",
     # init bounds
-    '{{init bounds: `Bounds`, optional}}':
-    '''bounds: `Bounds`, optional
+    "{{init bounds: `Bounds`, optional}}": """bounds: `Bounds`, optional
             Set the bounds array. Ignored if the *source* parameter is
             set.
 
             The bounds array may also be set after initialisation with
-            the `set_bounds` method.''',
-
+            the `set_bounds` method.""",
     # init geometry
-    '{{init geometry: `str`, optional}}':
-    '''geometry: `str`, optional
+    "{{init geometry: `str`, optional}}": """geometry: `str`, optional
             Set the geometry type. Ignored if the *source* parameter
             is set.
 
@@ -100,34 +84,25 @@ _docstring_substitution_definitions = {
             with the `set_geometry` method.
 
             *Parameter example:*
-               ``geometry='polygon'``''',
-
+               ``geometry='polygon'``""",
     # init interior_ring
-    '{{init interior_ring: `InteriorRing`, optional}}':
-    '''interior_ring: `InteriorRing`, optional
+    "{{init interior_ring: `InteriorRing`, optional}}": """interior_ring: `InteriorRing`, optional
             Set the interior ring variable. Ignored if the *source*
             parameter is set.
 
             The interior ring variable may also be set after
-            initialisation with the `set_interior_ring` method.''',
-
+            initialisation with the `set_interior_ring` method.""",
     # init copy
-    '{{init copy: `bool`, optional}}':
-    '''copy: `bool`, optional
+    "{{init copy: `bool`, optional}}": """copy: `bool`, optional
             If False then do not deep copy input parameters prior to
-            initialization. By default arguments are deep copied.''',
-
+            initialization. By default arguments are deep copied.""",
     # init source
-    '{{init source}}':
-
-    '''Note that if *source* is a `{{class}}` instance then
+    "{{init source}}": """Note that if *source* is a `{{class}}` instance then
             ``{{package}}.{{class}}(source=source)`` is equivalent to
-            ``source.copy()``.''',
-
+            ``source.copy()``.""",
     # data_like
-    '{{data_like}}':
-    '''A data_like object is any object that can be converted to
+    "{{data_like}}": """A data_like object is any object that can be converted to
             a `Data` object, i.e. `numpy` array_like objects, `Data`
             objects, and {{package}} instances that contain `Data`
-            objects.''',
+            objects.""",
 }

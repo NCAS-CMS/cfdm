@@ -10,7 +10,7 @@ import cfdm
 class ListTest(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
-        cfdm.log_level('DISABLE')
+        cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
@@ -20,7 +20,7 @@ class ListTest(unittest.TestCase):
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
 
-        self.gathered = 'gathered.nc'
+        self.gathered = "gathered.nc"
 
     def test_List__repr__str__dump(self):
         f = cfdm.read(self.gathered)[0]
@@ -31,11 +31,12 @@ class ListTest(unittest.TestCase):
         _ = str(list_)
         self.assertIsInstance(list_.dump(display=False), str)
 
+
 # --- End: class
 
 
-if __name__ == '__main__':
-    print('Run date:', datetime.datetime.now())
+if __name__ == "__main__":
+    print("Run date:", datetime.datetime.now())
     cfdm.environment()
     print()
     unittest.main(verbosity=2)

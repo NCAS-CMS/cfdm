@@ -5,7 +5,7 @@ import re
 
 from distutils.version import LooseVersion
 
-from pprint import (pformat, pprint)
+from pprint import pformat, pprint
 
 import numpy
 import netCDF4
@@ -21,101 +21,101 @@ logger = logging.getLogger(__name__)
 
 
 class NetCDFWrite(IOWrite):
-    '''
-    '''
-    def cf_description_of_file_contents_attributes(self):
-        '''Description of file contents properties
+    """"""
 
-        '''
+    def cf_description_of_file_contents_attributes(self):
+        """Description of file contents properties"""
         return (
-            'comment',
-            'Conventions',
-            'featureType',
-            'history',
-            'institution',
-            'references',
-            'source',
-            'title',
+            "comment",
+            "Conventions",
+            "featureType",
+            "history",
+            "institution",
+            "references",
+            "source",
+            "title",
         )
 
     def cf_geometry_types(self):
-        '''Geometry types
+        """Geometry types
 
-    .. versionadded:: (cfdm) 1.8.0
+        .. versionadded:: (cfdm) 1.8.0
 
-        '''
-        return set((
-            'point',
-            'line',
-            'polygon',
-        ))
+        """
+        return set(
+            (
+                "point",
+                "line",
+                "polygon",
+            )
+        )
 
     def cf_cell_method_qualifiers(self):
-        '''Cell method qualifiers
-
-        '''
-        return set((
-            'within',
-            'where',
-            'over',
-            'interval',
-            'comment',
-        ))
+        """Cell method qualifiers"""
+        return set(
+            (
+                "within",
+                "where",
+                "over",
+                "interval",
+                "comment",
+            )
+        )
 
     def _create_netcdf_group(self, nc, group_name):
-        '''Create a new netCDF4 group object.
+        """Create a new netCDF4 group object.
 
-    .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6
 
-    :Parameters:
+        :Parameters:
 
-        nc: `netCDF4._netCDF4.Group` or `netCDF4.Dataset`
+            nc: `netCDF4._netCDF4.Group` or `netCDF4.Dataset`
 
-        group_name: `str`
-            The name of the group.
+            group_name: `str`
+                The name of the group.
 
-    :Returns:
+        :Returns:
 
-        `netCDF4._netCDF4.Group`
-            The new group object.
+            `netCDF4._netCDF4.Group`
+                The new group object.
 
-        '''
+        """
         return nc.createGroup(group_name)
 
     def _create_netcdf_variable_name(self, parent, default):
         #                            force_use_existing=False):
-        '''Create an appropriate name for a netCDF variable.
+        """Create an appropriate name for a netCDF variable.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Parameters:
+        :Parameters:
 
-        parent:
+            parent:
 
-        default: `str`
+            default: `str`
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The netCDF variable name.
+            `str`
+                The netCDF variable name.
 
-        '''
+        """
         ncvar = self.implementation.nc_get_variable(parent, None)
 
-#        if force_use_existing:
-#            if ncvar is None:
-#                raise ValueError()
-#
-#            return ncvar
+        #        if force_use_existing:
+        #            if ncvar is None:
+        #                raise ValueError()
+        #
+        #            return ncvar
 
         if ncvar is None:
             try:
-                ncvar = self.implementation.get_property(parent,
-                                                         'standard_name',
-                                                         default)
+                ncvar = self.implementation.get_property(
+                    parent, "standard_name", default
+                )
             except AttributeError:
                 ncvar = default
-        elif not self.write_vars['group']:
+        elif not self.write_vars["group"]:
             # A flat file has been requested, so strip off any group
             # structure from the name.
             ncvar = self._remove_group_structure(ncvar)
@@ -123,46 +123,46 @@ class NetCDFWrite(IOWrite):
         return self._netcdf_name(ncvar)
 
     def _netcdf_name(self, base, dimsize=None, role=None):
-        '''Return a new netCDF variable or dimension name.
+        """Return a new netCDF variable or dimension name.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Parameters:
+        :Parameters:
 
-        base: `str`
+            base: `str`
 
-        dimsize: `int`, optional
+            dimsize: `int`, optional
 
-        role: `str`, optional
+            role: `str`, optional
 
-    :Returns:
+        :Returns:
 
-        `str`
-            NetCDF dimension name or netCDF variable name.
+            `str`
+                NetCDF dimension name or netCDF variable name.
 
-        '''
+        """
         if base is None:
             return
 
         g = self.write_vars
 
-        ncvar_names = g['ncvar_names']
-        ncdim_names = g['ncdim_to_size']
+        ncvar_names = g["ncvar_names"]
+        ncdim_names = g["ncdim_to_size"]
 
-        existing_names = g['ncvar_names'].union(ncdim_names)
+        existing_names = g["ncvar_names"].union(ncdim_names)
 
         if dimsize is not None:
             if not role:
                 raise ValueError("Must supply role when providing dimsize")
 
-#            if base in g['dimensions_with_role'].get(role, ()):
-#                if base in ncdim_names and dimsize == g['ncdim_to_size'][base]:
-#                    # Return the name of an existing netCDF dimension
-#                    # with this name, this size, and matching the
-#                    # given role.
-#                    return base
-            for ncdim in g['dimensions_with_role'].get(role, ()):
-                if g['ncdim_to_size'][ncdim] == dimsize:
+            #            if base in g['dimensions_with_role'].get(role, ()):
+            #                if base in ncdim_names and dimsize == g['ncdim_to_size'][base]:
+            #                    # Return the name of an existing netCDF dimension
+            #                    # with this name, this size, and matching the
+            #                    # given role.
+            #                    return base
+            for ncdim in g["dimensions_with_role"].get(role, ()):
+                if g["ncdim_to_size"][ncdim] == dimsize:
                     # Return the name of an existing netCDF dimension
                     # with this name, this size, and matching the
                     # given role.
@@ -170,72 +170,72 @@ class NetCDFWrite(IOWrite):
         # --- End: if
 
         if base in existing_names:
-            counter = g.setdefault('count_' + base, 1)
+            counter = g.setdefault("count_" + base, 1)
 
-            ncvar = '{0}_{1}'.format(base, counter)
+            ncvar = "{0}_{1}".format(base, counter)
             while ncvar in existing_names:
                 counter += 1
-                ncvar = '{0}_{1}'.format(base, counter)
+                ncvar = "{0}_{1}".format(base, counter)
         else:
             ncvar = base
 
-        ncvar = ncvar.replace(' ', '_')
+        ncvar = ncvar.replace(" ", "_")
 
         ncvar_names.add(ncvar)
 
         if role and dimsize is not None:
-            g['dimensions_with_role'].setdefault(role, []).append(ncvar)
+            g["dimensions_with_role"].setdefault(role, []).append(ncvar)
 
         return ncvar
 
     def _numpy_compressed(self, array):
-        '''Return all the non-masked data as a 1-d array.
+        """Return all the non-masked data as a 1-d array.
 
-    .. versionadded:: (cfdm) 1.8.0
+        .. versionadded:: (cfdm) 1.8.0
 
-    :Parameters:
+        :Parameters:
 
-        array: `numpy.ndarray`
-           A numpy array, that may or may not be masked.
+            array: `numpy.ndarray`
+               A numpy array, that may or may not be masked.
 
-    :Returns:
+        :Returns:
 
-        `numpy.ndarray`
-            The compressed numpy array.
+            `numpy.ndarray`
+                The compressed numpy array.
 
-    **Examples:**
+        **Examples:**
 
-    >>> x = numpy.ma.array(np.arange(5), mask=[0]*2 + [1]*3)
-    >>> c = n._numpy_compressed(x)
-    >>> c
-    array([0, 1])
-    >>> type(c)
-    <type 'numpy.ndarray'>
+        >>> x = numpy.ma.array(np.arange(5), mask=[0]*2 + [1]*3)
+        >>> c = n._numpy_compressed(x)
+        >>> c
+        array([0, 1])
+        >>> type(c)
+        <type 'numpy.ndarray'>
 
-        '''
+        """
         if numpy.ma.isMA(array):
             return array.compressed()
 
         return array.flatten()
 
     def _write_attributes(self, parent, ncvar, extra=None, omit=()):
-        '''Write netCDF attributes to the netCDF file.
+        """Write netCDF attributes to the netCDF file.
 
-    :Parameters:
+        :Parameters:
 
-        parent:
+            parent:
 
-        ncvar: `str`
+            ncvar: `str`
 
-        extra: `dict`, optional
+            extra: `dict`, optional
 
-        omit: sequence of `str`, optional
+            omit: sequence of `str`, optional
 
-    :Returns:
+        :Returns:
 
-        `dict`
+            `dict`
 
-        '''
+        """
         # To avoid mutable default argument (an anti-pattern) of extra={}
         if extra is None:
             extra = {}
@@ -256,51 +256,52 @@ class NetCDFWrite(IOWrite):
 
         # Make sure that _FillValue and missing data have the same
         # data type as the data
-        for attr in ('_FillValue', 'missing_value'):
+        for attr in ("_FillValue", "missing_value"):
             if attr not in netcdf_attrs:
                 continue
 
             data = self.implementation.get_data(parent, None)
             if data is not None:
-                dtype = g['datatype'].get(data.dtype, data.dtype)
-                netcdf_attrs[attr] = numpy.array(netcdf_attrs[attr],
-                                                 dtype=dtype)
+                dtype = g["datatype"].get(data.dtype, data.dtype)
+                netcdf_attrs[attr] = numpy.array(
+                    netcdf_attrs[attr], dtype=dtype
+                )
         # --- End: for
 
-        g['nc'][ncvar].setncatts(netcdf_attrs)
+        g["nc"][ncvar].setncatts(netcdf_attrs)
 
         return netcdf_attrs
 
     def _character_array(self, array):
-        '''Convert a numpy string array to a numpy character array wih an
-    extra trailing dimension.
+        """Convert a numpy string array to a numpy character array wih an
+        extra trailing dimension.
 
-    :Parameters:
+        :Parameters:
 
-        array: `numpy.ndarray`
+            array: `numpy.ndarray`
 
-    :Returns:
+        :Returns:
 
-        `numpy.ndarray`
+            `numpy.ndarray`
 
-    **Examples:**
+        **Examples:**
 
-    >>> print(a, a.shape, a.dtype.itemsize)
-    ['fu' 'bar'] (2,) 3
-    >>> b = _character_array(a)
-    >>> print(b, b.shape, b.dtype.itemsize)
-    [['f' 'u' ' ']
-     ['b' 'a' 'r']] (2, 3) 1
+        >>> print(a, a.shape, a.dtype.itemsize)
+        ['fu' 'bar'] (2,) 3
+        >>> b = _character_array(a)
+        >>> print(b, b.shape, b.dtype.itemsize)
+        [['f' 'u' ' ']
+         ['b' 'a' 'r']] (2, 3) 1
 
-    >>> print(a, a.shape, a.dtype.itemsize)
-    [-- 'bar'] (2,) 3
-    >>> b = _character_array(a)
-    >>> print(b, b.shape, b.dtype.itemsize)
-    [[-- -- --]
-     ['b' 'a' 'r']] (2, 3) 1
+        >>> print(a, a.shape, a.dtype.itemsize)
+        [-- 'bar'] (2,) 3
+        >>> b = _character_array(a)
+        >>> print(b, b.shape, b.dtype.itemsize)
+        [[-- -- --]
+         ['b' 'a' 'r']] (2, 3) 1
 
-        '''
-#        strlen = array.dtype.itemsize
+        """
+        #        strlen = array.dtype.itemsize
         original_shape = array.shape
         original_size = array.size
 
@@ -308,135 +309,134 @@ class NetCDFWrite(IOWrite):
         if masked:
             fill_value = array.fill_value
             mask = array.mask
-            array = numpy.ma.filled(array, fill_value='')
+            array = numpy.ma.filled(array, fill_value="")
 
-        if array.dtype.kind == 'U':
-            array = array.astype('S')
+        if array.dtype.kind == "U":
+            array = array.astype("S")
 
-        array = numpy.array(tuple(array.tobytes().decode('ascii')),
-                            dtype='S1')
+        array = numpy.array(tuple(array.tobytes().decode("ascii")), dtype="S1")
 
-#        else:
-#            # dtype is 'U'
-#            x = []
-#            for s in array.flatten():
-#                x.extend(tuple(s.ljust(N, '\x00')))
-#
-#            array = numpy.array(k, dtype='S1')
+        #        else:
+        #            # dtype is 'U'
+        #            x = []
+        #            for s in array.flatten():
+        #                x.extend(tuple(s.ljust(N, '\x00')))
+        #
+        #            array = numpy.array(k, dtype='S1')
 
         array.resize(original_shape + (array.size // original_size,))
-#        if masked:
-#            array = numpy.ma.array(array, mask=mask, fill_value=fill_value)
+        #        if masked:
+        #            array = numpy.ma.array(array, mask=mask, fill_value=fill_value)
 
-#        if array.dtype.kind == 'U':
-#            # Convert unicode to string
-#            array = array.astype('S')
-#
-#        new = netCDF4.stringtochar(array, encoding='none')
+        #        if array.dtype.kind == 'U':
+        #            # Convert unicode to string
+        #            array = array.astype('S')
+        #
+        #        new = netCDF4.stringtochar(array, encoding='none')
 
         if masked:
-            array = numpy.ma.masked_where(array == '', array)
+            array = numpy.ma.masked_where(array == "", array)
             array.set_fill_value(fill_value)
 
-        if array.dtype.kind != 'S':
-            raise ValueError(
-                "Array must have string data type.")
+        if array.dtype.kind != "S":
+            raise ValueError("Array must have string data type.")
 
-#            new = numpy.ma.array(new, mask=mask, fill_value=fill_value)
+        #            new = numpy.ma.array(new, mask=mask, fill_value=fill_value)
 
-#        new = numpy.ma.masked_all(shape + (strlen,), dtype='S1')
-#
-#        for index in numpy.ndindex(shape):
-#            value = array[index]
-#            if value is numpy.ma.masked:
-#                new[index] = numpy.ma.masked
-#            else:
-#                new[index] = tuple(value.ljust(strlen, ' '))
-#        # --- End: for
+        #        new = numpy.ma.masked_all(shape + (strlen,), dtype='S1')
+        #
+        #        for index in numpy.ndindex(shape):
+        #            value = array[index]
+        #            if value is numpy.ma.masked:
+        #                new[index] = numpy.ma.masked
+        #            else:
+        #                new[index] = tuple(value.ljust(strlen, ' '))
+        #        # --- End: for
 
         return array
 
     def _datatype(self, variable):
-        '''Return the netCDF4.createVariable datatype corresponding to the
-    datatype of the array of the input variable
+        """Return the netCDF4.createVariable datatype corresponding to the
+        datatype of the array of the input variable
 
-    For example, if variable.dtype is 'float32', then 'f4' will be
-    returned.
+        For example, if variable.dtype is 'float32', then 'f4' will be
+        returned.
 
-    For a NETCDF4 or CFA4 format file, numpy string data types will
-    either return `str` regardless of the numpy string length (and a
-    netCDF4 string type variable will be created) or, if
-    `self.write_vars['string']`` is `False`, ``'S1'`` (see below).
+        For a NETCDF4 or CFA4 format file, numpy string data types will
+        either return `str` regardless of the numpy string length (and a
+        netCDF4 string type variable will be created) or, if
+        `self.write_vars['string']`` is `False`, ``'S1'`` (see below).
 
-    For all other output netCDF formats (such NETCDF4_CLASSIC,
-    NETCDF3_64BIT, etc.) numpy string data types will return 'S1'
-    regardless of the numpy string length. This means that the
-    required conversion of multi-character datatype numpy arrays into
-    single-character datatype numpy arrays (with an extra trailing
-    dimension) is expected to be done elsewhere (currently in the
-    _write_netcdf_variable method).
+        For all other output netCDF formats (such NETCDF4_CLASSIC,
+        NETCDF3_64BIT, etc.) numpy string data types will return 'S1'
+        regardless of the numpy string length. This means that the
+        required conversion of multi-character datatype numpy arrays into
+        single-character datatype numpy arrays (with an extra trailing
+        dimension) is expected to be done elsewhere (currently in the
+        _write_netcdf_variable method).
 
-    If the input variable has no `!dtype` attribute (or it is None)
-    then 'S1' is returned, or `str` for NETCDF files.
+        If the input variable has no `!dtype` attribute (or it is None)
+        then 'S1' is returned, or `str` for NETCDF files.
 
-    :Parameters:
+        :Parameters:
 
-        variable:
-            A numpy array or an object with a `get_data` method.
+            variable:
+                A numpy array or an object with a `get_data` method.
 
-    :Returns:
+        :Returns:
 
-       `str` or str
-           The `netCDF4.createVariable` data type corresponding to the
-           datatype of the array of the input variable.
+           `str` or str
+               The `netCDF4.createVariable` data type corresponding to the
+               datatype of the array of the input variable.
 
-        '''
+        """
         g = self.write_vars
 
         if not isinstance(variable, numpy.ndarray):
             data = self.implementation.get_data(variable, None)
             if data is None:
-                return 'S1'
+                return "S1"
         else:
             data = variable
 
-        dtype = getattr(data, 'dtype', None)
-        if dtype is None or dtype.kind in 'SU':
-            if g['fmt'] == 'NETCDF4' and g['string']:
+        dtype = getattr(data, "dtype", None)
+        if dtype is None or dtype.kind in "SU":
+            if g["fmt"] == "NETCDF4" and g["string"]:
                 return str
 
-            return 'S1'
+            return "S1"
 
-        new_dtype = g['datatype'].get(dtype, None)
+        new_dtype = g["datatype"].get(dtype, None)
         if new_dtype is not None:
             dtype = new_dtype
 
-        return '{0}{1}'.format(dtype.kind, dtype.itemsize)
+        return "{0}{1}".format(dtype.kind, dtype.itemsize)
 
     def _string_length_dimension(self, size):
-        '''Create, if necessary, a netCDF dimension for string variables.
+        """Create, if necessary, a netCDF dimension for string variables.
 
-    :Parameters:
+        :Parameters:
 
-        size: `int`
+            size: `int`
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The netCDF dimension name.
+            `str`
+                The netCDF dimension name.
 
-        '''
+        """
         g = self.write_vars
 
         # ------------------------------------------------------------
         # Create a new dimension for the maximum string length
         # ------------------------------------------------------------
-        ncdim = self._netcdf_name('strlen{0}'.format(size),
-                                  dimsize=size, role='string_length')
+        ncdim = self._netcdf_name(
+            "strlen{0}".format(size), dimsize=size, role="string_length"
+        )
 
-        if ncdim not in g['ncdim_to_size']:
+        if ncdim not in g["ncdim_to_size"]:
             # This string length dimension needs creating
-            g['ncdim_to_size'][ncdim] = size
+            g["ncdim_to_size"][ncdim] = size
 
             # Define (and create if necessary) the group in which to
             # place this netCDF dimension.
@@ -447,24 +447,24 @@ class NetCDFWrite(IOWrite):
         return ncdim
 
     def _netcdf_dimensions(self, field, key, construct):
-        '''Return a tuple of the netCDF dimension names for the axes of a
-    metadata construct.
+        """Return a tuple of the netCDF dimension names for the axes of a
+        metadata construct.
 
-    If the construct has no data, then return `None`
+        If the construct has no data, then return `None`
 
-    :Parameters:
+        :Parameters:
 
-        field: Field construct
+            field: Field construct
 
-        key: `str`
+            key: `str`
 
-    :Returns:
+        :Returns:
 
-        `tuple` or `None`
-            The netCDF dimension names, or `None` if there are no
-            data.
+            `tuple` or `None`
+                The netCDF dimension names, or `None` if there are no
+                data.
 
-        '''
+        """
         g = self.write_vars
 
         domain_axes = self.implementation.get_construct_data_axes(field, key)
@@ -474,21 +474,23 @@ class NetCDFWrite(IOWrite):
 
         domain_axes = tuple(domain_axes)
 
-        ncdims = [g['axis_to_ncdim'][axis] for axis in domain_axes]
+        ncdims = [g["axis_to_ncdim"][axis] for axis in domain_axes]
 
         compression_type = self.implementation.get_compression_type(construct)
         if compression_type:
             sample_dimension_position = (
-                self.implementation.get_sample_dimension_position(construct))
-            compressed_axes = (
-                tuple(self.implementation.get_compressed_axes(
-                    field, key, construct)))
-            compressed_ncdims = tuple([g['axis_to_ncdim'][axis]
-                                       for axis in compressed_axes])
+                self.implementation.get_sample_dimension_position(construct)
+            )
+            compressed_axes = tuple(
+                self.implementation.get_compressed_axes(field, key, construct)
+            )
+            compressed_ncdims = tuple(
+                [g["axis_to_ncdim"][axis] for axis in compressed_axes]
+            )
 
-            sample_ncdim = g['sample_ncdim'].get(compressed_ncdims)
+            sample_ncdim = g["sample_ncdim"].get(compressed_ncdims)
 
-            if compression_type == 'gathered':
+            if compression_type == "gathered":
                 # ----------------------------------------------------
                 # Compression by gathering
                 # ----------------------------------------------------
@@ -500,10 +502,11 @@ class NetCDFWrite(IOWrite):
                     sample_ncdim = self._write_list_variable(
                         field,
                         list_variable,
-                        compress=' '.join(compressed_ncdims))
-                    g['sample_ncdim'][compressed_ncdims] = sample_ncdim
+                        compress=" ".join(compressed_ncdims),
+                    )
+                    g["sample_ncdim"][compressed_ncdims] = sample_ncdim
 
-            elif compression_type == 'ragged contiguous':
+            elif compression_type == "ragged contiguous":
                 # ----------------------------------------------------
                 # Compression by contiguous ragged array
                 #
@@ -515,7 +518,7 @@ class NetCDFWrite(IOWrite):
                 # ----------------------------------------------------
                 pass
 
-            elif compression_type == 'ragged indexed':
+            elif compression_type == "ragged indexed":
                 # ----------------------------------------------------
                 # Compression by indexed ragged array
                 #
@@ -526,65 +529,70 @@ class NetCDFWrite(IOWrite):
                 # netCDF name of the sample dimension.
                 # ----------------------------------------------------
                 pass
-            elif compression_type == 'ragged indexed contiguous':
+            elif compression_type == "ragged indexed contiguous":
                 pass
             else:
                 raise ValueError(
                     "Can't write {!r}: Unknown compression type: {!r}".format(
-                        construct, compression_type))
+                        construct, compression_type
+                    )
+                )
 
             n = len(compressed_ncdims)
-            ncdims[sample_dimension_position:sample_dimension_position + n] = (
-                [sample_ncdim])
+            ncdims[
+                sample_dimension_position : sample_dimension_position + n
+            ] = [sample_ncdim]
         # --- End: if
 
         return tuple(ncdims)
 
-    def _write_dimension(self, ncdim, f, axis=None, unlimited=False,
-                         size=None):
-        '''Write a netCDF dimension to the file.
+    def _write_dimension(
+        self, ncdim, f, axis=None, unlimited=False, size=None
+    ):
+        """Write a netCDF dimension to the file.
 
-    :Parameters:
+        :Parameters:
 
-        ncdim: `str`
-            The netCDF dimension name.
+            ncdim: `str`
+                The netCDF dimension name.
 
-        f: Field construct
+            f: Field construct
 
-        axis: `str` or `None`
-            The field's domain axis identifier.
+            axis: `str` or `None`
+                The field's domain axis identifier.
 
-        unlimited: `bool`, optional
-            If `True` then create an unlimited dimension. By default
-            dimensions are not unlimited.
+            unlimited: `bool`, optional
+                If `True` then create an unlimited dimension. By default
+                dimensions are not unlimited.
 
-        size: `int`, optional
-            Must be set if *axis* is `None`.
+            size: `int`, optional
+                Must be set if *axis* is `None`.
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-        '''
+        """
         g = self.write_vars
 
         if axis is not None:
             domain_axis = self.implementation.get_domain_axes(f)[axis]
             logger.info(
-                '    Writing {!r} to netCDF dimension: {}'.format(
-                    domain_axis, ncdim)
+                "    Writing {!r} to netCDF dimension: {}".format(
+                    domain_axis, ncdim
+                )
             )  # pragma: no cover
 
             size = self.implementation.get_domain_axis_size(f, axis)
-            g['axis_to_ncdim'][axis] = ncdim
+            g["axis_to_ncdim"][axis] = ncdim
 
-        g['ncdim_to_size'][ncdim] = size
+        g["ncdim_to_size"][ncdim] = size
 
         # Define (and create if necessary) the group in which to place
         # this netCDF dimension.
         parent_group = self._parent_group(ncdim)
 
-        if g['group'] and '/' in ncdim:
+        if g["group"] and "/" in ncdim:
             # This dimension needs to go into a sub-group so replace
             # its name with its basename (CF>=1.8)
             ncdim = self._remove_group_structure(ncdim)
@@ -595,16 +603,19 @@ class NetCDFWrite(IOWrite):
             try:
                 parent_group.createDimension(ncdim, size)
             except RuntimeError as error:
-                message = ("Can't create unlimited dimension "
-                           "in {} file ({}).".format(
-                               g['netcdf'].file_format, error))
+                message = (
+                    "Can't create unlimited dimension "
+                    "in {} file ({}).".format(g["netcdf"].file_format, error)
+                )
 
                 error = str(error)
-                if error == 'NetCDF: NC_UNLIMITED size already in use':
+                if error == "NetCDF: NC_UNLIMITED size already in use":
                     raise RuntimeError(
                         message + " In a {} file only one unlimited dimension "
                         "is allowed. Consider using a netCDF4 format.".format(
-                            g['netcdf'].file_format))
+                            g["netcdf"].file_format
+                        )
+                    )
 
                 raise RuntimeError(message)
         else:
@@ -614,46 +625,47 @@ class NetCDFWrite(IOWrite):
                 raise RuntimeError(
                     "Can't create size {} dimension {!r} in "
                     "{} file ({})".format(
-                        size, ncdim, g['netcdf'].file_format, error))
+                        size, ncdim, g["netcdf"].file_format, error
+                    )
+                )
         # --- End: if
 
-        g['dimensions'].add(ncdim)
+        g["dimensions"].add(ncdim)
 
-    def _write_dimension_coordinate(self, f, key, coord, ncdim,
-                                    coordinates):
-        '''Write a coordinate variable and its bounds variable to the file.
+    def _write_dimension_coordinate(self, f, key, coord, ncdim, coordinates):
+        """Write a coordinate variable and its bounds variable to the file.
 
-    This also writes a new netCDF dimension to the file and, if
-    required, a new netCDF dimension for the bounds.
+        This also writes a new netCDF dimension to the file and, if
+        required, a new netCDF dimension for the bounds.
 
-    :Parameters:
+        :Parameters:
 
-        f: Field construct
+            f: Field construct
 
-        key: `str`
+            key: `str`
 
-        coord: Dimension coordinate construct
+            coord: Dimension coordinate construct
 
-        ncdim: `str` or `None`
-            The name of the netCDF dimension for this dimension
-            coordinate construct, including any groups structure. Note
-            that the group structure may be different to the
-            corodinate variable, and the basename.
+            ncdim: `str` or `None`
+                The name of the netCDF dimension for this dimension
+                coordinate construct, including any groups structure. Note
+                that the group structure may be different to the
+                corodinate variable, and the basename.
 
-        coordinates: `list`
-           This list may get updated in-place.
+            coordinates: `list`
+               This list may get updated in-place.
 
-           .. versionadded:: (cfdm) .8.7.0
+               .. versionadded:: (cfdm) .8.7.0
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The netCDF name of the dimension coordinate.
+            `str`
+                The netCDF name of the dimension coordinate.
 
-        '''
+        """
         g = self.write_vars
 
-        seen = g['seen']
+        seen = g["seen"]
 
         data_axes = self.implementation.get_construct_data_axes(f, key)
         axis = data_axes[0]
@@ -661,8 +673,8 @@ class NetCDFWrite(IOWrite):
         create = False
         if not self._already_in_file(coord):
             create = True
-        elif seen[id(coord)]['ncdims'] != ():
-            if seen[id(coord)]['ncvar'] != seen[id(coord)]['ncdims'][0]:
+        elif seen[id(coord)]["ncdims"] != ():
+            if seen[id(coord)]["ncvar"] != seen[id(coord)]["ncdims"][0]:
                 # Already seen this coordinate but it was an auxiliary
                 # coordinate, so it needs to be created as a dimension
                 # coordinate.
@@ -683,46 +695,47 @@ class NetCDFWrite(IOWrite):
                 # No netCDF variable name not correponding netCDF
                 # dimension name has been set, so create a default
                 # netCDf variable name.
-                ncvar = self._create_netcdf_variable_name(coord,
-                                                          default='coordinate')
+                ncvar = self._create_netcdf_variable_name(
+                    coord, default="coordinate"
+                )
 
             ncdim = ncvar
 
             # Create a new dimension
             unlimited = self.implementation.nc_is_unlimited_axis(f, axis)
 
-#            if ncdim is None:
-#                # A netCDF dimension name has NOT been specified, so
-#                # put the dimension in the root group with the same
-#                # name as the coordinate variable.
-#                ncdim = self._remove_group_structure(ncvar)
-#            elif ncdim in g['dimensions']:
-#                # A netCDF dimension name has been specified, but
-#                # matches one already in the file, so put the
-#                # dimension in the root group with the same name as
-#                # the coordinate variable.
-#                ncdim = self._remove_group_structure(ncvar)
-#            else:
-#                ncdim = ncvar
-#            if ncdim is not None:
-#                # A netCDF dimension name HAS been specified, so make
-#                # sure that the basename of the coordinate variable
-#                # matches the basename of the dimension.
-#                if g['group']:
-#                    _, groups = self._remove_group_structure(
-#                        ncvar, return_groups=True)
-#                    ncvar = groups + self._remove_group_structure(ncdim)
-#                else:
-#                    ncvar = ncdim
-#            # --- End: if
-#
-#            if g['group']:
-#
-#                _, groups = self._remove_group_structure(
-#                    ncvar, return_groups=True)
-#               ncvar = groups + self._remove_group_structure(ncdim)
-#            else:
-#                ncvar = ncdim
+            #            if ncdim is None:
+            #                # A netCDF dimension name has NOT been specified, so
+            #                # put the dimension in the root group with the same
+            #                # name as the coordinate variable.
+            #                ncdim = self._remove_group_structure(ncvar)
+            #            elif ncdim in g['dimensions']:
+            #                # A netCDF dimension name has been specified, but
+            #                # matches one already in the file, so put the
+            #                # dimension in the root group with the same name as
+            #                # the coordinate variable.
+            #                ncdim = self._remove_group_structure(ncvar)
+            #            else:
+            #                ncdim = ncvar
+            #            if ncdim is not None:
+            #                # A netCDF dimension name HAS been specified, so make
+            #                # sure that the basename of the coordinate variable
+            #                # matches the basename of the dimension.
+            #                if g['group']:
+            #                    _, groups = self._remove_group_structure(
+            #                        ncvar, return_groups=True)
+            #                    ncvar = groups + self._remove_group_structure(ncdim)
+            #                else:
+            #                    ncvar = ncdim
+            #            # --- End: if
+            #
+            #            if g['group']:
+            #
+            #                _, groups = self._remove_group_structure(
+            #                    ncvar, return_groups=True)
+            #               ncvar = groups + self._remove_group_structure(ncdim)
+            #            else:
+            #                ncvar = ncdim
 
             self._write_dimension(ncdim, f, axis, unlimited=unlimited)
 
@@ -735,169 +748,188 @@ class NetCDFWrite(IOWrite):
             extra = self._write_bounds(f, coord, key, ncdimensions, ncvar)
 
             # Create a new dimension coordinate variable
-            self._write_netcdf_variable(ncvar, ncdimensions, coord,
-                                        extra=extra)
+            self._write_netcdf_variable(
+                ncvar, ncdimensions, coord, extra=extra
+            )
         else:
-            ncvar = seen[id(coord)]['ncvar']
-            ncdimensions = seen[id(coord)]['ncdims']
+            ncvar = seen[id(coord)]["ncvar"]
+            ncdimensions = seen[id(coord)]["ncdims"]
 
-        g['key_to_ncvar'][key] = ncvar
-        g['key_to_ncdims'][key] = ncdimensions
+        g["key_to_ncvar"][key] = ncvar
+        g["key_to_ncdims"][key] = ncdimensions
 
-        g['axis_to_ncdim'][axis] = seen[id(coord)]['ncdims'][0]
+        g["axis_to_ncdim"][axis] = seen[id(coord)]["ncdims"][0]
 
-        if g['coordinates'] and ncvar is not None:
+        if g["coordinates"] and ncvar is not None:
             # Add the dimension coordinate netCDF variable name to the
             # 'coordinates' arttribute
             coordinates.append(ncvar)
 
         return ncvar
 
-    def _write_count_variable(self, f, count_variable, ncdim=None,
-                              create_ncdim=True):
-        ''' Write a count variable to the netCDF file.
-
-        '''
+    def _write_count_variable(
+        self, f, count_variable, ncdim=None, create_ncdim=True
+    ):
+        """Write a count variable to the netCDF file."""
         g = self.write_vars
 
         if not self._already_in_file(count_variable):
-            ncvar = self._create_netcdf_variable_name(count_variable,
-                                                      default='count')
+            ncvar = self._create_netcdf_variable_name(
+                count_variable, default="count"
+            )
 
             if create_ncdim:
                 ncdim = self._netcdf_name(ncdim)
                 self._write_dimension(
-                    ncdim, f, None,
-                    size=self.implementation.get_data_size(count_variable))
+                    ncdim,
+                    f,
+                    None,
+                    size=self.implementation.get_data_size(count_variable),
+                )
 
             # --------------------------------------------------------
             # Create the sample dimension
             # --------------------------------------------------------
-            _ = self.implementation.nc_get_sample_dimension(count_variable,
-                                                            'element')
+            _ = self.implementation.nc_get_sample_dimension(
+                count_variable, "element"
+            )
             sample_ncdim = self._netcdf_name(_)
             self._write_dimension(
-                sample_ncdim, f, None,
-                size=int(self.implementation.get_data_sum(count_variable)))
+                sample_ncdim,
+                f,
+                None,
+                size=int(self.implementation.get_data_sum(count_variable)),
+            )
 
-            extra = {'sample_dimension': sample_ncdim}
+            extra = {"sample_dimension": sample_ncdim}
 
             # Create a new list variable
-            self._write_netcdf_variable(ncvar, (ncdim,),
-                                        count_variable, extra=extra)
+            self._write_netcdf_variable(
+                ncvar, (ncdim,), count_variable, extra=extra
+            )
 
-            g['count_variable_sample_dimension'][ncvar] = sample_ncdim
+            g["count_variable_sample_dimension"][ncvar] = sample_ncdim
         else:
-            ncvar = g['seen'][id(count_variable)]['ncvar']
-            sample_ncdim = g['count_variable_sample_dimension'][ncvar]
+            ncvar = g["seen"][id(count_variable)]["ncvar"]
+            sample_ncdim = g["count_variable_sample_dimension"][ncvar]
 
         return sample_ncdim
 
-    def _write_index_variable(self, f, index_variable,
-                              sample_dimension, ncdim=None,
-                              create_ncdim=True,
-                              instance_dimension=None):
-        '''Write an index variable to the netCDF file.
+    def _write_index_variable(
+        self,
+        f,
+        index_variable,
+        sample_dimension,
+        ncdim=None,
+        create_ncdim=True,
+        instance_dimension=None,
+    ):
+        """Write an index variable to the netCDF file.
 
-    :Parameters:
+        :Parameters:
 
-        f: Field construct
+            f: Field construct
 
-        index_variable: Index variable
+            index_variable: Index variable
 
-        sample_dimension: `str`
-            The name of the netCDF sample dimension.
+            sample_dimension: `str`
+                The name of the netCDF sample dimension.
 
-        ncdim: `str`, optional
+            ncdim: `str`, optional
 
-        create_ncdim: bool, optional
+            create_ncdim: bool, optional
 
-        instance_dimension: `str`, optional
-            The name of the netCDF instance dimension.
+            instance_dimension: `str`, optional
+                The name of the netCDF instance dimension.
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The name of the netCDF sample dimension.
+            `str`
+                The name of the netCDF sample dimension.
 
-        '''
+        """
         g = self.write_vars
 
         if not self._already_in_file(index_variable):
-            ncvar = self._create_netcdf_variable_name(index_variable,
-                                                      default='index')
+            ncvar = self._create_netcdf_variable_name(
+                index_variable, default="index"
+            )
 
             if create_ncdim:
                 ncdim = self._netcdf_name(ncdim)
                 self._write_dimension(
-                    ncdim, f, None,
-                    size=self.implementation.get_data_size(index_variable))
+                    ncdim,
+                    f,
+                    None,
+                    size=self.implementation.get_data_size(index_variable),
+                )
             # --- End: if
 
             # Create a new list variable
-            extra = {'instance_dimension': instance_dimension}
-            self._write_netcdf_variable(ncvar, (ncdim,),
-                                        index_variable, extra=extra)
+            extra = {"instance_dimension": instance_dimension}
+            self._write_netcdf_variable(
+                ncvar, (ncdim,), index_variable, extra=extra
+            )
 
-            g['index_variable_sample_dimension'][ncvar] = sample_dimension
+            g["index_variable_sample_dimension"][ncvar] = sample_dimension
         else:
-            ncvar = g['seen'][id(index_variable)]['ncvar']
-            sample_ncdim = g['index_variable_sample_dimension'][ncvar]
+            ncvar = g["seen"][id(index_variable)]["ncvar"]
+            sample_ncdim = g["index_variable_sample_dimension"][ncvar]
 
         return sample_dimension
 
     def _write_list_variable(self, f, list_variable, compress):
-        '''Write a list variable to the netCDF file.
-
-        '''
+        """Write a list variable to the netCDF file."""
         g = self.write_vars
 
         create = not self._already_in_file(list_variable)
 
         if create:
-            ncvar = self._create_netcdf_variable_name(list_variable,
-                                                      default='list')
+            ncvar = self._create_netcdf_variable_name(
+                list_variable, default="list"
+            )
 
             # Create a new dimension
             self._write_dimension(
-                ncvar, f,
-                size=self.implementation.get_data_size(list_variable))
+                ncvar, f, size=self.implementation.get_data_size(list_variable)
+            )
 
-            extra = {'compress': compress}
+            extra = {"compress": compress}
 
             # Create a new list variable
-            self._write_netcdf_variable(ncvar, (ncvar,),
-                                        list_variable, extra=extra)
+            self._write_netcdf_variable(
+                ncvar, (ncvar,), list_variable, extra=extra
+            )
 
             self.implementation.nc_set_variable(list_variable, ncvar)  # Why?
         else:
-            ncvar = g['seen'][id(list_variable)]['ncvar']
+            ncvar = g["seen"][id(list_variable)]["ncvar"]
 
         return ncvar
 
     def _write_scalar_data(self, value, ncvar):
-        '''Write a dimension coordinate and bounds to the netCDF file.
+        """Write a dimension coordinate and bounds to the netCDF file.
 
-    This also writes a new netCDF dimension to the file and, if
-    required, a new netCDF bounds dimension.
+        This also writes a new netCDF dimension to the file and, if
+        required, a new netCDF bounds dimension.
 
-    .. note:: This function updates ``g['seen']``.
+        .. note:: This function updates ``g['seen']``.
 
-    :Parameters:
+        :Parameters:
 
-        data: Data instance
+            data: Data instance
 
-        ncvar: `str`
+            ncvar: `str`
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The netCDF name of the scalar data variable
+            `str`
+                The netCDF name of the scalar data variable
 
-        '''
+        """
         g = self.write_vars
 
-        seen = g['seen']
+        seen = g["seen"]
 
         create = not self._already_in_file(value, ncdims=())
 
@@ -907,32 +939,33 @@ class NetCDFWrite(IOWrite):
             # Create a new dimension coordinate variable
             self._write_netcdf_variable(ncvar, (), value)
         else:
-            ncvar = seen[id(value)]['ncvar']
+            ncvar = seen[id(value)]["ncvar"]
 
         return ncvar
 
     def _create_geometry_container(self, field):
-        '''Create a geometry container variable in the netCDF file.
+        """Create a geometry container variable in the netCDF file.
 
-    .. versionadded:: (cfdm) 1.8.0
+        .. versionadded:: (cfdm) 1.8.0
 
-    :Parameters:
+        :Parameters:
 
-        field: Field construct
+            field: Field construct
 
-    :Returns:
+        :Returns:
 
-        `dict`
-            A representation off the CF-netCDF geometry container
-            variable for field construct. If there is no geometry
-            container then the dictionary is empty.
+            `dict`
+                A representation off the CF-netCDF geometry container
+                variable for field construct. If there is no geometry
+                container then the dictionary is empty.
 
-        '''
+        """
         g = self.write_vars
 
         gc = {}
         for key, coord in self.implementation.get_auxiliary_coordinates(
-                field).items():
+            field
+        ).items():
             geometry_type = self.implementation.get_geometry(coord, None)
             if geometry_type not in self.cf_geometry_types():
                 # No geometry bounds for this auxiliary coordinate
@@ -944,66 +977,74 @@ class NetCDFWrite(IOWrite):
                 continue
 
             # assuming 1-d coord ...
-            geometry_dimension = g['key_to_ncdims'][key][0]
+            geometry_dimension = g["key_to_ncdims"][key][0]
 
             geometry_id = (geometry_dimension, geometry_type)
             gc.setdefault(
                 geometry_id,
-                {'geometry_type': geometry_type}
+                {"geometry_type": geometry_type}
                 #                 'geometry_dimension': geometry_dimension,
             )
 
             # Nodes
-            nodes_ncvar = g['seen'][id(nodes)]['ncvar']
-            gc[geometry_id].setdefault('node_coordinates', []).append(
-                nodes_ncvar)
+            nodes_ncvar = g["seen"][id(nodes)]["ncvar"]
+            gc[geometry_id].setdefault("node_coordinates", []).append(
+                nodes_ncvar
+            )
 
             # Coordinates
             try:
-                coord_ncvar = g['seen'][id(coord)]['ncvar']
+                coord_ncvar = g["seen"][id(coord)]["ncvar"]
             except KeyError:
                 # There is no netCDF auxiliary coordinate variable
                 pass
             else:
-                gc[geometry_id].setdefault('coordinates', []).append(
-                    coord_ncvar)
+                gc[geometry_id].setdefault("coordinates", []).append(
+                    coord_ncvar
+                )
 
             # Grid mapping
             grid_mappings = [
-                g['seen'][id(cr)]['ncvar']
+                g["seen"][id(cr)]["ncvar"]
                 for cr in field.coordinate_references.values()
-                if (cr.coordinate_conversion.get_parameter(
-                        'grid_mapping_name', None) is not None
-                    and key in cr.coordinates())]
-            gc[geometry_id].setdefault('grid_mapping', []).extend(
-                grid_mappings)
+                if (
+                    cr.coordinate_conversion.get_parameter(
+                        "grid_mapping_name", None
+                    )
+                    is not None
+                    and key in cr.coordinates()
+                )
+            ]
+            gc[geometry_id].setdefault("grid_mapping", []).extend(
+                grid_mappings
+            )
 
             # Node count
             try:
-                ncvar = g['geometry_encoding'][nodes_ncvar]['node_count']
+                ncvar = g["geometry_encoding"][nodes_ncvar]["node_count"]
             except KeyError:
                 # There is no node count variable
                 pass
             else:
-                gc[geometry_id].setdefault('node_count', []).append(ncvar)
+                gc[geometry_id].setdefault("node_count", []).append(ncvar)
 
             # Part node count
             try:
-                ncvar = g['geometry_encoding'][nodes_ncvar]['part_node_count']
+                ncvar = g["geometry_encoding"][nodes_ncvar]["part_node_count"]
             except KeyError:
                 # There is no part node count variable
                 pass
             else:
-                gc[geometry_id].setdefault('part_node_count', []).append(ncvar)
+                gc[geometry_id].setdefault("part_node_count", []).append(ncvar)
 
             # Interior ring
             try:
-                ncvar = g['geometry_encoding'][nodes_ncvar]['interior_ring']
+                ncvar = g["geometry_encoding"][nodes_ncvar]["interior_ring"]
             except KeyError:
                 # There is no interior ring variable
                 pass
             else:
-                gc[geometry_id].setdefault('interior_ring', []).append(ncvar)
+                gc[geometry_id].setdefault("interior_ring", []).append(ncvar)
         # --- End: for
 
         if not gc:
@@ -1012,103 +1053,111 @@ class NetCDFWrite(IOWrite):
 
         for x in gc.values():
             # Node coordinates
-            if 'node_coordinates' in x:
-                x['node_coordinates'] = ' '.join(sorted(x['node_coordinates']))
+            if "node_coordinates" in x:
+                x["node_coordinates"] = " ".join(sorted(x["node_coordinates"]))
 
             # Coordinates
-            if 'coordinates' in x:
-                x['coordinates'] = ' '.join(sorted(x['coordinates']))
+            if "coordinates" in x:
+                x["coordinates"] = " ".join(sorted(x["coordinates"]))
 
             # Grid mapping
-            grid_mappings = set(x.get('grid_mapping', ()))
+            grid_mappings = set(x.get("grid_mapping", ()))
             if len(grid_mappings) == 1:
-                x['grid_mapping'] = grid_mappings.pop()
+                x["grid_mapping"] = grid_mappings.pop()
             elif len(grid_mappings) > 1:
                 raise ValueError(
                     "Can't write {!r}: Geometry container has multiple "
                     "grid mapping variables: {!r}".format(
-                        field, x['grid_mapping']))
+                        field, x["grid_mapping"]
+                    )
+                )
 
             # Node count
-            nc = set(x.get('node_count', ()))
+            nc = set(x.get("node_count", ()))
             if len(nc) == 1:
-                x['node_count'] = nc.pop()
+                x["node_count"] = nc.pop()
             elif len(nc) > 1:
                 raise ValueError(
                     "Can't write {!r}: Geometry container has multiple "
-                    "node count variables: {!r}".format(
-                        field, x['node_count']))
+                    "node count variables: {!r}".format(field, x["node_count"])
+                )
 
             # Part node count
-            pnc = set(x.get('part_node_count', ()))
+            pnc = set(x.get("part_node_count", ()))
             if len(pnc) == 1:
-                x['part_node_count'] = pnc.pop()
+                x["part_node_count"] = pnc.pop()
             elif len(pnc) > 1:
                 raise ValueError(
                     "Can't write {!r}: Geometry container has multiple "
                     "part node count variables: {!r}".format(
-                        field, x['part_node_count']))
+                        field, x["part_node_count"]
+                    )
+                )
 
             # Interior ring
-            ir = set(x.get('interior_ring', ()))
+            ir = set(x.get("interior_ring", ()))
             if len(ir) == 1:
-                x['interior_ring'] = ir.pop()
+                x["interior_ring"] = ir.pop()
             elif len(ir) > 1:
                 raise ValueError(
                     "Can't write {!r}: Geometry container has multiple "
                     "interior ring variables: {!r}".format(
-                        field, x['interior_ring']))
+                        field, x["interior_ring"]
+                    )
+                )
         # --- End: for
 
         if len(gc) > 1:
             raise ValueError(
                 "Can't write {!r}: Multiple geometry containers: {!r}".format(
-                    field, list(gc.values())))
+                    field, list(gc.values())
+                )
+            )
 
         _, geometry_container = gc.popitem()
 
-        g['geometry_dimensions'].add(geometry_dimension)
+        g["geometry_dimensions"].add(geometry_dimension)
 
         return geometry_container
 
     def _already_in_file(self, variable, ncdims=None, ignore_type=False):
-        '''Return True if a variable is logically equal any variable in the
-    g['seen'] dictionary.
+        """Return True if a variable is logically equal any variable in the
+        g['seen'] dictionary.
 
-    If this is the case then the variable has already been written to
-    the output netCDF file and so we don't need to do it again.
+        If this is the case then the variable has already been written to
+        the output netCDF file and so we don't need to do it again.
 
-    If 'ncdims' is set then a extra condition for equality is applied,
-    namely that of 'ncdims' being equal to the netCDF dimensions
-    (names and order) to that of a variable in the g['seen']
-    dictionary.
+        If 'ncdims' is set then a extra condition for equality is applied,
+        namely that of 'ncdims' being equal to the netCDF dimensions
+        (names and order) to that of a variable in the g['seen']
+        dictionary.
 
-    When `True` is returned, the input variable is added to the
-    g['seen'] dictionary.
+        When `True` is returned, the input variable is added to the
+        g['seen'] dictionary.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Parameters:
+        :Parameters:
 
-        variable:
+            variable:
 
-        ncdims: `tuple`, optional
+            ncdims: `tuple`, optional
 
-        ignore_type: `bool`, optional
+            ignore_type: `bool`, optional
 
-    :Returns:
+        :Returns:
 
-        `bool`
-            `True` if the variable has already been written to the
-            file, `False` otherwise.
+            `bool`
+                `True` if the variable has already been written to the
+                file, `False` otherwise.
 
-        '''
+        """
         g = self.write_vars
 
-        seen = g['seen']
+        seen = g["seen"]
 
         for value in seen.values():
-            if ncdims is not None and ncdims != value['ncdims']:
+            if ncdims is not None and ncdims != value["ncdims"]:
                 # The netCDF dimensions (names and order) of the input
                 # variable are different to those of this variable in
                 # the 'seen' dictionary
@@ -1116,11 +1165,12 @@ class NetCDFWrite(IOWrite):
 
             # Still here?
             if self.implementation.equal_components(
-                    variable, value['variable'], ignore_type=ignore_type):
+                variable, value["variable"], ignore_type=ignore_type
+            ):
                 seen[id(variable)] = {
-                    'variable': variable,
-                    'ncvar': value['ncvar'],
-                    'ncdims': value['ncdims']
+                    "variable": variable,
+                    "ncvar": value["ncvar"],
+                    "ncdims": value["ncdims"],
                 }
                 return True
         # --- End: for
@@ -1128,19 +1178,19 @@ class NetCDFWrite(IOWrite):
         return False
 
     def _write_geometry_container(self, field, geometry_container):
-        '''Write a netCDF geometry container variable.
+        """Write a netCDF geometry container variable.
 
-    .. versionadded:: (cfdm) 1.8.0
+        .. versionadded:: (cfdm) 1.8.0
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The netCDF variable name for the geometry container.
+            `str`
+                The netCDF variable name for the geometry container.
 
-        '''
+        """
         g = self.write_vars
 
-        for ncvar, gc in g['geometry_containers'].items():
+        for ncvar, gc in g["geometry_containers"].items():
             if geometry_container == gc:
                 # Use this existing geometry container
                 return ncvar
@@ -1148,71 +1198,75 @@ class NetCDFWrite(IOWrite):
 
         # Still here? Then write the geometry container to the file
         ncvar = self.implementation.nc_get_geometry_variable(
-            field,
-            default='geometry_container')
+            field, default="geometry_container"
+        )
         ncvar = self._netcdf_name(ncvar)
 
         logger.info(
-            '    Writing geometry container variable: {}'.format(ncvar)
+            "    Writing geometry container variable: {}".format(ncvar)
         )  # pragma: no cover
         logger.info(
-            '        {}'.format(geometry_container))  # pragma: no cover
+            "        {}".format(geometry_container)
+        )  # pragma: no cover
 
-        kwargs = {'varname': ncvar,
-                  'datatype': 'S1',
-                  'dimensions': (),
-                  'endian': g['endian']}
-        kwargs.update(g['netcdf_compression'])
+        kwargs = {
+            "varname": ncvar,
+            "datatype": "S1",
+            "dimensions": (),
+            "endian": g["endian"],
+        }
+        kwargs.update(g["netcdf_compression"])
 
         self._createVariable(**kwargs)
 
-        g['nc'][ncvar].setncatts(geometry_container)
+        g["nc"][ncvar].setncatts(geometry_container)
 
         # Update the 'geometry_containers' dictionary
-        g['geometry_containers'][ncvar] = geometry_container
+        g["geometry_containers"][ncvar] = geometry_container
 
         return ncvar
 
-    def _write_bounds(self, f, coord, coord_key, coord_ncdimensions,
-                      coord_ncvar=None):
-        '''Create a bounds netCDF variable, creating a new bounds netCDF
-    dimension if required. Return the bounds variable's netCDF
-    variable name.
+    def _write_bounds(
+        self, f, coord, coord_key, coord_ncdimensions, coord_ncvar=None
+    ):
+        """Create a bounds netCDF variable, creating a new bounds netCDF
+        dimension if required. Return the bounds variable's netCDF
+        variable name.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Parameters:
+        :Parameters:
 
-        f: Field construct
+            f: Field construct
 
-        coord:
+            coord:
 
-        coord_key: `str`
-            The coordinate construct key.
+            coord_key: `str`
+                The coordinate construct key.
 
-        coord_ncdimensions: `tuple` of `str`
-            The ordered netCDF dimension names of the coordinate's
-            dimensions (which do not include the bounds dimension).
+            coord_ncdimensions: `tuple` of `str`
+                The ordered netCDF dimension names of the coordinate's
+                dimensions (which do not include the bounds dimension).
 
-        coord_ncvar: `str`
-            The netCDF variable name of the parent variable
+            coord_ncvar: `str`
+                The netCDF variable name of the parent variable
 
-    :Returns:
+        :Returns:
 
-        `dict`
+            `dict`
 
-    **Examples:**
+        **Examples:**
 
-    >>> _write_bounds(c, ('dim2',))
-    {'bounds': 'lat_bounds'}
+        >>> _write_bounds(c, ('dim2',))
+        {'bounds': 'lat_bounds'}
 
-    >>> _write_bounds(c, ('dim2',))
-    {'nodes': 'x'}
+        >>> _write_bounds(c, ('dim2',))
+        {'nodes': 'x'}
 
-    >>> _write_bounds(c, ('dim2',))
-    {'climatology': 'time_bnds'}
+        >>> _write_bounds(c, ('dim2',))
+        {'climatology': 'time_bnds'}
 
-        '''
+        """
         g = self.write_vars
 
         bounds = self.implementation.get_bounds(coord, None)
@@ -1223,15 +1277,17 @@ class NetCDFWrite(IOWrite):
         if data is None:
             return {}
 
-        if (g['output_version'] >= g['CF-1.8'] and
-                self.implementation.is_geometry(coord)):
+        if g["output_version"] >= g[
+            "CF-1.8"
+        ] and self.implementation.is_geometry(coord):
 
             # --------------------------------------------------------
             # CF>=1.8 and we have geometry bounds, which are dealt
             # with separately
             # --------------------------------------------------------
-            extra = self._write_node_coordinates(coord, coord_ncvar,
-                                                 coord_ncdimensions)
+            extra = self._write_node_coordinates(
+                coord, coord_ncvar, coord_ncdimensions
+            )
             return extra
 
         # Still here? Then this coordinate has non-geometry bounds
@@ -1240,19 +1296,20 @@ class NetCDFWrite(IOWrite):
 
         size = data.shape[-1]
 
-#        bounds_ncdim = self._netcdf_name('bounds{0}'.format(size),
-#                                  dimsize=size, role='bounds')
+        #        bounds_ncdim = self._netcdf_name('bounds{0}'.format(size),
+        #                                  dimsize=size, role='bounds')
 
         bounds_ncdim = self.implementation.nc_get_dimension(
-            bounds,
-            'bounds{0}'.format(size))
-        if not g['group']:
+            bounds, "bounds{0}".format(size)
+        )
+        if not g["group"]:
             # A flat file has been requested, so strip off any group
             # structure from the name.
             bounds_ncdim = self._remove_group_structure(bounds_ncdim)
 
-        bounds_ncdim = self._netcdf_name(bounds_ncdim, dimsize=size,
-                                         role='bounds')
+        bounds_ncdim = self._netcdf_name(
+            bounds_ncdim, dimsize=size, role="bounds"
+        )
 
         # Check if this bounds variable has not been previously
         # created.
@@ -1260,15 +1317,15 @@ class NetCDFWrite(IOWrite):
         if self._already_in_file(bounds, ncdimensions):
             # This bounds variable has been previously created, so no
             # need to do so again.
-            ncvar = g['seen'][id(bounds)]['ncvar']
+            ncvar = g["seen"][id(bounds)]["ncvar"]
         else:
             # This bounds variable has not been previously created, so
             # create it now.
-            ncdim_to_size = g['ncdim_to_size']
+            ncdim_to_size = g["ncdim_to_size"]
             if bounds_ncdim not in ncdim_to_size:
                 logger.info(
-                    '    Writing size {} netCDF dimension for '
-                    'bounds: {}'.format(size, bounds_ncdim)
+                    "    Writing size {} netCDF dimension for "
+                    "bounds: {}".format(size, bounds_ncdim)
                 )  # pragma: no cover
 
                 ncdim_to_size[bounds_ncdim] = size
@@ -1277,25 +1334,27 @@ class NetCDFWrite(IOWrite):
                 # to place this netCDF dimension.
                 parent_group = self._parent_group(bounds_ncdim)
 
-                if g['group'] and '/' in bounds_ncdim:
+                if g["group"] and "/" in bounds_ncdim:
                     # This dimension needs to go into a sub-group so
                     # replace its name with its basename (CF>=1.8)
                     base_bounds_ncdim = self._remove_group_structure(
-                        bounds_ncdim)
+                        bounds_ncdim
+                    )
                 else:
                     base_bounds_ncdim = bounds_ncdim
 
                 parent_group.createDimension(base_bounds_ncdim, size)
 
                 # Set the netCDF bounds variable name
-                default = coord_ncvar + '_bounds'
+                default = coord_ncvar + "_bounds"
             else:
-                default = 'bounds'
+                default = "bounds"
 
-            ncvar = self.implementation.nc_get_variable(bounds,
-                                                        default=default)
+            ncvar = self.implementation.nc_get_variable(
+                bounds, default=default
+            )
 
-            if not self.write_vars['group']:
+            if not self.write_vars["group"]:
                 # A flat file has been requested, so strip off any
                 # group structure from the name (for now).
                 ncvar = self._remove_group_structure(ncvar)
@@ -1310,76 +1369,74 @@ class NetCDFWrite(IOWrite):
             if not bounds_groups and coord_groups:
                 ncvar = coord_groups + ncvar
 
-#            for ncdim in ncdimensions:
-#                _, ncdim_groups = self._remove_group_structure(
-#                    ncdim,
-#                    return_groups=True)
-#                if not bounds_groups.startswith(ncdim_groups):
-#                    raise ValueError(
-#                        "Can't find create a netCDF variable from {!r} "
-#                        "with a dimension that is not in the same group or "
-#                        "a sub-group as the variable: {}".format(bounds, ncdim)
-#                    )
+            #            for ncdim in ncdimensions:
+            #                _, ncdim_groups = self._remove_group_structure(
+            #                    ncdim,
+            #                    return_groups=True)
+            #                if not bounds_groups.startswith(ncdim_groups):
+            #                    raise ValueError(
+            #                        "Can't find create a netCDF variable from {!r} "
+            #                        "with a dimension that is not in the same group or "
+            #                        "a sub-group as the variable: {}".format(bounds, ncdim)
+            #                    )
 
             # Note that, in a field, bounds always have equal units to
             # their parent coordinate
 
             # Select properties to omit
             omit = []
-            for prop in g['omit_bounds_properties']:
+            for prop in g["omit_bounds_properties"]:
                 if self.implementation.has_property(coord, prop):
                     omit.append(prop)
             # --- End: for
 
             # Create the bounds netCDF variable
-            self._write_netcdf_variable(ncvar, ncdimensions, bounds,
-                                        omit=omit)
+            self._write_netcdf_variable(ncvar, ncdimensions, bounds, omit=omit)
         # --- End: if
 
-        extra['bounds'] = ncvar
-#        if self.implementation.is_climatology(coord):
+        extra["bounds"] = ncvar
+        #        if self.implementation.is_climatology(coord):
         axes = self.implementation.get_construct_data_axes(f, coord_key)
         for clim_axis in f.climatological_time_axes():
             if clim_axis == axes:
                 logger.info(
-                    '    Setting climatological bounds'
+                    "    Setting climatological bounds"
                 )  # pragma: no cover
 
-                extra['climatology'] = extra.pop('bounds')
+                extra["climatology"] = extra.pop("bounds")
                 break
         # --- End: for
-#        else:
+        #        else:
 
-        g['bounds'][coord_ncvar] = ncvar
+        g["bounds"][coord_ncvar] = ncvar
 
         return extra
 
-    def _write_node_coordinates(self, coord, coord_ncvar,
-                                coord_ncdimensions):
-        '''Create a netCDF node coordinates variable.
+    def _write_node_coordinates(self, coord, coord_ncvar, coord_ncdimensions):
+        """Create a netCDF node coordinates variable.
 
-    This will create:
+        This will create:
 
-    * A netCDF node dimension, if required.
-    * A netCDF node count variable, if required.
-    * A netCDF part node count variable, if required.
-    * A netCDF interior ring variable, if required.
+        * A netCDF node dimension, if required.
+        * A netCDF node count variable, if required.
+        * A netCDF part node count variable, if required.
+        * A netCDF interior ring variable, if required.
 
-    .. versionadded:: (cfdm) 1.8.0
+        .. versionadded:: (cfdm) 1.8.0
 
-    :Parameters:
+        :Parameters:
 
-        coord:
+            coord:
 
-        coord_ncvar: `str`
+            coord_ncvar: `str`
 
-        coord_ncdimensions: `list`
+            coord_ncdimensions: `list`
 
-    :Returns:
+        :Returns:
 
-        `dict`
+            `dict`
 
-        '''
+        """
         out = {}
 
         g = self.write_vars
@@ -1414,24 +1471,26 @@ class NetCDFWrite(IOWrite):
 
         # Set inherited properties on node variables
         inherited_properties = self.implementation.get_inherited_properties(
-            bounds)
-        self.implementation.set_inherited_properties(nodes,
-                                                     inherited_properties)
+            bounds
+        )
+        self.implementation.set_inherited_properties(
+            nodes, inherited_properties
+        )
 
         # Find the base of the netCDF part dimension name
         size = self.implementation.get_data_size(nodes)
-        ncdim = self._get_node_ncdimension(nodes, default='node')
-        ncdim = self._netcdf_name(ncdim, dimsize=size, role='node')
+        ncdim = self._get_node_ncdimension(nodes, default="node")
+        ncdim = self._netcdf_name(ncdim, dimsize=size, role="node")
 
         create = True
         if self._already_in_file(nodes, (ncdim,)):
             # This node coordinates variable has been previously
             # created, so no need to do so again.
-            ncvar = g['seen'][id(nodes)]['ncvar']
+            ncvar = g["seen"][id(nodes)]["ncvar"]
 
-            geometry_dimension = (
-                g['geometry_encoding'][ncvar]['geometry_dimension']
-            )
+            geometry_dimension = g["geometry_encoding"][ncvar][
+                "geometry_dimension"
+            ]
 
             if geometry_dimension == coord_ncdimensions[0]:
                 # The node coordiante variable already exists, and the
@@ -1442,9 +1501,11 @@ class NetCDFWrite(IOWrite):
                 # We need to log the original Bounds variable as being
                 # in the file, too. This is so that the geometry
                 # container variable can be created later on.
-                g['seen'][id(bounds)] = {'ncvar': ncvar,
-                                         'variable': bounds,
-                                         'ncdims': None}
+                g["seen"][id(bounds)] = {
+                    "ncvar": ncvar,
+                    "variable": bounds,
+                    "ncdims": None,
+                }
             else:
                 # The node coordiante variable already exists, but the
                 # corresponding encoding variables span the wrong
@@ -1456,12 +1517,12 @@ class NetCDFWrite(IOWrite):
         if create:
             # This node coordinates variable has not been previously
             # created, so create it now.
-            ncdim_to_size = g['ncdim_to_size']
+            ncdim_to_size = g["ncdim_to_size"]
             if ncdim not in ncdim_to_size:
                 size = self.implementation.get_data_size(nodes)
                 logger.info(
-                    '    Writing size {} netCDF node dimension: '
-                    '{}'.format(size, ncdim)
+                    "    Writing size {} netCDF node dimension: "
+                    "{}".format(size, ncdim)
                 )  # pragma: no cover
 
                 ncdim_to_size[ncdim] = size
@@ -1470,7 +1531,7 @@ class NetCDFWrite(IOWrite):
                 # to place this netCDF dimension.
                 parent_group = self._parent_group(ncdim)
 
-                if g['group'] and '/' in ncdim:
+                if g["group"] and "/" in ncdim:
                     # This dimension needs to go into a sub-group so
                     # replace its name with its basename (CF>=1.8)
                     ncdim = self._remove_group_structure(ncdim)
@@ -1479,15 +1540,16 @@ class NetCDFWrite(IOWrite):
 
             # Set an appropriate default netCDF node coordinates
             # variable name
-            axis = self.implementation.get_property(bounds, 'axis')
+            axis = self.implementation.get_property(bounds, "axis")
             if axis is not None:
                 default = str(axis).lower()
             else:
-                default = 'node_coordinate'
+                default = "node_coordinate"
 
-            ncvar = self.implementation.nc_get_variable(bounds,
-                                                        default=default)
-            if not self.write_vars['group']:
+            ncvar = self.implementation.nc_get_variable(
+                bounds, default=default
+            )
+            if not self.write_vars["group"]:
                 # A flat file has been requested, so strip off any
                 # group structure from the name.
                 ncvar = self._remove_group_structure(ncvar)
@@ -1499,67 +1561,67 @@ class NetCDFWrite(IOWrite):
 
             encodings = {}
 
-            nc_encodings = self._write_node_count(coord, bounds,
-                                                  coord_ncdimensions,
-                                                  encodings)
+            nc_encodings = self._write_node_count(
+                coord, bounds, coord_ncdimensions, encodings
+            )
             encodings.update(nc_encodings)
 
-            pnc_encodings = self._write_part_node_count(coord, bounds,
-                                                        encodings)
+            pnc_encodings = self._write_part_node_count(
+                coord, bounds, encodings
+            )
             encodings.update(pnc_encodings)
 
-            ir_encodings = self._write_interior_ring(coord, bounds,
-                                                     encodings)
+            ir_encodings = self._write_interior_ring(coord, bounds, encodings)
             encodings.update(ir_encodings)
 
-            g['geometry_encoding'][ncvar] = encodings
+            g["geometry_encoding"][ncvar] = encodings
 
             # We need to log the original Bounds variable as being in
             # the file, too. This is so that the geometry container
             # variable can be created later on.
-            g['seen'][id(bounds)] = {
-                'ncvar': ncvar,
-                'variable': bounds,
-                'ncdims': None
+            g["seen"][id(bounds)] = {
+                "ncvar": ncvar,
+                "variable": bounds,
+                "ncdims": None,
             }
         # --- End: if
 
         if coord_ncvar is not None:
-            g['bounds'][coord_ncvar] = ncvar
+            g["bounds"][coord_ncvar] = ncvar
 
-        return {'nodes': ncvar}
+        return {"nodes": ncvar}
 
-    def _write_node_count(self, coord, bounds, coord_ncdimensions,
-                          encodings):
-        '''Create a netCDF node count variable.
+    def _write_node_count(self, coord, bounds, coord_ncdimensions, encodings):
+        """Create a netCDF node count variable.
 
-    .. versionadded:: (cfdm) 1.8.0
+        .. versionadded:: (cfdm) 1.8.0
 
-    :Parameters:
+        :Parameters:
 
-        coord:
+            coord:
 
-        bounds:
+            bounds:
 
-        coord_ncdimensions: sequence of `str`
-            The netCDF instance dimension
+            coord_ncdimensions: sequence of `str`
+                The netCDF instance dimension
 
-        encodings: `dict`
-            Ignored.
+            encodings: `dict`
+                Ignored.
 
-    :Returns:
+        :Returns:
 
-        `dict`
+            `dict`
 
-        '''
+        """
         g = self.write_vars
 
         # Create the node count flattened data
-        array = self.implementation.get_array(self.implementation.get_data(
-            bounds))
-        if self.implementation.get_data_ndim(bounds) == 2:     # DCH
-            array = numpy.ma.count(array, axis=1)              # DCH
-        else:                                                  # DCH
+        array = self.implementation.get_array(
+            self.implementation.get_data(bounds)
+        )
+        if self.implementation.get_data_ndim(bounds) == 2:  # DCH
+            array = numpy.ma.count(array, axis=1)  # DCH
+        else:  # DCH
             array = numpy.ma.count(array, axis=2).sum(axis=1)  # DCH
 
         data = self.implementation.initialise_Data(array=array, copy=False)
@@ -1575,10 +1637,11 @@ class NetCDFWrite(IOWrite):
         nc = self.implementation.get_node_count(coord)
 
         if nc is not None:
-            ncvar = self.implementation.nc_get_variable(nc,
-                                                        default='node_count')
+            ncvar = self.implementation.nc_get_variable(
+                nc, default="node_count"
+            )
 
-            if not self.write_vars['group']:
+            if not self.write_vars["group"]:
                 # A flat file has been requested, so strip off any
                 # group structure from the name.
                 ncvar = self._remove_group_structure(ncvar)
@@ -1588,20 +1651,21 @@ class NetCDFWrite(IOWrite):
             properties = self.implementation.get_properties(nc)
             self.implementation.set_properties(count, properties)
         else:
-            ncvar = 'node_count'
+            ncvar = "node_count"
 
         geometry_dimension = coord_ncdimensions[0]
 
         if self._already_in_file(count, (geometry_dimension,)):
             # This node count variable has been previously created, so
             # no need to do so again.
-            ncvar = g['seen'][id(count)]['ncvar']
+            ncvar = g["seen"][id(count)]["ncvar"]
         else:
             # This node count variable has not been previously
             # created, so create it now.
-            if geometry_dimension not in g['ncdim_to_size']:
+            if geometry_dimension not in g["ncdim_to_size"]:
                 raise ValueError(
-                    "The netCDF geometry dimension should already exist ...")
+                    "The netCDF geometry dimension should already exist ..."
+                )
 
             ncvar = self._netcdf_name(ncvar)
 
@@ -1610,21 +1674,20 @@ class NetCDFWrite(IOWrite):
         # --- End: if
 
         # Return encodings
-        return {'geometry_dimension': geometry_dimension,
-                'node_count': ncvar}
+        return {"geometry_dimension": geometry_dimension, "node_count": ncvar}
 
     def _get_part_ncdimension(self, coord, default=None):
-        '''Get the base of the netCDF dimension for part node count and
-    interior ring variables.
+        """Get the base of the netCDF dimension for part node count and
+        interior ring variables.
 
-    .. versionadded:: (cfdm) 1.8.0
+        .. versionadded:: (cfdm) 1.8.0
 
-    :Returns:
+        :Returns:
 
-        The netCDF dimension name, or else the value of the *default*
-        parameter.
+            The netCDF dimension name, or else the value of the *default*
+            parameter.
 
-        '''
+        """
         ncdim = None
 
         pnc = self.implementation.get_part_node_count(coord)
@@ -1638,13 +1701,14 @@ class NetCDFWrite(IOWrite):
             # variable
             interior_ring = self.implementation.get_interior_ring(coord)
             if interior_ring is not None:
-                ncdim = self.implementation.nc_get_dimension(interior_ring,
-                                                             default=None)
+                ncdim = self.implementation.nc_get_dimension(
+                    interior_ring, default=None
+                )
         # --- End: if
 
         if ncdim is not None:
             # Found a netCDF dimension
-            if not self.write_vars['group']:
+            if not self.write_vars["group"]:
                 # A flat file has been requested, so strip off any
                 # group structure from the name.
                 ncdim = self._remove_group_structure(ncdim)
@@ -1655,129 +1719,129 @@ class NetCDFWrite(IOWrite):
         return default
 
     def _parent_group(self, name):
-        '''Return the parent group in which a dimension or variable is to be
-    created.
+        """Return the parent group in which a dimension or variable is to be
+        created.
 
-    .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6
 
-    :Parameters:
+        :Parameters:
 
-        name: `str`
-            The name of the netCDF dimension or variable.
+            name: `str`
+                The name of the netCDF dimension or variable.
 
-    :Returns:
+        :Returns:
 
-        `netCDF.Dataset` or `netCDF._netCDf4.Group`
+            `netCDF.Dataset` or `netCDF._netCDf4.Group`
 
-        '''
+        """
         g = self.write_vars
 
-        parent_group = g['netcdf']
+        parent_group = g["netcdf"]
 
-        if not g['group'] or '/' not in name:
+        if not g["group"] or "/" not in name:
             return parent_group
 
-        if not name.startswith('/'):
+        if not name.startswith("/"):
             raise ValueError(
                 "Invalid netCDF name {!r}: missing a leading '/'".format(name)
             )
 
-        for group_name in name.split('/')[1:-1]:
+        for group_name in name.split("/")[1:-1]:
             parent_group = self._write_group(parent_group, group_name)
 
         return parent_group
 
     def _remove_group_structure(self, name, return_groups=False):
-        '''Strip off any group structure from the name.
+        """Strip off any group structure from the name.
 
-    .. versionaddedd:: (cfdm) 1.8.6.0
+        .. versionaddedd:: (cfdm) 1.8.6.0
 
-    :Parameters:
+        :Parameters:
 
-        name: `str`
+            name: `str`
 
-        return_groups: `bool`, optional
+            return_groups: `bool`, optional
 
-    :Returns:
+        :Returns:
 
-        `str`
+            `str`
 
-    **Examples:**
+        **Examples:**
 
-    w._remove_group_structure('lat')
-    'lat'
-    w._remove_group_structure('/forecast/lat')
-    'lat'
-    w._remove_group_structure('/forecast/model/lat')
-    'lat'
-    w._remove_group_structure('lat', return_groups=True)
-    'lat', ''
-    w._remove_group_structure('/forecast/lat', return_groups=True)
-    'lat', '/forecast/'
-    w._remove_group_structure('/forecast/model/lat', return_groups=True)
-    'lat', '/forecast/model/'
+        w._remove_group_structure('lat')
+        'lat'
+        w._remove_group_structure('/forecast/lat')
+        'lat'
+        w._remove_group_structure('/forecast/model/lat')
+        'lat'
+        w._remove_group_structure('lat', return_groups=True)
+        'lat', ''
+        w._remove_group_structure('/forecast/lat', return_groups=True)
+        'lat', '/forecast/'
+        w._remove_group_structure('/forecast/model/lat', return_groups=True)
+        'lat', '/forecast/model/'
 
-        '''
-        structure = name.split('/')
+        """
+        structure = name.split("/")
         basename = structure[-1]
 
         if return_groups:
-            groups = '/'.join(structure[:-1])
+            groups = "/".join(structure[:-1])
             if groups:
-                groups += '/'
+                groups += "/"
 
             return basename, groups
 
         return basename
 
     def _groups(self, name):
-        '''Strip off any group structure from the name.
+        """Strip off any group structure from the name.
 
-    .. versionaddedd:: (cfdm) 1.8.6.1
+        .. versionaddedd:: (cfdm) 1.8.6.1
 
-    :Parameters:
+        :Parameters:
 
-        name: `str`
+            name: `str`
 
-    :Returns:
+        :Returns:
 
-        `str`
+            `str`
 
-    **Examples:**
+        **Examples:**
 
-    w._groups('lat')
-    ''
-    w._groups('/forecast/lat')
-    '/forecast/'
-    w._groups('/forecast/model/lat')
-    '/forecast/model/'
+        w._groups('lat')
+        ''
+        w._groups('/forecast/lat')
+        '/forecast/'
+        w._groups('/forecast/model/lat')
+        '/forecast/model/'
 
-        '''
+        """
         _, groups = self._remove_group_structure(name, return_groups=True)
 
         return groups
 
     def _get_node_ncdimension(self, bounds, default=None):
-        '''Get the netCDF dimension from a node count variable.
+        """Get the netCDF dimension from a node count variable.
 
-    .. versionadded:: (cfdm) 1.8.0
+        .. versionadded:: (cfdm) 1.8.0
 
-    :Parameters:
+        :Parameters:
 
-        bounds: Bounds component
+            bounds: Bounds component
 
-        default: optional
+            default: optional
 
-    :Returns:
+        :Returns:
 
-        The netCDF dimension name, or else the value of the *default*
-        parameter.
+            The netCDF dimension name, or else the value of the *default*
+            parameter.
 
-        '''
+        """
         ncdim = self.implementation.nc_get_dimension(bounds, default=None)
         if ncdim is not None:
             # Found a netCDF dimension
-            if not self.write_vars['group']:
+            if not self.write_vars["group"]:
                 # A flat file has been requested, so strip off any
                 # group structure from the name.
                 ncdim = self._remove_group_structure(ncdim)
@@ -1788,35 +1852,35 @@ class NetCDFWrite(IOWrite):
         return default
 
     def _write_part_node_count(self, coord, bounds, encodings):
-        '''Create a bounds netCDF variable, creating a new bounds netCDF
-    dimension if required. Return the bounds variable's netCDF
-    variable name.
+        """Create a bounds netCDF variable, creating a new bounds netCDF
+        dimension if required. Return the bounds variable's netCDF
+        variable name.
 
-    .. versionadded:: (cfdm) 1.8.0
+        .. versionadded:: (cfdm) 1.8.0
 
-    :Parameters:
+        :Parameters:
 
-        coord:
+            coord:
 
-        coord_ncvar: `str`
-            The netCDF variable name of the parent variable
+            coord_ncvar: `str`
+                The netCDF variable name of the parent variable
 
-    :Returns:
+        :Returns:
 
-        `dict`
+            `dict`
 
-    **Examples:**
+        **Examples:**
 
-    >>> _write_part_node_count(c, b)
-    {'part_node_count': 'pnc'}
+        >>> _write_part_node_count(c, b)
+        {'part_node_count': 'pnc'}
 
-    >>> _write_part_node_count(c, b)
-    {}
+        >>> _write_part_node_count(c, b)
+        {}
 
-        '''
-#        if self.implementation.get_data_ndim(bounds) < 3: # DCH
-#            # No need for a part node count variable required
-#            return {}
+        """
+        #        if self.implementation.get_data_ndim(bounds) < 3: # DCH
+        #            # No need for a part node count variable required
+        #            return {}
         if self.implementation.get_data_shape(bounds)[1] == 1:
             # No part node count variable required
             return {}
@@ -1824,8 +1888,9 @@ class NetCDFWrite(IOWrite):
         g = self.write_vars
 
         # Create the part node count flattened data
-        array = self.implementation.get_array(self.implementation.get_data(
-            bounds))
+        array = self.implementation.get_array(
+            self.implementation.get_data(bounds)
+        )
         array = numpy.trim_zeros(numpy.ma.count(array, axis=2).flatten())
         data = self.implementation.initialise_Data(array=array, copy=False)
 
@@ -1840,9 +1905,9 @@ class NetCDFWrite(IOWrite):
         pnc = self.implementation.get_part_node_count(coord)
         if pnc is not None:
             ncvar = self.implementation.nc_get_variable(
-                pnc,
-                default='part_node_count')
-            if not self.write_vars['group']:
+                pnc, default="part_node_count"
+            )
+            if not self.write_vars["group"]:
                 # A flat file has been requested, so strip off any
                 # group structure from the name.
                 ncvar = self._remove_group_structure(ncvar)
@@ -1852,28 +1917,28 @@ class NetCDFWrite(IOWrite):
             properties = self.implementation.get_properties(pnc)
             self.implementation.set_properties(count, properties)
         else:
-            ncvar = 'part_node_count'
+            ncvar = "part_node_count"
 
         # Find the base of the netCDF part dimension name
         size = self.implementation.get_data_size(count)
-        if g['part_ncdim'] is not None:
-            ncdim = g['part_ncdim']
-        elif 'part_ncdim' in encodings:
-            ncdim = encodings['part_ncdim']
+        if g["part_ncdim"] is not None:
+            ncdim = g["part_ncdim"]
+        elif "part_ncdim" in encodings:
+            ncdim = encodings["part_ncdim"]
         else:
-            ncdim = self._get_part_ncdimension(coord, default='part')
-            ncdim = self._netcdf_name(ncdim, dimsize=size, role='part')
+            ncdim = self._get_part_ncdimension(coord, default="part")
+            ncdim = self._netcdf_name(ncdim, dimsize=size, role="part")
 
         if self._already_in_file(count, (ncdim,)):
             # This part node count variable has been previously
             # created, so no need to do so again.
-            ncvar = g['seen'][id(count)]['ncvar']
+            ncvar = g["seen"][id(count)]["ncvar"]
         else:
-            ncdim_to_size = g['ncdim_to_size']
+            ncdim_to_size = g["ncdim_to_size"]
             if ncdim not in ncdim_to_size:
                 logger.info(
-                    '    Writing size {} netCDF part '
-                    'dimension{}'.format(size, ncdim)
+                    "    Writing size {} netCDF part "
+                    "dimension{}".format(size, ncdim)
                 )  # pragma: no cover
 
                 ncdim_to_size[ncdim] = size
@@ -1882,7 +1947,7 @@ class NetCDFWrite(IOWrite):
                 # to place this netCDF dimension.
                 parent_group = self._parent_group(ncdim)
 
-                if g['group'] and '/' in ncdim:
+                if g["group"] and "/" in ncdim:
                     # This dimension needs to go into a sub-group so
                     # replace its name with its basename (CF>=1.8)
                     ncdim = self._remove_group_structure(ncdim)
@@ -1895,38 +1960,37 @@ class NetCDFWrite(IOWrite):
             self._write_netcdf_variable(ncvar, (ncdim,), count)
         # --- End: if
 
-        g['part_ncdim'] = ncdim
+        g["part_ncdim"] = ncdim
 
         # Return encodings
-        return {'part_node_count': ncvar,
-                'part_ncdim': ncdim}
+        return {"part_node_count": ncvar, "part_ncdim": ncdim}
 
     def _write_interior_ring(self, coord, bounds, encodings):
-        '''Write an interior ring variable to the netCDF file.
+        """Write an interior ring variable to the netCDF file.
 
-    .. versionadded:: (cfdm) 1.8.0
+        .. versionadded:: (cfdm) 1.8.0
 
-    :Parameters:
+        :Parameters:
 
-        coord:
+            coord:
 
-        coord_ncvar: `str`
-            The netCDF variable name of the parent variable
+            coord_ncvar: `str`
+                The netCDF variable name of the parent variable
 
-        encodings:
+            encodings:
 
-    :Returns:
+        :Returns:
 
-        `dict`
+            `dict`
 
-        '''
+        """
         interior_ring = self.implementation.get_interior_ring(coord)
         if interior_ring is None:
             return {}
 
         g = self.write_vars
 
-#        array = self.implementation.get_data(interior_ring).array.compressed()
+        #        array = self.implementation.get_data(interior_ring).array.compressed()
         data = self.implementation.get_data(interior_ring)
         array = self.implementation.get_array(data)
         array = self._numpy_compressed(array)
@@ -1936,33 +2000,34 @@ class NetCDFWrite(IOWrite):
         data = self.implementation.initialise_Data(array=array, copy=False)
         self.implementation.set_data(interior_ring, data, copy=False)
 
-        ncvar = self.implementation.nc_get_variable(interior_ring,
-                                                    default='interior_ring')
+        ncvar = self.implementation.nc_get_variable(
+            interior_ring, default="interior_ring"
+        )
 
-        if not self.write_vars['group']:
+        if not self.write_vars["group"]:
             # A flat file has been requested, so strip off any group
             # structure from the name.
             ncvar = self._remove_group_structure(ncvar)
 
         size = self.implementation.get_data_size(interior_ring)
-        if g['part_ncdim'] is not None:
-            ncdim = g['part_ncdim']
-        elif 'part_ncdim' in encodings:
-            ncdim = encodings['part_ncdim']
+        if g["part_ncdim"] is not None:
+            ncdim = g["part_ncdim"]
+        elif "part_ncdim" in encodings:
+            ncdim = encodings["part_ncdim"]
         else:
-            ncdim = self._get_part_ncdimension(coord, default='part')
-            ncdim = self._netcdf_name(ncdim, dimsize=size, role='part')
+            ncdim = self._get_part_ncdimension(coord, default="part")
+            ncdim = self._netcdf_name(ncdim, dimsize=size, role="part")
 
         if self._already_in_file(interior_ring, (ncdim,)):
             # This interior ring variable has been previously created,
             # so no need to do so again.
-            ncvar = g['seen'][id(interior_ring)]['ncvar']
+            ncvar = g["seen"][id(interior_ring)]["ncvar"]
         else:
-            ncdim_to_size = g['ncdim_to_size']
+            ncdim_to_size = g["ncdim_to_size"]
             if ncdim not in ncdim_to_size:
                 logger.info(
-                    '    Writing size {} netCDF part '
-                    'dimension{}'.format(size, ncdim)
+                    "    Writing size {} netCDF part "
+                    "dimension{}".format(size, ncdim)
                 )  # pragma: no cover
                 ncdim_to_size[ncdim] = size
 
@@ -1970,7 +2035,7 @@ class NetCDFWrite(IOWrite):
                 # to place this netCDF dimension.
                 parent_group = self._parent_group(ncdim)
 
-                if g['group'] and '/' in ncdim:
+                if g["group"] and "/" in ncdim:
                     # This dimension needs to go into a sub-group so
                     # replace its name with its basename (CF>=1.8)
                     ncdim = self._remove_group_structure(ncdim)
@@ -1983,41 +2048,41 @@ class NetCDFWrite(IOWrite):
             self._write_netcdf_variable(ncvar, (ncdim,), interior_ring)
         # --- End: if
 
-        g['part_ncdim'] = ncdim
+        g["part_ncdim"] = ncdim
 
         # Return encodings
-        return {'interior_ring': ncvar,
-                'part_ncdim': ncdim}
+        return {"interior_ring": ncvar, "part_ncdim": ncdim}
 
-    def _write_scalar_coordinate(self, f, key, coord_1d, axis, coordinates,
-                                 extra=None):
-        '''Write a scalar coordinate and its bounds to the netCDF file.
+    def _write_scalar_coordinate(
+        self, f, key, coord_1d, axis, coordinates, extra=None
+    ):
+        """Write a scalar coordinate and its bounds to the netCDF file.
 
-    It is assumed that the input coordinate is has size 1, but this is not
-    checked.
+        It is assumed that the input coordinate is has size 1, but this is not
+        checked.
 
-    If an equal scalar coordinate has already been written to the file
-    then the input coordinate is not written.
+        If an equal scalar coordinate has already been written to the file
+        then the input coordinate is not written.
 
-    :Parameters:
+        :Parameters:
 
-        f: Field construct
+            f: Field construct
 
-        key: `str`
-            The coordinate construct key
+            key: `str`
+                The coordinate construct key
 
-        coordinate
-        axis : str
-            The field's axis identifier for the scalar coordinate.
+            coordinate
+            axis : str
+                The field's axis identifier for the scalar coordinate.
 
-        coordinates: `list`
+            coordinates: `list`
 
-    :Returns:
+        :Returns:
 
-        coordinates: `list`
-            The updated list of netCDF auxiliary coordinate names.
+            coordinates: `list`
+                The updated list of netCDF auxiliary coordinate names.
 
-        '''
+        """
         # To avoid mutable default argument (an anti-pattern) of extra={}
         if extra is None:
             extra = {}
@@ -2027,8 +2092,9 @@ class NetCDFWrite(IOWrite):
         scalar_coord = self.implementation.squeeze(coord_1d, axes=0)
 
         if not self._already_in_file(scalar_coord, ()):
-            ncvar = self._create_netcdf_variable_name(scalar_coord,
-                                                      default='scalar')
+            ncvar = self._create_netcdf_variable_name(
+                scalar_coord, default="scalar"
+            )
 
             # If this scalar coordinate has bounds then create the
             # bounds netCDF variable and add the 'bounds' or
@@ -2037,45 +2103,46 @@ class NetCDFWrite(IOWrite):
             bounds_extra = self._write_bounds(f, scalar_coord, key, (), ncvar)
 
             # Create a new scalar coordinate variable
-            self._write_netcdf_variable(ncvar, (), scalar_coord,
-                                        extra=bounds_extra)
+            self._write_netcdf_variable(
+                ncvar, (), scalar_coord, extra=bounds_extra
+            )
 
         else:
             # This scalar coordinate has already been written to the
             # file
-            ncvar = g['seen'][id(scalar_coord)]['ncvar']
+            ncvar = g["seen"][id(scalar_coord)]["ncvar"]
 
-        g['axis_to_ncscalar'][axis] = ncvar
+        g["axis_to_ncscalar"][axis] = ncvar
 
-        g['key_to_ncvar'][key] = ncvar
+        g["key_to_ncvar"][key] = ncvar
 
         coordinates.append(ncvar)
 
         return coordinates
 
     def _write_auxiliary_coordinate(self, f, key, coord, coordinates):
-        '''Write auxiliary coordinates and bounds to the netCDF file.
+        """Write auxiliary coordinates and bounds to the netCDF file.
 
-    If an equal auxiliary coordinate has already been written to the file
-    then the input coordinate is not written.
+        If an equal auxiliary coordinate has already been written to the file
+        then the input coordinate is not written.
 
-    :Parameters:
+        :Parameters:
 
-        f: Field construct
+            f: Field construct
 
-        key: `str`
+            key: `str`
 
-        coord: Coordinate construct
+            coord: Coordinate construct
 
-        coordinates: `list`
+            coordinates: `list`
 
-    :Returns:
+        :Returns:
 
-        `list`
-            The list of netCDF auxiliary coordinate names updated in
-            place.
+            `list`
+                The list of netCDF auxiliary coordinate names updated in
+                place.
 
-        '''
+        """
         g = self.write_vars
 
         ncvar = None
@@ -2084,29 +2151,33 @@ class NetCDFWrite(IOWrite):
         ncdimensions = self._netcdf_dimensions(f, key, coord)
 
         if self._already_in_file(coord, ncdimensions):
-            ncvar = g['seen'][id(coord)]['ncvar']
+            ncvar = g["seen"][id(coord)]["ncvar"]
 
             # Register that bounds as being the file, too. This is so
             # that a geometry container variable can be created later
             # on, if required.
-            bounds_ncvar = g['bounds'].get(ncvar)
+            bounds_ncvar = g["bounds"].get(ncvar)
             if bounds_ncvar is not None:
                 bounds = self.implementation.get_bounds(coord, None)
                 if bounds is not None:
-                    g['seen'][id(bounds)] = {
-                        'ncvar': bounds_ncvar,
-                        'variable': bounds,
-                        'ncdims': None
+                    g["seen"][id(bounds)] = {
+                        "ncvar": bounds_ncvar,
+                        "variable": bounds,
+                        "ncdims": None,
                     }
         else:
-            if (not self.implementation.get_properties(coord) and
-                    self.implementation.get_data(coord, default=None) is None):
+            if (
+                not self.implementation.get_properties(coord)
+                and self.implementation.get_data(coord, default=None) is None
+            ):
                 # No coordinates, but possibly bounds
-                self._write_bounds(f, coord, key, ncdimensions,
-                                   coord_ncvar=None)
+                self._write_bounds(
+                    f, coord, key, ncdimensions, coord_ncvar=None
+                )
             else:
-                ncvar = self._create_netcdf_variable_name(coord,
-                                                          default='auxiliary')
+                ncvar = self._create_netcdf_variable_name(
+                    coord, default="auxiliary"
+                )
 
                 # TODO: move setting of bounds ncvar to here - why?
 
@@ -2118,15 +2189,16 @@ class NetCDFWrite(IOWrite):
 
                 # Create a new auxiliary coordinate variable, if it has data
                 if self.implementation.get_data(coord, None) is not None:
-                    self._write_netcdf_variable(ncvar, ncdimensions, coord,
-                                                extra=extra)
+                    self._write_netcdf_variable(
+                        ncvar, ncdimensions, coord, extra=extra
+                    )
 
-#                g['key_to_ncvar'][key] = ncvar
-#                g['key_to_ncdims'][key] = ncdimensions
+        #                g['key_to_ncvar'][key] = ncvar
+        #                g['key_to_ncdims'][key] = ncdimensions
         # --- End: if
 
-        g['key_to_ncvar'][key] = ncvar
-        g['key_to_ncdims'][key] = ncdimensions
+        g["key_to_ncvar"][key] = ncvar
+        g["key_to_ncdims"][key] = ncdimensions
 
         if ncvar is not None:
             coordinates.append(ncvar)
@@ -2134,28 +2206,28 @@ class NetCDFWrite(IOWrite):
         return coordinates
 
     def _write_domain_ancillary(self, f, key, anc):
-        '''Write a domain ancillary and its bounds to the netCDF file.
+        """Write a domain ancillary and its bounds to the netCDF file.
 
-    If an equal domain ancillary has already been written to the file
-    athen it is not re-written.
+        If an equal domain ancillary has already been written to the file
+        athen it is not re-written.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Parameters:
+        :Parameters:
 
-        f: Field construct
+            f: Field construct
 
-        key: `str`
-            The internal identifier of the domain ancillary object.
+            key: `str`
+                The internal identifier of the domain ancillary object.
 
-        anc: Domain ancillary construct
+            anc: Domain ancillary construct
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The netCDF variable name of the domain ancillary variable.
+            `str`
+                The netCDF variable name of the domain ancillary variable.
 
-        '''
+        """
         g = self.write_vars
 
         ncdimensions = self._netcdf_dimensions(f, key, anc)
@@ -2163,16 +2235,19 @@ class NetCDFWrite(IOWrite):
         create = not self._already_in_file(anc, ncdimensions, ignore_type=True)
 
         if not create:
-            ncvar = g['seen'][id(anc)]['ncvar']
+            ncvar = g["seen"][id(anc)]["ncvar"]
         else:
             # See if we can set the default netCDF variable name to
             # its formula_terms term
             default = None
             for ref in self.implementation.get_coordinate_references(
-                    f).values():
-                for term, da_key in (  # DCH ALERT
-                        ref.coordinate_conversion.domain_ancillaries(
-                            ).items()
+                f
+            ).values():
+                for (
+                    term,
+                    da_key,
+                ) in (  # DCH ALERT
+                    ref.coordinate_conversion.domain_ancillaries().items()
                 ):
                     if da_key == key:
                         default = term
@@ -2183,10 +2258,9 @@ class NetCDFWrite(IOWrite):
             # --- End: for
 
             if default is None:
-                default = 'domain_ancillary'
+                default = "domain_ancillary"
 
-            ncvar = self._create_netcdf_variable_name(anc,
-                                                      default=default)
+            ncvar = self._create_netcdf_variable_name(anc, default=default)
 
             # If this domain ancillary has bounds then create the bounds
             # netCDF variable
@@ -2195,35 +2269,35 @@ class NetCDFWrite(IOWrite):
             # Create a new domain ancillary variable
             self._write_netcdf_variable(ncvar, ncdimensions, anc)
 
-        g['key_to_ncvar'][key] = ncvar
-        g['key_to_ncdims'][key] = ncdimensions
+        g["key_to_ncvar"][key] = ncvar
+        g["key_to_ncdims"][key] = ncdimensions
 
         return ncvar
 
     def _write_field_ancillary(self, f, key, anc):
-        '''Write a field ancillary to the netCDF file.
+        """Write a field ancillary to the netCDF file.
 
-    If an equal field ancillary has already been written to the file
-    then it is not re-written.
+        If an equal field ancillary has already been written to the file
+        then it is not re-written.
 
-    :Parameters:
+        :Parameters:
 
-        f : Field construct
+            f : Field construct
 
-        key : str
+            key : str
 
-        anc : Field ancillary construct
+            anc : Field ancillary construct
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The netCDF variable name of the field ancillary object.
+            `str`
+                The netCDF variable name of the field ancillary object.
 
-    **Examples:**
+        **Examples:**
 
-    >>> ncvar = _write_field_ancillary(f, 'fieldancillary2', anc)
+        >>> ncvar = _write_field_ancillary(f, 'fieldancillary2', anc)
 
-        '''
+        """
         g = self.write_vars
 
         ncdimensions = self._netcdf_dimensions(f, key, anc)
@@ -2231,104 +2305,111 @@ class NetCDFWrite(IOWrite):
         create = not self._already_in_file(anc, ncdimensions)
 
         if not create:
-            ncvar = g['seen'][id(anc)]['ncvar']
+            ncvar = g["seen"][id(anc)]["ncvar"]
         else:
-            ncvar = self._create_netcdf_variable_name(anc,
-                                                      default='ancillary_data')
+            ncvar = self._create_netcdf_variable_name(
+                anc, default="ancillary_data"
+            )
 
             # Create a new field ancillary variable
             self._write_netcdf_variable(ncvar, ncdimensions, anc)
 
-        g['key_to_ncvar'][key] = ncvar
-        g['key_to_ncdims'][key] = ncdimensions
+        g["key_to_ncvar"][key] = ncvar
+        g["key_to_ncdims"][key] = ncdimensions
 
         return ncvar
 
     def _write_cell_measure(self, field, key, cell_measure):
-        '''Write a cell measure construct to the netCDF file.
+        """Write a cell measure construct to the netCDF file.
 
-    If an identical construct has already in the file then the cell
-    measure will not be written.
+        If an identical construct has already in the file then the cell
+        measure will not be written.
 
-    :Parameters:
+        :Parameters:
 
-        field: Field construct
-            The field containing the cell measure.
+            field: Field construct
+                The field containing the cell measure.
 
-        key: `str`
-            The identifier of the cell measure (e.g. 'cellmeasure0').
+            key: `str`
+                The identifier of the cell measure (e.g. 'cellmeasure0').
 
-        cell_measure: Cell measure construct
+            cell_measure: Cell measure construct
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The 'measure: ncvar'.
+            `str`
+                The 'measure: ncvar'.
 
-        '''
+        """
         g = self.write_vars
 
         measure = self.implementation.get_measure(cell_measure)
         if measure is None:
             raise ValueError(
                 "Can't create a netCDF cell measure variable "
-                "without a 'measure' property")
+                "without a 'measure' property"
+            )
 
         ncdimensions = self._netcdf_dimensions(field, key, cell_measure)
 
         if self._already_in_file(cell_measure, ncdimensions):
             # Use existing cell measure variable
-            ncvar = g['seen'][id(cell_measure)]['ncvar']
+            ncvar = g["seen"][id(cell_measure)]["ncvar"]
         elif self.implementation.nc_get_external(cell_measure):
             # The cell measure is external
-            ncvar = self._create_netcdf_variable_name(cell_measure,
-                                                      default='cell_measure')
+            ncvar = self._create_netcdf_variable_name(
+                cell_measure, default="cell_measure"
+            )
 
             # Add ncvar to the global external_variables attribute
             self._set_external_variables(ncvar)
 
             # Create a new field to write out to the external file
-            if g['external_file'] is not None:
-                self._create_external(field=field, construct_id=key,
-                                      ncvar=ncvar, ncdimensions=ncdimensions)
+            if g["external_file"] is not None:
+                self._create_external(
+                    field=field,
+                    construct_id=key,
+                    ncvar=ncvar,
+                    ncdimensions=ncdimensions,
+                )
         else:
-            ncvar = self._create_netcdf_variable_name(cell_measure,
-                                                      default='cell_measure')
+            ncvar = self._create_netcdf_variable_name(
+                cell_measure, default="cell_measure"
+            )
 
             # Create a new cell measure variable
             self._write_netcdf_variable(ncvar, ncdimensions, cell_measure)
 
-        g['key_to_ncvar'][key] = ncvar
-        g['key_to_ncdims'][key] = ncdimensions
+        g["key_to_ncvar"][key] = ncvar
+        g["key_to_ncdims"][key] = ncdimensions
 
         # Update the field's cell_measures list
-        return '{0}: {1}'.format(measure, ncvar)
+        return "{0}: {1}".format(measure, ncvar)
 
     def _set_external_variables(self, ncvar):
-        '''Add ncvar to the global external_variables attribute
-
-        '''
+        """Add ncvar to the global external_variables attribute"""
         g = self.write_vars
 
-        external_variables = g['external_variables']
+        external_variables = g["external_variables"]
 
         if external_variables:
-            external_variables = '{} {}'.format(external_variables, ncvar)
+            external_variables = "{} {}".format(external_variables, ncvar)
         else:
             external_variables = ncvar
-            g['global_attributes'].add('external_variables')
+            g["global_attributes"].add("external_variables")
 
-        g['netcdf'].setncattr('external_variables', external_variables)
+        g["netcdf"].setncattr("external_variables", external_variables)
 
-        g['external_variables'] = external_variables
+        g["external_variables"] = external_variables
 
-    def _create_external(self, field=None, construct_id=None,
-                         ncvar=None, ncdimensions=None):
-        '''Create a new field to flag it for being written the external file.
+    def _create_external(
+        self, field=None, construct_id=None, ncvar=None, ncdimensions=None
+    ):
+        """Create a new field to flag it for being written the external file.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-        '''
+        """
         g = self.write_vars
 
         if ncdimensions is None:
@@ -2336,76 +2417,79 @@ class NetCDFWrite(IOWrite):
 
         # Still here?
         external = self.implementation.convert(
-            field=field,
-            construct_id=construct_id)
+            field=field, construct_id=construct_id
+        )
 
         # Set the correct netCDF variable and dimension names
         self.implementation.nc_set_variable(external, ncvar)
 
         external_domain_axes = self.implementation.get_domain_axes(external)
-        for ncdim, axis in zip(ncdimensions,
-                               self.implementation.get_field_data_axes(
-                                   external)):
+        for ncdim, axis in zip(
+            ncdimensions, self.implementation.get_field_data_axes(external)
+        ):
             external_domain_axis = external_domain_axes[axis]
             self.implementation.nc_set_dimension(external_domain_axis, ncdim)
 
-        g['external_fields'].append(external)
+        g["external_fields"].append(external)
 
         return external
 
     def _createVariable(self, **kwargs):
-        '''Create a variable in the netCDF file.
+        """Create a variable in the netCDF file.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-        '''
+        """
         g = self.write_vars
 
-        ncvar = kwargs['varname']
+        ncvar = kwargs["varname"]
 
-        g['nc'][ncvar] = g['netcdf'].createVariable(**kwargs)
+        g["nc"][ncvar] = g["netcdf"].createVariable(**kwargs)
 
     def _write_grid_mapping(self, f, ref, multiple_grid_mappings):
-        '''Write a grid mapping georeference to the netCDF file.
+        """Write a grid mapping georeference to the netCDF file.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Parameters:
+        :Parameters:
 
-        f: Field construct
+            f: Field construct
 
-        ref: Coordinate reference construct
-            The grid mapping coordinate reference to write to the file.
+            ref: Coordinate reference construct
+                The grid mapping coordinate reference to write to the file.
 
-        multiple_grid_mappings: `bool`
+            multiple_grid_mappings: `bool`
 
-    :Returns:
+        :Returns:
 
-        `str`
+            `str`
 
-        '''
+        """
         g = self.write_vars
 
         if self._already_in_file(ref):
             # Use existing grid_mapping variable
-            ncvar = g['seen'][id(ref)]['ncvar']
+            ncvar = g["seen"][id(ref)]["ncvar"]
 
         else:
             # Create a new grid mapping variable
             cc_parameters = (
-                self.implementation.get_coordinate_conversion_parameters(ref))
-            default = cc_parameters.get('grid_mapping_name', 'grid_mapping')
+                self.implementation.get_coordinate_conversion_parameters(ref)
+            )
+            default = cc_parameters.get("grid_mapping_name", "grid_mapping")
             ncvar = self._create_netcdf_variable_name(ref, default=default)
 
             logger.info(
-                '    Writing {!r} to netCDF variable:'.format(ref, ncvar)
+                "    Writing {!r} to netCDF variable:".format(ref, ncvar)
             )  # pragma: no cover
 
-            kwargs = {'varname': ncvar,
-                      'datatype': 'S1',
-                      'dimensions': (),
-                      'endian': g['endian']}
-            kwargs.update(g['netcdf_compression'])
+            kwargs = {
+                "varname": ncvar,
+                "datatype": "S1",
+                "dimensions": (),
+                "endian": g["endian"],
+            }
+            kwargs.update(g["netcdf_compression"])
 
             self._createVariable(**kwargs)
 
@@ -2425,67 +2509,78 @@ class NetCDFWrite(IOWrite):
 
                 parameters[term] = value
 
-            g['nc'][ncvar].setncatts(parameters)
+            g["nc"][ncvar].setncatts(parameters)
 
             # Update the 'seen' dictionary
-            g['seen'][id(ref)] = {
-                'variable': ref,
-                'ncvar': ncvar,
+            g["seen"][id(ref)] = {
+                "variable": ref,
+                "ncvar": ncvar,
                 # Grid mappings have no netCDF dimensions
-                'ncdims': (),
+                "ncdims": (),
             }
         # --- End: if
 
         if multiple_grid_mappings:
-            return '{0}: {1}'.format(
+            return "{0}: {1}".format(
                 ncvar,
-                ' '.join(sorted(
-                    [g['key_to_ncvar'][key] for key in
-                     self.implementation.get_coordinate_reference_coordinates(
-                         ref)
-                     ]
-                ))
+                " ".join(
+                    sorted(
+                        [
+                            g["key_to_ncvar"][key]
+                            for key in self.implementation.get_coordinate_reference_coordinates(
+                                ref
+                            )
+                        ]
+                    )
+                ),
             )
         else:
             return ncvar
 
-    def _write_netcdf_variable(self, ncvar, ncdimensions, cfvar,
-                               omit=(), extra=None, fill=False,
-                               data_variable=False):
-        '''Create a netCDF variable from *cfvar* with name *ncvar* and
-    dimensions *ncdimensions*. The new netCDF variable's properties
-    are given by cfvar.properties(), less any given by the *omit*
-    argument. If a new string-length netCDF dimension is required then
-    it will also be created. The ``seen`` dictionary is updated for
-    *cfvar*.
+    def _write_netcdf_variable(
+        self,
+        ncvar,
+        ncdimensions,
+        cfvar,
+        omit=(),
+        extra=None,
+        fill=False,
+        data_variable=False,
+    ):
+        """Create a netCDF variable from *cfvar* with name *ncvar* and
+        dimensions *ncdimensions*. The new netCDF variable's properties
+        are given by cfvar.properties(), less any given by the *omit*
+        argument. If a new string-length netCDF dimension is required then
+        it will also be created. The ``seen`` dictionary is updated for
+        *cfvar*.
 
-    :Parameters:
+        :Parameters:
 
-        ncvar: `str`
-            The netCDF name of the variable.
+            ncvar: `str`
+                The netCDF name of the variable.
 
-        dimensions: `tuple`
-            The netCDF dimension names of the variable
+            dimensions: `tuple`
+                The netCDF dimension names of the variable
 
-        cfvar: `Variable`
-            The construct to write to the netCDF file.
+            cfvar: `Variable`
+                The construct to write to the netCDF file.
 
-        omit: sequence of `str`, optional
+            omit: sequence of `str`, optional
 
-        extra: `dict`, optional
+            extra: `dict`, optional
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-        '''
+        """
         # To avoid mutable default argument (an anti-pattern) of extra={}
         if extra is None:
             extra = {}
 
         g = self.write_vars
 
-        logger.info('    Writing {!r}'.format(cfvar))  # pragma: no cover
+        logger.info("    Writing {!r}".format(cfvar))  # pragma: no cover
 
         # ------------------------------------------------------------
         # Set the netCDF4.createVariable datatype
@@ -2495,8 +2590,7 @@ class NetCDFWrite(IOWrite):
 
         original_ncdimensions = ncdimensions
 
-        data, ncdimensions = self._transform_strings(cfvar, data,
-                                                     ncdimensions)
+        data, ncdimensions = self._transform_strings(cfvar, data, ncdimensions)
 
         # ------------------------------------------------------------
         # Find the fill value - the value that the variable's data get
@@ -2507,14 +2601,14 @@ class NetCDFWrite(IOWrite):
         #    fill_value = self.implementation.get_property(
         #        cfvar, '_FillValue', None)
         # else:
-#        fill_value = None #False
+        #        fill_value = None #False
 
-#        fill_value = None
-#        if g['fmt'] == 'NETCDF4' and datatype == str:
-#            fill_value = '\x00'
+        #        fill_value = None
+        #        if g['fmt'] == 'NETCDF4' and datatype == str:
+        #            fill_value = '\x00'
 
         if data_variable:
-            lsd = g['least_significant_digit']
+            lsd = g["least_significant_digit"]
         else:
             lsd = None
 
@@ -2525,14 +2619,14 @@ class NetCDFWrite(IOWrite):
 
         if chunksizes is not None:
             logger.detail(
-                '      HDF5 chunksizes: {}'.format(chunksizes)
+                "      HDF5 chunksizes: {}".format(chunksizes)
             )  # pragma: no cover
 
         # ------------------------------------------------------------
         # Check that each dimension of the netCDF variable name is in
         # the same group or else in a sub-group (CF>=1.8)
         # ------------------------------------------------------------
-        if g['group']:
+        if g["group"]:
             groups = self._groups(ncvar)
             for ncdim in ncdimensions:
                 ncdim_groups = self._groups(ncdim)
@@ -2541,7 +2635,8 @@ class NetCDFWrite(IOWrite):
                         "Can't create netCDF variable {!r} from {!r} "
                         "with dimension {!r} that is not in the same group or "
                         "a sub-group as the variable.".format(
-                            ncvar, cfvar, ncdim)
+                            ncvar, cfvar, ncdim
+                        )
                     )
         # --- End: if
 
@@ -2549,56 +2644,64 @@ class NetCDFWrite(IOWrite):
         # Replace netCDF dimension names with their basenames
         # (CF>=1.8)
         # ------------------------------------------------------------
-#        ncdimensions_basename = [ncdim.split('/')[-1]
-#                                 for ncdim in ncdimensions]
-        ncdimensions_basename = [self._remove_group_structure(ncdim)
-                                 for ncdim in ncdimensions]
+        #        ncdimensions_basename = [ncdim.split('/')[-1]
+        #                                 for ncdim in ncdimensions]
+        ncdimensions_basename = [
+            self._remove_group_structure(ncdim) for ncdim in ncdimensions
+        ]
 
         # ------------------------------------------------------------
         # Create a new netCDF variable
         # ------------------------------------------------------------
         kwargs = {
-            'varname': ncvar,
-            'datatype': datatype,
-            'dimensions': ncdimensions_basename,
-            'endian': g['endian'],
-            'chunksizes': chunksizes,
+            "varname": ncvar,
+            "datatype": datatype,
+            "dimensions": ncdimensions_basename,
+            "endian": g["endian"],
+            "chunksizes": chunksizes,
             # 'fill_value': fill_value,
             # 'least_significant_digit': lsd,
         }
 
-        kwargs.update(g['netcdf_compression'])
+        kwargs.update(g["netcdf_compression"])
 
         # Note: this is a trivial assignment in standalone cfdm, but required
         # for non-trivial customisation applied by subclasses e.g. in cf-python
         kwargs = self._customize_createVariable(cfvar, kwargs)
 
         logger.info(
-            ' to netCDF variable: {}({})'.format(
-                ncvar, ', '.join(ncdimensions))
+            " to netCDF variable: {}({})".format(
+                ncvar, ", ".join(ncdimensions)
+            )
         )  # pragma: no cover
 
         try:
             self._createVariable(**kwargs)
         except RuntimeError as error:
             error = str(error)
-            if error == ("NetCDF: Not a valid data type or _FillValue "
-                         "type mismatch"):
+            if error == (
+                "NetCDF: Not a valid data type or _FillValue " "type mismatch"
+            ):
                 raise ValueError(
                     "Can't write {} data from {!r} to a {} file. "
                     "Consider using a netCDF4 format, or use the 'datatype' "
                     "parameter, or change the datatype before writing.".format(
-                        cfvar.data.dtype.name, cfvar, g['netcdf'].file_format))
+                        cfvar.data.dtype.name, cfvar, g["netcdf"].file_format
+                    )
+                )
 
             message = "Can't create variable in {} file from {} ({})".format(
-                g['netcdf'].file_format, cfvar, error)
+                g["netcdf"].file_format, cfvar, error
+            )
 
-            if error == 'NetCDF: NC_UNLIMITED in the wrong index':
+            if error == "NetCDF: NC_UNLIMITED in the wrong index":
                 raise RuntimeError(
                     message + ". In a {} file the unlimited dimension must "
                     "be the first (leftmost) dimension of the variable. "
                     "Consider using a netCDF4 format.".format(
-                        g['netcdf'].file_format))
+                        g["netcdf"].file_format
+                    )
+                )
 
             raise RuntimeError(message)
 
@@ -2606,8 +2709,9 @@ class NetCDFWrite(IOWrite):
         # Write attributes to the netCDF variable
         # ------------------------------------------------------------
 
-        attributes = self._write_attributes(cfvar, ncvar, extra=extra,
-                                            omit=omit)
+        attributes = self._write_attributes(
+            cfvar, ncvar, extra=extra, omit=omit
+        )
 
         # ------------------------------------------------------------
         # Write data to the netCDF variable
@@ -2622,74 +2726,83 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         if data is not None:
             # Find the missing data values, if any.
-            _FillValue = self.implementation.get_property(cfvar,
-                                                          '_FillValue',
-                                                          None)
-            missing_value = self.implementation.get_property(cfvar,
-                                                             'missing_value',
-                                                             None)
-            unset_values = [value for value in (_FillValue, missing_value)
-                            if value is not None]
+            _FillValue = self.implementation.get_property(
+                cfvar, "_FillValue", None
+            )
+            missing_value = self.implementation.get_property(
+                cfvar, "missing_value", None
+            )
+            unset_values = [
+                value
+                for value in (_FillValue, missing_value)
+                if value is not None
+            ]
 
             compressed = bool(
-                set(ncdimensions).intersection(g['sample_ncdim'].values()))
+                set(ncdimensions).intersection(g["sample_ncdim"].values())
+            )
 
-            self._write_data(data, cfvar, ncvar, ncdimensions,
-                             unset_values=unset_values,
-                             compressed=compressed,
-                             attributes=attributes)
+            self._write_data(
+                data,
+                cfvar,
+                ncvar,
+                ncdimensions,
+                unset_values=unset_values,
+                compressed=compressed,
+                attributes=attributes,
+            )
 
         # Update the 'seen' dictionary
-        g['seen'][id(cfvar)] = {
-            'variable': cfvar,
-            'ncvar': ncvar,
-            'ncdims': original_ncdimensions
+        g["seen"][id(cfvar)] = {
+            "variable": cfvar,
+            "ncvar": ncvar,
+            "ncdims": original_ncdimensions,
         }
 
     def _customize_createVariable(self, cfvar, kwargs):
-        '''Customise keyword arguments for `netCDF4.Dataset.createVariable`.
+        """Customise keyword arguments for `netCDF4.Dataset.createVariable`.
 
-    .. versionadded:: (cfdm) 1.7.6
+        .. versionadded:: (cfdm) 1.7.6
 
-    :Parameters:
+        :Parameters:
 
-        cfvar: cfdm instance that contains data
+            cfvar: cfdm instance that contains data
 
-        kwargs: `dict`
+            kwargs: `dict`
 
-    :Returns:
+        :Returns:
 
-        `dict`
-            Dictionary of keyword arguments to be passed to
-            `netCDF4.Dataset.createVariable`.
+            `dict`
+                Dictionary of keyword arguments to be passed to
+                `netCDF4.Dataset.createVariable`.
 
-        '''
+        """
         # This method is trivial but the intention is that subclasses will
         # override it to perform any desired customisation. Notably see
         # the equivalent method in cf-python which is non-trivial.
         return kwargs
 
     def _transform_strings(self, construct, data, ncdimensions):
-        '''Transform metadata construct arrays with string data type.
+        """Transform metadata construct arrays with string data type.
 
-    .. versionadded:: (cfdm) 1.7.3
+        .. versionadded:: (cfdm) 1.7.3
 
-    :Parameters:
+        :Parameters:
 
-        construct: metadata construct object
+            construct: metadata construct object
 
-        data: Data instance or `None`
+            data: Data instance or `None`
 
-        ncdimensions: `tuple`
+            ncdimensions: `tuple`
 
-    :Returns:
+        :Returns:
 
-        `Data`, `tuple`
+            `Data`, `tuple`
 
-        '''
+        """
         datatype = self._datatype(construct)
 
-        if data is not None and datatype == 'S1':
+        if data is not None and datatype == "S1":
             # --------------------------------------------------------
             # Convert a string data type numpy array into a character
             # data type ('S1') numpy array with an extra trailing
@@ -2697,10 +2810,10 @@ class NetCDFWrite(IOWrite):
             # is str, so this conversion does not happen.
             # --------------------------------------------------------
             array = self.implementation.get_array(data)
-#            if numpy.ma.is_masked(array):
-#                array = array.compressed()
-#            else:
-#                array = array.flatten()
+            #            if numpy.ma.is_masked(array):
+            #                array = array.compressed()
+            #            else:
+            #                array = array.flatten()
             array = self._numpy_compressed(array)
 
             strlen = len(max(array, key=len))
@@ -2712,27 +2825,35 @@ class NetCDFWrite(IOWrite):
 
         return data, ncdimensions
 
-    def _write_data(self, data, cfvar, ncvar, ncdimensions,
-                    unset_values=(), compressed=False, attributes=None):
-        '''Write a data array to the netCDF file.
+    def _write_data(
+        self,
+        data,
+        cfvar,
+        ncvar,
+        ncdimensions,
+        unset_values=(),
+        compressed=False,
+        attributes=None,
+    ):
+        """Write a data array to the netCDF file.
 
-    :Parameters:
+        :Parameters:
 
-        data: Data instance
+            data: Data instance
 
-        cfvar: cfdm instance
+            cfvar: cfdm instance
 
-        ncvar: `str`
+            ncvar: `str`
 
-        ncdimensions: `tuple` of `str`
+            ncdimensions: `tuple` of `str`
 
-        unset_values: sequence of numbers
+            unset_values: sequence of numbers
 
-        attributes: `dict`, optional
-            The netCDF attributes for the constructs that have been
-            written to the file.
+            attributes: `dict`, optional
+                The netCDF attributes for the constructs that have been
+                written to the file.
 
-        '''
+        """
         # To avoid mutable default argument (an anti-pattern) of attributes={}
         if attributes is None:
             attributes = {}
@@ -2748,7 +2869,7 @@ class NetCDFWrite(IOWrite):
             array = self.implementation.get_array(data)
 
         # Convert data type
-        new_dtype = g['datatype'].get(array.dtype)
+        new_dtype = g["datatype"].get(array.dtype)
         if new_dtype is not None:
             array = array.astype(new_dtype)
 
@@ -2759,147 +2880,173 @@ class NetCDFWrite(IOWrite):
             #     temp_array = array.compressed()
             # else:
             #     temp_array = array
-            if numpy.intersect1d(unset_values,
-                                 self._numpy_compressed(array)).size:
+            if numpy.intersect1d(
+                unset_values, self._numpy_compressed(array)
+            ).size:
                 raise ValueError(
                     "ERROR: Can't write data that has _FillValue or "
-                    "missing_value at unmasked point: {!r}".format(ncvar))
+                    "missing_value at unmasked point: {!r}".format(ncvar)
+                )
         # --- End: if
 
-        if (g['fmt'] == 'NETCDF4' and array.dtype.kind in 'SU' and
-                numpy.ma.isMA(array)):
+        if (
+            g["fmt"] == "NETCDF4"
+            and array.dtype.kind in "SU"
+            and numpy.ma.isMA(array)
+        ):
             # VLEN variables can not be assigned to by masked arrays
             # https://github.com/Unidata/netcdf4-python/pull/465
-            array = array.filled('')
+            array = array.filled("")
 
-        if g['warn_valid']:
+        if g["warn_valid"]:
             # Check for out-of-range values
             warned = self._check_valid(cfvar, array, attributes)
 
         # Copy the array into the netCDF variable
-        g['nc'][ncvar][...] = array
+        g["nc"][ncvar][...] = array
 
     def _check_valid(self, cfvar, array, attributes):
-        '''Check array for out-of-range values, as defined by the
-    valid_[min|max|range] attributes.
+        """Check array for out-of-range values, as defined by the
+        valid_[min|max|range] attributes.
 
-    .. versionadded:: (cfdm) 1.8.3
+        .. versionadded:: (cfdm) 1.8.3
 
-    :Parameters:
+        :Parameters:
 
-        cfvar: Construct
+            cfvar: Construct
 
-        array: `numpy.ndarray`
+            array: `numpy.ndarray`
 
-        attributes: `dict`
+            attributes: `dict`
 
-    :Returns:
+        :Returns:
 
-        `bool`
-            Whether or not a warning was issued.
+            `bool`
+                Whether or not a warning was issued.
 
-        '''
+        """
         out = 0
 
         valid_range = None
         valid_min = None
         valid_max = None
 
-        if 'valid_range' in attributes:
-            prop = 'valid_range'
+        if "valid_range" in attributes:
+            prop = "valid_range"
             valid_range = True
             valid_min, valid_max = attributes[prop]
 
-        message = ("WARNING: {!r} has data values written to {} "
-                   "that are strictly {} than the valid {} "
-                   "defined by the {} property: {}. "
-                   "Set warn_valid=False to remove warning.")
+        message = (
+            "WARNING: {!r} has data values written to {} "
+            "that are strictly {} than the valid {} "
+            "defined by the {} property: {}. "
+            "Set warn_valid=False to remove warning."
+        )
 
-        if 'valid_min' in attributes:
-            prop = 'valid_min'
+        if "valid_min" in attributes:
+            prop = "valid_min"
             if valid_range:
-                raise ValueError("Can't write {!r} with both {} and "
-                                 "valid_range properties".format(cvfar, prop))
+                raise ValueError(
+                    "Can't write {!r} with both {} and "
+                    "valid_range properties".format(cvfar, prop)
+                )
 
             valid_min = attributes[prop]
 
         if valid_min is not None and array.min() < valid_min:
-            print(message.format(
-                cfvar, self.write_vars['filename'],
-                'less', 'minimum', prop, valid_min))
+            print(
+                message.format(
+                    cfvar,
+                    self.write_vars["filename"],
+                    "less",
+                    "minimum",
+                    prop,
+                    valid_min,
+                )
+            )
             out += 1
 
-        if 'valid_max' in attributes:
-            prop = 'valid_max'
+        if "valid_max" in attributes:
+            prop = "valid_max"
             if valid_range:
-                raise ValueError("Can't write {!r} with both {} and "
-                                 "valid_range properties".format(cvfar, prop))
+                raise ValueError(
+                    "Can't write {!r} with both {} and "
+                    "valid_range properties".format(cvfar, prop)
+                )
 
             valid_max = attributes[prop]
 
         if valid_max is not None and array.max() > valid_max:
-            print(message.format(
-                cfvar, self.write_vars['filename'],
-                'greater', 'maximum', prop, valid_max))
+            print(
+                message.format(
+                    cfvar,
+                    self.write_vars["filename"],
+                    "greater",
+                    "maximum",
+                    prop,
+                    valid_max,
+                )
+            )
             out += 1
 
         return bool(out)
 
     def _convert_to_char(self, data):
-        '''Convert string data into character data
+        """Convert string data into character data
 
-    The return Data instance object will have data type 'S1' and will
-    have an extra trailing dimension.
+        The return Data instance object will have data type 'S1' and will
+        have an extra trailing dimension.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Parameters:
+        :Parameters:
 
-        data: Data instance
+            data: Data instance
 
-    :Returns:
+        :Returns:
 
-        Data instance
+            Data instance
 
-        '''
+        """
         strlen = data.dtype.itemsize
-#        print ('1 strlen =', strlen)
-#        if strlen > 1:
+        #        print ('1 strlen =', strlen)
+        #        if strlen > 1:
         data = self.implementation.initialise_Data(
-                array=self._character_array(
-                    self.implementation.get_array(data)),
-                units=self.implementation.get_data_units(data, None),
-                calendar=self.implementation.get_data_calendar(data, None),
-                copy=False)
+            array=self._character_array(self.implementation.get_array(data)),
+            units=self.implementation.get_data_units(data, None),
+            calendar=self.implementation.get_data_calendar(data, None),
+            copy=False,
+        )
 
         return data
 
-    def _write_field(self, f, add_to_seen=False,
-                     allow_data_insert_dimension=True):
-        '''Write a field construct to the netCDF file.
+    def _write_field(
+        self, f, add_to_seen=False, allow_data_insert_dimension=True
+    ):
+        """Write a field construct to the netCDF file.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Parameters:
+        :Parameters:
 
-        f: Field construct
+            f: Field construct
 
-        add_to_seen: bool, optional
+            add_to_seen: bool, optional
 
-        allow_data_insert_dimension: `bool`, optional
+            allow_data_insert_dimension: `bool`, optional
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-        '''
+        """
         g = self.write_vars
 
-        logger.info('  Writing {!r}:'.format(f))  # pragma: no cover
+        logger.info("  Writing {!r}:".format(f))  # pragma: no cover
 
         xxx = []
 
-        seen = g['seen']
+        seen = g["seen"]
 
         org_f = f
         if add_to_seen:
@@ -2916,69 +3063,74 @@ class NetCDFWrite(IOWrite):
         # the file.
         #
         # For example: {'domainaxis1': 'lon'}
-        g['axis_to_ncdim'] = {}
+        g["axis_to_ncdim"] = {}
 
         # Mapping of domain axis identifiers to netCDF scalar
         # coordinate variable names. This gets reset for each new
         # field that is written to the file.
         #
         # For example: {'domainaxis0': 'time'}
-        g['axis_to_ncscalar'] = {}
+        g["axis_to_ncscalar"] = {}
 
         # Mapping of construct internal identifiers to netCDF variable
         # names. This gets reset for each new field that is written to
         # the file.
         #
         # For example: {'dimensioncoordinate1': 'longitude'}
-        g['key_to_ncvar'] = {}
+        g["key_to_ncvar"] = {}
 
         # Mapping of construct internal identifiers to their netCDF
         # dimensions. This gets reset for each new field that is
         # written to the file.
         #
         # For example: {'dimensioncoordinate1': ['longitude']}
-        g['key_to_ncdims'] = {}
+        g["key_to_ncdims"] = {}
 
         # Type of compression applied to the field
         compression_type = self.implementation.get_compression_type(f)
-        g['compression_type'] = compression_type
+        g["compression_type"] = compression_type
         logger.info(
-            "    Compression = {!r}".format(g['compression_type'])
+            "    Compression = {!r}".format(g["compression_type"])
         )  # pragma: no cover
 
         #
-        g['sample_ncdim'] = {}
+        g["sample_ncdim"] = {}
 
         #
-        g['part_ncdim'] = None
+        g["part_ncdim"] = None
 
         # Initialize the list of the field's auxiliary and scalar
         # coordinate variable, and possibly its coordinate variables,
         # too.
         coordinates = []
 
-        if g['output_version'] >= g['CF-1.8']:
+        if g["output_version"] >= g["CF-1.8"]:
             if not self.implementation.conform_geometry_variables(f):
                 raise ValueError(
                     "Can't write {!r}: node count, part node count, "
                     "or interior ring variables have "
-                    "inconistent properties".format(f))
+                    "inconistent properties".format(f)
+                )
         # --- End: if
 
-        g['formula_terms_refs'] = [
-            ref
-            for ref in list(self.implementation.get_coordinate_references(
-                    f).values())
-            if self.implementation.get_coordinate_conversion_parameters(
-                    ref).get('standard_name', False)
-        ]
-
-        g['grid_mapping_refs'] = [
+        g["formula_terms_refs"] = [
             ref
             for ref in list(
-                    self.implementation.get_coordinate_references(f).values())
+                self.implementation.get_coordinate_references(f).values()
+            )
             if self.implementation.get_coordinate_conversion_parameters(
-                    ref).get('grid_mapping_name', False)
+                ref
+            ).get("standard_name", False)
+        ]
+
+        g["grid_mapping_refs"] = [
+            ref
+            for ref in list(
+                self.implementation.get_coordinate_references(f).values()
+            )
+            if self.implementation.get_coordinate_conversion_parameters(
+                ref
+            ).get("grid_mapping_name", False)
         ]
 
         field_coordinates = self.implementation.get_coordinates(f)
@@ -2986,27 +3138,38 @@ class NetCDFWrite(IOWrite):
         owning_coordinates = []
         standard_names = []
         computed_standard_names = []
-        for ref in g['formula_terms_refs']:
+        for ref in g["formula_terms_refs"]:
             coord_key = None
 
             standard_name = (
                 self.implementation.get_coordinate_conversion_parameters(
-                    ref).get('standard_name')
+                    ref
+                ).get("standard_name")
             )
             computed_standard_name = (
                 self.implementation.get_coordinate_conversion_parameters(
-                    ref).get('computed_standard_name')
+                    ref
+                ).get("computed_standard_name")
             )
 
-            if (standard_name is not None
-                    and computed_standard_name is not None):
-                for key in self.implementation.get_coordinate_reference_coordinates(ref):
+            if (
+                standard_name is not None
+                and computed_standard_name is not None
+            ):
+                for (
+                    key
+                ) in self.implementation.get_coordinate_reference_coordinates(
+                    ref
+                ):
                     coord = field_coordinates[key]
 
-                    if not (self.implementation.get_data_ndim(coord) == 1 and
-                            self.implementation.get_property(
-                                coord, 'standard_name', None)
-                            == standard_name):
+                    if not (
+                        self.implementation.get_data_ndim(coord) == 1
+                        and self.implementation.get_property(
+                            coord, "standard_name", None
+                        )
+                        == standard_name
+                    ):
                         continue
 
                     if coord_key is not None:
@@ -3026,31 +3189,35 @@ class NetCDFWrite(IOWrite):
                 continue
 
             x = self.implementation.get_property(
-                coord, 'computed_standard_name', None)
+                coord, "computed_standard_name", None
+            )
             if x is None:
                 self.implementation.set_property(
-                    field_coordinates[key], 'computed_standard_name', csn)
+                    field_coordinates[key], "computed_standard_name", csn
+                )
             elif x != csn:
                 raise ValueError("Standard name could not be computed.")
         # --- End: for
 
-        dimension_coordinates = (
-            self.implementation.get_dimension_coordinates(f)
+        dimension_coordinates = self.implementation.get_dimension_coordinates(
+            f
         )
 
         # For each of the field's domain axes ...
         domain_axes = self.implementation.get_domain_axes(f)
 
         for axis, domain_axis in sorted(domain_axes.items()):
-            ncdim = self.implementation.nc_get_dimension(domain_axis,
-                                                         default=None)
-#            if ncdim is not None:
-#                ncdim = self._netcdf_name(ncdim)
+            ncdim = self.implementation.nc_get_dimension(
+                domain_axis, default=None
+            )
+            #            if ncdim is not None:
+            #                ncdim = self._netcdf_name(ncdim)
 
             found_dimension_coordinate = False
             for key, dim_coord in dimension_coordinates.items():
-                if (self.implementation.get_construct_data_axes(f, key)
-                        != (axis,)):
+                if self.implementation.get_construct_data_axes(f, key) != (
+                    axis,
+                ):
                     continue
 
                 # ----------------------------------------------------
@@ -3062,16 +3229,19 @@ class NetCDFWrite(IOWrite):
                     # the dimension coordinate to the file as a
                     # coordinate variable.
                     ncvar = self._write_dimension_coordinate(
-                        f, key,
-                        dim_coord, ncdim=ncdim,
-                        coordinates=coordinates)
+                        f, key, dim_coord, ncdim=ncdim, coordinates=coordinates
+                    )
                 else:
                     # The data array does not span this axis (and
                     # therefore the dimension coordinate must have
                     # size 1).
-                    if (not g['scalar'] or
-                        len(self.implementation.get_constructs(
-                            f, axes=[axis])) >= 2):
+                    if (
+                        not g["scalar"]
+                        or len(
+                            self.implementation.get_constructs(f, axes=[axis])
+                        )
+                        >= 2
+                    ):
                         # Either A) it has been requested to not write
                         # scalar coordinate variables; or B) there ARE
                         # auxiliary coordinates, cell measures, domain
@@ -3080,14 +3250,18 @@ class NetCDFWrite(IOWrite):
                         # dimension coordinate to the file as a
                         # coordinate variable.
                         ncvar = self._write_dimension_coordinate(
-                            f, key,
+                            f,
+                            key,
                             dim_coord,
-                            ncdim=ncdim, coordinates=coordinates)
+                            ncdim=ncdim,
+                            coordinates=coordinates,
+                        )
 
                         # Expand the field's data array to include
                         # this domain axis
                         f = self.implementation.field_insert_dimension(
-                                f, position=0, axis=axis)
+                            f, position=0, axis=axis
+                        )
                     else:
                         # Scalar coordinate variables are being
                         # allowed; and there are NO auxiliary
@@ -3097,7 +3271,8 @@ class NetCDFWrite(IOWrite):
                         # dimension coordinate to the file as a scalar
                         # coordinate variable.
                         coordinates = self._write_scalar_coordinate(
-                            f, key, dim_coord, axis, coordinates)
+                            f, key, dim_coord, axis, coordinates
+                        )
                 # --- End: if
 
                 found_dimension_coordinate = True
@@ -3108,62 +3283,67 @@ class NetCDFWrite(IOWrite):
                 # ----------------------------------------------------
                 # There is NO dimension coordinate for this axis
                 # ----------------------------------------------------
-                spanning_constructs = (
-                    self.implementation.get_constructs(f, axes=[axis])
+                spanning_constructs = self.implementation.get_constructs(
+                    f, axes=[axis]
                 )
 
                 spanning_auxiliary_coordinates = (
                     self.implementation.get_auxiliary_coordinates(
-                        f, axes=[axis], exact=True)
+                        f, axes=[axis], exact=True
+                    )
                 )
 
-                if (axis not in data_axes
-                        and spanning_constructs
-                        and spanning_constructs !=
-                        spanning_auxiliary_coordinates):
+                if (
+                    axis not in data_axes
+                    and spanning_constructs
+                    and spanning_constructs != spanning_auxiliary_coordinates
+                ):
                     # The data array doesn't span the domain axis but
                     # a cell measure, domain ancillary, field
                     # ancillary, or an N-d (N>1) auxiliary coordinate
                     # does => expand the data array to include it.
                     f = self.implementation.field_insert_dimension(
-                            f, position=0, axis=axis)
+                        f, position=0, axis=axis
+                    )
                     data_axes.append(axis)
 
-#                spanning_constructs = self.implementation.get_constructs(
-#                    f, axes=[axis])
-#
-#                if axis not in data_axes and spanning_constructs:
-#                    # The data array doesn't span the domain axis but
-#                    # an auxiliary coordinate, cell measure, domain
-#                    # ancillary or field ancillary does, so expand the
-#                    # data array to include it.
-#                    f = self.implementation.field_insert_dimension(
-#                            f, position=0, axis=axis)
-#                    data_axes.append(axis)
+                #                spanning_constructs = self.implementation.get_constructs(
+                #                    f, axes=[axis])
+                #
+                #                if axis not in data_axes and spanning_constructs:
+                #                    # The data array doesn't span the domain axis but
+                #                    # an auxiliary coordinate, cell measure, domain
+                #                    # ancillary or field ancillary does, so expand the
+                #                    # data array to include it.
+                #                    f = self.implementation.field_insert_dimension(
+                #                            f, position=0, axis=axis)
+                #                    data_axes.append(axis)
 
                 # If the data array (now) spans this domain axis then
                 # create a netCDF dimension for it
                 if axis in data_axes:
-                    axis_size0 = (
-                        self.implementation.get_domain_axis_size(f, axis)
+                    axis_size0 = self.implementation.get_domain_axis_size(
+                        f, axis
                     )
 
                     use_existing_dimension = False
 
                     if spanning_constructs:
                         for key, construct in list(
-                                spanning_constructs.items()):
-                            axes = (
-                                self.implementation.get_construct_data_axes(
-                                    f, key)
+                            spanning_constructs.items()
+                        ):
+                            axes = self.implementation.get_construct_data_axes(
+                                f, key
                             )
-                            spanning_constructs[key] = (construct,
-                                                        axes.index(axis))
+                            spanning_constructs[key] = (
+                                construct,
+                                axes.index(axis),
+                            )
 
-                        for b1 in g['xxx']:
-                            (ncdim1,  axis_size1),  constructs1 = (
-                                list(b1.items())[0]
-                            )
+                        for b1 in g["xxx"]:
+                            (ncdim1, axis_size1), constructs1 = list(
+                                b1.items()
+                            )[0]
 
                             if axis_size0 != axis_size1:
                                 continue
@@ -3172,13 +3352,20 @@ class NetCDFWrite(IOWrite):
 
                             matched_construct = False
 
-                            for key0, (construct0, index0) in (
-                                    spanning_constructs.items()):
-                                for key1, (construct1, index1) in (
-                                        constructs1.items()):
-                                    if (index0 == index1 and
-                                        self.implementation.equal_components(
-                                            construct0, construct1)):
+                            for key0, (
+                                construct0,
+                                index0,
+                            ) in spanning_constructs.items():
+                                for key1, (
+                                    construct1,
+                                    index1,
+                                ) in constructs1.items():
+                                    if (
+                                        index0 == index1
+                                        and self.implementation.equal_components(
+                                            construct0, construct1
+                                        )
+                                    ):
                                         del constructs1[key1]
                                         matched_construct = True
                                         break
@@ -3195,43 +3382,56 @@ class NetCDFWrite(IOWrite):
                     # --- End: if
 
                     if use_existing_dimension:
-                        g['axis_to_ncdim'][axis] = ncdim1
-                    elif (g['compression_type'] == 'ragged contiguous'
-                          and len(data_axes) == 2
-                          and axis == data_axes[1]):
+                        g["axis_to_ncdim"][axis] = ncdim1
+                    elif (
+                        g["compression_type"] == "ragged contiguous"
+                        and len(data_axes) == 2
+                        and axis == data_axes[1]
+                    ):
                         # Do not create a netCDF dimension for the
                         # element dimension
-                        g['axis_to_ncdim'][axis] = 'ragged_{}'.format(
-                            'contiguous_element')
-                    elif (g['compression_type'] == 'ragged indexed'
-                          and len(data_axes) == 2
-                          and axis == data_axes[1]):
-                        # Do not create a netCDF dimension for the
-                        # element dimension
-                        g['axis_to_ncdim'][axis] = 'ragged_{}'.format(
-                            'indexed_element')
-                    elif (g['compression_type'] == 'ragged indexed contiguous'
-                          and len(data_axes) == 3
-                          and axis == data_axes[1]):
-                        # Do not create a netCDF dimension for the
-                        # element dimension
-                        g['axis_to_ncdim'][axis] = 'ragged_{}'.format(
-                            'indexed_contiguous_element1')
-                    elif (g['compression_type'] == 'ragged indexed contiguous'
-                          and len(data_axes) == 3
-                          and axis == data_axes[2]):
-                        # Do not create a netCDF dimension for the
-                        # element dimension
-                        g['axis_to_ncdim'][axis] = 'ragged_{}'.format(
-                            'indexed_contiguous_element2')
-                    else:
-                        domain_axis = (
-                            self.implementation.get_domain_axes(f)[axis]
+                        g["axis_to_ncdim"][axis] = "ragged_{}".format(
+                            "contiguous_element"
                         )
+                    elif (
+                        g["compression_type"] == "ragged indexed"
+                        and len(data_axes) == 2
+                        and axis == data_axes[1]
+                    ):
+                        # Do not create a netCDF dimension for the
+                        # element dimension
+                        g["axis_to_ncdim"][axis] = "ragged_{}".format(
+                            "indexed_element"
+                        )
+                    elif (
+                        g["compression_type"] == "ragged indexed contiguous"
+                        and len(data_axes) == 3
+                        and axis == data_axes[1]
+                    ):
+                        # Do not create a netCDF dimension for the
+                        # element dimension
+                        g["axis_to_ncdim"][axis] = "ragged_{}".format(
+                            "indexed_contiguous_element1"
+                        )
+                    elif (
+                        g["compression_type"] == "ragged indexed contiguous"
+                        and len(data_axes) == 3
+                        and axis == data_axes[2]
+                    ):
+                        # Do not create a netCDF dimension for the
+                        # element dimension
+                        g["axis_to_ncdim"][axis] = "ragged_{}".format(
+                            "indexed_contiguous_element2"
+                        )
+                    else:
+                        domain_axis = self.implementation.get_domain_axes(f)[
+                            axis
+                        ]
                         ncdim = self.implementation.nc_get_dimension(
-                            domain_axis, 'dim')
+                            domain_axis, "dim"
+                        )
 
-                        if not g['group']:
+                        if not g["group"]:
                             # A flat file has been requested, so strip
                             # off any group structure from the name.
                             ncdim = self._remove_group_structure(ncdim)
@@ -3239,9 +3439,11 @@ class NetCDFWrite(IOWrite):
                         ncdim = self._netcdf_name(ncdim)
 
                         unlimited = self.implementation.nc_is_unlimited_axis(
-                            f, axis)
+                            f, axis
+                        )
                         self._write_dimension(
-                            ncdim, f, axis, unlimited=unlimited)
+                            ncdim, f, axis, unlimited=unlimited
+                        )
 
                         xxx.append({(ncdim, axis_size0): spanning_constructs})
                 # --- End: if
@@ -3249,8 +3451,9 @@ class NetCDFWrite(IOWrite):
         # --- End: for
 
         field_data_axes = tuple(self.implementation.get_field_data_axes(f))
-        data_ncdimensions = [g['axis_to_ncdim'][axis]
-                             for axis in field_data_axes]
+        data_ncdimensions = [
+            g["axis_to_ncdim"][axis] for axis in field_data_axes
+        ]
 
         # ------------------------------------------------------------
         # Now that we've dealt with all of the axes, deal with
@@ -3258,11 +3461,12 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         if compression_type:
             compressed_axes = tuple(self.implementation.get_compressed_axes(f))
-            g['compressed_axes'] = compressed_axes
-            compressed_ncdims = tuple([g['axis_to_ncdim'][axis]
-                                       for axis in compressed_axes])
+            g["compressed_axes"] = compressed_axes
+            compressed_ncdims = tuple(
+                [g["axis_to_ncdim"][axis] for axis in compressed_axes]
+            )
 
-            if compression_type == 'gathered':
+            if compression_type == "gathered":
                 # ----------------------------------------------------
                 # Compression by gathering
                 #
@@ -3270,11 +3474,12 @@ class NetCDFWrite(IOWrite):
                 # of the netCDF sample dimension.
                 # ----------------------------------------------------
                 list_variable = self.implementation.get_list(f)
-                compress = ' '.join(compressed_ncdims)
-                sample_ncdim = self._write_list_variable(f, list_variable,
-                                                         compress=compress)
+                compress = " ".join(compressed_ncdims)
+                sample_ncdim = self._write_list_variable(
+                    f, list_variable, compress=compress
+                )
 
-            elif compression_type == 'ragged contiguous':
+            elif compression_type == "ragged contiguous":
                 # ----------------------------------------------------
                 # Compression by contiguous ragged array
                 #
@@ -3283,10 +3488,10 @@ class NetCDFWrite(IOWrite):
                 # ----------------------------------------------------
                 count = self.implementation.get_count(f)
                 sample_ncdim = self._write_count_variable(
-                    f, count,
-                    ncdim=data_ncdimensions[0], create_ncdim=False)
+                    f, count, ncdim=data_ncdimensions[0], create_ncdim=False
+                )
 
-            elif compression_type == 'ragged indexed':
+            elif compression_type == "ragged indexed":
                 # ----------------------------------------------------
                 # Compression by indexed ragged array
                 #
@@ -3295,19 +3500,23 @@ class NetCDFWrite(IOWrite):
                 # ----------------------------------------------------
                 index = self.implementation.get_index(f)
                 index_ncdim = self.implementation.nc_get_dimension(
-                    index, default='sample')
-                if not g['group']:
+                    index, default="sample"
+                )
+                if not g["group"]:
                     # A flat file has been requested, so strip off any
                     # group structure from the name.
                     index_ncdim = self._remove_group_structure(index_ncdim)
 
                 sample_ncdim = self._write_index_variable(
-                    f, index,
+                    f,
+                    index,
                     sample_dimension=index_ncdim,
-                    ncdim=index_ncdim, create_ncdim=True,
-                    instance_dimension=data_ncdimensions[0])
+                    ncdim=index_ncdim,
+                    create_ncdim=True,
+                    instance_dimension=data_ncdimensions[0],
+                )
 
-            elif compression_type == 'ragged indexed contiguous':
+            elif compression_type == "ragged indexed contiguous":
                 # ----------------------------------------------------
                 # Compression by indexed contigous ragged array
                 #
@@ -3316,16 +3525,17 @@ class NetCDFWrite(IOWrite):
                 # ----------------------------------------------------
                 count = self.implementation.get_count(f)
                 count_ncdim = self.implementation.nc_get_dimension(
-                    count, default='feature')
-                if not g['group']:
+                    count, default="feature"
+                )
+                if not g["group"]:
                     # A flat file has been requested, so strip off any
                     # group structure from the name.
                     count_ncdim = self._remove_group_structure(count_ncdim)
 
                 sample_ncdim = self._write_count_variable(
-                    f, count,
-                    ncdim=count_ncdim, create_ncdim=True)
-                if not g['group']:
+                    f, count, ncdim=count_ncdim, create_ncdim=True
+                )
+                if not g["group"]:
                     # A flat file has been requested, so strip off any
                     # group structure from the name.
                     smaple_ncdim = self._remove_group_structure(sample_ncdim)
@@ -3333,31 +3543,36 @@ class NetCDFWrite(IOWrite):
                 index_ncdim = count_ncdim
                 index = self.implementation.get_index(f)
                 self._write_index_variable(
-                    f, index,
+                    f,
+                    index,
                     sample_dimension=sample_ncdim,
-                    ncdim=index_ncdim, create_ncdim=False,
-                    instance_dimension=data_ncdimensions[0])
+                    ncdim=index_ncdim,
+                    create_ncdim=False,
+                    instance_dimension=data_ncdimensions[0],
+                )
 
-                g['sample_ncdim'][compressed_ncdims[0:2]] = index_ncdim
+                g["sample_ncdim"][compressed_ncdims[0:2]] = index_ncdim
 
             else:
                 raise ValueError(
                     "Can't write {!r}: Unknown compression type: {!r}".format(
-                        org_f, compression_type))
+                        org_f, compression_type
+                    )
+                )
 
-            g['sample_ncdim'][compressed_ncdims] = sample_ncdim
+            g["sample_ncdim"][compressed_ncdims] = sample_ncdim
 
             n = len(compressed_ncdims)
             sample_dimension = (
                 self.implementation.get_sample_dimension_position(f)
             )
-#            sample_dimension = [i for i in range(len(field_data_axes)-n+1)
-#                                if field_data_axes[i:i+n] == compressed_axes]
-#            sample_dimension = sample_dimension[0]
+            #            sample_dimension = [i for i in range(len(field_data_axes)-n+1)
+            #                                if field_data_axes[i:i+n] == compressed_axes]
+            #            sample_dimension = sample_dimension[0]
 
-            data_ncdimensions[sample_dimension:sample_dimension + n] = (
-                [sample_ncdim]
-            )
+            data_ncdimensions[sample_dimension : sample_dimension + n] = [
+                sample_ncdim
+            ]
         # --- End: if
 
         data_ncdimensions = tuple(data_ncdimensions)
@@ -3370,29 +3585,30 @@ class NetCDFWrite(IOWrite):
         # Initialize the list of 'coordinates' attribute variable
         # values (each of the form 'name')
         for key, aux_coord in sorted(
-                self.implementation.get_auxiliary_coordinates(f).items()):
+            self.implementation.get_auxiliary_coordinates(f).items()
+        ):
             axes = self.implementation.get_construct_data_axes(f, key)
             if len(axes) > 1 or axes[0] in data_axes:
                 # This auxiliary coordinate construct spans at least
                 # one of the dimensions of the field construct's data
                 # array.
-                coordinates = self._write_auxiliary_coordinate(f, key,
-                                                               aux_coord,
-                                                               coordinates)
+                coordinates = self._write_auxiliary_coordinate(
+                    f, key, aux_coord, coordinates
+                )
             else:
                 # This auxiliary coordinate needs to be written as a
                 # scalar coordiante variable
-                coordinates = self._write_scalar_coordinate(f, key,
-                                                            aux_coord,
-                                                            axis,
-                                                            coordinates)
+                coordinates = self._write_scalar_coordinate(
+                    f, key, aux_coord, axis, coordinates
+                )
         # --- End: for
 
         # ------------------------------------------------------------
         # Create netCDF variables from domain ancillaries
         # ------------------------------------------------------------
         for key, anc in sorted(
-                self.implementation.get_domain_ancillaries(f).items()):
+            self.implementation.get_domain_ancillaries(f).items()
+        ):
             self._write_domain_ancillary(f, key, anc)
 
         # ------------------------------------------------------------
@@ -3403,28 +3619,38 @@ class NetCDFWrite(IOWrite):
         cell_measures = [
             self._write_cell_measure(f, key, msr)
             for key, msr in sorted(
-                    self.implementation.get_cell_measures(f).items())
+                self.implementation.get_cell_measures(f).items()
+            )
         ]
 
         # ------------------------------------------------------------
         # Create netCDF formula_terms attributes from vertical
         # coordinate references
         # ------------------------------------------------------------
-        for ref in g['formula_terms_refs']:
+        for ref in g["formula_terms_refs"]:
             formula_terms = []
             bounds_formula_terms = []
             owning_coord_key = None
 
             standard_name = (
                 self.implementation.get_coordinate_conversion_parameters(
-                    ref).get('standard_name')
+                    ref
+                ).get("standard_name")
             )
             if standard_name is not None:
                 c = []
-                for key in self.implementation.get_coordinate_reference_coordinates(ref):
+                for (
+                    key
+                ) in self.implementation.get_coordinate_reference_coordinates(
+                    ref
+                ):
                     coord = self.implementation.get_coordinates(f)[key]
-                    if self.implementation.get_property(
-                            coord, 'standard_name', None) == standard_name:
+                    if (
+                        self.implementation.get_property(
+                            coord, "standard_name", None
+                        )
+                        == standard_name
+                    ):
                         c.append((key, coord))
 
                 if len(c) == 1:
@@ -3432,32 +3658,42 @@ class NetCDFWrite(IOWrite):
             # --- End: if
 
             z_axis = self.implementation.get_construct_data_axes(
-                f, owning_coord_key)[0]
+                f, owning_coord_key
+            )[0]
 
             if owning_coord_key is not None:
                 # This formula_terms coordinate reference matches up
                 # with an existing coordinate
 
-                for term, value in self.implementation.get_coordinate_conversion_parameters(ref).items():
+                for (
+                    term,
+                    value,
+                ) in self.implementation.get_coordinate_conversion_parameters(
+                    ref
+                ).items():
                     if value is None:
                         continue
 
-                    if term in ('standard_name', 'computed_standard_name'):
+                    if term in ("standard_name", "computed_standard_name"):
                         continue
 
                     ncvar = self._write_scalar_data(value, ncvar=term)
 
-                    formula_terms.append('{0}: {1}'.format(term, ncvar))
-                    bounds_formula_terms.append('{0}: {1}'.format(term, ncvar))
+                    formula_terms.append("{0}: {1}".format(term, ncvar))
+                    bounds_formula_terms.append("{0}: {1}".format(term, ncvar))
 
-                for term, key in ref.coordinate_conversion.domain_ancillaries(
-                        ).items():  # DCH ALERT
+                for (
+                    term,
+                    key,
+                ) in (
+                    ref.coordinate_conversion.domain_ancillaries().items()
+                ):  # DCH ALERT
                     if key is None:
                         continue
 
-                    domain_anc = (
-                        self.implementation.get_domain_ancillaries(f)[key]
-                    )
+                    domain_anc = self.implementation.get_domain_ancillaries(f)[
+                        key
+                    ]
                     if domain_anc is None:
                         continue
 
@@ -3466,31 +3702,32 @@ class NetCDFWrite(IOWrite):
 
                     # Get the netCDF variable name for the domain
                     # ancillary and add it to the formula_terms attribute
-                    ncvar = seen[id(domain_anc)]['ncvar']
-                    formula_terms.append('{0}: {1}'.format(term, ncvar))
+                    ncvar = seen[id(domain_anc)]["ncvar"]
+                    formula_terms.append("{0}: {1}".format(term, ncvar))
 
-                    bounds = g['bounds'].get(ncvar, None)
+                    bounds = g["bounds"].get(ncvar, None)
                     if bounds is not None:
                         if z_axis not in (
-                                self.implementation.get_construct_data_axes(
-                                    f, key)
+                            self.implementation.get_construct_data_axes(f, key)
                         ):
                             bounds = None
 
                     if bounds is None:
-                        bounds_formula_terms.append('{0}: {1}'.format(
-                            term, ncvar))
+                        bounds_formula_terms.append(
+                            "{0}: {1}".format(term, ncvar)
+                        )
                     else:
-                        bounds_formula_terms.append('{0}: {1}'.format(
-                            term, bounds))
+                        bounds_formula_terms.append(
+                            "{0}: {1}".format(term, bounds)
+                        )
             # --- End: if
 
             # Add the formula_terms attribute to the parent coordinate
             # variable
             if formula_terms:
-                ncvar = g['key_to_ncvar'][owning_coord_key]
-                formula_terms = ' '.join(formula_terms)
-                g['nc'][ncvar].setncattr('formula_terms', formula_terms)
+                ncvar = g["key_to_ncvar"][owning_coord_key]
+                formula_terms = " ".join(formula_terms)
+                g["nc"][ncvar].setncattr("formula_terms", formula_terms)
 
                 logger.info(
                     "    Writing formula_terms attribute to "
@@ -3499,16 +3736,18 @@ class NetCDFWrite(IOWrite):
 
                 # Add the formula_terms attribute to the parent
                 # coordinate bounds variable
-                bounds_ncvar = g['bounds'].get(ncvar)
+                bounds_ncvar = g["bounds"].get(ncvar)
                 if bounds_ncvar is not None:
-                    bounds_formula_terms = ' '.join(bounds_formula_terms)
-                    g['nc'][bounds_ncvar].setncattr(
-                        'formula_terms', bounds_formula_terms)
+                    bounds_formula_terms = " ".join(bounds_formula_terms)
+                    g["nc"][bounds_ncvar].setncattr(
+                        "formula_terms", bounds_formula_terms
+                    )
 
                     logger.info(
                         "    Writing formula_terms to netCDF "
                         "bounds variable {}: {!r}".format(
-                             bounds_ncvar, bounds_formula_terms)
+                            bounds_ncvar, bounds_formula_terms
+                        )
                     )  # pragma: no cover
             # --- End: if
 
@@ -3520,11 +3759,12 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Create netCDF variables grid mappings
         # ------------------------------------------------------------
-        multiple_grid_mappings = (len(g['grid_mapping_refs']) > 1)
+        multiple_grid_mappings = len(g["grid_mapping_refs"]) > 1
 
-        grid_mapping = [self._write_grid_mapping(f, ref,
-                                                 multiple_grid_mappings)
-                        for ref in g['grid_mapping_refs']]
+        grid_mapping = [
+            self._write_grid_mapping(f, ref, multiple_grid_mappings)
+            for ref in g["grid_mapping_refs"]
+        ]
 
         # ------------------------------------------------------------
         # Field ancillary variables
@@ -3535,108 +3775,114 @@ class NetCDFWrite(IOWrite):
         ancillary_variables = [
             self._write_field_ancillary(f, key, anc)
             for key, anc in self.implementation.get_field_ancillaries(
-                    f).items()
+                f
+            ).items()
         ]
 
         # ------------------------------------------------------------
         # Create the CF-netCDF data variable
         # ------------------------------------------------------------
-        ncvar = self._create_netcdf_variable_name(f, default='data')
+        ncvar = self._create_netcdf_variable_name(f, default="data")
 
-#        print ('    field ncvar =', ncvar, f.get_property('test_id', None))
+        #        print ('    field ncvar =', ncvar, f.get_property('test_id', None))
         ncdimensions = data_ncdimensions
 
         extra = {}
 
         # Cell measures
         if cell_measures:
-            cell_measures = ' '.join(cell_measures)
+            cell_measures = " ".join(cell_measures)
             logger.info(
                 "    Writing cell_measures attribute to "
                 "netCDF variable {}: {!r}".format(ncvar, cell_measures)
             )  # pragma: no cover
 
-            extra['cell_measures'] = cell_measures
+            extra["cell_measures"] = cell_measures
 
         # Auxiliary/scalar coordinates
         if coordinates:
-            coordinates = ' '.join(coordinates)
+            coordinates = " ".join(coordinates)
             logger.info(
                 "    Writing coordinates attribute to "
                 "netCDF variable {}: {!r}".format(ncvar, coordinates)
             )  # pragma: no cover
 
-            extra['coordinates'] = coordinates
+            extra["coordinates"] = coordinates
 
         # Grid mapping
         if grid_mapping:
-            grid_mapping = ' '.join(grid_mapping)
+            grid_mapping = " ".join(grid_mapping)
             logger.info(
                 "    Writing grid_mapping attribute to "
                 "netCDF variable {}: {!r}".format(ncvar, grid_mapping)
             )  # pragma: no cover
 
-            extra['grid_mapping'] = grid_mapping
+            extra["grid_mapping"] = grid_mapping
 
         # Ancillary variables
         if ancillary_variables:
-            ancillary_variables = ' '.join(ancillary_variables)
+            ancillary_variables = " ".join(ancillary_variables)
             logger.info(
                 "    Writing ancillary_variables attribute to "
-                "netCDF variable {}: {!r}".format(
-                    ncvar, ancillary_variables)
+                "netCDF variable {}: {!r}".format(ncvar, ancillary_variables)
             )  # pragma: no cover
 
-            extra['ancillary_variables'] = ancillary_variables
+            extra["ancillary_variables"] = ancillary_variables
 
         # name can be a dimension of the variable, a scalar coordinate
         # variable, a valid standard name, or the word 'area'
         cell_methods = self.implementation.get_cell_methods(f)
         if cell_methods:
-            axis_map = g['axis_to_ncdim'].copy()
-            axis_map.update(g['axis_to_ncscalar'])
+            axis_map = g["axis_to_ncdim"].copy()
+            axis_map.update(g["axis_to_ncscalar"])
 
             cell_methods_strings = []
             for cm in list(cell_methods.values()):
                 if not self.cf_cell_method_qualifiers().issuperset(
-                        self.implementation.get_cell_method_qualifiers(cm)):
+                    self.implementation.get_cell_method_qualifiers(cm)
+                ):
                     raise ValueError(
                         "Can't write {!r}: Unknown cell method "
-                        "property: {!r}".format(
-                            org_f, cm.properties()))
+                        "property: {!r}".format(org_f, cm.properties())
+                    )
 
-                axes = [axis_map.get(axis, axis)
-                        for axis in self.implementation.get_cell_method_axes(
-                                cm, ())]
+                axes = [
+                    axis_map.get(axis, axis)
+                    for axis in self.implementation.get_cell_method_axes(
+                        cm, ()
+                    )
+                ]
                 self.implementation.set_cell_method_axes(cm, axes)
                 cell_methods_strings.append(
-                    self.implementation.get_cell_method_string(cm))
+                    self.implementation.get_cell_method_string(cm)
+                )
 
-            cell_methods = ' '.join(cell_methods_strings)
+            cell_methods = " ".join(cell_methods_strings)
             logger.info(
                 "    Writing cell_methods attribute to "
                 "netCDF variable {}: {}".format(ncvar, cell_methods)
             )  # pragma: no cover
 
-            extra['cell_methods'] = cell_methods
+            extra["cell_methods"] = cell_methods
 
         # ------------------------------------------------------------
         # Geometry container (CF>=1.8)
         # ------------------------------------------------------------
-        if g['output_version'] >= g['CF-1.8']:
+        if g["output_version"] >= g["CF-1.8"]:
             geometry_container = self._create_geometry_container(f)
             if geometry_container:
-                gc_ncvar = self._write_geometry_container(f,
-                                                          geometry_container)
-                extra['geometry'] = gc_ncvar
+                gc_ncvar = self._write_geometry_container(
+                    f, geometry_container
+                )
+                extra["geometry"] = gc_ncvar
         # --- End: if
 
         # ------------------------------------------------------------
         # Create a new CF-netCDF data variable
         # ------------------------------------------------------------
         # Omit any global attributes from the variable
-        omit = g['global_attributes']
-        if g['group'] and self.implementation.nc_get_variable_groups(f):
+        omit = g["global_attributes"]
+        if g["group"] and self.implementation.nc_get_variable_groups(f):
             # Also omit any group attributes from the variable
             # (CF>=1.8)
             groups = self.implementation.nc_get_group_attributes(f)
@@ -3645,31 +3891,34 @@ class NetCDFWrite(IOWrite):
                 omit += tuple(groups)
         # --- End: if
 
-        self._write_netcdf_variable(ncvar, ncdimensions, f, omit=omit,
-                                    extra=extra, data_variable=True)
+        self._write_netcdf_variable(
+            ncvar, ncdimensions, f, omit=omit, extra=extra, data_variable=True
+        )
 
         # Update the 'seen' dictionary, if required
         if add_to_seen:
-            seen[id_f] = {'variable': org_f,
-                          'ncvar': ncvar,
-                          'ncdims': ncdimensions}
+            seen[id_f] = {
+                "variable": org_f,
+                "ncvar": ncvar,
+                "ncdims": ncdimensions,
+            }
 
         if xxx:
-            g['xxx'].extend(xxx)
+            g["xxx"].extend(xxx)
 
     def _create_vertical_datum(self, ref, coord_key):
-        '''Deal with a vertical datum.
+        """Deal with a vertical datum.
 
-    .. versionaddedd:: 1.7.0
+        .. versionaddedd:: 1.7.0
 
-        '''
+        """
         g = self.write_vars
 
         if not self.implementation.has_datum(ref):
             return
 
         count = [0, None]
-        for grid_mapping in g['grid_mapping_refs']:
+        for grid_mapping in g["grid_mapping_refs"]:
             if self.implementation.equal_datums(ref, grid_mapping):
                 count = [count[0] + 1, grid_mapping]
                 if count[0] > 1:
@@ -3680,12 +3929,13 @@ class NetCDFWrite(IOWrite):
             # Add the vertical coordinate to an existing
             # horizontal coordinate reference
             logger.info(
-                '      Adding {!r} to {!r}'.format(coord_key, grid_mapping)
+                "      Adding {!r} to {!r}".format(coord_key, grid_mapping)
             )  # pragma: no cover
 
             grid_mapping = count[1]
             self.implementation.set_coordinate_reference_coordinate(
-                grid_mapping, coord_key)
+                grid_mapping, coord_key
+            )
         else:
             # Create a new horizontal coordinate reference for the
             # vertical datum
@@ -3699,83 +3949,85 @@ class NetCDFWrite(IOWrite):
             )
 
             self.implementation.set_coordinate_reference_coordinates(
-                coordinate_reference=new_grid_mapping,
-                coordinates=[coord_key])
+                coordinate_reference=new_grid_mapping, coordinates=[coord_key]
+            )
 
             coordinate_conversion = (
                 self.implementation.initialise_CoordinateConversion(
-                    parameters={'grid_mapping_name': 'latitude_longitude'})
+                    parameters={"grid_mapping_name": "latitude_longitude"}
+                )
             )
             self.implementation.set_coordinate_conversion(
                 coordinate_reference=new_grid_mapping,
-                coordinate_conversion=coordinate_conversion)
+                coordinate_conversion=coordinate_conversion,
+            )
 
             datum = self.implementation.get_datum(ref)
             self.implementation.set_datum(
-                coordinate_reference=new_grid_mapping,
-                datum=datum)
+                coordinate_reference=new_grid_mapping, datum=datum
+            )
 
             ncvar = self.implementation.nc_get_variable(datum)
             if ncvar is not None:
-                if not self.write_vars['group']:
+                if not self.write_vars["group"]:
                     # A flat file has been requested, so strip off any
                     # group structure from the name.
                     ncvar = self._remove_group_structure(ncvar)
 
                 self.implementation.nc_set_variable(new_grid_mapping, ncvar)
 
-            g['grid_mapping_refs'].append(new_grid_mapping)
+            g["grid_mapping_refs"].append(new_grid_mapping)
 
     def _unlimited(self, field, axis):
-        '''Whether an axis is unlimited.
+        """Whether an axis is unlimited.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Parameters:
+        :Parameters:
 
-        field: Field construct
+            field: Field construct
 
-        axis: `str`
+            axis: `str`
 
-    :Returns:
+        :Returns:
 
-        `bool`
+            `bool`
 
-        '''
+        """
         return self.implementation.nc_is_unlimited_axis(field, axis)
 
     def _write_group(self, parent_group, group_name):
-        '''Find the netCDF global properties from all of the input fields and
-    write them to the netCDF4.Dataset.
+        """Find the netCDF global properties from all of the input fields and
+        write them to the netCDF4.Dataset.
 
-    .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6
 
-    :Parameters:
+        :Parameters:
 
-        parent_group: `netCDF4.Dateset` or `netCDF4._netCDF4.Group`
+            parent_group: `netCDF4.Dateset` or `netCDF4._netCDF4.Group`
 
-        group_name: `str`
+            group_name: `str`
 
-    :Returns:
+        :Returns:
 
-        `netCDF4._netCDF4.Group`
+            `netCDF4._netCDF4.Group`
 
-        '''
+        """
         return parent_group.createGroup(group_name)
 
     def _write_group_attributes(self, fields):
-        '''Find the netCDF global properties from all of the input fields and
-    write them to the netCDF4.Dataset.
+        """Find the netCDF global properties from all of the input fields and
+        write them to the netCDF4.Dataset.
 
-    :Parameters:
+        :Parameters:
 
-        fields : `list` of field constructs
+            fields : `list` of field constructs
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-        '''
+        """
         g = self.write_vars
 
         group_attributes = {}
@@ -3790,7 +4042,8 @@ class NetCDFWrite(IOWrite):
             if groups:
                 xx.setdefault(groups, []).append(f)
                 group_attributes.setdefault(groups, {}).update(
-                    self.implementation.nc_get_group_attributes(f))
+                    self.implementation.nc_get_group_attributes(f)
+                )
         # --- End: for
 
         for groups, fields in xx.items():
@@ -3808,7 +4061,8 @@ class NetCDFWrite(IOWrite):
                     for f in fields[1:]:
                         prop1 = self.implementation.get_property(f, prop, None)
                         if not self.implementation.equal_properties(
-                                prop0, prop1):
+                            prop0, prop1
+                        ):
                             this_group_attributes.pop(prop)
                             break
             # --- End: for
@@ -3821,11 +4075,11 @@ class NetCDFWrite(IOWrite):
                 if value is not None:
                     continue
 
-                this_group_attributes[attr] = (
-                    self.implementation.get_property(f0, attr)
+                this_group_attributes[attr] = self.implementation.get_property(
+                    f0, attr
                 )
 
-            nc = g['netcdf']
+            nc = g["netcdf"]
             for group in groups:
                 if group in nc.groups:
                     nc = nc.groups[group]
@@ -3838,35 +4092,36 @@ class NetCDFWrite(IOWrite):
             group_attributes[groups] = tuple(this_group_attributes)
         # --- End: for
 
-        g['group_attributes'] = group_attributes
+        g["group_attributes"] = group_attributes
 
     def _write_global_attributes(self, fields):
-        '''Find the netCDF global properties from all of the input fields and
-    write them to the netCDF4.Dataset.
+        """Find the netCDF global properties from all of the input fields and
+        write them to the netCDF4.Dataset.
 
-    :Parameters:
+        :Parameters:
 
-        fields : `list` of field constructs
+            fields : `list` of field constructs
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-        '''
+        """
         g = self.write_vars
 
         # ------------------------------------------------------------
         # Initialize the global attributes with those requested to be
         # such
         # ------------------------------------------------------------
-        global_attributes = g['global_attributes']
+        global_attributes = g["global_attributes"]
 
         # ------------------------------------------------------------
         # Add in the standard "description of file contents"
         # attributes
         # ------------------------------------------------------------
         global_attributes.update(
-            self.cf_description_of_file_contents_attributes())
+            self.cf_description_of_file_contents_attributes()
+        )
 
         # ------------------------------------------------------------
         # Add properties that have been marked as global on each field
@@ -3874,38 +4129,43 @@ class NetCDFWrite(IOWrite):
         force_global = {}
         for f in fields:
             for attr, v in self.implementation.nc_get_global_attributes(
-                    f).items():
+                f
+            ).items():
                 if v is None:
                     global_attributes.add(attr)
                 else:
                     force_global.setdefault(attr, []).append(v)
         # --- End: forf
 
-        if 'Conventions' not in force_global:
+        if "Conventions" not in force_global:
             for f in fields:
                 v = self.implementation.nc_get_global_attributes(f).get(
-                    'Conventions')
+                    "Conventions"
+                )
                 if v is not None:
-                    force_global.setdefault('Conventions', []).append(v)
+                    force_global.setdefault("Conventions", []).append(v)
         # --- End: if
 
-        force_global = {attr: v[0] for attr, v in force_global.items()
-                        if len(v) == len(fields) and len(set(v)) == 1}
+        force_global = {
+            attr: v[0]
+            for attr, v in force_global.items()
+            if len(v) == len(fields) and len(set(v)) == 1
+        }
 
         # File descriptors supercede "forced" global attributes
-        for attr in g['file_descriptors']:
+        for attr in g["file_descriptors"]:
             force_global.pop(attr, None)
 
         # ------------------------------------------------------------
         # Remove attributes that have been specifically requested to
         # not be global attributes.
         # ------------------------------------------------------------
-        global_attributes.difference_update(g['variable_attributes'])
+        global_attributes.difference_update(g["variable_attributes"])
 
         # ------------------------------------------------------------
         # Remove properties listed as file descriptors.
         # ------------------------------------------------------------
-        global_attributes.difference_update(g['file_descriptors'])
+        global_attributes.difference_update(g["file_descriptors"])
 
         # ------------------------------------------------------------
         # Remove attributes that are "forced" global attributes. These
@@ -3937,113 +4197,117 @@ class NetCDFWrite(IOWrite):
         # -----------------------------------------------------------
         # Write the Conventions global attribute to the file
         # ------------------------------------------------------------
-        delimiter = ' '
-        set_Conventions = force_global.pop('Conventions', None)
-        if g['Conventions']:
-            if isinstance(g['Conventions'], str):
-                g['Conventions'] = [g['Conventions']]
+        delimiter = " "
+        set_Conventions = force_global.pop("Conventions", None)
+        if g["Conventions"]:
+            if isinstance(g["Conventions"], str):
+                g["Conventions"] = [g["Conventions"]]
             else:
-                g['Conventions'] = list(g['Conventions'])
+                g["Conventions"] = list(g["Conventions"])
         else:
             if set_Conventions is None:
-                g['Conventions'] = []
+                g["Conventions"] = []
             else:
-                if ',' in set_Conventions:
-                    g['Conventions'] = split.set_Conventions.split(',')
+                if "," in set_Conventions:
+                    g["Conventions"] = split.set_Conventions.split(",")
                 else:
-                    g['Conventions'] = split.set_Conventions.split()
+                    g["Conventions"] = split.set_Conventions.split()
         # --- End: if
 
-        for i, c in enumerate(g['Conventions'][:]):
-            x = re.search(r'CF-(\d.*)', c)
+        for i, c in enumerate(g["Conventions"][:]):
+            x = re.search(r"CF-(\d.*)", c)
             if x:
-                g['Conventions'].pop(i)
+                g["Conventions"].pop(i)
         # --- End: for
 
-        if [x for x in g['Conventions'] if ',' in x]:
+        if [x for x in g["Conventions"] if "," in x]:
             raise ValueError(
                 "Conventions names can not contain commas: {0}".format(
-                    g['Conventions']))
+                    g["Conventions"]
+                )
+            )
 
-        g['output_version'] = g['latest_version']
-        g['Conventions'] = (
-            ['CF-' + str(g['output_version'])] + list(g['Conventions'])
+        g["output_version"] = g["latest_version"]
+        g["Conventions"] = ["CF-" + str(g["output_version"])] + list(
+            g["Conventions"]
         )
 
-        if [x for x in g['Conventions'] if ' ' in x]:
+        if [x for x in g["Conventions"] if " " in x]:
             # At least one of the conventions contains blanks
             # space, so join them with commas.
-            delimiter = ','
+            delimiter = ","
 
-        g['netcdf'].setncattr('Conventions', delimiter.join(g['Conventions']))
+        g["netcdf"].setncattr("Conventions", delimiter.join(g["Conventions"]))
 
         # ------------------------------------------------------------
         # Write the file descriptors to the file
         # ------------------------------------------------------------
-        for attr, value in g['file_descriptors'].items():
-            g['netcdf'].setncattr(attr, value)
+        for attr, value in g["file_descriptors"].items():
+            g["netcdf"].setncattr(attr, value)
 
         # ------------------------------------------------------------
         # Write other global attributes to the file
         # ------------------------------------------------------------
-        for attr in global_attributes - set(('Conventions',)):
-            g['netcdf'].setncattr(attr, self.implementation.get_property(
-                f0, attr))
+        for attr in global_attributes - set(("Conventions",)):
+            g["netcdf"].setncattr(
+                attr, self.implementation.get_property(f0, attr)
+            )
 
         # ------------------------------------------------------------
         # Write "forced" global attributes to the file
         # ------------------------------------------------------------
         for attr, v in force_global.items():
-            g['netcdf'].setncattr(attr, v)
+            g["netcdf"].setncattr(attr, v)
 
-        g['global_attributes'] = global_attributes
+        g["global_attributes"] = global_attributes
 
     def file_close(self, filename):
-        '''Close the netCDF file that has been written.
+        """Close the netCDF file that has been written.
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-        '''
-        self.write_vars['netcdf'].close()
+        """
+        self.write_vars["netcdf"].close()
 
     def file_open(self, filename, mode, fmt, fields):
-        '''Open the netCDF file for writing.
+        """Open the netCDF file for writing.
 
-    :Parameters:
+        :Parameters:
 
-        filename: `str`
-            As for the *filename* parameter for initialising a
-            `netCDF.Dataset` instance.
+            filename: `str`
+                As for the *filename* parameter for initialising a
+                `netCDF.Dataset` instance.
 
-        mode: `str`
-            As for the *mode* parameter for initialising a
-            `netCDF.Dataset` instance.
+            mode: `str`
+                As for the *mode* parameter for initialising a
+                `netCDF.Dataset` instance.
 
-        fmt: `str`
-            As for the *format* parameter for initialising a
-            `netCDF.Dataset` instance.
+            fmt: `str`
+                As for the *format* parameter for initialising a
+                `netCDF.Dataset` instance.
 
-        fields: sequence of `Field`
-            The field constructs to be written.
+            fields: sequence of `Field`
+                The field constructs to be written.
 
-    :Returns:
+        :Returns:
 
-        `netCDF.Dataset`
-            A `netCDF4.Dataset` object for the file.
+            `netCDF.Dataset`
+                A `netCDF4.Dataset` object for the file.
 
-        '''
+        """
         if fields:
             filename = os.path.abspath(filename)
             for f in fields:
                 if filename in self.implementation.get_filenames(f):
                     raise ValueError(
                         "Can't write to a file that contains data "
-                        "that needs to be read: {}".format(filename))
+                        "that needs to be read: {}".format(filename)
+                    )
         # --- End: if
 
-        if self.write_vars['overwrite']:
+        if self.write_vars["overwrite"]:
             os.remove(filename)
 
         try:
@@ -4054,261 +4318,274 @@ class NetCDFWrite(IOWrite):
         return nc
 
     @_manage_log_level_via_verbosity
-    def write(self, fields, filename, fmt='NETCDF4', overwrite=True,
-              global_attributes=None, variable_attributes=None,
-              file_descriptors=None, external=None, Conventions=None,
-              datatype=None, least_significant_digit=None,
-              endian='native', compress=0, fletcher32=False,
-              shuffle=True, scalar=True, string=True,
-              extra_write_vars=None, verbose=None, warn_valid=True,
-              group=True, coordinates=False):
-        '''Write fields to a netCDF file.
+    def write(
+        self,
+        fields,
+        filename,
+        fmt="NETCDF4",
+        overwrite=True,
+        global_attributes=None,
+        variable_attributes=None,
+        file_descriptors=None,
+        external=None,
+        Conventions=None,
+        datatype=None,
+        least_significant_digit=None,
+        endian="native",
+        compress=0,
+        fletcher32=False,
+        shuffle=True,
+        scalar=True,
+        string=True,
+        extra_write_vars=None,
+        verbose=None,
+        warn_valid=True,
+        group=True,
+        coordinates=False,
+    ):
+        """Write fields to a netCDF file.
 
-    NetCDF dimension and variable names will be taken from variables'
-    `!ncvar` attributes and the field attribute `!ncdimensions` if
-    present, otherwise they are inferred from standard names or set to
-    defaults. NetCDF names may be automatically given a numerical suffix
-    to avoid duplication.
+        NetCDF dimension and variable names will be taken from variables'
+        `!ncvar` attributes and the field attribute `!ncdimensions` if
+        present, otherwise they are inferred from standard names or set to
+        defaults. NetCDF names may be automatically given a numerical suffix
+        to avoid duplication.
 
-    Output netCDF file global properties are those which occur in the set
-    of CF global properties and non-standard data variable properties and
-    which have equal values across all input fields.
+        Output netCDF file global properties are those which occur in the set
+        of CF global properties and non-standard data variable properties and
+        which have equal values across all input fields.
 
-    Logically identical field components are only written to the file
-    once, apart from when they need to fulfil both dimension coordinate
-    and auxiliary coordinate roles for different data variables.
+        Logically identical field components are only written to the file
+        once, apart from when they need to fulfil both dimension coordinate
+        and auxiliary coordinate roles for different data variables.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Parameters:
+        :Parameters:
 
-        fields : (sequence of) `cfdm.Field`
-            The field or fields to write to the file.
+            fields : (sequence of) `cfdm.Field`
+                The field or fields to write to the file.
 
-            See `cfdm.write` for details.
+                See `cfdm.write` for details.
 
-        filename : str
-            The output CF-netCDF file.
+            filename : str
+                The output CF-netCDF file.
 
-            See `cfdm.write` for details.
+                See `cfdm.write` for details.
 
-        overwrite: bool, optional
-            If False then raise an exception if the output file
-            pre-exists. By default a pre-existing output file is over
-            written.
+            overwrite: bool, optional
+                If False then raise an exception if the output file
+                pre-exists. By default a pre-existing output file is over
+                written.
 
-            See `cfdm.write` for details.
+                See `cfdm.write` for details.
 
-        verbose : bool, optional
-            See `cfdm.write` for details.
+            verbose : bool, optional
+                See `cfdm.write` for details.
 
-        file_descriptors: `dict`, optional
-            Create description of file contents netCDF global
-            attributes from the specified attributes and their values.
+            file_descriptors: `dict`, optional
+                Create description of file contents netCDF global
+                attributes from the specified attributes and their values.
 
-            See `cfdm.write` for details.
+                See `cfdm.write` for details.
 
-        global_attributes: (sequence of) `str`, optional
-            Create netCDF global attributes from the specified field
-            construct properties, rather than netCDF data variable
-            attributes.
+            global_attributes: (sequence of) `str`, optional
+                Create netCDF global attributes from the specified field
+                construct properties, rather than netCDF data variable
+                attributes.
 
-            See `cfdm.write` for details.
+                See `cfdm.write` for details.
 
-        variable_attributes: (sequence of) `str`, optional
-            Create netCDF data variable attributes from the specified
-            field construct properties.
+            variable_attributes: (sequence of) `str`, optional
+                Create netCDF data variable attributes from the specified
+                field construct properties.
 
-            See `cfdm.write` for details.
+                See `cfdm.write` for details.
 
-        external: `str`, optional
-            Write metadata constructs that have data and are marked as
-            external to the named external file. Ignored if there are
-            no such constructs.
+            external: `str`, optional
+                Write metadata constructs that have data and are marked as
+                external to the named external file. Ignored if there are
+                no such constructs.
 
-            See `cfdm.write` for details.
+                See `cfdm.write` for details.
 
-        datatype : dict, optional
-            Specify data type conversions to be applied prior to writing
-            data to disk.
+            datatype : dict, optional
+                Specify data type conversions to be applied prior to writing
+                data to disk.
 
-            See `cfdm.write` for details.
+                See `cfdm.write` for details.
 
-        Conventions: (sequence of) `str`, optional
-            Specify conventions to be recorded by the netCDF global
-             ``Conventions`` attribute.
+            Conventions: (sequence of) `str`, optional
+                Specify conventions to be recorded by the netCDF global
+                 ``Conventions`` attribute.
 
-            See `cfdm.write` for details.
+                See `cfdm.write` for details.
 
-        endian: `str`, optional
-            The endian-ness of the output file.
+            endian: `str`, optional
+                The endian-ness of the output file.
 
-            See `cfdm.write` for details.
+                See `cfdm.write` for details.
 
-        compress: `int`, optional
-            Regulate the speed and efficiency of compression.
+            compress: `int`, optional
+                Regulate the speed and efficiency of compression.
 
-            See `cfdm.write` for details.
+                See `cfdm.write` for details.
 
-        least_significant_digit: `int`, optional
-            Truncate the input field construct data arrays, but not
-            the data arrays of metadata constructs.
+            least_significant_digit: `int`, optional
+                Truncate the input field construct data arrays, but not
+                the data arrays of metadata constructs.
 
-            See `cfdm.write` for details.
+                See `cfdm.write` for details.
 
-        fletcher32: `bool`, optional
-            If True then the Fletcher-32 HDF5 checksum algorithm is
-            activated to detect compression errors. Ignored if
-            *compress* is ``0``.
+            fletcher32: `bool`, optional
+                If True then the Fletcher-32 HDF5 checksum algorithm is
+                activated to detect compression errors. Ignored if
+                *compress* is ``0``.
 
-            See `cfdm.write` for details.
+                See `cfdm.write` for details.
 
-        shuffle: `bool`, optional
-            If True (the default) then the HDF5 shuffle filter (which
-            de-interlaces a block of data before compression by
-            reordering the bytes by storing the first byte of all of a
-            variable's values in the chunk contiguously, followed by
-            all the second bytes, and so on) is turned off.
+            shuffle: `bool`, optional
+                If True (the default) then the HDF5 shuffle filter (which
+                de-interlaces a block of data before compression by
+                reordering the bytes by storing the first byte of all of a
+                variable's values in the chunk contiguously, followed by
+                all the second bytes, and so on) is turned off.
 
-            See `cfdm.write` for details.
+                See `cfdm.write` for details.
 
-        string: `bool`, optional
-            By default string-valued construct data are written as
-            netCDF arrays of type string if the output file format is
-            ``'NETCDF4'``, or of type char with an extra dimension
-            denoting the maximum string length for any other output
-            file format (see the *fmt* parameter). If *string* is False
-            then string-valued construct data are written as netCDF
-            arrays of type char with an extra dimension denoting the
-            maximum string length, regardless of the selected output
-            file format.
+            string: `bool`, optional
+                By default string-valued construct data are written as
+                netCDF arrays of type string if the output file format is
+                ``'NETCDF4'``, or of type char with an extra dimension
+                denoting the maximum string length for any other output
+                file format (see the *fmt* parameter). If *string* is False
+                then string-valued construct data are written as netCDF
+                arrays of type char with an extra dimension denoting the
+                maximum string length, regardless of the selected output
+                file format.
 
-            See `cfdm.write` for details.
+                See `cfdm.write` for details.
 
-            .. versionadded:: (cfdm) 1.8.0
+                .. versionadded:: (cfdm) 1.8.0
 
-        warn_valid: `bool`, optional
-            If False then do not print a warning when writing
-            "out-of-range" data, as indicated by the values, if
-            present, of any of the ``valid_min``, ``valid_max`` or
-            ``valid_range`` properties on field and metadata
-            constructs that have data.
+            warn_valid: `bool`, optional
+                If False then do not print a warning when writing
+                "out-of-range" data, as indicated by the values, if
+                present, of any of the ``valid_min``, ``valid_max`` or
+                ``valid_range`` properties on field and metadata
+                constructs that have data.
 
-            See `cfdm.write` for details.
+                See `cfdm.write` for details.
 
-            .. versionadded:: (cfdm) 1.8.3
+                .. versionadded:: (cfdm) 1.8.3
 
-        group: `bool`, optional
-            If False then create a "flat" netCDF file, i.e. one with
-            only the root group, regardless of any group structure
-            specified by the field constructs.
+            group: `bool`, optional
+                If False then create a "flat" netCDF file, i.e. one with
+                only the root group, regardless of any group structure
+                specified by the field constructs.
 
-            See `cfdm.write` for details.
+                See `cfdm.write` for details.
 
-            .. versionadded:: (cfdm) 1.8.6
+                .. versionadded:: (cfdm) 1.8.6
 
-        coordinates: `bool`, optional
-            If True then include CF-netCDF coordinate variable names
-            in the 'coordinates' attribute of output data
-            variables.
+            coordinates: `bool`, optional
+                If True then include CF-netCDF coordinate variable names
+                in the 'coordinates' attribute of output data
+                variables.
 
-            See `cfdm.write` for details.
+                See `cfdm.write` for details.
 
-            .. versionadded:: (cfdm) 1.8.7.0
+                .. versionadded:: (cfdm) 1.8.7.0
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-    **Examples:**
+        **Examples:**
 
-    See `cfdm.write` for examples.
+        See `cfdm.write` for examples.
 
-        '''
-        logger.info('Writing to {}'.format(fmt))  # pragma: no cover
+        """
+        logger.info("Writing to {}".format(fmt))  # pragma: no cover
 
         # ------------------------------------------------------------
         # Initialise netCDF write parameters
         # ------------------------------------------------------------
         self.write_vars = {
             # Format of output file
-            'fmt': None,
+            "fmt": None,
             # netCDF4.Dataset instance
-            'netcdf': None,
+            "netcdf": None,
             # Map netCDF variable names to netCDF4.Variable instances
-            'nc': {},
+            "nc": {},
             # Map netCDF dimension names to netCDF dimension sizes
-            'ncdim_to_size': {},
+            "ncdim_to_size": {},
             # Dictionary of netCDF variable names and netCDF
             # dimensions keyed by items of the field (such as a
             # coordinate or a coordinate reference)
-            'seen': {},
+            "seen": {},
             # Set of all netCDF dimension and netCDF variable names.
-            'ncvar_names': set(()),
+            "ncvar_names": set(()),
             # Set of global or non-standard CF properties which have
             # identical values across all input fields.
-            'variable_attributes': set(),
-            'global_attributes': set(),
-            'file_descriptors': {},
-
-            'group': group,
-            'group_attributes': {},
-
-            'bounds': {},
+            "variable_attributes": set(),
+            "global_attributes": set(),
+            "file_descriptors": {},
+            "group": group,
+            "group_attributes": {},
+            "bounds": {},
             # NetCDF compression/endian
-            'netcdf_compression': {},
-            'endian': 'native',
-            'least_significant_digit': None,
+            "netcdf_compression": {},
+            "endian": "native",
+            "least_significant_digit": None,
             # CF properties which need not be set on bounds if they're set
             # on the parent coordinate
-            'omit_bounds_properties': ('units', 'standard_name', 'axis',
-                                       'positive', 'calendar', 'month_lengths',
-                                       'leap_year', 'leap_month'),
+            "omit_bounds_properties": (
+                "units",
+                "standard_name",
+                "axis",
+                "positive",
+                "calendar",
+                "month_lengths",
+                "leap_year",
+                "leap_month",
+            ),
             # Data type conversions to be applied prior to writing
-            'datatype': {},
-
+            "datatype": {},
             # Whether or not to write string data-types to netCDF4
             # files (as opposed to car data-types).
-            'string': string,
-
+            "string": string,
             # Conventions
-            'Conventions': Conventions,
-
-            'xxx': [],
-
-            'count_variable_sample_dimension': {},
-            'index_variable_sample_dimension': {},
-
-            'external_variables': '',
-            'external_fields': [],
-
-            'geometry_containers': {},
-            'geometry_encoding': {},
-            'geometry_dimensions': set(),
-
-            'dimensions_with_role': {},
-            'dimensions': set(),
-
-            'latest_version': LooseVersion(
-                self.implementation.get_cf_version()),
-            'version': {},
-
+            "Conventions": Conventions,
+            "xxx": [],
+            "count_variable_sample_dimension": {},
+            "index_variable_sample_dimension": {},
+            "external_variables": "",
+            "external_fields": [],
+            "geometry_containers": {},
+            "geometry_encoding": {},
+            "geometry_dimensions": set(),
+            "dimensions_with_role": {},
+            "dimensions": set(),
+            "latest_version": LooseVersion(
+                self.implementation.get_cf_version()
+            ),
+            "version": {},
             # Warn for the presence of out-of-range data with of
             # valid_[min|max|range] attributes?
-            'warn_valid': bool(warn_valid),
-            'valid_properties': set(('valid_min', 'valid_max', 'valid_range')),
-
+            "warn_valid": bool(warn_valid),
+            "valid_properties": set(("valid_min", "valid_max", "valid_range")),
             # Whether or not to name dimension corodinates in the
             # 'coordinates' attribute
-            'coordinates': bool(coordinates),
+            "coordinates": bool(coordinates),
         }
         g = self.write_vars
 
         # ------------------------------------------------------------
         # Set possible versions
         # ------------------------------------------------------------
-        for version in ('1.6', '1.7', '1.8', '1.9'):
-            g['CF-' + version] = LooseVersion(version)
+        for version in ("1.6", "1.7", "1.8", "1.9"):
+            g["CF-" + version] = LooseVersion(version)
 
         if extra_write_vars:
             g.update(copy.deepcopy(extra_write_vars))
@@ -4316,19 +4593,32 @@ class NetCDFWrite(IOWrite):
         compress = int(compress)
         zlib = bool(compress)
 
-        if fmt not in ('NETCDF3_CLASSIC', 'NETCDF3_64BIT',
-                       'NETCDF4', 'NETCDF4_CLASSIC',
-                       'NETCDF3_64BIT_OFFSET', 'NETCDF3_64BIT_DATA'):
+        if fmt not in (
+            "NETCDF3_CLASSIC",
+            "NETCDF3_64BIT",
+            "NETCDF4",
+            "NETCDF4_CLASSIC",
+            "NETCDF3_64BIT_OFFSET",
+            "NETCDF3_64BIT_DATA",
+        ):
             raise ValueError("Unknown output file format: {}".format(fmt))
 
-        if compress and fmt in ('NETCDF3_CLASSIC', 'NETCDF3_64BIT',
-                                'NETCDF3_64BIT_OFFSET', 'NETCDF3_64BIT_DATA'):
+        if compress and fmt in (
+            "NETCDF3_CLASSIC",
+            "NETCDF3_64BIT",
+            "NETCDF3_64BIT_OFFSET",
+            "NETCDF3_64BIT_DATA",
+        ):
             raise ValueError("Can't compress {} format file".format(fmt))
 
-        if group and fmt in ('NETCDF3_CLASSIC', 'NETCDF3_64BIT',
-                             'NETCDF3_64BIT_OFFSET', 'NETCDF3_64BIT_DATA'):
+        if group and fmt in (
+            "NETCDF3_CLASSIC",
+            "NETCDF3_64BIT",
+            "NETCDF3_64BIT_OFFSET",
+            "NETCDF3_64BIT_DATA",
+        ):
             # Can't write groups to a netCDF3 file
-            g['group'] = False
+            g["group"] = False
 
         # ------------------------------------------------------------
         # Set up global/non-global attributes
@@ -4339,13 +4629,13 @@ class NetCDFWrite(IOWrite):
             else:
                 variable_attributes = set(variable_attributes)
 
-            g['variable_attributes'] = variable_attributes
+            g["variable_attributes"] = variable_attributes
 
-            if 'Conventions' in variable_attributes:
+            if "Conventions" in variable_attributes:
                 raise ValueError(
                     "Can't prevent the 'Conventions' property from being "
-                    "a netCDF global variable: {0}".format(
-                        variable_attributes))
+                    "a netCDF global variable: {0}".format(variable_attributes)
+                )
         # --- End: if
 
         if global_attributes:
@@ -4354,57 +4644,64 @@ class NetCDFWrite(IOWrite):
             else:
                 global_attributes = set(global_attributes)
 
-            g['global_attributes'] = global_attributes
+            g["global_attributes"] = global_attributes
 
         if file_descriptors:
-            if 'Conventions' in file_descriptors:
+            if "Conventions" in file_descriptors:
                 raise ValueError(
                     "Use the Conventions parameter to specify conventions, "
-                    "rather than a file descriptor.")
+                    "rather than a file descriptor."
+                )
 
-            g['file_descriptors'] = file_descriptors
+            g["file_descriptors"] = file_descriptors
 
         # ------------------------------------------------------------
         # Set up data type conversions. By default, Booleans are
         # converted to 32-bit integers and python objects are
         # converted to 64-bit floats.
         # ------------------------------------------------------------
-        dtype_conversions = {numpy.dtype(bool): numpy.dtype('int32'),
-                             numpy.dtype(object): numpy.dtype(float)}
+        dtype_conversions = {
+            numpy.dtype(bool): numpy.dtype("int32"),
+            numpy.dtype(object): numpy.dtype(float),
+        }
         if datatype:
             dtype_conversions.update(datatype)
 
-        g['datatype'].update(dtype_conversions)
+        g["datatype"].update(dtype_conversions)
 
         # -------------------------------------------------------
         # Compression/endian
         # -------------------------------------------------------
-        g['netcdf_compression'].update({
-            'zlib': zlib,
-            'complevel': compress,
-            'fletcher32': bool(fletcher32),
-            'shuffle': bool(shuffle),
-        })
-        g['endian'] = endian
-        g['least_significant_digit'] = least_significant_digit
+        g["netcdf_compression"].update(
+            {
+                "zlib": zlib,
+                "complevel": compress,
+                "fletcher32": bool(fletcher32),
+                "shuffle": bool(shuffle),
+            }
+        )
+        g["endian"] = endian
+        g["least_significant_digit"] = least_significant_digit
 
-        g['fmt'] = fmt
+        g["fmt"] = fmt
 
-        if isinstance(fields, self.implementation.get_class('Field')):
+        if isinstance(fields, self.implementation.get_class("Field")):
             fields = (fields,)
         else:
             try:
                 fields = tuple(fields)
             except TypeError:
-                raise TypeError("'fields' parameter must be a (sequence of) "
-                                "Field instances")
+                raise TypeError(
+                    "'fields' parameter must be a (sequence of) "
+                    "Field instances"
+                )
 
         # ------------------------------------------------------------
         # Scalar coordinate variables
         # ------------------------------------------------------------
-        g['scalar'] = scalar
+        g["scalar"] = scalar
 
-        g['overwrite'] = overwrite
+        g["overwrite"] = overwrite
 
         # ------------------------------------------------------------
         # Open the output netCDF file
@@ -4414,28 +4711,28 @@ class NetCDFWrite(IOWrite):
             if not overwrite:
                 raise IOError(
                     "Can't write to an existing file unless "
-                    "overwrite=True: {}".format(
-                        os.path.abspath(filename)))
+                    "overwrite=True: {}".format(os.path.abspath(filename))
+                )
 
             if not os.access(filename, os.W_OK):
                 raise IOError(
                     "Can't overwrite an existing file without "
-                    "permission: {}".format(
-                        os.path.abspath(filename)))
+                    "permission: {}".format(os.path.abspath(filename))
+                )
         else:
-            g['overwrite'] = False
+            g["overwrite"] = False
 
-        mode = 'w'
-        g['filename'] = filename
-        g['netcdf'] = self.file_open(filename, mode, fmt, fields)
+        mode = "w"
+        g["filename"] = filename
+        g["netcdf"] = self.file_open(filename, mode, fmt, fields)
 
-#        # -----------------------------------------------------------
-#        # Set the fill mode for a Dataset open for writing to
-#        off. This # will prevent the data from being pre-filled with
-#        fill values, # which may result in some performance
-#        improvements.  #
-#        -------------------------------------------------------------
-#        g['netcdf'].set_fill_off()
+        #        # -----------------------------------------------------------
+        #        # Set the fill mode for a Dataset open for writing to
+        #        off. This # will prevent the data from being pre-filled with
+        #        fill values, # which may result in some performance
+        #        improvements.  #
+        #        -------------------------------------------------------------
+        #        g['netcdf'].set_fill_off()
 
         # ------------------------------------------------------------
         # Write global properties to the file first. This is important
@@ -4448,22 +4745,23 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Write group-level properties to the file next
         # ------------------------------------------------------------
-        if g['group']:
+        if g["group"]:
             self._write_group_attributes(fields)
 
         if external is not None:
-            if g['output_version'] < g['CF-1.7']:
+            if g["output_version"] < g["CF-1.7"]:
                 raise ValueError(
                     "Can't create external variables at CF-{} "
-                    "(version too old)".format(
-                        g['output_version']))
+                    "(version too old)".format(g["output_version"])
+                )
 
             external = os.path.expanduser(os.path.expandvars(external))
             if os.path.realpath(external) == os.path.realpath(filename):
-                raise ValueError("Can't set filename and external to the "
-                                 "same path")
+                raise ValueError(
+                    "Can't set filename and external to the " "same path"
+                )
         # --- End: if
-        g['external_file'] = external
+        g["external_file"] = external
 
         # ------------------------------------------------------------
         # Write each field construct
@@ -4479,17 +4777,20 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Write external fields to the external file
         # ------------------------------------------------------------
-        if g['external_fields'] and g['external_file'] is not None:
-            self.write(fields=g['external_fields'],
-                       filename=g['external_file'],
-                       fmt=fmt,
-                       overwrite=overwrite,
-                       datatype=datatype,
-                       endian=endian,
-                       compress=compress,
-                       fletcher32=fletcher32,
-                       shuffle=shuffle,
-                       verbose=verbose,
-                       extra_write_vars=extra_write_vars)
+        if g["external_fields"] and g["external_file"] is not None:
+            self.write(
+                fields=g["external_fields"],
+                filename=g["external_file"],
+                fmt=fmt,
+                overwrite=overwrite,
+                datatype=datatype,
+                endian=endian,
+                compress=compress,
+                fletcher32=fletcher32,
+                shuffle=shuffle,
+                verbose=verbose,
+                extra_write_vars=extra_write_vars,
+            )
+
 
 # --- End: class

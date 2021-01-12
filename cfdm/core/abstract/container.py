@@ -9,31 +9,32 @@ from ..docstring import _docstring_substitution_definitions
 
 
 class Container(metaclass=DocstringRewriteMeta):
-    '''Abstract base class for storing components.
+    """Abstract base class for storing components.
 
     .. versionadded:: (cfdm) 1.7.0
 
-    '''
+    """
+
     def __init__(self, source=None, copy=True):
-        '''**Initialisation**
+        """**Initialisation**
 
-    :Parameters:
+        :Parameters:
 
-        source: optional
-            Initialize the components from those of *source*.
+            source: optional
+                Initialize the components from those of *source*.
 
-            {{init source}}
+                {{init source}}
 
-        {{init copy: `bool`, optional}}
+            {{init copy: `bool`, optional}}
 
-        '''
+        """
         self._components = {}
 
         if source is not None:
             # WARNING: The 'custom' dictionary is never deep copied
             #          from source
             try:
-                custom = source._get_component('custom', {})
+                custom = source._get_component("custom", {})
             except AttributeError:
                 custom = {}
             else:
@@ -41,91 +42,91 @@ class Container(metaclass=DocstringRewriteMeta):
         else:
             custom = {}
 
-        self._set_component('custom', custom, copy=False)
+        self._set_component("custom", custom, copy=False)
 
     def __deepcopy__(self, memo):
-        '''Called by the `copy.deepcopy` function.
+        """Called by the `copy.deepcopy` function.
 
-    x.__deepcopy__() <==> copy.deepcopy(x)
+        x.__deepcopy__() <==> copy.deepcopy(x)
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    **Examples:**
+        **Examples:**
 
-    >>> import copy
-    >>> f = {{package}}.{{class}}()
-    >>> g = copy.deepcopy(f)
+        >>> import copy
+        >>> f = {{package}}.{{class}}()
+        >>> g = copy.deepcopy(f)
 
-        '''
+        """
         return self.copy()
 
     def __docstring_substitutions__(self):
-        '''Define docstring substitutions that apply to this class and all of
-    its subclasses.
+        """Define docstring substitutions that apply to this class and all of
+        its subclasses.
 
-    These are in addtion to, and take precendence over, docstring
-    substitutions defined by the base classes of this class.
+        These are in addtion to, and take precendence over, docstring
+        substitutions defined by the base classes of this class.
 
-    See `_docstring_substitutions` for details.
+        See `_docstring_substitutions` for details.
 
-    .. versionaddedd:: (cfdm) 1.8.7.0
+        .. versionaddedd:: (cfdm) 1.8.7.0
 
-    :Returns:
+        :Returns:
 
-        `dict`
-            The docstring substitutions that have been applied.
+            `dict`
+                The docstring substitutions that have been applied.
 
-        '''
+        """
         return _docstring_substitution_definitions
 
     def __docstring_package_depth__(self):
-        '''Return the package depth for {{package}} docstring substitutions.
+        """Return the package depth for {{package}} docstring substitutions.
 
-    See `_docstring_package_depth` for details.
+        See `_docstring_package_depth` for details.
 
-        '''
+        """
         return 1
 
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
     def _default(self, default, message=None):
-        '''Return a value or raise an Exception for a default case.
+        """Return a value or raise an Exception for a default case.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Parameters:
+        :Parameters:
 
-        default:
-            The value to return, or to raise if set to an `Exception`
-            instance.
+            default:
+                The value to return, or to raise if set to an `Exception`
+                instance.
 
-        message: `str`, optional
-            The error message to raise with *default* if it is an
-            `Exception` instance.
+            message: `str`, optional
+                The error message to raise with *default* if it is an
+                `Exception` instance.
 
-    :Returns:
+        :Returns:
 
-            The value of *default* if it is not an `Exception`
-            instance.
+                The value of *default* if it is not an `Exception`
+                instance.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f = {{package}}.{{class}}()
-    >>> f._default(AttributeError())  # Raises Exception
-    AttributeError:
-    >>> f._default(ValueError("Missing item"))  # Raises Exception
-    ValueError: Missing item
-    >>> f._default(ValueError(), message="No component")  # Raises Exception
-    ValueError: No component
-    >>> f._default(False)
-    False
-    >>> f._default('Not set')
-    'Not set'
-    >>> f._default(1)
-    1
+        >>> f = {{package}}.{{class}}()
+        >>> f._default(AttributeError())  # Raises Exception
+        AttributeError:
+        >>> f._default(ValueError("Missing item"))  # Raises Exception
+        ValueError: Missing item
+        >>> f._default(ValueError(), message="No component")  # Raises Exception
+        ValueError: No component
+        >>> f._default(False)
+        False
+        >>> f._default('Not set')
+        'Not set'
+        >>> f._default(1)
+        1
 
-        '''
+        """
         if isinstance(default, Exception):
             if message is not None and not default.args:
                 default = copy(default)
@@ -136,185 +137,190 @@ class Container(metaclass=DocstringRewriteMeta):
         return default
 
     def _del_component(self, component, default=ValueError()):
-        '''Remove a component.
+        """Remove a component.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `_get_component`, `_has_component`, `_set_component`
+        .. seealso:: `_get_component`, `_has_component`, `_set_component`
 
-    :Parameters:
+        :Parameters:
 
-        component:
-            The name of the component to be removed.
+            component:
+                The name of the component to be removed.
 
-        default: optional
-            Return *default* if the component has not been set.
+            default: optional
+                Return *default* if the component has not been set.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-            The removed component. If unset then *default* is
-            returned, if provided.
+                The removed component. If unset then *default* is
+                returned, if provided.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f = {{package}}.{{class}}()
-    >>> f._set_component('foo', 'bar')
-    >>> f._has_component('foo')
-    True
-    >>> f._get_component('foo')
-    'bar'
-    >>> f._del_component('foo')
-    'bar'
-    >>> f._has_component('foo')
-    False
+        >>> f = {{package}}.{{class}}()
+        >>> f._set_component('foo', 'bar')
+        >>> f._has_component('foo')
+        True
+        >>> f._get_component('foo')
+        'bar'
+        >>> f._del_component('foo')
+        'bar'
+        >>> f._has_component('foo')
+        False
 
-        '''
+        """
         try:
             return self._components.pop(component)
         except KeyError:
             return self._default(
-                default, "{!r} has no {!r} component".format(
-                    self.__class__.__name__, component)
+                default,
+                "{!r} has no {!r} component".format(
+                    self.__class__.__name__, component
+                ),
             )
 
     @property
     def _custom(self):
-        '''Customisable storage for additional attributes.
+        """Customisable storage for additional attributes.
 
-    .. versionadded:: (cfdm) 1.7.4
+        .. versionadded:: (cfdm) 1.7.4
 
-    **Examples:**
+        **Examples:**
 
-    >>> f = {{package}}.{{class}}()
-    >>> f._custom
-    {}
-    >>> f._custom['feature'] = ['f']
-    >>> g = f.copy()
-    >>> g._custom['feature'][0] = 'g'
-    >>> f._custom
-    {'feature': ['f']}
-    >>> g._custom
-    {'feature': ['g']}
-    >>> del g._custom['feature']
-    >>> f._custom
-    {'feature': ['f']}
-    >>> g._custom
-    {}
+        >>> f = {{package}}.{{class}}()
+        >>> f._custom
+        {}
+        >>> f._custom['feature'] = ['f']
+        >>> g = f.copy()
+        >>> g._custom['feature'][0] = 'g'
+        >>> f._custom
+        {'feature': ['f']}
+        >>> g._custom
+        {'feature': ['g']}
+        >>> del g._custom['feature']
+        >>> f._custom
+        {'feature': ['f']}
+        >>> g._custom
+        {}
 
-        '''
-        return self._get_component('custom')
+        """
+        return self._get_component("custom")
 
     def _get_component(self, component, default=ValueError()):
-        '''Return a component
+        """Return a component
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `_del_component`, `_has_component`, `_set_component`
+        .. seealso:: `_del_component`, `_has_component`, `_set_component`
 
-    :Parameters:
+        :Parameters:
 
-        component:
-            The name of the component to be returned.
+            component:
+                The name of the component to be returned.
 
-        default: optional
-            Return *default* if the component has not been set.
+            default: optional
+                Return *default* if the component has not been set.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-            The component. If unset then *default* is returned, if
-            provided.
+                The component. If unset then *default* is returned, if
+                provided.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f = {{package}}.{{class}}()
-    >>> f._set_component('foo', 'bar')
-    >>> f._has_component('foo')
-    True
-    >>> f._get_component('foo')
-    'bar'
-    >>> f._del_component('foo')
-    'bar'
-    >>> f._has_component('foo')
-    False
+        >>> f = {{package}}.{{class}}()
+        >>> f._set_component('foo', 'bar')
+        >>> f._has_component('foo')
+        True
+        >>> f._get_component('foo')
+        'bar'
+        >>> f._del_component('foo')
+        'bar'
+        >>> f._has_component('foo')
+        False
 
-        '''
+        """
         try:
             return self._components[component]
         except KeyError:
-            return self._default(default,
-                                 "{!r} has no {!r} component".format(
-                                     self.__class__.__name__, component))
+            return self._default(
+                default,
+                "{!r} has no {!r} component".format(
+                    self.__class__.__name__, component
+                ),
+            )
 
     def _has_component(self, component):
-        '''Whether a component has been set.
+        """Whether a component has been set.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `_del_component`, `_get_component`, `_set_component`
+        .. seealso:: `_del_component`, `_get_component`, `_set_component`
 
-    :Parameters:
+        :Parameters:
 
-        component:
-            The name of the component.
+            component:
+                The name of the component.
 
-    :Returns:
+        :Returns:
 
-        `bool`
-            True if the component has been set, otherwise False.
+            `bool`
+                True if the component has been set, otherwise False.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f = {{package}}.{{class}}()
-    >>> f._set_component('foo', 'bar')
-    >>> f._has_component('foo')
-    True
-    >>> f._get_component('foo')
-    'bar'
-    >>> f._del_component('foo')
-    'bar'
-    >>> f._has_component('foo')
-    False
+        >>> f = {{package}}.{{class}}()
+        >>> f._set_component('foo', 'bar')
+        >>> f._has_component('foo')
+        True
+        >>> f._get_component('foo')
+        'bar'
+        >>> f._del_component('foo')
+        'bar'
+        >>> f._has_component('foo')
+        False
 
-        '''
+        """
         return component in self._components
 
     def _set_component(self, component, value, copy=True):
-        '''Set a component.
+        """Set a component.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `_del_component`, `_get_component`, `_has_component`
+        .. seealso:: `_del_component`, `_get_component`, `_has_component`
 
-    :Parameters:
+        :Parameters:
 
-        component: `str`
-            The name of the component.
+            component: `str`
+                The name of the component.
 
-        value:
-            The value for the component.
+            value:
+                The value for the component.
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-    **Examples:**
+        **Examples:**
 
-    >>> f = {{package}}.{{class}}()
-    >>> f._set_component('foo', 'bar')
-    >>> f._has_component('foo')
-    True
-    >>> f._get_component('foo')
-    'bar'
-    >>> f._del_component('foo')
-    'bar'
-    >>> f._has_component('foo')
-    False
+        >>> f = {{package}}.{{class}}()
+        >>> f._set_component('foo', 'bar')
+        >>> f._has_component('foo')
+        True
+        >>> f._get_component('foo')
+        'bar'
+        >>> f._del_component('foo')
+        'bar'
+        >>> f._has_component('foo')
+        False
 
-        '''
+        """
         if copy:
             value = deepcopy(value)
 
@@ -324,23 +330,24 @@ class Container(metaclass=DocstringRewriteMeta):
     # Methods
     # ----------------------------------------------------------------
     def copy(self):
-        '''Return a deep copy.
+        """Return a deep copy.
 
-    ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+        ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Returns:
+        :Returns:
 
-        `{{class}}`
-            The deep copy.
+            `{{class}}`
+                The deep copy.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f = {{package}}.{{class}}()
-    >>> g = f.copy()
+        >>> f = {{package}}.{{class}}()
+        >>> g = f.copy()
 
-        '''
+        """
         return type(self)(source=self, copy=True)
+
 
 # --- End: class

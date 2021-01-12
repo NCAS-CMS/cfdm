@@ -2,7 +2,7 @@ from . import abstract
 
 
 class InteriorRing(abstract.PropertiesData):
-    '''An interior ring array with properties.
+    """An interior ring array with properties.
 
     If a cell is composed of multiple polygon parts, an individual
     polygon may define an "interior ring", i.e. a region that is to be
@@ -20,5 +20,7 @@ class InteriorRing(abstract.PropertiesData):
 
     .. versionadded:: (cfdm) 1.8.0
 
-    '''
+    """
+
+
 # --- End: class

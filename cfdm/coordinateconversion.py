@@ -2,9 +2,10 @@ from . import mixin
 from . import core
 
 
-class CoordinateConversion(mixin.ParametersDomainAncillaries,
-                           core.CoordinateConversion):
-    '''A coordinate conversion component of a coordinate reference
+class CoordinateConversion(
+    mixin.ParametersDomainAncillaries, core.CoordinateConversion
+):
+    """A coordinate conversion component of a coordinate reference
     construct of the CF data model.
 
     A coordinate conversion formula converting coordinate values taken
@@ -20,5 +21,7 @@ class CoordinateConversion(mixin.ParametersDomainAncillaries,
 
     .. versionadded:: (cfdm) 1.7.0
 
-    '''
+    """
+
+
 # --- End: class

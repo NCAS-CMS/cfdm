@@ -14,7 +14,7 @@ import cfdm
 class DomainTest(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
-        cfdm.log_level('DISABLE')
+        cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
@@ -25,9 +25,10 @@ class DomainTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
         self.filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
+            os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
+        )
         f = cfdm.read(self.filename)
-        self.assertEqual(len(f), 1, 'f={!r}'.format(f))
+        self.assertEqual(len(f), 1, "f={!r}".format(f))
         self.f = f[0]
 
         self.test_only = []
@@ -41,7 +42,7 @@ class DomainTest(unittest.TestCase):
         for d in f.domain_axes.values():
             _ = repr(d)
             _ = str(d)
-            self.assertEqual(d.construct_type, 'domain_axis')
+            self.assertEqual(d.construct_type, "domain_axis")
 
     def test_DomainAxis_equals(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -49,7 +50,7 @@ class DomainTest(unittest.TestCase):
 
         f = self.f
 
-        d = f.construct('key%domainaxis0')
+        d = f.construct("key%domainaxis0")
         self.assertIsInstance(cfdm.DomainAxis(source=d), cfdm.DomainAxis)
 
         self.assertIsInstance(cfdm.DomainAxis(source=f), cfdm.DomainAxis)
@@ -73,7 +74,7 @@ class DomainTest(unittest.TestCase):
 
         f = self.f
 
-        d = f.construct('key%domainaxis0')
+        d = f.construct("key%domainaxis0")
 
         d.set_size(99)
 
@@ -99,11 +100,12 @@ class DomainTest(unittest.TestCase):
             d.nc_set_unlimited(False)
             self.assertFalse(d.nc_is_unlimited())
 
+
 # --- End: class
 
 
-if __name__ == '__main__':
-    print('Run date:', datetime.datetime.now())
+if __name__ == "__main__":
+    print("Run date:", datetime.datetime.now())
     cfdm.environment()
     print()
     unittest.main(verbosity=2)
