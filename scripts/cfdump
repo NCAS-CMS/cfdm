@@ -5,11 +5,8 @@ if __name__ == "__main__":
 
     import getopt
     import os
-    import platform
     import sys
     import cfdm
-
-    from distutils.version import LooseVersion
 
     def print_help(version, date):
         import subprocess
