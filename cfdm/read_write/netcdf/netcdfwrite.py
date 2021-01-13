@@ -2944,7 +2944,7 @@ class NetCDFWrite(IOWrite):
             if valid_range:
                 raise ValueError(
                     "Can't write {!r} with both {} and "
-                    "valid_range properties".format(cvfar, prop)
+                    "valid_range properties".format(cfvar, prop)
                 )
 
             valid_min = attributes[prop]
@@ -2967,7 +2967,7 @@ class NetCDFWrite(IOWrite):
             if valid_range:
                 raise ValueError(
                     "Can't write {!r} with both {} and "
-                    "valid_range properties".format(cvfar, prop)
+                    "valid_range properties".format(cfvar, prop)
                 )
 
             valid_max = attributes[prop]
@@ -4205,9 +4205,9 @@ class NetCDFWrite(IOWrite):
                 g["Conventions"] = []
             else:
                 if "," in set_Conventions:
-                    g["Conventions"] = split.set_Conventions.split(",")
+                    g["Conventions"] = set_Conventions.split(",")
                 else:
-                    g["Conventions"] = split.set_Conventions.split()
+                    g["Conventions"] = set_Conventions.split()
         # --- End: if
 
         for i, c in enumerate(g["Conventions"][:]):

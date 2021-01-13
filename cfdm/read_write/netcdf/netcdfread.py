@@ -903,8 +903,12 @@ class NetCDFRead(IORead):
             )
             if flattener_name_mapping_dimensions is not None:
                 if isinstance(flattener_name_mapping_dimensions, str):
-                    flattener_name_mapping_attributes = [
-                        flattener_name_mapping_attributes
+                    # TODO SLB check with DCH that this is a correct fix for
+                    # suspected copy/paste error from:
+                    # ..._attributes = [ ..._attributes ]
+                    # (correctly raised by flake8 as use of undefined name)
+                    flattener_name_mapping_dimensions = [
+                        flattener_name_mapping_dimensions
                     ]
                 flattener_dimensions = dict(
                     tuple(x.split(": "))
@@ -6512,7 +6516,7 @@ class NetCDFRead(IORead):
         if len(parsed_interior_ring) != 1:
             self._add_message(
                 field_ncvar,
-                ncvar,
+                geometry_ncvar,
                 message=incorrectly_formatted,
                 attribute=attribute,
             )

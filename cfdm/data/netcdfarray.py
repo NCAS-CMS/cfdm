@@ -489,7 +489,7 @@ class NetCDFArray(abstract.Array):
             try:
                 netcdf = netCDF4.Dataset(self.get_filename(), "r")
             except RuntimeError as error:
-                raise RuntimeError("{}: {}".format(error, filename))
+                raise RuntimeError("{}: {}".format(error, self.get_filename()))
 
             self._set_component("netcdf", netcdf, copy=False)
 
