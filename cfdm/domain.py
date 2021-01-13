@@ -238,10 +238,6 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
                 as a string.
 
         """
-        indent = "    "
-        indent0 = indent * _level
-        indent1 = indent0 + indent
-
         axis_to_name = self._unique_domain_axis_identities()
 
         construct_name = self._unique_construct_names()

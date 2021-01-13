@@ -229,8 +229,6 @@ class PropertiesDataBounds(PropertiesData):
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        name = self.identity("")
-
         shape = None
         data = self.get_data(None)
         bounds = self.get_bounds(None)

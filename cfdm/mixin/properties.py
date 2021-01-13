@@ -111,7 +111,6 @@ class Properties(Container):
         c.set_properties({'units': 'Kelvin', 'standard_name': 'air_temperature'})
 
         """
-        namespace0 = namespace
         if namespace is None:
             namespace = self._package() + "."
         elif namespace and not namespace.endswith("."):
@@ -181,7 +180,6 @@ class Properties(Container):
 
         """
         indent0 = "    " * _level
-        indent1 = "    " * (_level + 1)
 
         string = []
 

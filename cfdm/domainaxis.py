@@ -114,7 +114,6 @@ class DomainAxis(
         c.nc_set_dimension('time')
 
         """
-        namespace0 = namespace
         if namespace is None:
             namespace = self._package() + "."
         elif namespace and not namespace.endswith("."):

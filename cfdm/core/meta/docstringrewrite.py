@@ -306,7 +306,7 @@ class DocstringRewriteMeta(type):
                     # class
                     attrs[attr_name] = attr
 
-                except Exception as error:
+                except Exception:
                     pass
         #                    raise RuntimeError(str(error) + ': ' +
         #                                       '.'.join([parent.__name__,

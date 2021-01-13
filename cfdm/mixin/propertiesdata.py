@@ -90,8 +90,6 @@ class PropertiesData(Properties):
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        name = self.identity("")
-
         data = self.get_data(None)
         if data is not None:
             dims = ", ".join([str(x) for x in data.shape])

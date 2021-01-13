@@ -735,8 +735,6 @@ class NetCDFRead(IORead):
         if extra_read_vars:
             g.update(deepcopy(extra_read_vars))
 
-        compression = {}
-
         # ----------------------------------------------------------------
         # Parse field parameter
         # ----------------------------------------------------------------
@@ -760,7 +758,8 @@ class NetCDFRead(IORead):
         # Parse 'extra' keyword parameter
         if extra:
             if isinstance(extra, str):
-                field = (extra,)
+                # TODO SLB: field variable not used, is this right?
+                field = (extra,)  # noqa: F841
 
             for f in extra:
                 if f not in g["get_constructs"]:
@@ -1298,10 +1297,8 @@ class NetCDFRead(IORead):
                     if not cf_compliant:
                         sample_dimension = None
                     else:
-                        element_dimension_2 = (
-                            self._parse_ragged_contiguous_compression(
-                                ncvar, sample_dimension
-                            )
+                        self._parse_ragged_contiguous_compression(
+                            ncvar, sample_dimension
                         )
 
                         # Do not attempt to create a field from a
@@ -1331,7 +1328,7 @@ class NetCDFRead(IORead):
                     if not cf_compliant:
                         instance_dimension = None
                     else:
-                        element_dimension_1 = self._parse_indexed_compression(
+                        self._parse_indexed_compression(
                             ncvar, instance_dimension
                         )
 
@@ -1484,7 +1481,6 @@ class NetCDFRead(IORead):
             if self._is_unreferenced(ncvar)
         ]
 
-        xx = []
         for ncvar in referenced_variables[:]:
             if all(
                 referencer in referenced_variables
@@ -2111,7 +2107,6 @@ class NetCDFRead(IORead):
 
         node_coordinates = attributes[geometry_ncvar].get("node_coordinates")
         node_count = attributes[geometry_ncvar].get("node_count")
-        coordinates = attributes[geometry_ncvar].get("coordinates")
         part_node_count = attributes[geometry_ncvar].get("part_node_count")
         interior_ring = attributes[geometry_ncvar].get("interior_ring")
 
@@ -2251,7 +2246,7 @@ class NetCDFRead(IORead):
             #
             # => we can treat the nodes as a contiguous ragged array
             # --------------------------------------------------------
-            element_dimension = self._set_ragged_contiguous_parameters(
+            self._set_ragged_contiguous_parameters(
                 elements_per_instance=nodes_per_geometry,
                 sample_dimension=node_dimension,
                 element_dimension="node",
@@ -2308,7 +2303,7 @@ class NetCDFRead(IORead):
                         break
             # --- End: for
 
-            element_dimension_1 = self._set_ragged_contiguous_parameters(
+            self._set_ragged_contiguous_parameters(
                 elements_per_instance=parts,
                 sample_dimension=node_dimension,
                 element_dimension="node",
@@ -2319,7 +2314,7 @@ class NetCDFRead(IORead):
                 part_node_count
             ][0]
 
-            element_dimension_2 = self._set_ragged_indexed_parameters(
+            self._set_ragged_indexed_parameters(
                 index=index,
                 indexed_sample_dimension=indexed_sample_dimension,
                 element_dimension="part",
@@ -2618,8 +2613,6 @@ class NetCDFRead(IORead):
 
         g = self.read_vars
 
-        nc = g["nc"]
-
         attribute = {coord_ncvar + ":formula_terms": formula_terms}
 
         g["formula_terms"].setdefault(coord_ncvar, {"coord": {}, "bounds": {}})
@@ -2640,7 +2633,7 @@ class NetCDFRead(IORead):
             )
             return False
 
-        parent_dimensions = self._ncdimensions(field_ncvar)
+        self._ncdimensions(field_ncvar)
 
         for x in parsed_formula_terms:
             term, values = list(x.items())[0]
@@ -2933,8 +2926,6 @@ class NetCDFRead(IORead):
 
         # Reset 'domain_ancillary_key'
         g["domain_ancillary_key"] = {}
-
-        nc = g["variable_dataset"][field_ncvar]
 
         dimensions = g["variable_dimensions"][field_ncvar]
         g["dataset_compliance"][field_ncvar] = {
@@ -3305,10 +3296,6 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         geometry = self._get_geometry(field_ncvar)
         if geometry is not None:
-            node_coordinates = set(geometry["node_coordinates"]).difference(
-                g["node_coordinates_as_bounds"]
-            )
-
             for node_ncvar in geometry["node_coordinates"]:
                 found = any(
                     [
@@ -4293,7 +4280,6 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         geometry = self._get_geometry(field_ncvar)
 
-        has_bounds = False
         attribute = "bounds"  # TODO Bad default? consider if bounds != None
 
         # If there are bounds then find the name of the attribute that
@@ -4379,8 +4365,6 @@ class NetCDFRead(IORead):
                 # required. (Introduced at v1.8.3)
                 # ----------------------------------------------------
                 self._set_default_FillValue(bounds, bounds_ncvar)
-
-            bounds_dimensions = g["variable_dimensions"][bounds_ncvar]
 
             bounds_data = self._create_data(
                 bounds_ncvar, bounds, parent_ncvar=ncvar
@@ -4625,7 +4609,7 @@ class NetCDFRead(IORead):
 
         # Set the CF properties
         properties = g["variable_attributes"][ncvar]
-        instance_ncdim = properties.pop("instance_dimension", None)
+        properties.pop("instance_dimension", None)
         self.implementation.set_properties(variable, properties)
 
         if not g["mask"]:
@@ -5865,11 +5849,6 @@ class NetCDFRead(IORead):
             + geometry_ncvar: " ".join(geometry["node_coordinates"])
         }
 
-        incorrect_dimensions = (
-            "Node coordinate variable",
-            "spans incorrect dimensions",
-        )
-
         if node_ncvar not in g["internal_variables"]:
             node_ncvar, message = self._check_missing_variable(
                 node_ncvar, "Node coordinate variable"
@@ -6162,10 +6141,6 @@ class NetCDFRead(IORead):
         """
         attribute = {field_ncvar + ":coordinates": string}
 
-        incorrectly_formatted = (
-            "coordinate attribute",
-            "is incorrectly formatted",
-        )
         incorrect_dimensions = (
             "Auxiliary/scalar coordinate variable",
             "spans incorrect dimensions",
@@ -6189,15 +6164,17 @@ class NetCDFRead(IORead):
         # Check that the variable's dimensions span a subset of the
         # parent variable's dimensions (allowing for char variables
         # with a trailing dimension)
-        dimensions = self._ncdimensions(coord_ncvar)
-        parent_dimensions = self._ncdimensions(field_ncvar)
+        dimensions = self._ncdimensions(coord_ncvar)  # noqa: F841
+        parent_dimensions = self._ncdimensions(field_ncvar)  # noqa: F841
+        # TODO SLB is there something missing here? Both variables above
+        # are unused, hence the 'noqa' marks there for now.
 
         if not self._dimensions_are_subset(
             coord_ncvar,
             self._ncdimensions(coord_ncvar),
             self._ncdimensions(field_ncvar),
         ):
-            d = self._add_message(
+            self._add_message(
                 field_ncvar,
                 coord_ncvar,
                 message=incorrect_dimensions,
@@ -6247,10 +6224,6 @@ class NetCDFRead(IORead):
         incorrectly_formatted = (
             "grid_mapping attribute",
             "is incorrectly formatted",
-        )
-        coordinate_not_in_data_variable = (
-            "Grid mapping coordinate variable",
-            "is not used by data variable",
         )
 
         g = self.read_vars

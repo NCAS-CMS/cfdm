@@ -304,7 +304,6 @@ class NetCDFWrite(IOWrite):
         masked = numpy.ma.isMA(array)
         if masked:
             fill_value = array.fill_value
-            mask = array.mask
             array = numpy.ma.filled(array, fill_value="")
 
         if array.dtype.kind == "U":
@@ -870,7 +869,6 @@ class NetCDFWrite(IOWrite):
             g["index_variable_sample_dimension"][ncvar] = sample_dimension
         else:
             ncvar = g["seen"][id(index_variable)]["ncvar"]
-            sample_ncdim = g["index_variable_sample_dimension"][ncvar]
 
         return sample_dimension
 
@@ -1433,8 +1431,6 @@ class NetCDFWrite(IOWrite):
             `dict`
 
         """
-        out = {}
-
         g = self.write_vars
 
         bounds = self.implementation.get_bounds(coord, None)
@@ -2603,11 +2599,6 @@ class NetCDFWrite(IOWrite):
         #        if g['fmt'] == 'NETCDF4' and datatype == str:
         #            fill_value = '\x00'
 
-        if data_variable:
-            lsd = g["least_significant_digit"]
-        else:
-            lsd = None
-
         # Set HDF chunksizes
         chunksizes = None
         if data is not None:
@@ -2656,7 +2647,6 @@ class NetCDFWrite(IOWrite):
             "endian": g["endian"],
             "chunksizes": chunksizes,
             # 'fill_value': fill_value,
-            # 'least_significant_digit': lsd,
         }
 
         kwargs.update(g["netcdf_compression"])
@@ -2896,7 +2886,7 @@ class NetCDFWrite(IOWrite):
 
         if g["warn_valid"]:
             # Check for out-of-range values
-            warned = self._check_valid(cfvar, array, attributes)
+            self._check_valid(cfvar, array, attributes)
 
         # Copy the array into the netCDF variable
         g["nc"][ncvar][...] = array
@@ -3004,9 +2994,6 @@ class NetCDFWrite(IOWrite):
             Data instance
 
         """
-        strlen = data.dtype.itemsize
-        #        print ('1 strlen =', strlen)
-        #        if strlen > 1:
         data = self.implementation.initialise_Data(
             array=self._character_array(self.implementation.get_array(data)),
             units=self.implementation.get_data_units(data, None),
@@ -3534,7 +3521,7 @@ class NetCDFWrite(IOWrite):
                 if not g["group"]:
                     # A flat file has been requested, so strip off any
                     # group structure from the name.
-                    smaple_ncdim = self._remove_group_structure(sample_ncdim)
+                    sample_ncdim = self._remove_group_structure(sample_ncdim)
 
                 index_ncdim = count_ncdim
                 index = self.implementation.get_index(f)

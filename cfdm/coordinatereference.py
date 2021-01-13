@@ -319,7 +319,6 @@ class CoordinateReference(
         """
         indent0 = "    " * _level
         indent1 = "    " * (_level + 1)
-        indent2 = "    " * (_level + 2)
 
         if _title is None:
             string = [

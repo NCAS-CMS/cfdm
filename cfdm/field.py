@@ -197,9 +197,6 @@ class Field(
             units += " {0}".format(calendar)
 
         # Axes
-        data_axes = self.get_data_axes(default=())
-        non_spanning_axes = set(self.domain_axes).difference(data_axes)
-
         axis_names = self._unique_domain_axis_identities()
 
         # Data
@@ -317,7 +314,6 @@ class Field(
 
         """
         data = self.get_data()
-        shape = data.shape
 
         indices = data._parse_indices(indices)
         indices = tuple(indices)
@@ -344,7 +340,6 @@ class Field(
         # ------------------------------------------------------------
         # Subspace other constructs that contain arrays
         # ------------------------------------------------------------
-        self_constructs = self.constructs
         new_constructs_data_axes = new.constructs.data_axes()
 
         if data_axes:
@@ -1629,7 +1624,6 @@ class Field(
         """
         indent = "    "
         indent0 = indent * _level
-        indent1 = indent0 + indent
 
         if _title is None:
             ncvar = self.nc_get_variable(None)
@@ -1652,8 +1646,6 @@ class Field(
         string = [line, indent0 + _title, line]
 
         axis_to_name = self._unique_domain_axis_identities()
-
-        name = self._unique_construct_names()
 
         constructs_data_axes = self.constructs.data_axes()
 
