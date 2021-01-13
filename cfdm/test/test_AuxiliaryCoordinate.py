@@ -56,7 +56,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
 
     def test_AuxiliaryCoordinate__repr__str__dump(self):
         f = cfdm.read(self.filename, verbose=1)[0]
-        x = f.auxiliary_coordinates("latitude").value()
+        f.auxiliary_coordinates("latitude").value()
 
         _ = repr(x)
         _ = str(x)
@@ -67,7 +67,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         f = cfdm.read(self.filename)[0]
 
         d = f.dimension_coordinates("grid_longitude").value()
-        x = cfdm.AuxiliaryCoordinate(source=d)
+        cfdm.AuxiliaryCoordinate(source=d)
 
     def test_AuxiliaryCoordinate_properties(self):
         f = cfdm.read(self.filename)[0]
@@ -83,7 +83,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
     def test_AuxiliaryCoordinate_source(self):
         f = cfdm.read(self.filename)[0]
         d = f.dimension_coordinates("grid_longitude").value()
-        x = cfdm.AuxiliaryCoordinate(source=d)
+        cfdm.AuxiliaryCoordinate(source=d)
 
     def test_AuxiliaryCoordinate_insert_dimension(self):
         f = cfdm.read(self.filename)[0]

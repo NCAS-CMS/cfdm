@@ -70,8 +70,6 @@ class CoordinateReferenceTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
-
         # Create a vertical grid mapping coordinate reference
         t = cfdm.CoordinateReference(
             coordinates=("coord1",),

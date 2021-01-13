@@ -170,7 +170,7 @@ class FunctionsTest(unittest.TestCase):
     def test_disable_logging(self):
         # Re-set to avoid coupling; use set level to check it is
         # restored after
-        original = cfdm.log_level("DETAIL")
+        cfdm.log_level("DETAIL")
         below_detail_values = [logging.DEBUG]
         at_or_above_detail_values = [
             cfdm.logging._nameToLevel["DETAIL"],

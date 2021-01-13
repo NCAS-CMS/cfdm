@@ -253,7 +253,6 @@ class DocstringTest(unittest.TestCase):
                 self.assertIn(string, x.del_property.__doc__, klass)
 
     def test_docstring_staticmethod(self):
-        string = "Return the value of the *default* parameter"
         for klass in self.subclasses_of_PropertiesData:
             x = klass
             self.assertEqual(
@@ -261,7 +260,6 @@ class DocstringTest(unittest.TestCase):
             )
 
     def test_docstring_classmethod(self):
-        string = "Return the value of the *default* parameter"
         for klass in self.subclasses_of_PropertiesData:
             for x in (klass, klass()):
                 self.assertEqual(

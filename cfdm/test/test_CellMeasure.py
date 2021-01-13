@@ -30,7 +30,7 @@ class CellMeasureTest(unittest.TestCase):
         self.f = f[0]
 
     def test_CellMeasure__init__(self):
-        c = cfdm.CellMeasure(source="qwerty")
+        cfdm.CellMeasure(source="qwerty")
 
     def test_CellMeasure__repr__str__dump_construct_type(self):
         f = self.f

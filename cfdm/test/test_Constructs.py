@@ -72,7 +72,7 @@ class ConstructsTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
+        self.f.copy()
 
         c = self.f.constructs
 
@@ -305,8 +305,8 @@ class ConstructsTest(unittest.TestCase):
         f = cfdm.example_field(1)
         c = f.constructs
 
-        d = copy.copy(c)
-        d = copy.deepcopy(c)
+        copy.copy(c)
+        copy.deepcopy(c)
 
     def test_Constructs__getitem__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -316,7 +316,7 @@ class ConstructsTest(unittest.TestCase):
         c = f.constructs
 
         with self.assertRaises(KeyError):
-            d = c["qwerty"]
+            c["qwerty"]
 
         self.assertIsInstance(
             c["auxiliarycoordinate1"], cfdm.AuxiliaryCoordinate
@@ -324,10 +324,10 @@ class ConstructsTest(unittest.TestCase):
 
         del c._constructs["auxiliary_coordinate"]
         with self.assertRaises(KeyError):
-            d = c["auxiliarycoordinate1"]
+            c["auxiliarycoordinate1"]
 
         with self.assertRaises(KeyError):
-            d = c["qwerty"]
+            c["qwerty"]
 
     def test_Constructs_private(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -352,10 +352,10 @@ class ConstructsTest(unittest.TestCase):
         x = c.copy()
         del x._constructs["auxiliary_coordinate"]
         with self.assertRaises(KeyError):
-            d = x["auxiliarycoordinate1"]
+            x["auxiliarycoordinate1"]
 
         with self.assertRaises(KeyError):
-            d = x["qwerty"]
+            x["qwerty"]
 
         # _del_construct
         x = f.constructs.copy()

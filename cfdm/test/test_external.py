@@ -47,7 +47,6 @@ class ExternalVariableTest(unittest.TestCase):
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
-        dir_with_data_files = os.path.dirname(os.path.realpath(__file__))
 
         dataset_dir = os.path.dirname(os.path.abspath(__file__))
         self.parent_file = os.path.join(dataset_dir, "parent.nc")

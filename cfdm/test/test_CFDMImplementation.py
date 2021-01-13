@@ -20,7 +20,7 @@ class CFDMImplementationTest(unittest.TestCase):
         self.i = cfdm.implementation()
 
     def test_CFDMImplementation__init__(self):
-        i = cfdm.CFDMImplementation({"NewClass1": "qwerty", "NewClass2": None})
+        cfdm.CFDMImplementation({"NewClass1": "qwerty", "NewClass2": None})
 
     def test_CFDMImplementation_classes(self):
         self.assertIsInstance(self.i.classes(), dict)

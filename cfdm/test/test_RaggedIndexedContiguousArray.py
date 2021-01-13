@@ -36,7 +36,7 @@ class RaggedIndexedContiguousArrayTest(unittest.TestCase):
 
         index = cfdm.Index(data=[0, 0, 0, 0, 1, 1, 1, 1])
 
-        count = cfdm.Count(data=[1, 3, 2, 2])
+        cfdm.Count(data=[1, 3, 2, 2])
 
         r = cfdm.RaggedIndexedContiguousArray(
             compressed_data,

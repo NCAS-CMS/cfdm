@@ -41,7 +41,7 @@ class FieldAncillaryTest(unittest.TestCase):
         f = self.f.copy()
 
         a = f.auxiliary_coordinates("latitude").value()
-        x = cfdm.FieldAncillary(source=a)
+        cfdm.FieldAncillary(source=a)
 
     def test_FieldAncillary_properties(self):
         f = self.f.copy()

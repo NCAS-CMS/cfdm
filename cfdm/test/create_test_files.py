@@ -24,10 +24,10 @@ def _make_contiguous_file(filename):
     n.Conventions = "CF-" + VN
     n.featureType = "timeSeries"
 
-    station = n.createDimension("station", 4)
-    obs = n.createDimension("obs", 24)
-    name_strlen = n.createDimension("name_strlen", 8)
-    bounds = n.createDimension("bounds", 2)
+    n.createDimension("station", 4)
+    n.createDimension("obs", 24)
+    n.createDimension("name_strlen", 8)
+    n.createDimension("bounds", 2)
 
     lon = n.createVariable("lon", "f8", ("station",))
     lon.standard_name = "longitude"
@@ -115,10 +115,10 @@ def _make_indexed_file(filename):
     n.Conventions = "CF-" + VN
     n.featureType = "timeSeries"
 
-    station = n.createDimension("station", 4)
-    obs = n.createDimension("obs", None)
-    name_strlen = n.createDimension("name_strlen", 8)
-    bounds = n.createDimension("bounds", 2)
+    n.createDimension("station", 4)
+    n.createDimension("obs", None)
+    n.createDimension("name_strlen", 8)
+    n.createDimension("bounds", 2)
 
     lon = n.createVariable("lon", "f8", ("station",))
     lon.standard_name = "longitude"
@@ -248,12 +248,12 @@ def _make_indexed_contiguous_file(filename):
     n.featureType = "timeSeriesProfile"
 
     # 3 stations
-    station = n.createDimension("station", 3)
+    n.createDimension("station", 3)
     # 58 profiles spreadover 4 stations, each at a different time
-    profile = n.createDimension("profile", 58)
-    obs = n.createDimension("obs", None)
-    name_strlen = n.createDimension("name_strlen", 8)
-    bounds = n.createDimension("bounds", 2)
+    n.createDimension("profile", 58)
+    n.createDimension("obs", None)
+    n.createDimension("name_strlen", 8)
+    n.createDimension("bounds", 2)
 
     lon = n.createVariable("lon", "f8", ("station",))
     lon.standard_name = "longitude"
@@ -887,9 +887,9 @@ def _make_geometry_1_file(filename):
         "variable."
     )
 
-    time = n.createDimension("time", 4)
-    instance = n.createDimension("instance", 2)
-    node = n.createDimension("node", 5)
+    n.createDimension("time", 4)
+    n.createDimension("instance", 2)
+    n.createDimension("node", 5)
 
     t = n.createVariable("time", "i4", ("time",))
     t.units = "seconds since 2016-11-07 20:00 UTC"
@@ -964,9 +964,9 @@ def _make_geometry_2_file(filename):
         "variable."
     )
 
-    time = n.createDimension("time", 4)
-    instance = n.createDimension("instance", 2)
-    node = n.createDimension("node", 5)
+    n.createDimension("time", 4)
+    n.createDimension("instance", 2)
+    n.createDimension("node", 5)
 
     t = n.createVariable("time", "i4", ("time",))
     t.units = "seconds since 2016-11-07 20:00 UTC"
@@ -1046,8 +1046,8 @@ def _make_geometry_3_file(filename):
         "node count variable."
     )
 
-    time = n.createDimension("time", 4)
-    instance = n.createDimension("instance", 3)
+    n.createDimension("time", 4)
+    n.createDimension("instance", 3)
     #    node     = n.createDimension('node'    , 3)
 
     t = n.createVariable("time", "i4", ("time",))
@@ -1122,10 +1122,10 @@ def _make_geometry_4_file(filename):
         "which have a corresponding auxiliary coordinate variable."
     )
 
-    time = n.createDimension("time", 4)
-    instance = n.createDimension("instance", 2)
-    node = n.createDimension("node", 5)
-    strlen = n.createDimension("strlen", 2)
+    n.createDimension("time", 4)
+    n.createDimension("instance", 2)
+    n.createDimension("node", 5)
+    n.createDimension("strlen", 2)
 
     # Variables
     t = n.createVariable("time", "i4", ("time",))
@@ -1194,11 +1194,11 @@ def _make_interior_ring_file(filename):
     )
 
     # Dimensions
-    time = n.createDimension("time", 4)
-    instance = n.createDimension("instance", 2)
-    node = n.createDimension("node", 13)
-    part = n.createDimension("part", 4)
-    strlen = n.createDimension("strlen", 2)
+    n.createDimension("time", 4)
+    n.createDimension("instance", 2)
+    n.createDimension("node", 13)
+    n.createDimension("part", 4)
+    n.createDimension("strlen", 2)
 
     # Variables
     t = n.createVariable("time", "i4", ("time",))
@@ -1297,11 +1297,11 @@ def _make_interior_ring_file_2(filename):
     )
 
     # Dimensions
-    time = n.createDimension("time", 4)
-    instance = n.createDimension("instance", 2)
-    node = n.createDimension("node", 13)
-    part = n.createDimension("part", 4)
-    strlen = n.createDimension("strlen", 2)
+    n.createDimension("time", 4)
+    n.createDimension("instance", 2)
+    n.createDimension("node", 13)
+    n.createDimension("part", 4)
+    n.createDimension("strlen", 2)
 
     # Variables
     t = n.createVariable("time", "i4", ("time",))
@@ -1393,14 +1393,14 @@ def _make_string_char_file(filename):
     n.Conventions = "CF-" + VN
     n.comment = "A netCDF file with variables of string and char data types"
 
-    dim1 = n.createDimension("dim1", 1)
-    time = n.createDimension("time", 4)
-    lat = n.createDimension("lat", 2)
-    lon = n.createDimension("lon", 3)
-    strlen8 = n.createDimension("strlen8", 8)
-    strlen7 = n.createDimension("strlen7", 7)
-    strlen5 = n.createDimension("strlen5", 5)
-    strlen3 = n.createDimension("strlen3", 3)
+    n.createDimension("dim1", 1)
+    n.createDimension("time", 4)
+    n.createDimension("lat", 2)
+    n.createDimension("lon", 3)
+    n.createDimension("strlen8", 8)
+    n.createDimension("strlen7", 7)
+    n.createDimension("strlen5", 5)
+    n.createDimension("strlen3", 3)
 
     months = numpy.array(["January", "February", "March", "April"], dtype="S8")
 
@@ -1448,7 +1448,7 @@ def _make_string_char_file(filename):
 
     c_numbers = n.createVariable("c_numbers", "S1", ("lat", "lon", "strlen5"))
     c_numbers.long_name = "char: Two dimensional"
-    d = numpy.empty((2, 3, 5), dtype="S1")
+    numpy.empty((2, 3, 5), dtype="S1")
     c_numbers[...] = netCDF4.stringtochar(numbers)
 
     c_months4m = n.createVariable("c_months4m", "S1", ("time", "strlen7"))

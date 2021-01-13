@@ -70,8 +70,8 @@ class StringTest(unittest.TestCase):
             )
 
             # Create and set domain axes
-            axis_T = tas.set_construct(cfdm.DomainAxis(1))
-            axis_Z = tas.set_construct(cfdm.DomainAxis(1))
+            tas.set_construct(cfdm.DomainAxis(1))
+            tas.set_construct(cfdm.DomainAxis(1))
             axis_Y = tas.set_construct(cfdm.DomainAxis(10))
             axis_X = tas.set_construct(cfdm.DomainAxis(9))
 
@@ -104,8 +104,8 @@ class StringTest(unittest.TestCase):
                 ),
             )
 
-            dim_Y = tas.set_construct(dimension_coordinate_Y, axes=[axis_Y])
-            dim_X = tas.set_construct(dimension_coordinate_X, axes=[axis_X])
+            tas.set_construct(dimension_coordinate_Y, axes=[axis_Y])
+            tas.set_construct(dimension_coordinate_X, axes=[axis_X])
 
             # Create and set the auxiliary coordinates
             array[0] = numpy.ma.masked

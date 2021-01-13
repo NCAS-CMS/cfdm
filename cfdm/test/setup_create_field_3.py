@@ -132,11 +132,11 @@ class create_fieldTest(unittest.TestCase):
         x = f.set_construct(dim0, axes=[axisX])
         y = f.set_construct(dim1, axes=[axisY])
         z = f.set_construct(dim2, axes=[axisZ])
-        t = f.set_construct(dim3, axes=[axisT])
+        f.set_construct(dim3, axes=[axisT])
 
         lat = f.set_construct(aux2, axes=[axisY, axisX])
         lon = f.set_construct(aux3, axes=[axisX, axisY])
-        greek = f.set_construct(aux4, axes=[axisY])
+        f.set_construct(aux4, axes=[axisY])
 
         ak = f.set_construct(ak, axes=[axisZ])
         bk = f.set_construct(bk, axes=[axisZ])

@@ -64,7 +64,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertIsInstance(x.dump(display=False, _key="qwerty"), str)
 
     def test_DimensionCoordinate__init__(self):
-        c = cfdm.DimensionCoordinate(source="qwerty")
+        cfdm.DimensionCoordinate(source="qwerty")
 
     def test_DimensionCoordinate_set_data(self):
         x = cfdm.DimensionCoordinate()

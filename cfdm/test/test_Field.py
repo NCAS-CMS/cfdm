@@ -90,7 +90,7 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cfdm.Field(source="qwerty")
+        cfdm.Field(source="qwerty")
 
     def test_Field___getitem__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

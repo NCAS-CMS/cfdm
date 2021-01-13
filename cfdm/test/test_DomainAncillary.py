@@ -47,7 +47,7 @@ class DomainAncillaryTest(unittest.TestCase):
         f = cfdm.read(self.filename)[0]
 
         a = f.auxiliary_coordinates("latitude").value()
-        x = cfdm.DomainAncillary(source=a)
+        cfdm.DomainAncillary(source=a)
 
     def test_DomainAncillary_properties(self):
         f = cfdm.read(self.filename)[0]

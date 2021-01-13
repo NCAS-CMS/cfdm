@@ -336,7 +336,7 @@ class read_writeTest(unittest.TestCase):
 
         f0 = cfdm.read(self.filename)[0]
         f = cfdm.read(tmpfile)[0]
-        h = cfdm.read(tmpfileh)[0]
+        cfdm.read(tmpfileh)[0]
         c = cfdm.read(tmpfilec)[0]
 
         self.assertTrue(f0.equals(f, verbose=3))
@@ -353,7 +353,7 @@ class read_writeTest(unittest.TestCase):
         )
 
         with self.assertRaises(OSError):
-            x = cfdm.read("test_read_write.py")
+            cfdm.read("test_read_write.py")
 
         # TODO: make portable instead of skipping on Mac OS (see Issue #25):
         #       '-i' aspect solved, but the regex patterns need amending too.
@@ -389,7 +389,7 @@ class read_writeTest(unittest.TestCase):
                     check=True,
                 )
 
-                h = cfdm.read(tmpfileh)[0]
+                cfdm.read(tmpfileh)[0]
 
     #        subprocess.run(' '.join(['head', tmpfileh]),  shell=True, check=True)
 
