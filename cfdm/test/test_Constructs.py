@@ -4,9 +4,8 @@ import inspect
 import os
 import unittest
 
-import numpy
-
 import faulthandler
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
