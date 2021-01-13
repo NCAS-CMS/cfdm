@@ -9,7 +9,8 @@ ignore =
     E272,
     E402,
     E501,
-    E203
+    E203,
+    W503  # Incompatible with PEP8 which we want to abide by
 # Exclude these directories/files, otherwise check all *.py files
 exclude =
     .git,
