@@ -44,6 +44,9 @@ class styleTest(unittest.TestCase):
             "E272",  # ...>1 spaces to align keywords in long import listings
             "E402",  # ...justified lower module imports in {.., core}/__init__
             "E501",  # ...docstring examples include output lines >79 chars
+            # Black auto-formatting doesn't abide by this code (e.g. see
+            # https://github.com/psf/black/issues/315)
+            "E203",
         )
 
         # First add Python files which lie outside of the cfdm

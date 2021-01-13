@@ -8,7 +8,8 @@ ignore =
     W605,
     E272,
     E402,
-    E501
+    E501,
+    E203
 # Exclude these directories/files, otherwise check all *.py files
 exclude =
     .git,
