@@ -1,8 +1,6 @@
 import logging
 import sys
 
-from copy import deepcopy
-
 from enum import Enum
 
 import numpy

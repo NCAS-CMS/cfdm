@@ -1,10 +1,9 @@
 from .mixin import ArrayMixin
 
-from . import mixin
 from .. import core
 
 
-class NumpyArray(mixin.ArrayMixin, core.NumpyArray):
+class NumpyArray(ArrayMixin, core.NumpyArray):
     """An underlying numpy array.
 
     .. versionadded:: (cfdm) 1.7.0

@@ -5,14 +5,10 @@ import re
 
 from distutils.version import LooseVersion
 
-from pprint import pformat, pprint
-
 import numpy
 import netCDF4
 
 from .. import IOWrite
-
-from . import constants
 
 from ...decorators import _manage_log_level_via_verbosity
 

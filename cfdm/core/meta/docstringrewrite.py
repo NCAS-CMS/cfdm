@@ -1,5 +1,4 @@
 import inspect
-import re
 
 
 class DocstringRewriteMeta(type):

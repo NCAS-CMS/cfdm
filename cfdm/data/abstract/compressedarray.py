@@ -1,5 +1,3 @@
-import numpy
-
 from .array import Array
 
 

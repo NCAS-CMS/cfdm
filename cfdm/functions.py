@@ -1,16 +1,12 @@
 import logging
 import os
-import platform
-import sys
 import urllib.parse
 
 from copy import deepcopy
 
 from functools import total_ordering
 
-import netCDF4
 import cftime
-import numpy
 import netcdf_flattener
 
 from . import core

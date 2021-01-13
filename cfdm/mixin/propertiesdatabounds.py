@@ -5,8 +5,6 @@ from operator import mul
 
 from . import PropertiesData
 
-from ..functions import rtol, atol
-
 from ..decorators import (
     _display_or_return,
     _inplace_enabled,

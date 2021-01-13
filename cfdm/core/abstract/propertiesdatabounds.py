@@ -1,5 +1,3 @@
-import abc
-
 import numpy
 
 from .propertiesdata import PropertiesData

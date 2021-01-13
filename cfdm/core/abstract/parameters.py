@@ -1,5 +1,3 @@
-import abc
-
 from copy import deepcopy
 
 from .container import Container

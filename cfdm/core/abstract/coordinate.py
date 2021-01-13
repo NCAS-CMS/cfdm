@@ -1,5 +1,3 @@
-import abc
-
 from .propertiesdatabounds import PropertiesDataBounds
 
 

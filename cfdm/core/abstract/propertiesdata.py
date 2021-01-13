@@ -1,5 +1,3 @@
-import abc
-
 from ..data import Data
 
 from .properties import Properties

@@ -1,8 +1,6 @@
 import logging
 import textwrap
 
-import numpy
-
 from . import Container
 
 from ..decorators import _manage_log_level_via_verbosity, _display_or_return

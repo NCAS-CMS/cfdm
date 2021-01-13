@@ -1,6 +1,3 @@
-import inspect
-import re
-
 from copy import copy, deepcopy
 
 from ..meta import DocstringRewriteMeta

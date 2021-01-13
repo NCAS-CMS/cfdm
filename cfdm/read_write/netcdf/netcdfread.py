@@ -11,7 +11,7 @@ from collections import OrderedDict
 from copy import deepcopy
 from distutils.version import LooseVersion
 from functools import reduce
-from pprint import pformat, pprint
+from pprint import pformat
 
 import numpy
 import netCDF4
@@ -20,11 +20,7 @@ import netcdf_flattener
 
 from ...decorators import _manage_log_level_via_verbosity
 
-from ...functions import log_level
-
 from .. import IORead
-
-from . import constants
 
 
 _cached_temporary_files = {}
