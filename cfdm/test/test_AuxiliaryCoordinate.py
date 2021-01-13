@@ -56,10 +56,10 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
 
     def test_AuxiliaryCoordinate__repr__str__dump(self):
         f = cfdm.read(self.filename, verbose=1)[0]
-        f.auxiliary_coordinates("latitude").value()
+        x = f.auxiliary_coordinates("latitude").value()
 
-        _ = repr(x)
-        _ = str(x)
+        repr(x)
+        str(x)
         self.assertIsInstance(x.dump(display=False), str)
         self.assertIsInstance(x.dump(display=False, _title=None), str)
 
