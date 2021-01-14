@@ -30,7 +30,7 @@ from . import CF
 
 
 class CFDMImplementation(Implementation):
-    ''''A container for the CF data model implementation.
+    '''A container for the CF data model implementation.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -262,7 +262,7 @@ class CFDMImplementation(Implementation):
         return data.insert_dimension(position=position)
 
     def del_property(self, construct, prop, default):
-        ''''Remove a property from a construct.
+        '''Remove a property from a construct.
 
     :Parameters:
 
