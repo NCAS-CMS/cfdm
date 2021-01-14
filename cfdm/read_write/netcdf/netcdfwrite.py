@@ -2472,7 +2472,7 @@ class NetCDFWrite(IOWrite):
             ncvar = self._create_netcdf_variable_name(ref, default=default)
 
             logger.info(
-                "    Writing {!r} to netCDF variable:".format(ref, ncvar)
+                "    Writing {!r} to netCDF variable: {}".format(ref, ncvar)
             )  # pragma: no cover
 
             kwargs = {
