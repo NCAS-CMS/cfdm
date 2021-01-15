@@ -102,6 +102,7 @@ a work in progress, you can mark it initially as a draft pull request.
 We would like to acknowledge and thank all those who have contributed
 ideas, code, and documentation to the cfdm library:
 
+* Alan Iwi
 * Allyn Treshansky
 * Bryan Lawrence
 * David Hassell
