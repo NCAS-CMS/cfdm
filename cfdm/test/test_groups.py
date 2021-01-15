@@ -9,7 +9,7 @@ import netCDF4
 import cfdm
 
 
-n_tmpfiles = 8
+n_tmpfiles = 9
 tmpfiles = [tempfile.mkstemp('_test_groups.nc', dir=os.getcwd())[1]
             for i in range(n_tmpfiles)]
 (
@@ -21,6 +21,7 @@ tmpfiles = [tempfile.mkstemp('_test_groups.nc', dir=os.getcwd())[1]
     grouped_file2,
     grouped_file3,
     grouped_file4,
+    grouped_file5,
 ) = tmpfiles
 
 
@@ -399,6 +400,42 @@ class GroupsTest(unittest.TestCase):
         domain_axis.nc_set_dimension_groups(['forecast'])
 
         cfdm.write(g, grouped_file, verbose=1)
+
+        h = cfdm.read(grouped_file, verbose=1)
+        self.assertEqual(len(h), 1)
+        h = h[0]
+        self.assertTrue(f.equals(h, verbose=3))
+
+    def test_groups_unlimited_dimension(self):
+        f = cfdm.example_field(0)
+
+        # Create an unlimited dimension in the root group
+        key = f.domain_axis_key('time')
+        domain_axis = f.constructs[key]
+        domain_axis.nc_set_unlimited(True)
+
+        f.insert_dimension(key, 0, inplace=True)
+
+        key = f.domain_axis_key('latitude')
+        domain_axis = f.constructs[key]
+        domain_axis.nc_set_unlimited(True)
+        domain_axis.nc_set_dimension_groups(['forecast'])
+
+        # ------------------------------------------------------------
+        # Move the latitude coordinate to the /forecast group. Note
+        # that this will drag its netDF dimension along with it,
+        # because it's a dimension coordinate variable
+        # ------------------------------------------------------------
+        lat = f.construct('latitude')
+        lat.nc_set_variable_groups(['forecast'])
+
+        # ------------------------------------------------------------
+        # Move the field construct to the /forecast/model group
+        # ------------------------------------------------------------
+        f.nc_set_variable_groups(['forecast', 'model'])
+
+        grouped_file = grouped_file5
+        cfdm.write(f, grouped_file5, verbose=1)
 
         h = cfdm.read(grouped_file, verbose=1)
         self.assertEqual(len(h), 1)
