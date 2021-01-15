@@ -288,6 +288,10 @@ class NetCDFRead(IORead):
         for flat_file in self.read_vars['flat_files']:
             flat_file.close()
 
+        # Close the original grouped file (v1.8.8.1)
+        if 'nc_grouped' in self.read_vars:
+            self.read_vars['nc_grouped'].close()
+
     def file_open(self, filename, flatten=True, verbose=None):
         '''Open the netCDf file for reading.
 
@@ -341,6 +345,7 @@ class NetCDFRead(IORead):
             flat_nc = netCDF4.Dataset(flat_file, 'w',
                                       diskless=True,
                                       persist=False)
+
             flat_nc.set_fill_off()
 
             # Flatten the file
@@ -348,7 +353,12 @@ class NetCDFRead(IORead):
                                      lax_mode=True,
                                      _copy_data=False)
 
-            nc.close()
+            # Store the original grouped file. This is primarily
+            # because the unlimited dimensions in the flattened
+            # dataset have size 0, since it contains no
+            # data. (v1.8.8.1)
+            g['nc_grouped'] = nc
+
             nc = flat_nc
 
             g['has_groups'] = True
@@ -831,6 +841,7 @@ class NetCDFRead(IORead):
         variable_groups = {}
         variable_group_attributes = {}
         variable_basename = {}
+        variable_grouped_dataset = {}
 
         dimension_groups = {}
         dimension_basename = {}
@@ -970,6 +981,8 @@ class NetCDFRead(IORead):
                     # variable path
                     ncvar = ncvar[1:]
                     flattener_variables[ncvar] = ncvar
+
+                variable_grouped_dataset[ncvar] = g['nc_grouped']
             # --- End: if
 
             variable_attributes[ncvar] = {}
@@ -1057,6 +1070,10 @@ class NetCDFRead(IORead):
         # The netCDF4 dataset object for each variable
         g['variable_dataset'] = variable_dataset
 
+        # The original gouped dataset for each variable (empty if the
+        # original dataset is not grouped) v1.8.8.1
+        g['variable_grouped_dataset'] = variable_grouped_dataset
+
         # The name of the file containing the each variable
         g['variable_filename'] = variable_filename
 
@@ -1074,7 +1091,19 @@ class NetCDFRead(IORead):
         # The netCDF dimensions of the parent file
         internal_dimension_sizes = {}
         for name, dimension in nc.dimensions.items():
-            internal_dimension_sizes[name] = dimension.size
+            if (
+                    has_groups
+                    and dimension_isunlimited[flattener_dimensions[name]]
+            ):
+                # For grouped datasets, get the unlimited dimension
+                # size from the original grouped dataset, because
+                # unlimited dimensions have size 0 in the flattened
+                # dataset (because it contains no data) (v1.8.8.1)
+                group, ncdim = self._netCDF4_group(g['nc_grouped'],
+                                                   flattener_dimensions[name])
+                internal_dimension_sizes[name] = group.dimensions[ncdim].size
+            else:
+                internal_dimension_sizes[name] = dimension.size
 
         if g['has_groups']:
             internal_dimension_sizes = {
@@ -4579,7 +4608,20 @@ class NetCDFRead(IORead):
         '''
         g = self.read_vars
 
-        variable = g['variables'].get(ncvar)
+        if g['has_groups']:
+            # Get the variable from the original grouped file. This is
+            # primarily so that unlimited dimensions don't come out
+            # with size 0 (v1.8.8.1)
+            group, name = self._netCDF4_group(
+                g['variable_grouped_dataset'][ncvar], ncvar
+            )
+#            path = ncvar.split('/')
+#            for group_name in path[1:-1]:
+#                group = group[group_name]
+            variable = group.variables.get(name)
+        else:
+            variable = g['variables'].get(ncvar)
+
         if variable is None:
             return None
 
@@ -4596,6 +4638,7 @@ class NetCDFRead(IORead):
         ndim = variable.ndim
         shape = variable.shape
         size = variable.size
+
         if size < 2:
             size = int(size)
 
@@ -6261,5 +6304,38 @@ class NetCDFRead(IORead):
         # --- End: if
 
         return out
+
+    def _netCDF4_group(self, nc, name):
+        '''Given a dataset and a variable or dimension name, return the group
+object for the name, and the name within the group.
+
+    .. versionadded:: 1.8.8.1
+
+    :Parameters:
+
+        nc: `netCDF4._netCDF4.Dataset` or `netCDF4._netCDF4.Group`
+
+        name: `str`
+
+    :Returns:
+
+        `netCDF4._netCDF4.Dataset` or `netCDF4._netCDF4.Group`, `str`
+
+    **Examples:**
+
+    >>> group, name = n._netCDF4_group(nc, 'time')
+    >>> group.name, name
+    ('/', 'time')
+    >>> group, name = n._netCDF4_group(nc, '/surfacelayer/Z')
+    >>> group.name, name
+    ('surfacelayer', 'Z')
+
+        '''
+        group = nc
+        path = name.split('/')
+        for group_name in path[1:-1]:
+            group = group[group_name]
+
+        return group, path[-1]
 
 # --- End: class
