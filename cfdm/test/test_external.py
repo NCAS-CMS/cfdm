@@ -4,8 +4,12 @@ import os
 import tempfile
 import unittest
 
-import netCDF4
 import numpy
+
+import faulthandler
+faulthandler.enable()  # to debug seg faults and timeouts
+
+import netCDF4
 
 import cfdm
 
