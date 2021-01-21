@@ -2,30 +2,31 @@ import numpy
 
 
 class ArrayMixin:
-    '''Mixin class for a container of an array.
+    """Mixin class for a container of an array.
 
     .. versionadded:: (cfdm) 1.8.7.0
 
-    '''
+    """
+
     def __array__(self, *dtype):
-        '''The numpy array interface.
+        """The numpy array interface.
 
-    .. versionadded:: (cfdm) 1.8.7.0
+        .. versionadded:: (cfdm) 1.8.7.0
 
-    :Returns:
+        :Returns:
 
-        `numpy.ndarray`
-            An independent numpy array of the data.
+            `numpy.ndarray`
+                An independent numpy array of the data.
 
-    **Examples:**
+        **Examples:**
 
-    >>> isinstance(a, Array)
-    True
-    >>> n = numpy.asanyarray(a)
-    >>> isinstance(n, numpy.ndarray)
-    True
+        >>> isinstance(a, Array)
+        True
+        >>> n = numpy.asanyarray(a)
+        >>> isinstance(n, numpy.ndarray)
+        True
 
-        '''
+        """
         array = self.array
         if not dtype:
             return array
@@ -33,144 +34,145 @@ class ArrayMixin:
             return array.astype(dtype[0], copy=False)
 
     def __getitem__(self, indices):
-        '''Return a subspace as an independent numpy array.
+        """Return a subspace as an independent numpy array.
 
-    x.__getitem__(indices) <==> x[indices]
+        x.__getitem__(indices) <==> x[indices]
 
-    Indexing follows rules that are very similar to the numpy indexing
-    rules, the only differences being:
+        Indexing follows rules that are very similar to the numpy indexing
+        rules, the only differences being:
 
-    * An integer index i takes the i-th element but does not reduce
-      the rank by one.
+        * An integer index i takes the i-th element but does not reduce
+          the rank by one.
 
-    ..
+        ..
 
-    * When two or more dimensions' indices are sequences of integers
-      then these indices work independently along each dimension
-      (similar to the way vector subscripts work in Fortran). This is
-      the same behaviour as indexing on a Variable object of the
-      netCDF4 package.
+        * When two or more dimensions' indices are sequences of integers
+          then these indices work independently along each dimension
+          (similar to the way vector subscripts work in Fortran). This is
+          the same behaviour as indexing on a Variable object of the
+          netCDF4 package.
 
-    .. versionadded:: (cfdm) 1.8.7.0
+        .. versionadded:: (cfdm) 1.8.7.0
 
-        '''
+        """
         raise NotImplementedError(
             "Subclasses of cfdm.data.abstract.Array "
             "must implement '__getitem__'"
         )  # pragma: no cover
 
     def __repr__(self):
-        '''Called by the `repr` built-in function.
+        """Called by the `repr` built-in function.
 
-    x.__repr__() <==> repr(x)
+        x.__repr__() <==> repr(x)
 
-    .. versionadded:: (cfdm) 1.8.7.0
+        .. versionadded:: (cfdm) 1.8.7.0
 
-        '''
+        """
         return "<{0}{1}: >".format(self.__class__.__name__, self.shape)
 
     def __str__(self):
-        '''Called by the `str` built-in function.
+        """Called by the `str` built-in function.
 
-    x.__str__() <==> str(x)
+        x.__str__() <==> str(x)
 
-    .. versionadded:: (cfdm) 1.8.7.0
+        .. versionadded:: (cfdm) 1.8.7.0
 
-        '''
+        """
         return "shape={0}, dtype={1}".format(self.shape, self.dtype)
 
     def __docstring_package_depth__(self):
-        '''Return the package depth for {{package}} docstring substitutions.
+        """Return the package depth for {{package}} docstring substitutions.
 
-    See `_docstring_package_depth` for details.
+        See `_docstring_package_depth` for details.
 
-        '''
+        """
         return 0
 
     def get_compression_type(self):
-        '''The type of compression that has been applied to the underlying
-    array.
+        """The type of compression that has been applied to the underlying
+        array.
 
-    .. versionadded:: (cfdm) 1.8.7.0
+        .. versionadded:: (cfdm) 1.8.7.0
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The compression type. An empty string means that no
-            compression has been applied.
+            `str`
+                The compression type. An empty string means that no
+                compression has been applied.
 
-    **Examples:**
+        **Examples:**
 
-    >>> a.compression_type
-    ''
+        >>> a.compression_type
+        ''
 
-    >>> a.compression_type
-    'gathered'
+        >>> a.compression_type
+        'gathered'
 
-    >>> a.compression_type
-    'ragged contiguous'
+        >>> a.compression_type
+        'ragged contiguous'
 
-        '''
-        return self._get_component('compression_type', '')
+        """
+        return self._get_component("compression_type", "")
 
     @classmethod
     def get_subspace(cls, array, indices, copy=True):
-        '''Return a subspace, defined by indices, of a numpy array.
+        """Return a subspace, defined by indices, of a numpy array.
 
-    Only certain type of indices are allowed. See the *indices*
-    parameter for details.
+        Only certain type of indices are allowed. See the *indices*
+        parameter for details.
 
-    Indexing is similar to numpy indexing. Given the restrictions on
-    the type of indices allowed - see the *indicies* parameter - the
-    only difference to numpy indexing is
+        Indexing is similar to numpy indexing. Given the restrictions on
+        the type of indices allowed - see the *indicies* parameter - the
+        only difference to numpy indexing is
 
-      * When two or more dimension's indices are sequences of integers
-        then these indices work independently along each dimension
-        (similar to the way vector subscripts work in Fortran).
+          * When two or more dimension's indices are sequences of integers
+            then these indices work independently along each dimension
+            (similar to the way vector subscripts work in Fortran).
 
-    .. versionadded:: (cfdm) 1.8.7.0
+        .. versionadded:: (cfdm) 1.8.7.0
 
-    :Parameters:
+        :Parameters:
 
-        array: `numpy.ndarray`
-            The array to be subspaced.
+            array: `numpy.ndarray`
+                The array to be subspaced.
 
-        indices:
-            The indices that define the subspace.
+            indices:
+                The indices that define the subspace.
 
-            Must be either `Ellipsis` or a sequence that contains an
-            index for each dimension. In the latter case, each
-            dimension's index must either be a `slice` object or a
-            sequence of two or more integers.
+                Must be either `Ellipsis` or a sequence that contains an
+                index for each dimension. In the latter case, each
+                dimension's index must either be a `slice` object or a
+                sequence of two or more integers.
 
-              *Parameter example:*
-                indices=Ellipsis
+                  *Parameter example:*
+                    indices=Ellipsis
 
-              *Parameter example:*
-                indices=[[5, 7, 8]]
+                  *Parameter example:*
+                    indices=[[5, 7, 8]]
 
-              *Parameter example:*
-                indices=[slice(4, 7)]
+                  *Parameter example:*
+                    indices=[slice(4, 7)]
 
-              *Parameter example:*
-                indices=[slice(None), [5, 7, 8]]
+                  *Parameter example:*
+                    indices=[slice(None), [5, 7, 8]]
 
-              *Parameter example:*
-                indices=[[2, 5, 6], slice(15, 4, -2), [8, 7, 5]]
+                  *Parameter example:*
+                    indices=[[2, 5, 6], slice(15, 4, -2), [8, 7, 5]]
 
-        copy: `bool`
-            If `False` then the returned subspace may (or may not) be
-            independent of the input *array*. By default the returned
-            subspace is independent of the input *array*.
+            copy: `bool`
+                If `False` then the returned subspace may (or may not) be
+                independent of the input *array*. By default the returned
+                subspace is independent of the input *array*.
 
-    :Returns:
+        :Returns:
 
-        `numpy.ndarray`
+            `numpy.ndarray`
 
-        '''
+        """
         if indices is not Ellipsis:
-            axes_with_list_indices = [i for i, x in enumerate(indices)
-                                      if not isinstance(x, slice)]
+            axes_with_list_indices = [
+                i for i, x in enumerate(indices) if not isinstance(x, slice)
+            ]
             n_axes_with_list_indices = len(axes_with_list_indices)
 
             if n_axes_with_list_indices < 2:
@@ -211,5 +213,6 @@ class ArrayMixin:
         # --- End: if
 
         return array
+
 
 # --- End: class

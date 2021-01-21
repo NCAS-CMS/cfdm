@@ -6,14 +6,30 @@ from .netcdf import NetCDFWrite
 _implementation = implementation()
 
 
-def write(fields, filename, fmt='NETCDF4', overwrite=True,
-          global_attributes=None, variable_attributes=None,
-          file_descriptors=None, external=None, Conventions=None,
-          datatype=None, least_significant_digit=None,
-          endian='native', compress=0, fletcher32=False, shuffle=True,
-          string=True, verbose=None, warn_valid=True, group=True,
-          coordinates=False, _implementation=_implementation):
-    '''Write field constructs to a netCDF file.
+def write(
+    fields,
+    filename,
+    fmt="NETCDF4",
+    overwrite=True,
+    global_attributes=None,
+    variable_attributes=None,
+    file_descriptors=None,
+    external=None,
+    Conventions=None,
+    datatype=None,
+    least_significant_digit=None,
+    endian="native",
+    compress=0,
+    fletcher32=False,
+    shuffle=True,
+    string=True,
+    verbose=None,
+    warn_valid=True,
+    group=True,
+    coordinates=False,
+    _implementation=_implementation,
+):
+    """Write field constructs to a netCDF file.
 
     **File format**
 
@@ -441,22 +457,33 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
 
     >>> cfdm.write(f, 'file.nc', Conventions='CMIP-6.2')
 
-    '''
+    """
     # ----------------------------------------------------------------
     # Initialise the netCDF write object
     # ----------------------------------------------------------------
     netcdf = NetCDFWrite(_implementation)
 
     if fields:
-        netcdf.write(fields, filename, fmt=fmt, overwrite=overwrite,
-                     global_attributes=global_attributes,
-                     variable_attributes=variable_attributes,
-                     file_descriptors=file_descriptors,
-                     external=external, Conventions=Conventions,
-                     datatype=datatype,
-                     least_significant_digit=least_significant_digit,
-                     endian=endian, compress=compress,
-                     shuffle=shuffle, fletcher32=fletcher32,
-                     string=string, verbose=verbose,
-                     warn_valid=warn_valid, group=group,
-                     coordinates=coordinates, extra_write_vars=None)
+        netcdf.write(
+            fields,
+            filename,
+            fmt=fmt,
+            overwrite=overwrite,
+            global_attributes=global_attributes,
+            variable_attributes=variable_attributes,
+            file_descriptors=file_descriptors,
+            external=external,
+            Conventions=Conventions,
+            datatype=datatype,
+            least_significant_digit=least_significant_digit,
+            endian=endian,
+            compress=compress,
+            shuffle=shuffle,
+            fletcher32=fletcher32,
+            string=string,
+            verbose=verbose,
+            warn_valid=warn_valid,
+            group=group,
+            coordinates=coordinates,
+            extra_write_vars=None,
+        )

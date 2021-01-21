@@ -2,10 +2,8 @@ from . import mixin
 from . import core
 
 
-class Datum(mixin.Parameters,
-            mixin.NetCDFVariable,
-            core.Datum):
-    '''A datum component of a coordinate reference construct of the CF
+class Datum(mixin.Parameters, mixin.NetCDFVariable, core.Datum):
+    """A datum component of a coordinate reference construct of the CF
     data model.
 
     A datum is a complete or partial definition of the zeroes of the
@@ -34,35 +32,35 @@ class Datum(mixin.Parameters,
 
     .. versionadded:: (cfdm) 1.7.0
 
-    '''
+    """
+
     def __init__(self, parameters=None, source=None, copy=True):
-        '''**Initialization**
+        """**Initialization**
 
-    :Parameters:
+        :Parameters:
 
-        parameters: `dict`, optional
-           Set parameters. The dictionary keys are parameter names,
-           with corresponding values. Ignored if the *source*
-           parameter is set.
+            parameters: `dict`, optional
+               Set parameters. The dictionary keys are parameter names,
+               with corresponding values. Ignored if the *source*
+               parameter is set.
 
-           Parameters may also be set after initialisation with the
-           `set_parameters` and `set_parameter` methods.
+               Parameters may also be set after initialisation with the
+               `set_parameters` and `set_parameter` methods.
 
-           *Parameter example:*
-             ``parameters={'earth_radius': 6371007.}``
+               *Parameter example:*
+                 ``parameters={'earth_radius': 6371007.}``
 
-        source: optional
-            Initialize the parameters from those of *source*.
+            source: optional
+                Initialize the parameters from those of *source*.
 
-            {{init source}}
+                {{init source}}
 
-        {{init copy: `bool`, optional}}
+            {{init copy: `bool`, optional}}
 
-        '''
-        super().__init__(parameters=parameters,
-                         source=source,
-                         copy=copy)
+        """
+        super().__init__(parameters=parameters, source=source, copy=copy)
 
         self._initialise_netcdf(source)
+
 
 # --- End: class

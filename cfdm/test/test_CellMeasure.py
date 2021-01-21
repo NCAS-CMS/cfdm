@@ -1,11 +1,9 @@
 import datetime
-import inspect
 import os
 import unittest
 
-import numpy
-
 import faulthandler
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
@@ -14,7 +12,7 @@ import cfdm
 class CellMeasureTest(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
-        cfdm.LOG_LEVEL('DISABLE')
+        cfdm.LOG_LEVEL("DISABLE")
         # Note: to enable all messages for given methods, lines or
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
@@ -25,13 +23,14 @@ class CellMeasureTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
         self.filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
+            os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
+        )
         f = cfdm.read(self.filename)
-        self.assertEqual(len(f), 1, 'f={!r}'.format(f))
+        self.assertEqual(len(f), 1, "f={!r}".format(f))
         self.f = f[0]
 
     def test_CellMeasure__init__(self):
-        c = cfdm.CellMeasure(source='qwerty')
+        cfdm.CellMeasure(source="qwerty")
 
     def test_CellMeasure__repr__str__dump_construct_type(self):
         f = self.f
@@ -40,15 +39,15 @@ class CellMeasureTest(unittest.TestCase):
             _ = repr(cm)
             _ = str(cm)
             self.assertIsInstance(cm.dump(display=False), str)
-            self.assertEqual(cm.construct_type, 'cell_measure')
+            self.assertEqual(cm.construct_type, "cell_measure")
 
     def test_CellMeasure(self):
         f = self.f.copy()
 
-        cm = f.construct('measure:area')
+        cm = f.construct("measure:area")
 
         self.assertTrue(cm.has_measure())
-        self.assertTrue(cm.get_measure(), 'area')
+        self.assertTrue(cm.get_measure(), "area")
 
         measure = cm.del_measure()
         self.assertFalse(cm.has_measure())
@@ -57,13 +56,14 @@ class CellMeasureTest(unittest.TestCase):
 
         cm.set_measure(measure)
         self.assertTrue(cm.has_measure())
-        self.assertEqual(cm.get_measure(), 'area')
+        self.assertEqual(cm.get_measure(), "area")
+
 
 # --- End: class
 
 
-if __name__ == '__main__':
-    print('Run date:', datetime.datetime.now())
+if __name__ == "__main__":
+    print("Run date:", datetime.datetime.now())
     cfdm.environment()
-    print('')
+    print("")
     unittest.main(verbosity=2)

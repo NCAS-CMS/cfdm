@@ -14,15 +14,17 @@ import cfdm
 
 
 def axes_combinations(ndim):
-    return [axes
-            for n in range(1, ndim+1)
-            for axes in itertools.permutations(range(ndim), n)]
+    return [
+        axes
+        for n in range(1, ndim + 1)
+        for axes in itertools.permutations(range(ndim), n)
+    ]
 
 
 class DataTest(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
-        cfdm.log_level('DISABLE')
+        cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or calls (those
         # without a 'verbose' option to do the same) e.g. to debug them, wrap
         # them (for methods, start-to-end internally) as follows:
@@ -31,7 +33,8 @@ class DataTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
         self.filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
+            os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
+        )
 
         self.test_only = []
         #    self.test_only = ['NOTHING!!!!!']
@@ -61,24 +64,24 @@ class DataTest(unittest.TestCase):
             return
 
         for d in [
-                cfdm.Data(9, units='km'),
-                cfdm.Data([9], units='km'),
-                cfdm.Data([[9]], units='km'),
-                cfdm.Data([8, 9], units='km'),
-                cfdm.Data([[8, 9]], units='km'),
-                cfdm.Data([7, 8, 9], units='km'),
-                cfdm.Data([[7, 8, 9]], units='km'),
-                cfdm.Data([6, 7, 8, 9], units='km'),
-                cfdm.Data([[6, 7, 8, 9]], units='km'),
-                cfdm.Data([[6, 7], [8, 9]], units='km'),
-                cfdm.Data([[6, 7, 8, 9], [6, 7, 8, 9]], units='km'),
+            cfdm.Data(9, units="km"),
+            cfdm.Data([9], units="km"),
+            cfdm.Data([[9]], units="km"),
+            cfdm.Data([8, 9], units="km"),
+            cfdm.Data([[8, 9]], units="km"),
+            cfdm.Data([7, 8, 9], units="km"),
+            cfdm.Data([[7, 8, 9]], units="km"),
+            cfdm.Data([6, 7, 8, 9], units="km"),
+            cfdm.Data([[6, 7, 8, 9]], units="km"),
+            cfdm.Data([[6, 7], [8, 9]], units="km"),
+            cfdm.Data([[6, 7, 8, 9], [6, 7, 8, 9]], units="km"),
         ]:
             _ = repr(d)
             _ = str(d)
 
-#    def test_Data__getitem__(self):
-#        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-#            return
+    #    def test_Data__getitem__(self):
+    #        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+    #            return
 
     def test_Data__setitem__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -86,44 +89,52 @@ class DataTest(unittest.TestCase):
 
         a = numpy.ma.arange(3000).reshape(50, 60)
 
-        d = cfdm.Data(a.filled(), units='m')
+        d = cfdm.Data(a.filled(), units="m")
 
         for n, (j, i) in enumerate(
-                ((34, 23), (0, 0), (-1, -1),
-                 (slice(40, 50), slice(58, 60)),
-                 (Ellipsis, slice(None)),
-                 (slice(None), Ellipsis),)
+            (
+                (34, 23),
+                (0, 0),
+                (-1, -1),
+                (slice(40, 50), slice(58, 60)),
+                (Ellipsis, slice(None)),
+                (slice(None), Ellipsis),
+            )
         ):
-            n = -n-1
-            for dvalue, avalue in ((n, n),
-                                   (cfdm.masked, numpy.ma.masked),
-                                   (n, n)):
+            n = -n - 1
+            for dvalue, avalue in (
+                (n, n),
+                (cfdm.masked, numpy.ma.masked),
+                (n, n),
+            ):
                 message = "cfdm.Data[{}, {}]={}={} failed".format(
-                    j, i, dvalue, avalue)
+                    j, i, dvalue, avalue
+                )
                 d[j, i] = dvalue
                 a[j, i] = avalue
                 x = d.array
-                self.assertTrue((x == a).all() in (True, numpy.ma.masked),
-                                message)
+                self.assertTrue(
+                    (x == a).all() in (True, numpy.ma.masked), message
+                )
                 m = numpy.ma.getmaskarray(x)
                 self.assertTrue(
                     (m == numpy.ma.getmaskarray(a)).all(),
-                    'd.mask.array=' + repr(m) + '\nnumpy.ma.getmaskarray(a)=' +
-                    repr(numpy.ma.getmaskarray(a))
+                    "d.mask.array="
+                    + repr(m)
+                    + "\nnumpy.ma.getmaskarray(a)="
+                    + repr(numpy.ma.getmaskarray(a)),
                 )
         # --- End: for
 
         a = numpy.ma.arange(3000).reshape(50, 60)
 
-        d = cfdm.Data(a.filled(), 'm')
+        d = cfdm.Data(a.filled(), "m")
 
         (j, i) = (slice(0, 2), slice(0, 3))
-        array = numpy.array([[1, 2, 6], [3, 4, 5]])*-1
+        array = numpy.array([[1, 2, 6], [3, 4, 5]]) * -1
 
-        for dvalue in (array,
-                       numpy.ma.masked_where(array < -2, array),
-                       array):
-            message = 'cfdm.Data[%s, %s]=%s failed' % (j, i, dvalue)
+        for dvalue in (array, numpy.ma.masked_where(array < -2, array), array):
+            message = "cfdm.Data[%s, %s]=%s failed" % (j, i, dvalue)
             d[j, i] = dvalue
             a[j, i] = dvalue
             x = d.array
@@ -133,7 +144,7 @@ class DataTest(unittest.TestCase):
         # --- End: for
 
         # Scalar numeric array
-        d = cfdm.Data(9, units='km')
+        d = cfdm.Data(9, units="km")
         d[...] = cfdm.masked
         a = d.array
         self.assertEqual(a.shape, ())
@@ -146,7 +157,7 @@ class DataTest(unittest.TestCase):
         a = numpy.ma.arange(12).reshape(3, 4)
         a[1, 1] = numpy.ma.masked
 
-        d = cfdm.Data(a, units='m')
+        d = cfdm.Data(a, units="m")
 
         self.assertTrue((a == d.array).all())
         self.assertTrue((a.mask == d.mask.array).all())
@@ -193,28 +204,28 @@ class DataTest(unittest.TestCase):
         self.assertTrue((b == e.array).all())
         self.assertTrue((b.mask == e.mask.array).all())
 
-#    def test_Data_astype(self):
-#        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-#            return
-#
-#        a = numpy.array([1.5, 2, 2.5], dtype=float)
-#        d = cfdm.Data(a)
-#
-#        self.assertTrue(d.dtype == numpy.dtype(float))
-#        self.assertTrue(d.array.dtype == numpy.dtype(float))
-#        self.assertTrue((d.array == a).all())
-#
-#        d.astype('int32')
-#        self.assertTrue(d.dtype == numpy.dtype('int32'))
-#        self.assertTrue(d.array.dtype == numpy.dtype('int32'))
-#        self.assertTrue((d.array == [1, 2, 2]).all())
-#
-#        d = cfdm.Data(a)
-#        try:
-#            d.astype(numpy.dtype(int, casting='safe'))
-#            self.assertTrue(False)
-#        except TypeError:
-#            pass
+    #    def test_Data_astype(self):
+    #        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+    #            return
+    #
+    #        a = numpy.array([1.5, 2, 2.5], dtype=float)
+    #        d = cfdm.Data(a)
+    #
+    #        self.assertTrue(d.dtype == numpy.dtype(float))
+    #        self.assertTrue(d.array.dtype == numpy.dtype(float))
+    #        self.assertTrue((d.array == a).all())
+    #
+    #        d.astype('int32')
+    #        self.assertTrue(d.dtype == numpy.dtype('int32'))
+    #        self.assertTrue(d.array.dtype == numpy.dtype('int32'))
+    #        self.assertTrue((d.array == [1, 2, 2]).all())
+    #
+    #        d = cfdm.Data(a)
+    #        try:
+    #            d.astype(numpy.dtype(int, casting='safe'))
+    #            self.assertTrue(False)
+    #        except TypeError:
+    #            pass
 
     def test_Data_array(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -223,24 +234,24 @@ class DataTest(unittest.TestCase):
         # ------------------------------------------------------------
         # Numpy array interface (__array__)
         # ------------------------------------------------------------
-        a = numpy.arange(12, dtype='int32').reshape(3, 4)
+        a = numpy.arange(12, dtype="int32").reshape(3, 4)
 
-        d = cfdm.Data(a, units='km')
+        d = cfdm.Data(a, units="km")
 
         b = numpy.array(d)
 
-        self.assertEqual(b.dtype, numpy.dtype('int32'))
+        self.assertEqual(b.dtype, numpy.dtype("int32"))
         self.assertEqual(a.shape, b.shape)
         self.assertTrue((a == b).all())
 
-        b = numpy.array(d, dtype='float32')
+        b = numpy.array(d, dtype="float32")
 
-        self.assertEqual(b.dtype, numpy.dtype('float32'))
+        self.assertEqual(b.dtype, numpy.dtype("float32"))
         self.assertEqual(a.shape, b.shape)
         self.assertTrue((a == b).all())
 
         # Scalar numeric array
-        d = cfdm.Data(9, units='km')
+        d = cfdm.Data(9, units="km")
         a = d.array
         self.assertEqual(a.shape, ())
         self.assertEqual(a, numpy.array(9))
@@ -250,8 +261,8 @@ class DataTest(unittest.TestCase):
         self.assertIs(a[()], numpy.ma.masked)
 
         # Non-scalar numeric array
-        b = numpy.arange(10*15*19).reshape(10, 1, 15, 19)
-        d = cfdm.Data(b, 'km')
+        b = numpy.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
+        d = cfdm.Data(b, "km")
         a = d.array
         a[0, 0, 0, 0] = -999
         a2 = d.array
@@ -264,17 +275,17 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        d = cfdm.Data([11292.5, 11293], units='days since 1970-1-1')
+        d = cfdm.Data([11292.5, 11293], units="days since 1970-1-1")
         dt = d.datetime_array
         self.assertEqual(dt[0], datetime.datetime(2000, 12, 1, 12, 0))
-        self.assertEqual(dt[1], datetime.datetime(2000, 12, 2,  0, 0))
+        self.assertEqual(dt[1], datetime.datetime(2000, 12, 2, 0, 0))
 
         d[0] = cfdm.masked
         dt = d.datetime_array
         self.assertIs(dt[0], numpy.ma.masked)
-        self.assertEqual(dt[1], datetime.datetime(2000, 12, 2,  0, 0))
+        self.assertEqual(dt[1], datetime.datetime(2000, 12, 2, 0, 0))
 
-        d = cfdm.Data(11292.5, units='days since 1970-1-1')
+        d = cfdm.Data(11292.5, units="days since 1970-1-1")
         dt = d.datetime_array
         self.assertEqual(dt[()], datetime.datetime(2000, 12, 1, 12, 0))
 
@@ -312,11 +323,13 @@ class DataTest(unittest.TestCase):
                 shape = [n for i, n in enumerate(d.shape) if i not in axes]
                 shape.insert(
                     sorted(axes)[0],
-                    numpy.prod([n
-                                for i, n in enumerate(d.shape) if i in axes]))
+                    numpy.prod(
+                        [n for i, n in enumerate(d.shape) if i in axes]
+                    ),
+                )
 
             self.assertEqual(e.shape, tuple(shape), axes)
-            self.assertEqual(e.ndim, d.ndim-len(axes)+1)
+            self.assertEqual(e.ndim, d.ndim - len(axes) + 1)
             self.assertEqual(e.size, d.size)
 
         for n in range(4):
@@ -345,8 +358,10 @@ class DataTest(unittest.TestCase):
             for axes in itertools.permutations(indices):
                 a = numpy.transpose(a, axes)
                 d = d.transpose(axes)
-                message = ("cfdm.Data.transpose({}) failed: d.shape={}, "
-                           "a.shape={}".format(axes, d.shape, a.shape))
+                message = (
+                    "cfdm.Data.transpose({}) failed: d.shape={}, "
+                    "a.shape={}".format(axes, d.shape, a.shape)
+                )
                 self.assertEqual(d.shape, a.shape, message)
                 self.assertTrue((d.array == a).all(), message)
         # --- End: for
@@ -364,26 +379,26 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        d = cfdm.Data([[4, 2, 1], [1, 2, 3]], units='metre')
+        d = cfdm.Data([[4, 2, 1], [1, 2, 3]], units="metre")
         u = d.unique()
         self.assertEqual(u.shape, (4,))
         self.assertTrue(
-            (u.array == cfdm.Data([1, 2, 3, 4], 'metre').array).all())
+            (u.array == cfdm.Data([1, 2, 3, 4], "metre").array).all()
+        )
 
         d[1, -1] = cfdm.masked
         u = d.unique()
         self.assertEqual(u.shape, (3,))
-        self.assertTrue(
-            (u.array == cfdm.Data([1, 2, 4], 'metre').array).all())
+        self.assertTrue((u.array == cfdm.Data([1, 2, 4], "metre").array).all())
 
     def test_Data_equals(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        a = numpy.ma.arange(10*15*19).reshape(10, 1, 15, 19)
+        a = numpy.ma.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
         a[0, 0, 2, 3] = numpy.ma.masked
 
-        d = cfdm.Data(a, units='days since 2000-2-2', calendar='noleap')
+        d = cfdm.Data(a, units="days since 2000-2-2", calendar="noleap")
         e = copy.deepcopy(d)
 
         self.assertTrue(d.equals(d, verbose=3))
@@ -471,35 +486,34 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        a = numpy.ma.array([[280.0,   -99,   -99,   -99],
-                            [281.0, 279.0, 278.0, 279.0]],
-                           dtype=float,
-                           mask=[[0, 1, 1, 1],
-                                 [0, 0, 0, 0]])
+        a = numpy.ma.array(
+            [[280.0, -99, -99, -99], [281.0, 279.0, 278.0, 279.0]],
+            dtype=float,
+            mask=[[0, 1, 1, 1], [0, 0, 0, 0]],
+        )
 
-        d = cfdm.Data([[280, -99, -99, -99],
-                       [281, 279, 278, 279]])
+        d = cfdm.Data([[280, -99, -99, -99], [281, 279, 278, 279]])
         self.assertEqual(d.dtype, numpy.dtype(int))
 
-        d = cfdm.Data([[280, -99, -99, -99],
-                       [281, 279, 278, 279]],
-                      dtype=float,
-                      mask=[[0, 1, 1, 1],
-                            [0, 0, 0, 0]])
+        d = cfdm.Data(
+            [[280, -99, -99, -99], [281, 279, 278, 279]],
+            dtype=float,
+            mask=[[0, 1, 1, 1], [0, 0, 0, 0]],
+        )
 
         self.assertEqual(d.dtype, a.dtype)
         self.assertTrue((d.array == a).all())
         self.assertEqual(d.mask.shape, a.mask.shape)
         self.assertTrue((d.mask.array == numpy.ma.getmaskarray(a)).all())
 
-        a = numpy.array([[280.0,   -99,   -99,   -99],
-                         [281.0, 279.0, 278.0, 279.0]],
-                        dtype=float)
+        a = numpy.array(
+            [[280.0, -99, -99, -99], [281.0, 279.0, 278.0, 279.0]], dtype=float
+        )
         mask = numpy.ma.masked_all(a.shape).mask
 
-        d = cfdm.Data([[280, -99, -99, -99],
-                       [281, 279, 278, 279]],
-                      dtype=float)
+        d = cfdm.Data(
+            [[280, -99, -99, -99], [281, 279, 278, 279]], dtype=float
+        )
 
         self.assertEqual(d.dtype, a.dtype)
         self.assertTrue((d.array == a).all())
@@ -536,15 +550,47 @@ class DataTest(unittest.TestCase):
 
         d[0, 0] = cfdm.masked
         self.assertTrue(
-            (d.filled().array == [[-9223372036854775806, 2, 3, ]]).all())
+            (
+                d.filled().array
+                == [
+                    [
+                        -9223372036854775806,
+                        2,
+                        3,
+                    ]
+                ]
+            ).all()
+        )
 
         d.set_fill_value(-99)
-        self.assertTrue((d.filled().array == [[-99, 2, 3, ]]).all())
+        self.assertTrue(
+            (
+                d.filled().array
+                == [
+                    [
+                        -99,
+                        2,
+                        3,
+                    ]
+                ]
+            ).all()
+        )
 
-        self.assertTrue((d.filled(1e10).array == [[1e10, 2, 3, ]]).all())
+        self.assertTrue(
+            (
+                d.filled(1e10).array
+                == [
+                    [
+                        1e10,
+                        2,
+                        3,
+                    ]
+                ]
+            ).all()
+        )
 
-        d = cfdm.Data(['a', 'b', 'c'], mask=[1, 0, 0])
-        self.assertTrue((d.filled().array == ['', 'b', 'c']).all())
+        d = cfdm.Data(["a", "b", "c"], mask=[1, 0, 0])
+        self.assertTrue((d.filled().array == ["", "b", "c"]).all())
 
     def test_Data_insert_dimension(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -571,7 +617,13 @@ class DataTest(unittest.TestCase):
         e = d.squeeze()
         self.assertEqual(e.shape, (12,))
         e = d.squeeze(-1)
-        self.assertEqual(e.shape, (1, 12,))
+        self.assertEqual(
+            e.shape,
+            (
+                1,
+                12,
+            ),
+        )
         self.assertIsNone(e.squeeze(0, inplace=True))
         self.assertEqual(e.shape, (12,))
 
@@ -600,11 +652,12 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data([[281, 279, 278, 279]])
         self.assertIsNone(d.get_compressed_dimension(None))
 
+
 # --- End: class
 
 
 if __name__ == "__main__":
-    print('Run date:', datetime.datetime.now())
+    print("Run date:", datetime.datetime.now())
     cfdm.environment()
-    print('')
+    print("")
     unittest.main(verbosity=2)

@@ -13,7 +13,7 @@ import cfdm
 class DomainAncillaryTest(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
-        cfdm.log_level('DISABLE')
+        cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
@@ -24,19 +24,21 @@ class DomainAncillaryTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
         self.filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
+            os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
+        )
 
     def test_DomainAncillary__repr__str__dump(self):
         f = cfdm.read(self.filename)[0]
-        x = f.domain_ancillaries('ncvar%a').value()
+        x = f.domain_ancillaries("ncvar%a").value()
 
         _ = repr(x)
         _ = str(x)
         self.assertIsInstance(x.dump(display=False), str)
 
         self.assertIsInstance(
-            x.dump(display=False, _key=f.domain_ancillaries('ncvar%a').key()),
-            str)
+            x.dump(display=False, _key=f.domain_ancillaries("ncvar%a").key()),
+            str,
+        )
 
         x.nc_del_variable()
         self.assertIsInstance(x.dump(display=False), str)
@@ -44,23 +46,23 @@ class DomainAncillaryTest(unittest.TestCase):
     def test_DomainAncillary_bounds(self):
         f = cfdm.read(self.filename)[0]
 
-        a = f.auxiliary_coordinates('latitude').value()
-        x = cfdm.DomainAncillary(source=a)
+        a = f.auxiliary_coordinates("latitude").value()
+        cfdm.DomainAncillary(source=a)
 
     def test_DomainAncillary_properties(self):
         f = cfdm.read(self.filename)[0]
-        x = f.domain_ancillaries('ncvar%a').value()
+        x = f.domain_ancillaries("ncvar%a").value()
 
-        x.set_property('long_name', 'qwerty')
+        x.set_property("long_name", "qwerty")
 
-        self.assertEqual(x.get_property('long_name'), 'qwerty')
-        self.assertEqual(x.del_property('long_name'), 'qwerty')
-        self.assertIsNone(x.get_property('long_name', None))
-        self.assertIsNone(x.del_property('long_name', None))
+        self.assertEqual(x.get_property("long_name"), "qwerty")
+        self.assertEqual(x.del_property("long_name"), "qwerty")
+        self.assertIsNone(x.get_property("long_name", None))
+        self.assertIsNone(x.del_property("long_name", None))
 
     def test_DomainAncillary_insert_dimension(self):
         f = cfdm.read(self.filename)[0]
-        d = f.dimension_coordinates('grid_longitude').value()
+        d = f.dimension_coordinates("grid_longitude").value()
         x = cfdm.DomainAncillary(source=d)
 
         self.assertEqual(x.shape, (9,))
@@ -76,9 +78,10 @@ class DomainAncillaryTest(unittest.TestCase):
 
     def test_DomainAncillary_transpose(self):
         f = cfdm.read(self.filename)[0]
-        a = f.auxiliary_coordinates('longitude').value()
+        a = f.auxiliary_coordinates("longitude").value()
         bounds = cfdm.Bounds(
-            data=cfdm.Data(numpy.arange(9*10*4).reshape(9, 10, 4)))
+            data=cfdm.Data(numpy.arange(9 * 10 * 4).reshape(9, 10, 4))
+        )
         a.set_bounds(bounds)
         x = cfdm.DomainAncillary(source=a)
 
@@ -95,9 +98,10 @@ class DomainAncillaryTest(unittest.TestCase):
 
     def test_DomainAncillary_squeeze(self):
         f = cfdm.read(self.filename)[0]
-        a = f.auxiliary_coordinates('longitude').value()
+        a = f.auxiliary_coordinates("longitude").value()
         bounds = cfdm.Bounds(
-            data=cfdm.Data(numpy.arange(9*10*4).reshape(9, 10, 4)))
+            data=cfdm.Data(numpy.arange(9 * 10 * 4).reshape(9, 10, 4))
+        )
         a.set_bounds(bounds)
         x = cfdm.DomainAncillary(source=a)
 
@@ -115,11 +119,12 @@ class DomainAncillaryTest(unittest.TestCase):
         self.assertEqual(x.shape, (1, 9, 10))
         self.assertEqual(x.bounds.shape, (1, 9, 10, 4), x.bounds.shape)
 
+
 # --- End: class
 
 
 if __name__ == "__main__":
-    print('Run date:', datetime.datetime.now())
+    print("Run date:", datetime.datetime.now())
     cfdm.environment()
     print()
     unittest.main(verbosity=2)

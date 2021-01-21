@@ -2,10 +2,10 @@ from . import mixin
 from . import core
 
 
-class DomainAncillary(mixin.NetCDFVariable,
-                      mixin.PropertiesDataBounds,
-                      core.DomainAncillary):
-    '''A domain ancillary construct of the CF data model.
+class DomainAncillary(
+    mixin.NetCDFVariable, mixin.PropertiesDataBounds, core.DomainAncillary
+):
+    """A domain ancillary construct of the CF data model.
 
     A domain ancillary construct provides information which is needed
     for computing the location of cells in an alternative coordinate
@@ -34,81 +34,111 @@ class DomainAncillary(mixin.NetCDFVariable,
 
     .. versionadded:: (cfdm) 1.7.0
 
-    '''
-    def __init__(self, properties=None, data=None, bounds=None,
-                 geometry=None, interior_ring=None, source=None,
-                 copy=True, _use_data=True):
-        '''**Initialization**
+    """
 
-    :Parameters:
+    def __init__(
+        self,
+        properties=None,
+        data=None,
+        bounds=None,
+        geometry=None,
+        interior_ring=None,
+        source=None,
+        copy=True,
+        _use_data=True,
+    ):
+        """**Initialization**
 
-        {{init properties: `dict`, optional}}
+        :Parameters:
 
-           *Parameter example:*
-              ``properties={'standard_name': 'altitude'}``
+            {{init properties: `dict`, optional}}
 
-        {{init data: data_like, optional}}
+               *Parameter example:*
+                  ``properties={'standard_name': 'altitude'}``
 
-        {{init bounds: `Bounds`, optional}}
+            {{init data: data_like, optional}}
 
-        {{init geometry: `str`, optional}}
+            {{init bounds: `Bounds`, optional}}
 
-        {{init interior_ring: `InteriorRing`, optional}}
+            {{init geometry: `str`, optional}}
 
-        source: optional
-            Initialize the properties, data and bounds from those of
-            *source*.
+            {{init interior_ring: `InteriorRing`, optional}}
 
-            {{init source}}
+            source: optional
+                Initialize the properties, data and bounds from those of
+                *source*.
 
-        {{init copy: `bool`, optional}}
+                {{init source}}
 
-        '''
-        super().__init__(properties=properties, data=data,
-                         bounds=bounds, geometry=geometry,
-                         interior_ring=interior_ring, source=source,
-                         copy=copy, _use_data=_use_data)
+            {{init copy: `bool`, optional}}
+
+        """
+        super().__init__(
+            properties=properties,
+            data=data,
+            bounds=bounds,
+            geometry=geometry,
+            interior_ring=interior_ring,
+            source=source,
+            copy=copy,
+            _use_data=_use_data,
+        )
 
         self._initialise_netcdf(source)
 
-    def dump(self, display=True, _omit_properties=None, _key=None,
-             _level=0, _title=None, _axes=None, _axis_names=None):
-        '''A full description of the domain ancillary construct.
+    def dump(
+        self,
+        display=True,
+        _omit_properties=None,
+        _key=None,
+        _level=0,
+        _title=None,
+        _axes=None,
+        _axis_names=None,
+    ):
+        """A full description of the domain ancillary construct.
 
-    Returns a description of all properties, including those of
-    components, and provides selected values of all data arrays.
+        Returns a description of all properties, including those of
+        components, and provides selected values of all data arrays.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Parameters:
+        :Parameters:
 
-        display: `bool`, optional
-            If False then return the description as a string. By
-            default the description is printed.
+            display: `bool`, optional
+                If False then return the description as a string. By
+                default the description is printed.
 
-    :Returns:
+        :Returns:
 
-        {{returns dump}}
+            {{returns dump}}
 
-        '''
+        """
         if _title is None:
             ncvar = self.nc_get_variable(None)
             if ncvar is not None:
-                ncvar = ' (ncvar%{0})'.format(ncvar)
+                ncvar = " (ncvar%{0})".format(ncvar)
             else:
-                ncvar = ''
+                ncvar = ""
 
             if _key is None:
-                default = ''
+                default = ""
             else:
                 default = _key
 
-            _title = ('Domain Ancillary: ' + self.identity(default=default) +
-                      ncvar)
+            _title = (
+                "Domain Ancillary: " + self.identity(default=default) + ncvar
+            )
 
-        return super().dump(display=display,
-                            _omit_properties=_omit_properties,
-                            _key=_key, _level=_level, _title=_title,
-                            _axes=_axes, _axis_names=_axis_names)
+        return super().dump(
+            display=display,
+            _omit_properties=_omit_properties,
+            _key=_key,
+            _level=_level,
+            _title=_title,
+            _axes=_axes,
+            _axis_names=_axis_names,
+        )
+
 
 # --- End: class

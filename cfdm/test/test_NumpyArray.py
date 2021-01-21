@@ -12,7 +12,7 @@ import cfdm
 class NumpyArrayTest(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
-        cfdm.LOG_LEVEL('DISABLE')
+        cfdm.LOG_LEVEL("DISABLE")
         # Note: to enable all messages for given methods, lines or
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
@@ -37,11 +37,12 @@ class NumpyArrayTest(unittest.TestCase):
         b = numpy.array(x)
         self.assertTrue((b == a).all())
 
+
 # --- End: class
 
 
 if __name__ == "__main__":
-    print('Run date:', datetime.datetime.now())
+    print("Run date:", datetime.datetime.now())
     cfdm.environment()
-    print('')
+    print("")
     unittest.main(verbosity=2)

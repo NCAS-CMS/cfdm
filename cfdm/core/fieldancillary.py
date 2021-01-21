@@ -2,7 +2,7 @@ from . import abstract
 
 
 class FieldAncillary(abstract.PropertiesData):
-    '''A field ancillary construct of the CF data model.
+    """A field ancillary construct of the CF data model.
 
     The field ancillary construct provides metadata which are
     distributed over the same sampling domain as the field itself. For
@@ -25,25 +25,27 @@ class FieldAncillary(abstract.PropertiesData):
 
     .. versionadded:: (cfdm) 1.7.0
 
-    '''
+    """
+
     @property
     def construct_type(self):
-        '''Return a description of the construct type.
+        """Return a description of the construct type.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The construct type.
+            `str`
+                The construct type.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f = {{package}}.{{class}}()
-    >>> f.construct_type
-    'field_ancillary'
+        >>> f = {{package}}.{{class}}()
+        >>> f.construct_type
+        'field_ancillary'
 
-        '''
-        return 'field_ancillary'
+        """
+        return "field_ancillary"
+
 
 # --- End: class

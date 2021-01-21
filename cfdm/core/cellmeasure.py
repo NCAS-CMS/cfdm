@@ -2,7 +2,7 @@ from . import abstract
 
 
 class CellMeasure(abstract.PropertiesData):
-    '''A cell measure construct of the CF data model.
+    """A cell measure construct of the CF data model.
 
     A cell measure construct provides information that is needed about
     the size or shape of the cells and that depends on a subset of the
@@ -24,41 +24,54 @@ class CellMeasure(abstract.PropertiesData):
 
     .. versionadded:: (cfdm) 1.7.0
 
-    '''
-    def __init__(self, measure=None, properties=None, data=None,
-                 source=None, copy=True, _use_data=True):
-        '''**Initialisation**
+    """
 
-    :Parameters:
+    def __init__(
+        self,
+        measure=None,
+        properties=None,
+        data=None,
+        source=None,
+        copy=True,
+        _use_data=True,
+    ):
+        """**Initialisation**
 
-        measure: `str`, optional
-            Set the measure that indicates which metric given by the
-            data array. Ignored if the *source* parameter is set.
+        :Parameters:
 
-            The measure may also be set after initialisation with the
-            `set_measure` method.
+            measure: `str`, optional
+                Set the measure that indicates which metric given by the
+                data array. Ignored if the *source* parameter is set.
 
-            *Parameter example:*
-              ``measure='area'``
+                The measure may also be set after initialisation with the
+                `set_measure` method.
 
-        {{init properties: `dict`, optional}}
+                *Parameter example:*
+                  ``measure='area'``
 
-            *Parameter example:*
-              ``properties={'units': 'metres 2'}``
+            {{init properties: `dict`, optional}}
 
-        {{init data: data_like, optional}}
+                *Parameter example:*
+                  ``properties={'units': 'metres 2'}``
 
-        source: optional
-            Initialise the measure, properties and data from those of
-            source.
+            {{init data: data_like, optional}}
 
-            {{init source}}
+            source: optional
+                Initialise the measure, properties and data from those of
+                source.
 
-        {{init copy: `bool`, optional}}
+                {{init source}}
 
-        '''
-        super().__init__(properties=properties, source=source,
-                         data=data, copy=copy, _use_data=_use_data)
+            {{init copy: `bool`, optional}}
+
+        """
+        super().__init__(
+            properties=properties,
+            source=source,
+            data=data,
+            copy=copy,
+            _use_data=_use_data,
+        )
 
         if source is not None:
             try:
@@ -72,177 +85,180 @@ class CellMeasure(abstract.PropertiesData):
 
     @property
     def construct_type(self):
-        '''Return a description of the construct type.
+        """Return a description of the construct type.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The construct type.
+            `str`
+                The construct type.
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.construct_type
-    'cell_measure'
+        >>> c = {{package}}.{{class}}()
+        >>> c.construct_type
+        'cell_measure'
 
-        '''
-        return 'cell_measure'
+        """
+        return "cell_measure"
 
     def del_measure(self, default=ValueError()):
-        '''Remove the measure.
+        """Remove the measure.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `get_measure`, `has_measure`, `set_measure`
+        .. seealso:: `get_measure`, `has_measure`, `set_measure`
 
-    :Parameters:
+        :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the measure
-            has not been set.
+            default: optional
+                Return the value of the *default* parameter if the measure
+                has not been set.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-            The removed measure.
+                The removed measure.
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.set_measure('area')
-    >>> c.has_measure()
-    True
-    >>> c.get_measure()
-    'area'
-    >>> c.del_measure()
-    'area'
-    >>> c.has_measure()
-    False
-    >>> print(c.del_measure(None))
-    None
-    >>> print(c.get_measure(None))
-    None
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_measure('area')
+        >>> c.has_measure()
+        True
+        >>> c.get_measure()
+        'area'
+        >>> c.del_measure()
+        'area'
+        >>> c.has_measure()
+        False
+        >>> print(c.del_measure(None))
+        None
+        >>> print(c.get_measure(None))
+        None
 
-        '''
+        """
         try:
-            return self._del_component('measure')
+            return self._del_component("measure")
         except ValueError:
             return self._default(
-                default, "{!r} has no measure".format(self.__class__.__name__))
+                default, "{!r} has no measure".format(self.__class__.__name__)
+            )
 
     def has_measure(self):
-        '''Whether the measure has been set.
+        """Whether the measure has been set.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_measure`, `get_measure`, `set_measure`
+        .. seealso:: `del_measure`, `get_measure`, `set_measure`
 
-    :Returns:
+        :Returns:
 
-         `bool`
-            True if the measure has been set, otherwise False.
+             `bool`
+                True if the measure has been set, otherwise False.
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.set_measure('area')
-    >>> c.has_measure()
-    True
-    >>> c.get_measure()
-    'area'
-    >>> c.del_measure()
-    'area'
-    >>> c.has_measure()
-    False
-    >>> print(c.del_measure(None))
-    None
-    >>> print(c.get_measure(None))
-    None
-        '''
-        return self._has_component('measure')
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_measure('area')
+        >>> c.has_measure()
+        True
+        >>> c.get_measure()
+        'area'
+        >>> c.del_measure()
+        'area'
+        >>> c.has_measure()
+        False
+        >>> print(c.del_measure(None))
+        None
+        >>> print(c.get_measure(None))
+        None
+        """
+        return self._has_component("measure")
 
     def get_measure(self, default=ValueError()):
-        '''Return the measure.
+        """Return the measure.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_measure`, `has_measure`, `set_measure`
+        .. seealso:: `del_measure`, `has_measure`, `set_measure`
 
-    :Parameters:
+        :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the measure
-            has not been set.
+            default: optional
+                Return the value of the *default* parameter if the measure
+                has not been set.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-            The value of the measure.
+                The value of the measure.
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.set_measure('area')
-    >>> c.has_measure()
-    True
-    >>> c.get_measure()
-    'area'
-    >>> c.del_measure()
-    'area'
-    >>> c.has_measure()
-    False
-    >>> print(c.del_measure(None))
-    None
-    >>> print(c.get_measure(None))
-    None
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_measure('area')
+        >>> c.has_measure()
+        True
+        >>> c.get_measure()
+        'area'
+        >>> c.del_measure()
+        'area'
+        >>> c.has_measure()
+        False
+        >>> print(c.del_measure(None))
+        None
+        >>> print(c.get_measure(None))
+        None
 
-        '''
+        """
         try:
-            return self._get_component('measure')
+            return self._get_component("measure")
         except ValueError:
             return self._default(
-                default, "{!r} has no measure".format(self.__class__.__name__))
+                default, "{!r} has no measure".format(self.__class__.__name__)
+            )
 
     def set_measure(self, measure, copy=True):
-        '''Set the measure.
+        """Set the measure.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_measure`, `get_measure`, `has_measure`
+        .. seealso:: `del_measure`, `get_measure`, `has_measure`
 
-    :Parameters:
+        :Parameters:
 
-        measure: `str`
-            The value for the measure.
+            measure: `str`
+                The value for the measure.
 
-        copy: `bool`, optional
-            If True then set a deep copy of *measure*.
+            copy: `bool`, optional
+                If True then set a deep copy of *measure*.
 
-    :Returns:
+        :Returns:
 
-         `None`
+             `None`
 
-    **Examples:**
+        **Examples:**
 
-    >>> c = {{package}}.{{class}}()
-    >>> c.set_measure('area')
-    >>> c.has_measure()
-    True
-    >>> c.get_measure()
-    'area'
-    >>> c.del_measure()
-    'area'
-    >>> c.has_measure()
-    False
-    >>> print(c.del_measure(None))
-    None
-    >>> print(c.get_measure(None))
-    None
-        '''
-        return self._set_component('measure', measure, copy=copy)
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_measure('area')
+        >>> c.has_measure()
+        True
+        >>> c.get_measure()
+        'area'
+        >>> c.del_measure()
+        'area'
+        >>> c.has_measure()
+        False
+        >>> print(c.del_measure(None))
+        None
+        >>> print(c.get_measure(None))
+        None
+        """
+        return self._set_component("measure", measure, copy=copy)
+
 
 # --- End: class

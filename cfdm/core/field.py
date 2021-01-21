@@ -7,9 +7,8 @@ from . import Constructs
 from . import Domain
 
 
-class Field(mixin.ConstructAccess,
-            abstract.PropertiesData):
-    '''A field construct of the CF data model.
+class Field(mixin.ConstructAccess, abstract.PropertiesData):
+    """A field construct of the CF data model.
 
     The field construct is central to the CF data model, and includes
     all the other constructs. A field corresponds to a CF-netCDF data
@@ -37,58 +36,61 @@ class Field(mixin.ConstructAccess,
 
     .. versionadded:: (cfdm) 1.7.0
 
-    '''
+    """
+
     # ----------------------------------------------------------------
     # Define the base of the identity keys for each construct type
     # ----------------------------------------------------------------
     _construct_key_base = {
-        'auxiliary_coordinate': 'auxiliarycoordinate',
-        'cell_measure': 'cellmeasure',
-        'cell_method': 'cellmethod',
-        'coordinate_reference': 'coordinatereference',
-        'dimension_coordinate': 'dimensioncoordinate',
-        'domain_ancillary': 'domainancillary',
-        'domain_axis': 'domainaxis',
-        'field_ancillary': 'fieldancillary',
+        "auxiliary_coordinate": "auxiliarycoordinate",
+        "cell_measure": "cellmeasure",
+        "cell_method": "cellmethod",
+        "coordinate_reference": "coordinatereference",
+        "dimension_coordinate": "dimensioncoordinate",
+        "domain_ancillary": "domainancillary",
+        "domain_axis": "domainaxis",
+        "field_ancillary": "fieldancillary",
     }
 
     def __new__(cls, *args, **kwargs):
-        '''This must be overridden in subclasses.
+        """This must be overridden in subclasses.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-        '''
+        """
         instance = super().__new__(cls)
         instance._Constructs = Constructs
         instance._Domain = Domain
         return instance
 
-    def __init__(self, properties=None, source=None, copy=True,
-                 _use_data=True):
-        '''**Initialization**
+    def __init__(
+        self, properties=None, source=None, copy=True, _use_data=True
+    ):
+        """**Initialization**
 
-    :Parameters:
+        :Parameters:
 
-        {{init properties: `dict`, optional}}
+            {{init properties: `dict`, optional}}
 
-            *Parameter example:*
-               ``properties={'standard_name': 'air_temperature'}``
+                *Parameter example:*
+                   ``properties={'standard_name': 'air_temperature'}``
 
-        source: optional
-            Initialize the properties, data and metadata constructs
-            from those of *source*.
+            source: optional
+                Initialize the properties, data and metadata constructs
+                from those of *source*.
 
-            {{init source}}
+                {{init source}}
 
-        {{init copy: `bool`, optional}}
+            {{init copy: `bool`, optional}}
 
-        '''
+        """
         # To avoid mutable default argument (an anti-pattern) of properties={}
         if properties is None:
             properties = {}
 
-        super().__init__(properties=properties, source=source,
-                         copy=copy, _use_data=False)
+        super().__init__(
+            properties=properties, source=source, copy=copy, _use_data=False
+        )
 
         if source is not None:
             # Initialise constructs and the data from the source
@@ -118,7 +120,7 @@ class Field(mixin.ConstructAccess,
         if constructs is None:
             constructs = self._Constructs(**self._construct_key_base)
 
-        self._set_component('constructs', constructs, copy=False)
+        self._set_component("constructs", constructs, copy=False)
 
         if data is not None and _use_data:
             self.set_data(data, data_axes, copy=copy)
@@ -130,237 +132,237 @@ class Field(mixin.ConstructAccess,
     # ----------------------------------------------------------------
     @property
     def construct_type(self):
-        '''Return a description of the construct type.
+        """Return a description of the construct type.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The construct type.
+            `str`
+                The construct type.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f = {{package}}.{{class}}()
-    >>> f.construct_type
-    'field'
+        >>> f = {{package}}.{{class}}()
+        >>> f.construct_type
+        'field'
 
-        '''
-        return 'field'
+        """
+        return "field"
 
     @property
     def constructs(self):
-        '''Return the metadata constructs.
+        """Return the metadata constructs.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Returns:
+        :Returns:
 
-        `Constructs`
-            The constructs.
+            `Constructs`
+                The constructs.
 
-    **Examples:**
+        **Examples:**
 
-    >>> print(f.constructs)
-    Constructs:
-    {'cellmethod0': <{{repr}}CellMethod: area: mean>,
-     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
-     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
-     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
-     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
+        >>> print(f.constructs)
+        Constructs:
+        {'cellmethod0': <{{repr}}CellMethod: area: mean>,
+         'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+         'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+         'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+         'domainaxis2': <{{repr}}DomainAxis: size(1)>}
 
-        '''
-        return self._get_component('constructs')
+        """
+        return self._get_component("constructs")
 
     @property
     def domain(self):
-        '''Return the domain.
+        """Return the domain.
 
-    ``f.domain`` is equivalent to ``f.get_domain()``
+        ``f.domain`` is equivalent to ``f.get_domain()``
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `get_domain`
+        .. seealso:: `get_domain`
 
-    :Returns:
+        :Returns:
 
-        `Domain`
-            The domain.
+            `Domain`
+                The domain.
 
-    **Examples:**
+        **Examples:**
 
-    >>> d0 = f.domain
-    >>> d1 = f.get_domain()
-    >>> d0.equals(d1)
-    True
+        >>> d0 = f.domain
+        >>> d1 = f.get_domain()
+        >>> d0.equals(d1)
+        True
 
-        '''
+        """
         return self.get_domain()
 
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
     def del_data_axes(self, key=None, default=ValueError()):
-        '''Remove the keys of the domain axis constructs spanned by the data
-    of the field or of a metadata construct.
+        """Remove the keys of the domain axis constructs spanned by the data
+        of the field or of a metadata construct.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `get_data_axes`, `has_data_axes`, `set_data_axes`
+        .. seealso:: `get_data_axes`, `has_data_axes`, `set_data_axes`
 
-    :Parameters:
+        :Parameters:
 
-        key: `str`, optional
-            Specify a metadata construct, instead of the field
-            construct.
+            key: `str`, optional
+                Specify a metadata construct, instead of the field
+                construct.
 
-            *Parameter example:*
-              ``key='auxiliarycoordinate0'``
+                *Parameter example:*
+                  ``key='auxiliarycoordinate0'``
 
-        default: optional
-            Return the value of the *default* parameter if the data
-            axes have not been set.
+            default: optional
+                Return the value of the *default* parameter if the data
+                axes have not been set.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-        `tuple`
-            The removed keys of the domain axis constructs spanned by
-            the data.
+            `tuple`
+                The removed keys of the domain axis constructs spanned by
+                the data.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.del_data_axes()
-    ('domainaxis0', 'domainaxis1')
+        >>> f.del_data_axes()
+        ('domainaxis0', 'domainaxis1')
 
-    >>> f.del_data_axes(key='dimensioncoordinate2')
-    ('domainaxis1',)
+        >>> f.del_data_axes(key='dimensioncoordinate2')
+        ('domainaxis1',)
 
-    >>> f.has_data_axes()
-    False
-    >>> f.has_data_axes(default='no axes')
-    'no axes'
+        >>> f.has_data_axes()
+        False
+        >>> f.has_data_axes(default='no axes')
+        'no axes'
 
-        '''
+        """
         if key is not None:
             return super().del_data_axes(key, default=default)
 
         try:
-            return self._del_component('data_axes')
+            return self._del_component("data_axes")
         except ValueError:
             return self._default(
                 default,
-                "{!r} has no data axes".format(self.__class__.__name__)
+                "{!r} has no data axes".format(self.__class__.__name__),
             )
 
     def get_domain(self):
-        '''Return the domain.
+        """Return the domain.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `domain`
+        .. seealso:: `domain`
 
-    :Returns:
+        :Returns:
 
-        `Domain`
-             The domain.
+            `Domain`
+                 The domain.
 
-    **Examples:**
+        **Examples:**
 
-    >>> d = f.get_domain()
+        >>> d = f.get_domain()
 
-        '''
+        """
         return self._Domain.fromconstructs(self.constructs)
 
     def get_data_axes(self, key=None, default=ValueError()):
-        '''Return the keys of the domain axis constructs spanned by the data
-    of the field or of a metadata construct.
+        """Return the keys of the domain axis constructs spanned by the data
+        of the field or of a metadata construct.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_data_axes`, `get_data`, `set_data_axes`
+        .. seealso:: `del_data_axes`, `get_data`, `set_data_axes`
 
-    :Parameters:
+        :Parameters:
 
-        key: `str`, optional
-            Specify a metadata construct, instead of the field
-            construct.
+            key: `str`, optional
+                Specify a metadata construct, instead of the field
+                construct.
 
-            *Parameter example:*
-              ``key='auxiliarycoordinate0'``
+                *Parameter example:*
+                  ``key='auxiliarycoordinate0'``
 
-        default: optional
-            Return the value of the *default* parameter if the data
-            axes have not been set.
+            default: optional
+                Return the value of the *default* parameter if the data
+                axes have not been set.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-        `tuple`
-            The keys of the domain axis constructs spanned by the
-            data.
+            `tuple`
+                The keys of the domain axis constructs spanned by the
+                data.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.get_data_axes()
-    ('domainaxis0', 'domainaxis1')
+        >>> f.get_data_axes()
+        ('domainaxis0', 'domainaxis1')
 
-    >>> f.get_data_axes('dimensioncoordinate2')
-    ('domainaxis1',)
+        >>> f.get_data_axes('dimensioncoordinate2')
+        ('domainaxis1',)
 
-    >>> f.has_data_axes()
-    False
-    >>> f.get_data_axes(default='no axes')
-    'no axes'
+        >>> f.has_data_axes()
+        False
+        >>> f.get_data_axes(default='no axes')
+        'no axes'
 
-        '''
+        """
         if key is not None:
             return super().get_data_axes(key, default=default)
 
         try:
-            return self._get_component('data_axes')
+            return self._get_component("data_axes")
         except ValueError:
             return self._default(
                 default,
-                "{!r} has no data axes".format(self.__class__.__name__)
+                "{!r} has no data axes".format(self.__class__.__name__),
             )
 
     def has_data_axes(self, key=None):
-        '''Whether the domain axis constructs spanned by the data of the field
-    or of a metadata construct have been set.
+        """Whether the domain axis constructs spanned by the data of the field
+        or of a metadata construct have been set.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_data_axes`, `get_data_axes`, `set_data_axes`
+        .. seealso:: `del_data_axes`, `get_data_axes`, `set_data_axes`
 
-    :Parameters:
+        :Parameters:
 
-        key: `str`, optional
-            Specify a metadata construct, instead of the field
-            construct.
+            key: `str`, optional
+                Specify a metadata construct, instead of the field
+                construct.
 
-            *Parameter example:*
-              ``key='domainancillary1'``
+                *Parameter example:*
+                  ``key='domainancillary1'``
 
-    :Returns:
+        :Returns:
 
-        `bool`
-            True if domain axis constructs that span the data been
-            set, otherwise False.
+            `bool`
+                True if domain axis constructs that span the data been
+                set, otherwise False.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.has_data_axes()
-    True
+        >>> f.has_data_axes()
+        True
 
-    >>> f.has_data_axes(key='auxiliarycoordinate2')
-    False
+        >>> f.has_data_axes(key='auxiliarycoordinate2')
+        False
 
-        '''
+        """
         axes = self.get_data_axes(key, default=None)
         if axes is None:
             return False
@@ -368,49 +370,49 @@ class Field(mixin.ConstructAccess,
         return True
 
     def del_construct(self, key, default=ValueError()):
-        '''Remove a metadata construct.
+        """Remove a metadata construct.
 
-    If a domain axis construct is selected for removal then it can't
-    be spanned by any data arrays of the field nor metadata
-    constructs, nor be referenced by any cell method
-    constructs. However, a domain ancillary construct may be removed
-    even if it is referenced by coordinate reference construct.
+        If a domain axis construct is selected for removal then it can't
+        be spanned by any data arrays of the field nor metadata
+        constructs, nor be referenced by any cell method
+        constructs. However, a domain ancillary construct may be removed
+        even if it is referenced by coordinate reference construct.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `get_construct`, `constructs`, `has_construct`,
-                 `set_construct`
+        .. seealso:: `get_construct`, `constructs`, `has_construct`,
+                     `set_construct`
 
-    :Parameters:
+        :Parameters:
 
-        key: `str`
-            The construct identifier of the metadata construct to be
-            removed.
+            key: `str`
+                The construct identifier of the metadata construct to be
+                removed.
 
-            *Parameter example:*
-              ``key='auxiliarycoordinate0'``
+                *Parameter example:*
+                  ``key='auxiliarycoordinate0'``
 
-        default: optional
-            Return the value of the *default* parameter if the data
-            axes have not been set.
+            default: optional
+                Return the value of the *default* parameter if the data
+                axes have not been set.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-            The removed metadata construct.
+                The removed metadata construct.
 
-    **Examples:**
+        **Examples:**
 
 
-    >>> f.del_construct('auxiliarycoordinate2')
-    <{{repr}}AuxiliaryCoordinate: latitude(111, 106) degrees_north>
-    >>> f.del_construct('auxiliarycoordinate2')
-    ValueError: Can't get remove non-existent construct
-    >>> f.del_construct('auxiliarycoordinate2', default=False)
-    False
+        >>> f.del_construct('auxiliarycoordinate2')
+        <{{repr}}AuxiliaryCoordinate: latitude(111, 106) degrees_north>
+        >>> f.del_construct('auxiliarycoordinate2')
+        ValueError: Can't get remove non-existent construct
+        >>> f.del_construct('auxiliarycoordinate2', default=False)
+        False
 
-        '''
+        """
         if key in self.domain_axes and key in self.get_data_axes(default=()):
             raise ValueError(
                 "Can't remove domain axis {!r} that is spanned by the data "
@@ -420,79 +422,79 @@ class Field(mixin.ConstructAccess,
         return super().del_construct(key, default=default)
 
     def set_data(self, data, axes=None, copy=True, inplace=True):
-        '''Set the data of the field construct.
+        """Set the data of the field construct.
 
-    The units, calendar and fill value properties of the data object
-    are removed prior to insertion.
+        The units, calendar and fill value properties of the data object
+        are removed prior to insertion.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_data`, `get_data`, `has_data`, `set_data_axes`
+        .. seealso:: `del_data`, `get_data`, `has_data`, `set_data_axes`
 
-    :Parameters:
+        :Parameters:
 
-        data: data_like
-            The data to be inserted.
+            data: data_like
+                The data to be inserted.
 
-            {{data_like}}
+                {{data_like}}
 
-        axes: (sequence of) `str`, or `None`
-            The identifiers of the domain axes spanned by the data
-            array. If `None` then the data axes are not set.
+            axes: (sequence of) `str`, or `None`
+                The identifiers of the domain axes spanned by the data
+                array. If `None` then the data axes are not set.
 
-            The axes may also be set afterwards with the
-            `set_data_axes` method.
+                The axes may also be set afterwards with the
+                `set_data_axes` method.
 
-            *Parameter example:*
-              ``axes=['domainaxis2']``
+                *Parameter example:*
+                  ``axes=['domainaxis2']``
 
-            *Parameter example:*
-              ``axes='domainaxis2'``
+                *Parameter example:*
+                  ``axes='domainaxis2'``
 
-            *Parameter example:*
-              ``axes=['domainaxis2', 'domainaxis1']``
+                *Parameter example:*
+                  ``axes=['domainaxis2', 'domainaxis1']``
 
-            *Parameter example:*
-              ``axes=None``
+                *Parameter example:*
+                  ``axes=None``
 
-        copy: `bool`, optional
-            If False then do not copy the data prior to insertion. By
-            default the data are copied.
+            copy: `bool`, optional
+                If False then do not copy the data prior to insertion. By
+                default the data are copied.
 
-        {{inplace: `bool`, optional (default True)}}
+            {{inplace: `bool`, optional (default True)}}
 
-            .. versionadded:: (cfdm) 1.8.7.0
+                .. versionadded:: (cfdm) 1.8.7.0
 
-    :Returns:
+        :Returns:
 
-        `None` or `{{class}}`
-            If the operation was in-place then `None` is returned,
-            otherwise return a new `{{class}}` instance containing the
-            new data.
+            `None` or `{{class}}`
+                If the operation was in-place then `None` is returned,
+                otherwise return a new `{{class}}` instance containing the
+                new data.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f = {{package}}.Field()
-    >>> f.set_data([1, 2, 3])
-    >>> f.has_data()
-    True
-    >>> f.get_data()
-    <{{repr}}Data(3): [1, 2, 3]>
-    >>> f.data
-    <{{repr}}Data(3): [1, 2, 3]>
-    >>> f.del_data()
-    <{{repr}}Data(3): [1, 2, 3]>
-    >>> g = f.set_data([4, 5, 6], inplace=False)
-    >>> g.data
-    <{{repr}}Data(3): [4, 5, 6]>
-    >>> f.has_data()
-    False
-    >>> print(f.get_data(None))
-    None
-    >>> print(f.del_data(None))
-    None
+        >>> f = {{package}}.Field()
+        >>> f.set_data([1, 2, 3])
+        >>> f.has_data()
+        True
+        >>> f.get_data()
+        <{{repr}}Data(3): [1, 2, 3]>
+        >>> f.data
+        <{{repr}}Data(3): [1, 2, 3]>
+        >>> f.del_data()
+        <{{repr}}Data(3): [1, 2, 3]>
+        >>> g = f.set_data([4, 5, 6], inplace=False)
+        >>> g.data
+        <{{repr}}Data(3): [4, 5, 6]>
+        >>> f.has_data()
+        False
+        >>> print(f.get_data(None))
+        None
+        >>> print(f.del_data(None))
+        None
 
-        '''
+        """
         if inplace:
             f = self
         else:
@@ -513,53 +515,53 @@ class Field(mixin.ConstructAccess,
         return f
 
     def set_data_axes(self, axes, key=None, _shape=None):
-        '''Set the domain axis constructs spanned by the data of the field or
-    of a metadata construct.
+        """Set the domain axis constructs spanned by the data of the field or
+        of a metadata construct.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_data_axes`, `get_data`, `get_data_axes`,
-                 `has_data_axes`
+        .. seealso:: `del_data_axes`, `get_data`, `get_data_axes`,
+                     `has_data_axes`
 
-    :Parameters:
+        :Parameters:
 
-         axes: sequence of `str`
-            The identifiers of the domain axis constructs spanned by
-            the data of the field or of a metadata construct.
+             axes: sequence of `str`
+                The identifiers of the domain axis constructs spanned by
+                the data of the field or of a metadata construct.
 
-            *Parameter example:*
-              ``axes='domainaxis1'``
+                *Parameter example:*
+                  ``axes='domainaxis1'``
 
-            *Parameter example:*
-              ``axes=['domainaxis1']``
+                *Parameter example:*
+                  ``axes=['domainaxis1']``
 
-            *Parameter example:*
-              ``axes=['domainaxis1', 'domainaxis0']``
+                *Parameter example:*
+                  ``axes=['domainaxis1', 'domainaxis0']``
 
-         key: `str`, optional
-            Specify a metadata construct, instead of the field
-            construct.
+             key: `str`, optional
+                Specify a metadata construct, instead of the field
+                construct.
 
-            *Parameter example:*
-              ``key='domainancillary1'``
+                *Parameter example:*
+                  ``key='domainancillary1'``
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-    **Examples:**
+        **Examples:**
 
-    Set the domain axis constructs spanned by the data of the field
-    construct:
+        Set the domain axis constructs spanned by the data of the field
+        construct:
 
-    >>> f.set_data_axes(['domainaxis0', 'domainaxis1'])
+        >>> f.set_data_axes(['domainaxis0', 'domainaxis1'])
 
-    Set the domain axis constructs spanned by the data of a metadata
-    construct:
+        Set the domain axis constructs spanned by the data of a metadata
+        construct:
 
-    >>> f.set_data_axes(['domainaxis1'], key='dimensioncoordinate1')
+        >>> f.set_data_axes(['domainaxis1'], key='dimensioncoordinate1')
 
-        '''
+        """
         if isinstance(axes, str):
             axes = (axes,)
 
@@ -573,7 +575,7 @@ class Field(mixin.ConstructAccess,
         # --- End: if
 
         if _shape is not None:
-            domain_axes = self.constructs.filter_by_type('domain_axis')
+            domain_axes = self.constructs.filter_by_type("domain_axis")
             axes_shape = []
             for axis in axes:
                 if axis not in domain_axes:
@@ -589,13 +591,15 @@ class Field(mixin.ConstructAccess,
                     "Can't set field construct data axes: Data array shape "
                     "of {!r} does not match the shape of the given domain "
                     "axes {}: {}".format(
-                        _shape, tuple(axes), tuple(axes_shape))
+                        _shape, tuple(axes), tuple(axes_shape)
+                    )
                 )
         # --- End: if
 
         axes = tuple(axes)
-        self._set_component('data_axes', axes, copy=False)
+        self._set_component("data_axes", axes, copy=False)
 
         self.constructs._field_data_axes = axes
+
 
 # --- End: class

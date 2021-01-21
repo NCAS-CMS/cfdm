@@ -2,7 +2,7 @@ from . import abstract
 
 
 class DomainAxis(abstract.Container):
-    '''A domain axis construct of the CF data model.
+    """A domain axis construct of the CF data model.
 
     A domain axis construct specifies the number of points along an
     independent axis of the domain. It comprises a positive integer
@@ -15,29 +15,30 @@ class DomainAxis(abstract.Container):
 
     .. versionadded:: (cfdm) 1.7.0
 
-    '''
+    """
+
     def __init__(self, size=None, source=None, copy=True):
-        '''**Initialization**
+        """**Initialization**
 
-    :Parameters:
+        :Parameters:
 
-        size: `int`, optional
-            The size of the domain axis.
+            size: `int`, optional
+                The size of the domain axis.
 
-            *Parameter example:*
-              ``size=192``
+                *Parameter example:*
+                  ``size=192``
 
-            The size may also be set after initialisation with the
-            `set_size` method.
+                The size may also be set after initialisation with the
+                `set_size` method.
 
-        source:
-            Initialize the size from that of source.
+            source:
+                Initialize the size from that of source.
 
-            {{init source}}
+                {{init source}}
 
-        {{init copy: `bool`, optional}}
+            {{init copy: `bool`, optional}}
 
-        '''
+        """
         super().__init__(source=source, copy=copy)
 
         if source is not None:
@@ -52,172 +53,175 @@ class DomainAxis(abstract.Container):
 
     @property
     def construct_type(self):
-        '''Return a description of the construct type.
+        """Return a description of the construct type.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The construct type.
+            `str`
+                The construct type.
 
-    **Examples:**
+        **Examples:**
 
-    >>> d = {{package}}.{{class}}()
-    >>> d.construct_type
-    'domain_axis'
+        >>> d = {{package}}.{{class}}()
+        >>> d.construct_type
+        'domain_axis'
 
-        '''
-        return 'domain_axis'
+        """
+        return "domain_axis"
 
     def del_size(self, default=ValueError()):
-        '''Remove the size.
+        """Remove the size.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `get_size`, `has_size`, `set_size`
+        .. seealso:: `get_size`, `has_size`, `set_size`
 
-    :Parameters:
+        :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the size
-            has not been set. If set to an `Exception` instance then
-            it will be raised instead.
+            default: optional
+                Return the value of the *default* parameter if the size
+                has not been set. If set to an `Exception` instance then
+                it will be raised instead.
 
-    :Returns:
+        :Returns:
 
-            The removed size.
+                The removed size.
 
-    **Examples:**
+        **Examples:**
 
-    >>> d.set_size(96)
-    >>> d.has_size()
-    True
-    >>> d.get_size()
-    96
-    >>> d.del_size()
-    96
-    >>> d.has_size()
-    False
-    >>> print(d.del_size(None))
-    None
-    >>> print(d.get_size(None))
-    None
+        >>> d.set_size(96)
+        >>> d.has_size()
+        True
+        >>> d.get_size()
+        96
+        >>> d.del_size()
+        96
+        >>> d.has_size()
+        False
+        >>> print(d.del_size(None))
+        None
+        >>> print(d.get_size(None))
+        None
 
-        '''
+        """
         try:
-            return self._del_component('size')
+            return self._del_component("size")
         except ValueError:
             return self._default(
-                default, "{!r} has no size".format(self.__class__.__name__))
+                default, "{!r} has no size".format(self.__class__.__name__)
+            )
 
     def has_size(self):
-        '''Whether the size has been set.
+        """Whether the size has been set.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_size`, `get_size`, `set_size`
+        .. seealso:: `del_size`, `get_size`, `set_size`
 
-    :Returns:
+        :Returns:
 
-         `bool`
-            True if the size has been set, otherwise False.
+             `bool`
+                True if the size has been set, otherwise False.
 
-    **Examples:**
+        **Examples:**
 
-    >>> d.set_size(96)
-    >>> d.has_size()
-    True
-    >>> d.get_size()
-    96
-    >>> d.del_size()
-    96
-    >>> d.has_size()
-    False
-    >>> print(d.del_size(None))
-    None
-    >>> print(d.get_size(None))
-    None
+        >>> d.set_size(96)
+        >>> d.has_size()
+        True
+        >>> d.get_size()
+        96
+        >>> d.del_size()
+        96
+        >>> d.has_size()
+        False
+        >>> print(d.del_size(None))
+        None
+        >>> print(d.get_size(None))
+        None
 
-        '''
-        return self._has_component('size')
+        """
+        return self._has_component("size")
 
     def get_size(self, default=ValueError()):
-        '''Return the size.
+        """Return the size.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_size`, `has_size`, `set_size`
+        .. seealso:: `del_size`, `has_size`, `set_size`
 
-    :Parameters:
+        :Parameters:
 
-        default: optional
-            Return the value of the *default* parameter if the size
-            has not been set. If set to an `Exception` instance then
-            it will be raised instead.
+            default: optional
+                Return the value of the *default* parameter if the size
+                has not been set. If set to an `Exception` instance then
+                it will be raised instead.
 
-    :Returns:
+        :Returns:
 
-            The size.
+                The size.
 
-    **Examples:**
+        **Examples:**
 
-    >>> d.set_size(96)
-    >>> d.has_size()
-    True
-    >>> d.get_size()
-    96
-    >>> d.del_size()
-    96
-    >>> d.has_size()
-    False
-    >>> print(d.del_size(None))
-    None
-    >>> print(d.get_size(None))
-    None
+        >>> d.set_size(96)
+        >>> d.has_size()
+        True
+        >>> d.get_size()
+        96
+        >>> d.del_size()
+        96
+        >>> d.has_size()
+        False
+        >>> print(d.del_size(None))
+        None
+        >>> print(d.get_size(None))
+        None
 
-        '''
+        """
         try:
-            return self._get_component('size')
+            return self._get_component("size")
         except ValueError:
             return self._default(
-                default, "{!r} has no size".format(self.__class__.__name__))
+                default, "{!r} has no size".format(self.__class__.__name__)
+            )
 
     def set_size(self, size, copy=True):
-        '''Set the size.
+        """Set the size.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `del_size`, `get_size`, `has_size`
+        .. seealso:: `del_size`, `get_size`, `has_size`
 
-    :Parameters:
+        :Parameters:
 
-        value: `int`
-            The size.
+            value: `int`
+                The size.
 
-        copy: `bool`, optional
-            If True then set a deep copy of *size*.
+            copy: `bool`, optional
+                If True then set a deep copy of *size*.
 
-    :Returns:
+        :Returns:
 
-         `None`
+             `None`
 
-    **Examples:**
+        **Examples:**
 
-    >>> d.set_size(96)
-    >>> d.has_size()
-    True
-    >>> d.get_size()
-    96
-    >>> d.del_size()
-    96
-    >>> d.has_size()
-    False
-    >>> print(d.del_size(None))
-    None
-    >>> print(d.get_size(None))
+        >>> d.set_size(96)
+        >>> d.has_size()
+        True
+        >>> d.get_size()
+        96
+        >>> d.del_size()
+        96
+        >>> d.has_size()
+        False
+        >>> print(d.del_size(None))
+        None
+        >>> print(d.get_size(None))
 
-        '''
-        self._set_component('size', size, copy=copy)
+        """
+        self._set_component("size", size, copy=copy)
+
 
 # --- End: class
