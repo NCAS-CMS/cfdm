@@ -3150,7 +3150,7 @@ class NetCDFRead(IORead):
         data = self._create_data(field_ncvar, f, unpacked_dtype=unpacked_dtype)
 
         logger.detail(
-            "        [d] Inserting {!r}".format(data)
+            f"        [d] Inserting {data.__class__.__name__}{data.shape}"
         )  # pragma: no cover
 
         self.implementation.set_data(f, data, axes=data_axes, copy=False)
