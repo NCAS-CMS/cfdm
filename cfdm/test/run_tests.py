@@ -1,10 +1,14 @@
 import datetime
+import doctest
 import os
+import pkgutil
 import unittest
 
+from argparse import ArgumentParser
 from random import choice, shuffle
 
 import faulthandler
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
@@ -56,6 +60,22 @@ shuffle(all_test_cases._tests)
 testsuite.addTests(all_test_cases)
 
 
+def add_doctests(test_suite):
+    """Set up doctest tests and add them to a given test suite."""
+    # Tell doctest comparisons to treat any sequence of whitespace including
+    # newlines as equal and to take '...' in output to mean any text
+    doctest_flags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
+    # TODO: incrementally add-in doctesting to eventually cover whole codebase
+    # but for now setup each module gradually by adding specific sub-module
+    # names to 'if' statement below to include all under those in the check.
+    for importer, name, ispkg in pkgutil.walk_packages(
+        cfdm.__path__, cfdm.__name__ + "."
+    ):
+        test_suite.addTests(
+            doctest.DocTestSuite(name, optionflags=doctest_flags)
+        )
+
+
 def run_test_suite_setup_0(verbosity=2):
     """Run the test suite's first set-up stage."""
     runner = unittest.TextTestRunner(verbosity=verbosity)
@@ -68,8 +88,21 @@ def run_test_suite_setup_1(verbosity=2):
     runner.run(testsuite_setup_1)
 
 
-def run_test_suite(verbosity=2):
+def run_doctests_only(verbosity=2):
+    """Run only doctest tests to test docstring code examples."""
+    testsuite_doctests = unittest.TestSuite()  # use a new dedicated test suite
+    add_doctests(testsuite_doctests)
+    runner = unittest.TextTestRunner(verbosity=verbosity)
+    outcome = runner.run(testsuite_doctests)
+    if not outcome.wasSuccessful():  # set exit code
+        exit(1)  # else is zero for sucess as standard
+
+
+def run_test_suite(verbosity=2, include_doctests=False):
     """Run the test suite."""
+    if include_doctests:  # add doctests to the test suite to run
+        add_doctests(testsuite)
+
     runner = unittest.TextTestRunner(verbosity=verbosity)
     outcome = runner.run(testsuite)
     # Note unittest.TextTestRunner().run() does not set an exit code,
@@ -80,6 +113,16 @@ def run_test_suite(verbosity=2):
 
 
 if __name__ == "__main__":
+    parser = ArgumentParser()
+    parser.add_argument(
+        "-d",
+        "--doctest",
+        dest="doctest",
+        action="store_true",
+        help="run only the doctest tests",
+    )
+    args = parser.parse_args()
+
     print("---------------")
     print("CFDM TEST SUITE")
     print("---------------")
@@ -87,8 +130,14 @@ if __name__ == "__main__":
     cfdm.environment()
     print("")
     print("Running tests from", os.path.abspath(os.curdir))
-    print("")
 
-    run_test_suite_setup_0()
-    run_test_suite_setup_1()
-    run_test_suite()
+    if args.doctest:
+        print("Note: running only doctest tests\n")
+        run_doctests_only()
+    else:
+        print("")
+        run_test_suite_setup_0()
+        run_test_suite_setup_1()
+        # TODO: when doctesting is ready such that all modules have the right
+        # prep in their code docstring examples, set include_doctests=True.
+        run_test_suite()
