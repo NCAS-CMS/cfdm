@@ -91,7 +91,7 @@ class DomainAxis(abstract.Container):
 
         **Examples:**
 
-        >>> d = cfdm.core.DomainAxis(size=50)
+        >>> d = {{package}}.{{class}}(size=50)
         >>> d.has_size()
         True
         >>> d.get_size()
@@ -129,7 +129,7 @@ class DomainAxis(abstract.Container):
 
         **Examples:**
 
-        >>> d = cfdm.core.DomainAxis(size=50)
+        >>> d = {{package}}.{{class}}(size=50)
         >>> d.has_size()
         True
         >>> d.get_size()
@@ -168,7 +168,7 @@ class DomainAxis(abstract.Container):
 
         **Examples:**
 
-        >>> d = cfdm.core.DomainAxis(size=50)
+        >>> d = {{package}}.{{class}}(size=50)
         >>> d.has_size()
         True
         >>> d.get_size()
@@ -213,7 +213,7 @@ class DomainAxis(abstract.Container):
 
         **Examples:**
 
-        >>> d = cfdm.core.DomainAxis(size=50)
+        >>> d = {{package}}.{{class}}(size=50)
         >>> d.has_size()
         True
         >>> d.get_size()
