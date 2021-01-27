@@ -201,7 +201,7 @@ class NetCDFWrite(IOWrite):
 
         **Examples:**
 
-        >>> x = numpy.ma.array(np.arange(5), mask=[0]*2 + [1]*3)
+        >>> x = numpy.ma.array(numpy.arange(5), mask=[0]*2 + [1]*3)
         >>> c = n._numpy_compressed(x)
         >>> c
         array([0, 1])

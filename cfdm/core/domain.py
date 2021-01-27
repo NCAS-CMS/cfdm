@@ -92,6 +92,7 @@ class Domain(mixin.ConstructAccess, abstract.Container):
 
         **Examples:**
 
+        >>> d = cfdm.example_field(0)
         >>> print(d.constructs)
         Constructs:
         {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
@@ -129,7 +130,12 @@ class Domain(mixin.ConstructAccess, abstract.Container):
 
         **Examples:**
 
+        >>> d = cfdm.example_field(0)
         >>> e = d.copy()
+        >>> e.equals(d)
+        True
+        >>> e is d
+        False
 
         """
         return type(self)(source=self, copy=True, _use_data=data)
@@ -162,7 +168,10 @@ class Domain(mixin.ConstructAccess, abstract.Container):
 
         **Examples:**
 
+        >>> f = cfdm.example_field(0)
         >>> d = {{package}}.{{class}}.fromconstructs(f.constructs)
+        >>> d
+        <Domain: {1, 5, 8}>
 
         """
         domain = cls()
