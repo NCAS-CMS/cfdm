@@ -163,6 +163,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
         **Examples:**
 
+        >>> f = {{package}}.example_field(0)
         >>> print(f.constructs)
         Constructs:
         {'cellmethod0': <{{repr}}CellMethod: area: mean>,
@@ -192,6 +193,10 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
                 The domain.
 
         **Examples:**
+
+        >>> f = {{package}}.example_field(2)
+        >>> f.domain
+        <Domain: {1, 5, 8, 36}>
 
         >>> d0 = f.domain
         >>> d1 = f.get_domain()
@@ -235,15 +240,19 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
         **Examples:**
 
+        >>> f = {{package}}.example_field(0)
+        >>> f.get_data_axes()
+        ('domainaxis0', 'domainaxis1')
+        >>> f.get_data_axes(key='dimensioncoordinate2')
+        ('domainaxis2',)
+        >>> f.has_data_axes()
+        True
+
         >>> f.del_data_axes()
         ('domainaxis0', 'domainaxis1')
-
-        >>> f.del_data_axes(key='dimensioncoordinate2')
-        ('domainaxis1',)
-
         >>> f.has_data_axes()
         False
-        >>> f.has_data_axes(default='no axes')
+        >>> f.get_data_axes(default='no axes')
         'no axes'
 
         """
@@ -272,7 +281,14 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
         **Examples:**
 
-        >>> d = f.get_domain()
+        >>> f = {{package}}.example_field(2)
+        >>> f.get_domain()
+        <Domain: {1, 5, 8, 36}>
+
+        >>> d0 = f.domain
+        >>> d1 = f.get_domain()
+        >>> d0.equals(d1)
+        True
 
         """
         return self._Domain.fromconstructs(self.constructs)
@@ -308,12 +324,16 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
         **Examples:**
 
+        >>> f = {{package}}.example_field(0)
         >>> f.get_data_axes()
         ('domainaxis0', 'domainaxis1')
+        >>> f.get_data_axes(key='dimensioncoordinate2')
+        ('domainaxis2',)
+        >>> f.has_data_axes()
+        True
 
-        >>> f.get_data_axes('dimensioncoordinate2')
-        ('domainaxis1',)
-
+        >>> f.del_data_axes()
+        ('domainaxis0', 'domainaxis1')
         >>> f.has_data_axes()
         False
         >>> f.get_data_axes(default='no axes')
@@ -356,11 +376,20 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
         **Examples:**
 
+        >>> f = {{package}}.example_field(0)
+        >>> f.get_data_axes()
+        ('domainaxis0', 'domainaxis1')
+        >>> f.get_data_axes(key='dimensioncoordinate2')
+        ('domainaxis2',)
         >>> f.has_data_axes()
         True
 
-        >>> f.has_data_axes(key='auxiliarycoordinate2')
+        >>> f.del_data_axes()
+        ('domainaxis0', 'domainaxis1')
+        >>> f.has_data_axes()
         False
+        >>> f.get_data_axes(default='no axes')
+        'no axes'
 
         """
         axes = self.get_data_axes(key, default=None)
@@ -404,10 +433,13 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
         **Examples:**
 
+        >>> f = {{package}}.example_field(4)
+        >>> f.del_construct('auxiliarycoordinate2')
+        <{{repr}}AuxiliaryCoordinate: longitude(3) degrees_east>
 
+        >>> f = {{package}}.example_field(0)
         >>> f.del_construct('auxiliarycoordinate2')
-        <{{repr}}AuxiliaryCoordinate: latitude(111, 106) degrees_north>
-        >>> f.del_construct('auxiliarycoordinate2')
+        Traceback ...
         ValueError: Can't remove non-existent construct
         >>> f.del_construct('auxiliarycoordinate2', default=False)
         False
@@ -474,7 +506,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
         **Examples:**
 
-        >>> f = {{package}}.Field()
+        >>> f = {{package}}.{{class}}()
         >>> f.set_data([1, 2, 3])
         >>> f.has_data()
         True
@@ -482,6 +514,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         <{{repr}}Data(3): [1, 2, 3]>
         >>> f.data
         <{{repr}}Data(3): [1, 2, 3]>
+
         >>> f.del_data()
         <{{repr}}Data(3): [1, 2, 3]>
         >>> g = f.set_data([4, 5, 6], inplace=False)
@@ -554,11 +587,15 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         Set the domain axis constructs spanned by the data of the field
         construct:
 
+        >>> f = {{package}}.{{class}}()
         >>> f.set_data_axes(['domainaxis0', 'domainaxis1'])
+        >>> f.get_data_axes()
+        ('domainaxis0', 'domainaxis1')
 
         Set the domain axis constructs spanned by the data of a metadata
         construct:
 
+        >>> f = {{package}}.example_field(5)
         >>> f.set_data_axes(['domainaxis1'], key='dimensioncoordinate1')
 
         """
