@@ -517,7 +517,7 @@ class Constructs(abstract.Container):
 
         if out is None:
             return self._default(
-                default, "Can't get remove non-existent construct"
+                default, "Can't remove non-existent construct"
             )
 
         return out

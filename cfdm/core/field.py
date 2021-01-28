@@ -408,7 +408,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         >>> f.del_construct('auxiliarycoordinate2')
         <{{repr}}AuxiliaryCoordinate: latitude(111, 106) degrees_north>
         >>> f.del_construct('auxiliarycoordinate2')
-        ValueError: Can't get remove non-existent construct
+        ValueError: Can't remove non-existent construct
         >>> f.del_construct('auxiliarycoordinate2', default=False)
         False
 
