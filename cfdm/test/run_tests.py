@@ -1,5 +1,6 @@
 import datetime
 import doctest
+import importlib
 import os
 import pkgutil
 import unittest
@@ -72,7 +73,13 @@ def add_doctests(test_suite):
         cfdm.__path__, cfdm.__name__ + "."
     ):
         test_suite.addTests(
-            doctest.DocTestSuite(name, optionflags=doctest_flags)
+            doctest.DocTestSuite(
+                name,
+                optionflags=doctest_flags,
+                globs={
+                    "cfdm": importlib.import_module("cfdm"),
+                },
+            )
         )
 
 
