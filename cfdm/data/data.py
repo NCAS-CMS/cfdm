@@ -223,9 +223,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             shape = str(shape)
             shape = shape.replace(",)", ")")
 
-        return "<{0}{1}: {2}>".format(
-            self.__class__.__name__, shape, str(self)
-        )
+        return f"<{self.__class__.__name__}{shape}: {self}>"
 
     def __getitem__(self, indices):
         """Return a subspace of the data defined by indices
@@ -434,8 +432,9 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         try:
             first = self.first_element()
+        except ValueError:
+            first = "??"
         except Exception:
-            out = ""
             if units and not isreftime:
                 out += " {0}".format(units)
             if calendar:
@@ -467,7 +466,11 @@ class Data(Container, NetCDFHDF5, core.Data):
 
             out = "{0}{1!s}{2}".format(open_brackets, first, close_brackets)
         else:
-            last = self.last_element()
+            try:
+                last = self.last_element()
+            except ValueError:
+                last = "??"
+                
             if isreftime:
                 if last is numpy.ma.masked:
                     last = 0
@@ -490,7 +493,11 @@ class Data(Container, NetCDFHDF5, core.Data):
                     open_brackets, first, last, close_brackets
                 )
             elif shape[-1:] == (3,):
-                middle = self.second_element()
+                try:
+                    middle = self.second_element()
+                except ValueError:
+                    middle = "??"
+               
                 if isreftime:
                     # Convert reference time to date-time
                     if middle is numpy.ma.masked:
