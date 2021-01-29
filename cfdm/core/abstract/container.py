@@ -183,6 +183,9 @@ class Container(metaclass=DocstringRewriteMeta):
     def _custom(self):
         """Customisable storage for additional attributes.
 
+        See https://ncas-cms.github.io/cfdm/extensions.html for more
+        information.
+
         .. versionadded:: (cfdm) 1.7.4
 
         **Examples:**
@@ -190,18 +193,18 @@ class Container(metaclass=DocstringRewriteMeta):
         >>> f = {{package}}.{{class}}()
         >>> f._custom
         {}
-        >>> f._custom['feature'] = ['f']
+        >>> f._custom['feature_1'] = 1
         >>> g = f.copy()
-        >>> g._custom['feature'][0] = 'g'
+        >>> g._custom['feature_2'] = 2
         >>> f._custom
-        {'feature': ['f']}
+        {'feature': 1}
         >>> g._custom
-        {'feature': ['g']}
-        >>> del g._custom['feature']
+        {'feature_1': 1, 'feature_2': 2}
+        >>> del g._custom['feature_1']
+        >>> g._custom
+        {'feature_2': 2}
         >>> f._custom
-        {'feature': ['f']}
-        >>> g._custom
-        {}
+        {'feature_1': 1}
 
         """
         return self._get_component("custom")
