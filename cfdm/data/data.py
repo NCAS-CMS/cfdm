@@ -190,7 +190,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         **Examples:**
 
-        >>> import numpy
+
         >>> d = {{package}}.{{class}}([1, 2, 3])
         >>> a = numpy.array(d)
         >>> print(type(a))
@@ -255,7 +255,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         **Examples:**
 
-        >>> import numpy
+
         >>> d = {{package}}.{{class}}(numpy.arange(100, 190).reshape(1, 10, 9))
         >>> d.shape
         (1, 10, 9)
@@ -390,7 +390,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         **Examples:**
 
-        >>> import numpy
+
         >>> d = {{package}}.{{class}}(numpy.arange(100, 190).reshape(1, 10, 9))
         >>> d.shape
         (10, 9)
@@ -546,7 +546,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         **Examples:**
 
-        >>> import numpy
+
         >>> d = {{package}}.{{class}}([[1, 2, 3]], 'km')
         >>> x = d._item((0, -1))
         >>> print(x, type(x))
@@ -1032,7 +1032,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         **Examples:**
 
-        >>> import numpy
+
         >>> d = {{package}}.{{class}}(numpy.arange(12).reshape(3, 4), 'm')
         >>> d[1, 1] = masked
         >>> print(d.array)
@@ -1573,7 +1573,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         **Examples:**
 
-        >>> import numpy
+
         >>> d = cfdm.Data(numpy.arange(100, 190).reshape(1, 10, 9))
         >>> d._parse_indices((slice(None, None, None), 1, 2))
         [slice(None, None, None), slice(1, 2, 1), slice(2, 3, 1)]
@@ -1695,7 +1695,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         **Examples:**
 
-        >>> import numpy
+
         >>> d = {{package}}.Data(numpy.arange(24).reshape(1, 2, 3, 4))
         >>> d
         <{{repr}}Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
@@ -1767,7 +1767,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         **Examples:**
 
-        >>> import numpy
+
         >>> d = {{package}}.Data(numpy.arange(24).reshape(1, 2, 3, 4))
         >>> d
         <{{repr}}Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
@@ -1914,7 +1914,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         **Examples:**
 
-        >>> import numpy
+
         >>> d = {{package}}.Data(numpy.arange(24).reshape(1, 2, 3, 4))
         >>> d
         <{{repr}}Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
@@ -2428,7 +2428,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         **Examples**
 
-        >>> import numpy
+
         >>> d = {{package}}.Data(numpy.arange(24).reshape(1, 2, 3, 4))
         >>> d
         <{{repr}}Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>

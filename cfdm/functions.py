@@ -496,7 +496,7 @@ class Constant(metaclass=DocstringRewriteMeta):
     Care is required when the right hand side operand is a `numpy`
     array
 
-       >>> import numpy
+
        >>> c * numpy.array([1, 2, 3])
        array([20, 40, 60])
        >>> d = numpy.array([1, 2, 3]) * c
@@ -546,7 +546,7 @@ class Constant(metaclass=DocstringRewriteMeta):
        >>> 3 == c
        False
 
-       >>> import numpy
+
        >>> c = {{package}}.{{class}})
        >>> c < numpy.array([10, 20, 30])
        array([False, False,  True])

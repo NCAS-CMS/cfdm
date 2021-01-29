@@ -78,6 +78,7 @@ def add_doctests(test_suite):
                 optionflags=doctest_flags,
                 globs={
                     "cfdm": importlib.import_module("cfdm"),
+                    "numpy": importlib.import_module("numpy"),
                 },
             )
         )

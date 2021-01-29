@@ -120,7 +120,7 @@ class PropertiesDataBounds(PropertiesData):
 
         **Examples:**
 
-        >>> import numpy
+
         >>> c = {{package}}.{{class}}()
         >>> b = {{package}}.Bounds(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
         >>> c.set_bounds(b)
@@ -155,7 +155,7 @@ class PropertiesDataBounds(PropertiesData):
 
         **Examples:**
 
-        >>> import numpy
+
         >>> i = {{package}}.InteriorRing(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
         >>> c.set_interior_ring(i)
         >>> c.has_interior_ring()
@@ -196,7 +196,7 @@ class PropertiesDataBounds(PropertiesData):
 
         **Examples:**
 
-        >>> import numpy
+
         >>> c = {{package}}.{{class}}()
         >>> b = {{package}}.Bounds(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
         >>> c.set_bounds(b)
@@ -292,7 +292,7 @@ class PropertiesDataBounds(PropertiesData):
 
         **Examples:**
 
-        >>> import numpy
+
         >>> c = {{package}}.{{class}}()
         >>> i = {{package}}.InteriorRing(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
         >>> c.set_interior_ring(i)
@@ -346,7 +346,7 @@ class PropertiesDataBounds(PropertiesData):
 
         **Examples:**
 
-        >>> import numpy
+
         >>> c = {{package}}.{{class}}()
         >>> b = {{package}}.Bounds(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
         >>> c.set_bounds(b)
@@ -444,7 +444,7 @@ class PropertiesDataBounds(PropertiesData):
 
         **Examples:**
 
-        >>> import numpy
+
         >>> c = {{package}}.{{class}}()
         >>> i = {{package}}.InteriorRing(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
         >>> c.set_interior_ring(i)
@@ -489,7 +489,7 @@ class PropertiesDataBounds(PropertiesData):
 
         **Examples:**
 
-        >>> import numpy
+
         >>> c = {{package}}.{{class}}()
         >>> b = {{package}}.Bounds(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
         >>> c.set_bounds(b)
@@ -559,7 +559,7 @@ class PropertiesDataBounds(PropertiesData):
 
         **Examples:**
 
-        >>> import numpy
+
         >>> c = {{package}}.{{class}}()
         >>> i = {{package}}.InteriorRing(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
         >>> c.set_interior_ring(i)
@@ -604,7 +604,7 @@ class PropertiesDataBounds(PropertiesData):
 
         **Examples:**
 
-        >>> import numpy
+
         >>> c = {{package}}.{{class}}()
         >>> b = {{package}}.Bounds(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
         >>> c.set_bounds(b)
@@ -700,7 +700,7 @@ class PropertiesDataBounds(PropertiesData):
 
         **Examples:**
 
-        >>> import numpy
+
         >>> c = {{package}}.{{class}})(
         >>> i = {{package}}.InteriorRing(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
         >>> c.set_interior_ring(i)

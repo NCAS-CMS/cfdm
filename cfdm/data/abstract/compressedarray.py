@@ -239,7 +239,7 @@ class CompressedArray(Array):
         **Examples:**
 
         >>> n = a.compressed_array
-        >>> import numpy
+
         >>> isinstance(n, numpy.ndarray)
         True
 
