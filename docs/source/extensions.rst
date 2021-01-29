@@ -10,14 +10,13 @@
 
 Version |release| for version |version| of the CF conventions.
 
+.. contents::
+   :local:
+   :backlinks: entry
 
 The cfdm package has been designed to be subclassed, so that the
 creation of a new implementation of the CF data model, based on cfdm,
 is straight forward. For example:
-
-
-.. Creating a new implementation of the CF data model by subclassing
-   cfdm classes is straight forward. For example:
 
 .. code-block:: python
    :caption: *Create a new implementation with a new field construct
@@ -115,8 +114,7 @@ in overridden methods.
    
    >>> class my_Field_2(cfdm.Field):
    ...    def my_coordinates(self):
-   ...        '''Get coordinate constructs with a different API
-   ...        '''
+   ...        """Get coordinate constructs with a different API."""
    ...        c = self.coordinates
    ...        if not c:
    ...            return {}
@@ -124,9 +122,9 @@ in overridden methods.
    ... 
    >>> class my_CFDMImplementation(cfdm.CFDMImplementation):
    ...    def get_coordinates(self, field):
-   ...        '''Get coordinate constructs from a my_Field_2 instance,
-   ...    using its different API.
-   ...        '''
+   ...        """Get coordinate constructs from a my_Field_2 instance,
+   ...        using its different API.
+   ...        """
    ...        return field.my_coordinates()
    ... 
    >>> my_implementation_2 = my_CFDMImplementation(
@@ -185,10 +183,10 @@ other aspects it unchanged
 	 
    >>> class my_NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
    ...     def read(self, filename):
-   ...         '''Read my fields from a netCDF file on disk or from
-   ...     an OPeNDAP server location, using my modified mapping
-   ...     from netCDF to the CF data model.
-   ...         '''
+   ...         """Read my fields from a netCDF file on disk or from
+   ...         an OPeNDAP server location, using my modified mapping
+   ...         from netCDF to the CF data model.
+   ...         """
    ...         print("Reading dataset using my modified mapping")
    ...         return super().read(filename)
 
@@ -198,8 +196,7 @@ other aspects it unchanged
 	     
    >>> my_netcdf = my_NetCDFRead(my_implementation_2)
    >>> def my_read_3(filename, ):
-   ...     '''Read my field constructs from a dataset.
-   ...     '''
+   ...     """Read my field constructs from a dataset."""
    ...     return my_netcdf.read(filename)
    
 .. code-block:: python
@@ -215,6 +212,11 @@ In the same manner, `cfdm.read_write.netcdf.NetCDFWrite` may be
 subclassed, and a new write-to-disk function defined, to override
 aspects of the mapping from CF data model constructs to netCDF
 elements in a dataset.
+
+The _custom dictionary
+^^^^^^^^^^^^^^^^^^^^^^
+
+TODO (in progress ...)
 
 Documentation
 ^^^^^^^^^^^^^
