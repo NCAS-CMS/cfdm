@@ -197,7 +197,7 @@ class Container(metaclass=DocstringRewriteMeta):
         >>> g = f.copy()
         >>> g._custom['feature_2'] = 2
         >>> f._custom
-        {'feature': 1}
+        {'feature_1': 1}
         >>> g._custom
         {'feature_1': 1, 'feature_2': 2}
         >>> del g._custom['feature_1']
