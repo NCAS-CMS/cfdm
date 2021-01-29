@@ -194,13 +194,13 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> d = {{package}}.{{class}}([1, 2, 3])
         >>> a = numpy.array(d)
         >>> print(type(a))
-        <type 'numpy.ndarray'>
+        <class 'numpy.ndarray'>
         >>> a[0] = -99
         >>> d
         <{{repr}}{{class}}(3): [1, 2, 3]>
         >>> b = numpy.array(d, float)
         >>> print(b)
-        [ 1.  2.  3.]
+        [1. 2. 3.]
 
         """
         array = self.array
@@ -321,14 +321,15 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> for e in d:
         ...    print(repr(e))
         ...
-        <{{repr}}Data: [1, 2] metres>
-        <{{repr}}Data: [4, 5] metres>
+        <{{repr}}Data(2): [1, 2] metres>
+        <{{repr}}Data(2): [4, 5] metres>
 
         >>> d = {{package}}.{{class}}(34, 'metres')
         >>> for e in d:
         ...     print(repr(e))
-        ...
-        TypeError: iteration over a 0-d Data
+        Traceback (most recent call last):
+            ...
+        TypeError: Iteration over 0-d Data
 
         """
         ndim = self.ndim
@@ -393,12 +394,12 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         >>> d = {{package}}.{{class}}(numpy.arange(100, 190).reshape(1, 10, 9))
         >>> d.shape
-        (10, 9)
+        (1, 10, 9)
         >>> d[:, :, 1] = -10
         >>> d[:, 0] = range(9)
         >>> d[..., 6:3:-1, 3:6] = numpy.arange(-18, -9).reshape(3, 3)
-        >>> d[0, [2, 9], [4, 8]] =  Data([[-2, -3]])
-        >>> d[0, :, -2] = masked
+        >>> d[0, [2, 9], [4, 8]] = cfdm.Data([[-2, -3]])
+        >>> d[0, :, -2] = cfdm.masked
 
         """
         indices = self._parse_indices(indices)
@@ -546,15 +547,14 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         **Examples:**
 
-
         >>> d = {{package}}.{{class}}([[1, 2, 3]], 'km')
         >>> x = d._item((0, -1))
         >>> print(x, type(x))
-        3 <type 'int'>
-        >>> x = d._item(1)
+        3 <class 'int'>
+        >>> x = d._item((0, 1))
         >>> print(x, type(x))
-        2 <type 'int'>
-        >>> d[0, 1] = masked
+        2 <class 'int'>
+        >>> d[0, 1] = cfdm.masked
         >>> d._item((slice(None), slice(1, 2)))
         masked
 
