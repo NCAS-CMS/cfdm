@@ -250,7 +250,7 @@ the subclasses `__init__` method, similarly to this:
    ...         if source and copy:
    ...	           # Deep copy the custom 'x' value
    ...             try:
-   ...  	       self._custom['x'] = deep.copy(source._custom['x'])
+   ...  	       self._custom['x'] = copy.deepcopy(source._custom['x'])
    ...             except (AttributeError, KeyError):
    ...                 pass  
 
