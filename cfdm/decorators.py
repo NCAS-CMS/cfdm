@@ -13,10 +13,8 @@ from .functions import (
 from .constants import ValidLogLevels
 
 
-# Identifier for 'inplace_enabled' to use as internal '_custom'
-# dictionary key, or directly as a (temporary) attribute name if
-# '_custom' is not provided:
-INPLACE_ENABLED_PLACEHOLDER = "_to_assign"
+# Identifier for '_inplace_enabled' to use as a (temporary) attribute name
+INPLACE_ENABLED_PLACEHOLDER = "_inplace_store"
 
 
 def _inplace_enabled(operation_method=None, *, default=False):
@@ -43,22 +41,10 @@ def _inplace_enabled(operation_method=None, *, default=False):
         @wraps(operation_method)
         def inplace_wrapper(self, *args, **kwargs):
             is_inplace = kwargs.get("inplace", default)
-            try:
-                if is_inplace:
-                    # create an attribute equal to 'self'
-                    self._custom[INPLACE_ENABLED_PLACEHOLDER] = self
-                else:
-                    # create an attribute equal to a (shallow) copy of
-                    # 'self'
-                    self._custom[INPLACE_ENABLED_PLACEHOLDER] = self.copy()
-            # '_custom' not available for object so have to use a direct
-            # attribute for the storage, which is not as desirable since
-            # it is more exposed:
-            except AttributeError:
-                if is_inplace:
-                    self.INPLACE_ENABLED_PLACEHOLDER = self
-                else:
-                    self.INPLACE_ENABLED_PLACEHOLDER = self.copy()
+            if is_inplace:
+                self.INPLACE_ENABLED_PLACEHOLDER = self
+            else:
+                self.INPLACE_ENABLED_PLACEHOLDER = self.copy()
 
             processed_copy = operation_method(self, *args, **kwargs)
 
@@ -76,11 +62,11 @@ def _inplace_enabled(operation_method=None, *, default=False):
 
 
 def _inplace_enabled_define_and_cleanup(instance):
-    """Delete attribute set by inable_enabled but store and return its
+    """Delete attribute set by _inplace_enabled but store and return its
     value.
 
     Designed as a convenience function for use at the start of methods
-    decorated by inplace_enabled; the core variable used throughout
+    decorated by _inplace_enabled; the core variable used throughout
     for the instance in the decorated method should first be assigned
     to this function with the class instance as the input. For
     example:
