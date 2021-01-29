@@ -771,7 +771,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         Only applicable for reference time units.
 
         If the calendar has not been set then the CF default calendar of
-        "standard" (i.e. the mixed Gregorian/Julian calendar as defined by
+        'standard' (i.e. the mixed Gregorian/Julian calendar as defined by
         Udunits) will be used.
 
         Conversions are carried out with the `netCDF4.num2date` function.
@@ -790,9 +790,9 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> d = {{package}}.{{class}}([31, 62, 90], units='days since 2018-12-01')
         >>> a = d.datetime_array
         >>> print(a)
-        [cftime.DatetimeGregorian(2019-01-01 00:00:00)
-         cftime.DatetimeGregorian(2019-02-01 00:00:00)
-         cftime.DatetimeGregorian(2019-03-01 00:00:00)]
+        [cftime.DatetimeGregorian(2019, 1, 1, 0, 0, 0, 0)
+         cftime.DatetimeGregorian(2019, 2, 1, 0, 0, 0, 0)
+         cftime.DatetimeGregorian(2019, 3, 1, 0, 0, 0, 0)]
         >>> print(a[1])
         2019-02-01 00:00:00
 
@@ -800,9 +800,9 @@ class Data(Container, NetCDFHDF5, core.Data):
         ...          calendar='360_day')
         >>> a = d.datetime_array
         >>> print(a)
-        [cftime.Datetime360Day(2019-01-02 00:00:00)
-         cftime.Datetime360Day(2019-02-03 00:00:00)
-         cftime.Datetime360Day(2019-03-01 00:00:00)]
+        [cftime.Datetime360Day(2019, 1, 2, 0, 0, 0, 0)
+         cftime.Datetime360Day(2019, 2, 3, 0, 0, 0, 0)
+         cftime.Datetime360Day(2019, 3, 1, 0, 0, 0, 0)]
         >>> print(a[1])
         2019-02-03 00:00:00
 
@@ -929,7 +929,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> d = {{package}}.{{class}}([[0, 0, 0]])
         >>> d.any()
         False
-        >>> d[0, 0] = masked
+        >>> d[0, 0] = cfdm.masked
         >>> print(d.array)
         [[-- 0 0]]
         >>> d.any()
@@ -939,7 +939,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         [[-- 3 0]]
         >>> d.any()
         True
-        >>> d[...] = masked
+        >>> d[...] = cfdm.masked
         >>> print(d.array)
         [[-- -- --]]
         >>> d.any()
@@ -1034,7 +1034,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
 
         >>> d = {{package}}.{{class}}(numpy.arange(12).reshape(3, 4), 'm')
-        >>> d[1, 1] = masked
+        >>> d[1, 1] = cfdm.masked
         >>> print(d.array)
         [[0  1  2  3]
          [4 --  6  7]
@@ -1045,26 +1045,26 @@ class Data(Container, NetCDFHDF5, core.Data):
          [4 --  6  7]
          [8  9 10 11]]
         >>> print(d.apply_masking(fill_values=[0]).array)
-        [[--  1  2  3]
-         [ 4 --  6  7]
-         [ 8  9 10 11]]
+        [[-- 1 2 3]
+         [4 -- 6 7]
+         [8 9 10 11]]
         >>> print(d.apply_masking(fill_values=[0, 11]).array)
-        [[--  1  2  3]
-         [ 4 --  6  7]
-         [ 8  9 10 --]]
+        [[-- 1 2 3]
+         [4 -- 6 7]
+         [8 9 10 --]]
 
         >>> print(d.apply_masking(valid_min=3).array)
-        [[-- -- --  3]
-         [ 4 --  6  7]
-         [ 8  9 10 11]]
+        [[-- -- -- 3]
+         [4 -- 6 7]
+         [8 9 10 11]]
         >>> print(d.apply_masking(valid_max=6).array)
-        [[ 0  1  2  3]
-         [ 4 --  6 --]
+        [[0 1 2 3]
+         [4 -- 6 --]
          [-- -- -- --]]
         >>> print(d.apply_masking(valid_range=[2, 8]).array)
-        [[-- --  2  3]
-         [ 4 --  6  7]
-         [ 8 -- -- --]]
+        [[-- -- 2 3]
+         [4 -- 6 7]
+         [8 -- -- --]]
 
         >>> d.set_fill_value(7)
         >>> print(d.apply_masking(fill_values=True).array)
@@ -1073,9 +1073,9 @@ class Data(Container, NetCDFHDF5, core.Data):
          [8  9 10 11]]
         >>> print(d.apply_masking(fill_values=True,
         ...                       valid_range=[2, 8]).array)
-        [[-- --  2  3]
-         [ 4 --  6 --]
-         [ 8 -- -- --]]
+        [[-- -- 2 3]
+         [4 -- 6 --]
+         [8 -- -- --]]
 
         """
         if valid_range is not None:
@@ -2374,21 +2374,21 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> d = {{package}}.{{class}}(9.0)
         >>> x = d.first_element()
         >>> print(x, type(x))
-        (9.0, <type 'float'>)
+        9.0 <class 'float'>
 
         >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
         >>> x = d.first_element()
         >>> print(x, type(x))
-        (1, <type 'int'>)
-        >>> d[0, 0] = masked
+        1 <class 'int'>
+        >>> d[0, 0] = cfdm.masked
         >>> y = d.first_element()
         >>> print(y, type(y))
-        (masked, <class 'numpy.ma.core.MaskedConstant'>)
+        -- <class 'numpy.ma.core.MaskedConstant'>
 
         >>> d = {{package}}.{{class}}(['foo', 'bar'])
         >>> x = d.first_element()
         >>> print(x, type(x))
-        ('foo', <type 'str'>)
+        foo <class 'str'>
 
         """
         return self._item((slice(0, 1),) * self.ndim)
@@ -2547,7 +2547,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> x = d.last_element()
         >>> print(x, type(x))
         (4, <type 'int'>)
-        >>> d[-1, -1] = masked
+        >>> d[-1, -1] = cfdm.masked
         >>> y = d.last_element()
         >>> print(y, type(y))
         (masked, <class 'numpy.ma.core.MaskedConstant'>)
@@ -2577,7 +2577,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> x = d.second_element()
         >>> print(x, type(x))
         (2, <type 'int'>)
-        >>> d[0, 1] = masked
+        >>> d[0, 1] = cfdm.masked
         >>> y = d.second_element()
         >>> print(y, type(y))
         (masked, <class 'numpy.ma.core.MaskedConstant'>)
@@ -2666,7 +2666,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> d = {{package}}.{{class}}([[4, 2, 1], [1, 2, 3]], 'metre')
         >>> d.unique()
         <{{repr}}Data(4): [1, 2, 3, 4] metre>
-        >>> d[1, -1] = masked
+        >>> d[1, -1] = cfdm.masked
         >>> d.unique()
         <{{repr}}Data(3): [1, 2, 4] metre>
 
