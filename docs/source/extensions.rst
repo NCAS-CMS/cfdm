@@ -160,7 +160,7 @@ in overridden methods.
    ...    RaggedIndexedContiguousArray=cfdm.RaggedIndexedContiguousArray,
    ... )
 
-As all classes are required for the initialization of the new
+As all classes are required for the initialisation of the new
 implementation class, this demonstrates explicitly that, in the absence
 of subclasses of the other classes, the cfdm classes may be used.
 
@@ -216,8 +216,45 @@ elements in a dataset.
 The _custom dictionary
 ^^^^^^^^^^^^^^^^^^^^^^
 
-TODO (in progress ...)
+All cfdm classes have a `_custom` attribute that contains a dictionary
+meant for use in external subclasses. It is not used by any cfdm
+classes. The `_custom` dictionary is shallow copied, rather than deep
+copied, when using the standard cfdm deep copy method techniques
+(i.e. the `!copy` method, initialisation with the *source* parameter,
+or applying the `copy.deepcopy` function). This is so that subclasses
+of cfdm are not committed to potentially expensive deep copies of the
+dictionary values. Note that calling `copy.deepcopy` on cfdm
+(sub)class simply invokes its `!copy` method.
 
+The result of this behaviour is that if an external subclass stores a
+mutable object within its custom dictionary then, by default, a deep
+copy will contain the identical mutable object, to which in-place
+changes will affect both the original and copied instances.
+
+To account for this, the external subclass can either simply commit to
+never updating such mutables in-place (which is can be acceptable for
+private quantities which are tightly controlled); or else include
+extra code that does deep copy such mutables when any deep copy (or
+equivalent) operation is called. The latter should be implemented in
+the subclasses `__init__` method, similarly to this:
+
+.. code-block:: python
+   :caption: *Ensure that the _custom dictionary 'x' value is deep
+             copied when a deep copy of an instance is requested.*
+	 
+   >>> class my_Field_3(cfdm.Field):
+   ...     def __init__(self, properties=None, source=None, copy=True,
+   ...                  _use_data=True):
+   ...         super().__init__(properties=properties, source=source,
+   ...                          copy=copy, _use_data=_use_data)
+   ...         if source and copy:
+   ...	           # Deep copy the custom 'x' value
+   ...             try:
+   ...  	       self._custom['x'] = deep.copy(source._custom['x'])
+   ...             except (AttributeError, KeyError):
+   ...                 pass  
+
+	   
 Documentation
 ^^^^^^^^^^^^^
 
@@ -245,8 +282,9 @@ cf-python adds more flexible inspection, reading and writing; and
 provides metadata-aware analytical processing capabilities such as
 regridding and statistical calculations.
 
-It also has a more sophisticated data class that allows for
-larger-than-memory manipulations and parallel processing.
+It also has a more sophisticated data class that subclasses
+`cfdm.Data`, but allows for larger-than-memory manipulations and
+parallel processing.
 
 cf-python strictly extends the cfdm API, so that a cfdm command will
 always work on its cf-python counterpart.
