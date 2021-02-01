@@ -94,7 +94,8 @@ class CellMethod(mixin.Container, core.CellMethod):
     def creation_commands(
         self, namespace=None, indent=0, string=True, name="c", header=True
     ):
-        """Return the commands that would create the cell method construct.
+        """Return the commands that would create the cell method
+        construct.
 
         .. versionadded:: (cfdm) 1.8.7.0
 

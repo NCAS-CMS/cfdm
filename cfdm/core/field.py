@@ -210,8 +210,8 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
     # Methods
     # ----------------------------------------------------------------
     def del_data_axes(self, key=None, default=ValueError()):
-        """Remove the keys of the domain axis constructs spanned by the data
-        of the field or of a metadata construct.
+        """Remove the keys of the domain axis constructs spanned by the
+        data of the field or of a metadata construct.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -294,8 +294,8 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         return self._Domain.fromconstructs(self.constructs)
 
     def get_data_axes(self, key=None, default=ValueError()):
-        """Return the keys of the domain axis constructs spanned by the data
-        of the field or of a metadata construct.
+        """Return the keys of the domain axis constructs spanned by the
+        data of the field or of a metadata construct.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -352,8 +352,8 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
             )
 
     def has_data_axes(self, key=None):
-        """Whether the domain axis constructs spanned by the data of the field
-        or of a metadata construct have been set.
+        """Whether the domain axis constructs spanned by the data of the
+        field or of a metadata construct have been set.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -548,8 +548,8 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         return f
 
     def set_data_axes(self, axes, key=None, _shape=None):
-        """Set the domain axis constructs spanned by the data of the field or
-        of a metadata construct.
+        """Set the domain axis constructs spanned by the data of the
+        field or of a metadata construct.
 
         .. versionadded:: (cfdm) 1.7.0
 

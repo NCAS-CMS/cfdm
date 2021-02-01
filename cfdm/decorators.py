@@ -206,7 +206,8 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg, calls=[0]):
 
 # @_test_decorator_args('i') -> example usage for decorating, using i kwarg
 def _test_decorator_args(*dec_args):
-    """A wrapper for provision of positional arguments to the decorator."""
+    """A wrapper for provision of positional arguments to the
+    decorator."""
 
     def deprecated_kwarg_check_decorator(operation_method):
         """A decorator for a deprecation check on given kwargs.

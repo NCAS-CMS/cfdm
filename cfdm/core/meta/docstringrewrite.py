@@ -412,8 +412,8 @@ class DocstringRewriteMeta(type):
 
     @staticmethod
     def _docstring_substitutions(cls):
-        """Return the docstring substitutions that apply to methods of the
-        given class.
+        """Return the docstring substitutions that apply to methods of
+        the given class.
 
         Text to be replaced is specified as a key in the returned
         dictionary, with the replacement text defined by the corresponding
@@ -531,8 +531,8 @@ class DocstringRewriteMeta(type):
 
     @staticmethod
     def _docstring_method_exclusions(cls):
-        """Return the names of methods to exclude from docstring substitutions
-        for the given class.
+        """Return the names of methods to exclude from docstring
+        substitutions for the given class.
 
         Exclusions for a class may be defined by creating a
         `__docstring_method_exclusions__` method that returns the sequence
@@ -598,7 +598,8 @@ class DocstringRewriteMeta(type):
         config,
         class_docstring=None,
     ):
-        """Perform docstring substitutions on a method at time of import.
+        """Perform docstring substitutions on a method at time of
+        import.
 
         .. versionadded:: (cfdm) 1.8.7.0
 

@@ -14,7 +14,8 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
     """
 
     def __docstring_package_depth__(self):
-        """Return the package depth for {{package}} docstring substitutions.
+        """Return the package depth for {{package}} docstring
+        substitutions.
 
         See `_docstring_package_depth` for details.
 
@@ -204,8 +205,8 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         )
 
     def get_data_axes(self, key, default=ValueError):
-        """Return the keys of the domain axis constructs spanned by the data
-        of a metadata construct.
+        """Return the keys of the domain axis constructs spanned by the
+        data of a metadata construct.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -255,8 +256,8 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
             )
 
     def del_data_axes(self, key, default=ValueError()):
-        """Remove the keys of the domain axis constructs spanned by the data
-        of a metadata construct.
+        """Remove the keys of the domain axis constructs spanned by the
+        data of a metadata construct.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -349,8 +350,8 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         return True
 
     def set_data_axes(self, axes, key):
-        """Set the domain axis constructs spanned by the data of a metadata
-        construct.
+        """Set the domain axis constructs spanned by the data of a
+        metadata construct.
 
         .. versionadded:: (cfdm) 1.7.0
 

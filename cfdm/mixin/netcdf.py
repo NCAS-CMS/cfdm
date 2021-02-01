@@ -13,8 +13,8 @@ class NetCDF:
     """
 
     def _initialise_netcdf(self, source=None):
-        """Call this from inside the __init__ method of a class that inherits
-        from this mixin class.
+        """Call this from inside the __init__ method of a class that
+        inherits from this mixin class.
 
         :Parameters:
 
@@ -54,6 +54,7 @@ class _NetCDFGroupsMixin:
     """Mixin class for accessing netCDF(4) hierarchical groups.
 
     .. versionadded:: (cfdm) 1.8.6
+
     """
 
     def _nc_groups(self, nc_get):
@@ -1276,8 +1277,8 @@ class NetCDFGlobalAttributes(NetCDF):
     """
 
     def nc_global_attributes(self, values=False):
-        """Return the selection of properties to be written as netCDF global
-        attributes.
+        """Return the selection of properties to be written as netCDF
+        global attributes.
 
         When multiple field constructs are being written to the same file,
         it is only possible to create a netCDF global attribute from a
@@ -1350,8 +1351,8 @@ class NetCDFGlobalAttributes(NetCDF):
         return out
 
     def nc_clear_global_attributes(self):
-        """Remove the selection of properties to be written as netCDF global
-        attributes.
+        """Remove the selection of properties to be written as netCDF
+        global attributes.
 
         When multiple field constructs are being written to the same file,
         it is only possible to create a netCDF global attribute from a
@@ -1552,8 +1553,8 @@ class NetCDFGroupAttributes(NetCDF):
     """
 
     def nc_group_attributes(self, values=False):
-        """Return the selection of properties to be written as netCDF group
-        attributes.
+        """Return the selection of properties to be written as netCDF
+        group attributes.
 
         .. versionadded:: (cfdm) 1.8.6
 
@@ -1611,8 +1612,8 @@ class NetCDFGroupAttributes(NetCDF):
         return out
 
     def nc_clear_group_attributes(self):
-        """Remove the selection of properties to be written as netCDF group
-        attributes.
+        """Remove the selection of properties to be written as netCDF
+        group attributes.
 
         .. versionadded:: (cfdm) 1.8.6
 
@@ -1782,8 +1783,8 @@ class NetCDFUnlimitedDimensions(NetCDF):
     """
 
     def nc_unlimited_dimensions(self):
-        """Return the selection of domain axis constructs to be written as
-        netCDF unlimited dimensions.
+        """Return the selection of domain axis constructs to be written
+        as netCDF unlimited dimensions.
 
         By default output netCDF dimensions are not unlimited.
 
@@ -1821,8 +1822,8 @@ class NetCDFUnlimitedDimensions(NetCDF):
         )
 
     def nc_set_unlimited_dimensions(self, axes):
-        """Select domain axis constructs to be written as netCDF unlimited
-        dimensions.
+        """Select domain axis constructs to be written as netCDF
+        unlimited dimensions.
 
         By default output netCDF dimensions are not unlimited.
 
@@ -1871,8 +1872,8 @@ class NetCDFUnlimitedDimensions(NetCDF):
         )
 
     def nc_clear_unlimited_dimensions(self):
-        """Remove the selection of domain axis constructs to be written as
-        netCDF unlimited dimensions.
+        """Remove the selection of domain axis constructs to be written
+        as netCDF unlimited dimensions.
 
         By default output netCDF dimensions are not unlimited.
 
@@ -1920,7 +1921,8 @@ class NetCDFExternal(NetCDF):
     """
 
     def nc_get_external(self):
-        """Whether the construct corresponds to an external netCDF variable.
+        """Whether the construct corresponds to an external netCDF
+        variable.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -2081,7 +2083,8 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
             )
 
     def nc_has_geometry_variable(self):
-        """Whether the netCDF geometry container variable name has been set.
+        """Whether the netCDF geometry container variable name has been
+        set.
 
         .. versionadded:: (cfdm) 1.8.0
 

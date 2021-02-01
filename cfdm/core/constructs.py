@@ -257,7 +257,8 @@ class Constructs(abstract.Container):
             self._constructs[x] = OrderedDict()
 
     def __contains__(self, key):
-        """Called to implement membership test operators for construct keys.
+        """Called to implement membership test operators for construct
+        keys.
 
         x.__contains__(y) <==> y in x
 
@@ -333,7 +334,8 @@ class Constructs(abstract.Container):
         return self._construct_axes.pop(k, *d)
 
     def _view(self, ignore=()):
-        """Return a new container with a view the same metadata constructs.
+        """Return a new container with a view the same metadata
+        constructs.
 
         A new `{{class}}` instance is returned that contains the same
         metadata construct instances
@@ -401,6 +403,7 @@ class Constructs(abstract.Container):
 
         Type name components are formatted to be whitespace-delimited to
         effective words for the purposes of printing to the user.
+
         """
         return construct_type.replace("_", " ")
 
@@ -741,7 +744,11 @@ class Constructs(abstract.Container):
         return self._constructs[construct_type].pop(k, *d)
 
     def _update(self, other):
-        """D.update(E) -> None. Update D from E."""
+        """D.update(E) -> None.
+
+        Update D from E.
+
+        """
         self._ignore = tuple(set(self._ignore).union(other._ignore))
 
         self._key_base.update(other._key_base)
@@ -756,7 +763,8 @@ class Constructs(abstract.Container):
     # Dictionary-like methods
     # ----------------------------------------------------------------
     def get(self, key, *default):
-        """Return the construct for construct key, if it exists, else default.
+        """Return the construct for construct key, if it exists, else
+        default.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -952,8 +960,8 @@ class Constructs(abstract.Container):
         )
 
     def data_axes(self):
-        """Return the domain axis constructs spanned by metadata construct
-        data.
+        """Return the domain axis constructs spanned by metadata
+        construct data.
 
         .. versionadded:: (cfdm) 1.7.0
 

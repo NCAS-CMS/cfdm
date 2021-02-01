@@ -138,7 +138,7 @@ class PropertiesDataBounds(PropertiesData):
             self.set_part_node_count(part_node_count, copy=copy)
 
     def __getitem__(self, indices):
-        """Return a subspace of the construct defined by indices
+        """Return a subspace of the construct defined by indices.
 
         f.__getitem__(indices) <==> f[indices]
 
@@ -1158,7 +1158,8 @@ class PropertiesDataBounds(PropertiesData):
             )
 
     def has_node_count(self):
-        """Whether or not there is a node count variable for geometry bounds..
+        """Whether or not there is a node count variable for geometry
+        bounds..
 
         .. versionadded:: (cfdm) 1.8.0
 
@@ -1187,8 +1188,8 @@ class PropertiesDataBounds(PropertiesData):
         return self._has_component("node_count")
 
     def has_part_node_count(self):
-        """Whether or not there is a part node count variable for geometry
-        bounds..
+        """Whether or not there is a part node count variable for
+        geometry bounds..
 
         .. versionadded:: (cfdm) 1.8.0
 

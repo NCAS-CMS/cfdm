@@ -7,7 +7,8 @@ from .numpyarray import NumpyArray
 
 
 class Data(abstract.Container):
-    """An orthogonal multidimensional array with masked values and units.
+    """An orthogonal multidimensional array with masked values and
+    units.
 
     .. versionadded:: (cfdm) 1.7.0
 

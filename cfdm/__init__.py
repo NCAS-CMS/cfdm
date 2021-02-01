@@ -1,6 +1,6 @@
 """cfdm is a reference implementation of the CF data model, that
-identifies the fundamental elements of the CF conventions and shows
-how they relate to each other, independently of the netCDF encoding.
+identifies the fundamental elements of the CF conventions and shows how
+they relate to each other, independently of the netCDF encoding.
 
 The central element defined by the CF data model is the field
 construct, which corresponds to a CF-netCDF data variable with all of

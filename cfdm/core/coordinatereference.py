@@ -546,7 +546,6 @@ class CoordinateReference(abstract.Container):
         >>> c.coordinates()
         {'dimensioncoordinate0', 'dimensioncoordinate1'}
 
-
         """
         if isinstance(coordinates, str):
             coordinates = (coordinates,)

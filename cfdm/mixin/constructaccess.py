@@ -489,8 +489,8 @@ class ConstructAccess:
         )
 
     def domain_axis_key(self, identity, default=ValueError()):
-        """Return the key of the domain axis construct that is spanned by 1-d
-        coordinate constructs.
+        """Return the key of the domain axis construct that is spanned
+        by 1-d coordinate constructs.
 
         :Parameters:
 

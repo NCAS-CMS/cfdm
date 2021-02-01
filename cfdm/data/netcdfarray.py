@@ -218,15 +218,11 @@ class NetCDFArray(abstract.Array):
         return array
 
     def __repr__(self):
-        """x.__repr__() <==> repr(x)
-
-        """
+        """x.__repr__() <==> repr(x)"""
         return f"<{self.__class__.__name__}{self.shape}: {self}>"
 
     def __str__(self):
-        """x.__str__() <==> str(x)
-
-        """
+        """x.__str__() <==> str(x)"""
         name = self.get_ncvar()
         if name is None:
             name = "varid={0}".format(self.get_varid())
@@ -256,7 +252,7 @@ class NetCDFArray(abstract.Array):
 
     @property
     def ndim(self):
-        """Number of array dimensions
+        """Number of array dimensions.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -282,6 +278,7 @@ class NetCDFArray(abstract.Array):
         0
         >>> a.size
         1
+
         """
         return self._get_component("ndim")
 
@@ -313,6 +310,7 @@ class NetCDFArray(abstract.Array):
         0
         >>> a.size
         1
+
         """
         return self._get_component("shape")
 
@@ -362,7 +360,8 @@ class NetCDFArray(abstract.Array):
         return self._get_component("filename")
 
     def get_group(self):
-        """The netCDF4 group structure to which the netCDF variable belongs.
+        """The netCDF4 group structure to which the netCDF variable
+        belongs.
 
         .. versionadded:: (cfdm) 1.8.6.0
 
@@ -406,8 +405,8 @@ class NetCDFArray(abstract.Array):
         return self._get_component("ncvar")
 
     def get_varid(self):
-        """The UNIDATA netCDF interface ID of the variable containing the
-        array.
+        """The UNIDATA netCDF interface ID of the variable containing
+        the array.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -471,7 +470,8 @@ class NetCDFArray(abstract.Array):
         return self[...]
 
     def open(self):
-        """Return an open `netCDF4.Dataset` for the file containing the array.
+        """Return an open `netCDF4.Dataset` for the file containing the
+        array.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -491,9 +491,7 @@ class NetCDFArray(abstract.Array):
             try:
                 netcdf = netCDF4.Dataset(self.get_filename(), "r")
             except RuntimeError as error:
-                raise RuntimeError(
-                    f"{error}: {self.get_filename()}"
-                )
+                raise RuntimeError(f"{error}: {self.get_filename()}")
 
             self._set_component("netcdf", netcdf, copy=False)
 

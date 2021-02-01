@@ -60,7 +60,7 @@ class NumpyArray(abstract.Array):
 
     @property
     def ndim(self):
-        """Number of array dimensions
+        """Number of array dimensions.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -150,6 +150,7 @@ class NumpyArray(abstract.Array):
         0
         >>> a.size
         1
+
         """
         return self._get_component("array").size
 

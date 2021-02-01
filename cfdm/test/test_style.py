@@ -4,13 +4,15 @@ import pycodestyle
 import unittest
 
 import faulthandler
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
 
 
 class styleTest(unittest.TestCase):
-    """Test PEP8 compliance on all '.py' files in the 'cfdm' directory."""
+    """Test PEP8 compliance on all '.py' files in the 'cfdm'
+    directory."""
 
     def setUp(self):
         self.cfdm_dir = os.path.dirname(os.path.abspath(__file__))

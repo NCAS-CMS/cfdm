@@ -59,7 +59,7 @@ class Implementation(metaclass=abc.ABCMeta):
         return self._class.copy()
 
     def copy(self):
-        """Copy"""
+        """Copy."""
         return type(self)(cf_version=self.get_cf_version(), **self._class)
 
     def get_class(self, name):

@@ -41,8 +41,8 @@ class Container:
         return ", ".join(out)
 
     def __docstring_substitutions__(self):
-        """Define docstring substitutions that apply to this class and all of
-        its subclasses.
+        """Define docstring substitutions that apply to this class and
+        all of its subclasses.
 
         These are in addtion to, and take precendence over, docstring
         substitutions defined by the base classes of this class.
@@ -60,7 +60,8 @@ class Container:
         return _docstring_substitution_definitions
 
     def __docstring_package_depth__(self):
-        """Return the package depth for {{package}} docstring substitutions.
+        """Return the package depth for {{package}} docstring
+        substitutions.
 
         See `_docstring_package_depth` for details.
 
@@ -71,8 +72,9 @@ class Container:
     def _atol(self):
         """Internal alias for `{{package}}.atol`.
 
-        An alias is necessary to avoid a name clash with the keyword argument
-        of identical name (`atol`) in calling functions.
+        An alias is necessary to avoid a name clash with the keyword
+        argument of identical name (`atol`) in calling functions.
+
         """
         return atol().value
 
@@ -80,8 +82,9 @@ class Container:
     def _rtol(self):
         """Internal alias for `{{package}}.rtol`.
 
-        An alias is necessary to avoid a name clash with the keyword argument
-        of identical name (`rtol`) in calling functions.
+        An alias is necessary to avoid a name clash with the keyword
+        argument of identical name (`rtol`) in calling functions.
+
         """
         return rtol().value
 

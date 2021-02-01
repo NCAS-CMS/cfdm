@@ -6,6 +6,7 @@ import unittest
 from unittest.mock import patch
 
 import faulthandler
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
@@ -26,9 +27,12 @@ WARNING_MSG = "Best pay attention to this!"
 
 @cfdm.decorators._manage_log_level_via_verbosity
 def decorated_logging_func(verbose=None):
-    """Dummy function to log messages at various log levels via decorator.
+    """Dummy function to log messages at various log levels via
+    decorator.
 
-    See also dummyClass.decorated_logging_method to do the same for a method.
+    See also dummyClass.decorated_logging_method to do the same for a
+    method.
+
     """
     logger.debug(DEBUG_MSG)
     logger.detail(DETAIL_MSG)
@@ -37,9 +41,8 @@ def decorated_logging_func(verbose=None):
 
 
 class dummyClass:
-    """Dummy class acting as container to test methods as proper instance
-    methods, mirroring their context in the codebase.
-    """
+    """Dummy class acting as container to test methods as proper
+    instance methods, mirroring their context in the codebase."""
 
     def __init__(self):
         self._list = [1]
@@ -56,8 +59,7 @@ class dummyClass:
 
     def func(self, inplace):
         """Dummy function to do something trivial to a mutable object,
-        potentially in-place as toggled by an in-place flag.
-        """
+        potentially in-place as toggled by an in-place flag."""
         if inplace:
             d = self
         else:
@@ -71,9 +73,8 @@ class dummyClass:
 
     @cfdm.decorators._inplace_enabled(False)
     def decorated_func(self, inplace):
-        """Dummy function equivalent to 'func' but a decorator manages the
-        logic to specify and conduct in-place operation.
-        """
+        """Dummy function equivalent to 'func' but a decorator manages
+        the logic to specify and conduct in-place operation."""
         d = cfdm.decorators._inplace_enabled_define_and_cleanup(self)
         d._list.append(2)
         return d
@@ -81,8 +82,9 @@ class dummyClass:
     def print_or_return_string(self, display=True):
         """Dummy function to either print or return a given string.
 
-        It prints the string if the display argument is True, else
-        it returns it.
+        It prints the string if the display argument is True, else it
+        returns it.
+
         """
         string = self.dummy_string
 
@@ -94,15 +96,17 @@ class dummyClass:
     @cfdm.decorators._display_or_return
     def print_or_return_string_by_decorator(self, display=True):
         """Dummy function equivalent to 'print_or_return_string' but a
-        decorator manages the logic to print if display argument is True.
-        """
+        decorator manages the logic to print if display argument is
+        True."""
         return self.dummy_string
 
     @cfdm.decorators._manage_log_level_via_verbosity
     def decorated_logging_method(self, verbose=None):
-        """Dummy function to log messages at various log levels via decorator.
+        """Dummy function to log messages at various log levels via
+        decorator.
 
         See also decorated_logging_func to do the same for a function.
+
         """
         logger.debug(self.debug_message)
         logger.detail(self.detail_message)

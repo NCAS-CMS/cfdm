@@ -178,8 +178,8 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
 
     @_display_or_return
     def _dump_axes(self, axis_names, display=True, _level=0):
-        """Return a string containing a description of the domain axes of the
-        field.
+        """Return a string containing a description of the domain axes
+        of the field.
 
         :Parameters:
 

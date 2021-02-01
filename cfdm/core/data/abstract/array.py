@@ -89,7 +89,7 @@ class Array(abstract.Container):
 
     @property
     def ndim(self):
-        """Number of array dimensions
+        """Number of array dimensions.
 
         .. versionadded:: (cfdm) 1.7.0
 

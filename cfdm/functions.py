@@ -36,7 +36,8 @@ del _subs
 
 
 def configuration(atol=None, rtol=None, log_level=None):
-    """View or set any number of constants in the project-wide configuration.
+    """View or set any number of constants in the project-wide
+    configuration.
 
     The full list of global constants that are provided in a dictionary to
     view, and can be set in any combination, are:
@@ -159,7 +160,8 @@ def configuration(atol=None, rtol=None, log_level=None):
 
 
 def _configuration(_Configuration, **kwargs):
-    """Internal helper function to provide the logic for `cfdm.configuration`.
+    """Internal helper function to provide the logic for
+    `cfdm.configuration`.
 
     We delegate from the user-facing `cfdm.configuration` for two main reasons:
 
@@ -223,7 +225,8 @@ def LOG_LEVEL(*new_log_level):
 
 
 def _is_valid_log_level_int(int_log_level):
-    """Return a Boolean stating if input is a ValidLogLevels Enum integer."""
+    """Return a Boolean stating if input is a ValidLogLevels Enum
+    integer."""
     try:
         ValidLogLevels(int_log_level)
     except KeyError:  # if verbose int not in Enum int constants
@@ -586,8 +589,8 @@ class Constant(metaclass=DocstringRewriteMeta):
         self._func = _func
 
     def __docstring_substitutions__(self):
-        """Define docstring substitutions that apply to this class and all of
-        its subclasses.
+        """Define docstring substitutions that apply to this class and
+        all of its subclasses.
 
         These are in addtion to, and take precendence over, docstring
         substitutions defined by the base classes of this class.
@@ -605,7 +608,8 @@ class Constant(metaclass=DocstringRewriteMeta):
         return _docstring_substitution_definitions
 
     def __docstring_package_depth__(self):
-        """Return the package depth for {{package}} docstring substitutions.
+        """Return the package depth for {{package}} docstring
+        substitutions.
 
         See `_docstring_package_depth` for details.
 
@@ -790,8 +794,8 @@ class Configuration(dict, metaclass=DocstringRewriteMeta):
         return instance
 
     def __docstring_substitutions__(self):
-        """Define docstring substitutions that apply to this class and all of
-        its subclasses.
+        """Define docstring substitutions that apply to this class and
+        all of its subclasses.
 
         These are in addtion to, and take precendence over, docstring
         substitutions defined by the base classes of this class.
@@ -809,7 +813,8 @@ class Configuration(dict, metaclass=DocstringRewriteMeta):
         return _docstring_substitution_definitions
 
     def __docstring_package_depth__(self):
-        """Return the package depth for {{package}} docstring substitutions.
+        """Return the package depth for {{package}} docstring
+        substitutions.
 
         See `_docstring_package_depth` for details.
 
@@ -918,8 +923,8 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
         return cls._Constant(old, _func=cls)
 
     def __docstring_substitutions__(self):
-        """Define docstring substitutions that apply to this class and all of
-        its subclasses.
+        """Define docstring substitutions that apply to this class and
+        all of its subclasses.
 
         These are in addtion to, and take precendence over, docstring
         substitutions defined by the base classes of this class.
@@ -937,7 +942,8 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
         return _docstring_substitution_definitions
 
     def __docstring_package_depth__(self):
-        """Return the package depth for {{package}} docstring substitutions.
+        """Return the package depth for {{package}} docstring
+        substitutions.
 
         See `_docstring_package_depth` for details.
 
@@ -948,8 +954,8 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
 
 
 class atol(ConstantAccess):
-    """The tolerance on absolute differences when testing for numerically
-    tolerant equality.
+    """The tolerance on absolute differences when testing for
+    numerically tolerant equality.
 
     Two real numbers ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
@@ -1034,8 +1040,8 @@ class atol(ConstantAccess):
 
 
 class rtol(ConstantAccess):
-    """The tolerance on relative differences when testing for numerically
-    tolerant equality.
+    """The tolerance on relative differences when testing for
+    numerically tolerant equality.
 
     Two real numbers ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute

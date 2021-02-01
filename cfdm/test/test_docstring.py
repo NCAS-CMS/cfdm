@@ -3,13 +3,15 @@ import inspect
 import unittest
 
 import faulthandler
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
 
 
 def _recurse_on_subclasses(klass):
-    """Return as a set all subclasses in a classes' subclass hierarchy."""
+    """Return as a set all subclasses in a classes' subclass
+    hierarchy."""
     return set(klass.__subclasses__()).union(
         [
             sub
@@ -20,11 +22,14 @@ def _recurse_on_subclasses(klass):
 
 
 def _get_all_abbrev_subclasses(klass):
-    """Return set of all subclasses in class hierarchy, filtering some out.
+    """Return set of all subclasses in class hierarchy, filtering some
+    out.
 
-    Filter out cf.mixin.properties*.Properties* (by means of there not being
-    any abbreviated cf.Properties* classes) plus any cfdm classes, since
-    this function needs to take cf subclasses from cfdm classes as well.
+    Filter out cf.mixin.properties*.Properties* (by means of there not
+    being any abbreviated cf.Properties* classes) plus any cfdm classes,
+    since this function needs to take cf subclasses from cfdm classes as
+    well.
+
     """
     return tuple(
         [
@@ -85,7 +90,7 @@ class DocstringTest(unittest.TestCase):
         self.assertIsNone(grandchild.__doc__)
 
         class parent(metaclass=cfdm.core.meta.DocstringRewriteMeta):
-            """No sub 0"""
+            """No sub 0."""
 
         class child(parent):
             pass
@@ -111,7 +116,7 @@ class DocstringTest(unittest.TestCase):
         self.assertEqual(grandchild.__doc__, "grandchild")
 
         class child(parent):
-            """No sub 1"""
+            """No sub 1."""
 
         class grandchild(child):
             pass
@@ -125,7 +130,7 @@ class DocstringTest(unittest.TestCase):
         self.assertIsNone(greatgrandchild.__doc__)
 
         class greatgrandchild(grandchild):
-            """No sub 3"""
+            """No sub 3."""
 
         self.assertEqual(parent.__doc__, "parent")
         self.assertEqual(child.__doc__, "No sub 1")
@@ -133,7 +138,7 @@ class DocstringTest(unittest.TestCase):
         self.assertEqual(greatgrandchild.__doc__, "No sub 3")
 
         class grandchild(child):
-            """No sub 2"""
+            """No sub 2."""
 
         class greatgrandchild(grandchild):
             pass
