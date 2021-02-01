@@ -8,6 +8,7 @@ import unittest
 import numpy
 
 import faulthandler
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
@@ -34,7 +35,10 @@ atexit.register(_remove_tmpfiles)
 
 
 class StringTest(unittest.TestCase):
+    """TODO DOCS."""
+
     def setUp(self):
+        """TODO DOCS."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -49,6 +53,7 @@ class StringTest(unittest.TestCase):
         self.test_only = []
 
     def test_STRING(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 

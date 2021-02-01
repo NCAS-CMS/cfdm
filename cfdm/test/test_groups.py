@@ -5,6 +5,7 @@ import tempfile
 import unittest
 
 import faulthandler
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import netCDF4
@@ -43,7 +44,10 @@ atexit.register(_remove_tmpfiles)
 
 
 class GroupsTest(unittest.TestCase):
+    """TODO DOCS."""
+
     def setUp(self):
+        """TODO DOCS."""
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -56,6 +60,7 @@ class GroupsTest(unittest.TestCase):
         # cfdm.LOG_LEVEL('DISABLE')
 
     def test_groups(self):
+        """TODO DOCS."""
         f = cfdm.example_field(1)
 
         ungrouped_file = ungrouped_file1
@@ -152,6 +157,7 @@ class GroupsTest(unittest.TestCase):
         self.assertTrue(f.equals(h[0], verbose=2))
 
     def test_groups_geometry(self):
+        """TODO DOCS."""
         f = cfdm.example_field(6)
 
         ungrouped_file = ungrouped_file2
@@ -278,6 +284,7 @@ class GroupsTest(unittest.TestCase):
         self.assertTrue(f.equals(h[0], verbose=2))
 
     def test_groups_compression(self):
+        """TODO DOCS."""
         f = cfdm.example_field(4)
 
         ungrouped_file = ungrouped_file3
@@ -344,6 +351,7 @@ class GroupsTest(unittest.TestCase):
         self.assertTrue(f.equals(h[0], verbose=2))
 
     def test_groups_dimension(self):
+        """TODO DOCS."""
         f = cfdm.example_field(0)
 
         ungrouped_file = ungrouped_file4
@@ -412,32 +420,33 @@ class GroupsTest(unittest.TestCase):
         self.assertTrue(f.equals(h, verbose=3))
 
     def test_groups_unlimited_dimension(self):
+        """TODO DOCS."""
         f = cfdm.example_field(0)
 
         # Create an unlimited dimension in the root group
-        key = f.domain_axis_key('time')
+        key = f.domain_axis_key("time")
         domain_axis = f.constructs[key]
         domain_axis.nc_set_unlimited(True)
 
         f.insert_dimension(key, 0, inplace=True)
 
-        key = f.domain_axis_key('latitude')
+        key = f.domain_axis_key("latitude")
         domain_axis = f.constructs[key]
         domain_axis.nc_set_unlimited(True)
-        domain_axis.nc_set_dimension_groups(['forecast'])
+        domain_axis.nc_set_dimension_groups(["forecast"])
 
         # ------------------------------------------------------------
         # Move the latitude coordinate to the /forecast group. Note
         # that this will drag its netDF dimension along with it,
         # because it's a dimension coordinate variable
         # ------------------------------------------------------------
-        lat = f.construct('latitude')
-        lat.nc_set_variable_groups(['forecast'])
+        lat = f.construct("latitude")
+        lat.nc_set_variable_groups(["forecast"])
 
         # ------------------------------------------------------------
         # Move the field construct to the /forecast/model group
         # ------------------------------------------------------------
-        f.nc_set_variable_groups(['forecast', 'model'])
+        f.nc_set_variable_groups(["forecast", "model"])
 
         grouped_file = grouped_file5
         cfdm.write(f, grouped_file5, verbose=1)
@@ -446,6 +455,7 @@ class GroupsTest(unittest.TestCase):
         self.assertEqual(len(h), 1)
         h = h[0]
         self.assertTrue(f.equals(h, verbose=3))
+
 
 # --- End: class
 

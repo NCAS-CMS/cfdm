@@ -27,11 +27,10 @@ WARNING_MSG = "Best pay attention to this!"
 
 @cfdm.decorators._manage_log_level_via_verbosity
 def decorated_logging_func(verbose=None):
-    """Dummy function to log messages at various log levels via
-    decorator.
+    """Dummy function to log messages at various levels by decorator.
 
-    See also dummyClass.decorated_logging_method to do the same for a
-    method.
+    See also dummyClass.decorated_logging_method which does the same but
+    as a method rather than a function.
 
     """
     logger.debug(DEBUG_MSG)
@@ -41,10 +40,15 @@ def decorated_logging_func(verbose=None):
 
 
 class dummyClass:
-    """Dummy class acting as container to test methods as proper
-    instance methods, mirroring their context in the codebase."""
+    """Dummy class acting as container to test methods.
+
+    This is a special class to test appropriate methods as proper
+    instance methods, mirroring their context in the codebase.
+
+    """
 
     def __init__(self):
+        """TODO DOCS."""
         self._list = [1]
 
         self.debug_message = DEBUG_MSG
@@ -55,11 +59,16 @@ class dummyClass:
         self.dummy_string = "foo bar baz"
 
     def copy(self):
+        """TODO DOCS."""
         return copy.deepcopy(self)  # note a shallow copy is not sufficient
 
     def func(self, inplace):
-        """Dummy function to do something trivial to a mutable object,
-        potentially in-place as toggled by an in-place flag."""
+        """Dummy function to do something trivial to a mutable object.
+
+        The operation is potentially done in-place as specified by an
+        in-place flag.
+
+        """
         if inplace:
             d = self
         else:
@@ -73,8 +82,12 @@ class dummyClass:
 
     @cfdm.decorators._inplace_enabled(False)
     def decorated_func(self, inplace):
-        """Dummy function equivalent to 'func' but a decorator manages
-        the logic to specify and conduct in-place operation."""
+        """Dummy function that is 'func' except managed by decorator.
+
+        The decorator manages whether or not the operation is applied
+        in-place.
+
+        """
         d = cfdm.decorators._inplace_enabled_define_and_cleanup(self)
         d._list.append(2)
         return d
@@ -95,17 +108,20 @@ class dummyClass:
 
     @cfdm.decorators._display_or_return
     def print_or_return_string_by_decorator(self, display=True):
-        """Dummy function equivalent to 'print_or_return_string' but a
-        decorator manages the logic to print if display argument is
-        True."""
+        """Equivalent to 'print_or_return_string' but via decorator.
+
+        The decorator manages whether or not to print rather than return
+        depending on whether or not the display argument is True.
+
+        """
         return self.dummy_string
 
     @cfdm.decorators._manage_log_level_via_verbosity
     def decorated_logging_method(self, verbose=None):
-        """Dummy function to log messages at various log levels via
-        decorator.
+        """Method to log messages at various levels by decorator.
 
-        See also decorated_logging_func to do the same for a function.
+        See also decorated_logging_func which does the same but as a
+        function rather than a method.
 
         """
         logger.debug(self.debug_message)
@@ -118,10 +134,14 @@ class dummyClass:
 
 
 class DecoratorsTest(unittest.TestCase):
+    """TODO DOCS."""
+
     def setUp(self):
+        """TODO DOCS."""
         self.test_only = []
 
     def test_inplace_enabled(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -148,6 +168,7 @@ class DecoratorsTest(unittest.TestCase):
         self.assertEqual(res_4, None)  # as return None if inplace=True
 
     def test_manage_log_level_via_verbosity(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -250,6 +271,7 @@ class DecoratorsTest(unittest.TestCase):
 
     @patch("builtins.print")
     def test_display_or_return(self, mock_print):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 

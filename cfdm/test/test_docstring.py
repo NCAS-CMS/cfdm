@@ -10,8 +10,7 @@ import cfdm
 
 
 def _recurse_on_subclasses(klass):
-    """Return as a set all subclasses in a classes' subclass
-    hierarchy."""
+    """Return all unique subclasses of a classes' subclass hierarchy."""
     return set(klass.__subclasses__()).union(
         [
             sub
@@ -22,8 +21,7 @@ def _recurse_on_subclasses(klass):
 
 
 def _get_all_abbrev_subclasses(klass):
-    """Return set of all subclasses in class hierarchy, filtering some
-    out.
+    """Return subclasses of the class hierarchy with some filtered out.
 
     Filter out cf.mixin.properties*.Properties* (by means of there not
     being any abbreviated cf.Properties* classes) plus any cfdm classes,
@@ -41,7 +39,10 @@ def _get_all_abbrev_subclasses(klass):
 
 
 class DocstringTest(unittest.TestCase):
+    """TODO DOCS."""
+
     def setUp(self):
+        """TODO DOCS."""
         self.package = "cfdm"
         self.repr = ""
 
@@ -76,6 +77,8 @@ class DocstringTest(unittest.TestCase):
         )
 
     def test_class_docstring_rewrite(self):
+        """TODO DOCS."""
+
         class parent(metaclass=cfdm.core.meta.DocstringRewriteMeta):
             pass
 
@@ -98,12 +101,12 @@ class DocstringTest(unittest.TestCase):
         class grandchild(child):
             pass
 
-        self.assertEqual(parent.__doc__, "No sub 0")
+        self.assertEqual(parent.__doc__, "No sub 0.")
         self.assertIsNone(child.__doc__)
         self.assertIsNone(grandchild.__doc__)
 
         class parent(metaclass=cfdm.core.meta.DocstringRewriteMeta):
-            """{{class}}"""
+            """{{class}}."""
 
         class child(parent):
             pass
@@ -111,9 +114,9 @@ class DocstringTest(unittest.TestCase):
         class grandchild(child):
             pass
 
-        self.assertEqual(parent.__doc__, "parent")
-        self.assertEqual(child.__doc__, "child")
-        self.assertEqual(grandchild.__doc__, "grandchild")
+        self.assertEqual(parent.__doc__, "parent.")
+        self.assertEqual(child.__doc__, "child.")
+        self.assertEqual(grandchild.__doc__, "grandchild.")
 
         class child(parent):
             """No sub 1."""
@@ -124,18 +127,18 @@ class DocstringTest(unittest.TestCase):
         class greatgrandchild(grandchild):
             pass
 
-        self.assertEqual(parent.__doc__, "parent")
-        self.assertEqual(child.__doc__, "No sub 1")
+        self.assertEqual(parent.__doc__, "parent.")
+        self.assertEqual(child.__doc__, "No sub 1.")
         self.assertIsNone(grandchild.__doc__)
         self.assertIsNone(greatgrandchild.__doc__)
 
         class greatgrandchild(grandchild):
             """No sub 3."""
 
-        self.assertEqual(parent.__doc__, "parent")
-        self.assertEqual(child.__doc__, "No sub 1")
+        self.assertEqual(parent.__doc__, "parent.")
+        self.assertEqual(child.__doc__, "No sub 1.")
         self.assertIsNone(grandchild.__doc__)
-        self.assertEqual(greatgrandchild.__doc__, "No sub 3")
+        self.assertEqual(greatgrandchild.__doc__, "No sub 3.")
 
         class grandchild(child):
             """No sub 2."""
@@ -143,36 +146,37 @@ class DocstringTest(unittest.TestCase):
         class greatgrandchild(grandchild):
             pass
 
-        self.assertEqual(parent.__doc__, "parent")
-        self.assertEqual(child.__doc__, "No sub 1")
-        self.assertEqual(grandchild.__doc__, "No sub 2")
+        self.assertEqual(parent.__doc__, "parent.")
+        self.assertEqual(child.__doc__, "No sub 1.")
+        self.assertEqual(grandchild.__doc__, "No sub 2.")
         self.assertIsNone(greatgrandchild.__doc__)
 
         class grandchild(child):
-            """Sub 2 {{class}}"""
+            """Sub 2 {{class}}."""
 
         class greatgrandchild(grandchild):
             pass
 
-        self.assertEqual(parent.__doc__, "parent")
-        self.assertEqual(child.__doc__, "No sub 1")
-        self.assertEqual(grandchild.__doc__, "Sub 2 grandchild")
-        self.assertEqual(greatgrandchild.__doc__, "Sub 2 greatgrandchild")
+        self.assertEqual(parent.__doc__, "parent.")
+        self.assertEqual(child.__doc__, "No sub 1.")
+        self.assertEqual(grandchild.__doc__, "Sub 2 grandchild.")
+        self.assertEqual(greatgrandchild.__doc__, "Sub 2 greatgrandchild.")
 
         class parent(metaclass=cfdm.core.meta.DocstringRewriteMeta):
             pass
 
         class child(parent):
-            """{{class}}"""
+            """{{class}}."""
 
         class grandchild(child):
             pass
 
         self.assertIsNone(parent.__doc__)
-        self.assertEqual(child.__doc__, "child")
-        self.assertEqual(grandchild.__doc__, "grandchild")
+        self.assertEqual(child.__doc__, "child.")
+        self.assertEqual(grandchild.__doc__, "grandchild.")
 
     def test_docstring(self):
+        """TODO DOCS."""
         # Test that all {{ occurrences have been substituted
         for klass in self.subclasses_of_Container:
             for x in (klass, klass()):
@@ -203,6 +207,7 @@ class DocstringTest(unittest.TestCase):
                     )
 
     def test_docstring_package(self):
+        """TODO DOCS."""
         string = ">>> f = {}.".format(self.package)
         for klass in self.subclasses_of_Container:
             for x in (klass, klass()):
@@ -214,6 +219,7 @@ class DocstringTest(unittest.TestCase):
                 self.assertIn(string, x.clear_properties.__doc__, klass)
 
     def test_docstring_class(self):
+        """TODO DOCS."""
         for klass in self.subclasses_of_Properties:
             string = ">>> f = {}.{}".format(self.package, klass.__name__)
             for x in (klass, klass()):
@@ -246,18 +252,21 @@ class DocstringTest(unittest.TestCase):
                 )
 
     def test_docstring_repr(self):
+        """TODO DOCS."""
         string = "<{}Data".format(self.repr)
         for klass in self.subclasses_of_PropertiesData:
             for x in (klass, klass()):
                 self.assertIn(string, x.has_data.__doc__, klass)
 
     def test_docstring_default(self):
+        """TODO DOCS."""
         string = "Return the value of the *default* parameter"
         for klass in self.subclasses_of_Properties:
             for x in (klass, klass()):
                 self.assertIn(string, x.del_property.__doc__, klass)
 
     def test_docstring_staticmethod(self):
+        """TODO DOCS."""
         for klass in self.subclasses_of_PropertiesData:
             x = klass
             self.assertEqual(
@@ -265,6 +274,7 @@ class DocstringTest(unittest.TestCase):
             )
 
     def test_docstring_classmethod(self):
+        """TODO DOCS."""
         for klass in self.subclasses_of_PropertiesData:
             for x in (klass, klass()):
                 self.assertEqual(
@@ -272,6 +282,7 @@ class DocstringTest(unittest.TestCase):
                 )
 
     def test_docstring_docstring_substitutions(self):
+        """TODO DOCS."""
         for klass in self.subclasses_of_Container:
             for x in (klass,):
                 d = x._docstring_substitutions(klass)

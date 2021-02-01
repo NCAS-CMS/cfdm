@@ -3,13 +3,17 @@ import os
 import unittest
 
 import faulthandler
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
 
 
 class InteriorRingTest(unittest.TestCase):
+    """TODO DOCS."""
+
     def setUp(self):
+        """TODO DOCS."""
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -30,6 +34,7 @@ class InteriorRingTest(unittest.TestCase):
         )
 
     def test_InteriorRing__repr__str__dump(self):
+        """TODO DOCS."""
         f = cfdm.read(self.geometry_interior_ring_file)[0]
 
         coord = f.construct("axis=X")

@@ -11,10 +11,10 @@ import cfdm
 
 
 class styleTest(unittest.TestCase):
-    """Test PEP8 compliance on all '.py' files in the 'cfdm'
-    directory."""
+    """Test PEP8 compliance on all Python files in the codebase."""
 
     def setUp(self):
+        """TODO DOCS."""
         self.cfdm_dir = os.path.dirname(os.path.abspath(__file__))
         os.chdir(self.cfdm_dir)
 
@@ -34,6 +34,7 @@ class styleTest(unittest.TestCase):
         ]
 
     def test_pep8_compliance(self):
+        """TODO DOCS."""
         pep8_check = pycodestyle.StyleGuide()
 
         # Directories to skip in the recursive walk of the directory:

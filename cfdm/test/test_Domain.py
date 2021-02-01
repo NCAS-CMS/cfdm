@@ -11,7 +11,10 @@ import cfdm
 
 
 class DomainTest(unittest.TestCase):
+    """TODO DOCS."""
+
     def setUp(self):
+        """TODO DOCS."""
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -33,6 +36,7 @@ class DomainTest(unittest.TestCase):
         self.test_only = []
 
     def test_Domain__repr__str__dump(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -43,6 +47,7 @@ class DomainTest(unittest.TestCase):
         self.assertIsInstance(d.dump(display=False), str)
 
     def test_Domain_equals(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 

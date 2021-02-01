@@ -5,12 +5,15 @@ import unittest
 import numpy
 
 import faulthandler
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
 
 
 class AuxiliaryCoordinateTest(unittest.TestCase):
+    """TODO DOCS."""
+
     filename = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
     )
@@ -43,6 +46,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
     aux1.set_bounds(bounds)
 
     def setUp(self):
+        """TODO DOCS."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -55,6 +59,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
     def test_AuxiliaryCoordinate__repr__str__dump(self):
+        """TODO DOCS."""
         f = cfdm.read(self.filename, verbose=1)[0]
         x = f.auxiliary_coordinates("latitude").value()
 
@@ -64,12 +69,14 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertIsInstance(x.dump(display=False, _title=None), str)
 
     def test_AuxiliaryCoordinate_bounds(self):
+        """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
 
         d = f.dimension_coordinates("grid_longitude").value()
         cfdm.AuxiliaryCoordinate(source=d)
 
     def test_AuxiliaryCoordinate_properties(self):
+        """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
         x = f.auxiliary_coordinates("latitude").value()
 
@@ -81,11 +88,13 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertIsNone(x.del_property("long_name", None))
 
     def test_AuxiliaryCoordinate_source(self):
+        """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
         d = f.dimension_coordinates("grid_longitude").value()
         cfdm.AuxiliaryCoordinate(source=d)
 
     def test_AuxiliaryCoordinate_insert_dimension(self):
+        """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
         d = f.dimension_coordinates("grid_longitude").value()
         x = cfdm.AuxiliaryCoordinate(source=d)
@@ -102,6 +111,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertEqual(x.bounds.shape, (9, 1, 2), x.bounds.shape)
 
     def test_AuxiliaryCoordinate_transpose(self):
+        """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
         x = f.auxiliary_coordinates("longitude").value()
 
@@ -122,6 +132,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertEqual(x.bounds.shape, (10, 9, 4), x.bounds.shape)
 
     def test_AuxiliaryCoordinate_squeeze(self):
+        """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
         x = f.auxiliary_coordinates("longitude").value()
 
@@ -144,6 +155,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertEqual(x.bounds.shape, (1, 9, 10, 4), x.bounds.shape)
 
     def test_AuxiliaryCoordinate_interior_ring(self):
+        """TODO DOCS."""
         c = cfdm.AuxiliaryCoordinate()
 
         i = cfdm.InteriorRing(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
