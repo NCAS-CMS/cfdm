@@ -440,10 +440,9 @@ link_release = re.search(r"(\d+\.\d+\.\d+\.\d+)", release).groups()[0]
 
 
 def linkcode_resolve(domain, info):
-    """
-    This is a function which should return the URL to source code
-    corresponding to the object in given domain with given information.
-    """
+    """This is a function which should return the URL to source code
+    corresponding to the object in given domain with given
+    information."""
 
     # =================================================================
     # Must delete all .doctrees directories in build for changes to be
