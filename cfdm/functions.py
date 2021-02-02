@@ -547,7 +547,7 @@ class Constant(metaclass=DocstringRewriteMeta):
        False
 
 
-       >>> c = {{package}}.{{class}})
+       >>> c = {{package}}.{{class}}()
        >>> c < numpy.array([10, 20, 30])
        array([False, False,  True])
        >>> numpy.array([10, 20, 30]) >= c
@@ -1183,7 +1183,7 @@ class log_level(ConstantAccess):
     >>> print({{package}}.{{class}}())
     WARNING
     >>> with {{package}}.{{class}}('DETAIL'):
-    ...     print({{package}}.class}}(), {{package}}.{{class}}(-1), {{package}}.{{class}}())
+    ...     print({{package}}.{{class}}(), {{package}}.{{class}}(-1), {{package}}.{{class}}())
     ...
     DETAIL DETAIL DEBUG
     >>> print({{package}}.{{class}}())

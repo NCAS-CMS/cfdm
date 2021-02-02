@@ -2664,9 +2664,9 @@ class CFDMImplementation(Implementation):
         **Examples:**
 
         >>> if API.has_datum(ref):
-        ...     print ref, 'has a datum'
+        ...     print(ref, 'has a datum')
         ... else:
-        ...     print ref, 'does not have a datum'
+        ...     print(ref, 'does not have a datum')
 
         """
         return bool(coordinate_reference.datum)

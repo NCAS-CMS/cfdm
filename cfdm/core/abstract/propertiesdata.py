@@ -138,9 +138,8 @@ class PropertiesData(Properties):
 
         **Examples:**
 
-
         >>> f = {{package}}.{{class}}()
-        >>> f.set_data({{package}}.Data(numpy.range(9.)))
+        >>> f.set_data({{package}}.Data(numpy.arange(10.)))
         >>> f.has_data()
         True
         >>> d = f.data
