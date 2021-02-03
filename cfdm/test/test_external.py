@@ -1,18 +1,22 @@
 import atexit
 import datetime
+import inspect
 import os
 import tempfile
 import unittest
 
-import netCDF4
-import numpy
+import faulthandler
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
 
 
 n_tmpfiles = 3
-tmpfiles = [tempfile.mkstemp('_test_external.nc', dir=os.getcwd())[1]
-            for i in range(n_tmpfiles)]
+tmpfiles = [
+    tempfile.mkstemp("_test_external.nc", dir=os.getcwd())[1]
+    for i in range(n_tmpfiles)
+]
 (
     tempfile,
     tempfile_parent,
@@ -21,9 +25,7 @@ tmpfiles = [tempfile.mkstemp('_test_external.nc', dir=os.getcwd())[1]
 
 
 def _remove_tmpfiles():
-    '''Remove temporary files created during tests.
-
-    '''
+    """Remove temporary files created during tests."""
     for f in tmpfiles:
         try:
             os.remove(f)
@@ -37,7 +39,7 @@ atexit.register(_remove_tmpfiles)
 class ExternalVariableTest(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
-        cfdm.LOG_LEVEL('DISABLE')
+        cfdm.LOG_LEVEL("DISABLE")
         # Note: to enable all messages for given methods, lines or
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
@@ -46,14 +48,14 @@ class ExternalVariableTest(unittest.TestCase):
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
-        dir_with_data_files = os.path.dirname(os.path.realpath(__file__))
 
         dataset_dir = os.path.dirname(os.path.abspath(__file__))
-        self.parent_file = os.path.join(dataset_dir, 'parent.nc')
-        self.external_file = os.path.join(dataset_dir, 'external.nc')
-        self.combined_file = os.path.join(dataset_dir, 'combined.nc')
+        self.parent_file = os.path.join(dataset_dir, "parent.nc")
+        self.external_file = os.path.join(dataset_dir, "external.nc")
+        self.combined_file = os.path.join(dataset_dir, "combined.nc")
         self.external_missing_file = os.path.join(
-            dataset_dir, 'external_missing.nc')
+            dataset_dir, "external_missing.nc"
+        )
 
         self.test_only = []
 
@@ -72,16 +74,17 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertEqual(len(f), 1)
         f = f[0]
 
-        cell_measure = f.constructs.filter_by_identity('measure:area').value()
+        cell_measure = f.constructs.filter_by_identity("measure:area").value()
 
         self.assertTrue(cell_measure.nc_get_external())
-        self.assertEqual(cell_measure.nc_get_variable(), 'areacella')
+        self.assertEqual(cell_measure.nc_get_variable(), "areacella")
         self.assertEqual(cell_measure.properties(), {})
         self.assertFalse(cell_measure.has_data())
 
         # External file contains only the cell measure variable
-        f = cfdm.read(self.parent_file, external=[self.external_file],
-                      verbose=False)
+        f = cfdm.read(
+            self.parent_file, external=[self.external_file], verbose=False
+        )
 
         c = cfdm.read(self.combined_file, verbose=False)
 
@@ -90,8 +93,9 @@ class ExternalVariableTest(unittest.TestCase):
             _ = str(i)
             self.assertIsInstance(i.dump(display=False), str)
 
-        cell_measure = f[0].constructs.filter_by_identity(
-            'measure:area').value()
+        cell_measure = (
+            f[0].constructs.filter_by_identity("measure:area").value()
+        )
 
         self.assertEqual(len(f), 1)
         self.assertEqual(len(c), 1)
@@ -100,8 +104,9 @@ class ExternalVariableTest(unittest.TestCase):
             self.assertTrue(c[i].equals(f[i], verbose=3))
 
         # External file contains other variables
-        f = cfdm.read(self.parent_file, external=self.combined_file,
-                      verbose=False)
+        f = cfdm.read(
+            self.parent_file, external=self.combined_file, verbose=False
+        )
 
         for i in f:
             _ = repr(i)
@@ -118,7 +123,7 @@ class ExternalVariableTest(unittest.TestCase):
         f = cfdm.read(
             self.parent_file,
             external=[self.external_file, self.external_missing_file],
-            verbose=False
+            verbose=False,
         )
 
         for i in f:
@@ -150,7 +155,7 @@ class ExternalVariableTest(unittest.TestCase):
         for i in range(len(g)):
             self.assertTrue(combined[i].equals(g[i], verbose=3))
 
-        cell_measure = g[0].constructs('measure:area').value()
+        cell_measure = g[0].constructs("measure:area").value()
 
         self.assertFalse(cell_measure.nc_get_external())
         cell_measure.nc_set_external(True)
@@ -159,13 +164,15 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertTrue(cell_measure.has_data())
 
         self.assertTrue(
-            g[0].constructs.filter_by_identity(
-                'measure:area').value().nc_get_external()
+            g[0]
+            .constructs.filter_by_identity("measure:area")
+            .value()
+            .nc_get_external()
         )
 
-        cfdm.write(g, tempfile_parent,
-                   external=tempfile_external,
-                   verbose=False)
+        cfdm.write(
+            g, tempfile_parent, external=tempfile_external, verbose=False
+        )
 
         h = cfdm.read(tempfile_parent, verbose=False)
 
@@ -186,8 +193,8 @@ class ExternalVariableTest(unittest.TestCase):
 # --- End: class
 
 
-if __name__ == '__main__':
-    print('Run date:', datetime.datetime.now())
+if __name__ == "__main__":
+    print("Run date:", datetime.datetime.now())
     cfdm.environment()
     print()
     unittest.main(verbosity=2)

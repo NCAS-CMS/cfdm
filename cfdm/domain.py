@@ -8,6 +8,7 @@ from . import Constructs
 from .decorators import (
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
+    _manage_log_level_via_verbosity,
     _display_or_return,
 )
 
@@ -283,13 +284,12 @@ class Domain(
                 A string containing the description.
 
         """
+        indent1 = "    " * _level
+
         axes = self.domain_axes
 
         w = sorted(
-            [
-                f"{'    ' * _level}Domain Axis: {axis_names[axis]}"
-                for axis in axes
-            ]
+            [f"{indent1}Domain Axis: {axis_names[axis]}" for axis in axes]
         )
 
         return "\n".join(w)
@@ -334,8 +334,8 @@ class Domain(
         * where data elements are strictly greater than the value of
           the ``valid_max`` property;
 
-        * where data elements are within the inclusive range specified
-          by the two values of ``valid_range`` property.
+        * where data elements are within the inclusive range specified by
+          the two values of ``valid_range`` property.
 
         If any of the above properties have not been set the no
         masking is applied for that method.
@@ -366,12 +366,12 @@ class Domain(
 
         **Examples:**
 
-        >>> d = {{package}}.example_field(0).domain
+        >>> d = cfdm.example_field(0).domain
         >>> x = d.construct('longitude')
-        >>> x.data[[0, -1]] = {{package}}.masked
+        >>> x.data[[0, -1]] = cfdm.masked
         >>> print(x.data.array)
         [-- 67.5 112.5 157.5 202.5 247.5 292.5 --]
-        >>> {{package}}.write(d, 'masked.nc')
+        >>> cfdm.write(d, 'masked.nc')
         >>> no_mask = {{package}}.read('masked.nc', domain=True, mask=False)[0]
         >>> no_mask_x = no_mask.construct('longitude')
         >>> print(no_mask_x.data.array)
@@ -406,7 +406,7 @@ class Domain(
 
         **Examples:**
 
-        >>> d = {{package}}.example_field(0)
+        >>> d = cfdm.example_field(0)
         >>> d.climatological_time_axes()
         set()
 
@@ -950,6 +950,3 @@ class Domain(
             out.append(f"ncvar%{n}")
 
         return out
-
-
-# --- End: class

@@ -4,173 +4,174 @@ from . import abstract
 
 
 class NumpyArray(abstract.Array):
-    '''A container for a numpy array.
+    """A container for a numpy array.
 
     .. versionadded:: (cfdm) 1.7.0
 
-    '''
+    """
+
     def __init__(self, array=None):
-        '''**Initialization**
+        """**Initialization**
 
-    :Parameters:
+        :Parameters:
 
-        array: `numpy.ndarray`
-            The numpy array.
+            array: `numpy.ndarray`
+                The numpy array.
 
-        '''
+        """
         super().__init__()
 
-        self._set_component('array', array, copy=False)
+        self._set_component("array", array, copy=False)
 
-#    def __deepcopy__(self, memo):
-#        '''Called by the `copy.deepcopy` function.
-#
-#    x.__deepcopy__() <==> copy.deepcopy(x)
-#
-#    Copy-on-write is employed. Therefore, after copying, care must be
-#    taken when making in-place modifications to attributes of either
-#    the original or the new copy.
-#
-#    .. versionadded:: (cfdm) 1.8.7.0
-#
-#    **Examples:**
-#
-#    >>> import copy
-#    >>> y = copy.deepcopy(x)
-#
-#        '''
-#        return self.copy()
+    #    def __deepcopy__(self, memo):
+    #        '''Called by the `copy.deepcopy` function.
+    #
+    #    x.__deepcopy__() <==> copy.deepcopy(x)
+    #
+    #    Copy-on-write is employed. Therefore, after copying, care must be
+    #    taken when making in-place modifications to attributes of either
+    #    the original or the new copy.
+    #
+    #    .. versionadded:: (cfdm) 1.8.7.0
+    #
+    #    **Examples:**
+    #
+    #    >>> import copy
+    #    >>> y = copy.deepcopy(x)
+    #
+    #        '''
+    #        return self.copy()
 
     @property
     def dtype(self):
-        '''Data-type of the data elements.
+        """Data-type of the data elements.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    **Examples:**
+        **Examples:**
 
-    >>> a.dtype
-    dtype('float64')
-    >>> print(type(a.dtype))
-    <type 'numpy.dtype'>
+        >>> a.dtype
+        dtype('float64')
+        >>> print(type(a.dtype))
+        <type 'numpy.dtype'>
 
-        '''
-        return self._get_component('array').dtype
+        """
+        return self._get_component("array").dtype
 
     @property
     def ndim(self):
-        '''Number of array dimensions
+        """Number of array dimensions
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    **Examples:**
+        **Examples:**
 
-    >>> a.shape
-    (73, 96)
-    >>> a.ndim
-    2
-    >>> a.size
-    7008
+        >>> a.shape
+        (73, 96)
+        >>> a.ndim
+        2
+        >>> a.size
+        7008
 
-    >>> a.shape
-    (1, 1, 1)
-    >>> a.ndim
-    3
-    >>> a.size
-    1
+        >>> a.shape
+        (1, 1, 1)
+        >>> a.ndim
+        3
+        >>> a.size
+        1
 
-    >>> a.shape
-    ()
-    >>> a.ndim
-    0
-    >>> a.size
-    1
+        >>> a.shape
+        ()
+        >>> a.ndim
+        0
+        >>> a.size
+        1
 
-        '''
-        return self._get_component('array').ndim
+        """
+        return self._get_component("array").ndim
 
     @property
     def shape(self):
-        '''Tuple of array dimension sizes.
+        """Tuple of array dimension sizes.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    **Examples:**
+        **Examples:**
 
-    >>> a.shape
-    (73, 96)
-    >>> a.ndim
-    2
-    >>> a.size
-    7008
+        >>> a.shape
+        (73, 96)
+        >>> a.ndim
+        2
+        >>> a.size
+        7008
 
-    >>> a.shape
-    (1, 1, 1)
-    >>> a.ndim
-    3
-    >>> a.size
-    1
+        >>> a.shape
+        (1, 1, 1)
+        >>> a.ndim
+        3
+        >>> a.size
+        1
 
-    >>> a.shape
-    ()
-    >>> a.ndim
-    0
-    >>> a.size
-    1
+        >>> a.shape
+        ()
+        >>> a.ndim
+        0
+        >>> a.size
+        1
 
-    '''
-        return self._get_component('array').shape
+        """
+        return self._get_component("array").shape
 
     @property
     def size(self):
-        '''Number of elements in the array.
+        """Number of elements in the array.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    **Examples:**
+        **Examples:**
 
-    >>> a.shape
-    (73, 96)
-    >>> a.size
-    7008
-    >>> a.ndim
-    2
+        >>> a.shape
+        (73, 96)
+        >>> a.size
+        7008
+        >>> a.ndim
+        2
 
-    >>> a.shape
-    (1, 1, 1)
-    >>> a.ndim
-    3
-    >>> a.size
-    1
+        >>> a.shape
+        (1, 1, 1)
+        >>> a.ndim
+        3
+        >>> a.size
+        1
 
-    >>> a.shape
-    ()
-    >>> a.ndim
-    0
-    >>> a.size
-    1
-        '''
-        return self._get_component('array').size
+        >>> a.shape
+        ()
+        >>> a.ndim
+        0
+        >>> a.size
+        1
+        """
+        return self._get_component("array").size
 
     @property
     def array(self):
-        '''Return an independent numpy array containing the data.
+        """Return an independent numpy array containing the data.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Returns:
+        :Returns:
 
-        `numpy.ndarray`
-            An independent numpy array of the data.
+            `numpy.ndarray`
+                An independent numpy array of the data.
 
-    **Examples:**
+        **Examples:**
 
-    >>> n = a.array
-    >>> isinstance(n, numpy.ndarray)
-    True
+        >>> n = a.array
+        >>> isinstance(n, numpy.ndarray)
+        True
 
-        '''
-        array = self._get_component('array')
+        """
+        array = self._get_component("array")
 
         if not array.ndim and numpy.ma.isMA(array):
             # This is because numpy.ma.copy doesn't work for
@@ -184,29 +185,27 @@ class NumpyArray(abstract.Array):
         return array
 
     def copy(self):
-        '''Return a deep copy of the array.
+        """Return a deep copy of the array.
 
-    ``a.copy() is equivalent to ``copy.deepcopy(a)``.
+        ``a.copy() is equivalent to ``copy.deepcopy(a)``.
 
-    Copy-on-write is employed. Therefore, after copying, care must be
-    taken when making in-place modifications to attributes of either
-    the original or the new copy.
+        Copy-on-write is employed. Therefore, after copying, care must be
+        taken when making in-place modifications to attributes of either
+        the original or the new copy.
 
-    .. versionadded:: (cfdm) 1.8.7.0
+        .. versionadded:: (cfdm) 1.8.7.0
 
-    :Returns:
+        :Returns:
 
-        `{{class}}`
-            The deep copy.
+            `{{class}}`
+                The deep copy.
 
-    **Examples:**
+        **Examples:**
 
-    >>> b = a.copy()
+        >>> b = a.copy()
 
-        '''
+        """
         klass = self.__class__
         new = klass.__new__(klass)
         new.__dict__ = self.__dict__.copy()
         return new
-
-# --- End: class

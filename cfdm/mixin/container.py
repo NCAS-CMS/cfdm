@@ -13,94 +13,96 @@ logger = logging.getLogger(__name__)
 
 
 class Container:
-    '''Mixin class for storing object components.
+    """Mixin class for storing object components.
 
     .. versionadded:: (cfdm) 1.7.0
 
-    '''
+    """
+
     def __repr__(self):
-        '''Called by the `repr` built-in function.
+        """Called by the `repr` built-in function.
 
-    x.__repr__() <==> repr(x)
+        x.__repr__() <==> repr(x)
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-        '''
-        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
+        """
+        return "<{0}: {1}>".format(self.__class__.__name__, str(self))
 
     def __str__(self):
-        '''Called by the `str` built-in function.
+        """Called by the `str` built-in function.
 
-    x.__str__() <==> str(x)
+        x.__str__() <==> str(x)
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-        '''
+        """
         out = sorted(self._components)
-        return ', '.join(out)
+        return ", ".join(out)
 
     def __docstring_substitutions__(self):
-        '''Define docstring substitutions that apply to this class and all of
-    its subclasses.
+        """Define docstring substitutions that apply to this class and all of
+        its subclasses.
 
-    These are in addtion to, and take precendence over, docstring
-    substitutions defined by the base classes of this class.
+        These are in addtion to, and take precendence over, docstring
+        substitutions defined by the base classes of this class.
 
-    See `_docstring_substitutions` for details.
+        See `_docstring_substitutions` for details.
 
-    .. versionaddedd:: (cfdm) 1.8.7.0
+        .. versionaddedd:: (cfdm) 1.8.7.0
 
-    :Returns:
+        :Returns:
 
-        `dict`
-            The docstring substitutions that have been applied.
+            `dict`
+                The docstring substitutions that have been applied.
 
-        '''
+        """
         return _docstring_substitution_definitions
 
     def __docstring_package_depth__(self):
-        '''Return the package depth for {{package}} docstring substitutions.
+        """Return the package depth for {{package}} docstring substitutions.
 
-    See `_docstring_package_depth` for details.
+        See `_docstring_package_depth` for details.
 
-        '''
+        """
         return 0
 
     @property
     def _atol(self):
-        '''Internal alias for `{{package}}.atol`.
+        """Internal alias for `{{package}}.atol`.
 
-    An alias is necessary to avoid a name clash with the keyword argument
-    of identical name (`atol`) in calling functions.
-        '''
+        An alias is necessary to avoid a name clash with the keyword argument
+        of identical name (`atol`) in calling functions.
+        """
         return atol().value
 
     @property
     def _rtol(self):
-        '''Internal alias for `{{package}}.rtol`.
+        """Internal alias for `{{package}}.rtol`.
 
-    An alias is necessary to avoid a name clash with the keyword argument
-    of identical name (`rtol`) in calling functions.
-        '''
+        An alias is necessary to avoid a name clash with the keyword argument
+        of identical name (`rtol`) in calling functions.
+        """
         return rtol().value
 
-    def _equals(self, x, y, rtol=None, atol=None,
-                ignore_data_type=False, **kwargs):
-        '''Whether two objects are the same.
+    def _equals(
+        self, x, y, rtol=None, atol=None, ignore_data_type=False, **kwargs
+    ):
+        """Whether two objects are the same.
 
-    Equality either uses one or other of the objects `!equals`
-    methods, or casts them as numpy arrays and carried aout numericlly
-    tolerant equality checks.
+        Equality either uses one or other of the objects `!equals`
+        methods, or casts them as numpy arrays and carried aout numericlly
+        tolerant equality checks.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Parameters:
+        :Parameters:
 
-        {{atol: number, optional}}
+            {{atol: number, optional}}
 
-        {{rtol: number, optional}}
+            {{rtol: number, optional}}
 
-        '''
+        """
         if rtol is None:
             rtol = self._rtol
         else:
@@ -111,11 +113,11 @@ class Container:
         else:
             atol = float(atol)
 
-        kwargs['ignore_data_type'] = ignore_data_type
-        kwargs['rtol'] = rtol
-        kwargs['atol'] = atol
+        kwargs["ignore_data_type"] = ignore_data_type
+        kwargs["rtol"] = rtol
+        kwargs["atol"] = atol
 
-        eq = getattr(x, 'equals', None)
+        eq = getattr(x, "equals", None)
         if callable(eq):
             # --------------------------------------------------------
             # x has a callable "equals" method
@@ -124,14 +126,14 @@ class Container:
             try:
                 # Python 3
                 pass
-#                parameters = inspect.signature(eq).bind_partial(**kwargs)
+            #                parameters = inspect.signature(eq).bind_partial(**kwargs)
             except AttributeError:
                 # Python 2
                 pass
 
             return eq(y, **kwargs)
 
-        eq = getattr(y, 'equals', None)
+        eq = getattr(y, "equals", None)
         if callable(eq):
             # --------------------------------------------------------
             # y has a callable "equals" method
@@ -140,7 +142,7 @@ class Container:
             try:
                 # Python 3
                 pass
-#                parameters = inspect.signature(eq).bind_partial(**kwargs)
+            #                parameters = inspect.signature(eq).bind_partial(**kwargs)
             except AttributeError:
                 # Python 2
                 pass
@@ -161,8 +163,10 @@ class Container:
         # THIS IS WHERE SOME NUMPY FUTURE WARNINGS ARE COMING FROM
 
         if not ignore_data_type and x.dtype != y.dtype:
-            if (x.dtype.kind not in ('S', 'U')
-                    and y.dtype.kind not in ('S', 'U')):
+            if x.dtype.kind not in ("S", "U") and y.dtype.kind not in (
+                "S",
+                "U",
+            ):
                 return False
 
         x_is_masked = numpy.ma.isMA(x)
@@ -177,8 +181,9 @@ class Container:
             if x_is_masked and y_is_masked:
                 if (x.mask != y.mask).any():
                     return False
-            elif ((x_is_masked and x.mask.any()) or
-                  (y_is_masked and y.mask.any())):
+            elif (x_is_masked and x.mask.any()) or (
+                y_is_masked and y.mask.any()
+            ):
                 return False
 
             try:
@@ -192,21 +197,21 @@ class Container:
 
     @_manage_log_level_via_verbosity
     def _equals_preprocess(self, other, verbose=None, ignore_type=False):
-        '''Common preprocessing prior to testing of equality.
+        """Common preprocessing prior to testing of equality.
 
-    * If the LHS operand is (object identity) the RHS operand then
-      return True.
+        * If the LHS operand is (object identity) the RHS operand then
+          return True.
 
-    * If ignore_type=False and the LHS operand is not of the same type, or
-      a squblcass of, the RHS operand then return False
+        * If ignore_type=False and the LHS operand is not of the same type, or
+          a squblcass of, the RHS operand then return False
 
-    * If ignore_type=True and the LHS operand is not of the same type,
-      or a sublcass of, the RHS operand then instantiate a new
-      instance based on the the RHS class and return it.
+        * If ignore_type=True and the LHS operand is not of the same type,
+          or a sublcass of, the RHS operand then instantiate a new
+          instance based on the the RHS class and return it.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-        '''
+        """
         # Check for object identity
         if self is other:
             return True
@@ -216,22 +221,23 @@ class Container:
             if not isinstance(other, self.__class__):
                 other = type(self)(source=other, copy=False)
         elif not isinstance(other, self.__class__):
-            logger.info("{}: Incompatible type: {}".format(
-                self.__class__.__name__, type(other)))
+            logger.info(
+                "{}: Incompatible type: {}".format(
+                    self.__class__.__name__, type(other)
+                )
+            )
             return False
 
         return other
 
     def _package(self):
-        '''Return the name of the package in which this class resides.
+        """Return the name of the package in which this class resides.
 
-    :Returns:
+        :Returns:
 
-        `str`
-           The package name
+            `str`
+               The package name
 
-        '''
+        """
         depth = self.__class__._docstring_package_depth(self.__class__)
-        return '.'.join(self.__module__.split('.')[0:depth + 1])
-
-# --- End: class
+        return ".".join(self.__module__.split(".")[0 : depth + 1])

@@ -1,3 +1,1 @@
-from .abstractio import (IO,
-                         IORead,
-                         IOWrite)
+from .abstractio import IO, IORead, IOWrite

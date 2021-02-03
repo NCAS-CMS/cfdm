@@ -10,7 +10,7 @@ import cfdm
 class Core2Test(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
-        cfdm.log_level('DISABLE')
+        cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
@@ -28,17 +28,18 @@ class Core2Test(unittest.TestCase):
 
         # __array__
         b = numpy.array(a)
-        b = numpy.array(a, dtype='float')
+        b = numpy.array(a, dtype="float")
 
     def test_core_Container(self):
         # __init__
-        a = cfdm.core.Container(source='qwerty')
+        a = cfdm.core.Container(source="qwerty")
+
 
 # --- End: class
 
 
 if __name__ == "__main__":
-    print('Run date:', datetime.datetime.now())
+    print("Run date:", datetime.datetime.now())
     cfdm.environment()
-    print('')
+    print("")
     unittest.main(verbosity=2)

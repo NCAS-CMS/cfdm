@@ -1,41 +1,39 @@
 from distutils.core import setup
+
 # from setuptools import setup
 
 import os
 import fnmatch
-import sys
 import re
 
 
 def find_package_data_files(directory):
     for root, dirs, files in os.walk(directory):
         for basename in files:
-            if fnmatch.fnmatch(basename, '*'):
+            if fnmatch.fnmatch(basename, "*"):
                 filename = os.path.join(root, basename)
-                yield filename.replace('cfdm/', '', 1)
+                yield filename.replace("cfdm/", "", 1)
 
 
 def _read(fname):
-    """Returns content of a file.
-
-    """
+    """Returns content of a file."""
     fpath = os.path.dirname(__file__)
     fpath = os.path.join(fpath, fname)
-    with open(fpath, 'r') as file_:
+    with open(fpath, "r") as file_:
         return file_.read()
 
 
 def _get_version():
-    """Returns library version by inspecting core/__init__.py file.
-
-    """
-    return re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
-                     _read("cfdm/core/__init__.py"),
-                     re.MULTILINE).group(1)
+    """Returns library version by inspecting core/__init__.py file."""
+    return re.search(
+        r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+        _read("cfdm/core/__init__.py"),
+        re.MULTILINE,
+    ).group(1)
 
 
 version = _get_version()
-packages = ['cfdm']
+packages = ["cfdm"]
 
 long_description = """The **cfdm** Python package is a reference implementation of the `CF
 data model <https://www.geosci-model-dev.net/10/4619/2017>`_, that
@@ -112,7 +110,7 @@ This project is hosted in a `GitHub repository
 up-to-date source."""
 
 # Get dependencies
-requirements = open('requirements.txt', 'r')
+requirements = open("requirements.txt", "r")
 install_requires = requirements.read().splitlines()
 
 setup(
@@ -128,8 +126,13 @@ setup(
     download_url="https://pypi.org/project/cfdm/#files",
     platforms=["Linux", "MacOS", "Windows"],
     keywords=[
-        'cf', 'netcdf', 'data', 'science', 'oceanography', 'meteorology',
-        'climate'
+        "cf",
+        "netcdf",
+        "data",
+        "science",
+        "oceanography",
+        "meteorology",
+        "climate",
     ],
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -141,26 +144,26 @@ setup(
         "Programming Language :: Python :: 3",
     ],
     packages=[
-        'cfdm',
-        'cfdm.abstract',
-        'cfdm.core',
-        'cfdm.core.abstract',
-        'cfdm.core.data',
-        'cfdm.core.data.abstract',
-        'cfdm.core.docstring',
-        'cfdm.core.meta',
-        'cfdm.core.mixin',
-        'cfdm.docstring',
-        'cfdm.data',
-        'cfdm.data.abstract',
-        'cfdm.data.mixin',
-        'cfdm.mixin',
-        'cfdm.read_write',
-        'cfdm.read_write.abstract',
-        'cfdm.read_write.netcdf',
-        'cfdm.test',
+        "cfdm",
+        "cfdm.abstract",
+        "cfdm.core",
+        "cfdm.core.abstract",
+        "cfdm.core.data",
+        "cfdm.core.data.abstract",
+        "cfdm.core.docstring",
+        "cfdm.core.meta",
+        "cfdm.core.mixin",
+        "cfdm.docstring",
+        "cfdm.data",
+        "cfdm.data.abstract",
+        "cfdm.data.mixin",
+        "cfdm.mixin",
+        "cfdm.read_write",
+        "cfdm.read_write.abstract",
+        "cfdm.read_write.netcdf",
+        "cfdm.test",
     ],
-    scripts=['scripts/cfdump'],
-    python_requires='>=3.6',
+    scripts=["scripts/cfdump"],
+    python_requires=">=3.6",
     install_requires=install_requires,
 )

@@ -2,13 +2,17 @@ import datetime
 import os
 import unittest
 
+import faulthandler
+
+faulthandler.enable()  # to debug seg faults and timeouts
+
 import cfdm
 
 
 class PartNodeCountPropertiesTest(unittest.TestCase):
     def setUp(self):
         # Disable log messages to silence expected warnings
-        cfdm.log_level('DISABLE')
+        cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
@@ -19,15 +23,17 @@ class PartNodeCountPropertiesTest(unittest.TestCase):
 
         self.geometry_interior_ring_file = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            'geometry_interior_ring.nc')
+            "geometry_interior_ring.nc",
+        )
         self.geometry_interior_ring_file_2 = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            'geometry_interior_ring_2.nc')
+            "geometry_interior_ring_2.nc",
+        )
 
     def test_PartNodeCountProperties__repr__str__dump(self):
         f = cfdm.read(self.geometry_interior_ring_file)[0]
 
-        coord = f.construct('axis=X')
+        coord = f.construct("axis=X")
         self.assertTrue(coord.has_part_node_count())
 
         p = coord.get_part_node_count()
@@ -36,11 +42,12 @@ class PartNodeCountPropertiesTest(unittest.TestCase):
         _ = str(p)
         self.assertIsInstance(p.dump(display=False), str)
 
+
 # --- End: class
 
 
-if __name__ == '__main__':
-    print('Run date:', datetime.datetime.now())
+if __name__ == "__main__":
+    print("Run date:", datetime.datetime.now())
     cfdm.environment()
     print()
     unittest.main(verbosity=2)

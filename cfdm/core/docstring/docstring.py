@@ -45,10 +45,10 @@ _docstring_substitution_definitions = {
 
                 *Parameter example:*
                   ``axes=0``
-    
+
                 *Parameter example:*
                   ``axes=-1``
-    
+
                 *Parameter example:*
                   ``axes=[1, -2]``""",
     # default Exception
@@ -72,33 +72,33 @@ _docstring_substitution_definitions = {
     "{{init data: data_like, optional}}": """data: data_like, optional
                 Set the data. Ignored if the *source* parameter is
                 set.
-                
+
                 {{data_like}}
-                
+
                 The data also may be set after initialisation with the
                 `set_data` method.""",
     # init bounds
     "{{init bounds: `Bounds`, optional}}": """bounds: `Bounds`, optional
                 Set the bounds array. Ignored if the *source*
                 parameter is set.
-                
+
                 The bounds array may also be set after initialisation
                 with the `set_bounds` method.""",
     # init geometry
     "{{init geometry: `str`, optional}}": """geometry: `str`, optional
                 Set the geometry type. Ignored if the *source*
                 parameter is set.
-                
+
                 The geometry type may also be set after initialisation
                 with the `set_geometry` method.
-                
+
                 *Parameter example:*
                   ``geometry='polygon'``""",
     # init interior_ring
     "{{init interior_ring: `InteriorRing`, optional}}": """interior_ring: `InteriorRing`, optional
                 Set the interior ring variable. Ignored if the
                 *source* parameter is set.
-                
+
                 The interior ring variable may also be set after
                 initialisation with the `set_interior_ring` method.""",
     # init copy

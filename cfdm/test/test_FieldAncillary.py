@@ -2,20 +2,23 @@ import datetime
 import os
 import unittest
 
-import numpy
+import faulthandler
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
 
 
 class FieldAncillaryTest(unittest.TestCase):
     filename = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
+        os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
+    )
 
-#    f = cfdm.read(filename)[0]
+    #    f = cfdm.read(filename)[0]
 
     def setUp(self):
         # Disable log messages to silence expected warnings
-        cfdm.log_level('DISABLE')
+        cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
         # calls (those without a 'verbose' option to do the same)
         # e.g. to debug them, wrap them (for methods, start-to-end
@@ -28,7 +31,7 @@ class FieldAncillaryTest(unittest.TestCase):
 
     def test_FieldAncillary__repr__str__dump(self):
         f = self.f.copy()
-        x = f.field_ancillaries('ancillaryA').value()
+        x = f.field_ancillaries("ancillaryA").value()
 
         _ = repr(x)
         _ = str(x)
@@ -37,23 +40,23 @@ class FieldAncillaryTest(unittest.TestCase):
     def test_FieldAncillary_source(self):
         f = self.f.copy()
 
-        a = f.auxiliary_coordinates('latitude').value()
-        x = cfdm.FieldAncillary(source=a)
+        a = f.auxiliary_coordinates("latitude").value()
+        cfdm.FieldAncillary(source=a)
 
     def test_FieldAncillary_properties(self):
         f = self.f.copy()
-        x = f.domain_ancillaries('ncvar%a').value()
+        x = f.domain_ancillaries("ncvar%a").value()
 
-        x.set_property('long_name', 'qwerty')
+        x.set_property("long_name", "qwerty")
 
-        self.assertEqual(x.get_property('long_name'), 'qwerty')
-        self.assertEqual(x.del_property('long_name'), 'qwerty')
-        self.assertIsNone(x.get_property('long_name', None))
-        self.assertIsNone(x.del_property('long_name', None))
+        self.assertEqual(x.get_property("long_name"), "qwerty")
+        self.assertEqual(x.del_property("long_name"), "qwerty")
+        self.assertIsNone(x.get_property("long_name", None))
+        self.assertIsNone(x.del_property("long_name", None))
 
     def test_FieldAncillary_insert_dimension(self):
         f = self.f.copy()
-        d = f.dimension_coordinates('grid_longitude').value()
+        d = f.dimension_coordinates("grid_longitude").value()
         x = cfdm.FieldAncillary(source=d)
 
         self.assertEqual(x.shape, (9,))
@@ -66,7 +69,7 @@ class FieldAncillaryTest(unittest.TestCase):
 
     def test_FieldAncillary_transpose(self):
         f = self.f.copy()
-        a = f.auxiliary_coordinates('longitude').value()
+        a = f.auxiliary_coordinates("longitude").value()
         x = cfdm.FieldAncillary(source=a)
 
         self.assertEqual(x.shape, (9, 10))
@@ -79,7 +82,7 @@ class FieldAncillaryTest(unittest.TestCase):
 
     def test_FieldAncillary_squeeze(self):
         f = self.f.copy()
-        a = f.auxiliary_coordinates('longitude').value()
+        a = f.auxiliary_coordinates("longitude").value()
         x = cfdm.FieldAncillary(source=a)
 
         x.insert_dimension(1, inplace=True)
@@ -93,11 +96,12 @@ class FieldAncillaryTest(unittest.TestCase):
         x.squeeze(2, inplace=True)
         self.assertEqual(x.shape, (1, 9, 10))
 
+
 # --- End: class
 
 
 if __name__ == "__main__":
-    print('Run date:', datetime.datetime.now())
+    print("Run date:", datetime.datetime.now())
     cfdm.environment()
     print()
     unittest.main(verbosity=2)

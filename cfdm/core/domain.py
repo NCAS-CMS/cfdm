@@ -4,9 +4,8 @@ from . import mixin
 from . import Constructs
 
 
-class Domain(mixin.FieldDomain,
-             abstract.Properties):
-    '''A domain construct of the CF data model.
+class Domain(mixin.FieldDomain, abstract.Properties):
+    """A domain construct of the CF data model.
 
     The domain represents a set of discrete "locations" in what
     generally would be a multi-dimensional space, either in the real
@@ -21,49 +20,48 @@ class Domain(mixin.FieldDomain,
 
     .. versionadded:: (cfdm) 1.7.0
 
-    '''
+    """
+
     # Define the base of the identity keys for each construct type
     _construct_key_base = {
-        'auxiliary_coordinate': 'auxiliarycoordinate',
-        'cell_measure': 'cellmeasure',
-        'coordinate_reference': 'coordinatereference',
-        'dimension_coordinate': 'dimensioncoordinate',
-        'domain_ancillary': 'domainancillary',
-        'domain_axis': 'domainaxis',
+        "auxiliary_coordinate": "auxiliarycoordinate",
+        "cell_measure": "cellmeasure",
+        "coordinate_reference": "coordinatereference",
+        "dimension_coordinate": "dimensioncoordinate",
+        "domain_ancillary": "domainancillary",
+        "domain_axis": "domainaxis",
     }
 
     def __new__(cls, *args, **kwargs):
-        '''This must be overridden in subclasses.
-
-        '''
+        """This must be overridden in subclasses."""
         instance = super().__new__(cls)
         instance._Constructs = Constructs
         return instance
 
-    def __init__(self, properties=None, source=None, copy=True,
-                 _use_data=True):
-        '''**Initialization**
+    def __init__(
+        self, properties=None, source=None, copy=True, _use_data=True
+    ):
+        """**Initialization**
 
-    :Parameters:
+        :Parameters:
 
-        {{init properties: `dict`, optional}}
+            {{init properties: `dict`, optional}}
 
             *Parameter example:*
                ``properties={'long_name': 'Domain for model'}``
 
-        source: optional
-            Initialize the metadata constructs from those of *source*.
+            source: optional
+                Initialize the metadata constructs from those of *source*.
 
-            {{init source}}
+                {{init source}}
 
-            A new domain may also be instantiated with the
-            `fromconstructs` class method.
+                A new domain may also be instantiated with the
+                `fromconstructs` class method.
 
-        {{init copy: `bool`, optional}}
+            {{init copy: `bool`, optional}}
 
-        '''
-        super().__init__(properties=properties, source=source,
-                         copy=copy)
+        """
+        super().__init__(properties=properties, source=source, copy=copy)
 
         if source is not None:
             try:
@@ -73,8 +71,9 @@ class Domain(mixin.FieldDomain,
                 copy = False
                 _use_data = True
             else:
-                constructs = constructs._view(ignore=('cell_method',
-                                                      'field_ancillary'))
+                constructs = constructs._view(
+                    ignore=("cell_method", "field_ancillary")
+                )
         else:
             constructs = self._Constructs(**self._construct_key_base)
             copy = False
@@ -83,148 +82,149 @@ class Domain(mixin.FieldDomain,
         if copy or not _use_data:
             constructs = constructs.copy(data=_use_data)
 
-        self._set_component('constructs', constructs, copy=False)
+        self._set_component("constructs", constructs, copy=False)
 
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
     @property
     def construct_type(self):
-        '''Return a description of the construct type.
+        """Return a description of the construct type.
 
-    .. versionadded:: (cfdm) 1.9.0.0
+        .. versionadded:: (cfdm) 1.9.0.0
 
-    :Returns:
+        :Returns:
+            `str`
+                The construct type.
 
-        `str`
-            The construct type.
+        **Examples:**
 
-    **Examples:**
+        >>> d = {{package}}.{{class}}()
+        >>> d.construct_type
+        'domain'
 
-    >>> d = {{package}}.{{class}}()
-    >>> d.construct_type
-    'domain'
-
-        '''
-        return 'domain'
+        """
+        return "domain"
 
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
     def copy(self, data=True):
-        '''Return a deep copy.
+        """Return a deep copy.
 
-    ``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
+        ``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `fromconstructs`
+        .. seealso:: `fromconstructs`
 
-    :Parameters:
+        :Parameters:
 
-        data: `bool`, optional
-            If False then do not copy data. By default data are
-            copied.
+            data: `bool`, optional
+                If False then do not copy data. By default data are
+                copied.
 
-    :Returns:
+        :Returns:
 
-        `{{class}}`
-            The deep copy.
+            `{{class}}`
+                The deep copy.
 
-    **Examples:**
+        **Examples:**
 
-    >>> d = {{package}}.{{class}}()
-    >>> e = d.copy()
+        >>> d = {{package}}.{{class}}()
+        >>> e = d.copy()
 
-        '''
+        """
         return type(self)(source=self, copy=True, _use_data=data)
 
     def del_construct(self, key, default=ValueError()):
-        '''Remove a metadata construct.
+        """Remove a metadata construct.
 
-    If a domain axis construct is selected for removal then it can't
-    be spanned by any data arrays of the metadata constructs. However,
-    a domain ancillary construct may be removed even if it is
-    referenced by coordinate reference construct.
+        If a domain axis construct is selected for removal then it
+        can't be spanned by any data arrays of the metadata
+        constructs. However, a domain ancillary construct may be
+        removed even if it is referenced by coordinate reference
+        construct.
 
-    .. versionadded:: (cfdm) 1.9.0.0
+        .. versionadded:: (cfdm) 1.9.0.0
 
-    .. seealso:: `get_construct`, `constructs`, `has_construct`,
-                 `set_construct`
+        .. seealso:: `get_construct`, `constructs`, `has_construct`,
+                     `set_construct`
 
-    :Parameters:
+        :Parameters:
 
-        key: `str`
-            The construct identifier of the metadata construct to be
-            removed.
+            key: `str`
+                The construct identifier of the metadata construct to
+                be removed.
 
-            *Parameter example:*
-              ``key='auxiliarycoordinate0'``
+                *Parameter example:*
+                  ``key='auxiliarycoordinate0'``
 
-        default: optional
-            Return the value of the *default* parameter if the data
-            axes have not been set.
+            default: optional
+                Return the value of the *default* parameter if the
+                data axes have not been set.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-            The removed metadata construct.
+                The removed metadata construct.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.del_construct('auxiliarycoordinate2')
-    <{{repr}}AuxiliaryCoordinate: latitude(111, 106) degrees_north>
-    >>> f.del_construct('auxiliarycoordinate2')
-    ValueError: Can't get remove non-existent construct
-    >>> f.del_construct('auxiliarycoordinate2', default=False)
-    False
+        >>> f.del_construct('auxiliarycoordinate2')
+        <{{repr}}AuxiliaryCoordinate: latitude(111, 106) degrees_north>
+        >>> f.del_construct('auxiliarycoordinate2')
+        ValueError: Can't get remove non-existent construct
+        >>> f.del_construct('auxiliarycoordinate2', default=False)
+        False
 
-        '''
+        """
         return self.constructs._del_construct(key, default=default)
 
     @classmethod
     def fromconstructs(cls, constructs, copy=False):
-        '''Return a new domain contining the given metadata constructs.
+        """Return a new domain contining the given metadata constructs.
 
-    The new domain acts as a view to the given constructs, i.e. changes
-    to the domain, such as the addition or removal of a construct,
-    will also affect the input `Constructs` instance.
+        The new domain acts as a view to the given constructs,
+        i.e. changes to the domain, such as the addition or removal of
+        a construct, will also affect the input `Constructs` instance.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Parameters:
+        :Parameters:
 
-        constructs: `Constructs`
-            The constructs from which to create the new domain. Cell
-            method and field ancillary constructs are ignored.
+            constructs: `Constructs`
+                The constructs from which to create the new domain. Cell
+                method and field ancillary constructs are ignored.
 
-        copy: `bool`, optional
-            If True then deep copy the metadata constructs prior to
-            initialization. By default the metadata constructs are not
-            copied. Note that even when *copy* is True, the input
-            `Constructs` container is not copied.
+            copy: `bool`, optional
+                If True then deep copy the metadata constructs prior
+                to initialization. By default the metadata constructs
+                are not copied. Note that even when *copy* is True,
+                the input `Constructs` container is not copied.
 
-    :Returns:
+        :Returns:
 
-        `{{class}}`
-            The domain created from a view of the constructs.
+            `{{class}}`
+                The domain created from a view of the constructs.
 
-    **Examples:**
+        **Examples:**
 
-    >>> d = {{package}}.{{class}}.fromconstructs(f.constructs)
+        >>> f = cfdm.example_field(0)
+        >>> d = {{package}}.{{class}}.fromconstructs(f.constructs)
+        >>> d
+        <Domain: {1, 5, 8}>
+        >>> d = {{package}}.{{class}}.fromconstructs(f.constructs.copy())
 
-    >>> d = {{package}}.{{class}}.fromconstructs(f.constructs.copy())
-
-        '''
+        """
         domain = cls()
-        domain._set_component('constructs',
-                              constructs._view(ignore=('cell_method',
-                                                       'field_ancillary')),
-                              copy=copy)
+        domain._set_component(
+            "constructs",
+            constructs._view(ignore=("cell_method", "field_ancillary")),
+            copy=copy,
+        )
 
         domain.constructs._field_data_axes = None
 
         return domain
-
-# --- End: class

@@ -1,108 +1,17 @@
-import logging
 import re
 
-from ..decorators import (
-    _manage_log_level_via_verbosity,
-)
 
-logger = logging.getLogger(__name__)
+class ConstructAccess:
+    """Mixin class for manipulating constructs stored in a `Constructs`
+    object.
 
-
-class FieldDomain:
-    """Mixin class for methods common to both field and domain constructs
-
-    .. versionadded:: (cfdm) 1.9.0.0
+    .. versionadded:: (cfdm) 1.7.0
 
     """
 
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-    def _apply_masking_constructs(self):
-        """Apply masking to metadata constructs in-place,
-
-        Masking is applied to all metadata constructs with data.
-
-        See `Field.apply_masking` or `Domain.apply_masking` for details
-
-        .. versionadded:: (cfdm) 1.9.0.0
-
-        :Returns:
-
-            `None`
-
-        """
-        # Apply masking to the metadata constructs
-        for c in self.constructs.filter_by_data().values():
-            c.apply_masking(inplace=True)
-
-    def _get_data_compression_variables(self, component):
-        """TODO"""
-        out = []
-        for construct in self.constructs.filter_by_data().values():
-            data = construct.get_data(None)
-            if data is None:
-                continue
-
-            x = getattr(data, f"get_{component}")(None)
-            if x is None:
-                continue
-
-            out.append(x)
-
-        for construct in self.constructs.filter_by_data().values():
-            if not construct.has_bounds():
-                continue
-
-            data = construct.get_bounds_data(None)
-            if data is None:
-                continue
-
-            x = getattr(data, f"get_{component}")(None)
-            if x is None:
-                continue
-
-            out.append(x)
-
-        for construct in self.coordinates.values():
-            interior_ring = construct.get_interior_ring(None)
-            if interior_ring is None:
-                continue
-
-            data = interior_ring.get_data(None)
-            if data is None:
-                continue
-
-            x = getattr(data, f"get_{component}")(None)
-            if x is None:
-                continue
-
-            out.append(x)
-
-        return out
-
-    def _get_coordinate_geometry_variables(self, component):
-        """Return the list of variables for the geometry coordinates.
-
-        :Parameters:
-
-            component: `str`
-
-        :Returns:
-
-            `list'
-
-        """
-        out = []
-        for construct in self.coordinates.values():
-            x = getattr(construct, f"get_{component}")(None)
-            if x is None:
-                continue
-
-            out.append(x)
-
-        return out
-
     def _unique_construct_names(self):
         """Return unique metadata construct names.
 
@@ -127,7 +36,7 @@ class FieldDomain:
             name_to_keys = {}
 
             for key, construct in d.items():
-                name = construct.identity(default=f"key%{key}")
+                name = construct.identity(default="key%" + key)
                 name_to_keys.setdefault(name, []).append(key)
                 key_to_name[key] = name
 
@@ -136,8 +45,9 @@ class FieldDomain:
                     continue
 
                 for key in keys:
-                    x = re.findall("\d+$", key)[0]
-                    key_to_name[key] = f"{name}{{{x}}}"
+                    key_to_name[key] = "{0}{{{1}}}".format(
+                        name, re.findall(r"\d+$", key)[0]
+                    )
         # --- End: for
 
         return key_to_name
@@ -168,11 +78,12 @@ class FieldDomain:
 
         for (name, size), keys in name_to_keys.items():
             if len(keys) == 1:
-                key_to_name[keys[0]] = f"{name}({size})"
+                key_to_name[keys[0]] = "{0}({1})".format(name, size)
             else:
                 for key in keys:
-                    x = re.findall("\d+$", key)[0]
-                    key_to_name[key] = f"{name}{{{x}}}({size})"
+                    key_to_name[key] = "{0}{{{1}}}({2})".format(
+                        name, re.findall(r"\d+$", key)[0], size
+                    )
         # --- End: for
 
         return key_to_name
@@ -192,6 +103,7 @@ class FieldDomain:
 
             `Constructs`
                 The constructs and their construct keys.
+
 
         **Examples:**
 
@@ -388,44 +300,44 @@ class FieldDomain:
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def construct(self, identity=None, default=ValueError()):
-        """Return a metadata construct, or its key.
+    def construct(self, identity, default=ValueError()):
+        """Select a metadata construct by its identity.
 
         .. versionadded:: (cfdm) 1.7.0
 
         .. seealso:: `construct_key`, `constructs`,
-                     `Constructs.filter_by_identity`,
-                     `Constructs.value`
+                     `Constructs.filter_by_identity`, `Constructs.value`
 
         :Parameters:
 
             identity: optional
-                Select the construct by one of
+                Select constructs that have the given identity. If exactly
+                one construct is selected then it is returned, otherwise
+                an exception is raised.
 
-                * A metadata construct identity.
+                The identity is specified by a string
+                (e.g. ``'latitude'``, ``'long_name=time'``, etc.); or a
+                compiled regular expression
+                (e.g. ``re.compile('^atmosphere')``), for which all
+                constructs whose identities match (via `re.search`) are
+                selected.
 
-                  {{construct selection identity}}
+                Each construct has a number of identities, and is selected
+                if any of them match any of those provided. A construct's
+                identities are those returned by its `!identities`
+                method. In the following example, the construct ``c`` has
+                four identities:
 
-                * The key of a metadata construct, preceeded by the
-                  string ``key%``.
+                   >>> c.identities()
+                   ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
 
-                * `None`. This is the default, which selects the
-                  metadata construct when there is only one of them.
+                In addition, each construct also has an identity based its
+                construct key (e.g. ``'key%dimensioncoordinate2'``)
 
-                *Parameter example:*
-                  ``identity="cell_area"``
-
-                *Parameter example:*
-                  ``identity="long_name=Cell Area"``
-
-                *Parameter example:*
-                  ``identity="measure:area"``
-
-                *Parameter example:*
-                  ``identity=re.compile("^cell")``
-
-                *Parameter example:*
-                  ``identity="key%cellmeasure1"``
+                Note that in the output of a `print` call or `!dump`
+                method, a construct is always described by one of its
+                identities, and so this description may always be used as
+                an *identity* argument.
 
             default: optional
                 Return the value of the *default* parameter if the
@@ -437,16 +349,51 @@ class FieldDomain:
 
                 The selected construct.
 
+        **Examples:**
+
+        >>> print(f.constructs)
+        Constructs:
+        {'cellmethod0': {{repr}}<CellMethod: area: mean>,
+         'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: long_name=time(1) days since 2018-12-01 >,
+         'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+         'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+         'domainaxis2': <{{repr}}DomainAxis: size(1)>}
+
+        Select the construct that has the "standard_name" property of 'latitude':
+
+        >>> f.construct('latitude')
+        <{{repr}}DimensionCoordinate: latitude(5) degrees_north>
+
+        Select the cell method construct that has a "method" of 'mean':
+
+        >>> f.construct('method:mean')
+        <{{repr}}CellMethod: area: mean>
+
+        Attempt to select the construct whose "standard_name" start with the
+        letter 'l':
+
+        >>> import re
+        >>> f.construct(re.compile('^l'))
+        ValueError: Can't return 2 constructs
+        >>> f.construct(re.compile('^l'), default='no construct')
+        'no construct'
+
         """
-        if identity is None:
-            c = self.constructs
-        else:
-            c = self.constructs.filter_by_identity(identity)
+        c = self.constructs.filter_by_identity(identity)
+        if len(c) == 1:
+            return c.value()
 
-        return c.value(default=default)
+        if not c:
+            return self._default(default, "Can't return zero constructs")
 
-    def construct_key(self, identity=None, default=ValueError()):
-        """Return the key of a metadata construct.
+        return self._default(
+            default, "Can't return {0} constructs".format(len(c))
+        )
+
+    def construct_key(self, identity, default=ValueError()):
+        """Select the key of a metadata construct by its identity.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -456,32 +403,33 @@ class FieldDomain:
         :Parameters:
 
             identity: optional
-                Select the construct by one of
+                Select constructs that have the given identity. If exactly
+                one construct is selected then it is returned, otherwise
+                an exception is raised.
 
-                * A metadata construct identity.
+                The identity is specified by a string
+                (e.g. ``'latitude'``, ``'long_name=time'``, etc.); or a
+                compiled regular expression
+                (e.g. ``re.compile('^atmosphere')``), for which all
+                constructs whose identities match (via `re.search`) are
+                selected.
 
-                  {{construct selection identity}}
+                Each construct has a number of identities, and is selected
+                if any of them match any of those provided. A construct's
+                identities are those returned by its `!identities`
+                method. In the following example, the construct ``c`` has
+                four identities:
 
-                * The key of a metadata construct, preceeded by
-                  ``key%``.
+                   >>> c.identities()
+                   ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
 
-                * `None`. This is the default, which selects the metadata
-                  construct when there is only one of them.
+                In addition, each construct also has an identity based its
+                construct key (e.g. ``'key%dimensioncoordinate2'``)
 
-                *Parameter example:*
-                  ``identity="cell_area"``
-
-                *Parameter example:*
-                  ``identity="long_name=Cell Area"``
-
-                *Parameter example:*
-                  ``identity="key%cellmeasure1"``
-
-                *Parameter example:*
-                  ``identity="measure:area"``
-
-                *Parameter example:*
-                  ``identity=re.compile("^lat")``
+                Note that in the output of a `print` call or `!dump`
+                method, a construct is always described by one of its
+                identities, and so this description may always be used as
+                an *identity* argument.
 
             default: optional
                 Return the value of the *default* parameter if the
@@ -527,49 +475,63 @@ class FieldDomain:
         'no construct'
 
         """
-        if identity is None:
-            c = self.constructs
-        else:
-            c = self.constructs.filter_by_identity(identity)
+        c = self.constructs.filter_by_identity(identity)
+        if len(c) == 1:
+            return c.key()
 
-        return c.key(default=default)
+        if not c:
+            return self._default(
+                default, "Can't return the key of zero constructs"
+            )
 
-    def domain_axis_key(self, identity=None, default=ValueError()):
+        return self._default(
+            default, "Can't return the keys of {0} constructs".format(len(c))
+        )
+
+    def domain_axis_key(self, identity, default=ValueError()):
         """Return the key of the domain axis construct that is spanned by 1-d
         coordinate constructs.
 
         :Parameters:
 
-            identity: optional
-                Select the domain axis construct by one of:
+            identity:
+                Select the 1-d coordinate constructs that have the given
+                identity.
 
-                * An identity or key of a 1-d dimension or auxiliary
-                  coordinate construct that whose data spans the
-                  domain axis construct.
+                An identity is specified by a string (e.g. ``'latitude'``,
+                ``'long_name=time'``, etc.); or a compiled regular
+                expression (e.g. ``re.compile('^atmosphere')``), for which
+                all constructs whose identities match (via `re.search`)
+                are selected.
 
-                  {{construct selection identity}}
+                Each coordinate construct has a number of identities, and
+                is selected if any of them match any of those provided. A
+                construct's identities are those returned by its
+                `!identities` method. In the following example, the
+                construct ``x`` has four identities:
 
-                * `None`. This is the default, which selects the
-                  dimension or 1-d auxiliary coordinate construct when
-                  there is only one of them.
+                   >>> x.identities()
+                   ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
 
-                *Parameter example:*
-                  ``identity='time'``
+                In addition, each construct also has an identity based its
+                construct key (e.g. ``'key%dimensioncoordinate2'``)
 
-                *Parameter example:*
-                  ``identity='ncvar%y'``
+                Note that in the output of a `print` call or `!dump`
+                method, a construct is always described by one of its
+                identities, and so this description may always be used as
+                an *identity* argument.
 
             default: optional
-                Return the value of the *default* parameter if a
-                domain axis construct can not be found.
+                Return the value of the *default* parameter if a domain
+                axis construct can not be found.
 
                 {{default Exception}}
 
         :Returns:
 
             `str`
-                The key of the domain axis construct that is spanned
-                by the data of the selected 1-d coordinate constructs.
+                The key of the domain axis construct that is spanned by
+                the data of the selected 1-d coordinate constructs.
 
         **Examples:**
 
@@ -601,7 +563,9 @@ class FieldDomain:
         if not len(c):
             return self._default(
                 default,
-                f"No 1-d coordinate constructs have identity {identity!r}",
+                "No 1-d coordinate constructs have identity {!r}".format(
+                    identity
+                ),
             )
 
         data_axes = constructs.data_axes()
@@ -624,168 +588,18 @@ class FieldDomain:
             return self._default(
                 default,
                 "1-d coordinate constructs selected with identity "
-                f"{coord!r} have not been assigned a domain axis constructs",
+                "{!r} have not been assigned a domain axis constructs".format(
+                    coord
+                ),
             )
 
         if len(keys) > 1:
             return self._default(
                 default,
                 "Multiple 1-d coordinate constructs selected "
-                f"with identity {identity!r} span multiple domain axes: "
-                f"{keys!r}",
+                "with identity {!r} span multiple domain axes: {!r}".format(
+                    identity, keys
+                ),
             )
 
         return keys.pop()
-
-    @_manage_log_level_via_verbosity
-    def equals(
-        self,
-        other,
-        rtol=None,
-        atol=None,
-        verbose=None,
-        ignore_data_type=False,
-        ignore_fill_value=False,
-        ignore_properties=(),
-        ignore_compression=True,
-        ignore_type=False,
-    ):
-        """Whether two constructs are the same.
-
-        Equality is strict by default. This means that for two
-        constructs to be considered equal they must have corresponding
-        metadata constructs and for each pair of constructs:
-
-        * the same descriptive properties must be present, with the
-          same values and data types, and vector-valued properties
-          must also have same the size and be element-wise equal (see
-          the *ignore_properties* and *ignore_data_type* parameters),
-          and
-
-        ..
-
-        * if there are data arrays then they must have same shape and
-          data type, the same missing data mask, and be element-wise
-          equal (see the *ignore_data_type* parameter).
-
-        {{equals tolerance}}
-
-        {{equals compression}}
-
-        Any type of object may be tested but, in general, equality is
-        only possible with another field construct, or a subclass of
-        one. See the *ignore_type* parameter.
-
-        {{equals netCDF}}
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        :Parameters:
-
-            other:
-                The object to compare for equality.
-
-            {{atol: number, optional}}
-
-            {{rtol: number, optional}}
-
-            {{ignore_fill_value: `bool`, optional}}
-
-            ignore_properties: sequence of `str`, optional
-                The names of properties of the construct (not the
-                metadata constructs) to omit from the comparison. Note
-                that the ``Conventions`` property is always omitted.
-
-            {{ignore_data_type: `bool`, optional}}
-
-            {{ignore_compression: `bool`, optional}}
-
-            {{ignore_type: `bool`, optional}}
-
-            {{verbose: `int` or `str` or `None`, optional}}
-
-        :Returns:
-
-            `bool`
-                Whether the two constructs are equal.
-
-        **Examples:**
-
-        >>> f.equals(f)
-        True
-        >>> f.equals(f.copy())
-        True
-        >>> f.equals(f[...])
-        True
-        >>> f.equals('a string, not a construct')
-        False
-
-        >>> g = f.copy()
-        >>> g.set_property('foo', 'bar')
-        >>> f.equals(g)
-        False
-        >>> f.equals(g, verbose=3)
-        {{class}}: Non-common property name: foo
-        {{class}}: Different properties
-        False
-
-        """
-        # Check the properties and data
-        ignore_properties = tuple(ignore_properties) + ("Conventions",)
-
-        if not super().equals(
-            other,
-            rtol=rtol,
-            atol=atol,
-            verbose=verbose,
-            ignore_data_type=ignore_data_type,
-            ignore_fill_value=ignore_fill_value,
-            ignore_properties=ignore_properties,
-            ignore_compression=ignore_compression,
-            ignore_type=ignore_type,
-        ):
-            return False
-
-        # Check the constructs
-        if not self._equals(
-            self.constructs,
-            other.constructs,
-            rtol=rtol,
-            atol=atol,
-            verbose=verbose,
-            ignore_data_type=ignore_data_type,
-            ignore_fill_value=ignore_fill_value,
-            ignore_compression=ignore_compression,
-            _ignore_type=False,
-        ):
-            logger.info(
-                f"{self.__class__.__name__}: Different metadata constructs"
-            )
-            return False
-
-        return True
-
-    def has_geometry(self):
-        """Return whether or not any coordinates have cell geometries.
-
-        .. versionadded:: (cfdm) 1.8.0
-
-        :Returns:
-
-            `bool`
-                True if there are geometries, otherwise False.
-
-        **Examples:**
-
-        >>> f = {{package}}.{{class}}()
-        >>> f.has_geometry()
-        False
-
-        """
-        for c in self.constructs.filter_by_type(
-            "auxiliary_coordinate", "dimension_coordinate", "domain_ancillary"
-        ).values():
-            if c.has_geometry():
-                return True
-
-        return False

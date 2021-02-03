@@ -1,18 +1,15 @@
 import os
 import platform
-import re
 import sys
 
 import netCDF4
 import numpy
 
-from . import (__version__,
-               __cf_version__,
-               __file__)
+from . import __version__, __cf_version__, __file__
 
 
 def environment(display=True, paths=True):
-    '''Return the names, versions and paths of all dependencies.
+    """Return the names, versions and paths of all dependencies.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -52,30 +49,32 @@ def environment(display=True, paths=True):
     numpy: 1.16.2
     cfdm.core: 1.8.0
 
-    '''
+    """
     dependency_version_paths_mapping = {
-        'Platform': (platform.platform(), ''),
-        'HDF5 library': (netCDF4.__hdf5libversion__, ''),
-        'netcdf library': (netCDF4.__netcdf4libversion__, ''),
-        'Python': (platform.python_version(), sys.executable),
-        'netCDF4': (netCDF4.__version__, os.path.abspath(netCDF4.__file__)),
-        'numpy': (numpy.__version__, os.path.abspath(numpy.__file__)),
-        'cfdm.core': (__version__, os.path.abspath(__file__)),
+        "Platform": (platform.platform(), ""),
+        "HDF5 library": (netCDF4.__hdf5libversion__, ""),
+        "netcdf library": (netCDF4.__netcdf4libversion__, ""),
+        "Python": (platform.python_version(), sys.executable),
+        "netCDF4": (netCDF4.__version__, os.path.abspath(netCDF4.__file__)),
+        "numpy": (numpy.__version__, os.path.abspath(numpy.__file__)),
+        "cfdm.core": (__version__, os.path.abspath(__file__)),
     }
-    string = '{0}: {1!s}'
+    string = "{0}: {1!s}"
     if paths:  # include path information, else exclude, when unpacking tuple
-        string += ' {2!s}'
-    out = [string.format(dep, *info)
-           for dep, info in dependency_version_paths_mapping.items()]
+        string += " {2!s}"
+    out = [
+        string.format(dep, *info)
+        for dep, info in dependency_version_paths_mapping.items()
+    ]
 
     if display:
-        print('\n'.join(out))  # pragma: no cover
+        print("\n".join(out))  # pragma: no cover
     else:
         return out
 
 
 def CF():
-    '''The version of the CF conventions.
+    """The version of the CF conventions.
 
     This indicates which version of the CF conventions are represented
     by this release of the cfdm.core package, and therefore the
@@ -94,5 +93,5 @@ def CF():
     >>> cfdm.core.CF()
     '1.8'
 
-    '''
+    """
     return __cf_version__
