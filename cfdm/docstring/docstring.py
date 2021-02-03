@@ -205,19 +205,6 @@ _docstring_substitution_definitions = {
                 ``3``/``'DETAIL'``) for increasing verbosity, the more
                 description that is printed to convey information
                 about the operation.""",
-    # {{construct selection identity}}
-    "{{construct selection identity}}": """A construct has a number of string-valued identities
-                defined by its `!identities` method, and is selected
-                if any of them match the *identity*
-                parameter. *identity* may be a string that equals one
-                of a construct's identities; or a `re.Pattern` object
-                that matches one of a construct's identities via
-                `re.search`.
-
-                Note that in the output of a `dump` method or `print`
-                call, a metadata construct is always described by one
-                of its identities, and so this description may always
-                be used as an *identity* value.""",
     # {{domain axis selection identity}}
     "{{domain axis selection identity}}": """A domain axis construct has a number of string-valued
                 identities (defined by its `!identities` method) and
@@ -238,4 +225,21 @@ _docstring_substitution_definitions = {
                 description is printed and `None` is
                 returned. Otherwise the description is returned as a
                 string.""",
+    # ----------------------------------------------------------------
+    # Method description susbstitutions (3.5 levels of indentation)
+    # ----------------------------------------------------------------
+    # {{construct selection identity}}
+    "{{construct selection identity}}": """A construct has a number of string-valued identities
+                  defined by its `!identities` method, and is selected
+                  if any of them match the *identity*
+                  parameter. *identity* may be a string that equals
+                  one of a construct's identities; or a `re.Pattern`
+                  object that matches one of a construct's identities
+                  via `re.search`.
+
+                  Note that in the output of a `dump` method or
+                  `print` call, a metadata construct is always
+                  described by one of its identities, and so this
+                  description may always be used as an *identity*
+                  value.""",
 }

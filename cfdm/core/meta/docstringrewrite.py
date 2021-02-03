@@ -396,7 +396,7 @@ class DocstringRewriteMeta(type):
                      `_docstring_method_exclusions`,
                      `_docstring_substitutions`,
                      `__docstring_substitutions__`,
-                     `__docstring_package_depth__`
+                     `__docstring_package_depth__`,
                      `__docstring_method_exclusions__`
 
         :Returns:
@@ -445,7 +445,7 @@ class DocstringRewriteMeta(type):
                      `_docstring_package_depth`,
                      `_docstring_method_exclusions`,
                      `__docstring_substitutions__`,
-                     `__docstring_package_depth__`
+                     `__docstring_package_depth__`,
                      `__docstring_method_exclusions__`
 
         :Parameters:

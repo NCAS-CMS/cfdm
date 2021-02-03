@@ -50,7 +50,7 @@ class NetCDF:
 class _NetCDFGroupsMixin:
     """Mixin class for accessing netCDF(4) hierarchical groups.
 
-    .. versionadded:: (cfdm) 1.8.6
+    .. versionadded:: (cfdm) 1.8.6.0
     """
 
     def _nc_groups(self, nc_get):
@@ -62,7 +62,7 @@ class _NetCDFGroupsMixin:
         strings. If the name is not set, or contains no ``/`` characters
         then an empty sequence is returned, signifying the root group.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `_nc_clear_groups`, `_nc_set_groups`
 
@@ -93,7 +93,7 @@ class _NetCDFGroupsMixin:
         strings. If the name is not set, or contains no ``/`` characters
         then an empty sequence is returned, signifying the root group.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `_nc_clear_groups`, `_nc_groups`
 
@@ -153,7 +153,7 @@ class _NetCDFGroupsMixin:
         strings. If the name is not set, or contains no ``/`` characters
         then an empty sequence is returned, signifying the root group.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `_nc_groups`, `_nc_set_groups`
 
@@ -206,9 +206,10 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if the netCDF
-                dimension name has not been set. If set to an `Exception`
-                instance then it will be raised instead.
+                Return the value of the *default* parameter if the
+                netCDF dimension name has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -253,9 +254,10 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if the netCDF
-                dimension name has not been set. If set to an `Exception`
-                instance then it will be raised instead.
+                Return the value of the *default* parameter if the
+                netCDF dimension name has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -393,7 +395,7 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
         strings. If the name is not set, or contains no ``/`` characters
         then an empty sequence is returned, signifying the root group.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_clear_dimension_groups`,
                      `nc_set_dimension_groups`
@@ -442,9 +444,10 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
         the netCDF dimension name, with `nc_set_dimension`, with the group
         structure delimited by ``/`` characters.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
-        .. seealso:: `nc_clear_dimension_groups`, `nc_dimension_groups`
+        .. seealso:: `nc_clear_dimension_groups`,
+                     `nc_dimension_groups`
 
         :Parameters:
 
@@ -500,7 +503,7 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
         set the netCDF dimension name, with `nc_set_dimension`, with no
         ``/`` characters.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_dimension_groups`, `nc_set_dimension_groups`
 
@@ -558,9 +561,10 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if the netCDF
-                variable name has not been set. If set to an `Exception`
-                instance then it will be raised instead.
+                Return the value of the *default* parameter if the
+                netCDF variable name has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -605,9 +609,10 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if the netCDF
-                variable name has not been set. If set to an `Exception`
-                instance then it will be raised instead.
+                Return the value of the *default* parameter if the
+                netCDF variable name has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -746,7 +751,7 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
         strings. If the name is not set, or contains no ``/`` characters
         then an empty sequence is returned, signifying the root group.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_clear_variable_groups`,
                      `nc_set_variable_groups`
@@ -795,7 +800,7 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
         the netCDF variable name, with `nc_set_variable`, with the group
         structure delimited by ``/`` characters.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_clear_variable_groups`, `nc_variable_groups`
 
@@ -853,7 +858,7 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
         set the netCDF variable name, with `nc_set_variable`, with no
         ``/`` characters.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_variable_groups`, `nc_set_variable_groups`
 
@@ -911,9 +916,10 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if the netCDF
-                sample dimension name has not been set. If set to an
-                `Exception` instance then it will be raised instead.
+                Return the value of the *default* parameter if the
+                netCDF sample dimension name has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -958,9 +964,10 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if the netCDF
-                sample dimension name has not been set. If set to an
-                `Exception` instance then it will be raised instead.
+                Return the value of the *default* parameter if the
+                netCDF sample dimension name has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -1098,7 +1105,7 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
         strings. If the name is not set, or contains no ``/`` characters
         then an empty sequence is returned, signifying the root group.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_clear_sample_dimension_groups`,
                      `nc_set_sample_dimension_groups`
@@ -1147,7 +1154,7 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
         the netCDF dimension name, with `nc_set_sample_dimension`, with
         the group structure delimited by ``/`` characters.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_clear_sample_dimension_groups`,
                      `nc_sample_dimension_groups`
@@ -1206,7 +1213,7 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
         set the netCDF dimension name, with `nc_set_sample_dimension`,
         with no ``/`` characters.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_sample_dimension_groups`,
                      `nc_set_sample_dimension_groups`
@@ -1481,7 +1488,7 @@ class NetCDFGlobalAttributes(NetCDF):
 class NetCDFGroupAttributes(NetCDF):
     """Mixin class for accessing netCDF group attributes.
 
-    .. versionadded:: (cfdm) 1.8.6
+    .. versionadded:: (cfdm) 1.8.6.0
 
     """
 
@@ -1489,7 +1496,7 @@ class NetCDFGroupAttributes(NetCDF):
         """Return the selection of properties to be written as netCDF group
         attributes.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `write`, `nc_clear_group_attributes`,
                      `nc_set_group_attribute`, `nc_set_group_attributes`
@@ -1548,7 +1555,7 @@ class NetCDFGroupAttributes(NetCDF):
         """Remove the selection of properties to be written as netCDF group
         attributes.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `write`, `nc_group_attributes`,
                      `nc_set_group_attribute`, `nc_set_group_attributes`
@@ -1589,7 +1596,7 @@ class NetCDFGroupAttributes(NetCDF):
     def nc_set_group_attribute(self, prop, value=None):
         """Select a property to be written as a netCDF group attribute.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `write`, `nc_group_attributes`,
                      `nc_clear_group_attributes`,
@@ -1643,7 +1650,7 @@ class NetCDFGroupAttributes(NetCDF):
     def nc_set_group_attributes(self, properties, copy=True):
         """Set properties to be written as netCDF group attributes.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `write`, `nc_clear_group_attributes`,
                      `nc_group_attributes`, `nc_set_group_attribute`
@@ -1921,9 +1928,10 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if the netCDF
-                dimension name has not been set. If set to an `Exception`
-                instance then it will be raised instead.
+                Return the value of the *default* parameter if the
+                netCDF dimension name has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -1969,9 +1977,10 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if the netCDF
-                dimension name has not been set. If set to an `Exception`
-                instance then it will be raised instead.
+                Return the value of the *default* parameter if the
+                netCDF dimension name has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -2109,10 +2118,10 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
         strings. If the name is not set, or contains no ``/`` characters
         then an empty sequence is returned, signifying the root group.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_clear_geometry_variable_groups`,
-        `nc_set_geometry_variable_groups`
+                     `nc_set_geometry_variable_groups`
 
         :Returns:
 
@@ -2158,7 +2167,7 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
         the netCDF variable name, with `nc_set_geometry_variable`, with
         the group structure delimited by ``/`` characters.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_clear_geometry_variable_groups`,
                      `nc_geometry_variable_groups`
@@ -2217,7 +2226,7 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
         set the netCDF variable name, with `nc_set_geometry_variable`,
         with no ``/`` characters.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_geometry_variable_groups`,
                      `nc_set_geometry_variable_groups`
@@ -2268,15 +2277,16 @@ class NetCDFHDF5(NetCDF):
     def nc_hdf5_chunksizes(self):
         """Return the HDF5 chunksizes for the data.
 
-        .. note:: Chunksizes are cleared from the output of methods that
-                  change the data shape.
+        .. note:: Chunksizes are cleared from the output of methods
+                  that change the data shape.
 
-        .. note:: Chunksizes are ignored for netCDF3 files that do not use
-                  HDF5.
+        .. note:: Chunksizes are ignored for netCDF3 files that do not
+                  use HDF5.
 
         .. versionadded:: (cfdm) 1.7.2
 
-        .. seealso:: `nc_clear_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`
+        .. seealso:: `nc_clear_hdf5_chunksizes`,
+                     `nc_set_hdf5_chunksizes`
 
         :Returns:
 

@@ -328,7 +328,6 @@ class Properties(Container):
                 Store the properties from the dictionary supplied.
 
                 *Parameter example:*
-
                   ``properties={'standard_name': 'altitude', 'foo': 'bar'}``
 
             copy: `bool`, optional
