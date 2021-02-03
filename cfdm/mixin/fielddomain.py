@@ -9,43 +9,42 @@ logger = logging.getLogger(__name__)
 
 
 class FieldDomain:
-    '''Mixin class for methods common to both field and domain constructs
+    """Mixin class for methods common to both field and domain constructs
 
     .. versionadded:: (cfdm) 1.9.0.0
 
-    '''
+    """
+
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
     def _apply_masking_constructs(self):
-        '''Apply masking to metadata constructs in-place,
+        """Apply masking to metadata constructs in-place,
 
-    Masking is applied to all metadata constructs with data.
+        Masking is applied to all metadata constructs with data.
 
-    See `Field.apply_masking` or `Domain.apply_masking` for details
+        See `Field.apply_masking` or `Domain.apply_masking` for details
 
-    .. versionadded:: (cfdm) 1.9.0.0
+        .. versionadded:: (cfdm) 1.9.0.0
 
-    :Returns:
+        :Returns:
 
-        `None`
+            `None`
 
-        '''
+        """
         # Apply masking to the metadata constructs
         for c in self.constructs.filter_by_data().values():
             c.apply_masking(inplace=True)
 
     def _get_data_compression_variables(self, component):
-        '''TODO
-
-        '''
+        """TODO"""
         out = []
         for construct in self.constructs.filter_by_data().values():
             data = construct.get_data(None)
             if data is None:
                 continue
 
-            x = getattr(data, 'get_' + component)(None)
+            x = getattr(data, f"get_{component}")(None)
             if x is None:
                 continue
 
@@ -59,7 +58,7 @@ class FieldDomain:
             if data is None:
                 continue
 
-            x = getattr(data, 'get_' + component)(None)
+            x = getattr(data, f"get_{component}")(None)
             if x is None:
                 continue
 
@@ -74,7 +73,7 @@ class FieldDomain:
             if data is None:
                 continue
 
-            x = getattr(data, 'get_' + component)(None)
+            x = getattr(data, f"get_{component}")(None)
             if x is None:
                 continue
 
@@ -83,20 +82,20 @@ class FieldDomain:
         return out
 
     def _get_coordinate_geometry_variables(self, component):
-        '''Return the list of variables for the geometry coordinates.
+        """Return the list of variables for the geometry coordinates.
 
-    :Parameters:
+        :Parameters:
 
-        component: `str`
+            component: `str`
 
-    :Returns:
+        :Returns:
 
-        `list'
+            `list'
 
-        '''
+        """
         out = []
         for construct in self.coordinates.values():
-            x = getattr(construct, 'get_' + component)(None)
+            x = getattr(construct, f"get_{component}")(None)
             if x is None:
                 continue
 
@@ -105,22 +104,22 @@ class FieldDomain:
         return out
 
     def _unique_construct_names(self):
-        '''Return unique metadata construct names.
+        """Return unique metadata construct names.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    **Examples:**
+        **Examples:**
 
-    >>> f._unique_construct_names()
-    {'cellmethod0': 'method:mean',
-     'dimensioncoordinate0': 'latitude',
-     'dimensioncoordinate1': 'longitude',
-     'dimensioncoordinate2': 'time',
-     'domainaxis0': 'ncdim%lat',
-     'domainaxis1': 'ncdim%lon',
-     'domainaxis2': 'key%domainaxis2'}
+        >>> f._unique_construct_names()
+        {'cellmethod0': 'method:mean',
+         'dimensioncoordinate0': 'latitude',
+         'dimensioncoordinate1': 'longitude',
+         'dimensioncoordinate2': 'time',
+         'domainaxis0': 'ncdim%lat',
+         'domainaxis1': 'ncdim%lon',
+         'domainaxis2': 'key%domainaxis2'}
 
-        '''
+        """
         key_to_name = {}
         name_to_keys = {}
 
@@ -128,7 +127,7 @@ class FieldDomain:
             name_to_keys = {}
 
             for key, construct in d.items():
-                name = construct.identity(default='key%'+key)
+                name = construct.identity(default=f"key%{key}")
                 name_to_keys.setdefault(name, []).append(key)
                 key_to_name[key] = name
 
@@ -137,31 +136,33 @@ class FieldDomain:
                     continue
 
                 for key in keys:
-                    x = re.findall('\d+$', key)[0]
+                    x = re.findall("\d+$", key)[0]
                     key_to_name[key] = f"{name}{{{x}}}"
         # --- End: for
 
         return key_to_name
 
     def _unique_domain_axis_identities(self):
-        '''Return unique domain axis construct names.
+        """Return unique domain axis construct names.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    **Examples:**
+        **Examples:**
 
-    >>> f._unique_domain_axis_identities()
-    {'domainaxis0': 'latitude(5)',
-     'domainaxis1': 'longitude(8)',
-     'domainaxis2': 'time(1)'}
+        >>> f._unique_domain_axis_identities()
+        {'domainaxis0': 'latitude(5)',
+         'domainaxis1': 'longitude(8)',
+         'domainaxis2': 'time(1)'}
 
-        '''
+        """
         key_to_name = {}
         name_to_keys = {}
 
         for key, value in self.domain_axes.items():
-            name_size = (self.constructs.domain_axis_identity(key),
-                         value.get_size(''))
+            name_size = (
+                self.constructs.domain_axis_identity(key),
+                value.get_size(""),
+            )
             name_to_keys.setdefault(name_size, []).append(key)
             key_to_name[key] = name_size
 
@@ -170,7 +171,7 @@ class FieldDomain:
                 key_to_name[keys[0]] = f"{name}({size})"
             else:
                 for key in keys:
-                    x = re.findall('\d+$', key)[0]
+                    x = re.findall("\d+$", key)[0]
                     key_to_name[key] = f"{name}{{{x}}}({size})"
         # --- End: for
 
@@ -181,291 +182,262 @@ class FieldDomain:
     # ----------------------------------------------------------------
     @property
     def coordinate_references(self):
-        '''Return coordinate reference constructs.
+        """Return coordinate reference constructs.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `constructs`
+        .. seealso:: `constructs`
 
-    :Returns:
+        :Returns:
 
-        `Constructs`
-            The constructs and their construct keys.
+            `Constructs`
+                The constructs and their construct keys.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.coordinate_references
-    Constructs:
-    {}
+        >>> f.coordinate_references
+        Constructs:
+        {}
 
-    >>> f.coordinate_references
-    Constructs:
-    {'coordinatereference0': <{{repr}}CoordinateReference: atmosphere_hybrid_height_coordinate>,
-     'coordinatereference1': <{{repr}}CoordinateReference: rotated_latitude_longitude>}
+        >>> f.coordinate_references
+        Constructs:
+        {'coordinatereference0': <{{repr}}CoordinateReference: atmosphere_hybrid_height_coordinate>,
+         'coordinatereference1': <{{repr}}CoordinateReference: rotated_latitude_longitude>}
 
-        '''
-        return self.constructs.filter_by_type('coordinate_reference')
+        """
+        return self.constructs.filter_by_type("coordinate_reference")
 
     @property
     def domain_axes(self):
-        '''Return domain axis constructs.
+        """Return domain axis constructs.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `constructs`
+        .. seealso:: `constructs`
 
-    :Returns:
+        :Returns:
 
-        `Constructs`
-            The domain axis constructs and their construct keys.
+            `Constructs`
+                The domain axis constructs and their construct keys.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.domain_axes
-    Constructs:
-    {}
+        >>> f.domain_axes
+        Constructs:
+        {}
 
-    >>> f.domain_axes
-    Constructs:
-    {'domainaxis0': <{{repr}}DomainAxis: size(1)>,
-     'domainaxis1': <{{repr}}DomainAxis: size(10)>,
-     'domainaxis2': <{{repr}}DomainAxis: size(9)>,
-     'domainaxis3': <{{repr}}DomainAxis: size(1)>}
+        >>> f.domain_axes
+        Constructs:
+        {'domainaxis0': <{{repr}}DomainAxis: size(1)>,
+         'domainaxis1': <{{repr}}DomainAxis: size(10)>,
+         'domainaxis2': <{{repr}}DomainAxis: size(9)>,
+         'domainaxis3': <{{repr}}DomainAxis: size(1)>}
 
-        '''
-        return self.constructs.filter_by_type('domain_axis')
+        """
+        return self.constructs.filter_by_type("domain_axis")
 
     @property
     def auxiliary_coordinates(self):
-        '''Return auxiliary coordinate constructs.
+        """Return auxiliary coordinate constructs.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `constructs`
+        .. seealso:: `constructs`
 
-    :Returns:
+        :Returns:
 
-        `Constructs`
-            The auxiliary coordinate constructs and their construct
-            keys.
+            `Constructs`
+                The auxiliary coordinate constructs and their construct
+                keys.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.auxiliary_coordinates
-    Constructs:
-    {}
+        >>> f.auxiliary_coordinates
+        Constructs:
+        {}
 
-    >>> f.auxiliary_coordinates
-    Constructs:
-    {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
-     'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
-     'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
+        >>> f.auxiliary_coordinates
+        Constructs:
+        {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+         'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+         'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
 
-        '''
-        return self.constructs.filter_by_type('auxiliary_coordinate')
+        """
+        return self.constructs.filter_by_type("auxiliary_coordinate")
 
     @property
     def dimension_coordinates(self):
-        '''Return dimension coordinate constructs.
+        """Return dimension coordinate constructs.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `constructs`
+        .. seealso:: `constructs`
 
-    :Returns:
+        :Returns:
 
-        `Constructs`
-            The dimension coordinate constructs and their construct
-            keys.
+            `Constructs`
+                The dimension coordinate constructs and their construct
+                keys.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.dimension_coordinates
-    Constructs:
-    {}
+        >>> f.dimension_coordinates
+        Constructs:
+        {}
 
-    >>> f.dimension_coordinates
-    Constructs:
-    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
-     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
-     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
-     'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
+        >>> f.dimension_coordinates
+        Constructs:
+        {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
+         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
+         'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
 
-        '''
-        return self.constructs.filter_by_type('dimension_coordinate')
+        """
+        return self.constructs.filter_by_type("dimension_coordinate")
 
     @property
     def coordinates(self):
-        '''Return dimension and auxiliary coordinate constructs.
+        """Return dimension and auxiliary coordinate constructs.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `auxiliary_coordinates`, `constructs`,
-                 `dimension_coordinates`
+        .. seealso:: `auxiliary_coordinates`, `constructs`,
+                     `dimension_coordinates`
 
-    :Returns:
+        :Returns:
 
-        `Constructs`
-            The auxiliary coordinate and dimension coordinate
-            constructs and their construct keys.
+            `Constructs`
+                The auxiliary coordinate and dimension coordinate
+                constructs and their construct keys.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.coordinates
-    Constructs:
-    {}
+        >>> f.coordinates
+        Constructs:
+        {}
 
-    >>> f.coordinates
-    Constructs:
-    {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
-     'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
-     'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
-     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
-     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
-     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
-     'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
+        >>> f.coordinates
+        Constructs:
+        {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+         'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+         'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
+         'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
+         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
+         'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
 
-        '''
+        """
         out = self.dimension_coordinates
         out._update(self.auxiliary_coordinates)
         return out
 
     @property
     def domain_ancillaries(self):
-        '''Return domain ancillary constructs.
+        """Return domain ancillary constructs.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `constructs`
+        .. seealso:: `constructs`
 
-    :Returns:
+        :Returns:
 
-        `Constructs`
-            The domain ancillary constructs and their construct keys.
+            `Constructs`
+                The domain ancillary constructs and their construct keys.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.domain_ancillaries
-    Constructs:
-    {}
+        >>> f.domain_ancillaries
+        Constructs:
+        {}
 
-    >>> f.domain_ancillaries
-    Constructs:
-    {'domainancillary0': <{{repr}}DomainAncillary: ncvar%a(1) m>,
-     'domainancillary1': <{{repr}}DomainAncillary: ncvar%b(1) >,
-     'domainancillary2': <{{repr}}DomainAncillary: surface_altitude(10, 9) m>}
+        >>> f.domain_ancillaries
+        Constructs:
+        {'domainancillary0': <{{repr}}DomainAncillary: ncvar%a(1) m>,
+         'domainancillary1': <{{repr}}DomainAncillary: ncvar%b(1) >,
+         'domainancillary2': <{{repr}}DomainAncillary: surface_altitude(10, 9) m>}
 
-        '''
-        return self.constructs.filter_by_type('domain_ancillary')
+        """
+        return self.constructs.filter_by_type("domain_ancillary")
 
     @property
     def cell_measures(self):
-        '''Return cell measure constructs.
+        """Return cell measure constructs.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `constructs`
+        .. seealso:: `constructs`
 
-    :Returns:
+        :Returns:
 
-        `Constructs`
-            The cell measure constructs and their construct keys.
+            `Constructs`
+                The cell measure constructs and their construct keys.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.cell_measures
-    Constructs:
-    {}
+        >>> f.cell_measures
+        Constructs:
+        {}
 
-    >>> f.cell_measures
-    Constructs:
-    {'cellmeasure0': <{{repr}}CellMeasure: measure%area(9, 10) km2>}
+        >>> f.cell_measures
+        Constructs:
+        {'cellmeasure0': <{{repr}}CellMeasure: measure%area(9, 10) km2>}
 
-        '''
-        return self.constructs.filter_by_type('cell_measure')
+        """
+        return self.constructs.filter_by_type("cell_measure")
 
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
     def construct(self, identity=None, default=ValueError()):
-        '''Return a metadata construct, or its key.
+        """Return a metadata construct, or its key.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `construct_key`, `constructs`,
-                 `Constructs.filter_by_identity`, `Constructs.value`
+        .. seealso:: `construct_key`, `constructs`,
+                     `Constructs.filter_by_identity`,
+                     `Constructs.value`
 
-    :Parameters:
+        :Parameters:
 
-        identity: optional
-            Select the construct by one of
+            identity: optional
+                Select the construct by one of
 
-            * A metadata construct identity.
+                * A metadata construct identity.
 
-              {{construct selection identity}}
+                  {{construct selection identity}}
 
-            * The key of a metadata construct
+                * The key of a metadata construct, preceeded by the
+                  string ``key%``.
 
-            * `None`. This is the default, which selects the metadata
-              construct when there is only one of them.
+                * `None`. This is the default, which selects the
+                  metadata construct when there is only one of them.
 
-            *Parameter example:*
-              ``identity='latitude'``
+                *Parameter example:*
+                  ``identity="cell_area"``
 
-            *Parameter example:*
-              ``identity='long_name=Cell Area'``
+                *Parameter example:*
+                  ``identity="long_name=Cell Area"``
 
-            *Parameter example:*
-              ``identity='cellmeasure1'``
+                *Parameter example:*
+                  ``identity="measure:area"``
 
-            *Parameter example:*
-              ``identity='measure:area'``
+                *Parameter example:*
+                  ``identity=re.compile("^cell")``
 
-            *Parameter example:*
-              ``identity=re.compile('^lat')``
+                *Parameter example:*
+                  ``identity="key%cellmeasure1"``
 
-        default: optional
-            Return the value of the *default* parameter if the
-            property has not been set.
+            default: optional
+                Return the value of the *default* parameter if the
+                property has not been set.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-            The selected construct.
+                The selected construct.
 
-    **Examples:**
-
-    >>> print(f.constructs)
-    Constructs:
-    {'cellmethod0': {{repr}}<CellMethod: area: mean>,
-     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: long_name=time(1) days since 2018-12-01 >,
-     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
-     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
-     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
-
-    Select the construct that has the "standard_name" property of 'latitude':
-
-    >>> f.construct('latitude')
-    <{{repr}}DimensionCoordinate: latitude(5) degrees_north>
-
-    Select the cell method construct that has a "method" of 'mean':
-
-    >>> f.construct('method:mean')
-    <{{repr}}CellMethod: area: mean>
-
-    Attempt to select the construct whose "standard_name" start with the
-    letter 'l':
-
-    >>> import re
-    >>> f.construct(re.compile('^l'))
-    ValueError: Can't return 2 constructs
-    >>> f.construct(re.compile('^l'), default='no construct')
-    'no construct'
-
-        '''
+        """
         if identity is None:
             c = self.constructs
         else:
@@ -474,86 +446,87 @@ class FieldDomain:
         return c.value(default=default)
 
     def construct_key(self, identity=None, default=ValueError()):
-        '''Return the key of a metadata construct.
+        """Return the key of a metadata construct.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `construct`, `constructs`,
-                 `Constructs.filter_by_identity`, `Constructs.key`
+        .. seealso:: `construct`, `constructs`,
+                     `Constructs.filter_by_identity`, `Constructs.key`
 
-    :Parameters:
+        :Parameters:
 
-        identity: optional
-            Select the construct by one of
+            identity: optional
+                Select the construct by one of
 
-            * A metadata construct identity.
+                * A metadata construct identity.
 
-              {{construct selection identity}}
+                  {{construct selection identity}}
 
-            * The key of a metadata construct
+                * The key of a metadata construct, preceeded by
+                  ``key%``.
 
-            * `None`. This is the default, which selects the metadata
-              construct when there is only one of them.
+                * `None`. This is the default, which selects the metadata
+                  construct when there is only one of them.
 
-            *Parameter example:*
-              ``identity='latitude'``
+                *Parameter example:*
+                  ``identity="cell_area"``
 
-            *Parameter example:*
-              ``identity='long_name=Cell Area'``
+                *Parameter example:*
+                  ``identity="long_name=Cell Area"``
 
-            *Parameter example:*
-              ``identity='cellmeasure1'``
+                *Parameter example:*
+                  ``identity="key%cellmeasure1"``
 
-            *Parameter example:*
-              ``identity='measure:area'``
+                *Parameter example:*
+                  ``identity="measure:area"``
 
-            *Parameter example:*
-              ``identity=re.compile('^lat')``
+                *Parameter example:*
+                  ``identity=re.compile("^lat")``
 
-        default: optional
-            Return the value of the *default* parameter if the
-            property has not been set
+            default: optional
+                Return the value of the *default* parameter if the
+                property has not been set
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The key of the selected construct.
+            `str`
+                The key of the selected construct.
 
-    **Examples:**
+        **Examples:**
 
-    >>> print(f.constructs)
-    Constructs:
-    {'cellmethod0': <{{repr}}ellMethod: area: mean>,
-     'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
-     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
-     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: long_name=time(1) days since 2018-12-01 >,
-     'domainaxis0': <{{repr}}DomainAxis: size(5)>,
-     'domainaxis1': <{{repr}}DomainAxis: size(8)>,
-     'domainaxis2': <{{repr}}DomainAxis: size(1)>}
+        >>> print(f.constructs)
+        Constructs:
+        {'cellmethod0': <{{repr}}ellMethod: area: mean>,
+         'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: long_name=time(1) days since 2018-12-01 >,
+         'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+         'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+         'domainaxis2': <{{repr}}DomainAxis: size(1)>}
 
-    Select the construct that has the "standard_name" property of
-    'latitude':
+        Select the construct that has the "standard_name" property of
+        'latitude':
 
-    >>> f.construct_key('latitude')
-     'dimensioncoordinate0'
+        >>> f.construct_key('latitude')
+         'dimensioncoordinate0'
 
-    Select the cell method construct that has a "method" of 'mean':
+        Select the cell method construct that has a "method" of 'mean':
 
-    >>> f.construct_key('method:mean')
-    'cellmethod0'
+        >>> f.construct_key('method:mean')
+        'cellmethod0'
 
-    Attempt to select the construct whose "standard_name" start with
-    the letter 'l':
+        Attempt to select the construct whose "standard_name" start with
+        the letter 'l':
 
-    >>> import re
-    >>> f.construct_key(re.compile('^l'))
-    ValueError: Can't return the key of 2 constructs
-    >>> f.construct_key(re.compile('^l'), default='no construct')
-    'no construct'
+        >>> import re
+        >>> f.construct_key(re.compile('^l'))
+        ValueError: Can't return the key of 2 constructs
+        >>> f.construct_key(re.compile('^l'), default='no construct')
+        'no construct'
 
-        '''
+        """
         if identity is None:
             c = self.constructs
         else:
@@ -562,76 +535,77 @@ class FieldDomain:
         return c.key(default=default)
 
     def domain_axis_key(self, identity=None, default=ValueError()):
-        '''Return the key of the domain axis construct that is spanned by 1-d
-    coordinate constructs.
+        """Return the key of the domain axis construct that is spanned by 1-d
+        coordinate constructs.
 
-    :Parameters:
+        :Parameters:
 
-        identity: optional
-            Select the domain axis construct by one of:
+            identity: optional
+                Select the domain axis construct by one of:
 
-            * An identity or key of a 1-d dimension or auxiliary
-              coordinate construct that whose data spans the domain
-              axis construct.
+                * An identity or key of a 1-d dimension or auxiliary
+                  coordinate construct that whose data spans the
+                  domain axis construct.
 
-              {{construct selection identity}}
+                  {{construct selection identity}}
 
-            * `None`. This is the default, which selects the dimension
-              or 1-d auxiliary coordinate construct when there is only
-              one of them.
+                * `None`. This is the default, which selects the
+                  dimension or 1-d auxiliary coordinate construct when
+                  there is only one of them.
 
-            *Parameter example:*
-              ``identity='time'``
+                *Parameter example:*
+                  ``identity='time'``
 
-            *Parameter example:*
-              ``identity='ncvar%y'``
+                *Parameter example:*
+                  ``identity='ncvar%y'``
 
-        default: optional
-            Return the value of the *default* parameter if a domain
-            axis construct can not be found.
+            default: optional
+                Return the value of the *default* parameter if a
+                domain axis construct can not be found.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-        `str`
-            The key of the domain axis construct that is spanned by
-            the data of the selected 1-d coordinate constructs.
+            `str`
+                The key of the domain axis construct that is spanned
+                by the data of the selected 1-d coordinate constructs.
 
-    **Examples:**
+        **Examples:**
 
-    >>> print(f.constructs())
-    Constructs:
-    {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: time(1) days since 1964-01-21 00:00:00 >,
-     'dimensioncoordinate1': <{{repr}}DimensionCoordinate: pressure(23) mbar>,
-     'dimensioncoordinate2': <{{repr}}DimensionCoordinate: latitude(160) degrees_north>,
-     'dimensioncoordinate3': <{{repr}}DimensionCoordinate: longitude(320) degrees_east>,
-     'domainaxis0': <{{repr}}DomainAxis: size(1)>,
-     'domainaxis1': <{{repr}}DomainAxis: size(23)>,
-     'domainaxis2': <{{repr}}DomainAxis: size(160)>,
-     'domainaxis3': <{{repr}}DomainAxis: size(320)>}
-    >>> f.domain.domain_axis_key('time')
-    'domainaxis0'
-    >>> f.domain.domain_axis_key('longitude')
-    'domainaxis3'
+        >>> print(f.constructs())
+        Constructs:
+        {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: time(1) days since 1964-01-21 00:00:00 >,
+         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: pressure(23) mbar>,
+         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: latitude(160) degrees_north>,
+         'dimensioncoordinate3': <{{repr}}DimensionCoordinate: longitude(320) degrees_east>,
+         'domainaxis0': <{{repr}}DomainAxis: size(1)>,
+         'domainaxis1': <{{repr}}DomainAxis: size(23)>,
+         'domainaxis2': <{{repr}}DomainAxis: size(160)>,
+         'domainaxis3': <{{repr}}DomainAxis: size(320)>}
+        >>> f.domain.domain_axis_key('time')
+        'domainaxis0'
+        >>> f.domain.domain_axis_key('longitude')
+        'domainaxis3'
 
-        '''
+        """
         constructs = self.constructs
 
         # Select 1-d coordinate constructs with the given identity
-        c = constructs.filter_by_type('dimension_coordinate',
-                                      'auxiliary_coordinate')
+        c = constructs.filter_by_type(
+            "dimension_coordinate", "auxiliary_coordinate"
+        )
         c = c.filter_by_naxes(1)
         c = c.filter_by_identity(identity)
 
         if not len(c):
             return self._default(
                 default,
-                f"No 1-d coordinate constructs have identity {identity!r}"
+                f"No 1-d coordinate constructs have identity {identity!r}",
             )
 
         data_axes = constructs.data_axes()
-        domain_axes = constructs.filter_by_type('domain_axis')
+        domain_axes = constructs.filter_by_type("domain_axis")
 
         keys = []
         for ckey, coord in c.items():
@@ -650,7 +624,7 @@ class FieldDomain:
             return self._default(
                 default,
                 "1-d coordinate constructs selected with identity "
-                f"{coord!r} have not been assigned a domain axis constructs"
+                f"{coord!r} have not been assigned a domain axis constructs",
             )
 
         if len(keys) > 1:
@@ -658,119 +632,132 @@ class FieldDomain:
                 default,
                 "Multiple 1-d coordinate constructs selected "
                 f"with identity {identity!r} span multiple domain axes: "
-                f"{keys!r}"
+                f"{keys!r}",
             )
 
         return keys.pop()
 
     @_manage_log_level_via_verbosity
-    def equals(self, other, rtol=None, atol=None, verbose=None,
-               ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_compression=True,
-               ignore_type=False):
-        '''Whether two constructs are the same.
+    def equals(
+        self,
+        other,
+        rtol=None,
+        atol=None,
+        verbose=None,
+        ignore_data_type=False,
+        ignore_fill_value=False,
+        ignore_properties=(),
+        ignore_compression=True,
+        ignore_type=False,
+    ):
+        """Whether two constructs are the same.
 
-    Equality is strict by default. This means that for two constructs
-    to be considered equal they must have corresponding metadata
-    constructs and for each pair of constructs:
+        Equality is strict by default. This means that for two
+        constructs to be considered equal they must have corresponding
+        metadata constructs and for each pair of constructs:
 
-    * the same descriptive properties must be present, with the same
-      values and data types, and vector-valued properties must also
-      have same the size and be element-wise equal (see the
-      *ignore_properties* and *ignore_data_type* parameters), and
+        * the same descriptive properties must be present, with the
+          same values and data types, and vector-valued properties
+          must also have same the size and be element-wise equal (see
+          the *ignore_properties* and *ignore_data_type* parameters),
+          and
 
-    ..
+        ..
 
-    * if there are data arrays then they must have same shape and data
-      type, the same missing data mask, and be element-wise equal (see
-      the *ignore_data_type* parameter).
+        * if there are data arrays then they must have same shape and
+          data type, the same missing data mask, and be element-wise
+          equal (see the *ignore_data_type* parameter).
 
-    {{equals tolerance}}
+        {{equals tolerance}}
 
-    {{equals compression}}
+        {{equals compression}}
 
-    Any type of object may be tested but, in general, equality is only
-    possible with another field construct, or a subclass of one. See
-    the *ignore_type* parameter.
+        Any type of object may be tested but, in general, equality is
+        only possible with another field construct, or a subclass of
+        one. See the *ignore_type* parameter.
 
-    {{equals netCDF}}
+        {{equals netCDF}}
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    :Parameters:
+        :Parameters:
 
-        other:
-            The object to compare for equality.
+            other:
+                The object to compare for equality.
 
-        {{atol: number, optional}}
+            {{atol: number, optional}}
 
-        {{rtol: number, optional}}
+            {{rtol: number, optional}}
 
-        {{ignore_fill_value: `bool`, optional}}
+            {{ignore_fill_value: `bool`, optional}}
 
-        ignore_properties: sequence of `str`, optional
-            The names of properties of the construct (not the metadata
-            constructs) to omit from the comparison. Note that the
-            ``Conventions`` property is always omitted.
+            ignore_properties: sequence of `str`, optional
+                The names of properties of the construct (not the
+                metadata constructs) to omit from the comparison. Note
+                that the ``Conventions`` property is always omitted.
 
-        {{ignore_data_type: `bool`, optional}}
+            {{ignore_data_type: `bool`, optional}}
 
-        {{ignore_compression: `bool`, optional}}
+            {{ignore_compression: `bool`, optional}}
 
-        {{ignore_type: `bool`, optional}}
+            {{ignore_type: `bool`, optional}}
 
-        {{verbose: `int` or `str` or `None`, optional}}
+            {{verbose: `int` or `str` or `None`, optional}}
 
-    :Returns:
+        :Returns:
 
-        `bool`
-            Whether the two constructs are equal.
+            `bool`
+                Whether the two constructs are equal.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f.equals(f)
-    True
-    >>> f.equals(f.copy())
-    True
-    >>> f.equals(f[...])
-    True
-    >>> f.equals('a string, not a construct')
-    False
+        >>> f.equals(f)
+        True
+        >>> f.equals(f.copy())
+        True
+        >>> f.equals(f[...])
+        True
+        >>> f.equals('a string, not a construct')
+        False
 
-    >>> g = f.copy()
-    >>> g.set_property('foo', 'bar')
-    >>> f.equals(g)
-    False
-    >>> f.equals(g, verbose=3)
-    {{class}}: Non-common property name: foo
-    {{class}}: Different properties
-    False
+        >>> g = f.copy()
+        >>> g.set_property('foo', 'bar')
+        >>> f.equals(g)
+        False
+        >>> f.equals(g, verbose=3)
+        {{class}}: Non-common property name: foo
+        {{class}}: Different properties
+        False
 
-        '''
-        # ------------------------------------------------------------
+        """
         # Check the properties and data
-        # ------------------------------------------------------------
-        ignore_properties = tuple(ignore_properties) + ('Conventions',)
+        ignore_properties = tuple(ignore_properties) + ("Conventions",)
 
         if not super().equals(
-                other,
-                rtol=rtol, atol=atol, verbose=verbose,
-                ignore_data_type=ignore_data_type,
-                ignore_fill_value=ignore_fill_value,
-                ignore_properties=ignore_properties,
-                ignore_compression=ignore_compression,
-                ignore_type=ignore_type):
+            other,
+            rtol=rtol,
+            atol=atol,
+            verbose=verbose,
+            ignore_data_type=ignore_data_type,
+            ignore_fill_value=ignore_fill_value,
+            ignore_properties=ignore_properties,
+            ignore_compression=ignore_compression,
+            ignore_type=ignore_type,
+        ):
             return False
 
-        # ------------------------------------------------------------
         # Check the constructs
-        # ------------------------------------------------------------
-        if not self._equals(self.constructs, other.constructs,
-                            rtol=rtol, atol=atol, verbose=verbose,
-                            ignore_data_type=ignore_data_type,
-                            ignore_fill_value=ignore_fill_value,
-                            ignore_compression=ignore_compression,
-                            _ignore_type=False):
+        if not self._equals(
+            self.constructs,
+            other.constructs,
+            rtol=rtol,
+            atol=atol,
+            verbose=verbose,
+            ignore_data_type=ignore_data_type,
+            ignore_fill_value=ignore_fill_value,
+            ignore_compression=ignore_compression,
+            _ignore_type=False,
+        ):
             logger.info(
                 f"{self.__class__.__name__}: Different metadata constructs"
             )
@@ -779,29 +766,29 @@ class FieldDomain:
         return True
 
     def has_geometry(self):
-        '''Return whether or not any coordinates have cell geometries.
+        """Return whether or not any coordinates have cell geometries.
 
-    .. versionadded:: (cfdm) 1.8.0
+        .. versionadded:: (cfdm) 1.8.0
 
-    :Returns:
+        :Returns:
 
-        `bool`
-            True if there are geometries, otherwise False.
+            `bool`
+                True if there are geometries, otherwise False.
 
-    **Examples:**
+        **Examples:**
 
-    >>> f = {{package}}.{{class}}()
-    >>> f.has_geometry()
-    False
+        >>> f = {{package}}.{{class}}()
+        >>> f.has_geometry()
+        False
 
-        '''
+        """
         for c in self.constructs.filter_by_type(
-                'auxiliary_coordinate',
-                'dimension_coordinate',
-                'domain_ancillary').values():
+            "auxiliary_coordinate", "dimension_coordinate", "domain_ancillary"
+        ).values():
             if c.has_geometry():
                 return True
 
         return False
+
 
 # --- End: class
