@@ -67,21 +67,19 @@ for core in ("", "_core"):
 
         try:
             with open(rst_file) as f:
-                rst_contents = f.read().split()
+                rst_contents = f.read()
 
             for method in methods:
                 method = ".".join([class_name, method])
-                method = "~" + method
                 if method not in rst_contents:
                     n_undocumented_methods += 1
                     print(
-                        "Method {} not in {}".format(
-                            method, os.path.join(source, "class", rst_file)
-                        )
+                        f"Method {method} not in "
+                        f"{os.path.join(source, 'class', rst_file)}"
                     )
         except FileNotFoundError:
             n_missing_files += 1
-            print("File {} does not exist".format(rst_file))
+            print(f"File {rst_file} does not exist")
 # --- End: for
 
 # Raise an exception to ensure a non-zero shell return code
@@ -93,9 +91,8 @@ if n_missing_files:
 
 if n_undocumented_methods or n_missing_files:
     raise ValueError(
-        "Found undocumented methods ({}) or missing .rst files ({})".format(
-            n_undocumented_methods, n_missing_files
-        )
+        "Found undocumented methods ({n_undocumented_methods}) "
+        "or missing .rst files ({n_missing_files})"
     )
 
 print("All non-private methods are documented")
