@@ -22,11 +22,12 @@ is straight forward. For example:
    :caption: *Create a new implementation with a new field construct
              class.*
 
-   >>> import cfdm
-   >>> class my_Field(cfdm.Field):
-   ...     def info(self):
-   ...         return 'I am a {!r} instance'.format(
-   ...             self.__class__.__name__)
+   import cfdm
+   
+   class my_Field(cfdm.Field):
+       def info(self):
+           return 'I am a {!r} instance'.format(
+               self.__class__.__name__)
    
 The interpretation of CF-netCDF files that is encoded within the
 `cfdm.read` and `cfdm.write` functions is also inheritable, so that an
@@ -56,19 +57,15 @@ that the two can vary independently.
    >>> my_write = functools.partial(cfdm.write,
    ...                              _implementation=my_implementation)
 
-
 .. code-block:: python
    :caption: *Read my_field constructs from 'file.nc', the netCDF file
-              used in the tutorial, using the new my_read function.*
-	     
+              used in the tutorial, using the new my_read
+              function. Inspect a field construct read from the
+              dataset, demonstrating that it is a my_Field instance
+              from the new implementation that has the inherited
+              functionality of a cfdm.Field instance.*
+
    >>> q, t = my_read('file.nc')
-
-.. code-block:: python
-   :caption: *Inspect a field construct read from the dataset,
-              demonstrating that it is a my_Field instance from the
-              new implementation that has the inherited functionality
-              of a cfdm.Field instance.*
-
    >>> print(type(q))
    <class '__main__.my_Field'>  
    >>> print(q.info())
@@ -101,7 +98,6 @@ other component classes:
    >>> print(type(q.construct('latitude')))
    <class 'cfdm.dimensioncoordinate.DimensionCoordinate'>
 
-
 If the API of the new implementation is changed such that a given cfdm
 functionality has a different API in the new implementation, then the
 new read-from-disk and write-to-disk functions defined above can still
@@ -112,53 +108,53 @@ in overridden methods.
 .. code-block:: python
    :caption: *Create an implementation with a different API.*
    
-   >>> class my_Field_2(cfdm.Field):
-   ...    def my_coordinates(self):
-   ...        """Get coordinate constructs with a different API."""
-   ...        c = self.coordinates
-   ...        if not c:
-   ...            return {}
-   ...        return c
-   ... 
-   >>> class my_CFDMImplementation(cfdm.CFDMImplementation):
-   ...    def get_coordinates(self, field):
-   ...        """Get coordinate constructs from a my_Field_2 instance,
-   ...        using its different API.
-   ...        """
-   ...        return field.my_coordinates()
-   ... 
-   >>> my_implementation_2 = my_CFDMImplementation(
-   ...    cf_version=cfdm.CF(),
-   ...    
-   ...    Field=my_Field_2,
-   ...    
-   ...    AuxiliaryCoordinate=cfdm.AuxiliaryCoordinate,
-   ...    CellMeasure=cfdm.CellMeasure,
-   ...    CellMethod=cfdm.CellMethod,
-   ...    CoordinateReference=cfdm.CoordinateReference,
-   ...    DimensionCoordinate=cfdm.DimensionCoordinate,
-   ...    DomainAncillary=cfdm.DomainAncillary,
-   ...    DomainAxis=cfdm.DomainAxis,
-   ...    FieldAncillary=cfdm.FieldAncillary,
-   ...    
-   ...    Bounds=cfdm.Bounds,
-   ...    InteriorRing=cfdm.InteriorRing,
-   ...    CoordinateConversion=cfdm.CoordinateConversion,
-   ...    Datum=cfdm.Datum,
-   ...    
-   ...    List=cfdm.List,
-   ...    Index=cfdm.Index,
-   ...    Count=cfdm.Count,
-   ...    NodeCountProperties=cfdm.NodeCountProperties,
-   ...    PartNodeCountProperties=cfdm.PartNodeCountProperties,
-   ...    
-   ...    Data=cfdm.Data,
-   ...    GatheredArray=cfdm.GatheredArray,
-   ...    NetCDFArray=cfdm.NetCDFArray,
-   ...    RaggedContiguousArray=cfdm.RaggedContiguousArray,
-   ...    RaggedIndexedArray=cfdm.RaggedIndexedArray,
-   ...    RaggedIndexedContiguousArray=cfdm.RaggedIndexedContiguousArray,
-   ... )
+   class my_Field_2(cfdm.Field):
+      def my_coordinates(self):
+          """Get coordinate constructs with a different API."""
+          c = self.coordinates
+          if not c:
+              return {}
+          return c
+   
+   class my_CFDMImplementation(cfdm.CFDMImplementation):
+      def get_coordinates(self, field):
+          """Get coordinate constructs from a my_Field_2 instance,
+          using its different API.
+          """
+          return field.my_coordinates()
+   
+   my_implementation_2 = my_CFDMImplementation(
+      cf_version=cfdm.CF(),
+      
+      Field=my_Field_2,
+      
+      AuxiliaryCoordinate=cfdm.AuxiliaryCoordinate,
+      CellMeasure=cfdm.CellMeasure,
+      CellMethod=cfdm.CellMethod,
+      CoordinateReference=cfdm.CoordinateReference,
+      DimensionCoordinate=cfdm.DimensionCoordinate,
+      DomainAncillary=cfdm.DomainAncillary,
+      DomainAxis=cfdm.DomainAxis,
+      FieldAncillary=cfdm.FieldAncillary,
+      
+      Bounds=cfdm.Bounds,
+      InteriorRing=cfdm.InteriorRing,
+      CoordinateConversion=cfdm.CoordinateConversion,
+      Datum=cfdm.Datum,
+      
+      List=cfdm.List,
+      Index=cfdm.Index,
+      Count=cfdm.Count,
+      NodeCountProperties=cfdm.NodeCountProperties,
+      PartNodeCountProperties=cfdm.PartNodeCountProperties,
+      
+      Data=cfdm.Data,
+      GatheredArray=cfdm.GatheredArray,
+      NetCDFArray=cfdm.NetCDFArray,
+      RaggedContiguousArray=cfdm.RaggedContiguousArray,
+      RaggedIndexedArray=cfdm.RaggedIndexedArray,
+      RaggedIndexedContiguousArray=cfdm.RaggedIndexedContiguousArray,
+   )
 
 As all classes are required for the initialisation of the new
 implementation class, this demonstrates explicitly that, in the absence
@@ -181,23 +177,23 @@ other aspects it unchanged
    :caption: *Modify the mapping of netCDF elements to CF data model
               instances.*
 	 
-   >>> class my_NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
-   ...     def read(self, filename):
-   ...         """Read my fields from a netCDF file on disk or from
-   ...         an OPeNDAP server location, using my modified mapping
-   ...         from netCDF to the CF data model.
-   ...         """
-   ...         print("Reading dataset using my modified mapping")
-   ...         return super().read(filename)
+   class my_NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
+       def read(self, filename):
+           """Read my fields from a netCDF file on disk or from
+           an OPeNDAP server location, using my modified mapping
+           from netCDF to the CF data model.
+           """
+           print("Reading dataset using my modified mapping")
+           return super().read(filename)
 
 .. code-block:: python
    :caption: *Create a new read-from-disk function that uses the
               modified mapping.*
 	     
-   >>> my_netcdf = my_NetCDFRead(my_implementation_2)
-   >>> def my_read_3(filename, ):
-   ...     """Read my field constructs from a dataset."""
-   ...     return my_netcdf.read(filename)
+   my_netcdf = my_NetCDFRead(my_implementation_2)
+   def my_read_3(filename, ):
+       """Read my field constructs from a dataset."""
+       return my_netcdf.read(filename)
    
 .. code-block:: python
    :caption: *Read the file from disk into 'my_Field_2' instances,
@@ -217,42 +213,51 @@ The _custom dictionary
 ^^^^^^^^^^^^^^^^^^^^^^
 
 All cfdm classes have a `_custom` attribute that contains a dictionary
-meant for use in external subclasses. It is not used by any cfdm
-classes. The `_custom` dictionary is shallow copied, rather than deep
-copied, when using the standard cfdm deep copy method techniques
-(i.e. the `!copy` method, initialisation with the *source* parameter,
-or applying the `copy.deepcopy` function). This is so that subclasses
-of cfdm are not committed to potentially expensive deep copies of the
-dictionary values. Note that calling `copy.deepcopy` on cfdm
-(sub)class simply invokes its `!copy` method.
+meant for use in external subclasses.
 
-The result of this behaviour is that if an external subclass stores a
-mutable object within its custom dictionary then, by default, a deep
-copy will contain the identical mutable object, to which in-place
-changes will affect both the original and copied instances.
+It is intended for the storage of extra objects that are required by
+an external subclass, yet can be transfered to copied instances using
+the inherited cfdm infrastructure. The `_custom` dictionary is shallow
+copied, rather than deep copied, when using the standard cfdm deep
+copy method techniques (i.e. the `!copy` method, initialisation with
+the *source* parameter, or applying the `copy.deepcopy` function) so
+that subclasses of cfdm are not committed to potentially expensive
+deep copies of the dictionary values, of which cfdm has no
+knowledge. Note that calling `copy.deepcopy` on a cfdm (sub)class
+simply invokes its `!copy` method. The cfdm library itself does not
+use the `_custom` dictionary, other than to pass on a shallow copy of
+it to copied instances.
+
+The consequence of this shallow-copy behaviour is that if an external
+subclass stores a mutable object within its custom dictionary then, by
+default, a deep copy will contain the identical mutable object, to
+which in-place changes will affect both the original and copied
+instances.
 
 To account for this, the external subclass can either simply commit to
 never updating such mutables in-place (which is can be acceptable for
 private quantities which are tightly controlled); or else include
 extra code that does deep copy such mutables when any deep copy (or
-equivalent) operation is called. The latter should be implemented in
-the subclasses `__init__` method, similarly to this:
+equivalent) operation is called. The latter approach should be
+implemented in the subclass's `__init__` method, similarly to this:
 
 .. code-block:: python
    :caption: *Ensure that the _custom dictionary 'x' value is deep
              copied when a deep copy of an instance is requested.*
-	 
-   >>> class my_Field_3(cfdm.Field):
-   ...     def __init__(self, properties=None, source=None, copy=True,
-   ...                  _use_data=True):
-   ...         super().__init__(properties=properties, source=source,
-   ...                          copy=copy, _use_data=_use_data)
-   ...         if source and copy:
-   ...	           # Deep copy the custom 'x' value
-   ...             try:
-   ...  	       self._custom['x'] = deep.copy(source._custom['x'])
-   ...             except (AttributeError, KeyError):
-   ...                 pass  
+
+   import copy
+   
+   class my_Field_3(cfdm.Field):
+       def __init__(self, properties=None, source=None, copy=True,
+                    _use_data=True):
+           super().__init__(properties=properties, source=source,
+                            copy=copy, _use_data=_use_data)
+           if source and copy:
+   	       # Deep copy the custom 'x' value
+               try:
+    	           self._custom['x'] = copy.deepcopy(source._custom['x'])
+               except (AttributeError, KeyError):
+                   pass  
 
 	   
 Documentation
