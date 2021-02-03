@@ -6,6 +6,7 @@ import unittest
 from unittest.mock import patch
 
 import faulthandler
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
