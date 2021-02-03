@@ -5194,8 +5194,8 @@ def example_fields(*n, _func=example_field):
                 out.append(_func(i))
             except ValueError:
                 break
-            else:
-                i += 1
+
+            i += 1
     else:
         out = [_func(i) for i in n]
 

@@ -52,25 +52,29 @@ in-place operation can be considerably faster. These methods have the
 `~Field.transpose`, `~Field.insert_dimension`, `~Field.compress`, and
 `~Field.uncompress` methods of a field construct.
   
-For example, in one particular test using a :ref:`dataset from the
-tutorial <Sample-datasets>`, transposing the data dimensions of the
-field construct was ~11 times faster when done in-place, compared with
-creating a new independent field construct:
+For example, in one particular test, transposing the data dimensions
+of the field construct was ~10 times faster when done in-place,
+compared with creating a new independent field construct:
 
 .. code-block:: python
    :caption: *Calculate the speed-up of performing the "transpose"
-             operation in-place. The data are brought into memory
-             prior to the tests to remove the time taken to read the
-             dataset from disk from the results.*
+             operation in-place.
       
    >>> import timeit
    >>> import cfdm
-   >>> q, t = cfdm.read('file.nc')
-   >>> t.data.to_memory()
-   >>> min(timeit.repeat('t.transpose()',
+   >>> f = cfdm.example_field(0)
+   >>> print(f)
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(latitude(5), longitude(8)) 1
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> min(timeit.repeat('g = f.transpose()',
    ...                   globals=globals(), number=1000))
-   2.1561493259978306
-   >>> min(timeit.repeat('t.transpose(inplace=True)',
+   1.2819487630004005
+   >>> min(timeit.repeat('f.transpose(inplace=True)',
    ...                   globals=globals(), number=1000))
-   0.18915946600100142
+   0.13453567200122052
 

@@ -17,6 +17,7 @@ version 1.9.0.0
 * New method: `cfdm.DimensionCoordinate.is_climatology`
 * New method: `cfdm.DimensionCoordinate.set_climatology`
 * New function: `cfdm.unique_constructs`
+* New function: `cfdm.example_fields`
 * Fix for zero-sized unlimited dimensions when read from a grouped
   netCDF file (https://github.com/NCAS-CMS/cfdm/issues/113)
 
