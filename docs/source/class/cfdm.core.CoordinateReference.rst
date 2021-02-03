@@ -57,7 +57,7 @@ Datum
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/
-   :template: arttrbute.rst
+   :template: attribute.rst
 
    ~cfdm.core.CoordinateReference.datum
 
@@ -80,7 +80,7 @@ Coordinate conversion
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/
-   :template: arttrbute.rst
+   :template: attribute.rst
 
    ~cfdm.core.CoordinateReference.coordinate_conversion
 
