@@ -258,7 +258,6 @@ implemented in the subclass's `__init__` method, similarly to this:
     	           self._custom['x'] = copy.deepcopy(source._custom['x'])
                except (AttributeError, KeyError):
                    pass  
-
 	   
 Documentation
 ^^^^^^^^^^^^^
