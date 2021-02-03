@@ -155,8 +155,7 @@ from .cfdmimplementation import CFDMImplementation, implementation
 
 from .read_write import read, write
 
-from .examplefield import (example_field,
-                           example_fields)
+from .examplefield import example_field, example_fields
 
 from .abstract import Container
 

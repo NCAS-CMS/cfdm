@@ -204,51 +204,51 @@ class Constructs(mixin.Container, core.Constructs):
         return out
 
     def _del_construct(self, key, default=ValueError()):
-        '''Remove a metadata construct.
+        """Remove a metadata construct.
 
-    If a domain axis construct is selected for removal then it can't
-    be spanned by any metdata construct data arrays, nor be referenced
-    by any cell method constructs.
+        If a domain axis construct is selected for removal then it can't
+        be spanned by any metdata construct data arrays, nor be referenced
+        by any cell method constructs.
 
-    However, a domain ancillary construct may be removed even if it is
-    referenced by coordinate reference construct. In this case the
-    reference is replace with `None`.
+        However, a domain ancillary construct may be removed even if it is
+        referenced by coordinate reference construct. In this case the
+        reference is replace with `None`.
 
-    If a climatological time cell method construct is removed then the
-    climatological status of its corresponding coordinate constructs
-    will be reviewed.
+        If a climatological time cell method construct is removed then the
+        climatological status of its corresponding coordinate constructs
+        will be reviewed.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `_get_construct`, `_set_construct`
+        .. seealso:: `_get_construct`, `_set_construct`
 
-    :Parameters:
+        :Parameters:
 
-        key: `str`
-            The key of the construct to be removed.
+            key: `str`
+                The key of the construct to be removed.
 
-            *Parameter example:*
-              ``key='auxiliarycoordinate0'``
+                *Parameter example:*
+                  ``key='auxiliarycoordinate0'``
 
-        default: optional
-            Return the value of the *default* parameter if the
-            construct can not be removed, or does not exist.
+            default: optional
+                Return the value of the *default* parameter if the
+                construct can not be removed, or does not exist.
 
-            {{default Exception}}
+                {{default Exception}}
 
-    :Returns:
+        :Returns:
 
-            The removed construct.
+                The removed construct.
 
-    **Examples:**
+        **Examples:**
 
-    >>> x = c._del_construct('auxiliarycoordinate2')
+        >>> x = c._del_construct('auxiliarycoordinate2')
 
-        '''
+        """
         out = super()._del_construct(key, default=default)
 
         try:
-            is_cell_method = (out.construct_type == 'cell_method')
+            is_cell_method = out.construct_type == "cell_method"
         except AttributeError:
             is_cell_method = False
 
@@ -259,17 +259,16 @@ class Constructs(mixin.Container, core.Constructs):
             # climatology status of approriate coordinate constructs.
             # --------------------------------------------------------
             qualifiers = out.qualifiers()
-            if 'within' in qualifiers or 'over' in qualifiers:
+            if "within" in qualifiers or "over" in qualifiers:
                 axes = out.get_axes(default=())
-                if (
-                        len(axes) == 1 and
-                        axis not in self.filter_by_type('domain_axis')
+                if len(axes) == 1 and axis not in self.filter_by_type(
+                    "domain_axis"
                 ):
                     coordinates = {}
                     axes = set(axes)
                     for ckey, c in self.filter_by_type(
-                            'dimension_coordinate',
-                            'auxiliary_coordinate').items():
+                        "dimension_coordinate", "auxiliary_coordinate"
+                    ).items():
                         if axes != set(self.data_axes().get(ckey, ())):
                             continue
 
@@ -544,44 +543,46 @@ class Constructs(mixin.Container, core.Constructs):
         return True
 
     def _set_climatology(self, cell_methods=None, coordinates=None):
-        '''Set the climatology flag on approriate coordinate constructs, based
-    on the cell method constructs.
+        """Set the climatology flag on approriate coordinate constructs, based
+        on the cell method constructs.
 
-    .. versionadded:: (cfdm) 1.9.0.0
+        .. versionadded:: (cfdm) 1.9.0.0
 
-    :Parameters:
+        :Parameters:
 
-        cell_methods: `dict`, optional
-            TODO
+            cell_methods: `dict`, optional
+                TODO
 
-        coordinates: `dict`, optional
-            TODO
+            coordinates: `dict`, optional
+                TODO
 
-    :Returns:
+        :Returns:
 
-        `list` of `str`
-            The domain axis construct identifiers of all
-            climatological time axes. The list may contain axis
-            duplications.
+            `list` of `str`
+                The domain axis construct identifiers of all
+                climatological time axes. The list may contain axis
+                duplications.
 
-        '''
+        """
         out = []
 
-        domain_axes = self.filter_by_type('domain_axis')
+        domain_axes = self.filter_by_type("domain_axis")
 
         if coordinates:
-            cell_methods = self.filter_by_type('cell_method').ordered()
+            cell_methods = self.filter_by_type("cell_method").ordered()
         elif cell_methods:
-            coordinates = self.filter_by_type('dimension_coordinate',
-                                              'auxiliary_coordinate')
+            coordinates = self.filter_by_type(
+                "dimension_coordinate", "auxiliary_coordinate"
+            )
         else:
-            cell_methods = self.filter_by_type('cell_method').ordered()
-            coordinates = self.filter_by_type('dimension_coordinate',
-                                              'auxiliary_coordinate')
+            cell_methods = self.filter_by_type("cell_method").ordered()
+            coordinates = self.filter_by_type(
+                "dimension_coordinate", "auxiliary_coordinate"
+            )
 
         for key, cm in cell_methods.items():
             qualifiers = cm.qualifiers()
-            if not ('within' in qualifiers or 'over' in qualifiers):
+            if not ("within" in qualifiers or "over" in qualifiers):
                 continue
 
             axes = cm.get_axes(default=())
@@ -610,78 +611,75 @@ class Constructs(mixin.Container, core.Constructs):
 
         return out
 
-    def _set_construct(self, construct, key=None, axes=None,
-                       copy=True):
-        '''Set a metadata construct.
+    def _set_construct(self, construct, key=None, axes=None, copy=True):
+        """Set a metadata construct.
 
-    .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `_del_construct`, `_get_construct`,
-                 `_set_construct_data_axes`
+        .. seealso:: `_del_construct`, `_get_construct`,
+                     `_set_construct_data_axes`
 
-    :Parameters:
+        :Parameters:
 
-        construct:
-            The metadata construct to be inserted.
+            construct:
+                The metadata construct to be inserted.
 
-        key: `str`, optional
-            The construct identifier to be used for the construct. If
-            not set then a new, unique identifier is created
-            automatically. If the identifier already exists then the
-            exisiting construct will be replaced.
+            key: `str`, optional
+                The construct identifier to be used for the construct. If
+                not set then a new, unique identifier is created
+                automatically. If the identifier already exists then the
+                exisiting construct will be replaced.
 
-            *Parameter example:*
-              ``key='cellmeasure0'``
+                *Parameter example:*
+                  ``key='cellmeasure0'``
 
-        axes: (sequence of) `str`, optional
-            The construct identifiers of the domain axis constructs
-            spanned by the data array. An exception is raised if used
-            for a metadata construct that can not have a data array,
-            i.e. domain axis, cell method and coordinate reference
-            constructs.
+            axes: (sequence of) `str`, optional
+                The construct identifiers of the domain axis constructs
+                spanned by the data array. An exception is raised if used
+                for a metadata construct that can not have a data array,
+                i.e. domain axis, cell method and coordinate reference
+                constructs.
 
-            The axes may also be set afterwards with the
-            `_set_construct_data_axes` method.
+                The axes may also be set afterwards with the
+                `_set_construct_data_axes` method.
 
-            *Parameter example:*
-              ``axes='domainaxis1'``
+                *Parameter example:*
+                  ``axes='domainaxis1'``
 
-            *Parameter example:*
-              ``axes=['domainaxis1']``
+                *Parameter example:*
+                  ``axes=['domainaxis1']``
 
-            *Parameter example:*
-              ``axes=('domainaxis1', 'domainaxis0')``
+                *Parameter example:*
+                  ``axes=('domainaxis1', 'domainaxis0')``
 
-        copy: `bool`, optional
-            If True then return a copy of the unique selected
-            construct. By default the construct is copied.
+            copy: `bool`, optional
+                If True then return a copy of the unique selected
+                construct. By default the construct is copied.
 
-    :Returns:
+        :Returns:
 
-         `str`
-            The construct identifier for the construct.
+             `str`
+                The construct identifier for the construct.
 
-    **Examples:**
+        **Examples:**
 
-    >>> key = f._set_construct(c)
-    >>> key = f._set_construct(c, copy=False)
-    >>> key = f._set_construct(c, axes='domainaxis2')
-    >>> key = f._set_construct(c, key='cellmeasure0')
+        >>> key = f._set_construct(c)
+        >>> key = f._set_construct(c, copy=False)
+        >>> key = f._set_construct(c, axes='domainaxis2')
+        >>> key = f._set_construct(c, key='cellmeasure0')
 
-        '''
+        """
         if copy:
             # Create a deep copy of the construct
             construct = construct.copy()
 
-        key = super()._set_construct(construct, key=key, axes=axes,
-                                     copy=False)
+        key = super()._set_construct(construct, key=key, axes=axes, copy=False)
 
         # Set any appropriate climatology flags
         construct_type = construct.construct_type
-        if construct_type in ('dimension_coordinate',
-                              'auxiliary_coordinate'):
+        if construct_type in ("dimension_coordinate", "auxiliary_coordinate"):
             self._set_climatology(coordinates={key: construct})
-        elif construct_type == 'cell_method':
+        elif construct_type == "cell_method":
             self._set_climatology(cell_methods={key: construct})
 
         # Return the identifier of the construct

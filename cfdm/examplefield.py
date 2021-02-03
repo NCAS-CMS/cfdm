@@ -5101,7 +5101,7 @@ def example_field(n, _implementation=_implementation):
 
 
 def example_fields(*n, _func=example_field):
-    '''Return example field constructs.
+    """Return example field constructs.
 
     .. versionadded:: (cfdm) 1.9.0.0
 
@@ -5185,7 +5185,7 @@ def example_fields(*n, _func=example_field):
 
     See the `cfdm.example_field` for more details.
 
-    '''
+    """
     if not n:
         out = []
         i = 0

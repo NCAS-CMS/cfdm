@@ -218,15 +218,11 @@ class NetCDFArray(abstract.Array):
         return array
 
     def __repr__(self):
-        """x.__repr__() <==> repr(x)
-
-        """
+        """x.__repr__() <==> repr(x)"""
         return f"<{self.__class__.__name__}{self.shape}: {self}>"
 
     def __str__(self):
-        """x.__str__() <==> str(x)
-
-        """
+        """x.__str__() <==> str(x)"""
         name = self.get_ncvar()
         if name is None:
             name = "varid={0}".format(self.get_varid())
@@ -491,9 +487,7 @@ class NetCDFArray(abstract.Array):
             try:
                 netcdf = netCDF4.Dataset(self.get_filename(), "r")
             except RuntimeError as error:
-                raise RuntimeError(
-                    f"{error}: {self.get_filename()}"
-                )
+                raise RuntimeError(f"{error}: {self.get_filename()}")
 
             self._set_component("netcdf", netcdf, copy=False)
 

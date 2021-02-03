@@ -36,26 +36,28 @@ del _subs
 
 
 def configuration(atol=None, rtol=None, log_level=None):
-    """View or set any number of constants in the project-wide configuration.
+    """View or set any number of constants in the project-wide
+    configuration.
 
-    The full list of global constants that are provided in a dictionary to
-    view, and can be set in any combination, are:
+    The full list of global constants that are provided in a
+    dictionary to view, and can be set in any combination, are:
 
     * `atol`
     * `rtol`
     * `log_level`
 
-    These are all constants that apply throughout `cfdm`, except for in
-    specific functions only if overridden by the corresponding keyword
-    argument to that function.
+    These are all constants that apply throughout `cfdm`, except for
+    in specific functions only if overridden by the corresponding
+    keyword argument to that function.
 
-    The value of `None`, either taken by default or supplied as a value,
-    will result in the constant in question not being changed from the
-    current value. That is, it will have no effect.
+    The value of `None`, either taken by default or supplied as a
+    value, will result in the constant in question not being changed
+    from the current value. That is, it will have no effect.
 
-    Note that setting a constant using this function is equivalent to setting
-    it by means of a specific function of the same name, e.g. via `cfdm.atol`,
-    but in this case multiple constants can be set at once.
+    Note that setting a constant using this function is equivalent to
+    setting it by means of a specific function of the same name,
+    e.g. via `cfdm.atol`, but in this case multiple constants can be
+    set at once.
 
     .. versionadded:: (cfdm) 1.8.6
 
@@ -85,7 +87,7 @@ def configuration(atol=None, rtol=None, log_level=None):
 
     :Returns:
 
-         `Configuration`
+        `Configuration`
             The dictionary-like object containing the names and values
             of the project-wide constants prior to the change, or the
             current names and values if no new values are specified.
@@ -159,17 +161,21 @@ def configuration(atol=None, rtol=None, log_level=None):
 
 
 def _configuration(_Configuration, **kwargs):
-    """Internal helper function to provide the logic for `cfdm.configuration`.
+    """Internal helper function to provide the logic for
+    `cfdm.configuration`.
 
-    We delegate from the user-facing `cfdm.configuration` for two main reasons:
+    We delegate from the user-facing `cfdm.configuration` for two main
+    reasons:
 
-    1) to avoid a name clash there between the keyword arguments and the
-    functions which they each call (e.g. `atol` and `cfdm.atol`) which
-    would otherwise necessitate aliasing every such function name; and
+    1) to avoid a name clash there between the keyword arguments and
+       the functions which they each call (e.g. `atol` and
+       `cfdm.atol`) which would otherwise necessitate aliasing every
+       such function name; and
 
-    2) because the user-facing function must have the appropriate keywords
-    explicitly listed, but the very similar logic applied for each keyword
-    can be consolidated by iterating over the full dictionary of input kwargs.
+    2) because the user-facing function must have the keywords
+       explicitly listed, but the very similar logic applied for each
+       keyword can be consolidated by iterating over the full
+       dictionary of input kwargs.
 
     :Parameters:
 
@@ -437,7 +443,7 @@ def abspath(filename):
 
 
 def unique_constructs(constructs, copy=True):
-    '''Return the unique constructs from a sequence.
+    """Return the unique constructs from a sequence.
 
     .. versionadded:: (cfdm) 1.9.0.0
 
@@ -485,7 +491,7 @@ def unique_constructs(constructs, copy=True):
     [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
      <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
 
-    '''
+    """
     if not constructs:
         # constructs is an empty sequence
         return []
@@ -520,7 +526,7 @@ def unique_constructs(constructs, copy=True):
     for construct in constructs:
         is_equal = False
         for c in out:
-            if construct.equals(c, verbose='DISABLE'):
+            if construct.equals(c, verbose="DISABLE"):
                 is_equal = True
                 break
         # --- End: for
@@ -677,8 +683,9 @@ class Constant(metaclass=DocstringRewriteMeta):
                 A value for the constant.
 
             _func: function, optional
-                A function that that is executed upon exit from a context
-                manager, that takes the *value* parameter as its argument.
+                A function that that is executed upon exit from a
+                context manager, that takes the *value* parameter as
+                its argument.
 
         """
         self.value = value
@@ -1125,8 +1132,8 @@ class atol(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `CONSTANTS` dictionary.
 
         """
         return float(arg)
@@ -1240,7 +1247,7 @@ class log_level(ConstantAccess):
 
     :Parameters:
 
-         log_level: `str` or `int` or `Constant`, optional
+        log_level: `str` or `int` or `Constant`, optional
             The new value of the minimal log severity level. This can
             be specified either as a string equal (ignoring case) to
             the named set of log levels or identifier ``'DISABLE'``,

@@ -22,39 +22,39 @@ class Implementation(metaclass=abc.ABCMeta):
     def classes(self):
         """Return all the classes of the implmentation.
 
-    :Returns:
+        :Returns:
 
-        `dict`
-            The class objects, keyed by their class name.
+            `dict`
+                The class objects, keyed by their class name.
 
-    **Examples:**
+        **Examples:**
 
-    >>> sorted(i.classes())
-    ['AuxiliaryCoordinate',
-     'Bounds',
-     'CellMeasure',
-     'CellMethod',
-     'CoordinateConversion',
-     'CoordinateReference',
-     'Count',
-     'Data',
-     'Datum',
-     'DimensionCoordinate',
-     'Domain',
-     'DomainAncillary',
-     'DomainAxis',
-     'Field',
-     'FieldAncillary',
-     'GatheredArray',
-     'Index',
-     'InteriorRing',
-     'List',
-     'NetCDFArray',
-     'NodeCountProperties',
-     'PartNodeCountProperties',
-     'RaggedContiguousArray',
-     'RaggedIndexedArray',
-     'RaggedIndexedContiguousArray']
+        >>> sorted(i.classes())
+        ['AuxiliaryCoordinate',
+         'Bounds',
+         'CellMeasure',
+         'CellMethod',
+         'CoordinateConversion',
+         'CoordinateReference',
+         'Count',
+         'Data',
+         'Datum',
+         'DimensionCoordinate',
+         'Domain',
+         'DomainAncillary',
+         'DomainAxis',
+         'Field',
+         'FieldAncillary',
+         'GatheredArray',
+         'Index',
+         'InteriorRing',
+         'List',
+         'NetCDFArray',
+         'NodeCountProperties',
+         'PartNodeCountProperties',
+         'RaggedContiguousArray',
+         'RaggedIndexedArray',
+         'RaggedIndexedContiguousArray']
 
         """
         return self._class.copy()
