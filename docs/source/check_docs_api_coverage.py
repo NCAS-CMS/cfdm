@@ -67,11 +67,10 @@ for core in ("", "_core"):
 
         try:
             with open(rst_file) as f:
-                rst_contents = f.read().split()
+                rst_contents = f.read()
 
             for method in methods:
                 method = ".".join([class_name, method])
-                method = "~" + method
                 if method not in rst_contents:
                     n_undocumented_methods += 1
                     print(
