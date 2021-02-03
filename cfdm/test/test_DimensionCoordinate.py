@@ -102,9 +102,6 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertIsNone(x.del_climatology(None))
 
 
-# --- End: class
-
-
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cfdm.environment()

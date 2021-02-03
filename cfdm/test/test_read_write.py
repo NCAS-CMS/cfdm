@@ -182,7 +182,7 @@ class read_writeTest(unittest.TestCase):
             g = g[0]
             self.assertTrue(
                 f.equals(g, verbose=3),
-                "Bad read/write of format: {}".format(fmt),
+                f"Bad read/write of format: {fmt}"
             )
 
     def test_read_write_netCDF4_compress_shuffle(self):
@@ -200,7 +200,7 @@ class read_writeTest(unittest.TestCase):
                     self.assertTrue(
                         f.equals(g, verbose=3),
                         "Bad read/write with lossless compression: "
-                        "{}, {}, {}".format(fmt, compress, shuffle),
+                        f"{fmt}, {compress}, {shuffle}"
                     )
         # --- End: for
 
@@ -221,7 +221,7 @@ class read_writeTest(unittest.TestCase):
             g = cfdm.read(tmpfile)[0]
             self.assertTrue(
                 f.equals(g, verbose=3),
-                "Bad read/write of format: {}".format(fmt),
+                f"Bad read/write of format: {fmt}"
             )
 
     def test_read_mask(self):
@@ -406,11 +406,11 @@ class read_writeTest(unittest.TestCase):
             j = i + n
             self.assertTrue(
                 f[i].data.equals(f[j].data, verbose=3),
-                "{!r} {!r}".format(f[i], f[j]),
+                f"{f[i]!r} {f[j]!r}"
             )
             self.assertTrue(
                 f[j].data.equals(f[i].data, verbose=3),
-                "{!r} {!r}".format(f[j], f[i]),
+                f"{f[j]!r} {f[i]!r}",
             )
 
         f0 = cfdm.read(self.string_filename)
@@ -443,9 +443,7 @@ class read_writeTest(unittest.TestCase):
             self.assertEqual(
                 g.get_property("Conventions"),
                 " ".join([version, other]),
-                "{!r}, {!r}".format(
-                    g.get_property("Conventions"), Conventions
-                ),
+                f"{g.get_property('Conventions')!r}, {Conventions!r}"
             )
 
         for Conventions in (
@@ -461,9 +459,7 @@ class read_writeTest(unittest.TestCase):
             self.assertEqual(
                 g.get_property("Conventions"),
                 version,
-                "{!r}, {!r}".format(
-                    g.get_property("Conventions"), Conventions
-                ),
+                f"{g.get_property('Conventions')!r}, {Conventions!r}"
             )
 
         for Conventions in (
@@ -475,9 +471,7 @@ class read_writeTest(unittest.TestCase):
             self.assertEqual(
                 g.get_property("Conventions"),
                 " ".join(Conventions),
-                "{!r}, {!r}".format(
-                    g.get_property("Conventions"), Conventions
-                ),
+                f"{g.get_property('Conventions')!r}, {Conventions!r}"
             )
 
         for Conventions in ([other, version],):
@@ -486,9 +480,7 @@ class read_writeTest(unittest.TestCase):
             self.assertEqual(
                 g.get_property("Conventions"),
                 " ".join([version, other]),
-                "{!r}, {!r}".format(
-                    g.get_property("Conventions"), Conventions
-                ),
+                f"{g.get_property('Conventions')!r}, {Conventions!r}"
             )
 
     def test_read_write_multiple_geometries(self):
@@ -599,9 +591,6 @@ class read_writeTest(unittest.TestCase):
         f.set_data_axes((), key=key)
 
         cfdm.write(f, tmpfile)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

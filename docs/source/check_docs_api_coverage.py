@@ -32,7 +32,7 @@ else:
 
 if not source.endswith("source"):
     raise ValueError(
-        "Given directory {} does not end with 'source'".format(source)
+        f"Given directory {source} does not end with 'source'"
     )
 
 n_undocumented_methods = 0
@@ -91,8 +91,8 @@ if n_missing_files:
 
 if n_undocumented_methods or n_missing_files:
     raise ValueError(
-        "Found undocumented methods ({n_undocumented_methods}) "
-        "or missing .rst files ({n_missing_files})"
+        f"Found undocumented methods ({n_undocumented_methods}) "
+        f"or missing .rst files ({n_missing_files})"
     )
 
 print("All non-private methods are documented")

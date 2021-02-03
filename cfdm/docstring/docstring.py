@@ -31,19 +31,19 @@ from ..core import CF
 
 _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
-    # General susbstitutions (not indent-dependent)
+    # General substitutions (not indent-dependent)
     # ----------------------------------------------------------------
     # {{VN}}
     "{{VN}}": CF(),
     # ----------------------------------------------------------------
-    # Class description susbstitutions (1 level of indentation)
+    # Class description substitutions (1 level of indentation)
     # ----------------------------------------------------------------
     # {{netCDF variable}}
     "{{netCDF variable}}": """The netCDF variable name of the construct may be accessed with the
     `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
     `nc_has_variable` methods.""",
     # ----------------------------------------------------------------
-    # Method description susbstitutions (2 levels of indentation)
+    # Method description substitutions (2 levels of indentation)
     # ----------------------------------------------------------------
     # {{equals tolerance}}
     "{{equals tolerance}}": """Two real numbers ``x`` and ``y`` are considered equal if
@@ -73,7 +73,7 @@ _docstring_substitution_definitions = {
         always written as netCDF global attributes, if possible, so
         selecting them is optional.""",
     # ----------------------------------------------------------------
-    # Method description susbstitutions (3 levels of indentataion)
+    # Method description substitutions (3 levels of indentataion)
     # ----------------------------------------------------------------
     # {{init properties: `dict`, optional}}
     "{{init properties: `dict`, optional}}": """properties: `dict`, optional
@@ -226,7 +226,7 @@ _docstring_substitution_definitions = {
                 returned. Otherwise the description is returned as a
                 string.""",
     # ----------------------------------------------------------------
-    # Method description susbstitutions (3.5 levels of indentation)
+    # Method description substitutions (3.5 levels of indentation)
     # ----------------------------------------------------------------
     # {{construct selection identity}}
     "{{construct selection identity}}": """A construct has a number of string-valued identities
