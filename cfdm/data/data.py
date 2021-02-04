@@ -26,8 +26,7 @@ logger = logging.getLogger(__name__)
 
 
 class Data(Container, NetCDFHDF5, core.Data):
-    """An orthogonal multidimensional array with masked values and
-    units.
+    """An orthogonal multidimensional array with masking and units.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -46,7 +45,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         _use_array=True,
         **kwargs
     ):
-        """**Initialization**
+        """Initialises the `Data` instance.
 
         :Parameters:
 
@@ -572,8 +571,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         return numpy.ma.masked
 
     def _parse_axes(self, axes):
-        """Parse data axes and return valid non-duplicate axes as a
-        tuple.
+        """Parses the data axes and returns valid non-duplicate axes.
 
         :Parameters:
 
@@ -741,8 +739,7 @@ class Data(Container, NetCDFHDF5, core.Data):
     # ----------------------------------------------------------------
     @property
     def compressed_array(self):
-        """Return an independent numpy array containing the compressed
-        data.
+        """Returns an independent numpy array of the compressed data.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -768,8 +765,11 @@ class Data(Container, NetCDFHDF5, core.Data):
 
     @property
     def datetime_array(self):
-        """Return an independent numpy array containing the date-time
-        objects corresponding to times since a reference date.
+        """Returns an independent numpy array of datetimes.
+
+        Specifically, returns an independent numpy array containing
+        the date-time objects corresponding to times since a reference
+        date.
 
         Only applicable for reference time units.
 
@@ -846,8 +846,10 @@ class Data(Container, NetCDFHDF5, core.Data):
 
     @property
     def datetime_as_string(self):
-        """Return an independent numpy array containing string
-        representations of times since a reference date.
+        """Returns an independent numpy array with datetimes as strings.
+
+        Specifically, returns an independent numpy array containing
+        string representations of times since a reference date.
 
         Only applicable for reference time units.
 
@@ -1526,8 +1528,10 @@ class Data(Container, NetCDFHDF5, core.Data):
             )
 
     def get_compressed_dimension(self, default=ValueError()):
-        """Return the position of the compressed dimension in the
-        compressed array.
+        """Returns the compressed dimension's array position.
+
+        That is, returns the position of the compressed dimension
+        in the compressed array.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -2034,8 +2038,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         return d
 
     def get_compressed_axes(self):
-        """Return the dimensions that have compressed in the underlying
-        array.
+        """Returns the dimensions that are compressed in the array.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -2072,8 +2075,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         return ca.get_compressed_axes()
 
     def get_compression_type(self):
-        """Return the type of compression applied to the underlying
-        array.
+        """Returns the type of compression applied to the array.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -2695,11 +2697,11 @@ class Data(Container, NetCDFHDF5, core.Data):
     # Aliases
     # ----------------------------------------------------------------
     def max(self, axes=None):
-        """Alias for `maximum`"""
+        """Alias for `maximum`."""
         return self.maximum(axes=axes)
 
     def min(self, axes=None):
-        """Alias for `minimum`"""
+        """Alias for `minimum`."""
         return self.minimum(axes=axes)
 
 

@@ -29,7 +29,7 @@ class GatheredArray(abstract.CompressedArray):
         compressed_dimension=None,
         list_variable=None,
     ):
-        """**Initialization**
+        """Initialises the `GatheredArray` instance.
 
         :Parameters:
 
@@ -65,10 +65,9 @@ class GatheredArray(abstract.CompressedArray):
         )
 
     def __getitem__(self, indices):
-        """x.__getitem__(indices) <==> x[indices]
+        """Returns a subspace of the uncompressed data as a numpy array.
 
-        Returns an subspace of the uncompressed data as an independent
-        numpy array.
+        x.__getitem__(indices) <==> x[indices]
 
         The indices that define the subspace are relative to the
         uncompressed data and must be either `Ellipsis` or a sequence that
