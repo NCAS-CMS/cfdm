@@ -14,8 +14,7 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
     """
 
     def __docstring_package_depth__(self):
-        """Return the package depth for {{package}} docstring
-        substitutions.
+        """Returns the package depth for {{package}} substitutions.
 
         See `_docstring_package_depth` for details.
 
@@ -205,8 +204,10 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         )
 
     def get_data_axes(self, key, default=ValueError):
-        """Return the keys of the domain axis constructs spanned by the
-        data of a metadata construct.
+        """Gets the keys of the axes spanned by the construct data.
+
+        Specifically, returns the keys of the domain axis constructs
+        spanned by the data of a metadata construct.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -256,8 +257,10 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
             )
 
     def del_data_axes(self, key, default=ValueError()):
-        """Remove the keys of the domain axis constructs spanned by the
-        data of a metadata construct.
+        """Removes the keys of the axes spanned by the construct data.
+
+        Specifically, removes the keys of the domain axis constructs
+        spanned by the data of a metadata construct.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -309,8 +312,10 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         return data_axes
 
     def has_data_axes(self, key=None):
-        """Whether the domain axis constructs spanned by the data of a
-        metadata construct have been set.
+        """Whether the axes spanned by the construct data have been set.
+
+        Specifically, whether the domain axis constructs spanned by the
+        data of a metadata construct have been set.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -350,8 +355,7 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         return True
 
     def set_data_axes(self, axes, key):
-        """Set the domain axis constructs spanned by the data of a
-        metadata construct.
+        """Sets domain axis constructs spanned by the construct data.
 
         .. versionadded:: (cfdm) 1.7.0
 

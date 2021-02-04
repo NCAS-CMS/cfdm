@@ -4,8 +4,7 @@ from .parameters import Parameters
 
 
 class ParametersDomainAncillaries(Parameters):
-    """Mixin class for a collection of named parameters and named domain
-    ancillary constructs.
+    """Mixin to collect named parameters and domain ancillaries.
 
     .. versionadded:: (cfdm) 1.7.0
 

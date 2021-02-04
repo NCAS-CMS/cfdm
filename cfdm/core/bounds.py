@@ -2,8 +2,10 @@ from . import abstract
 
 
 class Bounds(abstract.PropertiesData):
-    """A cell bounds component of a coordinate or domain ancillary
-    construct of the CF data model.
+    """A cell bounds component.
+
+    That is, a cell bounds component of a coordinate or domain
+    ancillary construct of the CF data model.
 
     An array of cell bounds spans the same domain axes as its
     coordinate array, with the addition of an extra dimension whose

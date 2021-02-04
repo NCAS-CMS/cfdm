@@ -26,12 +26,15 @@ class DocstringRewriteMeta(type):
     # http://www.jesshamrick.com/2013/04/17/rewriting-python-docstrings-with-a-metaclass/
 
     def __new__(cls, class_name, parents, attrs):
-        # ------------------------------------------------------------
-        # Combine the docstring substitutions from all classes in the
-        # inheritance tree. The value for a key that occurs in
-        # multiple classes will be taken from the class closest to the
-        # child class.
-        # ------------------------------------------------------------
+        """Combines docstring substitutions across the inheritance tree.
+
+        That is, combines docstring substitutions from all classes in the
+        inheritance tree.
+
+        The value for a key that occurs in multiple classes will be taken
+        from the class closest to the child class.
+
+        """
         docstring_rewrite = {}
 
         for parent in parents[::-1]:
@@ -412,8 +415,7 @@ class DocstringRewriteMeta(type):
 
     @staticmethod
     def _docstring_substitutions(cls):
-        """Return the docstring substitutions that apply to methods of
-        the given class.
+        """Returns the substitutions that apply to methods of the class.
 
         Text to be replaced is specified as a key in the returned
         dictionary, with the replacement text defined by the corresponding
@@ -481,8 +483,7 @@ class DocstringRewriteMeta(type):
 
     @staticmethod
     def _docstring_package_depth(cls):
-        """Return the package depth, N, for {{package}} docstring
-        substitutions for the given class.
+        """Returns the class {{package}} substitutions package depth.
 
         In docstrings, ``{{package}}`` is replaced by the name of the
         package, as defined by the first N+1 ``.`` (dot) separated fields
@@ -531,8 +532,7 @@ class DocstringRewriteMeta(type):
 
     @staticmethod
     def _docstring_method_exclusions(cls):
-        """Return the names of methods to exclude from docstring
-        substitutions for the given class.
+        """Returns method names excluded in the class substitutions.
 
         Exclusions for a class may be defined by creating a
         `__docstring_method_exclusions__` method that returns the sequence
@@ -598,8 +598,7 @@ class DocstringRewriteMeta(type):
         config,
         class_docstring=None,
     ):
-        """Perform docstring substitutions on a method at time of
-        import.
+        """Performs docstring substitutions on a method at import time.
 
         .. versionadded:: (cfdm) 1.8.7.0
 
