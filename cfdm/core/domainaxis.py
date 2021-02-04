@@ -18,7 +18,7 @@ class DomainAxis(abstract.Container):
     """
 
     def __init__(self, size=None, source=None, copy=True):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 

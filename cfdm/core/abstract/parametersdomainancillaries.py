@@ -14,7 +14,7 @@ class ParametersDomainAncillaries(Parameters):
     def __init__(
         self, parameters=None, domain_ancillaries=None, source=None, copy=True
     ):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 

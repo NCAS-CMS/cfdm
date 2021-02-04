@@ -70,7 +70,7 @@ class CoordinateReference(abstract.Container):
         source=None,
         copy=True,
     ):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 

@@ -11,7 +11,7 @@ class NumpyArray(abstract.Array):
     """
 
     def __init__(self, array=None):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 

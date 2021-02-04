@@ -35,7 +35,7 @@ class Datum(mixin.Parameters, mixin.NetCDFVariable, core.Datum):
     """
 
     def __init__(self, parameters=None, source=None, copy=True):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 

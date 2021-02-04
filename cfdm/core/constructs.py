@@ -44,7 +44,7 @@ class Constructs(abstract.Container):
         _view=False,
         _ignore=(),
     ):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 

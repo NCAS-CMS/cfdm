@@ -14,7 +14,7 @@ class Array(abstract.Container):
     """
 
     def __init__(self, **kwargs):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 

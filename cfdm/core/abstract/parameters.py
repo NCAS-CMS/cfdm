@@ -11,7 +11,7 @@ class Parameters(Container):
     """
 
     def __init__(self, parameters=None, source=None, copy=True):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 

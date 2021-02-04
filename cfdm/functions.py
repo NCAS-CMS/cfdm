@@ -573,7 +573,7 @@ class Constant(metaclass=DocstringRewriteMeta):
     __slots__ = ("_func", "value", "_type")
 
     def __init__(self, value, _func=None):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 

@@ -20,7 +20,7 @@ class Implementation(metaclass=abc.ABCMeta):
                 del self._class[key]
 
     def classes(self):
-        """Return all the classes of the implmeentation.
+        """Return all the classes of the implementation.
 
         :Returns:
 

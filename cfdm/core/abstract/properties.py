@@ -11,7 +11,7 @@ class Properties(Container):
     """
 
     def __init__(self, properties=None, source=None, copy=True):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 

@@ -25,7 +25,7 @@ class Data(abstract.Container):
         _use_array=True,
         _custom_deep_copy=False,
     ):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 
