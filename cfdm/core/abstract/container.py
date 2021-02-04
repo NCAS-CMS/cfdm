@@ -13,7 +13,7 @@ class Container(metaclass=DocstringRewriteMeta):
     """
 
     def __init__(self, source=None, copy=True):
-        """**Initialisation**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 

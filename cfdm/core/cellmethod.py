@@ -27,7 +27,7 @@ class CellMethod(abstract.Container):
     def __init__(
         self, axes=None, method=None, qualifiers=None, source=None, copy=True
     ):
-        """**Initialisation**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 

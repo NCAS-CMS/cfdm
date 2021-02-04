@@ -35,7 +35,7 @@ class CellMeasure(abstract.PropertiesData):
         copy=True,
         _use_data=True,
     ):
-        """**Initialisation**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 

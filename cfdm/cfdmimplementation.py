@@ -68,7 +68,7 @@ class CFDMImplementation(Implementation):
         NodeCountProperties=None,
         PartNodeCountProperties=None,
     ):
-        """**Initialisation**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 
