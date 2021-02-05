@@ -487,7 +487,7 @@ class Constant(metaclass=DocstringRewriteMeta):
        >>> c * 3
        60
        >>> 2 - c
-       -38
+       -18
 
        >>> c = {{package}}.{{class}}('New_')
        >>> c * 2

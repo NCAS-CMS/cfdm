@@ -61,14 +61,14 @@ def example_field(n, _implementation=_implementation):
 
     >>> f = cfdm.example_field(0)
     >>> print(f)
-    Field: specific_humidity(ncvar%q)
-    ---------------------------------
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
     Data            : specific_humidity(latitude(5), longitude(8)) 1
     Cell methods    : area: mean
-    Dimension coords: time(1) = [2019-01-01 00:00:00]
-                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
                     : longitude(8) = [22.5, ..., 337.5] degrees_east
-    >>> print(f.array)
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> print(f.data.array)
     [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
      [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
      [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
@@ -147,13 +147,13 @@ def example_field(n, _implementation=_implementation):
     >>> f = cfdm.example_field(6)
     >>> print(f)
     Field: precipitation_amount (ncvar%pr)
-    ---------------------------------------
+    --------------------------------------
     Data            : precipitation_amount(cf_role=timeseries_id(2), time(4))
-    Dimension coords: time(4) = [2000-01-02 00:00:00, ..., 2000-01-05 00:00:00]
+    Dimension coords: time(4) = [2000-01-16 12:00:00, ..., 2000-04-15 00:00:00]
     Auxiliary coords: latitude(cf_role=timeseries_id(2)) = [25.0, 7.0] degrees_north
                     : longitude(cf_role=timeseries_id(2)) = [10.0, 40.0] degrees_east
                     : cf_role=timeseries_id(cf_role=timeseries_id(2)) = [b'x1', b'y2']
-                    : altitude(cf_role=timeseries_id(2), 3, 4) = [[[1.0, ..., --]]] m
+                    : ncvar%z(cf_role=timeseries_id(2), 3, 4) = [[[1.0, ..., --]]] m
     Coord references: grid_mapping_name:latitude_longitude
 
     >>> f = cfdm.example_field(7)
