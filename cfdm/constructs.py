@@ -134,8 +134,7 @@ class Constructs(mixin.Container, core.Constructs):
     # Private methods
     # ----------------------------------------------------------------
     def _axes_to_constructs(self):
-        """Map domain axis constructs to the metadata constructs whose
-        data span them.
+        """Maps domain axes to constructs whose data span them.
 
         This is useful for ascertaining whether or not two `Constructs`
         instances are equal.
@@ -1015,8 +1014,7 @@ class Constructs(mixin.Container, core.Constructs):
         return out
 
     def filter_by_data(self):
-        """Select metadata constructs by whether they could contain
-        data.
+        """Selects metadata constructs that could contain data.
 
         Selection is not based on whether they actually have data,
         rather by whether the construct supports the inclusion of
@@ -1420,7 +1418,9 @@ class Constructs(mixin.Container, core.Constructs):
         return out
 
     def filter_by_naxes(self, *naxes):
-        """Select metadata constructs by the number of domain axis
+        """Selects constructs by the number of axes their data spans.
+
+        Specifically, selects metadata constructs by the number of domain axis
         constructs spanned by their data.
 
         .. versionadded:: (cfdm) 1.7.0

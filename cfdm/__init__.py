@@ -1,6 +1,8 @@
-"""cfdm is a reference implementation of the CF data model, that
-identifies the fundamental elements of the CF conventions and shows how
-they relate to each other, independently of the netCDF encoding.
+"""cfdm is a reference implementation of the CF data model.
+
+It identifies the fundamental elements of the CF conventions and
+shows how they relate to each other, independently of the netCDF
+encoding.
 
 The central element defined by the CF data model is the field
 construct, which corresponds to a CF-netCDF data variable with all of
@@ -177,6 +179,7 @@ logging.addLevelName(logging.DETAIL, "DETAIL")
 
 
 def detail(self, message, *args, **kwargs):
+    """Sets up a custom logging level named 'detail'."""
     if self.isEnabledFor(logging.DETAIL):
         self._log(logging.DETAIL, message, args, **kwargs)
 

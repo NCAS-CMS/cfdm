@@ -227,7 +227,7 @@ class Field(
             string.append("Cell methods    : {0}".format(c))
 
         def _print_item(self, key, variable, axes):
-            """Private function called by __str__"""
+            """Private function called by __str__."""
             # Field ancillary
             x = [variable.identity(default=key)]
 
@@ -370,7 +370,7 @@ class Field(
     # Private methods
     # ----------------------------------------------------------------
     def _get_data_compression_variables(self, component):
-        """"""
+        """TODO DOCS."""
         out = []
         for construct in self.constructs.filter_by_data().values():
             data = construct.get_data(None)
@@ -437,7 +437,7 @@ class Field(
         return out
 
     def _one_line_description(self, axis_names_sizes=None):
-        """"""
+        """TODO DOCS."""
         if axis_names_sizes is None:
             axis_names_sizes = self._unique_domain_axis_identities()
 
@@ -460,8 +460,10 @@ class Field(
         return "{0}{1}{2}".format(self.identity(""), axis_names, units)
 
     def _set_dataset_compliance(self, value):
-        """Set the report of problems encountered whilst reading the
-        field construct from a dataset.
+        """Sets the dataset compliance report.
+
+        Specifically, sets the report of problems encountered whilst
+        reading the field construct from a dataset.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -475,8 +477,6 @@ class Field(
         :Returns:
 
             `None`
-
-        **Examples:**
 
         """
         self._set_component("dataset_compliance", value, copy=True)
@@ -495,7 +495,9 @@ class Field(
     @property
     @_test_decorator_args("i")
     def _test_docstring_substitution_decorator_property(self):
-        """Test docstring substitution on {{class}} with @property and a
+        """Tests docstring substitution with a property and decorator.
+
+        The substitution is tested on {{class}} with @property and a
         decorator.
 
             {{inplace: `bool`, optional}}
@@ -947,8 +949,7 @@ class Field(
         def _compress_metadata(
             f, method, count, N, axes, Array_func, **kwargs
         ):
-            """Compress metadata constructs for a field by a chosen
-            method.
+            """Compresses constructs for a field by a chosen method.
 
             :Parameters:
 
@@ -1866,8 +1867,7 @@ class Field(
         return out
 
     def has_geometry(self):
-        """Whether or not any coordinate constructs have cell
-        geometries.
+        """Whether any coordinate constructs have cell geometries.
 
         .. versionadded:: (cfdm) 1.8.7.0
 
@@ -2149,7 +2149,9 @@ class Field(
         return f
 
     def dataset_compliance(self, display=False):
-        """A report of problems encountered whilst reading the field
+        """Returns a report of issues from reading in the field.
+
+        Reported are problems encountered whilst reading the field
         construct from a dataset.
 
         If the dataset is partially CF-compliant to the extent that it is
@@ -2224,8 +2226,7 @@ class Field(
             print("}\n")
 
     def nc_set_component_variable(self, component, value):
-        """Set the netCDF variable name for all components of the given
-        type.
+        """Sets the netCDF variable name for components of given type.
 
         Some components exist within multiple constructs, but when written
         to a netCDF dataset the netCDF names associated with such
@@ -2291,8 +2292,7 @@ class Field(
             v.nc_set_variable(value)
 
     def nc_del_component_variable(self, component):
-        """Remove the netCDF variable name for all components of the
-        given type.
+        """Removes the netCDF variable name for same-type components.
 
         Some components exist within multiple constructs, but when written
         to a netCDF dataset the netCDF names associated with such
@@ -2355,8 +2355,10 @@ class Field(
             v.nc_del_variable(None)
 
     def nc_set_component_variable_groups(self, component, groups):
-        """Set the netCDF variable groups hierarchy for all components
-        of the given type.
+        """Sets variable groups hierarchy for same-type components.
+
+        Specifically, sets the netCDF variable groups hierarchy for all
+        components of the given type.
 
         Some components exist within multiple constructs, but when written
         to a netCDF dataset the netCDF names associated with such
@@ -2421,8 +2423,10 @@ class Field(
             v.nc_set_variable_groups(groups)
 
     def nc_clear_component_variable_groups(self, component):
-        """Remove the netCDF variable groups hierarchy for all
-        components of the given type.
+        """Removes variable groups hierarchy for same-type components.
+
+        Specifically, removes the netCDF variable groups hierarchy for
+        all components of the given type.
 
         Some components exist within multiple constructs, but when written
         to a netCDF dataset the netCDF names associated with such
@@ -2484,8 +2488,7 @@ class Field(
             v.nc_clear_variable_groups()
 
     def nc_set_component_dimension(self, component, value):
-        """Set the netCDF dimension name for all components of the given
-        type.
+        """Sets the netCDF dimension name for components of given type.
 
         Some components exist within multiple constructs, but when written
         to a netCDF dataset the netCDF names associated with such
@@ -2544,8 +2547,7 @@ class Field(
             v.nc_set_dimension(value)
 
     def nc_del_component_dimension(self, component):
-        """Remove the netCDF dimension name for all components of the
-        given type.
+        """Removes netCDF dimension name for components of given type.
 
         Some components exist within multiple constructs, but when written
         to a netCDF dataset the netCDF names associated with such
@@ -2601,8 +2603,10 @@ class Field(
             v.nc_del_dimension(None)
 
     def nc_set_component_dimension_groups(self, component, groups):
-        """Set the netCDF dimension groups hierarchy for all components
-        of the given type.
+        """Sets dimension groups hierarchy for same-type components.
+
+        Specifically, sets the netCDF dimension groups hierarchy for
+        all components of the given type.
 
         Some components exist within multiple constructs, but when written
         to a netCDF dataset the netCDF names associated with such
@@ -2661,7 +2665,9 @@ class Field(
             v.nc_set_dimension_groups(groups)
 
     def nc_clear_component_dimension_groups(self, component):
-        """Remove the netCDF dimension groups hierarchy for all
+        """Removes dimension groups hierarchy for same-type components.
+
+        Removes the netCDF dimension groups hierarchy for all
         components of the given type.
 
         Some components exist within multiple constructs, but when written
@@ -2718,8 +2724,7 @@ class Field(
             v.nc_clear_dimension_groups()
 
     def nc_set_component_sample_dimension(self, component, value):
-        """Set the netCDF sample dimension name for all components of
-        the given type.
+        """Sets the sample dimension name for same-type components.
 
         Some components exist within multiple constructs, but when written
         to a netCDF dataset the netCDF names associated with such
@@ -2771,8 +2776,7 @@ class Field(
             v.nc_set_sample_dimension(value)
 
     def nc_del_component_sample_dimension(self, component):
-        """Remove the netCDF sample dimension name for all components of
-        the given type.
+        """Removes the sample dimension name for same-type components.
 
         Some components exist within multiple constructs, but when written
         to a netCDF dataset the netCDF names associated with such
@@ -2820,8 +2824,10 @@ class Field(
             v.nc_del_sample_dimension(None)
 
     def nc_set_component_sample_dimension_groups(self, component, groups):
-        """Set the netCDF sample dimension groups hierarchy for all
-        components of the given type.
+        """Sets same-type component sample dimension groups hierarchies.
+
+        That is, sets the netCDF sample dimension groups hierarchy
+        for all components of the given type.
 
         Some components exist within multiple constructs, but when written
         to a netCDF dataset the netCDF names associated with such
@@ -2872,8 +2878,10 @@ class Field(
             v.nc_set_sample_dimension_groups(groups)
 
     def nc_clear_component_sample_dimension_groups(self, component):
-        """Remove the netCDF sample dimension groups hierarchy for all
-        components of the given type.
+        """Removes same-type component sample dimension groups.
+
+        Specifically, removes the netCDF sample dimension groups hierarchy
+        for all components of the given type.
 
         Some components exist within multiple constructs, but when written
         to a netCDF dataset the netCDF names associated with such
