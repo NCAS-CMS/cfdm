@@ -48,7 +48,6 @@ class FieldAncillary(
         copy=True,
         _use_data=True,
     ):
-
         """Initialises the `{{class}}` instance.
 
         :Parameters:

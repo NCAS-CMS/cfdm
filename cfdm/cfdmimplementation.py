@@ -306,8 +306,7 @@ class CFDMImplementation(Implementation):
         return data.array
 
     def get_auxiliary_coordinates(self, field, axes=None, exact=False):
-        """Return auxiliary coordinate constructs that span particular
-        axes.
+        """Returns auxiliary coordinates that span particular axes.
 
         If no axes are specified then all auxiliary coordinate constructs
         are returned.
@@ -483,8 +482,7 @@ class CFDMImplementation(Implementation):
         return [data_axes[i] for i in self.get_data_compressed_axes(data)]
 
     def get_compression_type(self, construct):
-        """Return the construct keys of the domain axis constructs
-        spanned by a metadata construct.
+        """Returns the type of compression applied.
 
         :Parameters:
 
@@ -504,8 +502,10 @@ class CFDMImplementation(Implementation):
         return data.get_compression_type()
 
     def get_construct_data_axes(self, field, key):
-        """Return the construct keys of the domain axis constructs
-        spanned by a metadata construct.
+        """Returns the construct keys of the spanned axes.
+
+        That is, returns the construct keys of the domain axis
+        constructs spanned by a metadata construct.
 
         :Parameters:
 
@@ -569,8 +569,10 @@ class CFDMImplementation(Implementation):
         return coordinate_reference.coordinates()
 
     def get_coordinate_conversion_parameters(self, coordinate_reference):
-        """Return the coordinate conversion parameters of a coordinate
-        reference construct.
+        """Gets the coordinate reference conversion parameters.
+
+        Specifically, returns the coordinate conversion parameters of a
+        coordinate reference construct.
 
         :Parameters:
 
@@ -758,8 +760,7 @@ class CFDMImplementation(Implementation):
         return coordinate_reference.datum
 
     def get_datum_parameters(self, ref):
-        """Return the parameter-valued terms of a coordinate reference
-        datum.
+        """Returns coordinate reference datum parameter-valued terms.
 
         :Parameters:
 
@@ -823,8 +824,7 @@ class CFDMImplementation(Implementation):
         return field.domain_axes[axis].get_size()
 
     def get_sample_dimension_position(self, construct):
-        """Return the position of the sample dimension of compressed
-        data.
+        """Returns the position of the compressed data sample dimension.
 
         :Parameters:
 
@@ -852,8 +852,7 @@ class CFDMImplementation(Implementation):
         return field.nc_get_geometry_variable(default)
 
     def nc_get_group_attributes(self, field):
-        """Return the netCDF sub-group attribtues for the field
-        construct.
+        """Returns the netCDF sub-group attribtues for the field.
 
         .. versionadded:: (cfdm) 1.8.6
 
@@ -917,8 +916,7 @@ class CFDMImplementation(Implementation):
         return count.nc_get_sample_dimension(default=default)
 
     def nc_is_unlimited_axis(self, field, axis):
-        """Whether a domain axis corresponds to a netCDF unlimited
-        dimension.
+        """Whether a domain axis matches a netCDF unlimited dimension.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -940,8 +938,7 @@ class CFDMImplementation(Implementation):
         return domain_axis.nc_is_unlimited()
 
     def nc_set_unlimited_axis(self, field, axis):
-        """Set a domain axis to correspond to a netCDF unlimited
-        dimension.
+        """Sets a domain axis to match a netCDF unlimited dimension.
 
         .. versionadded:: (cfdm) 1.7.4
 
@@ -1158,8 +1155,7 @@ class CFDMImplementation(Implementation):
         return field.field_ancillaries
 
     def get_field_data_axes(self, field):
-        """Return the construct keys of the field constructs data
-        dimensions.
+        """Returns the construct keys of the field's data dimensions.
 
         :Parameters:
 
@@ -1651,8 +1647,10 @@ class CFDMImplementation(Implementation):
     def initialise_DimensionCoordinate_from_AuxiliaryCoordinate(
         self, auxiliary_coordinate=None, copy=True
     ):
-        """Return a dimension coordinate construct insitialized from an
-        auxiliary coordinate construct.
+        """Returns a dimension coordinate from an auxiliary coordinate.
+
+        Specifically, returns a dimension coordinate construct
+        insitialized from an auxiliary coordinate construct.
 
         :Parameters:
 

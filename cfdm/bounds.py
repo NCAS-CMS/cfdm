@@ -10,8 +10,10 @@ class Bounds(
     mixin.PropertiesData,
     core.Bounds,
 ):
-    """A cell bounds component of a coordinate or domain ancillary
-    construct of the CF data model.
+    """A cell bounds component.
+
+    Specifically, a cell bounds component of a coordinate or domain
+    ancillary construct of the CF data model.
 
     An array of cell bounds spans the same domain axes as its
     coordinate array, with the addition of an extra dimension whose

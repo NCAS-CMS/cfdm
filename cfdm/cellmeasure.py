@@ -109,8 +109,7 @@ class CellMeasure(
         data_name="data",
         header=True,
     ):
-        """Return the commands that would create the cell measure
-        construct.
+        """Returns the commands to create the cell measure construct.
 
         .. versionadded:: (cfdm) 1.8.7.0
 

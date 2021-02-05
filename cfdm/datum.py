@@ -3,8 +3,7 @@ from . import core
 
 
 class Datum(mixin.Parameters, mixin.NetCDFVariable, core.Datum):
-    """A datum component of a coordinate reference construct of the CF
-    data model.
+    """A datum component of a CF data model coordinate reference.
 
     A datum is a complete or partial definition of the zeroes of the
     dimension and auxiliary coordinate constructs which define a
