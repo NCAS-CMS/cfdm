@@ -111,10 +111,16 @@ class Container(metaclass=DocstringRewriteMeta):
 
         >>> f = {{package}}.{{class}}()
         >>> f._default(AttributeError())  # Raises Exception
-        AttributeError:
+        Traceback (most recent call last):
+            ...
+        AttributeError
         >>> f._default(ValueError("Missing item"))  # Raises Exception
+        Traceback (most recent call last):
+            ...
         ValueError: Missing item
         >>> f._default(ValueError(), message="No component")  # Raises Exception
+        Traceback (most recent call last):
+            ...
         ValueError: No component
         >>> f._default(False)
         False

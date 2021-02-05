@@ -439,7 +439,8 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
         >>> f = {{package}}.example_field(0)
         >>> f.del_construct('auxiliarycoordinate2')
-        Traceback ...
+        Traceback (most recent call last):
+            ...
         ValueError: Can't remove non-existent construct
         >>> f.del_construct('auxiliarycoordinate2', default=False)
         False

@@ -313,6 +313,7 @@ class CellMethod(abstract.Container):
         >>> c.get_axes()
         ('domainaxis1',)
         >>> c.del_axes()
+        ('domainaxis1',)
         >>> c.has_axes()
         False
         >>> c.get_axes('NO AXES')
@@ -357,6 +358,7 @@ class CellMethod(abstract.Container):
         >>> c.get_method()
         'minimum'
         >>> c.del_method()
+        'minimum'
         >>> c.has_method()
         False
         >>> c.get_method('NO METHOD')
@@ -443,6 +445,7 @@ class CellMethod(abstract.Container):
         >>> c.get_axes()
         ('domainaxis1',)
         >>> c.del_axes()
+        ('domainaxis1',)
         >>> c.has_axes()
         False
         >>> c.get_axes('NO AXES')
@@ -474,6 +477,7 @@ class CellMethod(abstract.Container):
         >>> c.get_method()
         'minimum'
         >>> c.del_method()
+        'minimum'
         >>> c.has_method()
         False
         >>> c.get_method('NO METHOD')
@@ -588,6 +592,7 @@ class CellMethod(abstract.Container):
         >>> c.get_axes()
         ('domainaxis1',)
         >>> c.del_axes()
+        ('domainaxis1',)
         >>> c.has_axes()
         False
         >>> c.get_axes('NO AXES')
@@ -640,6 +645,7 @@ class CellMethod(abstract.Container):
         >>> c.get_method()
         'minimum'
         >>> c.del_method()
+        'minimum'
         >>> c.has_method()
         False
         >>> c.get_method('NO METHOD')

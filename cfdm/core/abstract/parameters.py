@@ -120,7 +120,7 @@ class Parameters(Container):
         False
         >>> print(f.del_parameter('earth_radius', None))
         None
-        >>> print(f.get_paramete('earth_radius', None))
+        >>> print(f.get_parameter('earth_radius', None))
         None
 
         """
