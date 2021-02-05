@@ -36,8 +36,7 @@ del _subs
 
 
 def configuration(atol=None, rtol=None, log_level=None):
-    """View or set any number of constants in the project-wide
-    configuration.
+    """Views and sets constants in the project-wide configuration.
 
     The full list of global constants that are provided in a dictionary to
     view, and can be set in any combination, are:
@@ -160,8 +159,7 @@ def configuration(atol=None, rtol=None, log_level=None):
 
 
 def _configuration(_Configuration, **kwargs):
-    """Internal helper function to provide the logic for
-    `cfdm.configuration`.
+    """Internal helper function with logic for `cfdm.configuration`.
 
     We delegate from the user-facing `cfdm.configuration` for two main reasons:
 
@@ -225,8 +223,7 @@ def LOG_LEVEL(*new_log_level):
 
 
 def _is_valid_log_level_int(int_log_level):
-    """Return a Boolean stating if input is a ValidLogLevels Enum
-    integer."""
+    """True if the input is a ValidLogLevels Enum integer."""
     try:
         ValidLogLevels(int_log_level)
     except KeyError:  # if verbose int not in Enum int constants
@@ -589,8 +586,10 @@ class Constant(metaclass=DocstringRewriteMeta):
         self._func = _func
 
     def __docstring_substitutions__(self):
-        """Define docstring substitutions that apply to this class and
-        all of its subclasses.
+        """Defines applicable docstring substitutions.
+
+        Substitutons are considered applicable if they apply to this
+        class as well as all of its subclasses.
 
         These are in addtion to, and take precendence over, docstring
         substitutions defined by the base classes of this class.
@@ -608,8 +607,7 @@ class Constant(metaclass=DocstringRewriteMeta):
         return _docstring_substitution_definitions
 
     def __docstring_package_depth__(self):
-        """Return the package depth for {{package}} docstring
-        substitutions.
+        """Returns the package depth for {{package}} substitutions.
 
         See `_docstring_package_depth` for details.
 
@@ -641,80 +639,104 @@ class Constant(metaclass=DocstringRewriteMeta):
         return self.copy()
 
     def __bool__(self):
+        """TODO DOCS."""
         return bool(self.value)
 
     def __float__(self):
+        """TODO DOCS."""
         return float(self.value)
 
     def __int__(self):
+        """TODO DOCS."""
         return int(self.value)
 
     def __eq__(self, other):
+        """TODO DOCS."""
         return self.value == other
 
     def __lt__(self, other):
+        """TODO DOCS."""
         return self.value < other
 
     def __abs__(self):
+        """TODO DOCS."""
         return abs(self.value)
 
     def __neg__(self):
+        """TODO DOCS."""
         return -self.value
 
     def __pos__(self):
+        """TODO DOCS."""
         return self.value
 
     def __iadd__(self, other):
+        """TODO DOCS."""
         self.value += other
         return self
 
     def __ifloordiv__(self, other):
+        """TODO DOCS."""
         self.value //= other
         return self
 
     def __imul__(self, other):
+        """TODO DOCS."""
         self.value *= other
         return self
 
     def __isub__(self, other):
+        """TODO DOCS."""
         self.value -= other
         return self
 
     def __itruediv__(self, other):
+        """TODO DOCS."""
         self.value /= other
         return self
 
     def __add__(self, other):
+        """TODO DOCS."""
         return self.value + other
 
     def __floordiv__(self, other):
+        """TODO DOCS."""
         return self.value // other
 
     def __mul__(self, other):
+        """TODO DOCS."""
         return self.value * other
 
     def __sub__(self, other):
+        """TODO DOCS."""
         return self.value - other
 
     def __truediv__(self, other):
+        """TODO DOCS."""
         return self.value / other
 
     def __radd__(self, other):
+        """TODO DOCS."""
         return other + self.value
 
     def __rfloordiv__(self, other):
+        """TODO DOCS."""
         return other // self.value
 
     def __rmul__(self, other):
+        """TODO DOCS."""
         return other * self.value
 
     def __rsub__(self, other):
+        """TODO DOCS."""
         return other - self.value
 
     def __rtruediv__(self, other):
+        """TODO DOCS."""
         return other / self.value
 
     def __hash__(self):
+        """TODO DOCS."""
         return hash((self.value, getattr(self, "_func", None)))
 
     def __repr__(self):
@@ -752,8 +774,9 @@ class Constant(metaclass=DocstringRewriteMeta):
 
 
 class Configuration(dict, metaclass=DocstringRewriteMeta):
-    """A dictionary-like container for the global constants with context
-    manager support.
+    """Dictionary-like container for the global constants.
+
+    The container has context manager support.
 
     Initialization is as for a `dict`, and nearly all of the `dict`
     methods are available with the same behaviours (`clear`,
@@ -794,8 +817,10 @@ class Configuration(dict, metaclass=DocstringRewriteMeta):
         return instance
 
     def __docstring_substitutions__(self):
-        """Define docstring substitutions that apply to this class and
-        all of its subclasses.
+        """Defines applicable docstring substitutions.
+
+        Substitutons are considered applicable if they apply to this
+        class as well as all of its subclasses.
 
         These are in addtion to, and take precendence over, docstring
         substitutions defined by the base classes of this class.
@@ -813,8 +838,7 @@ class Configuration(dict, metaclass=DocstringRewriteMeta):
         return _docstring_substitution_definitions
 
     def __docstring_package_depth__(self):
-        """Return the package depth for {{package}} docstring
-        substitutions.
+        """Returns the package depth for {{package}} substitutions.
 
         See `_docstring_package_depth` for details.
 
@@ -844,6 +868,7 @@ class Configuration(dict, metaclass=DocstringRewriteMeta):
         return "<{0}: {1}>".format(self.__class__.__name__, super().__repr__())
 
     def __str__(self):
+        """TODO DOCS."""
         return super().__repr__()
 
     # ----------------------------------------------------------------
@@ -871,8 +896,7 @@ class Configuration(dict, metaclass=DocstringRewriteMeta):
 
 
 class ConstantAccess(metaclass=DocstringRewriteMeta):
-    '''Base class for classes masquerading as functions that access
-    package-wide constants.
+    '''Base class to act as a function accessing package-wide constants.
 
     Subclasses must implement or inherit a method called `_parse` as
     follows:
@@ -923,8 +947,10 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
         return cls._Constant(old, _func=cls)
 
     def __docstring_substitutions__(self):
-        """Define docstring substitutions that apply to this class and
-        all of its subclasses.
+        """Defines applicable docstring substitutions.
+
+        Substitutons are considered applicable if they apply to this
+        class as well as all of its subclasses.
 
         These are in addtion to, and take precendence over, docstring
         substitutions defined by the base classes of this class.
@@ -942,8 +968,7 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
         return _docstring_substitution_definitions
 
     def __docstring_package_depth__(self):
-        """Return the package depth for {{package}} docstring
-        substitutions.
+        """Returns the package depth for {{package}} substitutions.
 
         See `_docstring_package_depth` for details.
 
@@ -954,8 +979,7 @@ class ConstantAccess(metaclass=DocstringRewriteMeta):
 
 
 class atol(ConstantAccess):
-    """The tolerance on absolute differences when testing for
-    numerically tolerant equality.
+    """The numerical equality tolerance on absolute differences.
 
     Two real numbers ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
@@ -1040,8 +1064,7 @@ class atol(ConstantAccess):
 
 
 class rtol(ConstantAccess):
-    """The tolerance on relative differences when testing for
-    numerically tolerant equality.
+    """The numerical equality tolerance on relative differences.
 
     Two real numbers ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute

@@ -5,8 +5,10 @@ from . import core
 class CoordinateConversion(
     mixin.ParametersDomainAncillaries, core.CoordinateConversion
 ):
-    """A coordinate conversion component of a coordinate reference
-    construct of the CF data model.
+    """A coordinate conversion component.
+
+    Specifically, a coordinate conversion component of a coordinate
+    reference construct of the CF data model.
 
     A coordinate conversion formula converting coordinate values taken
     from the dimension or auxiliary coordinate constructs to a

@@ -37,6 +37,8 @@ CONSTANTS = {
 # logging
 # --------------------------------------------------------------------
 class ValidLogLevels(Enum):
+    """TODO DOCS."""
+
     DISABLE = 0
     WARNING = 1
     INFO = 2

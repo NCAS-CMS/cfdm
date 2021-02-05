@@ -159,8 +159,7 @@ class CoordinateReference(
     def creation_commands(
         self, namespace=None, indent=0, string=True, name="c", header=True
     ):
-        """Return the commands that would create the coordinate
-        reference construct.
+        """Returns the commands to create the coordinate reference.
 
         .. versionadded:: (cfdm) 1.8.7.0
 
@@ -550,7 +549,7 @@ class CoordinateReference(
         return default
 
     def identities(self):
-        """Return all possible identities.
+        """Returns all possible identities.
 
         The identities comprise:
 
@@ -585,7 +584,6 @@ class CoordinateReference(
         []
 
         """
-
         out = []
 
         for prop in ("standard_name", "grid_mapping_name"):
