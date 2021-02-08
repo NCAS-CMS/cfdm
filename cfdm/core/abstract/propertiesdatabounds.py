@@ -700,7 +700,7 @@ class PropertiesDataBounds(PropertiesData):
         **Examples:**
 
 
-        >>> c = {{package}}.{{class}})(
+        >>> c = {{package}}.{{class}}()
         >>> i = {{package}}.InteriorRing(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
         >>> c.set_interior_ring(i)
         >>> c.has_interior_ring()

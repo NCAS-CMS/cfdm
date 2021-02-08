@@ -170,10 +170,10 @@ class Data(abstract.Container):
         >>> isinstance(n, numpy.ndarray)
         True
         >>> print(n)
-        [ 1.,   2.,   3.]
+        [1. 2. 3.]
         >>> n[0] = 88
         >>> d
-        <{{repr}}{{class}}: [1.0, 2.0, 3.0] km>
+        <{{repr}}{{class}}(3): [1.0, 2.0, 3.0] km>
 
         """
         array = self._get_Array().array

@@ -2675,9 +2675,9 @@ class CFDMImplementation(Implementation):
         **Examples:**
 
         >>> if API.has_datum(ref):
-        ...     print ref, 'has a datum'
+        ...     print(ref, 'has a datum')
         ... else:
-        ...     print ref, 'does not have a datum'
+        ...     print(ref, 'does not have a datum')
 
         """
         return bool(coordinate_reference.datum)
@@ -2777,30 +2777,29 @@ def implementation():
     >>> i
     <CFDMImplementation: >
     >>> i.classes()
-    {'AuxiliaryCoordinate': cfdm.auxiliarycoordinate.AuxiliaryCoordinate,
-     'Bounds': cfdm.bounds.Bounds,
-     'CellMeasure': cfdm.cellmeasure.CellMeasure,
-     'CellMethod': cfdm.cellmethod.CellMethod,
-     'CoordinateConversion': cfdm.coordinateconversion.CoordinateConversion,
-     'CoordinateReference': cfdm.coordinatereference.CoordinateReference,
-     'Count': cfdm.count.Count,
-     'Data': cfdm.data.data.Data,
-     'Datum': cfdm.datum.Datum,
-     'DimensionCoordinate': cfdm.dimensioncoordinate.DimensionCoordinate,
-     'DomainAncillary': cfdm.domainancillary.DomainAncillary,
-     'DomainAxis': cfdm.domainaxis.DomainAxis,
-     'Field': cfdm.field.Field,
-     'FieldAncillary': cfdm.fieldancillary.FieldAncillary,
-     'GatheredArray': cfdm.data.gatheredarray.GatheredArray,
-     'Index': cfdm.index.Index,
-     'InteriorRing': cfdm.interiorring.InteriorRing,
-     'List': cfdm.list.List,
-     'NetCDFArray': cfdm.data.netcdfarray.NetCDFArray,
-     'NodeCountProperties': cfdm.nodecount.NodeCountProperties,
-     'PartNodeCountProperties': cfdm.partnodecount.PartNodeCountProperties,
-     'RaggedContiguousArray': cfdm.data.raggedcontiguousarray.RaggedContiguousArray,
-     'RaggedIndexedArray': cfdm.data.raggedindexedarray.RaggedIndexedArray,
-     'RaggedIndexedContiguousArray': cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray}
-
+    {'AuxiliaryCoordinate': <class 'cfdm.auxiliarycoordinate.AuxiliaryCoordinate'>,
+     'CellMeasure': <class 'cfdm.cellmeasure.CellMeasure'>,
+     'CellMethod': <class 'cfdm.cellmethod.CellMethod'>,
+     'CoordinateReference': <class 'cfdm.coordinatereference.CoordinateReference'>,
+     'DimensionCoordinate': <class 'cfdm.dimensioncoordinate.DimensionCoordinate'>,
+     'DomainAncillary': <class 'cfdm.domainancillary.DomainAncillary'>,
+     'DomainAxis': <class 'cfdm.domainaxis.DomainAxis'>,
+     'Field': <class 'cfdm.field.Field'>,
+     'FieldAncillary': <class 'cfdm.fieldancillary.FieldAncillary'>,
+     'Bounds': <class 'cfdm.bounds.Bounds'>,
+     'InteriorRing': <class 'cfdm.interiorring.InteriorRing'>,
+     'CoordinateConversion': <class 'cfdm.coordinateconversion.CoordinateConversion'>,
+     'Datum': <class 'cfdm.datum.Datum'>,
+     'Data': <class 'cfdm.data.data.Data'>,
+     'GatheredArray': <class 'cfdm.data.gatheredarray.GatheredArray'>,
+     'NetCDFArray': <class 'cfdm.data.netcdfarray.NetCDFArray'>,
+     'RaggedContiguousArray': <class 'cfdm.data.raggedcontiguousarray.RaggedContiguousArray'>,
+     'RaggedIndexedArray': <class 'cfdm.data.raggedindexedarray.RaggedIndexedArray'>,
+     'RaggedIndexedContiguousArray': <class 'cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray'>
+     'List': <class 'cfdm.list.List'>,
+     'Count': <class 'cfdm.count.Count'>,
+     'Index': <class 'cfdm.index.Index'>,
+     'NodeCountProperties': <class 'cfdm.nodecountproperties.NodeCountProperties'>,
+     'PartNodeCountProperties': <class 'cfdm.partnodecountproperties.PartNodeCountProperties'>}
     """
     return _implementation.copy()

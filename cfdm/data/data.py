@@ -896,10 +896,11 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         **Examples:**
 
-        >>> d = {{package}}.{{class}}(numpy.ma.array([[280.0,   -99,   -99,   -99],
-                                     [281.0, 279.0, 278.0, 279.5]],
-                     mask=[[0, 1, 1, 1],
-                           [0, 0, 0, 0]]))
+        >>> d = {{package}}.{{class}}(numpy.ma.array(
+        ...     [[280.0,   -99,   -99,   -99],
+        ...      [281.0, 279.0, 278.0, 279.5]],
+        ...     mask=[[0, 1, 1, 1], [0, 0, 0, 0]]
+        ... ))
         >>> d
         <{{repr}}Data(2, 4): [[280.0, ..., 279.5]]>
         >>> print(d.array)
@@ -2548,21 +2549,21 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> d = {{package}}.{{class}}(9.0)
         >>> x = d.last_element()
         >>> print(x, type(x))
-        (9.0, <type 'float'>)
+        9.0 <class 'float'>
 
         >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
         >>> x = d.last_element()
         >>> print(x, type(x))
-        (4, <type 'int'>)
+        4 <class 'int'>
         >>> d[-1, -1] = cfdm.masked
         >>> y = d.last_element()
         >>> print(y, type(y))
-        (masked, <class 'numpy.ma.core.MaskedConstant'>)
+        -- <class 'numpy.ma.core.MaskedConstant'>
 
         >>> d = {{package}}.{{class}}(['foo', 'bar'])
         >>> x = d.last_element()
         >>> print(x, type(x))
-        ('bar', <type 'str'>)
+        bar <class 'str'>
 
         """
         return self._item((slice(-1, None),) * self.ndim)
@@ -2583,16 +2584,16 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
         >>> x = d.second_element()
         >>> print(x, type(x))
-        (2, <type 'int'>)
+        2 <class 'int'>
         >>> d[0, 1] = cfdm.masked
         >>> y = d.second_element()
         >>> print(y, type(y))
-        (masked, <class 'numpy.ma.core.MaskedConstant'>)
+        -- <class 'numpy.ma.core.MaskedConstant'>
 
         >>> d = {{package}}.{{class}}(['foo', 'bar'])
         >>> x = d.second_element()
         >>> print(x, type(x))
-        ('bar', <type 'str'>)
+        bar <class 'str'>
 
         """
         return self._item((slice(0, 1),) * (self.ndim - 1) + (slice(1, 2),))
@@ -2672,7 +2673,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         >>> d = {{package}}.{{class}}([[4, 2, 1], [1, 2, 3]], 'metre')
         >>> d.unique()
-        <{{repr}}Data(4): [1, 2, 3, 4] metre>
+        <{{repr}}Data(4): [1, ..., 4] metre>
         >>> d[1, -1] = cfdm.masked
         >>> d.unique()
         <{{repr}}Data(3): [1, 2, 4] metre>

@@ -443,8 +443,8 @@ class NetCDFRead(IORead):
 
         **Examples:**
 
-        >>> if NetCDFRead.is_netcdf_file(filename):
-        ...     return 'netCDF'
+        >>> {{package}}.{{class}}.is_netcdf_file('file.nc')
+        True
 
         """
         # Assume that URLs are in netCDF format
@@ -499,8 +499,8 @@ class NetCDFRead(IORead):
 
         **Examples:**
 
-        >>> if NetCDFRead.is_cdl_file(filename):
-        ...     return 'CDL'
+        >>> {{package}}.{{class}}.is_cdl_file('file.nc')
+        False
 
         """
         # Read the magic number

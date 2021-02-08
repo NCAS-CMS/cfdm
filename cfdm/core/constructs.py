@@ -1044,8 +1044,8 @@ class Constructs(abstract.Container):
 
         Select dimension coordinate and field ancillary constructs:
 
-        >>> d = c.filter_by_type('dimension_coordinate',
-            'field_ancillary')
+        >>> d = c.filter_by_type(
+        ...     'dimension_coordinate', 'field_ancillary')
 
         """
         if types:
@@ -1083,7 +1083,7 @@ class Constructs(abstract.Container):
         >>> print(c)
         Constructs:
         {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>}
-        >>> c.key(
+        >>> c.key()
         'dimensioncoordinate0'
         >>> c.value()
         <{{repr}}DimensionCoordinate: latitude(5) degrees_north>
@@ -1258,7 +1258,7 @@ class Constructs(abstract.Container):
         >>> print(c)
         Constructs:
         {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>}
-        >>> c.key(
+        >>> c.key()
         'dimensioncoordinate0'
         >>> c.value()
         <{{repr}}DimensionCoordinate: latitude(5) degrees_north>

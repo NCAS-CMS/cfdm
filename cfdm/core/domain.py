@@ -95,7 +95,8 @@ class Domain(mixin.ConstructAccess, abstract.Container):
         >>> d = cfdm.example_field(0)
         >>> print(d.constructs)
         Constructs:
-        {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+        {'cellmethod0': <CellMethod: area: mean>,
+         'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
          'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
          'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
          'domainaxis0': <{{repr}}DomainAxis: size(5)>,
