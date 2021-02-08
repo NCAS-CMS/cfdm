@@ -9,7 +9,10 @@ import cfdm
 
 
 class RaggedIndexedArrayTest(unittest.TestCase):
+    """TODO DOCS."""
+
     def setUp(self):
+        """TODO DOCS."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or calls (those
@@ -26,9 +29,11 @@ class RaggedIndexedArrayTest(unittest.TestCase):
         )
 
     def test_RaggedIndexedArray_to_memory(self):
+        """TODO DOCS."""
         self.assertIsInstance(self.r.to_memory(), cfdm.RaggedIndexedArray)
 
     def test_RaggedIndexedArray_get_index(self):
+        """TODO DOCS."""
         r = self.r
         self.assertIsInstance(r.get_index(), cfdm.Index)
         r._del_component("index_variable")

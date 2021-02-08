@@ -35,6 +35,8 @@ atexit.register(_remove_tmpfiles)
 
 
 class DSGTest(unittest.TestCase):
+    """TODO DOCS."""
+
     contiguous = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
         "DSG_timeSeries_contiguous.nc",
@@ -161,6 +163,7 @@ class DSGTest(unittest.TestCase):
     test_only = []
 
     def setUp(self):
+        """TODO DOCS."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -273,6 +276,7 @@ class DSGTest(unittest.TestCase):
     #        self.test_only = []
 
     def test_DSG_contiguous(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -344,6 +348,7 @@ class DSGTest(unittest.TestCase):
         cfdm.write(tas, tempfile)
 
     def test_DSG_indexed(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -369,6 +374,7 @@ class DSGTest(unittest.TestCase):
             self.assertTrue(g[i].equals(f[i], verbose=3))
 
     def test_DSG_indexed_contiguous(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -403,6 +409,7 @@ class DSGTest(unittest.TestCase):
             self.assertTrue(g[i].equals(f[i], verbose=3))
 
     def test_DSG_create_contiguous(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 

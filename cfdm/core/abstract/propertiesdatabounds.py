@@ -10,8 +10,7 @@ from .propertiesdata import PropertiesData
 
 
 class PropertiesDataBounds(PropertiesData):
-    """Mixin class for a data array with bounds and descriptive
-    properties.
+    """Mixin for a data array with bounds and descriptive properties.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -28,7 +27,7 @@ class PropertiesDataBounds(PropertiesData):
         copy=True,
         _use_data=True,
     ):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 

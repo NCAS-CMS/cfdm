@@ -36,7 +36,7 @@ class PropertiesData(Properties):
         return instance
 
     def __getitem__(self, indices):
-        """Return a subspace defined by indices
+        """Return a subspace defined by indices.
 
         f.__getitem__(indices) <==> f[indices]
 

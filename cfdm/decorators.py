@@ -62,8 +62,7 @@ def _inplace_enabled(operation_method=None, *, default=False):
 
 
 def _inplace_enabled_define_and_cleanup(instance):
-    """Delete attribute set by _inplace_enabled but store and return its
-    value.
+    """Deletes attribute set by _inplace_enabled, returning its value.
 
     Designed as a convenience function for use at the start of methods
     decorated by _inplace_enabled; the core variable used throughout
@@ -92,8 +91,7 @@ def _inplace_enabled_define_and_cleanup(instance):
 
 
 def _manage_log_level_via_verbosity(method_with_verbose_kwarg, calls=[0]):
-    """A decorator for managing log message filtering by verbosity
-    argument.
+    """A decorator to manage log filtering by verbosity argument.
 
     This enables overriding of the log severity level such that an
     integer input (lying in the valid range) to the decorated function
@@ -206,7 +204,7 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg, calls=[0]):
 
 # @_test_decorator_args('i') -> example usage for decorating, using i kwarg
 def _test_decorator_args(*dec_args):
-    """A wrapper for provision of positional arguments to the decorator."""
+    """A wrapper to provide positional arguments to the decorator."""
 
     def deprecated_kwarg_check_decorator(operation_method):
         """A decorator for a deprecation check on given kwargs.

@@ -44,7 +44,10 @@ atexit.register(_remove_tmpfiles)
 
 
 class GroupsTest(unittest.TestCase):
+    """TODO DOCS."""
+
     def setUp(self):
+        """TODO DOCS."""
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -57,6 +60,7 @@ class GroupsTest(unittest.TestCase):
         # cfdm.LOG_LEVEL('DISABLE')
 
     def test_groups(self):
+        """TODO DOCS."""
         f = cfdm.example_field(1)
 
         ungrouped_file = ungrouped_file1
@@ -153,6 +157,7 @@ class GroupsTest(unittest.TestCase):
         self.assertTrue(f.equals(h[0], verbose=2))
 
     def test_groups_geometry(self):
+        """TODO DOCS."""
         f = cfdm.example_field(6)
 
         ungrouped_file = ungrouped_file2
@@ -279,6 +284,7 @@ class GroupsTest(unittest.TestCase):
         self.assertTrue(f.equals(h[0], verbose=2))
 
     def test_groups_compression(self):
+        """TODO DOCS."""
         f = cfdm.example_field(4)
 
         ungrouped_file = ungrouped_file3
@@ -345,6 +351,7 @@ class GroupsTest(unittest.TestCase):
         self.assertTrue(f.equals(h[0], verbose=2))
 
     def test_groups_dimension(self):
+        """TODO DOCS."""
         f = cfdm.example_field(0)
 
         ungrouped_file = ungrouped_file4
@@ -413,6 +420,7 @@ class GroupsTest(unittest.TestCase):
         self.assertTrue(f.equals(h, verbose=3))
 
     def test_groups_unlimited_dimension(self):
+        """TODO DOCS."""
         f = cfdm.example_field(0)
 
         # Create an unlimited dimension in the root group
