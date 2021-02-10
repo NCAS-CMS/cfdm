@@ -268,6 +268,7 @@ class CellMethod(mixin.Container, core.CellMethod):
 
         **Examples:**
 
+        >>> c = {{package}}.CellMethod()
         >>> c.equals(c)
         True
         >>> c.equals(c.copy())
@@ -420,14 +421,14 @@ class CellMethod(mixin.Container, core.CellMethod):
 
         **Examples:**
 
+        >>> f = {{package}}.example_field(1)
+        >>> c = f.get_construct('cellmethod1')
         >>> c.get_method()
-        'minimum;
+        'maximum'
         >>> c.identity()
-        'method:minimum'
-        >>> c.identity(default='no identity')
-        'method:minimum'
+        'method:maximum'
         >>> c.del_method()
-        'minimum'
+        'maximum'
         >>> c.identity()
         ''
         >>> c.identity(default='no identity')
@@ -458,12 +459,14 @@ class CellMethod(mixin.Container, core.CellMethod):
 
         **Examples:**
 
+        >>> f = {{package}}.example_field(1)
+        >>> c = f.get_construct('cellmethod1')
         >>> c.get_method()
-        'minimum'
+        'maximum'
         >>> c.identities()
-        ['method:minimum']
+        ['method:maximum']
         >>> c.del_method()
-        'minimum'
+        'maximum'
         >>> c.identities()
         []
 
