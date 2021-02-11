@@ -37,7 +37,10 @@ atexit.register(_remove_tmpfiles)
 
 
 class ExternalVariableTest(unittest.TestCase):
+    """TODO DOCS."""
+
     def setUp(self):
+        """TODO DOCS."""
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -60,6 +63,7 @@ class ExternalVariableTest(unittest.TestCase):
         self.test_only = []
 
     def test_EXTERNAL_READ(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -138,6 +142,7 @@ class ExternalVariableTest(unittest.TestCase):
             self.assertTrue(c[i].equals(f[i], verbose=3))
 
     def test_EXTERNAL_WRITE(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 

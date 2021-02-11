@@ -31,7 +31,7 @@ _flattener_separator = netcdf_flattener._Flattener._Flattener__new_separator
 
 
 class NetCDFRead(IORead):
-    """"""
+    """A container for instantiating Fields from a netCDF dataset."""
 
     _code0 = {
         # Physically meaningful and corresponding to constructs
@@ -90,7 +90,7 @@ class NetCDFRead(IORead):
     }
 
     def cf_datum_parameters(self):
-        """Datum-defining parameters names"""
+        """Datum-defining parameters names."""
         return (
             "earth_radius",
             "geographic_crs_name",
@@ -107,13 +107,15 @@ class NetCDFRead(IORead):
         )
 
     def cf_coordinate_reference_coordinates(self):
-        """Mapping of each coordinate reference canonical name to the
-        coordinates to which it applies. The coordinates are defined by
-        their standard names.
+        """Maps canonical names to applicable coordinates.
+
+        Specifically it is a mapping of each coordinate reference
+        canonical name to the coordinates to which it applies. The
+        coordinates are defined by their standard names.
 
         A coordinate reference canonical name is either the value of the
-        grid_mapping_name attribute of a grid mapping variable
-        (e.g. 'lambert_azimuthal_equal_area'), or the standard name of a
+        grid_mapping_name attribute of a grid mapping variable (e.g.
+        'lambert_azimuthal_equal_area'), or the standard name of a
         vertical coordinate variable with a formula_terms attribute
         (e.g. ocean_sigma_coordinate').
 
@@ -227,8 +229,10 @@ class NetCDFRead(IORead):
         }
 
     def _is_unreferenced(self, ncvar):
-        """Return True if the netCDF variable is not referenced by any other
-        netCDF variable.
+        """True if a netCDF variable is not referenced by another.
+
+        Return True if the netCDF variable is not referenced by any
+        other netCDF variable.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -471,8 +475,10 @@ class NetCDFRead(IORead):
             return False
 
     def is_cdl_file(cls, filename):
-        """Return True if the file is a CDL text representation of a netCDF
-        file.
+        """True if the file is in CDL format.
+
+        Return True if the file is a CDL text representation of a
+        netCDF file.
 
         Note that the file type is determined by inspecting the file's
         contents and any file suffix is not not considered. The file is
@@ -561,8 +567,10 @@ class NetCDFRead(IORead):
         warnings=True,
         warn_valid=False,
     ):
-        """Read fields from a netCDF file on disk or from an OPeNDAP server
-        location.
+        """Reads a netCDF dataset from file or OPenDAP URL.
+
+        Read fields from a netCDF file on disk or from an OPeNDAP
+        server location.
 
         The file may be big or little endian.
 
@@ -1576,8 +1584,10 @@ class NetCDFRead(IORead):
         return out
 
     def _check_valid(self, field, construct):
-        """Issue a warning if a construct with data has valid_[min|max|range]
-        properties.
+        """Warns when valid_[min|max|range] properties exist on data.
+
+        Issue a warning if a construct with data has
+        valid_[min|max|range] properties.
 
         .. versionadded:: (cfdm) 1.8.3
 
@@ -1624,8 +1634,10 @@ class NetCDFRead(IORead):
         print(message)
 
     def _plural(self, x, singular):
-        """Return the plural of a word if *x* has zero elements or more than
-        one element, otherwise return the word unchanged.
+        """Pluralises a singular word if *x* is not of length one.
+
+        Return the plural of a word if *x* has zero elements or more
+        than one element, otherwise return the word unchanged.
 
         :Parameters:
 
@@ -1658,12 +1670,15 @@ class NetCDFRead(IORead):
         raise ValueError("Can't (yet) pluralise {}".format(singular))
 
     def _set_default_FillValue(self, construct, ncvar):
-        """"""
-        # ------------------------------------------------------------
-        # Masking has been turned off, so make sure that there is a
-        # fill value recorded so that masking may later be applied
-        # manually, if required.
-        # ------------------------------------------------------------
+        """Ensure there is a fill value recorded on the construct.
+
+        The motivation for this is that masking can later be
+        applied manually on the construct after the masking has
+        been turned off.
+
+        .. versionadded:: (cfdm) 1.8.3
+
+        """
         _FillValue = self.implementation.get_property(
             construct, "_FillValue", None
         )
@@ -1960,7 +1975,7 @@ class NetCDFRead(IORead):
     def _parse_indexed_contiguous_compression(
         self, sample_dimension, instance_dimension
     ):
-        """Parse an index variable for DSG indexed contiguous ragged arrays.
+        """Parse an index variable for indexed contiguous ragged arrays.
 
         :Parameters:
 
@@ -2881,8 +2896,7 @@ class NetCDFRead(IORead):
         # --- End: if
 
     def _check_missing_variable(self, ncvar, message0):
-        """For a missing variable, return the variable name and a suitable
-         message.
+        """Return the name of a missing variable with a message.
 
         .. versionaddedd:: (cfdm) 1.8.6.0
 
@@ -2993,12 +3007,6 @@ class NetCDFRead(IORead):
         self.implementation.set_properties(f, field_properties, copy=True)
 
         if not g["mask"]:
-            # --------------------------------------------------------
-            # Masking has been turned off, so make sure that there is
-            # a fill value recorded on the field so that masking may
-            # later be applied manually, if required. (Introduced at
-            # v1.8.2.)
-            # --------------------------------------------------------
             self._set_default_FillValue(f, field_ncvar)
 
         # Store the field's netCDF variable name
@@ -3748,8 +3756,10 @@ class NetCDFRead(IORead):
         return f
 
     def _find_coordinate_variable(self, field_ncvar, field_groups, ncdim):
-        """Find a Unidata coordinate variable for a particular CF-netCDF data
-        variable and netCDF dimension combination.
+        """Find a coordinate variable for a data-dimension combination.
+
+        Find a Unidata coordinate variable for a particular CF-netCDF
+        data variable and netCDF dimension combination.
 
         .. versionadded:: (cfdm) 1.8.6
 
@@ -3780,7 +3790,7 @@ class NetCDFRead(IORead):
             return ncdim, ""
 
         if not g["has_groups"]:
-            # This file has no group structurea and there is no
+            # This file has no group structure and there is no
             # coordinate variable for this dimension
             return None, ""
 
@@ -3881,7 +3891,7 @@ class NetCDFRead(IORead):
         return None, ""
 
     def _is_char_or_string(self, ncvar):
-        """Return True if the netCDf variable has string or char datatype.
+        """True if the netCDf variable has string or char datatype.
 
         .. versionadded:: (cfdm) 1.8.0
 
@@ -3970,7 +3980,7 @@ class NetCDFRead(IORead):
         variable=None,
         conformance=None,
     ):
-        """Store and log a message describing a problem with a field component.
+        """Stores and logs a message about an issue with a field.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -4051,8 +4061,10 @@ class NetCDFRead(IORead):
         return d
 
     def _get_domain_axes(self, ncvar, allow_external=False):
-        """Return the domain axis identifiers that correspond to a netCDF
-        variable's netCDF dimensions.
+        """Find a domain axis identifier for the variable's dimensions.
+
+        Return the domain axis identifiers that correspond to a
+        netCDF variable's netCDF dimensions.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -4314,12 +4326,6 @@ class NetCDFRead(IORead):
         self.implementation.set_properties(c, properties)
 
         if not g["mask"]:
-            # --------------------------------------------------------
-            # Masking has been turned off, so make sure that there is
-            # a fill value recorded on the coordinate or domain
-            # ancillary so that masking may later be applied manually,
-            # if required. (Introduced at v1.8.3)
-            # --------------------------------------------------------
             self._set_default_FillValue(c, ncvar)
 
         data = None
@@ -4359,12 +4365,6 @@ class NetCDFRead(IORead):
             self.implementation.set_properties(bounds, bounds_properties)
 
             if not g["mask"]:
-                # ----------------------------------------------------
-                # Masking has been turned off, so make sure that there
-                # is a fill value recorded on the bounds so that
-                # masking may later be applied manually, if
-                # required. (Introduced at v1.8.3)
-                # ----------------------------------------------------
                 self._set_default_FillValue(bounds, bounds_ncvar)
 
             bounds_data = self._create_data(
@@ -4501,12 +4501,6 @@ class NetCDFRead(IORead):
             )
 
             if not g["mask"]:
-                # ----------------------------------------------------
-                # Masking has been turned off, so make sure that there
-                # is a fill value recorded on the cell measure so that
-                # masking may later be applied manually, if
-                # required. (Introduced at v1.8.3)
-                # ----------------------------------------------------
                 self._set_default_FillValue(cell_measure, ncvar)
 
             data = self._create_data(ncvar, cell_measure)
@@ -4549,12 +4543,6 @@ class NetCDFRead(IORead):
         self.implementation.set_properties(variable, properties)
 
         if not g["mask"]:
-            # --------------------------------------------------------
-            # Masking has been turned off, so make sure that there is
-            # a fill value recorded on the variable so that masking
-            # may later be applied manually, if required. (Introduced
-            # at v1.8.3)
-            # --------------------------------------------------------
             self._set_default_FillValue(variable, ncvar)
 
         # Set the netCDF variable name
@@ -4614,12 +4602,6 @@ class NetCDFRead(IORead):
         self.implementation.set_properties(variable, properties)
 
         if not g["mask"]:
-            # --------------------------------------------------------
-            # Masking has been turned off, so make sure that there is
-            # a fill value recorded on the variable so that masking
-            # may later be applied manually, if required. (Introduced
-            # at v1.8.3)
-            # --------------------------------------------------------
             self._set_default_FillValue(variable, ncvar)
 
         # Set the netCDF variable name
@@ -4683,12 +4665,6 @@ class NetCDFRead(IORead):
         self.implementation.set_properties(variable, properties)
 
         if not g["mask"]:
-            # --------------------------------------------------------
-            # Masking has been turned off, so make sure that there is
-            # a fill value recorded on the variable so that masking
-            # may later be applied manually, if required. (Introduced
-            # at v1.8.3)
-            # --------------------------------------------------------
             self._set_default_FillValue(variable, ncvar)
 
         data = self._create_data(ncvar, variable)
@@ -4725,12 +4701,6 @@ class NetCDFRead(IORead):
         self.implementation.set_properties(variable, properties)
 
         if not self.read_vars["mask"]:
-            # --------------------------------------------------------
-            # Masking has been turned off, so make sure that there is
-            # a fill value recorded on the variable so that masking
-            # may later be applied manually, if required. (Introduced
-            # at v1.8.3)
-            # --------------------------------------------------------
             self._set_default_FillValue(variable, ncvar)
 
         data = self._create_data(ncvar, variable, uncompress_override=True)
@@ -4768,12 +4738,6 @@ class NetCDFRead(IORead):
         self.implementation.set_properties(variable, properties)
 
         if not g["mask"]:
-            # --------------------------------------------------------
-            # Masking has been turned off, so make sure that there is
-            # a fill value recorded on the variable so that masking
-            # may later be applied manually, if required. (Introduced
-            # at v1.8.3)
-            # --------------------------------------------------------
             self._set_default_FillValue(variable, ncvar)
 
         return variable
@@ -4817,12 +4781,6 @@ class NetCDFRead(IORead):
         self.implementation.set_properties(variable, properties)
 
         if not g["mask"]:
-            # --------------------------------------------------------
-            # Masking has been turned off, so make sure that there is
-            # a fill value recorded on the variable so that masking
-            # may later be applied manually, if required. (Introduced
-            # at v1.8.3)
-            # --------------------------------------------------------
             self._set_default_FillValue(variable, ncvar)
 
         return variable
@@ -5185,12 +5143,6 @@ class NetCDFRead(IORead):
         )
 
         if not self.read_vars["mask"]:
-            # --------------------------------------------------------
-            # Masking has been turned off, so make sure that there is
-            # a fill value recorded on the field ancillary so that
-            # masking may later be applied manually, if
-            # required. (Introduced at v1.8.3)
-            # --------------------------------------------------------
             self._set_default_FillValue(field_ancillary, ncvar)
 
         # Insert data
@@ -5378,7 +5330,10 @@ class NetCDFRead(IORead):
         return out
 
     def _create_formula_terms_ref(self, f, key, coord, formula_terms):
-        """Create a coordinate reference of a netCDF formula terms attribute.
+        """Create a formula terms coordinate reference.
+
+        Specifically, create a coordinate reference of a netCDF
+        formula terms attribute.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -5460,8 +5415,7 @@ class NetCDFRead(IORead):
         return coordref
 
     def _ncdimensions(self, ncvar):
-        """Return a list of the netCDF dimensions corresponding to a netCDF
-        variable.
+        """Lists the netCDF dimensions associated with a variable.
 
         If the variable has been compressed then the *implied
         uncompressed* dimensions are returned.
@@ -5553,8 +5507,9 @@ class NetCDFRead(IORead):
         compressed_dimension=None,
         list_variable=None,
     ):
-        """Create a `Data` object for a compressed-by-gathering netCDF
-        variable.
+        """Creates Data for a compressed-by-gathering netCDF variable.
+
+        Specifically, a `Data` object is created.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -5587,8 +5542,10 @@ class NetCDFRead(IORead):
         uncompressed_shape=None,
         count_variable=None,
     ):
-        """Create a `Data` object for a compressed-by-contiguous-ragged-array
-        netCDF variable.
+        """Creates Data for a contiguous ragged array variable.
+
+        Creates a `Data` object for a compressed-by-contiguous-ragged-
+        array netCDF variable.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -5622,8 +5579,7 @@ class NetCDFRead(IORead):
         uncompressed_shape=None,
         index_variable=None,
     ):
-        """Create a `Data` object for a compressed-by-indexed-ragged-array
-        netCDF variable.
+        """Creates Data for an indexed ragged array variable.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -5650,8 +5606,7 @@ class NetCDFRead(IORead):
         count_variable=None,
         index_variable=None,
     ):
-        """Create a `Data` object for a
-        compressed-by-indexed-contiguous-ragged-array netCDF variable.
+        """Creates Data for an indexed contiguous ragged array variable.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -5881,7 +5836,7 @@ class NetCDFRead(IORead):
         return ok
 
     def _check_cell_measures(self, field_ncvar, string, parsed_string):
-        """Checks requirements
+        """Checks requirements.
 
         * 7.2.requirement.1
         * 7.2.requirement.3
@@ -5987,7 +5942,7 @@ class NetCDFRead(IORead):
         return ok
 
     def _check_geometry_attribute(self, field_ncvar, string, parsed_string):
-        """Checks requirements
+        """Checks requirements.
 
         .. versionadded:: (cfdm) 1.8.0
 
@@ -6045,7 +6000,7 @@ class NetCDFRead(IORead):
         return True
 
     def _check_ancillary_variables(self, field_ncvar, string, parsed_string):
-        """Checks requirements
+        """Checks requirements.
 
         :Parameters:
 
@@ -6126,7 +6081,7 @@ class NetCDFRead(IORead):
     def _check_auxiliary_scalar_coordinate(
         self, field_ncvar, coord_ncvar, string
     ):
-        """Checks requirements
+        """Checks requirements.
 
           * 5.requirement.5
           * 5.requirement.6
@@ -6188,7 +6143,7 @@ class NetCDFRead(IORead):
         return True
 
     def _dimensions_are_subset(self, ncvar, dimensions, parent_dimensions):
-        """Return True if dimensions are a subset of the parent dimensions."""
+        """True if dimensions are a subset of the parent dimensions."""
         if not set(dimensions).issubset(parent_dimensions):
             if not (
                 self._is_char(ncvar)
@@ -6201,7 +6156,7 @@ class NetCDFRead(IORead):
     def _check_grid_mapping(
         self, field_ncvar, grid_mapping, parsed_grid_mapping
     ):
-        """Checks requirements
+        """Checks requirements.
 
           * 5.6.requirement.1
           * 5.6.requirement.2
@@ -6276,7 +6231,7 @@ class NetCDFRead(IORead):
         return True
 
     def _check_compress(self, parent_ncvar, compress, parsed_compress):
-        """Check compressed dimension is valid and exists in the file."""
+        """Check a compressed dimension is valid and in the file."""
         attribute = {parent_ncvar + ":compress": compress}
 
         incorrectly_formatted = (
@@ -6318,7 +6273,7 @@ class NetCDFRead(IORead):
         node_coordinates,
         parsed_node_coordinates,
     ):
-        """Check node coordinate variables are valid and exist in the file."""
+        """Check node coordinate variables are valid and in the file."""
         attribute = {geometry_ncvar + ":node_coordinates": node_coordinates}
 
         g = self.read_vars
@@ -6415,7 +6370,7 @@ class NetCDFRead(IORead):
         part_node_count,
         parsed_part_node_count,
     ):
-        """Check part node count variable is valid and exists in the file."""
+        """Check part node count variable is valid and in the file."""
         if part_node_count is None:
             return True
 
@@ -6675,7 +6630,13 @@ class NetCDFRead(IORead):
         # ============================================================
 
         def subst(s):
-            "substitute tokens for WORD and SEP (space or end of string)"
+            """Substitutes WORD and SEP tokens for regular expressions.
+
+            All WORD tokens are replaced by the expression for a space
+            and all SEP tokens are replaced by the expression for the
+            end of string.
+
+            """
             return s.replace("WORD", r"[A-Za-z0-9_#]+").replace(
                 "SEP", r"(\s+|$)"
             )
@@ -6735,29 +6696,31 @@ class NetCDFRead(IORead):
         return out
 
     def _netCDF4_group(self, nc, name):
-        """Given a dataset and a variable or dimension name, return the group
-        object for the name, and the name within the group.
+        """Return the group of a variable or dimension in the dataset.
 
-            .. versionadded:: 1.8.8.1
+        Given a dataset and a variable or dimension name, return the
+        group object for the name, and the name within the group.
 
-            :Parameters:
+        .. versionadded:: 1.8.8.1
 
-                nc: `netCDF4._netCDF4.Dataset` or `netCDF4._netCDF4.Group`
+        :Parameters:
 
-                name: `str`
+            nc: `netCDF4._netCDF4.Dataset` or `netCDF4._netCDF4.Group`
 
-            :Returns:
+            name: `str`
 
-                `netCDF4._netCDF4.Dataset` or `netCDF4._netCDF4.Group`, `str`
+        :Returns:
 
-            **Examples:**
+            `netCDF4._netCDF4.Dataset` or `netCDF4._netCDF4.Group`, `str`
 
-            >>> group, name = n._netCDF4_group(nc, 'time')
-            >>> group.name, name
-            ('/', 'time')
-            >>> group, name = n._netCDF4_group(nc, '/surfacelayer/Z')
-            >>> group.name, name
-            ('surfacelayer', 'Z')
+        **Examples:**
+
+        >>> group, name = n._netCDF4_group(nc, 'time')
+        >>> group.name, name
+        ('/', 'time')
+        >>> group, name = n._netCDF4_group(nc, '/surfacelayer/Z')
+        >>> group.name, name
+        ('surfacelayer', 'Z')
 
         """
         group = nc

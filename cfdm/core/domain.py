@@ -38,7 +38,7 @@ class Domain(mixin.ConstructAccess, abstract.Container):
         return instance
 
     def __init__(self, source=None, copy=True, _use_data=True):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 
