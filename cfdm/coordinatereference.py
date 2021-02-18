@@ -191,8 +191,8 @@ class CoordinateReference(
         ... )
         >>> x.datum.set_parameter('earth_radius', 6371007)
         >>> x.coordinate_conversion.set_parameters(
-        ...     {'standard_name', 'atmosphere_hybrid_height_coordinate',
-        ...      'computed_standard_name', 'altitude'}
+        ...     {'standard_name': 'atmosphere_hybrid_height_coordinate',
+        ...      'computed_standard_name': 'altitude'}
         ... )
         >>> x.coordinate_conversion.set_domain_ancillaries(
         ...     {'a': 'domainancillary0',
@@ -436,6 +436,9 @@ class CoordinateReference(
 
         **Examples:**
 
+        >>> c = {{package}}.CoordinateReference(
+        ...     coordinates=['dimensioncoordinate0']
+        ... )
         >>> c.equals(c)
         True
         >>> c.equals(c.copy())
@@ -521,15 +524,16 @@ class CoordinateReference(
 
         **Examples:**
 
+        >>> f = cfdm.example_field(1)
+        >>> c = f.get_construct('coordinatereference0')
         >>> c.identity()
-        'standard_name:atmosphere_ln_pressure_coordinate'
+        'standard_name:atmosphere_hybrid_height_coordinate'
 
+        >>> c = f.get_construct('coordinatereference1')
         >>> c.identity()
-        'grid_mapping_name:lambert_azimuthal_equal_area'
+        'grid_mapping_name:rotated_latitude_longitude'
 
-        >>> c.identity()
-        'ncvar%rotated_pole'
-
+        >>> c = cfdm.CoordinateReference()
         >>> c.identity()
         ''
         >>> c.identity(default='no identity')
@@ -571,15 +575,17 @@ class CoordinateReference(
 
         **Examples:**
 
+        >>> f = cfdm.example_field(1)
+        >>> c = f.get_construct('coordinatereference0')
         >>> c.identities()
-        ['standard_name:atmosphere_ln_pressure_coordinate']
+        ['standard_name:atmosphere_hybrid_height_coordinate']
 
+        >>> c = f.get_construct('coordinatereference1')
         >>> c.identities()
-        ['grid_mapping_name:lambert_azimuthal_equal_area', 'ncvar%grid_mapping']
+        ['grid_mapping_name:rotated_latitude_longitude',
+         'ncvar%rotated_latitude_longitude']
 
-        >>> c.identity()
-        ['ncvar%rotated_pole']
-
+        >>> c = cfdm.CoordinateReference()
         >>> c.identities()
         []
 
