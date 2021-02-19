@@ -65,18 +65,24 @@ class Parameters(Container):
 
         **Examples:**
 
-        >>> old = f.clear_parameters()
-        >>> old
-        {'standard_parallel': 25.0;
-         'longitude_of_central_meridian': 265.0,
-         'latitude_of_projection_origin': 25.0}
+        >>> f = {{package}}.{{class}}()
         >>> f.parameters()
         {}
-        >>> f.set_parameters(old)
+        >>> p = {'standard_parallel': 25.0,
+        ...      'longitude_of_central_meridian': 265.0,
+        ...      'latitude_of_projection_origin': 25.0}
+        >>> f.set_parameters(p)
         >>> f.parameters()
-        {'standard_parallel': 25.0;
+        {'standard_parallel': 25.0,
          'longitude_of_central_meridian': 265.0,
          'latitude_of_projection_origin': 25.0}
+
+        >>> old = f.clear_parameters()
+        >>> old
+        {'standard_parallel': 25.0,
+         'longitude_of_central_meridian': 265.0,
+         'latitude_of_projection_origin': 25.0}
+        >>> f.set_parameters(old)
 
         """
         out = self._get_component("parameters")
@@ -238,18 +244,24 @@ class Parameters(Container):
 
         **Examples:**
 
-        >>> old = f.clear_parameters()
-        >>> old
-        {'standard_parallel': 25.0;
-         'longitude_of_central_meridian': 265.0,
-         'latitude_of_projection_origin': 25.0}
+        >>> f = {{package}}.{{class}}()
         >>> f.parameters()
         {}
-        >>> f.set_parameters(old)
+        >>> p = {'standard_parallel': 25.0,
+        ...      'longitude_of_central_meridian': 265.0,
+        ...      'latitude_of_projection_origin': 25.0}
+        >>> f.set_parameters(p)
         >>> f.parameters()
-        {'standard_parallel': 25.0;
+        {'standard_parallel': 25.0,
          'longitude_of_central_meridian': 265.0,
          'latitude_of_projection_origin': 25.0}
+
+        >>> old = f.clear_parameters()
+        >>> old
+        {'standard_parallel': 25.0,
+         'longitude_of_central_meridian': 265.0,
+         'latitude_of_projection_origin': 25.0}
+        >>> f.set_parameters(old)
 
         """
         return self._get_component("parameters").copy()
@@ -280,18 +292,24 @@ class Parameters(Container):
 
         **Examples:**
 
-        >>> old = f.clear_parameters()
-        >>> old
-        {'standard_parallel': 25.0;
-         'longitude_of_central_meridian': 265.0,
-         'latitude_of_projection_origin': 25.0}
+        >>> f = {{package}}.{{class}}()
         >>> f.parameters()
         {}
-        >>> f.set_parameters(old)
+        >>> p = {'standard_parallel': 25.0,
+        ...      'longitude_of_central_meridian': 265.0,
+        ...      'latitude_of_projection_origin': 25.0}
+        >>> f.set_parameters(p)
         >>> f.parameters()
-        {'standard_parallel': 25.0;
+        {'standard_parallel': 25.0,
          'longitude_of_central_meridian': 265.0,
          'latitude_of_projection_origin': 25.0}
+
+        >>> old = f.clear_parameters()
+        >>> old
+        {'standard_parallel': 25.0,
+         'longitude_of_central_meridian': 265.0,
+         'latitude_of_projection_origin': 25.0}
+        >>> f.set_parameters(old)
 
         """
         if copy:
