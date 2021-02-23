@@ -654,11 +654,22 @@ class CFDMImplementation(Implementation):
 
         **Examples:**
 
+        >>> w = cfdm.implementation()
+        >>> d = cfdm.DimensionCoordinate(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(range(180))
+        ... )
         >>> d
         <DimensionCoordinate: latitude(180) degrees_north>
         >>> w.get_data_ndim(d)
         1
 
+        >>> b = cfdm.Bounds(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(numpy.arange(360).reshape(180, 2))
+        ... )
         >>> b
         <Bounds: latitude(180, 2) degrees_north>
         >>> w.get_data_ndim(b)
@@ -685,11 +696,22 @@ class CFDMImplementation(Implementation):
 
         **Examples:**
 
+        >>> w = cfdm.implementation()
+        >>> d = cfdm.DimensionCoordinate(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(range(180))
+        ... )
         >>> d
         <DimensionCoordinate: latitude(180) degrees_north>
         >>> w.get_data_shape(d)
         (180,)
 
+        >>> b = cfdm.Bounds(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(numpy.arange(360).reshape(180, 2))
+        ... )
         >>> b
         <Bounds: latitude(180, 2) degrees_north>
         >>> w.get_data_shape(b)
@@ -716,14 +738,25 @@ class CFDMImplementation(Implementation):
 
         **Examples:**
 
+        >>> w = cfdm.implementation()
+        >>> d = cfdm.DimensionCoordinate(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(range(180))
+        ... )
         >>> d
         <DimensionCoordinate: latitude(180) degrees_north>
-        >>> w.get_data_ndim(d)
+        >>> w.get_data_size(d)
         180
 
+        >>> b = cfdm.Bounds(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(numpy.arange(360).reshape(180, 2))
+        ... )
         >>> b
         <Bounds: latitude(180, 2) degrees_north>
-        >>> w.get_data_ndim(b)
+        >>> w.get_data_size(b)
         360
 
         """
@@ -1147,9 +1180,10 @@ class CFDMImplementation(Implementation):
 
         **Examples:**
 
+        >>> w = cfdm.implementation()
+        >>> f = cfdm.example_field(1)
         >>> w.get_field_ancillaries(f)
-        {'fieldancillary0': <FieldAncillary: ....>,
-         'fieldancillary1': <FieldAncillary: ....>}
+        <Constructs: field_ancillary(1)>
 
         """
         return field.field_ancillaries
@@ -1305,8 +1339,13 @@ class CFDMImplementation(Implementation):
 
         **Examples:**
 
+        >>> w = cfdm.implementation()
+        >>> c = cfdm.CellMeasure(
+        ...     measure='area', properties={'units': 'km2'},
+        ...     data=cfdm.Data(numpy.arange(73*96).reshape(73, 96))
+        ... )
         >>> c
-        <CellMeasure: area(73, 96) km2>
+        <CellMeasure: measure:area(73, 96) km2>
         >>> w.get_measure(c)
         'area'
 
@@ -1395,12 +1434,19 @@ class CFDMImplementation(Implementation):
 
         **Examples:**
 
+        >>> w = cfdm.implementation()
+        >>> d = cfdm.DimensionCoordinate(
+        ...     properties={
+        ...         'standard_name': 'latitude',
+        ...         'units': 'degrees_north',
+        ...         'foo': 'bar'
+        ...     },
+        ...     data=cfdm.Data(range(180))
+        ... )
         >>> d
         <DimensionCoordinate: latitude(180) degrees_north>
         >>> w.get_properties(d)
-        {'units: 'degrees_north'}
-         'standard_name: 'latitude',
-         'foo': 'bar'}
+        {'standard_name': 'latitude', 'units': 'degrees_north', 'foo': 'bar'}
 
         """
         return parent.properties()
@@ -1454,15 +1500,26 @@ class CFDMImplementation(Implementation):
 
         **Examples:**
 
+        >>> w = cfdm.implementation()
+        >>> d = cfdm.DimensionCoordinate(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(range(180))
+        ... )
         >>> d
         <DimensionCoordinate: latitude(180) degrees_north>
         >>> w.get_data(d)
-        <Data(180): [-89.5, ..., 89.5] degrees_north>
+        <Data(180): [0, ..., 179] degrees_north>
 
+        >>> b = cfdm.Bounds(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(numpy.arange(360).reshape(180, 2))
+        ... )
         >>> b
         <Bounds: latitude(180, 2) degrees_north>
         >>> w.get_data(b)
-        <Data(180, 2): [[-90, ..., 90]] degrees_north>
+        <Data(180, 2): [[0, ..., 359]] degrees_north>
 
         """
         return parent.get_data(default=default)
@@ -2674,10 +2731,15 @@ class CFDMImplementation(Implementation):
 
         **Examples:**
 
-        >>> if API.has_datum(ref):
-        ...     print(ref, 'has a datum')
-        ... else:
-        ...     print(ref, 'does not have a datum')
+        >>> w = cfdm.implementation()
+
+        >>> c = cfdm.CoordinateReference()
+        >>> w.has_datum(c)
+        False
+
+        r = cfdm.CoordinateReference(datum=cfdm.Data(1))
+        >>> w.has_datum(r)
+        True
 
         """
         return bool(coordinate_reference.datum)
@@ -2697,14 +2759,25 @@ class CFDMImplementation(Implementation):
 
         **Examples:**
 
-        >>> coord
+        >>> w = cfdm.implementation()
+        >>> d = cfdm.DimensionCoordinate(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(range(180))
+        ... )
+        >>> d
         <DimensionCoordinate: latitude(180) degrees_north>
-        >>> w.has_property(coord, 'units')
+        >>> w.has_property(d, 'units')
         True
 
-        >>> bounds
+        >>> b = cfdm.Bounds(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(numpy.arange(360).reshape(180, 2))
+        ... )
+        >>> b
         <Bounds: latitude(180, 2) degrees_north>
-        >>> w.has_property(bounds, 'long_name')
+        >>> w.has_property(b, 'long_name')
         False
 
         """
@@ -2795,11 +2868,12 @@ def implementation():
      'NetCDFArray': <class 'cfdm.data.netcdfarray.NetCDFArray'>,
      'RaggedContiguousArray': <class 'cfdm.data.raggedcontiguousarray.RaggedContiguousArray'>,
      'RaggedIndexedArray': <class 'cfdm.data.raggedindexedarray.RaggedIndexedArray'>,
-     'RaggedIndexedContiguousArray': <class 'cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray'>
+     'RaggedIndexedContiguousArray': <class 'cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray'>,
      'List': <class 'cfdm.list.List'>,
      'Count': <class 'cfdm.count.Count'>,
      'Index': <class 'cfdm.index.Index'>,
      'NodeCountProperties': <class 'cfdm.nodecountproperties.NodeCountProperties'>,
      'PartNodeCountProperties': <class 'cfdm.partnodecountproperties.PartNodeCountProperties'>}
+
     """
     return _implementation.copy()

@@ -910,10 +910,6 @@ class NetCDFRead(IORead):
             )
             if flattener_name_mapping_dimensions is not None:
                 if isinstance(flattener_name_mapping_dimensions, str):
-                    # TODO SLB check with DCH that this is a correct fix for
-                    # suspected copy/paste error from:
-                    # ..._attributes = [ ..._attributes ]
-                    # (correctly raised by flake8 as use of undefined name)
                     flattener_name_mapping_dimensions = [
                         flattener_name_mapping_dimensions
                     ]

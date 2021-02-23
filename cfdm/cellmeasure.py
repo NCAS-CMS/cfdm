@@ -293,21 +293,22 @@ class CellMeasure(
 
         **Examples:**
 
-        >>> f.equals(f)
+        >>> c = {{package}}.CellMeasure()
+        >>> c.set_properties({'units': 'm2'})
+        >>> c.equals(c)
         True
-        >>> f.equals(f.copy())
+        >>> c.equals(c.copy())
         True
-        >>> f.equals('not a cell measure')
+        >>> c.equals('not a cell measure')
         False
 
-        >>> g = f.copy()
-        >>> g.set_property('foo', 'bar')
-        >>> f.equals(g)
+        >>> m = c.copy()
+        >>> m.set_property('units', 'km2')
+        >>> c.equals(m)
         False
-        >>> f.equals(g, verbose=3)
-        CellMeasure: Non-common property name: foo
-        CellMeasure: Different properties
+        >>> c.equals(m, verbose=3)
         False
+        >>> # Logs: CellMeasure: Different 'units' property values: 'm2', 'km2'
 
         """
         if not super().equals(
@@ -363,29 +364,24 @@ class CellMeasure(
 
         **Examples:**
 
+        >>> f = {{package}}.example_field(1)
+        >>> c = f.get_construct('cellmeasure0')
         >>> c.get_measure()
         'area'
+
         >>> c.properties()
-        {'long_name': 'Area',
-         'standard_name': 'cell_area'}
+        {'units': 'km2'}
         >>> c.nc_get_variable()
-        'areacello'
+        'cell_measure'
         >>> c.identity(default='no identity')
         'measure:area'
+
         >>> c.del_measure()
         'area'
         >>> c.identity()
-        'cell_area'
-        >>> c.del_property('standard_name')
-        'cell_area'
-        >>> c.identity()
-        'long_name=Area'
-        >>> c.del_properly('long_name')
-        'Area'
-        >>> c.identity()
-        'ncvar%areacello'
+        'ncvar%cell_measure'
         >>> c.nc_del_variable()
-        'areacello'
+        'cell_measure'
         >>> c.identity()
         ''
         >>> c.identity(default='no identity')
@@ -434,19 +430,17 @@ class CellMeasure(
 
         **Examples:**
 
-        >>> f.properties()
-        {'foo': 'bar',
-         'long_name': 'Area of cells',
-         'standard_name': 'cell_area'}
-        >>> f.nc_get_variable()
-        'areacello'
-        >>> f.identities()
-        ['measure:area',
-         'cell_area',
-         'long_name=Area of cells',
-         'foo=bar',
-         'standard_name=cell_area',
-         'ncvar%areacello']
+        >>> f = {{package}}.example_field(1)
+        >>> c = f.get_construct('cellmeasure0')
+        >>> c.get_measure()
+        'area'
+
+        >>> c.properties()
+        {'units': 'km2'}
+        >>> c.nc_get_variable()
+        'cell_measure'
+        >>> c.identities()
+        ['measure:area', 'units=km2', 'ncvar%cell_measure']
 
         """
         out = super().identities()

@@ -86,13 +86,22 @@ class ParametersDomainAncillaries(Parameters):
 
         **Examples:**
 
-        >>> old = f.clear_domain_ancillaries()
-        >>> old
+        >>> f = {{package}}.{{class}}()
+        >>> f.domain_ancillaries()
+        {}
+        >>> d = {'a': 'domainancillary0',
+        ...      'b': 'domainancillary1',
+        ...      'orog': 'domainancillary2'}
+        >>> f.set_domain_ancillaries(d)
+        >>> f.domain_ancillaries()
         {'a': 'domainancillary0',
          'b': 'domainancillary1',
          'orog': 'domainancillary2'}
-        >>> f.set_domain_ancillaries(old)
+
+        >>> old = f.clear_domain_ancillaries()
         >>> f.domain_ancillaries()
+        {}
+        >>> old
         {'a': 'domainancillary0',
          'b': 'domainancillary1',
          'orog': 'domainancillary2'}
@@ -131,16 +140,17 @@ class ParametersDomainAncillaries(Parameters):
 
         **Examples:**
 
+        >>> c = {{package}}.{{class}}()
         >>> c.set_domain_ancillary('orog', 'domainancillary2')
         >>> c.has_domain_ancillary('orog')
         True
         >>> c.get_domain_ancillary('orog')
-        domainancillary2'
+        'domainancillary2'
         >>> c.del_domain_ancillary('orog')
-        domainancillary2'
-        >>> c.has_domain_ancillaryr('orog')
+        'domainancillary2'
+        >>> c.has_domain_ancillary('orog')
         False
-        >>> print(c.del_domain_ancillaryy('orog', None))
+        >>> print(c.del_domain_ancillary('orog', None))
         None
         >>> print(c.get_domain_ancillary('orog', None))
         None
@@ -173,13 +183,22 @@ class ParametersDomainAncillaries(Parameters):
 
         **Examples:**
 
-        >>> old = f.clear_domain_ancillaries()
-        >>> old
+        >>> f = {{package}}.{{class}}()
+        >>> f.domain_ancillaries()
+        {}
+        >>> d = {'a': 'domainancillary0',
+        ...      'b': 'domainancillary1',
+        ...      'orog': 'domainancillary2'}
+        >>> f.set_domain_ancillaries(d)
+        >>> f.domain_ancillaries()
         {'a': 'domainancillary0',
          'b': 'domainancillary1',
          'orog': 'domainancillary2'}
-        >>> f.set_domain_ancillaries(old)
+
+        >>> old = f.clear_domain_ancillaries()
         >>> f.domain_ancillaries()
+        {}
+        >>> old
         {'a': 'domainancillary0',
          'b': 'domainancillary1',
          'orog': 'domainancillary2'}
@@ -212,16 +231,17 @@ class ParametersDomainAncillaries(Parameters):
 
         **Examples:**
 
+        >>> c = {{package}}.{{class}}()
         >>> c.set_domain_ancillary('orog', 'domainancillary2')
         >>> c.has_domain_ancillary('orog')
         True
         >>> c.get_domain_ancillary('orog')
-        domainancillary2'
+        'domainancillary2'
         >>> c.del_domain_ancillary('orog')
-        domainancillary2'
-        >>> c.has_domain_ancillaryr('orog')
+        'domainancillary2'
+        >>> c.has_domain_ancillary('orog')
         False
-        >>> print(c.del_domain_ancillaryy('orog', None))
+        >>> print(c.del_domain_ancillary('orog', None))
         None
         >>> print(c.get_domain_ancillary('orog', None))
         None
@@ -256,16 +276,17 @@ class ParametersDomainAncillaries(Parameters):
 
         **Examples:**
 
+        >>> c = {{package}}.{{class}}()
         >>> c.set_domain_ancillary('orog', 'domainancillary2')
         >>> c.has_domain_ancillary('orog')
         True
         >>> c.get_domain_ancillary('orog')
-        domainancillary2'
+        'domainancillary2'
         >>> c.del_domain_ancillary('orog')
-        domainancillary2'
-        >>> c.has_domain_ancillaryr('orog')
+        'domainancillary2'
+        >>> c.has_domain_ancillary('orog')
         False
-        >>> print(c.del_domain_ancillaryy('orog', None))
+        >>> print(c.del_domain_ancillary('orog', None))
         None
         >>> print(c.get_domain_ancillary('orog', None))
         None
@@ -300,13 +321,22 @@ class ParametersDomainAncillaries(Parameters):
 
         **Examples:**
 
-        >>> old = f.clear_domain_ancillaries()
-        >>> old
+        >>> f = {{package}}.{{class}}()
+        >>> f.domain_ancillaries()
+        {}
+        >>> d = {'a': 'domainancillary0',
+        ...      'b': 'domainancillary1',
+        ...      'orog': 'domainancillary2'}
+        >>> f.set_domain_ancillaries(d)
+        >>> f.domain_ancillaries()
         {'a': 'domainancillary0',
          'b': 'domainancillary1',
          'orog': 'domainancillary2'}
-        >>> f.set_domain_ancillaries(old)
+
+        >>> old = f.clear_domain_ancillaries()
         >>> f.domain_ancillaries()
+        {}
+        >>> old
         {'a': 'domainancillary0',
          'b': 'domainancillary1',
          'orog': 'domainancillary2'}
@@ -344,16 +374,17 @@ class ParametersDomainAncillaries(Parameters):
 
         **Examples:**
 
+        >>> c = {{package}}.{{class}}()
         >>> c.set_domain_ancillary('orog', 'domainancillary2')
         >>> c.has_domain_ancillary('orog')
         True
         >>> c.get_domain_ancillary('orog')
-        domainancillary2'
+        'domainancillary2'
         >>> c.del_domain_ancillary('orog')
-        domainancillary2'
-        >>> c.has_domain_ancillaryr('orog')
+        'domainancillary2'
+        >>> c.has_domain_ancillary('orog')
         False
-        >>> print(c.del_domain_ancillaryy('orog', None))
+        >>> print(c.del_domain_ancillary('orog', None))
         None
         >>> print(c.get_domain_ancillary('orog', None))
         None
