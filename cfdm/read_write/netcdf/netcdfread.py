@@ -766,8 +766,7 @@ class NetCDFRead(IORead):
         # Parse 'extra' keyword parameter
         if extra:
             if isinstance(extra, str):
-                # TODO SLB: field variable not used, is this right?
-                field = (extra,)  # noqa: F841
+                extra = (extra,)
 
             for f in extra:
                 if f not in g["get_constructs"]:
@@ -910,10 +909,6 @@ class NetCDFRead(IORead):
             )
             if flattener_name_mapping_dimensions is not None:
                 if isinstance(flattener_name_mapping_dimensions, str):
-                    # TODO SLB check with DCH that this is a correct fix for
-                    # suspected copy/paste error from:
-                    # ..._attributes = [ ..._attributes ]
-                    # (correctly raised by flake8 as use of undefined name)
                     flattener_name_mapping_dimensions = [
                         flattener_name_mapping_dimensions
                     ]
@@ -3305,7 +3300,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         geometry = self._get_geometry(field_ncvar)
         if geometry is not None:
-            for node_ncvar in geometry["node_coordinates"]:
+            for node_ncvar in geometry['node_coordinates']:
                 found = any(
                     [
                         (self.implementation.get_bounds_ncvar(a) == node_ncvar)
@@ -6120,11 +6115,6 @@ class NetCDFRead(IORead):
         # Check that the variable's dimensions span a subset of the
         # parent variable's dimensions (allowing for char variables
         # with a trailing dimension)
-        dimensions = self._ncdimensions(coord_ncvar)  # noqa: F841
-        parent_dimensions = self._ncdimensions(field_ncvar)  # noqa: F841
-        # TODO SLB is there something missing here? Both variables above
-        # are unused, hence the 'noqa' marks there for now.
-
         if not self._dimensions_are_subset(
             coord_ncvar,
             self._ncdimensions(coord_ncvar),
