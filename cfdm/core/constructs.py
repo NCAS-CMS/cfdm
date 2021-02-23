@@ -456,7 +456,9 @@ class Constructs(abstract.Container):
 
         **Examples:**
 
-        >>> x = f._del_construct('auxiliarycoordinate2')
+        >>> f = cfdm.example_field(3)
+        >>> c = f.constructs()
+        >>> x = c._del_construct('auxiliarycoordinate2')
 
         """
         data_axes = self.data_axes()
@@ -771,7 +773,7 @@ class Constructs(abstract.Container):
         """
         return self._dictionary().get(key, *default)
 
-    def items(self):
+    def items(self):  # SB NOTE: flaky doctest due to dict_items order
         """Return the items as (construct key, construct) pairs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -786,18 +788,17 @@ class Constructs(abstract.Container):
 
         **Examples:**
 
-        >>> c = {{package}}.example_field(0)
-        >>> c_items = c.constructs.items()
+        >>> f = cfdm.example_field(0)
+        >>> c = f.constructs
+        >>> c_items = c.items()
         >>> print(c_items)
-        dict_items([
-             ('dimensioncoordinate0', <{{repr}}DimensionCoordinate: latitude(5) degrees_north>),
-             ('dimensioncoordinate1', <{{repr}}DimensionCoordinate: longitude(8) degrees_east>),
-             ('dimensioncoordinate2', <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >),
-             ('domainaxis0', <{{repr}}DomainAxis: size(5)>),
-             ('domainaxis1', <{{repr}}DomainAxis: size(8)>),
-             ('domainaxis2', <{{repr}}DomainAxis: size(1)>),
-             ('cellmethod0', <{{repr}}CellMethod: area: mean>)
-        ])
+        dict_items([('dimensioncoordinate0', <{{repr}}DimensionCoordinate: latitude(5) degrees_north>),
+                    ('dimensioncoordinate1', <{{repr}}DimensionCoordinate: longitude(8) degrees_east>),
+                    ('dimensioncoordinate2', <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >),
+                    ('domainaxis0', <{{repr}}DomainAxis: size(5)>),
+                    ('domainaxis1', <{{repr}}DomainAxis: size(8)>),
+                    ('domainaxis2', <{{repr}}DomainAxis: size(1)>),
+                    ('cellmethod0', <{{repr}}CellMethod: area: mean>)])
         >>> type(c_items)
         <class 'dict_items'>
         >>> dict(c_items)
@@ -812,7 +813,7 @@ class Constructs(abstract.Container):
         """
         return self._dictionary().items()
 
-    def keys(self):
+    def keys(self):  # SB NOTE: flaky doctest due to dict_items order
         """Return all of the construct keys, in arbitrary order.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -826,18 +827,17 @@ class Constructs(abstract.Container):
 
         **Examples:**
 
-        >>> c = {{package}}.example_field(0)
-        >>> c_keys = c.constructs.keys()
+        >>> f = cfdm.example_field(0)
+        >>> c = f.constructs
+        >>> c_keys = c.keys()
         >>> print(c_keys)
-        dict_keys([
-             'domainaxis0',
-             'domainaxis1',
-             'domainaxis2',
-             'dimensioncoordinate0',
-             'dimensioncoordinate1',
-             'dimensioncoordinate2',
-             'cellmethod0'
-        ])
+        dict_keys(['domainaxis0',
+                   'domainaxis1',
+                   'domainaxis2',
+                   'dimensioncoordinate0',
+                   'dimensioncoordinate1',
+                   'dimensioncoordinate2',
+                   'cellmethod0'])
         >>> type(c_keys)
         <class 'dict_keys'>
         >>> list(c_keys)
@@ -852,7 +852,7 @@ class Constructs(abstract.Container):
         """
         return self._construct_type.keys()
 
-    def values(self):
+    def values(self):  # SB NOTE: flaky doctest due to dict_items order
         """Return all of the metadata constructs, in arbitrary order.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -866,18 +866,17 @@ class Constructs(abstract.Container):
 
         **Examples:**
 
-        >>> c = {{package}}.example_field(0)
-        >>> c_values = c.constructs.values()
+        >>> f = cfdm.example_field(0)
+        >>> c = f.constructs
+        >>> c_values = c.values()
         >>> print(c_values)
-        dict_values([
-            <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
-            <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
-            <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
-            <{{repr}}CellMethod: area: mean>,
-            <{{repr}}DomainAxis: size(5)>,
-            <{{repr}}DomainAxis: size(8)>,
-            <{{repr}}DomainAxis: size(1)>
-        ])
+        dict_values([<{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+                     <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+                     <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+                     <{{repr}}DomainAxis: size(5)>,
+                     <{{repr}}DomainAxis: size(8)>,
+                     <{{repr}}DomainAxis: size(1)>,
+                     <{{repr}}CellMethod: area: mean>])
         >>> type(c_values)
         <class 'dict_values'>
         >>> list(c_values)
@@ -945,8 +944,10 @@ class Constructs(abstract.Container):
 
         **Examples:**
 
-        >>> g = f.copy()
-        >>> g = f.copy(data=False)
+        >>> f = cfdm.example_field(0)
+        >>> c = f.constructs
+        >>> k = c.copy()
+        >>> k = c.copy(data=False)
 
         """
         return type(self)(
@@ -974,6 +975,8 @@ class Constructs(abstract.Container):
 
         **Examples:**
 
+        >>> f = cfdm.example_field(0)
+        >>> c = f.constructs
         >>> print(c)
         Constructs:
         {'cellmethod0': <{{repr}}CellMethod: area: mean>,
@@ -1172,7 +1175,7 @@ class Constructs(abstract.Container):
         **Examples:**
 
         >>> print(c)
-        onstructs:
+        Constructs:
         {'cellmethod0': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean>,
          'cellmethod1': <{{repr}}CellMethod: domainaxis3: maximum>}
         >>> c.ordered()
