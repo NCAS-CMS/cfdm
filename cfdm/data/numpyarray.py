@@ -11,9 +11,9 @@ class NumpyArray(ArrayMixin, core.NumpyArray):
     """
 
     def __getitem__(self, indices):
-        """x.__getitem__(indices) <==> x[indices]
+        """Returns a subspace of the array as a numpy array.
 
-        Returns a subspace of the array as an independent numpy array.
+        x.__getitem__(indices) <==> x[indices]
 
         The indices that define the subspace must be either `Ellipsis` or
         a sequence that contains an index for each dimension. In the

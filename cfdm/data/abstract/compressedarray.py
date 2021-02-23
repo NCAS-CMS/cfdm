@@ -18,7 +18,7 @@ class CompressedArray(Array):
         compression_type=None,
         **kwargs
     ):
-        """**Initialization**
+        """Initialises the `CompressedArray` instance.
 
         :Parameters:
 
@@ -107,7 +107,7 @@ class CompressedArray(Array):
     # ----------------------------------------------------------------
     @property
     def array(self):
-        """Return an independent numpy array containing the uncompressed data.
+        """Returns a numpy array containing the uncompressed data.
 
         :Returns:
 
@@ -229,7 +229,7 @@ class CompressedArray(Array):
 
     @property
     def compressed_array(self):
-        """Return an independent numpy array containing the compressed data.
+        """Returns an independent numpy array with the compressed data.
 
         :Returns:
 
@@ -282,8 +282,7 @@ class CompressedArray(Array):
         )
 
     def get_compressed_dimension(self, *default):
-        """Return the position of the compressed dimension in the compressed
-        array.
+        """Returns the compressed dimension's position in the array.
 
         .. versionadded:: (cfdm) 1.7.0
 

@@ -12,6 +12,8 @@ import cfdm
 
 
 class DomainTest(unittest.TestCase):
+    """TODO DOCS."""
+
     filename = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
     )
@@ -19,6 +21,7 @@ class DomainTest(unittest.TestCase):
     d = f.domain
 
     def setUp(self):
+        """TODO DOCS."""
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -32,6 +35,7 @@ class DomainTest(unittest.TestCase):
         self.test_only = []
 
     def test_Domain__repr__str__dump(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -58,6 +62,7 @@ class DomainTest(unittest.TestCase):
         d = cfdm.Domain(source="qwerty")
 
     def test_Domain_equals(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 

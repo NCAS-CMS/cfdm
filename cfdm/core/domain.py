@@ -41,7 +41,7 @@ class Domain(mixin.FieldDomain, abstract.Properties):
     def __init__(
         self, properties=None, source=None, copy=True, _use_data=True
     ):
-        """**Initialization**
+        """Initialisation.
 
         :Parameters:
 
@@ -51,7 +51,7 @@ class Domain(mixin.FieldDomain, abstract.Properties):
                ``properties={'long_name': 'Domain for model'}``
 
             source: optional
-                Initialize the metadata constructs from those of *source*.
+                Initialise the metadata constructs from those of *source*.
 
                 {{init source}}
 

@@ -5,7 +5,7 @@ class Implementation(metaclass=abc.ABCMeta):
     """Store an implementation of the CF data model."""
 
     def __init__(self, cf_version=None, **kwargs):
-        """**Initialisation**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 
@@ -20,7 +20,7 @@ class Implementation(metaclass=abc.ABCMeta):
                 del self._class[key]
 
     def classes(self):
-        """Return all the classes of the implmentation.
+        """Return all the classes of the implementation.
 
         :Returns:
 
@@ -60,7 +60,7 @@ class Implementation(metaclass=abc.ABCMeta):
         return self._class.copy()
 
     def copy(self):
-        """Copy"""
+        """Copy."""
         return type(self)(cf_version=self.get_cf_version(), **self._class)
 
     def get_class(self, name):

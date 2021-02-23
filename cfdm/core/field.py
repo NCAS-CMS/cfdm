@@ -66,7 +66,7 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
     def __init__(
         self, properties=None, source=None, copy=True, _use_data=True
     ):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 
@@ -183,8 +183,10 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
     # Methods
     # ----------------------------------------------------------------
     def del_data_axes(self, key=None, default=ValueError()):
-        """Remove the keys of the domain axis constructs spanned by the data
-        of the field or of a metadata construct.
+        """Removes the keys of the axes spanned by the construct data.
+
+        Specifically, removes the keys of the domain axis constructs
+        spanned by the data of the field or of a metadata construct.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -267,8 +269,10 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
         return self._Domain.fromconstructs(self.constructs, copy=False)
 
     def get_data_axes(self, key=None, default=ValueError()):
-        """Return the keys of the domain axis constructs spanned by the data
-        of the field or of a metadata construct.
+        """Gets the keys of the axes spanned by the construct data.
+
+        Specifically, returns the keys of the domain axis constructs
+        spanned by the data of the field or of a metadata construct.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -325,8 +329,10 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
             )
 
     def has_data_axes(self, key=None):
-        """Whether the domain axis constructs spanned by the data of the field
-        or of a metadata construct have been set.
+        """Whether the axes spanned by the construct data have been set.
+
+        Specifically, whether the domain axis constructs spanned by the
+        data of the field or of a metadata construct have been set.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -411,7 +417,8 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
 
         >>> f = {{package}}.example_field(0)
         >>> f.del_construct('auxiliarycoordinate2')
-        Traceback ...
+        Traceback (most recent call last):
+            ...
         ValueError: Can't remove non-existent construct
         >>> f.del_construct('auxiliarycoordinate2', default=False)
         False
@@ -520,8 +527,10 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
         return f
 
     def set_data_axes(self, axes, key=None, _shape=None):
-        """Set the domain axis constructs spanned by the data of the field or
-        of a metadata construct.
+        """Sets the axes spanned by the construct data.
+
+        Specifically, sets the domain axis constructs spanned by the
+        data of the field or of a metadata construct.
 
         .. versionadded:: (cfdm) 1.7.0
 

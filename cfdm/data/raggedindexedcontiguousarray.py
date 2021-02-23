@@ -34,7 +34,7 @@ class RaggedIndexedContiguousArray(
         count_variable=None,
         index_variable=None,
     ):
-        """**Initialization**
+        """Initialises the `RaggedIndexedContiguousArray` instance.
 
         :Parameters:
 
@@ -71,10 +71,9 @@ class RaggedIndexedContiguousArray(
         )
 
     def __getitem__(self, indices):
-        """x.__getitem__(indices) <==> x[indices]
+        """Returns a subspace of the uncompressed data a numpy array.
 
-        Returns an subspace of the uncompressed data an independent numpy
-        array.
+        x.__getitem__(indices) <==> x[indices]
 
         The indices that define the subspace are relative to the
         uncompressed data and must be either `Ellipsis` or a sequence that

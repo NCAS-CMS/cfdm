@@ -44,7 +44,7 @@ class Constructs(abstract.Container):
         _view=False,
         _ignore=(),
     ):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 
@@ -261,7 +261,7 @@ class Constructs(abstract.Container):
             self._constructs[x] = OrderedDict()
 
     def __contains__(self, key):
-        """Called to implement membership test operators for construct keys.
+        """Implements membership test operators for construct keys.
 
         x.__contains__(y) <==> y in x
 
@@ -337,7 +337,7 @@ class Constructs(abstract.Container):
         return self._construct_axes.pop(k, *d)
 
     def _view(self, ignore=()):
-        """Return a new container with a view the same metadata constructs.
+        """Returns a new container with a view of the same constructs.
 
         A new `{{class}}` instance is returned that contains the same
         metadata construct instances
@@ -405,11 +405,12 @@ class Constructs(abstract.Container):
 
         Type name components are formatted to be whitespace-delimited to
         effective words for the purposes of printing to the user.
+
         """
         return construct_type.replace("_", " ")
 
     def _dictionary(self, copy=False):
-        """"""
+        """Constructs the mapping of keys to metadata constructs."""
         out = {}
         ignore = self._ignore
         for key, value in self._constructs.items():
@@ -704,8 +705,9 @@ class Constructs(abstract.Container):
     # Private dictionary-like methods
     # ----------------------------------------------------------------
     def _pop(self, k, *d):
-        """D.pop(k[,d]) -> v, remove specified key and return the
-        corresponding value.
+        """Removes specified key and returns the corresponding value.
+
+        D.pop(k[,d]) -> v
 
         If k is not found, d is returned if given, otherwise KeyError is
         raised
@@ -727,7 +729,11 @@ class Constructs(abstract.Container):
         return self._constructs[construct_type].pop(k, *d)
 
     def _update(self, other):
-        """D.update(E) -> None. Update D from E."""
+        """D.update(E) -> None.
+
+        Update D from E.
+
+        """
         self._ignore = tuple(set(self._ignore).union(other._ignore))
 
         self._key_base.update(other._key_base)
@@ -742,7 +748,7 @@ class Constructs(abstract.Container):
     # Dictionary-like methods
     # ----------------------------------------------------------------
     def get(self, key, *default):
-        """Return the construct for construct key, if it exists, else default.
+        """Returns the construct for the construct key, if it exists.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -882,7 +888,7 @@ class Constructs(abstract.Container):
 
         .. seealso:: `construct_types`
 
-        TODO
+        TODO DOCS.
 
         """
         x = self._construct_type.get(key)
@@ -940,8 +946,10 @@ class Constructs(abstract.Container):
         )
 
     def data_axes(self):
-        """Return the domain axis constructs spanned by metadata construct
-        data.
+        """Returns the axes spanned by the data.
+
+        Specifically, returns the domain axis constructs spanned by
+        metadata construct data.
 
         .. versionadded:: (cfdm) 1.7.0
 

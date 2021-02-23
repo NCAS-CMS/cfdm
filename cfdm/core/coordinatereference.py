@@ -70,7 +70,7 @@ class CoordinateReference(abstract.Container):
         source=None,
         copy=True,
     ):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 
@@ -545,7 +545,6 @@ class CoordinateReference(abstract.Container):
         >>> c.set_coordinates(old)
         >>> c.coordinates()
         {'dimensioncoordinate0', 'dimensioncoordinate1'}
-
 
         """
         if isinstance(coordinates, str):

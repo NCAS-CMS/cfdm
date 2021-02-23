@@ -113,9 +113,9 @@ class Field(
     def __new__(cls, *args, **kwargs):
         """Store component classes.
 
-        .. note:: If a child class requires a different component classes
-                  than the ones defined here, then they must be redefined
-                  in the child class.
+        .. note:: If a child class requires a different component
+        classes           than the ones defined here, then they must be
+        redefined           in the child class.
 
         """
         instance = super().__new__(cls)
@@ -133,7 +133,7 @@ class Field(
     def __init__(
         self, properties=None, source=None, copy=True, _use_data=True
     ):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 
@@ -234,7 +234,7 @@ class Field(
             string.append("Cell methods    : {0}".format(c))
 
         def _print_item(self, key, variable, axes):
-            """Private function called by __str__"""
+            """Private function called by __str__."""
             # Field ancillary
             x = [variable.identity(default=key)]
 
@@ -379,7 +379,7 @@ class Field(
     # Private methods
     # ----------------------------------------------------------------
     def _one_line_description(self, axis_names_sizes=None):
-        """TODO"""
+        """TODO DOCS."""
         if axis_names_sizes is None:
             axis_names_sizes = self._unique_domain_axis_identities()
 
@@ -416,7 +416,9 @@ class Field(
     @property
     @_test_decorator_args("i")
     def _test_docstring_substitution_decorator_property(self):
-        """Test docstring substitution on {{class}} with @property and a
+        """Tests docstring substitution with a property and decorator.
+
+        The substitution is tested on {{class}} with @property and a
         decorator.
 
             {{inplace: `bool`, optional}}
@@ -642,7 +644,7 @@ class Field(
         Constructs:
         {'cellmethod0': <{{repr}}CellMethod: area: mean>}
         >>> g.climatological_time_axes()
-        {}
+        set()
 
         """
         out = set()
@@ -876,7 +878,7 @@ class Field(
         def _compress_metadata(
             f, method, count, N, axes, Array_func, **kwargs
         ):
-            """Compress metadata constructs for a field by a chosen method.
+            """Compresses constructs for a field by a chosen method.
 
             :Parameters:
 
@@ -1576,8 +1578,8 @@ class Field(
         return "\n".join(string)
 
     def get_data_axes(self, key=None, default=ValueError()):
-        """Return the keys of the domain axis constructs spanned by the data
-        of the field or of a metadata construct.
+        """Return the keys of the domain axis constructs spanned by the
+        data of the field or of a metadata construct.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -1684,7 +1686,7 @@ class Field(
         return out
 
     def has_geometry(self):
-        """Whether or not any coordinate constructs have cell geometries.
+        """Whether any coordinate constructs have cell geometries.
 
         .. versionadded:: (cfdm) 1.8.7.0
 

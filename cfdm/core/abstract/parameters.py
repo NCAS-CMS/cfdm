@@ -11,7 +11,7 @@ class Parameters(Container):
     """
 
     def __init__(self, parameters=None, source=None, copy=True):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 
@@ -120,7 +120,7 @@ class Parameters(Container):
         False
         >>> print(f.del_parameter('earth_radius', None))
         None
-        >>> print(f.get_paramete('earth_radius', None))
+        >>> print(f.get_parameter('earth_radius', None))
         None
 
         """

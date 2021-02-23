@@ -440,11 +440,11 @@ link_release = re.search(r"(\d+\.\d+\.\d+\.\d+)", release).groups()[0]
 
 
 def linkcode_resolve(domain, info):
-    """
-    This is a function which should return the URL to source code
-    corresponding to the object in given domain with given information.
-    """
+    """Returns the URL to the source code corresponding to each object.
 
+    This is a function required by the sphinx.ext.linkcode extension.
+
+    """
     # =================================================================
     # Must delete all .doctrees directories in build for changes to be
     # picked up. E.g.:

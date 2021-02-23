@@ -12,6 +12,8 @@ import cfdm
 
 
 class DimensionCoordinateTest(unittest.TestCase):
+    """TODO DOCS."""
+
     filename = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
     )
@@ -44,6 +46,7 @@ class DimensionCoordinateTest(unittest.TestCase):
     dim.set_bounds(bounds)
 
     def setUp(self):
+        """TODO DOCS."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -56,6 +59,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
     def test_DimensionCoordinate__repr__str__dump(self):
+        """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
         x = f.dimension_coordinates("grid_latitude").value()
 
@@ -65,9 +69,11 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertIsInstance(x.dump(display=False, _key="qwerty"), str)
 
     def test_DimensionCoordinate__init__(self):
+        """TODO DOCS."""
         cfdm.DimensionCoordinate(source="qwerty")
 
     def test_DimensionCoordinate_set_data(self):
+        """TODO DOCS."""
         x = cfdm.DimensionCoordinate()
 
         y = x.set_data(cfdm.Data([1, 2, 3]))
@@ -89,6 +95,7 @@ class DimensionCoordinateTest(unittest.TestCase):
             y = x.set_data(cfdm.Data(1))
 
     def test_DimensionCoordinate_climatology(self):
+        """TODO DOCS."""
         x = cfdm.DimensionCoordinate()
 
         self.assertFalse(x.is_climatology())

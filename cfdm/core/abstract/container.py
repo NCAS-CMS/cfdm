@@ -23,7 +23,7 @@ class Container(metaclass=DocstringRewriteMeta):
     """
 
     def __init__(self, source=None, copy=True):
-        """**Initialisation**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 
@@ -68,8 +68,10 @@ class Container(metaclass=DocstringRewriteMeta):
         return self.copy()
 
     def __docstring_substitutions__(self):
-        """Define docstring substitutions that apply to this class and all of
-        its subclasses.
+        """Defines docstring substitutions for a class and subclasses.
+
+        That is, defines docstring substitutions that apply to this
+        class and all of its subclasses.
 
         These are in addtion to, and take precendence over, docstring
         substitutions defined by the base classes of this class.
@@ -87,7 +89,7 @@ class Container(metaclass=DocstringRewriteMeta):
         return _docstring_substitution_definitions
 
     def __docstring_package_depth__(self):
-        """Return the package depth for {{package}} docstring substitutions.
+        """Returns the package depth for {{package}} substitutions.
 
         See `_docstring_package_depth` for details.
 
@@ -121,10 +123,16 @@ class Container(metaclass=DocstringRewriteMeta):
 
         >>> f = {{package}}.{{class}}()
         >>> f._default(AttributeError())  # Raises Exception
-        AttributeError:
+        Traceback (most recent call last):
+            ...
+        AttributeError
         >>> f._default(ValueError("Missing item"))  # Raises Exception
+        Traceback (most recent call last):
+            ...
         ValueError: Missing item
         >>> f._default(ValueError(), message="No component")  # Raises Exception
+        Traceback (most recent call last):
+            ...
         ValueError: No component
         >>> f._default(False)
         False
@@ -220,7 +228,7 @@ class Container(metaclass=DocstringRewriteMeta):
         return self._get_component("custom")
 
     def _get_component(self, component, default=ValueError()):
-        """Return a component
+        """Return a component.
 
         .. versionadded:: (cfdm) 1.7.0
 

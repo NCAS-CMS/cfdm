@@ -97,7 +97,7 @@ class Domain(
     def __init__(
         self, properties=None, source=None, copy=True, _use_data=True
     ):
-        """**Initialization**
+        """Initialisation.
 
         :Parameters:
 
@@ -107,7 +107,7 @@ class Domain(
                    ``properties={'long_name': 'Domain for model'}``
 
             source: optional
-                Initialize the metadata constructs from those of
+                Initialise the metadata constructs from those of
                 *source*.
 
                 {{init source}}
@@ -154,7 +154,7 @@ class Domain(
         """
 
         def _print_item(self, cid, variable, axes):
-            """Private function called by __str__"""
+            """Private function called by __str__."""
             x = [variable.identity(default=f"key%{cid}")]
 
             if variable.has_data():
@@ -267,8 +267,7 @@ class Domain(
     # ----------------------------------------------------------------
     @_display_or_return
     def _dump_axes(self, axis_names, display=True, _level=0):
-        """Return a string containing a description of the domain axes of the
-        field.
+        """Returns a string description of the field's domain axes.
 
         :Parameters:
 
@@ -815,8 +814,7 @@ class Domain(
         return "\n".join(string)
 
     def get_filenames(self):
-        """Return the names of the files containing the data of the metadata
-        constructs.
+        """Return the file names containing the metadata construct data.
 
         :Returns:
 

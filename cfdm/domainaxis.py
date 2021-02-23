@@ -44,7 +44,7 @@ class DomainAxis(
     """
 
     def __init__(self, size=None, source=None, copy=True):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 
@@ -82,7 +82,7 @@ class DomainAxis(
     def creation_commands(
         self, namespace=None, indent=0, string=True, name="c", header=True
     ):
-        """Return the commands that would create the domain axis construct.
+        """Returns the commands to create the domain axis construct.
 
         .. versionadded:: (cfdm) 1.8.7.0
 

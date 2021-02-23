@@ -56,7 +56,7 @@ class AuxiliaryCoordinate(
         copy=True,
         _use_data=True,
     ):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 

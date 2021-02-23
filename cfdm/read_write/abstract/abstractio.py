@@ -5,7 +5,7 @@ class IO(metaclass=abc.ABCMeta):
     """Abstract base class for reading and writing Fields."""
 
     def __init__(self, implementation):
-        """**Initialisation**
+        """Initialises the `IO` instance.
 
         :Parameters:
 

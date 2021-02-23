@@ -11,7 +11,7 @@ class Properties(Container):
     """
 
     def __init__(self, properties=None, source=None, copy=True):
-        """**Initialization**
+        """Initialises the `{{class}}` instance.
 
         :Parameters:
 
@@ -66,17 +66,16 @@ class Properties(Container):
         ...                   'long_name': 'Air Pressure'})
         >>> f.properties()
         {'standard_name': 'air_pressure',
-         'foo': 'bar',
          'long_name': 'Air Pressure'}
         >>> f.set_properties({'standard_name': 'air_pressure', 'foo': 'bar'})
         >>> f.properties()
         {'standard_name': 'air_pressure',
-         'foo': 'bar',
-         'long_name': 'Air Pressure'}
+         'long_name': 'Air Pressure',
+         'foo': 'bar'}
         >>> f.clear_properties()
         {'standard_name': 'air_pressure',
-         'foo': 'bar',
-         'long_name': 'Air Pressure'}
+         'long_name': 'Air Pressure',
+         'foo': 'bar'}
         >>> f.properties()
         {}
 
@@ -298,17 +297,16 @@ class Properties(Container):
         ...                   'long_name': 'Air Pressure'})
         >>> f.properties()
         {'standard_name': 'air_pressure',
-         'foo': 'bar',
          'long_name': 'Air Pressure'}
         >>> f.set_properties({'standard_name': 'air_pressure', 'foo': 'bar'})
         >>> f.properties()
         {'standard_name': 'air_pressure',
-         'foo': 'bar',
-         'long_name': 'Air Pressure'}
+         'long_name': 'Air Pressure',
+         'foo': 'bar'}
         >>> f.clear_properties()
         {'standard_name': 'air_pressure',
-         'foo': 'bar',
-         'long_name': 'Air Pressure'}
+         'long_name': 'Air Pressure',
+         'foo': 'bar'}
         >>> f.properties()
         {}
 
@@ -348,17 +346,16 @@ class Properties(Container):
         ...                   'long_name': 'Air Pressure'})
         >>> f.properties()
         {'standard_name': 'air_pressure',
-         'foo': 'bar',
          'long_name': 'Air Pressure'}
         >>> f.set_properties({'standard_name': 'air_pressure', 'foo': 'bar'})
         >>> f.properties()
         {'standard_name': 'air_pressure',
-         'foo': 'bar',
-         'long_name': 'Air Pressure'}
+         'long_name': 'Air Pressure',
+         'foo': 'bar'}
         >>> f.clear_properties()
         {'standard_name': 'air_pressure',
-         'foo': 'bar',
-         'long_name': 'Air Pressure'}
+         'long_name': 'Air Pressure',
+         'foo': 'bar'}
         >>> f.properties()
         {}
 

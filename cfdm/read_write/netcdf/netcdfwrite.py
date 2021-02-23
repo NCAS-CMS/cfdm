@@ -17,10 +17,10 @@ logger = logging.getLogger(__name__)
 
 
 class NetCDFWrite(IOWrite):
-    """"""
+    """A container for writing Fields to a netCDF dataset."""
 
     def cf_description_of_file_contents_attributes(self):
-        """Description of file contents properties"""
+        """Description of file contents properties."""
         return (
             "comment",
             "Conventions",
@@ -33,7 +33,7 @@ class NetCDFWrite(IOWrite):
         )
 
     def cf_geometry_types(self):
-        """Geometry types
+        """Geometry types.
 
         .. versionadded:: (cfdm) 1.8.0
 
@@ -47,7 +47,7 @@ class NetCDFWrite(IOWrite):
         )
 
     def cf_cell_method_qualifiers(self):
-        """Cell method qualifiers"""
+        """Cell method qualifiers."""
         return set(
             (
                 "within",
@@ -59,7 +59,7 @@ class NetCDFWrite(IOWrite):
         )
 
     def _create_netcdf_group(self, nc, group_name):
-        """Create a new netCDF4 group object.
+        """Creates a new netCDF4 group object.
 
         .. versionadded:: (cfdm) 1.8.6.0
 
@@ -269,8 +269,11 @@ class NetCDFWrite(IOWrite):
         return netcdf_attrs
 
     def _character_array(self, array):
-        """Convert a numpy string array to a numpy character array wih an
-        extra trailing dimension.
+        """Converts a numpy array of strings to character data type.
+
+        As well as the data type conversion from string to character,
+        the output numpy character array is given an extra trailing
+        dimension.
 
         :Parameters:
 
@@ -351,8 +354,11 @@ class NetCDFWrite(IOWrite):
         return array
 
     def _datatype(self, variable):
-        """Return the netCDF4.createVariable datatype corresponding to the
-        datatype of the array of the input variable
+        """Returns the input variable array's netCDF4-like data type.
+
+        Specifically return the `netCDF4.createVariable` data type
+        corresponding to the data type of the array of the input
+        variable.
 
         For example, if variable.dtype is 'float32', then 'f4' will be
         returned.
@@ -408,7 +414,7 @@ class NetCDFWrite(IOWrite):
         return "{0}{1}".format(dtype.kind, dtype.itemsize)
 
     def _string_length_dimension(self, size):
-        """Create, if necessary, a netCDF dimension for string variables.
+        """Creates a netCDF dimension for string variables if necessary.
 
         :Parameters:
 
@@ -442,10 +448,10 @@ class NetCDFWrite(IOWrite):
         return ncdim
 
     def _netcdf_dimensions(self, field, key, construct):
-        """Return a tuple of the netCDF dimension names for the axes of a
-        metadata construct.
+        """Returns the netCDF dimension names for the construct axes.
 
-        If the construct has no data, then return `None`
+        The names are returned in a tuple. If the metadata construct
+        has no data, then `None` is returned.
 
         :Parameters:
 
@@ -627,7 +633,7 @@ class NetCDFWrite(IOWrite):
         g["dimensions"].add(ncdim)
 
     def _write_dimension_coordinate(self, f, key, coord, ncdim, coordinates):
-        """Write a coordinate variable and its bounds variable to the file.
+        """Writes a coordinate variable and its bounds variable to file.
 
         This also writes a new netCDF dimension to the file and, if
         required, a new netCDF dimension for the bounds.
@@ -1114,8 +1120,10 @@ class NetCDFWrite(IOWrite):
         return geometry_container
 
     def _already_in_file(self, variable, ncdims=None, ignore_type=False):
-        """Return True if a variable is logically equal any variable in the
-        g['seen'] dictionary.
+        """True if a variable already exists in g['seen'].
+
+        Specifically, returns True if a variable is logically equal any
+        variable in the g['seen'] dictionary.
 
         If this is the case then the variable has already been written to
         the output netCDF file and so we don't need to do it again.
@@ -1222,9 +1230,11 @@ class NetCDFWrite(IOWrite):
     def _write_bounds(
         self, f, coord, coord_key, coord_ncdimensions, coord_ncvar=None
     ):
-        """Create a bounds netCDF variable, creating a new bounds netCDF
-        dimension if required. Return the bounds variable's netCDF
-        variable name.
+        """Creates a bounds netCDF variable and returns its name.
+
+        Specifically, creates a bounds netCDF variable, creating a new
+        bounds netCDF dimension if required. Returns the bounds
+        variable's netCDF variable name.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -1666,8 +1676,10 @@ class NetCDFWrite(IOWrite):
         return {"geometry_dimension": geometry_dimension, "node_count": ncvar}
 
     def _get_part_ncdimension(self, coord, default=None):
-        """Get the base of the netCDF dimension for part node count and
-        interior ring variables.
+        """Gets dimension name for part node counts or interior rings.
+
+        Specifically, gets the base of the netCDF dimension for part
+        node count and interior ring variables.
 
         .. versionadded:: (cfdm) 1.8.0
 
@@ -1708,8 +1720,10 @@ class NetCDFWrite(IOWrite):
         return default
 
     def _parent_group(self, name):
-        """Return the parent group in which a dimension or variable is to be
-        created.
+        """Returns the parent group due for a dimension or variable.
+
+        That is, the parent group in which a dimension or variable is
+        to be created.
 
         .. versionadded:: (cfdm) 1.8.6.0
 
@@ -1841,7 +1855,9 @@ class NetCDFWrite(IOWrite):
         return default
 
     def _write_part_node_count(self, coord, bounds, encodings):
-        """Create a bounds netCDF variable, creating a new bounds netCDF
+        """Creates a bounds netCDF variable and returns its name.
+
+        Create a bounds netCDF variable, creating a new bounds netCDF
         dimension if required. Return the bounds variable's netCDF
         variable name.
 
@@ -2376,7 +2392,7 @@ class NetCDFWrite(IOWrite):
         return "{0}: {1}".format(measure, ncvar)
 
     def _set_external_variables(self, ncvar):
-        """Add ncvar to the global external_variables attribute"""
+        """Add ncvar to the global external_variables attribute."""
         g = self.write_vars
 
         external_variables = g["external_variables"]
@@ -2394,7 +2410,7 @@ class NetCDFWrite(IOWrite):
     def _create_external(
         self, field=None, construct_id=None, ncvar=None, ncdimensions=None
     ):
-        """Create a new field to flag it for being written the external file.
+        """Creates a new field to flag to write to an external file.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -2537,11 +2553,17 @@ class NetCDFWrite(IOWrite):
         data_variable=False,
         domain_variable=False,
     ):
-        """Create a netCDF variable from *cfvar* with name *ncvar* and
-        dimensions *ncdimensions*. The new netCDF variable's properties
+        """Creates a new netCDF variable for a construct.
+
+        The new netCDF variable is created from *cfvar* with name
+        *ncvar* and dimensions *ncdimensions*. It's properties
         are given by cfvar.properties(), less any given by the *omit*
-        argument. If a new string-length netCDF dimension is required then
-        it will also be created. The ``seen`` dictionary is updated for
+        argument. If a new string-length netCDF dimension is required
+        then it will also be created.
+
+        The ``seen`` dictionary is updated to account for the new
+        variable.
+
         *cfvar*.
 
             :Parameters:
@@ -2760,7 +2782,10 @@ class NetCDFWrite(IOWrite):
         }
 
     def _customize_createVariable(self, cfvar, kwargs):
-        """Customise keyword arguments for `netCDF4.Dataset.createVariable`.
+        """Customises `netCDF4.Dataset.createVariable` keywords.
+
+        The keyword arguments may be changed in subclasses which
+        override this method.
 
         .. versionadded:: (cfdm) 1.7.6
 
@@ -2906,8 +2931,10 @@ class NetCDFWrite(IOWrite):
         g["nc"][ncvar][...] = array
 
     def _check_valid(self, cfvar, array, attributes):
-        """Check array for out-of-range values, as defined by the
-        valid_[min|max|range] attributes.
+        """Checks if an array is considered fully valid.
+
+        Specifically, checks array for out-of-range values, as
+        defined by the valid_[min|max|range] attributes.
 
         .. versionadded:: (cfdm) 1.8.3
 
@@ -2992,7 +3019,7 @@ class NetCDFWrite(IOWrite):
         return bool(out)
 
     def _convert_to_char(self, data):
-        """Convert string data into character data
+        """Convert string data into character data.
 
         The returned Data object will have data type 'S1' and will
         have an extra trailing dimension.
@@ -4048,8 +4075,7 @@ class NetCDFWrite(IOWrite):
         return self.implementation.nc_is_unlimited_axis(field, axis)
 
     def _write_group(self, parent_group, group_name):
-        """Find the netCDF global properties from all of the input fields and
-        write them to the netCDF4.Dataset.
+        """Creates a new netCDF4 parent group object.
 
         .. versionadded:: (cfdm) 1.8.6.0
 
@@ -4067,8 +4093,7 @@ class NetCDFWrite(IOWrite):
         return parent_group.createGroup(group_name)
 
     def _write_group_attributes(self, fields):
-        """Find the netCDF global properties from all of the input fields and
-        write them to the netCDF4.Dataset.
+        """Writes the netCDF group-level attributes to the file.
 
         :Parameters:
 
@@ -4146,8 +4171,10 @@ class NetCDFWrite(IOWrite):
         g["group_attributes"] = group_attributes
 
     def _write_global_attributes(self, fields):
-        """Find the netCDF global properties from all of the input fields and
-        write them to the netCDF4.Dataset.
+        """Writes all netCDF global properties to the netCDF4 dataset.
+
+        Specifically, finds the netCDF global properties from all of
+        the input fields and writes them to the `netCDF4.Dataset`.
 
         :Parameters:
 
@@ -4423,7 +4450,7 @@ class NetCDFWrite(IOWrite):
 
                 See `cfdm.write` for details.
 
-            filename : str
+            filename: str
                 The output CF-netCDF file.
 
                 See `cfdm.write` for details.
@@ -4435,7 +4462,7 @@ class NetCDFWrite(IOWrite):
 
                 See `cfdm.write` for details.
 
-            verbose : bool, optional
+            verbose: bool, optional
                 See `cfdm.write` for details.
 
             file_descriptors: `dict`, optional

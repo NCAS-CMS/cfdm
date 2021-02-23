@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class FieldDomain:
-    """Mixin class for methods common to both field and domain constructs
+    """Mixin class for methods of field and domain constructs.
 
     .. versionadded:: (cfdm) 1.9.0.0
 
@@ -19,7 +19,7 @@ class FieldDomain:
     # Private methods
     # ----------------------------------------------------------------
     def _apply_masking_constructs(self):
-        """Apply masking to metadata constructs in-place,
+        """Apply masking to metadata constructs in-place.
 
         Masking is applied to all metadata constructs with data.
 
@@ -37,7 +37,7 @@ class FieldDomain:
             c.apply_masking(inplace=True)
 
     def _get_data_compression_variables(self, component):
-        """TODO"""
+        """TODO."""
         out = []
         for construct in self.constructs.filter_by_data().values():
             data = construct.get_data(None)
@@ -535,8 +535,10 @@ class FieldDomain:
         return c.key(default=default)
 
     def domain_axis_key(self, identity=None, default=ValueError()):
-        """Return the key of the domain axis construct that is spanned by 1-d
-        coordinate constructs.
+        """Returns the domain axis key spanned by 1-d coordinates.
+
+        Specifically, returns the key of the domain axis construct that
+        is spanned by 1-d coordinate constructs.
 
         :Parameters:
 

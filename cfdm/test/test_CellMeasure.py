@@ -10,7 +10,10 @@ import cfdm
 
 
 class CellMeasureTest(unittest.TestCase):
+    """TODO DOCS."""
+
     def setUp(self):
+        """TODO DOCS."""
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -30,9 +33,11 @@ class CellMeasureTest(unittest.TestCase):
         self.f = f[0]
 
     def test_CellMeasure__init__(self):
+        """TODO DOCS."""
         cfdm.CellMeasure(source="qwerty")
 
     def test_CellMeasure__repr__str__dump_construct_type(self):
+        """TODO DOCS."""
         f = self.f
 
         for cm in f.cell_measures.values():
@@ -42,6 +47,7 @@ class CellMeasureTest(unittest.TestCase):
             self.assertEqual(cm.construct_type, "cell_measure")
 
     def test_CellMeasure(self):
+        """TODO DOCS."""
         f = self.f.copy()
 
         cm = f.construct("measure:area")

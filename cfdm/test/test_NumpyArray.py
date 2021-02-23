@@ -11,7 +11,10 @@ import cfdm
 
 
 class NumpyArrayTest(unittest.TestCase):
+    """TODO DOCS."""
+
     def setUp(self):
+        """TODO DOCS."""
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -23,6 +26,7 @@ class NumpyArrayTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
     def test_NumpyArray_copy(self):
+        """TODO DOCS."""
         a = numpy.array([1, 2, 3, 4])
 
         x = cfdm.NumpyArray(a)
@@ -31,6 +35,7 @@ class NumpyArrayTest(unittest.TestCase):
         self.assertTrue((x.array == y.array).all())
 
     def test_NumpyArray__array__(self):
+        """TODO DOCS."""
         a = numpy.array([1, 2, 3, 4])
 
         x = cfdm.NumpyArray(a)

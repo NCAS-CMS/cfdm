@@ -39,8 +39,11 @@ atexit.register(_remove_tmpfiles)
 
 
 class FunctionsTest(unittest.TestCase):
+    """TODO DOCS."""
+
     @classmethod
     def setUpClass(cls):
+        """TODO DOCS."""
         # Need to run this per-class, not per-method, to access the
         # original value of log_level to use to test the default (see
         # test_log_level)
@@ -56,6 +59,7 @@ class FunctionsTest(unittest.TestCase):
         # (no tearDownClass necessary)
 
     def setUp(self):
+        """TODO DOCS."""
         # Disable log messages to silence expected warning, but
         # save original state for test on logging (see test_log_level)
         cfdm.log_level("DISABLE")
@@ -88,6 +92,7 @@ class FunctionsTest(unittest.TestCase):
         self.test_only = []
 
     def test_atol_rtol(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -112,6 +117,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertTrue(cfdm.atol() == org)
 
     def test_log_level(self):
+        """TODO DOCS."""
         original = self.__class__.original  # original to module i.e. default
 
         self.assertEqual(original, "WARNING")  # test default
@@ -142,6 +148,7 @@ class FunctionsTest(unittest.TestCase):
             cfdm.LOG_LEVEL("ERROR")
 
     def test_reset_log_emergence_level(self):
+        """TODO DOCS."""
         # 'DISABLE' is special case so test it afterwards (see below)
         for value in self.valid_level_values:
             cfdm.functions._reset_log_emergence_level(value)
@@ -169,6 +176,7 @@ class FunctionsTest(unittest.TestCase):
         )
 
     def test_disable_logging(self):
+        """TODO DOCS."""
         # Re-set to avoid coupling; use set level to check it is
         # restored after
         cfdm.log_level("DETAIL")
@@ -198,12 +206,14 @@ class FunctionsTest(unittest.TestCase):
         self.assertFalse(cfdm.logging.getLogger().isEnabledFor(logging.DEBUG))
 
     def test_CF(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         self.assertEqual(cfdm.CF(), cfdm.core.__cf_version__)
 
     def test_environment(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -230,6 +240,7 @@ class FunctionsTest(unittest.TestCase):
             self.assertIn(component, ep)
 
     def test_example_field(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -263,6 +274,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(len(cfdm.example_fields(0, 2, 0)), 3)
 
     def test_abspath(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -274,6 +286,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(cfdm.abspath(filename), filename)
 
     def test_configuration(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -412,6 +425,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(len(cfdm.unique_constructs(domains)), 2)
 
     def test_context_managers(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -469,6 +483,7 @@ class FunctionsTest(unittest.TestCase):
         func(**org)
 
     def test_Constant(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -559,6 +574,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertFalse(cfdm.Constant(False))
 
     def test_Configuration(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 

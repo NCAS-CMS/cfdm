@@ -11,7 +11,10 @@ import cfdm
 
 
 class CellMethodTest(unittest.TestCase):
+    """TODO DOCS."""
+
     def setUp(self):
+        """TODO DOCS."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or calls (those
@@ -31,6 +34,7 @@ class CellMethodTest(unittest.TestCase):
         self.test_only = []
 
     def test_CellMethod__repr__str__dump_construct_type(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -43,6 +47,7 @@ class CellMethodTest(unittest.TestCase):
             self.assertEqual(c.construct_type, "cell_method")
 
     def test_CellMethod(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -96,6 +101,7 @@ class CellMethodTest(unittest.TestCase):
         c = cfdm.CellMethod(source="qwerty")
 
     def test_CellMethod_axes(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -110,6 +116,7 @@ class CellMethodTest(unittest.TestCase):
         self.assertIsNone(f.del_axes(None))
 
     def test_CellMethod_method(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -124,6 +131,7 @@ class CellMethodTest(unittest.TestCase):
         self.assertIsNone(f.del_method(None))
 
     def test_CellMethod_qualifier(self):
+        """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 

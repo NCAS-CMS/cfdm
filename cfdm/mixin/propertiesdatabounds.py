@@ -17,8 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 class PropertiesDataBounds(PropertiesData):
-    """Mixin class for a data array with descriptive properties and cell
-    bounds.
+    """Mixin for a data array with descriptive properties and bounds.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -37,7 +36,7 @@ class PropertiesDataBounds(PropertiesData):
         copy=True,
         _use_data=True,
     ):
-        """**Initialization**
+        """Initialises the `PropertiesDataBounds` instance.
 
         :Parameters:
 
@@ -138,7 +137,7 @@ class PropertiesDataBounds(PropertiesData):
             self.set_part_node_count(part_node_count, copy=copy)
 
     def __getitem__(self, indices):
-        """Return a subspace of the construct defined by indices
+        """Return a subspace of the construct defined by indices.
 
         f.__getitem__(indices) <==> f[indices]
 
@@ -1163,7 +1162,7 @@ class PropertiesDataBounds(PropertiesData):
             )
 
     def has_node_count(self):
-        """Whether or not there is a node count variable for geometry bounds..
+        """Whether geometry bounds have a node count variable.
 
         .. versionadded:: (cfdm) 1.8.0
 
@@ -1192,8 +1191,7 @@ class PropertiesDataBounds(PropertiesData):
         return self._has_component("node_count")
 
     def has_part_node_count(self):
-        """Whether or not there is a part node count variable for geometry
-        bounds..
+        """Whether geometry bounds have a part node count variable.
 
         .. versionadded:: (cfdm) 1.8.0
 

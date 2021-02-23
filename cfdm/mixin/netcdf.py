@@ -2,6 +2,8 @@ from copy import deepcopy
 
 
 class DeprecationError(Exception):
+    """An error indicating a method is no longer available."""
+
     pass
 
 
@@ -13,8 +15,10 @@ class NetCDF:
     """
 
     def _initialise_netcdf(self, source=None):
-        """Call this from inside the __init__ method of a class that inherits
-        from this mixin class.
+        """Helps to initialise netCDF components.
+
+        Call this from inside the __init__ method of a class that
+        inherits from this mixin class.
 
         :Parameters:
 
@@ -51,6 +55,7 @@ class _NetCDFGroupsMixin:
     """Mixin class for accessing netCDF(4) hierarchical groups.
 
     .. versionadded:: (cfdm) 1.8.6.0
+
     """
 
     def _nc_groups(self, nc_get):
@@ -135,7 +140,6 @@ class _NetCDFGroupsMixin:
                         "Can't have '/' character in group name: "
                         "{!r}".format(group)
                     )
-            # --- End: for
 
             name = "/".join(("",) + tuple(groups) + (name,))
 
@@ -382,7 +386,6 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
                     "A netCDF dimension name with a group structure "
                     "can't end with a '/'. Got {!r}".format(value)
                 )
-        # --- End: if
 
         self._get_component("netcdf")["dimension"] = value
 
@@ -738,7 +741,6 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
                     "A netCDF variable name with a group structure "
                     "can't end with a '/'. Got {!r}".format(value)
                 )
-        # --- End: if
 
         self._get_component("netcdf")["variable"] = value
 
@@ -1092,7 +1094,6 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
                     "A netCDF sample dimension name with a group structure "
                     "can't end with a '/'. Got {!r}".format(value)
                 )
-        # --- End: if
 
         self._get_component("netcdf")["sample_dimension"] = value
 
@@ -1262,8 +1263,7 @@ class NetCDFGlobalAttributes(NetCDF):
     """
 
     def nc_global_attributes(self, values=False):
-        """Return the selection of properties to be written as netCDF global
-        attributes.
+        """Returns properties to write as netCDF global attributes.
 
         {{netcdf global}}
 
@@ -1326,8 +1326,7 @@ class NetCDFGlobalAttributes(NetCDF):
         return out
 
     def nc_clear_global_attributes(self):
-        """Remove the selection of properties to be written as netCDF global
-        attributes.
+        """Removes properties to write as netCDF global attributes.
 
         {{netcdf global}}
 
@@ -1368,7 +1367,6 @@ class NetCDFGlobalAttributes(NetCDF):
         return out
 
     def nc_set_global_attribute(self, prop, value=None):
-
         """Select a property to be written as a netCDF global attribute.
 
         {{netcdf global}}
@@ -1493,8 +1491,7 @@ class NetCDFGroupAttributes(NetCDF):
     """
 
     def nc_group_attributes(self, values=False):
-        """Return the selection of properties to be written as netCDF group
-        attributes.
+        """Returns properties to write as netCDF group attributes.
 
         .. versionadded:: (cfdm) 1.8.6.0
 
@@ -1552,8 +1549,7 @@ class NetCDFGroupAttributes(NetCDF):
         return out
 
     def nc_clear_group_attributes(self):
-        """Remove the selection of properties to be written as netCDF group
-        attributes.
+        """Removes properties to write as netCDF group attributes.
 
         .. versionadded:: (cfdm) 1.8.6.0
 
@@ -1720,8 +1716,7 @@ class NetCDFUnlimitedDimensions(NetCDF):
     """
 
     def nc_unlimited_dimensions(self):
-        """Return the selection of domain axis constructs to be written as
-        netCDF unlimited dimensions.
+        """Returns domain axes to write as netCDF unlimited dimensions.
 
         By default output netCDF dimensions are not unlimited.
 
@@ -1755,12 +1750,11 @@ class NetCDFUnlimitedDimensions(NetCDF):
         raise DeprecationError(
             "'nc_unlimited_dimensions' was deprecated at version 1.7.4 "
             "and is no longer available. Use DomainAxis.nc_is_unlimited "
-            "instead"
+            "instead."
         )
 
     def nc_set_unlimited_dimensions(self, axes):
-        """Select domain axis constructs to be written as netCDF unlimited
-        dimensions.
+        """Selects domain axes to write as netCDF unlimited dimensions.
 
         By default output netCDF dimensions are not unlimited.
 
@@ -1809,8 +1803,7 @@ class NetCDFUnlimitedDimensions(NetCDF):
         )
 
     def nc_clear_unlimited_dimensions(self):
-        """Remove the selection of domain axis constructs to be written as
-        netCDF unlimited dimensions.
+        """Removes domain axes to write as netCDF unlimited dimensions.
 
         By default output netCDF dimensions are not unlimited.
 
@@ -1855,7 +1848,7 @@ class NetCDFExternal(NetCDF):
     """
 
     def nc_get_external(self):
-        """Whether the construct corresponds to an external netCDF variable.
+        """Whether a construct matches an external netCDF variable.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -1909,8 +1902,7 @@ class NetCDFExternal(NetCDF):
 
 
 class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
-    """Mixin class for accessing the netCDF geometry container variable
-    name.
+    """Mixin to access the netCDF geometry container variable name.
 
     .. versionadded:: (cfdm) 1.8.0
 
@@ -2015,7 +2007,7 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
             )
 
     def nc_has_geometry_variable(self):
-        """Whether the netCDF geometry container variable name has been set.
+        """Whether a netCDF geometry container variable has a name.
 
         .. versionadded:: (cfdm) 1.8.0
 
@@ -2105,7 +2097,6 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
                     "A netCDF geometry variable name with a group structure "
                     "can't end with a '/'. Got {!r}".format(value)
                 )
-        # --- End: if
 
         self._get_component("netcdf")["geometry_variable"] = value
 
@@ -2475,8 +2466,10 @@ class NetCDFUnlimitedDimension(NetCDF):
 
 
 class NetCDFComponents(NetCDF):
-    """Mixin class for accessing netCDF names consistently across multiple
-    metadata constructs.
+    """Mixin class for netCDF fetaure common to many constructs.
+
+    Accesses netCDF names consistently across multiple metadata
+    constructs.
 
     Assumes that the mixin classes `NetCDFDimension` and
     `NetCDFVariable` have also been subclassed.
@@ -2489,7 +2482,10 @@ class NetCDFComponents(NetCDF):
     """
 
     def nc_set_component_variable(self, component, value):
-        """Set the netCDF variable name for all components of the given type.
+        """Set the netCDF variable name for components.
+
+        Sets the netCDF variable name for all components of a given
+        type.
 
         Some components exist within multiple constructs, but when written
         to a netCDF dataset the netCDF names associated with such
@@ -2555,15 +2551,17 @@ class NetCDFComponents(NetCDF):
             v.nc_set_variable(value)
 
     def nc_del_component_variable(self, component):
-        """Remove the netCDF variable name for all components of the given
+        """Remove the netCDF variable name of components.
+
+        Removes the netCDF variable name for all components of a given
         type.
 
-        Some components exist within multiple constructs, but when written
-        to a netCDF dataset the netCDF names associated with such
-        components will be arbitrarily taken from one of them. The netCDF
-        names can be set on all such occurences individually, or
-        preferably by using this method to ensure consistency across all
-        such components.
+        Some components exist within multiple constructs, but when
+        written to a netCDF dataset the netCDF names associated with
+        such components will be arbitrarily taken from one of
+        them. The netCDF names can be set on all such occurences
+        individually, or preferably by using this method to ensure
+        consistency across all such components.
 
         .. versionadded:: (cfdm) 1.8.6.0
 
@@ -2619,15 +2617,17 @@ class NetCDFComponents(NetCDF):
             v.nc_del_variable(None)
 
     def nc_set_component_variable_groups(self, component, groups):
-        """Set the netCDF variable groups hierarchy for all components of the
-        given type.
+        """Set the netCDF variable groups of components.
 
-        Some components exist within multiple constructs, but when written
-        to a netCDF dataset the netCDF names associated with such
-        components will be arbitrarily taken from one of them. The netCDF
-        names can be set on all such occurences individually, or
-        preferably by using this method to ensure consistency across all
-        such components.
+        Sets the netCDF variable groups for all components of a given
+        type.
+
+        Some components exist within multiple constructs, but when
+        written to a netCDF dataset the netCDF names associated with
+        such components will be arbitrarily taken from one of
+        them. The netCDF names can be set on all such occurences
+        individually, or preferably by using this method to ensure
+        consistency across all such components.
 
         .. versionadded:: (cfdm) 1.8.6.0
 
@@ -2685,15 +2685,17 @@ class NetCDFComponents(NetCDF):
             v.nc_set_variable_groups(groups)
 
     def nc_clear_component_variable_groups(self, component):
-        """Remove the netCDF variable groups hierarchy for all components of
-        the given type.
+        """Remove the netCDF variable groups of components.
 
-        Some components exist within multiple constructs, but when written
-        to a netCDF dataset the netCDF names associated with such
-        components will be arbitrarily taken from one of them. The netCDF
-        names can be set on all such occurences individually, or
-        preferably by using this method to ensure consistency across all
-        such components.
+        Removes the netCDF variable groups for all components of a given
+        type.
+
+        Some components exist within multiple constructs, but when
+        written to a netCDF dataset the netCDF names associated with
+        such components will be arbitrarily taken from one of
+        them. The netCDF names can be set on all such occurences
+        individually, or preferably by using this method to ensure
+        consistency across all such components.
 
         .. versionadded:: (cfdm) 1.8.6.0
 
@@ -2748,7 +2750,10 @@ class NetCDFComponents(NetCDF):
             v.nc_clear_variable_groups()
 
     def nc_set_component_dimension(self, component, value):
-        """Set the netCDF dimension name for all components of the given type.
+        """Set the netCDF dimension name of components.
+
+        Sets the netCDF dimension name for all components of a given
+        type.
 
         Some components exist within multiple constructs, but when written
         to a netCDF dataset the netCDF names associated with such
@@ -2807,15 +2812,17 @@ class NetCDFComponents(NetCDF):
             v.nc_set_dimension(value)
 
     def nc_del_component_dimension(self, component):
-        """Remove the netCDF dimension name for all components of the given
-        type.
+        """Remove the netCDF dimension name of components.
 
-        Some components exist within multiple constructs, but when written
-        to a netCDF dataset the netCDF names associated with such
-        components will be arbitrarily taken from one of them. The netCDF
-        names can be set on all such occurences individually, or
-        preferably by using this method to ensure consistency across all
-        such components.
+        Removes the netCDF dimension name for all components of a
+        given type.
+
+        Some components exist within multiple constructs, but when
+        written to a netCDF dataset the netCDF names associated with
+        such components will be arbitrarily taken from one of
+        them. The netCDF names can be set on all such occurences
+        individually, or preferably by using this method to ensure
+        consistency across all such components.
 
         .. versionadded:: (cfdm) 1.8.6.0
 
@@ -2864,15 +2871,17 @@ class NetCDFComponents(NetCDF):
             v.nc_del_dimension(None)
 
     def nc_set_component_dimension_groups(self, component, groups):
-        """Set the netCDF dimension groups hierarchy for all components of the
-        given type.
+        """Set the netCDF dimension groups of components.
 
-        Some components exist within multiple constructs, but when written
-        to a netCDF dataset the netCDF names associated with such
-        components will be arbitrarily taken from one of them. The netCDF
-        names can be set on all such occurences individually, or
-        preferably by using this method to ensure consistency across all
-        such components.
+        Sets the netCDF dimension groups for all components of a given
+        type.
+
+        Some components exist within multiple constructs, but when
+        written to a netCDF dataset the netCDF names associated with
+        such components will be arbitrarily taken from one of
+        them. The netCDF names can be set on all such occurences
+        individually, or preferably by using this method to ensure
+        consistency across all such components.
 
         .. versionadded:: (cfdm) 1.8.6.0
 
@@ -2924,8 +2933,10 @@ class NetCDFComponents(NetCDF):
             v.nc_set_dimension_groups(groups)
 
     def nc_clear_component_dimension_groups(self, component):
-        """Remove the netCDF dimension groups hierarchy for all components of
-        the given type.
+        """Remove the netCDF dimension groups of components.
+
+        Removes the netCDF dimension groups for all components of a
+        given type.
 
         Some components exist within multiple constructs, but when written
         to a netCDF dataset the netCDF names associated with such
@@ -2981,15 +2992,17 @@ class NetCDFComponents(NetCDF):
             v.nc_clear_dimension_groups()
 
     def nc_set_component_sample_dimension(self, component, value):
-        """Set the netCDF sample dimension name for all components of the
+        """Set the netCDF sample dimension name of components.
+
+        Sets the netCDF sample dimension name for all components of a
         given type.
 
-        Some components exist within multiple constructs, but when written
-        to a netCDF dataset the netCDF names associated with such
-        components will be arbitrarily taken from one of them. The netCDF
-        names can be set on all such occurences individually, or
-        preferably by using this method to ensure consistency across all
-        such components.
+        Some components exist within multiple constructs, but when
+        written to a netCDF dataset the netCDF names associated with
+        such components will be arbitrarily taken from one of
+        them. The netCDF names can be set on all such occurences
+        individually, or preferably by using this method to ensure
+        consistency across all such components.
 
         .. versionadded:: (cfdm) 1.8.6.0
 
@@ -3034,8 +3047,10 @@ class NetCDFComponents(NetCDF):
             v.nc_set_sample_dimension(value)
 
     def nc_del_component_sample_dimension(self, component):
-        """Remove the netCDF sample dimension name for all components of the
-        given type.
+        """Remove the netCDF sample dimension name of components.
+
+        Removes the netCDF sample dimension name for all components of
+        a given type.
 
         Some components exist within multiple constructs, but when written
         to a netCDF dataset the netCDF names associated with such
@@ -3083,15 +3098,17 @@ class NetCDFComponents(NetCDF):
             v.nc_del_sample_dimension(None)
 
     def nc_set_component_sample_dimension_groups(self, component, groups):
-        """Set the netCDF sample dimension groups hierarchy for all components
-        of the given type.
+        """Set the netCDF sample dimension groups of components.
 
-        Some components exist within multiple constructs, but when written
-        to a netCDF dataset the netCDF names associated with such
-        components will be arbitrarily taken from one of them. The netCDF
-        names can be set on all such occurences individually, or
-        preferably by using this method to ensure consistency across all
-        such components.
+        Sets the netCDF sample dimension groups for all components of
+        a given type.
+
+        Some components exist within multiple constructs, but when
+        written to a netCDF dataset the netCDF names associated with
+        such components will be arbitrarily taken from one of
+        them. The netCDF names can be set on all such occurences
+        individually, or preferably by using this method to ensure
+        consistency across all such components.
 
         .. versionadded:: (cfdm) 1.8.6.0
 
@@ -3135,15 +3152,17 @@ class NetCDFComponents(NetCDF):
             v.nc_set_sample_dimension_groups(groups)
 
     def nc_clear_component_sample_dimension_groups(self, component):
-        """Remove the netCDF sample dimension groups hierarchy for all
-        components of the given type.
+        """Remove the netCDF sample dimension groups of components.
 
-        Some components exist within multiple constructs, but when written
-        to a netCDF dataset the netCDF names associated with such
-        components will be arbitrarily taken from one of them. The netCDF
-        names can be set on all such occurences individually, or
-        preferably by using this method to ensure consistency across all
-        such components.
+        Removes the netCDF sample dimension groups for all components
+        of a given type.
+
+        Some components exist within multiple constructs, but when
+        written to a netCDF dataset the netCDF names associated with
+        such components will be arbitrarily taken from one of
+        them. The netCDF names can be set on all such occurences
+        individually, or preferably by using this method to ensure
+        consistency across all such components.
 
         .. versionadded:: (cfdm) 1.8.6.0
 
@@ -3185,8 +3204,7 @@ class NetCDFComponents(NetCDF):
 
 
 class NetCDFUnreferenced:
-    """Mixin class for methods that apply to constructs corresponding to
-    unreferenced netCDF variables.
+    """Mixin class for constructs of unreferenced netCDF variables.
 
     .. versionadded:: (cfdm) 1.9.0.0
 
@@ -3196,8 +3214,10 @@ class NetCDFUnreferenced:
     # Private methods
     # ----------------------------------------------------------------
     def _set_dataset_compliance(self, value):
-        """Set the report of problems encountered whilst reading the construct
-        from a dataset.
+        """Set the dataset compliance report.
+
+        Set the report of problems encountered whilst reading the
+        construct from a dataset.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -3222,8 +3242,10 @@ class NetCDFUnreferenced:
     # Methods
     # ----------------------------------------------------------------
     def dataset_compliance(self, display=False):
-        """A report of problems encountered whilst reading the construct from
-        a dataset.
+        """Return the dataset compliance report.
+
+        A report of problems encountered whilst reading the construct
+        from a dataset.
 
         If the dataset is partially CF-compliant to the extent that it is
         not possible to unambiguously map an element of the netCDF dataset

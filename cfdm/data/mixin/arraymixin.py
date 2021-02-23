@@ -81,7 +81,7 @@ class ArrayMixin:
         return "shape={0}, dtype={1}".format(self.shape, self.dtype)
 
     def __docstring_package_depth__(self):
-        """Return the package depth for {{package}} docstring substitutions.
+        """Returns the package depth for {{package}} substitutions.
 
         See `_docstring_package_depth` for details.
 
@@ -89,8 +89,10 @@ class ArrayMixin:
         return 0
 
     def get_compression_type(self):
-        """The type of compression that has been applied to the underlying
-        array.
+        """Returns the array's compression type.
+
+        Specifically, returns the type of compression that has been
+        applied to the underlying array.
 
         .. versionadded:: (cfdm) 1.8.7.0
 
