@@ -3300,7 +3300,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         geometry = self._get_geometry(field_ncvar)
         if geometry is not None:
-            for node_ncvar in geometry["node_coordinates"]:
+            for node_ncvar in node_coordinates:
                 found = any(
                     [
                         (self.implementation.get_bounds_ncvar(a) == node_ncvar)
@@ -6115,11 +6115,6 @@ class NetCDFRead(IORead):
         # Check that the variable's dimensions span a subset of the
         # parent variable's dimensions (allowing for char variables
         # with a trailing dimension)
-        dimensions = self._ncdimensions(coord_ncvar)  # noqa: F841
-        parent_dimensions = self._ncdimensions(field_ncvar)  # noqa: F841
-        # TODO SLB is there something missing here? Both variables above
-        # are unused, hence the 'noqa' marks there for now.
-
         if not self._dimensions_are_subset(
             coord_ncvar,
             self._ncdimensions(coord_ncvar),
