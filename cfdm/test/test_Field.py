@@ -155,11 +155,11 @@ class FieldTest(unittest.TestCase):
             self.assertEqual(
                 g.data.shape,
                 e.data.shape,
-                f"Bad shape for {indices}: {g.data.shape} != {e.data.shape}"
+                f"Bad shape for {indices}: {g.data.shape} != {e.data.shape}",
             )
             self.assertTrue(
                 (g.data.array == e).all(),
-                f"Bad values for {indices}: {g.data.array} != {e}"
+                f"Bad values for {indices}: {g.data.array} != {e}",
             )
 
         # Check slicing of bounds
