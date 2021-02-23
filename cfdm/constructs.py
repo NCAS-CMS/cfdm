@@ -943,7 +943,6 @@ class Constructs(mixin.Container, core.Constructs):
         )
 
         # Parse the mode parameter
-        _and = False  # TODO SLB: doesn't do anything, is that intended?
         _or = False
         _exact = False
         _subset = False
@@ -952,7 +951,7 @@ class Constructs(mixin.Container, core.Constructs):
             mode = "and"
 
         if mode == "and":
-            _and = True  # noqa: F841
+            pass
         elif mode == "or":
             _or = True
         elif mode == "exact":
