@@ -766,8 +766,7 @@ class NetCDFRead(IORead):
         # Parse 'extra' keyword parameter
         if extra:
             if isinstance(extra, str):
-                # TODO SLB: field variable not used, is this right?
-                field = (extra,)  # noqa: F841
+                extra = (extra,)
 
             for f in extra:
                 if f not in g["get_constructs"]:
