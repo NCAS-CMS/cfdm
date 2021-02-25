@@ -52,8 +52,8 @@ repos:
     rev: 5.1.1
     hooks:
       - id: pydocstyle
-    # Due to pydocstyle bug, see https://github.com/PyCQA/pydocstyle/issues/526
-    exclude: cfdm/functions.py  # TODO: remove once above bug is fixed.
+        # pydocstyle bug, see https://github.com/PyCQA/pydocstyle/issues/526
+        exclude: 'cfdm/functions.py'  # TODO: remove exclusion when bug fixed
 
   # Additionally validate againt flake8 for other Python style enforcement
   # (see https://flake8.pycqa.org/en/latest/ for documentation and see
