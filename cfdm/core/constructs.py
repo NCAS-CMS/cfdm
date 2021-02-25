@@ -577,10 +577,35 @@ class Constructs(abstract.Container):
 
         **Examples:**
 
-        >>> key = f.set_construct(c)
-        >>> key = f.set_construct(c, copy=False)
-        >>> key = f.set_construct(c, axes='domainaxis2')
-        >>> key = f.set_construct(c, key='cellmeasure0')
+        >>> f = cfdm.example_field(3)
+        >>> c = f.constructs()
+        >>> c
+        <Constructs: auxiliary_coordinate(6), domain_axis(2)>
+        >>> d = cfdm.DomainAxis(10)
+        >>> key1 = c._set_construct(d, copy=False)
+        >>> key1
+        'domainaxis2'
+        >>> print(c.filter_by_type('domain_axis'))
+        Constructs:
+        {'domainaxis0': <DomainAxis: size(4)>,
+         'domainaxis1': <DomainAxis: size(9)>,
+         'domainaxis2': <DomainAxis: size(10)>}
+
+        >>> a = cfdm.CellMeasure(measure='area', properties={'units': 'm2'})
+        >>> key2 = c._set_construct(a, key='my_area_cell_measure')
+        >>> key2
+        'my_area_cell_measure'
+        >>> v = cfdm.CellMeasure(measure='volume', properties={'units': 'm3'})
+        >>> key3 = c._set_construct(
+        ...     v, key='my_volume_cell_measure', axes='domainaxis2')
+        >>> key3
+        'my_volume_cell_measure'
+        >>> c
+        <Constructs: auxiliary_coordinate(6), cell_measure(2), domain_axis(3)>
+        >>> print(c.filter_by_type('cell_measure'))
+        Constructs:
+        {'my_area_cell_measure': <CellMeasure: measure:area m2>,
+         'my_volume_cell_measure': <CellMeasure: measure:volume m3>}
 
         """
         construct_type = self._check_construct_type(construct.construct_type)
@@ -652,8 +677,13 @@ class Constructs(abstract.Container):
 
         **Examples:**
 
-        >>> key = f.set_construct(c)
-        >>> f._set_construct_data_axes(key, axes='domainaxis1')
+        >>> f = cfdm.example_field(3)
+        >>> c = f.constructs()
+        >>> c
+        <Constructs: auxiliary_coordinate(6), domain_axis(2)>
+        >>> a = cfdm.CellMeasure(measure='area', properties={'units': 'm2'})
+        >>> area_measure_key = c.set_construct(a)
+        >>> f._set_construct_data_axes(area_measure_key, axes='domainaxis0')
 
         """
         if construct is None:
@@ -1043,12 +1073,18 @@ class Constructs(abstract.Container):
 
         Select dimension coordinate constructs:
 
+        >>> f = cfdm.example_field(1)
+        >>> c = f.constructs()
         >>> d = c.filter_by_type('dimension_coordinate')
+        >>> d
+        <Constructs: dimension_coordinate(4)>
 
         Select dimension coordinate and field ancillary constructs:
 
-        >>> d = c.filter_by_type(
+        >>> k = c.filter_by_type(
         ...     'dimension_coordinate', 'field_ancillary')
+        >>> k
+        <Constructs: dimension_coordinate(4), field_ancillary(1)>
 
         """
         if types:
@@ -1083,6 +1119,15 @@ class Constructs(abstract.Container):
 
         **Examples:**
 
+        >>> f = cfdm.Field()
+        >>> c = f.constructs()
+        >>> d = cfdm.DimensionCoordinate(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(range(5))
+        ... )
+        >>> c._set_construct(d)
+        'dimensioncoordinate0'
         >>> print(c)
         Constructs:
         {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>}
@@ -1125,24 +1170,20 @@ class Constructs(abstract.Container):
 
         **Examples:**
 
+        >>> f = cfdm.example_field(0)
+        >>> c = f.constructs()
         >>> c.keys()
         ['domainaxis0',
          'domainaxis1',
          'domainaxis2',
-         'dimensioncoordinate2',
          'dimensioncoordinate0',
          'dimensioncoordinate1',
+         'dimensioncoordinate2',
          'cellmethod0']
         >>> c.new_identifier('domain_axis')
         'domainaxis3'
-        >>> c.keys()
-        ['domainaxis0',
-         'domainaxis1',
-         'domainaxis2',
-         'dimensioncoordinate2',
-         'dimensioncoordinate0',
-         'dimensioncoordinate1',
-         'cellmethod0']
+        >>> c.new_identifier('cell_method')
+        'cellmethod1'
 
         """
         construct_type = self._check_construct_type(construct_type)
@@ -1174,13 +1215,21 @@ class Constructs(abstract.Container):
 
         **Examples:**
 
-        >>> print(c)
+        >>> f = cfdm.example_field(6)
+        >>> c = f.constructs()
+        >>> c
+        <Constructs: auxiliary_coordinate(4), coordinate_reference(1), dimension_coordinate(1), domain_axis(2)>
+        >>> a = c.filter_by_type('auxiliary_coordinate')
+        >>> a
+        <Constructs: auxiliary_coordinate(4)>
+        >>> print(a)
         Constructs:
-        {'cellmethod0': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean>,
-         'cellmethod1': <{{repr}}CellMethod: domainaxis3: maximum>}
-        >>> c.ordered()
-        OrderedDict([('cellmethod0', <{{repr}}CellMethod: domainaxis1: domainaxis2: mean>),
-                     ('cellmethod1', <{{repr}}CellMethod: domainaxis3: maximum>)])
+        {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(2) degrees_north>,
+         'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(2) degrees_east>,
+         'auxiliarycoordinate2': <AuxiliaryCoordinate: cf_role=timeseries_id(2) >,
+         'auxiliarycoordinate3': <AuxiliaryCoordinate: ncvar%z m>}
+        >>> a.ordered()
+        TODO AFTER BUG FIX
 
         """
         if len(self._constructs) > 1:
@@ -1228,7 +1277,9 @@ class Constructs(abstract.Container):
 
         **Examples:**
 
-        >>> g = f.shallow_copy()
+        >>> f = cfdm.example_field(0)
+        >>> c = f.constructs
+        >>> k = c.shallow_copy()
 
         """
         if _ignore is None:
@@ -1258,6 +1309,15 @@ class Constructs(abstract.Container):
 
         **Examples:**
 
+        >>> f = cfdm.Field()
+        >>> c = f.constructs()
+        >>> d = cfdm.DimensionCoordinate(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(range(5))
+        ... )
+        >>> c._set_construct(d)
+        'dimensioncoordinate0'
         >>> print(c)
         Constructs:
         {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>}
