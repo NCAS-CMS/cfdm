@@ -3300,7 +3300,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         geometry = self._get_geometry(field_ncvar)
         if geometry is not None:
-            for node_ncvar in geometry['node_coordinates']:
+            for node_ncvar in geometry["node_coordinates"]:
                 found = any(
                     [
                         (self.implementation.get_bounds_ncvar(a) == node_ncvar)
