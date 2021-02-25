@@ -6,6 +6,7 @@ version NEXT
 
 * Fix for zero-sized unlimited dimensions when read from a grouped
   netCDF file (https://github.com/NCAS-CMS/cfdm/issues/113)
+* Changed dependency: ``cftime>=1.4.1``
 
 version 1.8.8.0
 ---------------

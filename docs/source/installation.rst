@@ -70,7 +70,7 @@ To install from source:
 1. Download the cfdm package from https://pypi.org/project/cfdm
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``1.8.7.0``):
+   you want to install, e.g. ``1.8.9.0``):
 
    .. code:: console
 	 
@@ -138,7 +138,7 @@ The cfdm package requires:
 * `netCDF4 <https://pypi.org/project/netCDF4/>`_, version 1.5.3 or
   newer,
 
-* `cftime <https://pypi.org/project/cftime/>`_, version 1.3.0 or
+* `cftime <https://pypi.org/project/cftime/>`_, version 1.4.1 or
   newer,
 
 * `netcdf_flattener <https://pypi.org/project/netcdf-flattener/>`_,

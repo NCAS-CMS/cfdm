@@ -14,6 +14,7 @@
 **CF-1.8**
 ----------
 
+* `Version 1.8.9.0 <https://ncas-cms.github.io/cfdm/1.8.9.0>`_ (2021-??-??)
 * `Version 1.8.8.0 <https://ncas-cms.github.io/cfdm/1.8.8.0>`_ (2020-12-18)
 * `Version 1.8.7.0 <https://ncas-cms.github.io/cfdm/1.8.7.0>`_ (2020-10-09)
 * `Version 1.8.6.0 <https://ncas-cms.github.io/cfdm/1.8.6.0>`_ (2020-07-24)
@@ -76,7 +77,7 @@ integer values for updates that apply to the same version of CF:
    :caption: *Retrieve the version of the cfdm package.*
 	     	     
    >>> cfdm.__version__
-   '1.8.7.0'
+   '1.8.9.0'
 
 The next section outlines the scheme used to set version identifiers.
 
