@@ -181,8 +181,16 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.coordinate_conversion
-        <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: a, b, orog>
+        >>> orog = cfdm.DomainAncillary()
+        >>> c = cfdm.CoordinateConversion(
+        ...     parameters={
+        ...         'standard_name': 'atmosphere_hybrid_height_coordinate',
+        ...     },
+        ...     domain_ancillaries={'orog': orog}
+        ... )
+        >>> r = {{package}}.{{class}}(coordinate_conversion=c)
+        >>> r.coordinate_conversion
+        <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: orog>
 
         """
         return self.get_coordinate_conversion()
@@ -202,8 +210,12 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.datum
-        <{[repr}}Datum: Parameters: earth_radius>
+        >>> d = cfdm.Datum(parameters={'earth_radius': 7000000})
+        >>> r = {{package}}.{{class}}(datum=d)
+        >>> r
+        <CoordinateReference: >
+        >>> r.datum
+        <{{repr}}Datum: Parameters: earth_radius>
 
         """
         return self.get_datum()
@@ -277,7 +289,8 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> d = c.copy()
+        >>> r = {{package}}.{{class}}()
+        >>> s = r.copy()
 
         """
         return type(self)(source=self, copy=True)
@@ -372,9 +385,13 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.del_datum()
+        >>> d = cfdm.Datum(parameters={'earth_radius': 7000000})
+        >>> r = {{package}}.{{class}}(datum=d)
+        >>> r.get_datum()
         <{{repr}}Datum: Parameters: earth_radius>
-        >>> c.get_datum()
+        >>> r.del_datum()
+        <{{repr}}Datum: Parameters: earth_radius>
+        >>> r.get_datum()
         <{{repr}}Datum: Parameters: >
 
         """
@@ -423,8 +440,14 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.get_datum()
+        >>> d = cfdm.Datum(parameters={'earth_radius': 7000000})
+        >>> r = {{package}}.{{class}}(datum=d)
+        >>> r.get_datum()
         <{{repr}}Datum: Parameters: earth_radius>
+        >>> r.del_datum()
+        <{{repr}}Datum: Parameters: earth_radius>
+        >>> r.get_datum()
+        <{{repr}}Datum: Parameters: >
 
         """
         out = self._get_component("datum", None)
