@@ -1217,34 +1217,47 @@ class Constructs(abstract.Container):
 
         **Examples:**
 
-        >>> f = cfdm.example_field(6)
+        >>> f = cfdm.Field()
         >>> c = f.constructs()
-        >>> c
-        <Constructs: auxiliary_coordinate(4), coordinate_reference(1), dimension_coordinate(1), domain_axis(2)>
-        >>> a = c.filter_by_type('auxiliary_coordinate')
-        >>> a
-        <Constructs: auxiliary_coordinate(4)>
-        >>> print(a)
+        >>> c.ordered()
+        {}
+        >>> m1 = cfdm.CellMethod(axes=['domainaxis1'], method='mean')
+        >>> c._set_construct(m1, key='cell_method_for_axis_1')
+        'cell_method_for_axis_1'
+        >>> m2 = cfdm.CellMethod(axes=['domainaxis0'], method='minimum')
+        >>> c._set_construct(m2, key='cell_method_for_axis_0')
+        'cell_method_for_axis_0'
+        >>> print(c)
         Constructs:
-        {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(2) degrees_north>,
-         'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(2) degrees_east>,
-         'auxiliarycoordinate2': <AuxiliaryCoordinate: cf_role=timeseries_id(2) >,
-         'auxiliarycoordinate3': <AuxiliaryCoordinate: ncvar%z m>}
-        >>> a.ordered()
-        TODO AFTER BUG FIX
+        {'cell_method_for_axis_0': <CellMethod: domainaxis0: minimum>,
+         'cell_method_for_axis_1': <CellMethod: domainaxis1: mean>}
+        >>> c.ordered()
+        OrderedDict([('cell_method_for_axis_1', <CellMethod: domainaxis1: mean>),
+                     ('cell_method_for_axis_0', <CellMethod: domainaxis0: minimum>)])
 
         """
-        if len(self._constructs) > 1:
+        # Filter out all construct types not present i.e. with value of {}
+        existing_construct_types = {
+            c_type: c for c_type, c in self._constructs.items() if c
+        }
+
+        number_construct_types = len(existing_construct_types)
+        if number_construct_types > 1:
             raise ValueError(
                 "Can't order multiple construct types: {!r}".format(self)
             )
+        elif number_construct_types == 0:
+            return existing_construct_types
 
-        if self._ordered_constructs != set(self._constructs):
+        # Only one existing construct type as guaranteed above, so check items
+        if self._ordered_constructs != existing_construct_types.keys():
             raise ValueError(
                 "Can't order un-orderable construct type: {!r}".format(self)
             )
 
-        return self._constructs[tuple(self._ordered_constructs)[0]].copy()
+        return existing_construct_types[
+            tuple(self._ordered_constructs)[0]
+        ].copy()
 
     def replace(self, key, construct, axes=None, copy=True):
         """Replace one metadata construct with another.
