@@ -1203,7 +1203,9 @@ class Constructs(abstract.Container):
         """Return the constructs in their predetermined order.
 
         For cell method constructs, the predetermined order is that in
-        which they where added.
+        which they where added. There is no predetermined ordering for
+        all other construct types, and a exception is raised if any
+        non-cell method constructs are present.
 
         .. versionadded:: (cfdm) 1.7.0
 
