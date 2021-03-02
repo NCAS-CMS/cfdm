@@ -211,7 +211,7 @@ class CoordinateReference(abstract.Container):
         **Examples:**
 
         >>> d = cfdm.Datum(parameters={'earth_radius': 7000000})
-        >>> r = {{package}}.{{class}}(datum=d)
+        >>> r = cfdm.{{class}}(datum=d)
         >>> r
         <CoordinateReference: >
         >>> r.datum
@@ -223,7 +223,7 @@ class CoordinateReference(abstract.Container):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def clear_coordinates(self):
+    def clear_coordinates(self):  # SB NOTE: flaky doctest due to set order
         """Remove all references to coordinate constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -237,20 +237,21 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> old = c.clear_coordinates()
-        {'dimensioncoordinate0', 'dimensioncoordinate1'}
-        >>> c.coordinates()
+        >>> r = {{package}}.{{class}}()
+        >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
+        >>> r.coordinates()
+        {'auxiliarycoordinate1', 'dimensioncoordinate0'}
+        >>> r.clear_coordinates()
+        {'auxiliarycoordinate1', 'dimensioncoordinate0'}
+        >>> r.coordinates()
         set()
-        >>> c.set_coordinates(old)
-        >>> c.coordinates()
-        {'dimensioncoordinate0', 'dimensioncoordinate1'}
 
         """
         out = self._get_component("coordinates")
         self._set_component("coordinates", set())
         return out.copy()
 
-    def coordinates(self):
+    def coordinates(self):  # SB NOTE: flaky doctest due to set order
         """Return all references to coordinate constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -264,13 +265,14 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> old = c.clear_coordinates()
-        {'dimensioncoordinate0', 'dimensioncoordinate1'}
-        >>> c.coordinates()
+        >>> r = {{package}}.{{class}}()
+        >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
+        >>> r.coordinates()
+        {'auxiliarycoordinate1', 'dimensioncoordinate0'}
+        >>> r.clear_coordinates()
+        {'auxiliarycoordinate1', 'dimensioncoordinate0'}
+        >>> r.coordinates()
         set()
-        >>> c.set_coordinates(old)
-        >>> c.coordinates()
-        {'dimensioncoordinate0', 'dimensioncoordinate1'}
 
         """
         return self._get_component("coordinates").copy()
@@ -386,7 +388,7 @@ class CoordinateReference(abstract.Container):
         **Examples:**
 
         >>> d = cfdm.Datum(parameters={'earth_radius': 7000000})
-        >>> r = {{package}}.{{class}}(datum=d)
+        >>> r = cfdm.{{class}}(datum=d)
         >>> r.get_datum()
         <{{repr}}Datum: Parameters: earth_radius>
         >>> r.del_datum()
@@ -441,7 +443,7 @@ class CoordinateReference(abstract.Container):
         **Examples:**
 
         >>> d = cfdm.Datum(parameters={'earth_radius': 7000000})
-        >>> r = {{package}}.{{class}}(datum=d)
+        >>> r = cfdm.{{class}}(datum=d)
         >>> r.get_datum()
         <{{repr}}Datum: Parameters: earth_radius>
         >>> r.del_datum()
@@ -531,7 +533,7 @@ class CoordinateReference(abstract.Container):
         c = self._get_component("coordinates")
         c.add(key)
 
-    def set_coordinates(self, coordinates):
+    def set_coordinates(self, coordinates):  # SB NOTE: flaky doctest set order
         """Set references to coordinate constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -561,13 +563,14 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> old = c.clear_coordinates()
-        {'dimensioncoordinate0', 'dimensioncoordinate1'}
-        >>> c.coordinates()
+        >>> r = {{package}}.{{class}}()
+        >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
+        >>> r.coordinates()
+        {'auxiliarycoordinate1', 'dimensioncoordinate0'}
+        >>> r.clear_coordinates()
+        {'auxiliarycoordinate1', 'dimensioncoordinate0'}
+        >>> r.coordinates()
         set()
-        >>> c.set_coordinates(old)
-        >>> c.coordinates()
-        {'dimensioncoordinate0', 'dimensioncoordinate1'}
 
         """
         if isinstance(coordinates, str):
