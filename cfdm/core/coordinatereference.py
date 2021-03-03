@@ -237,7 +237,7 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> r = {{package}}.{{class}}()
+        >>> r = cfdm.{{class}}()
         >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
         >>> r.coordinates()
         {'auxiliarycoordinate1', 'dimensioncoordinate0'}
@@ -265,7 +265,7 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> r = {{package}}.{{class}}()
+        >>> r = cfdm.{{class}}()
         >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
         >>> r.coordinates()
         {'auxiliarycoordinate1', 'dimensioncoordinate0'}
@@ -326,14 +326,15 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.coordinates()
-        {'dimensioncoordinate0',
-         'dimensioncoordinate1'}
-        >>> c.del_coordinate('dimensioncoordinate0')
+        >>> r = cfdm.{{class}}()
+        >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
+        >>> r.coordinates()
+        {'auxiliarycoordinate1', 'dimensioncoordinate0'}
+        >>> r.del_coordinate('dimensioncoordinate0')
         'dimensioncoordinate0'
-        >>> c.coordinates()
-        {'dimensioncoordinate1'}
-        >>> c.del_coordinate('dimensioncoordinate0', 'not set')
+        >>> r.coordinates()
+        {'auxiliarycoordinate1'}
+        >>> r.del_coordinate('dimensioncoordinate0', 'not set')
         'not set'
 
         """
@@ -362,10 +363,21 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.del_coordinate_conversion()
-        <{{repr}}CoordinateConversion: Parameters(grid_mapping_name, grid_north_pole_latitude, grid_north_pole_longitude)>
-        >>> c.get_coordinate_conversion()
-        <{{repr}}CoordinateConversion: Parameters: ; Ancillaries: >
+        >>> r = cfdm.{{class}}()
+        >>> orog = cfdm.DomainAncillary()
+        >>> c = cfdm.CoordinateConversion(
+        ...     parameters={
+        ...         'standard_name': 'atmosphere_hybrid_height_coordinate',
+        ...     },
+        ...     domain_ancillaries={'orog': orog}
+        ... )
+        >>> r.set_coordinate_conversion(c)
+        >>> r.get_coordinate_conversion()
+        <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: orog>
+        >>> r.del_coordinate_conversion()
+        <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: orog>
+        >>> r.get_coordinate_conversion()
+        <CoordinateConversion: Parameters: ; Ancillaries: >
 
         """
         new = self._CoordinateConversion()
@@ -387,8 +399,9 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
+        >>> r = cfdm.{{class}}()
         >>> d = cfdm.Datum(parameters={'earth_radius': 7000000})
-        >>> r = cfdm.{{class}}(datum=d)
+        >>> r.set_datum(d)
         >>> r.get_datum()
         <{{repr}}Datum: Parameters: earth_radius>
         >>> r.del_datum()
@@ -417,8 +430,21 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.get_coordinate_conversion()
-        <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: a, b, orog>
+        >>> r = cfdm.{{class}}()
+        >>> orog = cfdm.DomainAncillary()
+        >>> c = cfdm.CoordinateConversion(
+        ...     parameters={
+        ...         'standard_name': 'atmosphere_hybrid_height_coordinate',
+        ...     },
+        ...     domain_ancillaries={'orog': orog}
+        ... )
+        >>> r.set_coordinate_conversion(c)
+        >>> r.get_coordinate_conversion()
+        <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: orog>
+        >>> r.del_coordinate_conversion()
+        <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: orog>
+        >>> r.get_coordinate_conversion()
+        <CoordinateConversion: Parameters: ; Ancillaries: >
 
         """
         out = self._get_component("coordinate_conversion", None)
@@ -442,8 +468,9 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
+        >>> r = cfdm.{{class}}()
         >>> d = cfdm.Datum(parameters={'earth_radius': 7000000})
-        >>> r = cfdm.{{class}}(datum=d)
+        >>> r.set_datum(d)
         >>> r.get_datum()
         <{{repr}}Datum: Parameters: earth_radius>
         >>> r.del_datum()
@@ -485,12 +512,13 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.coordinates()
-        {'dimensioncoordinate0',
-         'dimensioncoordinate1'}
-        >>> c.has_coordinate('dimensioncoordinate0')
+        >>> r = cfdm.{{class}}()
+        >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
+        >>> r.coordinates()
+        {'auxiliarycoordinate1', 'dimensioncoordinate0'}
+        >>> r.has_coordinate('dimensioncoordinate0')
         True
-        >>> c.has_coordinate('auxiliarycoordinate1')
+        >>> r.has_coordinate('dimensioncoordinate1')
         False
 
         """
@@ -520,14 +548,14 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.coordinates()
-        {'dimensioncoordinate0',
-         'dimensioncoordinate1'}
-        >>> c.set_coordinate('auxiliarycoordinate0')
-        >>> c.coordinates()
-        {'dimensioncoordinate0',
-         'dimensioncoordinate1',
-         'auxiliarycoordinate0'}
+        >>> r = {{package}}.{{class}}()
+        >>> r.set_coordinate('dimensioncoordinate0')
+        >>> r.coordinates()
+        {'dimensioncoordinate0'}
+        >>> r.has_coordinate('dimensioncoordinate0')
+        True
+        >>> r.has_coordinate('auxiliarycoordinate0')
+        False
 
         """
         c = self._get_component("coordinates")
@@ -602,9 +630,21 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.set_coordinate_conversion(cc)
-
-        >>> c.set_coordinate_conversion(cc, copy=False)
+        >>> r = cfdm.{{class}}()
+        >>> orog = cfdm.DomainAncillary()
+        >>> c = cfdm.CoordinateConversion(
+        ...     parameters={
+        ...         'standard_name': 'atmosphere_hybrid_height_coordinate',
+        ...     },
+        ...     domain_ancillaries={'orog': orog}
+        ... )
+        >>> r.set_coordinate_conversion(c)
+        >>> r.get_coordinate_conversion()
+        <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: orog>
+        >>> r.del_coordinate_conversion()
+        <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: orog>
+        >>> r.get_coordinate_conversion()
+        <CoordinateConversion: Parameters: ; Ancillaries: >
 
         """
         if copy:
@@ -636,9 +676,15 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.set_datum(d)
-
-        >>> c.set_datum(d, copy=False)
+        >>> r = cfdm.{{class}}()
+        >>> d = cfdm.Datum(parameters={'earth_radius': 7000000})
+        >>> r.set_datum(d)
+        >>> r.get_datum()
+        <{{repr}}Datum: Parameters: earth_radius>
+        >>> r.del_datum()
+        <{{repr}}Datum: Parameters: earth_radius>
+        >>> r.get_datum()
+        <{{repr}}Datum: Parameters: >
 
         """
         if copy:
