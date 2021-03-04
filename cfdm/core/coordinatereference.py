@@ -181,8 +181,8 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> orog = cfdm.DomainAncillary()
-        >>> c = cfdm.CoordinateConversion(
+        >>> orog = {{package}}.DomainAncillary()
+        >>> c = {{package}}.CoordinateConversion(
         ...     parameters={
         ...         'standard_name': 'atmosphere_hybrid_height_coordinate',
         ...     },
@@ -210,10 +210,10 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> d = cfdm.Datum(parameters={'earth_radius': 7000000})
-        >>> r = cfdm.{{class}}(datum=d)
+        >>> d = {{package}}.Datum(parameters={'earth_radius': 7000000})
+        >>> r = {{package}}.{{class}}(datum=d)
         >>> r
-        <CoordinateReference: >
+        <{{repr}}CoordinateReference: >
         >>> r.datum
         <{{repr}}Datum: Parameters: earth_radius>
 
@@ -237,7 +237,7 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> r = cfdm.{{class}}()
+        >>> r = {{package}}.{{class}}()
         >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
         >>> r.coordinates()
         {'auxiliarycoordinate1', 'dimensioncoordinate0'}
@@ -265,7 +265,7 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> r = cfdm.{{class}}()
+        >>> r = {{package}}.{{class}}()
         >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
         >>> r.coordinates()
         {'auxiliarycoordinate1', 'dimensioncoordinate0'}
@@ -326,7 +326,7 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> r = cfdm.{{class}}()
+        >>> r = {{package}}.{{class}}()
         >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
         >>> r.coordinates()
         {'auxiliarycoordinate1', 'dimensioncoordinate0'}
@@ -363,9 +363,9 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> r = cfdm.{{class}}()
-        >>> orog = cfdm.DomainAncillary()
-        >>> c = cfdm.CoordinateConversion(
+        >>> r = {{package}}.{{class}}()
+        >>> orog = {{package}}.DomainAncillary()
+        >>> c = {{package}}.CoordinateConversion(
         ...     parameters={
         ...         'standard_name': 'atmosphere_hybrid_height_coordinate',
         ...     },
@@ -377,7 +377,7 @@ class CoordinateReference(abstract.Container):
         >>> r.del_coordinate_conversion()
         <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: orog>
         >>> r.get_coordinate_conversion()
-        <CoordinateConversion: Parameters: ; Ancillaries: >
+        <{{repr}}CoordinateConversion: Parameters: ; Ancillaries: >
 
         """
         new = self._CoordinateConversion()
@@ -399,8 +399,8 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> r = cfdm.{{class}}()
-        >>> d = cfdm.Datum(parameters={'earth_radius': 7000000})
+        >>> r = {{package}}.{{class}}()
+        >>> d = {{package}}.Datum(parameters={'earth_radius': 7000000})
         >>> r.set_datum(d)
         >>> r.get_datum()
         <{{repr}}Datum: Parameters: earth_radius>
@@ -430,9 +430,9 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> r = cfdm.{{class}}()
-        >>> orog = cfdm.DomainAncillary()
-        >>> c = cfdm.CoordinateConversion(
+        >>> r = {{package}}.{{class}}()
+        >>> orog = {{package}}.DomainAncillary()
+        >>> c = {{package}}.CoordinateConversion(
         ...     parameters={
         ...         'standard_name': 'atmosphere_hybrid_height_coordinate',
         ...     },
@@ -444,7 +444,7 @@ class CoordinateReference(abstract.Container):
         >>> r.del_coordinate_conversion()
         <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: orog>
         >>> r.get_coordinate_conversion()
-        <CoordinateConversion: Parameters: ; Ancillaries: >
+        <{{repr}}CoordinateConversion: Parameters: ; Ancillaries: >
 
         """
         out = self._get_component("coordinate_conversion", None)
@@ -468,8 +468,8 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> r = cfdm.{{class}}()
-        >>> d = cfdm.Datum(parameters={'earth_radius': 7000000})
+        >>> r = {{package}}.{{class}}()
+        >>> d = {{package}}.Datum(parameters={'earth_radius': 7000000})
         >>> r.set_datum(d)
         >>> r.get_datum()
         <{{repr}}Datum: Parameters: earth_radius>
@@ -512,7 +512,7 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> r = cfdm.{{class}}()
+        >>> r = {{package}}.{{class}}()
         >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
         >>> r.coordinates()
         {'auxiliarycoordinate1', 'dimensioncoordinate0'}
@@ -630,9 +630,9 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> r = cfdm.{{class}}()
-        >>> orog = cfdm.DomainAncillary()
-        >>> c = cfdm.CoordinateConversion(
+        >>> r = {{package}}.{{class}}()
+        >>> orog = {{package}}.DomainAncillary()
+        >>> c = {{package}}.CoordinateConversion(
         ...     parameters={
         ...         'standard_name': 'atmosphere_hybrid_height_coordinate',
         ...     },
@@ -644,7 +644,7 @@ class CoordinateReference(abstract.Container):
         >>> r.del_coordinate_conversion()
         <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: orog>
         >>> r.get_coordinate_conversion()
-        <CoordinateConversion: Parameters: ; Ancillaries: >
+        <{{repr}}CoordinateConversion: Parameters: ; Ancillaries: >
 
         """
         if copy:
@@ -676,8 +676,8 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> r = cfdm.{{class}}()
-        >>> d = cfdm.Datum(parameters={'earth_radius': 7000000})
+        >>> r = {{package}}.{{class}}()
+        >>> d = {{package}}.Datum(parameters={'earth_radius': 7000000})
         >>> r.set_datum(d)
         >>> r.get_datum()
         <{{repr}}Datum: Parameters: earth_radius>

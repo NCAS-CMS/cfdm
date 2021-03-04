@@ -243,7 +243,7 @@ class PropertiesDataBounds(PropertiesData):
 
         **Examples:**
 
-        >>> f = cfdm.read('file.nc')[0]
+        >>> f = {{package}}.read('file.nc')[0]
         >>> c = f.construct('axis=X')
         >>> c.has_geometry()
         True
@@ -393,7 +393,7 @@ class PropertiesDataBounds(PropertiesData):
 
         **Examples:**
 
-        >>> f = cfdm.read('file.nc')[0]
+        >>> f = {{package}}.read('file.nc')[0]
         >>> c = f.construct('axis=X')
         >>> c.has_geometry()
         True
@@ -523,7 +523,7 @@ class PropertiesDataBounds(PropertiesData):
 
         **Examples:**
 
-        >>> f = cfdm.read('file.nc')[0]
+        >>> f = {{package}}.read('file.nc')[0]
         >>> c = f.construct('axis=X')
         >>> c.has_geometry()
         True
@@ -657,7 +657,7 @@ class PropertiesDataBounds(PropertiesData):
 
         **Examples:**
 
-        >>> f = cfdm.read('file.nc')[0]
+        >>> f = {{package}}.read('file.nc')[0]
         >>> c = f.construct('axis=X')
         >>> c.has_geometry()
         True

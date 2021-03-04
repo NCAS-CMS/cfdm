@@ -92,7 +92,7 @@ class Domain(mixin.ConstructAccess, abstract.Container):
 
         **Examples:**
 
-        >>> d = cfdm.example_field(0)
+        >>> d = {{package}}.example_field(0)
         >>> print(d.constructs)
         Constructs:
         {'cellmethod0': <CellMethod: area: mean>,
@@ -131,7 +131,7 @@ class Domain(mixin.ConstructAccess, abstract.Container):
 
         **Examples:**
 
-        >>> d = cfdm.example_field(0)
+        >>> d = {{package}}.{{class}}()
         >>> e = d.copy()
         >>> e.equals(d)
         True
@@ -169,7 +169,7 @@ class Domain(mixin.ConstructAccess, abstract.Container):
 
         **Examples:**
 
-        >>> f = cfdm.example_field(0)
+        >>> f = {{package}}.example_field(0)
         >>> d = {{package}}.{{class}}.fromconstructs(f.constructs)
         >>> d
         <Domain: {1, 5, 8}>
