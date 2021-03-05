@@ -186,7 +186,7 @@ class CoordinateReference(
 
         **Examples:**
 
-        >>> x = {{package}}.CoordinateReference(
+        >>> x = {{package}}.{{class}}(
         ...     coordinates=['dimensioncoordinate0']
         ... )
         >>> x.datum.set_parameter('earth_radius', 6371007)
@@ -200,7 +200,7 @@ class CoordinateReference(
         ...      'orog': 'domainancillary2'}
         ... )
         >>> print(x.creation_commands(header=False))
-        c = {{package}}.CoordinateReference()
+        c = {{package}}.{{class}}()
         c.set_coordinates({'dimensioncoordinate0'})
         c.datum.set_parameter('earth_radius', 6371007)
         c.coordinate_conversion.set_parameter('standard_name', 'atmosphere_hybrid_height_coordinate')
@@ -436,7 +436,7 @@ class CoordinateReference(
 
         **Examples:**
 
-        >>> c = {{package}}.CoordinateReference(
+        >>> c = {{package}}.{{class}}(
         ...     coordinates=['dimensioncoordinate0']
         ... )
         >>> c.equals(c)
@@ -524,7 +524,7 @@ class CoordinateReference(
 
         **Examples:**
 
-        >>> f = cfdm.example_field(1)
+        >>> f = {{package}}.example_field(1)
         >>> c = f.get_construct('coordinatereference0')
         >>> c.identity()
         'standard_name:atmosphere_hybrid_height_coordinate'
@@ -533,7 +533,7 @@ class CoordinateReference(
         >>> c.identity()
         'grid_mapping_name:rotated_latitude_longitude'
 
-        >>> c = cfdm.CoordinateReference()
+        >>> c = {{package}}.{{class}}()
         >>> c.identity()
         ''
         >>> c.identity(default='no identity')
@@ -575,7 +575,7 @@ class CoordinateReference(
 
         **Examples:**
 
-        >>> f = cfdm.example_field(1)
+        >>> f = {{package}}.example_field(1)
         >>> c = f.get_construct('coordinatereference0')
         >>> c.identities()
         ['standard_name:atmosphere_hybrid_height_coordinate']
@@ -585,7 +585,7 @@ class CoordinateReference(
         ['grid_mapping_name:rotated_latitude_longitude',
          'ncvar%rotated_latitude_longitude']
 
-        >>> c = cfdm.CoordinateReference()
+        >>> c = {{package}}.{{class}}()
         >>> c.identities()
         []
 

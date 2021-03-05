@@ -249,11 +249,11 @@ class Bounds(
 
         **Examples:**
 
-        >>> f = cfdm.example_field(6)
+        >>> f = {{package}}.example_field(6)
         >>> d = f.constructs('longitude').value()
         >>> b = d.bounds
         >>> b
-        <Bounds: longitude(2, 3, 4) degrees_east>
+        <{{repr}}Bounds: longitude(2, 3, 4) degrees_east>
 
         >>> b.inherited_properties()
         {'units': 'degrees_east', 'standard_name': 'longitude'}
@@ -290,11 +290,11 @@ class Bounds(
 
         **Examples:**
 
-        >>> f = cfdm.example_field(6)
+        >>> f = {{package}}.example_field(6)
         >>> d = f.constructs('longitude').value()
         >>> b = d.bounds
         >>> b
-        <Bounds: longitude(2, 3, 4) degrees_east>
+        <{{repr}}Bounds: longitude(2, 3, 4) degrees_east>
         >>> b.identity()
         'longitude'
 
