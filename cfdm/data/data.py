@@ -398,8 +398,8 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> d[:, :, 1] = -10
         >>> d[:, 0] = range(9)
         >>> d[..., 6:3:-1, 3:6] = numpy.arange(-18, -9).reshape(3, 3)
-        >>> d[0, [2, 9], [4, 8]] = cfdm.Data([[-2, -3]])
-        >>> d[0, :, -2] = cfdm.masked
+        >>> d[0, [2, 9], [4, 8]] = {{package}}.{{class}}([[-2, -3]])
+        >>> d[0, :, -2] = {{package}}.masked
 
         """
         indices = self._parse_indices(indices)
@@ -554,7 +554,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> x = d._item((0, 1))
         >>> print(x, type(x))
         2 <class 'int'>
-        >>> d[0, 1] = cfdm.masked
+        >>> d[0, 1] = {{package}}.masked
         >>> d._item((slice(None), slice(1, 2)))
         masked
 
@@ -799,8 +799,8 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> print(a[1])
         2019-02-01 00:00:00
 
-        >>> d = {{package}}.{{class}}([31, 62, 90], units='days since 2018-12-01',
-        ...          calendar='360_day')
+        >>> d = {{package}}.{{class}}(
+        ...     [31, 62, 90], units='days since 2018-12-01', calendar='360_day')
         >>> a = d.datetime_array
         >>> print(a)
         [cftime.Datetime360Day(2019, 1, 2, 0, 0, 0, 0)
@@ -874,8 +874,8 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> print(d.datetime_as_string)
         ['2019-01-01 00:00:00' '2019-02-01 00:00:00' '2019-03-01 00:00:00']
 
-        >>> d = {{package}}.{{class}}([31, 62, 90], units='days since 2018-12-01',
-        ...          calendar='360_day')
+        >>> d = {{package}}.{{class}}(
+        ...     [31, 62, 90], units='days since 2018-12-01', calendar='360_day')
         >>> print(d.datetime_as_string)
         ['2019-01-02 00:00:00' '2019-02-03 00:00:00' '2019-03-01 00:00:00']
 
@@ -935,7 +935,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> d = {{package}}.{{class}}([[0, 0, 0]])
         >>> d.any()
         False
-        >>> d[0, 0] = cfdm.masked
+        >>> d[0, 0] = {{package}}.masked
         >>> print(d.array)
         [[-- 0 0]]
         >>> d.any()
@@ -945,7 +945,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         [[-- 3 0]]
         >>> d.any()
         True
-        >>> d[...] = cfdm.masked
+        >>> d[...] = {{package}}.masked
         >>> print(d.array)
         [[-- -- --]]
         >>> d.any()
@@ -1040,7 +1040,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
 
         >>> d = {{package}}.{{class}}(numpy.arange(12).reshape(3, 4), 'm')
-        >>> d[1, 1] = cfdm.masked
+        >>> d[1, 1] = {{package}}.masked
         >>> print(d.array)
         [[0  1  2  3]
          [4 --  6  7]
@@ -1216,13 +1216,13 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         **Examples:**
 
-        >>> d = {{package}}.Data([[0.0, 45.0], [45.0, 90.0]],
-        ...                      units='degrees_east')
+        >>> d = {{package}}.{{class}}([[0.0, 45.0], [45.0, 90.0]],
+        ...                           units='degrees_east')
         >>> print(d.creation_commands())
-        data = {{package}}.Data([[0.0, 45.0], [45.0, 90.0]], units='degrees_east', dtype='f8')
+        data = {{package}}.{{class}}([[0.0, 45.0], [45.0, 90.0]], units='degrees_east', dtype='f8')
 
-        >>> d = {{package}}.Data(['alpha', 'beta', 'gamma', 'delta'],
-        ...                      mask = [1, 0, 0, 0])
+        >>> d = {{package}}.{{class}}(['alpha', 'beta', 'gamma', 'delta'],
+        ...                           mask = [1, 0, 0, 0])
         >>> d.creation_commands(name='d', namespace='', string=False)
         ["d = Data(['', 'beta', 'gamma', 'delta'], dtype='U5', mask=Data([True, False, False, False], dtype='b1'))"]
 
@@ -1325,10 +1325,10 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         **Examples:**
 
-        >>> d = {{package}}.Data([[1, 2, 3]])
+        >>> d = {{package}}.{{class}}([[1, 2, 3]])
         >>> print(d.filled().array)
         [[1 2 3]]
-        >>> d[0, 0] = cfdm.masked
+        >>> d[0, 0] = {{package}}.masked
         >>> print(d.filled().array)
         [[-9223372036854775806                    2                    3]]
         >>> d.set_fill_value(-99)
@@ -1582,7 +1582,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         **Examples:**
 
 
-        >>> d = cfdm.Data(numpy.arange(100, 190).reshape(1, 10, 9))
+        >>> d = {{package}}.{{class}}(numpy.arange(100, 190).reshape(1, 10, 9))
         >>> d._parse_indices((slice(None, None, None), 1, 2))
         [slice(None, None, None), slice(1, 2, 1), slice(2, 3, 1)]
         >>> d._parse_indices((1,))
@@ -1704,7 +1704,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         **Examples:**
 
 
-        >>> d = {{package}}.Data(numpy.arange(24).reshape(1, 2, 3, 4))
+        >>> d = {{package}}.{{class}}(numpy.arange(24).reshape(1, 2, 3, 4))
         >>> d
         <{{repr}}Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
         >>> print(d.array)
@@ -1776,7 +1776,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         **Examples:**
 
 
-        >>> d = {{package}}.Data(numpy.arange(24).reshape(1, 2, 3, 4))
+        >>> d = {{package}}.{{class}}(numpy.arange(24).reshape(1, 2, 3, 4))
         >>> d
         <{{repr}}Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
         >>> print(d.array)
@@ -1923,7 +1923,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         **Examples:**
 
 
-        >>> d = {{package}}.Data(numpy.arange(24).reshape(1, 2, 3, 4))
+        >>> d = {{package}}.{{class}}(numpy.arange(24).reshape(1, 2, 3, 4))
         >>> d
         <{{repr}}Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
         >>> print(d.array)
@@ -2344,9 +2344,9 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         **Examples:**
 
-        >>> f = cfdm.example_field(0)
-        >>> cfdm.write(f, 'temp_file.nc')
-        >>> g = cfdm.read('temp_file.nc')[0]
+        >>> f = {{package}}.example_field(0)
+        >>> {{package}}.write(f, 'temp_file.nc')
+        >>> g = {{package}}.read('temp_file.nc')[0]
         >>> d = g.data
         >>> d.get_filenames()
         {'/data/user/temp_file.nc'}
@@ -2388,7 +2388,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> x = d.first_element()
         >>> print(x, type(x))
         1 <class 'int'>
-        >>> d[0, 0] = cfdm.masked
+        >>> d[0, 0] = {{package}}.masked
         >>> y = d.first_element()
         >>> print(y, type(y))
         -- <class 'numpy.ma.core.MaskedConstant'>
@@ -2437,7 +2437,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         **Examples**
 
 
-        >>> d = {{package}}.Data(numpy.arange(24).reshape(1, 2, 3, 4))
+        >>> d = {{package}}.{{class}}(numpy.arange(24).reshape(1, 2, 3, 4))
         >>> d
         <{{repr}}Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
         >>> print(d.array)
@@ -2555,7 +2555,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> x = d.last_element()
         >>> print(x, type(x))
         4 <class 'int'>
-        >>> d[-1, -1] = cfdm.masked
+        >>> d[-1, -1] = {{package}}.masked
         >>> y = d.last_element()
         >>> print(y, type(y))
         -- <class 'numpy.ma.core.MaskedConstant'>
@@ -2585,7 +2585,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> x = d.second_element()
         >>> print(x, type(x))
         2 <class 'int'>
-        >>> d[0, 1] = cfdm.masked
+        >>> d[0, 1] = {{package}}.masked
         >>> y = d.second_element()
         >>> print(y, type(y))
         -- <class 'numpy.ma.core.MaskedConstant'>
@@ -2674,7 +2674,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> d = {{package}}.{{class}}([[4, 2, 1], [1, 2, 3]], 'metre')
         >>> d.unique()
         <{{repr}}Data(4): [1, ..., 4] metre>
-        >>> d[1, -1] = cfdm.masked
+        >>> d[1, -1] = {{package}}.masked
         >>> d.unique()
         <{{repr}}Data(3): [1, 2, 4] metre>
 
