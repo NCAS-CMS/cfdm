@@ -99,10 +99,50 @@ class CFDMImplementation(Implementation):
             FieldAncillary:
                 A field ancillary construct class.
 
-            Bounds:             = Bounds
-            CoordinateAncillary = CoordinateAncillary
-            Data                = Data
-            NetCDF              = NetCDF
+            Bounds:
+                A cell bounds component class.
+
+            InteriorRing:
+                An interior ring array class.
+
+            CoordinateConversion:
+                A coordinate conversion component class.
+
+            Datum:
+                A datum component class.
+
+            Data:
+                A data array class.
+
+            GatheredArray:
+                A class for an underlying gathered array.
+
+            NetCDFArray:
+                A class for an underlying array stored in a netCDF file.
+
+            RaggedContiguousArray:
+                A class for an underlying contiguous ragged array.
+
+            RaggedIndexedArray:
+                A class for an underlying indexed ragged array.
+
+            RaggedIndexedContiguousArray:
+                A class for an underlying indexed contiguous ragged array.
+
+            List:
+                A list variable class.
+
+            Count:
+                A count variable class.
+
+            Index:
+                An index variable class.
+
+            NodeCountProperties:
+                A class for properties of a netCDF node count variable.
+
+            PartNodeCountProperties:
+                A class for properties of a netCDF part node count variable.
 
         """
         super().__init__(
