@@ -68,7 +68,7 @@ class CFDMImplementation(Implementation):
         NodeCountProperties=None,
         PartNodeCountProperties=None,
     ):
-        """Initialises the `{{class}}` instance.
+        """Initialises the `CFDMImplementation` instance.
 
         :Parameters:
 
@@ -2737,7 +2737,7 @@ class CFDMImplementation(Implementation):
         >>> w.has_datum(c)
         False
 
-        r = cfdm.CoordinateReference(datum=cfdm.Data(1))
+        >>> r = cfdm.CoordinateReference(datum=cfdm.Data(1))
         >>> w.has_datum(r)
         True
 

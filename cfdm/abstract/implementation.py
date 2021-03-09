@@ -5,7 +5,7 @@ class Implementation(metaclass=abc.ABCMeta):
     """Store an implementation of the CF data model."""
 
     def __init__(self, cf_version=None, **kwargs):
-        """Initialises the `{{class}}` instance.
+        """Initialises the `Implementation` instance.
 
         :Parameters:
 
