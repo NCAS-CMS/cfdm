@@ -71,8 +71,6 @@ jobs:
         pip install pycodestyle
 
         # Install Python-based deps and our dev version of cfdm to test:
-        # NOTE: temporarily bypassing latest netCDF4, v.1.5.4, as it is
-        # causing setup issues relating to HDF5 headers not being found:
         pip install netCDF4
         pip install -e .
 
