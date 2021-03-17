@@ -370,7 +370,7 @@ class Field(
     # Private methods
     # ----------------------------------------------------------------
     def _get_data_compression_variables(self, component):
-        """TODO DOCS."""
+        """Returns data compression variables for a component."""
         out = []
         for construct in self.constructs.filter_by_data().values():
             data = construct.get_data(None)
@@ -437,7 +437,7 @@ class Field(
         return out
 
     def _one_line_description(self, axis_names_sizes=None):
-        """TODO DOCS."""
+        """Returns a one-line description of the field."""
         if axis_names_sizes is None:
             axis_names_sizes = self._unique_domain_axis_identities()
 

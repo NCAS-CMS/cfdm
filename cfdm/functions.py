@@ -639,104 +639,197 @@ class Constant(metaclass=DocstringRewriteMeta):
         return self.copy()
 
     def __bool__(self):
-        """TODO DOCS."""
+        """Truth value testing and the built-in operation `bool`.
+
+        x.__bool__() <==> bool(x)
+
+        """
         return bool(self.value)
 
     def __float__(self):
-        """TODO DOCS."""
+        """Called to implement the built-in function `float`.
+
+        x.__float__() <==> float(x)
+
+        """
         return float(self.value)
 
     def __int__(self):
-        """TODO DOCS."""
+        """Called to implement the built-in function `int`.
+
+        x.__int__() <==> int(x)
+
+        """
         return int(self.value)
 
     def __eq__(self, other):
-        """TODO DOCS."""
+        """The rich comparison operator ``==``.
+
+        x.__eq__(y) <==> x==y
+
+        """
         return self.value == other
 
     def __lt__(self, other):
-        """TODO DOCS."""
+        """The rich comparison operator ``<``.
+
+        x.__lt__(y) <==> x<y
+
+        """
         return self.value < other
 
     def __abs__(self):
-        """TODO DOCS."""
+        """The unary arithmetic operation ``abs``.
+
+        x.__abs__() <==> abs(x)
+
+        """
         return abs(self.value)
 
     def __neg__(self):
-        """TODO DOCS."""
+        """The unary arithmetic operation ``-``.
+
+        x.__neg__() <==> -x
+
+        """
         return -self.value
 
     def __pos__(self):
-        """TODO DOCS."""
+        """The unary arithmetic operation ``+``.
+
+        x.__pos__() <==> +x
+
+        """
         return self.value
 
     def __iadd__(self, other):
-        """TODO DOCS."""
+        """The augmented arithmetic assignment ``+=``.
+
+        x.__iadd__(y) <==> x+=y
+
+        """
         self.value += other
         return self
 
     def __ifloordiv__(self, other):
-        """TODO DOCS."""
+        """The augmented arithmetic assignment ``//=``.
+
+        x.__ifloordiv__(y) <==> x//=y
+
+        """
         self.value //= other
         return self
 
     def __imul__(self, other):
-        """TODO DOCS."""
+        """The augmented arithmetic assignment ``*=``.
+
+        x.__imul__(y) <==> x*=y
+
+        """
         self.value *= other
         return self
 
     def __isub__(self, other):
-        """TODO DOCS."""
+        """The augmented arithmetic assignment ``-=``.
+
+        x.__isub__(y) <==> x-=y
+
+        """
         self.value -= other
         return self
 
     def __itruediv__(self, other):
-        """TODO DOCS."""
+        """The augmented arithmetic assignment ``/=`` (true division).
+
+        x.__itruediv__(y) <==> x/=y
+
+        """
         self.value /= other
         return self
 
     def __add__(self, other):
-        """TODO DOCS."""
+        """The binary arithmetic operation ``+``.
+
+        x.__add__(y) <==> x+y
+
+        """
         return self.value + other
 
     def __floordiv__(self, other):
-        """TODO DOCS."""
+        """The binary arithmetic operation ``//``.
+
+        x.__floordiv__(y) <==> x//y
+
+        """
         return self.value // other
 
     def __mul__(self, other):
-        """TODO DOCS."""
+        """The binary arithmetic operation ``*``.
+
+        x.__mul__(y) <==> x*y
+
+        """
         return self.value * other
 
     def __sub__(self, other):
-        """TODO DOCS."""
+        """The binary arithmetic operation ``-``.
+
+        x.__sub__(y) <==> x-y
+
+        """
         return self.value - other
 
     def __truediv__(self, other):
-        """TODO DOCS."""
+        """The binary arithmetic operation ``/`` (true division).
+
+        x.__truediv__(y) <==> x/y
+
+        """
         return self.value / other
 
     def __radd__(self, other):
-        """TODO DOCS."""
+        """Binary arithmetic operation ``+`` with reflected operands.
+
+        x.__radd__(y) <==> y+x
+
+        """
         return other + self.value
 
     def __rfloordiv__(self, other):
-        """TODO DOCS."""
+        """Binary arithmetic operation ``//`` with reflected operands.
+
+        x.__rfloordiv__(y) <==> y//x
+
+        """
         return other // self.value
 
     def __rmul__(self, other):
-        """TODO DOCS."""
+        """Binary arithmetic operation ``*`` with reflected operands.
+
+        x.__rmul__(y) <==> y*x
+
+        """
         return other * self.value
 
     def __rsub__(self, other):
-        """TODO DOCS."""
+        """Binary arithmetic operation ``-`` with reflected operands.
+
+        x.__rsub__(y) <==> y-x
+
+        """
         return other - self.value
 
     def __rtruediv__(self, other):
-        """TODO DOCS."""
+        """The binary arithmetic operation ``/`` (true division) with
+        reflected operands.
+
+        x.__rtruediv__(y) <==> y/x
+
+        """
         return other / self.value
 
     def __hash__(self):
-        """TODO DOCS."""
+        """Returns the hash value of the Constant."""
         return hash((self.value, getattr(self, "_func", None)))
 
     def __repr__(self):
@@ -868,7 +961,11 @@ class Configuration(dict, metaclass=DocstringRewriteMeta):
         return "<{0}: {1}>".format(self.__class__.__name__, super().__repr__())
 
     def __str__(self):
-        """TODO DOCS."""
+        """Called by the `str` built-in function.
+
+        x.__str__() <==> str(x)
+
+        """
         return super().__repr__()
 
     # ----------------------------------------------------------------
