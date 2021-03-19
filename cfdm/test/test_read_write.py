@@ -217,6 +217,7 @@ class read_writeTest(unittest.TestCase):
             h = cfdm.example_field(0)
             cfdm.write(h, tmpfile, fmt=fmt, mode='a')  # now includes h with g
             f = cfdm.read(tmpfile)
+
             # After append, file should emerge with a number of fields
             # equal to the sum of all fields appended to them.
             self.assertEqual(len(f), g_orig_length + 1)
