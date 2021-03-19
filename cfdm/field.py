@@ -1,3 +1,4 @@
+from copy import deepcopy
 import logging
 
 from . import mixin
@@ -160,6 +161,14 @@ class Field(
 
         self._initialise_netcdf(source)
 
+        if source is not None:
+            try:
+                dc = source._get_component("dataset_compliance", {})
+            except AttributeError:
+                dc = {}
+
+            self._set_dataset_compliance(dc)
+
     def __repr__(self):
         """Called by the `repr` built-in function.
 
@@ -245,14 +254,11 @@ class Field(
                     x.append(" (external variable: ncvar%{})".format(ncvar))
                 else:
                     x.append(" (external variable)")
-            # --- End: if
 
             if variable.has_data():
                 x.append(" = {0}".format(variable.get_data()))
 
             return "".join(x)
-
-        # --- End: def
 
         # Field ancillary variables
         x = [
@@ -354,7 +360,6 @@ class Field(
                         dice.append(indices[data_axes.index(axis)])
                     else:
                         dice.append(slice(None))
-                # --- End: for
 
                 if needs_slicing:
                     new.set_construct(
@@ -479,7 +484,7 @@ class Field(
             `None`
 
         """
-        self._set_component("dataset_compliance", value, copy=True)
+        self._set_component("dataset_compliance", value, copy=False)
 
     @property
     def _test_docstring_substitution_property_Field(self):
@@ -906,8 +911,6 @@ class Field(
                 calendar=data.get_calendar(None),
             )
 
-        # --- End: def
-
         def _RaggedContiguousArray(
             self, compressed_data, data, count_variable
         ):
@@ -919,8 +922,6 @@ class Field(
                 count_variable=count_variable,
             )
 
-        # --- End: def
-
         def _RaggedIndexedArray(self, compressed_data, data, index_variable):
             return self._RaggedIndexedArray(
                 compressed_data,
@@ -929,8 +930,6 @@ class Field(
                 ndim=data.ndim,
                 index_variable=index_variable,
             )
-
-        # --- End: def
 
         def _RaggedIndexedContiguousArray(
             self, compressed_data, data, count_variable, index_variable
@@ -943,8 +942,6 @@ class Field(
                 count_variable=count_variable,
                 index_variable=index_variable,
             )
-
-        # --- End: def
 
         def _compress_metadata(
             f, method, count, N, axes, Array_func, **kwargs
@@ -1012,7 +1009,6 @@ class Field(
                             end = start + last
                             compressed_data[start:end] = d[:last]
                             start += last
-                # --- End: if
 
                 # Insert the compressed data into the metadata
                 # construct
@@ -1054,14 +1050,11 @@ class Field(
                             end = start + last
                             compressed_data[start:end] = d[:last]
                             start += last
-                    # --- End: if
 
                     # Insert the compressed data into the metadata
                     # construct
                     y = Array_func(f, compressed_data, data=data, **kwargs)
                     data._set_CompressedArray(y, copy=False)
-
-        # --- End: def
 
         f = _inplace_enabled_define_and_cleanup(self)
 
@@ -1102,7 +1095,6 @@ class Field(
                     "DSG ragged indexed contiguous compression. Got "
                     "{}".format(self.data.ndim)
                 )
-        # --- End: if
 
         # Make sure that the metadata constructs have the same
         # relative axis order as the field's data
@@ -1127,7 +1119,6 @@ class Field(
                         break
                     else:
                         last -= 1
-                # --- End: for
 
                 count.append(last)
 
@@ -1142,7 +1133,6 @@ class Field(
                 end = start + last
                 compressed_field_data[start:end] = d[:last]
                 start += last
-        # --- End: if
 
         if method == "contiguous":
             # --------------------------------------------------------
@@ -1267,43 +1257,43 @@ class Field(
 
         return f
 
-    def copy(self, data=True):
-        """Return a deep copy of the field construct.
-
-        ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
-
-        Arrays within `Data` instances are copied with a copy-on-write
-        technique. This means that a copy takes up very little extra
-        memory, even when the original contains very large data arrays,
-        and the copy operation is fast.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        :Parameters:
-
-            data: `bool`, optional
-                If False then do not copy the data of the field construct,
-                nor the data of any of its metadata constructs. By default
-                all data are copied.
-
-        :Returns:
-
-            `Field`
-                The deep copy.
-
-        **Examples:**
-
-        >>> g = f.copy()
-        >>> g = f.copy(data=False)
-        >>> g.has_data()
-        False
-
-        """
-        new = super().copy(data=data)
-
-        new._set_dataset_compliance(self.dataset_compliance())
-
-        return new
+#    def copy(self, data=True):
+#        """Return a deep copy of the field construct.
+#
+#        ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+#
+#        Arrays within `Data` instances are copied with a copy-on-write
+#        technique. This means that a copy takes up very little extra
+#        memory, even when the original contains very large data arrays,
+#        and the copy operation is fast.
+#
+#        .. versionadded:: (cfdm) 1.7.0
+#
+#        :Parameters:
+#
+#            data: `bool`, optional
+#                If False then do not copy the data of the field construct,
+#                nor the data of any of its metadata constructs. By default
+#                all data are copied.
+#
+#        :Returns:
+#
+#            `Field`
+#                The deep copy.
+#
+#        **Examples:**
+#
+#        >>> g = f.copy()
+#        >>> g = f.copy(data=False)
+#        >>> g.has_data()
+#        False
+#
+#        """
+#        new = super().copy(data=data)
+#
+#        new._set_dataset_compliance(self.dataset_compliance())
+#
+#        return new
 
     def creation_commands(
         self,
@@ -1636,12 +1626,11 @@ class Field(
                     _title = "ncvar%{0}".format(ncvar)
                 else:
                     _title += " (ncvar%{0})".format(ncvar)
-            # --- End: if
+
             if _title is None:
                 _title = ""
 
             _title = "Field: {0}".format(_title)
-        # --- End: if
 
         line = "{0}{1}".format(indent0, "".ljust(len(_title), "-"))
 
@@ -1684,7 +1673,6 @@ class Field(
                 string.append(cm.dump(display=False, _level=_level))
 
             string.append("")
-        # --- End: if
 
         # Field ancillaries
         for cid, value in sorted(self.field_ancillaries.items()):
@@ -2079,7 +2067,6 @@ class Field(
                 f.set_construct(
                     self.domain_axes[domain_axis], key=domain_axis, copy=True
                 )
-        # --- End: if
 
         # ------------------------------------------------------------
         # Set data axes
@@ -2100,7 +2087,6 @@ class Field(
 
                 if set(axes).issubset(data_axes):
                     f.set_construct(construct, key=ccid, axes=axes, copy=True)
-            # --- End: for
 
             # Add coordinate references which span a subset of the item's
             # axes
@@ -2123,7 +2109,6 @@ class Field(
                     if not set(axes).issubset(data_axes):
                         ok = False
                         break
-                # --- End: for
 
                 if ok:
                     ref = ref.copy()
@@ -2154,18 +2139,20 @@ class Field(
         Reported are problems encountered whilst reading the field
         construct from a dataset.
 
-        If the dataset is partially CF-compliant to the extent that it is
-        not possible to unambiguously map an element of the netCDF dataset
-        to an element of the CF data model, then a field construct is
-        still returned by the `read` function, but may be incomplete.
+        If the dataset is partially CF-compliant to the extent that it
+        is not possible to unambiguously map an element of the netCDF
+        dataset to an element of the CF data model, then a field
+        construct is still returned by the `read` function, but may be
+        incomplete.
 
-        Such "structural" non-compliance would occur, for example, if the
-        ``coordinates`` attribute of a CF-netCDF data variable refers to
-        another variable that does not exist, or refers to a variable that
-        spans a netCDF dimension that does not apply to the data variable.
+        Such "structural" non-compliance would occur, for example, if
+        the ``coordinates`` attribute of a CF-netCDF data variable
+        refers to another variable that does not exist, or refers to a
+        variable that spans a netCDF dimension that does not apply to
+        the data variable.
 
-        Other types of non-compliance are not checked, such whether or not
-        controlled vocabularies have been adhered to.
+        Other types of non-compliance are not checked, such whether or
+        not controlled vocabularies have been adhered to.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -2174,19 +2161,20 @@ class Field(
         :Parameters:
 
             display: `bool`, optional
-                If True print the compliance report. By default the report
-                is returned as a dictionary.
+                If True print the compliance report. By default the
+                report is returned as a dictionary.
 
         :Returns:
 
             `None` or `dict`
                 The report. If *display* is True then the report is
-                printed and `None` is returned. Otherwise the report is
-                returned as a dictionary.
+                printed and `None` is returned. Otherwise the report
+                is returned as a dictionary.
 
         **Examples:**
 
-        If no problems were encountered, an empty dictionary is returned:
+        If no problems were encountered, an empty dictionary is
+        returned:
 
         >>> f.dataset_compliance()
         {}
@@ -2195,7 +2183,7 @@ class Field(
         d = self._get_component("dataset_compliance", {})
 
         if not display:
-            return d
+            return deepcopy(d)
 
         if not d:
             print(d)
@@ -3073,7 +3061,6 @@ class Field(
                 for i, axis in enumerate(construct_axes):
                     if axis not in new_construct_axes:
                         new_construct_axes.insert(i, axis)
-                # --- End: for
 
                 iaxes = [
                     construct_axes.index(axis) for axis in new_construct_axes
@@ -3083,7 +3070,6 @@ class Field(
                 construct.transpose(iaxes, inplace=True)
 
                 f.set_data_axes(axes=new_construct_axes, key=key)
-        # --- End: if
 
         return f
 
@@ -3156,6 +3142,3 @@ class Field(
             c.uncompress(inplace=True)
 
         return f
-
-
-# --- End: class

@@ -523,7 +523,6 @@ class NetCDFRead(IORead):
                     cdl = True
             except UnicodeDecodeError:
                 pass
-        # --- End: try
 
         try:
             fh.close()
@@ -819,10 +818,10 @@ class NetCDFRead(IORead):
         # --- End: for
 
         g["global_attributes"] = global_attributes
-        logger.debug(
-            "    Global attributes:\n"
-            + pformat(g["global_attributes"], indent=4)
-        )  # pragma: no cover
+#        logger.debug(
+#            "    Global attributes:\n"
+#            + pformat(g["global_attributes"], indent=4)
+#        )  # pragma: no cover
 
         # ------------------------------------------------------------
         # Find the CF version for the file
@@ -1092,10 +1091,10 @@ class NetCDFRead(IORead):
             }
 
         logger.debug("    General read variables:")  # pragma: no cover
-        logger.debug(
-            "        read_vars['variable_dimensions'] =\n"
-            + pformat(variable_dimensions, indent=12)
-        )  # pragma: no cover
+#        logger.debug(
+#            "        read_vars['variable_dimensions'] =\n"
+#            + pformat(variable_dimensions, indent=12)
+#        )  # pragma: no cover
 
         # The netCDF attributes for each variable
         #
@@ -1203,49 +1202,49 @@ class NetCDFRead(IORead):
         #       '/forecasts/model/t': 't'}
         g["dimension_basename"] = dimension_basename
 
-        logger.debug(
-            "        read_vars['dimension_isunlimited'] =\n"
-            + pformat(g["dimension_isunlimited"], indent=12)
-        )  # pragma: no cover
-        logger.debug(
-            "        read_vars['internal_dimension_sizes'] =\n"
-            + pformat(g["internal_dimension_sizes"], indent=12)
-        )  # pragma: no cover
-
-        logger.debug("    Groups read vars:")  # pragma: no cover
-        logger.debug(
-            "        read_vars['variable_groups'] =\n"
-            + pformat(g["variable_groups"], indent=12)
-        )  # pragma: no cover
-        logger.debug(
-            "        read_vars['variable_basename'] =\n"
-            + pformat(variable_basename, indent=12)
-        )  # pragma: no cover
-        logger.debug(
-            "        read_vars['dimension_groups'] =\n"
-            + pformat(g["dimension_groups"], indent=12)
-        )  # pragma: no cover
-        logger.debug(
-            "        read_vars['dimension_basename'] =\n"
-            + pformat(g["dimension_basename"], indent=12)
-        )  # pragma: no cover
-
-        logger.debug(
-            "        read_vars['flattener_variables'] =\n"
-            + pformat(g["flattener_variables"], indent=12)
-        )  # pragma: no cover
-        logger.debug(
-            "        read_vars['flattener_dimensions'] =\n"
-            + pformat(g["flattener_dimensions"], indent=12)
-        )  # pragma: no cover
-        logger.debug(
-            "        read_vars['flattener_attributes'] =\n"
-            + pformat(g["flattener_attributes"], indent=12)
-        )  # pragma: no cover
-
-        logger.debug(
-            "    netCDF dimensions: " + pformat(internal_dimension_sizes)
-        )  # pragma: no cover
+#        logger.debug(
+#            "        read_vars['dimension_isunlimited'] =\n"
+#            + pformat(g["dimension_isunlimited"], indent=12)
+#        )  # pragma: no cover
+#        logger.debug(
+#            "        read_vars['internal_dimension_sizes'] =\n"
+#            + pformat(g["internal_dimension_sizes"], indent=12)
+#        )  # pragma: no cover
+#
+#        logger.debug("    Groups read vars:")  # pragma: no cover
+#        logger.debug(
+#            "        read_vars['variable_groups'] =\n"
+#            + pformat(g["variable_groups"], indent=12)
+#        )  # pragma: no cover
+#        logger.debug(
+#            "        read_vars['variable_basename'] =\n"
+#            + pformat(variable_basename, indent=12)
+#        )  # pragma: no cover
+#        logger.debug(
+#            "        read_vars['dimension_groups'] =\n"
+#            + pformat(g["dimension_groups"], indent=12)
+#        )  # pragma: no cover
+#        logger.debug(
+#            "        read_vars['dimension_basename'] =\n"
+#            + pformat(g["dimension_basename"], indent=12)
+#        )  # pragma: no cover
+#
+#        logger.debug(
+#            "        read_vars['flattener_variables'] =\n"
+#            + pformat(g["flattener_variables"], indent=12)
+#        )  # pragma: no cover
+#        logger.debug(
+#            "        read_vars['flattener_dimensions'] =\n"
+#            + pformat(g["flattener_dimensions"], indent=12)
+#        )  # pragma: no cover
+#        logger.debug(
+#            "        read_vars['flattener_attributes'] =\n"
+#            + pformat(g["flattener_attributes"], indent=12)
+#        )  # pragma: no cover
+#
+#        logger.debug(
+#            "    netCDF dimensions: " + pformat(internal_dimension_sizes)
+#        )  # pragma: no cover
 
         # ------------------------------------------------------------
         # List variables
@@ -1380,10 +1379,10 @@ class NetCDFRead(IORead):
         # --- End: if
 
         logger.debug("    Compression read vars:")  # pragma: no cover
-        logger.debug(
-            "        read_vars['compression'] =\n"
-            + pformat(g["compression"], indent=12)
-        )  # pragma: no cover
+#        logger.debug(
+#            "        read_vars['compression'] =\n"
+#            + pformat(g["compression"], indent=12)
+#        )  # pragma: no cover
 
         # ------------------------------------------------------------
         # Parse external variables (CF>=1.7)
@@ -1455,14 +1454,14 @@ class NetCDFRead(IORead):
         # --- End: if
 
         logger.debug("    Reference read vars:")  # pragma: no cover
-        logger.debug(
-            "        read_vars['references'] =\n"
-            + pformat(g["references"], indent=12)
-        )  # pragma: no cover
-        logger.debug(
-            "        read_vars['referencers'] =\n"
-            + pformat(g["referencers"], indent=12)
-        )  # pragma: no cover
+#        logger.debug(
+#            "        read_vars['references'] =\n"
+#            + pformat(g["references"], indent=12)
+#        )  # pragma: no cover
+#        logger.debug(
+#            "        read_vars['referencers'] =\n"
+#            + pformat(g["referencers"], indent=12)
+#        )  # pragma: no cover
 
         # ------------------------------------------------------------
         # Discard fields created from netCDF variables that are
@@ -2106,11 +2105,11 @@ class NetCDFRead(IORead):
         logger.info(
             "    Geometry container = {!r}".format(geometry_ncvar)
         )  # pragma: no cover
-        logger.debug(
-            "        netCDF attributes: {}".format(
-                pformat(attributes[geometry_ncvar], indent=12)
-            )
-        )  # pragma: no cover
+#        logger.debug(
+#            "        netCDF attributes: {}".format(
+#                pformat(attributes[geometry_ncvar], indent=12)
+#            )
+#        )  # pragma: no cover
 
         geometry_type = attributes[geometry_ncvar].get("geometry_type")
 
@@ -2964,10 +2963,10 @@ class NetCDFRead(IORead):
 
         field_properties.update(g["variable_attributes"][field_ncvar])
 
-        logger.debug(
-            "        netCDF attributes:\n"
-            + pformat(field_properties, indent=12)
-        )  # pragma: no cover
+#        logger.debug(
+#            "        netCDF attributes:\n"
+#            + pformat(field_properties, indent=12)
+#        )  # pragma: no cover
 
         # Take cell_methods out of the data variable's properties
         # since it will need special processing once the domain has

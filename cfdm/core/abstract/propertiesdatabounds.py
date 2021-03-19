@@ -78,7 +78,6 @@ class PropertiesDataBounds(PropertiesData):
                 interior_ring = source.get_interior_ring(None)
             except AttributeError:
                 interior_ring = None
-        # --- End: if
 
         # Initialise bounds
         if bounds is not None:
@@ -639,7 +638,7 @@ class PropertiesDataBounds(PropertiesData):
 
         self._set_component("bounds", bounds, copy=False)
 
-    def set_geometry(self, value, copy=True):
+    def set_geometry(self, value):
         """Set the geometry type.
 
         .. versionadded:: (cfdm) 1.8.0
@@ -674,7 +673,7 @@ class PropertiesDataBounds(PropertiesData):
         True
 
         """
-        self._set_component("geometry", value, copy=copy)
+        self._set_component("geometry", value, copy=False)
 
     def set_interior_ring(self, interior_ring, copy=True):
         """Set the interior_ring.
@@ -724,6 +723,3 @@ class PropertiesDataBounds(PropertiesData):
             interior_ring = interior_ring.copy()
 
         self._set_component("interior_ring", interior_ring, copy=False)
-
-
-# --- End: class

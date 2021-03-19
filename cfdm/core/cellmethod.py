@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 from . import abstract
 
 
@@ -106,7 +104,6 @@ class CellMethod(abstract.Container):
                 qualifiers = source.qualifiers()
             except AttributeError:
                 qualifiers = None
-        # --- End: if
 
         if axes is not None:
             axes = self.set_axes(axes)
@@ -547,7 +544,7 @@ class CellMethod(abstract.Container):
         """
         return self._get_component("qualifiers").copy()
 
-    def set_axes(self, value, copy=True):
+    def set_axes(self, value):
         """Set the axes of the cell method.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -607,17 +604,14 @@ class CellMethod(abstract.Container):
         >>> c.set_axes('time')
 
         """
-        if copy:
-            value = deepcopy(value)
-
         if isinstance(value, str):
             value = (value,)
         else:
             value = tuple(value)
 
-        return self._set_component("axes", value, copy=False)
+        return self._set_component("axes", value)
 
-    def set_method(self, value, copy=True):
+    def set_method(self, value):
         """Set the method of the cell method.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -628,9 +622,6 @@ class CellMethod(abstract.Container):
 
             value: `str`
                 The value for the method.
-
-            copy: `bool`, optional
-                If True then set a deep copy of *value*.
 
         :Returns:
 
@@ -654,9 +645,9 @@ class CellMethod(abstract.Container):
         'NO METHOD'
 
         """
-        return self._set_component("method", value, copy=copy)
+        return self._set_component("method", value, copy=False)
 
-    def set_qualifier(self, qualifier, value, copy=True):
+    def set_qualifier(self, qualifier, value):
         """Set a qualifier of the cell method.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -672,9 +663,6 @@ class CellMethod(abstract.Container):
             value:
                 The value for the qualifier.
 
-            copy: `bool`, optional
-                If True then set a deep copy of *value*.
-
         :Returns:
 
             `None`
@@ -687,10 +675,4 @@ class CellMethod(abstract.Container):
         'land'
 
         """
-        if copy:
-            value = deepcopy(value)
-
         self._get_component("qualifiers")[qualifier] = value
-
-
-# --- End: class
