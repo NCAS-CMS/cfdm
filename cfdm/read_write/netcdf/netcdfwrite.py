@@ -943,8 +943,9 @@ class NetCDFWrite(IOWrite):
         if create:
             ncvar = self._netcdf_name(ncvar)  # DCH ?
 
-            # Create a new dimension coordinate variable
-            self._write_netcdf_variable(ncvar, (), value)
+            if not g['dry_run']:
+                # Create a new dimension coordinate variable
+                self._write_netcdf_variable(ncvar, (), value)
         else:
             ncvar = seen[id(value)]["ncvar"]
 
@@ -2118,17 +2119,20 @@ class NetCDFWrite(IOWrite):
             ncvar = self._create_netcdf_variable_name(
                 scalar_coord, default="scalar"
             )
+            if not g['dry_run']:
+                # If this scalar coordinate has bounds then create the
+                # bounds netCDF variable and add the 'bounds' or
+                # 'climatology' (as appropriate) attribute to the
+                # dictionary of extra attributes
+                bounds_extra = self._write_bounds(
+                    f, scalar_coord, key, (), ncvar)
 
-            # If this scalar coordinate has bounds then create the
-            # bounds netCDF variable and add the 'bounds' or
-            # 'climatology' (as appropriate) attribute to the
-            # dictionary of extra attributes
-            bounds_extra = self._write_bounds(f, scalar_coord, key, (), ncvar)
-
-            # Create a new scalar coordinate variable
-            self._write_netcdf_variable(
-                ncvar, (), scalar_coord, extra=bounds_extra
-            )
+                # Create a new scalar coordinate variable
+                self._write_netcdf_variable(
+                    ncvar, (), scalar_coord, extra=bounds_extra
+                )
+            else:
+                return ncvar
 
         else:
             # This scalar coordinate has already been written to the
