@@ -72,6 +72,13 @@ _docstring_substitution_definitions = {
         The standard description-of-file-contents properties are
         always written as netCDF global attributes, if possible, so
         selecting them is optional.""",
+    # {{netcdf group}}
+    "{{netcdf group}}": """The group hierarchy is defined by the netCDF name. Groups are
+        delimited by ``/`` (slash) characters in the netCDF name. The
+        groups are returned, in hierarchical order, as a sequence of
+        strings. If the name is not set, or contains no ``/``
+        characters then an empty sequence is returned, signifying the
+        root group.""",
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentataion)
     # ----------------------------------------------------------------
