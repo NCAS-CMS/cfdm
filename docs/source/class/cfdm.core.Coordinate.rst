@@ -104,6 +104,21 @@ Geometries
 
    ~cfdm.core.Coordinate.interior_ring
 
+Climatological time
+-------------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.Coordinate.del_climatology
+   ~cfdm.core.Coordinate.get_climatology
+   ~cfdm.core.Coordinate.is_climatology
+   ~cfdm.core.Coordinate.set_climatology
+
 Modification
 ------------
 

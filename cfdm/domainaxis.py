@@ -230,8 +230,8 @@ class DomainAxis(
         :Parameters:
 
             default: optional
-                If no identity can be found then return the value of the
-                default parameter.
+                If no identity can be found then return the value of
+                the default parameter.
 
         :Returns:
 
@@ -239,8 +239,8 @@ class DomainAxis(
 
         **Examples:**
 
-        >>> d.nc_get_dimension()
-        'time'
+        >>> d = {{package}}.DomainAxis(size=9)
+        >>> d.nc_set_dimension('time')
         >>> d.identity()
         'ncdim%time'
         >>> d.identity(default='no identity')
@@ -272,13 +272,13 @@ class DomainAxis(
 
         :Returns:
 
-            `list`
+            `list` of `str`
                 The identities.
 
         **Examples:**
 
-        >>> d.nc_get_dimension()
-        'time'
+        >>> d = {{package}}.DomainAxis(size=9)
+        >>> d.nc_set_dimension('time')
         >>> d.identities()
         ['ncdim%time']
         >>> d.nc_del_dimension()

@@ -30,7 +30,7 @@ The CF data model defines a **"field construct"** for storing data
 with all of its metadata. It is defined as follows:
 
 .. glossary::
-   
+
   field construct
     corresponds to a CF-netCDF data variable with all of its
     metadata. It consists of
@@ -38,40 +38,45 @@ with all of its metadata. It is defined as follows:
     - descriptive properties that apply to field construct as a whole
       (e.g. the standard name),
     
-    - a data array, and
-    
-    - **"metadata constructs"** that describe the locations of each
-      cell of the data array (i.e. the **"domain"**), defined by
+    - a data array,
 
-      .. glossary::
-         
-        domain axis constructs
-          corresponding to CF-netCDF dimensions or scalar coordinate
-          variables
-      
-        dimension coordinate constructs
-          corresponding to CF-netCDF coordinate variables or numeric scalar
-          coordinate variables
-      
-        auxiliary coordinate constructs
-          corresponding to CF-netCDF auxiliary coordinate variables and
-          non-numeric scalar coordinate variables
-      
-        coordinate reference constructs
-          corresponding to CF-netCDF grid mapping variables or the
-          formula_terms attribute of a coordinate variable
-      
-        domain ancillary constructs
-          corresponding to CF-netCDF variables named by the formula_terms
-          attribute of a coordinate variable
-      
-        cell measure constructs
-          corresponding to CF-netCDF cell measure variables
-      
+    - **metadata constructs** that describe the locations of each cell
+      of the data array (i.e. the “domain”), defined by a
     
+      .. glossary::
+        
+        domain construct
+          that describes the locations of each cell of the data array,
+          and contains
+        	 
+          .. glossary::
+             
+            domain axis constructs
+              corresponding to CF-netCDF dimensions or scalar coordinate
+              variables
+          
+            dimension coordinate constructs
+              corresponding to CF-netCDF coordinate variables or numeric scalar
+              coordinate variables
+          
+            auxiliary coordinate constructs
+              corresponding to CF-netCDF auxiliary coordinate variables and
+              non-numeric scalar coordinate variables
+          
+            coordinate reference constructs
+              corresponding to CF-netCDF grid mapping variables or the
+              formula_terms attribute of a coordinate variable
+          
+            domain ancillary constructs
+              corresponding to CF-netCDF variables named by the formula_terms
+              attribute of a coordinate variable
+          
+            cell measure constructs
+              corresponding to CF-netCDF cell measure variables
+
     - **metadata constructs** that describe the physical nature of the
       data array, defined by
-    
+
       .. glossary::
          
         field ancillary constructs
@@ -88,7 +93,7 @@ with all of its metadata. It is defined as follows:
 .. figure:: images/field.png
    :scale: 35 %
 
-   *The nine constructs of our CF data model described using UML The field construct corresponds to a CF-netCDF data variable. The domain provides the linkage between the field construct and the constructs which describe measurement locations and cell properties. It is not a construct of the data model but an abstract concept that is useful for understanding it. Similarly, it is useful to define an abstract generic coordinate construct that can be used to refer to coordinates when the their type (dimension or auxiliary coordinate construct) is not an issue.*
+   *The constructs of the CF data model described using UML. The field construct corresponds to a CF-netCDF data variable. The domain construct provides the linkage between the field construct and the constructs which describe measurement locations and cell properties. It is useful to define an abstract generic coordinate construct that can be used to refer to coordinates when the their type (dimension or auxiliary coordinate construct) is not an issue.*
 
 ----
 

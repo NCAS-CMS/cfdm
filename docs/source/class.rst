@@ -20,6 +20,15 @@ Field construct class
 		 
    cfdm.Field
 
+Domain construct class
+----------------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cfdm.Domain
+
 Metadata construct classes
 --------------------------
 
@@ -56,15 +65,6 @@ Coordinate component classes
    cfdm.CoordinateConversion
    cfdm.Datum
    cfdm.InteriorRing
-
-Domain class
-------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: class/
-
-   cfdm.Domain
 
 Data classes
 ------------

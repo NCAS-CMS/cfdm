@@ -161,15 +161,12 @@ class FieldTest(unittest.TestCase):
             self.assertEqual(
                 g.data.shape,
                 e.data.shape,
-                "Bad shape for {}: {} != {}".format(
-                    indices, g.data.shape, e.data.shape
-                ),
+                f"Bad shape for {indices}: {g.data.shape} != {e.data.shape}",
             )
             self.assertTrue(
                 (g.data.array == e).all(),
-                "Bad values for {}: {} != {}".format(indices, g.data.array, e),
+                f"Bad values for {indices}: {g.data.array} != {e}",
             )
-        # --- End: for
 
         # Check slicing of bounds
         g = f[..., 0:4]
@@ -680,30 +677,22 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f.copy()
+        for f in cfdm.example_fields():
+            _ = f.creation_commands()
+
+        f = cfdm.example_field(1)
 
         for rd in (False, True):
-            for indent in (0, 4):
-                for h in (False, True):
-                    for s in (False, True):
-                        for ns in (None, ""):
-                            _ = f.creation_commands(
-                                representative_data=rd,
-                                indent=indent,
-                                namespace=ns,
-                                string=s,
-                                header=h,
-                            )
-                            for i in range(7):
-                                f = cfdm.example_field(i)
-                                _ = f.creation_commands(
-                                    representative_data=rd,
-                                    indent=indent,
-                                    namespace=ns,
-                                    string=s,
-                                    header=h,
-                                )
-        # --- End: for
+            _ = f.creation_commands(representative_data=rd)
+
+        for indent in (0, 4):
+            _ = f.creation_commands(indent=indent)
+
+        for s in (False, True):
+            _ = f.creation_commands(string=s)
+
+        for ns in ("cfdm", ""):
+            _ = f.creation_commands(namespace=ns)
 
     def test_Field_has_geometry(self):
         """TODO DOCS."""
@@ -716,8 +705,26 @@ class FieldTest(unittest.TestCase):
         f = cfdm.example_field(6)
         self.assertTrue(f.has_geometry())
 
+    def test_Field_climatological_time_axes(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
 
-# --- End: class
+        f = cfdm.example_field(7)
+
+        self.assertEqual(f.climatological_time_axes(), set())
+
+        cm = cfdm.CellMethod(axes="domainaxis0", method="mean")
+        cm.set_qualifier("over", "years")
+        f.set_construct(cm)
+
+        self.assertEqual(f.climatological_time_axes(), set(("domainaxis0",)))
+
+    def test_Field_bounds(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cfdm.example_field(0)
+        self.assertFalse(f.has_bounds())
 
 
 if __name__ == "__main__":

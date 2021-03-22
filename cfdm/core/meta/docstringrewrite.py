@@ -2,7 +2,7 @@ import inspect
 
 
 class DocstringRewriteMeta(type):
-    """Modify docstrings.
+    """Modify docstrings at time of import.
 
     **Methodology**
 
@@ -389,7 +389,7 @@ class DocstringRewriteMeta(type):
                      `_docstring_method_exclusions`,
                      `_docstring_substitutions`,
                      `__docstring_substitutions__`,
-                     `__docstring_package_depth__`
+                     `__docstring_package_depth__`,
                      `__docstring_method_exclusions__`
 
         :Returns:
@@ -437,7 +437,7 @@ class DocstringRewriteMeta(type):
                      `_docstring_package_depth`,
                      `_docstring_method_exclusions`,
                      `__docstring_substitutions__`,
-                     `__docstring_package_depth__`
+                     `__docstring_package_depth__`,
                      `__docstring_method_exclusions__`
 
         :Parameters:
@@ -588,6 +588,18 @@ class DocstringRewriteMeta(type):
         """Performs docstring substitutions on a method at import time.
 
         .. versionadded:: (cfdm) 1.8.7.0
+
+        :Parameters:
+
+            package_name: `str`
+
+            class_name: `str`
+
+            f: class method
+
+            method_name: `str`
+
+            config: `dict`
 
         """
         if class_docstring is not None:

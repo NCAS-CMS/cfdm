@@ -1,4 +1,3 @@
-# from copy import deepcopy
 import logging
 
 from . import mixin
@@ -10,7 +9,6 @@ from . import Index
 from . import List
 
 from .constants import masked as cfdm_masked
-from .core.functions import deepcopy
 
 from .data import (
     RaggedContiguousArray,
@@ -32,11 +30,13 @@ logger = logging.getLogger(__name__)
 
 
 class Field(
+    mixin.FieldDomain,
     mixin.NetCDFVariable,
     mixin.NetCDFGeometry,
     mixin.NetCDFGlobalAttributes,
     mixin.NetCDFGroupAttributes,
-    mixin.ConstructAccess,
+    mixin.NetCDFComponents,
+    mixin.NetCDFUnreferenced,
     mixin.PropertiesData,
     core.Field,
 ):
@@ -162,13 +162,7 @@ class Field(
 
         self._initialise_netcdf(source)
 
-        if source is not None:
-            try:
-                dc = source._get_component("dataset_compliance", {})
-            except AttributeError:
-                dc = {}
-
-            self._set_dataset_compliance(dc)
+        self._set_dataset_compliance(self.dataset_compliance(), copy=True)
 
     def __repr__(self):
         """Called by the `repr` built-in function.
@@ -369,79 +363,13 @@ class Field(
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-    def _get_data_compression_variables(self, component):
-        """Returns data compression variables for a component."""
-        out = []
-        for construct in self.constructs.filter_by_data().values():
-            data = construct.get_data(None)
-            if data is None:
-                continue
-
-            x = getattr(data, "get_" + component)(None)
-            if x is None:
-                continue
-
-            out.append(x)
-
-        for construct in self.constructs.filter_by_data().values():
-            if not construct.has_bounds():
-                continue
-
-            data = construct.get_bounds_data(None)
-            if data is None:
-                continue
-
-            x = getattr(data, "get_" + component)(None)
-            if x is None:
-                continue
-
-            out.append(x)
-
-        for construct in self.coordinates.values():
-            interior_ring = construct.get_interior_ring(None)
-            if interior_ring is None:
-                continue
-
-            data = interior_ring.get_data(None)
-            if data is None:
-                continue
-
-            x = getattr(data, "get_" + component)(None)
-            if x is None:
-                continue
-
-            out.append(x)
-
-        return out
-
-    def _get_coordinate_geometry_variables(self, component):
-        """Return the list of variables for the geometry coordinates.
-
-        :Parameters:
-
-            component: `str`
-
-        :Returns:
-
-            `list'
-
-        """
-        out = []
-        for construct in self.coordinates.values():
-            x = getattr(construct, "get_" + component)(None)
-            if x is None:
-                continue
-
-            out.append(x)
-
-        return out
-
     def _one_line_description(self, axis_names_sizes=None):
         """Returns a one-line description of the field."""
         if axis_names_sizes is None:
             axis_names_sizes = self._unique_domain_axis_identities()
 
         x = [axis_names_sizes[axis] for axis in self.get_data_axes(default=())]
+
         axis_names = ", ".join(x)
         if axis_names:
             axis_names = f"({axis_names})"
@@ -458,28 +386,6 @@ class Field(
             units += f" {calendar}"
 
         return f"{self.identity('')}{axis_names}{units}"
-
-    def _set_dataset_compliance(self, value):
-        """Sets the dataset compliance report.
-
-        Specifically, sets the report of problems encountered whilst
-        reading the field construct from a dataset.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        .. seealso:: `dataset_compliance`
-
-        :Parameters:
-
-            value:
-               The value of the ``dataset_compliance`` component.
-
-        :Returns:
-
-            `None`
-
-        """
-        self._set_component("dataset_compliance", value, copy=False)
 
     @property
     def _test_docstring_substitution_property_Field(self):
@@ -535,36 +441,6 @@ class Field(
     # Attributes
     # ----------------------------------------------------------------
     @property
-    def field_ancillaries(self):
-        """Return field ancillary constructs.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        .. seealso:: `constructs`, `get_construct`
-
-        :Returns:
-
-            `Constructs`
-                The field ancillary constructs and their construct keys.
-
-        **Examples:**
-
-        >>> print(f.field_ancillaries)
-        Constructs:
-        {}
-
-        >>> print(f.field_ancillaries)
-        Constructs:
-        {'fieldancillary0': <{{repr}}FieldAncillary: air_temperature standard_error(10, 9) K>}
-
-        >>> print(f.field_ancillaries('specific_humuidity standard_error'))
-        Constructs:
-        {'fieldancillary0': <{{repr}}FieldAncillary: specific_humidity standard_error(10, 9) K>}
-
-        """
-        return self.constructs.filter_by_type("field_ancillary")
-
-    @property
     def cell_methods(self):
         """Return cell method constructs.
 
@@ -599,45 +475,76 @@ class Field(
         """
         return self.constructs.filter_by_type("cell_method")
 
+    @property
+    def field_ancillaries(self):
+        """Return field ancillary constructs.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `constructs`, `get_construct`
+
+        :Returns:
+
+            `Constructs`
+                The field ancillary constructs and their construct keys.
+
+        **Examples:**
+
+        >>> print(f.field_ancillaries)
+        Constructs:
+        {}
+
+        >>> print(f.field_ancillaries)
+        Constructs:
+        {'fieldancillary0': <{{repr}}FieldAncillary: air_temperature standard_error(10, 9) K>}
+
+        >>> print(f.field_ancillaries('specific_humuidity standard_error'))
+        Constructs:
+        {'fieldancillary0': <{{repr}}FieldAncillary: specific_humidity standard_error(10, 9) K>}
+
+        """
+        return self.constructs.filter_by_type("field_ancillary")
+
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+    @_inplace_enabled(default=False)
     def apply_masking(self, inplace=False):
         """Apply masking as defined by the CF conventions.
 
-        Masking is applied to the field construct data as well as metadata
-        constructs' data.
+        Masking is applied to the field construct data as well as
+        metadata constructs with data.
 
-        Masking is applied according to any of the following criteria that
-        are applicable:
+        Masking is applied according to any of the following criteria
+        that are applicable:
 
         * where data elements are equal to the value of the
           ``missing_value`` property;
 
-        * where data elements are equal to the value of the ``_FillValue``
-          property;
+        * where data elements are equal to the value of the
+          ``_FillValue`` property;
 
         * where data elements are strictly less than the value of the
           ``valid_min`` property;
 
-        * where data elements are strictly greater than the value of the
-          ``valid_max`` property;
+        * where data elements are strictly greater than the value of
+          the ``valid_max`` property;
 
-        * where data elements are within the inclusive range specified by
-          the two values of ``valid_range`` property.
+        * where data elements are within the inclusive range specified
+          by the two values of ``valid_range`` property.
 
-        If any of the above properties have not been set the no masking is
-        applied for that method.
+        If any of the above properties have not been set the no
+        masking is applied for that method.
 
         Elements that are already masked remain so.
 
-        .. note:: If using the `apply_masking` method on a construct that
-                  has been read from a dataset with the ``mask=False``
-                  parameter to the `read` function, then the mask defined
-                  in the dataset can only be recreated if the
-                  ``missing_value``, ``_FillValue``, ``valid_min``,
-                  ``valid_max``, and ``valid_range`` properties have not
-                  been updated.
+        .. note:: If using the `apply_masking` method on a construct
+                  that has been read from a dataset with the
+                  ``mask=False`` parameter to the `read` function,
+                  then the mask defined in the dataset can only be
+                  recreated if the ``missing_value``, ``_FillValue``,
+                  ``valid_min``, ``valid_max``, and ``valid_range``
+                  properties have not been updated.
 
         .. versionadded:: (cfdm) 1.8.3
 
@@ -650,12 +557,22 @@ class Field(
         :Returns:
 
             `Field` or `None`
-                A new field construct with masked values, or `None` if the
-                operation was in-place.
+                A new field construct with masked values, or `None` if
+                the operation was in-place.
 
         **Examples:**
 
+        >>> f = {{package}}.example_field(0)
+        >>> f.data[[0, -1]] = numpy.ma.masked
         >>> print(f.data.array)
+        [[   --    --    --    --    --    --    --    --]
+         [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+         [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+         [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+         [   --    --    --    --    --    --    --    --]]
+        >>> {{package}}.write(f, 'masked.nc')
+        >>> no_mask = {{package}}.read('masked.nc', mask=False)[0]
+        >>> print(no_mask.data.array)
         [9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,
          9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36],
          [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
@@ -663,8 +580,8 @@ class Field(
          [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
         [9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,
          9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36]])
-        >>> masked_f = f.apply_masking()
-        >>> print(masked_f.data.array)
+        >>> masked = no_mask.apply_masking()
+        >>> print(masked.data.array)
         [[   --    --    --    --    --    --    --    --]
          [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
          [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
@@ -672,32 +589,29 @@ class Field(
          [   --    --    --    --    --    --    --    --]]
 
         """
-        if inplace:
-            f = self
-        else:
-            f = self.copy()
+        f = _inplace_enabled_define_and_cleanup(self)
 
         # Apply masking to the field construct
         super(Field, f).apply_masking(inplace=True)
 
         # Apply masking to the metadata constructs
-        for c in f.constructs.filter_by_data().values():
-            c.apply_masking(inplace=True)
+        f._apply_masking_constructs()
 
-        if inplace:
-            f = None
         return f
 
     def climatological_time_axes(self):
         """Return all axes which are climatological time axes.
 
+        This is ascertained by inspecting the axes of any cell methods
+        cnstructs.
+
         .. versionadded:: (cfdm) 1.7.0
 
         :Returns:
 
-            `list`
-                The list of all axes on the field which are climatological time
-                axes. If there are none, this will be an empty list.
+            `set`
+                The keys of the domain axeis constructs that are
+                climatological time axes.
 
         **Examples:**
 
@@ -708,18 +622,17 @@ class Field(
         {'cellmethod0': <{{repr}}CellMethod: domainaxis0: minimum within days>,
          'cellmethod1': <{{repr}}CellMethod: domainaxis0: mean over days>}
         >>> f.climatological_time_axes()
-        [('domainaxis0',), ('domainaxis0',)]
-
+        {'domainaxis0'}
         >>> g
         <Field: air_potential_temperature(time(120), latitude(5), longitude(8)) K>
         >>> print(g.cell_methods())
         Constructs:
         {'cellmethod0': <{{repr}}CellMethod: area: mean>}
         >>> g.climatological_time_axes()
-        []
+        set()
 
         """
-        out = []
+        out = set()
 
         domain_axes = self.domain_axes
 
@@ -737,7 +650,8 @@ class Field(
                 continue
 
             # Still here? Then this axis is a climatological time axis
-            out.append((axis,))
+            #            out.append((axis,))
+            out.add(axis)
 
         return out
 
@@ -897,7 +811,7 @@ class Field(
         [3 7 5 9]
         >>> g.compress('indexed', inplace=True)
         >>> g.data.get_index()
-         <{{repr}}Index: (24) >
+        <{{repr}}Index: (24) >
         >>> print(g.data.get_index().array)
         [0 0 0 1 1 1 1 1 1 1 2 2 2 2 2 3 3 3 3 3 3 3 3 3]
         >>> {{package}}.write(g, 'compressed_file_indexed.nc')
@@ -1254,44 +1168,6 @@ class Field(
 
         return f
 
-    #    def copy(self, data=True):
-    #        """Return a deep copy of the field construct.
-    #
-    #        ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
-    #
-    #        Arrays within `Data` instances are copied with a copy-on-write
-    #        technique. This means that a copy takes up very little extra
-    #        memory, even when the original contains very large data arrays,
-    #        and the copy operation is fast.
-    #
-    #        .. versionadded:: (cfdm) 1.7.0
-    #
-    #        :Parameters:
-    #
-    #            data: `bool`, optional
-    #                If False then do not copy the data of the field construct,
-    #                nor the data of any of its metadata constructs. By default
-    #                all data are copied.
-    #
-    #        :Returns:
-    #
-    #            `Field`
-    #                The deep copy.
-    #
-    #        **Examples:**
-    #
-    #        >>> g = f.copy()
-    #        >>> g = f.copy(data=False)
-    #        >>> g.has_data()
-    #        False
-    #
-    #        """
-    #        new = super().copy(data=data)
-    #
-    #        new._set_dataset_compliance(self.dataset_compliance())
-    #
-    #        return new
-
     def creation_commands(
         self,
         representative_data=False,
@@ -1318,6 +1194,7 @@ class Field(
 
         .. seealso:: `set_construct`,
                      `{{package}}.Data.creation_commands`,
+                     `{{package}}.Domain.creation_commands`,
                      `{{package}}.example_field`
 
         :Parameters:
@@ -1507,27 +1384,22 @@ class Field(
                 f"{name}.nc_set_global_attributes({nc_global_attributes!r})"
             )
 
-        # Domain axes
-        for key, c in self.domain_axes.items():
-            out.extend(
-                c.creation_commands(
-                    indent=0,
-                    string=False,
-                    namespace=namespace0,
-                    name="c",
-                    header=header,
-                )
+        # Domain
+        out.extend(
+            self.domain.creation_commands(
+                representative_data=representative_data,
+                string=False,
+                indent=0,
+                namespace=namespace0,
+                name=name,
+                data_name=data_name,
+                header=header,
+                _domain=False,
             )
-            out.append(f"{name}.set_construct(c, key={key!r}, copy=False)")
+        )
 
-        # Metadata constructs with data
-        for key, c in self.constructs.filter_by_type(
-            "dimension_coordinate",
-            "auxiliary_coordinate",
-            "cell_measure",
-            "domain_ancillary",
-            "field_ancillary",
-        ).items():
+        # Field ancillary constructs
+        for key, c in self.field_ancillaries().items():
             out.extend(
                 c.creation_commands(
                     representative_data=representative_data,
@@ -1546,19 +1418,6 @@ class Field(
 
         # Cell method constructs
         for key, c in self.cell_methods.items():
-            out.extend(
-                c.creation_commands(
-                    namespace=namespace0,
-                    indent=0,
-                    string=False,
-                    name="c",
-                    header=header,
-                )
-            )
-            out.append(f"{name}.set_construct(c)")
-
-        # Coordinate reference constructs
-        for key, c in self.coordinate_references.items():
             out.extend(
                 c.creation_commands(
                     namespace=namespace0,
@@ -1676,149 +1535,96 @@ class Field(
             )
             string.append("")
 
-        string.append(self.get_domain().dump(display=False))
+        string.append(
+            self.get_domain().dump(display=False, _create_title=False)
+        )
 
         return "\n".join(string)
 
-    @_manage_log_level_via_verbosity
-    def equals(
-        self,
-        other,
-        rtol=None,
-        atol=None,
-        verbose=None,
-        ignore_data_type=False,
-        ignore_fill_value=False,
-        ignore_properties=(),
-        ignore_compression=True,
-        ignore_type=False,
-    ):
-        """Whether two field constructs are the same.
-
-        Equality is strict by default. This means that for two field
-        constructs to be considered equal they must have corresponding
-        metadata constructs and for each pair of constructs:
-
-        * the same descriptive properties must be present, with the same
-          values and data types, and vector-valued properties must also
-          have same the size and be element-wise equal (see the
-          *ignore_properties* and *ignore_data_type* parameters), and
-
-        ..
-
-        * if there are data arrays then they must have same shape and data
-          type, the same missing data mask, and be element-wise equal (see
-          the *ignore_data_type* parameter).
-
-        {{equals tolerance}}
-
-        {{equals compression}}
-
-        Any type of object may be tested but, in general, equality is only
-        possible with another field construct, or a subclass of one. See
-        the *ignore_type* parameter.
-
-        {{equals netCDF}}
+    def get_data_axes(self, key=None, default=ValueError()):
+        """Return the keys of the domain axis constructs spanned by the
+        data of the field or of a metadata construct.
 
         .. versionadded:: (cfdm) 1.7.0
 
+        .. seealso:: `del_data_axes`, `get_data`, `set_data_axes`
+
         :Parameters:
 
-            other:
-                The object to compare for equality.
+            key: `str`, optional TODO
 
-            {{atol: number, optional}}
+            default: optional
+                Return the value of the *default* parameter if the data
+                axes have not been set.
 
-            {{rtol: number, optional}}
-
-            ignore_fill_value: `bool`, optional
-                If True then the ``_FillValue`` and ``missing_value``
-                properties are omitted from the comparison, for the field
-                construct and metadata constructs.
-
-            ignore_properties: sequence of `str`, optional
-                The names of properties of the field construct (not the
-                metadata constructs) to omit from the comparison. Note
-                that the ``Conventions`` property is always omitted.
-
-            {{ignore_data_type: `bool`, optional}}
-
-            {{ignore_compression: `bool`, optional}}
-
-            {{ignore_type: `bool`, optional}}
-
-            {{verbose: `int` or `str` or `None`, optional}}
+                {{default Exception}}
 
         :Returns:
 
-            `bool`
-                Whether the two field constructs are equal.
+            `tuple`
+                The keys of the domain axis constructs spanned by the
+                data.
 
         **Examples:**
 
-        >>> f.equals(f)
-        True
-        >>> f.equals(f.copy())
-        True
-        >>> f.equals(f[...])
-        True
-        >>> f.equals('not a Field instance')
-        False
+        >>> f.get_data_axes()
+        ('domainaxis0', 'domainaxis1')
 
-        >>> g = f.copy()
-        >>> g.set_property('foo', 'bar')
-        >>> f.equals(g)
+        >>> f.get_data_axes('dimensioncoordinate2')
+        ('domainaxis1',)
+
+        >>> f.has_data_axes()
         False
-        >>> f.equals(g, verbose=3)
-        Field: Non-common property name: foo
-        Field: Different properties
-        False
+        >>> f.get_data_axes(default='no axes')
+        'no axes'
 
         """
-        # ------------------------------------------------------------
-        # Check the properties and data
-        # ------------------------------------------------------------
-        ignore_properties = tuple(ignore_properties) + ("Conventions",)
+        if key is not None:
+            return super().get_data_axes(key, default=default)
 
-        if not super().equals(
-            other,
-            rtol=rtol,
-            atol=atol,
-            verbose=verbose,
-            ignore_data_type=ignore_data_type,
-            ignore_fill_value=ignore_fill_value,
-            ignore_properties=ignore_properties,
-            ignore_compression=ignore_compression,
-            ignore_type=ignore_type,
-        ):
-            return False
-
-        # ------------------------------------------------------------
-        # Check the constructs
-        # ------------------------------------------------------------
-        if not self._equals(
-            self.constructs,
-            other.constructs,
-            rtol=rtol,
-            atol=atol,
-            verbose=verbose,
-            ignore_data_type=ignore_data_type,
-            ignore_fill_value=ignore_fill_value,
-            ignore_compression=ignore_compression,
-            _ignore_type=False,
-        ):
-            logger.info(
-                f"{self.__class__.__name__}: Different metadata constructs"
+        try:
+            return self._get_component("data_axes")
+        except ValueError:
+            return self._default(
+                default,
+                "{!r} has no data axes".format(self.__class__.__name__),
             )
-            return False
 
-        return True
+    def get_domain(self):
+        """Return the domain.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `domain`
+
+        :Returns:
+
+            `Domain`
+                 The domain.
+
+        **Examples:**
+
+        >>> d = f.get_domain()
+
+        """
+        domain = self._Domain.fromconstructs(self.constructs)
+
+        # Set climatological time axes for the domain
+        climatological_time_axes = self.climatological_time_axes()
+        if climatological_time_axes:
+            coordinates = self.coordinates
+            for key, c in coordinates.items():
+                axes = self.get_data_axes(key, default=())
+                if len(axes) == 1 and axes[0] in climatological_time_axes:
+                    c.set_climatology(True)
+
+        return domain
 
     def get_filenames(self):
-        """Return the name of the file or files containing the data.
+        """Return the names of the files containing the data.
 
-        The names of the file or files containing the data of metadata
-        constructs are also returned.
+        The names of the files containing the data of the field
+        constructs and of any metadata constructs are returned.
 
         :Returns:
 
@@ -1832,7 +1638,7 @@ class Field(
         >>> {{package}}.write(f, 'temp_file.nc')
         >>> g = {{package}}.read('temp_file.nc')[0]
         >>> g.get_filenames()
-        {'/data/user/file1.nc'}
+        {'temp_file.nc'}
 
         """
         out = super().get_filenames()
@@ -2114,795 +1920,12 @@ class Field(
 
         return f
 
-    def dataset_compliance(self, display=False):
-        """Returns a report of issues from reading in the field.
-
-        Reported are problems encountered whilst reading the field
-        construct from a dataset.
-
-        If the dataset is partially CF-compliant to the extent that it
-        is not possible to unambiguously map an element of the netCDF
-        dataset to an element of the CF data model, then a field
-        construct is still returned by the `read` function, but may be
-        incomplete.
-
-        Such "structural" non-compliance would occur, for example, if
-        the ``coordinates`` attribute of a CF-netCDF data variable
-        refers to another variable that does not exist, or refers to a
-        variable that spans a netCDF dimension that does not apply to
-        the data variable.
-
-        Other types of non-compliance are not checked, such whether or
-        not controlled vocabularies have been adhered to.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        .. seealso:: `{{package}}.read`
-
-        :Parameters:
-
-            display: `bool`, optional
-                If True print the compliance report. By default the
-                report is returned as a dictionary.
-
-        :Returns:
-
-            `None` or `dict`
-                The report. If *display* is True then the report is
-                printed and `None` is returned. Otherwise the report
-                is returned as a dictionary.
-
-        **Examples:**
-
-        If no problems were encountered, an empty dictionary is
-        returned:
-
-        >>> f.dataset_compliance()
-        {}
-
-        """
-        d = self._get_component("dataset_compliance", {})
-
-        if not display:
-            return deepcopy(d)
-
-        if not d:
-            print(d)
-            return
-
-        for key0, value0 in d.items():
-            print(f"{{{key0!r}:")
-            print(f"    CF version: {value0['CF version']!r},")
-            print(f"    dimensions: {value0['dimensions']!r},")
-            print("    non-compliance: {")
-            for key1, value1 in sorted(value0["non-compliance"].items()):
-                for x in value1:
-                    print(f"        {key1!r}: [")
-                    print(
-                        "            {{{0}}},".format(
-                            "\n             ".join(
-                                [
-                                    f"{key2!r}: {value2!r},"
-                                    for key2, value2 in sorted(x.items())
-                                ]
-                            )
-                        )
-                    )
-
-                print("        ],")
-
-            print("    },")
-            print("}\n")
-
-    def nc_set_component_variable(self, component, value):
-        """Sets the netCDF variable name for components of given type.
-
-        Some components exist within multiple constructs, but when written
-        to a netCDF dataset the netCDF names associated with such
-        components will be arbitrarily taken from one of them. The netCDF
-        names can be set on all such occurrences individually, or
-        preferably by using this method to ensure consistency across all
-        such components.
-
-        .. versionadded:: (cfdm) 1.8.6
-
-        .. seealso:: `nc_del_component_variable`,
-                     `nc_set_component_variable_groups`,
-                     `nc_clear_component_variable_groups`
-
-        :Parameters:
-
-            component: `str`
-                Specify the component type. One of:
-
-                =====================  ===================================
-                *component*            Description
-                =====================  ===================================
-                ``'interior_ring'``    Interior ring variables for
-                                       geometry coordinates
-
-
-                ``'node_count'``       Node count variables for geometry
-                                       coordinates
-
-                ``'part_node_count'``  Part node count variables for
-                                       geometry coordinates
-
-                ``'count'``            Count variables for contiguous
-                                       ragged arrays
-
-                ``'index'``            Index variables for indexed
-                                       ragged arrays
-
-                ``'list'``             List variables for compression by
-                                       gathering
-                =====================  ===================================
-
-            value: `str`
-                The netCDF variable name to be set for each component.
-
-        :Returns:
-
-            `None`
-
-        **Examples:**
-
-        >>> f.nc_set_component_variable('interior_ring', 'interiorring_1')
-
-        """
-        if component in ("count", "index", "list"):
-            variables = self._get_data_compression_variables(component)
-        elif component in ("interior_ring", "node_count", "part_node_count"):
-            variables = self._get_coordinate_geometry_variables(component)
-        else:
-            raise ValueError(f"Invalid component: {component!r}")
-
-        for v in variables:
-            v.nc_set_variable(value)
-
-    def nc_del_component_variable(self, component):
-        """Removes the netCDF variable name for same-type components.
-
-        Some components exist within multiple constructs, but when written
-        to a netCDF dataset the netCDF names associated with such
-        components will be arbitrarily taken from one of them. The netCDF
-        names can be set on all such occurrences individually, or
-        preferably by using this method to ensure consistency across all
-        such components.
-
-        .. versionadded:: (cfdm) 1.8.6
-
-        .. seealso:: `nc_set_component_variable`,
-                     `nc_set_component_variable_groups`,
-                     `nc_clear_component_variable_groups`
-
-        :Parameters:
-
-            component: `str`
-                Specify the component type. One of:
-
-                =====================  ===================================
-                *component*            Description
-                =====================  ===================================
-                ``'interior_ring'``    Interior ring variables for
-                                       geometry coordinates
-
-                ``'node_count'``       Node count variables for geometry
-                                       coordinates
-
-                ``'part_node_count'``  Part node count variables for
-                                       geometry coordinates
-
-                ``'count'``            Count variables for contiguous
-                                       ragged arrays
-
-                ``'index'``            Index variables for indexed
-                                       ragged arrays
-
-                ``'list'``             List variables for compression by
-                                       gathering
-
-                =====================  ===================================
-
-        :Returns:
-
-            `None`
-
-        **Examples:**
-
-        >>> f.nc_del_component_variable('interior_ring')
-
-        """
-        if component in ("count", "index", "list"):
-            variables = self._get_data_compression_variables(component)
-        elif component in ("interior_ring", "node_count", "part_node_count"):
-            variables = self._get_coordinate_geometry_variables(component)
-        else:
-            raise ValueError(f"Invalid component: {component!r}")
-
-        for v in variables:
-            v.nc_del_variable(None)
-
-    def nc_set_component_variable_groups(self, component, groups):
-        """Sets variable groups hierarchy for same-type components.
-
-        Specifically, sets the netCDF variable groups hierarchy for all
-        components of the given type.
-
-        Some components exist within multiple constructs, but when written
-        to a netCDF dataset the netCDF names associated with such
-        components will be arbitrarily taken from one of them. The netCDF
-        names can be set on all such occurrences individually, or
-        preferably by using this method to ensure consistency across all
-        such components.
-
-        .. versionadded:: (cfdm) 1.8.6
-
-        .. seealso:: `nc_del_component_variable`,
-                     `nc_set_component_variable`,
-                     `nc_clear_component_variable_groups`
-
-        :Parameters:
-
-            component: `str`
-                Specify the component type. One of:
-
-                =====================  ===================================
-                *component*            Description
-                =====================  ===================================
-                ``'interior_ring'``    Interior ring variables for
-                                       geometry coordinates
-
-                ``'node_count'``       Node count variables for geometry
-                                       coordinates
-
-                ``'part_node_count'``  Part node count variables for
-                                       geometry coordinates
-
-                ``'count'``            Count variables for contiguous
-                                       ragged arrays
-
-                ``'index'``            Index variables for indexed
-                                       ragged arrays
-
-                ``'list'``             List variables for compression by
-                                       gathering
-                =====================  ===================================
-
-            groups: sequence of `str`
-                The new group structure for each component.
-
-        :Returns:
-
-            `None`
-
-        **Examples:**
-
-        >>> f.nc_set_component_variable_groups('interior_ring', ['forecast'])
-
-        """
-        if component in ("count", "index", "list"):
-            variables = self._get_data_compression_variables(component)
-        elif component in ("interior_ring", "node_count", "part_node_count"):
-            variables = self._get_coordinate_geometry_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_set_variable_groups(groups)
-
-    def nc_clear_component_variable_groups(self, component):
-        """Removes variable groups hierarchy for same-type components.
-
-        Specifically, removes the netCDF variable groups hierarchy for
-        all components of the given type.
-
-        Some components exist within multiple constructs, but when written
-        to a netCDF dataset the netCDF names associated with such
-        components will be arbitrarily taken from one of them. The netCDF
-        names can be set on all such occurrences individually, or
-        preferably by using this method to ensure consistency across all
-        such components.
-
-        .. versionadded:: (cfdm) 1.8.6
-
-        .. seealso:: `nc_del_component_variable`,
-                     `nc_set_component_variable`,
-                     `nc_set_component_variable_groups`
-
-        :Parameters:
-
-            component: `str`
-                Specify the component type. One of:
-
-                =====================  ===================================
-                *component*            Description
-                =====================  ===================================
-                ``'interior_ring'``    Interior ring variables for
-                                       geometry coordinates
-
-                ``'node_count'``       Node count variables for geometry
-                                       coordinates
-
-                ``'part_node_count'``  Part node count variables for
-                                       geometry coordinates
-
-                ``'count'``            Count variables for contiguous
-                                       ragged arrays
-
-                ``'index'``            Index variables for indexed
-                                       ragged arrays
-
-                ``'list'``             List variables for compression by
-                                       gathering
-                =====================  ===================================
-
-        :Returns:
-
-            `None`
-
-        **Examples:**
-
-        >>> f.nc_clear_component_variable_groups('interior_ring')
-
-        """
-        if component in ("count", "index", "list"):
-            variables = self._get_data_compression_variables(component)
-        elif component in ("interior_ring", "node_count", "part_node_count"):
-            variables = self._get_coordinate_geometry_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_clear_variable_groups()
-
-    def nc_set_component_dimension(self, component, value):
-        """Sets the netCDF dimension name for components of given type.
-
-        Some components exist within multiple constructs, but when written
-        to a netCDF dataset the netCDF names associated with such
-        components will be arbitrarily taken from one of them. The netCDF
-        names can be set on all such occurrences individually, or
-        preferably by using this method to ensure consistency across all
-        such components.
-
-        .. versionadded:: (cfdm) 1.8.6
-
-        .. seealso:: `nc_del_component_dimension`,
-                     `nc_set_component_dimension_groups`,
-                     `nc_clear_component_dimension_groups`
-
-        :Parameters:
-
-            component: `str`
-                Specify the component type. One of:
-
-                =====================  ===================================
-                *component*            Description
-                =====================  ===================================
-                ``'interior_ring'``    Interior ring variables for
-                                       geometry coordinates
-
-                ``'part_node_count'``  Part node count variables for
-                                       geometry coordinates
-
-                ``'count'``            Count variables for contiguous
-                                       ragged arrays
-
-                ``'index'``            Index variables for indexed
-                                       ragged arrays
-                =====================  ===================================
-
-            value: `str`
-                The netCDF dimension name to be set for each component.
-
-        :Returns:
-
-            `None`
-
-        **Examples:**
-
-        >>> f.nc_set_component_dimension('interior_ring', 'part')
-
-        """
-        if component in ("count", "index"):
-            variables = self._get_data_compression_variables(component)
-        elif component in ("interior_ring", "part_node_count"):
-            variables = self._get_coordinate_geometry_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_set_dimension(value)
-
-    def nc_del_component_dimension(self, component):
-        """Removes netCDF dimension name for components of given type.
-
-        Some components exist within multiple constructs, but when written
-        to a netCDF dataset the netCDF names associated with such
-        components will be arbitrarily taken from one of them. The netCDF
-        names can be set on all such occurrences individually, or
-        preferably by using this method to ensure consistency across all
-        such components.
-
-        .. versionadded:: (cfdm) 1.8.6
-
-        .. seealso:: `nc_set_component_dimension`,
-                     `nc_set_component_dimension_groups`,
-                     `nc_clear_component_dimension_groups`
-
-        :Parameters:
-
-            component: `str`
-                Specify the component type. One of:
-
-                =====================  ===================================
-                *component*            Description
-                =====================  ===================================
-                ``'interior_ring'``    Interior ring variables for
-                                       geometry coordinates
-
-                ``'part_node_count'``  Part node count variables for
-                                       geometry coordinates
-
-                ``'count'``            Count variables for contiguous
-                                       ragged arrays
-
-                ``'index'``            Index variables for indexed
-                                       ragged arrays
-                =====================  ===================================
-
-        :Returns:
-
-            `None`
-
-        **Examples:**
-
-        >>> f.nc_del_component_dimension('interior_ring')
-
-        """
-        if component in ("count", "index"):
-            variables = self._get_data_compression_variables(component)
-        elif component in ("interior_ring", "part_node_count"):
-            variables = self._get_coordinate_geometry_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_del_dimension(None)
-
-    def nc_set_component_dimension_groups(self, component, groups):
-        """Sets dimension groups hierarchy for same-type components.
-
-        Specifically, sets the netCDF dimension groups hierarchy for
-        all components of the given type.
-
-        Some components exist within multiple constructs, but when written
-        to a netCDF dataset the netCDF names associated with such
-        components will be arbitrarily taken from one of them. The netCDF
-        names can be set on all such occurrences individually, or
-        preferably by using this method to ensure consistency across all
-        such components.
-
-        .. versionadded:: (cfdm) 1.8.6
-
-        .. seealso:: `nc_del_component_dimension`,
-                     `nc_set_component_dimension`,
-                     `nc_clear_component_dimension_groups`
-
-        :Parameters:
-
-            component: `str`
-                Specify the component type. One of:
-
-                =====================  ===================================
-                *component*            Description
-                =====================  ===================================
-                ``'interior_ring'``    Interior ring variables for
-                                       geometry coordinates
-
-                ``'part_node_count'``  Part node count variables for
-                                       geometry coordinates
-
-                ``'count'``            Count variables for contiguous
-                                       ragged arrays
-
-                ``'index'``            Index variables for indexed
-                                       ragged arrays
-                =====================  ===================================
-
-            groups: sequence of `str`
-                The new group structure for each component.
-
-        :Returns:
-
-            `None`
-
-        **Examples:**
-
-        >>> f.nc_set_component_dimension_groups('interior_ring', ['forecast'])
-
-        """
-        if component in ("count", "index"):
-            variables = self._get_data_compression_variables(component)
-        elif component in ("interior_ring", "part_node_count"):
-            variables = self._get_coordinate_geometry_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_set_dimension_groups(groups)
-
-    def nc_clear_component_dimension_groups(self, component):
-        """Removes dimension groups hierarchy for same-type components.
-
-        Removes the netCDF dimension groups hierarchy for all
-        components of the given type.
-
-        Some components exist within multiple constructs, but when written
-        to a netCDF dataset the netCDF names associated with such
-        components will be arbitrarily taken from one of them. The netCDF
-        names can be set on all such occurrences individually, or
-        preferably by using this method to ensure consistency across all
-        such components.
-
-        .. versionadded:: (cfdm) 1.8.6
-
-        .. seealso:: `nc_del_component_dimension`,
-                     `nc_set_component_dimension`,
-                     `nc_set_component_dimension_groups`
-
-        :Parameters:
-
-            component: `str`
-                Specify the component type. One of:
-
-                =====================  ===================================
-                *component*            Description
-                =====================  ===================================
-                ``'interior_ring'``    Interior ring variables for
-                                       geometry coordinates
-
-                ``'part_node_count'``  Part node count variables for
-                                       geometry coordinates
-
-                ``'count'``            Count variables for contiguous
-                                       ragged arrays
-
-                ``'index'``            Index variables for indexed
-                                       ragged arrays
-                =====================  ===================================
-
-        :Returns:
-
-            `None`
-
-        **Examples:**
-
-        >>> f.nc_clear_component_dimension_groups('interior_ring')
-
-        """
-        if component in ("count", "index"):
-            variables = self._get_data_compression_variables(component)
-        elif component in ("interior_ring", "part_node_count"):
-            variables = self._get_coordinate_geometry_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_clear_dimension_groups()
-
-    def nc_set_component_sample_dimension(self, component, value):
-        """Sets the sample dimension name for same-type components.
-
-        Some components exist within multiple constructs, but when written
-        to a netCDF dataset the netCDF names associated with such
-        components will be arbitrarily taken from one of them. The netCDF
-        names can be set on all such occurrences individually, or
-        preferably by using this method to ensure consistency across all
-        such components.
-
-        .. versionadded:: (cfdm) 1.8.6
-
-        .. seealso:: `nc_del_component_sample_dimension`,
-                     `nc_set_component_sample_dimension_groups`,
-                     `nc_clear_component_sample_dimension_groups`
-
-        :Parameters:
-
-            component: `str`
-                Specify the component type. One of:
-
-                =====================  ===================================
-                *component*            Description
-                =====================  ===================================
-                ``'count'``            Count variables for contiguous
-                                       ragged arrays
-
-                ``'index'``            Index variables for indexed
-                                       ragged arrays
-                =====================  ===================================
-
-            value: `str`
-                The netCDF sample_dimension name to be set for each
-                component.
-
-        :Returns:
-
-            `None`
-
-        **Examples:**
-
-        >>> f.nc_set_component_sample_dimension('count', 'obs')
-
-        """
-        if component in ("count", "index"):
-            variables = self._get_data_compression_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_set_sample_dimension(value)
-
-    def nc_del_component_sample_dimension(self, component):
-        """Removes the sample dimension name for same-type components.
-
-        Some components exist within multiple constructs, but when written
-        to a netCDF dataset the netCDF names associated with such
-        components will be arbitrarily taken from one of them. The netCDF
-        names can be set on all such occurrences individually, or
-        preferably by using this method to ensure consistency across all
-        such components.
-
-        .. versionadded:: (cfdm) 1.8.6
-
-        .. seealso:: `nc_set_component_sample_dimension`,
-                     `nc_set_component_sample_dimension_groups`,
-                     `nc_clear_component_sample_dimension_groups`
-
-        :Parameters:
-
-            component: `str`
-                Specify the component type. One of:
-
-                =====================  ===================================
-                *component*            Description
-                =====================  ===================================
-                ``'count'``            Count variables for contiguous
-                                       ragged arrays
-
-                ``'index'``            Index variables for indexed
-                                       ragged arrays
-                =====================  ===================================
-
-        :Returns:
-
-            `None`
-
-        **Examples:**
-
-        >>> f.nc_del_component_sample_dimension('count')
-
-        """
-        if component in ("count", "index"):
-            variables = self._get_data_compression_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_del_sample_dimension(None)
-
-    def nc_set_component_sample_dimension_groups(self, component, groups):
-        """Sets same-type component sample dimension groups hierarchies.
-
-        That is, sets the netCDF sample dimension groups hierarchy
-        for all components of the given type.
-
-        Some components exist within multiple constructs, but when written
-        to a netCDF dataset the netCDF names associated with such
-        components will be arbitrarily taken from one of them. The netCDF
-        names can be set on all such occurrences individually, or
-        preferably by using this method to ensure consistency across all
-        such components.
-
-        .. versionadded:: (cfdm) 1.8.6
-
-        .. seealso:: `nc_del_component_sample_dimension`,
-                     `nc_set_component_sample_dimension`,
-                     `nc_clear_component_sample_dimension_groups`
-
-        :Parameters:
-
-            component: `str`
-                Specify the component type. One of:
-
-                =====================  ===================================
-                *component*            Description
-                =====================  ===================================
-                ``'count'``            Count variables for contiguous
-                                       ragged arrays
-
-                ``'index'``            Index variables for indexed
-                                       ragged arrays
-                =====================  ===================================
-
-            groups: sequence of `str`
-                The new group structure for each component.
-
-        :Returns:
-
-            `None`
-
-        **Examples:**
-
-        >>> f.nc_set_component_sample_dimension_groups('count', ['forecast'])
-
-        """
-        if component in ("count", "index"):
-            variables = self._get_data_compression_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_set_sample_dimension_groups(groups)
-
-    def nc_clear_component_sample_dimension_groups(self, component):
-        """Removes same-type component sample dimension groups.
-
-        Specifically, removes the netCDF sample dimension groups hierarchy
-        for all components of the given type.
-
-        Some components exist within multiple constructs, but when written
-        to a netCDF dataset the netCDF names associated with such
-        components will be arbitrarily taken from one of them. The netCDF
-        names can be set on all such occurrences individually, or
-        preferably by using this method to ensure consistency across all
-        such components.
-
-        .. versionadded:: (cfdm) 1.8.6
-
-        .. seealso:: `nc_del_component_sample_dimension`,
-                     `nc_set_component_sample_dimension`,
-                     `nc_set_component_sample_dimension_groups`
-
-        :Parameters:
-
-            component: `str`
-                Specify the component type. One of:
-
-                =====================  ===================================
-                *component*            Description
-                =====================  ===================================
-                ``'count'``            Count variables for contiguous
-                                       ragged arrays
-
-                ``'index'``            Index variables for indexed
-                                       ragged arrays
-                =====================  ===================================
-
-        :Returns:
-
-            `None`
-
-        **Examples:**
-
-        >>> f.nc_del_component_sample_dimension_groups('count')
-
-        """
-        if component in ("count", "index"):
-            variables = self._get_data_compression_variables(component)
-        else:
-            raise ValueError("Invalid component: {!r}".format(component))
-
-        for v in variables:
-            v.nc_clear_sample_dimension_groups()
-
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
         """Remove size one axes from the data.
 
-        By default all size one axes are removed, but particular size one
-        axes may be selected for removal.
+        By default all size one axes are removed, but particular size
+        one axes may be selected for removal.
 
         .. versionadded:: (cfdm) 1.7.0
 

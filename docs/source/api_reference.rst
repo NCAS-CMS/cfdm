@@ -12,6 +12,7 @@ Version |release| for version |version| of the CF conventions.
 * **Construct classes**
   
   * :ref:`cfdm.Field <cfdm-Field>`
+  * :ref:`cfdm.Domain <cfdm-Domain>`
   * :ref:`cfdm.AuxiliaryCoordinate <cfdm-AuxiliaryCoordinate>`
   * :ref:`cfdm.CellMeasure <cfdm-CellMeasure>`
   * :ref:`cfdm.CellMethod <cfdm-CellMethod>`

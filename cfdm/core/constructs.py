@@ -152,6 +152,8 @@ class Constructs(abstract.Container):
                         self_construct_axes.pop(cid, None)
                         self_construct_type.pop(cid, None)
 
+                    self._key_base.pop(construct_type, None)
+                    self._array_constructs.remove(construct_type)
                     continue
 
                 if construct_type not in source_constructs:
@@ -484,24 +486,8 @@ class Constructs(abstract.Container):
                         f"spans the data array of metadata construct {xid!r}"
                     )
 
-            # Fail if the domain axis construct is referenced by a
+            # Fail if the domaain axis construct is referenced by a
             # cell method construct
-            #            try:
-            #                cell_methods = self.filter_by_type('cell_method')
-            #            except ValueError:
-            #                # Cell methods are not possible for this Constructs
-            #                # instance
-            #                pass
-            #            else:
-            #                for xid, cm in cell_methods.items():
-            #                    axes = cm.get_axes(())
-            #                    if key in axes:
-            #                        raise ValueError(
-            #                            "Can't remove domain axis construct {!r} "
-            #                            "that is referenced by cell method construct "
-            #                            "{!r}".format(key, xid)
-            #                        )
-
             for xid, cm in self.filter_by_type("cell_method").items():
                 #                axes = cm.get_axes(())
                 if key in cm.get_axes(()):
@@ -624,9 +610,7 @@ class Constructs(abstract.Container):
             key = self.new_identifier(construct_type)
 
         if construct_type in self._array_constructs:
-            # ---------------------------------------------------------
             # The construct could have a data array
-            # ---------------------------------------------------------
             if axes is not None:
                 self._set_construct_data_axes(
                     key=key, axes=axes, construct=construct
@@ -937,6 +921,8 @@ class Constructs(abstract.Container):
         .. versionadded:: (cfdm) 1.7.0
 
         .. seealso:: `construct_types`
+
+        TODO DOCS.
 
         """
         x = self._construct_type.get(key)

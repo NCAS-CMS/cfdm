@@ -1,15 +1,7 @@
-from ..meta import DocstringRewriteMeta
+class FieldDomain:
+    """Mixin class for methods common to field and domain constructs.
 
-# --------------------------------------------------------------------
-# See cfdm.core.mixin.container.__docstring_substitution__ for
-# {{...}}  docstring substitutions
-# --------------------------------------------------------------------
-
-
-class ConstructAccess(metaclass=DocstringRewriteMeta):
-    """Mixin class for accessing an embedded `Constructs` object.
-
-    .. versionadded:: (cfdm) 1.7.0
+    .. versionadded:: (cfdm) 1.9.0.0
 
     """
 
@@ -21,48 +13,47 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         """
         return 1
 
-    def del_construct(self, key, default=ValueError()):
-        """Remove a metadata construct.
-
-        If a domain axis construct is selected for removal then it can't
-        be spanned by any metadata construct data, nor the field
-        construct's data; nor be referenced by any cell method constructs.
-
-        However, a domain ancillary construct may be removed even if it is
-        referenced by coordinate reference construct. In this case the
-        reference is replace with `None`.
+    # ----------------------------------------------------------------
+    # Attributes
+    # ----------------------------------------------------------------
+    @property
+    def constructs(self):
+        """Return the metdata constructs.
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `constructs`, `get_construct`, `has_construct`,
-                     `set_construct`
-
-        :Parameters:
-
-            key: `str`
-                The key of the metadata construct to be removed.
-
-                *Parameter example:*
-                  ``key='auxiliarycoordinate0'``
-
-            default: optional
-                Return the value of the *default* parameter if the
-                construct can not be removed, or does not exist.
-
-                {{default Exception}}
-
         :Returns:
 
-                The removed metadata construct.
+            `Constructs`
+                The constructs.
 
         **Examples:**
 
-        >>> f.del_construct('dimensioncoordinate1')
-        <{{repr}}DimensionCoordinate: grid_latitude(111) degrees>
+        >>> f = {{package}}.example_field(0)
+        >>> print(f.constructs)
+        Constructs:
+        {'cellmethod0': <{{repr}}CellMethod: area: mean>,
+         'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+         'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+         'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+         'domainaxis2': <{{repr}}DomainAxis: size(1)>}
+        >>> print(f.domain.constructs)
+        Constructs:
+        {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+         'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+         'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+         'domainaxis2': <{{repr}}DomainAxis: size(1)>}
 
         """
-        return self.constructs._del_construct(key, default=default)
+        return self._get_component("constructs")
 
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def get_construct(self, key, default=ValueError()):
         """Return a metadata construct.
 
@@ -101,10 +92,17 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
          'domainaxis1': <{{repr}}DomainAxis: 10>,
          'domainaxis2': <{{repr}}DomainAxis: 9>}
         >>> f.get_construct('dimensioncoordinate1')
-        <{[repr}}DimensionCoordinate: grid_latitude(10) degrees>
+        <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>
 
         """
-        return self.constructs.filter_by_key(key).value(default=default)
+
+        c = self.constructs.get(key)
+        if c is None:
+            return self._default(
+                default, message=f"{key!r} construct does not exist"
+            )
+
+        return c
 
     def has_construct(self, key):
         """Whether a metadata construct exists.
@@ -117,7 +115,7 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         :Parameters:
 
             key: `str`
-                The key of the metadata construct.
+                The identifier of the metadata construct.
 
                 *Parameter example:*
                   ``key='auxiliarycoordinate0'``
@@ -136,13 +134,7 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         False
 
         """
-        # Assume construct keys can (uncommonly) be Falsy e.g. '' or 0
-        # (this is tested explicitly) but not None (so None untested).
-        try_get_construct = self.get_construct(key, default=None)
-        if try_get_construct is None:
-            return False
-
-        return True
+        return key in self.constructs
 
     def set_construct(self, construct, key=None, axes=None, copy=True):
         """Set a metadata construct.
@@ -158,20 +150,20 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
                 The metadata construct to be inserted.
 
             key: `str`, optional
-                The construct identifier to be used for the construct. If
-                not set then a new, unique identifier is created
-                automatically. If the identifier already exists then the
-                existing construct will be replaced.
+                The construct identifier to be used for the
+                construct. If not set then a new, unique identifier is
+                created automatically. If the identifier already
+                exists then the existing construct will be replaced.
 
                 *Parameter example:*
                   ``key='cellmeasure0'``
 
             axes: (sequence of) `str`, optional
-                The construct identifiers of the domain axis constructs
-                spanned by the data array. An exception is raised if used
-                for a metadata construct that can not have a data array,
-                i.e. domain axis, cell method and coordinate reference
-                constructs.
+                The construct identifiers of the domain axis
+                constructs spanned by the data array. An exception is
+                raised if used for a metadata construct that can not
+                have a data array, i.e. domain axis, cell method and
+                coordinate reference constructs.
 
                 *Parameter example:*
                   ``axes='domainaxis1'``
@@ -183,8 +175,8 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
                   ``axes=['domainaxis1', 'domainaxis0']``
 
             copy: `bool`, optional
-                If True then set a copy of the construct. By default the
-                construct is copied.
+                If True then set a copy of the construct. By default
+                the construct is copied.
 
         :Returns:
 
@@ -222,15 +214,16 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
                   ``key='auxiliarycoordinate0'``
 
             default: optional
-                Return the value of the *default* parameter if the data
-                axes have not been set.
+                Return the value of the *default* parameter if the
+                data axes have not been set.
 
                 {{default Exception}}
 
         :Returns:
 
             `tuple`
-                The keys of the domain axis constructs spanned by the data.
+                The keys of the domain axis constructs spanned by the
+                data.
 
         **Examples:**
 
@@ -269,21 +262,23 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         :Parameters:
 
             key: `str`
-                Specify a metadata construct, instead of the field construct.
+                Specify a metadata construct, instead of the field
+                construct.
 
                 *Parameter example:*
                   ``key='auxiliarycoordinate0'``
 
             default: optional
-                Return the value of the *default* parameter if the data
-                axes have not been set. If set to an `Exception` instance
-                then it will be raised instead.
+                Return the value of the *default* parameter if the
+                data axes have not been set.
+
+                {{default Exception}}
 
         :Returns:
 
             `tuple`
-                The removed keys of the domain axis constructs spanned by the
-                data.
+                The removed keys of the domain axis constructs spanned
+                by the data.
 
         **Examples:**
 
@@ -311,7 +306,7 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
 
         return data_axes
 
-    def has_data_axes(self, key=None):
+    def has_data_axes(self, key):
         """Whether the axes spanned by the construct data have been set.
 
         Specifically, whether the domain axis constructs spanned by the
@@ -323,7 +318,7 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
 
         :Parameters:
 
-            key: `str`, optional
+            key: `str`
                 Specify a metadata construct.
 
                 *Parameter example:*
@@ -349,10 +344,7 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
 
         """
         axes = self.get_data_axes(key, default=None)
-        if axes is None:
-            return False
-
-        return True
+        return axes is not None
 
     def set_data_axes(self, axes, key):
         """Sets domain axis constructs spanned by the construct data.
@@ -365,8 +357,8 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         :Parameters:
 
              axes: sequence of `str`
-                The identifiers of the domain axis constructs spanned by
-                the data of the field or of a metadata construct.
+                The identifiers of the domain axis constructs spanned
+                by the data of the field or of a metadata construct.
 
                 *Parameter example:*
                   ``axes='domainaxis1'``

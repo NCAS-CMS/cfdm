@@ -29,7 +29,7 @@ def write(
     coordinates=False,
     _implementation=_implementation,
 ):
-    """Write field constructs to a netCDF file.
+    """Write field and domain constructs to a netCDF file.
 
     **File format**
 
@@ -102,8 +102,8 @@ def write(
 
     :Parameters:
 
-        fields: (sequence of) `Field`
-            The field constructs to write to the file.
+        fields: (sequence of) `Field` or `Domain`
+            The field and domain constructs to write to the file.
 
         filename: `str`
             The output netCDF file name. Various type of expansion are
@@ -121,14 +121,14 @@ def write(
         fmt: `str`, optional
             The format of the output file. One of:
 
-            ==========================  ================================
+            ==========================  ==============================
             *fmt*                       Output file type
-            ==========================  ================================
-            ``'NETCDF4'``               NetCDF4 format file. This is the
-                                        default.
+            ==========================  ==============================
+            ``'NETCDF4'``               NetCDF4 format file. This is
+                                        the default.
 
-            ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file (see
-                                        below)
+            ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file
+                                        (see below)
 
             ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file
                                         (limited to file sizes less
@@ -141,8 +141,9 @@ def write(
                                         ``'NETCDF3_64BIT_OFFSET'``
 
             ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format
-                                        file with extensions (see below)
-            ==========================  ================================
+                                        file with extensions (see
+                                        below)
+            ==========================  ==============================
 
             By default the format is ``'NETCDF4'``.
 

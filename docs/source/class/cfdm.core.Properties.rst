@@ -39,6 +39,8 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.core.Properties.copy
+   ~cfdm.core.Properties.has_bounds
+   ~cfdm.core.Properties.has_data
 
 Special
 -------

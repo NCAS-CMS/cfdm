@@ -31,19 +31,19 @@ from ..core import CF
 
 _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
-    # General susbstitutions (not indent-dependent)
+    # General substitutions (not indent-dependent)
     # ----------------------------------------------------------------
     # {{VN}}
     "{{VN}}": CF(),
     # ----------------------------------------------------------------
-    # Class description susbstitutions (1 level of indentation)
+    # Class description substitutions (1 level of indentation)
     # ----------------------------------------------------------------
     # {{netCDF variable}}
     "{{netCDF variable}}": """The netCDF variable name of the construct may be accessed with the
     `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
     `nc_has_variable` methods.""",
     # ----------------------------------------------------------------
-    # Method description susbstitutions (2 levels of indentation)
+    # Method description substitutions (2 levels of indentation)
     # ----------------------------------------------------------------
     # {{equals tolerance}}
     "{{equals tolerance}}": """Two real numbers ``x`` and ``y`` are considered equal if
@@ -72,8 +72,15 @@ _docstring_substitution_definitions = {
         The standard description-of-file-contents properties are
         always written as netCDF global attributes, if possible, so
         selecting them is optional.""",
+    # {{netcdf group}}
+    "{{netcdf group}}": """The group hierarchy is defined by the netCDF name. Groups are
+        delimited by ``/`` (slash) characters in the netCDF name. The
+        groups are returned, in hierarchical order, as a sequence of
+        strings. If the name is not set, or contains no ``/``
+        characters then an empty sequence is returned, signifying the
+        root group.""",
     # ----------------------------------------------------------------
-    # Method description susbstitutions (3 levels of indentataion)
+    # Method description substitutions (3 levels of indentataion)
     # ----------------------------------------------------------------
     # {{init properties: `dict`, optional}}
     "{{init properties: `dict`, optional}}": """properties: `dict`, optional
@@ -205,19 +212,6 @@ _docstring_substitution_definitions = {
                 ``3``/``'DETAIL'``) for increasing verbosity, the more
                 description that is printed to convey information
                 about the operation.""",
-    # {{construct selection identity}}
-    "{{construct selection identity}}": """A construct has a number of string-valued identities
-                defined by its `!identities` method, and is selected
-                if any of them match the *identity*
-                parameter. *identity* may be a string that equals one
-                of a construct's identities; or a `re.Pattern` object
-                that matches one of a construct's identities via
-                `re.search`.
-
-                Note that in the output of a `dump` method or `print`
-                call, a metadata construct is always described by one
-                of its identities, and so this description may always
-                be used as an *identity* value.""",
     # {{domain axis selection identity}}
     "{{domain axis selection identity}}": """A domain axis construct has a number of string-valued
                 identities (defined by its `!identities` method) and
@@ -238,4 +232,21 @@ _docstring_substitution_definitions = {
                 description is printed and `None` is
                 returned. Otherwise the description is returned as a
                 string.""",
+    # ----------------------------------------------------------------
+    # Method description substitutions (3.5 levels of indentation)
+    # ----------------------------------------------------------------
+    # {{construct selection identity}}
+    "{{construct selection identity}}": """A construct has a number of string-valued identities
+                  defined by its `!identities` method, and is selected
+                  if any of them match the *identity*
+                  parameter. *identity* may be a string that equals
+                  one of a construct's identities; or a `re.Pattern`
+                  object that matches one of a construct's identities
+                  via `re.search`.
+
+                  Note that in the output of a `dump` method or
+                  `print` call, a metadata construct is always
+                  described by one of its identities, and so this
+                  description may always be used as an *identity*
+                  value.""",
 }

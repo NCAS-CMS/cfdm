@@ -97,6 +97,7 @@ from .functions import (
     environment,
     log_level,
     rtol,
+    unique_constructs,
     _disable_logging,
     _reset_log_emergence_level,
     _is_valid_log_level_int,
@@ -156,7 +157,7 @@ from .cfdmimplementation import CFDMImplementation, implementation
 
 from .read_write import read, write
 
-from .examplefield import example_field
+from .examplefield import example_field, example_fields
 
 from .abstract import Container
 

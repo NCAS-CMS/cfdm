@@ -187,6 +187,48 @@ class Properties(Container):
                 f"{self.__class__.__name__!r} has no {prop!r} property",
             )
 
+    def has_bounds(self):
+        """Whether or not there are cell bounds.
+
+        This is always False.
+
+        .. versionadded:: (cfdm) 1.9.0.0
+
+        .. seealso:: `has_data`
+
+        :Returns:
+
+            `False`
+
+        **Examples:**
+
+        >>> f = {{package}}.{{class}}()
+        >>> f.has_bounds()
+        False
+
+        """
+        return False
+
+    def has_data(self):
+        """Whether or not the construct has data.
+
+        `{{class}}` instances never have data.
+
+        .. versionadded:: (cfdm) 1.9.0.0
+
+        :Returns:
+
+            `False`
+
+        **Examples:**
+
+        >>> f = {{package}}.{{class}}()
+        >>> f.has_data()
+        False
+
+        """
+        return False
+
     def has_property(self, prop):
         """Whether a property has been set.
 
@@ -279,7 +321,6 @@ class Properties(Container):
                 Store the properties from the dictionary supplied.
 
                 *Parameter example:*
-
                   ``properties={'standard_name': 'altitude', 'foo': 'bar'}``
 
             copy: `bool`, optional

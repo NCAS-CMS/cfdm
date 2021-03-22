@@ -7,7 +7,7 @@ from . import Constructs
 from . import Domain
 
 
-class Field(mixin.ConstructAccess, abstract.PropertiesData):
+class Field(mixin.FieldDomain, abstract.PropertiesData):
     """A field construct of the CF data model.
 
     The field construct is central to the CF data model, and includes
@@ -151,33 +151,6 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         return "field"
 
     @property
-    def constructs(self):
-        """Return the metadata constructs.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        :Returns:
-
-            `Constructs`
-                The constructs.
-
-        **Examples:**
-
-        >>> f = {{package}}.example_field(0)
-        >>> print(f.constructs)
-        Constructs:
-        {'cellmethod0': <{{repr}}CellMethod: area: mean>,
-         'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
-         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
-         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
-         'domainaxis0': <{{repr}}DomainAxis: size(5)>,
-         'domainaxis1': <{{repr}}DomainAxis: size(8)>,
-         'domainaxis2': <{{repr}}DomainAxis: size(1)>}
-
-        """
-        return self._get_component("constructs")
-
-    @property
     def domain(self):
         """Return the domain.
 
@@ -287,7 +260,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         True
 
         """
-        return self._Domain.fromconstructs(self.constructs)
+        return self._Domain.fromconstructs(self.constructs, copy=False)
 
     def get_data_axes(self, key=None, default=ValueError()):
         """Gets the keys of the axes spanned by the construct data.
@@ -386,11 +359,10 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         'no axes'
 
         """
-        axes = self.get_data_axes(key, default=None)
-        if axes is None:
-            return False
+        if key is None:
+            return self.get_data_axes(default=None) is not None
 
-        return True
+        return super().has_data_axes(key)
 
     def del_construct(self, key, default=ValueError()):
         """Remove a metadata construct.
@@ -440,13 +412,13 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         False
 
         """
-        if key in self.domain_axes and key in self.get_data_axes(default=()):
+        if key in self.get_data_axes(default=()):
             raise ValueError(
                 f"Can't remove domain axis {key!r} that is spanned by the "
                 "data of the field construct"
             )
 
-        return super().del_construct(key, default=default)
+        return self.constructs._del_construct(key, default=default)
 
     def set_data(self, data, axes=None, copy=True, inplace=True):
         """Set the data of the field construct.

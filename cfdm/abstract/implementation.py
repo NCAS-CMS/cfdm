@@ -45,6 +45,7 @@ class Implementation(metaclass=abc.ABCMeta):
          'Data',
          'Datum',
          'DimensionCoordinate',
+         'Domain',
          'DomainAncillary',
          'DomainAxis',
          'Field',

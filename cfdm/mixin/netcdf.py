@@ -51,150 +51,7 @@ class NetCDF:
         self._set_component("netcdf", netcdf, copy=False)
 
 
-class _NetCDFGroupsMixin:
-    """Mixin class for accessing netCDF(4) hierarchical groups.
-
-    .. versionadded:: (cfdm) 1.8.6
-
-    """
-
-    def _nc_groups(self, nc_get):
-        """Return the netCDF group hierarchy.
-
-        The group hierarchy is defined by the netCDF name. Groups are
-        delimited by ``/`` (slash) characters in the netCDF name. The
-        groups are returned, in hierarchical order, as a sequence of
-        strings. If the name is not set, or contains no ``/``
-        characters then an empty sequence is returned, signifying the
-        root group.
-
-        .. versionadded:: (cfdm) 1.8.6
-
-        .. seealso:: `_nc_clear_groups`, `_nc_set_groups`
-
-        :Parameters:
-
-            nc_get: function
-                The method which gets the netCDF name.
-
-        :Returns:
-
-            `tuple` of `str`
-                The group structure.
-
-        **Examples:**
-
-        See the examples in classes which inherit this method.
-
-        """
-        name = nc_get(default="")
-        return tuple(name.split("/")[1:-1])
-
-    def _nc_set_groups(self, groups, nc_get, nc_set, nc_groups):
-        """Set the netCDF group hierarchy.
-
-        The group hierarchy is defined by the netCDF name. Groups are
-        delimited by ``/`` (slash) characters in the netCDF name. The
-        groups are returned, in hierarchical order, as a sequence of
-        strings. If the name is not set, or contains no ``/``
-        characters then an empty sequence is returned, signifying the
-        root group.
-
-        .. versionadded:: (cfdm) 1.8.6
-
-        .. seealso:: `_nc_clear_groups`, `_nc_groups`
-
-        :Parameters:
-
-            groups: sequence of `str`
-                The new group structure.
-
-            nc_get: function
-                The method which gets the netCDF name.
-
-            nc_set: function
-                The method which sets the netCDF name.
-
-            nc_groups: function
-                The method which returns existing group structure.
-
-        :Returns:
-
-            `tuple` of `str`
-                The group structure prior to being reset.
-
-        **Examples:**
-
-        See the examples in classes which inherit this method.
-
-        """
-        old = nc_groups()
-
-        name = nc_get(default="")
-        name = name.split("/")[-1]
-        if not name:
-            raise ValueError("Can't set groups when there is no netCDF name")
-
-        if groups:
-            for group in groups:
-                if "/" in group:
-                    raise ValueError(
-                        f"Can't have '/' character in group name: {group!r}"
-                    )
-
-            name = "/".join(("",) + tuple(groups) + (name,))
-
-        if name:
-            nc_set(name)
-
-        return old
-
-    def _nc_clear_groups(self, nc_get, nc_set, nc_groups):
-        """Remove the netCDF group hierarchy.
-
-        The group hierarchy is defined by the netCDF name. Groups are
-        delimited by ``/`` (slash) characters in the netCDF name. The
-        groups are returned, in hierarchical order, as a sequence of
-        strings. If the name is not set, or contains no ``/``
-        characters then an empty sequence is returned, signifying the
-        root group.
-
-        .. versionadded:: (cfdm) 1.8.6
-
-        .. seealso:: `_nc_groups`, `_nc_set_groups`
-
-        :Parameters:
-
-            nc_get: function
-                The method which gets the netCDF name.
-
-            nc_set: function
-                The method which sets the netCDF name.
-
-            nc_groups: function
-                The method which returns existing group structure.
-
-        :Returns:
-
-            `tuple` of `str`
-                The removed group structure.
-
-        **Examples:**
-
-        See the examples in classes which inherit this method.
-
-        """
-        old = nc_groups()
-
-        name = nc_get(default="")
-        name = name.split("/")[-1]
-        if name:
-            nc_set(name)
-
-        return old
-
-
-class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
+class NetCDFDimension(NetCDF):
     """Mixin class for accessing the netCDF dimension name.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -213,8 +70,9 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
 
             default: optional
                 Return the value of the *default* parameter if the
-                netCDF dimension name has not been set. If set to an
-                `Exception` instance then it will be raised instead.
+                netCDF dimension name has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -258,8 +116,9 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
 
             default: optional
                 Return the value of the *default* parameter if the
-                netCDF dimension name has not been set. If set to an
-                `Exception` instance then it will be raised instead.
+                netCDF dimension name has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -387,14 +246,9 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
     def nc_dimension_groups(self):
         """Return the netCDF dimension group hierarchy.
 
-        The group hierarchy is defined by the netCDF name. Groups are
-        delimited by ``/`` (slash) characters in the netCDF name. The
-        groups are returned, in hierarchical order, as a sequence of
-        strings. If the name is not set, or contains no ``/``
-        characters then an empty sequence is returned, signifying the
-        root group.
+        {{netcdf group}}
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_clear_dimension_groups`,
                      `nc_set_dimension_groups`
@@ -428,25 +282,21 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
         ()
 
         """
-        return self._nc_groups(nc_get=self.nc_get_dimension)
+        return _nc_groups(nc_get=self.nc_get_dimension)
 
     def nc_set_dimension_groups(self, groups):
         """Set the netCDF dimension group hierarchy.
 
-        The group hierarchy is defined by the netCDF name. Groups are
-        delimited by ``/`` (slash) characters in the netCDF name. The
-        groups are returned, in hierarchical order, as a sequence of
-        strings. If the name is not set, or contains no ``/``
-        characters then an empty sequence is returned, signifying the
-        root group.
+        {{netcdf group}}
 
         An alternative technique for setting the group structure is to
         set the netCDF dimension name, with `nc_set_dimension`, with
         the group structure delimited by ``/`` characters.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
-        .. seealso:: `nc_clear_dimension_groups`, `nc_dimension_groups`
+        .. seealso:: `nc_clear_dimension_groups`,
+                     `nc_dimension_groups`
 
         :Parameters:
 
@@ -482,7 +332,7 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
         ()
 
         """
-        return self._nc_set_groups(
+        return _nc_set_groups(
             groups,
             nc_get=self.nc_get_dimension,
             nc_set=self.nc_set_dimension,
@@ -492,18 +342,13 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
     def nc_clear_dimension_groups(self):
         """Remove the netCDF dimension group hierarchy.
 
-        The group hierarchy is defined by the netCDF name. Groups are
-        delimited by ``/`` (slash) characters in the netCDF name. The
-        groups are returned, in hierarchical order, as a sequence of
-        strings. If the name is not set, or contains no ``/``
-        characters then an empty sequence is returned, signifying the
-        root group.
+        {{netcdf group}}
 
         An alternative technique for removing the group structure is
         to set the netCDF dimension name, with `nc_set_dimension`,
         with no ``/`` characters.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_dimension_groups`, `nc_set_dimension_groups`
 
@@ -536,14 +381,14 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
         ()
 
         """
-        return self._nc_clear_groups(
+        return _nc_clear_groups(
             nc_get=self.nc_get_dimension,
             nc_set=self.nc_set_dimension,
             nc_groups=self.nc_dimension_groups,
         )
 
 
-class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
+class NetCDFVariable(NetCDF):
     """Mixin class for accessing the netCDF variable name.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -562,8 +407,9 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
 
             default: optional
                 Return the value of the *default* parameter if the
-                netCDF variable name has not been set. If set to an
-                `Exception` instance then it will be raised instead.
+                netCDF variable name has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -607,8 +453,9 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
 
             default: optional
                 Return the value of the *default* parameter if the
-                netCDF variable name has not been set. If set to an
-                `Exception` instance then it will be raised instead.
+                netCDF variable name has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -737,14 +584,9 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
     def nc_variable_groups(self):
         """Return the netCDF variable group hierarchy.
 
-        The group hierarchy is defined by the netCDF name. Groups are
-        delimited by ``/`` (slash) characters in the netCDF name. The
-        groups are returned, in hierarchical order, as a sequence of
-        strings. If the name is not set, or contains no ``/``
-        characters then an empty sequence is returned, signifying the
-        root group.
+        {{netcdf group}}
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_clear_variable_groups`,
                      `nc_set_variable_groups`
@@ -778,23 +620,18 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
         ()
 
         """
-        return self._nc_groups(nc_get=self.nc_get_variable)
+        return _nc_groups(nc_get=self.nc_get_variable)
 
     def nc_set_variable_groups(self, groups):
         """Set the netCDF variable group hierarchy.
 
-        The group hierarchy is defined by the netCDF name. Groups are
-        delimited by ``/`` (slash) characters in the netCDF name. The
-        groups are returned, in hierarchical order, as a sequence of
-        strings. If the name is not set, or contains no ``/``
-        characters then an empty sequence is returned, signifying the
-        root group.
+        {{netcdf group}}
 
         An alternative technique for setting the group structure is to
         set the netCDF variable name, with `nc_set_variable`, with the
         group structure delimited by ``/`` characters.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_clear_variable_groups`, `nc_variable_groups`
 
@@ -832,7 +669,7 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
         ()
 
         """
-        return self._nc_set_groups(
+        return _nc_set_groups(
             groups,
             nc_get=self.nc_get_variable,
             nc_set=self.nc_set_variable,
@@ -842,18 +679,13 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
     def nc_clear_variable_groups(self):
         """Remove the netCDF variable group hierarchy.
 
-        The group hierarchy is defined by the netCDF name. Groups are
-        delimited by ``/`` (slash) characters in the netCDF name. The
-        groups are returned, in hierarchical order, as a sequence of
-        strings. If the name is not set, or contains no ``/``
-        characters then an empty sequence is returned, signifying the
-        root group.
+        {{netcdf group}}
 
         An alternative technique for removing the group structure is
         to set the netCDF variable name, with `nc_set_variable`, with
         no ``/`` characters.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_variable_groups`, `nc_set_variable_groups`
 
@@ -886,14 +718,14 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
         ()
 
         """
-        return self._nc_clear_groups(
+        return _nc_clear_groups(
             nc_get=self.nc_get_variable,
             nc_set=self.nc_set_variable,
             nc_groups=self.nc_variable_groups,
         )
 
 
-class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
+class NetCDFSampleDimension(NetCDF):
     """Mixin class for accessing the netCDF sample dimension name.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -913,9 +745,9 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
 
             default: optional
                 Return the value of the *default* parameter if the
-                netCDF sample dimension name has not been set. If set
-                to an `Exception` instance then it will be raised
-                instead.
+                netCDF sample dimension name has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -944,7 +776,8 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
         except KeyError:
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no netCDF sample dimension name",
+                f"{self.__class__.__name__!r} has no "
+                "netCDF sample dimension name",
             )
 
     def nc_get_sample_dimension(self, default=ValueError()):
@@ -959,9 +792,9 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
 
             default: optional
                 Return the value of the *default* parameter if the
-                netCDF sample dimension name has not been set. If set
-                to an `Exception` instance then it will be raised
-                instead.
+                netCDF sample dimension name has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -990,7 +823,8 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
         except KeyError:
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no netCDF sample dimension name",
+                f"{self.__class__.__name__!r} has no "
+                "netCDF sample dimension name",
             )
 
     def nc_has_sample_dimension(self):
@@ -1091,14 +925,9 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
     def nc_sample_dimension_groups(self):
         """Return the netCDF dimension group hierarchy.
 
-        The group hierarchy is defined by the netCDF name. Groups are
-        delimited by ``/`` (slash) characters in the netCDF name. The
-        groups are returned, in hierarchical order, as a sequence of
-        strings. If the name is not set, or contains no ``/``
-        characters then an empty sequence is returned, signifying the
-        root group.
+        {{netcdf group}}
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_clear_sample_dimension_groups`,
                      `nc_set_sample_dimension_groups`
@@ -1132,22 +961,18 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
         ()
 
         """
-        return self._nc_groups(nc_get=self.nc_get_sample_dimension)
+        return _nc_groups(nc_get=self.nc_get_sample_dimension)
 
     def nc_set_sample_dimension_groups(self, groups):
         """Set the netCDF dimension group hierarchy.
 
-        The group hierarchy is defined by the netCDF name. Groups are
-        delimited by ``/`` (slash) characters in the netCDF name. The
-        groups are returned, in hierarchical order, as a sequence of
-        strings. If the name is not set, or contains no ``/`` characters
-        then an empty sequence is returned, signifying the root group.
+        {{netcdf group}}
 
         An alternative technique for setting the group structure is to set
         the netCDF dimension name, with `nc_set_sample_dimension`, with
         the group structure delimited by ``/`` characters.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_clear_sample_dimension_groups`,
                      `nc_sample_dimension_groups`
@@ -1186,7 +1011,7 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
         ()
 
         """
-        return self._nc_set_groups(
+        return _nc_set_groups(
             groups,
             nc_get=self.nc_get_sample_dimension,
             nc_set=self.nc_set_sample_dimension,
@@ -1196,17 +1021,13 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
     def nc_clear_sample_dimension_groups(self):
         """Remove the netCDF dimension group hierarchy.
 
-        The group hierarchy is defined by the netCDF name. Groups are
-        delimited by ``/`` (slash) characters in the netCDF name. The
-        groups are returned, in hierarchical order, as a sequence of
-        strings. If the name is not set, or contains no ``/`` characters
-        then an empty sequence is returned, signifying the root group.
+        {{netcdf group}}
 
         An alternative technique for removing the group structure is to
         set the netCDF dimension name, with `nc_set_sample_dimension`,
         with no ``/`` characters.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_sample_dimension_groups`,
                      `nc_set_sample_dimension_groups`
@@ -1240,7 +1061,7 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
         ()
 
         """
-        return self._nc_clear_groups(
+        return _nc_clear_groups(
             nc_get=self.nc_get_sample_dimension,
             nc_set=self.nc_set_sample_dimension,
             nc_groups=self.nc_sample_dimension_groups,
@@ -1257,23 +1078,13 @@ class NetCDFGlobalAttributes(NetCDF):
     def nc_global_attributes(self, values=False):
         """Returns properties to write as netCDF global attributes.
 
-        When multiple field constructs are being written to the same file,
-        it is only possible to create a netCDF global attribute from a
-        property that has identical values for each field construct. If
-        any field construct's property has a different value then the
-        property will not be written as a netCDF global attribute, even if
-        it has been selected as such, but will appear instead as
-        attributes on the netCDF data variables corresponding to each
-        field construct.
-
-        The standard description-of-file-contents properties are always
-        written as netCDF global attributes, if possible, so selecting
-        them is optional.
+        {{netcdf global}}
 
         .. versionadded:: (cfdm) 1.7.0
 
         .. seealso:: `write`, `nc_clear_global_attributes`,
-                     `nc_set_global_attribute`, `nc_set_global_attributes`
+                     `nc_set_global_attribute`,
+                     `nc_set_global_attributes`
 
         :Parameters:
 
@@ -1329,18 +1140,7 @@ class NetCDFGlobalAttributes(NetCDF):
     def nc_clear_global_attributes(self):
         """Removes properties to write as netCDF global attributes.
 
-        When multiple field constructs are being written to the same
-        file, it is only possible to create a netCDF global attribute
-        from a property that has identical values for each field
-        construct. If any field construct's property has a different
-        value then the property will not be written as a netCDF global
-        attribute, even if it has been selected as such, but will
-        appear instead as attributes on the netCDF data variables
-        corresponding to each field construct.
-
-        The standard description-of-file-contents properties are
-        always written as netCDF global attributes, if possible, so
-        selecting them is optional.
+        {{netcdf global}}
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -1381,18 +1181,7 @@ class NetCDFGlobalAttributes(NetCDF):
     def nc_set_global_attribute(self, prop, value=None):
         """Select a property to be written as a netCDF global attribute.
 
-        When multiple field constructs are being written to the same file,
-        it is only possible to create a netCDF global attribute from a
-        property that has identical values for each field construct. If
-        any field construct's property has a different value then the
-        property will not be written as a netCDF global attribute, even if
-        it has been selected as such, but will appear instead as
-        attributes on the netCDF data variables corresponding to each
-        field construct.
-
-        The standard description-of-file-contents properties are always
-        written as netCDF global attributes, if possible, so selecting
-        them is optional.
+        {{netcdf global}}
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -1446,18 +1235,7 @@ class NetCDFGlobalAttributes(NetCDF):
     def nc_set_global_attributes(self, properties, copy=True):
         """Set properties to be written as netCDF global attributes.
 
-        When multiple field constructs are being written to the same
-        file, it is only possible to create a netCDF global attribute
-        from a property that has identical values for each field
-        construct. If any field construct's property has a different
-        value then the property will not be written as a netCDF global
-        attribute, even if it has been selected as such, but will
-        appear instead as attributes on the netCDF data variables
-        corresponding to each field construct.
-
-        The standard description-of-file-contents properties are
-        always written as netCDF global attributes, if possible, so
-        selecting them is optional.
+        {{netcdf global}}
 
         .. versionadded:: (cfdm) 1.7.10
 
@@ -1521,14 +1299,14 @@ class NetCDFGlobalAttributes(NetCDF):
 class NetCDFGroupAttributes(NetCDF):
     """Mixin class for accessing netCDF group attributes.
 
-    .. versionadded:: (cfdm) 1.8.6
+    .. versionadded:: (cfdm) 1.8.6.0
 
     """
 
     def nc_group_attributes(self, values=False):
         """Returns properties to write as netCDF group attributes.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `write`, `nc_clear_group_attributes`,
                      `nc_set_group_attribute`, `nc_set_group_attributes`
@@ -1572,7 +1350,7 @@ class NetCDFGroupAttributes(NetCDF):
         out = out.copy()
 
         if values:
-            # Replace a None value with the value from the variable
+            # kReplace a None value with the value from the variable
             # properties
             properties = self.properties()
             if properties:
@@ -1585,7 +1363,7 @@ class NetCDFGroupAttributes(NetCDF):
     def nc_clear_group_attributes(self):
         """Removes properties to write as netCDF group attributes.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `write`, `nc_group_attributes`,
                      `nc_set_group_attribute`, `nc_set_group_attributes`
@@ -1626,7 +1404,7 @@ class NetCDFGroupAttributes(NetCDF):
     def nc_set_group_attribute(self, prop, value=None):
         """Select a property to be written as a netCDF group attribute.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `write`, `nc_group_attributes`,
                      `nc_clear_group_attributes`,
@@ -1680,7 +1458,7 @@ class NetCDFGroupAttributes(NetCDF):
     def nc_set_group_attributes(self, properties, copy=True):
         """Set properties to be written as netCDF group attributes.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `write`, `nc_clear_group_attributes`,
                      `nc_group_attributes`, `nc_set_group_attribute`
@@ -1783,7 +1561,7 @@ class NetCDFUnlimitedDimensions(NetCDF):
 
         """
         raise DeprecationError(
-            "Field.nc_unlimited_dimensions was deprecated at version 1.7.4 "
+            "'nc_unlimited_dimensions' was deprecated at version 1.7.4 "
             "and is no longer available. Use DomainAxis.nc_is_unlimited "
             "instead."
         )
@@ -1832,9 +1610,9 @@ class NetCDFUnlimitedDimensions(NetCDF):
 
         """
         raise DeprecationError(
-            "Field.nc_set_unlimited_dimensions was deprecated at version "
-            "1.7.4 and is no longer available."
-            "Use DomainAxis.nc_set_unlimited instead."
+            "'nc_set_unlimited_dimensions' was deprecated at version "
+            "1.7.4 and is no longer available. "
+            "Use DomainAxis.nc_set_unlimited instead"
         )
 
     def nc_clear_unlimited_dimensions(self):
@@ -1869,8 +1647,8 @@ class NetCDFUnlimitedDimensions(NetCDF):
 
         """
         raise DeprecationError(
-            "Field.nc_clear_unlimited_dimensions was deprecated at version "
-            "1.7.4 and is no longer available."
+            "'nc_clear_unlimited_dimensions' was deprecated at version "
+            "1.7.4 and is no longer available. "
             "Use DomainAxis.nc_set_unlimited instead."
         )
 
@@ -1936,7 +1714,7 @@ class NetCDFExternal(NetCDF):
         self._get_component("netcdf")["external"] = bool(external)
 
 
-class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
+class NetCDFGeometry(NetCDF):
     """Mixin to access the netCDF geometry container variable name.
 
     .. versionadded:: (cfdm) 1.8.0
@@ -1955,9 +1733,10 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if the netCDF
-                dimension name has not been set. If set to an `Exception`
-                instance then it will be raised instead.
+                Return the value of the *default* parameter if the
+                netCDF dimension name has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -2002,8 +1781,9 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
 
             default: optional
                 Return the value of the *default* parameter if the
-                netCDF dimension name has not been set. If set to an
-                `Exception` instance then it will be raised instead.
+                netCDF dimension name has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -2032,7 +1812,8 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
         except KeyError:
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no netCDF geometry variable name",
+                f"{self.__class__.__name__!r} has no "
+                "netCDF geometry variable name",
             )
 
     def nc_has_geometry_variable(self):
@@ -2133,17 +1914,12 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
     def nc_geometry_variable_groups(self):
         """Return the netCDF geometry variable group hierarchy.
 
-        The group hierarchy is defined by the netCDF name. Groups are
-        delimited by ``/`` (slash) characters in the netCDF name. The
-        groups are returned, in hierarchical order, as a sequence of
-        strings. If the name is not set, or contains no ``/``
-        characters then an empty sequence is returned, signifying the
-        root group.
+        {{netcdf group}}
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_clear_geometry_variable_groups`,
-        `nc_set_geometry_variable_groups`
+                     `nc_set_geometry_variable_groups`
 
         :Returns:
 
@@ -2174,23 +1950,18 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
         ()
 
         """
-        return self._nc_groups(nc_get=self.nc_get_geometry_variable)
+        return _nc_groups(nc_get=self.nc_get_geometry_variable)
 
     def nc_set_geometry_variable_groups(self, groups):
         """Set the netCDF geometry variable group hierarchy.
 
-        The group hierarchy is defined by the netCDF name. Groups are
-        delimited by ``/`` (slash) characters in the netCDF name. The
-        groups are returned, in hierarchical order, as a sequence of
-        strings. If the name is not set, or contains no ``/``
-        characters then an empty sequence is returned, signifying the
-        root group.
+        {{netcdf group}}
 
         An alternative technique for setting the group structure is to
         set the netCDF variable name, with `nc_set_geometry_variable`,
         with the group structure delimited by ``/`` characters.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_clear_geometry_variable_groups`,
                      `nc_geometry_variable_groups`
@@ -2229,7 +2000,7 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
         ()
 
         """
-        return self._nc_set_groups(
+        return _nc_set_groups(
             groups,
             nc_get=self.nc_get_geometry_variable,
             nc_set=self.nc_set_geometry_variable,
@@ -2239,18 +2010,13 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
     def nc_clear_geometry_variable_groups(self):
         """Remove the netCDF geometry variable group hierarchy.
 
-        The group hierarchy is defined by the netCDF name. Groups are
-        delimited by ``/`` (slash) characters in the netCDF name. The
-        groups are returned, in hierarchical order, as a sequence of
-        strings. If the name is not set, or contains no ``/``
-        characters then an empty sequence is returned, signifying the
-        root group.
+        {{netcdf group}}
 
         An alternative technique for removing the group structure is
         to set the netCDF variable name, with
         `nc_set_geometry_variable`, with no ``/`` characters.
 
-        .. versionadded:: (cfdm) 1.8.6
+        .. versionadded:: (cfdm) 1.8.6.0
 
         .. seealso:: `nc_geometry_variable_groups`,
                      `nc_set_geometry_variable_groups`
@@ -2284,7 +2050,7 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
         ()
 
         """
-        return self._nc_clear_groups(
+        return _nc_clear_groups(
             nc_get=self.nc_get_geometry_variable,
             nc_set=self.nc_set_geometry_variable,
             nc_groups=self.nc_geometry_variable_groups,
@@ -2301,15 +2067,16 @@ class NetCDFHDF5(NetCDF):
     def nc_hdf5_chunksizes(self):
         """Return the HDF5 chunksizes for the data.
 
-        .. note:: Chunksizes are cleared from the output of methods that
-                  change the data shape.
+        .. note:: Chunksizes are cleared from the output of methods
+                  that change the data shape.
 
-        .. note:: Chunksizes are ignored for netCDF3 files that do not use
-                  HDF5.
+        .. note:: Chunksizes are ignored for netCDF3 files that do not
+                  use HDF5.
 
         .. versionadded:: (cfdm) 1.7.2
 
-        .. seealso:: `nc_clear_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`
+        .. seealso:: `nc_clear_hdf5_chunksizes`,
+                     `nc_set_hdf5_chunksizes`
 
         :Returns:
 
@@ -2494,3 +2261,995 @@ class NetCDFUnlimitedDimension(NetCDF):
 
         """
         self._get_component("netcdf")["unlimited"] = bool(value)
+
+
+class NetCDFComponents(NetCDF):
+    """Mixin class for netCDF fetaure common to many constructs.
+
+    Accesses netCDF names consistently across multiple metadata
+    constructs.
+
+    Assumes that the mixin classes `NetCDFDimension` and
+    `NetCDFVariable` have also been subclassed.
+
+    Assumes that the methods `_get_data_compression_variables` and
+    `_get_coordinate_geometry_variables` have been defined elsewhere.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    """
+
+    def nc_set_component_variable(self, component, value):
+        """Set the netCDF variable name for components.
+
+        Sets the netCDF variable name for all components of a given
+        type.
+
+        Some components exist within multiple constructs, but when written
+        to a netCDF dataset the netCDF names associated with such
+        components will be arbitrarily taken from one of them. The netCDF
+        names can be set on all such occurences individually, or
+        preferably by using this method to ensure consistency across all
+        such components.
+
+        .. versionadded:: (cfdm) 1.8.6.0
+
+        .. seealso:: `nc_del_component_variable`,
+                     `nc_set_component_variable_groups`,
+                     `nc_clear_component_variable_groups`
+
+        :Parameters:
+
+            component: `str`
+                Specify the component type. One of:
+
+                =====================  ===================================
+                *component*            Description
+                =====================  ===================================
+                ``'interior_ring'``    Interior ring variables for
+                                       geometry coordinates
+
+
+                ``'node_count'``       Node count variables for geometry
+                                       coordinates
+
+                ``'part_node_count'``  Part node count variables for
+                                       geometry coordinates
+
+                ``'count'``            Count variables for contiguous
+                                       ragged arrays
+
+                ``'index'``            Index variables for indexed
+                                       ragged arrays
+
+                ``'list'``             List variables for compression by
+                                       gathering
+                =====================  ===================================
+
+            value: `str`
+                The netCDF variable name to be set for each component.
+
+        :Returns:
+
+            `None`
+
+        **Examples:**
+
+        >>> f.nc_set_component_variable('interior_ring', 'interiorring_1')
+
+        """
+        if component in ("count", "index", "list"):
+            variables = self._get_data_compression_variables(component)
+        elif component in ("interior_ring", "node_count", "part_node_count"):
+            variables = self._get_coordinate_geometry_variables(component)
+        else:
+            raise ValueError(f"Invalid component: {component!r}")
+
+        for v in variables:
+            v.nc_set_variable(value)
+
+    def nc_del_component_variable(self, component):
+        """Remove the netCDF variable name of components.
+
+        Removes the netCDF variable name for all components of a given
+        type.
+
+        Some components exist within multiple constructs, but when
+        written to a netCDF dataset the netCDF names associated with
+        such components will be arbitrarily taken from one of
+        them. The netCDF names can be set on all such occurences
+        individually, or preferably by using this method to ensure
+        consistency across all such components.
+
+        .. versionadded:: (cfdm) 1.8.6.0
+
+        .. seealso:: `nc_set_component_variable`,
+                     `nc_set_component_variable_groups`,
+                     `nc_clear_component_variable_groups`
+
+        :Parameters:
+
+            component: `str`
+                Specify the component type. One of:
+
+                =====================  ===================================
+                *component*            Description
+                =====================  ===================================
+                ``'interior_ring'``    Interior ring variables for
+                                       geometry coordinates
+
+                ``'node_count'``       Node count variables for geometry
+                                       coordinates
+
+                ``'part_node_count'``  Part node count variables for
+                                       geometry coordinates
+
+                ``'count'``            Count variables for contiguous
+                                       ragged arrays
+
+                ``'index'``            Index variables for indexed
+                                       ragged arrays
+
+                ``'list'``             List variables for compression by
+                                       gathering
+
+                =====================  ===================================
+
+        :Returns:
+
+            `None`
+
+        **Examples:**
+
+        >>> f.nc_del_component_variable('interior_ring')
+
+        """
+        if component in ("count", "index", "list"):
+            variables = self._get_data_compression_variables(component)
+        elif component in ("interior_ring", "node_count", "part_node_count"):
+            variables = self._get_coordinate_geometry_variables(component)
+        else:
+            raise ValueError(f"Invalid component: {component!r}")
+
+        for v in variables:
+            v.nc_del_variable(None)
+
+    def nc_set_component_variable_groups(self, component, groups):
+        """Set the netCDF variable groups of components.
+
+        Sets the netCDF variable groups for all components of a given
+        type.
+
+        Some components exist within multiple constructs, but when
+        written to a netCDF dataset the netCDF names associated with
+        such components will be arbitrarily taken from one of
+        them. The netCDF names can be set on all such occurences
+        individually, or preferably by using this method to ensure
+        consistency across all such components.
+
+        .. versionadded:: (cfdm) 1.8.6.0
+
+        .. seealso:: `nc_del_component_variable`,
+                     `nc_set_component_variable`,
+                     `nc_clear_component_variable_groups`
+
+        :Parameters:
+
+            component: `str`
+                Specify the component type. One of:
+
+                =====================  ===================================
+                *component*            Description
+                =====================  ===================================
+                ``'interior_ring'``    Interior ring variables for
+                                       geometry coordinates
+
+                ``'node_count'``       Node count variables for geometry
+                                       coordinates
+
+                ``'part_node_count'``  Part node count variables for
+                                       geometry coordinates
+
+                ``'count'``            Count variables for contiguous
+                                       ragged arrays
+
+                ``'index'``            Index variables for indexed
+                                       ragged arrays
+
+                ``'list'``             List variables for compression by
+                                       gathering
+                =====================  ===================================
+
+            groups: sequence of `str`
+                The new group structure for each component.
+
+        :Returns:
+
+            `None`
+
+        **Examples:**
+
+        >>> f.nc_set_component_variable_groups('interior_ring', ['forecast'])
+
+        """
+        if component in ("count", "index", "list"):
+            variables = self._get_data_compression_variables(component)
+        elif component in ("interior_ring", "node_count", "part_node_count"):
+            variables = self._get_coordinate_geometry_variables(component)
+        else:
+            raise ValueError(f"Invalid component: {component!r}")
+
+        for v in variables:
+            v.nc_set_variable_groups(groups)
+
+    def nc_clear_component_variable_groups(self, component):
+        """Remove the netCDF variable groups of components.
+
+        Removes the netCDF variable groups for all components of a given
+        type.
+
+        Some components exist within multiple constructs, but when
+        written to a netCDF dataset the netCDF names associated with
+        such components will be arbitrarily taken from one of
+        them. The netCDF names can be set on all such occurences
+        individually, or preferably by using this method to ensure
+        consistency across all such components.
+
+        .. versionadded:: (cfdm) 1.8.6.0
+
+        .. seealso:: `nc_del_component_variable`,
+                     `nc_set_component_variable`,
+                     `nc_set_component_variable_groups`
+
+        :Parameters:
+
+            component: `str`
+                Specify the component type. One of:
+
+                =====================  ===================================
+                *component*            Description
+                =====================  ===================================
+                ``'interior_ring'``    Interior ring variables for
+                                       geometry coordinates
+
+                ``'node_count'``       Node count variables for geometry
+                                       coordinates
+
+                ``'part_node_count'``  Part node count variables for
+                                       geometry coordinates
+
+                ``'count'``            Count variables for contiguous
+                                       ragged arrays
+
+                ``'index'``            Index variables for indexed
+                                       ragged arrays
+
+                ``'list'``             List variables for compression by
+                                       gathering
+                =====================  ===================================
+
+        :Returns:
+
+            `None`
+
+        **Examples:**
+
+        >>> f.nc_clear_component_variable_groups('interior_ring')
+
+        """
+        if component in ("count", "index", "list"):
+            variables = self._get_data_compression_variables(component)
+        elif component in ("interior_ring", "node_count", "part_node_count"):
+            variables = self._get_coordinate_geometry_variables(component)
+        else:
+            raise ValueError(f"Invalid component: {component!r}")
+
+        for v in variables:
+            v.nc_clear_variable_groups()
+
+    def nc_set_component_dimension(self, component, value):
+        """Set the netCDF dimension name of components.
+
+        Sets the netCDF dimension name for all components of a given
+        type.
+
+        Some components exist within multiple constructs, but when written
+        to a netCDF dataset the netCDF names associated with such
+        components will be arbitrarily taken from one of them. The netCDF
+        names can be set on all such occurences individually, or
+        preferably by using this method to ensure consistency across all
+        such components.
+
+        .. versionadded:: (cfdm) 1.8.6.0
+
+        .. seealso:: `nc_del_component_dimension`,
+                     `nc_set_component_dimension_groups`,
+                     `nc_clear_component_dimension_groups`
+
+        :Parameters:
+
+            component: `str`
+                Specify the component type. One of:
+
+                =====================  ===================================
+                *component*            Description
+                =====================  ===================================
+                ``'interior_ring'``    Interior ring variables for
+                                       geometry coordinates
+
+                ``'part_node_count'``  Part node count variables for
+                                       geometry coordinates
+
+                ``'count'``            Count variables for contiguous
+                                       ragged arrays
+
+                ``'index'``            Index variables for indexed
+                                       ragged arrays
+                =====================  ===================================
+
+            value: `str`
+                The netCDF dimension name to be set for each component.
+
+        :Returns:
+
+            `None`
+
+        **Examples:**
+
+        >>> f.nc_set_component_dimension('interior_ring', 'part')
+
+        """
+        if component in ("count", "index"):
+            variables = self._get_data_compression_variables(component)
+        elif component in ("interior_ring", "part_node_count"):
+            variables = self._get_coordinate_geometry_variables(component)
+        else:
+            raise ValueError(f"Invalid component: {component!r}")
+
+        for v in variables:
+            v.nc_set_dimension(value)
+
+    def nc_del_component_dimension(self, component):
+        """Remove the netCDF dimension name of components.
+
+        Removes the netCDF dimension name for all components of a
+        given type.
+
+        Some components exist within multiple constructs, but when
+        written to a netCDF dataset the netCDF names associated with
+        such components will be arbitrarily taken from one of
+        them. The netCDF names can be set on all such occurences
+        individually, or preferably by using this method to ensure
+        consistency across all such components.
+
+        .. versionadded:: (cfdm) 1.8.6.0
+
+        .. seealso:: `nc_set_component_dimension`,
+                     `nc_set_component_dimension_groups`,
+                     `nc_clear_component_dimension_groups`
+
+        :Parameters:
+
+            component: `str`
+                Specify the component type. One of:
+
+                =====================  ===================================
+                *component*            Description
+                =====================  ===================================
+                ``'interior_ring'``    Interior ring variables for
+                                       geometry coordinates
+
+                ``'part_node_count'``  Part node count variables for
+                                       geometry coordinates
+
+                ``'count'``            Count variables for contiguous
+                                       ragged arrays
+
+                ``'index'``            Index variables for indexed
+                                       ragged arrays
+                =====================  ===================================
+
+        :Returns:
+
+            `None`
+
+        **Examples:**
+
+        >>> f.nc_del_component_dimension('interior_ring')
+
+        """
+        if component in ("count", "index"):
+            variables = self._get_data_compression_variables(component)
+        elif component in ("interior_ring", "part_node_count"):
+            variables = self._get_coordinate_geometry_variables(component)
+        else:
+            raise ValueError(f"Invalid component: {component!r}")
+
+        for v in variables:
+            v.nc_del_dimension(None)
+
+    def nc_set_component_dimension_groups(self, component, groups):
+        """Set the netCDF dimension groups of components.
+
+        Sets the netCDF dimension groups for all components of a given
+        type.
+
+        Some components exist within multiple constructs, but when
+        written to a netCDF dataset the netCDF names associated with
+        such components will be arbitrarily taken from one of
+        them. The netCDF names can be set on all such occurences
+        individually, or preferably by using this method to ensure
+        consistency across all such components.
+
+        .. versionadded:: (cfdm) 1.8.6.0
+
+        .. seealso:: `nc_del_component_dimension`,
+                     `nc_set_component_dimension`,
+                     `nc_clear_component_dimension_groups`
+
+        :Parameters:
+
+            component: `str`
+                Specify the component type. One of:
+
+                =====================  ===================================
+                *component*            Description
+                =====================  ===================================
+                ``'interior_ring'``    Interior ring variables for
+                                       geometry coordinates
+
+                ``'part_node_count'``  Part node count variables for
+                                       geometry coordinates
+
+                ``'count'``            Count variables for contiguous
+                                       ragged arrays
+
+                ``'index'``            Index variables for indexed
+                                       ragged arrays
+                =====================  ===================================
+
+            groups: sequence of `str`
+                The new group structure for each component.
+
+        :Returns:
+
+            `None`
+
+        **Examples:**
+
+        >>> f.nc_set_component_dimension_groups('interior_ring', ['forecast'])
+
+        """
+        if component in ("count", "index"):
+            variables = self._get_data_compression_variables(component)
+        elif component in ("interior_ring", "part_node_count"):
+            variables = self._get_coordinate_geometry_variables(component)
+        else:
+            raise ValueError(f"Invalid component: {component!r}")
+
+        for v in variables:
+            v.nc_set_dimension_groups(groups)
+
+    def nc_clear_component_dimension_groups(self, component):
+        """Remove the netCDF dimension groups of components.
+
+        Removes the netCDF dimension groups for all components of a
+        given type.
+
+        Some components exist within multiple constructs, but when written
+        to a netCDF dataset the netCDF names associated with such
+        components will be arbitrarily taken from one of them. The netCDF
+        names can be set on all such occurences individually, or
+        preferably by using this method to ensure consistency across all
+        such components.
+
+        .. versionadded:: (cfdm) 1.8.6.0
+
+        .. seealso:: `nc_del_component_dimension`,
+                     `nc_set_component_dimension`,
+                     `nc_set_component_dimension_groups`
+
+        :Parameters:
+
+            component: `str`
+                Specify the component type. One of:
+
+                =====================  ===================================
+                *component*            Description
+                =====================  ===================================
+                ``'interior_ring'``    Interior ring variables for
+                                       geometry coordinates
+
+                ``'part_node_count'``  Part node count variables for
+                                       geometry coordinates
+
+                ``'count'``            Count variables for contiguous
+                                       ragged arrays
+
+                ``'index'``            Index variables for indexed
+                                       ragged arrays
+                =====================  ===================================
+
+        :Returns:
+
+            `None`
+
+        **Examples:**
+
+        >>> f.nc_clear_component_dimension_groups('interior_ring')
+
+        """
+        if component in ("count", "index"):
+            variables = self._get_data_compression_variables(component)
+        elif component in ("interior_ring", "part_node_count"):
+            variables = self._get_coordinate_geometry_variables(component)
+        else:
+            raise ValueError(f"Invalid component: {component!r}")
+
+        for v in variables:
+            v.nc_clear_dimension_groups()
+
+    def nc_set_component_sample_dimension(self, component, value):
+        """Set the netCDF sample dimension name of components.
+
+        Sets the netCDF sample dimension name for all components of a
+        given type.
+
+        Some components exist within multiple constructs, but when
+        written to a netCDF dataset the netCDF names associated with
+        such components will be arbitrarily taken from one of
+        them. The netCDF names can be set on all such occurences
+        individually, or preferably by using this method to ensure
+        consistency across all such components.
+
+        .. versionadded:: (cfdm) 1.8.6.0
+
+        .. seealso:: `nc_del_component_sample_dimension`,
+                     `nc_set_component_sample_dimension_groups`,
+                     `nc_clear_component_sample_dimension_groups`
+
+        :Parameters:
+
+            component: `str`
+                Specify the component type. One of:
+
+                =====================  ===================================
+                *component*            Description
+                =====================  ===================================
+                ``'count'``            Count variables for contiguous
+                                       ragged arrays
+
+                ``'index'``            Index variables for indexed
+                                       ragged arrays
+                =====================  ===================================
+
+            value: `str`
+                The netCDF sample_dimension name to be set for each
+                component.
+
+        :Returns:
+
+            `None`
+
+        **Examples:**
+
+        >>> f.nc_set_component_sample_dimension('count', 'obs')
+
+        """
+        if component in ("count", "index"):
+            variables = self._get_data_compression_variables(component)
+        else:
+            raise ValueError(f"Invalid component: {component!r}")
+
+        for v in variables:
+            v.nc_set_sample_dimension(value)
+
+    def nc_del_component_sample_dimension(self, component):
+        """Remove the netCDF sample dimension name of components.
+
+        Removes the netCDF sample dimension name for all components of
+        a given type.
+
+        Some components exist within multiple constructs, but when written
+        to a netCDF dataset the netCDF names associated with such
+        components will be arbitrarily taken from one of them. The netCDF
+        names can be set on all such occurences individually, or
+        preferably by using this method to ensure consistency across all
+        such components.
+
+        .. versionadded:: (cfdm) 1.8.6.0
+
+        .. seealso:: `nc_set_component_sample_dimension`,
+                     `nc_set_component_sample_dimension_groups`,
+                     `nc_clear_component_sample_dimension_groups`
+
+        :Parameters:
+
+            component: `str`
+                Specify the component type. One of:
+
+                =====================  ===================================
+                *component*            Description
+                =====================  ===================================
+                ``'count'``            Count variables for contiguous
+                                       ragged arrays
+
+                ``'index'``            Index variables for indexed
+                                       ragged arrays
+                =====================  ===================================
+
+        :Returns:
+
+            `None`
+
+        **Examples:**
+
+        >>> f.nc_del_component_sample_dimension('count')
+
+        """
+        if component in ("count", "index"):
+            variables = self._get_data_compression_variables(component)
+        else:
+            raise ValueError(f"Invalid component: {component!r}")
+
+        for v in variables:
+            v.nc_del_sample_dimension(None)
+
+    def nc_set_component_sample_dimension_groups(self, component, groups):
+        """Set the netCDF sample dimension groups of components.
+
+        Sets the netCDF sample dimension groups for all components of
+        a given type.
+
+        Some components exist within multiple constructs, but when
+        written to a netCDF dataset the netCDF names associated with
+        such components will be arbitrarily taken from one of
+        them. The netCDF names can be set on all such occurences
+        individually, or preferably by using this method to ensure
+        consistency across all such components.
+
+        .. versionadded:: (cfdm) 1.8.6.0
+
+        .. seealso:: `nc_del_component_sample_dimension`,
+                     `nc_set_component_sample_dimension`,
+                     `nc_clear_component_sample_dimension_groups`
+
+        :Parameters:
+
+            component: `str`
+                Specify the component type. One of:
+
+                =====================  ===================================
+                *component*            Description
+                =====================  ===================================
+                ``'count'``            Count variables for contiguous
+                                       ragged arrays
+
+                ``'index'``            Index variables for indexed
+                                       ragged arrays
+                =====================  ===================================
+
+            groups: sequence of `str`
+                The new group structure for each component.
+
+        :Returns:
+
+            `None`
+
+        **Examples:**
+
+        >>> f.nc_set_component_sample_dimension_groups('count', ['forecast'])
+
+        """
+        if component in ("count", "index"):
+            variables = self._get_data_compression_variables(component)
+        else:
+            raise ValueError(f"Invalid component: {component!r}")
+
+        for v in variables:
+            v.nc_set_sample_dimension_groups(groups)
+
+    def nc_clear_component_sample_dimension_groups(self, component):
+        """Remove the netCDF sample dimension groups of components.
+
+        Removes the netCDF sample dimension groups for all components
+        of a given type.
+
+        Some components exist within multiple constructs, but when
+        written to a netCDF dataset the netCDF names associated with
+        such components will be arbitrarily taken from one of
+        them. The netCDF names can be set on all such occurences
+        individually, or preferably by using this method to ensure
+        consistency across all such components.
+
+        .. versionadded:: (cfdm) 1.8.6.0
+
+        .. seealso:: `nc_del_component_sample_dimension`,
+                     `nc_set_component_sample_dimension`,
+                     `nc_set_component_sample_dimension_groups`
+
+        :Parameters:
+
+            component: `str`
+                Specify the component type. One of:
+
+                =====================  ===================================
+                *component*            Description
+                =====================  ===================================
+                ``'count'``            Count variables for contiguous
+                                       ragged arrays
+
+                ``'index'``            Index variables for indexed
+                                       ragged arrays
+                =====================  ===================================
+
+        :Returns:
+
+            `None`
+
+        **Examples:**
+
+        >>> f.nc_del_component_sample_dimension_groups('count')
+
+        """
+        if component in ("count", "index"):
+            variables = self._get_data_compression_variables(component)
+        else:
+            raise ValueError(f"Invalid component: {component!r}")
+
+        for v in variables:
+            v.nc_clear_sample_dimension_groups()
+
+
+class NetCDFUnreferenced:
+    """Mixin class for constructs of unreferenced netCDF variables.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    """
+
+    def _set_dataset_compliance(self, value, copy=True):
+        """Set the dataset compliance report.
+
+        Set the report of problems encountered whilst reading the
+        construct from a dataset.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `dataset_compliance`
+
+        :Parameters:
+
+            value: `dict`
+               The value of the ``dataset_compliance`` component. This
+               will be deep copied.
+
+            copy: `bool`, optional
+                If False then the compliance report dictionary is not
+                copied prior to insertion.
+
+        :Returns:
+
+            `None`
+
+        **Examples:**
+
+        """
+        self._set_component("dataset_compliance", value, copy=copy)
+
+    def dataset_compliance(self, display=False):
+        """Return the dataset compliance report.
+
+        A report of problems encountered whilst reading the construct
+        from a dataset.
+
+        If the dataset is partially CF-compliant to the extent that it is
+        not possible to unambiguously map an element of the netCDF dataset
+        to an element of the CF data model, then a construct is still
+        returned by the `read` function, but may be incomplete.
+
+        Such "structural" non-compliance would occur, for example, if the
+        ``coordinates`` attribute of a CF-netCDF data variable refers to
+        another variable that does not exist, or refers to a variable that
+        spans a netCDF dimension that does not apply to the data variable.
+
+        Other types of non-compliance are not checked, such whether or not
+        controlled vocabularies have been adhered to.
+
+        When a dictionary is returned, the compliance report may be
+        updated by changing the dictionary in-place.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `{{package}}.read`, `_set_dataset_compliance`
+
+        :Parameters:
+
+            display: `bool`, optional
+                If True print the compliance report. By default the report
+                is returned as a dictionary.
+
+        :Returns:
+
+            `None` or `dict`
+                The report. If *display* is True then the report is
+                printed and `None` is returned. Otherwise the report is
+                returned as a dictionary.
+
+        **Examples:**
+
+        If no problems were encountered, an empty dictionary is returned:
+
+        >>> f = {{package}}.example_field(1)
+        >>> cfdm.write(f, 'example.nc')
+        >>> g = {{package}}.read('example.nc')[0]
+        >>> g.dataset_compliance()
+        {}
+
+        """
+        d = self._get_component("dataset_compliance", {})
+
+        if not display:
+            return d
+
+        if not d:
+            print(d)
+            return
+
+        for key0, value0 in d.items():
+            print(f"{{{key0!r}:")
+            print(f"    CF version: {value0['CF version']!r},")
+            print(f"    dimensions: {value0['dimensions']!r},")
+            print("    non-compliance: {")
+            for key1, value1 in sorted(value0["non-compliance"].items()):
+                for x in value1:
+                    print(f"        {key1!r}: [")
+                    print(
+                        "            {{{0}}},".format(
+                            "\n             ".join(
+                                [
+                                    f"{key2!r}: {value2!r},"
+                                    for key2, value2 in sorted(x.items())
+                                ]
+                            )
+                        )
+                    )
+
+                print("        ],")
+
+            print("    },")
+
+
+def _nc_groups(nc_get):
+    """Return the netCDF group hierarchy.
+
+    The group hierarchy is defined by the netCDF name. Groups are
+    delimited by ``/`` (slash) characters in the netCDF name. The
+    groups are returned, in hierarchical order, as a sequence of
+    strings. If the name is not set, or contains no ``/`` characters
+    then an empty sequence is returned, signifying the root group.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    .. seealso:: `_nc_clear_groups`, `_nc_set_groups`
+
+    :Parameters:
+
+        nc_get: function
+            The method which gets the netCDF name.
+
+    :Returns:
+
+        `tuple` of `str`
+            The group structure.
+
+    **Examples:**
+
+    See the examples in class methods which use this function.
+
+    """
+    name = nc_get(default="")
+    return tuple(name.split("/")[1:-1])
+
+
+def _nc_set_groups(groups, nc_get, nc_set, nc_groups):
+    """Set the netCDF group hierarchy.
+
+    The group hierarchy is defined by the netCDF name. Groups are
+    delimited by ``/`` (slash) characters in the netCDF name. The
+    groups are returned, in hierarchical order, as a sequence of
+    strings. If the name is not set, or contains no ``/`` characters
+    then an empty sequence is returned, signifying the root group.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    .. seealso:: `_nc_clear_groups`, `_nc_groups`
+
+    :Parameters:
+
+        groups: sequence of `str`
+            The new group structure.
+
+        nc_get: function
+            The method which gets the netCDF name.
+
+        nc_set: function
+            The method which sets the netCDF name.
+
+        nc_groups: function
+            The method which returns existing group structure.
+
+    :Returns:
+
+        `tuple` of `str`
+            The group structure prior to being reset.
+
+    **Examples:**
+
+    See the examples in class methods which use this function.
+
+    """
+    old = nc_groups()
+
+    name = nc_get(default="")
+    name = name.split("/")[-1]
+    if not name:
+        raise ValueError("Can't set groups when there is no netCDF name")
+
+    if groups:
+        for group in groups:
+            if "/" in group:
+                raise ValueError(
+                    f"Can't have '/' character in group name: {group!r}"
+                )
+
+        name = "/".join(("",) + tuple(groups) + (name,))
+
+    if name:
+        nc_set(name)
+
+    return old
+
+
+def _nc_clear_groups(nc_get, nc_set, nc_groups):
+    """Remove the netCDF group hierarchy.
+
+    The group hierarchy is defined by the netCDF name. Groups are
+    delimited by ``/`` (slash) characters in the netCDF name. The
+    groups are returned, in hierarchical order, as a sequence of
+    strings. If the name is not set, or contains no ``/`` characters
+    then an empty sequence is returned, signifying the root group.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    .. seealso:: `_nc_groups`, `_nc_set_groups`
+
+    :Parameters:
+
+        nc_get: function
+            The method which gets the netCDF name.
+
+        nc_set: function
+            The method which sets the netCDF name.
+
+        nc_groups: function
+            The method which returns existing group structure.
+
+    :Returns:
+
+        `tuple` of `str`
+            The removed group structure.
+
+    **Examples:**
+
+    See the examples in class methods which use this function.
+
+    """
+    old = nc_groups()
+
+    name = nc_get(default="")
+    name = name.split("/")[-1]
+    if name:
+        nc_set(name)
+
+    return old
