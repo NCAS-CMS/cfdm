@@ -443,7 +443,14 @@ class NetCDFWrite(IOWrite):
             # place this netCDF dimension.
             parent_group = self._parent_group(ncdim)
 
-            parent_group.createDimension(ncdim, size)
+            try:
+                parent_group.createDimension(ncdim, size)
+            except RuntimeError as error:
+                if "NetCDF: String match to name in use" in str(error):
+                    # What to do here? SLB
+                    pass
+                else:
+                    raise RuntimeError
 
         return ncdim
 
@@ -2621,6 +2628,11 @@ class NetCDFWrite(IOWrite):
 
         g = self.write_vars
 
+        # Don't ever write any variables in the 'dry run' read iteration of an
+        # append-mode write (only write in the second post-dry-run iteration).
+        if g['dry_run']:
+            return
+
         logger.info("    Writing {!r}".format(cfvar))  # pragma: no cover
 
         # ------------------------------------------------------------
@@ -2721,15 +2733,17 @@ class NetCDFWrite(IOWrite):
         except RuntimeError as error:
             error = str(error)
             if "NetCDF: String match to name in use" in error:
-                # Update the 'seen' dictionary
-                seen_updates = {
-                    'variable': cfvar,
-                    'ncvar': ncvar,
-                    'ncdims': original_ncdimensions
-                }
-                g['seen'][id(cfvar)] = seen_updates
+                # What to do here? SLB...
+                # (... probably not the below but it is at least illustrative)
+
+                # The ncvar name is in use (why wasn't it known before and in
+                # 'ncvar_names' already?) so use a new name.
+                g["ncvar_names"].add(ncvar)
+                ncvar = self._create_netcdf_variable_name(cfvar, default="???")
+                kwargs["varname"] = ncvar  # update
+                self._createVariable(**kwargs)
                 return
-            if error == (
+            elif error == (
                 "NetCDF: Not a valid data type or _FillValue " "type mismatch"
             ):
                 raise ValueError(
@@ -2739,12 +2753,10 @@ class NetCDFWrite(IOWrite):
                         cfvar.data.dtype.name, cfvar, g["netcdf"].file_format
                     )
                 )
-
-            message = "Can't create variable in {} file from {} ({})".format(
-                g["netcdf"].file_format, cfvar, error
-            )
-
-            if error == "NetCDF: NC_UNLIMITED in the wrong index":
+            elif error == "NetCDF: NC_UNLIMITED in the wrong index":
+                message = "Can't create variable in {} file from {} ({})".format(
+                    g["netcdf"].file_format, cfvar, error
+                )
                 raise RuntimeError(
                     message + ". In a {} file the unlimited dimension must "
                     "be the first (leftmost) dimension of the variable. "
@@ -2752,8 +2764,8 @@ class NetCDFWrite(IOWrite):
                         g["netcdf"].file_format
                     )
                 )
-
-            raise RuntimeError(message)
+            else:
+                raise RuntimeError(message)
 
         # ------------------------------------------------------------
         # Write attributes to the netCDF variable
@@ -3278,9 +3290,10 @@ class NetCDFWrite(IOWrite):
                     # The data array spans this domain axis, so write
                     # the dimension coordinate to the file as a
                     # coordinate variable.
-                    ncvar = self._write_dimension_coordinate(
-                        f, key, dim_coord, ncdim=ncdim, coordinates=coordinates
-                    )
+                    if not g['dry_run']:
+                        ncvar = self._write_dimension_coordinate(
+                            f, key, dim_coord, ncdim=ncdim, coordinates=coordinates
+                        )
                 else:
                     # The data array does not span this axis (and
                     # therefore the dimension coordinate must have
@@ -3292,27 +3305,28 @@ class NetCDFWrite(IOWrite):
                         )
                         >= 2
                     ):
-                        # Either A) it has been requested to not write
-                        # scalar coordinate variables; or B) there ARE
-                        # auxiliary coordinates, cell measures, domain
-                        # ancillaries or field ancillaries which span
-                        # this domain axis. Therefore write the
-                        # dimension coordinate to the file as a
-                        # coordinate variable.
-                        ncvar = self._write_dimension_coordinate(
-                            f,
-                            key,
-                            dim_coord,
-                            ncdim=ncdim,
-                            coordinates=coordinates,
-                        )
+                        if not g['dry_run']:
+                            # Either A) it has been requested to not write
+                            # scalar coordinate variables; or B) there ARE
+                            # auxiliary coordinates, cell measures, domain
+                            # ancillaries or field ancillaries which span
+                            # this domain axis. Therefore write the
+                            # dimension coordinate to the file as a
+                            # coordinate variable.
+                            ncvar = self._write_dimension_coordinate(
+                                f,
+                                key,
+                                dim_coord,
+                                ncdim=ncdim,
+                                coordinates=coordinates,
+                            )
 
                         # Expand the field's data array to include
                         # this domain axis
                         f = self.implementation.field_insert_dimension(
                             f, position=0, axis=axis
                         )
-                    else:
+                    elif not g['dry_run']:
                         # Scalar coordinate variables are being
                         # allowed; and there are NO auxiliary
                         # coordinates, cell measures, domain
@@ -3325,8 +3339,12 @@ class NetCDFWrite(IOWrite):
                         )
                 # --- End: if
 
-                found_dimension_coordinate = True
-                break
+                # If it's a 'dry run' for append moed, assume a dimension
+                # coordinate has not been found in order to run through the
+                # remaining logic below.
+                if not g["dry_run"]:
+                    found_dimension_coordinate = True
+                    break
             # --- End: for
 
             if not found_dimension_coordinate:
