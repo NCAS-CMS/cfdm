@@ -259,15 +259,14 @@ class Constructs(mixin.Container, core.Constructs):
             qualifiers = out.qualifiers()
             if "within" in qualifiers or "over" in qualifiers:
                 axes = out.get_axes(default=())
-                if len(axes) == 1 and axis not in self.filter_by_type(
+                if len(axes) == 1 and axes[0] not in self.filter_by_type(
                     "domain_axis"
                 ):
                     coordinates = {}
-                    axes = set(axes)
                     for ckey, c in self.filter_by_type(
                         "dimension_coordinate", "auxiliary_coordinate"
                     ).items():
-                        if axes != set(self.data_axes().get(ckey, ())):
+                        if axes != self.data_axes().get(ckey, ()):
                             continue
 
                         # This coordinate construct spans the deleted
@@ -283,7 +282,6 @@ class Constructs(mixin.Container, core.Constructs):
                     # time.
                     if coordinates:
                         self._set_climatology(coordinates=coordinates)
-        # --- End: if
 
         return out
 

@@ -59,7 +59,7 @@ class DomainTest(unittest.TestCase):
             _ = d.dump(display=False, _title=title)
 
     def test_Domain__init__(self):
-        d = cfdm.Domain(source="qwerty")
+        cfdm.Domain(source="qwerty")
 
     def test_Domain_equals(self):
         """TODO DOCS."""
@@ -120,10 +120,10 @@ class DomainTest(unittest.TestCase):
         d = cfdm.example_field(1).domain
 
         with self.assertRaises(ValueError):
-            x = d.creation_commands(name="c")
+            d.creation_commands(name="c")
 
         with self.assertRaises(ValueError):
-            x = d.creation_commands(name="data", data_name="data")
+            d.creation_commands(name="data", data_name="data")
 
         d.nc_set_global_attribute("foo", "bar")
         d = d.creation_commands(namespace="my_cfdm", header=True)

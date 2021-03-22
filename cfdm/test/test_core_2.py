@@ -24,18 +24,15 @@ class Core2Test(unittest.TestCase):
         a = cfdm.core.NumpyArray(numpy.array([1, 2, 3]))
 
         # __deepcopy__
-        b = copy.deepcopy(a)
+        copy.deepcopy(a)
 
         # __array__
-        b = numpy.array(a)
-        b = numpy.array(a, dtype="float")
+        numpy.array(a)
+        numpy.array(a, dtype="float")
 
     def test_core_Container(self):
         # __init__
-        a = cfdm.core.Container(source="qwerty")
-
-
-# --- End: class
+        cfdm.core.Container(source="qwerty")
 
 
 if __name__ == "__main__":

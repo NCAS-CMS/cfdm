@@ -3209,7 +3209,7 @@ class NetCDFUnreferenced:
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-    def _set_dataset_compliance(self, value):
+    def _set_dataset_compliance(self, value, copy=True):
         """Set the dataset compliance report.
 
         Set the report of problems encountered whilst reading the
@@ -3225,6 +3225,8 @@ class NetCDFUnreferenced:
                The value of the ``dataset_compliance`` component. This
                will be deep copied.
 
+            copy: TODO
+
         :Returns:
 
             `None`
@@ -3232,7 +3234,7 @@ class NetCDFUnreferenced:
         **Examples:**
 
         """
-        self._set_component("dataset_compliance", value, copy=True)
+        self._set_component("dataset_compliance", value, copy=copy)
 
     # ----------------------------------------------------------------
     # Methods

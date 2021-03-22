@@ -8,7 +8,6 @@ from . import Constructs
 from .decorators import (
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
-    _manage_log_level_via_verbosity,
     _display_or_return,
 )
 
@@ -127,7 +126,7 @@ class Domain(
 
         self._initialise_netcdf(source)
 
-        self._set_dataset_compliance(self.dataset_compliance())
+        self._set_dataset_compliance(self.dataset_compliance(), copy=False)
 
     def __repr__(self):
         """Called by the `repr` built-in function.
@@ -695,7 +694,6 @@ class Domain(
         """
         indent = "    "
         indent0 = indent * _level
-        indent1 = indent0 + indent
 
         if _create_title:
             if _title is None:
