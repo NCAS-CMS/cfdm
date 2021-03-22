@@ -51,7 +51,8 @@ class Domain(mixin.FieldDomain, abstract.Properties):
                ``properties={'long_name': 'Domain for model'}``
 
             source: optional
-                Initialise the metadata constructs from those of *source*.
+                Initialize the metadata constructs from those of
+                *source*.
 
                 {{init source}}
 
@@ -195,8 +196,9 @@ class Domain(mixin.FieldDomain, abstract.Properties):
         :Parameters:
 
             constructs: `Constructs`
-                The constructs from which to create the new domain. Cell
-                method and field ancillary constructs are ignored.
+                The constructs from which to create the new
+                domain. Cell method and field ancillary constructs are
+                ignored.
 
             copy: `bool`, optional
                 If True then deep copy the metadata constructs prior
@@ -211,7 +213,7 @@ class Domain(mixin.FieldDomain, abstract.Properties):
 
         **Examples:**
 
-        >>> f = cfdm.example_field(0)
+        >>> f = {{package}}.example_field(0)
         >>> d = {{package}}.{{class}}.fromconstructs(f.constructs)
         >>> d
         <Domain: {1, 5, 8}>

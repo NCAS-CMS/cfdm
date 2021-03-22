@@ -70,7 +70,7 @@ To install from source:
 1. Download the cfdm package from https://pypi.org/project/cfdm
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``1.8.7.0``):
+   you want to install, e.g. ``1.8.9.0``):
 
    .. code:: console
 	 
@@ -131,19 +131,29 @@ Tests are run from within the ``cfdm/test`` directory:
 
 The cfdm package requires:
 
-* `Python <https://www.python.org/>`_, version 3.6 or newer,
+* `Python <https://www.python.org/>`_, version 3.6 or newer, including
+  the latest version Python 3.9,
 
 * `numpy <http://www.numpy.org/>`_, version 1.15 or newer,
 
-* `netCDF4 <https://pypi.org/project/netCDF4/>`_, version 1.5.3 or
+* `netCDF4 <https://pypi.org/project/netCDF4/>`_, version 1.5.4 or
   newer,
 
-* `cftime <https://pypi.org/project/cftime/>`_, version 1.3.0 or
+* `cftime <https://pypi.org/project/cftime/>`_, version 1.4.1 or
   newer,
 
 * `netcdf_flattener <https://pypi.org/project/netcdf-flattener/>`_,
   version 1.2.0 or newer.
-  
+
+
+.. note::
+   Some dependencies have dropped support for Python 3.6 for their
+   newer versions, so it may be necessary to use at least Python 3.7 in
+   combination with those.
+
+   In particular, this is known to be the case if you are using `numpy` at
+   version 1.20 or above.
+
 ----
 
 .. _Code-repository:

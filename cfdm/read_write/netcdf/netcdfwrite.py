@@ -2635,6 +2635,11 @@ class NetCDFWrite(IOWrite):
         #        if g['fmt'] == 'NETCDF4' and datatype == str:
         #            fill_value = '\x00'
 
+        if data_variable:
+            lsd = g["least_significant_digit"]
+        else:
+            lsd = None
+
         # Set HDF chunksizes
         chunksizes = None
         if data is not None:
@@ -2682,6 +2687,7 @@ class NetCDFWrite(IOWrite):
             "dimensions": ncdimensions_basename,
             "endian": g["endian"],
             "chunksizes": chunksizes,
+            "least_significant_digit": lsd,
             # 'fill_value': fill_value,
         }
 

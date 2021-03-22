@@ -618,7 +618,6 @@ class FieldDomain:
             key = axes[0]
             if domain_axes.get(key):
                 keys.append(key)
-        # --- End: for
 
         keys = set(keys)
 

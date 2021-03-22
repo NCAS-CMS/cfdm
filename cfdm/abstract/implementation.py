@@ -5,7 +5,7 @@ class Implementation(metaclass=abc.ABCMeta):
     """Store an implementation of the CF data model."""
 
     def __init__(self, cf_version=None, **kwargs):
-        """Initialises the `{{class}}` instance.
+        """Initialises the `Implementation` instance.
 
         :Parameters:
 
@@ -29,6 +29,11 @@ class Implementation(metaclass=abc.ABCMeta):
 
         **Examples:**
 
+        >>> i = cfdm.Implementation()  # an abstract implementation
+        >>> i.classes()
+        {}
+
+        >>> i = cfdm.implementation()  # child CF data model implementation
         >>> sorted(i.classes())
         ['AuxiliaryCoordinate',
          'Bounds',
@@ -80,6 +85,7 @@ class Implementation(metaclass=abc.ABCMeta):
 
         **Examples:**
 
+        >>> i = cfdm.implementation()  # child CF data model implementation
         >>> Field = i.get_class('Field')
         >>> f = Field()
 
@@ -87,9 +93,7 @@ class Implementation(metaclass=abc.ABCMeta):
         try:
             return self._class[name]
         except KeyError:
-            raise ValueError(
-                "Implementation does not have class {!r}".format(name)
-            )
+            raise ValueError(f"Implementation does not have class {name!r}")
 
     def get_cf_version(self):
         """Return the CF version of the implementation.
@@ -101,6 +105,7 @@ class Implementation(metaclass=abc.ABCMeta):
 
         **Examples:**
 
+        >>> i = cfdm.implementation()  # child CF data model implementation
         >>> i.get_cf_version()
         '1.8'
 
@@ -127,10 +132,18 @@ class Implementation(metaclass=abc.ABCMeta):
 
         **Examples:**
 
-        >>> from . import Field
-        >>> i.set_class('Field', Field)
+        >>> i = cfdm.Implementation()  # child CF data model implementation
+        >>> i.classes()
+        {}
+
+        >>> i.set_class('Field', cfdm.Field)
+        >>> i.classes()
+        {'Field': <class 'cfdm.field.Field'>}
+
         >>> field_class = i.get_class('Field')
         >>> f = field_class()
+        >>> f
+        <Field: >
 
         """
         self._class[name] = cls

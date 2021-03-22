@@ -77,7 +77,7 @@ class DomainAxis(
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        return "size({0})".format(self.get_size(""))
+        return f"size({self.get_size('')})"
 
     def creation_commands(
         self, namespace=None, indent=0, string=True, name="c", header=True
@@ -123,31 +123,28 @@ class DomainAxis(
 
         if header:
             out.append("#")
-            out.append("# {}:".format(self.construct_type))
+            out.append(f"# {self.construct_type}:")
             identity = self.identity()
             if identity:
-                out[-1] += " {}".format(identity)
-        # --- End: if
+                out[-1] += f" {identity}"
 
-        out.append(
-            "{} = {}{}()".format(name, namespace, self.__class__.__name__)
-        )
+        out.append(f"{name} = {namespace}{self.__class__.__name__}()")
 
         size = self.get_size(None)
         if size is not None:
-            out.append("{}.set_size({})".format(name, size))
+            out.append(f"{name}.set_size({size})")
 
         nc = self.nc_get_dimension(None)
         if nc is not None:
-            out.append("{}.nc_set_dimension({!r})".format(name, nc))
+            out.append(f"{name}.nc_set_dimension({nc!r})")
 
         if self.nc_is_unlimited():
-            out.append("c.nc_set_unlimited({})".format(True))
+            out.append("fc.nc_set_unlimited({True})")
 
         if string:
             indent = " " * indent
             out[0] = indent + out[0]
-            out = ("\n" + indent).join(out)
+            out = (f"\n{indent}").join(out)
 
         return out
 
@@ -211,9 +208,8 @@ class DomainAxis(
         other_size = other.get_size(None)
         if not self_size == other_size:
             logger.info(
-                "{0}: Different axis sizes: {1} != {2}".format(
-                    self.__class__.__name__, self_size, other_size
-                )
+                f"{self.__class__.__name__}: Different axis sizes: "
+                f"{self_size} != {other_size}"
             )
             return False
 
@@ -259,7 +255,7 @@ class DomainAxis(
         """
         n = self.nc_get_dimension(None)
         if n is not None:
-            return "ncdim%{0}".format(n)
+            return f"ncdim%{n}"
 
         return default
 
@@ -295,6 +291,6 @@ class DomainAxis(
 
         n = self.nc_get_dimension(None)
         if n is not None:
-            out.append("ncdim%{0}".format(n))
+            out.append(f"ncdim%{n}")
 
         return out

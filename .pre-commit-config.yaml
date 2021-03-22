@@ -1,6 +1,10 @@
 # Configure pre-commit hooks to check for Python code validity, formatting and
 # style issues and prompt for these to be corrected before committing.
 
+# Excludes for *all* pre-commit hooks as listed below:
+# (these are documentation files, either old ones or aut-generated ones)
+exclude: docs\/1\..*\d\/|docs\/_downloads\/|docs\/.*\/tutorial\.py
+
 repos:
 
   # Use specific format-enforcing pre-commit hooks from the core library
@@ -19,9 +23,10 @@ repos:
   # (see https://black.readthedocs.io/en/stable/ for documentation and see
   # the cfdm pyproject.toml file for our custom black configuration)
   - repo: https://github.com/ambv/black
-    rev: stable
+    rev: 20.8b1
     hooks:
       - id: black
+        language_version: python3
 
   # Also format docstrings in a consistent way, on top of 'black' requirements
   # with the aim to auto-correct towards the Google docstring format (see
@@ -47,6 +52,8 @@ repos:
     rev: 5.1.1
     hooks:
       - id: pydocstyle
+        # pydocstyle bug, see https://github.com/PyCQA/pydocstyle/issues/526
+        exclude: 'cfdm/functions.py'  # TODO: remove exclusion when bug fixed
 
   # Additionally validate againt flake8 for other Python style enforcement
   # (see https://flake8.pycqa.org/en/latest/ for documentation and see

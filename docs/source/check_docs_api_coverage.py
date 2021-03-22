@@ -1,5 +1,4 @@
-"""Check the method-coverage of all classes listed in
-docs/source/class.rst
+"""Check the method-coverage of all classes in docs/source/class.rst.
 
 All non-private methods of all such classes are checked for having an
 entry in their corresponding class's file in docs/source/class/
@@ -31,9 +30,7 @@ else:
 
 
 if not source.endswith("source"):
-    raise ValueError(
-        f"Given directory {source} does not end with 'source'"
-    )
+    raise ValueError(f"Given directory {source} does not end with 'source'")
 
 n_undocumented_methods = 0
 n_missing_files = 0

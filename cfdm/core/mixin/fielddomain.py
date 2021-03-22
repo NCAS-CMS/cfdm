@@ -244,8 +244,8 @@ class FieldDomain:
             return self._default(
                 default,
                 message=(
-                    f"{self.__class__.__name__!r} has no data axes for "
-                    f"the metadata construct {key!r}"
+                    f"{self.__class__.__name__!r} has no data axes for the "
+                    f"metadata construct {key!r}"
                 ),
             )
 

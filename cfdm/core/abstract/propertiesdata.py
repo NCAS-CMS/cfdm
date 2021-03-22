@@ -84,7 +84,7 @@ class PropertiesData(Properties):
         if data is not None:
             return data.__array__(*dtype)
 
-        raise ValueError("{} has no data".format(self.__class__.__name__))
+        raise ValueError(f"{self.__class__.__name__} has no data")
 
     def __data__(self):
         """Defines the data interface.
@@ -109,7 +109,7 @@ class PropertiesData(Properties):
         if data is not None:
             return data
 
-        raise ValueError("{} has no data".format(self.__class__.__name__))
+        raise ValueError(f"{self.__class__.__name__} has no data")
 
     # ----------------------------------------------------------------
     # Attributes
@@ -230,9 +230,10 @@ class PropertiesData(Properties):
         None
 
         """
-        data = self.get_data(None)
-        self._del_component("data", default=default)
-        return data
+        # data = self.get_data(None)
+        # self._del_component("data", default=default)
+        # return data
+        return self._del_component("data", default=default)
 
     def get_data(self, default=ValueError(), _units=True, _fill_value=True):
         """Return the data.
@@ -288,8 +289,7 @@ class PropertiesData(Properties):
 
         if data is None:
             return self._default(
-                default,
-                message="{!r} has no data".format(self.__class__.__name__),
+                default, message=f"{self.__class__.__name__!r} has no data"
             )
 
         if _units:
@@ -305,7 +305,6 @@ class PropertiesData(Properties):
                 data.set_calendar(calendar)
             else:
                 data.del_calendar(default=None)
-        # --- End: if
 
         if _fill_value:
             # Copy the fill_value to the data
@@ -316,7 +315,6 @@ class PropertiesData(Properties):
                 data.set_fill_value(fill_value)
             else:
                 data.del_fill_value(default=None)
-        # --- End: if
 
         return data
 
@@ -435,7 +433,9 @@ class PropertiesData(Properties):
         None
 
         """
-        data = self._Data(data, copy=False)
+        _Data = self._Data
+        if not isinstance(data, _Data):
+            data = _Data(data, copy=False)
 
         if copy:
             data = data.copy()

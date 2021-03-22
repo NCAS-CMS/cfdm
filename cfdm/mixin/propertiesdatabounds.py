@@ -126,7 +126,6 @@ class PropertiesDataBounds(PropertiesData):
                 part_node_count = source.get_part_node_count(None)
             except AttributeError:
                 part_node_count = None
-        # --- End: if
 
         # Initialise node count
         if node_count is not None:
@@ -212,10 +211,8 @@ class PropertiesDataBounds(PropertiesData):
                         # reverse its bounds (as per 7.1 of the
                         # conventions)
                         bounds_indices[-1] = slice(None, None, -1)
-                # --- End: if
 
                 new.set_bounds(self_bounds[tuple(bounds_indices)], copy=False)
-        # --- End: if
 
         # Return the new bounded variable
         return new
@@ -236,7 +233,7 @@ class PropertiesDataBounds(PropertiesData):
 
         if shape is not None:
             dims = ", ".join([str(x) for x in shape])
-            dims = "({0})".format(dims)
+            dims = f"({dims})"
         else:
             dims = ""
 
@@ -264,7 +261,7 @@ class PropertiesDataBounds(PropertiesData):
 
             units += " " + calendar
 
-        return "{0}{1} {2}".format(self.identity(""), dims, units)
+        return f"{self.identity('')}{dims} {units}"
 
     # ----------------------------------------------------------------
     # Attributes
@@ -290,9 +287,7 @@ class PropertiesDataBounds(PropertiesData):
             return bounds.dtype
 
         raise AttributeError(
-            "{!r} object has no attribute 'dtype'".format(
-                self.__class__.__name__
-            )
+            f"{self.__class__.__name__!r} object has no attribute 'dtype'"
         )
 
     @property
@@ -347,9 +342,7 @@ class PropertiesDataBounds(PropertiesData):
             return ndim
 
         raise AttributeError(
-            "{!r} object has no attribute 'ndim'".format(
-                self.__class__.__name__
-            )
+            f"{self.__class__.__name__!r} object has no attribute 'ndim'"
         )
 
     @property
@@ -404,9 +397,7 @@ class PropertiesDataBounds(PropertiesData):
             return shape
 
         raise AttributeError(
-            "{!r} object has no attribute 'shape'".format(
-                self.__class__.__name__
-            )
+            f"{self.__class__.__name__!r} object has no attribute 'shape'"
         )
 
     @property
@@ -537,7 +528,6 @@ class PropertiesDataBounds(PropertiesData):
                 x = b.get_property(prop, c.get_property(prop, None))
                 if x is not None:
                     fill_values.append(x)
-            # --- End: for
 
             kwargs = {"inplace": True, "fill_values": fill_values}
 
@@ -656,7 +646,7 @@ class PropertiesDataBounds(PropertiesData):
         # Geometry type
         geometry = self.get_geometry(None)
         if geometry is not None:
-            out.append("{}.set_geometry({!r})".format(name, geometry))
+            out.append(f"{name}.set_geometry({geometry!r})")
 
         # Climatology
         if _coordinate and self.get_climatology(False):
@@ -675,7 +665,7 @@ class PropertiesDataBounds(PropertiesData):
                     header=False,
                 )
             )
-            out.append("{}.set_bounds({})".format(name, bounds_name))
+            out.append("{name}.set_bounds({bounds_name})")
 
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
@@ -690,9 +680,7 @@ class PropertiesDataBounds(PropertiesData):
                     header=False,
                 )
             )
-            out.append(
-                "{}.set_interior_ring({})".format(name, interior_ring_name)
-            )
+            out.append(f"{name}.set_interior_ring({interior_ring_name})")
 
         if string:
             indent = " " * indent
@@ -740,9 +728,7 @@ class PropertiesDataBounds(PropertiesData):
         except ValueError:
             return self._default(
                 default,
-                "{!r} has no node count variable".format(
-                    self.__class__.__name__
-                ),
+                f"{self.__class__.__name__!r} has no node count variable",
             )
 
     def del_part_node_count(self, default=ValueError()):
@@ -785,9 +771,7 @@ class PropertiesDataBounds(PropertiesData):
         except ValueError:
             return self._default(
                 default,
-                "{!r} has no part node count variable".format(
-                    self.__class__.__name__
-                ),
+                f"{self.__class__.__name__!r} has no part node count variable",
             )
 
     @_display_or_return
@@ -839,9 +823,7 @@ class PropertiesDataBounds(PropertiesData):
         geometry = self.get_geometry(None)
         if geometry is not None:
             indent1 = "    " * (_level + 1)
-            string.append(
-                "{0}{1}Geometry: {2}".format(indent1, _prefix, geometry)
-            )
+            string.append(f"{indent1}{_prefix}Geometry: {geometry}")
 
         # ------------------------------------------------------------
         # Bounds
@@ -1015,7 +997,6 @@ class PropertiesDataBounds(PropertiesData):
                 )  # pragma: no cover
 
                 return False
-        # --- End: if
 
         # ------------------------------------------------------------
         # Check the interior ring
@@ -1047,7 +1028,6 @@ class PropertiesDataBounds(PropertiesData):
                 )  # pragma: no cover
 
                 return False
-        # --- End: if
 
         return True
 
@@ -1106,15 +1086,14 @@ class PropertiesDataBounds(PropertiesData):
         False
 
         """
-        try:
-            return self._get_component("node_count")
-        except ValueError:
+        out = self._get_component("node_count", None)
+        if out is None:
             return self._default(
                 default,
-                "{!r} has no node count variable".format(
-                    self.__class__.__name__
-                ),
+                f"{self.__class__.__name__!r} has no node count variable",
             )
+
+        return out
 
     def get_part_node_count(self, default=ValueError()):
         """Return the part node count variable for geometry bounds.
@@ -1151,15 +1130,14 @@ class PropertiesDataBounds(PropertiesData):
         False
 
         """
-        try:
-            return self._get_component("part_node_count")
-        except ValueError:
+        out = self._get_component("part_node_count", None)
+        if out is None:
             return self._default(
                 default,
-                "{!r} has no part node count variable".format(
-                    self.__class__.__name__
-                ),
+                f"{self.__class__.__name__!r} has no part node count variable",
             )
+
+        return out
 
     def has_node_count(self):
         """Whether geometry bounds have a node count variable.
@@ -1487,9 +1465,7 @@ class PropertiesDataBounds(PropertiesData):
             position += ndim + 1
         elif not 0 <= position <= ndim:
             raise ValueError(
-                "Can't insert dimension: Invalid position: {!r}".format(
-                    position
-                )
+                f"Can't insert dimension: Invalid position: {position!r}"
             )
 
         super(PropertiesDataBounds, c).insert_dimension(position, inplace=True)
@@ -1737,7 +1713,6 @@ class PropertiesDataBounds(PropertiesData):
                 # were). See section 7.1 of the CF conventions.
                 data[:, :, slice(1, 4, 2)] = data[:, :, slice(3, 0, -2)]
                 bounds.set_data(data, copy=False)
-        # --- End: if
 
         # ------------------------------------------------------------
         # Transpose the interior ring

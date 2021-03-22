@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 from . import mixin
 from . import core
 
@@ -91,27 +89,11 @@ class Bounds(
         else:
             inherited_properties = {}
 
-        self._set_component("inherited_properties", inherited_properties)
+        self._set_component(
+            "inherited_properties", inherited_properties, copy=False
+        )
 
         self._initialise_netcdf(source)
-
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
-    def _inherited_properties(self):
-        """Return the properties inherited from a coordinate construct.
-
-        .. versionadded:: (cfdm) 1.8.7.0
-
-        .. seealso:: `inherited_properties`, `properties`
-
-        :Returns:
-
-            `dict`
-                The inherited properties.
-
-        """
-        return self.inherited_properties()
 
     # ----------------------------------------------------------------
     # Methods
@@ -164,43 +146,46 @@ class Bounds(
     def get_data(self, default=ValueError(), _units=True, _fill_value=True):
         """Return the data.
 
-         Note that the data are returned in a `Data` object. Use the
+        Note that the data are returned in a `Data` object. Use the
         `array` attribute of the `Data` instance to return the data as an
-         independent `numpy` array.
+        independent `numpy` array.
 
-         .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-         .. seealso:: `data`, `del_data`, `has_data`, `set_data`
+        .. seealso:: `data`, `del_data`, `has_data`, `set_data`
 
-         :Parameters:
+        :Parameters:
 
-             default: optional
-                 Return the value of the *default* parameter if data have
-                 not been set.
+            default: optional
+                Return the value of the *default* parameter if data have
+                not been set.
 
-                 {{default Exception}}
+                {{default Exception}}
 
-         :Returns:
+        :Returns:
 
-             `Data`
-                 The data.
+            `Data`
+                The data.
 
-         **Examples:**
+        **Examples:**
 
-         >>> d = {{package}}.Data(range(10))
-         >>> f.set_data(d)
-         >>> f.has_data()
-         True
-         >>> f.get_data()
-         <{{repr}}Data(10): [0, ..., 9]>
-         >>> f.del_data()
-         <{{repr}}Data(10): [0, ..., 9]>
-         >>> f.has_data()
-         False
-         >>> print(f.get_data(None))
-         None
-         >>> print(f.del_data(None))
-         None
+        >>> f = {{package}}.Field(
+        ...     properties={'standard_name': 'surface_altitude'})
+        >>> d = {{package}}.Data(range(10))
+        >>> f.set_data(d)
+        >>> f.has_data()
+        True
+        >>> f.get_data()
+        <{{repr}}Data(10): [0, ..., 9]>
+
+        >>> f.del_data()
+        <{{repr}}Data(10): [0, ..., 9]>
+        >>> f.has_data()
+        False
+        >>> print(f.get_data(None))
+        None
+        >>> print(f.del_data(None))
+        None
 
         """
         data = super().get_data(
@@ -210,25 +195,26 @@ class Bounds(
         if data is None:
             return super().get_data(default=default)
 
-        if _units:
-            if not data.has_units():
-                units = self.inherited_properties().get("units")
-                if units is not None:
-                    data.set_units(units)
-            # --- End: if
+        if _units or _fill_value:
+            inherited_properties = self._get_component(
+                "inherited_properties", {}
+            )
 
-            if not data.has_calendar():
-                calendar = self.inherited_properties().get("calendar")
-                if calendar is not None:
-                    data.set_calendar(calendar)
-        # --- End: if
+            if _units:
+                if not data.has_units():
+                    units = inherited_properties.get("units")
+                    if units is not None:
+                        data.set_units(units)
 
-        if _fill_value:
-            if not data.has_fill_value():
-                _ = self.inherited_properties().get("fill_value")  # TODO
-                if _ is not None:
-                    data.set_fill_value(_)
-        # --- End: if
+                if not data.has_calendar():
+                    calendar = inherited_properties.get("calendar")
+                    if calendar is not None:
+                        data.set_calendar(calendar)
+
+            if _fill_value and not data.has_fill_value():
+                fv = inherited_properties.get("fill_value")  # TODO
+                if fv is not None:
+                    data.set_fill_value(fv)
 
         return data
 
@@ -246,14 +232,17 @@ class Bounds(
 
         **Examples:**
 
-        >>> b.properties()
-        {}
+        >>> f = {{package}}.example_field(6)
+        >>> d = f.constructs('longitude').value()
+        >>> b = d.bounds
+        >>> b
+        <{{repr}}Bounds: longitude(2, 3, 4) degrees_east>
+
         >>> b.inherited_properties()
-        {'standard_name': 'longitude',
-         'units': 'degrees_east'}
+        {'units': 'degrees_east', 'standard_name': 'longitude'}
 
         """
-        return deepcopy(self._get_component("inherited_properties", {}))
+        return self._get_component("inherited_properties", {}).copy()
 
     def identity(self, default=""):
         """Return the canonical identity.
@@ -284,20 +273,16 @@ class Bounds(
 
         **Examples:**
 
-        >>> b.inherited_properties()
-        {'foo': 'bar',
-         'long_name': 'Longitude'}
-        >>> b.properties()
-        {'long_name': 'A different long name'}
+        >>> f = {{package}}.example_field(6)
+        >>> d = f.constructs('longitude').value()
+        >>> b = d.bounds
+        >>> b
+        <{{repr}}Bounds: longitude(2, 3, 4) degrees_east>
         >>> b.identity()
-        'long_name=A different long name'
-        >>> b.del_property('long_name')
-        'A different long name'
-        >>> b.identity()
-        'long_name=Longitude'
+        'longitude'
 
         """
-        inherited_properties = self.inherited_properties()
+        inherited_properties = self._get_component("inherited_properties", {})
         if inherited_properties:
             bounds = self.copy()
             properties = bounds.properties()

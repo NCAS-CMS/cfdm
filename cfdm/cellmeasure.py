@@ -163,7 +163,7 @@ class CellMeasure(
 
         measure = self.get_measure(None)
         if measure is not None:
-            out.append("{}.set_measure({!r})".format(name, measure))
+            out.append(f"{name}.set_measure({measure!r})")
 
         if string:
             indent = " " * indent
@@ -202,17 +202,17 @@ class CellMeasure(
         """
         if _title is None:
             name = self.identity(default=self.get_property("units", ""))
-            _title = "Cell Measure: " + name
+            _title = f"Cell Measure: {name}"
 
         if self.nc_get_external():
             if not (self.has_data() or self.properties()):
                 ncvar = self.nc_get_variable(None)
                 if ncvar is not None:
-                    ncvar = "ncvar%" + ncvar
+                    ncvar = f"ncvar%{ncvar}"
                 else:
                     ncvar = ""
-                _title += " (external variable: {0})".format(ncvar)
-        # --- End: if
+
+                _title += f" (external variable: {ncvar})"
 
         return super().dump(
             display=display,
@@ -293,21 +293,22 @@ class CellMeasure(
 
         **Examples:**
 
-        >>> f.equals(f)
+        >>> c = {{package}}.CellMeasure()
+        >>> c.set_properties({'units': 'm2'})
+        >>> c.equals(c)
         True
-        >>> f.equals(f.copy())
+        >>> c.equals(c.copy())
         True
-        >>> f.equals('not a cell measure')
+        >>> c.equals('not a cell measure')
         False
 
-        >>> g = f.copy()
-        >>> g.set_property('foo', 'bar')
-        >>> f.equals(g)
+        >>> m = c.copy()
+        >>> m.set_property('units', 'km2')
+        >>> c.equals(m)
         False
-        >>> f.equals(g, verbose=3)
-        CellMeasure: Non-common property name: foo
-        CellMeasure: Different properties
+        >>> c.equals(m, verbose=3)
         False
+        >>> # Logs: CellMeasure: Different 'units' property values: 'm2', 'km2'
 
         """
         if not super().equals(
@@ -327,9 +328,8 @@ class CellMeasure(
         measure1 = other.get_measure(None)
         if measure0 != measure1:
             logger.info(
-                "{0}: Different measure ({1} != {2})".format(
-                    self.__class__.__name__, measure0, measure1
-                )
+                f"{self.__class__.__name__}: Different measure "
+                f"({measure0} != {measure1})"
             )
             return False
 
@@ -363,29 +363,24 @@ class CellMeasure(
 
         **Examples:**
 
+        >>> f = {{package}}.example_field(1)
+        >>> c = f.get_construct('cellmeasure0')
         >>> c.get_measure()
         'area'
+
         >>> c.properties()
-        {'long_name': 'Area',
-         'standard_name': 'cell_area'}
+        {'units': 'km2'}
         >>> c.nc_get_variable()
-        'areacello'
+        'cell_measure'
         >>> c.identity(default='no identity')
         'measure:area'
+
         >>> c.del_measure()
         'area'
         >>> c.identity()
-        'cell_area'
-        >>> c.del_property('standard_name')
-        'cell_area'
-        >>> c.identity()
-        'long_name=Area'
-        >>> c.del_properly('long_name')
-        'Area'
-        >>> c.identity()
-        'ncvar%areacello'
+        'ncvar%cell_measure'
         >>> c.nc_del_variable()
-        'areacello'
+        'cell_measure'
         >>> c.identity()
         ''
         >>> c.identity(default='no identity')
@@ -394,7 +389,7 @@ class CellMeasure(
         """
         n = self.get_measure(None)
         if n is not None:
-            return "measure:{0}".format(n)
+            return f"measure:{n}"
 
         n = self.get_property("standard_name", None)
         if n is not None:
@@ -403,12 +398,11 @@ class CellMeasure(
         for prop in ("cf_role", "long_name"):
             n = self.get_property(prop, None)
             if n is not None:
-                return "{0}={1}".format(prop, n)
-        # --- End: for
+                return f"{prop}={n}"
 
         n = self.nc_get_variable(None)
         if n is not None:
-            return "ncvar%{0}".format(n)
+            return f"ncvar%{n}"
 
         return default
 
@@ -434,25 +428,23 @@ class CellMeasure(
 
         **Examples:**
 
-        >>> f.properties()
-        {'foo': 'bar',
-         'long_name': 'Area of cells',
-         'standard_name': 'cell_area'}
-        >>> f.nc_get_variable()
-        'areacello'
-        >>> f.identities()
-        ['measure:area',
-         'cell_area',
-         'long_name=Area of cells',
-         'foo=bar',
-         'standard_name=cell_area',
-         'ncvar%areacello']
+        >>> f = {{package}}.example_field(1)
+        >>> c = f.get_construct('cellmeasure0')
+        >>> c.get_measure()
+        'area'
+
+        >>> c.properties()
+        {'units': 'km2'}
+        >>> c.nc_get_variable()
+        'cell_measure'
+        >>> c.identities()
+        ['measure:area', 'units=km2', 'ncvar%cell_measure']
 
         """
         out = super().identities()
 
         n = self.get_measure(None)
         if n is not None:
-            out.insert(0, "measure:{0}".format(n))
+            out.insert(0, f"measure:{n}")
 
         return out

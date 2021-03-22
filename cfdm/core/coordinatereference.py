@@ -75,12 +75,13 @@ class CoordinateReference(abstract.Container):
         :Parameters:
 
             coordinates: sequence of `str`, optional
-                Identify the related dimension and auxiliary coordinate
-                constructs by their construct identifiers. Ignored if the
-                *source* parameter is set.
+                Identify the related dimension and auxiliary
+                coordinate constructs by their construct
+                identifiers. Ignored if the *source* parameter is set.
 
-                The coordinates may also be set after initialisation with
-                the `set_coordinates` and `set_coordinate` methods.
+                The coordinates may also be set after initialisation
+                with the `set_coordinates` and `set_coordinate`
+                methods.
 
                 *Parameter example:*
                   ``coordinates=['dimensioncoordinate2']``
@@ -92,13 +93,13 @@ class CoordinateReference(abstract.Container):
                 Set the datum component of the coordinate reference
                 construct. Ignored if the *source* parameter is set.
 
-                The datum may also be set after initialisation with the
-                `set_datum` method.
+                The datum may also be set after initialisation with
+                the `set_datum` method.
 
             coordinate_conversion: `CoordinateConversion`, optional
-                Set the coordinate conversion component of the coordinate
-                reference construct. Ignored if the *source* parameter is
-                set.
+                Set the coordinate conversion component of the
+                coordinate reference construct. Ignored if the
+                *source* parameter is set.
 
                 The coordinate conversion may also be set after
                 initialisation with the `set_coordinate_conversion`
@@ -132,7 +133,6 @@ class CoordinateReference(abstract.Container):
                 datum = source.get_datum()
             except AttributeError:
                 datum = None
-        # --- End: if
 
         if coordinates is not None:
             self.set_coordinates(coordinates)
@@ -181,8 +181,16 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.coordinate_conversion
-        <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: a, b, orog>
+        >>> orog = {{package}}.DomainAncillary()
+        >>> c = {{package}}.CoordinateConversion(
+        ...     parameters={
+        ...         'standard_name': 'atmosphere_hybrid_height_coordinate',
+        ...     },
+        ...     domain_ancillaries={'orog': orog}
+        ... )
+        >>> r = {{package}}.{{class}}(coordinate_conversion=c)
+        >>> r.coordinate_conversion
+        <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: orog>
 
         """
         return self.get_coordinate_conversion()
@@ -202,8 +210,12 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.datum
-        <{[repr}}Datum: Parameters: earth_radius>
+        >>> d = {{package}}.Datum(parameters={'earth_radius': 7000000})
+        >>> r = {{package}}.{{class}}(datum=d)
+        >>> r
+        <{{repr}}CoordinateReference: >
+        >>> r.datum
+        <{{repr}}Datum: Parameters: earth_radius>
 
         """
         return self.get_datum()
@@ -225,17 +237,18 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> old = c.clear_coordinates()
-        {'dimensioncoordinate0', 'dimensioncoordinate1'}
-        >>> c.coordinates()
+        >>> r = {{package}}.{{class}}()
+        >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
+        >>> sorted(r.coordinates())
+        ['auxiliarycoordinate1', 'dimensioncoordinate0']
+        >>> sorted(r.clear_coordinates())
+        ['auxiliarycoordinate1', 'dimensioncoordinate0']
+        >>> r.coordinates()
         set()
-        >>> c.set_coordinates(old)
-        >>> c.coordinates()
-        {'dimensioncoordinate0', 'dimensioncoordinate1'}
 
         """
         out = self._get_component("coordinates")
-        self._set_component("coordinates", set())
+        self._set_component("coordinates", set(), copy=False)
         return out.copy()
 
     def coordinates(self):
@@ -252,13 +265,14 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> old = c.clear_coordinates()
-        {'dimensioncoordinate0', 'dimensioncoordinate1'}
-        >>> c.coordinates()
+        >>> r = {{package}}.{{class}}()
+        >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
+        >>> sorted(r.coordinates())
+        ['auxiliarycoordinate1', 'dimensioncoordinate0']
+        >>> sorted(r.clear_coordinates())
+        ['auxiliarycoordinate1', 'dimensioncoordinate0']
+        >>> r.coordinates()
         set()
-        >>> c.set_coordinates(old)
-        >>> c.coordinates()
-        {'dimensioncoordinate0', 'dimensioncoordinate1'}
 
         """
         return self._get_component("coordinates").copy()
@@ -277,7 +291,8 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> d = c.copy()
+        >>> r = {{package}}.{{class}}()
+        >>> s = r.copy()
 
         """
         return type(self)(source=self, copy=True)
@@ -311,14 +326,15 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.coordinates()
-        {'dimensioncoordinate0',
-         'dimensioncoordinate1'}
-        >>> c.del_coordinate('dimensioncoordinate0')
+        >>> r = {{package}}.{{class}}()
+        >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
+        >>> r.coordinates()
+        {'auxiliarycoordinate1', 'dimensioncoordinate0'}
+        >>> r.del_coordinate('dimensioncoordinate0')
         'dimensioncoordinate0'
-        >>> c.coordinates()
-        {'dimensioncoordinate1'}
-        >>> c.del_coordinate('dimensioncoordinate0', 'not set')
+        >>> r.coordinates()
+        {'auxiliarycoordinate1'}
+        >>> r.del_coordinate('dimensioncoordinate0', 'not set')
         'not set'
 
         """
@@ -328,8 +344,7 @@ class CoordinateReference(abstract.Container):
             return key
 
         return self._default(
-            default,
-            "{!r} has no {!r} coordinate".format(self.__class__.__name__, key),
+            default, f"{self.__class__.__name__!r} has no {key!r} coordinate"
         )
 
     def del_coordinate_conversion(self):
@@ -347,15 +362,26 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.del_coordinate_conversion()
-        <{{repr}}CoordinateConversion: Parameters(grid_mapping_name, grid_north_pole_latitude, grid_north_pole_longitude)>
-        >>> c.get_coordinate_conversion()
+        >>> r = {{package}}.{{class}}()
+        >>> orog = {{package}}.DomainAncillary()
+        >>> c = {{package}}.CoordinateConversion(
+        ...     parameters={
+        ...         'standard_name': 'atmosphere_hybrid_height_coordinate',
+        ...     },
+        ...     domain_ancillaries={'orog': orog}
+        ... )
+        >>> r.set_coordinate_conversion(c)
+        >>> r.get_coordinate_conversion()
+        <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: orog>
+        >>> r.del_coordinate_conversion()
+        <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: orog>
+        >>> r.get_coordinate_conversion()
         <{{repr}}CoordinateConversion: Parameters: ; Ancillaries: >
 
         """
         new = self._CoordinateConversion()
         out = self._del_component("coordinate_conversion", new)
-        self.set_coordinate_conversion(new)
+        self.set_coordinate_conversion(new, copy=False)
         return out
 
     def del_datum(self):
@@ -372,15 +398,20 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.del_datum()
+        >>> r = {{package}}.{{class}}()
+        >>> d = {{package}}.Datum(parameters={'earth_radius': 7000000})
+        >>> r.set_datum(d)
+        >>> r.get_datum()
         <{{repr}}Datum: Parameters: earth_radius>
-        >>> c.get_datum()
+        >>> r.del_datum()
+        <{{repr}}Datum: Parameters: earth_radius>
+        >>> r.get_datum()
         <{{repr}}Datum: Parameters: >
 
         """
         new = self._Datum()
         out = self._del_component("datum", new)
-        self.set_datum(new)
+        self.set_datum(new, copy=False)
         return out
 
     def get_coordinate_conversion(self):
@@ -398,8 +429,21 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.get_coordinate_conversion()
-        <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: a, b, orog>
+        >>> r = {{package}}.{{class}}()
+        >>> orog = {{package}}.DomainAncillary()
+        >>> c = {{package}}.CoordinateConversion(
+        ...     parameters={
+        ...         'standard_name': 'atmosphere_hybrid_height_coordinate',
+        ...     },
+        ...     domain_ancillaries={'orog': orog}
+        ... )
+        >>> r.set_coordinate_conversion(c)
+        >>> r.get_coordinate_conversion()
+        <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: orog>
+        >>> r.del_coordinate_conversion()
+        <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: orog>
+        >>> r.get_coordinate_conversion()
+        <{{repr}}CoordinateConversion: Parameters: ; Ancillaries: >
 
         """
         out = self._get_component("coordinate_conversion", None)
@@ -423,8 +467,15 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.get_datum()
+        >>> r = {{package}}.{{class}}()
+        >>> d = {{package}}.Datum(parameters={'earth_radius': 7000000})
+        >>> r.set_datum(d)
+        >>> r.get_datum()
         <{{repr}}Datum: Parameters: earth_radius>
+        >>> r.del_datum()
+        <{{repr}}Datum: Parameters: earth_radius>
+        >>> r.get_datum()
+        <{{repr}}Datum: Parameters: >
 
         """
         out = self._get_component("datum", None)
@@ -460,12 +511,13 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.coordinates()
-        {'dimensioncoordinate0',
-         'dimensioncoordinate1'}
-        >>> c.has_coordinate('dimensioncoordinate0')
+        >>> r = {{package}}.{{class}}()
+        >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
+        >>> r.coordinates()
+        {'auxiliarycoordinate1', 'dimensioncoordinate0'}
+        >>> r.has_coordinate('dimensioncoordinate0')
         True
-        >>> c.has_coordinate('auxiliarycoordinate1')
+        >>> r.has_coordinate('dimensioncoordinate1')
         False
 
         """
@@ -495,20 +547,20 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.coordinates()
-        {'dimensioncoordinate0',
-         'dimensioncoordinate1'}
-        >>> c.set_coordinate('auxiliarycoordinate0')
-        >>> c.coordinates()
-        {'dimensioncoordinate0',
-         'dimensioncoordinate1',
-         'auxiliarycoordinate0'}
+        >>> r = {{package}}.{{class}}()
+        >>> r.set_coordinate('dimensioncoordinate0')
+        >>> r.coordinates()
+        {'dimensioncoordinate0'}
+        >>> r.has_coordinate('dimensioncoordinate0')
+        True
+        >>> r.has_coordinate('auxiliarycoordinate0')
+        False
 
         """
         c = self._get_component("coordinates")
         c.add(key)
 
-    def set_coordinates(self, coordinates):
+    def set_coordinates(self, coordinates):  # SB NOTE: flaky doctest set order
         """Set references to coordinate constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -538,13 +590,14 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> old = c.clear_coordinates()
-        {'dimensioncoordinate0', 'dimensioncoordinate1'}
-        >>> c.coordinates()
+        >>> r = {{package}}.{{class}}()
+        >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
+        >>> r.coordinates()
+        {'auxiliarycoordinate1', 'dimensioncoordinate0'}
+        >>> r.clear_coordinates()
+        {'auxiliarycoordinate1', 'dimensioncoordinate0'}
+        >>> r.coordinates()
         set()
-        >>> c.set_coordinates(old)
-        >>> c.coordinates()
-        {'dimensioncoordinate0', 'dimensioncoordinate1'}
 
         """
         if isinstance(coordinates, str):
@@ -576,9 +629,21 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.set_coordinate_conversion(cc)
-
-        >>> c.set_coordinate_conversion(cc, copy=False)
+        >>> r = {{package}}.{{class}}()
+        >>> orog = {{package}}.DomainAncillary()
+        >>> c = {{package}}.CoordinateConversion(
+        ...     parameters={
+        ...         'standard_name': 'atmosphere_hybrid_height_coordinate',
+        ...     },
+        ...     domain_ancillaries={'orog': orog}
+        ... )
+        >>> r.set_coordinate_conversion(c)
+        >>> r.get_coordinate_conversion()
+        <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: orog>
+        >>> r.del_coordinate_conversion()
+        <{{repr}}CoordinateConversion: Parameters: standard_name; Ancillaries: orog>
+        >>> r.get_coordinate_conversion()
+        <{{repr}}CoordinateConversion: Parameters: ; Ancillaries: >
 
         """
         if copy:
@@ -610,9 +675,15 @@ class CoordinateReference(abstract.Container):
 
         **Examples:**
 
-        >>> c.set_datum(d)
-
-        >>> c.set_datum(d, copy=False)
+        >>> r = {{package}}.{{class}}()
+        >>> d = {{package}}.Datum(parameters={'earth_radius': 7000000})
+        >>> r.set_datum(d)
+        >>> r.get_datum()
+        <{{repr}}Datum: Parameters: earth_radius>
+        >>> r.del_datum()
+        <{{repr}}Datum: Parameters: earth_radius>
+        >>> r.get_datum()
+        <{{repr}}Datum: Parameters: >
 
         """
         if copy:

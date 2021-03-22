@@ -1,6 +1,6 @@
-from copy import deepcopy
-
 from .container import Container
+
+from ..functions import deepcopy
 
 
 class Parameters(Container):
@@ -43,7 +43,6 @@ class Parameters(Container):
                 parameters = source.parameters()
             except AttributeError:
                 parameters = None
-        # --- End: if
 
         if parameters is None:
             parameters = {}
@@ -65,22 +64,28 @@ class Parameters(Container):
 
         **Examples:**
 
-        >>> old = f.clear_parameters()
-        >>> old
-        {'standard_parallel': 25.0;
-         'longitude_of_central_meridian': 265.0,
-         'latitude_of_projection_origin': 25.0}
+        >>> f = {{package}}.{{class}}()
         >>> f.parameters()
         {}
-        >>> f.set_parameters(old)
+        >>> p = {'standard_parallel': 25.0,
+        ...      'longitude_of_central_meridian': 265.0,
+        ...      'latitude_of_projection_origin': 25.0}
+        >>> f.set_parameters(p)
         >>> f.parameters()
-        {'standard_parallel': 25.0;
+        {'standard_parallel': 25.0,
          'longitude_of_central_meridian': 265.0,
          'latitude_of_projection_origin': 25.0}
 
+        >>> old = f.clear_parameters()
+        >>> old
+        {'standard_parallel': 25.0,
+         'longitude_of_central_meridian': 265.0,
+         'latitude_of_projection_origin': 25.0}
+        >>> f.set_parameters(old)
+
         """
         out = self._get_component("parameters")
-        self._set_component("parameters", {})
+        self._set_component("parameters", {}, copy=False)
         return out.copy()
 
     def del_parameter(self, parameter, default=ValueError()):
@@ -129,9 +134,7 @@ class Parameters(Container):
         except KeyError:
             return self._default(
                 default,
-                "{!r} has no {!r} parameter".format(
-                    self.__class__.__name__, parameter
-                ),
+                f"{self.__class__.__name__!r} has no {parameter!r} parameter",
             )
 
     def get_parameter(self, parameter, default=ValueError()):
@@ -177,9 +180,7 @@ class Parameters(Container):
         except KeyError:
             return self._default(
                 default,
-                "{!r} has no {!r} parameter".format(
-                    self.__class__.__name__, parameter
-                ),
+                f"{self.__class__.__name__!r} has no {parameter!r} parameter",
             )
 
     def has_parameter(self, parameter):
@@ -238,18 +239,24 @@ class Parameters(Container):
 
         **Examples:**
 
-        >>> old = f.clear_parameters()
-        >>> old
-        {'standard_parallel': 25.0;
-         'longitude_of_central_meridian': 265.0,
-         'latitude_of_projection_origin': 25.0}
+        >>> f = {{package}}.{{class}}()
         >>> f.parameters()
         {}
-        >>> f.set_parameters(old)
+        >>> p = {'standard_parallel': 25.0,
+        ...      'longitude_of_central_meridian': 265.0,
+        ...      'latitude_of_projection_origin': 25.0}
+        >>> f.set_parameters(p)
         >>> f.parameters()
-        {'standard_parallel': 25.0;
+        {'standard_parallel': 25.0,
          'longitude_of_central_meridian': 265.0,
          'latitude_of_projection_origin': 25.0}
+
+        >>> old = f.clear_parameters()
+        >>> old
+        {'standard_parallel': 25.0,
+         'longitude_of_central_meridian': 265.0,
+         'latitude_of_projection_origin': 25.0}
+        >>> f.set_parameters(old)
 
         """
         return self._get_component("parameters").copy()
@@ -280,24 +287,28 @@ class Parameters(Container):
 
         **Examples:**
 
-        >>> old = f.clear_parameters()
-        >>> old
-        {'standard_parallel': 25.0;
-         'longitude_of_central_meridian': 265.0,
-         'latitude_of_projection_origin': 25.0}
+        >>> f = {{package}}.{{class}}()
         >>> f.parameters()
         {}
-        >>> f.set_parameters(old)
+        >>> p = {'standard_parallel': 25.0,
+        ...      'longitude_of_central_meridian': 265.0,
+        ...      'latitude_of_projection_origin': 25.0}
+        >>> f.set_parameters(p)
         >>> f.parameters()
-        {'standard_parallel': 25.0;
+        {'standard_parallel': 25.0,
          'longitude_of_central_meridian': 265.0,
          'latitude_of_projection_origin': 25.0}
+
+        >>> old = f.clear_parameters()
+        >>> old
+        {'standard_parallel': 25.0,
+         'longitude_of_central_meridian': 265.0,
+         'latitude_of_projection_origin': 25.0}
+        >>> f.set_parameters(old)
 
         """
         if copy:
             parameters = deepcopy(parameters)
-        else:
-            parameters = parameters.copy()
 
         self._get_component("parameters").update(parameters)
 

@@ -128,7 +128,7 @@ class DimensionCoordinate(
             if _key is None:
                 default = ""
             else:
-                default = "key%{0}".format(_key)
+                default = f"key%{_key}"
 
             _title = "Dimension coordinate: " + self.identity(default=default)
 

@@ -185,7 +185,6 @@ class Domain(
                     x.append(f" (external variable: ncvar%{ncvar})")
                 else:
                     x.append(" (external variable)")
-            # --- End: if
 
             if variable.has_data():
                 x.append(f" = {variable.data}")
@@ -220,7 +219,7 @@ class Domain(
                         y += f" = {dim.get_data()}"
 
                     x.append(y)
-        # --- End: for
+
         if x:
             x = "\n                : ".join(x)
             string.append(f"Dimension coords: {x}")
@@ -333,8 +332,8 @@ class Domain(
         * where data elements are strictly greater than the value of
           the ``valid_max`` property;
 
-        * where data elements are within the inclusive range specified by
-          the two values of ``valid_range`` property.
+        * where data elements are within the inclusive range specified
+          by the two values of ``valid_range`` property.
 
         If any of the above properties have not been set the no
         masking is applied for that method.
@@ -707,7 +706,7 @@ class Domain(
                         _title = f"ncvar%{ncvar}"
                     else:
                         _title += f" (ncvar%{ncvar})"
-                # --- End: if
+
                 if _title is None:
                     _title = ""
 
@@ -889,7 +888,6 @@ class Domain(
             n = self.get_property(prop, None)
             if n is not None:
                 return f"{prop}={n}"
-        # --- End: for
 
         n = self.nc_get_variable(None)
         if n is not None:

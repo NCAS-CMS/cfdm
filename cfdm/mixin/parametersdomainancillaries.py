@@ -144,7 +144,6 @@ class ParametersDomainAncillaries(Parameters):
                     )
                 )
                 return False
-        # --- End: for
 
         # Still here? Then the two instances are as equal as can be
         # ascertained in the absence of domains.

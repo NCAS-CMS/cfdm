@@ -234,13 +234,7 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
         if key is not None:
             return super().del_data_axes(key, default=default)
 
-        try:
-            return self._del_component("data_axes")
-        except ValueError:
-            return self._default(
-                default,
-                "{!r} has no data axes".format(self.__class__.__name__),
-            )
+        return self._del_component("data_axes", default=default)
 
     def get_domain(self):
         """Return the domain.
@@ -320,13 +314,7 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
         if key is not None:
             return super().get_data_axes(key, default=default)
 
-        try:
-            return self._get_component("data_axes")
-        except ValueError:
-            return self._default(
-                default,
-                "{!r} has no data axes".format(self.__class__.__name__),
-            )
+        return self._get_component("data_axes", default=default)
 
     def has_data_axes(self, key=None):
         """Whether the axes spanned by the construct data have been set.
@@ -427,7 +415,7 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
         if key in self.get_data_axes(default=()):
             raise ValueError(
                 f"Can't remove domain axis {key!r} that is spanned by the "
-                "field construct data"
+                "data of the field construct"
             )
 
         return self.constructs._del_construct(key, default=default)
@@ -590,7 +578,6 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
             data = self.get_data(None)
             if data is not None:
                 _shape = data.shape
-        # --- End: if
 
         if _shape is not None:
             domain_axes = self.constructs.filter_by_type("domain_axis")
@@ -607,12 +594,9 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
             if _shape != tuple(axes_shape):
                 raise ValueError(
                     "Can't set field construct data axes: Data array shape "
-                    "of {!r} does not match the shape of the given domain "
-                    "axes {}: {}".format(
-                        _shape, tuple(axes), tuple(axes_shape)
-                    )
+                    f"of {_shape!r} does not match the shape of the given "
+                    f"domain axes {tuple(axes)}: {tuple(axes_shape)}"
                 )
-        # --- End: if
 
         axes = tuple(axes)
         self._set_component("data_axes", axes, copy=False)

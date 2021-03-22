@@ -27,10 +27,10 @@ class RaggedContiguous:
         >>> c = d.get_count()
 
         """
-        try:
-            return self._get_component("count_variable")
-        except ValueError:
+        out = self._get_component("count_variable", None)
+        if out is None:
             return self._default(
-                default,
-                "{!r} has no count variable".format(self.__class__.__name__),
+                default, f"{self.__class__.__name__!r} has no count variable"
             )
+
+        return out

@@ -93,7 +93,7 @@ class PropertiesData(Properties):
         data = self.get_data(None)
         if data is not None:
             dims = ", ".join([str(x) for x in data.shape])
-            dims = "({0})".format(dims)
+            dims = f"({dims})"
         else:
             dims = ""
 
@@ -107,7 +107,7 @@ class PropertiesData(Properties):
         if isreftime:
             units += " " + self.get_property("calendar", "")
 
-        return "{0}{1} {2}".format(self.identity(""), dims, units)
+        return f"{self.identity('')}{dims} {units}"
 
     # ----------------------------------------------------------------
     # Private methods
@@ -212,9 +212,7 @@ class PropertiesData(Properties):
             return data.dtype
 
         raise AttributeError(
-            "{!r} object has no attribute 'dtype'".format(
-                self.__class__.__name__
-            )
+            f"{self.__class__.__name__!r} object has no attribute 'dtype'"
         )
 
     @property
@@ -259,9 +257,7 @@ class PropertiesData(Properties):
             return data.ndim
 
         raise AttributeError(
-            "{!r} object has no attribute 'ndim'".format(
-                self.__class__.__name__
-            )
+            f"{self.__class__.__name__!r} object has no attribute 'ndim'"
         )
 
     @property
@@ -306,9 +302,7 @@ class PropertiesData(Properties):
             return data.shape
 
         raise AttributeError(
-            "{!r} object has no attribute 'shape'".format(
-                self.__class__.__name__
-            )
+            f"{self.__class__.__name__!r} object has no attribute 'shape'"
         )
 
     @property
@@ -353,9 +347,7 @@ class PropertiesData(Properties):
             return data.size
 
         raise AttributeError(
-            "{!r} object has no attribute 'size'".format(
-                self.__class__.__name__
-            )
+            f"{self.__class__.__name__!r} object has no attribute 'size'"
         )
 
     # ----------------------------------------------------------------
@@ -437,7 +429,6 @@ class PropertiesData(Properties):
                 x = v.get_property(prop, None)
                 if x is not None:
                     fill_values.append(x)
-            # --- End: for
 
             kwargs = {"inplace": True, "fill_values": fill_values}
 
@@ -512,7 +503,7 @@ class PropertiesData(Properties):
         if name == data_name:
             raise ValueError(
                 "The 'name' and 'data_name' parameters can "
-                "not have the same value: {!r}".format(name)
+                f"not have the same value: {name!r}"
             )
 
         namespace0 = namespace
@@ -529,32 +520,10 @@ class PropertiesData(Properties):
             header=header,
         )
 
-        #        construct_type = getattr(self, 'construct_type', None)
-        #        if construct_type is not None:
-        #            out.append("# {}: {}".format(construct_type,
-        #                                         self.identity()))
-        #
-        #        out.append("{} = {}{}()".format(name, namespace,
-        #                                        self.__class__.__name__))
-        #
-        #        properties = self.properties()
-        #        if properties:
-        #            for prop in self.inherited_properties():
-        #                properties.pop(prop, None)
-        #
-        #            out.append("{}.set_properties({})".format(name,
-        #                                                      properties))
-        #
-        #        nc = self.nc_get_variable(None)
-        #        if nc is not None:
-        #            out.append("{}.nc_set_variable({!r})".format(name, nc))
-
         data = self.get_data(None)
         if data is not None:
             if representative_data:
-                out.append(
-                    "{} = {!r}  # Representative data".format(data_name, data)
-                )
+                out.append(f"{data_name} = {data!r}  # Representative data")
             else:
                 out.extend(
                     data.creation_commands(
@@ -565,7 +534,7 @@ class PropertiesData(Properties):
                     )
                 )
 
-            out.append("{}.set_data({})".format(name, data_name))
+            out.append(f"{name}.set_data({data_name})")
 
         if string:
             indent = " " * indent
@@ -637,11 +606,7 @@ class PropertiesData(Properties):
 
             shape = ", ".join(x)
 
-            string.append(
-                "{0}{1}Data({2}) = {3}".format(
-                    indent1, _prefix, shape, str(data)
-                )
-            )
+            string.append(f"{indent1}{_prefix}Data({shape}) = {data}")
 
         return "\n".join(string)
 
@@ -737,9 +702,7 @@ class PropertiesData(Properties):
         external1 = other._get_component("external", False)
         if external0 != external1:
             logger.info(
-                "{0}: Only one external variable)".format(
-                    self.__class__.__name__
-                )
+                f"{self.__class__.__name__}: Only one external variable)"
             )
             return False
 
@@ -747,12 +710,9 @@ class PropertiesData(Properties):
             # Both variables are external
             if self.nc_get_variable(None) != other.nc_get_variable(None):
                 logger.info(
-                    "{}: External variable have different "
-                    "netCDF variable names: {} != {})".format(
-                        self.__class__.__name__,
-                        self.nc_get_variable(None),
-                        other.nc_get_variable(None),
-                    )
+                    f"{self.__class__.__name__}: External variables have different "
+                    "netCDF variable names: "
+                    f"{self.nc_get_variable(None)} != {other.nc_get_variable(None)})"
                 )
                 return False
 
@@ -778,9 +738,7 @@ class PropertiesData(Properties):
         # ------------------------------------------------------------
         if self.has_data() != other.has_data():
             logger.info(
-                "{0}: Different data: Only one {0} has data".format(
-                    self.__class__.__name__
-                )
+                f"{self.__class__.__name__}: Different data: Only one {0} has data"
             )
             return False
 
@@ -795,11 +753,8 @@ class PropertiesData(Properties):
                 ignore_fill_value=ignore_fill_value,
                 ignore_compression=ignore_compression,
             ):
-                logger.info(
-                    "{0}: Different data".format(self.__class__.__name__)
-                )
+                logger.info(f"{self.__class__.__name__}: Different data")
                 return False
-        # --- End: if
 
         return True
 

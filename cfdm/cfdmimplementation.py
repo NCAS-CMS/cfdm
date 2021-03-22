@@ -70,7 +70,7 @@ class CFDMImplementation(Implementation):
         NodeCountProperties=None,
         PartNodeCountProperties=None,
     ):
-        """Initialises the `{{class}}` instance.
+        """Initialises the `CFDMImplementation` instance.
 
         :Parameters:
 
@@ -104,10 +104,50 @@ class CFDMImplementation(Implementation):
             FieldAncillary:
                 A field ancillary construct class.
 
-            Bounds:             = Bounds
-            CoordinateAncillary = CoordinateAncillary
-            Data                = Data
-            NetCDF              = NetCDF
+            Bounds:
+                A cell bounds component class.
+
+            InteriorRing:
+                An interior ring array class.
+
+            CoordinateConversion:
+                A coordinate conversion component class.
+
+            Datum:
+                A datum component class.
+
+            Data:
+                A data array class.
+
+            GatheredArray:
+                A class for an underlying gathered array.
+
+            NetCDFArray:
+                A class for an underlying array stored in a netCDF file.
+
+            RaggedContiguousArray:
+                A class for an underlying contiguous ragged array.
+
+            RaggedIndexedArray:
+                A class for an underlying indexed ragged array.
+
+            RaggedIndexedContiguousArray:
+                A class for an underlying indexed contiguous ragged array.
+
+            List:
+                A list variable class.
+
+            Count:
+                A count variable class.
+
+            Index:
+                An index variable class.
+
+            NodeCountProperties:
+                A class for properties of a netCDF node count variable.
+
+            PartNodeCountProperties:
+                A class for properties of a netCDF part node count variable.
 
         """
         super().__init__(
@@ -145,7 +185,7 @@ class CFDMImplementation(Implementation):
         x.__repr__() <==> repr(x)
 
         """
-        return "<{0}: >".format(self.__class__.__name__)
+        return f"<{self.__class__.__name__}: >"
 
     def _get_domain_compression_variable(self, variable_type, domain):
         """Return the compression variable of compressed data of the
@@ -272,7 +312,6 @@ class CFDMImplementation(Implementation):
                         out[variable][k] = v
                     elif v != out[variable][k]:
                         return False
-        # --- End: for
 
         for coord in self.get_auxiliary_coordinates(field).values():
             for variable in out:
@@ -281,7 +320,6 @@ class CFDMImplementation(Implementation):
                     continue
 
                 x.set_properties(out[variable])
-        # --- End: for
 
         return True
 
@@ -831,11 +869,22 @@ class CFDMImplementation(Implementation):
 
         **Examples:**
 
+        >>> w = cfdm.implementation()
+        >>> d = cfdm.DimensionCoordinate(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(range(180))
+        ... )
         >>> d
         <DimensionCoordinate: latitude(180) degrees_north>
         >>> w.get_data_ndim(d)
         1
 
+        >>> b = cfdm.Bounds(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(numpy.arange(360).reshape(180, 2))
+        ... )
         >>> b
         <Bounds: latitude(180, 2) degrees_north>
         >>> w.get_data_ndim(b)
@@ -862,11 +911,22 @@ class CFDMImplementation(Implementation):
 
         **Examples:**
 
+        >>> w = cfdm.implementation()
+        >>> d = cfdm.DimensionCoordinate(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(range(180))
+        ... )
         >>> d
         <DimensionCoordinate: latitude(180) degrees_north>
         >>> w.get_data_shape(d)
         (180,)
 
+        >>> b = cfdm.Bounds(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(numpy.arange(360).reshape(180, 2))
+        ... )
         >>> b
         <Bounds: latitude(180, 2) degrees_north>
         >>> w.get_data_shape(b)
@@ -893,14 +953,25 @@ class CFDMImplementation(Implementation):
 
         **Examples:**
 
+        >>> w = cfdm.implementation()
+        >>> d = cfdm.DimensionCoordinate(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(range(180))
+        ... )
         >>> d
         <DimensionCoordinate: latitude(180) degrees_north>
-        >>> w.get_data_ndim(d)
+        >>> w.get_data_size(d)
         180
 
+        >>> b = cfdm.Bounds(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(numpy.arange(360).reshape(180, 2))
+        ... )
         >>> b
         <Bounds: latitude(180, 2) degrees_north>
-        >>> w.get_data_ndim(b)
+        >>> w.get_data_size(b)
         360
 
         """
@@ -1324,9 +1395,10 @@ class CFDMImplementation(Implementation):
 
         **Examples:**
 
+        >>> w = cfdm.implementation()
+        >>> f = cfdm.example_field(1)
         >>> w.get_field_ancillaries(f)
-        {'fieldancillary0': <FieldAncillary: ....>,
-         'fieldancillary1': <FieldAncillary: ....>}
+        <Constructs: field_ancillary(1)>
 
         """
         return field.field_ancillaries
@@ -1497,8 +1569,13 @@ class CFDMImplementation(Implementation):
 
         **Examples:**
 
+        >>> w = cfdm.implementation()
+        >>> c = cfdm.CellMeasure(
+        ...     measure='area', properties={'units': 'km2'},
+        ...     data=cfdm.Data(numpy.arange(73*96).reshape(73, 96))
+        ... )
         >>> c
-        <CellMeasure: area(73, 96) km2>
+        <CellMeasure: measure:area(73, 96) km2>
         >>> w.get_measure(c)
         'area'
 
@@ -1587,12 +1664,19 @@ class CFDMImplementation(Implementation):
 
         **Examples:**
 
+        >>> w = cfdm.implementation()
+        >>> d = cfdm.DimensionCoordinate(
+        ...     properties={
+        ...         'standard_name': 'latitude',
+        ...         'units': 'degrees_north',
+        ...         'foo': 'bar'
+        ...     },
+        ...     data=cfdm.Data(range(180))
+        ... )
         >>> d
         <DimensionCoordinate: latitude(180) degrees_north>
         >>> w.get_properties(d)
-        {'units: 'degrees_north'}
-         'standard_name: 'latitude',
-         'foo': 'bar'}
+        {'standard_name': 'latitude', 'units': 'degrees_north', 'foo': 'bar'}
 
         """
         return parent.properties()
@@ -1646,15 +1730,26 @@ class CFDMImplementation(Implementation):
 
         **Examples:**
 
+        >>> w = cfdm.implementation()
+        >>> d = cfdm.DimensionCoordinate(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(range(180))
+        ... )
         >>> d
         <DimensionCoordinate: latitude(180) degrees_north>
         >>> w.get_data(d)
-        <Data(180): [-89.5, ..., 89.5] degrees_north>
+        <Data(180): [0, ..., 179] degrees_north>
 
+        >>> b = cfdm.Bounds(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(numpy.arange(360).reshape(180, 2))
+        ... )
         >>> b
         <Bounds: latitude(180, 2) degrees_north>
         >>> w.get_data(b)
-        <Data(180, 2): [[-90, ..., 90]] degrees_north>
+        <Data(180, 2): [[0, ..., 359]] degrees_north>
 
         """
         return parent.get_data(default=default)
@@ -2337,7 +2432,7 @@ class CFDMImplementation(Implementation):
             construct.set_bounds(bounds, copy=copy)
         except Exception as error:
             if not error:
-                error = "Could not set {!r} on {!r}".format(bounds, construct)
+                error = f"Could not set {bounds!r} on {construct!r}"
 
             return error
 
@@ -2907,10 +3002,15 @@ class CFDMImplementation(Implementation):
 
         **Examples:**
 
-        >>> if API.has_datum(ref):
-        ...     print(ref, 'has a datum')
-        ... else:
-        ...     print(ref, 'does not have a datum')
+        >>> w = cfdm.implementation()
+
+        >>> c = cfdm.CoordinateReference()
+        >>> w.has_datum(c)
+        False
+
+        >>> r = cfdm.CoordinateReference(datum=cfdm.Data(1))
+        >>> w.has_datum(r)
+        True
 
         """
         return bool(coordinate_reference.datum)
@@ -2930,14 +3030,25 @@ class CFDMImplementation(Implementation):
 
         **Examples:**
 
-        >>> coord
+        >>> w = cfdm.implementation()
+        >>> d = cfdm.DimensionCoordinate(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(range(180))
+        ... )
+        >>> d
         <DimensionCoordinate: latitude(180) degrees_north>
-        >>> w.has_property(coord, 'units')
+        >>> w.has_property(d, 'units')
         True
 
-        >>> bounds
+        >>> b = cfdm.Bounds(
+        ...     properties={
+        ...         'standard_name': 'latitude', 'units': 'degrees_north'},
+        ...     data=cfdm.Data(numpy.arange(360).reshape(180, 2))
+        ... )
+        >>> b
         <Bounds: latitude(180, 2) degrees_north>
-        >>> w.has_property(bounds, 'long_name')
+        >>> w.has_property(b, 'long_name')
         False
 
         """
@@ -3026,7 +3137,7 @@ def implementation():
      'NetCDFArray': <class 'cfdm.data.netcdfarray.NetCDFArray'>,
      'RaggedContiguousArray': <class 'cfdm.data.raggedcontiguousarray.RaggedContiguousArray'>,
      'RaggedIndexedArray': <class 'cfdm.data.raggedindexedarray.RaggedIndexedArray'>,
-     'RaggedIndexedContiguousArray': <class 'cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray'>
+     'RaggedIndexedContiguousArray': <class 'cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray'>,
      'List': <class 'cfdm.list.List'>,
      'Count': <class 'cfdm.count.Count'>,
      'Index': <class 'cfdm.index.Index'>,

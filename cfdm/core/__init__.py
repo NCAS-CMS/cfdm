@@ -34,7 +34,7 @@ if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of netCDF4
-minimum_vn = "1.5.3"
+minimum_vn = "1.5.4"
 if LooseVersion(netCDF4.__version__) < LooseVersion(minimum_vn):
     raise ValueError(
         "Bad netCDF4 version: cfdm.core requires netCDF4>={}. "
