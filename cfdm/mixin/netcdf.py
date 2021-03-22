@@ -777,7 +777,7 @@ class NetCDFSampleDimension(NetCDF):
             return self._default(
                 default,
                 f"{self.__class__.__name__!r} has no "
-                "netCDF sample dimension name"
+                "netCDF sample dimension name",
             )
 
     def nc_get_sample_dimension(self, default=ValueError()):
@@ -824,7 +824,7 @@ class NetCDFSampleDimension(NetCDF):
             return self._default(
                 default,
                 f"{self.__class__.__name__!r} has no "
-                "netCDF sample dimension name"
+                "netCDF sample dimension name",
             )
 
     def nc_has_sample_dimension(self):
@@ -1813,7 +1813,7 @@ class NetCDFGeometry(NetCDF):
             return self._default(
                 default,
                 f"{self.__class__.__name__!r} has no "
-                "netCDF geometry variable name"
+                "netCDF geometry variable name",
             )
 
     def nc_has_geometry_variable(self):
