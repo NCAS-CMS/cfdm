@@ -53,7 +53,7 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
         shape = str(shape)
         shape = shape[1:-1]
 
-        return "<{0}: {{{1}}}>".format(self.__class__.__name__, shape)
+        return f"<{self.__class__.__name__}: {{{shape}}}>"
 
     def __str__(self):
         """Called by the `str` built-in function.
@@ -64,7 +64,7 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
 
         def _print_item(self, cid, variable, axes):
             """Private function called by __str__."""
-            x = [variable.identity(default="key%{0}".format(cid))]
+            x = [variable.identity(default=f"key%{cid}")]
 
             if variable.has_data():
                 shape = [axis_names[axis] for axis in axes]
@@ -97,7 +97,7 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
             # --- End: if
 
             if variable.has_data():
-                x.append(" = {0}".format(variable.data))
+                x.append(f" = {variable.data}")
             elif (
                 variable.construct_type
                 in ("auxiliary_coordinate", "domain_ancillary")
@@ -105,7 +105,7 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
                 and variable.bounds.has_data()
             ):
                 # Construct has no data but it does have bounds data
-                x.append(" = {0}".format(variable.bounds.data))
+                x.append(f" = {variable.bounds.data}")
 
             return "".join(x)
 
@@ -201,10 +201,7 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
         axes = self.domain_axes
 
         w = sorted(
-            [
-                "{0}Domain Axis: {1}".format(indent1, axis_names[axis])
-                for axis in axes
-            ]
+            [f"{indent1}Domain Axis: {axis_names[axis]}" for axis in axes]
         )
 
         return "\n".join(w)
@@ -386,6 +383,3 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
             return False
 
         return True
-
-
-# --- End: class

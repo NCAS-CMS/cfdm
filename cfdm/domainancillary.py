@@ -117,7 +117,7 @@ class DomainAncillary(
         if _title is None:
             ncvar = self.nc_get_variable(None)
             if ncvar is not None:
-                ncvar = " (ncvar%{0})".format(ncvar)
+                ncvar = f" (ncvar%{ncvar})"
             else:
                 ncvar = ""
 
@@ -127,7 +127,7 @@ class DomainAncillary(
                 default = _key
 
             _title = (
-                "Domain Ancillary: " + self.identity(default=default) + ncvar
+                f"Domain Ancillary: {self.identity(default=default)}{ncvar}"
             )
 
         return super().dump(
@@ -139,6 +139,3 @@ class DomainAncillary(
             _axes=_axes,
             _axis_names=_axis_names,
         )
-
-
-# --- End: class

@@ -1,6 +1,6 @@
-from copy import deepcopy
-
 from .container import Container
+
+from ..functions import deepcopy
 
 
 class Parameters(Container):
@@ -43,7 +43,6 @@ class Parameters(Container):
                 parameters = source.parameters()
             except AttributeError:
                 parameters = None
-        # --- End: if
 
         if parameters is None:
             parameters = {}
@@ -86,7 +85,7 @@ class Parameters(Container):
 
         """
         out = self._get_component("parameters")
-        self._set_component("parameters", {})
+        self._set_component("parameters", {}, copy=False)
         return out.copy()
 
     def del_parameter(self, parameter, default=ValueError()):
@@ -135,9 +134,7 @@ class Parameters(Container):
         except KeyError:
             return self._default(
                 default,
-                "{!r} has no {!r} parameter".format(
-                    self.__class__.__name__, parameter
-                ),
+                f"{self.__class__.__name__!r} has no {parameter!r} parameter",
             )
 
     def get_parameter(self, parameter, default=ValueError()):
@@ -183,9 +180,7 @@ class Parameters(Container):
         except KeyError:
             return self._default(
                 default,
-                "{!r} has no {!r} parameter".format(
-                    self.__class__.__name__, parameter
-                ),
+                f"{self.__class__.__name__!r} has no {parameter!r} parameter",
             )
 
     def has_parameter(self, parameter):
@@ -314,8 +309,6 @@ class Parameters(Container):
         """
         if copy:
             parameters = deepcopy(parameters)
-        else:
-            parameters = parameters.copy()
 
         self._get_component("parameters").update(parameters)
 
@@ -352,6 +345,3 @@ class Parameters(Container):
             value = deepcopy(value)
 
         self._get_component("parameters")[term] = value
-
-
-# --- End: class

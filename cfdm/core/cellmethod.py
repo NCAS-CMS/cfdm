@@ -180,12 +180,7 @@ class CellMethod(abstract.Container):
         'NO AXES'
 
         """
-        try:
-            return self._del_component("axes")
-        except ValueError:
-            return self._default(
-                default, "{!r} has no axes".format(self.__class__.__name__)
-            )
+        return self._del_component("axes", default=default)
 
     def del_method(self, default=ValueError()):
         """Remove the method of the cell method.
@@ -224,12 +219,7 @@ class CellMethod(abstract.Container):
         'NO METHOD'
 
         """
-        try:
-            return self._del_component("method")
-        except ValueError:
-            return self._default(
-                default, "{!r} has no method".format(self.__class__.__name__)
-            )
+        return self._del_component("method", default=default)
 
     def del_qualifier(self, qualifier, default=ValueError()):
         """Remove a qualifier of the cell method.
@@ -276,9 +266,7 @@ class CellMethod(abstract.Container):
         except KeyError:
             return self._default(
                 default,
-                "{!r} has no {!r} qualifier".format(
-                    self.__class__.__name__, qualifier
-                ),
+                f"{self.__class__.__name__!r} has no {qualifier!r} qualifier",
             )
 
     def get_axes(self, default=ValueError()):
@@ -319,12 +307,7 @@ class CellMethod(abstract.Container):
         'NO AXES'
 
         """
-        try:
-            return self._get_component("axes")
-        except ValueError:
-            return self._default(
-                default, "{!r} has no axes".format(self.__class__.__name__)
-            )
+        return self._get_component("axes", default=default)
 
     def get_method(self, default=ValueError()):
         """Return the method of the cell method.
@@ -364,12 +347,7 @@ class CellMethod(abstract.Container):
         'NO METHOD'
 
         """
-        try:
-            return self._get_component("method")
-        except ValueError:
-            return self._default(
-                default, "{!r} has no method".format(self.__class__.__name__)
-            )
+        return self._get_component("method", default=default)
 
     def get_qualifier(self, qualifier, default=ValueError()):
         """Return a qualifier of the cell method.
@@ -416,9 +394,7 @@ class CellMethod(abstract.Container):
         except KeyError:
             return self._default(
                 default,
-                "{!r} has no {!r} qualifier".format(
-                    self.__class__.__name__, qualifier
-                ),
+                f"{self.__class__.__name__!r} has no {qualifier!r} qualifier",
             )
 
     def has_axes(self):
@@ -609,7 +585,7 @@ class CellMethod(abstract.Container):
         else:
             value = tuple(value)
 
-        return self._set_component("axes", value)
+        return self._set_component("axes", value, copy=False)
 
     def set_method(self, value):
         """Set the method of the cell method.

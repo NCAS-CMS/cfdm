@@ -2,6 +2,8 @@ import os
 import platform
 import sys
 
+from pickle import dumps, loads
+
 import netCDF4
 import numpy
 
@@ -95,3 +97,13 @@ def CF():
 
     """
     return __cf_version__
+
+
+def deepcopy(x):
+    """Use pickle/unpickle to deep copy an object.
+
+    For the types of inputs expected, pickle/unpickle should a) work and
+    b) be "not slower, sometimes much faster" than `copy.deepcopy`.
+
+    """
+    return loads(dumps(x))

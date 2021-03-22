@@ -1,8 +1,8 @@
-from copy import copy, deepcopy
-
 from ..meta import DocstringRewriteMeta
 
 from ..docstring import _docstring_substitution_definitions
+
+from ..functions import deepcopy
 
 
 class Container(metaclass=DocstringRewriteMeta):
@@ -134,8 +134,7 @@ class Container(metaclass=DocstringRewriteMeta):
         """
         if isinstance(default, Exception):
             if message is not None and not default.args:
-                default = copy(default)
-                default.args = (message,)
+                default = type(default)(message)
 
             raise default
 
@@ -182,9 +181,7 @@ class Container(metaclass=DocstringRewriteMeta):
         except KeyError:
             return self._default(
                 default,
-                "{!r} has no {!r} component".format(
-                    self.__class__.__name__, component
-                ),
+                f"{ self.__class__.__name__!r} has no {component!r} component",
             )
 
     @property
@@ -258,9 +255,7 @@ class Container(metaclass=DocstringRewriteMeta):
         except KeyError:
             return self._default(
                 default,
-                "{!r} has no {!r} component".format(
-                    self.__class__.__name__, component
-                ),
+                f"{self.__class__.__name__!r} has no {component!r} component",
             )
 
     def _has_component(self, component):
@@ -356,6 +351,3 @@ class Container(metaclass=DocstringRewriteMeta):
 
         """
         return type(self)(source=self, copy=True)
-
-
-# --- End: class

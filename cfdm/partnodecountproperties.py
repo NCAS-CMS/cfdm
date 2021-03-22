@@ -89,6 +89,3 @@ class PartNodeCountProperties(
             _title=_title,
             _create_title=_create_title,
         )
-
-
-# --- End: class

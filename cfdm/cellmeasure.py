@@ -163,7 +163,7 @@ class CellMeasure(
 
         measure = self.get_measure(None)
         if measure is not None:
-            out.append("{}.set_measure({!r})".format(name, measure))
+            out.append(f"{name}.set_measure({measure!r})")
 
         if string:
             indent = " " * indent
@@ -202,17 +202,17 @@ class CellMeasure(
         """
         if _title is None:
             name = self.identity(default=self.get_property("units", ""))
-            _title = "Cell Measure: " + name
+            _title = f"Cell Measure: {name}"
 
         if self.nc_get_external():
             if not (self.has_data() or self.properties()):
                 ncvar = self.nc_get_variable(None)
                 if ncvar is not None:
-                    ncvar = "ncvar%" + ncvar
+                    ncvar = f"ncvar%{ncvar}"
                 else:
                     ncvar = ""
-                _title += " (external variable: {0})".format(ncvar)
-        # --- End: if
+
+                _title += f" (external variable: {ncvar})"
 
         return super().dump(
             display=display,
@@ -328,9 +328,8 @@ class CellMeasure(
         measure1 = other.get_measure(None)
         if measure0 != measure1:
             logger.info(
-                "{0}: Different measure ({1} != {2})".format(
-                    self.__class__.__name__, measure0, measure1
-                )
+                f"{self.__class__.__name__}: Different measure "
+                f"({measure0} != {measure1})"
             )
             return False
 
@@ -390,7 +389,7 @@ class CellMeasure(
         """
         n = self.get_measure(None)
         if n is not None:
-            return "measure:{0}".format(n)
+            return f"measure:{n}"
 
         n = self.get_property("standard_name", None)
         if n is not None:
@@ -399,12 +398,11 @@ class CellMeasure(
         for prop in ("cf_role", "long_name"):
             n = self.get_property(prop, None)
             if n is not None:
-                return "{0}={1}".format(prop, n)
-        # --- End: for
+                return f"{prop}={n}"
 
         n = self.nc_get_variable(None)
         if n is not None:
-            return "ncvar%{0}".format(n)
+            return f"ncvar%{n}"
 
         return default
 
@@ -447,9 +445,6 @@ class CellMeasure(
 
         n = self.get_measure(None)
         if n is not None:
-            out.insert(0, "measure:{0}".format(n))
+            out.insert(0, f"measure:{n}")
 
         return out
-
-
-# --- End: class

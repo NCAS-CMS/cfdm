@@ -68,7 +68,7 @@ class ArrayMixin:
         .. versionadded:: (cfdm) 1.8.7.0
 
         """
-        return "<{0}{1}: >".format(self.__class__.__name__, self.shape)
+        return f"<{self.__class__.__name__}{self.shape}: >"
 
     def __str__(self):
         """Called by the `str` built-in function.
@@ -78,7 +78,7 @@ class ArrayMixin:
         .. versionadded:: (cfdm) 1.8.7.0
 
         """
-        return "shape={0}, dtype={1}".format(self.shape, self.dtype)
+        return f"shape={self.shape}, dtype={self.dtype}"
 
     def __docstring_package_depth__(self):
         """Returns the package depth for {{package}} substitutions.
@@ -212,9 +212,5 @@ class ArrayMixin:
                 array = ma_array
             else:
                 array = array.copy()
-        # --- End: if
 
         return array
-
-
-# --- End: class

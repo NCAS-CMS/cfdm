@@ -60,6 +60,3 @@ class Datum(mixin.Parameters, mixin.NetCDFVariable, core.Datum):
         super().__init__(parameters=parameters, source=source, copy=copy)
 
         self._initialise_netcdf(source)
-
-
-# --- End: class

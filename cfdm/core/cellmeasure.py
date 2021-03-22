@@ -139,12 +139,7 @@ class CellMeasure(abstract.PropertiesData):
         None
 
         """
-        try:
-            return self._del_component("measure")
-        except ValueError:
-            return self._default(
-                default, "{!r} has no measure".format(self.__class__.__name__)
-            )
+        return self._del_component("measure", default=default)
 
     def has_measure(self):
         """Whether the measure has been set.
@@ -215,12 +210,7 @@ class CellMeasure(abstract.PropertiesData):
         None
 
         """
-        try:
-            return self._get_component("measure")
-        except ValueError:
-            return self._default(
-                default, "{!r} has no measure".format(self.__class__.__name__)
-            )
+        return self._get_component("measure", default=default)
 
     def set_measure(self, measure):
         """Set the measure.

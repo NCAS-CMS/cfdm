@@ -75,12 +75,13 @@ class CoordinateReference(abstract.Container):
         :Parameters:
 
             coordinates: sequence of `str`, optional
-                Identify the related dimension and auxiliary coordinate
-                constructs by their construct identifiers. Ignored if the
-                *source* parameter is set.
+                Identify the related dimension and auxiliary
+                coordinate constructs by their construct
+                identifiers. Ignored if the *source* parameter is set.
 
-                The coordinates may also be set after initialisation with
-                the `set_coordinates` and `set_coordinate` methods.
+                The coordinates may also be set after initialisation
+                with the `set_coordinates` and `set_coordinate`
+                methods.
 
                 *Parameter example:*
                   ``coordinates=['dimensioncoordinate2']``
@@ -92,13 +93,13 @@ class CoordinateReference(abstract.Container):
                 Set the datum component of the coordinate reference
                 construct. Ignored if the *source* parameter is set.
 
-                The datum may also be set after initialisation with the
-                `set_datum` method.
+                The datum may also be set after initialisation with
+                the `set_datum` method.
 
             coordinate_conversion: `CoordinateConversion`, optional
-                Set the coordinate conversion component of the coordinate
-                reference construct. Ignored if the *source* parameter is
-                set.
+                Set the coordinate conversion component of the
+                coordinate reference construct. Ignored if the
+                *source* parameter is set.
 
                 The coordinate conversion may also be set after
                 initialisation with the `set_coordinate_conversion`
@@ -132,7 +133,6 @@ class CoordinateReference(abstract.Container):
                 datum = source.get_datum()
             except AttributeError:
                 datum = None
-        # --- End: if
 
         if coordinates is not None:
             self.set_coordinates(coordinates)
@@ -223,7 +223,7 @@ class CoordinateReference(abstract.Container):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def clear_coordinates(self):  # SB NOTE: flaky doctest due to set order
+    def clear_coordinates(self):
         """Remove all references to coordinate constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -239,19 +239,19 @@ class CoordinateReference(abstract.Container):
 
         >>> r = {{package}}.{{class}}()
         >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
-        >>> r.coordinates()
-        {'auxiliarycoordinate1', 'dimensioncoordinate0'}
-        >>> r.clear_coordinates()
-        {'auxiliarycoordinate1', 'dimensioncoordinate0'}
+        >>> sorted(r.coordinates())
+        ['auxiliarycoordinate1', 'dimensioncoordinate0']
+        >>> sorted(r.clear_coordinates())
+        ['auxiliarycoordinate1', 'dimensioncoordinate0']
         >>> r.coordinates()
         set()
 
         """
         out = self._get_component("coordinates")
-        self._set_component("coordinates", set())
+        self._set_component("coordinates", set(), copy=False)
         return out.copy()
 
-    def coordinates(self):  # SB NOTE: flaky doctest due to set order
+    def coordinates(self):
         """Return all references to coordinate constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -267,10 +267,10 @@ class CoordinateReference(abstract.Container):
 
         >>> r = {{package}}.{{class}}()
         >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
-        >>> r.coordinates()
-        {'auxiliarycoordinate1', 'dimensioncoordinate0'}
-        >>> r.clear_coordinates()
-        {'auxiliarycoordinate1', 'dimensioncoordinate0'}
+        >>> sorted(r.coordinates())
+        ['auxiliarycoordinate1', 'dimensioncoordinate0']
+        >>> sorted(r.clear_coordinates())
+        ['auxiliarycoordinate1', 'dimensioncoordinate0']
         >>> r.coordinates()
         set()
 
@@ -344,8 +344,7 @@ class CoordinateReference(abstract.Container):
             return key
 
         return self._default(
-            default,
-            "{!r} has no {!r} coordinate".format(self.__class__.__name__, key),
+            default, f"{self.__class__.__name__!r} has no {key!r} coordinate"
         )
 
     def del_coordinate_conversion(self):
@@ -382,7 +381,7 @@ class CoordinateReference(abstract.Container):
         """
         new = self._CoordinateConversion()
         out = self._del_component("coordinate_conversion", new)
-        self.set_coordinate_conversion(new)
+        self.set_coordinate_conversion(new, copy=False)
         return out
 
     def del_datum(self):
@@ -412,7 +411,7 @@ class CoordinateReference(abstract.Container):
         """
         new = self._Datum()
         out = self._del_component("datum", new)
-        self.set_datum(new)
+        self.set_datum(new, copy=False)
         return out
 
     def get_coordinate_conversion(self):
@@ -691,6 +690,3 @@ class CoordinateReference(abstract.Container):
             datum = datum.copy()
 
         self._set_component("datum", datum, copy=False)
-
-
-# --- End: class

@@ -21,6 +21,3 @@ class InteriorRing(abstract.PropertiesData):
     .. versionadded:: (cfdm) 1.8.0
 
     """
-
-
-# --- End: class

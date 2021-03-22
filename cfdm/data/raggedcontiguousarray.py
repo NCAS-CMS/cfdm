@@ -139,6 +139,3 @@ class RaggedContiguousArray(mixin.RaggedContiguous, abstract.CompressedArray):
         super().to_memory()
         self.get_count().data.to_memory()
         return self
-
-
-# --- End: class

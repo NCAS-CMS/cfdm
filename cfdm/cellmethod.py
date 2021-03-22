@@ -60,7 +60,7 @@ class CellMethod(mixin.Container, core.CellMethod):
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        string = ["{0}:".format(axis) for axis in self.get_axes(())]
+        string = [f"{axis}:" for axis in self.get_axes(())]
 
         string.append(self.get_method(""))
 
@@ -68,7 +68,6 @@ class CellMethod(mixin.Container, core.CellMethod):
             q = self.get_qualifier(portion, None)
             if q is not None:
                 string.extend((portion, q))
-        # --- End: for
 
         interval = self.get_qualifier("interval", ())
         comment = self.get_qualifier("comment", None)
@@ -76,18 +75,18 @@ class CellMethod(mixin.Container, core.CellMethod):
         if interval:
             x = ["("]
 
-            y = ["interval: {0}".format(data) for data in interval]
+            y = [f"interval: {data}" for data in interval]
             x.append(" ".join(y))
 
             if comment is not None:
-                x.append(" comment: {0}".format(comment))
+                x.append(f" comment: {comment}")
 
             x.append(")")
 
             string.append("".join(x))
 
         elif comment is not None:
-            string.append("({0})".format(comment))
+            string.append(f"({comment})")
 
         return " ".join(string)
 
@@ -141,21 +140,18 @@ class CellMethod(mixin.Container, core.CellMethod):
 
         if header:
             out.append("#")
-            out.append("# {}:".format(self.construct_type))
+            out.append(f"# {self.construct_type}:")
             if method is not None:
-                out[-1] += " {}".format(method)
-        # --- End: if
+                out[-1] += f" {method}"
 
-        out.append(
-            "{} = {}{}()".format(name, namespace, self.__class__.__name__)
-        )
+        out.append(f"{name} = {namespace}{self.__class__.__name__}()")
 
         if method is not None:
-            out.append("{}.set_method({!r})".format(name, method))
+            out.append(f"{name}.set_method({method!r})")
 
         axes = self.get_axes(None)
         if axes is not None:
-            out.append("{}.set_axes({!r})".format(name, axes))
+            out.append(f"{name}.set_axes({axes!r})")
 
         for term, value in self.qualifiers().items():
             if term == "interval":
@@ -170,14 +166,13 @@ class CellMethod(mixin.Container, core.CellMethod):
                         )
                     else:
                         value[i] = str(data)
-                # --- End: for
 
                 value = ", ".join(value)
-                value = "[" + value + "]"
+                value = f"[{value}]"
             else:
                 value = repr(value)
 
-            out.append("{}.set_qualifier({!r}, {})".format(name, term, value))
+            out.append(f"{name}.set_qualifier({term!r}, {value})")
 
         if string:
             indent = " " * indent
@@ -336,7 +331,6 @@ class CellMethod(mixin.Container, core.CellMethod):
                     )
                 )
                 return False
-        # --- End: for
 
         if "interval" in ignore_qualifiers:
             return True
@@ -352,7 +346,6 @@ class CellMethod(mixin.Container, core.CellMethod):
                     )
                 )
                 return False
-            # --- End: if
 
             if len(intervals0) != len(intervals1):
                 logger.info(
@@ -362,7 +355,6 @@ class CellMethod(mixin.Container, core.CellMethod):
                     )
                 )
                 return False
-            # --- End: if
 
             for data0, data1 in zip(intervals0, intervals1):
                 if not self._equals(
@@ -389,7 +381,6 @@ class CellMethod(mixin.Container, core.CellMethod):
                 )
             )
             return False
-        # --- End: if
 
         # ------------------------------------------------------------
         # Do NOT check the axes
@@ -437,7 +428,7 @@ class CellMethod(mixin.Container, core.CellMethod):
         """
         n = self.get_method(None)
         if n is not None:
-            return "method:{0}".format(n)
+            return f"method:{n}"
 
         return default
 
@@ -475,7 +466,7 @@ class CellMethod(mixin.Container, core.CellMethod):
 
         n = self.get_method(None)
         if n is not None:
-            out.append("method:{0}".format(n))
+            out.append(f"method:{n}")
 
         return out
 
@@ -528,10 +519,8 @@ class CellMethod(mixin.Container, core.CellMethod):
             indices = numpy.argsort(axes)
         elif len(indices) != len(axes):
             raise ValueError(
-                "Can't sort cell method axes. The given indices ({}) "
-                "do not correspond to the number of axes ({})".format(
-                    indices, axes
-                )
+                f"Can't sort cell method axes. The given indices ({indices}) "
+                f"do not correspond to the number of axes ({axes})"
             )
 
         axes2 = []
@@ -551,6 +540,3 @@ class CellMethod(mixin.Container, core.CellMethod):
         new.set_qualifier("interval", tuple(intervals2))
 
         return new
-
-
-# --- End: class

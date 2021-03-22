@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 from .parameters import Parameters
 
 
@@ -59,15 +57,9 @@ class ParametersDomainAncillaries(Parameters):
                 domain_ancillaries = source.domain_ancillaries()
             except AttributeError:
                 domain_ancillaries = None
-        # --- End: if
 
         if domain_ancillaries is None:
             domain_ancillaries = {}
-        elif copy:
-            domain_ancillaries = domain_ancillaries.copy()
-            for key, value in list(domain_ancillaries.items()):
-                domain_ancillaries[key] = deepcopy(value)
-        # --- End: if
 
         self.set_domain_ancillaries(domain_ancillaries, copy=False)
 
@@ -163,9 +155,7 @@ class ParametersDomainAncillaries(Parameters):
         except KeyError:
             return self._default(
                 default,
-                "{!r} has no {!r} domain ancillary".format(
-                    self.__class__.__name__, domain_ancillary
-                ),
+                f"{self.__class__.__name__!r} has no {domain_ancillary!r} domain ancillary",
             )
 
     def domain_ancillaries(self):
@@ -252,9 +242,7 @@ class ParametersDomainAncillaries(Parameters):
         except KeyError:
             return self._default(
                 default,
-                "{!r} has no {!r} domain ancillary".format(
-                    self.__class__.__name__, domain_ancillary
-                ),
+                f"{self.__class__.__name__!r} has no {domain_ancillary!r} domain ancillary",
             )
 
     def has_domain_ancillary(self, domain_ancillary):
@@ -342,11 +330,6 @@ class ParametersDomainAncillaries(Parameters):
          'orog': 'domainancillary2'}
 
         """
-        if copy:
-            domain_ancillaries = deepcopy(domain_ancillaries)
-        else:
-            domain_ancillaries = domain_ancillaries.copy()
-
         self._get_component("domain_ancillaries").update(domain_ancillaries)
 
     def set_domain_ancillary(self, term, value, copy=True):
@@ -390,10 +373,4 @@ class ParametersDomainAncillaries(Parameters):
         None
 
         """
-        if copy:
-            value = deepcopy(value)
-
         self._get_component("domain_ancillaries")[term] = value
-
-
-# --- End: class

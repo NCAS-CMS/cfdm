@@ -135,6 +135,3 @@ class AuxiliaryCoordinate(
             _axes=_axes,
             _axis_names=_axis_names,
         )
-
-
-# --- End: class

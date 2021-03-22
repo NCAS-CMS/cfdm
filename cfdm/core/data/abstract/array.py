@@ -235,6 +235,3 @@ class Array(abstract.Container):
         new = klass.__new__(klass)
         new.__dict__ = self.__dict__.copy()
         return new
-
-
-# --- End: class

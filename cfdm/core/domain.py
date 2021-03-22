@@ -43,7 +43,8 @@ class Domain(mixin.ConstructAccess, abstract.Container):
         :Parameters:
 
             source: optional
-                Initialize the metadata constructs from those of *source*.
+                Initialize the metadata constructs from those of
+                *source*.
 
                 {{init source}}
 
@@ -145,22 +146,23 @@ class Domain(mixin.ConstructAccess, abstract.Container):
     def fromconstructs(cls, constructs, copy=False):
         """Create a domain from existing metadata constructs.
 
-        The new domain act as a view to the given constructs, i.e. changes
-        to the domain, such as the addition or removal of a construct,
-        will also affect the input `Constructs` instance.
+        The new domain act as a view to the given constructs,
+        i.e. changes to the domain, such as the addition or removal of
+        a construct, will also affect the input `Constructs` instance.
 
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
 
             constructs: `Constructs`
-                The constructs from which to create the new domain. Cell
-                method and field ancillary constructs are ignored.
+                The constructs from which to create the new
+                domain. Cell method and field ancillary constructs are
+                ignored.
 
             copy: `bool`, optional
-                If True then deep copy the metadata constructs prior to
-                initialization. By default the metadata constructs are not
-                copied.
+                If True then deep copy the metadata constructs prior
+                to initialization. By default the metadata constructs
+                are not copied.
 
         :Returns:
 
@@ -185,6 +187,3 @@ class Domain(mixin.ConstructAccess, abstract.Container):
         domain.constructs._field_data_axes = None
 
         return domain
-
-
-# --- End: class

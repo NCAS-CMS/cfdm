@@ -181,6 +181,3 @@ class GatheredArray(abstract.CompressedArray):
         super().to_memory()
         self.get_list().data.to_memory()
         return self
-
-
-# --- End: class
