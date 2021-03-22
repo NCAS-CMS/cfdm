@@ -1511,7 +1511,7 @@ class NetCDFWrite(IOWrite):
             ]
 
             if geometry_dimension == coord_ncdimensions[0]:
-                # The node coordiante variable already exists, and the
+                # The node coordinate variable already exists, and the
                 # corresponding encoding variables span the correct
                 # dimension.
                 create = False
@@ -1525,7 +1525,7 @@ class NetCDFWrite(IOWrite):
                     "ncdims": None,
                 }
             else:
-                # The node coordiante variable already exists, but the
+                # The node coordinate variable already exists, but the
                 # corresponding encoding variables span the wrong
                 # dimension => we have to create a new node
                 # coordinates variable.
@@ -3647,7 +3647,7 @@ class NetCDFWrite(IOWrite):
                 )
             else:
                 # This auxiliary coordinate needs to be written as a
-                # scalar coordiante variable
+                # scalar coordinate variable
                 coordinates = self._write_scalar_coordinate(
                     f, key, aux_coord, axis, coordinates
                 )

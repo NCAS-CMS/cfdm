@@ -3790,7 +3790,7 @@ class NetCDFRead(IORead):
             return None, ""
 
         # ------------------------------------------------------------
-        # File has groups. Look for a coordiante variable by proximal
+        # File has groups. Look for a coordinate variable by proximal
         # and lateral search techniques
         # ------------------------------------------------------------
         proximal_candidates = {}
