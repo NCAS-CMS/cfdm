@@ -218,23 +218,20 @@ class CoordinateReference(
 
         if header:
             out.append("#")
-            out.append("# {}:".format(self.construct_type))
+            out.append(f"# {self.construct_type}:")
             identity = self.identity()
             if identity:
-                out[-1] += " {}".format(identity)
-        # -- End: if
+                out[-1] += f" {identity}"
 
-        out.append(
-            "{} = {}{}()".format(name, namespace, self.__class__.__name__)
-        )
+        out.append(f"{name} = {namespace}{self.__class__.__name__}()")
 
         nc = self.nc_get_variable(None)
         if nc is not None:
-            out.append("{}.nc_set_variable({!r})".format(name, nc))
+            out.append(f"{name}.nc_set_variable({nc!r})")
 
         coordinates = self.coordinates()
         if coordinates:
-            out.append("{}.set_coordinates({})".format(name, coordinates))
+            out.append(f"{name}.set_coordinates({coordinates})")
 
         for term, value in self.datum.parameters().items():
             if isinstance(value, self._Data):
@@ -248,9 +245,7 @@ class CoordinateReference(
             else:
                 value = repr(value)
 
-            out.append(
-                "{}.datum.set_parameter({!r}, {})".format(name, term, value)
-            )
+            out.append(f"{name}.datum.set_parameter({term!r}, {value})")
 
         for term, value in self.coordinate_conversion.parameters().items():
             if isinstance(value, self._Data):
@@ -265,17 +260,13 @@ class CoordinateReference(
                 value = repr(value)
 
             out.append(
-                "{}.coordinate_conversion.set_parameter({!r}, {})".format(
-                    name, term, value
-                )
+                f"{name}.coordinate_conversion.set_parameter({term!r}, {value})"
             )
 
         domain_ancillaries = self.coordinate_conversion.domain_ancillaries()
         if domain_ancillaries:
             out.append(
-                "{}.coordinate_conversion.set_domain_ancillaries({})".format(
-                    name, domain_ancillaries
-                )
+                f"{name}.coordinate_conversion.set_domain_ancillaries({domain_ancillaries})"
             )
 
         if string:
@@ -321,9 +312,7 @@ class CoordinateReference(
 
         if _title is None:
             string = [
-                "{0}Coordinate Reference: {1}".format(
-                    indent0, self.identity(default="")
-                )
+                f"{indent0}Coordinate Reference: {self.identity(default='')}"
             ]
         else:
             string = [indent0 + _title]
@@ -331,11 +320,7 @@ class CoordinateReference(
         # Coordinate conversion parameter-valued terms
         coordinate_conversion = self.get_coordinate_conversion()
         for term, value in sorted(coordinate_conversion.parameters().items()):
-            string.append(
-                "{0}Coordinate conversion:{1} = {2}".format(
-                    indent1, term, value
-                )
-            )
+            string.append(f"{indent1}Coordinate conversion:{term} = {value}")
 
         # Coordinate conversion domain ancillary-valued terms
         if _construct_names:
@@ -345,46 +330,40 @@ class CoordinateReference(
                 if key in _construct_names:
                     construct_name = (
                         "Domain Ancillary: "
-                        + _construct_names.get(key, "key:{}".format(key))
+                        + _construct_names.get(key, f"key:{key}")
                     )
                 else:
                     construct_name = ""
 
                 string.append(
-                    "{0}Coordinate conversion:{1} = {2}".format(
-                        indent1, term, construct_name
-                    )
+                    f"{indent1}Coordinate conversion:{term} = {construct_name}"
                 )
         else:
             for term, value in sorted(
                 coordinate_conversion.domain_ancillaries().items()
             ):
                 string.append(
-                    "{0}Coordinate conversion:{1} = {2}".format(
-                        indent1, term, str(value)
-                    )
+                    f"{indent1}Coordinate conversion:{term} = {value}"
                 )
 
         # Datum parameter-valued terms
         datum = self.get_datum()
         for term, value in sorted(datum.parameters().items()):
-            string.append("{0}Datum:{1} = {2}".format(indent1, term, value))
+            string.append(f"{indent1}Datum:{term} = {value}")
 
         # Coordinates
         if _construct_names:
             for key in sorted(self.coordinates(), reverse=True):
-                coord = "{}".format(
-                    _construct_names.get(key, "key:{}".format(key))
-                )
+                coord = "{}".format(_construct_names.get(key, f"key:{key}"))
                 if key in _dimension_coordinates:
                     coord = "Dimension Coordinate: " + coord
                 elif key in _auxiliary_coordinates:
                     coord = "Auxiliary Coordinate: " + coord
 
-                string.append("{0}{1}".format(indent1, coord))
+                string.append(f"{indent1}{coord}")
         else:
             for identifier in sorted(self.coordinates()):
-                string.append("{0}Coordinate: {1}".format(indent1, identifier))
+                string.append(f"{indent1}Coordinate: {identifier}")
 
         return "\n".join(string)
 
@@ -459,8 +438,8 @@ class CoordinateReference(
         coords1 = other.coordinates()
         if len(coords0) != len(coords1):
             logger.info(
-                "{}: Different sized collections of coordinates "
-                "({}, {})".format(self.__class__.__name__, coords0, coords1)
+                f"{self.__class__.__name__}: Different sized collections of "
+                f"coordinates ({coords0}, {coords1})"
             )
 
             return False
@@ -473,9 +452,7 @@ class CoordinateReference(
             ignore_type=ignore_type,
         ):
             logger.info(
-                "{}: Different coordinate conversions".format(
-                    self.__class__.__name__
-                )
+                f"{self.__class__.__name__}: Different coordinate conversions"
             )
 
             return False
@@ -487,7 +464,7 @@ class CoordinateReference(
             verbose=verbose,
             ignore_type=ignore_type,
         ):
-            logger.info("{}: Different datums".format(self.__class__.__name__))
+            logger.info(f"{self.__class__.__name__}: Different datums")
 
             return False
 
@@ -543,12 +520,11 @@ class CoordinateReference(
         for prop in ("standard_name", "grid_mapping_name"):
             n = self.coordinate_conversion.get_parameter(prop, None)
             if n is not None:
-                return "{0}:{1}".format(prop, n)
-        # --- End: for
+                return f"{prop}:{n}"
 
         n = self.nc_get_variable(None)
         if n is not None:
-            return "ncvar%{0}".format(n)
+            return f"ncvar%{n}"
 
         return default
 
@@ -595,14 +571,10 @@ class CoordinateReference(
         for prop in ("standard_name", "grid_mapping_name"):
             n = self.coordinate_conversion.get_parameter(prop, None)
             if n is not None:
-                out.append("{0}:{1}".format(prop, n))
-        # --- End: for
+                out.append(f"{prop}:{n}")
 
         n = self.nc_get_variable(None)
         if n is not None:
-            out.append("ncvar%{0}".format(n))
+            out.append(f"ncvar%{n}")
 
         return out
-
-
-# --- End: class

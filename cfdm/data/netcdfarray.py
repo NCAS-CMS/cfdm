@@ -107,16 +107,16 @@ class NetCDFArray(abstract.Array):
         self._set_component("close", True, copy=False)
 
         if ndim is not None:
-            self._set_component("ndim", ndim)
+            self._set_component("ndim", ndim, copy=False)
 
         if size is not None:
-            self._set_component("size", size)
+            self._set_component("size", size, copy=False)
 
         if shape is not None:
-            self._set_component("shape", shape)
+            self._set_component("shape", shape, copy=False)
 
-        self._set_component("dtype", dtype)
-        self._set_component("mask", mask)
+        self._set_component("dtype", dtype, copy=False)
+        self._set_component("mask", mask, copy=False)
 
     def __getitem__(self, indices):
         """Returns a subspace of the array as a numpy array.
@@ -520,6 +520,3 @@ class NetCDFArray(abstract.Array):
 
         """
         return NumpyArray(self[...])
-
-
-# --- End: class

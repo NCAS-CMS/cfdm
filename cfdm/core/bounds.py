@@ -48,8 +48,9 @@ class Bounds(abstract.PropertiesData):
 
         """
         super().__init__(
-            properties=properties, data=data, source=source, copy=copy
+            properties=properties,
+            data=data,
+            source=source,
+            copy=copy,
+            _use_data=_use_data,
         )
-
-
-# --- End: class

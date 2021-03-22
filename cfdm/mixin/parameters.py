@@ -145,10 +145,6 @@ class Parameters(Container):
                     )
                 )
                 return False
-        # --- End: for
 
         # Still here? Then the two parameter collections are equal
         return True
-
-
-# --- End: class

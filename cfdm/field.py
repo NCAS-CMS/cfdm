@@ -1,3 +1,4 @@
+# from copy import deepcopy
 import logging
 
 from . import mixin
@@ -9,6 +10,7 @@ from . import Index
 from . import List
 
 from .constants import masked as cfdm_masked
+from .core.functions import deepcopy
 
 from .data import (
     RaggedContiguousArray,
@@ -160,6 +162,14 @@ class Field(
 
         self._initialise_netcdf(source)
 
+        if source is not None:
+            try:
+                dc = source._get_component("dataset_compliance", {})
+            except AttributeError:
+                dc = {}
+
+            self._set_dataset_compliance(dc)
+
     def __repr__(self):
         """Called by the `repr` built-in function.
 
@@ -168,9 +178,7 @@ class Field(
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        return "<{0}: {1}>".format(
-            self.__class__.__name__, self._one_line_description()
-        )
+        return f"<{self.__class__.__name__}: {self._one_line_description()}>"
 
     def __str__(self):
         """Called by the `str` built-in function.
@@ -180,12 +188,12 @@ class Field(
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        title = "Field: {0}".format(self.identity(""))
+        title = f"Field: {self.identity('')}"
 
         # Append the netCDF variable name
         ncvar = self.nc_get_variable(None)
         if ncvar is not None:
-            title += " (ncvar%{0})".format(ncvar)
+            title += f" (ncvar%{ncvar})"
 
         string = [title]
         string.append("".ljust(len(string[0]), "-"))
@@ -194,16 +202,14 @@ class Field(
         units = getattr(self, "units", "")
         calendar = getattr(self, "calendar", None)
         if calendar is not None:
-            units += " {0}".format(calendar)
+            units += f" {calendar}"
 
         # Axes
         axis_names = self._unique_domain_axis_identities()
 
         # Data
         string.append(
-            "Data            : {0}".format(
-                self._one_line_description(axis_names)
-            )
+            "Data            : {self._one_line_description(axis_names)}"
         )
 
         # Cell methods
@@ -224,7 +230,7 @@ class Field(
 
             c = " ".join(x)
 
-            string.append("Cell methods    : {0}".format(c))
+            string.append(f"Cell methods    : {c}")
 
         def _print_item(self, key, variable, axes):
             """Private function called by __str__."""
@@ -242,17 +248,14 @@ class Field(
             ):
                 ncvar = variable.nc_get_variable(None)
                 if ncvar is not None:
-                    x.append(" (external variable: ncvar%{})".format(ncvar))
+                    x.append(f" (external variable: ncvar%{ncvar})")
                 else:
                     x.append(" (external variable)")
-            # --- End: if
 
             if variable.has_data():
-                x.append(" = {0}".format(variable.get_data()))
+                x.append(f" = {variable.get_data()}")
 
             return "".join(x)
-
-        # --- End: def
 
         # Field ancillary variables
         x = [
@@ -260,9 +263,8 @@ class Field(
             for key, anc in sorted(self.field_ancillaries.items())
         ]
         if x:
-            string.append(
-                "Field ancils    : {}".format("\n                : ".join(x))
-            )
+            field_ancils = "\n                : ".join(x)
+            string.append(f"Field ancils    : {field_ancils}")
 
         string.append(str(self.domain))
 
@@ -354,13 +356,11 @@ class Field(
                         dice.append(indices[data_axes.index(axis)])
                     else:
                         dice.append(slice(None))
-                # --- End: for
 
                 if needs_slicing:
                     new.set_construct(
                         construct[tuple(dice)], key=key, copy=False
                     )
-        # --- End: if
 
         new.set_data(new_data, copy=False)
 
@@ -444,20 +444,20 @@ class Field(
         x = [axis_names_sizes[axis] for axis in self.get_data_axes(default=())]
         axis_names = ", ".join(x)
         if axis_names:
-            axis_names = "({0})".format(axis_names)
+            axis_names = f"({axis_names})"
 
         # Field units
         units = self.get_property("units", None)
         calendar = self.get_property("calendar", None)
         if units is not None:
-            units = " {0}".format(units)
+            units = f" {units}"
         else:
             units = ""
 
         if calendar is not None:
-            units += " {0}".format(calendar)
+            units += f" {calendar}"
 
-        return "{0}{1}{2}".format(self.identity(""), axis_names, units)
+        return f"{self.identity('')}{axis_names}{units}"
 
     def _set_dataset_compliance(self, value):
         """Sets the dataset compliance report.
@@ -479,7 +479,7 @@ class Field(
             `None`
 
         """
-        self._set_component("dataset_compliance", value, copy=True)
+        self._set_component("dataset_compliance", value, copy=False)
 
     @property
     def _test_docstring_substitution_property_Field(self):
@@ -753,29 +753,30 @@ class Field(
     ):
         """Compress the field construct.
 
-        Compression can save space by identifying and removing unwanted
-        missing data. Such compression techniques store the data more
-        efficiently and result in no precision loss.
+        Compression can save space by identifying and removing
+        unwanted missing data. Such compression techniques store the
+        data more efficiently and result in no precision loss.
 
-        The field construct data is compressed, along with any applicable
-        metadata constructs.
+        The field construct data is compressed, along with any
+        applicable metadata constructs.
 
-        Whether or not the field construct is compressed does not alter
-        its functionality nor external appearance.
+        Whether or not the field construct is compressed does not
+        alter its functionality nor external appearance.
 
-        A field that is already compressed will be returned compressed by
-        the chosen method.
+        A field that is already compressed will be returned compressed
+        by the chosen method.
 
-        When writing a compressed field construct to a dataset, compressed
-        netCDF variables are written, along with the supplementary netCDF
-        variables and attributes that are required for the encoding.
+        When writing a compressed field construct to a dataset,
+        compressed netCDF variables are written, along with the
+        supplementary netCDF variables and attributes that are
+        required for the encoding.
 
-        The following type of compression are available (see the *method*
-        parameter):
+        The following type of compression are available (see the
+        *method* parameter):
 
-            * Ragged arrays for discrete sampling geometries (DSG). Three
-              different types of ragged array representation are
-              supported.
+            * Ragged arrays for discrete sampling geometries
+              (DSG). Three different types of ragged array
+              representation are supported.
 
             ..
 
@@ -792,67 +793,72 @@ class Field(
 
                 * ``'contiguous'``
 
-                  Contiguous ragged array representation for DSG "point",
-                  "timeSeries", "trajectory" or "profile" features.
+                  Contiguous ragged array representation for DSG
+                  "point", "timeSeries", "trajectory" or "profile"
+                  features.
 
-                  The field construct data must have exactly 2 dimensions
-                  for which the first (leftmost) dimension indexes each
-                  feature and the second (rightmost) dimension contains
-                  the elements for the features. Trailing missing data
-                  values in the second dimension are removed to created
-                  the compressed data.
+                  The field construct data must have exactly 2
+                  dimensions for which the first (leftmost) dimension
+                  indexes each feature and the second (rightmost)
+                  dimension contains the elements for the
+                  features. Trailing missing data values in the second
+                  dimension are removed to created the compressed
+                  data.
 
                 * ``'indexed'``
 
                   Indexed ragged array representation for DSG "point",
                   "timeSeries", "trajectory", or "profile" features.
 
-                  The field construct data must have exactly 2 dimensions
-                  for which the first (leftmost) dimension indexes each
-                  feature and the second (rightmost) dimension contains
-                  the elements for the features. Trailing missing data
-                  values in the second dimension are removed to created
-                  the compressed data.
+                  The field construct data must have exactly 2
+                  dimensions for which the first (leftmost) dimension
+                  indexes each feature and the second (rightmost)
+                  dimension contains the elements for the
+                  features. Trailing missing data values in the second
+                  dimension are removed to created the compressed
+                  data.
 
                 * ``'indexed_contiguous'``
 
-                  Indexed contiguous ragged array representation for DSG
-                  "timeSeriesProfile", or "trajectoryProfile" features.
+                  Indexed contiguous ragged array representation for
+                  DSG "timeSeriesProfile", or "trajectoryProfile"
+                  features.
 
-                  The field construct data must have exactly 3 dimensions
-                  for which the first (leftmost) dimension indexes each
-                  feature; the second (middle) dimension indexes each
-                  timeseries or trajectory; and the third (rightmost)
-                  dimension contains the elements for the timeseries or
-                  trajectories. Trailing missing data values in the third
-                  dimension are removed to created the compressed data.
+                  The field construct data must have exactly 3
+                  dimensions for which the first (leftmost) dimension
+                  indexes each feature; the second (middle) dimension
+                  indexes each timeseries or trajectory; and the third
+                  (rightmost) dimension contains the elements for the
+                  timeseries or trajectories. Trailing missing data
+                  values in the third dimension are removed to created
+                  the compressed data.
 
                 * ``'gathered'``
 
-                  Compression by gathering over any subset of the field
-                  construct data dimensions.
+                  Compression by gathering over any subset of the
+                  field construct data dimensions.
 
                   *Not yet available.*
 
             count_properties: `dict`, optional
-                Provide properties to the count variable for contiguous
-                ragged array representation or indexed contiguous ragged
-                array representation.
+                Provide properties to the count variable for
+                contiguous ragged array representation or indexed
+                contiguous ragged array representation.
 
                 *Parameter example:*
                   ``count_properties={'long_name': 'number of timeseries'}``
 
             index_properties: `dict`, optional
                 Provide properties to the index variable for indexed
-                ragged array representation or indexed contiguous ragged
-                array representation.
+                ragged array representation or indexed contiguous
+                ragged array representation.
 
                 *Parameter example:*
                   ``index_properties={'long_name': 'station of profile'}``
 
             list_properties: `dict`, optional
-                Provide properties to the list variable for compression by
-                gathering.
+                Provide properties to the list variable for
+                compression by gathering.
 
                 *Parameter example:*
                   ``list_properties={'long_name': 'uncompression indices'}``
@@ -862,8 +868,8 @@ class Field(
         :Returns:
 
             `Field` or `None`
-                The compressed field construct, or `None` if the operation
-                was in-place.
+                The compressed field construct, or `None` if the
+                operation was in-place.
 
         **Examples:**
 
@@ -906,8 +912,6 @@ class Field(
                 calendar=data.get_calendar(None),
             )
 
-        # --- End: def
-
         def _RaggedContiguousArray(
             self, compressed_data, data, count_variable
         ):
@@ -919,8 +923,6 @@ class Field(
                 count_variable=count_variable,
             )
 
-        # --- End: def
-
         def _RaggedIndexedArray(self, compressed_data, data, index_variable):
             return self._RaggedIndexedArray(
                 compressed_data,
@@ -929,8 +931,6 @@ class Field(
                 ndim=data.ndim,
                 index_variable=index_variable,
             )
-
-        # --- End: def
 
         def _RaggedIndexedContiguousArray(
             self, compressed_data, data, count_variable, index_variable
@@ -943,8 +943,6 @@ class Field(
                 count_variable=count_variable,
                 index_variable=index_variable,
             )
-
-        # --- End: def
 
         def _compress_metadata(
             f, method, count, N, axes, Array_func, **kwargs
@@ -1012,7 +1010,6 @@ class Field(
                             end = start + last
                             compressed_data[start:end] = d[:last]
                             start += last
-                # --- End: if
 
                 # Insert the compressed data into the metadata
                 # construct
@@ -1054,14 +1051,11 @@ class Field(
                             end = start + last
                             compressed_data[start:end] = d[:last]
                             start += last
-                    # --- End: if
 
                     # Insert the compressed data into the metadata
                     # construct
                     y = Array_func(f, compressed_data, data=data, **kwargs)
                     data._set_CompressedArray(y, copy=False)
-
-        # --- End: def
 
         f = _inplace_enabled_define_and_cleanup(self)
 
@@ -1083,26 +1077,21 @@ class Field(
             if self.data.ndim != 2:
                 raise ValueError(
                     "The field data must have exactly 2 dimensions for "
-                    "DSG ragged contiguous compression. Got {}".format(
-                        self.data.ndim
-                    )
+                    f"DSG ragged contiguous compression. Got {self.data.ndim}"
                 )
         elif method == "indexed":
             if self.data.ndim != 2:
                 raise ValueError(
                     "The field data must have exactly 2 dimensions for "
-                    "DSG ragged indexed compression. Got {}".format(
-                        self.data.ndim
-                    )
+                    f"DSG ragged indexed compression. Got {self.data.ndim}"
                 )
         elif method == "indexed_contiguous":
             if self.data.ndim != 3:
                 raise ValueError(
                     "The field data must have exactly 3 dimensions for "
                     "DSG ragged indexed contiguous compression. Got "
-                    "{}".format(self.data.ndim)
+                    f"{self.data.ndim}"
                 )
-        # --- End: if
 
         # Make sure that the metadata constructs have the same
         # relative axis order as the field's data
@@ -1127,7 +1116,6 @@ class Field(
                         break
                     else:
                         last -= 1
-                # --- End: for
 
                 count.append(last)
 
@@ -1142,7 +1130,6 @@ class Field(
                 end = start + last
                 compressed_field_data[start:end] = d[:last]
                 start += last
-        # --- End: if
 
         if method == "contiguous":
             # --------------------------------------------------------
@@ -1261,49 +1248,49 @@ class Field(
             )
 
         else:
-            raise ValueError("Unknown compression method: {!r}".format(method))
+            raise ValueError(f"Unknown compression method: {method!r}")
 
         f.data._set_CompressedArray(x, copy=False)
 
         return f
 
-    def copy(self, data=True):
-        """Return a deep copy of the field construct.
-
-        ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
-
-        Arrays within `Data` instances are copied with a copy-on-write
-        technique. This means that a copy takes up very little extra
-        memory, even when the original contains very large data arrays,
-        and the copy operation is fast.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        :Parameters:
-
-            data: `bool`, optional
-                If False then do not copy the data of the field construct,
-                nor the data of any of its metadata constructs. By default
-                all data are copied.
-
-        :Returns:
-
-            `Field`
-                The deep copy.
-
-        **Examples:**
-
-        >>> g = f.copy()
-        >>> g = f.copy(data=False)
-        >>> g.has_data()
-        False
-
-        """
-        new = super().copy(data=data)
-
-        new._set_dataset_compliance(self.dataset_compliance())
-
-        return new
+    #    def copy(self, data=True):
+    #        """Return a deep copy of the field construct.
+    #
+    #        ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+    #
+    #        Arrays within `Data` instances are copied with a copy-on-write
+    #        technique. This means that a copy takes up very little extra
+    #        memory, even when the original contains very large data arrays,
+    #        and the copy operation is fast.
+    #
+    #        .. versionadded:: (cfdm) 1.7.0
+    #
+    #        :Parameters:
+    #
+    #            data: `bool`, optional
+    #                If False then do not copy the data of the field construct,
+    #                nor the data of any of its metadata constructs. By default
+    #                all data are copied.
+    #
+    #        :Returns:
+    #
+    #            `Field`
+    #                The deep copy.
+    #
+    #        **Examples:**
+    #
+    #        >>> g = f.copy()
+    #        >>> g = f.copy(data=False)
+    #        >>> g.has_data()
+    #        False
+    #
+    #        """
+    #        new = super().copy(data=data)
+    #
+    #        new._set_dataset_compliance(self.dataset_compliance())
+    #
+    #        return new
 
     def creation_commands(
         self,
@@ -1487,13 +1474,13 @@ class Field(
         """
         if name in ("b", "c", "mask", "i"):
             raise ValueError(
-                "The 'name' parameter can not have the value {!r}".format(name)
+                f"The 'name' parameter can not have the value {name!r}"
             )
 
         if name == data_name:
             raise ValueError(
                 "The 'name' parameter can not have the same value as "
-                "the 'data_name' parameters: {!r}".format(name)
+                f"the 'data_name' parameters: {name!r}"
             )
 
         namespace0 = namespace
@@ -1517,9 +1504,7 @@ class Field(
             out.append("#")
             out.append("# netCDF global attributes")
             out.append(
-                "{}.nc_set_global_attributes({!r})".format(
-                    name, nc_global_attributes
-                )
+                f"{name}.nc_set_global_attributes({nc_global_attributes!r})"
             )
 
         # Domain axes
@@ -1533,9 +1518,7 @@ class Field(
                     header=header,
                 )
             )
-            out.append(
-                "{}.set_construct(c, key={!r}, copy=False)".format(name, key)
-            )
+            out.append(f"{name}.set_construct(c, key={key!r}, copy=False)")
 
         # Metadata constructs with data
         for key, c in self.constructs.filter_by_type(
@@ -1557,9 +1540,8 @@ class Field(
                 )
             )
             out.append(
-                "{}.set_construct(c, axes={}, key={!r}, copy=False)".format(
-                    name, self.get_data_axes(key), key
-                )
+                f"{name}.set_construct(c, axes={self.get_data_axes(key)}, "
+                f"key={key!r}, copy=False)"
             )
 
         # Cell method constructs
@@ -1573,7 +1555,7 @@ class Field(
                     header=header,
                 )
             )
-            out.append("{}.set_construct(c)".format(name))
+            out.append(f"{name}.set_construct(c)")
 
         # Coordinate reference constructs
         for key, c in self.coordinate_references.items():
@@ -1586,7 +1568,7 @@ class Field(
                     header=header,
                 )
             )
-            out.append("{}.set_construct(c)".format(name))
+            out.append(f"{name}.set_construct(c)")
 
         # Field data axes
         data_axes = self.get_data_axes(None)
@@ -1595,7 +1577,7 @@ class Field(
                 out.append("#")
                 out.append("# field data axes")
 
-            out.append("{}.set_data_axes({})".format(name, data_axes))
+            out.append(f"{name}.set_data_axes({data_axes})")
 
         if string:
             indent = " " * indent
@@ -1633,17 +1615,16 @@ class Field(
             _title = self.identity(default=None)
             if ncvar is not None:
                 if _title is None:
-                    _title = "ncvar%{0}".format(ncvar)
+                    _title = f"ncvar%{ncvar}"
                 else:
-                    _title += " (ncvar%{0})".format(ncvar)
-            # --- End: if
+                    _title += f" (ncvar%{ncvar})"
+
             if _title is None:
                 _title = ""
 
-            _title = "Field: {0}".format(_title)
-        # --- End: if
+            _title = f"Field: {_title}"
 
-        line = "{0}{1}".format(indent0, "".ljust(len(_title), "-"))
+        line = f"{indent0}{''.ljust(len(_title), '-')}"
 
         # Title
         string = [line, indent0 + _title, line]
@@ -1663,9 +1644,7 @@ class Field(
             x = [axis_to_name[axis] for axis in self.get_data_axes(default=())]
 
             string.append("")
-            string.append(
-                "{0}Data({1}) = {2}".format(indent0, ", ".join(x), str(data))
-            )
+            string.append(f"{indent0}Data({', '.join(x)}) = {data}")
             string.append("")
 
         # Cell methods
@@ -1684,7 +1663,6 @@ class Field(
                 string.append(cm.dump(display=False, _level=_level))
 
             string.append("")
-        # --- End: if
 
         # Field ancillaries
         for cid, value in sorted(self.field_ancillaries.items()):
@@ -1830,9 +1808,7 @@ class Field(
             _ignore_type=False,
         ):
             logger.info(
-                "{0}: Different metadata constructs".format(
-                    self.__class__.__name__
-                )
+                f"{self.__class__.__name__}: Different metadata constructs"
             )
             return False
 
@@ -1948,24 +1924,19 @@ class Field(
 
         domain_axis = f.domain_axes.get(axis, None)
         if domain_axis is None:
-            raise ValueError(
-                "Can't insert non-existent domain axis: {}".format(axis)
-            )
+            raise ValueError(f"Can't insert non-existent domain axis: {axis}")
 
         if domain_axis.get_size() != 1:
             raise ValueError(
-                "Can't insert an axis of size {}: {!r}".format(
-                    domain_axis.get_size(), axis
-                )
+                "Can't insert an axis of size "
+                f"{domain_axis.get_size()}: {axis!r}"
             )
 
         data_axes = f.get_data_axes(default=None)
         if data_axes is not None:
             if axis in data_axes:
                 raise ValueError(
-                    "Can't insert a duplicate data array axis: {!r}".format(
-                        axis
-                    )
+                    f"Can't insert a duplicate data array axis: {axis!r}"
                 )
 
             data_axes = list(data_axes)
@@ -1983,10 +1954,10 @@ class Field(
         """Convert a metadata construct into a new field construct.
 
         The new field construct has the properties and data of the
-        metadata construct, and domain axis constructs corresponding to
-        the data. By default it also contains other metadata constructs
-        (such as dimension coordinate and coordinate reference constructs)
-        that define its domain.
+        metadata construct, and domain axis constructs corresponding
+        to the data. By default it also contains other metadata
+        constructs (such as dimension coordinate and coordinate
+        reference constructs) that define its domain.
 
         The `{{package}}.read` function allows a field construct to be
         derived directly from a netCDF variable that corresponds to a
@@ -2004,14 +1975,14 @@ class Field(
         :Parameters:
 
             key: `str`
-                Convert the metadata construct with the given construct
-                key.
+                Convert the metadata construct with the given
+                construct key.
 
             full_domain: `bool`, optional
-                If False then only create domain axis constructs for the
-                domain of the new field construct. By default as much of
-                the domain as possible is copied to the new field
-                construct.
+                If False then only create domain axis constructs for
+                the domain of the new field construct. By default as
+                much of the domain as possible is copied to the new
+                field construct.
 
         :Returns:
 
@@ -2079,7 +2050,6 @@ class Field(
                 f.set_construct(
                     self.domain_axes[domain_axis], key=domain_axis, copy=True
                 )
-        # --- End: if
 
         # ------------------------------------------------------------
         # Set data axes
@@ -2100,7 +2070,6 @@ class Field(
 
                 if set(axes).issubset(data_axes):
                     f.set_construct(construct, key=ccid, axes=axes, copy=True)
-            # --- End: for
 
             # Add coordinate references which span a subset of the item's
             # axes
@@ -2123,7 +2092,6 @@ class Field(
                     if not set(axes).issubset(data_axes):
                         ok = False
                         break
-                # --- End: for
 
                 if ok:
                     ref = ref.copy()
@@ -2143,8 +2111,6 @@ class Field(
                             f.set_construct(
                                 construct, key=dakey, axes=axes, copy=True
                             )
-            # --- End: for
-        # --- End: if
 
         return f
 
@@ -2154,18 +2120,20 @@ class Field(
         Reported are problems encountered whilst reading the field
         construct from a dataset.
 
-        If the dataset is partially CF-compliant to the extent that it is
-        not possible to unambiguously map an element of the netCDF dataset
-        to an element of the CF data model, then a field construct is
-        still returned by the `read` function, but may be incomplete.
+        If the dataset is partially CF-compliant to the extent that it
+        is not possible to unambiguously map an element of the netCDF
+        dataset to an element of the CF data model, then a field
+        construct is still returned by the `read` function, but may be
+        incomplete.
 
-        Such "structural" non-compliance would occur, for example, if the
-        ``coordinates`` attribute of a CF-netCDF data variable refers to
-        another variable that does not exist, or refers to a variable that
-        spans a netCDF dimension that does not apply to the data variable.
+        Such "structural" non-compliance would occur, for example, if
+        the ``coordinates`` attribute of a CF-netCDF data variable
+        refers to another variable that does not exist, or refers to a
+        variable that spans a netCDF dimension that does not apply to
+        the data variable.
 
-        Other types of non-compliance are not checked, such whether or not
-        controlled vocabularies have been adhered to.
+        Other types of non-compliance are not checked, such whether or
+        not controlled vocabularies have been adhered to.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -2174,19 +2142,20 @@ class Field(
         :Parameters:
 
             display: `bool`, optional
-                If True print the compliance report. By default the report
-                is returned as a dictionary.
+                If True print the compliance report. By default the
+                report is returned as a dictionary.
 
         :Returns:
 
             `None` or `dict`
                 The report. If *display* is True then the report is
-                printed and `None` is returned. Otherwise the report is
-                returned as a dictionary.
+                printed and `None` is returned. Otherwise the report
+                is returned as a dictionary.
 
         **Examples:**
 
-        If no problems were encountered, an empty dictionary is returned:
+        If no problems were encountered, an empty dictionary is
+        returned:
 
         >>> f.dataset_compliance()
         {}
@@ -2195,25 +2164,25 @@ class Field(
         d = self._get_component("dataset_compliance", {})
 
         if not display:
-            return d
+            return deepcopy(d)
 
         if not d:
             print(d)
             return
 
         for key0, value0 in d.items():
-            print("{{{0!r}:".format(key0))
-            print("    CF version: {0!r},".format(value0["CF version"]))
-            print("    dimensions: {0!r},".format(value0["dimensions"]))
+            print(f"{{{key0!r}:")
+            print(f"    CF version: {value0['CF version']!r},")
+            print(f"    dimensions: {value0['dimensions']!r},")
             print("    non-compliance: {")
             for key1, value1 in sorted(value0["non-compliance"].items()):
                 for x in value1:
-                    print("        {!r}: [".format(key1))
+                    print(f"        {key1!r}: [")
                     print(
                         "            {{{0}}},".format(
                             "\n             ".join(
                                 [
-                                    "{0!r}: {1!r},".format(key2, value2)
+                                    f"{key2!r}: {value2!r},"
                                     for key2, value2 in sorted(x.items())
                                 ]
                             )
@@ -2286,7 +2255,7 @@ class Field(
         elif component in ("interior_ring", "node_count", "part_node_count"):
             variables = self._get_coordinate_geometry_variables(component)
         else:
-            raise ValueError("Invalid component: {!r}".format(component))
+            raise ValueError(f"Invalid component: {component!r}")
 
         for v in variables:
             v.nc_set_variable(value)
@@ -2349,7 +2318,7 @@ class Field(
         elif component in ("interior_ring", "node_count", "part_node_count"):
             variables = self._get_coordinate_geometry_variables(component)
         else:
-            raise ValueError("Invalid component: {!r}".format(component))
+            raise ValueError(f"Invalid component: {component!r}")
 
         for v in variables:
             v.nc_del_variable(None)
@@ -2976,7 +2945,7 @@ class Field(
             try:
                 iaxes = f.data._parse_axes(axes)
             except ValueError as error:
-                raise ValueError("Can't squeeze data: {}".format(error))
+                raise ValueError(f"Can't squeeze data: {error}")
 
         data_axes = f.get_data_axes(default=None)
         if data_axes is not None:
@@ -3039,7 +3008,7 @@ class Field(
         try:
             iaxes = f.data._parse_axes(axes)
         except ValueError as error:
-            raise ValueError("Can't transpose data: {}".format(error))
+            raise ValueError(f"Can't transpose data: {error}")
 
         ndim = f.data.ndim
         if iaxes is None:
@@ -3073,7 +3042,6 @@ class Field(
                 for i, axis in enumerate(construct_axes):
                     if axis not in new_construct_axes:
                         new_construct_axes.insert(i, axis)
-                # --- End: for
 
                 iaxes = [
                     construct_axes.index(axis) for axis in new_construct_axes
@@ -3083,7 +3051,6 @@ class Field(
                 construct.transpose(iaxes, inplace=True)
 
                 f.set_data_axes(axes=new_construct_axes, key=key)
-        # --- End: if
 
         return f
 
@@ -3156,6 +3123,3 @@ class Field(
             c.uncompress(inplace=True)
 
         return f
-
-
-# --- End: class

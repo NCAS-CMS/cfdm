@@ -11,6 +11,3 @@ class Array(mixin.ArrayMixin, core.Array):
     .. versionadded:: (cfdm) 1.7.0
 
     """
-
-
-# --- End: class

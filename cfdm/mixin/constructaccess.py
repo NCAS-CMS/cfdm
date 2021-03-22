@@ -381,14 +381,15 @@ class ConstructAccess:
 
         """
         c = self.constructs.filter_by_identity(identity)
-        if len(c) == 1:
+        n = len(c)
+        if n == 1:
             return c.value()
 
-        if not c:
+        if not n:
             return self._default(default, "Can't return zero constructs")
 
         return self._default(
-            default, "Can't return {0} constructs".format(len(c))
+            default, f"Can't return more than one ({n}) constructs"
         )
 
     def construct_key(self, identity, default=ValueError()):
@@ -475,16 +476,17 @@ class ConstructAccess:
 
         """
         c = self.constructs.filter_by_identity(identity)
-        if len(c) == 1:
+        n = len(c)
+        if n == 1:
             return c.key()
 
-        if not c:
+        if not n:
             return self._default(
                 default, "Can't return the key of zero constructs"
             )
 
         return self._default(
-            default, "Can't return the keys of {0} constructs".format(len(c))
+            default, f"Can't return the keys of more than one ({n}) constructs"
         )
 
     def domain_axis_key(self, identity, default=ValueError()):
@@ -581,7 +583,6 @@ class ConstructAccess:
             key = axes[0]
             if domain_axes.get(key):
                 keys.append(key)
-        # --- End: for
 
         keys = set(keys)
 
@@ -604,6 +605,3 @@ class ConstructAccess:
             )
 
         return keys.pop()
-
-
-# --- End: class

@@ -78,7 +78,6 @@ class PropertiesDataBounds(PropertiesData):
                 interior_ring = source.get_interior_ring(None)
             except AttributeError:
                 interior_ring = None
-        # --- End: if
 
         # Initialise bounds
         if bounds is not None:
@@ -214,12 +213,14 @@ class PropertiesDataBounds(PropertiesData):
         None
 
         """
-        try:
-            return self._del_component("bounds")
-        except ValueError:
-            return self._default(
-                default, "{!r} has no bounds".format(self.__class__.__name__)
-            )
+        return self._del_component("bounds", default=default)
+
+    #        try:
+    #            return self._del_component("bounds")
+    #        except ValueError:
+    #            return self._default(
+    #                default, "{!r} has no bounds".format(self.__class__.__name__)
+    #            )
 
     def del_geometry(self, default=ValueError()):
         """Remove the geometry type.
@@ -260,13 +261,15 @@ class PropertiesDataBounds(PropertiesData):
         True
 
         """
-        try:
-            return self._del_component("geometry")
-        except ValueError:
-            return self._default(
-                default,
-                "{!r} has no geometry type".format(self.__class__.__name__),
-            )
+        return self._del_component("geometry", default=default)
+
+    #        try:
+    #            return self._del_component("geometry")
+    #        except ValueError:
+    #            return self._default(
+    #                default,
+    #                "{!r} has no geometry type".format(self.__class__.__name__),
+    #            )
 
     def del_interior_ring(self, default=ValueError()):
         """Remove the geometry type.
@@ -312,15 +315,17 @@ class PropertiesDataBounds(PropertiesData):
         None
 
         """
-        try:
-            return self._del_component("interior_ring")
-        except ValueError:
-            return self._default(
-                default,
-                "{!r} has no interior ring variable".format(
-                    self.__class__.__name__
-                ),
-            )
+        return self._del_component("interior_ring", default=default)
+
+    #        try:
+    #            return self._del_component("interior_ring")
+    #        except ValueError:
+    #            return self._default(
+    #                default,
+    #                "{!r} has no interior ring variable".format(
+    #                    self.__class__.__name__
+    #                ),
+    #            )
 
     def get_bounds(self, default=ValueError()):
         """Return the bounds.
@@ -364,12 +369,14 @@ class PropertiesDataBounds(PropertiesData):
         None
 
         """
-        try:
-            return self._get_component("bounds")
-        except ValueError:
-            return self._default(
-                default, "{!r} has no bounds".format(self.__class__.__name__)
-            )
+        return self._get_component("bounds", default=default)
+
+    #        try:
+    #            return self._get_component("bounds")
+    #        except ValueError:
+    #            return self._default(
+    #                default, "{!r} has no bounds".format(self.__class__.__name__)
+    #            )
 
     def get_geometry(self, default=ValueError()):
         """Return the geometry type.
@@ -410,13 +417,15 @@ class PropertiesDataBounds(PropertiesData):
         True
 
         """
-        try:
-            return self._get_component("geometry")
-        except ValueError:
-            return self._default(
-                default,
-                "{!r} has no geometry type".format(self.__class__.__name__),
-            )
+        return self._get_component("geometry", default=default)
+
+    #        try:
+    #            return self._get_component("geometry")
+    #        except ValueError:
+    #            return self._default(
+    #                default,
+    #                "{!r} has no geometry type".format(self.__class__.__name__),
+    #            )
 
     def get_interior_ring(self, default=ValueError()):
         """Return the interior ring variable for polygon geometries.
@@ -464,15 +473,17 @@ class PropertiesDataBounds(PropertiesData):
         None
 
         """
-        try:
-            return self._get_component("interior_ring")
-        except ValueError:
-            return self._default(
-                default,
-                "{!r} has no interior ring variable".format(
-                    self.__class__.__name__
-                ),
-            )
+        return self._get_component("interior_ring", default=default)
+
+    #        try:
+    #           return self._get_component("interior_ring")
+    #        except ValueError:
+    #           return self._default(
+    #                default,
+    #                "{!r} has no interior ring variable".format(
+    #                    self.__class__.__name__
+    #                ),
+    #            )
 
     def has_bounds(self):
         """Whether or not there are bounds.
@@ -586,7 +597,8 @@ class PropertiesDataBounds(PropertiesData):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
+        .. seealso:: `del_bounds`, `get_bounds`, `has_bounds`,
+                     `set_data`
 
         :Parameters:
 
@@ -629,17 +641,16 @@ class PropertiesDataBounds(PropertiesData):
                 bounds_data
             ) <= numpy.ndim(data):
                 raise ValueError(
-                    "{!r} must have more dimensions than "
-                    "its parent {!r}".format(bounds, self)
+                    f"{bounds!r} must have more dimensions than "
+                    f"its parent {self!r}"
                 )
-        # -- End: if
 
         if copy:
             bounds = bounds.copy()
 
         self._set_component("bounds", bounds, copy=False)
 
-    def set_geometry(self, value, copy=True):
+    def set_geometry(self, value):
         """Set the geometry type.
 
         .. versionadded:: (cfdm) 1.8.0
@@ -674,7 +685,7 @@ class PropertiesDataBounds(PropertiesData):
         True
 
         """
-        self._set_component("geometry", value, copy=copy)
+        self._set_component("geometry", value, copy=False)
 
     def set_interior_ring(self, interior_ring, copy=True):
         """Set the interior_ring.
@@ -724,6 +735,3 @@ class PropertiesDataBounds(PropertiesData):
             interior_ring = interior_ring.copy()
 
         self._set_component("interior_ring", interior_ring, copy=False)
-
-
-# --- End: class

@@ -251,8 +251,8 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
             return self._default(
                 default,
                 message=(
-                    "{!r} has no data axes for the metadata construct "
-                    "{!r}".format(self.__class__.__name__, key)
+                    f"{self.__class__.__name__!r} has no data axes for the "
+                    f"metadata construct {key!r}"
                 ),
             )
 
@@ -302,8 +302,8 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
             return self._default(
                 default,
                 message=(
-                    "{!r} has no data axes for the metadata construct "
-                    "{!r}".format(self.__class__.__name__, key)
+                    f"{self.__class__.__name__!r} has no data axes for the "
+                    f"metadata construct {key!r}"
                 ),
             )
         else:
@@ -401,6 +401,3 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
 
         """
         self.constructs._set_construct_data_axes(key=key, axes=axes)
-
-
-# --- End: class

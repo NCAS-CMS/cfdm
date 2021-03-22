@@ -167,6 +167,3 @@ class RaggedIndexedContiguousArray(
         self.get_count().data.to_memory()
         self.get_index().data.to_memory()
         return self
-
-
-# --- End: class

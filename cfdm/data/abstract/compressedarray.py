@@ -352,6 +352,3 @@ class CompressedArray(Array):
 
         """
         return self._get_compressed_Array(default=default)
-
-
-# --- End: class

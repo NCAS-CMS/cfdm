@@ -4807,6 +4807,3 @@ class NetCDFWrite(IOWrite):
                 verbose=verbose,
                 extra_write_vars=extra_write_vars,
             )
-
-
-# --- End: class

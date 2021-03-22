@@ -27,7 +27,7 @@ class Container:
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        return "<{0}: {1}>".format(self.__class__.__name__, str(self))
+        return f"<{self.__class__.__name__}: {self}>"
 
     def __str__(self):
         """Called by the `str` built-in function.
@@ -226,9 +226,7 @@ class Container:
                 other = type(self)(source=other, copy=False)
         elif not isinstance(other, self.__class__):
             logger.info(
-                "{}: Incompatible type: {}".format(
-                    self.__class__.__name__, type(other)
-                )
+                f"{self.__class__.__name__}: Incompatible type: {type(other)}"
             )
             return False
 
@@ -245,6 +243,3 @@ class Container:
         """
         depth = self.__class__._docstring_package_depth(self.__class__)
         return ".".join(self.__module__.split(".")[0 : depth + 1])
-
-
-# --- End: class

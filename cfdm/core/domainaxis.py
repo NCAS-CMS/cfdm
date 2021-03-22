@@ -46,7 +46,6 @@ class DomainAxis(abstract.Container):
                 size = source.get_size(None)
             except AttributeError:
                 size = None
-        # --- End: if
 
         if size is not None:
             self.set_size(size)
@@ -81,9 +80,10 @@ class DomainAxis(abstract.Container):
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if the size
-                has not been set. If set to an `Exception` instance then
-                it will be raised instead.
+                Return the value of the *default* parameter if the
+                size has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -108,12 +108,7 @@ class DomainAxis(abstract.Container):
         None
 
         """
-        try:
-            return self._del_component("size")
-        except ValueError:
-            return self._default(
-                default, "{!r} has no size".format(self.__class__.__name__)
-            )
+        return self._del_component("size", default=default)
 
     def has_size(self):
         """Whether the size has been set.
@@ -158,9 +153,10 @@ class DomainAxis(abstract.Container):
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if the size
-                has not been set. If set to an `Exception` instance then
-                it will be raised instead.
+                Return the value of the *default* parameter if the
+                size has not been set.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -185,14 +181,9 @@ class DomainAxis(abstract.Container):
         None
 
         """
-        try:
-            return self._get_component("size")
-        except ValueError:
-            return self._default(
-                default, "{!r} has no size".format(self.__class__.__name__)
-            )
+        return self._get_component("size", default=default)
 
-    def set_size(self, size, copy=True):
+    def set_size(self, size):
         """Set the size.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -203,9 +194,6 @@ class DomainAxis(abstract.Container):
 
             value: `int`
                 The size.
-
-            copy: `bool`, optional
-                If True then set a deep copy of *size*.
 
         :Returns:
 
@@ -230,7 +218,4 @@ class DomainAxis(abstract.Container):
         None
 
         """
-        self._set_component("size", size, copy=copy)
-
-
-# --- End: class
+        self._set_component("size", size, copy=False)

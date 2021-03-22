@@ -43,7 +43,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         dtype=None,
         mask=None,
         _use_array=True,
-        **kwargs
+        **kwargs,
     ):
         """Initialises the `Data` instance.
 
@@ -223,9 +223,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             shape = str(shape)
             shape = shape.replace(",)", ")")
 
-        return "<{0}{1}: {2}>".format(
-            self.__class__.__name__, shape, str(self)
-        )
+        return f"<{ self.__class__.__name__}{shape}: {self}>"
 
     def __getitem__(self, indices):
         """Return a subspace of the data defined by indices.
@@ -271,13 +269,13 @@ class Data(Container, NetCDFHDF5, core.Data):
         (1, 10, 1)
 
         """
-        indices = tuple(self._parse_indices(indices))
+        indices = self._parse_indices(indices)
 
         array = self._get_Array(None)
         if array is None:
             raise ValueError("No array!!")
 
-        array = array[indices]
+        array = array[tuple(indices)]
 
         out = self.copy(array=False)
         out._set_Array(array, copy=False)
@@ -297,7 +295,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         if self.size != 1:
             raise TypeError(
                 "only length-1 arrays can be converted to "
-                "Python scalars. Got {}".format(self)
+                f"Python scalars. Got {self}"
             )
 
         return int(self.array)
@@ -335,9 +333,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         ndim = self.ndim
 
         if not ndim:
-            raise TypeError(
-                "Iteration over 0-d {}".format(self.__class__.__name__)
-            )
+            raise TypeError(f"Iteration over 0-d {self.__class__.__name__}")
 
         if ndim == 1:
             i = iter(self.array)
@@ -431,16 +427,15 @@ class Data(Container, NetCDFHDF5, core.Data):
                 isreftime = "since" in units
             else:
                 units = "??"
-        # --- End: if
 
         try:
             first = self.first_element()
         except Exception:
             out = ""
             if units and not isreftime:
-                out += " {0}".format(units)
+                out += f" {units}"
             if calendar:
-                out += " {0}".format(calendar)
+                out += f" {calendar}"
 
             return out
 
@@ -466,7 +461,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                 except (ValueError, OverflowError):
                     first = "??"
 
-            out = "{0}{1!s}{2}".format(open_brackets, first, close_brackets)
+            out = f"{open_brackets}{first}{close_brackets}"
         else:
             last = self.last_element()
             if isreftime:
@@ -487,9 +482,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                     first, last = ("??", "??")
 
             if size > 3:
-                out = "{0}{1!s}, ..., {2!s}{3}".format(
-                    open_brackets, first, last, close_brackets
-                )
+                out = f"{open_brackets}{first}, ..., {last}{close_brackets}"
             elif shape[-1:] == (3,):
                 middle = self.second_element()
                 if isreftime:
@@ -507,24 +500,19 @@ class Data(Container, NetCDFHDF5, core.Data):
                     except (ValueError, OverflowError):
                         middle = "??"
 
-                out = "{0}{1!s}, {2!s}, {3!s}{4}".format(
-                    open_brackets, first, middle, last, close_brackets
+                out = (
+                    f"{open_brackets}{first}, {middle}, {last}{close_brackets}"
                 )
             elif size == 3:
-                out = "{0}{1!s}, ..., {2!s}{3}".format(
-                    open_brackets, first, last, close_brackets
-                )
+                out = f"{open_brackets}{first}, ..., {last}{close_brackets}"
             else:
-                out = "{0}{1!s}, {2!s}{3}".format(
-                    open_brackets, first, last, close_brackets
-                )
-        # --- End: if
+                out = f"{open_brackets}{first}, {last}{close_brackets}"
 
         if isreftime:
             if calendar:
-                out += " {0}".format(calendar)
+                out += f" {calendar}"
         elif units:
-            out += " {0}".format(units)
+            out += f" {units}"
 
         return out
 
@@ -608,13 +596,12 @@ class Data(Container, NetCDFHDF5, core.Data):
             elif -ndim <= axis < 0:
                 axes2.append(axis + ndim)
             else:
-                raise ValueError("Invalid axis: {!r}".format(axis))
-        # --- End: for
+                raise ValueError(f"Invalid axis: {axis!r}")
 
         # Check for duplicate axes
         n = len(axes2)
         if n > len(set(axes2)) >= 1:
-            raise ValueError("Duplicate axis: {}".format(axes2))
+            raise ValueError(f"Duplicate axis: {axes2}")
 
         return tuple(axes2)
 
@@ -703,7 +690,6 @@ class Data(Container, NetCDFHDF5, core.Data):
                     indices1[i] = y
                 else:
                     indices1[i] = (x,)
-            # --- End: for
 
             if numpy.size(value) == 1:
                 for i in itertools.product(*indices1):
@@ -722,11 +708,10 @@ class Data(Container, NetCDFHDF5, core.Data):
                             stop = start + 2
                             y.append(slice(start, stop))
                             start = stop
-                        # --- End: while
+
                         indices2.append(y)
                     else:
                         indices2.append((slice(None),))
-                # --- End: for
 
                 for i, j in zip(
                     itertools.product(*indices1), itertools.product(*indices2)
@@ -819,7 +804,6 @@ class Data(Container, NetCDFHDF5, core.Data):
             if mask is numpy.ma.nomask or not numpy.ma.is_masked(array):
                 mask = None
                 array = array.view(numpy.ndarray)
-        # --- End: if
 
         if mask is not None and not array.ndim:
             # Fix until num2date copes with scalar aarrays containing
@@ -1125,15 +1109,14 @@ class Data(Container, NetCDFHDF5, core.Data):
             except TypeError:
                 raise TypeError(
                     "'fill_values' parameter must be a sequence or "
-                    "of type bool. Got type {}".format(type(fill_values))
+                    f"of type bool. Got type {type(fill_values)}"
                 )
             else:
                 if isinstance(fill_values, str):
                     raise TypeError(
                         "'fill_values' parameter must be a sequence or "
-                        "of type bool. Got type {}".format(type(fill_values))
+                        f"of type bool. Got type {type(fill_values)}"
                     )
-        # --- End: if
 
         mask = None
 
@@ -1143,7 +1126,6 @@ class Data(Container, NetCDFHDF5, core.Data):
 
             for fill_value in fill_values[1:]:
                 mask |= array == fill_value
-        # --- End: for
 
         if valid_min is not None:
             if mask is None:
@@ -1151,7 +1133,6 @@ class Data(Container, NetCDFHDF5, core.Data):
                 mask = array < valid_min
             else:
                 mask |= array < valid_min
-        # --- End: if
 
         if valid_max is not None:
             if mask is None:
@@ -1159,7 +1140,6 @@ class Data(Container, NetCDFHDF5, core.Data):
                 mask = array > valid_max
             else:
                 mask |= array > valid_max
-        # --- End: if
 
         if mask is not None:
             array = numpy.ma.where(mask, cfdm_masked, array)
@@ -1250,19 +1230,19 @@ class Data(Container, NetCDFHDF5, core.Data):
         if units is None:
             units = ""
         else:
-            units = ", units={!r}".format(units)
+            units = f", units={units!r}"
 
         calendar = self.get_calendar(None)
         if calendar is None:
             calendar = ""
         else:
-            calendar = ", calendar={!r}".format(calendar)
+            calendar = f", calendar={calendar!r}"
 
         fill_value = self.get_fill_value(None)
         if fill_value is None:
             fill_value = ""
         else:
-            fill_value = ", fill_value={}".format(fill_value)
+            fill_value = f", fill_value={fill_value}"
 
         dtype = self.dtype.descr[0][1][1:]
 
@@ -1271,7 +1251,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                 name="mask", namespace=namespace0, indent=0, string=True
             )
             mask = mask.replace("mask = ", "mask=", 1)
-            mask = ", {}".format(mask)
+            mask = f", {mask}"
         else:
             mask = ""
 
@@ -1351,7 +1331,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                 if fill_value is None:  # should not be None by this stage
                     raise ValueError(
                         "Can't determine fill value for "
-                        "data type {!r}".format(d.dtype.str)
+                        f"data type {d.dtype.str!r}"
                     )  # pragma: no cover
         # --- End: if
 
@@ -1419,8 +1399,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             position += ndim + 1
         elif not 0 <= position <= ndim:
             raise ValueError(
-                "Can't insert dimension: "
-                "Invalid position: {!r}".format(position)
+                f"Can't insert dimension: Invalid position: {position!r}"
             )
 
         array = numpy.expand_dims(self.array, position)
@@ -1459,8 +1438,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             return self._get_Array().get_count()
         except (AttributeError, ValueError):
             return self._default(
-                default,
-                "{!r} has no count variable".format(self.__class__.__name__),
+                default, f"{self.__class__.__name__!r} has no count variable"
             )
 
     def get_index(self, default=ValueError()):
@@ -1493,8 +1471,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             return self._get_Array().get_index()
         except (AttributeError, ValueError):
             return self._default(
-                default,
-                "{!r} has no index variable".format(self.__class__.__name__),
+                default, f"{self.__class__.__name__!r} has no index variable"
             )
 
     def get_list(self, default=ValueError()):
@@ -1524,8 +1501,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             return self._get_Array().get_list()
         except (AttributeError, ValueError):
             return self._default(
-                default,
-                "{!r} has no list variable".format(self.__class__.__name__),
+                default, f"{self.__class__.__name__!r} has no list variable"
             )
 
     def get_compressed_dimension(self, default=ValueError()):
@@ -1563,9 +1539,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         except (AttributeError, ValueError):
             return self._default(
                 default,
-                "{!r} has no compressed dimension".format(
-                    self.__class__.__name__
-                ),
+                f"{ self.__class__.__name__!r} has no compressed dimension",
             )
 
     def _parse_indices(self, indices):
@@ -1616,9 +1590,8 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         if ndim and len_parsed_indices > ndim:
             raise IndexError(
-                "Invalid indices for data with shape {}: {} ".format(
-                    shape, parsed_indices
-                )
+                f"Invalid indices for data with shape {shape}: "
+                f"{parsed_indices}"
             )
 
         if len_parsed_indices < ndim:
@@ -1649,11 +1622,10 @@ class Data(Container, NetCDFHDF5, core.Data):
                     if index.size != size:
                         raise IndexError(
                             "Invalid indices for data "
-                            "with shape {}: {} ".format(shape, parsed_indices)
+                            f"with shape {shape}: {parsed_indices}"
                         )
 
                     index = numpy.where(index)[0]
-                # --- End: if
 
                 if not numpy.ndim(index):
                     if index < 0:
@@ -1675,7 +1647,6 @@ class Data(Container, NetCDFHDF5, core.Data):
             # --- End: if
 
             parsed_indices[i] = index
-        # --- End: for
 
         return parsed_indices
 
@@ -1737,7 +1708,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         try:
             axes = self._parse_axes(axes)
         except ValueError as error:
-            raise ValueError("Can't find maximum of data: {}".format(error))
+            raise ValueError(f"Can't find maximum of data: {error}")
 
         array = self.array
         array = numpy.amax(array, axis=axes, keepdims=True)
@@ -1809,7 +1780,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         try:
             axes = self._parse_axes(axes)
         except ValueError as error:
-            raise ValueError("Can't find minimum of data: {}".format(error))
+            raise ValueError(f"Can't find minimum of data: {error}")
 
         array = self.array
         array = numpy.amin(array, axis=axes, keepdims=True)
@@ -1871,7 +1842,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         try:
             axes = d._parse_axes(axes)
         except ValueError as error:
-            raise ValueError("Can't squeeze data: {}".format(error))
+            raise ValueError(f"Can't squeeze data: {error}")
 
         shape = d.shape
 
@@ -1883,7 +1854,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                 if shape[i] > 1:
                     raise ValueError(
                         "Can't squeeze data: "
-                        "Can't remove axis of size {}".format(shape[i])
+                        f"Can't remove axis of size {shape[i]}"
                     )
         # --- End: if
 
@@ -1956,8 +1927,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         try:
             axes = self._parse_axes(axes)
         except ValueError as error:
-            raise ValueError("Can't sum data: {}".format(error))
-
+            raise ValueError(f"Can't sum data: {error}")
         array = self.array
         array = numpy.sum(array, axis=axes, keepdims=True)
 
@@ -2015,7 +1985,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         try:
             axes = d._parse_axes(axes)
         except ValueError as error:
-            raise ValueError("Can't transpose data: {}".format(error))
+            raise ValueError(f"Can't transpose data: {error}")
 
         if axes is None:
             if ndim <= 1:
@@ -2024,7 +1994,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             axes = tuple(range(ndim - 1, -1, -1))
         elif len(axes) != ndim:
             raise ValueError(
-                "Can't transpose data: Axes don't match array: {}".format(axes)
+                f"Can't transpose data: Axes don't match array: {axes}"
             )
 
         # Return unchanged if axes are in the same order as the data
@@ -2279,7 +2249,6 @@ class Data(Container, NetCDFHDF5, core.Data):
                     )
                 )  # pragma: no cover
                 return False
-        # --- End: for
 
         if not ignore_compression:
             # --------------------------------------------------------
@@ -2490,7 +2459,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         try:
             axes = d._parse_axes(axes)
         except ValueError as error:
-            raise ValueError("Can't flatten data: {}".format(error))
+            raise ValueError(f"Can't flatten data: {error}")
 
         ndim = d.ndim
 
@@ -2704,14 +2673,3 @@ class Data(Container, NetCDFHDF5, core.Data):
     def min(self, axes=None):
         """Alias for `minimum`."""
         return self.minimum(axes=axes)
-
-
-# --- End: class
-
-
-# --------------------------------------------------------------------
-# Register the Data class as a "virtual subclass" of abstract.Array
-#
-# https://docs.python.org/3/library/abc.html
-# --------------------------------------------------------------------
-# abstract.Array.register(Data)

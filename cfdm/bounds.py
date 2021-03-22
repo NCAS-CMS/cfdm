@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 from . import mixin
 from . import core
 
@@ -91,27 +89,11 @@ class Bounds(
         else:
             inherited_properties = {}
 
-        self._set_component("inherited_properties", inherited_properties)
+        self._set_component(
+            "inherited_properties", inherited_properties, copy=False
+        )
 
         self._initialise_netcdf(source)
-
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
-    def _inherited_properties(self):
-        """Return the properties inherited from a coordinate construct.
-
-        .. versionadded:: (cfdm) 1.8.7.0
-
-        .. seealso:: `inherited_properties`, `properties`
-
-        :Returns:
-
-            `dict`
-                The inherited properties.
-
-        """
-        return self.inherited_properties()
 
     # ----------------------------------------------------------------
     # Methods
@@ -213,25 +195,26 @@ class Bounds(
         if data is None:
             return super().get_data(default=default)
 
-        if _units:
-            if not data.has_units():
-                units = self.inherited_properties().get("units")
-                if units is not None:
-                    data.set_units(units)
-            # --- End: if
+        if _units or _fill_value:
+            inherited_properties = self._get_component(
+                "inherited_properties", {}
+            )
 
-            if not data.has_calendar():
-                calendar = self.inherited_properties().get("calendar")
-                if calendar is not None:
-                    data.set_calendar(calendar)
-        # --- End: if
+            if _units:
+                if not data.has_units():
+                    units = inherited_properties.get("units")
+                    if units is not None:
+                        data.set_units(units)
 
-        if _fill_value:
-            if not data.has_fill_value():
-                _ = self.inherited_properties().get("fill_value")  # TODO
-                if _ is not None:
-                    data.set_fill_value(_)
-        # --- End: if
+                if not data.has_calendar():
+                    calendar = inherited_properties.get("calendar")
+                    if calendar is not None:
+                        data.set_calendar(calendar)
+
+            if _fill_value and not data.has_fill_value():
+                fv = inherited_properties.get("fill_value")  # TODO
+                if fv is not None:
+                    data.set_fill_value(fv)
 
         return data
 
@@ -259,7 +242,7 @@ class Bounds(
         {'units': 'degrees_east', 'standard_name': 'longitude'}
 
         """
-        return deepcopy(self._get_component("inherited_properties", {}))
+        return self._get_component("inherited_properties", {}).copy()
 
     def identity(self, default=""):
         """Return the canonical identity.
@@ -299,7 +282,7 @@ class Bounds(
         'longitude'
 
         """
-        inherited_properties = self.inherited_properties()
+        inherited_properties = self._get_component("inherited_properties", {})
         if inherited_properties:
             bounds = self.copy()
             properties = bounds.properties()
@@ -308,6 +291,3 @@ class Bounds(
             self = bounds
 
         return super().identity(default=default)
-
-
-# --- End: class

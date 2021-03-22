@@ -24,7 +24,7 @@ class Properties(Container):
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        return "{0}".format(self.identity(""))
+        return f"{self.identity('')}"
 
     # ----------------------------------------------------------------
     # Private methods
@@ -54,14 +54,13 @@ class Properties(Container):
         if _omit_properties:
             for prop in _omit_properties:
                 properties.pop(prop, None)
-        # --- End: if
 
         for prop, value in sorted(properties.items()):
-            name = "{0}{1}{2} = ".format(indent0, _prefix, prop)
+            name = f"{indent0}{_prefix}{prop} = "
             value = repr(value)
             subsequent_indent = " " * len(name)
             if value.startswith("'") or value.startswith('"'):
-                subsequent_indent = "{0} ".format(subsequent_indent)
+                subsequent_indent = f"{subsequent_indent} "
 
             string.append(
                 textwrap.fill(
@@ -124,27 +123,24 @@ class Properties(Container):
 
             construct_type = getattr(self, "construct_type", None)
             if construct_type is not None:
-                out[-1] += " {}:".format(construct_type)
+                out[-1] += f" {construct_type}:"
 
             identity = self.identity()
             if identity:
-                out[-1] += " {}".format(identity)
-        # --- End: if
+                out[-1] += f" {identity}"
 
-        out.append(
-            "{} = {}{}()".format(name, namespace, self.__class__.__name__)
-        )
+        out.append(f"{name} = {namespace}{self.__class__.__name__}()")
 
         properties = self.properties()
         if properties:
             for prop in self._inherited_properties():
                 properties.pop(prop, None)
 
-            out.append("{}.set_properties({})".format(name, properties))
+            out.append(f"{name}.set_properties({properties})")
 
         nc = self.nc_get_variable(None)
         if nc is not None:
-            out.append("{}.nc_set_variable({!r})".format(name, nc))
+            out.append(f"{name}.nc_set_variable({nc!r})")
 
         if string:
             indent = " " * indent
@@ -189,20 +185,16 @@ class Properties(Container):
         if _create_title:
             if _title is None:
                 if _key:
-                    default = "key%{0}".format(_key)
+                    default = f"key%{_key}"
                 else:
                     default = ""
 
                 string.append(
-                    "{0}{1}: {2}".format(
-                        indent0,
-                        self.__class__.__name__,
-                        self.identity(default=default),
-                    )
+                    f"{indent0}{self.__class__.__name_}: "
+                    f"{self.identity(default=default)}"
                 )
             else:
                 string.append(indent0 + _title)
-        # --- End: if
 
         # ------------------------------------------------------------
         # Properties
@@ -312,18 +304,14 @@ class Properties(Container):
             for prop in ignore_properties:
                 self_properties.pop(prop, None)
                 other_properties.pop(prop, None)
-        # --- End: if
 
         if set(self_properties) != set(other_properties):
             for prop in set(self_properties).symmetric_difference(
                 other_properties
             ):
                 logger.info(
-                    "{}: Missing property: {}".format(
-                        self.__class__.__name__, prop
-                    )
+                    f"{self.__class__.__name__}: Missing property: {prop}"
                 )
-            # --- End: if
 
             return False
 
@@ -340,12 +328,11 @@ class Properties(Container):
                 verbose=verbose,
             ):
                 logger.info(
-                    "{}: Different {!r} property values: "
-                    "{!r}, {!r}".format(self.__class__.__name__, prop, x, y)
+                    f"{self.__class__.__name__}: Different {prop!r} "
+                    f"property values: {x!r}, {y!r}"
                 )
 
                 return False
-        # --- End: for
 
         return True
 
@@ -410,12 +397,11 @@ class Properties(Container):
         for prop in ("cf_role", "axis", "long_name"):
             n = self.get_property(prop, None)
             if n is not None:
-                return "{0}={1}".format(prop, n)
-        # --- End: for
+                return f"{prop}={n}"
 
         n = self.nc_get_variable(None)
         if n is not None:
-            return "ncvar%{0}".format(n)
+            return f"ncvar%{n}"
 
         return default
 
@@ -466,25 +452,24 @@ class Properties(Container):
             out.append(standard_name)
 
         if cf_role is not None:
-            out.append("cf_role={}".format(cf_role))
+            out.append(f"cf_role={cf_role}")
 
         if axis is not None:
-            out.append("axis={}".format(axis))
+            out.append(f"axis={axis}")
 
         if long_name is not None:
-            out.append("long_name={}".format(long_name))
+            out.append(f"long_name={long_name}")
 
         out += [
-            "{0}={1}".format(prop, value)
-            for prop, value in sorted(properties.items())
+            f"{prop}={value}" for prop, value in sorted(properties.items())
         ]
 
         if standard_name is not None:
-            out.append("standard_name={}".format(standard_name))
+            out.append(f"standard_name={standard_name}")
 
         n = self.nc_get_variable(None)
         if n is not None:
-            out.append("ncvar%{0}".format(n))
+            out.append(f"ncvar%{n}")
 
         return out
 
@@ -511,6 +496,3 @@ class Properties(Container):
 
         """
         return {}
-
-
-# --- End: class

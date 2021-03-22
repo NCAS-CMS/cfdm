@@ -21,6 +21,3 @@ class CoordinateConversion(abstract.ParametersDomainAncillaries):
     .. versionadded:: (cfdm) 1.7.0
 
     """
-
-
-# --- End: class

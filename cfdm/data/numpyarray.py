@@ -53,6 +53,3 @@ class NumpyArray(ArrayMixin, core.NumpyArray):
 
         """
         return self
-
-
-# --- End: class

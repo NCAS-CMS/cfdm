@@ -78,7 +78,6 @@ class CellMeasure(abstract.PropertiesData):
                 measure = source.get_measure(None)
             except AttributeError:
                 measure = None
-        # --- End: if
 
         if measure is not None:
             self.set_measure(measure)
@@ -140,12 +139,7 @@ class CellMeasure(abstract.PropertiesData):
         None
 
         """
-        try:
-            return self._del_component("measure")
-        except ValueError:
-            return self._default(
-                default, "{!r} has no measure".format(self.__class__.__name__)
-            )
+        return self._del_component("measure", default=default)
 
     def has_measure(self):
         """Whether the measure has been set.
@@ -216,14 +210,9 @@ class CellMeasure(abstract.PropertiesData):
         None
 
         """
-        try:
-            return self._get_component("measure")
-        except ValueError:
-            return self._default(
-                default, "{!r} has no measure".format(self.__class__.__name__)
-            )
+        return self._get_component("measure", default=default)
 
-    def set_measure(self, measure, copy=True):
+    def set_measure(self, measure):
         """Set the measure.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -234,9 +223,6 @@ class CellMeasure(abstract.PropertiesData):
 
             measure: `str`
                 The value for the measure.
-
-            copy: `bool`, optional
-                If True then set a deep copy of *measure*.
 
         :Returns:
 
@@ -260,7 +246,4 @@ class CellMeasure(abstract.PropertiesData):
         None
 
         """
-        return self._set_component("measure", measure, copy=copy)
-
-
-# --- End: class
+        return self._set_component("measure", measure, copy=False)

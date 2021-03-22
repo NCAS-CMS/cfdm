@@ -179,7 +179,7 @@ class CFDMImplementation(Implementation):
         x.__repr__() <==> repr(x)
 
         """
-        return "<{0}: >".format(self.__class__.__name__)
+        return f"<{self.__class__.__name__}: >"
 
     def bounds_insert_dimension(self, bounds, position):
         """Insert a new dimension into bounds data.
@@ -224,7 +224,6 @@ class CFDMImplementation(Implementation):
                         out[variable][k] = v
                     elif v != out[variable][k]:
                         return False
-        # --- End: for
 
         for coord in self.get_auxiliary_coordinates(field).values():
             for variable in out:
@@ -233,7 +232,6 @@ class CFDMImplementation(Implementation):
                     continue
 
                 x.set_properties(out[variable])
-        # --- End: for
 
         return True
 
@@ -2217,7 +2215,7 @@ class CFDMImplementation(Implementation):
             construct.set_bounds(bounds, copy=copy)
         except Exception as error:
             if not error:
-                error = "Could not set {!r} on {!r}".format(bounds, construct)
+                error = f"Could not set {bounds!r} on {construct!r}"
 
             return error
 
@@ -2838,9 +2836,6 @@ class CFDMImplementation(Implementation):
 
         """
         return construct.squeeze(axes=axes)
-
-
-# --- End: class
 
 
 _implementation = CFDMImplementation(
