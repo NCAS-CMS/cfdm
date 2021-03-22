@@ -2258,7 +2258,7 @@ class Constructs(mixin.Container, core.Constructs):
                 prefiltered = getattr(out, "_prefiltered", None)
                 if prefiltered is not None:
                     out = prefiltered
-
-                break
+                else:
+                    break
 
         return out.shallow_copy()
