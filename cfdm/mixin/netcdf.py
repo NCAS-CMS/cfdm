@@ -776,7 +776,8 @@ class NetCDFSampleDimension(NetCDF):
         except KeyError:
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no netCDF sample dimension name",
+                f"{self.__class__.__name__!r} has no "
+                "netCDF sample dimension name"
             )
 
     def nc_get_sample_dimension(self, default=ValueError()):
@@ -822,7 +823,8 @@ class NetCDFSampleDimension(NetCDF):
         except KeyError:
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no netCDF sample dimension name",
+                f"{self.__class__.__name__!r} has no "
+                "netCDF sample dimension name"
             )
 
     def nc_has_sample_dimension(self):
@@ -1810,7 +1812,8 @@ class NetCDFGeometry(NetCDF):
         except KeyError:
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no netCDF geometry variable name",
+                f"{self.__class__.__name__!r} has no "
+                "netCDF geometry variable name"
             )
 
     def nc_has_geometry_variable(self):
@@ -3095,8 +3098,8 @@ class NetCDFUnreferenced:
 
         for key0, value0 in d.items():
             print(f"{{{key0!r}:")
-            print("    CF version: {value0['CF version']!r},")
-            print("    dimensions: {value0['dimensions']!r},")
+            print(f"    CF version: {value0['CF version']!r},")
+            print(f"    dimensions: {value0['dimensions']!r},")
             print("    non-compliance: {")
             for key1, value1 in sorted(value0["non-compliance"].items()):
                 for x in value1:
@@ -3105,7 +3108,7 @@ class NetCDFUnreferenced:
                         "            {{{0}}},".format(
                             "\n             ".join(
                                 [
-                                    "{key2!r}: {value2!r},"
+                                    f"{key2!r}: {value2!r},"
                                     for key2, value2 in sorted(x.items())
                                 ]
                             )
@@ -3142,7 +3145,7 @@ def _nc_groups(nc_get):
 
     **Examples:**
 
-    See the examples in classes which use this method.
+    See the examples in class methods which use this function.
 
     """
     name = nc_get(default="")
@@ -3183,7 +3186,7 @@ def _nc_set_groups(groups, nc_get, nc_set, nc_groups):
 
     **Examples:**
 
-        See the examples in classes which use this method.
+    See the examples in class methods which use this function.
 
     """
     old = nc_groups()
@@ -3239,7 +3242,7 @@ def _nc_clear_groups(nc_get, nc_set, nc_groups):
 
     **Examples:**
 
-    See the examples in classes which use this method.
+    See the examples in class methods which use this function.
 
     """
     old = nc_groups()

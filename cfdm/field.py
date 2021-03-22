@@ -162,7 +162,7 @@ class Field(
 
         self._initialise_netcdf(source)
 
-        self._set_dataset_compliance(self.dataset_compliance(), copy=False)
+        self._set_dataset_compliance(self.dataset_compliance(), copy=True)
 
     def __repr__(self):
         """Called by the `repr` built-in function.
