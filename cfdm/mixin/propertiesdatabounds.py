@@ -1,5 +1,6 @@
 import logging
 
+from itertools import chain
 from functools import reduce
 from operator import mul
 
@@ -971,9 +972,7 @@ class PropertiesDataBounds(PropertiesData):
         # ------------------------------------------------------------
         self_has_bounds = self.has_bounds()
         if self_has_bounds != other.has_bounds():
-            logger.info(
-                "{0}: Different bounds".format(self.__class__.__name__)
-            )
+            logger.info(f"{self.__class__.__name__}: Different bounds")
             return False
 
         if self_has_bounds:
@@ -989,7 +988,7 @@ class PropertiesDataBounds(PropertiesData):
                 ignore_compression=ignore_compression,
             ):
                 logger.info(
-                    "{0}: Different bounds".format(self.__class__.__name__)
+                    f"{self.__class__.__name__}: Different bounds"
                 )  # pragma: no cover
 
                 return False
@@ -1195,7 +1194,7 @@ class PropertiesDataBounds(PropertiesData):
         """
         return self._has_component("part_node_count")
 
-    def identities(self):
+    def identities(self, generator=False, **kwargs):
         """Return all possible identities.
 
         The identities comprise:
@@ -1210,9 +1209,23 @@ class PropertiesDataBounds(PropertiesData):
 
         .. seealso:: `identity`
 
+        :Parameters:
+
+            generator: `bool`, optional
+                If True then return a generator for the identities,
+                rather than a list.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
+            kwargs: optional
+                Additional configuration parameters. Currently
+                none. Unrecognised parameters are ignored.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
         :Returns:
 
-            `list`
+            `list` or generator
                 The identities.
 
         **Examples:**
@@ -1237,17 +1250,26 @@ class PropertiesDataBounds(PropertiesData):
          'units': 'm'}
         >>> f.identities()
         ['axis=Z', 'units=m', 'ncvar%z']
+        >>> for i in f.identities(generator=True):
+        ...     print(i)
+        ...
+        axis=Z
+        units=m
+        ncvar%z
 
         """
-        identities = super().identities()
+        identities = super().identities(generator=True)
 
+        bounds_identities = ""
         bounds = self.get_bounds(None)
         if bounds is not None:
-            identities.extend(
-                [i for i in bounds.identities() if i not in identities]
-            )
+            bounds_identities = bounds.identities(generator=True)
 
-        return identities
+        g = chain(identities, bounds_identities)
+        if generator:
+            return g
+
+        return list(g)
 
     def identity(self, default=""):
         """Return the canonical identity.
@@ -1374,7 +1396,7 @@ class PropertiesDataBounds(PropertiesData):
 
         return bounds
 
-    def get_bounds_data(self, default=ValueError()):
+    def get_bounds_data(self, default=ValueError(), _fill_value=True):
         """Return the bounds data.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -1404,7 +1426,8 @@ class PropertiesDataBounds(PropertiesData):
         if bounds is None:
             return self.get_bounds(default=default)
 
-        return bounds.get_data(default=default)
+        return bounds.get_data(default=default,
+                               _fill_value=_fill_value)
 
     @_inplace_enabled(default=False)
     def insert_dimension(self, position, inplace=False):

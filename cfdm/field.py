@@ -1242,44 +1242,6 @@ class Field(
 
         return f
 
-    #    def copy(self, data=True):
-    #        """Return a deep copy of the field construct.
-    #
-    #        ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
-    #
-    #        Arrays within `Data` instances are copied with a copy-on-write
-    #        technique. This means that a copy takes up very little extra
-    #        memory, even when the original contains very large data arrays,
-    #        and the copy operation is fast.
-    #
-    #        .. versionadded:: (cfdm) 1.7.0
-    #
-    #        :Parameters:
-    #
-    #            data: `bool`, optional
-    #                If False then do not copy the data of the field construct,
-    #                nor the data of any of its metadata constructs. By default
-    #                all data are copied.
-    #
-    #        :Returns:
-    #
-    #            `Field`
-    #                The deep copy.
-    #
-    #        **Examples:**
-    #
-    #        >>> g = f.copy()
-    #        >>> g = f.copy(data=False)
-    #        >>> g.has_data()
-    #        False
-    #
-    #        """
-    #        new = super().copy(data=data)
-    #
-    #        new._set_dataset_compliance(self.dataset_compliance())
-    #
-    #        return new
-
     def creation_commands(
         self,
         representative_data=False,
@@ -1468,7 +1430,7 @@ class Field(
         if name == data_name:
             raise ValueError(
                 "The 'name' parameter can not have the same value as "
-                f"the 'data_name' parameters: {name!r}"
+                f"the 'data_name' parameter: {name!r}"
             )
 
         namespace0 = namespace
@@ -1579,8 +1541,8 @@ class Field(
         """A full description of the field construct.
 
         Returns a description of all properties, including those of
-        metadata constructs and their components, and provides selected
-        values of all data arrays.
+        metadata constructs and their components, and provides
+        selected values of all data arrays.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -1687,24 +1649,25 @@ class Field(
         constructs to be considered equal they must have corresponding
         metadata constructs and for each pair of constructs:
 
-        * the same descriptive properties must be present, with the same
-          values and data types, and vector-valued properties must also
-          have same the size and be element-wise equal (see the
-          *ignore_properties* and *ignore_data_type* parameters), and
+        * the same descriptive properties must be present, with the
+          same values and data types, and vector-valued properties
+          must also have same the size and be element-wise equal (see
+          the *ignore_properties* and *ignore_data_type* parameters),
+          and
 
         ..
 
-        * if there are data arrays then they must have same shape and data
-          type, the same missing data mask, and be element-wise equal (see
-          the *ignore_data_type* parameter).
+        * if there are data arrays then they must have same shape and
+          data type, the same missing data mask, and be element-wise
+          equal (see the *ignore_data_type* parameter).
 
         {{equals tolerance}}
 
         {{equals compression}}
 
-        Any type of object may be tested but, in general, equality is only
-        possible with another field construct, or a subclass of one. See
-        the *ignore_type* parameter.
+        Any type of object may be tested but, in general, equality is
+        only possible with another field construct, or a subclass of
+        one. See the *ignore_type* parameter.
 
         {{equals netCDF}}
 
@@ -1721,13 +1684,14 @@ class Field(
 
             ignore_fill_value: `bool`, optional
                 If True then the ``_FillValue`` and ``missing_value``
-                properties are omitted from the comparison, for the field
-                construct and metadata constructs.
+                properties are omitted from the comparison, for the
+                field construct and metadata constructs.
 
             ignore_properties: sequence of `str`, optional
-                The names of properties of the field construct (not the
-                metadata constructs) to omit from the comparison. Note
-                that the ``Conventions`` property is always omitted.
+                The names of properties of the field construct (not
+                the metadata constructs) to omit from the
+                comparison. Note that the ``Conventions`` property is
+                always omitted.
 
             {{ignore_data_type: `bool`, optional}}
 

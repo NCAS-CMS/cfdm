@@ -184,8 +184,8 @@ class CellMethod(mixin.Container, core.CellMethod):
     def dump(self, display=True, _title=None, _level=0):
         """A full description of the cell method construct.
 
-        Returns a description the method, all qualifiers and the axes to
-        which it applies.
+        Returns a description the method, all qualifiers and the axes
+        to which it applies.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -227,14 +227,14 @@ class CellMethod(mixin.Container, core.CellMethod):
         The axes of the cell method constructs are *not* considered,
         because they may only be correctly interpreted by the field
         constructs that contain the cell method constructs in
-        question. They are, however, taken into account when two fields
-        constructs are tested for equality.
+        question. They are, however, taken into account when two
+        fields constructs are tested for equality.
 
         {{equals tolerance}}
 
-        Any type of object may be tested but, in general, equality is only
-        possible with another cell method construct, or a subclass of
-        one. See the *ignore_type* parameter.
+        Any type of object may be tested but, in general, equality is
+        only possible with another cell method construct, or a
+        subclass of one. See the *ignore_type* parameter.
 
         {{equals tolerance}}
 
@@ -285,12 +285,9 @@ class CellMethod(mixin.Container, core.CellMethod):
         # ------------------------------------------------------------
         if self.get_method(None) != other.get_method(None):
             logger.info(
-                "{0}: Different methods: {1!r} != {2!r}".format(
-                    self.__class__.__name__,
-                    self.get_method(None),
-                    other.get_method(None),
-                )
-            )
+                f"{self.__class__.__name__}: Different methods: "
+                f"{self.get_method(None)!r} != {other.get_method(None)!r}"
+            )  # pragma: no cover
             return False
 
         # ------------------------------------------------------------
@@ -308,10 +305,8 @@ class CellMethod(mixin.Container, core.CellMethod):
                 other_qualifiers
             ):
                 logger.info(
-                    "{0}: Non-common qualifier: {1!r}".format(
-                        self.__class__.__name__, q
-                    )
-                )
+                    f"{self.__class__.__name__}: Non-common qualifier: {q!r}"
+                )  # pragma: no cover
             return False
 
         for qualifier, x in self_qualifiers.items():
@@ -324,12 +319,12 @@ class CellMethod(mixin.Container, core.CellMethod):
                 atol=atol,
                 ignore_data_type=True,
                 verbose=verbose,
+                basic=True,
             ):
                 logger.info(
-                    "{0}: Different {1} qualifiers: {2!r}, {3!r}".format(
-                        self.__class__.__name__, prop, x, y
-                    )
-                )
+                    f"{self.__class__.__name__}: Different {prop} "
+                    f"qualifiers: {x!r}, {y!r}"
+                )  # pragma: no cover
                 return False
 
         if "interval" in ignore_qualifiers:
@@ -340,11 +335,9 @@ class CellMethod(mixin.Container, core.CellMethod):
         if intervals0:
             if not intervals1:
                 logger.info(
-                    "{0}: Different interval qualifiers: "
-                    "{1!r} != {2!r}".format(
-                        self.__class__.__name__, intervals0, intervals1
-                    )
-                )
+                    f"{self.__class__.__name__}: Different interval "
+                    f"qualifiers: {intervals0!r} != {intervals1!r}"
+                )  # pragma: no cover
                 return False
 
             if len(intervals0) != len(intervals1):
@@ -352,7 +345,7 @@ class CellMethod(mixin.Container, core.CellMethod):
                     "{0}: Different numbers of interval qualifiers: "
                     "{1!r} != {2!r}".format(
                         self.__class__.__name__, intervals0, intervals1
-                    )
+                    )  # pragma: no cover
                 )
                 return False
 
@@ -367,19 +360,16 @@ class CellMethod(mixin.Container, core.CellMethod):
                     ignore_fill_value=True,
                 ):
                     logger.info(
-                        "{0}: Different interval qualifiers: "
-                        "{1!r} != {2!r}".format(
-                            self.__class__.__name__, intervals0, intervals1
-                        )
-                    )
+                        f"{self.__class__.__name__}: Different interval "
+                        f"qualifiers: {intervals0!r} != {intervals1!r}"
+                    )  # pragma: no cover
                     return False
 
         elif intervals1:
             logger.info(
-                "{}: Different intervals: {!r} != {!r}".format(
-                    self.__class__.__name__, intervals0, intervals1
-                )
-            )
+                f"{self.__class__.__name__}: Different intervals: "
+                f"{intervals0!r} != {intervals1!r}"
+            )  # pragma: no cover
             return False
 
         # ------------------------------------------------------------
@@ -432,7 +422,7 @@ class CellMethod(mixin.Container, core.CellMethod):
 
         return default
 
-    def identities(self):
+    def identities(self, generator=False, **kwargs):
         """Return all possible identities.
 
         The identities comprise:
@@ -443,9 +433,23 @@ class CellMethod(mixin.Container, core.CellMethod):
 
         .. seealso:: `identity`
 
+        :Parameters:
+
+            generator: `bool`, optional
+                If True then return a generator for the identities,
+                rather than a list.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
+            kwargs: optional
+                Additional configuration parameters. Currently
+                none. Unrecognised parameters are ignored.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
         :Returns:
 
-            `list`
+            `list` or generator
                 The identities.
 
         **Examples:**
@@ -460,15 +464,16 @@ class CellMethod(mixin.Container, core.CellMethod):
         'maximum'
         >>> c.identities()
         []
+        >>> for i in c.identities(generator=True):
+        ...     print(i)
+        ...
 
         """
-        out = []
-
         n = self.get_method(None)
         if n is not None:
-            out.append(f"method:{n}")
+            return ["method:" + n]
 
-        return out
+        return []
 
     def sorted(self, indices=None):
         """Return a new cell method construct with sorted axes.

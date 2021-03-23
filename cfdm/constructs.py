@@ -1,5 +1,7 @@
 import logging
 
+from itertools import chain
+
 # from copy import deepcopy
 
 from . import core
@@ -1034,7 +1036,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         return out
 
-    def filter_by_identity(self, *identities):
+    def filter_by_identity(self, *identities, **kwargs):
         """Select metadata constructs by identity.
 
         Calling a `Constructs` instance selects metadata constructs by
@@ -1083,6 +1085,13 @@ class Constructs(mixin.Container, core.Constructs):
                 identities, and so this description may always be used
                 as an *identities* argument.
 
+            kwargs: optional
+                Additional parameters for configuring each construct's
+                `identities` method. ``generator=True`` is passed by
+                default.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
         :Returns:
 
             `Constructs`
@@ -1123,9 +1132,13 @@ class Constructs(mixin.Container, core.Constructs):
 
         for cid, construct in tuple(out.items()):
             ok = False
-            for value0 in identities:
-                for value1 in [f"key%{cid}"] + construct.identities():
-                    ok = self._matching_values(value0, construct, value1)
+            for value1 in chain(
+                ("key%" + cid,), construct.identities(generator=True, **kwargs)
+            ):
+                for value0 in identities:
+                    ok = self._matching_values(
+                        value0, construct, value1, basic=True
+                    )
                     if ok:
                         break
 
@@ -1286,7 +1299,9 @@ class Constructs(mixin.Container, core.Constructs):
             ok = False
             for value0 in measures:
                 value1 = construct.get_measure(None)
-                ok = self._matching_values(value0, construct, value1)
+                ok = self._matching_values(
+                    value0, construct, value1, basic=True
+                )
                 if ok:
                     break
 
@@ -1386,7 +1401,9 @@ class Constructs(mixin.Container, core.Constructs):
             ok = False
             for value0 in methods:
                 value1 = get_method(None)
-                ok = self._matching_values(value0, construct, value1)
+                ok = self._matching_values(
+                    value0, construct, value1, basic=True
+                )
                 if ok:
                     break
 
@@ -1544,7 +1561,9 @@ class Constructs(mixin.Container, core.Constructs):
             ok = False
             for value0 in ncdims:
                 value1 = nc_get_dimension(None)
-                ok = self._matching_values(value0, construct, value1)
+                ok = self._matching_values(
+                    value0, construct, value1, basic=True
+                )
                 if ok:
                     break
 
@@ -1622,7 +1641,9 @@ class Constructs(mixin.Container, core.Constructs):
             ok = False
             for value0 in ncvars:
                 value1 = nc_get_variable(None)
-                ok = self._matching_values(value0, construct, value1)
+                ok = self._matching_values(
+                    value0, construct, value1, basic=True
+                )
                 if ok:
                     break
 
@@ -1633,13 +1654,36 @@ class Constructs(mixin.Container, core.Constructs):
 
         return out
 
-    def _matching_values(self, value0, construct, value1):
-        """Whether or not two values are the same."""
+    def _matching_values(self, value0, construct, value1, basic=False):
+        """Whether or not two values are the same.
+
+        :Parameters:
+
+            value0:
+                The first value to be matched.
+
+            construct:
+                The construct whose `_equals` method is used to
+                determine whether values can be considered to match.
+
+            value1:
+                The second value to be matched.
+
+            basic: `bool`
+                If True then value0 and value1 will be compared with
+                the basic ``==`` operator.
+
+        :Returns:
+
+            `bool`
+                Whether or not the two values match.
+
+        """
         if value1 is not None:
             try:
                 result = value0.search(value1)
             except (AttributeError, TypeError):
-                result = construct._equals(value1, value0)
+                result = construct._equals(value1, value0, basic=basic)
 
             if result:
                 # This construct matches this property
@@ -1831,7 +1875,9 @@ class Constructs(mixin.Container, core.Constructs):
             ok = False
             value0 = construct.get_size(None)
             for value1 in sizes:
-                ok = self._matching_values(value1, construct, value0)
+                ok = self._matching_values(
+                    value1, construct, value0, basic=True
+                )
                 if ok:
                     break
 

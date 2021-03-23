@@ -90,7 +90,14 @@ class Container:
         return rtol().value
 
     def _equals(
-        self, x, y, rtol=None, atol=None, ignore_data_type=False, **kwargs
+        self,
+        x,
+        y,
+        rtol=None,
+        atol=None,
+        ignore_data_type=False,
+        basic=False,
+        **kwargs,
     ):
         """Whether two objects are the same.
 
@@ -107,6 +114,10 @@ class Container:
             {{rtol: number, optional}}
 
         """
+        if basic:
+            # x and y can be compared with the basic == operator
+            return bool(x == y)
+
         if rtol is None:
             rtol = self._rtol
         else:
@@ -126,15 +137,6 @@ class Container:
             # --------------------------------------------------------
             # x has a callable "equals" method
             # --------------------------------------------------------
-            # Check that the kwargs are OK
-            try:
-                # Python 3
-                pass
-            #                parameters = inspect.signature(eq).bind_partial(**kwargs)
-            except AttributeError:
-                # Python 2
-                pass
-
             return eq(y, **kwargs)
 
         eq = getattr(y, "equals", None)
@@ -142,27 +144,21 @@ class Container:
             # --------------------------------------------------------
             # y has a callable "equals" method
             # --------------------------------------------------------
-            # Check that the kwargs are OK
-            try:
-                # Python 3
-                pass
-            #                parameters = inspect.signature(eq).bind_partial(**kwargs)
-            except AttributeError:
-                # Python 2
-                pass
             return eq(x, **kwargs)
 
-        if numpy.shape(x) != numpy.shape(y):
+        x = numpy.asanyarray(x)
+        y = numpy.asanyarray(y)
+        if x.shape != y.shape:
             return False
 
-        # ------------------------------------------------------------
-        # Cast x and y as numpy arrays
-        # ------------------------------------------------------------
-        if not isinstance(x, numpy.ndarray):
-            x = numpy.asanyarray(x)
-
-        if not isinstance(y, numpy.ndarray):
-            y = numpy.asanyarray(y)
+        #        # ------------------------------------------------------------
+        #        # Cast x and y as numpy arrays
+        #        # ------------------------------------------------------------
+        #        if not isinstance(x, numpy.ndarray):
+        #            x = numpy.asanyarray(x)
+        #
+        #        if not isinstance(y, numpy.ndarray):
+        #            y = numpy.asanyarray(y)
 
         # THIS IS WHERE SOME NUMPY FUTURE WARNINGS ARE COMING FROM
 

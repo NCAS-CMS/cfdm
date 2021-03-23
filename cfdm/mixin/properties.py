@@ -70,6 +70,38 @@ class Properties(Container):
 
         return "\n".join(string)
 
+    def _identities_iter(self):
+        """Return all possible identities.
+
+        See `identities` for details and examples.
+
+        :Returns:
+
+            generator
+                The identities.
+
+        """
+        properties = self.properties()
+
+        standard_name = properties.pop("standard_name", None)
+        if standard_name is not None:
+            yield standard_name
+
+        for prop in ("cf_role", "axis", "long_name"):
+            p = properties.pop(prop, None)
+            if p is not None:
+                yield f"{prop}={p}"
+
+        for value, prop in sorted(properties.items()):
+            yield f"{prop}={value}"
+
+        if standard_name is not None:
+            yield "standard_name=" + standard_name
+
+        ncvar = self.nc_get_variable(None)
+        if ncvar is not None:
+            yield "ncvar%" + ncvar
+
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
@@ -405,7 +437,7 @@ class Properties(Container):
 
         return default
 
-    def identities(self):
+    def identities(self, generator=False, **kwargs):
         """Return all possible identities.
 
         The identities comprise:
@@ -419,9 +451,23 @@ class Properties(Container):
 
         .. seealso:: `identity`
 
+        :Parameters:
+
+            generator: `bool`, optional
+                If True then return a generator for the identities,
+                rather than a list.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
+            kwargs: optional
+                Additional configuration parameters. Currently
+                none. Unrecognised parameters are ignored.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
         :Returns:
 
-            `list`
+            `list` or generator
                 The identities.
 
         **Examples:**
@@ -438,40 +484,21 @@ class Properties(Container):
          'foo=bar',
          'standard_name=air_temperature',
          'ncvar%tas']
+        >>> for i in f.identities(generator=True):
+        ...     print(i)
+        ...
+        air_temperature
+        long_name=Air Temperature
+        foo=bar
+        standard_name=air_temperature
+        ncvar%tas
 
         """
-        properties = self.properties()
-        cf_role = properties.pop("cf_role", None)
-        axis = properties.pop("axis", None)
-        long_name = properties.pop("long_name", None)
-        standard_name = properties.pop("standard_name", None)
+        g = self._identities_iter()
+        if generator:
+            return g
 
-        out = []
-
-        if standard_name is not None:
-            out.append(standard_name)
-
-        if cf_role is not None:
-            out.append(f"cf_role={cf_role}")
-
-        if axis is not None:
-            out.append(f"axis={axis}")
-
-        if long_name is not None:
-            out.append(f"long_name={long_name}")
-
-        out += [
-            f"{prop}={value}" for prop, value in sorted(properties.items())
-        ]
-
-        if standard_name is not None:
-            out.append(f"standard_name={standard_name}")
-
-        n = self.nc_get_variable(None)
-        if n is not None:
-            out.append(f"ncvar%{n}")
-
-        return out
+        return list(g)
 
     def _inherited_properties(self):
         """Return the properties inherited from a parent construct.

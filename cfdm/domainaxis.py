@@ -259,7 +259,7 @@ class DomainAxis(
 
         return default
 
-    def identities(self):
+    def identities(self, generator=False, **kwargs):
         """Return all possible identities.
 
         The identities comprise:
@@ -270,9 +270,23 @@ class DomainAxis(
 
         .. seealso:: `identity`
 
+        :Parameters:
+
+            generator: `bool`, optional
+                If True then return a generator for the identities,
+                rather than a list.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
+            kwargs: optional
+                Additional configuration parameters. Currently
+                none. Unrecognised parameters are ignored.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
         :Returns:
 
-            `list`
+            `list` or generator
                 The identities.
 
         **Examples:**
@@ -285,12 +299,13 @@ class DomainAxis(
         'time'
         >>> d.identities()
         []
+        >>> for i in d.identities(generator=True):
+        ...     print(i)
+        ...
 
         """
-        out = []
-
         n = self.nc_get_dimension(None)
         if n is not None:
-            out.append(f"ncdim%{n}")
+            return ["ncdim%" + n]
 
-        return out
+        return []

@@ -1,4 +1,5 @@
 import logging
+from itertools import chain
 
 from . import mixin
 from . import core
@@ -401,7 +402,7 @@ class CellMeasure(
 
         return default
 
-    def identities(self):
+    def identities(self, generator=False, **kwargs):
         """Return all possible identities.
 
         The identities comprise:
@@ -416,9 +417,23 @@ class CellMeasure(
 
         .. seealso:: `identity`
 
+        :Parameters:
+
+            generator: `bool`, optional
+                If True then return a generator for the identities,
+                rather than a list.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
+            kwargs: optional
+                Additional configuration parameters. Currently
+                none. Unrecognised parameters are ignored.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
         :Returns:
 
-            `list`
+            `list` or generator
                 The identities.
 
         **Examples:**
@@ -434,12 +449,23 @@ class CellMeasure(
         'cell_measure'
         >>> c.identities()
         ['measure:area', 'units=km2', 'ncvar%cell_measure']
+        >>> for i in c.identities(generator=True):
+        ...     print(i)
+        ...
+        measure:area
+        units=km2
+        ncvar%cell_measure
 
         """
-        out = super().identities()
+        measure_identities = ""
+        measure = self.get_measure(None)
+        if measure is not None:
+            measure_identities = ("measure:" + measure,)
 
-        n = self.get_measure(None)
-        if n is not None:
-            out.insert(0, f"measure:{n}")
+        identities = super().identities(generator=True)
 
-        return out
+        g = chain(measure_identities, identities)
+        if generator:
+            return g
+
+        return list(g)

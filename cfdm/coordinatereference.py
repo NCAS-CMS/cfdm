@@ -150,6 +150,27 @@ class CoordinateReference(
         """
         return self.identity(default=self.nc_get_variable(""))
 
+    def _identities_iter(self):
+        """Return all possible identities.
+
+        See `identities` for details and examples.
+
+        :Returns:
+
+            generator
+                The identities.
+
+        """
+        cc = self.coordinate_conversion
+        for prop in ("standard_name", "grid_mapping_name"):
+            n = cc.get_parameter(prop, None)
+            if n is not None:
+                yield f"{prop}:{n}"
+
+        ncvar = self.nc_get_variable(None)
+        if ncvar is not None:
+            yield "ncvar%" + ncvar
+
     def creation_commands(
         self, namespace=None, indent=0, string=True, name="c", header=True
     ):
@@ -522,7 +543,7 @@ class CoordinateReference(
 
         return default
 
-    def identities(self):
+    def identities(self, generator=False, **kwargs):
         """Returns all possible identities.
 
         The identities comprise:
@@ -538,9 +559,23 @@ class CoordinateReference(
 
         .. seealso:: `identity`
 
+        :Parameters:
+
+            generator: `bool`, optional
+                If True then return a generator for the identities,
+                rather than a list.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
+            kwargs: optional
+                Additional configuration parameters. Currently
+                none. Unrecognised parameters are ignored.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
         :Returns:
 
-            `list`
+            `list` or generator
                 The identities.
 
         **Examples:**
@@ -554,21 +589,19 @@ class CoordinateReference(
         >>> c.identities()
         ['grid_mapping_name:rotated_latitude_longitude',
          'ncvar%rotated_latitude_longitude']
+        >>> for i in c.identities(generator=True):
+        ...     print(i)
+        ...
+        grid_mapping_name:rotated_latitude_longitude
+        ncvar%rotated_latitude_longitude
 
         >>> c = {{package}}.{{class}}()
         >>> c.identities()
         []
 
         """
-        out = []
+        g = self._identities_iter()
+        if generator:
+            return g
 
-        for prop in ("standard_name", "grid_mapping_name"):
-            n = self.coordinate_conversion.get_parameter(prop, None)
-            if n is not None:
-                out.append(f"{prop}:{n}")
-
-        n = self.nc_get_variable(None)
-        if n is not None:
-            out.append(f"ncvar%{n}")
-
-        return out
+        return list(g)
