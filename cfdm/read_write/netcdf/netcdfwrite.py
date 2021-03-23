@@ -773,7 +773,10 @@ class NetCDFWrite(IOWrite):
 
         g["key_to_ncvar"][key] = ncvar
         g["key_to_ncdims"][key] = ncdimensions
-        g["axis_to_ncdim"][axis] = seen[id(coord)]["ncdims"][0]
+        if seen.get(id(coord)):
+            g["axis_to_ncdim"][axis] = seen[id(coord)]["ncdims"][0]
+        else:
+            print("This probably shouldn't be happening with...", axis)
 
         if g["coordinates"] and ncvar is not None:
             # Add the dimension coordinate netCDF variable name to the
@@ -2737,11 +2740,8 @@ class NetCDFWrite(IOWrite):
                 # (... probably not the below but it is at least illustrative)
 
                 # The ncvar name is in use (why wasn't it known before and in
-                # 'ncvar_names' already?) so use a new name.
+                # 'ncvar_names' already?) so register that for later.
                 g["ncvar_names"].add(ncvar)
-                ncvar = self._create_netcdf_variable_name(cfvar, default="???")
-                kwargs["varname"] = ncvar  # update
-                self._createVariable(**kwargs)
                 return
             elif error == (
                 "NetCDF: Not a valid data type or _FillValue " "type mismatch"
