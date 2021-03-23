@@ -26,9 +26,9 @@ class PropertiesData(Properties):
     def __new__(cls, *args, **kwargs):
         """Store component classes.
 
-        NOTE: If a child class requires a different component classes than
-        the ones defined here, then they must be redefined in the child
-        class.
+        NOTE: If a child class requires a different component classes
+        than the ones defined here, then they must be redefined in the
+        child class.
 
         """
         instance = super().__new__(cls)
@@ -40,11 +40,11 @@ class PropertiesData(Properties):
 
         f.__getitem__(indices) <==> f[indices]
 
-        Indexing follows rules that are very similar to the numpy indexing
-        rules, the only differences being:
+        Indexing follows rules that are very similar to the numpy
+        indexing rules, the only differences being:
 
-        * An integer index i takes the i-th element but does not reduce
-          the rank by one.
+        * An integer index i takes the i-th element but does not
+          reduce the rank by one.
 
         * When two or more dimensions' indices are sequences of integers
           then these indices work independently along each dimension
@@ -764,7 +764,7 @@ class PropertiesData(Properties):
         :Returns:
 
             `set`
-                The file names in normalized, absolute form. If the data
+                The file names in normalised, absolute form. If the data
                 are in memory then an empty `set` is returned.
 
         """

@@ -44,7 +44,7 @@ class Constructs(abstract.Container):
         _view=False,
         _ignore=(),
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -100,13 +100,13 @@ class Constructs(abstract.Container):
                   ``cell_method='cellmethod'``
 
             source: optional
-                Initialize the construct keys and contained metadata
+                Initialise the construct keys and contained metadata
                 constructs from those of *source*.
 
             copy: `bool`, optional
-                If False then do not deep copy metadata constructs from
-                those of *source* prior to initialization. By default such
-                metadata constructs are deep copied.
+                If False then do not deep copy metadata constructs
+                from those of *source* prior to initialisation. By
+                default such metadata constructs are deep copied.
 
             _ignore: sequence of `str`, optional
                 Ignores the given construct types.
@@ -202,7 +202,6 @@ class Constructs(abstract.Container):
             self._ignore = ()
 
             return
-        # --- End: if
 
         self._ignore = _ignore
 
@@ -523,7 +522,6 @@ class Constructs(abstract.Container):
                         coordinate_conversion.set_domain_ancillary(term, None)
 
                 ref.del_coordinate(key, None)
-        # --- End: if
 
         out = self._pop(key, None)
 
@@ -750,7 +748,6 @@ class Constructs(abstract.Container):
                         "not match the shape required by domain axes "
                         f"{tuple(axes)}: {axes_shape}"
                     )
-        # --- End: try
 
         self._construct_axes[key] = tuple(axes)
 
@@ -1039,7 +1036,6 @@ class Constructs(abstract.Container):
                         axes = self._construct_axes.get(key)
                         if axes is not None:
                             out[key] = axes
-            # --- End: for
 
             return out
 

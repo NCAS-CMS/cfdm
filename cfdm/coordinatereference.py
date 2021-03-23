@@ -64,14 +64,7 @@ class CoordinateReference(
 
     **NetCDF interface**
 
-    The netCDF grid mapping variable name of a coordinate reference
-    construct may be accessed with the `nc_set_variable`,
-    `nc_get_variable`, `nc_del_variable` and `nc_has_variable`
-    methods.
-
-    The netCDF variable group structure may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+    {{netCDF variable}}
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -93,17 +86,18 @@ class CoordinateReference(
         source=None,
         copy=True,
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
             coordinates: sequence of `str`, optional
-                Identify the related dimension and auxiliary coordinate
-                constructs by their construct identifiers. Ignored if the
-                *source* parameter is set.
+                Identify the related dimension and auxiliary
+                coordinate constructs by their construct
+                identifiers. Ignored if the *source* parameter is set.
 
-                The coordinates may also be set after initialisation with
-                the `set_coordinates` and `set_coordinate` methods.
+                The coordinates may also be set after initialisation
+                with the `set_coordinates` and `set_coordinate`
+                methods.
 
                 *Parameter example:*
                   ``coordinates=['dimensioncoordinate2']``
@@ -115,20 +109,20 @@ class CoordinateReference(
                 Set the datum component of the coordinate reference
                 construct. Ignored if the *source* parameter is set.
 
-                The datum may also be set after initialisation with the
-                `set_datum` method.
+                The datum may also be set after initialisation with
+                the `set_datum` method.
 
             coordinate_conversion: `CoordinateConversion`, optional
-                Set the coordinate conversion component of the coordinate
-                reference construct. Ignored if the *source* parameter is
-                set.
+                Set the coordinate conversion component of the
+                coordinate reference construct. Ignored if the
+                *source* parameter is set.
 
                 The coordinate conversion may also be set after
                 initialisation with the `set_coordinate_conversion`
                 method.
 
             source: optional
-                Initialize the coordinates, datum and coordinate
+                Initialise the coordinates, datum and coordinate
                 conversion from those of *source*.
 
                 {{init source}}

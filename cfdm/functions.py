@@ -414,7 +414,7 @@ def abspath(filename):
     :Returns:
 
         `str`
-            The normalized absolutised version of *filename*.
+            The normalised absolutised version of *filename*.
 
     **Examples:**
 
@@ -570,7 +570,7 @@ class Constant(metaclass=DocstringRewriteMeta):
     __slots__ = ("_func", "value", "_type")
 
     def __init__(self, value, _func=None):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -578,8 +578,9 @@ class Constant(metaclass=DocstringRewriteMeta):
                 A value for the constant.
 
             _func: function, optional
-                A function that that is executed upon exit from a context
-                manager, that takes the *value* parameter as its argument.
+                A function that that is executed upon exit from a
+                context manager, that takes the *value* parameter as
+                its argument.
 
         """
         self.value = value
@@ -871,7 +872,7 @@ class Configuration(dict, metaclass=DocstringRewriteMeta):
 
     The container has context manager support.
 
-    Initialization is as for a `dict`, and nearly all of the `dict`
+    Initialisation is as for a `dict`, and nearly all of the `dict`
     methods are available with the same behaviours (`clear`,
     `fromkeys`, `get`, `items`, `keys`, `pop`, `popitem`,
     `setdefault`, `update`, `values`):

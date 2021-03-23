@@ -13,12 +13,12 @@ class Container(metaclass=DocstringRewriteMeta):
     """
 
     def __init__(self, source=None, copy=True):
-        """Initialises the `{{class}}` instance.
+        """**Initialiation**
 
         :Parameters:
 
             source: optional
-                Initialize the components from those of *source*.
+                Initialise the components from those of *source*.
 
                 {{init source}}
 

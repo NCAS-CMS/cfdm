@@ -24,7 +24,7 @@ class Data(abstract.Container):
         _use_array=True,
         _custom_deep_copy=False,
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -86,7 +86,7 @@ class Data(abstract.Container):
                   ``fill_value=-999.``
 
             source: *optional*
-                Initialize the data, units, calendar and fill value
+                Initialise the data, units, calendar and fill value
                 from those of *source*.
 
             {{init copy: `bool`, optional}}

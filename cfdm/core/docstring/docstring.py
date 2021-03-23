@@ -104,7 +104,7 @@ _docstring_substitution_definitions = {
     # init copy
     "{{init copy: `bool`, optional}}": """copy: `bool`, optional
                 If False then do not deep copy input parameters prior
-                to initialization. By default arguments are deep
+                to initialisation. By default arguments are deep
                 copied.""",
     # init source
     "{{init source}}": """Note that if *source* is a `{{class}}` instance then

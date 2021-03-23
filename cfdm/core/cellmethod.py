@@ -25,7 +25,7 @@ class CellMethod(abstract.Container):
     def __init__(
         self, axes=None, method=None, qualifiers=None, source=None, copy=True
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -79,7 +79,7 @@ class CellMethod(abstract.Container):
                   ``qualifiers={'where': 'sea', ''over': 'ice'}``
 
             source: optional
-                Initialize the axes, method and qualifiers from those of
+                Initialise the axes, method and qualifiers from those of
                 *source*.
 
                 {{init source}}

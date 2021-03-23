@@ -28,7 +28,7 @@ class RaggedIndexedArray(mixin.RaggedIndexed, abstract.CompressedArray):
         ndim=None,
         index_variable=None,
     ):
-        """Initialises the `RaggedIndexedArray` instance.
+        """**Initialisation**
 
         :Parameters:
 

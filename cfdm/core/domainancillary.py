@@ -10,7 +10,7 @@ class DomainAncillary(abstract.PropertiesDataBounds):
     formula of a coordinate reference construct. It contains a data
     array which depends on zero or more of the domain axes.
 
-    It also contains an optional array of cell bounds, stored in a
+    It also contains an optional arraqy of cell bounds, stored in a
     `Bounds` object, recording the extents of each cell (only
     applicable if the array contains coordinate data), and properties
     to describe the data.

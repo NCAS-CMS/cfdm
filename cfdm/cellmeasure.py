@@ -37,13 +37,7 @@ class CellMeasure(
 
     **NetCDF interface**
 
-    The netCDF variable name of the construct may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-    `nc_has_variable` methods.
-
-    The netCDF variable group structure may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+    {{netCDF variable}}
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -58,16 +52,17 @@ class CellMeasure(
         copy=True,
         _use_data=True,
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
             measure: `str`, optional
-                Set the measure that indicates which metric given by the
-                data array. Ignored if the *source* parameter is set.
+                Set the measure that indicates which metric given by
+                the data array. Ignored if the *source* parameter is
+                set.
 
-                The measure may also be set after initialisation with the
-                `set_measure` method.
+                The measure may also be set after initialisation with
+                the `set_measure` method.
 
                 *Parameter example:*
                   ``measure='area'``
@@ -80,8 +75,8 @@ class CellMeasure(
             {{init data: data_like, optional}}
 
             source: optional
-                Initialize the measure, properties and data from those of
-                *source*.
+                Initialise the measure, properties and data from those
+                of *source*.
 
                 {{init source}}
 

@@ -27,7 +27,7 @@ class Bounds(abstract.PropertiesData):
         copy=True,
         _use_data=True,
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -39,7 +39,7 @@ class Bounds(abstract.PropertiesData):
             {{init data: data_like, optional}}
 
             source: optional
-                Initialize the properties and data from those of *source*.
+                Initialise the properties and data from those of *source*.
                 respectively.
 
                 {{init source}}

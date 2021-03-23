@@ -30,7 +30,7 @@ class RaggedContiguousArray(mixin.RaggedContiguous, abstract.CompressedArray):
         ndim=None,
         count_variable=None,
     ):
-        """Initialises the `RaggedContiguousArray` instance.
+        """**Initialisation**
 
         :Parameters:
 

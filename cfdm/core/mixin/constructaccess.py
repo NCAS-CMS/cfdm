@@ -24,13 +24,14 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
     def del_construct(self, key, default=ValueError()):
         """Remove a metadata construct.
 
-        If a domain axis construct is selected for removal then it can't
-        be spanned by any metadata construct data, nor the field
-        construct's data; nor be referenced by any cell method constructs.
+        If a domain axis construct is selected for removal then it
+        can't be spanned by any metadata construct data, nor the field
+        construct's data; nor be referenced by any cell method
+        constructs.
 
-        However, a domain ancillary construct may be removed even if it is
-        referenced by coordinate reference construct. In this case the
-        reference is replace with `None`.
+        However, a domain ancillary construct may be removed even if
+        it is referenced by coordinate reference construct. In this
+        case the reference is replace with `None`.
 
         .. versionadded:: (cfdm) 1.7.0
 

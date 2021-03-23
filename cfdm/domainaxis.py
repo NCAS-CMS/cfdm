@@ -44,7 +44,7 @@ class DomainAxis(
     """
 
     def __init__(self, size=None, source=None, copy=True):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -58,7 +58,7 @@ class DomainAxis(
                   ``size=192``
 
             source: optional
-                Initialize the size from that of *source*.
+                Initialise the size from that of *source*.
 
                 {{init source}}
 

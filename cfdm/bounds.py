@@ -29,18 +29,12 @@ class Bounds(
 
     **NetCDF interface**
 
-    The netCDF variable name of the bounds may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-    `nc_has_variable` methods.
+    {{netCDF variable}}
 
     The name of the trailing netCDF dimension spanned by bounds (which
     does not correspond to a domain axis construct) may be accessed
     with the `nc_set_dimension`, `nc_get_dimension`,
     `nc_del_dimension` and `nc_has_dimension` methods.
-
-    The netCDF variable group structure may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -54,7 +48,7 @@ class Bounds(
         copy=True,
         _use_data=True,
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -66,7 +60,7 @@ class Bounds(
             {{init data: data_like, optional}}
 
             source: optional
-                Initialize the properties and data from those of *source*.
+                Initialise the properties and data from those of *source*.
 
                 {{init source}}
 

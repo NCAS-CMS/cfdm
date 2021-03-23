@@ -66,7 +66,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
     def __init__(
         self, properties=None, source=None, copy=True, _use_data=True
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -76,8 +76,8 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
                    ``properties={'standard_name': 'air_temperature'}``
 
             source: optional
-                Initialize the properties, data and metadata constructs
-                from those of *source*.
+                Initialise the properties, data and metadata
+                constructs from those of *source*.
 
                 {{init source}}
 

@@ -15,18 +15,19 @@ class NumpyArray(ArrayMixin, core.NumpyArray):
 
         x.__getitem__(indices) <==> x[indices]
 
-        The indices that define the subspace must be either `Ellipsis` or
-        a sequence that contains an index for each dimension. In the
-        latter case, each dimension's index must either be a `slice`
-        object or a sequence of two or more integers.
+        The indices that define the subspace must be either `Ellipsis`
+        or a sequence that contains an index for each dimension. In
+        the latter case, each dimension's index must either be a
+        `slice` object or a sequence of two or more integers.
 
         Indexing is similar to numpy indexing. The only difference to
         numpy indexing (given the restrictions on the type of indices
         allowed) is:
 
-          * When two or more dimension's indices are sequences of integers
-            then these indices work independently along each dimension
-            (similar to the way vector subscripts work in Fortran).
+          * When two or more dimension's indices are sequences of
+            integers then these indices work independently along each
+            dimension (similar to the way vector subscripts work in
+            Fortran).
 
         .. versionadded:: (cfdm) 1.7.0
 
