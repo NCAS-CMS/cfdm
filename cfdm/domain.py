@@ -41,27 +41,15 @@ class Domain(
 
     **NetCDF interface**
 
-    The netCDF variable name of the construct may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-    `nc_has_variable` methods.
+    {{netCDF variable}}
 
-    The selection of properties to be written as netCDF global
-    attributes may be accessed with the `nc_global_attributes`,
-    `nc_clear_global_attributes` and `nc_set_global_attribute`
-    methods.
+    {{netCDF global attributes}}
 
-    The netCDF variable group structure may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+    {{netCDF variable group}}
 
-    The netCDF group attributes may be accessed with the
-    `nc_group_attributes`, `nc_clear_group_attributes`,
-    `nc_set_group_attribute` and `nc_set_group_attributes` methods.
+    {{netCDF group attributes}}
 
-    The netCDF geometry variable group structure may be accessed with
-    the `nc_set_geometry_variable`, `nc_get_geometry_variable`,
-    `nc_geometry_variable_groups`, `nc_clear_variable_groups` and
-    `nc_set_geometry_variable_groups` methods.
+    {{netCDF geometry group}}
 
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
@@ -96,7 +84,7 @@ class Domain(
     def __init__(
         self, properties=None, source=None, copy=True, _use_data=True
     ):
-        """Initialisation.
+        """**Initialisation**
 
         :Parameters:
 
