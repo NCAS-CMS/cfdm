@@ -288,7 +288,7 @@ class PropertiesData(Properties):
 
         if data is None:
             return self._default(
-                default, message=f"{self.__class__.__name__!r} has no data"
+                default, message=f"{self.__class__.__name__} has no data"
             )
 
         if _units:
