@@ -227,12 +227,15 @@ class read_writeTest(unittest.TestCase):
             # Now append all other example fields, to check a diverse variety:
             new_length = 2
             for field_id in range(1, 7):
-                new_length += 1
                 ex_field = cfdm.example_field(field_id)
                 cfdm.write(ex_field, tmpfile, fmt=fmt, mode='a')
                 f = cfdm.read(tmpfile)
+
+                new_length += 1  # there should be exactly one more field now
                 self.assertEqual(len(f), new_length)
-                self.assertTrue(f[-1].equals(ex_field))
+                # Can't guarantee order of fields read in after the appends, so
+                # check that the field is *somewhere* in the read-in fieldlist
+                self.assertTrue(any([field.equals(ex_field) for field in f]))
 
             # Check behaviour when append identical fields, as an edge case:
             cfdm.write(g, tmpfile, fmt=fmt, mode='w', overwrite=True)
