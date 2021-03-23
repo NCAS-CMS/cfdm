@@ -35,16 +35,17 @@ class CellMeasure(abstract.PropertiesData):
         copy=True,
         _use_data=True,
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
             measure: `str`, optional
-                Set the measure that indicates which metric given by the
-                data array. Ignored if the *source* parameter is set.
+                Set the measure that indicates which metric given by
+                the data array. Ignored if the *source* parameter is
+                set.
 
-                The measure may also be set after initialisation with the
-                `set_measure` method.
+                The measure may also be set after initialisation with
+                the `set_measure` method.
 
                 *Parameter example:*
                   ``measure='area'``
@@ -57,8 +58,8 @@ class CellMeasure(abstract.PropertiesData):
             {{init data: data_like, optional}}
 
             source: optional
-                Initialise the measure, properties and data from those of
-                source.
+                Initialise the measure, properties and data from those
+                of source.
 
                 {{init source}}
 

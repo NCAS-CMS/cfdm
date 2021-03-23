@@ -68,7 +68,7 @@ class CFDMImplementation(Implementation):
         NodeCountProperties=None,
         PartNodeCountProperties=None,
     ):
-        """Initialises the `CFDMImplementation` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -1745,7 +1745,7 @@ class CFDMImplementation(Implementation):
         """Returns a dimension coordinate from an auxiliary coordinate.
 
         Specifically, returns a dimension coordinate construct
-        insitialized from an auxiliary coordinate construct.
+        insitialised from an auxiliary coordinate construct.
 
         :Parameters:
 

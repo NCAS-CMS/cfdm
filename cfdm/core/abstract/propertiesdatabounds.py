@@ -27,7 +27,7 @@ class PropertiesDataBounds(PropertiesData):
         copy=True,
         _use_data=True,
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -45,8 +45,8 @@ class PropertiesDataBounds(PropertiesData):
             {{init interior_ring: `InteriorRing`, optional}}
 
             source: optional
-                Initialize the properties, geometry type, data, bounds and
-                interior ring from those of *source*.
+                Initialise the properties, geometry type, data, bounds
+                and interior ring from those of *source*.
 
                 {{init source}}
 
@@ -182,8 +182,8 @@ class PropertiesDataBounds(PropertiesData):
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if bounds have
-                not been set.
+                Return the value of the *default* parameter if bounds
+                have not been set.
 
                 {{default Exception}}
 
@@ -490,7 +490,8 @@ class PropertiesDataBounds(PropertiesData):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `del_bounds`, `get_bounds`, `has_data`, `set_bounds`
+        .. seealso:: `del_bounds`, `get_bounds`, `has_data`,
+                     `set_bounds`
 
         :Returns:
 

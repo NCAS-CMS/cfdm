@@ -38,19 +38,19 @@ class ArrayMixin:
 
         x.__getitem__(indices) <==> x[indices]
 
-        Indexing follows rules that are very similar to the numpy indexing
-        rules, the only differences being:
+        Indexing follows rules that are very similar to the numpy
+        indexing rules, the only differences being:
 
-        * An integer index i takes the i-th element but does not reduce
-          the rank by one.
+        * An integer index i takes the i-th element but does not
+          reduce the rank by one.
 
         ..
 
-        * When two or more dimensions' indices are sequences of integers
-          then these indices work independently along each dimension
-          (similar to the way vector subscripts work in Fortran). This is
-          the same behaviour as indexing on a Variable object of the
-          netCDF4 package.
+        * When two or more dimensions' indices are sequences of
+          integers then these indices work independently along each
+          dimension (similar to the way vector subscripts work in
+          Fortran). This is the same behaviour as indexing on a
+          Variable object of the netCDF4 package.
 
         .. versionadded:: (cfdm) 1.8.7.0
 

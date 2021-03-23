@@ -29,7 +29,7 @@ class GatheredArray(abstract.CompressedArray):
         compressed_dimension=None,
         list_variable=None,
     ):
-        """Initialises the `GatheredArray` instance.
+        """**Initialisation**
 
         :Parameters:
 

@@ -21,20 +21,14 @@ class Datum(mixin.Parameters, mixin.NetCDFVariable, core.Datum):
 
     **NetCDF interface**
 
-    The netCDF variable name of the construct may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-    `nc_has_variable` methods.
-
-    The netCDF variable group structure may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+    {{netCDF variable}}
 
     .. versionadded:: (cfdm) 1.7.0
 
     """
 
     def __init__(self, parameters=None, source=None, copy=True):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -50,7 +44,7 @@ class Datum(mixin.Parameters, mixin.NetCDFVariable, core.Datum):
                  ``parameters={'earth_radius': 6371007.}``
 
             source: optional
-                Initialize the parameters from those of *source*.
+                Initialise the parameters from those of *source*.
 
                 {{init source}}
 

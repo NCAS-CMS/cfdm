@@ -38,12 +38,12 @@ class Domain(mixin.ConstructAccess, abstract.Container):
         return instance
 
     def __init__(self, source=None, copy=True, _use_data=True):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
             source: optional
-                Initialize the metadata constructs from those of
+                Initialise the metadata constructs from those of
                 *source*.
 
                 {{init source}}
@@ -161,7 +161,7 @@ class Domain(mixin.ConstructAccess, abstract.Container):
 
             copy: `bool`, optional
                 If True then deep copy the metadata constructs prior
-                to initialization. By default the metadata constructs
+                to initialisation. By default the metadata constructs
                 are not copied.
 
         :Returns:

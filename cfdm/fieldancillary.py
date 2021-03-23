@@ -28,13 +28,7 @@ class FieldAncillary(
 
     **NetCDF interface**
 
-    The netCDF variable name of the construct may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-    `nc_has_variable` methods.
-
-    The netCDF variable group structure may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+    {{netCDF variable}}
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -48,7 +42,7 @@ class FieldAncillary(
         copy=True,
         _use_data=True,
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -60,13 +54,12 @@ class FieldAncillary(
             {{init data: data_like, optional}}
 
             source: optional
-                Initialize the properties and data from those of *source*.
+                Initialise the properties and data from those of
+                *source*.
 
                 {{init source}}
 
             {{init copy: `bool`, optional}}
-                If False then do not deep copy input parameters prior to
-                initialization. By default arguments are deep copied.
 
         """
         super().__init__(

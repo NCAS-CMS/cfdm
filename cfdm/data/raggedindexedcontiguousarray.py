@@ -34,7 +34,7 @@ class RaggedIndexedContiguousArray(
         count_variable=None,
         index_variable=None,
     ):
-        """Initialises the `RaggedIndexedContiguousArray` instance.
+        """**Initialisation**
 
         :Parameters:
 

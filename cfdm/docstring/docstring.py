@@ -39,9 +39,29 @@ _docstring_substitution_definitions = {
     # Class description susbstitutions (1 level of indentation)
     # ----------------------------------------------------------------
     # {{netCDF variable}}
-    "{{netCDF variable}}": """The netCDF variable name of the construct may be accessed with the
+    "{{netCDF variable}}": """The netCDF variable name may be accessed with the
     `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-    `nc_has_variable` methods.""",
+    `nc_has_variable` methods.
+
+    The netCDF variable group structure may be accessed with the
+    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
+    `nc_clear_variable_groups` and `nc_set_variable_groups`
+    methods.""",
+    # {{netCDF global attributes}}
+    "{{netCDF global attributes}}": """The selection of properties to be written as netCDF global
+    attributes may be accessed with the `nc_global_attributes`,
+    `nc_clear_global_attributes` and `nc_set_global_attribute`
+    methods.""",
+    # {{netCDF group attributes}}
+    "{{netCDF group attributes}}": """The netCDF group attributes may be accessed with the
+    `nc_group_attributes`, `nc_clear_group_attributes`,
+    `nc_set_group_attribute` and `nc_set_group_attributes` methods.""",
+    # {{netCDF geometry group}}
+    "{{netCDF geometry group}}": """The netCDF geometry variable name and group structure may be
+    accessed with the `nc_set_geometry_variable`,
+    `nc_get_geometry_variable`, `nc_geometry_variable_groups`,
+    `nc_clear_variable_groups` and `nc_set_geometry_variable_groups`
+    methods.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (2 levels of indentation)
     # ----------------------------------------------------------------

@@ -48,9 +48,9 @@ class Constructs(mixin.Container, core.Constructs):
         """Select metadata constructs by identity.
 
         Calling a `Constructs` instance selects metadata constructs by
-        identity and is an alias for the `filter_by_identity` method. For
-        example, to select constructs that have an identity of
-        'air_temperature': ``d = c('air_temperature')``.
+        identity and is an alias for the `filter_by_identity`
+        method. For example, to select constructs that have an
+        identity of 'air_temperature': ``d = c('air_temperature')``.
 
         .. versionadded:: (cfdm) 1.7.0
 

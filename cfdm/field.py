@@ -69,23 +69,11 @@ class Field(
 
     {{netCDF variable}}
 
-    The selection of properties to be written as netCDF global
-    attributes may be accessed with the `nc_global_attributes`,
-    `nc_clear_global_attributes` and `nc_set_global_attribute`
-    methods.
+    {{netCDF global attributes}}
 
-    The netCDF variable group structure may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+    {{netCDF group attributes}}
 
-    The netCDF group attributes may be accessed with the
-    `nc_group_attributes`, `nc_clear_group_attributes`,
-    `nc_set_group_attribute` and `nc_set_group_attributes` methods.
-
-    The netCDF geometry variable group structure may be accessed with
-    the `nc_set_geometry_variable`, `nc_get_geometry_variable`,
-    `nc_geometry_variable_groups`, `nc_clear_variable_groups` and
-    `nc_set_geometry_variable_groups` methods.
+    {{netCDF geometry group}}
 
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
@@ -133,7 +121,7 @@ class Field(
     def __init__(
         self, properties=None, source=None, copy=True, _use_data=True
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -143,7 +131,7 @@ class Field(
                   ``properties={'standard_name': 'air_temperature'}``
 
             source: optional
-                Initialize the properties, data and metadata constructs
+                Initialise the properties, data and metadata constructs
                 from those of *source*.
 
                 {{init source}}
@@ -151,7 +139,7 @@ class Field(
             {{init copy: `bool`, optional}}
 
         """
-        # Initialize the new field with attributes and CF properties
+        # Initialise the new field with attributes and CF properties
         core.Field.__init__(
             self,
             properties=properties,
@@ -979,7 +967,7 @@ class Field(
                     # exactly the same axes in the same order
                     continue
 
-                # Initialize the compressed data for the metadata
+                # Initialise the compressed data for the metadata
                 # construct
                 data = c.get_data(None)
                 if data is not None:
@@ -1823,7 +1811,7 @@ class Field(
         :Returns:
 
             `set`
-                The file names in normalized, absolute form. If all of the
+                The file names in normalised, absolute form. If all of the
                 data are in memory then an empty `set` is returned.
 
         **Examples:**

@@ -70,7 +70,7 @@ class CoordinateReference(abstract.Container):
         source=None,
         copy=True,
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -106,7 +106,7 @@ class CoordinateReference(abstract.Container):
                 method.
 
             source: optional
-                Initialize the coordinates, datum and coordinate
+                Initialise the coordinates, datum and coordinate
                 conversion from those of *source*.
 
                 {{init source}}

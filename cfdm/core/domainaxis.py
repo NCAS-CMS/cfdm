@@ -18,7 +18,7 @@ class DomainAxis(abstract.Container):
     """
 
     def __init__(self, size=None, source=None, copy=True):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -32,7 +32,7 @@ class DomainAxis(abstract.Container):
                 `set_size` method.
 
             source:
-                Initialize the size from that of source.
+                Initialise the size from that of source.
 
                 {{init source}}
 
