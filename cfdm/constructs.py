@@ -46,7 +46,7 @@ class Constructs(mixin.Container, core.Constructs):
 
     """
 
-    def __call__(self, *identities):
+    def __call__(self, *identities, **kwargs):
         """Select metadata constructs by identity.
 
         Calling a `Constructs` instance selects metadata constructs by
@@ -80,7 +80,7 @@ class Constructs(mixin.Container, core.Constructs):
         See `filter_by_identity` for more examples.
 
         """
-        return self.filter_by_identity(*identities)
+        return self.filter_by_identity(*identities, **kwargs)
 
     def __repr__(self):
         """Called by the `repr` built-in function.
@@ -1120,7 +1120,6 @@ class Constructs(mixin.Container, core.Constructs):
 
         """
         out = self.shallow_copy()
-
         out._prefiltered = self.shallow_copy()
         out._filters_applied = self.filters_applied() + (
             {"filter_by_identity": identities},
@@ -1887,7 +1886,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         return out
 
-    def filter_by_type(self, *types):
+    def filter_by_type(self, *types, view=False):
         """Select metadata constructs by type.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -1921,7 +1920,7 @@ class Constructs(mixin.Container, core.Constructs):
                 ==========================  ================================
 
                 If no types are provided then all constructs are selected.
-
+TODO
         :Returns:
 
             `Constructs`
@@ -1938,12 +1937,13 @@ class Constructs(mixin.Container, core.Constructs):
         >>> d = c.filter_by_type('dimension_coordinate', 'field_ancillary')
 
         """
-        out = super().filter_by_type(*types)
+        out = super().filter_by_type(*types, view=view)
 
-        out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() + (
-            {"filter_by_type": types},
-        )
+        if not view:
+            out._prefiltered = self.shallow_copy()            
+            out._filters_applied = self.filters_applied() + (
+                {"filter_by_type": types},
+            )
 
         return out
 

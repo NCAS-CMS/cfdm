@@ -67,7 +67,7 @@ class ConstructAccess:
         key_to_name = {}
         name_to_keys = {}
 
-        for key, value in self.domain_axes.items():
+        for key, value in self.domain_axes(view=True).items():
             name_size = (
                 self.constructs.domain_axis_identity(key),
                 value.get_size(""),
@@ -77,13 +77,12 @@ class ConstructAccess:
 
         for (name, size), keys in name_to_keys.items():
             if len(keys) == 1:
-                key_to_name[keys[0]] = "{0}({1})".format(name, size)
+                key_to_name[keys[0]] = f"{name}({size})"
             else:
                 for key in keys:
                     key_to_name[key] = "{0}{{{1}}}({2})".format(
                         name, re.findall(r"\d+$", key)[0], size
                     )
-        # --- End: for
 
         return key_to_name
 
@@ -118,8 +117,8 @@ class ConstructAccess:
         """
         return self.constructs.filter_by_type("coordinate_reference")
 
-    @property
-    def domain_axes(self):
+#    @property
+    def domain_axes(self, view=False):
         """Return domain axis constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -133,11 +132,11 @@ class ConstructAccess:
 
         **Examples:**
 
-        >>> f.domain_axes
+        >>> f.domain_axes()
         Constructs:
         {}
 
-        >>> f.domain_axes
+        >>> f.domain_axes()
         Constructs:
         {'domainaxis0': <{{repr}}DomainAxis: size(1)>,
          'domainaxis1': <{{repr}}DomainAxis: size(10)>,
@@ -145,7 +144,7 @@ class ConstructAccess:
          'domainaxis3': <{{repr}}DomainAxis: size(1)>}
 
         """
-        return self.constructs.filter_by_type("domain_axis")
+        return self.constructs.filter_by_type("domain_axis", view=view)
 
     @property
     def auxiliary_coordinates(self):
@@ -572,7 +571,7 @@ class ConstructAccess:
             )
 
         data_axes = constructs.data_axes()
-        domain_axes = constructs.filter_by_type("domain_axis")
+        domain_axes = constructs.filter_by_type("domain_axis", view=True)
 
         keys = []
         for ckey, coord in c.items():

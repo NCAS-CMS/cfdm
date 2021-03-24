@@ -1039,7 +1039,7 @@ class Constructs(abstract.Container):
 
             return out
 
-    def filter_by_type(self, *types):
+    def filter_by_type(self, *types, view=False):
         """Select metadata constructs by type.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -1100,6 +1100,9 @@ class Constructs(abstract.Container):
             # Keep all construct types
             ignore = self._ignore
 
+        if view:
+            return self.view(_ignore=ignore)
+        
         return self.shallow_copy(_ignore=ignore)
 
     def key(self, default=ValueError()):
@@ -1359,3 +1362,28 @@ class Constructs(abstract.Container):
         _, construct = _dict.popitem()
 
         return construct
+
+    def view(self, _ignore=None):
+        """Return a shallow copy. TODO
+
+        ``copy.copy(f)`` is equivalent to ``f.shallow_copy()``.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        :Returns:
+
+                The shallow copy.
+
+        **Examples:**
+
+        >>> f = {{package}}.example_field(0)
+        >>> c = f.constructs
+        >>> k = c.shallow_copy()
+
+        """
+        if _ignore is None:
+            _ignore = self._ignore
+
+        return type(self)(
+            source=self, copy=False, _ignore=_ignore, _view=True
+        )

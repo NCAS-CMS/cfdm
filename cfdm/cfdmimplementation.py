@@ -878,7 +878,7 @@ class CFDMImplementation(Implementation):
         :Returns:
 
         """
-        return field.domain_axes
+        return field.domain_axes()
 
     def get_domain_axis_size(self, field, axis):
         """Return the size a of domrain axis construct.
