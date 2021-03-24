@@ -197,7 +197,7 @@ class Field(
 
         # Data
         string.append(
-            "Data            : {self._one_line_description(axis_names)}"
+            f"Data            : {self._one_line_description(axis_names)}"
         )
 
         # Cell methods
