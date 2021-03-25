@@ -1006,7 +1006,7 @@ class NetCDFWrite(IOWrite):
             # Grid mapping
             grid_mappings = [
                 g["seen"][id(cr)]["ncvar"]
-                for cr in field.coordinate_references.values()
+                for cr in field.coordinate_references(view=True).values()
                 if (
                     cr.coordinate_conversion.get_parameter(
                         "grid_mapping_name", None

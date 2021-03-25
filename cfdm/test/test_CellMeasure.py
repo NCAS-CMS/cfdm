@@ -40,7 +40,7 @@ class CellMeasureTest(unittest.TestCase):
         """TODO DOCS."""
         f = self.f
 
-        for cm in f.cell_measures.values():
+        for cm in f.cell_measures(view=True).values():
             _ = repr(cm)
             _ = str(cm)
             self.assertIsInstance(cm.dump(display=False), str)
@@ -63,9 +63,6 @@ class CellMeasureTest(unittest.TestCase):
         cm.set_measure(measure)
         self.assertTrue(cm.has_measure())
         self.assertEqual(cm.get_measure(), "area")
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

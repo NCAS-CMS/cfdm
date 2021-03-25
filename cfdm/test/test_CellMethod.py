@@ -40,7 +40,7 @@ class CellMethodTest(unittest.TestCase):
 
         f = self.f
 
-        for c in f.cell_methods.values():
+        for c in f.cell_methods(view=True).values():
             _ = repr(c)
             _ = str(c)
             self.assertIsInstance(c.dump(display=False), str)
@@ -56,7 +56,7 @@ class CellMethodTest(unittest.TestCase):
         # ------------------------------------------------------------
         # Equals and idenities
         # ------------------------------------------------------------
-        for c in f.cell_methods.values():
+        for c in f.cell_methods(view=True).values():
             d = c.copy()
             self.assertTrue(c.equals(c, verbose=3))
             self.assertTrue(c.equals(d, verbose=3))
@@ -147,9 +147,6 @@ class CellMethodTest(unittest.TestCase):
         self.assertEqual(f.del_qualifier("within"), "years")
         self.assertIsNone(f.del_qualifier("within", None))
         self.assertEqual(f.qualifiers(), {})
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

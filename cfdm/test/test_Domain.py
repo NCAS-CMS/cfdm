@@ -61,9 +61,6 @@ class DomainTest(unittest.TestCase):
         self.assertTrue(e.equals(d, verbose=3))
 
 
-# --- End: class
-
-
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cfdm.environment()

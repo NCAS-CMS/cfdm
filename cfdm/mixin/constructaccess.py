@@ -47,7 +47,6 @@ class ConstructAccess:
                     key_to_name[key] = "{0}{{{1}}}".format(
                         name, re.findall(r"\d+$", key)[0]
                     )
-        # --- End: for
 
         return key_to_name
 
@@ -89,8 +88,7 @@ class ConstructAccess:
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
-    @property
-    def coordinate_references(self):
+    def coordinate_references(self, view=False):
         """Return coordinate reference constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -105,20 +103,21 @@ class ConstructAccess:
 
         **Examples:**
 
-        >>> f.coordinate_references
+        >>> f.coordinate_references()
         Constructs:
         {}
 
-        >>> f.coordinate_references
+        >>> f.coordinate_references()
         Constructs:
         {'coordinatereference0': <{{repr}}CoordinateReference: atmosphere_hybrid_height_coordinate>,
          'coordinatereference1': <{{repr}}CoordinateReference: rotated_latitude_longitude>}
 
         """
-        return self.constructs.filter_by_type("coordinate_reference")
+        return self.constructs.filter_by_type(
+            "coordinate_reference", view=view
+        )
 
-#    @property
-    def domain_axes(self, view=False):
+    def domain_axes(self, view=False, cache=None):
         """Return domain axis constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -144,39 +143,45 @@ class ConstructAccess:
          'domainaxis3': <{{repr}}DomainAxis: size(1)>}
 
         """
+        if cache is not None:
+            return cache
+
         return self.constructs.filter_by_type("domain_axis", view=view)
 
-    @property
-    def auxiliary_coordinates(self):
+    def auxiliary_coordinates(self, view=False, cache=None):
         """Return auxiliary coordinate constructs.
 
-        .. versionadded:: (cfdm) 1.7.0
+                .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `constructs`
+                .. seealso:: `constructs`
+        TODO
+                :Returns:
 
-        :Returns:
+                    `Constructs`
+                        The auxiliary coordinate constructs and their construct
+                        keys.
 
-            `Constructs`
-                The auxiliary coordinate constructs and their construct
-                keys.
+                **Examples:**
 
-        **Examples:**
+                >>> f.auxiliary_coordinates()
+                Constructs:
+                {}
 
-        >>> f.auxiliary_coordinates
-        Constructs:
-        {}
-
-        >>> f.auxiliary_coordinates
-        Constructs:
-        {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
-         'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
-         'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
+                >>> f.auxiliary_coordinates()
+                Constructs:
+                {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+                 'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+                 'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
 
         """
-        return self.constructs.filter_by_type("auxiliary_coordinate")
+        if cache is not None:
+            return cache
 
-    @property
-    def dimension_coordinates(self):
+        return self.constructs.filter_by_type(
+            "auxiliary_coordinate", view=view
+        )
+
+    def dimension_coordinates(self, view=False):
         """Return dimension coordinate constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -203,46 +208,46 @@ class ConstructAccess:
          'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
 
         """
-        return self.constructs.filter_by_type("dimension_coordinate")
+        return self.constructs.filter_by_type(
+            "dimension_coordinate", view=view
+        )
 
-    @property
-    def coordinates(self):
+    def coordinates(self, view=False):
         """Return dimension and auxiliary coordinate constructs.
 
-        .. versionadded:: (cfdm) 1.7.0
+                .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `auxiliary_coordinates`, `constructs`,
-                     `dimension_coordinates`
+                .. seealso:: `auxiliary_coordinates`, `constructs`,
+                             `dimension_coordinates`
+        TODO
+                :Returns:
 
-        :Returns:
+                    `Constructs`
+                        The auxiliary coordinate and dimension coordinate
+                        constructs and their construct keys.
 
-            `Constructs`
-                The auxiliary coordinate and dimension coordinate
-                constructs and their construct keys.
+                **Examples:**
 
-        **Examples:**
+                >>> f.coordinates()
+                Constructs:
+                {}
 
-        >>> f.coordinates
-        Constructs:
-        {}
-
-        >>> f.coordinates
-        Constructs:
-        {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
-         'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
-         'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
-         'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
-         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
-         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
-         'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
+                >>> f.coordinates()
+                Constructs:
+                {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+                 'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+                 'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
+                 'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+                 'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
+                 'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
+                 'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
 
         """
-        out = self.dimension_coordinates
-        out._update(self.auxiliary_coordinates)
+        out = self.dimension_coordinates(view=False)
+        out._update(self.auxiliary_coordinates(view=False))
         return out
 
-    @property
-    def domain_ancillaries(self):
+    def domain_ancillaries(self, view=False, cache=None):
         """Return domain ancillary constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -267,10 +272,12 @@ class ConstructAccess:
          'domainancillary2': <{{repr}}DomainAncillary: surface_altitude(10, 9) m>}
 
         """
-        return self.constructs.filter_by_type("domain_ancillary")
+        if cache is not None:
+            return cache
 
-    @property
-    def cell_measures(self):
+        return self.constructs.filter_by_type("domain_ancillary", view=view)
+
+    def cell_measures(self, view=False):
         """Return cell measure constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -293,7 +300,7 @@ class ConstructAccess:
         {'cellmeasure0': <{{repr}}CellMeasure: measure%area(9, 10) km2>}
 
         """
-        return self.constructs.filter_by_type("cell_measure")
+        return self.constructs.filter_by_type("cell_measure", view=view)
 
     # ----------------------------------------------------------------
     # Methods
@@ -379,7 +386,7 @@ class ConstructAccess:
         'no construct'
 
         """
-        c = self.constructs.filter_by_identity(identity)
+        c = self.constructs.filter_by_identity(identity, view=True)
         n = len(c)
         if n == 1:
             return c.value()
@@ -474,7 +481,7 @@ class ConstructAccess:
         'no construct'
 
         """
-        c = self.constructs.filter_by_identity(identity)
+        c = self.constructs.filter_by_identity(identity, view=True)
         n = len(c)
         if n == 1:
             return c.key()
@@ -560,7 +567,7 @@ class ConstructAccess:
             "dimension_coordinate", "auxiliary_coordinate"
         )
         c = c.filter_by_naxes(1)
-        c = c.filter_by_identity(identity)
+        c = c.filter_by_identity(identity, view=True)
 
         if not len(c):
             return self._default(

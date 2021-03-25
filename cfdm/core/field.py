@@ -395,11 +395,12 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
     def del_construct(self, key, default=ValueError()):
         """Remove a metadata construct.
 
-        If a domain axis construct is selected for removal then it can't
-        be spanned by any data arrays of the field nor metadata
+        If a domain axis construct is selected for removal then it
+        can't be spanned by any data arrays of the field nor metadata
         constructs, nor be referenced by any cell method
-        constructs. However, a domain ancillary construct may be removed
-        even if it is referenced by coordinate reference construct.
+        constructs. However, a domain ancillary construct may be
+        removed even if it is referenced by coordinate reference
+        construct.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -409,15 +410,15 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         :Parameters:
 
             key: `str`
-                The construct identifier of the metadata construct to be
-                removed.
+                The construct identifier of the metadata construct to
+                be removed.
 
                 *Parameter example:*
                   ``key='auxiliarycoordinate0'``
 
             default: optional
-                Return the value of the *default* parameter if the data
-                axes have not been set.
+                Return the value of the *default* parameter if the
+                data axes have not been set.
 
                 {{default Exception}}
 
@@ -440,7 +441,8 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         False
 
         """
-        if key in self.domain_axes and key in self.get_data_axes(default=()):
+        domain_axes = self.constructs.filter_by_type("domain_axis", view=True)
+        if key in domain_axes and key in self.get_data_axes(default=()):
             raise ValueError(
                 f"Can't remove domain axis {key!r} that is spanned by the "
                 "data of the field construct"
@@ -451,8 +453,8 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
     def set_data(self, data, axes=None, copy=True, inplace=True):
         """Set the data of the field construct.
 
-        The units, calendar and fill value properties of the data object
-        are removed prior to insertion.
+        The units, calendar and fill value properties of the data
+        object are removed prior to insertion.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -608,13 +610,15 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
                 _shape = data.shape
 
         if _shape is not None:
-            domain_axes = self.constructs.filter_by_type("domain_axis")
+            domain_axes = self.constructs.filter_by_type(
+                "domain_axis", view=True
+            )
             axes_shape = []
             for axis in axes:
                 if axis not in domain_axes:
                     raise ValueError(
                         "Can't set field construct data axes: Domain axis "
-                        "{!r} doesn't exist".format(axis)
+                        f"{axis!r} doesn't exist"
                     )
 
                 axes_shape.append(domain_axes[axis].get_size())

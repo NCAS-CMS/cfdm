@@ -3180,7 +3180,7 @@ class NetCDFRead(IORead):
                 found = any(
                     [
                         (self.implementation.get_bounds_ncvar(a) == node_ncvar)
-                        for a in f.auxiliary_coordinates.values()
+                        for a in f.auxiliary_coordinates(view=True).values()
                     ]
                 )
 

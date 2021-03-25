@@ -64,7 +64,7 @@ class CoordinateReferenceTest(unittest.TestCase):
 
         f = self.f
 
-        for cr in f.coordinate_references.values():
+        for cr in f.coordinate_references(view=True).values():
             _ = repr(cr)
             _ = str(cr)
             self.assertIsInstance(cr.dump(display=False), str)
@@ -230,9 +230,6 @@ class CoordinateReferenceTest(unittest.TestCase):
         cr = f.construct("standard_name:atmosphere_hybrid_height_coordinate")
         cr.datum.nc_set_variable("my_name")
         cfdm.write(f, tempfile1)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

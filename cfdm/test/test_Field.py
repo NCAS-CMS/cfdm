@@ -156,7 +156,6 @@ class FieldTest(unittest.TestCase):
                         indices[axis] = slice(None)
 
                 e = e[tuple(indices)]
-            # --- End: if
 
             self.assertEqual(
                 g.data.shape,
@@ -169,7 +168,6 @@ class FieldTest(unittest.TestCase):
                 (g.data.array == e).all(),
                 "Bad values for {}: {} != {}".format(indices, g.data.array, e),
             )
-        # --- End: for
 
         # Check slicing of bounds
         g = f[..., 0:4]
@@ -233,7 +231,6 @@ class FieldTest(unittest.TestCase):
         for c in g.constructs.filter_by_data().values():
             if c.has_bounds():
                 c.bounds.data[...] = -99
-        # --- End: for
 
         self.assertEqual(g.get_filenames(), set())
 
@@ -371,102 +368,55 @@ class FieldTest(unittest.TestCase):
         _ = f.get_construct(key)
         self.assertIsNone(f.get_construct("qwerty", default=None))
 
-        constructs = self.f.auxiliary_coordinates
+        constructs = self.f.auxiliary_coordinates(view=True)
         n = 3
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} auxiliary coordinate constructs, expected {}".format(
-                len(constructs), n
-            ),
-        )
+        self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.AuxiliaryCoordinate)
 
-        constructs = self.f.cell_measures
+        constructs = self.f.cell_measures(view=True)
         n = 1
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} cell measure constructs, expected {}".format(
-                len(constructs), n
-            ),
-        )
+        self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.CellMeasure)
 
-        constructs = self.f.cell_methods
+        constructs = self.f.cell_methods(view=True)
         n = 2
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} cell method constructs, expected {}".format(
-                len(constructs), n
-            ),
-        )
+        self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.CellMethod)
 
-        ordered = self.f.cell_methods.ordered()
+        ordered = self.f.cell_methods(view=True).ordered()
         self.assertIsInstance(ordered, collections.OrderedDict)
 
-        constructs = self.f.coordinate_references
+        constructs = self.f.coordinate_references(view=True)
         n = 2
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} ccoordinate reference onstructs, expected {}".format(
-                len(constructs), n
-            ),
-        )
+        self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.CoordinateReference)
 
-        constructs = self.f.dimension_coordinates
+        constructs = self.f.dimension_coordinates(view=True)
         n = 3
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} dimension coordinate constructs, expected {}".format(
-                len(constructs), n
-            ),
-        )
+        self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DimensionCoordinate)
 
-        constructs = self.f.domain_ancillaries
+        constructs = self.f.domain_ancillaries(view=True)
         n = 3
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} domain ancillary constructs, expected {}".format(
-                len(constructs), n
-            ),
-        )
+        self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAncillary)
 
-        constructs = self.f.domain_axes
+        constructs = self.f.domain_axes(view=True)
         n = 3
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} domain axis constructs, expected {}".format(
-                len(constructs), n
-            ),
-        )
+        self.assertEqual(len(constructs), n)
+
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAxis)
 
-        constructs = self.f.field_ancillaries
+        constructs = self.f.field_ancillaries(view=True)
         n = 3
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} field ancillary constructs, expected {}".format(
-                len(constructs), n
-            ),
-        )
+        self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.FieldAncillary)
 
@@ -509,26 +459,26 @@ class FieldTest(unittest.TestCase):
 
         self.assertEqual(c.data.ndim, 1)
         self.assertEqual(c.get_property("standard_name"), "grid_latitude")
-        self.assertEqual(len(c.dimension_coordinates), 1)
-        self.assertEqual(len(c.auxiliary_coordinates), 1)
-        self.assertEqual(len(c.cell_measures), 0)
-        self.assertEqual(len(c.coordinate_references), 1)
-        self.assertEqual(len(c.domain_ancillaries), 0)
-        self.assertEqual(len(c.field_ancillaries), 0)
-        self.assertEqual(len(c.cell_methods), 0)
+        self.assertEqual(len(c.dimension_coordinates(view=True)), 1)
+        self.assertEqual(len(c.auxiliary_coordinates(view=True)), 1)
+        self.assertEqual(len(c.cell_measures(view=True)), 0)
+        self.assertEqual(len(c.coordinate_references(view=True)), 1)
+        self.assertEqual(len(c.domain_ancillaries(view=True)), 0)
+        self.assertEqual(len(c.field_ancillaries(view=True)), 0)
+        self.assertEqual(len(c.cell_methods(view=True)), 0)
 
         key = f.construct_key("latitude")
         c = f.convert(key)
 
         self.assertEqual(c.data.ndim, 2)
         self.assertEqual(c.get_property("standard_name"), "latitude")
-        self.assertEqual(len(c.dimension_coordinates), 2)
-        self.assertEqual(len(c.auxiliary_coordinates), 3)
-        self.assertEqual(len(c.cell_measures), 1)
-        self.assertEqual(len(c.coordinate_references), 1)
-        self.assertEqual(len(c.domain_ancillaries), 0)
-        self.assertEqual(len(c.field_ancillaries), 0)
-        self.assertEqual(len(c.cell_methods), 0)
+        self.assertEqual(len(c.dimension_coordinates(view=True)), 2)
+        self.assertEqual(len(c.auxiliary_coordinates(view=True)), 3)
+        self.assertEqual(len(c.cell_measures(view=True)), 1)
+        self.assertEqual(len(c.coordinate_references(view=True)), 1)
+        self.assertEqual(len(c.domain_ancillaries(view=True)), 0)
+        self.assertEqual(len(c.field_ancillaries(view=True)), 0)
+        self.assertEqual(len(c.cell_methods(view=True)), 0)
 
         with self.assertRaises(ValueError):
             f.convert("qwerty")
@@ -673,7 +623,6 @@ class FieldTest(unittest.TestCase):
                         bool(c.data.get_compression_type()), message
                     )
                     self.assertTrue(f.equals(c, verbose=3), message)
-        # --- End: for
 
     def test_Field_creation_commands(self):
         """TODO DOCS."""
@@ -703,7 +652,6 @@ class FieldTest(unittest.TestCase):
                                     string=s,
                                     header=h,
                                 )
-        # --- End: for
 
     def test_Field_has_geometry(self):
         """TODO DOCS."""
@@ -715,9 +663,6 @@ class FieldTest(unittest.TestCase):
 
         f = cfdm.example_field(6)
         self.assertTrue(f.has_geometry())
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

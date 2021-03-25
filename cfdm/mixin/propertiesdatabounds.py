@@ -1426,8 +1426,7 @@ class PropertiesDataBounds(PropertiesData):
         if bounds is None:
             return self.get_bounds(default=default)
 
-        return bounds.get_data(default=default,
-                               _fill_value=_fill_value)
+        return bounds.get_data(default=default, _fill_value=_fill_value)
 
     @_inplace_enabled(default=False)
     def insert_dimension(self, position, inplace=False):

@@ -84,7 +84,7 @@ class DSGTest(unittest.TestCase):
         self.assertEqual(len(f), 2, "f = " + repr(f))
         for g in f:
             self.assertTrue(g.equals(g.copy(), verbose=1))
-            self.assertEqual(len(g.auxiliary_coordinates), 2)
+            self.assertEqual(len(g.auxiliary_coordinates(view=True)), 2)
 
         g = f[0]
         for axis in ("X", "Y"):
@@ -133,7 +133,7 @@ class DSGTest(unittest.TestCase):
 
         for g in f:
             self.assertTrue(g.equals(g.copy(), verbose=3))
-            self.assertEqual(len(g.auxiliary_coordinates), 3)
+            self.assertEqual(len(g.auxiliary_coordinates(view=True)), 3)
 
         g = f[0]
         for axis in ("X", "Y", "Z"):
@@ -171,7 +171,7 @@ class DSGTest(unittest.TestCase):
 
         for g in f:
             self.assertTrue(g.equals(g.copy(), verbose=3))
-            self.assertEqual(len(g.auxiliary_coordinates), 3)
+            self.assertEqual(len(g.auxiliary_coordinates(view=True)), 3)
 
         g = f[0]
         for axis in ("X", "Y", "Z"):
@@ -200,7 +200,7 @@ class DSGTest(unittest.TestCase):
 
         for g in f:
             self.assertTrue(g.equals(g.copy(), verbose=3))
-            self.assertEqual(len(g.auxiliary_coordinates), 3)
+            self.assertEqual(len(g.auxiliary_coordinates(view=True)), 3)
 
         for axis in ("X", "Y"):
             coord = g.construct("axis=" + axis)
@@ -241,7 +241,7 @@ class DSGTest(unittest.TestCase):
 
             for g in f:
                 self.assertTrue(g.equals(g.copy(), verbose=3))
-                self.assertEqual(len(g.auxiliary_coordinates), 4)
+                self.assertEqual(len(g.auxiliary_coordinates(view=True)), 4)
 
             g = f[0]
             for axis in ("X", "Y"):
@@ -325,9 +325,6 @@ class DSGTest(unittest.TestCase):
 
             pnc.nc_set_dimension("new_dim_name")
             cfdm.write(f, tempfile)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

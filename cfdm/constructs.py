@@ -46,7 +46,7 @@ class Constructs(mixin.Container, core.Constructs):
 
     """
 
-    def __call__(self, *identities, **kwargs):
+    def __call__(self, *identities, view=False, **kwargs):
         """Select metadata constructs by identity.
 
         Calling a `Constructs` instance selects metadata constructs by
@@ -62,6 +62,8 @@ class Constructs(mixin.Container, core.Constructs):
 
             identities: optional
                 See `filter_by_identity` for details.
+
+            {{view: `bool`, optional}}
 
         :Returns:
 
@@ -80,7 +82,7 @@ class Constructs(mixin.Container, core.Constructs):
         See `filter_by_identity` for more examples.
 
         """
-        return self.filter_by_identity(*identities, **kwargs)
+        return self.filter_by_identity(*identities, view=view, **kwargs)
 
     def __repr__(self):
         """Called by the `repr` built-in function.
@@ -196,7 +198,7 @@ class Constructs(mixin.Container, core.Constructs):
 
             out[axes] = d
 
-        for cid, construct in self.filter_by_data().items():
+        for cid, construct in self.filter_by_data(view=True).items():
             axes = data_axes.get(cid)
             construct_type = self._construct_type[cid]
             out[axes][construct_type][cid] = construct
@@ -215,17 +217,20 @@ class Constructs(mixin.Container, core.Constructs):
         key1_to_key0=None,
     ):
         """Whether two cell method constructs are the same."""
-        cell_methods0 = self.filter_by_type("cell_method")
-        cell_methods1 = other.filter_by_type("cell_method")
+        # TODO replace with _construct_dict calls when ordered goes
+        # post Python 3.6
+        cell_methods0 = self.filter_by_type("cell_method", view=True)
+        cell_methods1 = other.filter_by_type("cell_method", view=True)
 
-        if len(cell_methods0) != len(cell_methods1):
+        len0 = len(cell_methods0)
+        if len0 != len(cell_methods1):
             logger(
                 "Different numbers of cell methods: "
                 f"{cell_methods0!r} != {cell_methods1!r}"
             )
             return False
 
-        if not len(cell_methods0):
+        if not len0:
             return True
 
         cell_methods0 = cell_methods0.ordered()
@@ -328,15 +333,14 @@ class Constructs(mixin.Container, core.Constructs):
         key1_to_key0=None,
     ):
         """Whether two coordinate reference constructs are the same."""
-        refs0 = dict(self.filter_by_type("coordinate_reference"))
-        refs1 = dict(other.filter_by_type("coordinate_reference"))
+        refs0 = self._construct_dict("coordinate_reference")
+        refs1 = other._construct_dict("coordinate_reference", copy=True)
 
         if len(refs0) != len(refs1):
             logger.info(
-                "{}: Different numbers of {} constructs: "
+                "{}: Different numbers of coordinate reference constructs: "
                 "{} != {}".format(
                     self.__class__.__name__,
-                    "coordinate reference",
                     len(refs0),
                     len(refs1),
                 )
@@ -427,12 +431,11 @@ class Constructs(mixin.Container, core.Constructs):
         key1_to_key0=None,
     ):
         """Whether two domain axes constructs are the same."""
-        self_sizes = [
-            d.get_size() for d in self.filter_by_type("domain_axis").values()
-        ]
-        other_sizes = [
-            d.get_size() for d in other.filter_by_type("domain_axis").values()
-        ]
+        domain_axes = self._construct_dict("domain_axis")
+        self_sizes = [d.get_size() for d in domain_axes.values()]
+
+        domain_axes = other._construct_dict("domain_axis")
+        other_sizes = [d.get_size() for d in domain_axes.values()]
 
         if sorted(self_sizes) != sorted(other_sizes):
             # There is not a 1-1 correspondence between axis sizes
@@ -523,7 +526,7 @@ class Constructs(mixin.Container, core.Constructs):
         'key%domainaxis4')
 
         """
-        domain_axes = self.filter_by_type("domain_axis")
+        domain_axes = self._construct_dict("domain_axis")
 
         if key not in domain_axes:
             raise ValueError(f"No domain axis construct with key {key!r}")
@@ -531,8 +534,9 @@ class Constructs(mixin.Container, core.Constructs):
         constructs_data_axes = self.data_axes()
 
         # Try to get the identity from an dimension coordinate
+        dimension_coordinates = self._construct_dict("dimension_coordinate")
         identity = ""
-        for dkey, dim in self.filter_by_type("dimension_coordinate").items():
+        for dkey, dim in dimension_coordinates.items():
             if constructs_data_axes.get(dkey) == (key,):
                 identity = dim.identity()
                 if identity.startswith("ncvar%"):
@@ -544,8 +548,10 @@ class Constructs(mixin.Container, core.Constructs):
             return identity
 
         # Try to get the identity from an auxiliary coordinate
+        auxiliary_coordinates = self._construct_dict("auxiliary_coordinate")
+
         identities = []
-        for akey, aux in self.filter_by_type("auxiliary_coordinate").items():
+        for akey, aux in auxiliary_coordinates.items():
             if constructs_data_axes.get(akey) == (key,):
                 identity = aux.identity()
                 if not identity.startswith("ncvar%"):
@@ -918,13 +924,6 @@ class Constructs(mixin.Container, core.Constructs):
         >>> d = c.filter_by_axis('or', 'domainaxis1', 'domainaxis2')
 
         """
-        out = self.shallow_copy()
-
-        out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() + (
-            {"filter_by_axis": (mode, axes)},
-        )
-
         # Parse the mode parameter
         _or = False
         _exact = False
@@ -946,17 +945,20 @@ class Constructs(mixin.Container, core.Constructs):
                 "mode parameter must be one of 'and', 'or', 'exact', subset'"
             )
 
-        data_constructs = self.filter_by_data()
-        constructs_data_axes = self.data_axes()
-
         axes = set(axes)
 
         if not axes:
-            for cid in tuple(out):
-                if cid not in data_constructs:
-                    out._pop(cid)
+            return self.filter_by_data(view=False)
 
-            return out
+        out = self.shallow_copy()
+
+        out._prefiltered = self.shallow_copy()
+        out._filters_applied = self.filters_applied() + (
+            {"filter_by_axis": (mode, axes)},
+        )
+
+        data_constructs = self.filter_by_data(view=True)
+        constructs_data_axes = self.data_axes()
 
         # Still here?
         for cid in tuple(out):
@@ -992,7 +994,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         return out
 
-    def filter_by_data(self):
+    def filter_by_data(self, view=False, cache=None):
         """Selects metadata constructs that could contain data.
 
         Selection is not based on whether they actually have data,
@@ -1009,6 +1011,12 @@ class Constructs(mixin.Container, core.Constructs):
                      `filter_by_property`, `filter_by_type`,
                      `filters_applied`, `inverse_filter`, `unfilter`
 
+        :Parameters:
+
+            {{view: `bool`, optional}}
+
+            cache: TODO
+
         :Returns:
 
             `Constructs`
@@ -1021,22 +1029,11 @@ class Constructs(mixin.Container, core.Constructs):
         >>> d = c.filter_by_data()
 
         """
-        out = self.shallow_copy()
-
-        out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() + (
-            {"filter_by_data": ()},
+        return self.filter_by_type(
+            *self._array_constructs, view=view, cache=cache
         )
 
-        array_constructs = self._array_constructs
-        for cid, construct_type in tuple(out._construct_type.items()):
-            if construct_type not in array_constructs:
-                # This construct can not have data
-                out._pop(cid)
-
-        return out
-
-    def filter_by_identity(self, *identities, **kwargs):
+    def filter_by_identity(self, *identities, view=False, **kwargs):
         """Select metadata constructs by identity.
 
         Calling a `Constructs` instance selects metadata constructs by
@@ -1085,6 +1082,8 @@ class Constructs(mixin.Container, core.Constructs):
                 identities, and so this description may always be used
                 as an *identities* argument.
 
+            {{view: `bool`, optional}}
+
             kwargs: optional
                 Additional parameters for configuring each construct's
                 `identities` method. ``generator=True`` is passed by
@@ -1120,10 +1119,12 @@ class Constructs(mixin.Container, core.Constructs):
 
         """
         out = self.shallow_copy()
-        out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() + (
-            {"filter_by_identity": identities},
-        )
+
+        if not view:
+            out._prefiltered = self.shallow_copy()
+            out._filters_applied = self.filters_applied() + (
+                {"filter_by_identity": identities},
+            )
 
         # Return all constructs if no identities have been provided
         if not identities:
@@ -1466,7 +1467,7 @@ class Constructs(mixin.Container, core.Constructs):
             {"filter_by_naxes": naxes},
         )
 
-        data_constructs = self.filter_by_data()
+        data_constructs = self.filter_by_data(view=True)
         constructs_data_axes = self.data_axes()
 
         for key in tuple(out._construct_type):
@@ -1886,7 +1887,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         return out
 
-    def filter_by_type(self, *types, view=False):
+    def filter_by_type(self, *types, view=False, cache=None):
         """Select metadata constructs by type.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -1920,7 +1921,15 @@ class Constructs(mixin.Container, core.Constructs):
                 ==========================  ================================
 
                 If no types are provided then all constructs are selected.
-TODO
+
+            {{view: `bool`, optional}}
+
+            cache: optional
+                If not `None` then return *cache* instead of the
+                requested constructs.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
         :Returns:
 
             `Constructs`
@@ -1937,10 +1946,13 @@ TODO
         >>> d = c.filter_by_type('dimension_coordinate', 'field_ancillary')
 
         """
+        if cache is not None:
+            return cache
+
         out = super().filter_by_type(*types, view=view)
 
         if not view:
-            out._prefiltered = self.shallow_copy()            
+            out._prefiltered = self.shallow_copy()
             out._filters_applied = self.filters_applied() + (
                 {"filter_by_type": types},
             )
@@ -2182,6 +2194,10 @@ TODO
         """Return a shallow copy.
 
         ``f.shallow_copy()`` is equivalent to ``copy.copy(f)``.
+
+        Any in-place changes to the actual constructs of the copy will
+        not be seen in the original `{{class}}` object, and vice
+        versa, but the copy is otherwise independent of its parent.
 
         .. versionadded:: (cfdm) 1.7.0
 

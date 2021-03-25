@@ -47,7 +47,7 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
         shape = sorted(
             [
                 domain_axis.get_size()
-                for domain_axis in list(self.domain_axes.values())
+                for domain_axis in list(self.domain_axes(view=True).values())
             ]
         )
         shape = str(shape)
@@ -118,10 +118,11 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
         constructs_data_axes = self.constructs.data_axes()
 
         x = []
-        for axis_cid in sorted(self.domain_axes):
-            for cid, dim in list(self.dimension_coordinates.items()):
+        dimension_coordinates = self.dimension_coordinates(view=True)
+        for axis_cid in sorted(self.domain_axes(view=True)):
+            for cid, dim in list(dimension_coordinates.items()):
                 if constructs_data_axes[cid] == (axis_cid,):
-                    name = dim.identity(default="key%{0}".format(cid))
+                    name = dim.identity(default=f"key%{0}")
                     y = "{0}({1})".format(name, dim.get_data().size)
                     if y != axis_names[axis_cid]:
                         y = "{0}({1})".format(name, axis_names[axis_cid])
@@ -129,50 +130,48 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
                         y += " = {0}".format(dim.get_data())
 
                     x.append(y)
-        # --- End: for
+
         if x:
-            string.append(
-                "Dimension coords: {}".format("\n                : ".join(x))
-            )
+            x = "\n                : ".join(x)
+            string.append(f"Dimension coords: {x}")
 
         # Auxiliary coordinates
         x = [
             _print_item(self, cid, v, constructs_data_axes[cid])
-            for cid, v in sorted(self.auxiliary_coordinates.items())
+            for cid, v in sorted(self.auxiliary_coordinates(view=True).items())
         ]
         if x:
-            string.append(
-                "Auxiliary coords: {}".format("\n                : ".join(x))
-            )
+            x = "\n                : ".join(x)
+            string.append(f"Auxiliary coords: {x}")
 
         # Cell measures
         x = [
             _print_item(self, cid, v, constructs_data_axes[cid])
-            for cid, v in sorted(self.cell_measures.items())
+            for cid, v in sorted(self.cell_measures(view=True).items())
         ]
         if x:
-            string.append(
-                "Cell measures   : {}".format("\n                : ".join(x))
-            )
+            x = "\n                : ".join(x)
+            string.append(f"Cell measures   : {x}")
 
         # Coordinate references
         x = sorted(
-            [str(ref) for ref in list(self.coordinate_references.values())]
+            [
+                str(ref)
+                for ref in list(self.coordinate_references(view=True).values())
+            ]
         )
         if x:
-            string.append(
-                "Coord references: {}".format("\n                : ".join(x))
-            )
+            x = "\n                : ".join(x)
+            string.append(f"Coord references: {x}")
 
         # Domain ancillary variables
         x = [
             _print_item(self, cid, anc, constructs_data_axes[cid])
-            for cid, anc in sorted(self.domain_ancillaries.items())
+            for cid, anc in sorted(self.domain_ancillaries(view=True).items())
         ]
         if x:
-            string.append(
-                "Domain ancils   : {}".format("\n                : ".join(x))
-            )
+            x = "\n                : ".join(x)
+            string.append(f"Domain ancils   : {x}")
 
         return "\n".join(string)
 
@@ -198,10 +197,11 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
         """
         indent1 = "    " * _level
 
-        axes = self.domain_axes
-
         w = sorted(
-            [f"{indent1}Domain Axis: {axis_names[axis]}" for axis in axes]
+            [
+                f"{indent1}Domain Axis: {axis_names[axis]}"
+                for axis in self.domain_axes(view=True)
+            ]
         )
 
         return "\n".join(w)
@@ -248,7 +248,8 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
             string.append(axes)
 
         # Dimension coordinates
-        for cid, value in sorted(self.dimension_coordinates.items()):
+        dimension_coordinates = self.dimension_coordinates(view=True)
+        for cid, value in sorted(dimension_coordinates.items()):
             string.append("")
             string.append(
                 value.dump(
@@ -263,7 +264,8 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
             )
 
         # Auxiliary coordinates
-        for cid, value in sorted(self.auxiliary_coordinates.items()):
+        auxiliary_coordinates = self.auxiliary_coordinates(view=True)
+        for cid, value in sorted(auxiliary_coordinates.items()):
             string.append("")
             string.append(
                 value.dump(
@@ -278,7 +280,7 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
             )
 
         # Domain ancillaries
-        for cid, value in sorted(self.domain_ancillaries.items()):
+        for cid, value in sorted(self.domain_ancillaries(view=True).items()):
             string.append("")
             string.append(
                 value.dump(
@@ -291,7 +293,9 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
             )
 
         # Coordinate references
-        for cid, value in sorted(self.coordinate_references.items()):
+        for cid, value in sorted(
+            self.coordinate_references(view=True).items()
+        ):
             string.append("")
             string.append(
                 value.dump(
@@ -301,13 +305,13 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
                         construct_name[cid]
                     ),
                     _construct_names=construct_name,
-                    _auxiliary_coordinates=tuple(self.auxiliary_coordinates),
-                    _dimension_coordinates=tuple(self.dimension_coordinates),
+                    _auxiliary_coordinates=tuple(auxiliary_coordinates),
+                    _dimension_coordinates=tuple(dimension_coordinates),
                 )
             )
 
         # Cell measures
-        for cid, value in sorted(self.cell_measures.items()):
+        for cid, value in sorted(self.cell_measures(view=True).items()):
             string.append("")
             string.append(
                 value.dump(

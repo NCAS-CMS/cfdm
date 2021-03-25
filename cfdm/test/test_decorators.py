@@ -130,9 +130,6 @@ class dummyClass:
         logger.warning(self.warning_message)
 
 
-# --- End: class
-
-
 class DecoratorsTest(unittest.TestCase):
     """TODO DOCS."""
 
@@ -295,9 +292,6 @@ class DecoratorsTest(unittest.TestCase):
         res_4 = test_class.print_or_return_string_by_decorator()
         mock_print.assert_called_with(new_string)
         self.assertEqual(res_4, None)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

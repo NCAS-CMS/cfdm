@@ -132,7 +132,6 @@ class DataTest(unittest.TestCase):
                     + "\nnumpy.ma.getmaskarray(a)="
                     + repr(numpy.ma.getmaskarray(a)),
                 )
-        # --- End: for
 
         a = numpy.ma.arange(3000).reshape(50, 60)
 
@@ -149,7 +148,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue((x == a).all() in (True, numpy.ma.masked), message)
             m = numpy.ma.getmaskarray(x)
             self.assertTrue((m == numpy.ma.getmaskarray(a)).all(), message)
-        # --- End: for
 
         # Scalar numeric array
         d = cfdm.Data(9, units="km")
@@ -377,7 +375,6 @@ class DataTest(unittest.TestCase):
                 )
                 self.assertEqual(d.shape, a.shape, message)
                 self.assertTrue((d.array == a).all(), message)
-        # --- End: for
 
         with self.assertRaises(ValueError):
             d.transpose(axes=99)
@@ -674,9 +671,6 @@ class DataTest(unittest.TestCase):
 
         d = cfdm.Data([[281, 279, 278, 279]])
         self.assertIsNone(d.get_compressed_dimension(None))
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

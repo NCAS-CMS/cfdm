@@ -184,11 +184,10 @@ class read_writeTest(unittest.TestCase):
         ):
             cfdm.write(f, tmpfile, fmt=fmt)
             g = cfdm.read(tmpfile)
-            self.assertEqual(len(g), 1, "g = " + repr(g))
+            self.assertEqual(len(g), 1)
             g = g[0]
             self.assertTrue(
-                f.equals(g, verbose=3),
-                "Bad read/write of format: {}".format(fmt),
+                f.equals(g, verbose=3), f"Bad read/write of format: {fmt}"
             )
 
     def test_read_write_netCDF4_compress_shuffle(self):
@@ -207,9 +206,8 @@ class read_writeTest(unittest.TestCase):
                     self.assertTrue(
                         f.equals(g, verbose=3),
                         "Bad read/write with lossless compression: "
-                        "{}, {}, {}".format(fmt, compress, shuffle),
+                        f"{fmt}, {compress}, {shuffle}",
                     )
-        # --- End: for
 
     def test_read_write_missing_data(self):
         """TODO DOCS."""
@@ -228,8 +226,7 @@ class read_writeTest(unittest.TestCase):
             cfdm.write(f, tmpfile, fmt=fmt)
             g = cfdm.read(tmpfile)[0]
             self.assertTrue(
-                f.equals(g, verbose=3),
-                "Bad read/write of format: {}".format(fmt),
+                f.equals(g, verbose=3), f"Bad read/write of format: {fmt}"
             )
 
     def test_read_mask(self):
@@ -309,22 +306,28 @@ class read_writeTest(unittest.TestCase):
             "NETCDF3_64BIT_DATA",
         ):
             f = cfdm.read(self.filename)[0]
+            domain_axes = f.domain_axes(view=True)
 
-            f.domain_axes["domainaxis0"].nc_set_unlimited(True)
+            domain_axes["domainaxis0"].nc_set_unlimited(True)
             cfdm.write(f, tmpfile, fmt=fmt)
 
             f = cfdm.read(tmpfile)[0]
-            self.assertTrue(f.domain_axes["domainaxis0"].nc_is_unlimited())
+            domain_axes = f.domain_axes(view=True)
+            self.assertTrue(domain_axes["domainaxis0"].nc_is_unlimited())
 
         fmt = "NETCDF4"
         f = cfdm.read(self.filename)[0]
-        f.domain_axes["domainaxis0"].nc_set_unlimited(True)
-        f.domain_axes["domainaxis2"].nc_set_unlimited(True)
+
+        domain_axes = f.domain_axes(view=True)
+
+        domain_axes["domainaxis0"].nc_set_unlimited(True)
+        domain_axes["domainaxis2"].nc_set_unlimited(True)
         cfdm.write(f, tmpfile, fmt=fmt)
 
         f = cfdm.read(tmpfile)[0]
-        self.assertTrue(f.domain_axes["domainaxis0"].nc_is_unlimited())
-        self.assertTrue(f.domain_axes["domainaxis2"].nc_is_unlimited())
+        domain_axes = f.domain_axes(view=True)
+        self.assertTrue(domain_axes["domainaxis0"].nc_is_unlimited())
+        self.assertTrue(domain_axes["domainaxis2"].nc_is_unlimited())
 
     def test_read_CDL(self):
         """TODO DOCS."""
@@ -439,7 +442,6 @@ class read_writeTest(unittest.TestCase):
                             cfdm.read(tmpfile1), cfdm.read(tmpfile0)
                         ):
                             self.assertTrue(i.equals(j, verbose=3))
-        # --- End: for
 
     def test_read_write_Conventions(self):
         """TODO DOCS."""
@@ -535,7 +537,6 @@ class read_writeTest(unittest.TestCase):
                 if x.equals(y):
                     f.pop(n)
                     break
-        # --- End: for
 
         self.assertFalse(f)
 
@@ -569,9 +570,6 @@ class read_writeTest(unittest.TestCase):
         f.set_data_axes((), key=key)
 
         cfdm.write(f, tmpfile)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

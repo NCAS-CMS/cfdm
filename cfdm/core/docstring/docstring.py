@@ -115,4 +115,16 @@ _docstring_substitution_definitions = {
                 to a `Data` object, i.e. `numpy` array_like objects,
                 `Data` objects, and {{package}} instances that contain
                 `Data` objects.""",
+    # view
+    "{{view: `bool`, optional}}": """If True then return the selected constructs as a view
+                to the full collection, instead of a shallow
+                copy. Creating a view is faster than returning a
+                shallow copy. In both cases the actual constructs
+                returned are references to the original ones, but any
+                in-place changes to a view (such as removing a
+                construct) will also occur in the original
+                `Constructs` object, and the filter history of a view
+                is also lost.
+
+                .. versionadded:: (cfdm) 1.8.9.0""",
 }

@@ -47,9 +47,6 @@ class PartNodeCountPropertiesTest(unittest.TestCase):
         self.assertIsInstance(p.dump(display=False), str)
 
 
-# --- End: class
-
-
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cfdm.environment()

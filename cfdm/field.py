@@ -201,7 +201,7 @@ class Field(
         )
 
         # Cell methods
-        cell_methods = self.cell_methods
+        cell_methods = self.cell_methods(view=True)
         if cell_methods:
             x = []
             for cm in cell_methods.values():
@@ -248,7 +248,7 @@ class Field(
         # Field ancillary variables
         x = [
             _print_item(self, key, anc, self.constructs.data_axes()[key])
-            for key, anc in sorted(self.field_ancillaries.items())
+            for key, anc in sorted(self.field_ancillaries(view=True).items())
         ]
         if x:
             field_ancils = "\n                : ".join(x)
@@ -312,16 +312,13 @@ class Field(
 
         data_axes = self.get_data_axes()
 
-        # Open any files that contained the original data (this not
-        # necessary, is an optimisation)
-
         # ------------------------------------------------------------
         # Subspace the field's data
         # ------------------------------------------------------------
         new_data = data[tuple(indices)]
 
         # Replace domain axes
-        domain_axes = new.domain_axes
+        domain_axes = new.domain_axes(view=True)
         for key, size in zip(data_axes, new_data.shape):
             domain_axis = domain_axes[key]
             domain_axis.set_size(size)
@@ -360,7 +357,8 @@ class Field(
     def _get_data_compression_variables(self, component):
         """Returns data compression variables for a component."""
         out = []
-        for construct in self.constructs.filter_by_data().values():
+        data_constructs = self.constructs.filter_by_data(view=True)
+        for construct in data_constructs.values():
             data = construct.get_data(None)
             if data is None:
                 continue
@@ -371,7 +369,7 @@ class Field(
 
             out.append(x)
 
-        for construct in self.constructs.filter_by_data().values():
+        for construct in data_constructs.values():
             if not construct.has_bounds():
                 continue
 
@@ -385,7 +383,7 @@ class Field(
 
             out.append(x)
 
-        for construct in self.coordinates.values():
+        for construct in self.coordinates(view=True).values():
             interior_ring = construct.get_interior_ring(None)
             if interior_ring is None:
                 continue
@@ -415,7 +413,7 @@ class Field(
 
         """
         out = []
-        for construct in self.coordinates.values():
+        for construct in self.coordinates(view=True).values():
             x = getattr(construct, "get_" + component)(None)
             if x is None:
                 continue
@@ -522,70 +520,68 @@ class Field(
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
-    @property
-    def field_ancillaries(self):
+    def field_ancillaries(self, view=False):
         """Return field ancillary constructs.
 
-        .. versionadded:: (cfdm) 1.7.0
+                .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `constructs`, `get_construct`
+                .. seealso:: `constructs`, `get_construct`
 
-        :Returns:
+                :Returns:
 
-            `Constructs`
-                The field ancillary constructs and their construct keys.
+                    `Constructs`
+                        The field ancillary constructs and their construct keys.
+        TODO
+                **Examples:**
 
-        **Examples:**
+                >>> print(f.field_ancillaries())
+                Constructs:
+                {}
 
-        >>> print(f.field_ancillaries)
-        Constructs:
-        {}
+                >>> print(f.field_ancillaries())
+                Constructs:
+                {'fieldancillary0': <{{repr}}FieldAncillary: air_temperature standard_error(10, 9) K>}
 
-        >>> print(f.field_ancillaries)
-        Constructs:
-        {'fieldancillary0': <{{repr}}FieldAncillary: air_temperature standard_error(10, 9) K>}
-
-        >>> print(f.field_ancillaries('specific_humuidity standard_error'))
-        Constructs:
-        {'fieldancillary0': <{{repr}}FieldAncillary: specific_humidity standard_error(10, 9) K>}
+                >>> print(f.field_ancillaries('specific_humuidity standard_error'))
+                Constructs:
+                {'fieldancillary0': <{{repr}}FieldAncillary: specific_humidity standard_error(10, 9) K>}
 
         """
-        return self.constructs.filter_by_type("field_ancillary")
+        return self.constructs.filter_by_type("field_ancillary", view=view)
 
-    @property
-    def cell_methods(self):
+    def cell_methods(self, view=False):
         """Return cell method constructs.
 
-        The cell methods are not returned in the order in which they were
-        applied. To achieve this use the `~Constructs.ordered` of the
-        returned `Constructs` instance.
+                The cell methods are not returned in the order in which they were
+                applied. To achieve this use the `~Constructs.ordered` of the
+                returned `Constructs` instance.
 
-        .. versionadded:: (cfdm) 1.7.0
+                .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `constructs`, `get_construct`, `set_construct`
+                .. seealso:: `constructs`, `get_construct`, `set_construct`
+        TODO
+                :Returns:
 
-        :Returns:
+                    `Constructs`
+                        The cell method constructs and their construct keys.
 
-            `Constructs`
-                The cell method constructs and their construct keys.
+                **Examples:**
 
-        **Examples:**
+                >>> f.cell_methods()
+                Constructs:
+                {}
 
-        >>> f.cell_methods
-        Constructs:
-        {}
+                >>> f.cell_methods()
+                Constructs:
+                {'cellmethod1': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+                 'cellmethod0': <{{repr}}CellMethod: domainaxis3: maximum>}
 
-        >>> f.cell_methods
-        Constructs:
-        {'cellmethod1': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
-         'cellmethod0': <{{repr}}CellMethod: domainaxis3: maximum>}
-
-        >>> f.cell_methods.ordered()
-        OrderedDict([('cellmethod0', <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
-                     ('cellmethod1', <{{repr}}CellMethod: domainaxis3: maximum>)])
+                >>> f.cell_methods.ordered()
+                OrderedDict([('cellmethod0', <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
+                             ('cellmethod1', <{{repr}}CellMethod: domainaxis3: maximum>)])
 
         """
-        return self.constructs.filter_by_type("cell_method")
+        return self.constructs.filter_by_type("cell_method", view=view)
 
     # ----------------------------------------------------------------
     # Methods
@@ -669,11 +665,12 @@ class Field(
         super(Field, f).apply_masking(inplace=True)
 
         # Apply masking to the metadata constructs
-        for c in f.constructs.filter_by_data().values():
+        for c in f.constructs.filter_by_data(view=True).values():
             c.apply_masking(inplace=True)
 
         if inplace:
             f = None
+
         return f
 
     def climatological_time_axes(self):
@@ -684,8 +681,9 @@ class Field(
         :Returns:
 
             `list`
-                The list of all axes on the field which are climatological time
-                axes. If there are none, this will be an empty list.
+                The list of all axes on the field which are
+                climatological time axes. If there are none, this will
+                be an empty list.
 
         **Examples:**
 
@@ -709,9 +707,9 @@ class Field(
         """
         out = []
 
-        domain_axes = self.domain_axes
+        domain_axes = None
 
-        for key, cm in self.cell_methods.ordered().items():
+        for key, cm in self.cell_methods().ordered().items():
             qualifiers = cm.qualifiers()
             if not ("within" in qualifiers or "over" in qualifiers):
                 continue
@@ -719,6 +717,9 @@ class Field(
             axes = cm.get_axes(default=())
             if len(axes) != 1:
                 continue
+
+            if domain_axes is None:
+                domain_axes = self.domain_axes(view=True)
 
             axis = axes[0]
             if axis not in domain_axes:
@@ -960,7 +961,8 @@ class Field(
             if method == "indexed_contiguous":
                 shape1 = f.data.shape[1]
 
-            for key, c in f.constructs.filter_by_axis("or").items():
+            for key, c in f.constructs.filter_by_axis("or", *axes).items():
+
                 c_axes = f.get_data_axes(key)
                 if c_axes != axes:
                     # Skip metadata constructs which don't span
@@ -1458,7 +1460,7 @@ class Field(
             )
 
         # Domain axes
-        for key, c in self.domain_axes.items():
+        for key, c in self.domain_axes(view=True).items():
             out.extend(
                 c.creation_commands(
                     indent=0,
@@ -1477,6 +1479,7 @@ class Field(
             "cell_measure",
             "domain_ancillary",
             "field_ancillary",
+            view=True,
         ).items():
             out.extend(
                 c.creation_commands(
@@ -1495,7 +1498,7 @@ class Field(
             )
 
         # Cell method constructs
-        for key, c in self.cell_methods.items():
+        for key, c in self.cell_methods(view=True).items():
             out.extend(
                 c.creation_commands(
                     namespace=namespace0,
@@ -1508,7 +1511,7 @@ class Field(
             out.append(f"{name}.set_construct(c)")
 
         # Coordinate reference constructs
-        for key, c in self.coordinate_references.items():
+        for key, c in self.coordinate_references(view=True).items():
             out.extend(
                 c.creation_commands(
                     namespace=namespace0,
@@ -1598,7 +1601,7 @@ class Field(
             string.append("")
 
         # Cell methods
-        cell_methods = self.cell_methods
+        cell_methods = self.cell_methods(view=True)
         if cell_methods:
             for cm in cell_methods.values():
                 cm = cm.copy()
@@ -1615,7 +1618,7 @@ class Field(
             string.append("")
 
         # Field ancillaries
-        for cid, value in sorted(self.field_ancillaries.items()):
+        for cid, value in sorted(self.field_ancillaries(view=True).items()):
             string.append(
                 value.dump(
                     display=False,
@@ -1789,7 +1792,7 @@ class Field(
         """
         out = super().get_filenames()
 
-        for c in self.constructs.filter_by_data().values():
+        for c in self.constructs.filter_by_data(view=True).values():
             out.update(c.get_filenames())
 
         return out
@@ -1812,7 +1815,7 @@ class Field(
         False
 
         """
-        for c in self.coordinates.values():
+        for c in self.coordinates(view=True).values():
             if c.has_geometry():
                 return True
 
@@ -1874,7 +1877,7 @@ class Field(
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        domain_axis = f.domain_axes.get(axis, None)
+        domain_axis = f.domain_axes(view=True).get(axis, None)
         if domain_axis is None:
             raise ValueError(f"Can't insert non-existent domain axis: {axis}")
 
@@ -1998,9 +2001,10 @@ class Field(
         constructs_data_axes = self.constructs.data_axes()
         data_axes = constructs_data_axes.get(key)
         if data_axes is not None:
+            domain_axes = self.domain_axes(view=True)
             for domain_axis in data_axes:
                 f.set_construct(
-                    self.domain_axes[domain_axis], key=domain_axis, copy=True
+                    domain_axes[domain_axis], key=domain_axis, copy=True
                 )
 
         # ------------------------------------------------------------
@@ -2014,7 +2018,10 @@ class Field(
         # ------------------------------------------------------------
         if full_domain:
             for ccid, construct in self.constructs.filter_by_type(
-                "dimension_coordinate", "auxiliary_coordinate", "cell_measure"
+                "dimension_coordinate",
+                "auxiliary_coordinate",
+                "cell_measure",
+                view=True,
             ).items():
                 axes = constructs_data_axes.get(ccid)
                 if axes is None:
@@ -2025,7 +2032,7 @@ class Field(
 
             # Add coordinate references which span a subset of the item's
             # axes
-            for rcid, ref in self.coordinate_references.items():
+            for rcid, ref in self.coordinate_references(view=True).items():
                 new_coordinates = [
                     ccid
                     for ccid in ref.coordinates()
@@ -2976,7 +2983,9 @@ class Field(
             f.set_data_axes(new_data_axes)
 
         if constructs:
-            for key, construct in f.constructs.filter_by_data().items():
+            for key, construct in f.constructs.filter_by_data(
+                view=True
+            ).items():
                 data = construct.get_data(None)
                 if data is None:
                     continue
@@ -3071,7 +3080,7 @@ class Field(
         f = _inplace_enabled_define_and_cleanup(self)
         super(Field, f).uncompress(inplace=True)
 
-        for c in f.constructs.filter_by_data().values():
+        for c in f.constructs.filter_by_data(view=True).values():
             c.uncompress(inplace=True)
 
         return f

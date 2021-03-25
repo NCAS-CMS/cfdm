@@ -420,7 +420,6 @@ class FunctionsTest(unittest.TestCase):
         with self.assertRaises(AttributeError):
             with org:
                 pass
-        # --- End: with
 
         # Full configuration
         func = cfdm.configuration
@@ -543,9 +542,6 @@ class FunctionsTest(unittest.TestCase):
 
         self.assertIsInstance(repr(c), str)
         self.assertEqual(str(c), str(dict(**c)))
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

@@ -115,25 +115,30 @@ class Constructs(abstract.Container):
                   ``_ignore=('cell_method', 'field_ancillary')``
 
         """
-        _ignore = tuple(set(_ignore))
+        _ignore = tuple(_ignore)
 
         if source is not None:
+
+            if _view:
+                self.__dict__ = source.__dict__.copy()
+                self._ignore = _ignore
+                return
 
             source_constructs = source._constructs
             source_ordered_constructs = source._ordered_constructs
 
             self._field_data_axes = source._field_data_axes
 
-            if _view:
-                self._ignore = _ignore
-                self._key_base = source._key_base
-                self._array_constructs = source._array_constructs
-                self._non_array_constructs = source._non_array_constructs
-                self._ordered_constructs = source_ordered_constructs
-                self._construct_axes = source._construct_axes
-                self._construct_type = source._construct_type
-                self._constructs = source_constructs
-                return
+            #          if _view:
+            #              self._ignore = _ignore
+            #              self._key_base = source._key_base
+            #              self._array_constructs = source._array_constructs
+            #              self._non_array_constructs = source._non_array_constructs
+            #              self._ordered_constructs = source_ordered_constructs
+            #              self._construct_axes = source._construct_axes
+            #              self._construct_type = source._construct_type
+            #              self._constructs = source_constructs
+            #              return
 
             self._key_base = source._key_base.copy()
             self._array_constructs = source._array_constructs.copy()
@@ -302,11 +307,10 @@ class Constructs(abstract.Container):
         if construct_type is None:
             raise KeyError(key)
 
-        d = self._constructs.get(construct_type)
-        if d is None:
-            d = {}
+        if construct_type in self._ignore:
+            raise KeyError(key)
 
-        return d[key]
+        return self._constructs.get(construct_type, {})[key]
 
     def __iter__(self):
         """Called when an iterator is required.
@@ -337,6 +341,17 @@ class Constructs(abstract.Container):
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
+    def _construct_dict(self, construct_type, copy=False):
+        """TODO."""
+        if construct_type in self._ignore:
+            return {}
+
+        out = self._constructs.get(construct_type, {})
+        if copy:
+            out = out.copy()
+
+        return out
+
     def _del_data_axes(self, k, *d):
         """Remove and return a construct's axes, if any.
 
@@ -400,14 +415,14 @@ class Constructs(abstract.Container):
         if self._ignore:
             x = set(x).difference(self._ignore)
 
-        if construct_type not in x:
-            return self._default(
-                default,
-                f"Invalid construct type {construct_type!r}. "
-                f"Must be one of {sorted(x)}",
-            )
+        if construct_type in x:
+            return construct_type
 
-        return construct_type
+        return self._default(
+            default,
+            f"Invalid construct type {construct_type!r}. "
+            f"Must be one of {sorted(x)}",
+        )
 
     def _construct_type_description(self, construct_type):
         """Format the description of the type of a metadata construct.
@@ -473,7 +488,10 @@ class Constructs(abstract.Container):
 
         """
         data_axes = self.data_axes()
-        if key in self.filter_by_type("domain_axis"):
+
+        domain_axes = self._construct_dict("domain_axis")
+
+        if key in domain_axes:
             # Fail if the domain axis construct is spanned by a data
             # array
             for xid, axes in data_axes.items():
@@ -483,26 +501,8 @@ class Constructs(abstract.Container):
                         f"spans the data array of metadata construct {xid!r}"
                     )
 
-            # Fail if the domain axis construct is referenced by a
-            # cell method construct
-            #            try:
-            #                cell_methods = self.filter_by_type('cell_method')
-            #            except ValueError:
-            #                # Cell methods are not possible for this Constructs
-            #                # instance
-            #                pass
-            #            else:
-            #                for xid, cm in cell_methods.items():
-            #                    axes = cm.get_axes(())
-            #                    if key in axes:
-            #                        raise ValueError(
-            #                            "Can't remove domain axis construct {!r} "
-            #                            "that is referenced by cell method construct "
-            #                            "{!r}".format(key, xid)
-            #                        )
-
-            for xid, cm in self.filter_by_type("cell_method").items():
-                #                axes = cm.get_axes(())
+            cell_methods = self._construct_dict("cell_method")
+            for xid, cm in cell_methods.items():
                 if key in cm.get_axes(()):
                     raise ValueError(
                         f"Can't remove domain axis construct {key!r} "
@@ -512,7 +512,10 @@ class Constructs(abstract.Container):
         else:
             # Remove references to the removed construct in coordinate
             # reference constructs
-            for ref in self.filter_by_type("coordinate_reference").values():
+            coordinate_references = self._construct_dict(
+                "coordinate_reference"
+            )
+            for ref in coordinate_references.values():
                 coordinate_conversion = ref.coordinate_conversion
                 for (
                     term,
@@ -705,7 +708,7 @@ class Constructs(abstract.Container):
         if isinstance(axes, str):
             axes = (axes,)
 
-        domain_axes = self.filter_by_type("domain_axis")
+        domain_axes = self._construct_dict("domain_axis")
 
         axes_shape = []
         for axis in axes:
@@ -951,10 +954,12 @@ class Constructs(abstract.Container):
 
         """
         out = self._construct_type.copy()
+
         ignore = self._ignore
         if ignore:
-            for x in ignore:
-                del out[x]
+            for key, ctype in self._construct_type.items():
+                if ctype in ignore:
+                    del out[key]
 
         return out
 
@@ -1025,19 +1030,22 @@ class Constructs(abstract.Container):
          'dimensioncoordinate2': ('domainaxis2',)}
 
         """
-        if not self._ignore:
-            return self._construct_axes.copy()
-        else:
-            ignore = self._ignore
-            out = {}
-            for construct_type, keys in self._constructs.items():
-                if construct_type not in ignore:
-                    for key in keys:
-                        axes = self._construct_axes.get(key)
-                        if axes is not None:
-                            out[key] = axes
+        out = self._construct_axes.copy()
 
+        ignore = self._ignore
+        if not ignore:
             return out
+
+        non_data_constructs = self._non_array_constructs
+        for construct_type, keys in self._constructs.items():
+            if construct_type in non_data_constructs:
+                continue
+
+            if construct_type in ignore:
+                for key in keys:
+                    out.pop(key, None)
+
+        return out
 
     def filter_by_type(self, *types, view=False):
         """Select metadata constructs by type.
@@ -1068,6 +1076,10 @@ class Constructs(abstract.Container):
                 If no types are provided then all constructs are
                 selected.
 
+        :Parameters:
+
+            {{view: `bool`, optional}}
+
         :Returns:
 
             `{{class}}`
@@ -1094,7 +1106,7 @@ class Constructs(abstract.Container):
         if types:
             # Ignore the all but the requested construct types
             ignore = set(self._key_base)
-            ignore.difference_update(set(types))
+            ignore.difference_update(types)
             ignore.update(self._ignore)
         else:
             # Keep all construct types
@@ -1102,7 +1114,7 @@ class Constructs(abstract.Container):
 
         if view:
             return self.view(_ignore=ignore)
-        
+
         return self.shallow_copy(_ignore=ignore)
 
     def key(self, default=ValueError()):
@@ -1247,8 +1259,11 @@ class Constructs(abstract.Container):
 
         """
         # Filter out all construct types not present i.e. with value of {}
+        ignore = self._ignore
         existing_construct_types = {
-            c_type: c for c_type, c in self._constructs.items() if c
+            c_type: c
+            for c_type, c in self._constructs.items()
+            if c and c_type not in ignore
         }
 
         number_construct_types = len(existing_construct_types)
@@ -1290,10 +1305,18 @@ class Constructs(abstract.Container):
 
         ``copy.copy(f)`` is equivalent to ``f.shallow_copy()``.
 
-        .. versionadded:: (cfdm) 1.7.0
+        Any in-place changes to the actual constructs of the copy will
+        not be seen in the original `{{class}}` object, and vice
+        versa, but the copy and filter history are otherwise
+        independent.
+
+        .. versionadded:: (cfdm) 1.8.9.0
+
+        .. seealso:: `view`
 
         :Returns:
 
+            `{{class}}`
                 The shallow copy.
 
         **Examples:**
@@ -1364,26 +1387,30 @@ class Constructs(abstract.Container):
         return construct
 
     def view(self, _ignore=None):
-        """Return a shallow copy. TODO
+        """Return a view.
 
-        ``copy.copy(f)`` is equivalent to ``f.shallow_copy()``.
+        The actual constructs returned are references to the original
+        ones, but any in-place changes to the view (such as removing a
+        construct) will also occur in the original `Constructs`
+        object, and the filter history of the view is also lost.
 
-        .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.8.9.0
+
+        .. seealso:: `shallow_copy`
 
         :Returns:
 
-                The shallow copy.
+            `{{class}}`
+                The new view.
 
         **Examples:**
 
         >>> f = {{package}}.example_field(0)
         >>> c = f.constructs
-        >>> k = c.shallow_copy()
+        >>> d = c.view()
 
         """
         if _ignore is None:
             _ignore = self._ignore
 
-        return type(self)(
-            source=self, copy=False, _ignore=_ignore, _view=True
-        )
+        return type(self)(source=self, copy=False, _ignore=_ignore, _view=True)

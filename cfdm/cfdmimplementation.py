@@ -371,7 +371,11 @@ class CFDMImplementation(Implementation):
         else:
             arg = "and"
 
-        return dict(field.auxiliary_coordinates.filter_by_axis(arg, *axes))
+        return dict(
+            field.auxiliary_coordinates(view=True)
+            .filter_by_axis(arg, *axes)
+            .items()
+        )
 
     def get_bounds(self, parent, default=None):
         """Return the bounds of a construct.
@@ -419,7 +423,7 @@ class CFDMImplementation(Implementation):
         :Returns:
 
         """
-        return field.cell_measures
+        return field.cell_measures()
 
     def get_cell_methods(self, field):
         """Return all of the cell method constructs of a field.
@@ -431,7 +435,7 @@ class CFDMImplementation(Implementation):
         :Returns:
 
         """
-        return field.cell_methods.ordered()
+        return field.cell_methods().ordered()
 
     def get_cell_method_axes(self, cell_method, default=None):
         """Return the axes of a cell method construct.
@@ -588,9 +592,9 @@ class CFDMImplementation(Implementation):
             axes = []
 
         if data:
-            return dict(field.constructs.filter_by_data())
+            return dict(field.constructs.filter_by_data().items())
 
-        return dict(field.constructs.filter_by_axis("and", *axes))
+        return dict(field.constructs.filter_by_axis("and", *axes).items())
 
     def get_coordinate_reference_coordinates(self, coordinate_reference):
         """Return the coordinates of a coordinate reference construct.
@@ -633,7 +637,7 @@ class CFDMImplementation(Implementation):
         :Returns:
 
         """
-        return field.coordinate_references
+        return field.coordinate_references()
 
     def get_coordinates(self, field):
         """Return all of the coordinate constructs of a field.
@@ -645,7 +649,7 @@ class CFDMImplementation(Implementation):
         :Returns:
 
         """
-        return field.coordinates
+        return field.coordinates()
 
     def get_data_calendar(self, data, default=None):
         """Return the calendar of date-time data.
@@ -854,7 +858,7 @@ class CFDMImplementation(Implementation):
         :Returns:
 
         """
-        return field.dimension_coordinates
+        return field.dimension_coordinates()
 
     def get_domain_ancillaries(self, field):
         """Return all of the domain ancillary constructs of a field.
@@ -866,7 +870,7 @@ class CFDMImplementation(Implementation):
         :Returns:
 
         """
-        return field.domain_ancillaries
+        return field.domain_ancillaries()
 
     def get_domain_axes(self, field):
         """Return all of the domain axis constructs of a field.
@@ -892,7 +896,7 @@ class CFDMImplementation(Implementation):
         :Returns:
 
         """
-        return field.domain_axes[axis].get_size()
+        return field.domain_axes(view=True)[axis].get_size()
 
     def get_sample_dimension_position(self, construct):
         """Returns the position of the compressed data sample dimension.
@@ -1224,7 +1228,7 @@ class CFDMImplementation(Implementation):
         <Constructs: field_ancillary(1)>
 
         """
-        return field.field_ancillaries
+        return field.field_ancillaries()
 
     def get_field_data_axes(self, field):
         """Returns the construct keys of the field's data dimensions.
