@@ -626,7 +626,7 @@ class NetCDFWrite(IOWrite):
                     )
 
                 raise RuntimeError(message)
-        else:
+        elif not g['dry_run']:
             try:
                 parent_group.createDimension(ncdim, size)
             except RuntimeError as error:
@@ -4304,27 +4304,28 @@ class NetCDFWrite(IOWrite):
             # space, so join them with commas.
             delimiter = ","
 
-        g["netcdf"].setncattr("Conventions", delimiter.join(g["Conventions"]))
+        if not g['dry_run']:
+            g["netcdf"].setncattr("Conventions", delimiter.join(g["Conventions"]))
 
-        # ------------------------------------------------------------
-        # Write the file descriptors to the file
-        # ------------------------------------------------------------
-        for attr, value in g["file_descriptors"].items():
-            g["netcdf"].setncattr(attr, value)
+            # ------------------------------------------------------------
+            # Write the file descriptors to the file
+            # ------------------------------------------------------------
+            for attr, value in g["file_descriptors"].items():
+                g["netcdf"].setncattr(attr, value)
 
-        # ------------------------------------------------------------
-        # Write other global attributes to the file
-        # ------------------------------------------------------------
-        for attr in global_attributes - set(("Conventions",)):
-            g["netcdf"].setncattr(
-                attr, self.implementation.get_property(f0, attr)
-            )
+            # ------------------------------------------------------------
+            # Write other global attributes to the file
+            # ------------------------------------------------------------
+            for attr in global_attributes - set(("Conventions",)):
+                g["netcdf"].setncattr(
+                    attr, self.implementation.get_property(f0, attr)
+                )
 
-        # ------------------------------------------------------------
-        # Write "forced" global attributes to the file
-        # ------------------------------------------------------------
-        for attr, v in force_global.items():
-            g["netcdf"].setncattr(attr, v)
+            # ------------------------------------------------------------
+            # Write "forced" global attributes to the file
+            # ------------------------------------------------------------
+            for attr, v in force_global.items():
+                g["netcdf"].setncattr(attr, v)
 
         g["global_attributes"] = global_attributes
 
@@ -4678,12 +4679,15 @@ class NetCDFWrite(IOWrite):
             # pair of such keys seem clearer than one "effective mode" key.
         }
 
-        effective_mode = 'w'
+        effective_mode = mode  # actual mode to use for the first IO iteration
         if mode == 'a':
+            # Read rather than append for the first iteration to ensure nothing
+            # gets written; only want to update the 'seen' dictionary first.
+            effective_mode = 'r'
             overwrite = False
             self.write_vars['dry_run'] = True
         self._file_io_iteration(
-            mode=mode,
+            mode=effective_mode,
             overwrite=overwrite,
             fields=fields,
             filename=filename,
@@ -4900,8 +4904,7 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Open the output netCDF file
         # ------------------------------------------------------------
-        if os.path.isfile(filename) and not (
-                g['post_dry_run'] or g['dry_run']):
+        if os.path.isfile(filename) and mode == 'w':
             if not overwrite:
                 raise IOError(
                     "Can't write to an existing file unless "
