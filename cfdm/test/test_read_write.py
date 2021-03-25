@@ -227,9 +227,17 @@ class read_writeTest(unittest.TestCase):
             # Now append all other example fields, to check a diverse variety:
             new_length = 2
             for field_id in range(1, 7):
+                print("\n>>>>>>>>>>> ONTO FIELD ID", field_id)
                 ex_field = cfdm.example_field(field_id)
                 cfdm.write(ex_field, tmpfile, fmt=fmt, mode='a')
                 f = cfdm.read(tmpfile)
+
+                print("$$$$$$$$$$$$$$$$$$$$$ OVERALL F IS", f)
+                print("$$$$$$$$$$$$$$$$$$$$$ NEED:")
+                ex_field.dump()
+                print("$$$$$$$$$$$$$$$$$$$$$ BUT GOT:")
+                f[0].dump()
+                # CURRENT ISSUE IS THE TIME BOUNDS ARE MISSING!!!
 
                 new_length += 1  # there should be exactly one more field now
                 self.assertEqual(len(f), new_length)
