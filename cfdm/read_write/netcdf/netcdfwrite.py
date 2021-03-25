@@ -2533,10 +2533,8 @@ class NetCDFWrite(IOWrite):
             }
             kwargs.update(g["netcdf_compression"])
 
-            if g['dry_run']:
-                return ncvar
-
-            self._createVariable(**kwargs)
+            if not g['dry_run']:
+                self._createVariable(**kwargs)
 
             # Add named parameters
             parameters = self.implementation.get_datum_parameters(ref)
@@ -2554,7 +2552,8 @@ class NetCDFWrite(IOWrite):
 
                 parameters[term] = value
 
-            g["nc"][ncvar].setncatts(parameters)
+            if not g['dry_run']:
+                g["nc"][ncvar].setncatts(parameters)
 
             # Update the 'seen' dictionary
             g["seen"][id(ref)] = {
