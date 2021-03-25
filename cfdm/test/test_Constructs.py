@@ -269,7 +269,7 @@ class ConstructsTest(unittest.TestCase):
                 ["domainaxis0", "domainaxis1"],
                 ["domainaxis0", "domainaxis1", "domainaxis2"],
             ):
-                d = c.filter_by_axis(mode, *args)
+                d = c.filter_by_axis(*args, mode=mode)
                 e = d.inverse_filter()
                 self.assertEqual(len(e), len(c) - len(d))
 

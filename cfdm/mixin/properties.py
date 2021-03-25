@@ -82,21 +82,21 @@ class Properties(Container):
 
         """
         properties = self.properties()
+        if properties:
+            standard_name = properties.pop("standard_name", None)
+            if standard_name is not None:
+                yield standard_name
 
-        standard_name = properties.pop("standard_name", None)
-        if standard_name is not None:
-            yield standard_name
+            for prop in ("cf_role", "axis", "long_name"):
+                p = properties.pop(prop, None)
+                if p is not None:
+                    yield f"{prop}={p}"
 
-        for prop in ("cf_role", "axis", "long_name"):
-            p = properties.pop(prop, None)
-            if p is not None:
-                yield f"{prop}={p}"
+            for value, prop in sorted(properties.items()):
+                yield f"{prop}={value}"
 
-        for value, prop in sorted(properties.items()):
-            yield f"{prop}={value}"
-
-        if standard_name is not None:
-            yield "standard_name=" + standard_name
+            if standard_name is not None:
+                yield "standard_name=" + standard_name
 
         ncvar = self.nc_get_variable(None)
         if ncvar is not None:

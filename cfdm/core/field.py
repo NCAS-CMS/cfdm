@@ -441,7 +441,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         False
 
         """
-        domain_axes = self.constructs.filter_by_type("domain_axis", view=True)
+        domain_axes = self.constructs.filter_by_type("domain_axis", _dict=True)
         if key in domain_axes and key in self.get_data_axes(default=()):
             raise ValueError(
                 f"Can't remove domain axis {key!r} that is spanned by the "
@@ -611,7 +611,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
         if _shape is not None:
             domain_axes = self.constructs.filter_by_type(
-                "domain_axis", view=True
+                "domain_axis", _dict=True
             )
             axes_shape = []
             for axis in axes:

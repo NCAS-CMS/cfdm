@@ -373,7 +373,7 @@ class CFDMImplementation(Implementation):
 
         return dict(
             field.auxiliary_coordinates(view=True)
-            .filter_by_axis(arg, *axes)
+            .filter_by_axis(*axes, mode=arg)
             .items()
         )
 
@@ -594,7 +594,7 @@ class CFDMImplementation(Implementation):
         if data:
             return dict(field.constructs.filter_by_data().items())
 
-        return dict(field.constructs.filter_by_axis("and", *axes).items())
+        return dict(field.constructs.filter_by_axis(*axes, mode="and").items())
 
     def get_coordinate_reference_coordinates(self, coordinate_reference):
         """Return the coordinates of a coordinate reference construct.

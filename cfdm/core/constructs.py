@@ -277,7 +277,11 @@ class Constructs(abstract.Container):
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        return key in self._construct_type
+        ctype = self._construct_type.get(key)
+        if ctype is None or ctype in self._ignore:
+            return False
+
+        return True
 
     def __copy__(self):
         """Called by the `copy.copy` standard library function.
@@ -346,7 +350,10 @@ class Constructs(abstract.Container):
         if construct_type in self._ignore:
             return {}
 
-        out = self._constructs.get(construct_type, {})
+        out = self._constructs.get(construct_type)
+        if out is None:
+            return {}
+
         if copy:
             out = out.copy()
 
@@ -781,6 +788,19 @@ class Constructs(abstract.Container):
         # Remove and return the construct
         return self._constructs[construct_type].pop(k, *d)
 
+    def _popitem(self):
+        """Remove and return a (key, value) pair as a 2-tuple.
+
+        Pairs are returned in random order. Raises KeyError if the
+        dict is empty.
+
+        """
+        k, v = self._dictionary().popitem()
+
+        self._pop(k)
+
+        return k, v
+
     def _update(self, other):
         """D.update(E) -> None.
 
@@ -1047,7 +1067,7 @@ class Constructs(abstract.Container):
 
         return out
 
-    def filter_by_type(self, *types, view=False):
+    def filter_by_type(self, *types, view=False, cache=None, _dict=True):
         """Select metadata constructs by type.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -1080,9 +1100,13 @@ class Constructs(abstract.Container):
 
             {{view: `bool`, optional}}
 
+            {{cache: optional}}
+
+            {{_dict: `bool`, optional}}
+
         :Returns:
 
-            `{{class}}`
+            `{{class}}` or `dict`
                 The selected constructs and their construct keys.
 
         **Examples:**
@@ -1103,6 +1127,27 @@ class Constructs(abstract.Container):
         <{{repr}}Constructs: dimension_coordinate(4), field_ancillary(1)>
 
         """
+        if cache is not None:
+            return cache
+
+        if _dict:
+            ntypes = len(types)
+            if ntypes == 1:
+                return self._construct_dict(types[0])
+
+            if not ntypes:
+                return self._dictionary()
+
+            ignore = self._ignore
+            constructs = self._constructs
+
+            out = {}
+            for t in types:
+                if t not in ignore:
+                    out.update(constructs.get(t, {}))
+
+            return out
+
         if types:
             # Ignore the all but the requested construct types
             ignore = set(self._key_base)

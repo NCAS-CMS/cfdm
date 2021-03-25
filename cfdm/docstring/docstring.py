@@ -258,4 +258,12 @@ _docstring_substitution_definitions = {
                 description is printed and `None` is
                 returned. Otherwise the description is returned as a
                 string.""",
+    # {{generator: `bool`, optional}}
+    "{{generator: `bool`, optional}}": """generator: `bool`, optional
+                If True then return a generator for the identities,
+                rather than a list. This can give improved performance
+                if iteration through the generator can be stopped
+                before all identities have been computed.
+
+                .. versionadded:: (cfdm) 1.8.9.0""",
 }

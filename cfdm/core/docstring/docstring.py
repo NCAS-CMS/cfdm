@@ -34,7 +34,35 @@ _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # # Method description susbstitutions (2 levels of indentation)
     # ----------------------------------------------------------------
-    #
+    # view
+    "{{view: `bool`, optional}}": """view: `bool`, optional
+                If True then return the selected constructs in a new
+                `Constructs` object that is a view to the full
+                collection, instead of a shallow copy. Creating a view
+                is faster than returning a shallow copy. In both cases
+                the actual constructs returned are references to the
+                original ones, but any in-place changes to a view
+                (such as removing a construct) might also occur in the
+                original `Constructs` object, and the filter history
+                of a view is also lost.
+
+                .. versionadded:: (cfdm) 1.8.9.0""",
+    # cache
+    "{{cache: optional}}": """cache: optional
+                If not `None` then return *cache* instead of the
+                requested constructs.
+
+                .. versionadded:: (cfdm) 1.8.9.0""",
+    # _dict
+    "{{_dict: `bool`, optional}}": """_dict: `bool`, optional
+                If True then return a dictionary instead of a
+                `Constructs` object. This is the fastest option, but
+                modifying the keys of this dictionary might corrupt
+                the calling object, and actions that affect the
+                constructs of the calling object (such as removing a
+                construct) might affect the returned dictionary.
+
+                .. versionadded:: (cfdm) 1.8.9.0""",
     # ----------------------------------------------------------------
     # # Method description susbstitutions (3 levels of indentation)
     # ----------------------------------------------------------------
@@ -115,16 +143,4 @@ _docstring_substitution_definitions = {
                 to a `Data` object, i.e. `numpy` array_like objects,
                 `Data` objects, and {{package}} instances that contain
                 `Data` objects.""",
-    # view
-    "{{view: `bool`, optional}}": """If True then return the selected constructs as a view
-                to the full collection, instead of a shallow
-                copy. Creating a view is faster than returning a
-                shallow copy. In both cases the actual constructs
-                returned are references to the original ones, but any
-                in-place changes to a view (such as removing a
-                construct) will also occur in the original
-                `Constructs` object, and the filter history of a view
-                is also lost.
-
-                .. versionadded:: (cfdm) 1.8.9.0""",
 }

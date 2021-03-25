@@ -66,7 +66,7 @@ class ConstructAccess:
         key_to_name = {}
         name_to_keys = {}
 
-        for key, value in self.domain_axes(view=True).items():
+        for key, value in self.domain_axes(_dict=True).items():
             name_size = (
                 self.constructs.domain_axis_identity(key),
                 value.get_size(""),
@@ -88,16 +88,24 @@ class ConstructAccess:
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
-    def coordinate_references(self, view=False):
+    def coordinate_references(self, view=False, cache=None, _dict=False):
         """Return coordinate reference constructs.
 
         .. versionadded:: (cfdm) 1.7.0
 
         .. seealso:: `constructs`
 
+        :Parameters:
+
+            {{view: `bool`, optional}}
+
+            {{cache: optional}}
+
+            {{_dict: `bool`, optional}}
+
         :Returns:
 
-            `Constructs`
+            `Constructs` or `dict`
                 The constructs and their construct keys.
 
 
@@ -114,19 +122,27 @@ class ConstructAccess:
 
         """
         return self.constructs.filter_by_type(
-            "coordinate_reference", view=view
+            "coordinate_reference", view=view, cache=cache, _dict=_dict
         )
 
-    def domain_axes(self, view=False, cache=None):
+    def domain_axes(self, view=False, cache=None, _dict=False):
         """Return domain axis constructs.
 
         .. versionadded:: (cfdm) 1.7.0
 
         .. seealso:: `constructs`
 
+        :Parameters:
+
+            {{view: `bool`, optional}}
+
+            {{cache: optional}}
+
+            {{_dict: `bool`, optional}}
+
         :Returns:
 
-            `Constructs`
+            `Constructs` or `dict`
                 The domain axis constructs and their construct keys.
 
         **Examples:**
@@ -143,54 +159,66 @@ class ConstructAccess:
          'domainaxis3': <{{repr}}DomainAxis: size(1)>}
 
         """
-        if cache is not None:
-            return cache
-
-        return self.constructs.filter_by_type("domain_axis", view=view)
-
-    def auxiliary_coordinates(self, view=False, cache=None):
-        """Return auxiliary coordinate constructs.
-
-                .. versionadded:: (cfdm) 1.7.0
-
-                .. seealso:: `constructs`
-        TODO
-                :Returns:
-
-                    `Constructs`
-                        The auxiliary coordinate constructs and their construct
-                        keys.
-
-                **Examples:**
-
-                >>> f.auxiliary_coordinates()
-                Constructs:
-                {}
-
-                >>> f.auxiliary_coordinates()
-                Constructs:
-                {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
-                 'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
-                 'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
-
-        """
-        if cache is not None:
-            return cache
-
         return self.constructs.filter_by_type(
-            "auxiliary_coordinate", view=view
+            "domain_axis", view=view, cache=cache, _dict=_dict
         )
 
-    def dimension_coordinates(self, view=False):
+    def auxiliary_coordinates(self, view=False, cache=None, _dict=False):
+        """Return auxiliary coordinate constructs.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `constructs`
+
+        :Parameters:
+
+            {{view: `bool`, optional}}
+
+            {{cache: optional}}
+
+            {{_dict: `bool`, optional}}
+
+        :Returns:
+
+            `Constructs` or `dict`
+                The auxiliary coordinate constructs and their construct
+                keys.
+
+        **Examples:**
+
+        >>> f.auxiliary_coordinates()
+        Constructs:
+        {}
+
+        >>> f.auxiliary_coordinates()
+        Constructs:
+        {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+         'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+         'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
+
+        """
+        return self.constructs.filter_by_type(
+            "auxiliary_coordinate", view=view, cache=cache, _dict=_dict
+        )
+
+    def dimension_coordinates(self, view=False, cache=None, _dict=False):
         """Return dimension coordinate constructs.
 
         .. versionadded:: (cfdm) 1.7.0
 
         .. seealso:: `constructs`
 
+        :Parameters:
+
+            {{view: `bool`, optional}}
+
+            {{cache: optional}}
+
+            {{_dict: `bool`, optional}}
+
         :Returns:
 
-            `Constructs`
+            `Constructs` or `dict`
                 The dimension coordinate constructs and their construct
                 keys.
 
@@ -209,54 +237,74 @@ class ConstructAccess:
 
         """
         return self.constructs.filter_by_type(
-            "dimension_coordinate", view=view
+            "dimension_coordinate", view=view, cache=cache, _dict=_dict
         )
 
-    def coordinates(self, view=False):
+    def coordinates(self, view=False, cache=None, _dict=False):
         """Return dimension and auxiliary coordinate constructs.
 
-                .. versionadded:: (cfdm) 1.7.0
+        . versionadded:: (cfdm) 1.7.0
 
-                .. seealso:: `auxiliary_coordinates`, `constructs`,
-                             `dimension_coordinates`
-        TODO
-                :Returns:
+        . seealso:: `auxiliary_coordinates`, `constructs`,
+                    `dimension_coordinates`
 
-                    `Constructs`
-                        The auxiliary coordinate and dimension coordinate
-                        constructs and their construct keys.
+        :Parameters:
 
-                **Examples:**
+            {{view: `bool`, optional}}
 
-                >>> f.coordinates()
-                Constructs:
-                {}
+            {{cache: optional}}
 
-                >>> f.coordinates()
-                Constructs:
-                {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
-                 'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
-                 'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
-                 'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
-                 'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
-                 'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
-                 'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
+            {{_dict: `bool`, optional}}
+
+        Returns:
+
+           `Constructs` or `dict`
+               The auxiliary coordinate and dimension coordinate
+               constructs and their construct keys.
+
+        *Examples:**
+
+        >> f.coordinates()
+        onstructs:
+        }
+
+        >> f.coordinates()
+        onstructs:
+        'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+        'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+        'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
+        'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+        'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
+        'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
+        'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
 
         """
-        out = self.dimension_coordinates(view=False)
-        out._update(self.auxiliary_coordinates(view=False))
-        return out
+        return self.constructs.filter_by_type(
+            "dimension_coordinate",
+            "auxiliary_coordinate",
+            view=view,
+            cache=cache,
+            _dict=_dict,
+        )
 
-    def domain_ancillaries(self, view=False, cache=None):
+    def domain_ancillaries(self, view=False, cache=None, _dict=False):
         """Return domain ancillary constructs.
 
         .. versionadded:: (cfdm) 1.7.0
 
         .. seealso:: `constructs`
 
+        :Parameters:
+
+            {{view: `bool`, optional}}
+
+            {{cache: optional}}
+
+            {{_dict: `bool`, optional}}
+
         :Returns:
 
-            `Constructs`
+            `Constructs` or `dict`
                 The domain ancillary constructs and their construct keys.
 
         **Examples:**
@@ -272,21 +320,28 @@ class ConstructAccess:
          'domainancillary2': <{{repr}}DomainAncillary: surface_altitude(10, 9) m>}
 
         """
-        if cache is not None:
-            return cache
+        return self.constructs.filter_by_type(
+            "domain_ancillary", view=view, cache=cache, _dict=_dict
+        )
 
-        return self.constructs.filter_by_type("domain_ancillary", view=view)
-
-    def cell_measures(self, view=False):
+    def cell_measures(self, view=False, cache=None, _dict=False):
         """Return cell measure constructs.
 
         .. versionadded:: (cfdm) 1.7.0
 
         .. seealso:: `constructs`
 
+        :Parameters:
+
+            {{view: `bool`, optional}}
+
+            {{cache: optional}}
+
+            {{_dict: `bool`, optional}}
+
         :Returns:
 
-            `Constructs`
+            `Constructs` or `dict`
                 The cell measure constructs and their construct keys.
 
         **Examples:**
@@ -300,7 +355,9 @@ class ConstructAccess:
         {'cellmeasure0': <{{repr}}CellMeasure: measure%area(9, 10) km2>}
 
         """
-        return self.constructs.filter_by_type("cell_measure", view=view)
+        return self.constructs.filter_by_type(
+            "cell_measure", view=view, cache=cache, _dict=_dict
+        )
 
     # ----------------------------------------------------------------
     # Methods
@@ -504,31 +561,33 @@ class ConstructAccess:
         :Parameters:
 
             identity:
-                Select the 1-d coordinate constructs that have the given
-                identity.
+                Select the 1-d coordinate constructs that have the
+                given identity.
 
-                An identity is specified by a string (e.g. ``'latitude'``,
-                ``'long_name=time'``, etc.); or a compiled regular
-                expression (e.g. ``re.compile('^atmosphere')``), for which
-                all constructs whose identities match (via `re.search`)
+                An identity is specified by a string
+                (e.g. ``'latitude'``, ``'long_name=time'``, etc.); or
+                a compiled regular expression
+                (e.g. ``re.compile('^atmosphere')``), for which all
+                constructs whose identities match (via `re.search`)
                 are selected.
 
-                Each coordinate construct has a number of identities, and
-                is selected if any of them match any of those provided. A
-                construct's identities are those returned by its
-                `!identities` method. In the following example, the
-                construct ``x`` has four identities:
+                Each coordinate construct has a number of identities,
+                and is selected if any of them match any of those
+                provided. A construct's identities are those returned
+                by its `!identities` method. In the following example,
+                the construct ``x`` has four identities:
 
                    >>> x.identities()
                    ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
 
-                In addition, each construct also has an identity based its
-                construct key (e.g. ``'key%dimensioncoordinate2'``)
+                In addition, each construct also has an identity based
+                its construct key
+                (e.g. ``'key%dimensioncoordinate2'``)
 
                 Note that in the output of a `print` call or `!dump`
                 method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
+                identities, and so this description may always be used
+                as an *identity* argument.
 
             default: optional
                 Return the value of the *default* parameter if a domain
@@ -560,25 +619,19 @@ class ConstructAccess:
         'domainaxis3'
 
         """
-        constructs = self.constructs
-
         # Select 1-d coordinate constructs with the given identity
-        c = constructs.filter_by_type(
-            "dimension_coordinate", "auxiliary_coordinate"
-        )
+        c = self.coordinates(view=True)
         c = c.filter_by_naxes(1)
         c = c.filter_by_identity(identity, view=True)
 
         if not len(c):
             return self._default(
                 default,
-                "No 1-d coordinate constructs have identity {!r}".format(
-                    identity
-                ),
+                f"No 1-d coordinate constructs have identity {identity!r}",
             )
 
-        data_axes = constructs.data_axes()
-        domain_axes = constructs.filter_by_type("domain_axis", view=True)
+        data_axes = self.constructs.data_axes()
+        domain_axes = self.domain_axes(_dict=True)
 
         keys = []
         for ckey, coord in c.items():
@@ -596,18 +649,14 @@ class ConstructAccess:
             return self._default(
                 default,
                 "1-d coordinate constructs selected with identity "
-                "{!r} have not been assigned a domain axis constructs".format(
-                    coord
-                ),
+                f"{coord!r} have not been assigned a domain axis constructs",
             )
 
         if len(keys) > 1:
             return self._default(
                 default,
-                "Multiple 1-d coordinate constructs selected "
-                "with identity {!r} span multiple domain axes: {!r}".format(
-                    identity, keys
-                ),
+                "Multiple 1-d coordinate constructs selected with "
+                f"identity {identity!r} span multiple domain axes: {keys!r}",
             )
 
         return keys.pop()

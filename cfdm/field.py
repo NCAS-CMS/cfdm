@@ -201,7 +201,7 @@ class Field(
         )
 
         # Cell methods
-        cell_methods = self.cell_methods(view=True)
+        cell_methods = self.cell_methods(_dict=True)
         if cell_methods:
             x = []
             for cm in cell_methods.values():
@@ -248,7 +248,7 @@ class Field(
         # Field ancillary variables
         x = [
             _print_item(self, key, anc, self.constructs.data_axes()[key])
-            for key, anc in sorted(self.field_ancillaries(view=True).items())
+            for key, anc in sorted(self.field_ancillaries(_dict=True).items())
         ]
         if x:
             field_ancils = "\n                : ".join(x)
@@ -318,7 +318,7 @@ class Field(
         new_data = data[tuple(indices)]
 
         # Replace domain axes
-        domain_axes = new.domain_axes(view=True)
+        domain_axes = new.domain_axes(_dict=True)
         for key, size in zip(data_axes, new_data.shape):
             domain_axis = domain_axes[key]
             domain_axis.set_size(size)
@@ -331,7 +331,7 @@ class Field(
 
         if data_axes:
             for key, construct in new.constructs.filter_by_axis(
-                "or", *data_axes
+                *data_axes, mode="or", view=True
             ).items():
                 needs_slicing = False
                 dice = []
@@ -357,7 +357,7 @@ class Field(
     def _get_data_compression_variables(self, component):
         """Returns data compression variables for a component."""
         out = []
-        data_constructs = self.constructs.filter_by_data(view=True)
+        data_constructs = self.constructs.filter_by_data(_dict=True)
         for construct in data_constructs.values():
             data = construct.get_data(None)
             if data is None:
@@ -383,7 +383,7 @@ class Field(
 
             out.append(x)
 
-        for construct in self.coordinates(view=True).values():
+        for construct in self.coordinates(_dict=True).values():
             interior_ring = construct.get_interior_ring(None)
             if interior_ring is None:
                 continue
@@ -413,7 +413,7 @@ class Field(
 
         """
         out = []
-        for construct in self.coordinates(view=True).values():
+        for construct in self.coordinates(_dict=True).values():
             x = getattr(construct, "get_" + component)(None)
             if x is None:
                 continue
@@ -520,7 +520,7 @@ class Field(
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
-    def field_ancillaries(self, view=False):
+    def field_ancillaries(self, view=False, cache=None, _dict=False):
         """Return field ancillary constructs.
 
                 .. versionadded:: (cfdm) 1.7.0
@@ -547,9 +547,11 @@ class Field(
                 {'fieldancillary0': <{{repr}}FieldAncillary: specific_humidity standard_error(10, 9) K>}
 
         """
-        return self.constructs.filter_by_type("field_ancillary", view=view)
+        return self.constructs.filter_by_type(
+            "field_ancillary", view=view, cache=cache, _dict=_dict
+        )
 
-    def cell_methods(self, view=False):
+    def cell_methods(self, view=False, cache=None, _dict=False):
         """Return cell method constructs.
 
                 The cell methods are not returned in the order in which they were
@@ -581,7 +583,9 @@ class Field(
                              ('cellmethod1', <{{repr}}CellMethod: domainaxis3: maximum>)])
 
         """
-        return self.constructs.filter_by_type("cell_method", view=view)
+        return self.constructs.filter_by_type(
+            "cell_method", view=view, cache=cache, _dict=_dict
+        )
 
     # ----------------------------------------------------------------
     # Methods
@@ -665,7 +669,7 @@ class Field(
         super(Field, f).apply_masking(inplace=True)
 
         # Apply masking to the metadata constructs
-        for c in f.constructs.filter_by_data(view=True).values():
+        for c in f.constructs.filter_by_data(_dict=True).values():
             c.apply_masking(inplace=True)
 
         if inplace:
@@ -718,8 +722,7 @@ class Field(
             if len(axes) != 1:
                 continue
 
-            if domain_axes is None:
-                domain_axes = self.domain_axes(view=True)
+            domain_axes = self.domain_axes(cache=domain_axes, _dict=True)
 
             axis = axes[0]
             if axis not in domain_axes:
@@ -961,7 +964,9 @@ class Field(
             if method == "indexed_contiguous":
                 shape1 = f.data.shape[1]
 
-            for key, c in f.constructs.filter_by_axis("or", *axes).items():
+            for key, c in f.constructs.filter_by_axis(
+                *axes, mode="or", view=True
+            ).items():
 
                 c_axes = f.get_data_axes(key)
                 if c_axes != axes:
@@ -1460,7 +1465,7 @@ class Field(
             )
 
         # Domain axes
-        for key, c in self.domain_axes(view=True).items():
+        for key, c in self.domain_axes(_dict=True).items():
             out.extend(
                 c.creation_commands(
                     indent=0,
@@ -1479,7 +1484,7 @@ class Field(
             "cell_measure",
             "domain_ancillary",
             "field_ancillary",
-            view=True,
+            _dict=True,
         ).items():
             out.extend(
                 c.creation_commands(
@@ -1498,7 +1503,7 @@ class Field(
             )
 
         # Cell method constructs
-        for key, c in self.cell_methods(view=True).items():
+        for key, c in self.cell_methods(_dict=True).items():
             out.extend(
                 c.creation_commands(
                     namespace=namespace0,
@@ -1511,7 +1516,7 @@ class Field(
             out.append(f"{name}.set_construct(c)")
 
         # Coordinate reference constructs
-        for key, c in self.coordinate_references(view=True).items():
+        for key, c in self.coordinate_references(_dict=True).items():
             out.extend(
                 c.creation_commands(
                     namespace=namespace0,
@@ -1601,7 +1606,7 @@ class Field(
             string.append("")
 
         # Cell methods
-        cell_methods = self.cell_methods(view=True)
+        cell_methods = self.cell_methods(_dict=True)
         if cell_methods:
             for cm in cell_methods.values():
                 cm = cm.copy()
@@ -1618,7 +1623,7 @@ class Field(
             string.append("")
 
         # Field ancillaries
-        for cid, value in sorted(self.field_ancillaries(view=True).items()):
+        for cid, value in sorted(self.field_ancillaries(_dict=True).items()):
             string.append(
                 value.dump(
                     display=False,
@@ -1792,7 +1797,7 @@ class Field(
         """
         out = super().get_filenames()
 
-        for c in self.constructs.filter_by_data(view=True).values():
+        for c in self.constructs.filter_by_data(_dict=True).values():
             out.update(c.get_filenames())
 
         return out
@@ -1815,7 +1820,7 @@ class Field(
         False
 
         """
-        for c in self.coordinates(view=True).values():
+        for c in self.coordinates(_dict=True).values():
             if c.has_geometry():
                 return True
 
@@ -1877,7 +1882,7 @@ class Field(
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        domain_axis = f.domain_axes(view=True).get(axis, None)
+        domain_axis = f.domain_axes(_dict=True).get(axis)
         if domain_axis is None:
             raise ValueError(f"Can't insert non-existent domain axis: {axis}")
 
@@ -1985,15 +1990,18 @@ class Field(
         Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
 
         """
-        c = self.constructs.filter_by_key(key).value().copy()
+        c = self.constructs.get(key)
+        if c is None:
+            raise ValueError("Can't return zero constructs")
 
         # ------------------------------------------------------------
         # Create a new field with the properties and data from the
         # construct
         # ------------------------------------------------------------
+        c = c.copy()
         data = c.del_data()
 
-        f = type(self)(source=c, copy=True)
+        f = type(self)(source=c, copy=False)
 
         # ------------------------------------------------------------
         # Add domain axes
@@ -2001,7 +2009,7 @@ class Field(
         constructs_data_axes = self.constructs.data_axes()
         data_axes = constructs_data_axes.get(key)
         if data_axes is not None:
-            domain_axes = self.domain_axes(view=True)
+            domain_axes = self.domain_axes(_dict=True)
             for domain_axis in data_axes:
                 f.set_construct(
                     domain_axes[domain_axis], key=domain_axis, copy=True
@@ -2021,7 +2029,7 @@ class Field(
                 "dimension_coordinate",
                 "auxiliary_coordinate",
                 "cell_measure",
-                view=True,
+                _dict=True,
             ).items():
                 axes = constructs_data_axes.get(ccid)
                 if axes is None:
@@ -2032,7 +2040,7 @@ class Field(
 
             # Add coordinate references which span a subset of the item's
             # axes
-            for rcid, ref in self.coordinate_references(view=True).items():
+            for rcid, ref in self.coordinate_references(_dict=True).items():
                 new_coordinates = [
                     ccid
                     for ccid in ref.coordinates()
@@ -2984,7 +2992,7 @@ class Field(
 
         if constructs:
             for key, construct in f.constructs.filter_by_data(
-                view=True
+                _dict=True
             ).items():
                 data = construct.get_data(None)
                 if data is None:
@@ -3080,7 +3088,7 @@ class Field(
         f = _inplace_enabled_define_and_cleanup(self)
         super(Field, f).uncompress(inplace=True)
 
-        for c in f.constructs.filter_by_data(view=True).values():
+        for c in f.constructs.filter_by_data(_dict=True).values():
             c.uncompress(inplace=True)
 
         return f
