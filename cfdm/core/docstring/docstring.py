@@ -53,14 +53,10 @@ _docstring_substitution_definitions = {
                 requested constructs.
 
                 .. versionadded:: (cfdm) 1.8.9.0""",
-    # _dict
-    "{{_dict: `bool`, optional}}": """_dict: `bool`, optional
+    # todict
+    "{{todict: `bool`, optional}}": """todict: `bool`, optional
                 If True then return a dictionary instead of a
-                `Constructs` object. This is the fastest option, but
-                modifying the keys of this dictionary might corrupt
-                the calling object, and actions that affect the
-                constructs of the calling object (such as removing a
-                construct) might affect the returned dictionary.
+                `Constructs` object. This is the fastest option.
 
                 .. versionadded:: (cfdm) 1.8.9.0""",
     # ----------------------------------------------------------------

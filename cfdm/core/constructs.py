@@ -324,7 +324,7 @@ class Constructs(abstract.Container):
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        return iter(self._dictionary().keys())
+        return iter(self.todict().keys())
 
     def __len__(self):
         """Return the number of constructs.
@@ -441,6 +441,10 @@ class Constructs(abstract.Container):
         return construct_type.replace("_", " ")
 
     def _dictionary(self, copy=False):
+        """Alias of `todict`."""
+        return self.todict()
+
+    def todict(self, copy=False):
         """Constructs the mapping of keys to metadata constructs."""
         out = {}
         ignore = self._ignore
@@ -795,7 +799,7 @@ class Constructs(abstract.Container):
         dict is empty.
 
         """
-        k, v = self._dictionary().popitem()
+        k, v = self.todict().popitem()
 
         self._pop(k)
 
@@ -828,7 +832,7 @@ class Constructs(abstract.Container):
         .. seealso:: `items`, `keys`, `values`
 
         """
-        return self._dictionary().get(key, *default)
+        return self.todict().get(key, *default)
 
     def items(self):  # SB NOTE: flaky doctest due to dict_items order
         """Return the items as (construct key, construct) pairs.
@@ -868,7 +872,7 @@ class Constructs(abstract.Container):
          'domainaxis2': <{{repr}}DomainAxis: size(1)>}
 
         """
-        return self._dictionary().items()
+        return self.todict().items()
 
     def keys(self):  # SB NOTE: flaky doctest due to dict_items order
         """Return all of the construct keys, in arbitrary order.
@@ -946,7 +950,7 @@ class Constructs(abstract.Container):
          <{{repr}}CellMethod: area: mean>]
 
         """
-        return self._dictionary().values()
+        return self.todict().values()
 
     # ----------------------------------------------------------------
     # Methods
@@ -1067,7 +1071,7 @@ class Constructs(abstract.Container):
 
         return out
 
-    def filter_by_type(self, *types, view=False, cache=None, _dict=True):
+    def filter_by_type(self, *types, view=False, todict=True, cache=None):
         """Select metadata constructs by type.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -1102,7 +1106,7 @@ class Constructs(abstract.Container):
 
             {{cache: optional}}
 
-            {{_dict: `bool`, optional}}
+            {{todict: `bool`, optional}}
 
         :Returns:
 
@@ -1130,13 +1134,13 @@ class Constructs(abstract.Container):
         if cache is not None:
             return cache
 
-        if _dict:
+        if todict:
             ntypes = len(types)
             if ntypes == 1:
-                return self._construct_dict(types[0])
+                return self._construct_dict(types[0], copy=True)
 
             if not ntypes:
-                return self._dictionary()
+                return self.todict()
 
             ignore = self._ignore
             constructs = self._constructs
@@ -1202,8 +1206,8 @@ class Constructs(abstract.Container):
         <{{repr}}DimensionCoordinate: latitude(5) degrees_north>
 
         """
-        _dict = self._dictionary()
-        n = len(_dict)
+        todict = self.todict()
+        n = len(todict)
         if not n:
             return self._default(default, "Can't get key for zero constructs")
 
@@ -1212,7 +1216,7 @@ class Constructs(abstract.Container):
                 default, f"Can't get key for more than one ({n}) constructs"
             )
 
-        key, _ = _dict.popitem()
+        key, _ = todict.popitem()
 
         return key
 
@@ -1417,8 +1421,8 @@ class Constructs(abstract.Container):
         <{{repr}}DimensionCoordinate: latitude(5) degrees_north>
 
         """
-        _dict = self._dictionary()
-        n = len(_dict)
+        todict = self.todict()
+        n = len(todict)
         if not n:
             return self._default(default, "Can't return zero constructs")
 
@@ -1427,7 +1431,7 @@ class Constructs(abstract.Container):
                 default, f"Can't return more than one ({n}) constructs"
             )
 
-        _, construct = _dict.popitem()
+        _, construct = todict.popitem()
 
         return construct
 

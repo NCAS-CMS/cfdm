@@ -61,7 +61,7 @@ class DimensionCoordinateTest(unittest.TestCase):
     def test_DimensionCoordinate__repr__str__dump(self):
         """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
-        x = f.dimension_coordinates(view=True)("grid_latitude").value()
+        x = f.dimension_coordinates("grid_latitude", view=True).value()
 
         _ = repr(x)
         _ = str(x)

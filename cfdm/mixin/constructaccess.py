@@ -66,7 +66,7 @@ class ConstructAccess:
         key_to_name = {}
         name_to_keys = {}
 
-        for key, value in self.domain_axes(_dict=True).items():
+        for key, value in self.domain_axes(todict=True).items():
             name_size = (
                 self.constructs.domain_axis_identity(key),
                 value.get_size(""),
@@ -86,9 +86,16 @@ class ConstructAccess:
         return key_to_name
 
     # ----------------------------------------------------------------
-    # Attributes
+    # Methods
     # ----------------------------------------------------------------
-    def coordinate_references(self, view=False, cache=None, _dict=False):
+    def coordinate_references(
+        self,
+        *identities,
+        view=False,
+        todict=False,
+        cache=None,
+        **identities_kwargs,
+    ):
         """Return coordinate reference constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -101,7 +108,7 @@ class ConstructAccess:
 
             {{cache: optional}}
 
-            {{_dict: `bool`, optional}}
+            {{todict: `bool`, optional}}
 
         :Returns:
 
@@ -121,11 +128,30 @@ class ConstructAccess:
          'coordinatereference1': <{{repr}}CoordinateReference: rotated_latitude_longitude>}
 
         """
+        if identities:
+            return self.constructs.chain(
+                "filter_by_type",
+                ("coordinate_reference",),
+                "filter_by_identity",
+                identities,
+                view=view,
+                todict=todict,
+                cache=cache,
+                identity_kwargs=identities_kwargs,
+            )
+
         return self.constructs.filter_by_type(
-            "coordinate_reference", view=view, cache=cache, _dict=_dict
+            "coordinate_reference", view=view, todict=todict, cache=cache
         )
 
-    def domain_axes(self, view=False, cache=None, _dict=False):
+    def domain_axes(
+        self,
+        *identities,
+        view=False,
+        todict=False,
+        cache=None,
+        **identities_kwargs,
+    ):
         """Return domain axis constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -138,7 +164,7 @@ class ConstructAccess:
 
             {{cache: optional}}
 
-            {{_dict: `bool`, optional}}
+            {{todict: `bool`, optional}}
 
         :Returns:
 
@@ -159,11 +185,30 @@ class ConstructAccess:
          'domainaxis3': <{{repr}}DomainAxis: size(1)>}
 
         """
+        if identities:
+            return self.constructs.chain(
+                "filter_by_type",
+                ("domain_axis",),
+                "filter_by_identity",
+                identities,
+                view=view,
+                todict=todict,
+                cache=cache,
+                identity_kwargs=identities_kwargs,
+            )
+
         return self.constructs.filter_by_type(
-            "domain_axis", view=view, cache=cache, _dict=_dict
+            "domain_axis", view=view, todict=todict, cache=cache
         )
 
-    def auxiliary_coordinates(self, view=False, cache=None, _dict=False):
+    def auxiliary_coordinates(
+        self,
+        *identities,
+        view=False,
+        todict=False,
+        cache=None,
+        **identities_kwargs,
+    ):
         """Return auxiliary coordinate constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -176,7 +221,7 @@ class ConstructAccess:
 
             {{cache: optional}}
 
-            {{_dict: `bool`, optional}}
+            {{todict: `bool`, optional}}
 
         :Returns:
 
@@ -197,11 +242,30 @@ class ConstructAccess:
          'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
 
         """
+        if identities:
+            return self.constructs.chain(
+                "filter_by_type",
+                ("auxiliary_coordinate",),
+                "filter_by_identity",
+                identities,
+                view=view,
+                todict=todict,
+                cache=cache,
+                identity_kwargs=identities_kwargs,
+            )
+
         return self.constructs.filter_by_type(
-            "auxiliary_coordinate", view=view, cache=cache, _dict=_dict
+            "auxiliary_coordinate", view=view, todict=todict, cache=cache
         )
 
-    def dimension_coordinates(self, view=False, cache=None, _dict=False):
+    def dimension_coordinates(
+        self,
+        *identities,
+        view=False,
+        todict=False,
+        cache=None,
+        **identities_kwargs,
+    ):
         """Return dimension coordinate constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -214,7 +278,7 @@ class ConstructAccess:
 
             {{cache: optional}}
 
-            {{_dict: `bool`, optional}}
+            {{todict: `bool`, optional}}
 
         :Returns:
 
@@ -224,11 +288,11 @@ class ConstructAccess:
 
         **Examples:**
 
-        >>> f.dimension_coordinates
+        >>> f.dimension_coordinates()
         Constructs:
         {}
 
-        >>> f.dimension_coordinates
+        >>> f.dimension_coordinates()
         Constructs:
         {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
          'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
@@ -236,11 +300,31 @@ class ConstructAccess:
          'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
 
         """
+
+        if identities:
+            return self.constructs.chain(
+                "filter_by_type",
+                ("dimension_coordinate",),
+                "filter_by_identity",
+                identities,
+                view=view,
+                todict=todict,
+                cache=cache,
+                identity_kwargs=identities_kwargs,
+            )
+
         return self.constructs.filter_by_type(
-            "dimension_coordinate", view=view, cache=cache, _dict=_dict
+            "dimension_coordinate", view=view, todict=todict, cache=cache
         )
 
-    def coordinates(self, view=False, cache=None, _dict=False):
+    def coordinates(
+        self,
+        *identities,
+        view=False,
+        todict=False,
+        cache=None,
+        **identities_kwargs,
+    ):
         """Return dimension and auxiliary coordinate constructs.
 
         . versionadded:: (cfdm) 1.7.0
@@ -254,7 +338,7 @@ class ConstructAccess:
 
             {{cache: optional}}
 
-            {{_dict: `bool`, optional}}
+            {{todict: `bool`, optional}}
 
         Returns:
 
@@ -279,15 +363,34 @@ class ConstructAccess:
         'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
 
         """
+        if identities:
+            return self.constructs.chain(
+                "filter_by_type",
+                ("dimension_coordinate", "auxiliary_coordinate"),
+                "filter_by_identity",
+                identities,
+                view=view,
+                todict=todict,
+                cache=cache,
+                identity_kwargs=identities_kwargs,
+            )
+
         return self.constructs.filter_by_type(
             "dimension_coordinate",
             "auxiliary_coordinate",
             view=view,
+            todict=todict,
             cache=cache,
-            _dict=_dict,
         )
 
-    def domain_ancillaries(self, view=False, cache=None, _dict=False):
+    def domain_ancillaries(
+        self,
+        *identities,
+        view=False,
+        todict=False,
+        cache=None,
+        **identities_kwargs,
+    ):
         """Return domain ancillary constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -300,7 +403,7 @@ class ConstructAccess:
 
             {{cache: optional}}
 
-            {{_dict: `bool`, optional}}
+            {{todict: `bool`, optional}}
 
         :Returns:
 
@@ -320,11 +423,30 @@ class ConstructAccess:
          'domainancillary2': <{{repr}}DomainAncillary: surface_altitude(10, 9) m>}
 
         """
+        if identities:
+            return self.constructs.chain(
+                "filter_by_type",
+                ("domain_ancillary",),
+                "filter_by_identity",
+                identities,
+                view=view,
+                todict=todict,
+                cache=cache,
+                identity_kwargs=identities_kwargs,
+            )
+
         return self.constructs.filter_by_type(
-            "domain_ancillary", view=view, cache=cache, _dict=_dict
+            "domain_ancillary", view=view, todict=todict, cache=cache
         )
 
-    def cell_measures(self, view=False, cache=None, _dict=False):
+    def cell_measures(
+        self,
+        *identities,
+        view=False,
+        todict=False,
+        cache=None,
+        **identities_kwargs,
+    ):
         """Return cell measure constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -337,7 +459,7 @@ class ConstructAccess:
 
             {{cache: optional}}
 
-            {{_dict: `bool`, optional}}
+            {{todict: `bool`, optional}}
 
         :Returns:
 
@@ -355,13 +477,22 @@ class ConstructAccess:
         {'cellmeasure0': <{{repr}}CellMeasure: measure%area(9, 10) km2>}
 
         """
+        if identities:
+            return self.constructs.chain(
+                "filter_by_type",
+                ("cell_measure",),
+                "filter_by_identity",
+                identities,
+                view=view,
+                todict=todict,
+                cache=cache,
+                identity_kwargs=identities_kwargs,
+            )
+
         return self.constructs.filter_by_type(
-            "cell_measure", view=view, cache=cache, _dict=_dict
+            "cell_measure", view=view, todict=todict, cache=cache
         )
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def construct(self, identity, default=ValueError()):
         """Select a metadata construct by its identity.
 
@@ -443,10 +574,11 @@ class ConstructAccess:
         'no construct'
 
         """
-        c = self.constructs.filter_by_identity(identity, view=True)
+        c = self.constructs.filter_by_identity(identity, todict=True)
         n = len(c)
         if n == 1:
-            return c.value()
+            _, c = c.popitem()
+            return c
 
         if not n:
             return self._default(default, "Can't return zero constructs")
@@ -538,10 +670,11 @@ class ConstructAccess:
         'no construct'
 
         """
-        c = self.constructs.filter_by_identity(identity, view=True)
+        c = self.constructs.filter_by_identity(identity, todict=True)
         n = len(c)
         if n == 1:
-            return c.key()
+            key, _ = c.popitem()
+            return key
 
         if not n:
             return self._default(
@@ -620,9 +753,18 @@ class ConstructAccess:
 
         """
         # Select 1-d coordinate constructs with the given identity
-        c = self.coordinates(view=True)
-        c = c.filter_by_naxes(1)
-        c = c.filter_by_identity(identity, view=True)
+        #        c = self.coordinates(view=True)
+        #        c = c.filter_by_naxes(1)
+        #        c = c.filter_by_identity(identity, todict=True)
+        c = self.constructs.chain(
+            "filter_by_type",
+            ("dimension_coordinate", "auxiliary_coordinate"),
+            "filter_by_naxes",
+            (1,),
+            "filter_by_identity",
+            (identity,),
+            todict=True,
+        )
 
         if not len(c):
             return self._default(
@@ -631,7 +773,7 @@ class ConstructAccess:
             )
 
         data_axes = self.constructs.data_axes()
-        domain_axes = self.domain_axes(_dict=True)
+        domain_axes = self.domain_axes(todict=True)
 
         keys = []
         for ckey, coord in c.items():

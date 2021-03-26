@@ -72,7 +72,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
 
-        d = f.dimension_coordinates(view=True)("grid_longitude").value()
+        d = f.dimension_coordinates("grid_longitude", view=True).value()
         cfdm.AuxiliaryCoordinate(source=d)
 
     def test_AuxiliaryCoordinate_properties(self):
@@ -90,13 +90,13 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
     def test_AuxiliaryCoordinate_source(self):
         """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
-        d = f.dimension_coordinates(view=True)("grid_longitude").value()
+        d = f.dimension_coordinates("grid_longitude", view=True).value()
         cfdm.AuxiliaryCoordinate(source=d)
 
     def test_AuxiliaryCoordinate_insert_dimension(self):
         """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
-        d = f.dimension_coordinates(view=True)("grid_longitude").value()
+        d = f.dimension_coordinates("grid_longitude", view=True).value()
         x = cfdm.AuxiliaryCoordinate(source=d)
 
         self.assertEqual(x.shape, (9,))

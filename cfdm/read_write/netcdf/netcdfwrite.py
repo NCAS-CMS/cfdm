@@ -3228,7 +3228,6 @@ class NetCDFWrite(IOWrite):
             )
             #            if ncdim is not None:
             #                ncdim = self._netcdf_name(ncdim)
-
             found_dimension_coordinate = False
             for key, dim_coord in dimension_coordinates.items():
                 if self.implementation.get_construct_data_axes(f, key) != (

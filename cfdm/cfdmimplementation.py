@@ -371,10 +371,10 @@ class CFDMImplementation(Implementation):
         else:
             arg = "and"
 
-        return dict(
+        return (
             field.auxiliary_coordinates(view=True)
             .filter_by_axis(*axes, mode=arg)
-            .items()
+            .todict()
         )
 
     def get_bounds(self, parent, default=None):

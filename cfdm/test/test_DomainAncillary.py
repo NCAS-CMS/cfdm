@@ -71,7 +71,7 @@ class DomainAncillaryTest(unittest.TestCase):
     def test_DomainAncillary_insert_dimension(self):
         """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
-        d = f.dimension_coordinates(view=True)("grid_longitude").value()
+        d = f.dimension_coordinates("grid_longitude", view=True).value()
         x = cfdm.DomainAncillary(source=d)
 
         self.assertEqual(x.shape, (9,))
