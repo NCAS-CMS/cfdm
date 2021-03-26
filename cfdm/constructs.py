@@ -1015,7 +1015,7 @@ class Constructs(mixin.Container, core.Constructs):
             # been provided
             for cid in tuple(out):
                 if _data_axes.get(cid) is None:
-                    # This construct does not have data axes
+                    # This construct doesd not have data axes
                     pop(cid)
 
             return out
@@ -1190,9 +1190,9 @@ class Constructs(mixin.Container, core.Constructs):
 
             {{view: `bool`, optional}}
 
-            {{cache: optional}}
-
             {{todict: `bool`, optional}}
+
+            {{cache: optional}}
 
         :Returns:
 
@@ -2055,6 +2055,7 @@ class Constructs(mixin.Container, core.Constructs):
         >>> d = c.filter_by_property(standard_name=re.compile('^air'))
 
         """
+        print ("TODO: sort out filter_by+_property in chain")
         out = self.shallow_copy()
 
         out._prefiltered = self.shallow_copy()
