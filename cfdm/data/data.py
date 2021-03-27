@@ -687,7 +687,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                             step = stop - start
                             stop += 1
                             y.append(slice(start, stop, step))
-                    # --- End: for
+
                     indices1[i] = y
                 else:
                     indices1[i] = (x,)
@@ -718,7 +718,6 @@ class Data(Container, NetCDFHDF5, core.Data):
                     itertools.product(*indices1), itertools.product(*indices2)
                 ):
                     array[i] = value[j]
-        # --- End: if
 
     # ----------------------------------------------------------------
     # Attributes
@@ -1334,7 +1333,6 @@ class Data(Container, NetCDFHDF5, core.Data):
                         "Can't determine fill value for "
                         f"data type {d.dtype.str!r}"
                     )  # pragma: no cover
-        # --- End: if
 
         array = self.array
 
@@ -1645,7 +1643,6 @@ class Data(Container, NetCDFHDF5, core.Data):
                     else:
                         # E.g. [1, 3, 4] -> [1, 3, 4]
                         pass
-            # --- End: if
 
             parsed_indices[i] = index
 
@@ -1857,7 +1854,6 @@ class Data(Container, NetCDFHDF5, core.Data):
                         "Can't squeeze data: "
                         f"Can't remove axis of size {shape[i]}"
                     )
-        # --- End: if
 
         if not axes:
             return d
@@ -2284,7 +2280,6 @@ class Data(Container, NetCDFHDF5, core.Data):
                         )
                     )  # pragma: no cover
                     return False
-        # --- End: if
 
         # ------------------------------------------------------------
         # Check for equal (uncompressed) array values
