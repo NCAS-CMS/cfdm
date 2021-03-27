@@ -91,10 +91,10 @@ class ConstructAccess:
     def coordinate_references(
         self,
         *identities,
-        view=False,
+        mode=None,
         todict=False,
         cache=None,
-        **identities_kwargs,
+        **filters,
     ):
         """Return coordinate reference constructs.
 
@@ -103,8 +103,6 @@ class ConstructAccess:
         .. seealso:: `constructs`
 
         :Parameters:
-
-            {{view: `bool`, optional}}
 
             {{cache: optional}}
 
@@ -128,29 +126,23 @@ class ConstructAccess:
          'coordinatereference1': <{{repr}}CoordinateReference: rotated_latitude_longitude>}
 
         """
-        if identities:
-            return self.constructs.chain(
-                "filter_by_type",
-                ("coordinate_reference",),
-                "filter_by_identity",
-                identities,
-                view=view,
-                todict=todict,
-                cache=cache,
-                identity_kwargs=identities_kwargs,
-            )
-
-        return self.constructs.filter_by_type(
-            "coordinate_reference", view=view, todict=todict, cache=cache
+        return self._zzz(
+            ("coordinate_reference",),
+            "coordinate_references",
+            *identities,
+            mode=mode,
+            todict=todict,
+            cache=cache,
+            **filters,
         )
 
     def domain_axes(
         self,
         *identities,
-        view=False,
         todict=False,
         cache=None,
-        **identities_kwargs,
+        mode=None,
+        **filters,
     ):
         """Return domain axis constructs.
 
@@ -159,8 +151,6 @@ class ConstructAccess:
         .. seealso:: `constructs`
 
         :Parameters:
-
-            {{view: `bool`, optional}}
 
             {{cache: optional}}
 
@@ -185,29 +175,23 @@ class ConstructAccess:
          'domainaxis3': <{{repr}}DomainAxis: size(1)>}
 
         """
-        if identities:
-            return self.constructs.chain(
-                "filter_by_type",
-                ("domain_axis",),
-                "filter_by_identity",
-                identities,
-                view=view,
-                todict=todict,
-                cache=cache,
-                identity_kwargs=identities_kwargs,
-            )
-
-        return self.constructs.filter_by_type(
-            "domain_axis", view=view, todict=todict, cache=cache
+        return self._zzz(
+            ("domain_axis",),
+            "domain_axes",
+            *identities,
+            mode=mode,
+            todict=todict,
+            cache=cache,
+            **filters,
         )
 
     def auxiliary_coordinates(
         self,
         *identities,
-        view=False,
         todict=False,
         cache=None,
-        **identities_kwargs,
+        mode=None,
+        **filters,
     ):
         """Return auxiliary coordinate constructs.
 
@@ -216,8 +200,6 @@ class ConstructAccess:
         .. seealso:: `constructs`
 
         :Parameters:
-
-            {{view: `bool`, optional}}
 
             {{cache: optional}}
 
@@ -242,29 +224,67 @@ class ConstructAccess:
          'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
 
         """
-        if identities:
-            return self.constructs.chain(
-                "filter_by_type",
-                ("auxiliary_coordinate",),
-                "filter_by_identity",
-                identities,
-                view=view,
-                todict=todict,
-                cache=cache,
-                identity_kwargs=identities_kwargs,
+        return self._zzz(
+            ("auxiliary_coordinate",),
+            "auxiliary_coordinates",
+            *identities,
+            mode=mode,
+            todict=todict,
+            cache=cache,
+            **filters,
+        )
+
+    def _zzz(
+        self,
+        _ctypes,
+        _method,
+        *identities,
+        mode=None,
+        todict=False,
+        cache=None,
+        **filters,
+    ):
+        """TODO.
+
+        .. versionadded:: (cfdm) 1.8.10.0
+
+        """
+        if not (identities or filters):
+            return self.constructs.filter_by_type(
+                *_ctypes, todict=todict, cache=cache
             )
 
-        return self.constructs.filter_by_type(
-            "auxiliary_coordinate", view=view, todict=todict, cache=cache
+        kwargs = {"filter_by_type": _ctypes}
+        if filters:
+            if "filter_by_type" in filters:
+                raise TypeError(
+                    f"{_method}() got an unexpected keyword argument "
+                    "'filter_by_type'"
+                )
+
+            kwargs.update(filters)
+
+        if identities:
+            if "filter_by_identity" in filters:
+                raise TypeError(
+                    f"Can't set {_method}() keyword argument "
+                    "'filter_by_identity' when positional *identities "
+                    "arguments are also set"
+                )
+
+            kwargs["filter_by_identity"] = identities
+
+        return self.constructs.filter(
+            todict=todict, cache=cache, mode=mode, **kwargs
         )
 
     def dimension_coordinates(
         self,
         *identities,
-        view=False,
+        mode=None,
         todict=False,
         cache=None,
-        **identities_kwargs,
+        **filters,
     ):
         """Return dimension coordinate constructs.
 
@@ -273,8 +293,6 @@ class ConstructAccess:
         .. seealso:: `constructs`
 
         :Parameters:
-
-            {{view: `bool`, optional}}
 
             {{cache: optional}}
 
@@ -300,30 +318,23 @@ class ConstructAccess:
          'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
 
         """
-
-        if identities:
-            return self.constructs.chain(
-                "filter_by_type",
-                ("dimension_coordinate",),
-                "filter_by_identity",
-                identities,
-                view=view,
-                todict=todict,
-                cache=cache,
-                identity_kwargs=identities_kwargs,
-            )
-
-        return self.constructs.filter_by_type(
-            "dimension_coordinate", view=view, todict=todict, cache=cache
+        return self._zzz(
+            ("dimension_coordinate",),
+            "dimension_coordinates",
+            *identities,
+            mode=mode,
+            todict=todict,
+            cache=cache,
+            **filters,
         )
 
     def coordinates(
         self,
         *identities,
-        view=False,
         todict=False,
         cache=None,
-        **identities_kwargs,
+        mode=None,
+        **filters,
     ):
         """Return dimension and auxiliary coordinate constructs.
 
@@ -333,8 +344,6 @@ class ConstructAccess:
                     `dimension_coordinates`
 
         :Parameters:
-
-            {{view: `bool`, optional}}
 
             {{cache: optional}}
 
@@ -363,33 +372,26 @@ class ConstructAccess:
         'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
 
         """
-        if identities:
-            return self.constructs.chain(
-                "filter_by_type",
-                ("dimension_coordinate", "auxiliary_coordinate"),
-                "filter_by_identity",
-                identities,
-                view=view,
-                todict=todict,
-                cache=cache,
-                identity_kwargs=identities_kwargs,
-            )
-
-        return self.constructs.filter_by_type(
-            "dimension_coordinate",
-            "auxiliary_coordinate",
-            view=view,
+        return self._zzz(
+            (
+                "dimension_coordinate",
+                "auxiliary_coordinate",
+            ),
+            "coordinates",
+            *identities,
+            mode=mode,
             todict=todict,
             cache=cache,
+            **filters,
         )
 
     def domain_ancillaries(
         self,
         *identities,
-        view=False,
         todict=False,
         cache=None,
-        **identities_kwargs,
+        mode=None,
+        **filters,
     ):
         """Return domain ancillary constructs.
 
@@ -398,8 +400,6 @@ class ConstructAccess:
         .. seealso:: `constructs`
 
         :Parameters:
-
-            {{view: `bool`, optional}}
 
             {{cache: optional}}
 
@@ -423,29 +423,23 @@ class ConstructAccess:
          'domainancillary2': <{{repr}}DomainAncillary: surface_altitude(10, 9) m>}
 
         """
-        if identities:
-            return self.constructs.chain(
-                "filter_by_type",
-                ("domain_ancillary",),
-                "filter_by_identity",
-                identities,
-                view=view,
-                todict=todict,
-                cache=cache,
-                identity_kwargs=identities_kwargs,
-            )
-
-        return self.constructs.filter_by_type(
-            "domain_ancillary", view=view, todict=todict, cache=cache
+        return self._zzz(
+            ("domain_ancillary",),
+            "domain_ancillaries",
+            *identities,
+            mode=mode,
+            todict=todict,
+            cache=cache,
+            **filters,
         )
 
     def cell_measures(
         self,
         *identities,
-        view=False,
         todict=False,
         cache=None,
-        **identities_kwargs,
+        mode=None,
+        **filters,
     ):
         """Return cell measure constructs.
 
@@ -454,8 +448,6 @@ class ConstructAccess:
         .. seealso:: `constructs`
 
         :Parameters:
-
-            {{view: `bool`, optional}}
 
             {{cache: optional}}
 
@@ -477,20 +469,14 @@ class ConstructAccess:
         {'cellmeasure0': <{{repr}}CellMeasure: measure%area(9, 10) km2>}
 
         """
-        if identities:
-            return self.constructs.chain(
-                "filter_by_type",
-                ("cell_measure",),
-                "filter_by_identity",
-                identities,
-                view=view,
-                todict=todict,
-                cache=cache,
-                identity_kwargs=identities_kwargs,
-            )
-
-        return self.constructs.filter_by_type(
-            "cell_measure", view=view, todict=todict, cache=cache
+        return self._zzz(
+            ("cell_measure",),
+            "cell_measures",
+            *identities,
+            mode=mode,
+            todict=todict,
+            cache=cache,
+            **filters,
         )
 
     def construct(self, identity, default=ValueError()):
@@ -756,13 +742,20 @@ class ConstructAccess:
         #        c = self.coordinates(view=True)
         #        c = c.filter_by_naxes(1)
         #        c = c.filter_by_identity(identity, todict=True)
-        c = self.constructs.chain(
-            "filter_by_type",
-            ("dimension_coordinate", "auxiliary_coordinate"),
-            "filter_by_naxes",
-            (1,),
-            "filter_by_identity",
-            (identity,),
+        #        c = self.constructs.chain(
+        #            "filter_by_type",
+        #            ("dimension_coordinate", "auxiliary_coordinate"),
+        #            "filter_by_naxes",
+        #            (1,),
+        #            "filter_by_identity",
+        #            (identity,),
+        #            todict=True,
+        #        )
+
+        c = self.constructs.filter(
+            filter_by_type=("dimension_coordinate", "auxiliary_coordinate"),
+            filter_by_naxes=(1,),
+            filter_by_identity=(identity,),
             todict=True,
         )
 

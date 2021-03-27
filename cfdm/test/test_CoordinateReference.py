@@ -64,7 +64,7 @@ class CoordinateReferenceTest(unittest.TestCase):
 
         f = self.f
 
-        for cr in f.coordinate_references(view=True).values():
+        for cr in f.coordinate_references().values():
             _ = repr(cr)
             _ = str(cr)
             self.assertIsInstance(cr.dump(display=False), str)

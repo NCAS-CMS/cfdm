@@ -91,10 +91,9 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
             ):
                 ncvar = variable.nc_get_variable(None)
                 if ncvar is not None:
-                    x.append(" (external variable: ncvar%{})".format(ncvar))
+                    x.append(f" (external variable: ncvar%{ncvar}")
                 else:
                     x.append(" (external variable)")
-            # --- End: if
 
             if variable.has_data():
                 x.append(f" = {variable.data}")
@@ -108,8 +107,6 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
                 x.append(f" = {variable.bounds.data}")
 
             return "".join(x)
-
-        # --- End: def
 
         string = []
 
@@ -254,16 +251,14 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
             string.append(axes)
 
         # Dimension coordinates
-        dimension_coordinates = self.dimension_coordinates(_dict=True)
+        dimension_coordinates = self.dimension_coordinates(todict=True)
         for cid, value in sorted(dimension_coordinates.items()):
             string.append("")
             string.append(
                 value.dump(
                     display=False,
                     _level=_level,
-                    _title="Dimension coordinate: {0}".format(
-                        construct_name[cid]
-                    ),
+                    _title=f"Dimension coordinate: {construct_name[cid]}",
                     _axes=constructs_data_axes[cid],
                     _axis_names=axis_to_name,
                 )
@@ -277,9 +272,7 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
                 value.dump(
                     display=False,
                     _level=_level,
-                    _title="Auxiliary coordinate: {0}".format(
-                        construct_name[cid]
-                    ),
+                    _title=f"Auxiliary coordinate: {construct_name[cid]}",
                     _axes=constructs_data_axes[cid],
                     _axis_names=axis_to_name,
                 )
@@ -292,7 +285,7 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
                 value.dump(
                     display=False,
                     _level=_level,
-                    _title="Domain ancillary: {0}".format(construct_name[cid]),
+                    _title=f"Domain ancillary: {construct_name[cid]}",
                     _axes=constructs_data_axes[cid],
                     _axis_names=axis_to_name,
                 )
@@ -307,9 +300,7 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
                 value.dump(
                     display=False,
                     _level=_level,
-                    _title="Coordinate reference: {0}".format(
-                        construct_name[cid]
-                    ),
+                    _title=f"Coordinate reference: {construct_name[cid]}",
                     _construct_names=construct_name,
                     _auxiliary_coordinates=tuple(auxiliary_coordinates),
                     _dimension_coordinates=tuple(dimension_coordinates),
@@ -324,7 +315,7 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
                     display=False,
                     _key=cid,
                     _level=_level,
-                    _title="Cell measure: {0}".format(construct_name[cid]),
+                    _title=f"Cell measure: {construct_name[cid]}",
                     _axes=constructs_data_axes[cid],
                     _axis_names=axis_to_name,
                 )

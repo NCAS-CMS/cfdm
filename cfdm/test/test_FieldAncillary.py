@@ -35,7 +35,7 @@ class FieldAncillaryTest(unittest.TestCase):
     def test_FieldAncillary__repr__str__dump(self):
         """TODO DOCS."""
         f = self.f.copy()
-        x = f.field_ancillaries("ancillaryA", view=True).value()
+        x = f.field_ancillaries("ancillaryA").value()
 
         _ = repr(x)
         _ = str(x)
@@ -45,13 +45,13 @@ class FieldAncillaryTest(unittest.TestCase):
         """TODO DOCS."""
         f = self.f.copy()
 
-        a = f.auxiliary_coordinates("latitude", view=True).value()
+        a = f.auxiliary_coordinates("latitude").value()
         cfdm.FieldAncillary(source=a)
 
     def test_FieldAncillary_properties(self):
         """TODO DOCS."""
         f = self.f.copy()
-        x = f.domain_ancillaries("ncvar%a", view=True).value()
+        x = f.domain_ancillaries("ncvar%a").value()
         x = cfdm.FieldAncillary(source=x)
 
         x.set_property("long_name", "qwerty")
@@ -64,7 +64,7 @@ class FieldAncillaryTest(unittest.TestCase):
     def test_FieldAncillary_insert_dimension(self):
         """TODO DOCS."""
         f = self.f.copy()
-        d = f.dimension_coordinates("grid_longitude", view=True).value()
+        d = f.dimension_coordinates("grid_longitude").value()
         x = cfdm.FieldAncillary(source=d)
 
         self.assertEqual(x.shape, (9,))
@@ -78,7 +78,7 @@ class FieldAncillaryTest(unittest.TestCase):
     def test_FieldAncillary_transpose(self):
         """TODO DOCS."""
         f = self.f.copy()
-        a = f.auxiliary_coordinates("longitude", view=True).value()
+        a = f.auxiliary_coordinates("longitude").value()
         x = cfdm.FieldAncillary(source=a)
 
         self.assertEqual(x.shape, (9, 10))
@@ -92,7 +92,7 @@ class FieldAncillaryTest(unittest.TestCase):
     def test_FieldAncillary_squeeze(self):
         """TODO DOCS."""
         f = self.f.copy()
-        a = f.auxiliary_coordinates("longitude", view=True).value()
+        a = f.auxiliary_coordinates("longitude").value()
         x = cfdm.FieldAncillary(source=a)
 
         x.insert_dimension(1, inplace=True)

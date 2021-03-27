@@ -61,7 +61,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
     def test_AuxiliaryCoordinate__repr__str__dump(self):
         """TODO DOCS."""
         f = cfdm.read(self.filename, verbose=1)[0]
-        x = f.auxiliary_coordinates(view=True)("latitude").value()
+        x = f.auxiliary_coordinates("latitude").value()
 
         repr(x)
         str(x)
@@ -72,13 +72,13 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
 
-        d = f.dimension_coordinates("grid_longitude", view=True).value()
+        d = f.dimension_coordinates("grid_longitude").value()
         cfdm.AuxiliaryCoordinate(source=d)
 
     def test_AuxiliaryCoordinate_properties(self):
         """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
-        x = f.auxiliary_coordinates(view=True)("latitude").value()
+        x = f.auxiliary_coordinates("latitude").value()
 
         x.set_property("long_name", "qwerty")
 
@@ -90,13 +90,13 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
     def test_AuxiliaryCoordinate_source(self):
         """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
-        d = f.dimension_coordinates("grid_longitude", view=True).value()
+        d = f.dimension_coordinates("grid_longitude").value()
         cfdm.AuxiliaryCoordinate(source=d)
 
     def test_AuxiliaryCoordinate_insert_dimension(self):
         """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
-        d = f.dimension_coordinates("grid_longitude", view=True).value()
+        d = f.dimension_coordinates("grid_longitude").value()
         x = cfdm.AuxiliaryCoordinate(source=d)
 
         self.assertEqual(x.shape, (9,))
@@ -113,7 +113,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
     def test_AuxiliaryCoordinate_transpose(self):
         """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
-        x = f.auxiliary_coordinates(view=True)("longitude").value()
+        x = f.auxiliary_coordinates("longitude").value()
 
         bounds = cfdm.Bounds(
             data=cfdm.Data(numpy.arange(9 * 10 * 4).reshape(9, 10, 4))
@@ -134,7 +134,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
     def test_AuxiliaryCoordinate_squeeze(self):
         """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
-        x = f.auxiliary_coordinates(view=True)("longitude").value()
+        x = f.auxiliary_coordinates("longitude").value()
 
         bounds = cfdm.Bounds(
             data=cfdm.Data(numpy.arange(9 * 10 * 4).reshape(9, 10, 4))

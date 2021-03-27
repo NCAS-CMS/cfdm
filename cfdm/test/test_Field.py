@@ -368,53 +368,53 @@ class FieldTest(unittest.TestCase):
         _ = f.get_construct(key)
         self.assertIsNone(f.get_construct("qwerty", default=None))
 
-        constructs = self.f.auxiliary_coordinates(view=True)
+        constructs = self.f.auxiliary_coordinates()
         n = 3
         self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.AuxiliaryCoordinate)
 
-        constructs = self.f.cell_measures(view=True)
+        constructs = self.f.cell_measures()
         n = 1
         self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.CellMeasure)
 
-        constructs = self.f.cell_methods(view=True)
+        constructs = self.f.cell_methods()
         n = 2
         self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.CellMethod)
 
-        ordered = self.f.cell_methods(view=True).ordered()
+        ordered = self.f.cell_methods().ordered()
         self.assertIsInstance(ordered, collections.OrderedDict)
 
-        constructs = self.f.coordinate_references(view=True)
+        constructs = self.f.coordinate_references()
         n = 2
         self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.CoordinateReference)
 
-        constructs = self.f.dimension_coordinates(view=True)
+        constructs = self.f.dimension_coordinates()
         n = 3
         self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DimensionCoordinate)
 
-        constructs = self.f.domain_ancillaries(view=True)
+        constructs = self.f.domain_ancillaries()
         n = 3
         self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAncillary)
 
-        constructs = self.f.domain_axes(view=True)
+        constructs = self.f.domain_axes()
         n = 3
         self.assertEqual(len(constructs), n)
 
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAxis)
 
-        constructs = self.f.field_ancillaries(view=True)
+        constructs = self.f.field_ancillaries()
         n = 3
         self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
@@ -459,26 +459,26 @@ class FieldTest(unittest.TestCase):
 
         self.assertEqual(c.data.ndim, 1)
         self.assertEqual(c.get_property("standard_name"), "grid_latitude")
-        self.assertEqual(len(c.dimension_coordinates(view=True)), 1)
-        self.assertEqual(len(c.auxiliary_coordinates(view=True)), 1)
-        self.assertEqual(len(c.cell_measures(view=True)), 0)
-        self.assertEqual(len(c.coordinate_references(view=True)), 1)
-        self.assertEqual(len(c.domain_ancillaries(view=True)), 0)
-        self.assertEqual(len(c.field_ancillaries(view=True)), 0)
-        self.assertEqual(len(c.cell_methods(view=True)), 0)
+        self.assertEqual(len(c.dimension_coordinates()), 1)
+        self.assertEqual(len(c.auxiliary_coordinates()), 1)
+        self.assertEqual(len(c.cell_measures()), 0)
+        self.assertEqual(len(c.coordinate_references()), 1)
+        self.assertEqual(len(c.domain_ancillaries()), 0)
+        self.assertEqual(len(c.field_ancillaries()), 0)
+        self.assertEqual(len(c.cell_methods()), 0)
 
         key = f.construct_key("latitude")
         c = f.convert(key)
 
         self.assertEqual(c.data.ndim, 2)
         self.assertEqual(c.get_property("standard_name"), "latitude")
-        self.assertEqual(len(c.dimension_coordinates(view=True)), 2)
-        self.assertEqual(len(c.auxiliary_coordinates(view=True)), 3)
-        self.assertEqual(len(c.cell_measures(view=True)), 1)
-        self.assertEqual(len(c.coordinate_references(view=True)), 1)
-        self.assertEqual(len(c.domain_ancillaries(view=True)), 0)
-        self.assertEqual(len(c.field_ancillaries(view=True)), 0)
-        self.assertEqual(len(c.cell_methods(view=True)), 0)
+        self.assertEqual(len(c.dimension_coordinates()), 2)
+        self.assertEqual(len(c.auxiliary_coordinates()), 3)
+        self.assertEqual(len(c.cell_measures()), 1)
+        self.assertEqual(len(c.coordinate_references()), 1)
+        self.assertEqual(len(c.domain_ancillaries()), 0)
+        self.assertEqual(len(c.field_ancillaries()), 0)
+        self.assertEqual(len(c.cell_methods()), 0)
 
         with self.assertRaises(ValueError):
             f.convert("qwerty")

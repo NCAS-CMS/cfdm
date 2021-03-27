@@ -34,15 +34,15 @@ class DomainAncillaryTest(unittest.TestCase):
     def test_DomainAncillary__repr__str__dump(self):
         """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
-        domain_ancillaries = f.domain_ancillaries(view=True)
+        domain_ancillaries = f.domain_ancillaries("ncvar%a")
 
-        x = domain_ancillaries("ncvar%a").value()
+        x = domain_ancillaries.value()
         _ = repr(x)
         _ = str(x)
         self.assertIsInstance(x.dump(display=False), str)
 
         self.assertIsInstance(
-            x.dump(display=False, _key=domain_ancillaries("ncvar%a").key()),
+            x.dump(display=False, _key=domain_ancillaries.key()),
             str,
         )
 
@@ -53,13 +53,13 @@ class DomainAncillaryTest(unittest.TestCase):
         """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
 
-        a = f.auxiliary_coordinates(view=True)("latitude").value()
+        a = f.auxiliary_coordinates("latitude").value()
         cfdm.DomainAncillary(source=a)
 
     def test_DomainAncillary_properties(self):
         """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
-        x = f.domain_ancillaries(view=True)("ncvar%a").value()
+        x = f.domain_ancillaries("ncvar%a").value()
 
         x.set_property("long_name", "qwerty")
 
@@ -71,7 +71,7 @@ class DomainAncillaryTest(unittest.TestCase):
     def test_DomainAncillary_insert_dimension(self):
         """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
-        d = f.dimension_coordinates("grid_longitude", view=True).value()
+        d = f.dimension_coordinates("grid_longitude").value()
         x = cfdm.DomainAncillary(source=d)
 
         self.assertEqual(x.shape, (9,))
@@ -88,7 +88,7 @@ class DomainAncillaryTest(unittest.TestCase):
     def test_DomainAncillary_transpose(self):
         """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
-        a = f.auxiliary_coordinates(view=True)("longitude").value()
+        a = f.auxiliary_coordinates("longitude").value()
         bounds = cfdm.Bounds(
             data=cfdm.Data(numpy.arange(9 * 10 * 4).reshape(9, 10, 4))
         )
@@ -109,7 +109,7 @@ class DomainAncillaryTest(unittest.TestCase):
     def test_DomainAncillary_squeeze(self):
         """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
-        a = f.auxiliary_coordinates(view=True)("longitude").value()
+        a = f.auxiliary_coordinates("longitude").value()
         bounds = cfdm.Bounds(
             data=cfdm.Data(numpy.arange(9 * 10 * 4).reshape(9, 10, 4))
         )

@@ -40,7 +40,7 @@ class CellMeasureTest(unittest.TestCase):
         """TODO DOCS."""
         f = self.f
 
-        for cm in f.cell_measures(view=True).values():
+        for cm in f.cell_measures().values():
             _ = repr(cm)
             _ = str(cm)
             self.assertIsInstance(cm.dump(display=False), str)

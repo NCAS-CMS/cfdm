@@ -42,7 +42,7 @@ class DomainTest(unittest.TestCase):
 
         f = self.f
 
-        for d in f.domain_axes(view=True).values():
+        for d in f.domain_axes().values():
             _ = repr(d)
             _ = str(d)
             self.assertEqual(d.construct_type, "domain_axis")
@@ -66,7 +66,7 @@ class DomainTest(unittest.TestCase):
 
         f = self.f
 
-        d = list(f.domain_axes(view=True).values())[0]
+        d = list(f.domain_axes().values())[0]
         e = d.copy()
 
         self.assertTrue(d.equals(d, verbose=3))
@@ -98,7 +98,7 @@ class DomainTest(unittest.TestCase):
 
         f = self.f.copy()
 
-        for d in f.domain_axes(view=True).values():
+        for d in f.domain_axes().values():
             self.assertFalse(d.nc_is_unlimited())
             d.nc_set_unlimited(False)
             self.assertFalse(d.nc_is_unlimited())

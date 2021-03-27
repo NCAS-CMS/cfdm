@@ -523,60 +523,54 @@ class Field(
     def field_ancillaries(
         self,
         *identities,
-        view=False,
         todict=False,
         cache=None,
-        **identities_kwargs,
+        mode=None,
+        **kwargs,
     ):
         """Return field ancillary constructs.
 
-                .. versionadded:: (cfdm) 1.7.0
+             .. versionadded:: (cfdm) 1.7.0
 
-                .. seealso:: `constructs`, `get_construct`
+             .. seealso:: `constructs`, `get_construct`
 
-                :Returns:
+             :Returns:
 
-                    `Constructs`
-                        The field ancillary constructs and their construct keys.
+                 `Constructs`
+                     The field ancillary constructs and their construct keys.
         TODO
-                **Examples:**
+             **Examples:**
 
-                >>> print(f.field_ancillaries())
-                Constructs:
-                {}
+             >>> print(f.field_ancillaries())
+             Constructs:
+             {}
 
-                >>> print(f.field_ancillaries())
-                Constructs:
-                {'fieldancillary0': <{{repr}}FieldAncillary: air_temperature standard_error(10, 9) K>}
+             >>> print(f.field_ancillaries())
+             Constructs:
+             {'fieldancillary0': <{{repr}}FieldAncillary: air_temperature standard_error(10, 9) K>}
 
-                >>> print(f.field_ancillaries('specific_humuidity standard_error'))
-                Constructs:
-                {'fieldancillary0': <{{repr}}FieldAncillary: specific_humidity standard_error(10, 9) K>}
+             >>> print(f.field_ancillaries('specific_humuidity standard_error'))
+             Constructs:
+             {'fieldancillary0': <{{repr}}FieldAncillary: specific_humidity standard_error(10, 9) K>}
 
         """
-        if identities:
-            return self.constructs.chain(
-                "filter_by_type",
-                ("field_ancillary",),
-                "filter_by_identity",
-                identities,
-                view=view,
-                todict=todict,
-                cache=cache,
-                identity_kwargs=identities_kwargs,
-            )
-
-        return self.constructs.filter_by_type(
-            "field_ancillary", view=view, todict=todict, cache=cache
+        return self._zzz(
+            ("field_ancillary",),
+            "field_ancillaries",
+            *identities,
+            mode=mode,
+            todict=todict,
+            cache=cache,
+            **kwargs,
         )
 
     def cell_methods(
         self,
         *identities,
-        view=False,
         todict=False,
         cache=None,
-        **identities_kwargs,
+        mode=None,
+        **kwargs,
     ):
         """Return cell method constructs.
 
@@ -609,23 +603,14 @@ class Field(
                              ('cellmethod1', <{{repr}}CellMethod: domainaxis3: maximum>)])
 
         """
-        if identities:
-            return self.constructs.chain(
-                "filter_by_type",
-                ("cell_method",),
-                "filter_by_identity",
-                identities,
-                view=view,
-                todict=todict,
-                cache=cache,
-                identity_kwargs=identities_kwargs,
-            )
-
-        return self.constructs.filter_by_type(
+        return self._zzz(
+            ("cell_method",),
             "cell_method",
-            view=view,
+            *identities,
+            mode=mode,
             todict=todict,
             cache=cache,
+            **kwargs,
         )
 
     # ----------------------------------------------------------------

@@ -40,7 +40,7 @@ class CellMethodTest(unittest.TestCase):
 
         f = self.f
 
-        for c in f.cell_methods(view=True).values():
+        for c in f.cell_methods().values():
             _ = repr(c)
             _ = str(c)
             self.assertIsInstance(c.dump(display=False), str)
@@ -56,7 +56,7 @@ class CellMethodTest(unittest.TestCase):
         # ------------------------------------------------------------
         # Equals and idenities
         # ------------------------------------------------------------
-        for c in f.cell_methods(view=True).values():
+        for c in f.cell_methods().values():
             d = c.copy()
             self.assertTrue(c.equals(c, verbose=3))
             self.assertTrue(c.equals(d, verbose=3))

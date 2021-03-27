@@ -306,26 +306,26 @@ class read_writeTest(unittest.TestCase):
             "NETCDF3_64BIT_DATA",
         ):
             f = cfdm.read(self.filename)[0]
-            domain_axes = f.domain_axes(view=True)
+            domain_axes = f.domain_axes()
 
             domain_axes["domainaxis0"].nc_set_unlimited(True)
             cfdm.write(f, tmpfile, fmt=fmt)
 
             f = cfdm.read(tmpfile)[0]
-            domain_axes = f.domain_axes(view=True)
+            domain_axes = f.domain_axes()
             self.assertTrue(domain_axes["domainaxis0"].nc_is_unlimited())
 
         fmt = "NETCDF4"
         f = cfdm.read(self.filename)[0]
 
-        domain_axes = f.domain_axes(view=True)
+        domain_axes = f.domain_axes()
 
         domain_axes["domainaxis0"].nc_set_unlimited(True)
         domain_axes["domainaxis2"].nc_set_unlimited(True)
         cfdm.write(f, tmpfile, fmt=fmt)
 
         f = cfdm.read(tmpfile)[0]
-        domain_axes = f.domain_axes(view=True)
+        domain_axes = f.domain_axes()
         self.assertTrue(domain_axes["domainaxis0"].nc_is_unlimited())
         self.assertTrue(domain_axes["domainaxis2"].nc_is_unlimited())
 

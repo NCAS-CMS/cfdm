@@ -1071,7 +1071,7 @@ class Constructs(abstract.Container):
 
         return out
 
-    def filter_by_type(self, *types, view=False, todict=True, cache=None):
+    def filter_by_type(self, *types, todict=True, cache=None):
         """Select metadata constructs by type.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -1101,8 +1101,6 @@ class Constructs(abstract.Container):
                 selected.
 
         :Parameters:
-
-            {{view: `bool`, optional}}
 
             {{cache: optional}}
 
@@ -1161,9 +1159,6 @@ class Constructs(abstract.Container):
             # Keep all construct types
             ignore = self._ignore
 
-        if view:
-            return self.view(_ignore=ignore)
-
         return self.shallow_copy(_ignore=ignore)
 
     def key(self, default=ValueError()):
@@ -1206,8 +1201,8 @@ class Constructs(abstract.Container):
         <{{repr}}DimensionCoordinate: latitude(5) degrees_north>
 
         """
-        todict = self.todict()
-        n = len(todict)
+        d = self.todict()
+        n = len(d)
         if not n:
             return self._default(default, "Can't get key for zero constructs")
 
@@ -1216,7 +1211,7 @@ class Constructs(abstract.Container):
                 default, f"Can't get key for more than one ({n}) constructs"
             )
 
-        key, _ = todict.popitem()
+        key, _ = d.popitem()
 
         return key
 
@@ -1421,17 +1416,17 @@ class Constructs(abstract.Container):
         <{{repr}}DimensionCoordinate: latitude(5) degrees_north>
 
         """
-        todict = self.todict()
-        n = len(todict)
-        if not n:
+        d = self.todict()
+        if not d:
             return self._default(default, "Can't return zero constructs")
 
+        n = len(d)
         if n > 1:
             return self._default(
                 default, f"Can't return more than one ({n}) constructs"
             )
 
-        _, construct = todict.popitem()
+        _, construct = d.popitem()
 
         return construct
 
@@ -1439,9 +1434,9 @@ class Constructs(abstract.Container):
         """Return a view.
 
         The actual constructs returned are references to the original
-        ones, but any in-place changes to the view (such as removing a
-        construct) will also occur in the original `Constructs`
-        object, and the filter history of the view is also lost.
+        ones, but any in-place structural changes to the view (such as
+        removing a construct) will also occur in the original
+        `Constructs` object, and vice versa.
 
         .. versionadded:: (cfdm) 1.8.9.0
 

@@ -372,7 +372,7 @@ class CFDMImplementation(Implementation):
             arg = "and"
 
         return (
-            field.auxiliary_coordinates(view=True)
+            field.auxiliary_coordinates()  # TODO OPT
             .filter_by_axis(*axes, mode=arg)
             .todict()
         )
@@ -896,7 +896,7 @@ class CFDMImplementation(Implementation):
         :Returns:
 
         """
-        return field.domain_axes(view=True)[axis].get_size()
+        return field.domain_axes(todict=True)[axis].get_size()
 
     def get_sample_dimension_position(self, construct):
         """Returns the position of the compressed data sample dimension.
