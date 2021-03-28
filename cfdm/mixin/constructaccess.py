@@ -570,7 +570,7 @@ class ConstructAccess:
             return self._default(default, "Can't return zero constructs")
 
         return self._default(
-            default, f"Can't return more than one ({n}) constructs"
+            default, f"Can't return more than one ({n}) construct"
         )
 
     def construct_key(self, identity, default=ValueError()):
@@ -668,7 +668,7 @@ class ConstructAccess:
             )
 
         return self._default(
-            default, f"Can't return the keys of more than one ({n}) constructs"
+            default, f"Can't return the keys of more than one ({n}) construct"
         )
 
     def domain_axis_key(self, identity, default=ValueError()):
@@ -739,19 +739,6 @@ class ConstructAccess:
 
         """
         # Select 1-d coordinate constructs with the given identity
-        #        c = self.coordinates(view=True)
-        #        c = c.filter_by_naxes(1)
-        #        c = c.filter_by_identity(identity, todict=True)
-        #        c = self.constructs.chain(
-        #            "filter_by_type",
-        #            ("dimension_coordinate", "auxiliary_coordinate"),
-        #            "filter_by_naxes",
-        #            (1,),
-        #            "filter_by_identity",
-        #            (identity,),
-        #            todict=True,
-        #        )
-
         c = self.constructs.filter(
             filter_by_type=("dimension_coordinate", "auxiliary_coordinate"),
             filter_by_naxes=(1,),
@@ -759,10 +746,10 @@ class ConstructAccess:
             todict=True,
         )
 
-        if not len(c):
+        if not c:
             return self._default(
                 default,
-                f"No 1-d coordinate constructs have identity {identity!r}",
+                f"There are no 1-d {identity!r} coordinate constructs",
             )
 
         data_axes = self.constructs.data_axes()
@@ -783,15 +770,15 @@ class ConstructAccess:
         if not keys:
             return self._default(
                 default,
-                "1-d coordinate constructs selected with identity "
-                f"{coord!r} have not been assigned a domain axis constructs",
+                "1-d {identity!r} coordinate constructs "
+                "have not been assigned a domain axis construct",
             )
 
         if len(keys) > 1:
             return self._default(
                 default,
-                "Multiple 1-d coordinate constructs selected with "
-                f"identity {identity!r} span multiple domain axes: {keys!r}",
+                f"Multiple 1-d {identity!r} coordinate constructs "
+                "span multiple domain axes: {keys!r}",
             )
 
         return keys.pop()
