@@ -367,13 +367,13 @@ class CFDMImplementation(Implementation):
             axes = []
 
         if exact:
-            arg = "exact"
+            mode = "exact"
         else:
-            arg = "and"
+            mode = "and"
 
         return (
             field.auxiliary_coordinates()  # TODO OPT
-            .filter_by_axis(*axes, mode=arg)
+            .filter_by_axis(mode, *axes)
             .todict()
         )
 
@@ -592,9 +592,9 @@ class CFDMImplementation(Implementation):
             axes = []
 
         if data:
-            return dict(field.constructs.filter_by_data().items())
+            return field.constructs.filter_by_data(todict=True)
 
-        return dict(field.constructs.filter_by_axis(*axes, mode="and").items())
+        return field.constructs.filter_by_axis("and", *axes, todict=True)
 
     def get_coordinate_reference_coordinates(self, coordinate_reference):
         """Return the coordinates of a coordinate reference construct.

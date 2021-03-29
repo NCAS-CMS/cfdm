@@ -8,9 +8,57 @@ class ConstructAccess:
 
     """
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
+    def _construct_types(
+        self,
+        _ctypes,
+        _method,
+        *identities,
+        axis_mode=None,
+        property_mode=None,
+        todict=False,
+        cache=None,
+        **filters,
+    ):
+        """TODO.
+
+        .. versionadded:: (cfdm) 1.8.10.0
+
+        """
+        if not (identities or filters):
+            return self.constructs.filter_by_type(
+                *_ctypes, todict=todict, cache=cache
+            )
+
+        kwargs = {"filter_by_type": _ctypes}
+        if filters:
+            if "filter_by_type" in filters:
+                raise TypeError(
+                    f"{_method}() got an unexpected keyword argument "
+                    "'filter_by_type'"
+                )
+
+            kwargs.update(filters)
+
+        if identities:
+            if "filter_by_identity" in filters:
+                raise TypeError(
+                    f"Can't set {_method}() keyword argument "
+                    "'filter_by_identity' when positional *identities "
+                    "arguments are also set"
+                )
+
+            # Ensure that filter_by_identity is the last filter
+            # applied, as it's the most expensive.
+            kwargs["filter_by_identity"] = identities
+
+        return self.constructs.filter(
+            todict=todict,
+            cache=cache,
+            axis_mode=axis_mode,
+            property_mode=property_mode,
+            **kwargs,
+        )
+
     def _unique_construct_names(self):
         """Return unique metadata construct names.
 
@@ -91,7 +139,8 @@ class ConstructAccess:
     def coordinate_references(
         self,
         *identities,
-        mode=None,
+        axis_mode=None,
+        property_mode=None,
         todict=False,
         cache=None,
         **filters,
@@ -126,11 +175,12 @@ class ConstructAccess:
          'coordinatereference1': <{{repr}}CoordinateReference: rotated_latitude_longitude>}
 
         """
-        return self._zzz(
+        return self._construct_types(
             ("coordinate_reference",),
             "coordinate_references",
             *identities,
-            mode=mode,
+            axis_mode=axis_mode,
+            property_mode=property_mode,
             todict=todict,
             cache=cache,
             **filters,
@@ -139,9 +189,10 @@ class ConstructAccess:
     def domain_axes(
         self,
         *identities,
+        axis_mode=None,
+        property_mode=None,
         todict=False,
         cache=None,
-        mode=None,
         **filters,
     ):
         """Return domain axis constructs.
@@ -175,11 +226,12 @@ class ConstructAccess:
          'domainaxis3': <{{repr}}DomainAxis: size(1)>}
 
         """
-        return self._zzz(
+        return self._construct_types(
             ("domain_axis",),
             "domain_axes",
             *identities,
-            mode=mode,
+            axis_mode=axis_mode,
+            property_mode=property_mode,
             todict=todict,
             cache=cache,
             **filters,
@@ -188,9 +240,10 @@ class ConstructAccess:
     def auxiliary_coordinates(
         self,
         *identities,
+        axis_mode=None,
+        property_mode=None,
         todict=False,
         cache=None,
-        mode=None,
         **filters,
     ):
         """Return auxiliary coordinate constructs.
@@ -224,64 +277,22 @@ class ConstructAccess:
          'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
 
         """
-        return self._zzz(
+        return self._construct_types(
             ("auxiliary_coordinate",),
             "auxiliary_coordinates",
             *identities,
-            mode=mode,
+            axis_mode=axis_mode,
+            property_mode=property_mode,
             todict=todict,
             cache=cache,
             **filters,
         )
 
-    def _zzz(
-        self,
-        _ctypes,
-        _method,
-        *identities,
-        mode=None,
-        todict=False,
-        cache=None,
-        **filters,
-    ):
-        """TODO.
-
-        .. versionadded:: (cfdm) 1.8.10.0
-
-        """
-        if not (identities or filters):
-            return self.constructs.filter_by_type(
-                *_ctypes, todict=todict, cache=cache
-            )
-
-        kwargs = {"filter_by_type": _ctypes}
-        if filters:
-            if "filter_by_type" in filters:
-                raise TypeError(
-                    f"{_method}() got an unexpected keyword argument "
-                    "'filter_by_type'"
-                )
-
-            kwargs.update(filters)
-
-        if identities:
-            if "filter_by_identity" in filters:
-                raise TypeError(
-                    f"Can't set {_method}() keyword argument "
-                    "'filter_by_identity' when positional *identities "
-                    "arguments are also set"
-                )
-
-            kwargs["filter_by_identity"] = identities
-
-        return self.constructs.filter(
-            todict=todict, cache=cache, mode=mode, **kwargs
-        )
-
     def dimension_coordinates(
         self,
         *identities,
-        mode=None,
+        axis_mode=None,
+        property_mode=None,
         todict=False,
         cache=None,
         **filters,
@@ -318,11 +329,12 @@ class ConstructAccess:
          'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
 
         """
-        return self._zzz(
+        return self._construct_types(
             ("dimension_coordinate",),
             "dimension_coordinates",
             *identities,
-            mode=mode,
+            axis_mode=axis_mode,
+            property_mode=property_mode,
             todict=todict,
             cache=cache,
             **filters,
@@ -331,9 +343,10 @@ class ConstructAccess:
     def coordinates(
         self,
         *identities,
+        axis_mode=None,
+        property_mode=None,
         todict=False,
         cache=None,
-        mode=None,
         **filters,
     ):
         """Return dimension and auxiliary coordinate constructs.
@@ -372,14 +385,15 @@ class ConstructAccess:
         'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
 
         """
-        return self._zzz(
+        return self._construct_types(
             (
                 "dimension_coordinate",
                 "auxiliary_coordinate",
             ),
             "coordinates",
             *identities,
-            mode=mode,
+            axis_mode=axis_mode,
+            property_mode=property_mode,
             todict=todict,
             cache=cache,
             **filters,
@@ -388,9 +402,10 @@ class ConstructAccess:
     def domain_ancillaries(
         self,
         *identities,
+        axis_mode=None,
+        property_mode=None,
         todict=False,
         cache=None,
-        mode=None,
         **filters,
     ):
         """Return domain ancillary constructs.
@@ -423,11 +438,12 @@ class ConstructAccess:
          'domainancillary2': <{{repr}}DomainAncillary: surface_altitude(10, 9) m>}
 
         """
-        return self._zzz(
+        return self._construct_types(
             ("domain_ancillary",),
             "domain_ancillaries",
             *identities,
-            mode=mode,
+            axis_mode=axis_mode,
+            property_mode=property_mode,
             todict=todict,
             cache=cache,
             **filters,
@@ -436,9 +452,10 @@ class ConstructAccess:
     def cell_measures(
         self,
         *identities,
+        axis_mode=None,
+        property_mode=None,
         todict=False,
         cache=None,
-        mode=None,
         **filters,
     ):
         """Return cell measure constructs.
@@ -469,17 +486,25 @@ class ConstructAccess:
         {'cellmeasure0': <{{repr}}CellMeasure: measure%area(9, 10) km2>}
 
         """
-        return self._zzz(
+        return self._construct_types(
             ("cell_measure",),
             "cell_measures",
             *identities,
-            mode=mode,
+            axis_mode=axis_mode,
+            property_mode=property_mode,
             todict=todict,
             cache=cache,
             **filters,
         )
 
-    def construct(self, identity, default=ValueError()):
+    def construct(
+        self,
+        identity=None,
+        default=ValueError(),
+        axis_mode=None,
+        property_mode=None,
+        **filters,
+    ):
         """Select a metadata construct by its identity.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -560,7 +585,24 @@ class ConstructAccess:
         'no construct'
 
         """
-        c = self.constructs.filter_by_identity(identity, todict=True)
+        if identity:
+            if "filter_by_identity" in filters:
+                raise TypeError(
+                    "Can't set keyword argument 'filter_by_identity' when "
+                    "the 'identity' argument is also set"
+                )
+
+            # Ensure that filter_by_identity is the last filter
+            # applied, as it's the most expensive.
+            filters["filter_by_identity"] = (identity,)
+
+        c = self.constructs.filter(
+            axis_mode=axis_mode,
+            property_mode=property_mode,
+            todict=True,
+            **filters,
+        )
+
         n = len(c)
         if n == 1:
             _, c = c.popitem()
@@ -573,7 +615,14 @@ class ConstructAccess:
             default, f"Can't return more than one ({n}) construct"
         )
 
-    def construct_key(self, identity, default=ValueError()):
+    def construct_key(
+        self,
+        identity=None,
+        default=ValueError(),
+        axis_mode=None,
+        property_mode=None,
+        **filters,
+    ):
         """Select the key of a metadata construct by its identity.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -656,7 +705,24 @@ class ConstructAccess:
         'no construct'
 
         """
-        c = self.constructs.filter_by_identity(identity, todict=True)
+        if identity:
+            if "filter_by_identity" in filters:
+                raise TypeError(
+                    "Can't set keyword argument 'filter_by_identity' when "
+                    "the 'identity' argument is also set"
+                )
+
+            # Ensure that filter_by_identity is the last filter
+            # applied, as it's the most expensive.
+            filters["filter_by_identity"] = (identity,)
+
+        c = self.constructs.filter(
+            axis_mode=axis_mode,
+            property_mode=property_mode,
+            todict=True,
+            **filters,
+        )
+
         n = len(c)
         if n == 1:
             key, _ = c.popitem()

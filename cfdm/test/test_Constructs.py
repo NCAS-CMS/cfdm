@@ -1,7 +1,5 @@
 import copy
 import datetime
-import inspect
-import os
 import unittest
 
 import faulthandler
@@ -13,6 +11,8 @@ import cfdm
 
 class ConstructsTest(unittest.TestCase):
     """TODO DOCS."""
+
+    f = cfdm.example_field(1)
 
     def setUp(self):
         """TODO DOCS."""
@@ -27,31 +27,16 @@ class ConstructsTest(unittest.TestCase):
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
 
-        self.filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
-        )
-        f = cfdm.read(self.filename)
-        self.assertEqual(len(f), 1, "f={!r}".format(f))
-        self.f = f[0]
-
-        self.test_only = []
-
     def test_Constructs__repr__str__dump(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f
 
         c = f.constructs
-        _ = repr(c)
-        _ = str(c)
+        repr(c)
+        str(c)
 
     def test_Constructs_key_items_value(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f
 
         for key, value in f.constructs.items():
@@ -61,9 +46,6 @@ class ConstructsTest(unittest.TestCase):
 
     def test_Constructs_copy_shallow_copy(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         c = self.f.constructs
 
         d = c.copy()
@@ -74,26 +56,43 @@ class ConstructsTest(unittest.TestCase):
         self.assertTrue(c.equals(d, verbose=3))
         self.assertTrue(d.equals(c, verbose=3))
 
-    def test_Constructs_FILTER(self):
+    def test_Constructs_filter(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        c = self.f.constructs
 
-        self.f.copy()
+        for todict in (False, True):
+            d = c.filter(
+                filter_by_axis=(),
+                filter_by_data=(),
+                filter_by_identity=(),
+                filter_by_key=(),
+                filter_by_measure=(),
+                filter_by_method=(),
+                filter_by_naxes=(),
+                filter_by_ncdim=(),
+                filter_by_ncvar=(),
+                filter_by_property={},
+                filter_by_size=(),
+                filter_by_type=(),
+                todict=todict,
+            )
+            self.assertEqual(len(d), 0)
 
+    def test_Constructs_FILTERING(self):
+        """TODO DOCS."""
         c = self.f.constructs
 
         self.assertEqual(len(c), 20)
         self.assertEqual(len(c.filter_by_identity()), 20)
-        self.assertEqual(len(c.filter_by_axis()), 13)
+        self.assertEqual(len(c.filter_by_axis()), 12)
         self.assertEqual(len(c.filter_by_key()), 20)
-        self.assertEqual(len(c.filter_by_data()), 13)
-        self.assertEqual(len(c.filter_by_property()), 13)
+        self.assertEqual(len(c.filter_by_data()), 12)
+        self.assertEqual(len(c.filter_by_property()), 12)
         self.assertEqual(len(c.filter_by_type()), 20)
         self.assertEqual(len(c.filter_by_method()), 2)
         self.assertEqual(len(c.filter_by_measure()), 1)
-        self.assertEqual(len(c.filter_by_ncvar()), 15)
-        self.assertEqual(len(c.filter_by_ncdim()), 3)
+        self.assertEqual(len(c.filter_by_ncvar()), 14)
+        self.assertEqual(len(c.filter_by_ncdim()), 4)
 
         self.assertEqual(len(c.filter_by_identity("qwerty")), 0)
         self.assertEqual(len(c.filter_by_key("qwerty")), 0)
@@ -109,8 +108,8 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(len(c.filter_by_type("cell_measure")), 1)
         self.assertEqual(len(c.filter_by_method("mean")), 1)
         self.assertEqual(len(c.filter_by_measure("area")), 1)
-        self.assertEqual(len(c.filter_by_ncvar("areacella")), 1)
-        self.assertEqual(len(c.filter_by_ncdim("grid_latitude")), 1)
+        self.assertEqual(len(c.filter_by_ncvar("a")), 1)
+        self.assertEqual(len(c.filter_by_ncdim("y")), 1)
         self.assertEqual(len(c.filter_by_size(9)), 1)
 
         constructs = c.filter_by_type(
@@ -124,129 +123,71 @@ class ConstructsTest(unittest.TestCase):
             "field_ancillary",
         )
         n = 20
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
+        self.assertEqual(len(constructs), n)
 
         constructs = c.filter_by_type("auxiliary_coordinate")
         n = 3
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
+        self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.AuxiliaryCoordinate)
 
         constructs = c.filter_by_type("cell_measure")
         n = 1
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
+        self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.CellMeasure)
 
         constructs = c.filter_by_size(9, 10)
         n = 2
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
+        self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAxis)
 
         constructs = c.filter_by_type("cell_method")
         n = 2
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
+        self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.CellMethod)
 
         constructs = c.filter_by_type("dimension_coordinate")
-        n = 3
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
+        n = 4
+        self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DimensionCoordinate)
 
         constructs = c.filter_by_type("coordinate_reference")
         n = 2
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
+        self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.CoordinateReference)
 
         constructs = c.filter_by_type("domain_ancillary")
         n = 3
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
+        self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAncillary)
 
         constructs = c.filter_by_type("field_ancillary")
-        n = 3
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
+        n = 1
+        self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.FieldAncillary)
 
         constructs = c.filter_by_type("domain_axis")
-        n = 3
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
+        n = 4
+        self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAxis)
 
         constructs = c.filter_by_type(*["domain_ancillary"])
         n = 3
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
+        self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAncillary)
 
-        constructs = c.filter_by_type(*["domain_axis"])
-        n = 3
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
-        for key, value in constructs.items():
-            self.assertIsInstance(value, cfdm.DomainAxis)
-
         constructs = c.filter_by_type("domain_ancillary", "domain_axis")
-        n = 6
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
+        n = 7
+        self.assertEqual(len(constructs), n)
 
         # Property
         for mode in ([], ["and"], ["or"]):
@@ -269,7 +210,7 @@ class ConstructsTest(unittest.TestCase):
                 ["domainaxis0", "domainaxis1"],
                 ["domainaxis0", "domainaxis1", "domainaxis2"],
             ):
-                d = c.filter_by_axis(*args, mode=mode)
+                d = c.filter_by_axis(mode, *args)
                 e = d.inverse_filter()
                 self.assertEqual(len(e), len(c) - len(d))
 
@@ -306,9 +247,6 @@ class ConstructsTest(unittest.TestCase):
 
     def test_Constructs_copy(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.example_field(1)
         c = f.constructs
 
@@ -317,9 +255,6 @@ class ConstructsTest(unittest.TestCase):
 
     def test_Constructs__getitem__(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.example_field(1)
         c = f.constructs
 
@@ -339,9 +274,6 @@ class ConstructsTest(unittest.TestCase):
 
     def test_Constructs_private(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.example_field(1)
         c = f.domain.constructs
 

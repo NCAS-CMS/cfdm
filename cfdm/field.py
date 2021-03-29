@@ -331,7 +331,7 @@ class Field(
 
         if data_axes:
             for key, construct in new.constructs.filter_by_axis(
-                *data_axes, mode="or", todict=True
+                "or", *data_axes, todict=True
             ).items():
                 needs_slicing = False
                 dice = []
@@ -523,10 +523,11 @@ class Field(
     def field_ancillaries(
         self,
         *identities,
+        axis_mode=None,
+        property_mode=None,
         todict=False,
         cache=None,
-        mode=None,
-        **kwargs,
+        **filters,
     ):
         """Return field ancillary constructs.
 
@@ -554,23 +555,25 @@ class Field(
              {'fieldancillary0': <{{repr}}FieldAncillary: specific_humidity standard_error(10, 9) K>}
 
         """
-        return self._zzz(
+        return self._construct_types(
             ("field_ancillary",),
             "field_ancillaries",
             *identities,
-            mode=mode,
+            axis_mode=axis_mode,
+            property_mode=property_mode,
             todict=todict,
             cache=cache,
-            **kwargs,
+            **filters,
         )
 
     def cell_methods(
         self,
         *identities,
+        axis_mode=None,
+        property_mode=None,
         todict=False,
         cache=None,
-        mode=None,
-        **kwargs,
+        **filters,
     ):
         """Return cell method constructs.
 
@@ -603,14 +606,15 @@ class Field(
                              ('cellmethod1', <{{repr}}CellMethod: domainaxis3: maximum>)])
 
         """
-        return self._zzz(
+        return self._construct_types(
             ("cell_method",),
             "cell_method",
             *identities,
-            mode=mode,
+            axis_mode=axis_mode,
+            property_mode=property_mode,
             todict=todict,
             cache=cache,
-            **kwargs,
+            **filters,
         )
 
     # ----------------------------------------------------------------
@@ -991,7 +995,7 @@ class Field(
                 shape1 = f.data.shape[1]
 
             for key, c in f.constructs.filter_by_axis(
-                *axes, mode="or", todict=True
+                "or", *axes, todict=True
             ).items():
 
                 c_axes = f.get_data_axes(key)
@@ -2066,6 +2070,8 @@ class Field(
 
             # Add coordinate references which span a subset of the item's
             # axes
+            domain_ancillaries = self.domain_ancillaries(todict=True)
+
             for rcid, ref in self.coordinate_references(todict=True).items():
                 new_coordinates = [
                     ccid
@@ -2098,7 +2104,7 @@ class Field(
                     ) in (
                         ref.coordinate_conversion.domain_ancillaries().values()
                     ):
-                        construct = self.constructs.get(dakey)
+                        construct = domain_ancillaries.get(dakey)
                         if construct is not None:
                             axes = constructs_data_axes.get(dakey)
                             f.set_construct(

@@ -44,101 +44,15 @@ class Constructs(mixin.Container, core.Constructs):
 
     """
 
-    @classmethod
-    def _filter_args(
-            cls,
-            method,
-            args,
-            original=None,
-            todict=False,
-            property_mode=None,
+    def __call__(
+        self,
+        *identities,
+        axis_mode="and",
+        property_mode="and",
+        todict=False,
+        cache=None,
+        **filters,
     ):
-        """TODO.
-
-        .. versionadded:: (cfdm) 1.8.10.0
-
-        :Parameters:
-
-        """
-        args0 = (original, todict, None)
-
-        if method in == "filter_by_property":
-            # `_filter_by_property` has a different syntax to the
-            # other "_filter_by_*"
-            if property_mode is None:
-                return args0
-
-            return args0 + (property_mode,)
-
-        return args0 + tuple(args)
-
-    @classmethod
-    def _filter_kwargs(
-            cls,
-            method,
-            args,
-            axis_mode=None,
-            _identities_config=None,
-    ):
-        """TODO.
-
-        .. versionadded:: (cfdm) 1.8.10.0
-
-        :Parameters:
-
-        """
-        if isinstance(args, dict):
-            return args
-
-        kwargs = {}
-
-        if not _identities_config and axis_mode is None:
-            return kwargs
-
-        if _identities_config and method == "filter_by_identity":
-            kwargs["_identities_config"] = _identities_config
-            return kwargs
-
-        if axis_mode is not None and method == "filter_by_axis":
-            kwargs["mode"] = axis_mode
-            return kwargs
-    @staticmethod
-    def _filter_preprocess(arg, todict=False, filter_applied=None):
-        """TODO.
-
-        .. versionadded:: (cfdm) 1.8.10.0
-
-        :Parameters:
-
-            arg: `Constructs` or `dict`
-                TODO
-
-            todict: `bool`, optional
-                If True, and *arg* is a `Constructs` object, then
-                return a dictionary.
-
-            filter_applied: `dict` optional
-                TODO
-
-        """
-        if isinstance(arg, dict):
-            return arg, arg.pop
-
-        if todict:
-            arg = arg.todict()
-            return arg, arg.pop
-
-        arg = arg.shallow_copy()
-
-        if filter_applied:
-            arg._prefiltered = arg.shallow_copy()
-            arg._filters_applied = arg.filters_applied() + (filter_applied,)
-
-        return arg, arg._pop
-
-    def __call__(self, *identities, axis_mode=None,
-                 property_mode=None, todict=False, cache=None,
-                 **kwargs ):
         """Select metadata constructs by identity.
 
         Calling a `Constructs` instance selects metadata constructs by
@@ -181,24 +95,28 @@ class Constructs(mixin.Container, core.Constructs):
         See `filter_by_identity` for more examples.
 
         """
-        if not kwargs:
+        if not filters:
             return self.filter_by_identity(
                 *identities, todict=todict, cache=cache
             )
 
         if identities:
-            if "filter_by_identity" in kwargs:
+            if "filter_by_identity" in filters:
                 raise TypeError(
                     f"Can't set {self.__class__.__name__}.__call__() "
                     "keyword argument 'filter_by_identity' when "
                     "positional *identities arguments are also set"
                 )
 
-            kwargs["filter_by_identity"] = identities
+            filters["filter_by_identity"] = identities
 
-        return self.filter(axis_mode=axis_mode,
-                           property_mode=property_mode, todict=todict,
-                           cache=cache, **kwargs)
+        return self.filter(
+            axis_mode=axis_mode,
+            property_mode=property_mode,
+            todict=todict,
+            cache=cache,
+            **filters,
+        )
 
     def __repr__(self):
         """Called by the `repr` built-in function.
@@ -250,9 +168,6 @@ class Constructs(mixin.Container, core.Constructs):
 
         return "\n ".join(out)
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
     def _axes_to_constructs(self):
         """Maps domain axes to constructs whose data span them.
 
@@ -562,6 +477,129 @@ class Constructs(mixin.Container, core.Constructs):
             return False
 
         return True
+
+    @classmethod
+    def _filter_parse_args(
+        cls,
+        method_name,
+        args,
+        todict=False,
+        cache=None,
+        axis_mode=None,
+        property_mode=None,
+        _identities_config=None,
+    ):
+        """TODO.
+
+        .. versionadded:: (cfdm) 1.8.10.0
+
+        :Parameters:
+
+            method_name: `str`
+                TODO
+
+            args:
+                TODO
+
+            todict: `bool`
+                TODO
+
+            cache: optional
+                TODO
+
+            property_mode: `str`, optional
+                TODO
+
+        :Returns:
+
+            `tuple`
+                asdasds TODO
+
+        """
+        out = (todict, cache)
+
+        if method_name == "filter_by_identity":
+            out += (_identities_config,)
+        elif method_name == "filter_by_axis":
+            out += (axis_mode,)
+        elif method_name == "filter_by_property":
+            out += (property_mode,)
+
+        out += (args,)
+
+        return out
+
+    @classmethod
+    def _filter_preprocess(cls, arg, todict=False, filter_applied=None):
+        """TODO.
+
+        .. versionadded:: (cfdm) 1.8.10.0
+
+        :Parameters:
+
+            arg: `Constructs` or `dict`
+                TODO
+
+            todict: `bool`, optional
+                If True, and *arg* is a `Constructs` object, then
+                return its dictionary representation.
+
+            filter_applied: `dict` optional
+                TODO
+
+        :Returns:
+
+                asdasds TODO
+
+        """
+        if isinstance(arg, dict):
+            return arg, arg.pop
+
+        if todict:
+            arg = arg.todict()
+            return arg, arg.pop
+
+        arg = arg.shallow_copy()
+
+        if filter_applied:
+            arg._prefiltered = arg.shallow_copy()
+            arg._filters_applied = arg.filters_applied() + (filter_applied,)
+
+        return arg, arg._pop
+
+    @classmethod
+    def _matching_values(cls, value0, construct, value1, basic=False):
+        """Whether or not two values are the same.
+
+        :Parameters:
+
+            value0:
+                The first value to be matched.
+
+            construct:
+                The construct whose `_equals` method is used to
+                determine whether values can be considered to match.
+
+            value1:
+                The second value to be matched.
+
+            basic: `bool`
+                If True then value0 and value1 will be compared with
+                the basic ``==`` operator.
+
+        :Returns:
+
+            `bool`
+                Whether or not the two values match.
+
+        """
+        if basic:
+            return bool(value1 == value0)
+
+        try:
+            return value0.search(value1)
+        except (AttributeError, TypeError):
+            return construct._equals(value1, value0)
 
     def copy(self, data=True):
         """Return a deep copy.
@@ -961,8 +999,8 @@ class Constructs(mixin.Container, core.Constructs):
 
     def filter(
         self,
-        axis_mode="and",
-        property_mode="and",
+        axis_mode=None,
+        property_mode=None,
         todict=False,
         cache=None,
         _identities_config={},
@@ -1024,7 +1062,9 @@ class Constructs(mixin.Container, core.Constructs):
                                     *axis* parameter of
                                     `filter_by_axis`
 
-                filter_by_data----- ???
+                filter_by_data----- Any value is allowed which will be
+                                    ignored, as `filter_by_data` does
+                                    not have any positional arguments.
 
                 filter_by_identity- A sequence as expected by the
                                     *identities* parameter of
@@ -1089,52 +1129,42 @@ class Constructs(mixin.Container, core.Constructs):
         if cache is not None:
             return cache
 
-        cls = type(self)
         if not filters:
-            out, _ = cls._filter_preprocess(self, todict=todict)
+            out, _ = self._filter_preprocess(self, todict=todict)
             return out
-
-        _data_axes = self._construct_axes
 
         # Apply filters
         out = self
         for method_name, args in filters.items():
             try:
-                filter_method = getattr(cls, "_" + method_name)
+                filter_method = getattr(self, "_" + method_name)
             except AttributeError:
                 raise TypeError(
                     "filter() got an unexpected keyword argument "
                     f"{method_name!r}"
                 )
 
-            kwargs = cls._filter_kwargs(
+            args = self._filter_parse_args(
                 method_name,
                 args,
+                todict=todict,
+                cache=cache,
                 axis_mode=axis_mode,
+                property_mode=property_mode,
                 _identities_config=_identities_config,
             )
 
-            args = cls._filter_args(
-                method_name,
-                args,
-                original=self,
-                todict=todict,
-                property_mode=property_mode,
-            )
-
-            out = filter_method(out, *args, **kwargs)
+            out = filter_method(out, *args)
 
         return out
 
-    @classmethod
     def _filter_by_axis(
-        cls,
+        self,
         arg,
-        original,
         todict,
         cache,
-        *axes,
-        axis_mode="and",
+        mode,
+        axes,
     ):
         """Worker function for `filter_by_axis` and `filter`.
 
@@ -1144,36 +1174,34 @@ class Constructs(mixin.Container, core.Constructs):
         if cache is not None:
             return cache
 
-        # Parse the axis_mode parameter
+        # Parse the mode parameter
         _or = False
         _exact = False
         _subset = False
-        if axis_mode == "and":
+        if mode in ("and", None):
             pass
-        elif axis_mode == "or":
+        elif mode == "or":
             _or = True
-        elif axis_mode == "exact":
+        elif mode == "exact":
             _exact = True
-        elif axis_mode == "subset":
+        elif mode == "subset":
             _subset = True
         elif axes:
             raise ValueError(
-                "'axis_mode' parameter must be one of 'and', 'or', 'exact', "
-                f"'subset'. Got: {axis_mode!r}"
+                f"filter_by_axis() got incorrect 'mode' value {mode!r}. "
+                "Expected one of  'and', 'or', 'exact', 'subset', None"
             )
 
-        out, pop = cls._filter_preprocess(
+        out, pop = self._filter_preprocess(
             arg,
-            filter_applied={"filter_by_axis": (axes, {"axis_mode": axis_mode})},
+            filter_applied={"filter_by_axis": (mode, axes)},
             todict=todict,
         )
 
-        data_axes = original._construct_axes
+        data_axes = self._construct_axes
         if not axes:
-            construct_type = original._construct_type
             for cid in tuple(out.keys()):
-                if construct_type[cid] not in data_axes:
-                    # This construct does not have data axes
+                if cid not in data_axes:
                     pop(cid)
 
             return out
@@ -1212,8 +1240,8 @@ class Constructs(mixin.Container, core.Constructs):
 
     def filter_by_axis(
         self,
+        mode="and",
         *axes,
-        axis_mode="and",
         todict=False,
         cache=None,
     ):
@@ -1241,13 +1269,13 @@ class Constructs(mixin.Container, core.Constructs):
                 could have data, spanning any domain axes constructs,
                 are selected.
 
-            axis_mode: `str`, optional
+            mode: `str`, optional
                 Define the relationship between the given domain axes
                 and the constructs' data.
 
-                ===========  =================================================
-                *axis_mode*  Description
-                ===========  =================================================
+                ==========  =================================================
+                *mode*      Description
+                ==========  =================================================
                 ``'and'``   A construct is selected if it spans *all* of the
                             given domain axes, *and possibly others*.
 
@@ -1259,9 +1287,9 @@ class Constructs(mixin.Container, core.Constructs):
 
                 ``subset``  A construct is selected if it spans *a subset* of
                             the given domain axes, *and no others*.
-                ===========  ==================================================
+                ==========  ==================================================
 
-                By default *axis_mode* is ``'and'``.
+                By default *mode* is ``'and'``.
 
             {{todict: `bool`, optional}}
 
@@ -1299,12 +1327,15 @@ class Constructs(mixin.Container, core.Constructs):
         """
         return self._filter_by_axis(
             self,
-            self,
             todict,
             cache,
-            *axes,
-            axis_mode=axis_mode,
+            mode,
+            axes,
         )
+
+    def _filter_by_data(self, arg, todict, cache, *ignore):
+        """TODO."""
+        return self._filter_by_type(arg, todict, cache, self._array_constructs)
 
     def filter_by_data(self, todict=False, cache=None):
         """Selects metadata constructs that could contain data.
@@ -1341,19 +1372,15 @@ class Constructs(mixin.Container, core.Constructs):
         >>> d = c.filter_by_data()
 
         """
-        return self.filter_by_type(
-            *self._array_constructs, todict=todict, cache=cache
-        )
+        return self._filter_by_data(self, todict, cache)
 
-    @classmethod
     def _filter_by_identity(
-        cls,
+        self,
         arg,
-            original,
         todict,
         cache,
-        *identities,
-        _identities_config={},
+        _identities_config,
+        identities,
     ):
         """Worker function for `filter_by_identity` and `filter`.
 
@@ -1362,7 +1389,7 @@ class Constructs(mixin.Container, core.Constructs):
         if cache is not None:
             return cache
 
-        out, pop = cls._filter_preprocess(
+        out, pop = self._filter_preprocess(
             arg,
             filter_applied={"filter_by_identity": identities},
             todict=todict,
@@ -1379,9 +1406,7 @@ class Constructs(mixin.Container, core.Constructs):
                 construct.identities(generator=True, **_identities_config),
             ):
                 for value0 in identities:
-                    ok = cls._matching_values(
-                        value0, construct, value1, basic=True
-                    )
+                    ok = self._matching_values(value0, construct, value1)
                     if ok:
                         break
 
@@ -1490,12 +1515,36 @@ class Constructs(mixin.Container, core.Constructs):
         """
         return self._filter_by_identity(
             self,
-            self,
             todict,
             cache,
-            *identities,
-            _identities_config=_identities_config,
+            _identities_config,
+            identities,
         )
+
+    def _filter_by_key(self, arg, todict, cache, keys):
+        """TODO.        """
+        if cache is not None:
+            return cache
+
+        out, pop = self._filter_preprocess(
+            arg,
+            filter_applied={"filter_by_key": keys},
+            todict=todict,
+        )
+
+        if not keys:
+            return out
+
+        if isinstance(out, dict):
+            construct_keys = out
+        else:
+            construct_keys = out._construct_type
+
+        for cid in tuple(construct_keys):
+            if cid not in keys:
+                pop(cid)
+
+        return out
 
     def filter_by_key(self, *keys, todict=False, cache=None):
         """Select metadata constructs by key.
@@ -1542,24 +1591,9 @@ class Constructs(mixin.Container, core.Constructs):
         >>> d = c.filter_by_key('dimensioncoordinate1', 'fieldancillary0')
 
         """
-        out = self.shallow_copy()
+        return self._filter_by_key(self, todict, cache, keys)
 
-        out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() + (
-            {"filter_by_key": keys},
-        )
-
-        if not keys:
-            return out
-
-        for cid in tuple(out._construct_type):
-            if cid not in keys:
-                out._pop(cid)
-
-        return out
-
-    @classmethod
-    def _filter_by_measure(cls, arg, original, todict, cache, *measures):
+    def _filter_by_measure(self, arg, todict, cache, measures):
         """Worker function for `filter_by_measure` and `filter`.
 
         .. versionadded:: (cfdm) 1.8.10.0
@@ -1569,25 +1603,22 @@ class Constructs(mixin.Container, core.Constructs):
             arg: `Constructs` or `dict`
                 TODO
 
-            original: `Constructs`
-                TODO
-
-            todict: 
+            todict:
                 As for *todict* in `filter_by_type`
 
-            cache: 
+            cache:
                 As for *cache* in `filter_by_type`
         """
         if cache is not None:
             return cache
 
-        out, pop = cls._filter_preprocess(
+        out, pop = self._filter_preprocess(
             arg,
             filter_applied={"filter_by_measure": measures},
             todict=todict,
         )
 
-        construct_type = original._construct_type
+        construct_type = self._construct_type
         if not measures:
             for cid in tuple(out.keys()):
                 if construct_type[cid] != "cell_measure":
@@ -1605,7 +1636,7 @@ class Constructs(mixin.Container, core.Constructs):
             ok = False
             if value1 is not None:
                 for value0 in measures:
-                    ok = cls._matching_values(
+                    ok = self._matching_values(
                         value0, construct, value1, basic=True
                     )
                     if ok:
@@ -1691,7 +1722,50 @@ class Constructs(mixin.Container, core.Constructs):
          'cellmeasure1': <{{repr}}CellMeasure: measure:volume(3, 9, 10) m3>}
 
         """
-        return self._filter_by_measure(self, self, todict, cache, *measures)
+        return self._filter_by_measure(self, todict, cache, measures)
+
+    def _filter_by_method(self, arg, todict, cache, methods):
+        """Worker function for `filter_by_measure` and `filter`.
+
+        .. versionadded:: (cfdm) 1.8.10.0"""
+        if cache is not None:
+            return cache
+
+        out, pop = self._filter_preprocess(
+            arg,
+            filter_applied={"filter_by_measure": methods},
+            todict=todict,
+        )
+
+        construct_type = self._construct_type
+        if not methods:
+            for cid in tuple(out.keys()):
+                if construct_type[cid] != "cell_method":
+                    pop(cid)
+
+            return out
+
+        for cid, construct in tuple(out.items()):
+            if construct_type[cid] != "cell_method":
+                pop(cid)
+                continue
+
+            value1 = construct.get_method(None)
+
+            ok = False
+            if value1 is not None:
+                for value0 in methods:
+                    ok = self._matching_values(
+                        value0, construct, value1, basic=True
+                    )
+                    if ok:
+                        break
+
+            if not ok:
+                # This construct does not match any of the methods
+                pop(cid)
+
+        return out
 
     def filter_by_method(self, *methods, todict=False, cache=None):
         """Select cell method constructs by method.
@@ -1766,45 +1840,9 @@ class Constructs(mixin.Container, core.Constructs):
          'cellmethod1': <{{repr}}CellMethod: domainaxis3: maximum>}
 
         """
-        out = self.shallow_copy()
+        return self._filter_by_method(self, todict, cache, methods)
 
-        out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() + (
-            {"filter_by_method": methods},
-        )
-
-        for cid, construct in tuple(out.items()):
-            if self._construct_type[cid] != "cell_method":
-                out._pop(cid)
-                continue
-
-            #            try:
-            #                get_method = construct.get_method
-            #            except AttributeError:
-            #                # This construct doesn't have a "get_method" method
-            #                out._pop(cid)
-            #                continue
-
-            if not methods:
-                continue
-
-            ok = False
-            value1 = construct.get_method(None)
-            for value0 in methods:
-                ok = self._matching_values(
-                    value0, construct, value1, basic=True
-                )
-                if ok:
-                    break
-
-            if not ok:
-                # This construct does not match any of the methods
-                out._pop(cid)
-
-        return out
-
-    @classmethod
-    def _filter_by_naxes( cls, arg, original, todict, cache, *naxes):
+    def _filter_by_naxes(self, arg, todict, cache, naxes):
         """Worker function for `filter_by_naxes` and `filter`.
 
         .. versionadded:: (cfdm) 1.8.10.0
@@ -1812,13 +1850,13 @@ class Constructs(mixin.Container, core.Constructs):
         if cache is not None:
             return cache
 
-        out, pop = cls._filter_preprocess(
+        out, pop = self._filter_preprocess(
             arg,
             filter_applied={"filter_by_naxes": naxes},
             todict=todict,
         )
-        
-        data_axes = original._construct_axes
+
+        data_axes = self._construct_axes
         if not naxes:
             # Return all constructs that have data if no naxes have
             # been provided
@@ -1851,9 +1889,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         return out
 
-    def filter_by_naxes(
-        self, *naxes, todict=False, cache=None, _data_axes=None
-    ):
+    def filter_by_naxes(self, *naxes, todict=False, cache=None):
         """Selects constructs by the number of axes their data spans.
 
         Specifically, selects metadata constructs by the number of
@@ -1906,9 +1942,53 @@ class Constructs(mixin.Container, core.Constructs):
         """
         return self._filter_by_naxes(
             self,
-            self, todict, cache, 
-            *naxes,
+            todict,
+            cache,
+            naxes,
         )
+
+    def _filter_by_ncdim(self, arg, todict, cache, ncdims):
+        """TODO."""
+        if cache is not None:
+            return cache
+
+        out, pop = self._filter_preprocess(
+            arg,
+            filter_applied={"filter_by_ncdim": ncdims},
+            todict=todict,
+        )
+
+        if not ncdims:
+            for cid, construct in tuple(out.items()):
+                try:
+                    construct.nc_get_dimension
+                except AttributeError:
+                    pop(cid)
+
+            return out
+
+        for cid, construct in tuple(out.items()):
+            try:
+                nc_get_dimension = construct.nc_get_dimension
+            except AttributeError:
+                pop(cid)
+                continue
+
+            value1 = nc_get_dimension(None)
+
+            ok = False
+            if value1 is not None:
+                for value0 in ncdims:
+                    ok = self._matching_values(
+                        value0, construct, value1, basic=True
+                    )
+                    if ok:
+                        break
+
+            if not ok:
+                pop(cid)
+
+        return out
 
     def filter_by_ncdim(self, *ncdims, todict=False, cache=None):
         """Select domain axis constructs by netCDF dimension name.
@@ -1960,38 +2040,48 @@ class Constructs(mixin.Container, core.Constructs):
         >>> d = c.filter_by_ncdim('time', 'lat')
 
         """
-        out = self.shallow_copy()
+        return self._filter_by_ncdim(self, todict, cache, ncdims)
 
-        out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() + (
-            {"filter_by_ncdim": ncdims},
+    def _filter_by_ncvar(self, arg, todict, cache, ncvars):
+        """TODO."""
+        if cache is not None:
+            return cache
+
+        out, pop = self._filter_preprocess(
+            arg,
+            filter_applied={"filter_by_ncvar": ncvars},
+            todict=todict,
         )
+
+        if not ncvars:
+            for cid, construct in tuple(out.items()):
+                try:
+                    construct.nc_get_variable
+                except AttributeError:
+                    pop(cid)
+
+            return out
 
         for cid, construct in tuple(out.items()):
             try:
-                nc_get_dimension = construct.nc_get_dimension
+                nc_get_variable = construct.nc_get_variable
             except AttributeError:
-                # This construct doesn't have a "nc_get_dimension"
-                # method
-                out._pop(cid)
+                pop(cid)
                 continue
 
-            if not ncdims:
-                continue
+            value1 = nc_get_variable(None)
 
-            value1 = nc_get_dimension(None)
             ok = False
-            for value0 in ncdims:
-                ok = self._matching_values(
-                    value0, construct, value1, basic=True
-                )
-                if ok:
-                    break
+            if value1 is not None:
+                for value0 in ncvars:
+                    ok = self._matching_values(
+                        value0, construct, value1, basic=True
+                    )
+                    if ok:
+                        break
 
             if not ok:
-                # This construct does not match any of the netCDF
-                # dimension names
-                out._pop(cid)
+                pop(cid)
 
         return out
 
@@ -2044,81 +2134,9 @@ class Constructs(mixin.Container, core.Constructs):
         >>> d = c.filter_by_ncvar('time', 'lat')
 
         """
-        out = self.shallow_copy()
+        return self._filter_by_ncvar(self, todict, cache, ncvars)
 
-        out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() + (
-            {"filter_by_ncvar": ncvars},
-        )
-
-        for cid, construct in tuple(out.items()):
-            try:
-                nc_get_variable = construct.nc_get_variable
-            except AttributeError:
-                # This construct doesn't have a "nc_get_variable"
-                # method
-                out._pop(cid)
-                continue
-
-            if not ncvars:
-                continue
-
-            value1 = nc_get_variable(None)
-            ok = False
-            for value0 in ncvars:
-                ok = self._matching_values(
-                    value0, construct, value1, basic=True
-                )
-                if ok:
-                    break
-
-            if not ok:
-                # This construct does not match any of the netCDF
-                # variable names
-                out._pop(cid)
-
-        return out
-
-    @classmethod
-    def _matching_values(cls, value0, construct, value1, basic=False):
-        """Whether or not two values are the same.
-
-        :Parameters:
-
-            value0:
-                The first value to be matched.
-
-            construct:
-                The construct whose `_equals` method is used to
-                determine whether values can be considered to match.
-
-            value1:
-                The second value to be matched.
-
-            basic: `bool`
-                If True then value0 and value1 will be compared with
-                the basic ``==`` operator.
-
-        :Returns:
-
-            `bool`
-                Whether or not the two values match.
-
-        """
-        if value1 is not None:
-            try:
-                result = value0.search(value1)
-            except (AttributeError, TypeError):
-                result = construct._equals(value1, value0, basic=basic)
-
-            if result:
-                # This construct matches this property
-                return True
-
-        return False
-
-    @classmethod
-    def _filter_by_property(cls, arg, todict, cache, *mode, **properties):
+    def _filter_by_property(self, arg, todict, cache, mode, properties):
         """Worker function for `filter_by_property` and `filter`.
 
         .. versionadded:: (cfdm) 1.8.10.0
@@ -2128,21 +2146,14 @@ class Constructs(mixin.Container, core.Constructs):
             return cache
 
         # Parse mode
-        _or = False
-        if mode:
-            if len(mode) > 1:
-                raise ValueError("Can provide at most one positional argument")
+        _or = mode == "or"
+        if not _or and mode not in (None, "and"):
+            raise ValueError(
+                "filter_by_property() got incorrect 'mode' value "
+                f"{mode!r}. Expected one of 'and', 'or', None"
+            )
 
-            x = mode[0]
-            if x == "or":
-                _or = True
-            elif x != "and":
-                raise ValueError(
-                    "Positional argument 'mode', if provided, "
-                    "must be 'or' or 'and'"
-                )
-
-        out, pop = cls._filter_preprocess(
+        out, pop = self._filter_preprocess(
             arg,
             filter_applied={"filter_by_property": (mode, properties)},
             todict=todict,
@@ -2179,12 +2190,11 @@ class Constructs(mixin.Container, core.Constructs):
                     break
 
             if not ok:
-                # This construct does not match any of the properties
                 pop(cid)
 
         return out
 
-    def filter_by_property(self, *mode, **properties):
+    def filter_by_property(self, mode="and", **properties):
         """Select metadata constructs by property.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -2257,13 +2267,9 @@ class Constructs(mixin.Container, core.Constructs):
         >>> d = c.filter_by_property(standard_name=re.compile('^air'))
 
         """
-        return self._filter_by_property(self, self, False, None,
-                                        *mode, **properties)
+        return self._filter_by_property(self, False, None, mode, properties)
 
-    @classmethod
-    def _filter_by_size(
-            cls, arg, original, todict, cache, *sizes
-    ):
+    def _filter_by_size(self, arg, todict, cache, sizes):
         """Worker function for `filter_by_size` and `filter`.
 
         .. versionadded:: (cfdm) 1.8.10.0
@@ -2271,44 +2277,35 @@ class Constructs(mixin.Container, core.Constructs):
         if cache is not None:
             return cache
 
-        out, pop = cls._filter_preprocess(
+        out, pop = self._filter_preprocess(
             arg,
             filter_applied={"filter_by_size": sizes},
             todict=todict,
         )
 
+        construct_type = self._construct_type
         if not sizes:
-            for cid, construct in tuple(out.items()):
-                try:
-                    construct.get_size
-                except AttributeError:
-                    pop(cid)
-
-            return out
-
-            dd = _xxx._constructs.get("domain_axis", {})
-            for cid in tuple(out):
-                if cid not in dd:
+            for cid in tuple(out.keys()):
+                if construct_type[cid] != "domain_axis":
                     pop(cid)
 
             return out
 
         for cid, construct in tuple(out.items()):
-            try:
-                get_size = construct.get_size
-            except AttributeError:
+            if construct_type[cid] != "domain_axis":
                 pop(cid)
                 continue
 
-            value0 = get_size(None)
+            value1 = construct.get_size(None)
 
             ok = False
-            for value1 in sizes:
-                ok = cls._matching_values(
-                    value1, construct, value0, basic=True
-                )
-                if ok:
-                    break
+            if value1 is not None:
+                for value0 in sizes:
+                    ok = self._matching_values(
+                        value0, construct, value1, basic=True
+                    )
+                    if ok:
+                        break
 
             if not ok:
                 # This construct does not match any of the sizes
@@ -2361,12 +2358,9 @@ class Constructs(mixin.Container, core.Constructs):
         >>> d = c.filter_by_size(1, 96)
 
         """
-        return self._filter_by_size(self, self, todict, cache, *sizes)
+        return self._filter_by_size(self, todict, cache, sizes)
 
-    @classmethod
-    def _filter_by_type(
-        cls, self, *types, todict=False, cache=None, _data_axes=None
-    ):
+    def _filter_by_type(self, arg, todict, cache, types):
         """Worker function for `filter_by_type` and `filter`.
 
         .. versionadded:: (cfdm) 1.8.10.0
@@ -2374,22 +2368,23 @@ class Constructs(mixin.Container, core.Constructs):
         if cache is not None:
             return cache
 
-        if isinstance(self, dict):
-            raise ValueError(
-                "When 'filter_by_type' is used with other filters "
-                f"by {cls.__name__}.filter then it must be "
-                "the first filter applied"
+        if isinstance(arg, dict):
+            if types:
+                pop = arg.pop
+                construct_type = self._construct_type
+                for cid in tuple(arg):
+                    if construct_type[cid] not in types:
+                        pop(cid)
+
+            return arg
+
+        out = super(Constructs, arg).filter_by_type(*types, todict=todict)
+
+        if not todict:
+            out._prefiltered = self.shallow_copy()
+            out._filters_applied = arg.filters_applied() + (
+                {"filter_by_type": types},
             )
-
-        out = super(Constructs, self).filter_by_type(*types, todict=todict)
-
-        if todict:
-            return out
-
-        out._prefiltered = self.shallow_copy()
-        out._filters_applied = self.filters_applied() + (
-            {"filter_by_type": types},
-        )
 
         return out
 
@@ -2448,7 +2443,7 @@ class Constructs(mixin.Container, core.Constructs):
         >>> d = c.filter_by_type('dimension_coordinate', 'field_ancillary')
 
         """
-        return self._filter_by_type(self, self, todict, cache, *types)
+        return self._filter_by_type(self, todict, cache, types)
 
     def filters_applied(self):
         """A history of filters that have been applied.
