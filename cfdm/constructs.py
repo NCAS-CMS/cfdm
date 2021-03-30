@@ -498,7 +498,8 @@ class Constructs(mixin.Container, core.Constructs):
 
     @classmethod
     def _filter_preprocess(cls, arg, todict=False, filter_applied=None):
-        """Preprocess a `dict` or `Constructs` object prior to filtering.
+        """Preprocess a `dict` or `Constructs` object prior to
+        filtering.
 
         .. versionadded:: (cfdm) 1.8.10.0
 
@@ -1306,6 +1307,7 @@ class Constructs(mixin.Container, core.Constructs):
         See `filter_by_data` for details.
 
         .. versionadded:: (cfdm) 1.8.10.0
+
         """
         return self._filter_by_type(arg, todict, self._array_constructs)
 
@@ -1361,6 +1363,7 @@ class Constructs(mixin.Container, core.Constructs):
         See `filter_by_identity` for details.
 
         .. versionadded:: (cfdm) 1.8.10.0
+
         """
         out, pop = self._filter_preprocess(
             arg,
@@ -1489,8 +1492,7 @@ class Constructs(mixin.Container, core.Constructs):
 
             _config: optional
                 TODO Additional parameters for configuring each construct's
-                `identities` method. ``generator=True`` is passed by
-                default.
+                `identities` method.
 
                 .. versionadded:: (cfdm) 1.8.10.0
 
@@ -1538,6 +1540,7 @@ class Constructs(mixin.Container, core.Constructs):
         See `filter_by_key` for details.
 
         .. versionadded:: (cfdm) 1.8.10.0
+
         """
         out, pop = self._filter_preprocess(
             arg,
@@ -1867,6 +1870,7 @@ class Constructs(mixin.Container, core.Constructs):
         See `filter_by_naxes` for details.
 
         .. versionadded:: (cfdm) 1.8.10.0
+
         """
         out, pop = self._filter_preprocess(
             arg,
@@ -1968,6 +1972,7 @@ class Constructs(mixin.Container, core.Constructs):
         See `filter_by_ncdim` for details.
 
         .. versionadded:: (cfdm) 1.8.10.0
+
         """
         out, pop = self._filter_preprocess(
             arg,
@@ -2068,6 +2073,7 @@ class Constructs(mixin.Container, core.Constructs):
         See `filter_by_ncvar` for details.
 
         .. versionadded:: (cfdm) 1.8.10.0
+
         """
         out, pop = self._filter_preprocess(
             arg,
@@ -2321,6 +2327,7 @@ class Constructs(mixin.Container, core.Constructs):
         See `filter_by_size` for details.
 
         .. versionadded:: (cfdm) 1.8.10.0
+
         """
         out, pop = self._filter_preprocess(
             arg,
@@ -2413,6 +2420,7 @@ class Constructs(mixin.Container, core.Constructs):
         See `filter_by_type` for details.
 
         .. versionadded:: (cfdm) 1.8.10.0
+
         """
         if isinstance(arg, dict):
             if types:
@@ -2862,6 +2870,6 @@ class Constructs(mixin.Container, core.Constructs):
 
 
 def _short_circuit_test(x):
-    """By default short circuit after a standard name identity
-    (e.g. 'time') has been tested."""
+    """By default short circuit after a standard name identity (e.g.
+    'time') has been tested."""
     return "=" not in x and ":" not in x and "%" not in x
