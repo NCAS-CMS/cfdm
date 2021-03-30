@@ -34,31 +34,18 @@ _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # # Method description susbstitutions (2 levels of indentation)
     # ----------------------------------------------------------------
-    #    # view
-    #    "{{view: `bool`, optional}}": """view: `bool`, optional
-    #                If True then return the selected constructs in a new
-    #                `Constructs` object that is a view to the full
-    #                collection, instead of a shallow copy. Creating a view
-    #                is faster than returning a shallow copy. In both cases
-    #                the actual constructs returned are references to the
-    #                original ones, but any in-place changes to a view
-    #                (such as removing a construct) might also occur in the
-    #                original `Constructs` object, and the filter history
-    #                of a view is also lost.
-    #
-    #                .. versionadded:: (cfdm) 1.8.9.0""",
-    # cache
-    "{{cache: optional}}": """cache: optional
-                If not `None` then return *cache* instead of the
+    # cached: optional
+    "{{cached: optional}}": """cached: optional
+                If not `None` then return *cached* instead of the
                 requested constructs.
 
-                .. versionadded:: (cfdm) 1.8.9.0""",
-    # todict
+                .. versionadded:: (cfdm) 1.8.10.0""",
+    # todict: `bool`, optional
     "{{todict: `bool`, optional}}": """todict: `bool`, optional
                 If True then return a dictionary instead of a
-                `Constructs` object. This is the fastest option.
+                `Constructs` object. This is a faster option.
 
-                .. versionadded:: (cfdm) 1.8.9.0""",
+                .. versionadded:: (cfdm) 1.8.10.0""",
     # ----------------------------------------------------------------
     # # Method description susbstitutions (3 levels of indentation)
     # ----------------------------------------------------------------

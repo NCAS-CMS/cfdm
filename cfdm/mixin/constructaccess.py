@@ -12,35 +12,40 @@ class ConstructAccess:
         self,
         _ctypes,
         _method,
-        *identities,
-        axis_mode=None,
-        property_mode=None,
+        identities,
         todict=False,
-        cache=None,
-        **filters,
+        cached=None,
+        **kwargs,
     ):
         """TODO.
 
         .. versionadded:: (cfdm) 1.8.10.0
 
         """
-        if not (identities or filters):
-            return self.constructs.filter_by_type(
-                *_ctypes, todict=todict, cache=cache
-            )
-
-        kwargs = {"filter_by_type": _ctypes}
-        if filters:
-            if "filter_by_type" in filters:
-                raise TypeError(
-                    f"{_method}() got an unexpected keyword argument "
-                    "'filter_by_type'"
+        if not _ctypes:
+            filter_kwargs = kwargs
+        else:
+            if not (identities or kwargs):
+                # Calling filter_by_type directly is faster
+                return self.constructs.filter_by_type(
+                    *_ctypes, todict=todict, cached=cached
                 )
 
-            kwargs.update(filters)
+            # Ensure that filter_by_types is the first filter
+            # applied, as it's the cheapest
+            filter_kwargs = {"filter_by_type": _ctypes}
+
+            if kwargs:
+                if "filter_by_type" in kwargs:
+                    raise TypeError(
+                        f"{_method}() got an unexpected keyword argument "
+                        "'filter_by_type'"
+                    )
+
+                filter_kwargs.update(kwargs)
 
         if identities:
-            if "filter_by_identity" in filters:
+            if "filter_by_identity" in kwargs:
                 raise TypeError(
                     f"Can't set {_method}() keyword argument "
                     "'filter_by_identity' when positional *identities "
@@ -49,14 +54,10 @@ class ConstructAccess:
 
             # Ensure that filter_by_identity is the last filter
             # applied, as it's the most expensive.
-            kwargs["filter_by_identity"] = identities
+            filter_kwargs["filter_by_identity"] = identities
 
         return self.constructs.filter(
-            todict=todict,
-            cache=cache,
-            axis_mode=axis_mode,
-            property_mode=property_mode,
-            **kwargs,
+            todict=todict, cached=cached, **filter_kwargs
         )
 
     def _unique_construct_names(self):
@@ -77,9 +78,12 @@ class ConstructAccess:
 
         """
         key_to_name = {}
-        name_to_keys = {}
+        ignore = self.constructs._ignore
 
-        for d in self.constructs._constructs.values():
+        for ctype, d in self.constructs._constructs.items():
+            if ctype in ignore:
+                continue
+
             name_to_keys = {}
 
             for key, construct in d.items():
@@ -133,18 +137,7 @@ class ConstructAccess:
 
         return key_to_name
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
-    def coordinate_references(
-        self,
-        *identities,
-        axis_mode=None,
-        property_mode=None,
-        todict=False,
-        cache=None,
-        **filters,
-    ):
+    def coordinate_references(self, *identities, **kwargs):
         """Return coordinate reference constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -153,7 +146,7 @@ class ConstructAccess:
 
         :Parameters:
 
-            {{cache: optional}}
+            {{cached: optional}}
 
             {{todict: `bool`, optional}}
 
@@ -178,23 +171,11 @@ class ConstructAccess:
         return self._construct_types(
             ("coordinate_reference",),
             "coordinate_references",
-            *identities,
-            axis_mode=axis_mode,
-            property_mode=property_mode,
-            todict=todict,
-            cache=cache,
-            **filters,
+            identities,
+            **kwargs,
         )
 
-    def domain_axes(
-        self,
-        *identities,
-        axis_mode=None,
-        property_mode=None,
-        todict=False,
-        cache=None,
-        **filters,
-    ):
+    def domain_axes(self, *identities, **kwargs):
         """Return domain axis constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -203,9 +184,9 @@ class ConstructAccess:
 
         :Parameters:
 
-            {{cache: optional}}
+            identities: optional
 
-            {{todict: `bool`, optional}}
+            kwargs: optional
 
         :Returns:
 
@@ -227,25 +208,10 @@ class ConstructAccess:
 
         """
         return self._construct_types(
-            ("domain_axis",),
-            "domain_axes",
-            *identities,
-            axis_mode=axis_mode,
-            property_mode=property_mode,
-            todict=todict,
-            cache=cache,
-            **filters,
+            ("domain_axis",), "domain_axes", identities, **kwargs
         )
 
-    def auxiliary_coordinates(
-        self,
-        *identities,
-        axis_mode=None,
-        property_mode=None,
-        todict=False,
-        cache=None,
-        **filters,
-    ):
+    def auxiliary_coordinates(self, *identities, **kwargs):
         """Return auxiliary coordinate constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -254,7 +220,7 @@ class ConstructAccess:
 
         :Parameters:
 
-            {{cache: optional}}
+            {{cached: optional}}
 
             {{todict: `bool`, optional}}
 
@@ -280,23 +246,11 @@ class ConstructAccess:
         return self._construct_types(
             ("auxiliary_coordinate",),
             "auxiliary_coordinates",
-            *identities,
-            axis_mode=axis_mode,
-            property_mode=property_mode,
-            todict=todict,
-            cache=cache,
-            **filters,
+            identities,
+            **kwargs,
         )
 
-    def dimension_coordinates(
-        self,
-        *identities,
-        axis_mode=None,
-        property_mode=None,
-        todict=False,
-        cache=None,
-        **filters,
-    ):
+    def dimension_coordinates(self, *identities, **kwargs):
         """Return dimension coordinate constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -305,7 +259,7 @@ class ConstructAccess:
 
         :Parameters:
 
-            {{cache: optional}}
+            {{cached: optional}}
 
             {{todict: `bool`, optional}}
 
@@ -332,23 +286,11 @@ class ConstructAccess:
         return self._construct_types(
             ("dimension_coordinate",),
             "dimension_coordinates",
-            *identities,
-            axis_mode=axis_mode,
-            property_mode=property_mode,
-            todict=todict,
-            cache=cache,
-            **filters,
+            identities,
+            **kwargs,
         )
 
-    def coordinates(
-        self,
-        *identities,
-        axis_mode=None,
-        property_mode=None,
-        todict=False,
-        cache=None,
-        **filters,
-    ):
+    def coordinates(self, *identities, **kwargs):
         """Return dimension and auxiliary coordinate constructs.
 
         . versionadded:: (cfdm) 1.7.0
@@ -358,7 +300,6 @@ class ConstructAccess:
 
         :Parameters:
 
-            {{cache: optional}}
 
             {{todict: `bool`, optional}}
 
@@ -391,23 +332,11 @@ class ConstructAccess:
                 "auxiliary_coordinate",
             ),
             "coordinates",
-            *identities,
-            axis_mode=axis_mode,
-            property_mode=property_mode,
-            todict=todict,
-            cache=cache,
-            **filters,
+            identities,
+            **kwargs,
         )
 
-    def domain_ancillaries(
-        self,
-        *identities,
-        axis_mode=None,
-        property_mode=None,
-        todict=False,
-        cache=None,
-        **filters,
-    ):
+    def domain_ancillaries(self, *identities, **kwargs):
         """Return domain ancillary constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -416,7 +345,6 @@ class ConstructAccess:
 
         :Parameters:
 
-            {{cache: optional}}
 
             {{todict: `bool`, optional}}
 
@@ -439,25 +367,10 @@ class ConstructAccess:
 
         """
         return self._construct_types(
-            ("domain_ancillary",),
-            "domain_ancillaries",
-            *identities,
-            axis_mode=axis_mode,
-            property_mode=property_mode,
-            todict=todict,
-            cache=cache,
-            **filters,
+            ("domain_ancillary",), "domain_ancillaries", identities, **kwargs
         )
 
-    def cell_measures(
-        self,
-        *identities,
-        axis_mode=None,
-        property_mode=None,
-        todict=False,
-        cache=None,
-        **filters,
-    ):
+    def cell_measures(self, *identities, **kwargs):
         """Return cell measure constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -466,9 +379,6 @@ class ConstructAccess:
 
         :Parameters:
 
-            {{cache: optional}}
-
-            {{todict: `bool`, optional}}
 
         :Returns:
 
@@ -487,30 +397,15 @@ class ConstructAccess:
 
         """
         return self._construct_types(
-            ("cell_measure",),
-            "cell_measures",
-            *identities,
-            axis_mode=axis_mode,
-            property_mode=property_mode,
-            todict=todict,
-            cache=cache,
-            **filters,
+            ("cell_measure",), "cell_measures", identities, **kwargs
         )
 
-    def construct(
-        self,
-        identity=None,
-        default=ValueError(),
-        axis_mode=None,
-        property_mode=None,
-        **filters,
-    ):
+    def construct(self, identity=None, default=ValueError(), **kwargs):
         """Select a metadata construct by its identity.
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `construct_key`, `constructs`,
-                     `Constructs.filter_by_identity`, `Constructs.value`
+        .. seealso:: `construct_key`, `constructs`
 
         :Parameters:
 
@@ -585,22 +480,18 @@ class ConstructAccess:
         'no construct'
 
         """
-        if identity:
-            if "filter_by_identity" in filters:
-                raise TypeError(
-                    "Can't set keyword argument 'filter_by_identity' when "
-                    "the 'identity' argument is also set"
-                )
+        if identity is None:
+            identity = ()
+        else:
+            identity = (identity,)
 
-            # Ensure that filter_by_identity is the last filter
-            # applied, as it's the most expensive.
-            filters["filter_by_identity"] = (identity,)
+        kwargs["todict"] = True
 
-        c = self.constructs.filter(
-            axis_mode=axis_mode,
-            property_mode=property_mode,
-            todict=True,
-            **filters,
+        c = self._construct_types(
+            (),
+            "construct",
+            identity,
+            **kwargs,
         )
 
         n = len(c)
@@ -615,20 +506,12 @@ class ConstructAccess:
             default, f"Can't return more than one ({n}) construct"
         )
 
-    def construct_key(
-        self,
-        identity=None,
-        default=ValueError(),
-        axis_mode=None,
-        property_mode=None,
-        **filters,
-    ):
+    def construct_key(self, identity=None, default=ValueError(), **kwargs):
         """Select the key of a metadata construct by its identity.
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `construct`, `constructs`,
-                     `Constructs.filter_by_identity`, `Constructs.key`
+        .. seealso:: `construct`, `constructs`
 
         :Parameters:
 
@@ -705,22 +588,18 @@ class ConstructAccess:
         'no construct'
 
         """
-        if identity:
-            if "filter_by_identity" in filters:
-                raise TypeError(
-                    "Can't set keyword argument 'filter_by_identity' when "
-                    "the 'identity' argument is also set"
-                )
+        if identity is None:
+            identity = ()
+        else:
+            identity = (identity,)
 
-            # Ensure that filter_by_identity is the last filter
-            # applied, as it's the most expensive.
-            filters["filter_by_identity"] = (identity,)
+        kwargs["todict"] = True
 
-        c = self.constructs.filter(
-            axis_mode=axis_mode,
-            property_mode=property_mode,
-            todict=True,
-            **filters,
+        c = self._construct_types(
+            (),
+            "construct",
+            identity,
+            **kwargs,
         )
 
         n = len(c)

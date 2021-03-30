@@ -91,7 +91,7 @@ class NetCDFRead(IORead):
     def _loglevel_debug(self):
         """Return True if and only if log level is DEBUG."""
         return logger.parent.level == logging.DEBUG
-        
+
     def cf_datum_parameters(self):
         """Datum-defining parameters names."""
         return (

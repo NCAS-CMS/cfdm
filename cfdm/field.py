@@ -520,15 +520,7 @@ class Field(
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
-    def field_ancillaries(
-        self,
-        *identities,
-        axis_mode=None,
-        property_mode=None,
-        todict=False,
-        cache=None,
-        **filters,
-    ):
+    def field_ancillaries(self, *identities, **kwargs):
         """Return field ancillary constructs.
 
              .. versionadded:: (cfdm) 1.7.0
@@ -556,25 +548,10 @@ class Field(
 
         """
         return self._construct_types(
-            ("field_ancillary",),
-            "field_ancillaries",
-            *identities,
-            axis_mode=axis_mode,
-            property_mode=property_mode,
-            todict=todict,
-            cache=cache,
-            **filters,
+            ("field_ancillary",), "field_ancillaries", identities, **kwargs
         )
 
-    def cell_methods(
-        self,
-        *identities,
-        axis_mode=None,
-        property_mode=None,
-        todict=False,
-        cache=None,
-        **filters,
-    ):
+    def cell_methods(self, *identities, **kwargs):
         """Return cell method constructs.
 
                 The cell methods are not returned in the order in which they were
@@ -607,14 +584,7 @@ class Field(
 
         """
         return self._construct_types(
-            ("cell_method",),
-            "cell_method",
-            *identities,
-            axis_mode=axis_mode,
-            property_mode=property_mode,
-            todict=todict,
-            cache=cache,
-            **filters,
+            ("cell_method",), "cell_method", identities, **kwargs
         )
 
     # ----------------------------------------------------------------
@@ -752,7 +722,7 @@ class Field(
             if len(axes) != 1:
                 continue
 
-            domain_axes = self.domain_axes(cache=domain_axes, todict=True)
+            domain_axes = self.domain_axes(cached=domain_axes, todict=True)
 
             axis = axes[0]
             if axis not in domain_axes:

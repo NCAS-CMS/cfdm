@@ -129,17 +129,6 @@ class Constructs(abstract.Container):
 
             self._field_data_axes = source._field_data_axes
 
-            #          if _view:
-            #              self._ignore = _ignore
-            #              self._key_base = source._key_base
-            #              self._array_constructs = source._array_constructs
-            #              self._non_array_constructs = source._non_array_constructs
-            #              self._ordered_constructs = source_ordered_constructs
-            #              self._construct_axes = source._construct_axes
-            #              self._construct_type = source._construct_type
-            #              self._constructs = source_constructs
-            #              return
-
             self._key_base = source._key_base.copy()
             self._array_constructs = source._array_constructs.copy()
             self._non_array_constructs = source._non_array_constructs.copy()
@@ -221,7 +210,7 @@ class Constructs(abstract.Container):
         self._construct_axes = {}
 
         # The construct type for each key. For example:
-        # {'domainaxis1'         :'domain_axis',
+        # {'domainaxis1':'domain_axis',
         #  'auxiliarycoordinate3':'auxiliary_coordinate'}
         self._construct_type = {}
 
@@ -277,11 +266,7 @@ class Constructs(abstract.Container):
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        ctype = self._construct_type.get(key)
-        if ctype is None or ctype in self._ignore:
-            return False
-
-        return True
+        return self.construct_type(key) is not None
 
     def __copy__(self):
         """Called by the `copy.copy` standard library function.
@@ -307,14 +292,11 @@ class Constructs(abstract.Container):
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        construct_type = self.construct_type(key)  # ignore??
+        construct_type = self.construct_type(key)
         if construct_type is None:
             raise KeyError(key)
 
-        if construct_type in self._ignore:
-            raise KeyError(key)
-
-        return self._constructs.get(construct_type, {})[key]
+        return self._constructs[construct_type][key]
 
     def __iter__(self):
         """Called when an iterator is required.
@@ -324,7 +306,7 @@ class Constructs(abstract.Container):
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        return iter(self.todict().keys())
+        return iter(self.todict())
 
     def __len__(self):
         """Return the number of constructs.
@@ -334,17 +316,15 @@ class Constructs(abstract.Container):
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        n = 0
+        n = len(self._construct_type)
         ignore = self._ignore
-        for key, value in self._constructs.items():
-            if key not in ignore:
-                n += len(value)
+        if ignore:
+            constructs = self._constructs
+            for ctype in ignore:
+                n -= len(constructs[ctype])
 
         return n
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
     def _construct_dict(self, construct_type, copy=False):
         """TODO."""
         if construct_type in self._ignore:
@@ -415,20 +395,14 @@ class Constructs(abstract.Container):
                 construct was given as `None`, `None` is returned.
 
         """
-        if construct_type is None:
-            return None
-
-        x = self._key_base
-        if self._ignore:
-            x = set(x).difference(self._ignore)
-
-        if construct_type in x:
+        if construct_type is None or (
+            construct_type not in self._ignore
+            and construct_type in self._key_base
+        ):
             return construct_type
 
         return self._default(
-            default,
-            f"Invalid construct type {construct_type!r}. "
-            f"Must be one of {sorted(x)}",
+            default, f"Invalid construct type {construct_type!r}"
         )
 
     def _construct_type_description(self, construct_type):
@@ -439,24 +413,6 @@ class Constructs(abstract.Container):
 
         """
         return construct_type.replace("_", " ")
-
-    def _dictionary(self, copy=False):
-        """Alias of `todict`."""
-        return self.todict()
-
-    def todict(self, copy=False):
-        """Constructs the mapping of keys to metadata constructs."""
-        out = {}
-        ignore = self._ignore
-        for key, value in self._constructs.items():
-            if key not in ignore:
-                out.update(value)
-
-        if copy:
-            for key, construct in tuple(out.items()):
-                out[key] = construct.copy()
-
-        return out
 
     def _del_construct(self, key, default=ValueError()):
         """Remove a metadata construct.
@@ -545,6 +501,10 @@ class Constructs(abstract.Container):
             )
 
         return out
+
+    def _dictionary(self, copy=False):
+        """Deprecated at 1.8.10.0. Use `todict` instead."""
+        return self.todict()
 
     def _set_construct(self, construct, key=None, axes=None, copy=True):
         """Set a metadata construct.
@@ -832,7 +792,15 @@ class Constructs(abstract.Container):
         .. seealso:: `items`, `keys`, `values`
 
         """
-        return self.todict().get(key, *default)
+        try:
+            return self[key]
+        except KeyError:
+            pass
+
+        if not default:
+            return None
+
+        return default[0]
 
     def items(self):  # SB NOTE: flaky doctest due to dict_items order
         """Return the items as (construct key, construct) pairs.
@@ -911,7 +879,8 @@ class Constructs(abstract.Container):
          'cellmethod0']
 
         """
-        return self._construct_type.keys()
+        #        return self._construct_type.keys()
+        return self.todict().keys()
 
     def values(self):  # SB NOTE: flaky doctest due to dict_items order
         """Return all of the metadata constructs, in arbitrary order.
@@ -963,11 +932,11 @@ class Constructs(abstract.Container):
         .. seealso:: `construct_types`
 
         """
-        x = self._construct_type.get(key)
-        if x in self._ignore:
+        ctype = self._construct_type.get(key)
+        if ctype is not None and ctype in self._ignore:
             return
 
-        return x
+        return ctype
 
     def construct_types(self):
         """Return all of the construct types for all keys.
@@ -1071,7 +1040,7 @@ class Constructs(abstract.Container):
 
         return out
 
-    def filter_by_type(self, *types, todict=True, cache=None):
+    def filter_by_type(self, *types, todict=True, cached=None):
         """Select metadata constructs by type.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -1102,9 +1071,9 @@ class Constructs(abstract.Container):
 
         :Parameters:
 
-            {{cache: optional}}
-
             {{todict: `bool`, optional}}
+
+            {{cached: optional}}
 
         :Returns:
 
@@ -1129,8 +1098,8 @@ class Constructs(abstract.Container):
         <{{repr}}Constructs: dimension_coordinate(4), field_ancillary(1)>
 
         """
-        if cache is not None:
-            return cache
+        if cached is not None:
+            return cached
 
         if todict:
             ntypes = len(types)
@@ -1377,6 +1346,35 @@ class Constructs(abstract.Container):
             source=self, copy=False, _ignore=_ignore, _view=False
         )
 
+    def todict(self, copy=False):
+        """Return a dictionary represntation of the metadata constructs.
+
+        .. versionadded:: (cfdm) 1.8.10.0
+
+        :Parameters:
+
+            copy: `bool`, optional
+                If True then deep copy the metadata construct values.
+
+        :Returns:
+
+            `dict`
+                The dictionary representation, keyed by construct
+                identifiers with metadata construct values.
+
+        """
+        out = {}
+        ignore = self._ignore
+        for key, value in self._constructs.items():
+            if key not in ignore:
+                out.update(value)
+
+        if copy:
+            for key, construct in tuple(out.items()):
+                out[key] = construct.copy()
+
+        return out
+
     def value(self, default=ValueError()):
         """Return the sole metadata construct.
 
@@ -1438,7 +1436,7 @@ class Constructs(abstract.Container):
         removing a construct) will also occur in the original
         `Constructs` object, and vice versa.
 
-        .. versionadded:: (cfdm) 1.8.9.0
+        .. versionadded:: (cfdm) 1.8.10.0
 
         .. seealso:: `shallow_copy`
 
@@ -1457,4 +1455,4 @@ class Constructs(abstract.Container):
         if _ignore is None:
             _ignore = self._ignore
 
-        return type(self)(source=self, copy=False, _ignore=_ignore, _view=True)
+        return self._view(ignore=_ignore)

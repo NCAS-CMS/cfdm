@@ -105,7 +105,11 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         <{[repr}}DimensionCoordinate: grid_latitude(10) degrees>
 
         """
-        return self.constructs.filter_by_key(key).value(default=default)
+        construct = self.constructs.get(key)
+        if construct is None:
+            return self._default(default, f"No construct for key {key!r}")
+
+        return construct
 
     def has_construct(self, key):
         """Whether a metadata construct exists.
@@ -137,13 +141,7 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         False
 
         """
-        # Assume construct keys can (uncommonly) be Falsy e.g. '' or 0
-        # (this is tested explicitly) but not None (so None untested).
-        try_get_construct = self.get_construct(key, default=None)
-        if try_get_construct is None:
-            return False
-
-        return True
+        return key in self.constructs
 
     def set_construct(self, construct, key=None, axes=None, copy=True):
         """Set a metadata construct.
@@ -252,8 +250,8 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
             return self._default(
                 default,
                 message=(
-                    f"{self.__class__.__name__!r} has no data axes for the "
-                    f"metadata construct {key!r}"
+                    f"{self.__class__.__name__!r} has no data axes for "
+                    f"construct {key!r}"
                 ),
             )
 
@@ -303,8 +301,8 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
             return self._default(
                 default,
                 message=(
-                    f"{self.__class__.__name__!r} has no data axes for the "
-                    f"metadata construct {key!r}"
+                    f"{self.__class__.__name__!r} has no data axes for "
+                    f"construct {key!r}"
                 ),
             )
         else:
@@ -349,8 +347,7 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         None
 
         """
-        axes = self.get_data_axes(key, default=None)
-        if axes is None:
+        if self.get_data_axes(key, default=None) is None:
             return False
 
         return True
