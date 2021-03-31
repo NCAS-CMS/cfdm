@@ -78,6 +78,9 @@ class ConstructsTest(unittest.TestCase):
             )
             self.assertEqual(len(d), 0)
 
+        with self.assertRaises(TypeError):
+            c.filter(bad_kwarg=None)
+
     def test_Constructs_FILTERING(self):
         """TODO DOCS."""
         c = self.f.constructs

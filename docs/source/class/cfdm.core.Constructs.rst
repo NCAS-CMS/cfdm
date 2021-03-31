@@ -64,6 +64,7 @@ Miscellaneous
    ~cfdm.core.Constructs.copy
    ~cfdm.core.Constructs.shallow_copy
    ~cfdm.core.Constructs.ordered
+   ~cfdm.core.Constructs.todict
 
 Dictionary-access methods
 -------------------------

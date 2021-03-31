@@ -27,13 +27,13 @@ t.clear_properties()
 t.properties()
 t.set_properties(original)
 t.properties()
-t.coordinate_references
-print(t.coordinate_references)
-list(t.coordinate_references.keys())
-for key, value in t.coordinate_references.items():
+t.coordinate_references()
+print(t.coordinate_references())
+list(t.coordinate_references().keys())
+for key, value in t.coordinate_references().items():
     print(key, repr(value))
-print(t.dimension_coordinates)
-print(t.domain_axes)
+print(t.dimension_coordinates())
+print(t.domain_axes())
 q.constructs
 print(q.constructs)
 t.constructs
@@ -45,7 +45,7 @@ t.ndim
 t.shape
 t.size
 t.data.size
-print(t.domain_axes)
+print(t.domain_axes())
 t
 t.shape
 t.get_data_axes()
@@ -64,7 +64,7 @@ q, t = cfdm.read('file.nc')
 t
 t2 = t.squeeze()
 t2
-print(t2.dimension_coordinates)
+print(t2.dimension_coordinates())
 t3 = t2.insert_dimension(axis='domainaxis3', position=1)
 t3
 t3.transpose([2, 0, 1])
@@ -137,7 +137,7 @@ c = t.constructs.filter_by_type('auxiliary_coordinate')
 c
 c.inverse_filter()
 print(t.constructs.filter_by_type('cell_measure'))
-print(t.cell_measures)
+print(t.cell_measures())
 t.construct('latitude')
 key = t.construct_key('latitude')
 t.get_construct(key)
@@ -203,11 +203,11 @@ field_latitude.set_property('test', 'set by field')
 print(domain_latitude.get_property('test'))
 domain_latitude.del_property('test')
 field_latitude.has_property('test')
-print(q.domain_axes)
-d = q.domain_axes.get('domainaxis1')
+print(q.domain_axes())
+d = q.domain_axes().get('domainaxis1')
 d
 d.get_size()
-print(t.coordinates)
+print(t.coordinates())
 lon = t.constructs('grid_longitude').value()
 bounds = lon.bounds
 bounds
@@ -236,8 +236,8 @@ crs.datum.parameters()
 crs.coordinate_conversion
 crs.coordinate_conversion.parameters()
 crs.coordinate_conversion.domain_ancillaries()
-print(t.cell_methods)
-t.cell_methods.ordered()
+print(t.cell_methods())
+t.cell_methods().ordered()
 cm = t.constructs('method:mean').value()
 cm
 cm.get_axes()

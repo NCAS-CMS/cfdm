@@ -40,11 +40,14 @@ class Constructs(mixin.Container, core.Constructs):
     example, to select constructs that have an identity of
     'air_temperature': ``d = c('air_temperature')``.
 
+    Note that ``c(*identities, **filter_kwargs)`` is equivalent to
+    ``c.filter(filter_by_identity=identities, **filter_kwargs)``.
+
     .. versionadded:: (cfdm) 1.7.0
 
     """
 
-    def __call__(self, *identities, **kwargs):
+    def __call__(self, *identities, **filter_kwargs):
         """Select metadata constructs by identity.
 
         Calling a `Constructs` instance selects metadata constructs by
@@ -52,20 +55,25 @@ class Constructs(mixin.Container, core.Constructs):
         method. For example, to select constructs that have an
         identity of 'air_temperature': ``d = c('air_temperature')``.
 
-        Note that ``c(*identities, **kwargs)`` is equivalent to
-        ``c.filter(filter_by_identity=identities, **kwargs)``.
+        Note that ``c(*identities, **filter_kwargs)`` is equivalent to
+        ``c.filter(filter_by_identity=identities, **filter_kwargs)``.
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `filter_by_identity`
+        .. seealso:: `filter_by_identity`, `filter`
 
         :Parameters:
 
             identities: optional
-                See `filter_by_identity` for details.
+                Select constructs that have an identity, defined by
+                their `!identities` methods, that matches any of the
+                given values.
 
-            kwargs: optional
-                TODO
+                {{string value match}}
+
+                {{displayed identity}}
+
+            {{filter_kwargs: optional}}
 
         :Returns:
 
@@ -78,16 +86,16 @@ class Constructs(mixin.Container, core.Constructs):
 
         """
         if identities:
-            if "filter_by_identity" in kwargs:
+            if "filter_by_identity" in filter_kwargs:
                 raise TypeError(
                     f"Can't set {self.__class__.__name__}.__call__() "
                     "keyword argument 'filter_by_identity' when "
                     "positional *identities arguments are also set"
                 )
 
-            kwargs["filter_by_identity"] = identities
+            filter_kwargs["filter_by_identity"] = identities
 
-        return self.filter(**kwargs)
+        return self.filter(**filter_kwargs)
 
     def __repr__(self):
         """Called by the `repr` built-in function.
@@ -452,44 +460,60 @@ class Constructs(mixin.Container, core.Constructs):
     @classmethod
     def _filter_parse_args(
         cls,
-        method_name,
+        method,
         args,
         todict=False,
         axis_mode=None,
         property_mode=None,
         _identity_config=None,
     ):
-        """TODO.
+        """Parse argument designed to a filter method.
+
+        Specifically transforms the arguments to a filter method
+        (e.g. `filter_by_property`) so that they can be used in the
+        corresponding underscore filter method
+        (e.g. `_filter_by_property`).
 
         .. versionadded:: (cfdm) 1.8.10.0
 
         :Parameters:
 
-            method_name: `str`
-                TODO
+            method: `str`
+                The name of a filter method (e.g. "filter_by_data").
 
-            args:
-                TODO
+            args: asd
+                The input arguments for the filter method
+                (e.g. "_filter_by_data").
 
             todict: `bool`
-                TODO
+                The value of the filter method's *todict* parameter.
+
+            axis_mode: `str`, optional
+                Provide a value for the *mode* parameter of the
+                `filter_by_axis` method.
 
             property_mode: `str`, optional
-                TODO
+                Provide a value for the *mode* parameter of the
+                `filter_by_property` method.
+
+            _identity_config: optional
+                Provide a value for the *_config* parameter of the
+                `filter_by_identity` method.
 
         :Returns:
 
             `tuple`
-                asdasds TODO
+                The parsed positional arguments for corresponding
+                underscore filter method.
 
         """
         out = (todict,)
 
-        if method_name == "filter_by_identity":
+        if method == "filter_by_identity":
             out += (_identity_config,)
-        elif method_name == "filter_by_axis":
+        elif method == "filter_by_axis":
             out += (axis_mode,)
-        elif method_name == "filter_by_property":
+        elif method == "filter_by_property":
             out += ((property_mode,),)
 
         out += (args,)
@@ -498,8 +522,7 @@ class Constructs(mixin.Container, core.Constructs):
 
     @classmethod
     def _filter_preprocess(cls, arg, todict=False, filter_applied=None):
-        """Preprocess a `dict` or `Constructs` object prior to
-        filtering.
+        """Preprocess a `dict` or `Constructs` prior to filtering.
 
         .. versionadded:: (cfdm) 1.8.10.0
 
@@ -576,6 +599,15 @@ class Constructs(mixin.Container, core.Constructs):
             return value0.search(value1)
         except (AttributeError, TypeError):
             return construct._equals(value1, value0)
+
+    @classmethod
+    def _short_circuit_test(cls, x):
+        """The default short cicuit test.
+
+        See `_filter_by_identity` for details.
+
+        """
+        return "=" not in x and ":" not in x and "%" not in x
 
     def copy(self, data=True):
         """Return a deep copy.
@@ -982,40 +1014,47 @@ class Constructs(mixin.Container, core.Constructs):
         _identity_config={},
         **filters,
     ):
-        """Select metadata constructs by a sequence of filters.
+        """Select metadata constructs by a chain of filters.
 
         This method allows multiple filters defined by the
         "filter_by_*" methods to be chained in an alternative manner
-        to calling the individual methods in sequence. For instance,
-        to select the domain axis constucts with size 73
+        to calling the individual methods in sequence.
+
+        For instance, to select the domain axis constucts with size 73
+        or 96
 
            >>> c2 = c.filter(filter_by_type=['domain_axis'],
-           ...               filter_by_size=[73])
+           ...               filter_by_size=[73, 96])
 
         is equivalent to
 
            >>> c2 = c.filter_by_type('domain_axis')
-           >>> c2 = c2.filter_by_size(73)
+           >>> c2 = c2.filter_by_size(73, 96)
 
-        When the resultsis requested as a dictionary as opposed to a
-        `{{class}}` object (see the *todict* parameter), using the
-        `filter` method to call two or more filters is considerably
-        faster than calling the individual methods in sequence. For
-        instance
+        When the results are requested as a dictionary as opposed to a
+        `Constructs` object (see the *todict* parameter), using the
+        `filter` method to call two or more filters is faster than
+        calling the individual methods in sequence. For instance
 
-           >>> d = c.filter(filter_by_type=['domain_axis'],
-           ...              filter_by_size=[73],
+           >>> d = c.filter(filter_by_type=['dimension_coordinate'],
+           ...              filter_by_identity=['time'],
            ...              todict=True)
 
-        is equivalent to, but considerably faster than
+        is equivalent to, but faster, than
 
-           >>> c2 = c.filter_by_type('domain_axis')
-           >>> d = c2.filter_by_size(73, todict=True)
+           >>> c2 = c.filter_by_type('dimension_coordinate')
+           >>> d = c2.filter_by_identity('time', todict=True)
 
         .. versionadded:: (cfdm) 1.8.10.0
 
-        .. seealso:: TODO `filters_applied`, `inverse_filter`,
-                     `unfilter`
+        .. seealso:: `filter_by_axis`, `filter_by_data`,
+                     `filter_by_identity`, `filter_by_key`,
+                     `filter_by_measure`, `filter_by_method`,
+                     `filter_by_identity`, `filter_by_naxes`,
+                     `filter_by_ncdim`, `filter_by_ncvar`,
+                     `filter_by_property`, `filter_by_type`,
+                     `filters_applied`, `inverse_filter`, `unfilter`,
+                     `clear_filters_applied`
 
         :Parameters:
 
@@ -1025,81 +1064,86 @@ class Constructs(mixin.Container, core.Constructs):
                 provides the arguments for that method. For instance,
                 the parameter ``filter_by_type=['domain_axis']`` will
                 cause the `filter_by_type` method to be called with
-                positional arguments ``*['domain_axis']``. The filters
-                will be applied in the same order that the keyword
-                arguments appear.
+                positional arguments ``*['domain_axis']``.
+
+                The filters are applied in the same order that the
+                keyword arguments appear.
 
                 Valid keywords and their values are:
 
-                ==================  ==================================
-                Keyword             Value
-                ==================  ==================================
-                filter_by_axis      A sequence as expected by the
-                                    *axis* parameter of
-                                    `filter_by_axis`
+                ======================  ==============================
+                Keyword                 Value
+                ======================  ==============================
+                ``filter_by_axis``      A sequence as expected by the
+                                        *axes* parameter of
+                                        `filter_by_axis`
 
-                filter_by_data----- Any value is allowed which will be
-                                    ignored, as `filter_by_data` does
-                                    not have any positional arguments.
+                ``filter_by_identity``  A sequence as expected by the
+                                        *identities* parameter of
+                                        `filter_by_identity`
 
-                filter_by_identity- A sequence as expected by the
-                                    *identities* parameter of
-                                    `filter_by_identity`
+                ``filter_by_key``       A sequence as expected by the
+                                        *keys* parameter of
+                                        `filter_by_key`
 
-                filter_by_key ----- A sequence as expected by the
-                                    *keys* parameter of
-                                    `filter_by_key`
+                ``filter_by_measure``   A sequence as expected by the
+                                        *measures* parameter of
+                                        `filter_by_measure`
 
-                filter_by_measure-- A sequence as expected by the
-                                    *measure* parameter of
-                                    `filter_by_measure`
+                ``filter_by_method``    A sequence as expected by the
+                                        *methods* parameter of
+                                        `filter_by_method`
 
-                filter_by_method--- A sequence as expected by the
-                                    *methods* parameter of
-                                    `filter_by_method`
+                ``filter_by_naxes``     A sequence as expected by the
+                                        *naxes* parameter of
+                                        `filter_by_naxes`
 
-                filter_by_naxes---- A sequence as expected by the
-                                    *naxes* parameter of
-                                    `filter_by_naxes`
+                ``filter_by_ncdim``     A sequence as expected by the
+                                        *ncdims* parameter of
+                                        `filter_by_ncdim`
 
-                filter_by_ncdim---- A sequence as expected by the
-                                    *ncdims* parameter of
-                                    `filter_by_ncdim`
+                ``filter_by_ncvar``     A sequence as expected by the
+                                        *ncvars* parameter of
+                                        `filter_by_ncvar`
 
+                ``filter_by_size``      A sequence as expected by the
+                                        *sizes* parameter of
+                                        `filter_by_size`
 
-                filter_by_ncvar---- A sequence as expected by the
-                                    *ncvars* parameter of
-                                    `filter_by_ncvar`
+                ``filter_by_type``      A sequence as expected by the
+                                        *types* parameter of
+                                        `filter_by_type`
 
-                filter_by_property- A dictionary as expected by the
-                                    *properties* parameter of
-                                    `filter_by_property`
+                ``filter_by_property``  A dictionary as expected by
+                                        the *properties* parameter of
+                                        `filter_by_property`
 
-                filter_by_size ---- A sequence as expected by the
-                                    *sizes* parameter of
-                                    `filter_by_size`
-
-                filter_by_type      A sequence as expected by the
-                                    *types* parameter of
-                                    `filter_by_type`
-                ==================  ==================================
+                ``filter_by_data``      Any value is allowed which
+                                        will be ignored, as
+                                        `filter_by_data` does not have
+                                        any positional arguments.
+                ======================  ==============================
 
             axis_mode: `str`, optional
-                TODO
+                Provide a value for the *mode* parameter of the
+                `filter_by_axis` method.
 
             property_mode: `str`, optional
-                TODO
+                Provide a value for the *mode* parameter of the
+                `filter_by_property` method.
 
             {{todict: `bool`, optional}}
 
             {{cached: optional}}
 
+            _identity_config: optional
+                Provide a value for the *_config* parameter of the
+                `filter_by_identity` method.
+
         :Returns:
-            TODO
 
-        **Examples:**
-
-        TODO
+            `Constructs` or `dict` or *cached*
+                The selected constructs, or a cached valued.
 
         """
         if cached is not None:
@@ -1110,17 +1154,17 @@ class Constructs(mixin.Container, core.Constructs):
             return out
 
         out = self
-        for method_name, args in filters.items():
+        for method, args in filters.items():
             try:
-                filter_method = getattr(self, "_" + method_name)
+                filter_method = getattr(self, "_" + method)
             except AttributeError:
                 raise TypeError(
-                    "filter() got an unexpected keyword argument "
-                    f"{method_name!r}"
+                    f"{self.__class__.__name__}.filter() got an unexpected "
+                    f"keyword argument {method!r}"
                 )
 
             args = self._filter_parse_args(
-                method_name,
+                method,
                 args,
                 todict=todict,
                 axis_mode=axis_mode,
@@ -1218,12 +1262,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `filter_by_data`, `filter_by_key`,
-                     `filter_by_measure`, `filter_by_method`,
-                     `filter_by_identity`, `filter_by_naxes`,
-                     `filter_by_ncdim`, `filter_by_ncvar`,
-                     `filter_by_property`, `filter_by_type`,
-                     `filters_applied`, `inverse_filter`, `unfilter`
+        .. seealso:: `filter`, `filters_applied`, `inverse_filter`,
+                     `clear_filters_applied`, `unfilter`
 
         :Parameters:
 
@@ -1250,17 +1290,16 @@ class Constructs(mixin.Container, core.Constructs):
                 By default *mode* is ``'and'``.
 
             axes: optional
-                Select the constructs whose data spans particular
-                domain axis constructs.
-
-                A domain axis construct is identified by its construct
-                key (e.g. ``'domainaxis1'``).
+                Select the constructs whose data spans the given
+                domain axis constructs, specified by the given values
+                of domain axis construct identifiers
+                (e.g. ``'domainaxis1'``).
 
                 If no axes are provided then all constructs that do or
                 could have data, spanning any domain axes constructs,
                 are selected.
 
-                By default *mode* is ``'and'``.
+                {{string value match}}
 
             {{todict: `bool`, optional}}
 
@@ -1268,8 +1307,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         :Returns:
 
-            `Constructs`
-                The selected constructs and their construct keys.
+            `Constructs` or `dict` or *cached*
+                The selected constructs, or a cached valued.
 
         **Examples:**
 
@@ -1321,12 +1360,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `filter_by_axis`, `filter_by_key`,
-                     `filter_by_measure`, `filter_by_method`,
-                     `filter_by_identity`, `filter_by_naxes`,
-                     `filter_by_ncdim`, `filter_by_ncvar`,
-                     `filter_by_property`, `filter_by_type`,
-                     `filters_applied`, `inverse_filter`, `unfilter`
+        .. seealso:: `filter`, `filters_applied`, `inverse_filter`,
+                     `clear_filters_applied`, `unfilter`
 
         :Parameters:
 
@@ -1336,8 +1371,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         :Returns:
 
-            `Constructs` or `dict`
-                The selected constructs and their construct keys.
+            `Constructs` or `dict` or *cached*
+                The selected constructs, or a cached valued.
 
         **Examples:**
 
@@ -1381,7 +1416,7 @@ class Constructs(mixin.Container, core.Constructs):
         # very expensive to compute.
         # ------------------------------------------------------------
         short_circuit_test = _config.get(
-            "short_circuit_test", _short_circuit_test
+            "short_circuit_test", self._short_circuit_test
         )
         identities_kwargs = _config.get("identities_kwargs", {})
 
@@ -1439,68 +1474,39 @@ class Constructs(mixin.Container, core.Constructs):
     ):
         """Select metadata constructs by identity.
 
-        TODO Calling a `Constructs` instance selects metadata
-        constructs by identity and is an alias for the
-        `filter_by_identity` method.
+        Calling a `Constructs` instance is an alias for
+        `filter_by_identity`.
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `filter_by_axis`, `filter_by_data`,
-                     `filter_by_key`, `filter_by_measure`,
-                     `filter_by_method`, `filter_by_naxes`,
-                     `filter_by_ncdim`, `filter_by_ncvar`,
-                     `filter_by_property`, `filter_by_type`,
-                     `filters_applied`, `inverse_filter`, `unfilter`
+        .. seealso:: `filter`, `filters_applied`, `inverse_filter`,
+                     `clear_filters_applied`, `unfilter`
 
         :Parameters:
 
             identities: optional
-                Select constructs that have any of the given
-                identities.
+                Select constructs that have an identity, defined by
+                their `!identities` methods, that matches any of the
+                given values.
 
-                An identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``, etc.); or
-                a compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``), for which all
-                constructs whose identities match (via `re.search`)
-                are selected.
+                {{string value match}}
 
-                If no identities are provided then all constructs are
-                selected.
-
-                Each construct has a number of identities, and is
-                selected if any of them match any of those provided. A
-                construct's identities are those returned by its
-                `!identities` method. In the following example, the
-                construct ``x`` has four identities:
-
-                   >>> x.identities()
-                   ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
-
-                In addition, each construct also has an identity based
-                its construct key
-                (e.g. ``'key%dimensioncoordinate2'``)
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used
-                as an *identities* argument.
+                {{displayed identity}}
 
             {{todict: `bool`, optional}}
 
             {{cached: optional}}
 
             _config: optional
-                TODO Additional parameters for configuring each construct's
-                `identities` method.
+                Additional parameters for configuring the application
+                of a construct's `identities` method.
 
                 .. versionadded:: (cfdm) 1.8.10.0
 
         :Returns:
 
             `Constructs` or `dict` or *cached*
-                The selected constructs and their construct keys, or a
-                cached valued.
+                The selected constructs, or a cached valued.
 
         **Examples:**
 
@@ -1575,24 +1581,20 @@ class Constructs(mixin.Container, core.Constructs):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `filter_by_axis`, `filter_by_data`,
-                     `filter_by_measure`, `filter_by_method`,
-                     `filter_by_identity`, `filter_by_naxes`,
-                     `filter_by_ncdim`, `filter_by_ncvar`,
-                     `filter_by_property`, `filter_by_type`,
-                     `filters_applied`, `inverse_filter`, `unfilter`
+        .. seealso:: `filter`, `filters_applied`, `inverse_filter`,
+                     `clear_filters_applied`, `unfilter`
 
         :Parameters:
 
-            keys: optional
+            key: optional
                 Select constructs that have any of the given construct
-                keys.
-
-                A key is specified by a string
-                (e.g. ``'fieldancillary0'``).
+                identifiers, specified by the given values
+                (e.g. ``'dimensioncoordiante1'``).
 
                 If no keys are provided then all constructs are
                 selected.
+
+                {{string value match}}
 
             {{todict: `bool`, optional}}
 
@@ -1600,8 +1602,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         :Returns:
 
-            `Constructs`
-                The selected constructs and their construct keys.
+            `Constructs` or `dict` or *cached*
+                The selected constructs, or a cached valued.
 
         **Examples:**
 
@@ -1669,12 +1671,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `filter_by_axis`, `filter_by_data`,
-                     `filter_by_key`, `filter_by_method`,
-                     `filter_by_identity`, `filter_by_naxes`,
-                     `filter_by_ncdim`, `filter_by_ncvar`,
-                     `filter_by_property`, `filter_by_type`,
-                     `filters_applied`, `inverse_filter`, `unfilter`
+        .. seealso:: `filter`, `filters_applied`, `inverse_filter`,
+                     `clear_filters_applied`, `unfilter`
 
         :Parameters:
 
@@ -1682,19 +1680,19 @@ class Constructs(mixin.Container, core.Constructs):
                 Select cell measure constructs that have any of the
                 given measure values.
 
-                A measure is specified by a string (e.g. ``'area'``);
-                or a compiled regular expression
-                (e.g. ``re.compile('^a')``), for which all constructs
-                whose measures match (via `re.search`) are selected.
-
                 If no measures are provided then all cell measure
                 constructs are selected.
+
+                {{string value match}}
 
             {{todict: `bool`, optional}}
 
             {{cached: optional}}
 
         :Returns:
+
+            `Constructs` or `dict` or *cached*
+                The selected constructs, or a cached valued.
 
             `Constructs`
                 The selected cell measure constructs and their
@@ -1791,26 +1789,19 @@ class Constructs(mixin.Container, core.Constructs):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `filter_by_axis`, `filter_by_data`,
-                     `filter_by_key`, `filter_by_measure`,
-                     `filter_by_identity`, `filter_by_naxes`,
-                     `filter_by_ncdim`, `filter_by_ncvar`,
-                     `filter_by_property`, `filter_by_type`,
-                     `filters_applied`, `inverse_filter`, `unfilter`
+        .. seealso:: `filter`, `filters_applied`, `inverse_filter`,
+                     `clear_filters_applied`, `unfilter`
 
         :Parameters:
 
             methods: optional
                 Select cell method constructs that have any of the
-                given methods.
-
-                A method is specified by a string (e.g. ``'mean'``);
-                or a compiled regular expression
-                (e.g. ``re.compile('^m')``), for which all constructs
-                whose methods match (via `re.search`) are selected.
+                given method values.
 
                 If no methods are provided then all cell method
                 constructs are selected.
+
+                {{string value match}}
 
             {{todict: `bool`, optional}}
 
@@ -1818,9 +1809,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         :Returns:
 
-            `Constructs`
-                The selected cell method constructs and their
-                construct keys.
+            `Constructs` or `dict` or *cached*
+                The selected constructs, or a cached valued.
 
         **Examples:**
 
@@ -1918,25 +1908,21 @@ class Constructs(mixin.Container, core.Constructs):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `filter_by_axis`, `filter_by_data`,
-                     `filter_by_key`, `filter_by_measure`,
-                     `filter_by_method`, `filter_by_identity`,
-                     `filter_by_ncdim`, `filter_by_ncvar`,
-                     `filter_by_property`, `filter_by_type`,
-                     `filters_applied`, `inverse_filter`, `unfilter`
+        .. seealso:: `filter`, `filters_applied`, `inverse_filter`,
+                     `clear_filters_applied`, `unfilter`
 
         :Parameters:
 
             naxes: optional
-                Select constructs whose data spans a particular number
-                of domain axis constructs.
+                Select constructs that have data whose number of
+                dimensions matchs any of the given values.
 
-                A number of domain axis constructs is given by an
-                `int`.
-
-                If no numbers are provided then all constructs that do
+                If no values are provided then all constructs that do
                 or could have data, spanning any domain axes
                 constructs, are selected.
+
+                A value may be any object that can match an integer
+                via ``==``.
 
             {{todict: `bool`, optional}}
 
@@ -1944,9 +1930,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         :Returns:
 
-            `Constructs`
-                The selected domain axis constructs and their
-                construct keys.
+            `Constructs` or `dict` or *cached*
+                The selected constructs, or a cached valued.
 
         **Examples:**
 
@@ -2017,27 +2002,21 @@ class Constructs(mixin.Container, core.Constructs):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `filter_by_axis`, `filter_by_data`,
-                     `filter_by_key`, `filter_by_measure`,
-                     `filter_by_method`, `filter_by_naxes`,
-                     `filter_by_identity`, `filter_by_ncvar`,
-                     `filter_by_property`, `filter_by_type`,
-                     `filters_applied`, `inverse_filter`, `unfilter`
+        .. seealso:: `filter`, `filters_applied`, `inverse_filter`,
+                     `clear_filters_applied`, `unfilter`
 
         :Parameters:
 
             ncdims: optional
-                Select domain axis constructs that have any of the
-                given netCDF dimension names.
-
-                A netCDF dimension name is specified by a string
-                (e.g. ``'time'``); or a compiled regular expression
-                (e.g. ``re.compile('^lat')``), for which all
-                constructs whose netCDF dimension names match (via
-                `re.search`) are selected.
+                Select constructs that have a netCDF dimension name,
+                defined by their `!nc_get_dimension` methods, that
+                match any of the given values.
 
                 If no netCDF dimension names are provided then all
-                domain axis constructs are selected.
+                constructs that do or could have a netCDF dimension
+                name are selected.
+
+                {{string value match}}
 
             {{todict: `bool`, optional}}
 
@@ -2045,9 +2024,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         :Returns:
 
-            `Constructs`
-                The selected domain axis constructs and their
-                construct keys.
+            `Constructs` or `dict` or *cached*
+                The selected constructs, or a cached valued.
 
         **Examples:**
 
@@ -2118,28 +2096,21 @@ class Constructs(mixin.Container, core.Constructs):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `filter_by_axis`, `filter_by_data`,
-                     `filter_by_key`, `filter_by_measure`,
-                     `filter_by_method`, `filter_by_naxes`,
-                     `filter_by_identity`, `filter_by_ncdim`,
-                     `filter_by_property`, `filter_by_type`,
-                     `filters_applied`, `inverse_filter`, `unfilter`
+        .. seealso:: `filter`, `filters_applied`, `inverse_filter`,
+                     `clear_filters_applied`, `unfilter`
 
         :Parameters:
 
             ncvars: optional
-                Select constructs that have any of the given netCDF
-                variable names.
-
-                A netCDF variable name is specified by a string
-                (e.g. ``'time'``); or a compiled regular expression
-                (e.g. ``re.compile('^lat')``), for which all
-                constructs whose netCDF variable names match (via
-                `re.search`) are selected.
+                Select constructs that have a netCDF variable name,
+                defined by their `!nc_get_variable` methods, that
+                match any of the given values.
 
                 If no netCDF variable names are provided then all
                 constructs that do or could have a netCDF variable
-                name, with any value, are selected.
+                name are selected.
+
+                {{string value match}}
 
             {{todict: `bool`, optional}}
 
@@ -2147,8 +2118,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         :Returns:
 
-            `Constructs`
-                The selected constructs and their construct keys.
+            `Constructs` or `dict` or *cached*
+                The selected constructs, or a cached valued.
 
         **Examples:**
 
@@ -2251,12 +2222,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `filter_by_axis`, `filter_by_data`,
-                     `filter_by_key`, `filter_by_measure`,
-                     `filter_by_method`, `filter_by_naxes`,
-                     `filter_by_identity`, `filter_by_ncdim`,
-                     `filter_by_ncvar`, `filter_by_type`,
-                     `filters_applied`, `inverse_filter`, `unfilter`
+        .. seealso:: `filter`, `filters_applied`, `inverse_filter`,
+                     `clear_filters_applied`, `unfilter`
 
         :Parameters:
 
@@ -2293,8 +2260,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         :Returns:
 
-            `Constructs`
-                The selected constructs and their construct keys.
+            `Constructs` or `dict` or *cached*
+                The selected constructs, or a cached valued.
 
         **Examples:**
 
@@ -2369,24 +2336,21 @@ class Constructs(mixin.Container, core.Constructs):
 
         .. versionadded:: (cfdm) 1.7.3
 
-        .. seealso:: `filter_by_axis`, `filter_by_data`,
-                     `filter_by_key`, `filter_by_measure`,
-                     `filter_by_method`, `filter_by_naxes`,
-                     `filter_by_identity`, `filter_by_ncdim`,
-                     `filter_by_ncvar`, `filter_by_property`,
-                     `filter_by_type`, `filters_applied`,
-                     `inverse_filter`, `unfilter`
+        .. seealso:: `filter`, `filters_applied`, `inverse_filter`,
+                     `clear_filters_applied`, `unfilter`
 
         :Parameters:
 
             sizes: optional
-                Select domain axis constructs that have any of the
-                given sizes.
-
-                A size is specified by an `int`.
+                Select domain axis constructs that have sizes, defined
+                by their `!get_size` methods, that match any of the
+                given values.
 
                 If no sizes are provided then all domain axis
                 constructs are selected.
+
+                A value may be any object that can match an integer
+                via ``==``.
 
             {{todict: `bool`, optional}}
 
@@ -2394,9 +2358,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         :Returns:
 
-            `Constructs`
-                The selected domain axis constructs and their
-                construct keys.
+            `Constructs` or `dict` or *cached*
+                The selected constructs, or a cached valued.
 
         **Examples:**
 
@@ -2447,12 +2410,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `filter_by_axis`, `filter_by_data`,
-                     `filter_by_key`, `filter_by_measure`,
-                     `filter_by_method`, `filter_by_naxes`,
-                     `filter_by_ncdim`, `filter_by_ncvar`,
-                     `filter_by_identity`, `filter_by_property`,
-                     `filters_applied`, `inverse_filter`, `unfilter`
+        .. seealso:: `filter`, `filters_applied`, `inverse_filter`,
+                     `clear_filters_applied`, `unfilter`
 
         :Parameters:
 
@@ -2483,8 +2442,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         :Returns:
 
-            `Constructs` or `dict`
-                The selected constructs and their construct keys.
+            `Constructs` or `dict` or *cached*
+                The selected constructs, or a cached valued.
 
         **Examples:**
 
@@ -2514,12 +2473,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `filter_by_axis`, `filter_by_data`,
-                     `filter_by_key`, `filter_by_measure`,
-                     `filter_by_method`, `filter_by_naxes`,
-                     `filter_by_identity`, `filter_by_ncdim`,
-                     `filter_by_ncvar`, `filter_by_property`,
-                     `filter_by_type`, `inverse_filter`, `unfilter`
+        .. seealso:: `filter`, `inverse_filter`,
+                     `clear_filters_applied`, `unfilter`
 
         :Returns:
 
@@ -2576,12 +2531,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `filter_by_axis`, `filter_by_data`,
-                     `filter_by_key`, `filter_by_measure`,
-                     `filter_by_method`, `filter_by_naxes`,
-                     `filter_by_identity`, `filter_by_ncdim`,
-                     `filter_by_ncvar`, `filter_by_property`,
-                     `filter_by_type`, `inverse_filter`, `unfilter`
+        .. seealso:: `filter`, `filters_applied`, `inverse_filter`,
+                     `unfilter`
 
         :Returns:
 
@@ -2627,12 +2578,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `filter_by_axis`, `filter_by_data`,
-                     `filter_by_key`, `filter_by_measure`,
-                     `filter_by_method`, `filter_by_naxes`,
-                     `filter_by_identity`, `filter_by_ncdim`,
-                     `filter_by_ncvar`, `filter_by_property`,
-                     `filter_by_type`, `filters_applied`, `unfilter`
+        .. seealso:: `filter`, `filters_applied`,
+                     `clear_filters_applied`, `unfilter`
 
         :Parameters:
 
@@ -2780,13 +2727,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `filter_by_axis`, `filter_by_data`,
-                     `filter_by_key`, `filter_by_measure`,
-                     `filter_by_method`, `filter_by_naxes`,
-                     `filter_by_identity`, `filter_by_ncdim`,
-                     `filter_by_ncvar`, `filter_by_property`,
-                     `filter_by_type`, `filters_applied`,
-                     `inverse_filter`
+        .. seealso:: `filter`, `filters_applied`,
+                     `clear_filters_applied`, `inverse_filter`
 
         :Parameters:
 
@@ -2867,9 +2809,3 @@ class Constructs(mixin.Container, core.Constructs):
                     break
 
         return out.shallow_copy()
-
-
-def _short_circuit_test(x):
-    """By default short circuit after a standard name identity (e.g.
-    'time') has been tested."""
-    return "=" not in x and ":" not in x and "%" not in x

@@ -32,6 +32,7 @@ Filtering
    ~cfdm.Constructs.filter_by_key
    ~cfdm.Constructs.filter_by_ncdim
    ~cfdm.Constructs.filter_by_ncvar
+   ~cfdm.Constructs.filter
    ~cfdm.Constructs.filters_applied
    ~cfdm.Constructs.clear_filters_applied
    ~cfdm.Constructs.inverse_filter
@@ -81,6 +82,7 @@ Miscellaneous
    ~cfdm.Constructs.equals
    ~cfdm.Constructs.ordered
    ~cfdm.Constructs.replace
+   ~cfdm.Constructs.todict
 
 Dictionary-access methods
 -------------------------

@@ -47,7 +47,14 @@ Metadata constructs
    ~cfdm.Domain.has_data_axes
    ~cfdm.Domain.set_data_axes
    ~cfdm.Domain.domain_axis_key
-
+   ~cfdm.Domain.auxiliary_coordinates
+   ~cfdm.Domain.cell_measures
+   ~cfdm.Domain.coordinates
+   ~cfdm.Domain.coordinate_references
+   ~cfdm.Domain.dimension_coordinates
+   ~cfdm.Domain.domain_ancillaries
+   ~cfdm.Domain.domain_axes
+   
 .. rubric:: Attributes
    
 .. autosummary::
@@ -56,13 +63,6 @@ Metadata constructs
    :template: attribute.rst
 
    ~cfdm.Domain.constructs
-   ~cfdm.Domain.auxiliary_coordinates
-   ~cfdm.Domain.cell_measures
-   ~cfdm.Domain.coordinates
-   ~cfdm.Domain.coordinate_references
-   ~cfdm.Domain.dimension_coordinates
-   ~cfdm.Domain.domain_ancillaries
-   ~cfdm.Domain.domain_axes
 
 Miscellaneous
 -------------

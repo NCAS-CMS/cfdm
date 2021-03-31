@@ -265,5 +265,27 @@ _docstring_substitution_definitions = {
                 if iteration through the generator can be stopped
                 before all identities have been computed.
 
-                .. versionadded:: (cfdm) 1.8.9.0""",
+                .. versionadded:: (cfdm) 1.8.10.0""",
+    # {{filter_kwargs: optional}}
+    "{{filter_kwargs: optional}}": """filter_kwargs: optional
+                Keyword arguments accepted by `Constructs.filter` that
+                define additional construct selection criteria, and
+                configure the returned value.
+
+                *Parameter example:*
+                  To return a dictionary instead of a `Constructs`
+                  object, use ``todict=True``.
+
+                .. versionadded:: (cfdm) 1.8.10.0""",
+    # ----------------------------------------------------------------
+    # Method description susbstitutions (3 levels of indentataion)
+    # ----------------------------------------------------------------
+    # {{string value match}}
+    "{{string value match}}": """A value may be any object that can match via ``==``,
+                or a `re.Pattern` object that matches via its `search`
+                method.""",
+    # {{displayed identity}}
+    "{{displayed identity}}": """Note that in the output of a `dump` method or `print`
+                call, a construct is always described by an identity
+                that will select it""",
 }

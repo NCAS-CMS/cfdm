@@ -244,16 +244,17 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         None
 
         """
-        try:
-            return self.constructs.data_axes()[key]
-        except KeyError:
-            return self._default(
-                default,
-                message=(
-                    f"{self.__class__.__name__!r} has no data axes for "
-                    f"construct {key!r}"
-                ),
-            )
+        data_axes = self.constructs.data_axes().get(key)
+        if data_axes is not None:
+            return data_axes
+
+        return self._default(
+            default,
+            message=(
+                f"{self.__class__.__name__!r} has no data axes for "
+                f"construct {key!r}"
+            ),
+        )
 
     def del_data_axes(self, key, default=ValueError()):
         """Removes the keys of the axes spanned by the construct data.
@@ -295,20 +296,18 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         'no axes'
 
         """
-        try:
-            data_axes = self.constructs.data_axes()[key]
-        except KeyError:
-            return self._default(
-                default,
-                message=(
-                    f"{self.__class__.__name__!r} has no data axes for "
-                    f"construct {key!r}"
-                ),
-            )
-        else:
+        data_axes = self.constructs.data_axes().get(key)
+        if data_axes is not None:
             self.constructs._del_data_axes(key)
+            return data_axes
 
-        return data_axes
+        return self._default(
+            default,
+            message=(
+                f"{self.__class__.__name__!r} has no data axes for "
+                f"construct {key!r}"
+            ),
+        )
 
     def has_data_axes(self, key=None):
         """Whether the axes spanned by the construct data have been set.

@@ -326,7 +326,24 @@ class Constructs(abstract.Container):
         return n
 
     def _construct_dict(self, construct_type, copy=False):
-        """TODO."""
+        """Return the dictionary of constructs of a particular type.
+
+        .. versionadded:: (cfdm) 1.8.10.0
+
+        :Parameters:
+
+            copy: `bool`, optional
+                If True and some constructs exisit then the dictionary
+                is a copy of of that stored in the `_constructs`
+                attirbute, otherwise it is the same dictionary.
+
+        :Returns:
+
+            `dict`
+                The dictionary, keyed by construct identifiers with
+                construct values.
+
+        """
         if construct_type in self._ignore:
             return {}
 
@@ -503,7 +520,11 @@ class Constructs(abstract.Container):
         return out
 
     def _dictionary(self, copy=False):
-        """Deprecated at 1.8.10.0. Use `todict` instead."""
+        """Deprecated at 1.8.10.0.
+
+        Use `todict` instead.
+
+        """
         return self.todict()
 
     def _set_construct(self, construct, key=None, axes=None, copy=True):
@@ -731,32 +752,27 @@ class Constructs(abstract.Container):
     def _pop(self, k, *d):
         """Removes specified key and returns the corresponding value.
 
-        D.pop(k[,d]) -> v
-
-        If k is not found, d is returned if given, otherwise KeyError
-        is raised
+        D.pop(k[,d]) -> v, remove specified key and return the
+        corresponding value. If key is not found, d is returned if
+        given, otherwise KeyError is raised.
 
         """
-        # Remove the construct axes, if any
-        self._del_data_axes(k, None)
+        construct_type = self.construct_type(k)
+        if construct_type is not None:
+            self._del_data_axes(k, None)
+            del self._construct_type[k]
+            return self._constructs[construct_type].pop(k)
 
-        # Find the construct type
-        try:
-            construct_type = self._construct_type.pop(k)
-        except KeyError as error:
-            if d:
-                return d[0]
+        if d:
+            return d[0]
 
-            raise KeyError(error)
-
-        # Remove and return the construct
-        return self._constructs[construct_type].pop(k, *d)
+        raise KeyError(k)
 
     def _popitem(self):
         """Remove and return a (key, value) pair as a 2-tuple.
 
-        Pairs are returned in random order. Raises KeyError if the
-        dict is empty.
+        Pairs are returned in random order. Raises KeyError if the dict
+        is empty.
 
         """
         k, v = self.todict().popitem()
@@ -784,23 +800,19 @@ class Constructs(abstract.Container):
     # ----------------------------------------------------------------
     # Dictionary-like methods
     # ----------------------------------------------------------------
-    def get(self, key, *default):
-        """Returns the construct for the construct key, if it exists.
+    def get(self, key, default=None):
+        """Returns the construct for the key, else default.
 
         .. versionadded:: (cfdm) 1.7.0
 
         .. seealso:: `items`, `keys`, `values`
 
         """
-        try:
-            return self[key]
-        except KeyError:
-            pass
+        construct_type = self.construct_type(key)
+        if construct_type is not None:
+            return self._constructs[construct_type][key]
 
-        if not default:
-            return None
-
-        return default[0]
+        return default
 
     def items(self):  # SB NOTE: flaky doctest due to dict_items order
         """Return the items as (construct key, construct) pairs.
@@ -879,7 +891,6 @@ class Constructs(abstract.Container):
          'cellmethod0']
 
         """
-        #        return self._construct_type.keys()
         return self.todict().keys()
 
     def values(self):  # SB NOTE: flaky doctest due to dict_items order
@@ -921,15 +932,23 @@ class Constructs(abstract.Container):
         """
         return self.todict().values()
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def construct_type(self, key):
-        """Return the type of a metadata construct for a given key.
+        """Return the type of a construct for a given key.
 
         .. versionadded:: (cfdm) 1.7.0
 
         .. seealso:: `construct_types`
+
+        :Parameters:
+
+            key: `str`
+                A construct identifier.
+
+        :Returns:
+
+            `str` or `None`
+                The construct type, or `None` if the *key* is not
+                present.
 
         """
         ctype = self._construct_type.get(key)
@@ -1428,31 +1447,33 @@ class Constructs(abstract.Container):
 
         return construct
 
-    def view(self, _ignore=None):
-        """Return a view.
 
-        The actual constructs returned are references to the original
-        ones, but any in-place structural changes to the view (such as
-        removing a construct) will also occur in the original
-        `Constructs` object, and vice versa.
-
-        .. versionadded:: (cfdm) 1.8.10.0
-
-        .. seealso:: `shallow_copy`
-
-        :Returns:
-
-            `{{class}}`
-                The new view.
-
-        **Examples:**
-
-        >>> f = {{package}}.example_field(0)
-        >>> c = f.constructs
-        >>> d = c.view()
-
-        """
-        if _ignore is None:
-            _ignore = self._ignore
-
-        return self._view(ignore=_ignore)
+#    def view(self, _ignore=None):
+#        """Return a view.
+#
+#        The actual constructs returned are references to the original
+#        ones, but any in-place structural changes to the view (such as
+#        removing a construct) will also occur in the original
+#        `Constructs` object, and vice versa.
+#
+#        .. versionadded:: (cfdm) 1.8.10.0
+#
+#        .. seealso:: `shallow_copy`
+#
+#        :Returns:
+#
+#            `{{class}}`
+#                The new view.
+#
+#        **Examples:**
+#
+#        >>> f = {{package}}.example_field(0)
+#        >>> c = f.constructs
+#        >>> d = c.view()
+#
+#        """
+#        if _ignore is None:
+#            _ignore = self._ignore
+#
+#        return self._view(ignore=_ignore)
+#

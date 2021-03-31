@@ -118,15 +118,6 @@ Metadata constructs
    ~cfdm.Field.has_data_axes
    ~cfdm.Field.set_data_axes
    ~cfdm.Field.domain_axis_key
-   
-.. rubric:: Attributes
-   
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cfdm.Field.constructs
    ~cfdm.Field.auxiliary_coordinates
    ~cfdm.Field.cell_measures
    ~cfdm.Field.cell_methods
@@ -136,6 +127,15 @@ Metadata constructs
    ~cfdm.Field.domain_ancillaries
    ~cfdm.Field.domain_axes
    ~cfdm.Field.field_ancillaries
+   
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.Field.constructs
 
 .. _Field-Domain:
 

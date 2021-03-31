@@ -520,71 +520,107 @@ class Field(
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
-    def field_ancillaries(self, *identities, **kwargs):
+    def field_ancillaries(self, *identities, **filter_kwargs):
         """Return field ancillary constructs.
 
-             .. versionadded:: (cfdm) 1.7.0
+        ``c.field_ancillaries(*identities, **filter_kwargs)`` is
+        equivalent to
+        ``c.constructs.filter(filter_by_type=["field_ancillary"],
+        filter_by_identity=identities, **filter_kwargs)``.
 
-             .. seealso:: `constructs`, `get_construct`
+        .. versionadded:: (cfdm) 1.7.0
 
-             :Returns:
+        .. seealso:: `constructs`, `get_construct`
 
-                 `Constructs`
-                     The field ancillary constructs and their construct keys.
-        TODO
-             **Examples:**
+        :Parameters:
 
-             >>> print(f.field_ancillaries())
-             Constructs:
-             {}
+            identities: optional
+                Select field ancillary constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values.
 
-             >>> print(f.field_ancillaries())
-             Constructs:
-             {'fieldancillary0': <{{repr}}FieldAncillary: air_temperature standard_error(10, 9) K>}
+                {{string value match}}
 
-             >>> print(f.field_ancillaries('specific_humuidity standard_error'))
-             Constructs:
-             {'fieldancillary0': <{{repr}}FieldAncillary: specific_humidity standard_error(10, 9) K>}
+                {{displayed identity}}
+
+            {{filter_kwargs: optional}}
+
+         :Returns:
+
+            `Constructs`
+                The selected constructs, unless modified by any
+                *filter_kwargs* parameters.
+
+        **Examples:**
+
+        >>> print(f.field_ancillaries())
+        Constructs:
+        {}
+
+        >>> print(f.field_ancillaries())
+        Constructs:
+        {'fieldancillary0': <{{repr}}FieldAncillary: air_temperature standard_error(10, 9) K>}
+
+        >>> print(f.field_ancillaries('specific_humuidity standard_error'))
+        Constructs:
+        {'fieldancillary0': <{{repr}}FieldAncillary: specific_humidity standard_error(10, 9) K>}
 
         """
-        return self._construct_types(
-            ("field_ancillary",), "field_ancillaries", identities, **kwargs
+        return self._filter_interface(
+            ("field_ancillary",),
+            "field_ancillaries",
+            identities,
+            **filter_kwargs,
         )
 
-    def cell_methods(self, *identities, **kwargs):
+    def cell_methods(self, *identities, **filter_kwargs):
         """Return cell method constructs.
 
-                The cell methods are not returned in the order in which they were
-                applied. To achieve this use the `~Constructs.ordered` of the
-                returned `Constructs` instance.
+         The cell methods are not returned in the order in which they
+         were applied. To achieve this use the `~Constructs.ordered` of
+         the returned `Constructs` instance.
 
-                .. versionadded:: (cfdm) 1.7.0
+         .. versionadded:: (cfdm) 1.7.0
 
-                .. seealso:: `constructs`, `get_construct`, `set_construct`
-        TODO
-                :Returns:
+         .. seealso:: `constructs`, `get_construct`, `set_construct`
 
-                    `Constructs`
-                        The cell method constructs and their construct keys.
+         :Parameters:
 
-                **Examples:**
+             identities: optional
+                 Select cell method constructs that have an identity,
+                 defined by their `!identities` methods, that matches
+                 any of the given values.
 
-                >>> f.cell_methods()
-                Constructs:
-                {}
+                 {{string value match}}
 
-                >>> f.cell_methods()
-                Constructs:
-                {'cellmethod1': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
-                 'cellmethod0': <{{repr}}CellMethod: domainaxis3: maximum>}
+                 {{displayed identity}}
 
-                >>> f.cell_methods.ordered()
-                OrderedDict([('cellmethod0', <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
-                             ('cellmethod1', <{{repr}}CellMethod: domainaxis3: maximum>)])
+             {{filter_kwargs: optional}}
+
+        :Returns:
+
+            `Constructs`
+                The selected constructs, unless modified by any
+                *filter_kwargs* parameters.
+
+         **Examples:**
+
+         >>> f.cell_methods()
+         Constructs:
+         {}
+
+         >>> f.cell_methods()
+         Constructs:
+         {'cellmethod1': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+          'cellmethod0': <{{repr}}CellMethod: domainaxis3: maximum>}
+
+         >>> f.cell_methods().ordered()
+         OrderedDict([('cellmethod0', <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
+                      ('cellmethod1', <{{repr}}CellMethod: domainaxis3: maximum>)])
 
         """
-        return self._construct_types(
-            ("cell_method",), "cell_method", identities, **kwargs
+        return self._filter_interface(
+            ("cell_method",), "cell_method", identities, **filter_kwargs
         )
 
     # ----------------------------------------------------------------

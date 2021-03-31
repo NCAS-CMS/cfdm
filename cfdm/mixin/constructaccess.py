@@ -8,24 +8,49 @@ class ConstructAccess:
 
     """
 
-    def _construct_types(
+    def _filter_interface(
         self,
         _ctypes,
         _method,
         identities,
         todict=False,
         cached=None,
-        **kwargs,
+        **filter_kwargs,
     ):
         """TODO.
 
         .. versionadded:: (cfdm) 1.8.10.0
 
+        :Parameters:
+
+            _ctypes: `tuple`
+
+            _method: `str`
+
+            identities: `tuple`
+                Select constructs that have an identity, defined by
+                their `!identities` methods, that matches any of the
+                given tuple values.
+
+                {{string value match}}
+
+            {{todict: `bool`, optional}}
+
+            {{cached: optional}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+            `Constructs`
+                The selected constructs, unless modified the *todict*
+                or *cached* parameters.
+
         """
         if not _ctypes:
-            filter_kwargs = kwargs
+            kwargs = filter_kwargs
         else:
-            if not (identities or kwargs):
+            if not (identities or filter_kwargs):
                 # Calling filter_by_type directly is faster
                 return self.constructs.filter_by_type(
                     *_ctypes, todict=todict, cached=cached
@@ -33,19 +58,19 @@ class ConstructAccess:
 
             # Ensure that filter_by_types is the first filter
             # applied, as it's the cheapest
-            filter_kwargs = {"filter_by_type": _ctypes}
+            kwargs = {"filter_by_type": _ctypes}
 
-            if kwargs:
-                if "filter_by_type" in kwargs:
+            if filter_kwargs:
+                if "filter_by_type" in filter_kwargs:
                     raise TypeError(
                         f"{_method}() got an unexpected keyword argument "
                         "'filter_by_type'"
                     )
 
-                filter_kwargs.update(kwargs)
+                kwargs.update(filter_kwargs)
 
         if identities:
-            if "filter_by_identity" in kwargs:
+            if "filter_by_identity" in filter_kwargs:
                 raise TypeError(
                     f"Can't set {_method}() keyword argument "
                     "'filter_by_identity' when positional *identities "
@@ -54,11 +79,9 @@ class ConstructAccess:
 
             # Ensure that filter_by_identity is the last filter
             # applied, as it's the most expensive.
-            filter_kwargs["filter_by_identity"] = identities
+            kwargs["filter_by_identity"] = identities
 
-        return self.constructs.filter(
-            todict=todict, cached=cached, **filter_kwargs
-        )
+        return self.constructs.filter(todict=todict, cached=cached, **kwargs)
 
     def _unique_construct_names(self):
         """Return unique metadata construct names.
@@ -137,7 +160,7 @@ class ConstructAccess:
 
         return key_to_name
 
-    def coordinate_references(self, *identities, **kwargs):
+    def coordinate_references(self, *identities, **filter_kwargs):
         """Return coordinate reference constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -146,15 +169,22 @@ class ConstructAccess:
 
         :Parameters:
 
-            {{cached: optional}}
+            identities: optional
+                Select coordinate reference constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values.
 
-            {{todict: `bool`, optional}}
+                {{string value match}}
+
+                {{displayed identity}}
+
+            {{filter_kwargs: optional}}
 
         :Returns:
 
-            `Constructs` or `dict`
-                The constructs and their construct keys.
-
+            `Constructs`
+                The selected constructs, unless modified by any
+                *filter_kwargs* parameters.
 
         **Examples:**
 
@@ -168,14 +198,14 @@ class ConstructAccess:
          'coordinatereference1': <{{repr}}CoordinateReference: rotated_latitude_longitude>}
 
         """
-        return self._construct_types(
+        return self._filter_interface(
             ("coordinate_reference",),
             "coordinate_references",
             identities,
-            **kwargs,
+            **filter_kwargs,
         )
 
-    def domain_axes(self, *identities, **kwargs):
+    def domain_axes(self, *identities, **filter_kwargs):
         """Return domain axis constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -184,14 +214,22 @@ class ConstructAccess:
 
         :Parameters:
 
-            identities: optional
+            identities: `tuple`, optional
+                Select domain axis constructs that have an identity,
+                defined by their `!identities` methods, that matches
+                any of the given values.
 
-            kwargs: optional
+                {{string value match}}
+
+                {{displayed identity}}
+
+            {{filter_kwargs: optional}}
 
         :Returns:
 
-            `Constructs` or `dict`
-                The domain axis constructs and their construct keys.
+            `Constructs`
+                The selected constructs, unless modified by any
+                *filter_kwargs* parameters.
 
         **Examples:**
 
@@ -207,11 +245,11 @@ class ConstructAccess:
          'domainaxis3': <{{repr}}DomainAxis: size(1)>}
 
         """
-        return self._construct_types(
-            ("domain_axis",), "domain_axes", identities, **kwargs
+        return self._filter_interface(
+            ("domain_axis",), "domain_axes", identities, **filter_kwargs
         )
 
-    def auxiliary_coordinates(self, *identities, **kwargs):
+    def auxiliary_coordinates(self, *identities, **filter_kwargs):
         """Return auxiliary coordinate constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -220,15 +258,22 @@ class ConstructAccess:
 
         :Parameters:
 
-            {{cached: optional}}
+            identities: optional
+                Select auxiliary coordinate constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values.
 
-            {{todict: `bool`, optional}}
+                {{string value match}}
+
+                {{displayed identity}}
+
+            {{filter_kwargs: optional}}
 
         :Returns:
 
-            `Constructs` or `dict`
-                The auxiliary coordinate constructs and their construct
-                keys.
+            `Constructs`
+                The selected constructs, unless modified by any
+                *filter_kwargs* parameters.
 
         **Examples:**
 
@@ -243,14 +288,14 @@ class ConstructAccess:
          'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
 
         """
-        return self._construct_types(
+        return self._filter_interface(
             ("auxiliary_coordinate",),
             "auxiliary_coordinates",
             identities,
-            **kwargs,
+            **filter_kwargs,
         )
 
-    def dimension_coordinates(self, *identities, **kwargs):
+    def dimension_coordinates(self, *identities, **filter_kwargs):
         """Return dimension coordinate constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -259,15 +304,22 @@ class ConstructAccess:
 
         :Parameters:
 
-            {{cached: optional}}
+            identities: optional
+                Select dimension coordinate constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values.
 
-            {{todict: `bool`, optional}}
+                {{string value match}}
+
+                {{displayed identity}}
+
+            {{filter_kwargs: optional}}
 
         :Returns:
 
-            `Constructs` or `dict`
-                The dimension coordinate constructs and their construct
-                keys.
+            `Constructs`
+                The selected constructs, unless modified by any
+                *filter_kwargs* parameters.
 
         **Examples:**
 
@@ -283,14 +335,14 @@ class ConstructAccess:
          'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
 
         """
-        return self._construct_types(
+        return self._filter_interface(
             ("dimension_coordinate",),
             "dimension_coordinates",
             identities,
-            **kwargs,
+            **filter_kwargs,
         )
 
-    def coordinates(self, *identities, **kwargs):
+    def coordinates(self, *identities, **filter_kwargs):
         """Return dimension and auxiliary coordinate constructs.
 
         . versionadded:: (cfdm) 1.7.0
@@ -300,14 +352,22 @@ class ConstructAccess:
 
         :Parameters:
 
+            identities: optional
+                Select coordinate constructs that have an identity,
+                defined by their `!identities` methods, that matches
+                any of the given values.
 
-            {{todict: `bool`, optional}}
+                {{string value match}}
 
-        Returns:
+                {{displayed identity}}
 
-           `Constructs` or `dict`
-               The auxiliary coordinate and dimension coordinate
-               constructs and their construct keys.
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+            `Constructs`
+                The selected constructs, unless modified by any
+                *filter_kwargs* parameters.
 
         *Examples:**
 
@@ -326,17 +386,17 @@ class ConstructAccess:
         'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
 
         """
-        return self._construct_types(
+        return self._filter_interface(
             (
                 "dimension_coordinate",
                 "auxiliary_coordinate",
             ),
             "coordinates",
             identities,
-            **kwargs,
+            **filter_kwargs,
         )
 
-    def domain_ancillaries(self, *identities, **kwargs):
+    def domain_ancillaries(self, *identities, **filter_kwargs):
         """Return domain ancillary constructs.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -345,33 +405,50 @@ class ConstructAccess:
 
         :Parameters:
 
+            identities: optional
+                Select domain ancillary constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values.
 
-            {{todict: `bool`, optional}}
+                {{string value match}}
+
+                {{displayed identity}}
+
+            {{filter_kwargs: optional}}
 
         :Returns:
 
-            `Constructs` or `dict`
-                The domain ancillary constructs and their construct keys.
+            `Constructs`
+                The selected constructs, unless modified by any
+                *filter_kwargs* parameters.
 
         **Examples:**
 
-        >>> f.domain_ancillaries
+        >>> f.domain_ancillaries()
         Constructs:
         {}
 
-        >>> f.domain_ancillaries
+        >>> f.domain_ancillaries()
         Constructs:
         {'domainancillary0': <{{repr}}DomainAncillary: ncvar%a(1) m>,
          'domainancillary1': <{{repr}}DomainAncillary: ncvar%b(1) >,
          'domainancillary2': <{{repr}}DomainAncillary: surface_altitude(10, 9) m>}
 
         """
-        return self._construct_types(
-            ("domain_ancillary",), "domain_ancillaries", identities, **kwargs
+        return self._filter_interface(
+            ("domain_ancillary",),
+            "domain_ancillaries",
+            identities,
+            **filter_kwargs,
         )
 
-    def cell_measures(self, *identities, **kwargs):
+    def cell_measures(self, *identities, **filter_kwargs):
         """Return cell measure constructs.
+
+        ``c.cell_measures(*identities, **filter_kwargs)`` is
+        equivalent to
+        ``c.constructs.filter(filter_by_type=["cell_measure"],
+        filter_by_identity=identities, **filter_kwargs)``.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -379,28 +456,39 @@ class ConstructAccess:
 
         :Parameters:
 
+            identities: optional
+                Select cell measure constructs that have an identity,
+                defined by their `!identities` methods, that matches
+                any of the given values.
+
+                {{string value match}}
+
+                {{displayed identity}}
+
+            {{filter_kwargs: optional}}
 
         :Returns:
 
-            `Constructs` or `dict`
-                The cell measure constructs and their construct keys.
+            `Constructs`
+                The selected constructs, unless modified by any
+                *filter_kwargs* parameters.
 
         **Examples:**
 
-        >>> f.cell_measures
+        >>> f.cell_measures()
         Constructs:
         {}
 
-        >>> f.cell_measures
+        >>> f.cell_measures()
         Constructs:
         {'cellmeasure0': <{{repr}}CellMeasure: measure%area(9, 10) km2>}
 
         """
-        return self._construct_types(
-            ("cell_measure",), "cell_measures", identities, **kwargs
+        return self._filter_interface(
+            ("cell_measure",), "cell_measures", identities, **filter_kwargs
         )
 
-    def construct(self, identity=None, default=ValueError(), **kwargs):
+    def construct(self, identity=None, default=ValueError(), **filter_kwargs):
         """Select a metadata construct by its identity.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -409,40 +497,22 @@ class ConstructAccess:
 
         :Parameters:
 
-            identity: optional
-                Select constructs that have the given identity. If exactly
-                one construct is selected then it is returned, otherwise
-                an exception is raised.
+            identity:
+                Select the construct that has an identity, defined by
+                its `!identities` method, that matches the given
+                value.
 
-                The identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``, etc.); or a
-                compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``), for which all
-                constructs whose identities match (via `re.search`) are
-                selected.
+                {{string value match}}
 
-                Each construct has a number of identities, and is selected
-                if any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``c`` has
-                four identities:
-
-                   >>> c.identities()
-                   ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
-
-                In addition, each construct also has an identity based its
-                construct key (e.g. ``'key%dimensioncoordinate2'``)
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
+                {{displayed identity}}
 
             default: optional
                 Return the value of the *default* parameter if the
                 property has not been set.
 
                 {{default Exception}}
+
+            {{filter_kwargs: optional}}
 
         :Returns:
 
@@ -485,13 +555,13 @@ class ConstructAccess:
         else:
             identity = (identity,)
 
-        kwargs["todict"] = True
+        filter_kwargs["todict"] = True
 
-        c = self._construct_types(
+        c = self._filter_interface(
             (),
             "construct",
             identity,
-            **kwargs,
+            **filter_kwargs,
         )
 
         n = len(c)
@@ -506,7 +576,9 @@ class ConstructAccess:
             default, f"Can't return more than one ({n}) construct"
         )
 
-    def construct_key(self, identity=None, default=ValueError(), **kwargs):
+    def construct_key(
+        self, identity=None, default=ValueError(), **filter_kwargs
+    ):
         """Select the key of a metadata construct by its identity.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -515,40 +587,22 @@ class ConstructAccess:
 
         :Parameters:
 
-            identity: optional
-                Select constructs that have the given identity. If exactly
-                one construct is selected then it is returned, otherwise
-                an exception is raised.
+            identity:
+                Select the construct that has an identity, defined by
+                its `!identities` method, that matches the given
+                value.
 
-                The identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``, etc.); or a
-                compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``), for which all
-                constructs whose identities match (via `re.search`) are
-                selected.
+                {{string value match}}
 
-                Each construct has a number of identities, and is selected
-                if any of them match any of those provided. A construct's
-                identities are those returned by its `!identities`
-                method. In the following example, the construct ``c`` has
-                four identities:
-
-                   >>> c.identities()
-                   ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
-
-                In addition, each construct also has an identity based its
-                construct key (e.g. ``'key%dimensioncoordinate2'``)
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used as
-                an *identity* argument.
+                {{displayed identity}}
 
             default: optional
                 Return the value of the *default* parameter if the
                 property has not been set
 
                 {{default Exception}}
+
+            {{filter_kwargs: optional}}
 
         :Returns:
 
@@ -593,13 +647,13 @@ class ConstructAccess:
         else:
             identity = (identity,)
 
-        kwargs["todict"] = True
+        filter_kwargs["todict"] = True
 
-        c = self._construct_types(
+        c = self._filter_interface(
             (),
             "construct",
             identity,
-            **kwargs,
+            **filter_kwargs,
         )
 
         n = len(c)
@@ -625,33 +679,13 @@ class ConstructAccess:
         :Parameters:
 
             identity:
-                Select the 1-d coordinate constructs that have the
-                given identity.
+                Select the 1-d coordinate construct that has an
+                identity, defined by its `!identities` method, that
+                matches the given value.
 
-                An identity is specified by a string
-                (e.g. ``'latitude'``, ``'long_name=time'``, etc.); or
-                a compiled regular expression
-                (e.g. ``re.compile('^atmosphere')``), for which all
-                constructs whose identities match (via `re.search`)
-                are selected.
+                {{string value match}}
 
-                Each coordinate construct has a number of identities,
-                and is selected if any of them match any of those
-                provided. A construct's identities are those returned
-                by its `!identities` method. In the following example,
-                the construct ``x`` has four identities:
-
-                   >>> x.identities()
-                   ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
-
-                In addition, each construct also has an identity based
-                its construct key
-                (e.g. ``'key%dimensioncoordinate2'``)
-
-                Note that in the output of a `print` call or `!dump`
-                method, a construct is always described by one of its
-                identities, and so this description may always be used
-                as an *identity* argument.
+                {{displayed identity}}
 
             default: optional
                 Return the value of the *default* parameter if a domain

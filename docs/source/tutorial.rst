@@ -548,10 +548,10 @@ Class                  CF data model construct                                  
 =====================  ==============================================================  ==============================
 
 Metadata constructs of a particular type can be retrieved with the
-following attributes of the field construct:
+following methods of the field construct:
 
 ==============================  =====================  
-Attribute                       Metadata constructs    
+Method                          Metadata constructs    
 ==============================  =====================  
 `~Field.domain_axes`            Domain axes            
 `~Field.dimension_coordinates`  Dimension coordinates  
@@ -583,15 +583,15 @@ dictionary (see the section on :ref:`metadata construct access
    :caption: *Retrieve the field construct's coordinate reference
              constructs, and access them using dictionary methods.*
       
-   >>> t.coordinate_references
+   >>> t.coordinate_references()
    <Constructs: coordinate_reference(2)>
-   >>> print(t.coordinate_references)
+   >>> print(t.coordinate_references())
    Constructs:
    {'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
     'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
-   >>> list(t.coordinate_references.keys())
+   >>> list(t.coordinate_references().keys())
    ['coordinatereference0', 'coordinatereference1']
-   >>> for key, value in t.coordinate_references.items():
+   >>> for key, value in t.coordinate_references().items():
    ...     print(key, repr(value))
    ...
    coordinatereference1 <CoordinateReference: rotated_latitude_longitude>
@@ -601,13 +601,13 @@ dictionary (see the section on :ref:`metadata construct access
    :caption: *Retrieve the field construct's dimension coordinate and
              domain axis constructs.*
       
-   >>> print(t.dimension_coordinates)
+   >>> print(t.dimension_coordinates())
    Constructs:
    {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
     'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
-   >>> print(t.domain_axes)
+   >>> print(t.domain_axes())
    Constructs:
    {'domainaxis0': <DomainAxis: size(1)>,
     'domainaxis1': <DomainAxis: size(10)>,
@@ -750,7 +750,7 @@ the field construct. For example, the data of the field construct
    :caption: *Show which data axis constructs are spanned by the field
              construct's data.*
 	    
-   >>> print(t.domain_axes)
+   >>> print(t.domain_axes())
    Constructs:
    {'domainaxis0': <DomainAxis: size(1)>,
     'domainaxis1': <DomainAxis: size(10)>,
@@ -848,7 +848,7 @@ Method                     Description
    >>> t2 = t.squeeze()
    >>> t2
    <CF Field: air_temperature(grid_latitude(10), grid_longitude(9)) K>
-   >>> print(t2.dimension_coordinates)
+   >>> print(t2.dimension_coordinates())
    Constructs:
    {'dimensioncoordinate0': <CF DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
     'dimensioncoordinate1': <CF DimensionCoordinate: grid_latitude(10) degrees>,
@@ -1407,7 +1407,7 @@ metadata construct:
    >>> print(t.constructs.filter_by_type('cell_measure'))
    Constructs:
    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
-   >>> print(t.cell_measures)
+   >>> print(t.cell_measures())
    Constructs:
    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
 
@@ -1729,12 +1729,12 @@ the `~cfdm.DomainAxis.get_size` method of the domain axis construct.
 .. code-block:: python
    :caption: *Get the size of a domain axis construct.*
 
-   >>> print(q.domain_axes)
+   >>> print(q.domain_axes())
    Constructs:
    {'domainaxis0': <DomainAxis: size(5)>,
     'domainaxis1': <DomainAxis: size(8)>,
     'domainaxis2': <DomainAxis: size(1)>}
-   >>> d = q.domain_axes.get('domainaxis1')
+   >>> d = q.domain_axes().get('domainaxis1')
    >>> d
    <DomainAxis: size(8)>
    >>> d.get_size()
@@ -1757,7 +1757,7 @@ individually with the `~cfdm.Field.auxiliary_coordinates` and
 .. code-block:: python
    :caption: *Retrieve both types of coordinate constructs.*
       
-   >>> print(t.coordinates)
+   >>> print(t.coordinates())
    Constructs:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
     'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
@@ -2043,7 +2043,7 @@ cell method constructs to be recorded.
              the use of construct keys instead of netCDF variable
              names for cell method axes identification.*
 	     
-   >>> print(t.cell_methods)
+   >>> print(t.cell_methods())
    Constructs:
    {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
     'cellmethod1': <CellMethod: domainaxis3: maximum>}
@@ -2059,7 +2059,7 @@ to the field construct during :ref:`field construct creation
    :caption: *Retrieve the cell method constructs in the same order
              that they were applied.*
 	     
-   >>> t.cell_methods.ordered()
+   >>> t.cell_methods().ordered()
    OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
                 ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
 
