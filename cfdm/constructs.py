@@ -1,12 +1,13 @@
 import logging
-
 from itertools import chain
+from re import Pattern
 
 from . import core
 from . import mixin
 
 from .decorators import _manage_log_level_via_verbosity
 from .core.functions import deepcopy
+
 
 logger = logging.getLogger(__name__)
 
@@ -573,18 +574,19 @@ class Constructs(mixin.Container, core.Constructs):
         :Parameters:
 
             value0:
-                The first value to be matched.
+                The first value to be matched. Could a `re.Pattern`
+                object.
 
             construct:
-                The construct whose `_equals` method is used to
+                The construct whose `_equals` method might be used to
                 determine whether values can be considered to match.
 
             value1:
                 The second value to be matched.
 
             basic: `bool`
-                If True then value0 and value1 will be compared with
-                the basic ``==`` operator.
+                If True then replace the expensive `_equals` method
+                with ``==``.
 
         :Returns:
 
@@ -592,19 +594,37 @@ class Constructs(mixin.Container, core.Constructs):
                 Whether or not the two values match.
 
         """
-        if basic:
-            return bool(value1 == value0)
+        if isinstance(value0, Pattern):
+            try:
+                return value0.search(value1)
+            except TypeError:
+                return False
 
-        try:
-            return value0.search(value1)
-        except (AttributeError, TypeError):
-            return construct._equals(value1, value0)
+        if basic:
+            return value0 == value1
+
+        return construct._equals(value1, value0)
 
     @classmethod
     def _short_circuit_test(cls, x):
         """The default short cicuit test.
 
+        .. versionadded:: (cfdm) 1.8.10.0
+
         See `_filter_by_identity` for details.
+
+        :Parameters:
+
+            x: `str`
+                The value against which the construct's identities are
+                being compared.
+
+        :Returns:
+
+            `bool`
+                 Returns `True` if the construct's `identities` method
+                 is to short circuit after the first identity is
+                 computed, otherwise `False`.
 
         """
         return "=" not in x and ":" not in x and "%" not in x
@@ -1159,7 +1179,7 @@ class Constructs(mixin.Container, core.Constructs):
                 filter_method = getattr(self, "_" + method)
             except AttributeError:
                 raise TypeError(
-                    f"{self.__class__.__name__}.filter() got an unexpected "
+                    f"{self.__class__.__name__}.filter() has an unexpected "
                     f"keyword argument {method!r}"
                 )
 
@@ -1204,7 +1224,7 @@ class Constructs(mixin.Container, core.Constructs):
             _subset = True
         elif axes:
             raise ValueError(
-                f"filter_by_axis() got incorrect 'mode' value {mode!r}. "
+                f"filter_by_axis() has incorrect 'mode' value {mode!r}. "
                 "Expected one of  'and', 'or', 'exact', 'subset', None"
             )
 
@@ -1420,47 +1440,45 @@ class Constructs(mixin.Container, core.Constructs):
         )
         identities_kwargs = _config.get("identities_kwargs", {})
 
-        oks = [False] * len(out)
+        matched = set()
 
         for value0 in identities:
-            is_str = isinstance(value0, str)
 
+            # Create short circuit
             short_circuit = None
-            if is_str:
-                # Create short circuits
+            if isinstance(value0, str):
                 if short_circuit_test(value0):
                     short_circuit = 1
                 elif value0.startswith("key%"):
-                    # In every case, short circuit after a construct
-                    # identity (e.g. 'key%dimensioncoordinate1') has
-                    # been tested.
                     short_circuit = 0
 
-            for j, (cid, construct) in enumerate(out.items()):
-                if oks[j]:
+            for cid, construct in out.items():
+                if cid in matched:
+                    # We've already matched this construct
                     continue
 
+                construct_identities = chain(
+                    ("key%" + cid,),
+                    construct.identities(generator=True, **identities_kwargs),
+                )
+
                 ok = False
-                for i, value1 in enumerate(
-                    chain(
-                        ("key%" + cid,),
-                        construct.identities(
-                            generator=True, **identities_kwargs
-                        ),
-                    )
-                ):
+                for i, value1 in enumerate(construct_identities):
                     ok = self._matching_values(
-                        value0, construct, value1, basic=is_str
+                        value0, construct, value1, basic=True
                     )
                     if ok:
-                        oks[j] = True
+                        # Ensure that we don't check this construct
+                        # again
+                        matched.add(cid)
                         break
 
                     if short_circuit is not None and i >= short_circuit:
+                        # Stop checking this construct
                         break
 
-        for ok, cid in zip(oks, tuple(out)):
-            if not ok:
+        for cid in tuple(out):
+            if cid not in matched:
                 pop(cid)
 
         return out
@@ -2158,10 +2176,13 @@ class Constructs(mixin.Container, core.Constructs):
             _or = False
         else:
             mode = mode[0]
-            _or = mode == "or"
-            if not _or and mode not in (None, "and"):
+            if mode in (None, "and"):
+                _or = False
+            elif mode == "or":
+                _or = True
+            else:
                 raise ValueError(
-                    "filter_by_property() got incorrect 'mode' value "
+                    "filter_by_property() has incorrect 'mode' value "
                     f"({mode!r}). If set must be one of 'and', 'or', None"
                 )
 
