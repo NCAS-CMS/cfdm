@@ -481,7 +481,7 @@ class Constructs(mixin.Container, core.Constructs):
             method: `str`
                 The name of a filter method (e.g. "filter_by_data").
 
-            args: asd
+            args: sequence or `dict`
                 The input arguments for the filter method
                 (e.g. "_filter_by_data").
 
