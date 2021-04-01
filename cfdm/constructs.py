@@ -2176,10 +2176,10 @@ class Constructs(mixin.Container, core.Constructs):
             _or = False
         else:
             mode = mode[0]
-            if mode in (None, "and"):
-                _or = False
-            elif mode == "or":
+            if mode == "or":
                 _or = True
+            elif mode in ("and", None):
+                _or = False
             else:
                 raise ValueError(
                     "filter_by_property() has incorrect 'mode' value "
