@@ -63,8 +63,8 @@ class ConstructAccess:
             if filter_kwargs:
                 if "filter_by_type" in filter_kwargs:
                     raise TypeError(
-                        f"{_method}() got an unexpected keyword argument "
-                        "'filter_by_type'"
+                        f"{self.__class__.__name__}.{_method}() got an "
+                        "unexpected keyword argument 'filter_by_type'"
                     )
 
                 kwargs.update(filter_kwargs)
@@ -72,9 +72,9 @@ class ConstructAccess:
         if identities:
             if "filter_by_identity" in filter_kwargs:
                 raise TypeError(
-                    f"Can't set {_method}() keyword argument "
-                    "'filter_by_identity' when positional *identities "
-                    "arguments are also set"
+                    f"Can't set {self.__class__.__name__}.{_method}() "
+                    "keyword argument 'filter_by_identity' when "
+                    "positional *identities arguments are also set"
                 )
 
             # Ensure that filter_by_identity is the last filter
