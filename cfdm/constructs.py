@@ -94,6 +94,8 @@ class Constructs(mixin.Container, core.Constructs):
                     "positional *identities arguments are also set"
                 )
 
+            # Ensure that filter_by_identity is the last filter
+            # applied, as it's the most expensive.
             filter_kwargs["filter_by_identity"] = identities
 
         return self.filter(**filter_kwargs)
