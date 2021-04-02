@@ -624,7 +624,7 @@ class Constructs(mixin.Container, core.Constructs):
         :Returns:
 
             `bool`
-                 Returns `True` if the construct's `identities` method
+                 Returns `True` if a construct's `identities` method
                  is to short circuit after the first identity is
                  computed, otherwise `False`.
 
