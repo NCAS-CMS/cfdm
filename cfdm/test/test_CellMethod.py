@@ -1,5 +1,4 @@
 import datetime
-import inspect
 import os
 import unittest
 
@@ -31,13 +30,8 @@ class CellMethodTest(unittest.TestCase):
         self.assertEqual(len(f), 1, "f={!r}".format(f))
         self.f = f[0]
 
-        self.test_only = []
-
     def test_CellMethod__repr__str__dump_construct_type(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f
 
         for c in f.cell_methods().values():
@@ -48,9 +42,6 @@ class CellMethodTest(unittest.TestCase):
 
     def test_CellMethod(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f
 
         # ------------------------------------------------------------
@@ -102,9 +93,6 @@ class CellMethodTest(unittest.TestCase):
 
     def test_CellMethod_axes(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.CellMethod()
 
         self.assertFalse(f.has_axes())
@@ -117,9 +105,6 @@ class CellMethodTest(unittest.TestCase):
 
     def test_CellMethod_method(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.CellMethod()
 
         self.assertFalse(f.has_method())
@@ -132,9 +117,6 @@ class CellMethodTest(unittest.TestCase):
 
     def test_CellMethod_qualifier(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.CellMethod()
 
         self.assertEqual(f.qualifiers(), {})

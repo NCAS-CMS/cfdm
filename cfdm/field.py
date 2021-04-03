@@ -566,12 +566,14 @@ class Field(
         {'fieldancillary0': <{{repr}}FieldAncillary: specific_humidity standard_error(10, 9) K>}
 
         """
-        return self._filter_interface(
+        c, _ = self._filter_interface(
             ("field_ancillary",),
             "field_ancillaries",
             identities,
             **filter_kwargs,
         )
+
+        return c
 
     def cell_methods(self, *identities, **filter_kwargs):
         """Return cell method constructs.
@@ -619,9 +621,11 @@ class Field(
                       ('cellmethod1', <{{repr}}CellMethod: domainaxis3: maximum>)])
 
         """
-        return self._filter_interface(
+        c, _ = self._filter_interface(
             ("cell_method",), "cell_method", identities, **filter_kwargs
         )
+
+        return c
 
     # ----------------------------------------------------------------
     # Methods

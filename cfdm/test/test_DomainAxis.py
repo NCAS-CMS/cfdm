@@ -1,5 +1,4 @@
 import datetime
-import inspect
 import os
 import unittest
 
@@ -33,13 +32,8 @@ class DomainTest(unittest.TestCase):
         self.assertEqual(len(f), 1, "f={!r}".format(f))
         self.f = f[0]
 
-        self.test_only = []
-
     def test_DomainAxis__repr__str_construct_type(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f
 
         for d in f.domain_axes().values():
@@ -49,9 +43,6 @@ class DomainTest(unittest.TestCase):
 
     def test_DomainAxis_equals(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f
 
         d = f.construct("key%domainaxis0")
@@ -61,9 +52,6 @@ class DomainTest(unittest.TestCase):
 
     def test_DomainAxis_source(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f
 
         d = list(f.domain_axes().values())[0]
@@ -75,9 +63,6 @@ class DomainTest(unittest.TestCase):
 
     def test_DomainAxis_size(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f
 
         d = f.construct("key%domainaxis0")
@@ -93,9 +78,6 @@ class DomainTest(unittest.TestCase):
 
     def test_DomainAxis_unlimited(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f.copy()
 
         for d in f.domain_axes().values():

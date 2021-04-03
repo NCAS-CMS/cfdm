@@ -1,6 +1,5 @@
 import atexit
 import datetime
-import inspect
 import os
 import tempfile
 import unittest
@@ -55,13 +54,8 @@ class CoordinateReferenceTest(unittest.TestCase):
         self.assertEqual(len(f), 1, "f={!r}".format(f))
         self.f = f[0]
 
-        self.test_only = []
-
     def test_CoordinateReference__repr__str__dump_construct_type(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f
 
         for cr in f.coordinate_references().values():
@@ -72,9 +66,6 @@ class CoordinateReferenceTest(unittest.TestCase):
 
     def test_CoordinateReference_equals(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # Create a vertical grid mapping coordinate reference
         t = cfdm.CoordinateReference(
             coordinates=("coord1",),
@@ -149,9 +140,6 @@ class CoordinateReferenceTest(unittest.TestCase):
 
     def test_CoordinateConversion(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f.copy()
 
         cr = f.construct("standard_name:atmosphere_hybrid_height_coordinate")
@@ -197,9 +185,6 @@ class CoordinateReferenceTest(unittest.TestCase):
 
     def test_Datum(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f.copy()
 
         cr = f.construct("standard_name:atmosphere_hybrid_height_coordinate")

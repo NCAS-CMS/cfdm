@@ -49,19 +49,22 @@ class ConstructAccess:
         """
         if cached is not None:
             return cached, None
-        
+
         if not _ctypes:
             kwargs = filter_kwargs
         else:
-            if not (identities or filter_kwargs):
-                # Calling filter_by_type directly is faster
-                return self.constructs.filter_by_type(
-                    *_ctypes, todict=todict, cached=cached
-                )
-
             # Ensure that filter_by_types is the first filter
             # applied, as it's the cheapest
             kwargs = {"filter_by_type": _ctypes}
+
+            if not (identities or filter_kwargs):
+                # Calling filter_by_type directly is faster
+                return (
+                    self.constructs.filter_by_type(
+                        *_ctypes, todict=todict, cached=cached
+                    ),
+                    kwargs,
+                )
 
             if filter_kwargs:
                 if "filter_by_type" in filter_kwargs:
@@ -84,28 +87,26 @@ class ConstructAccess:
             # applied, as it's the most expensive.
             kwargs["filter_by_identity"] = identities
 
-        return self.constructs.filter(todict=todict, cached=cached, **kwargs), kwargs
+        return (
+            self.constructs.filter(todict=todict, cached=cached, **kwargs),
+            kwargs,
+        )
 
     def _construct(
         self,
         _ctypes,
         _method,
-        identity=None,
+        identities,
         key=False,
         default=None,
-            item=False,
-            todict=False,
-            cached=None,
+        item=False,
+        todict=False,
+        cached=None,
         **filter_kwargs,
     ):
         """TODO."""
         if cached is not None:
             return cached
-        
-        if identity is None:
-            identities = ()
-        else:
-            identities = (identity,)
 
         filter_kwargs["todict"] = True
 
@@ -118,12 +119,12 @@ class ConstructAccess:
 
         n = len(c)
         if n == 1:
-            key, construct = c.popitem()
+            k, construct = c.popitem()
             if key:
-                return key
+                return k
 
             if item:
-                return key, construct
+                return k, construct
 
             return construct
 
@@ -235,6 +236,9 @@ class ConstructAccess:
                 identity, defined by their `!identities` methods, that
                 matches any of the given values.
 
+                If no identities are provided then all coordinate
+                reference constructs are selected.
+
                 {{string value match}}
 
                 {{displayed identity}}
@@ -328,6 +332,9 @@ class ConstructAccess:
                 identity, defined by their `!identities` methods, that
                 matches any of the given values.
 
+                If no identities are provided then all auxiliary
+                coordinate constructs are selected.
+
                 {{string value match}}
 
                 {{displayed identity}}
@@ -376,6 +383,9 @@ class ConstructAccess:
                 identity, defined by their `!identities` methods, that
                 matches any of the given values.
 
+                If no identities are provided then all dimension
+                coordinate constructs are selected.
+
                 {{string value match}}
 
                 {{displayed identity}}
@@ -410,7 +420,7 @@ class ConstructAccess:
         )
 
         return c
-    
+
     def coordinates(self, *identities, **filter_kwargs):
         """Return dimension and auxiliary coordinate constructs.
 
@@ -425,6 +435,9 @@ class ConstructAccess:
                 Select coordinate constructs that have an identity,
                 defined by their `!identities` methods, that matches
                 any of the given values.
+
+                If no identities are provided then all coordinate
+                constructs are selected.
 
                 {{string value match}}
 
@@ -534,6 +547,9 @@ class ConstructAccess:
                 defined by their `!identities` methods, that matches
                 any of the given values.
 
+                If no identities are provided then all cell measure
+                constructs are selected.
+
                 {{string value match}}
 
                 {{displayed identity}}
@@ -563,8 +579,13 @@ class ConstructAccess:
 
         return c
 
-    def construct(self, identity=None, default=ValueError(), **filter_kwargs):
-        """Select a metadata construct by its identity.
+    def construct(self, *identity, default=ValueError(), **filter_kwargs):
+        """Select a unique metadata construct by its identity.
+
+        If zero or two or more constructs are selected then an
+        exception is raised, or the *default* parameter is returned.
+
+        All constructs that
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -572,10 +593,13 @@ class ConstructAccess:
 
         :Parameters:
 
-            identity:
-                Select the construct that has an identity, defined by
-                its `!identities` method, that matches the given
-                value.
+            identity: optional
+                Select constructs that have an identity, defined by
+                their `!identities` methods, that matches any of the
+                given values.
+
+                If no identities are provided then all constructs are
+                selected.
 
                 {{string value match}}
 
@@ -626,37 +650,93 @@ class ConstructAccess:
 
         """
         return self._construct(
-            _ctypes=(),
+            (),
             "construct",
-            identity=identity,
+            identity,
             key=False,
             default=default,
             item=False,
             **filter_kwargs,
         )
-    
-    def construct_item(self, identity=None, default=ValueError(), **filter_kwargs):
-        """TODO."""
+
+    def construct_item(self, *identity, default=ValueError(), **filter_kwargs):
+        """Select a unique metadata construct by its identity.
+
+        If zero or two or more constructs are selected then an
+        exception is raised, or the *default* parameter is returned.
+
+        All constructs that
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `construct_key`, `constructs`
+
+        :Parameters:
+
+            identity: optional
+                Select constructs that have an identity, defined by
+                their `!identities` methods, that matches any of the
+                given values.
+
+                If no identities are provided then all constructs are
+                selected.
+
+                {{string value match}}
+
+                {{displayed identity}}
+
+            default: optional
+                Return the value of the *default* parameter if the
+                property has not been set.
+
+                {{default Exception}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+            `tuple`
+                The selected construct and its construct identifer.
+
+        **Examples:**
+
+        TODO
+
+        """
         return self._construct(
-            _ctypes=(),
+            (),
             "construct",
-            identity=identity,
+            identity,
             key=False,
             default=default,
             item=True,
             **filter_kwargs,
         )
-    
-    def construct_key(
-        self, identity=None, default=ValueError(), **filter_kwargs
-    ):
-        """Select the key of a metadata construct by its identity.
+
+    def construct_key(self, *identity, default=ValueError(), **filter_kwargs):
+        """Select the key of a unique metadata construct by its
+        identity.
+
+        If zero or two or more constructs are selected then an
+        exception is raised, or the *default* parameter is returned.
 
         .. versionadded:: (cfdm) 1.7.0
 
         .. seealso:: `construct`, `constructs`
 
         :Parameters:
+
+            identity: optional
+                Select constructs that have an identity, defined by
+                their `!identities` methods, that matches any of the
+                given values.
+
+                If no identities are provided then all constructs are
+                selected.
+
+                {{string value match}}
+
+                {{displayed identity}}
 
             identity:
                 Select the construct that has an identity, defined by
@@ -678,7 +758,7 @@ class ConstructAccess:
         :Returns:
 
             `str`
-                The key of the selected construct.
+                The identifier of the selected construct.
 
         **Examples:**
 
@@ -714,9 +794,9 @@ class ConstructAccess:
 
         """
         return self._construct(
-            _ctypes=(),
+            (),
             "construct",
-            identity=identity,
+            identity,
             key=True,
             default=default,
             item=False,

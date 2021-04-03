@@ -1,6 +1,5 @@
 import atexit
 import datetime
-import inspect
 import os
 import tempfile
 import unittest
@@ -160,8 +159,6 @@ class DSGTest(unittest.TestCase):
 
     b = numpy.ma.where(b == -99, numpy.ma.masked, b)
 
-    test_only = []
-
     def setUp(self):
         """TODO DOCS."""
         # Disable log messages to silence expected warnings
@@ -272,14 +269,9 @@ class DSGTest(unittest.TestCase):
     #
     #        b = numpy.ma.where(b == -99, numpy.ma.masked, b)
     #        self.b = b
-    #
-    #        self.test_only = []
 
     def test_DSG_contiguous(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.c.copy()
 
         self.assertEqual(len(f), 2)
@@ -349,9 +341,6 @@ class DSGTest(unittest.TestCase):
 
     def test_DSG_indexed(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.i.copy()
 
         self.assertEqual(len(f), 2)
@@ -375,9 +364,6 @@ class DSGTest(unittest.TestCase):
 
     def test_DSG_indexed_contiguous(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.ic.copy()
 
         self.assertEqual(len(f), 2)
@@ -410,9 +396,6 @@ class DSGTest(unittest.TestCase):
 
     def test_DSG_create_contiguous(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # Define the ragged array values
         ragged_array = numpy.array([1, 3, 4, 3, 6], dtype="float32")
         # Define the count array values

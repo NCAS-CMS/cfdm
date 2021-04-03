@@ -1509,6 +1509,9 @@ class Constructs(mixin.Container, core.Constructs):
                 their `!identities` methods, that matches any of the
                 given values.
 
+                If no identities are provided then all constructs are
+                selected.
+
                 {{string value match}}
 
                 {{displayed identity}}

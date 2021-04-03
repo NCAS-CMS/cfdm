@@ -1,7 +1,6 @@
 import atexit
 import collections
 import datetime
-import inspect
 import os
 import re
 import tempfile
@@ -70,39 +69,21 @@ class FieldTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
         self.f = cfdm.read(self.filename)[0]
 
-        self.test_only = []
-
-    #        self.test_only = ['test_Field_constructs']
-    #        self.test_only = ['test_Field_domain_axes']
-    #        self.test_only = ['test_Field_axes','test_Field_data_axes']
-    #        self.test_only = ['test_Field___getitem__']
-    #        self.test_only = ['test_Field___setitem__']
-    #        self.test_only = ['test_Field_field']
-
     def test_Field__repr__str__dump_construct_type(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f
 
-        _ = repr(f)
-        _ = str(f)
+        repr(f)
+        str(f)
         self.assertIsInstance(f.dump(display=False), str)
         self.assertEqual(f.construct_type, "field")
 
     def test_Field__init__(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         cfdm.Field(source="qwerty")
 
     def test_Field___getitem__(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f.copy()
         f = f.squeeze()
 
@@ -177,9 +158,6 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(b.data.shape, (4, 2))
 
     #    def test_Field___setitem__(self):
-    #        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-    #            return
-    #
     #        f = self.f.squeeze()
     #
     #        f[...] = 0
@@ -209,9 +187,6 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_get_filenames(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.example_field(0)
 
         cfdm.write(f, tmpfile)
@@ -238,9 +213,6 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_apply_masking(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.example_field(0)
 
         for prop in (
@@ -294,14 +266,11 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_PROPERTIES(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f.copy()
         for name, value in f.properties().items():
             self.assertTrue(f.has_property(name))
-            _ = f.get_property(name)
-            _ = f.del_property(name)
+            f.get_property(name)
+            f.del_property(name)
             self.assertIsNone(f.del_property(name, default=None))
             self.assertIsNone(f.get_property(name, default=None))
             self.assertFalse(f.has_property(name))
@@ -315,9 +284,6 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_set_get_del_has_data(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f.copy()
 
         self.assertTrue(f.has_data())
@@ -353,19 +319,25 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(g.has_data())
         self.assertTrue(g.data.equals(d))
 
+    def test_Field_construct_item(self):
+        """TODO DOCS."""
+        f = self.f
+
+        out = f.construct_item("key%domainaxis0")
+        self.assertEqual(len(out), 2)
+        self.assertEqual(out[0], "domainaxis0")
+        self.assertIsInstance(out[1], cfdm.DomainAxis)
+
     def test_Field_CONSTRUCTS(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f.copy()
 
-        _ = f.construct("latitude")
+        f.construct("latitude")
         self.assertIsNone(f.construct("NOT_latitude", default=None))
         self.assertIsNone(f.construct(re.compile("^l"), default=None))
 
         key = f.construct_key("latitude")
-        _ = f.get_construct(key)
+        f.get_construct(key)
         self.assertIsNone(f.get_construct("qwerty", default=None))
 
         constructs = self.f.auxiliary_coordinates()
@@ -432,9 +404,6 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_data_axes(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f.copy()
 
         ref = f.get_data_axes()
@@ -449,9 +418,6 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_convert(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f.copy()
 
         key = f.construct_key("grid_latitude")
@@ -485,9 +451,6 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_equals(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f.copy()
         self.assertTrue(f.equals(f, verbose=3))
 
@@ -508,9 +471,6 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_del_construct(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f.copy()
 
         a = f.del_construct("auxiliarycoordinate1")
@@ -526,9 +486,6 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_has_construct(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f.copy()
 
         b = f.has_construct("auxiliarycoordinate1")
@@ -545,9 +502,6 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_squeeze_transpose_insert_dimension(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f
 
         g = f.transpose()
@@ -577,9 +531,6 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_compress_uncompress(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         methods = ("contiguous", "indexed", "indexed_contiguous")
 
         for method in methods:
@@ -626,9 +577,6 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_creation_commands(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f.copy()
 
         for rd in (False, True):
@@ -636,7 +584,7 @@ class FieldTest(unittest.TestCase):
                 for h in (False, True):
                     for s in (False, True):
                         for ns in (None, ""):
-                            _ = f.creation_commands(
+                            f.creation_commands(
                                 representative_data=rd,
                                 indent=indent,
                                 namespace=ns,
@@ -645,7 +593,7 @@ class FieldTest(unittest.TestCase):
                             )
                             for i in range(7):
                                 f = cfdm.example_field(i)
-                                _ = f.creation_commands(
+                                f.creation_commands(
                                     representative_data=rd,
                                     indent=indent,
                                     namespace=ns,
@@ -655,9 +603,6 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_has_geometry(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f
         self.assertFalse(f.has_geometry())
 

@@ -1,5 +1,4 @@
 import datetime
-import inspect
 import os
 import unittest
 
@@ -33,13 +32,8 @@ class DomainTest(unittest.TestCase):
         self.assertEqual(len(f), 1, "f={!r}".format(f))
         self.f = f[0]
 
-        self.test_only = []
-
     def test_Domain__repr__str__dump(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = self.f.domain
 
         _ = repr(d)
@@ -48,9 +42,6 @@ class DomainTest(unittest.TestCase):
 
     def test_Domain_equals(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f
 
         d = f.domain

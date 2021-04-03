@@ -1,6 +1,5 @@
 import atexit
 import datetime
-import inspect
 import os
 import tempfile
 import unittest
@@ -256,13 +255,8 @@ class GatheredTest(unittest.TestCase):
         b = numpy.ma.where(b == -99, numpy.ma.masked, b)
         self.b = b
 
-        self.test_only = []
-
     def test_GATHERING(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.read(self.gathered, verbose=False)
 
         self.assertEqual(len(f), 3)
@@ -280,9 +274,6 @@ class GatheredTest(unittest.TestCase):
 
     def test_GATHERING_create(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # Define the gathered values
         gathered_array = numpy.array(
             [[280, 282.5, 281], [279, 278, 277.5]], dtype="float32"

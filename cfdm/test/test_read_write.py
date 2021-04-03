@@ -1,6 +1,5 @@
 import atexit
 import datetime
-import inspect
 import os
 import platform
 import subprocess
@@ -67,21 +66,8 @@ class read_writeTest(unittest.TestCase):
             os.path.dirname(os.path.abspath(__file__)), "string_char.nc"
         )
 
-        self.test_only = []
-        # self.test_only = ['NOTHING!!!!!']
-        # self.test_only = ['test_write_filename']
-        # self.test_only = ['test_read_write_unlimited']
-        # self.test_only = ['test_read_field']
-        # self.test_only = ['test_read_mask']
-        # self.test_only = ['test_read_write_format']
-        # self.test_only = ['test_read_write_Conventions']
-        # self.test_only = ['test_read_write_multiple_geometries']
-
     def test_write_filename(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.example_field(0)
         a = f.data.array
 
@@ -95,9 +81,6 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_field(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # Test field keyword of cfdm.read
         filename = self.filename
 
@@ -170,9 +153,6 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_format(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.read(self.filename)[0]
         for fmt in (
             "NETCDF3_CLASSIC",
@@ -192,9 +172,6 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_netCDF4_compress_shuffle(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.read(self.filename)[0]
         for fmt in ("NETCDF4", "NETCDF4_CLASSIC"):
             for shuffle in (True,):
@@ -211,9 +188,6 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_missing_data(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.read(self.filename)[0]
         for fmt in (
             "NETCDF3_CLASSIC",
@@ -231,9 +205,6 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_mask(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.example_field(0)
 
         N = f.size
@@ -270,9 +241,6 @@ class read_writeTest(unittest.TestCase):
 
     def test_write_datatype(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.read(self.filename)[0]
         self.assertEqual(f.data.dtype, numpy.dtype(float))
 
@@ -294,9 +262,6 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_unlimited(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for fmt in (
             "NETCDF4",
             "NETCDF4_CLASSIC",
@@ -331,9 +296,6 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_CDL(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         subprocess.run(
             " ".join(["ncdump", self.filename, ">", tmpfile]),
             shell=True,
@@ -411,9 +373,6 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_string(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.read(self.string_filename)
 
         n = int(len(f) / 2)
@@ -445,9 +404,6 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_Conventions(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.read(self.filename)[0]
 
         version = "CF-" + cfdm.CF()
@@ -509,9 +465,6 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_multiple_geometries(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         a = []
         for filename in (
             "geometry_1.nc",
@@ -542,9 +495,6 @@ class read_writeTest(unittest.TestCase):
 
     def test_write_coordinates(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.example_field(0)
 
         cfdm.write(f, tmpfile, coordinates=True)
@@ -555,9 +505,6 @@ class read_writeTest(unittest.TestCase):
 
     def test_write_scalar_domain_ancillary(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.example_field(1)
 
         # Create scalar domain ancillary

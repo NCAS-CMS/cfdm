@@ -1,7 +1,6 @@
 import atexit
 import copy
 import datetime
-import inspect
 import logging
 import os
 import platform
@@ -89,13 +88,8 @@ class FunctionsTest(unittest.TestCase):
             "warning",
         ]
 
-        self.test_only = []
-
     def test_atol_rtol(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         org = cfdm.RTOL()
         self.assertEqual(cfdm.RTOL(1e-5), org)
         self.assertEqual(cfdm.RTOL(), 1e-5)
@@ -207,16 +201,10 @@ class FunctionsTest(unittest.TestCase):
 
     def test_CF(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         self.assertEqual(cfdm.CF(), cfdm.core.__cf_version__)
 
     def test_environment(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         e = cfdm.environment(display=False)
         ep = cfdm.environment(display=False, paths=False)
 
@@ -243,9 +231,6 @@ class FunctionsTest(unittest.TestCase):
 
     def test_example_field(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         top = 7
 
         for n in range(top + 1):
@@ -269,9 +254,6 @@ class FunctionsTest(unittest.TestCase):
 
     def test_abspath(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         filename = "test_file.nc"
         self.assertEqual(cfdm.abspath(filename), os.path.abspath(filename))
         filename = "http://test_file.nc"
@@ -281,9 +263,6 @@ class FunctionsTest(unittest.TestCase):
 
     def test_configuration(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # Test getting of all config. and store original values to test on:
         org = cfdm.configuration()
         self.assertIsInstance(org, dict)
@@ -387,9 +366,6 @@ class FunctionsTest(unittest.TestCase):
 
     def test_context_managers(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # rtol and atol
         for func in (
             cfdm.atol,
@@ -444,9 +420,6 @@ class FunctionsTest(unittest.TestCase):
 
     def test_Constant(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         c = cfdm.Constant(20)
         d = cfdm.Constant(10)
         e = cfdm.Constant(999)
@@ -535,9 +508,6 @@ class FunctionsTest(unittest.TestCase):
 
     def test_Configuration(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         c = cfdm.configuration()
 
         self.assertIsInstance(repr(c), str)
