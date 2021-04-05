@@ -136,7 +136,7 @@ class ConstructAccess:
             return self._default(
                 default,
                 f"{self.__class__.__name__}.{_method}() can't return zero "
-                f"items found by filter_kwargs={kwargs}",
+                f"items TODO found by filter_kwargs={kwargs}",
             )
 
         return self._default(
@@ -598,10 +598,10 @@ class ConstructAccess:
                 their `!identities` methods, that matches any of the
                 given values.
 
-                If no identities are provided then all constructs are
+                If no values are provided then all constructs are
                 selected.
 
-                {{string value match}}
+                {{value match}}
 
                 {{displayed identity}}
 
@@ -678,10 +678,10 @@ class ConstructAccess:
                 their `!identities` methods, that matches any of the
                 given values.
 
-                If no identities are provided then all constructs are
+                If no values are provided then all constructs are
                 selected.
 
-                {{string value match}}
+                {{value match}}
 
                 {{displayed identity}}
 
@@ -731,10 +731,10 @@ class ConstructAccess:
                 their `!identities` methods, that matches any of the
                 given values.
 
-                If no identities are provided then all constructs are
+                If no values are provided then all constructs are
                 selected.
 
-                {{string value match}}
+                {{value match}}
 
                 {{displayed identity}}
 

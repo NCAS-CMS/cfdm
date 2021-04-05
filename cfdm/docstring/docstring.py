@@ -281,11 +281,11 @@ _docstring_substitution_definitions = {
     # Method description susbstitutions (3 levels of indentataion)
     # ----------------------------------------------------------------
     # {{string value match}}
-    "{{string value match}}": """A value may be any object that can match a string via
-                ``==``, or a `re.Pattern` object that matches via its
-                `search` method.""",
+    "{{value match}}": """A value may be any object that can match via the
+                ``==`` operator, or a `re.Pattern` object that matches
+                via its `search` method.""",
     # {{displayed identity}}
     "{{displayed identity}}": """Note that in the output of a `dump` method or `print`
                 call, a construct is always described by an identity
-                that will select it""",
+                that will select it.""",
 }
