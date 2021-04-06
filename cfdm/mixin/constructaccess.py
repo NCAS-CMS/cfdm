@@ -23,9 +23,11 @@ class ConstructAccess:
 
         :Parameters:
 
-            _ctypes: `tuple`
+            _ctypes: `tuple` of `str`
+                The construct types to restrict the selection to.
 
             _method: `str`
+                The name of the calling method.
 
             identities: `tuple`
                 Select constructs that have an identity, defined by
@@ -42,9 +44,12 @@ class ConstructAccess:
 
         :Returns:
 
-            (`Constructs`, `dict`) or (*cached*, `None`)
-                The selected constructs, unless modified the *todict*
-                or *cached* parameters. TODO.
+            `Constructs` or `dict`, `dict`
+                If *cached* is `None`, return the selected constructs,
+                and the filter kwargs that selected them.
+
+            *cached*, `None`
+                If *cached* is not `None`, return the *cahced*.
 
         """
         if cached is not None:
@@ -576,7 +581,7 @@ class ConstructAccess:
         return c
 
     def construct(self, *identity, default=ValueError(), **filter_kwargs):
-        """Select a unique metadata construct by its identity.
+        """Return a metadata construct.
 
         If zero or two or more constructs are selected then an
         exception is raised, or the *default* parameter is returned.
@@ -656,7 +661,7 @@ class ConstructAccess:
         )
 
     def construct_item(self, *identity, default=ValueError(), **filter_kwargs):
-        """Select a unique metadata construct by its identity.
+        """Return a metadata construct and its identifier.
 
         If zero or two or more constructs are selected then an
         exception is raised, or the *default* parameter is returned.
