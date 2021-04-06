@@ -32,7 +32,7 @@ class ConstructAccess:
                 their `!identities` methods, that matches any of the
                 given tuple values.
 
-                {{string value match}}
+                {{value match}}
 
             {{todict: `bool`, optional}}
 
@@ -44,7 +44,7 @@ class ConstructAccess:
 
             (`Constructs`, `dict`) or (*cached*, `None`)
                 The selected constructs, unless modified the *todict*
-                or *cached* parameters. TODO
+                or *cached* parameters. TODO.
 
         """
         if cached is not None:
@@ -75,24 +75,27 @@ class ConstructAccess:
 
                 kwargs.update(filter_kwargs)
 
-        if identities:
-            if "filter_by_identity" in filter_kwargs:
+        # Ensure that filter_by_identity is the last filter applied,
+        # as it's the most expensive.
+        filter_by_identity = kwargs.pop("filter_by_identity", None)
+        if filter_by_identity is None:
+            if identities:
+                kwargs["filter_by_identity"] = identities
+        else:
+            kwargs["filter_by_identity"] = filter_by_identity
+            if identities:
                 raise TypeError(
                     f"Can't set {self.__class__.__name__}.{_method}() "
                     "keyword argument 'filter_by_identity' when "
                     "positional *identities arguments are also set"
                 )
 
-            # Ensure that filter_by_identity is the last filter
-            # applied, as it's the most expensive.
-            kwargs["filter_by_identity"] = identities
-
         return (
             self.constructs.filter(todict=todict, cached=cached, **kwargs),
             kwargs,
         )
 
-    def _construct(
+    def _select_construct(
         self,
         _ctypes,
         _method,
@@ -110,7 +113,7 @@ class ConstructAccess:
 
         filter_kwargs["todict"] = True
 
-        c, kwargs = self._filter_interface(
+        c, _ = self._filter_interface(
             _ctypes,
             _method,
             identities,
@@ -132,17 +135,10 @@ class ConstructAccess:
         if default is None or default == (None, None):
             return default
 
-        if not n:
-            return self._default(
-                default,
-                f"{self.__class__.__name__}.{_method}() can't return zero "
-                f"items TODO found by filter_kwargs={kwargs}",
-            )
-
         return self._default(
             default,
-            f"{self.__class__.__name__}.{_method}() can't return more than "
-            f"one item ({n} items) found by filter_kwargs={kwargs}",
+            f"{self.__class__.__name__}.{_method}() can't return {n} "
+            "constructs",
         )
 
     def _unique_construct_names(self):
@@ -239,7 +235,7 @@ class ConstructAccess:
                 If no identities are provided then all coordinate
                 reference constructs are selected.
 
-                {{string value match}}
+                {{value match}}
 
                 {{displayed identity}}
 
@@ -286,7 +282,7 @@ class ConstructAccess:
                 defined by their `!identities` methods, that matches
                 any of the given values.
 
-                {{string value match}}
+                {{value match}}
 
                 {{displayed identity}}
 
@@ -335,7 +331,7 @@ class ConstructAccess:
                 If no identities are provided then all auxiliary
                 coordinate constructs are selected.
 
-                {{string value match}}
+                {{value match}}
 
                 {{displayed identity}}
 
@@ -386,7 +382,7 @@ class ConstructAccess:
                 If no identities are provided then all dimension
                 coordinate constructs are selected.
 
-                {{string value match}}
+                {{value match}}
 
                 {{displayed identity}}
 
@@ -439,7 +435,7 @@ class ConstructAccess:
                 If no identities are provided then all coordinate
                 constructs are selected.
 
-                {{string value match}}
+                {{value match}}
 
                 {{displayed identity}}
 
@@ -494,7 +490,7 @@ class ConstructAccess:
                 identity, defined by their `!identities` methods, that
                 matches any of the given values.
 
-                {{string value match}}
+                {{value match}}
 
                 {{displayed identity}}
 
@@ -550,7 +546,7 @@ class ConstructAccess:
                 If no identities are provided then all cell measure
                 constructs are selected.
 
-                {{string value match}}
+                {{value match}}
 
                 {{displayed identity}}
 
@@ -649,7 +645,7 @@ class ConstructAccess:
         'no construct'
 
         """
-        return self._construct(
+        return self._select_construct(
             (),
             "construct",
             identity,
@@ -700,10 +696,10 @@ class ConstructAccess:
 
         **Examples:**
 
-        TODO
+        TODO.
 
         """
-        return self._construct(
+        return self._select_construct(
             (),
             "construct",
             identity,
@@ -714,8 +710,7 @@ class ConstructAccess:
         )
 
     def construct_key(self, *identity, default=ValueError(), **filter_kwargs):
-        """Select the key of a unique metadata construct by its
-        identity.
+        """Return the identifier of a metadata construct.
 
         If zero or two or more constructs are selected then an
         exception is raised, or the *default* parameter is returned.
@@ -735,15 +730,6 @@ class ConstructAccess:
                 selected.
 
                 {{value match}}
-
-                {{displayed identity}}
-
-            identity:
-                Select the construct that has an identity, defined by
-                its `!identities` method, that matches the given
-                value.
-
-                {{string value match}}
 
                 {{displayed identity}}
 
@@ -793,7 +779,7 @@ class ConstructAccess:
         'no construct'
 
         """
-        return self._construct(
+        return self._select_construct(
             (),
             "construct",
             identity,
@@ -803,7 +789,9 @@ class ConstructAccess:
             **filter_kwargs,
         )
 
-    def domain_axis_key(self, identity, default=ValueError()):
+    def domain_axis_key(
+        self, *identity, default=ValueError(), **filter_kwargs
+    ):
         """Returns the domain axis key spanned by the coordinates.
 
         Specifically, returns the key of the domain axis construct that
@@ -811,20 +799,28 @@ class ConstructAccess:
 
         :Parameters:
 
-            identity:
-                Select the 1-d coordinate construct that has an
-                identity, defined by its `!identities` method, that
-                matches the given value.
+            identity: optional
 
-                {{string value match}}
+                Select the 1-d dimension coordinate constructs that
+                have an identity, defined by their `!identities`
+                methods, that matches any of the given values. In
+                addition to a construct identities, the values are
+                matched against:
+
+                If no values are provided then all 1-d dimension
+                coordinate constructs are selected.
+
+                {{value match}}
 
                 {{displayed identity}}
 
             default: optional
-                Return the value of the *default* parameter if a domain
-                axis construct can not be found.
+                Return the value of the *default* parameter if the
+                property has not been set.
 
                 {{default Exception}}
+
+            {{filter_kwargs: optional}}
 
         :Returns:
 
@@ -851,13 +847,11 @@ class ConstructAccess:
 
         """
         # Select 1-d coordinate constructs with the given identity
-        c = self.constructs.filter(
-            filter_by_type=("dimension_coordinate", "auxiliary_coordinate"),
+        c = self.coordinates(
+            *identity,
             filter_by_naxes=(1,),
-            filter_by_identity=(identity,),
             todict=True,
         )
-
         if not c:
             return self._default(
                 default,

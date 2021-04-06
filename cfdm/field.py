@@ -539,7 +539,7 @@ class Field(
                 identity, defined by their `!identities` methods, that
                 matches any of the given values.
 
-                {{string value match}}
+                {{value match}}
 
                 {{displayed identity}}
 
@@ -593,7 +593,7 @@ class Field(
                  defined by their `!identities` methods, that matches
                  any of the given values.
 
-                 {{string value match}}
+                 {{value match}}
 
                  {{displayed identity}}
 

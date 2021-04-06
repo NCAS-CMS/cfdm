@@ -70,7 +70,7 @@ class Constructs(mixin.Container, core.Constructs):
                 their `!identities` methods, that matches any of the
                 given values.
 
-                {{string value match}}
+                {{value match}}
 
                 {{displayed identity}}
 
@@ -1321,7 +1321,7 @@ class Constructs(mixin.Container, core.Constructs):
                 could have data, spanning any domain axes constructs,
                 are selected.
 
-                {{string value match}}
+                {{value match}}
 
             {{todict: `bool`, optional}}
 
@@ -1512,7 +1512,7 @@ class Constructs(mixin.Container, core.Constructs):
                 If no identities are provided then all constructs are
                 selected.
 
-                {{string value match}}
+                {{value match}}
 
                 {{displayed identity}}
 
@@ -1617,7 +1617,7 @@ class Constructs(mixin.Container, core.Constructs):
                 If no keys are provided then all constructs are
                 selected.
 
-                {{string value match}}
+                {{value match}}
 
             {{todict: `bool`, optional}}
 
@@ -1706,7 +1706,7 @@ class Constructs(mixin.Container, core.Constructs):
                 If no measures are provided then all cell measure
                 constructs are selected.
 
-                {{string value match}}
+                {{value match}}
 
             {{todict: `bool`, optional}}
 
@@ -1824,7 +1824,7 @@ class Constructs(mixin.Container, core.Constructs):
                 If no methods are provided then all cell method
                 constructs are selected.
 
-                {{string value match}}
+                {{value match}}
 
             {{todict: `bool`, optional}}
 
@@ -2039,7 +2039,7 @@ class Constructs(mixin.Container, core.Constructs):
                 constructs that do or could have a netCDF dimension
                 name are selected.
 
-                {{string value match}}
+                {{value match}}
 
             {{todict: `bool`, optional}}
 
@@ -2133,7 +2133,7 @@ class Constructs(mixin.Container, core.Constructs):
                 constructs that do or could have a netCDF variable
                 name are selected.
 
-                {{string value match}}
+                {{value match}}
 
             {{todict: `bool`, optional}}
 
