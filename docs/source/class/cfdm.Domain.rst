@@ -38,6 +38,7 @@ Metadata constructs
 
    ~cfdm.Domain.construct
    ~cfdm.Domain.construct_key
+   ~cfdm.Domain.construct_item
    ~cfdm.Domain.del_construct
    ~cfdm.Domain.get_construct
    ~cfdm.Domain.has_construct

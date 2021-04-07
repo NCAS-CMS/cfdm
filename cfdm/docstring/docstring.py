@@ -272,10 +272,6 @@ _docstring_substitution_definitions = {
                 define additional construct selection criteria, and
                 configure the returned value.
 
-                *Parameter example:*
-                  To return a dictionary instead of a `Constructs`
-                  object, use ``todict=True``.
-
                 .. versionadded:: (cfdm) 1.8.10.0""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (3 levels of indentataion)

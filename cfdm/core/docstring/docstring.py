@@ -36,8 +36,8 @@ _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # cached: optional
     "{{cached: optional}}": """cached: optional
-                If not `None` then return *cached* without selecting
-                any constucts.
+                If any value other than `None` then return *cached*
+                without selecting any constucts.
 
                 .. versionadded:: (cfdm) 1.8.10.0""",
     # todict: `bool`, optional

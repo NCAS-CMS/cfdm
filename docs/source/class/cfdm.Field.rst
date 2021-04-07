@@ -109,6 +109,7 @@ Metadata constructs
 
    ~cfdm.Field.construct
    ~cfdm.Field.construct_key
+   ~cfdm.Field.construct_item
    ~cfdm.Field.del_construct
    ~cfdm.Field.get_construct
    ~cfdm.Field.has_construct

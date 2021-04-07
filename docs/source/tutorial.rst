@@ -1147,9 +1147,9 @@ that apply to the `Data` class.
 
 ----
 
-.. _Filtering-metadata-constructs:
+.. _Selecting-metadata-constructs:
 
-**Filtering metadata constructs**
+**Selecting metadata constructs**
 ---------------------------------
 
 A `Constructs` instance has filtering methods for selecting constructs
@@ -1172,8 +1172,11 @@ Method                            Filter criteria
 `~Constructs.filter_by_ncdim`     NetCDF dimension name (see the :ref:`netCDF interface <NetCDF-interface>`)
 ================================  ==========================================================================  
 
-Each of these methods returns a new `Constructs` instance that
-contains the selected constructs.
+In addition, the `~Constructs.filter` method of a `Constructs`
+instance allows these filters to be chained together in a single call.
+
+Each of these methods returns a new `Constructs` instance by default
+that contains the selected constructs.
 
 .. code-block:: python
    :caption: *Get constructs by their type*.
@@ -1240,8 +1243,8 @@ contains the selected constructs.
    Constructs:
    {'cellmethod1': <CellMethod: domainaxis3: maximum>}
 
-As each of these methods returns a `Constructs` instance, it is easy
-to perform further filters on their results:
+As each of these methods returns a `Constructs` instance by default,
+it is easy to perform further filters on their results:
    
 .. code-block:: python
    :caption: *Make selections from previous selections.*
@@ -1282,13 +1285,6 @@ A construct's identity may be any one of the following
   (see the :ref:`netCDF interface <NetCDF-interface>`), and 
 * The construct key, preceded by "key%"
   e.g. ``'key%auxiliarycoordinate2'``.
-
-.. Valid construct names are used to describe constructs when they are
-   inspected, and so it is often convenient to copy these names when
-   selecting metadata constructs. For example, the :ref:`three
-   auxiliary coordinate constructs <Medium-detail>` in the field
-   construct ``t`` have names ``'latitude'``, ``'longitude'`` and
-   ``'long_name=Grid latitude name'``.
 
 .. code-block:: python
    :caption: *Get constructs by their identity.*
@@ -1410,7 +1406,7 @@ metadata construct:
    >>> print(t.cell_measures())
    Constructs:
    {'cellmeasure0': <CellMeasure: measure:area(9, 10) km2>}
-
+   
 ----
    
 .. _Metadata-construct-access:
@@ -1440,6 +1436,15 @@ construct key, by any of the following techniques:
    >>> key = t.construct_key('latitude')
    >>> t.get_construct(key)
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
+
+* with the `~Field.construct_item` method of a field construct:
+
+.. code-block:: python
+   :caption: *Get the "latitude" metadata construct and its identifier
+             via its construct identity.*
+      
+   >>> key, lat = t.construct_item('latitude')
+   ('auxiliarycoordinate0', <AuxiliaryCoordinate: latitude(10, 9) degrees_N>)
 
 * with the `~Constructs.value` method of a `Constructs` instance
   that contains one construct,
@@ -1484,7 +1489,7 @@ customised exception:
    Traceback (most recent call last):
       ...
    ValueError: Can't return zero constructs
-   >>> t.construct('measure:volume', False)
+   >>> t.construct('measure:volume', default=False)
    False
    >>> c = t.constructs.filter_by_measure('volume')
    >>> len(c)

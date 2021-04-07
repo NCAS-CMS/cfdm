@@ -17,7 +17,7 @@ class ConstructAccess:
         cached=None,
         **filter_kwargs,
     ):
-        """TODO.
+        """An optimised interface to `Constructs.filter`.
 
         .. versionadded:: (cfdm) 1.8.10.0
 
@@ -44,16 +44,14 @@ class ConstructAccess:
 
         :Returns:
 
-            `Constructs` or `dict`, `dict`
-                If *cached* is `None`, return the selected constructs,
-                and the filter kwargs that selected them.
-
-            *cached*, `None`
-                If *cached* is not `None`, return the *cahced*.
+            `Constructs` or `dict` or *cached*
+                If *cached* is `None`, return the selected
+                constructs. If *cached* is not `None`, return
+                *cached*.
 
         """
         if cached is not None:
-            return cached, None
+            return cached
 
         if not _ctypes:
             kwargs = filter_kwargs
@@ -64,11 +62,8 @@ class ConstructAccess:
 
             if not (identities or filter_kwargs):
                 # Calling filter_by_type directly is faster
-                return (
-                    self.constructs.filter_by_type(
-                        *_ctypes, todict=todict, cached=cached
-                    ),
-                    kwargs,
+                return self.constructs.filter_by_type(
+                    *_ctypes, todict=todict, cached=cached
                 )
 
             if filter_kwargs:
@@ -95,10 +90,7 @@ class ConstructAccess:
                     "positional *identities arguments are also set"
                 )
 
-        return (
-            self.constructs.filter(todict=todict, cached=cached, **kwargs),
-            kwargs,
-        )
+        return self.constructs.filter(todict=todict, cached=cached, **kwargs)
 
     def _select_construct(
         self,
@@ -112,13 +104,55 @@ class ConstructAccess:
         cached=None,
         **filter_kwargs,
     ):
-        """TODO."""
+        """An optimised interface for selecting a unique construct.
+
+        .. versionadded:: (cfdm) 1.8.10.0
+
+        :Parameters:
+
+            _ctypes: `tuple` of `str`
+                The construct types to restrict the selection to.
+
+            _method: `str`
+                The name of the calling method.
+
+            identities: `tuple`
+                Select constructs that have an identity, defined by
+                their `!identities` methods, that matches any of the
+                given tuple values.
+
+                {{value match}}
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no unique construct.
+
+                {{default Exception}}
+
+            key: `bool`, optional
+                If True the return the construct identifier.
+
+            item: `bool`, optional
+                If True the return the construct identifier and the
+                construct.
+
+            {{todict: `bool`, optional}}
+
+            {{cached: optional}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                The unique construct, or its identifier, or both.
+
+        """
         if cached is not None:
             return cached
 
         filter_kwargs["todict"] = True
 
-        c, _ = self._filter_interface(
+        c = self._filter_interface(
             _ctypes,
             _method,
             identities,
@@ -136,8 +170,7 @@ class ConstructAccess:
 
             return construct
 
-        # Fast return for None defaults
-        if default is None or default == (None, None):
+        if default is None:
             return default
 
         return self._default(
@@ -264,14 +297,12 @@ class ConstructAccess:
          'coordinatereference1': <{{repr}}CoordinateReference: rotated_latitude_longitude>}
 
         """
-        c, _ = self._filter_interface(
+        return self._filter_interface(
             ("coordinate_reference",),
             "coordinate_references",
             identities,
             **filter_kwargs,
         )
-
-        return c
 
     def domain_axes(self, *identities, **filter_kwargs):
         """Return domain axis constructs.
@@ -313,11 +344,9 @@ class ConstructAccess:
          'domainaxis3': <{{repr}}DomainAxis: size(1)>}
 
         """
-        c, _ = self._filter_interface(
+        return self._filter_interface(
             ("domain_axis",), "domain_axes", identities, **filter_kwargs
         )
-
-        return c
 
     def auxiliary_coordinates(self, *identities, **filter_kwargs):
         """Return auxiliary coordinate constructs.
@@ -361,14 +390,12 @@ class ConstructAccess:
          'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
 
         """
-        c, _ = self._filter_interface(
+        return self._filter_interface(
             ("auxiliary_coordinate",),
             "auxiliary_coordinates",
             identities,
             **filter_kwargs,
         )
-
-        return c
 
     def dimension_coordinates(self, *identities, **filter_kwargs):
         """Return dimension coordinate constructs.
@@ -413,14 +440,12 @@ class ConstructAccess:
          'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
 
         """
-        c, _ = self._filter_interface(
+        return self._filter_interface(
             ("dimension_coordinate",),
             "dimension_coordinates",
             identities,
             **filter_kwargs,
         )
-
-        return c
 
     def coordinates(self, *identities, **filter_kwargs):
         """Return dimension and auxiliary coordinate constructs.
@@ -469,7 +494,7 @@ class ConstructAccess:
         'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
 
         """
-        c, _ = self._filter_interface(
+        return self._filter_interface(
             (
                 "dimension_coordinate",
                 "auxiliary_coordinate",
@@ -478,8 +503,6 @@ class ConstructAccess:
             identities,
             **filter_kwargs,
         )
-
-        return c
 
     def domain_ancillaries(self, *identities, **filter_kwargs):
         """Return domain ancillary constructs.
@@ -520,14 +543,12 @@ class ConstructAccess:
          'domainancillary2': <{{repr}}DomainAncillary: surface_altitude(10, 9) m>}
 
         """
-        c, _ = self._filter_interface(
+        return self._filter_interface(
             ("domain_ancillary",),
             "domain_ancillaries",
             identities,
             **filter_kwargs,
         )
-
-        return c
 
     def cell_measures(self, *identities, **filter_kwargs):
         """Return cell measure constructs.
@@ -574,11 +595,9 @@ class ConstructAccess:
         {'cellmeasure0': <{{repr}}CellMeasure: measure%area(9, 10) km2>}
 
         """
-        c, _ = self._filter_interface(
+        return self._filter_interface(
             ("cell_measure",), "cell_measures", identities, **filter_kwargs
         )
-
-        return c
 
     def construct(self, *identity, default=ValueError(), **filter_kwargs):
         """Return a metadata construct.
@@ -607,8 +626,8 @@ class ConstructAccess:
                 {{displayed identity}}
 
             default: optional
-                Return the value of the *default* parameter if the
-                property has not been set.
+                Return the value of the *default* parameter if there
+                is no unique construct.
 
                 {{default Exception}}
 
@@ -687,8 +706,8 @@ class ConstructAccess:
                 {{displayed identity}}
 
             default: optional
-                Return the value of the *default* parameter if the
-                property has not been set.
+                Return the value of the *default* parameter if there
+                is no unique construct.
 
                 {{default Exception}}
 
@@ -698,10 +717,6 @@ class ConstructAccess:
 
             `tuple`
                 The selected construct and its construct identifer.
-
-        **Examples:**
-
-        TODO.
 
         """
         return self._select_construct(
@@ -739,8 +754,8 @@ class ConstructAccess:
                 {{displayed identity}}
 
             default: optional
-                Return the value of the *default* parameter if the
-                property has not been set
+                Return the value of the *default* parameter if there
+                is no unique construct.
 
                 {{default Exception}}
 
@@ -797,7 +812,7 @@ class ConstructAccess:
     def domain_axis_key(
         self, *identity, default=ValueError(), **filter_kwargs
     ):
-        """Returns the domain axis key spanned by the coordinates.
+        """Returns the domain axis key spanned by 1-d coordinates.
 
         Specifically, returns the key of the domain axis construct that
         is spanned by 1-d coordinate constructs.
@@ -805,12 +820,9 @@ class ConstructAccess:
         :Parameters:
 
             identity: optional
-
                 Select the 1-d dimension coordinate constructs that
                 have an identity, defined by their `!identities`
-                methods, that matches any of the given values. In
-                addition to a construct identities, the values are
-                matched against:
+                methods, that matches any of the given values.
 
                 If no values are provided then all 1-d dimension
                 coordinate constructs are selected.
@@ -820,8 +832,8 @@ class ConstructAccess:
                 {{displayed identity}}
 
             default: optional
-                Return the value of the *default* parameter if the
-                property has not been set.
+                Return the value of the *default* parameter if there
+                is no unique construct.
 
                 {{default Exception}}
 
@@ -858,9 +870,12 @@ class ConstructAccess:
             todict=True,
         )
         if not c:
+            if default is None:
+                return default
+
             return self._default(
                 default,
-                f"There are no 1-d {identity!r} coordinate constructs",
+                "There are no 1-d coordinate constructs",
             )
 
         data_axes = self.constructs.data_axes()
@@ -869,27 +884,31 @@ class ConstructAccess:
         keys = []
         for ckey, coord in c.items():
             axes = data_axes.get(ckey)
-            if not axes:
+            if axes is None:
                 continue
 
             key = axes[0]
-            if domain_axes.get(key):
+            if key in domain_axes:
                 keys.append(key)
 
         keys = set(keys)
 
+        n = len(keys)
+        if n == 1:
+            return keys.pop()
+
+        if default is None:
+            return default
+
         if not keys:
             return self._default(
                 default,
-                "1-d {identity!r} coordinate constructs "
+                "Some selected 1-d coordinate constructs "
                 "have not been assigned a domain axis construct",
             )
 
-        if len(keys) > 1:
-            return self._default(
-                default,
-                f"Multiple 1-d {identity!r} coordinate constructs "
-                "span multiple domain axes: {keys!r}",
-            )
-
-        return keys.pop()
+        return self._default(
+            default,
+            "The selected 1-d coordinate constructs "
+            f"span multiple domain axes: {keys!r}",
+        )

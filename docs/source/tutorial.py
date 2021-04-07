@@ -141,6 +141,7 @@ print(t.cell_measures())
 t.construct('latitude')
 key = t.construct_key('latitude')
 t.get_construct(key)
+key, lat = t.construct_item('latitude')
 t.constructs('latitude').value()
 c = t.constructs.get(key)
 t.constructs[key]
@@ -148,7 +149,7 @@ try:
     t.construct('measure:volume')                # Raises Exception
 except:
     pass
-t.construct('measure:volume', False)
+t.construct('measure:volume', default=False)
 c = t.constructs.filter_by_measure('volume')
 len(c)
 try:

@@ -412,11 +412,14 @@ class Constructs(abstract.Container):
                 construct was given as `None`, `None` is returned.
 
         """
-        if construct_type is None or (
+        if (
             construct_type not in self._ignore
             and construct_type in self._key_base
-        ):
+        ) or construct_type is None:
             return construct_type
+
+        if default is None:
+            return default
 
         return self._default(
             default, f"Invalid construct type {construct_type!r}"
@@ -480,6 +483,9 @@ class Constructs(abstract.Container):
             # array
             for xid, axes in data_axes.items():
                 if key in axes:
+                    if default is None:
+                        return default
+
                     raise ValueError(
                         f"Can't remove domain axis construct {key!r} that "
                         f"spans the data array of metadata construct {xid!r}"
@@ -488,6 +494,9 @@ class Constructs(abstract.Container):
             cell_methods = self._construct_dict("cell_method")
             for xid, cm in cell_methods.items():
                 if key in cm.get_axes(()):
+                    if default is None:
+                        return default
+
                     raise ValueError(
                         f"Can't remove domain axis construct {key!r} "
                         "that is referenced by cell method construct "
@@ -513,6 +522,9 @@ class Constructs(abstract.Container):
         out = self._pop(key, None)
 
         if out is None:
+            if default is None:
+                return default
+
             return self._default(
                 default, "Can't remove non-existent construct"
             )
@@ -1191,17 +1203,19 @@ class Constructs(abstract.Container):
         """
         d = self.todict()
         n = len(d)
+        if n == 1:
+            key, _ = d.popitem()
+            return key
+
+        if default is None:
+            return default
+
         if not n:
             return self._default(default, "Can't get key for zero constructs")
 
-        if n > 1:
-            return self._default(
-                default, f"Can't get key for more than one ({n}) constructs"
-            )
-
-        key, _ = d.popitem()
-
-        return key
+        return self._default(
+            default, f"Can't get key for more than one ({n}) constructs"
+        )
 
     def new_identifier(self, construct_type):
         """Return a new, unused construct key.
@@ -1434,18 +1448,20 @@ class Constructs(abstract.Container):
 
         """
         d = self.todict()
+        n = len(d)
+        if n == 1:
+            _, construct = d.popitem()
+            return construct
+
+        if default is None:
+            return default
+
         if not d:
             return self._default(default, "Can't return zero constructs")
 
-        n = len(d)
-        if n > 1:
-            return self._default(
-                default, f"Can't return more than one ({n}) constructs"
-            )
-
-        _, construct = d.popitem()
-
-        return construct
+        return self._default(
+            default, f"Can't return more than one ({n}) constructs"
+        )
 
 
 #    def view(self, _ignore=None):

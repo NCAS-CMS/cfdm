@@ -566,14 +566,12 @@ class Field(
         {'fieldancillary0': <{{repr}}FieldAncillary: specific_humidity standard_error(10, 9) K>}
 
         """
-        c, _ = self._filter_interface(
+        return self._filter_interface(
             ("field_ancillary",),
             "field_ancillaries",
             identities,
             **filter_kwargs,
         )
-
-        return c
 
     def cell_methods(self, *identities, **filter_kwargs):
         """Return cell method constructs.
@@ -621,11 +619,9 @@ class Field(
                       ('cellmethod1', <{{repr}}CellMethod: domainaxis3: maximum>)])
 
         """
-        c, _ = self._filter_interface(
+        return self._filter_interface(
             ("cell_method",), "cell_method", identities, **filter_kwargs
         )
-
-        return c
 
     # ----------------------------------------------------------------
     # Methods
@@ -1928,8 +1924,8 @@ class Field(
 
         if domain_axis.get_size() != 1:
             raise ValueError(
-                "Can't insert an axis of size "
-                f"{domain_axis.get_size()}: {axis!r}"
+                f"Can only insert axis of size 1. Axis {axis!r} has size "
+                f"{domain_axis.get_size()}"
             )
 
         data_axes = f.get_data_axes(default=None)
