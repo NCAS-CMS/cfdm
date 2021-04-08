@@ -106,10 +106,13 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
 
         """
         construct = self.constructs.get(key)
-        if construct is None:
-            return self._default(default, f"No construct for key {key!r}")
+        if construct is not None:
+            return construct
 
-        return construct
+        if default is None:
+            return default
+
+        return self._default(default, f"No construct for key {key!r}")
 
     def has_construct(self, key):
         """Whether a metadata construct exists.
@@ -203,7 +206,7 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         )
 
     def get_data_axes(self, key, default=ValueError):
-        """Gets the keys of the axes spanned by the construct data.
+        """Gets the keys of the axes spanned by a construct's data.
 
         Specifically, returns the keys of the domain axis constructs
         spanned by the data of a metadata construct.
@@ -244,9 +247,12 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         None
 
         """
-        data_axes = self.constructs.data_axes().get(key)
+        data_axes = self.constructs.get_data_axes(key, default=None)
         if data_axes is not None:
             return data_axes
+
+        if default is None:
+            return default
 
         return self._default(
             default,
@@ -296,10 +302,13 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         'no axes'
 
         """
-        data_axes = self.constructs.data_axes().get(key)
+        data_axes = self.constructs.get_data_axes(key, default=None)
         if data_axes is not None:
             self.constructs._del_data_axes(key)
             return data_axes
+
+        if default is None:
+            return default
 
         return self._default(
             default,
@@ -346,10 +355,7 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         None
 
         """
-        if self.get_data_axes(key, default=None) is None:
-            return False
-
-        return True
+        return self.get_data_axes(key, default=None) is not None
 
     def set_data_axes(self, axes, key):
         """Sets domain axis constructs spanned by the construct data.

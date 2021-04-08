@@ -1133,6 +1133,7 @@ class Constructs(abstract.Container):
             return cached
 
         if todict:
+            # Return a dict
             ntypes = len(types)
             if ntypes == 1:
                 return self._construct_dict(types[0], copy=True)
@@ -1150,6 +1151,7 @@ class Constructs(abstract.Container):
 
             return out
 
+        # Still here? Then return a `Constructs` object
         if types:
             # Ignore the all but the requested construct types
             ignore = set(self._key_base)
@@ -1160,6 +1162,45 @@ class Constructs(abstract.Container):
             ignore = self._ignore
 
         return self.shallow_copy(_ignore=ignore)
+
+    def get_data_axes(self, key, default=ValueError()):
+        """Return the keys of the axes spanned by a construct's data.
+
+        Specifically, returns the keys of the domain axis constructs
+        spanned by the data of a metadata construct.
+
+        .. versionadded:: (cfdm) 1.8.9.0
+
+        :Parameters:
+
+            key: `str`
+                Specify a metadata construct.
+
+                *Parameter example:*
+                  ``key='auxiliarycoordinate0'``
+
+            default: optional
+                Return the value of the *default* parameter if the data
+                axes have not been set.
+
+                {{default Exception}}
+
+        :Returns:
+
+            `tuple`
+                The keys of the domain axis constructs spanned by the data.
+
+        """
+        data_axes = self._construct_axes.get(key)
+        if data_axes is not None:
+            ignore = self._ignore
+            if not ignore or self._construct_type[key] not in ignore:
+                return data_axes
+
+        if default is None:
+            return default
+
+        return self._default(default, f"No data axes for construct {key!r}")
 
     def key(self, default=ValueError()):
         """Return the construct key of the sole metadata construct.

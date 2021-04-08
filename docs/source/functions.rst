@@ -50,3 +50,6 @@ Miscellaneous
    cfdm.environment
    cfdm.example_field
    cfdm.implementation
+   cfdm.is_log_level_info
+   cfdm.is_log_level_detail
+   cfdm.is_log_level_debug

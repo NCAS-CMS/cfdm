@@ -1,5 +1,4 @@
 import logging
-from itertools import chain
 from re import Pattern
 
 from . import core
@@ -611,9 +610,13 @@ class Constructs(mixin.Container, core.Constructs):
     def _short_circuit_test(cls, x):
         """The default short cicuit test.
 
-        .. versionadded:: (cfdm) 1.8.10.0
+        If this method returns True then only ther first identity
+        return by the construct's `!identities` method will be
+        checked.
 
         See `_filter_by_identity` for details.
+
+        .. versionadded:: (cfdm) 1.8.9.0
 
         :Parameters:
 
@@ -1447,25 +1450,23 @@ class Constructs(mixin.Container, core.Constructs):
         for value0 in identities:
 
             # Create short circuit
-            short_circuit = None
+            check_first_identity_only = False
             if isinstance(value0, str):
-                if short_circuit_test(value0):
-                    short_circuit = 1
-                elif value0.startswith("key%"):
-                    short_circuit = 0
+                check_first_identity_only = short_circuit_test(value0)
 
             for cid, construct in out.items():
                 if cid in matched:
                     # We've already matched this construct
                     continue
 
-                construct_identities = chain(
-                    ("key%" + cid,),
-                    construct.identities(generator=True, **identities_kwargs),
-                )
+                if value0 == "key%" + cid:
+                    matched.add(cid)
+                    break
 
                 ok = False
-                for i, value1 in enumerate(construct_identities):
+                for value1 in construct.identities(
+                    generator=True, **identities_kwargs
+                ):
                     ok = self._matching_values(
                         value0, construct, value1, basic=True
                     )
@@ -1475,7 +1476,7 @@ class Constructs(mixin.Container, core.Constructs):
                         matched.add(cid)
                         break
 
-                    if short_circuit is not None and i >= short_circuit:
+                    if check_first_identity_only:
                         # Stop checking this construct
                         break
 

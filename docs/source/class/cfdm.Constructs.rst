@@ -66,6 +66,7 @@ Data axes
    :template: method.rst
 
    ~cfdm.Constructs.data_axes
+   ~cfdm.Constructs.get_data_axes
 
 Miscellaneous
 -------------

@@ -1260,12 +1260,14 @@ class PropertiesDataBounds(PropertiesData):
         """
         identities = super().identities(generator=True)
 
-        bounds_identities = ""
+        #        bounds_identities = ""
         bounds = self.get_bounds(None)
         if bounds is not None:
             bounds_identities = bounds.identities(generator=True)
+            g = chain(identities, bounds_identities)
+        else:
+            g = identities
 
-        g = chain(identities, bounds_identities)
         if generator:
             return g
 

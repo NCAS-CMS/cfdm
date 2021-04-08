@@ -50,6 +50,7 @@ Data axes
    :template: method.rst
 
    ~cfdm.core.Constructs.data_axes
+   ~cfdm.core.Constructs.get_data_axes
 
 Miscellaneous
 -------------

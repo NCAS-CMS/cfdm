@@ -2439,7 +2439,6 @@ class CFDMImplementation(Implementation):
         return field.set_construct(construct, axes=axes, copy=copy)
 
     def set_domain_ancillary(self, field, construct, axes, copy=True):
-        #                    extra_axes=0, copy=True):
         """Insert a domain ancillary object into a field.
 
         :Parameters:

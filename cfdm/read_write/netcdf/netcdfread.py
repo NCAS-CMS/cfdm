@@ -19,6 +19,8 @@ import netcdf_flattener
 
 from ...decorators import _manage_log_level_via_verbosity
 
+from ...functions import is_log_level_debug
+
 from .. import IORead
 
 
@@ -87,10 +89,6 @@ class NetCDFRead(IORead):
         "not in node_coordinates": 16,
         "is not locatable in the group hierarchy": 17,
     }
-
-    def _loglevel_debug(self):
-        """Return True if and only if log level is DEBUG."""
-        return logger.parent.level == logging.DEBUG
 
     def cf_datum_parameters(self):
         """Datum-defining parameters names."""
@@ -793,7 +791,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         nc = self.file_open(filename, flatten=True, verbose=None)
         logger.info(f"Reading netCDF file: {filename}\n")  # pragma: no cover
-        if self._loglevel_debug():
+        if is_log_level_debug(logger):
             logger.debug(
                 f"    Input netCDF dataset:\n        {nc}\n"
             )  # pragma: no cover
@@ -817,7 +815,7 @@ class NetCDFRead(IORead):
                 pass
 
         g["global_attributes"] = global_attributes
-        if self._loglevel_debug():
+        if is_log_level_debug(logger):
             logger.debug(
                 f"    Global attributes:\n        {g['global_attributes']}"
             )  # pragma: no cover
@@ -1075,7 +1073,7 @@ class NetCDFRead(IORead):
                 for name, value in variable_dimensions.items()
             }
 
-        if self._loglevel_debug():
+        if is_log_level_debug(logger):
             logger.debug(
                 "    General read variables:\n"
                 "        read_vars['variable_dimensions'] =\n"
@@ -1188,7 +1186,7 @@ class NetCDFRead(IORead):
         #       '/forecasts/model/t': 't'}
         g["dimension_basename"] = dimension_basename
 
-        if self._loglevel_debug():
+        if is_log_level_debug(logger):
             logger.debug(
                 "        read_vars['dimension_isunlimited'] =\n"
                 f"            {g['dimension_isunlimited']}\n"
@@ -1340,7 +1338,7 @@ class NetCDFRead(IORead):
                 # node coordinate variable
                 g["do_not_create_field"].add(geometry_ncvar)
 
-        if self._loglevel_debug():
+        if is_log_level_debug(logger):
             logger.debug(
                 "    Compression read vars:\n"
                 "        read_vars['compression'] =\n"
@@ -1409,7 +1407,7 @@ class NetCDFRead(IORead):
                     },
                 )
 
-        if self._loglevel_debug():
+        if is_log_level_debug(logger):
             logger.debug(
                 "    Reference read vars:\n"
                 "        read_vars['references'] =\n"
@@ -1928,7 +1926,7 @@ class NetCDFRead(IORead):
             "ragged_contiguous"
         ]["profile_dimension"]
 
-        if self._loglevel_debug():
+        if is_log_level_debug(logger):
             logger.debug(
                 "    Pre-processing indexed and contiguous compression "
                 f"for instance dimension: {instance_dimension}\n"
@@ -1970,7 +1968,7 @@ class NetCDFRead(IORead):
 
         del g["compression"][sample_dimension]["ragged_contiguous"]
 
-        if self._loglevel_debug():
+        if is_log_level_debug(logger):
             logger.debug(
                 f"    Created read_vars['compression'][{sample_dimension!r}]"
                 "['ragged_indexed_contiguous']\n"
@@ -2429,7 +2427,7 @@ class NetCDFRead(IORead):
 
         g["new_dimensions"][element_dimension] = element_dimension_size
 
-        if self._loglevel_debug():
+        if is_log_level_debug(logger):
             logger.debug(
                 "    Created "
                 f"read_vars['compression'][{indexed_sample_dimension!r}]['ragged_indexed']"
@@ -2861,7 +2859,7 @@ class NetCDFRead(IORead):
 
         field_properties.update(g["variable_attributes"][field_ncvar])
 
-        if self._loglevel_debug():
+        if is_log_level_debug(logger):
             logger.debug(
                 "        netCDF attributes:\n"
                 f"            {field_properties}"
@@ -5891,7 +5889,7 @@ class NetCDFRead(IORead):
 
             # Though an error of sorts, set as debug level message;
             # read not terminated
-            if self._loglevel_debug():
+            if is_log_level_debug(logger):
                 logger.debug(
                     f"    Error processing netCDF variable {field_ncvar}: {d['reason']}"
                 )  # pragma: no cover
