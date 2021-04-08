@@ -706,9 +706,9 @@ class NetCDFWrite(IOWrite):
                 ncvar = ncdim
 
             if ncvar is None:
-                # No netCDF variable name not correponding netCDF
+                # No netCDF variable name not correponding to a netCDF
                 # dimension name has been set, so create a default
-                # netCDf variable name.
+                # netCDF variable name.
                 ncvar = self._create_netcdf_variable_name(
                     coord, default="coordinate"
                 )
@@ -778,7 +778,7 @@ class NetCDFWrite(IOWrite):
 
         if g["coordinates"] and ncvar is not None:
             # Add the dimension coordinate netCDF variable name to the
-            # 'coordinates' arttribute
+            # 'coordinates' attribute
             coordinates.append(ncvar)
 
         return ncvar
@@ -1760,7 +1760,7 @@ class NetCDFWrite(IOWrite):
 
         :Returns:
 
-            `netCDF.Dataset` or `netCDF._netCDf4.Group`
+            `netCDF.Dataset` or `netCDF._netCDF4.Group`
 
         """
         g = self.write_vars
