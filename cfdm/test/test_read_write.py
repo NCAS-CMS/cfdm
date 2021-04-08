@@ -237,13 +237,12 @@ class read_writeTest(unittest.TestCase):
                 ex_field.dump()
                 print("$$$$$$$$$$$$$$$$$$$$$ BUT GOT:")
                 f[0].dump()
-                # CURRENT ISSUE IS THE TIME BOUNDS ARE MISSING!!!
 
                 new_length += 1  # there should be exactly one more field now
                 self.assertEqual(len(f), new_length)
                 # Can't guarantee order of fields read in after the appends, so
                 # check that the field is *somewhere* in the read-in fieldlist
-                self.assertTrue(any([field.equals(ex_field) for field in f]))
+                self.assertTrue(any([ex_field.equals(field) for field in f]))
 
             # Check behaviour when append identical fields, as an edge case:
             cfdm.write(g, tmpfile, fmt=fmt, mode='w', overwrite=True)
