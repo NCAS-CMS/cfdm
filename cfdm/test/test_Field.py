@@ -556,6 +556,16 @@ class FieldTest(unittest.TestCase):
         h.data[...] = h.data.array[...] + 1
         self.assertFalse(f.equals(h))
 
+        # Symmetry
+        f = cfdm.example_field(2)
+        g = f.copy()
+        self.assertTrue(f.equals(g))
+        self.assertTrue(g.equals(f))
+
+        g.del_construct("dimensioncoordinate0")
+        self.assertFalse(f.equals(g))
+        self.assertFalse(g.equals(f))
+
     def test_Field_del_construct(self):
         """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

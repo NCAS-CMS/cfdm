@@ -681,6 +681,12 @@ class Constructs(mixin.Container, core.Constructs):
         axes_to_constructs0 = self._axes_to_constructs()
         axes_to_constructs1 = other._axes_to_constructs()
 
+        if len(axes_to_constructs0) != len(axes_to_constructs1):
+            logger.info(
+                f"{self.__class__.__name__}: Can't match constructs"
+            )  # pragma: no cover
+            return False
+
         for axes0, constructs0 in axes_to_constructs0.items():
             matched_all_constructs_with_these_axes = False
 
