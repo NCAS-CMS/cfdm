@@ -448,8 +448,12 @@ class NetCDFWrite(IOWrite):
                     parent_group.createDimension(ncdim, size)
                 except RuntimeError as error:
                     if "NetCDF: String match to name in use" in str(error):
-                        # What to do here? SLB
-                        pass
+                        if self.write_vars['post_dry_run']:  # 'a' mode, so OK
+                            logger.debug(
+                                "Caught case of 'String match to name in use'"
+                            )
+                        else:  # bad, so raise original error
+                            raise
                     else:
                         raise RuntimeError
 
@@ -632,9 +636,13 @@ class NetCDFWrite(IOWrite):
                 parent_group.createDimension(ncdim, size)
             except RuntimeError as error:
                 if "NetCDF: String match to name in use" in str(error):
-                    logger.debug(
-                        "Caught case of 'String match to name in use'"
-                    )
+                    if self.write_vars['post_dry_run']:  # append mode, so OK
+                        logger.debug(
+                            "Caught case of 'String match to name in use'"
+                        )
+                        pass
+                    else:  # bad, so raise original error
+                        raise
                 else:
                     raise RuntimeError(
                         "Can't create size {} dimension {!r} in "
@@ -769,12 +777,22 @@ class NetCDFWrite(IOWrite):
             ncvar = seen[id(coord)]["ncvar"]
             ncdimensions = seen[id(coord)]["ncdims"]
 
-        g["key_to_ncvar"][key] = ncvar
-        g["key_to_ncdims"][key] = ncdimensions
         if seen.get(id(coord)):
             g["axis_to_ncdim"][axis] = seen[id(coord)]["ncdims"][0]
         else:
-            print("This probably shouldn't be happening with...", axis)
+            # g["seen"][id(coord)] = {
+            #     "variable": coord,
+            #     "ncvar": ncvar,
+            #     "ncdims": ncdimensions,
+            # }
+            print(
+                "This probably shouldn't be happening with...",
+                axis, coord, ncvar, ncdimensions, coordinates
+            )
+            return ncvar
+
+        g["key_to_ncvar"][key] = ncvar
+        g["key_to_ncdims"][key] = ncdimensions
 
         if g["coordinates"] and ncvar is not None:
             # Add the dimension coordinate netCDF variable name to the
@@ -1234,7 +1252,8 @@ class NetCDFWrite(IOWrite):
         }
         kwargs.update(g["netcdf_compression"])
 
-        self._createVariable(**kwargs)
+        if not g["dry_run"]:
+            self._createVariable(**kwargs)
 
         g["nc"][ncvar].setncatts(geometry_container)
 
@@ -1368,8 +1387,13 @@ class NetCDFWrite(IOWrite):
                     except RuntimeError as error:
                         error = str(error)
                         if error == "NetCDF: String match to name in use":
-                            logger.debug(
-                                "Caught case of 'String match to name in use'")
+                            if self.write_vars['post_dry_run']:  # 'a' mode, OK
+                                logger.debug(
+                                    "Caught case of "
+                                    "'String match to name in use'"
+                                )
+                            else:  # bad, so raise original error
+                                raise
 
                 # Set the netCDF bounds variable name
                 default = coord_ncvar + "_bounds"
@@ -2727,13 +2751,13 @@ class NetCDFWrite(IOWrite):
         except RuntimeError as error:
             error = str(error)
             if "NetCDF: String match to name in use" in error:
-                # What to do here? SLB...
-                # (... probably not the below but it is at least illustrative)
-
-                # The ncvar name is in use (why wasn't it known before and in
-                # 'ncvar_names' already?) so register that for later.
-                g["ncvar_names"].add(ncvar)
-                return
+                if self.write_vars['post_dry_run']:  # append mode, so OK
+                    logger.debug(
+                        "Caught case of 'String match to name in use'"
+                    )
+                    return
+                else:  # bad, so raise original error
+                    raise
             elif error == (
                 "NetCDF: Not a valid data type or _FillValue " "type mismatch"
             ):
