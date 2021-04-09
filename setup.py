@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 
 # from setuptools import setup
 
@@ -114,6 +114,29 @@ up-to-date source."""
 requirements = open("requirements.txt", "r")
 install_requires = requirements.read().splitlines()
 
+tests_require = (
+    [
+        "pytest",
+        "pycodestyle",
+        "coverage",
+    ],
+)
+extras_require = {
+    "documentation": [
+        "sphinx>=2,<=4",
+        "sphinx-copybutton",
+        "sphinx-toggleprompt",
+        "sphinxcontrib-spelling",
+    ],
+    "pre-commit hooks": [
+        "pre-commit",
+        "black",
+        "docformatter",
+        "flake8",
+        "pydocstyle",
+    ],
+}
+
 setup(
     name="cfdm",
     long_description=long_description,
@@ -172,4 +195,6 @@ setup(
     scripts=["scripts/cfdump"],
     python_requires=">=3.6",
     install_requires=install_requires,
+    tests_require=tests_require,
+    extras_require=extras_require,
 )
