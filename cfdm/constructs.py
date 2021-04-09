@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 def _chain_kwargs(
     method, view, todict, identity_kwargs=None, mode=None, _data_axes=None
 ):
-    """TODO"""
+    """TODO."""
     kwargs = {"view": view, "todict": todict}
 
     if not identity_kwargs and mode is None and _data_axes is None:
@@ -77,7 +77,6 @@ class Constructs(mixin.Container, core.Constructs):
         out, *args, filter_applied=None, view=False, todict=False
     ):
         """TODO."""
-
         if isinstance(out, dict):
             #           # Return all constructs if no args have been provided
             #           if not args:
@@ -829,7 +828,7 @@ class Constructs(mixin.Container, core.Constructs):
                 f"{self.__class__.__name__}: Can't match constructs"
             )  # pragma: no cover
             return False
-        
+
         for axes0, constructs0 in axes_to_constructs0.items():
             matched_all_constructs_with_these_axes = False
 
