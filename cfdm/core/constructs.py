@@ -526,7 +526,7 @@ class Constructs(abstract.Container):
                 return default
 
             return self._default(
-                default, "Can't remove non-existent construct"
+                default, f"Can't remove non-existent construct {key!r}"
             )
 
         return out

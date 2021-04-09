@@ -871,7 +871,7 @@ class Constructs(mixin.Container, core.Constructs):
                 f"{self.__class__.__name__}: Can't match constructs"
             )  # pragma: no cover
             return False
-        
+
         for axes0, constructs0 in axes_to_constructs0.items():
             matched_all_constructs_with_these_axes = False
 
@@ -1437,6 +1437,12 @@ class Constructs(mixin.Container, core.Constructs):
             # Return all constructs if no identities have been provided
             return out
 
+        #        # Allow keys without the 'key%' prefix
+        #        construct_types = self._construct_type
+        #        identities = [
+        #            "key%" + i if i in construct_types else i for i in identities
+        #        ]
+
         # ------------------------------------------------------------
         # The overriding principle here is to iterate over as few
         # individual construct identities as possible, as these can be
@@ -1450,8 +1456,6 @@ class Constructs(mixin.Container, core.Constructs):
         matched = set()
 
         for value0 in identities:
-
-            # Create short circuit
             check_first_identity_only = False
             if isinstance(value0, str):
                 check_first_identity_only = short_circuit_test(value0)
@@ -1461,7 +1465,8 @@ class Constructs(mixin.Container, core.Constructs):
                     # We've already matched this construct
                     continue
 
-                if value0 == "key%" + cid:
+                # Allow a key with or without the 'key%' prefix
+                if value0 == cid or value0 == "key%" + cid:
                     matched.add(cid)
                     break
 

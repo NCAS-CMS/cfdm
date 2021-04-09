@@ -2854,8 +2854,7 @@ independent of the original field.
    <Data(1, 1, 1): [[[-1e+30]]] K>
    >>> t.data[0, 0, 0]
    <Data(1, 1, 1): [[[-1.0]]] K>
-   >>> key = u.construct_key('grid_latitude')    
-   >>> u.del_construct(key)
+   >>> u.del_construct('grid_latitude')
    <DimensionCoordinate: grid_latitude(10) degrees>
    >>> u.constructs('grid_latitude')
    Constructs:

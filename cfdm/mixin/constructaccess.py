@@ -1,4 +1,7 @@
+import logging
 import re
+
+logger = logging.getLogger(__name__)
 
 
 class ConstructAccess:
@@ -302,6 +305,85 @@ class ConstructAccess:
             "coordinate_references",
             identities,
             **filter_kwargs,
+        )
+
+    def del_construct(self, identity, default=ValueError()):
+        """Remove a metadata construct.
+
+        If a domain axis construct is selected for removal then it
+        can't be spanned by any data arrays of the field nor metadata
+        constructs, nor be referenced by any cell method
+        constructs. However, a domain ancillary construct may be
+        removed even if it is referenced by coordinate reference
+        construct.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `get_construct`, `constructs`, `has_construct`,
+                     `set_construct`
+
+        :Parameters:
+
+            identity:
+                Select the unique construct that has the identity,
+                defined by its `!identities` method, that matches the
+                given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            default: optional
+                Return the value of the *default* parameter if the
+                data axes have not been set.
+
+                {{default Exception}}
+
+        :Returns:
+
+                The removed metadata construct.
+
+        **Examples:**
+
+        >>> f = {{package}}.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> f.del_construct('time')
+        <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >
+        >>> f.del_construct('time')
+        Traceback (most recent call last):
+            ...
+        ValueError: Can't remove non-existent construct 'ti
+        >>> f.del_construct('time', default='No time')
+        'No time'
+        >>> f.del_construct('dimensioncoordinate1')
+        <{{repr}}DimensionCoordinate: longitude(8) degrees_east>
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), ncdim%lon(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+
+        """
+        key = self.construct_key(identity, default=None)
+        if key is not None:
+            return self.constructs._del_construct(key)
+
+        if default is None:
+            return default
+
+        return self._default(
+            default, f"Can't remove non-existent construct {identity!r}"
         )
 
     def domain_axes(self, *identities, **filter_kwargs):
@@ -618,6 +700,9 @@ class ConstructAccess:
                 their `!identities` methods, that matches any of the
                 given values.
 
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
                 If no values are provided then all constructs are
                 selected.
 
@@ -698,6 +783,9 @@ class ConstructAccess:
                 their `!identities` methods, that matches any of the
                 given values.
 
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
                 If no values are provided then all constructs are
                 selected.
 
@@ -745,6 +833,9 @@ class ConstructAccess:
                 Select constructs that have an identity, defined by
                 their `!identities` methods, that matches any of the
                 given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
 
                 If no values are provided then all constructs are
                 selected.
