@@ -1437,12 +1437,6 @@ class Constructs(mixin.Container, core.Constructs):
             # Return all constructs if no identities have been provided
             return out
 
-        #        # Allow keys without the 'key%' prefix
-        #        construct_types = self._construct_type
-        #        identities = [
-        #            "key%" + i if i in construct_types else i for i in identities
-        #        ]
-
         # ------------------------------------------------------------
         # The overriding principle here is to iterate over as few
         # individual construct identities as possible, as these can be

@@ -488,17 +488,14 @@ class FieldTest(unittest.TestCase):
         """TODO DOCS."""
         f = self.f.copy()
 
-        b = f.has_construct("auxiliarycoordinate1")
-        self.assertTrue(b)
+        self.assertTrue(f.has_construct("latitude"))
 
         f.del_construct("auxiliarycoordinate1")
-        c = f.has_construct("auxiliarycoordinate1")
-        self.assertTrue(not c)  # now expect False as we deleted the construct
+        self.assertFalse(f.has_construct("auxiliarycoordinate1"))
 
         # Test edge case whereby constructs have Falsy values as key names:
         f.set_construct(cfdm.DomainAxis(0), key="")
-        d = f.has_construct("")
-        self.assertTrue(d)
+        self.assertTrue(f.has_construct(""))
 
     def test_Field_squeeze_transpose_insert_dimension(self):
         """TODO DOCS."""
