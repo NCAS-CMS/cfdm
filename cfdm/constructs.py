@@ -441,20 +441,17 @@ class Constructs(mixin.Container, core.Constructs):
     ):
         """Whether two domain axes constructs are the same."""
         domain_axes = self._construct_dict("domain_axis")
-        self_sizes = [d.get_size() for d in domain_axes.values()]
+        self_sizes = sorted([d.get_size() for d in domain_axes.values()])
 
         domain_axes = other._construct_dict("domain_axis")
-        other_sizes = [d.get_size() for d in domain_axes.values()]
+        other_sizes = sorted([d.get_size() for d in domain_axes.values()])
 
-        if sorted(self_sizes) != sorted(other_sizes):
+        if self_sizes != other_sizes:
             # There is not a 1-1 correspondence between axis sizes
             logger.info(
-                "{0}: Different domain axis sizes: {1} != {2}".format(
-                    self.__class__.__name__,
-                    sorted(self_sizes),
-                    sorted(other_sizes),
-                )
-            )
+                f"{self.__class__.__name__}: Different domain axis sizes: "
+                f"{self_sizes} != {other_sizes}"
+            )  # pragma: no cover
             return False
 
         return True
@@ -831,9 +828,8 @@ class Constructs(mixin.Container, core.Constructs):
         # Check that each instance is the same type
         if not isinstance(other, self.__class__):
             logger.info(
-                "{0}: Incompatible type: {1}".format(
-                    self.__class__.__name__, other.__class__.__name__
-                )
+                f"{self.__class__.__name__}: Incompatible type: "
+                f"{other.__class__.__name__}"
             )
             if not _return_axis_map:
                 return False
@@ -870,6 +866,12 @@ class Constructs(mixin.Container, core.Constructs):
         axes_to_constructs0 = self._axes_to_constructs()
         axes_to_constructs1 = other._axes_to_constructs()
 
+        if len(axes_to_constructs0) != len(axes_to_constructs1):
+            logger.info(
+                f"{self.__class__.__name__}: Can't match constructs"
+            )  # pragma: no cover
+            return False
+        
         for axes0, constructs0 in axes_to_constructs0.items():
             matched_all_constructs_with_these_axes = False
 
