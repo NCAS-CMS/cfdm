@@ -434,7 +434,7 @@ class Properties(Container):
 
         return default
 
-    def identities(self, generator=False, stop=-1, **kwargs):
+    def identities(self, generator=False, **kwargs):
         """Return all possible identities.
 
         The identities comprise:

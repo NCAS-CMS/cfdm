@@ -1,4 +1,6 @@
 import logging
+
+from itertools import zip_longest
 from re import Pattern
 
 from . import core
@@ -473,7 +475,7 @@ class Constructs(mixin.Container, core.Constructs):
         corresponding underscore filter method
         (e.g. `_filter_by_property`).
 
-        .. versionadded:: (cfdm) 1.8.10.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         :Parameters:
 
@@ -523,7 +525,7 @@ class Constructs(mixin.Container, core.Constructs):
     def _filter_preprocess(cls, arg, todict=False, filter_applied=None):
         """Preprocess a `dict` or `Constructs` prior to filtering.
 
-        .. versionadded:: (cfdm) 1.8.10.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         :Parameters:
 
@@ -629,7 +631,12 @@ class Constructs(mixin.Container, core.Constructs):
                  computed, otherwise `False`.
 
         """
-        return "=" not in x and ":" not in x and "%" not in x
+        return (
+            isinstance(x, str)
+            and "=" not in x
+            and ":" not in x
+            and "%" not in x
+        )
 
     def copy(self, data=True):
         """Return a deep copy.
@@ -1072,7 +1079,7 @@ class Constructs(mixin.Container, core.Constructs):
            >>> c2 = c.filter_by_type('dimension_coordinate')
            >>> d = c2.filter_by_identity('time', todict=True)
 
-        .. versionadded:: (cfdm) 1.8.10.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         .. seealso:: `filter_by_axis`, `filter_by_data`,
                      `filter_by_identity`, `filter_by_key`,
@@ -1214,7 +1221,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         See `filter_by_axis` for details.
 
-        .. versionadded:: (cfdm) 1.8.10.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         """
         # Parse the mode parameter
@@ -1372,7 +1379,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         See `filter_by_data` for details.
 
-        .. versionadded:: (cfdm) 1.8.10.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         """
         return self._filter_by_type(arg, todict, self._array_constructs)
@@ -1424,7 +1431,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         See `filter_by_identity` for details.
 
-        .. versionadded:: (cfdm) 1.8.10.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         """
         out, pop = self._filter_preprocess(
@@ -1449,41 +1456,72 @@ class Constructs(mixin.Container, core.Constructs):
 
         matched = set()
 
+        # Process identities that are construct identifiers
+        identities2 = []
         for value0 in identities:
-            check_first_identity_only = False
-            if isinstance(value0, str):
-                check_first_identity_only = short_circuit_test(value0)
-
-            for cid, construct in out.items():
-                if cid in matched:
-                    # We've already matched this construct
-                    continue
-
-                # Allow a key with or without the 'key%' prefix
+            is_key = False
+            for cid in out:
                 if value0 == cid or value0 == "key%" + cid:
+                    is_key = True
                     matched.add(cid)
                     break
 
-                ok = False
-                for value1 in construct.identities(
-                    generator=True, **identities_kwargs
-                ):
-                    ok = self._matching_values(
-                        value0, construct, value1, basic=True
-                    )
-                    if ok:
-                        # Ensure that we don't check this construct
-                        # again
-                        matched.add(cid)
-                        break
+            if not is_key:
+                identities2.append(value0)
 
-                    if check_first_identity_only:
-                        # Stop checking this construct
-                        break
+        identities = identities2
 
-        for cid in tuple(out):
-            if cid not in matched:
+        if identities:
+            test_for_short_circuit = True
+
+            for cid in matched:
                 pop(cid)
+
+            matched = set()
+
+            constructs = out.values()
+
+            # Dictionary of construct identifiers and construct
+            # identity generators
+            generators = {
+                cid: construct.identities(generator=True, **identities_kwargs)
+                for cid, construct in out.items()
+            }
+
+            for values in zip_longest(*generators.values(), fillvalue=None):
+                # Loop round the each construct's next identity
+                for cid, construct, value1 in zip(
+                    generators, constructs, values
+                ):
+                    if cid in matched or value1 is None:
+                        continue
+
+                    # Loop round the given values
+                    for value0 in identities:
+                        if self._matching_values(
+                            value0, construct, value1, basic=True
+                        ):
+                            matched.add(cid)
+                            break
+
+                if test_for_short_circuit:
+                    identities = [
+                        v for v in identities if not short_circuit_test(v)
+                    ]
+                    if identities:
+                        test_for_short_circuit = False
+                    else:
+                        break
+
+        if not matched:
+            if isinstance(out, dict):
+                out = {}
+            else:
+                out._clear()
+        else:
+            for cid in tuple(out):
+                if cid not in matched:
+                    pop(cid)
 
         return out
 
@@ -1526,7 +1564,7 @@ class Constructs(mixin.Container, core.Constructs):
                 Additional parameters for configuring the application
                 of a construct's `identities` method.
 
-                .. versionadded:: (cfdm) 1.8.10.0
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -1570,7 +1608,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         See `filter_by_key` for details.
 
-        .. versionadded:: (cfdm) 1.8.10.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         """
         out, pop = self._filter_preprocess(
@@ -1652,7 +1690,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         See `filter_by_measure` for details.
 
-        .. versionadded:: (cfdm) 1.8.10.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         """
         out, pop = self._filter_preprocess(
@@ -1686,7 +1724,6 @@ class Constructs(mixin.Container, core.Constructs):
                         break
 
             if not ok:
-                # This construct does not match any of the measures
                 pop(cid)
 
         return out
@@ -1771,7 +1808,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         See `filter_by_method` for details.
 
-        .. versionadded:: (cfdm) 1.8.10.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         """
         out, pop = self._filter_preprocess(
@@ -1884,7 +1921,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         See `filter_by_naxes` for details.
 
-        .. versionadded:: (cfdm) 1.8.10.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         """
         out, pop = self._filter_preprocess(
@@ -1981,7 +2018,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         See `filter_by_ncdim` for details.
 
-        .. versionadded:: (cfdm) 1.8.10.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         """
         out, pop = self._filter_preprocess(
@@ -2075,7 +2112,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         See `filter_by_ncvar` for details.
 
-        .. versionadded:: (cfdm) 1.8.10.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         """
         out, pop = self._filter_preprocess(
@@ -2168,7 +2205,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         See `filter_by_property`  for details.
 
-        .. versionadded:: (cfdm) 1.8.10.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         """
         # Parse mode
@@ -2321,7 +2358,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         See `filter_by_size` for details.
 
-        .. versionadded:: (cfdm) 1.8.10.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         """
         out, pop = self._filter_preprocess(
@@ -2410,7 +2447,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         See `filter_by_type` for details.
 
-        .. versionadded:: (cfdm) 1.8.10.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         """
         if isinstance(arg, dict):

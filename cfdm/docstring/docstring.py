@@ -265,14 +265,14 @@ _docstring_substitution_definitions = {
                 if iteration through the generator can be stopped
                 before all identities have been computed.
 
-                .. versionadded:: (cfdm) 1.8.10.0""",
+                .. versionadded:: (cfdm) 1.8.9.0""",
     # {{filter_kwargs: optional}}
     "{{filter_kwargs: optional}}": """filter_kwargs: optional
                 Keyword arguments accepted by `Constructs.filter` that
                 define additional construct selection criteria, and
                 configure the returned value.
 
-                .. versionadded:: (cfdm) 1.8.10.0""",
+                .. versionadded:: (cfdm) 1.8.9.0""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (3 levels of indentataion)
     # ----------------------------------------------------------------

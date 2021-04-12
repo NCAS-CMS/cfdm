@@ -1258,12 +1258,11 @@ class PropertiesDataBounds(PropertiesData):
         ncvar%z
 
         """
-        identities = super().identities(generator=True)
+        identities = super().identities(generator=True, **kwargs)
 
-        #        bounds_identities = ""
         bounds = self.get_bounds(None)
         if bounds is not None:
-            bounds_identities = bounds.identities(generator=True)
+            bounds_identities = bounds.identities(generator=True, **kwargs)
             g = chain(identities, bounds_identities)
         else:
             g = identities

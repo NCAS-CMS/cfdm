@@ -328,7 +328,7 @@ class Constructs(abstract.Container):
     def _construct_dict(self, construct_type, copy=False):
         """Return the dictionary of constructs of a particular type.
 
-        .. versionadded:: (cfdm) 1.8.10.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         :Parameters:
 
@@ -532,7 +532,7 @@ class Constructs(abstract.Container):
         return out
 
     def _dictionary(self, copy=False):
-        """Deprecated at 1.8.10.0.
+        """Deprecated at 1.8.9.0.
 
         Use `todict` instead.
 
@@ -761,6 +761,22 @@ class Constructs(abstract.Container):
     # ----------------------------------------------------------------
     # Private dictionary-like methods
     # ----------------------------------------------------------------
+    def _clear(self):
+        """D.clear() -> None.
+
+        Remove all items from D.
+
+        """
+        self._ignore = ()
+        self._field_data_axes = ()
+        self._key_base.clear()
+        self._array_constructs.clear()
+        self._non_array_constructs.clear()
+        self._ordered_constructs.clear()
+        self._construct_axes.clear()
+        self._construct_type.clear()
+        self._constructs.clear()
+
     def _pop(self, k, *d):
         """Removes specified key and returns the corresponding value.
 
@@ -1423,7 +1439,7 @@ class Constructs(abstract.Container):
     def todict(self, copy=False):
         """Return a dictionary represntation of the metadata constructs.
 
-        .. versionadded:: (cfdm) 1.8.10.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         :Parameters:
 
@@ -1503,34 +1519,3 @@ class Constructs(abstract.Container):
         return self._default(
             default, f"Can't return more than one ({n}) constructs"
         )
-
-
-#    def view(self, _ignore=None):
-#        """Return a view.
-#
-#        The actual constructs returned are references to the original
-#        ones, but any in-place structural changes to the view (such as
-#        removing a construct) will also occur in the original
-#        `Constructs` object, and vice versa.
-#
-#        .. versionadded:: (cfdm) 1.8.10.0
-#
-#        .. seealso:: `shallow_copy`
-#
-#        :Returns:
-#
-#            `{{class}}`
-#                The new view.
-#
-#        **Examples:**
-#
-#        >>> f = {{package}}.example_field(0)
-#        >>> c = f.constructs
-#        >>> d = c.view()
-#
-#        """
-#        if _ignore is None:
-#            _ignore = self._ignore
-#
-#        return self._view(ignore=_ignore)
-#

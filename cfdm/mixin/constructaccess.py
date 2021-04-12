@@ -16,13 +16,18 @@ class ConstructAccess:
         _ctypes,
         _method,
         identities,
-        todict=False,
         cached=None,
+        construct=False,
+        key=False,
+        item=False,
+        default=None,
+        _last_filter=None,
+        _identity_config={},
         **filter_kwargs,
     ):
         """An optimised interface to `Constructs.filter`.
 
-        .. versionadded:: (cfdm) 1.8.10.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         :Parameters:
 
@@ -61,13 +66,41 @@ class ConstructAccess:
         else:
             # Ensure that filter_by_types is the first filter
             # applied, as it's the cheapest
-            kwargs = {"filter_by_type": _ctypes}
-
             if not (identities or filter_kwargs):
                 # Calling filter_by_type directly is faster
-                return self.constructs.filter_by_type(
-                    *_ctypes, todict=todict, cached=cached
+                if construct:
+                    todict = True
+                else:
+                    todict = False
+
+                c = self.constructs.filter_by_type(*_ctypes, todict=todict)
+
+                if not construct:
+                    # Return Constructs or dict
+                    return c
+
+                # Return constuct, or key, or both, or default
+                n = len(c)
+                if n == 1:
+                    k, construct = c.popitem()
+                    if key:
+                        return k
+
+                    if item:
+                        return k, construct
+
+                    return construct
+
+                if default is None:
+                    return default
+
+                return self._default(
+                    default,
+                    f"{self.__class__.__name__}.{_method}() can't return {n} "
+                    "constructs",
                 )
+
+            kwargs = {"filter_by_type": _ctypes}
 
             if filter_kwargs:
                 if "filter_by_type" in filter_kwargs:
@@ -78,8 +111,8 @@ class ConstructAccess:
 
                 kwargs.update(filter_kwargs)
 
-        # Ensure that filter_by_identity is the last filter applied,
-        # as it's the most expensive.
+        # Ensure that filter_by_identity is the one of the last
+        # filters applied, as it's expensive.
         filter_by_identity = kwargs.pop("filter_by_identity", None)
         if filter_by_identity is None:
             if identities:
@@ -93,75 +126,25 @@ class ConstructAccess:
                     "positional *identities arguments are also set"
                 )
 
-        return self.constructs.filter(todict=todict, cached=cached, **kwargs)
+        if _last_filter:
+            for ftype in _last_filter:
+                value = kwargs.pop(ftype, None)
+                if value is not None:
+                    kwargs[ftype] = value
 
-    def _select_construct(
-        self,
-        _ctypes,
-        _method,
-        identities,
-        key=False,
-        default=None,
-        item=False,
-        todict=False,
-        cached=None,
-        **filter_kwargs,
-    ):
-        """An optimised interface for selecting a unique construct.
+        if construct:
+            kwargs["todict"] = True
 
-        .. versionadded:: (cfdm) 1.8.10.0
-
-        :Parameters:
-
-            _ctypes: `tuple` of `str`
-                The construct types to restrict the selection to.
-
-            _method: `str`
-                The name of the calling method.
-
-            identities: `tuple`
-                Select constructs that have an identity, defined by
-                their `!identities` methods, that matches any of the
-                given tuple values.
-
-                {{value match}}
-
-            default: optional
-                Return the value of the *default* parameter if there
-                is no unique construct.
-
-                {{default Exception}}
-
-            key: `bool`, optional
-                If True the return the construct identifier.
-
-            item: `bool`, optional
-                If True the return the construct identifier and the
-                construct.
-
-            {{todict: `bool`, optional}}
-
-            {{cached: optional}}
-
-            {{filter_kwargs: optional}}
-
-        :Returns:
-
-                The unique construct, or its identifier, or both.
-
-        """
-        if cached is not None:
-            return cached
-
-        filter_kwargs["todict"] = True
-
-        c = self._filter_interface(
-            _ctypes,
-            _method,
-            identities,
-            **filter_kwargs,
+        c = self.constructs.filter(
+            _identity_config=_identity_config,
+            **kwargs,
         )
 
+        if not construct:
+            # Return Constructs or dict
+            return c
+
+        # Return constuct, or key, or both, or default
         n = len(c)
         if n == 1:
             k, construct = c.popitem()
@@ -181,6 +164,98 @@ class ConstructAccess:
             f"{self.__class__.__name__}.{_method}() can't return {n} "
             "constructs",
         )
+
+    #    def _select_construct(
+    #        self,
+    #        _ctypes,
+    #        _method,
+    #        identities,
+    #        key=False,
+    #        default=None,
+    #        item=False,
+    #        todict=False,
+    #        cached=None,
+    #        _last_filter=None,
+    #        _identity_config={},
+    #        **filter_kwargs,
+    #    ):
+    #        """An optimised interface for selecting a unique construct.
+    #
+    #        .. versionadded:: (cfdm) 1.8.9.0
+    #
+    #        :Parameters:
+    #
+    #            _ctypes: `tuple` of `str`
+    #                The construct types to restrict the selection to.
+    #
+    #            _method: `str`
+    #                The name of the calling method.
+    #
+    #            identities: `tuple`
+    #                Select constructs that have an identity, defined by
+    #                their `!identities` methods, that matches any of the
+    #                given tuple values.
+    #
+    #                {{value match}}
+    #
+    #            default: optional
+    #                Return the value of the *default* parameter if there
+    #                is no unique construct.
+    #
+    #                {{default Exception}}
+    #
+    #            key: `bool`, optional
+    #                If True the return the construct identifier.
+    #
+    #            item: `bool`, optional
+    #                If True the return the construct identifier and the
+    #                construct.
+    #
+    #            {{todict: `bool`, optional}}
+    #
+    #            {{cached: optional}}
+    #
+    #            {{filter_kwargs: optional}}
+    #
+    #        :Returns:
+    #
+    #                The unique construct, or its identifier, or both.
+    #
+    #        """
+    #        if cached is not None:
+    #            return cached
+    #
+    #        filter_kwargs["todict"] = True
+    #
+    #        c = self._filter_interface(
+    #            _ctypes,
+    #            _method,
+    #            identities,
+    #            cached=cached,
+    #            _last_filter=_last_filter,
+    #            _identity_config=_identity_config,
+    #            **filter_kwargs,
+    #        )
+    #
+    #        n = len(c)
+    #        if n == 1:
+    #            k, construct = c.popitem()
+    #            if key:
+    #                return k
+    #
+    #            if item:
+    #                return k, construct
+    #
+    #            return construct
+    #
+    #        if default is None:
+    #            return default
+    #
+    #        return self._default(
+    #            default,
+    #            f"{self.__class__.__name__}.{_method}() can't return {n} "
+    #            "constructs",
+    #        )
 
     def _unique_construct_names(self):
         """Return unique metadata construct names.
@@ -307,7 +382,7 @@ class ConstructAccess:
             **filter_kwargs,
         )
 
-    def del_construct(self, identity, default=ValueError()):
+    def del_construct(self, *identity, default=ValueError(), **filter_kwargs):
         """Remove a metadata construct.
 
         If a domain axis construct is selected for removal then it
@@ -342,6 +417,8 @@ class ConstructAccess:
 
                 {{default Exception}}
 
+            {{filter_kwargs: optional}}
+
         :Returns:
 
                 The removed metadata construct.
@@ -375,16 +452,14 @@ class ConstructAccess:
         Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
 
         """
-        key = self.construct_key(identity, default=None)
+        key = self.construct_key(*identity, default=None, **filter_kwargs)
         if key is not None:
             return self.constructs._del_construct(key)
 
         if default is None:
             return default
 
-        return self._default(
-            default, f"Can't remove non-existent construct {identity!r}"
-        )
+        return self._default(default, "Can't find unique construct to remove")
 
     def domain_axes(self, *identities, **filter_kwargs):
         """Return domain axis constructs.
@@ -754,13 +829,24 @@ class ConstructAccess:
         'no construct'
 
         """
-        return self._select_construct(
+        #        return self._select_construct(
+        #            (),
+        #            "construct",
+        #            identity,
+        #            key=False,
+        #            default=default,
+        #            item=False,
+        #            **filter_kwargs,
+        #        )
+
+        return self._filter_interface(
             (),
             "construct",
             identity,
+            construct=True,
             key=False,
-            default=default,
             item=False,
+            default=default,
             **filter_kwargs,
         )
 
@@ -772,7 +858,7 @@ class ConstructAccess:
 
         All constructs that
 
-        .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         .. seealso:: `construct_key`, `constructs`
 
@@ -807,15 +893,26 @@ class ConstructAccess:
                 The selected construct and its construct identifer.
 
         """
-        return self._select_construct(
+        return self._filter_interface(
             (),
             "construct",
             identity,
+            construct=True,
             key=False,
-            default=default,
             item=True,
+            default=default,
             **filter_kwargs,
         )
+
+    #        return self._select_construct(
+    #            (),
+    #            "construct",
+    #            identity,
+    #            key=False,
+    #            default=default,
+    #            item=True,
+    #            **filter_kwargs,
+    #        )
 
     def construct_key(self, *identity, default=ValueError(), **filter_kwargs):
         """Return the identifier of a metadata construct.
@@ -890,15 +987,27 @@ class ConstructAccess:
         'no construct'
 
         """
-        return self._select_construct(
+        return self._filter_interface(
             (),
             "construct",
             identity,
+            construct=True,
             key=True,
-            default=default,
             item=False,
+            default=default,
             **filter_kwargs,
         )
+
+    #
+    #        return self._select_construct(
+    #            (),
+    #            "construct",
+    #            identity,
+    #            key=True,
+    #            default=default,
+    #            item=False,
+    #            **filter_kwargs,
+    #        )
 
     def domain_axis_key(
         self, *identity, default=ValueError(), **filter_kwargs
@@ -1002,4 +1111,65 @@ class ConstructAccess:
             default,
             "The selected 1-d coordinate constructs "
             f"span multiple domain axes: {keys!r}",
+        )
+
+    def has_construct(self, *identity, **filter_kwargs):
+        """Whether a unique metadata construct exists.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `get_construct`, `constructs`, `has_construct`,
+                     `set_construct`
+
+        :Parameters:
+
+            identity:
+                Select the unique construct that has the identity,
+                defined by its `!identities` method, that matches the
+                given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                The removed metadata construct.
+
+        **Examples:**
+
+        >>> f = {{package}}.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> f.has_construct('time')
+        True
+        >>> f.del_construct('altitude')
+        False
+
+        """
+        if (
+            len(identity) == 1
+            and not filter_kwargs
+            and identity[0] in self.constructs
+        ):
+            # Faster return for when identity is a single construct
+            # identifier
+            return True
+
+        return bool(
+            self.construct(*identity, default=None, **filter_kwargs)
+            is not None
         )

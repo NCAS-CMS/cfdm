@@ -39,14 +39,14 @@ _docstring_substitution_definitions = {
                 If any value other than `None` then return *cached*
                 without selecting any constucts.
 
-                .. versionadded:: (cfdm) 1.8.10.0""",
+                .. versionadded:: (cfdm) 1.8.9.0""",
     # todict: `bool`, optional
     "{{todict: `bool`, optional}}": """todict: `bool`, optional
                 If True then return a dictionary of constructs keyed
                 by their construct identifiers, instead of a
                 `Constructs` object. This is a faster option.
 
-                .. versionadded:: (cfdm) 1.8.10.0""",
+                .. versionadded:: (cfdm) 1.8.9.0""",
     # ----------------------------------------------------------------
     # # Method description susbstitutions (3 levels of indentation)
     # ----------------------------------------------------------------
