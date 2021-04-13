@@ -1,5 +1,4 @@
 import logging
-from itertools import chain
 
 from . import mixin
 from . import core
@@ -457,15 +456,13 @@ class CellMeasure(
         ncvar%cell_measure
 
         """
-        measure_identities = ""
         measure = self.get_measure(None)
         if measure is not None:
-            measure_identities = ("measure:" + measure,)
+            pre = ((f"measure:{measure}",),)
+            pre0 = kwargs.pop("pre", None)
+            if pre0:
+                pre = tuple(pre0) + pre
 
-        identities = super().identities(generator=True)
+            kwargs["pre"] = pre
 
-        g = chain(measure_identities, identities)
-        if generator:
-            return g
-
-        return list(g)
+        return super().identities(generator=generator, **kwargs)

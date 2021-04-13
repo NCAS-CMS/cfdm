@@ -768,7 +768,6 @@ class Constructs(abstract.Container):
 
         """
         self._ignore = ()
-        self._field_data_axes = ()
         self._key_base.clear()
         self._array_constructs.clear()
         self._non_array_constructs.clear()

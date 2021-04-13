@@ -1,6 +1,5 @@
 import logging
 
-from itertools import chain
 from functools import reduce
 from operator import mul
 
@@ -1258,19 +1257,16 @@ class PropertiesDataBounds(PropertiesData):
         ncvar%z
 
         """
-        identities = super().identities(generator=True, **kwargs)
-
         bounds = self.get_bounds(None)
         if bounds is not None:
-            bounds_identities = bounds.identities(generator=True, **kwargs)
-            g = chain(identities, bounds_identities)
-        else:
-            g = identities
+            post = (bounds.identities(generator=True),)
+            post0 = kwargs.pop("post", None)
+            if post0:
+                post = tuple(post0) + post
 
-        if generator:
-            return g
+            kwargs["post"] = post
 
-        return list(g)
+        return super().identities(generator=generator, **kwargs)
 
     def identity(self, default=""):
         """Return the canonical identity.

@@ -169,7 +169,7 @@ class CoordinateReference(
 
         ncvar = self.nc_get_variable(None)
         if ncvar is not None:
-            yield "ncvar%" + ncvar
+            yield f"ncvar%{ncvar}"
 
     def creation_commands(
         self, namespace=None, indent=0, string=True, name="c", header=True
@@ -600,8 +600,4 @@ class CoordinateReference(
         []
 
         """
-        g = self._identities_iter()
-        if generator:
-            return g
-
-        return list(g)
+        return super().identities(generator=generator, **kwargs)

@@ -90,6 +90,21 @@ class CellMethod(mixin.Container, core.CellMethod):
 
         return " ".join(string)
 
+    def _identities_iter(self):
+        """Return all possible identities.
+
+        See `identities` for details and examples.
+
+        :Returns:
+
+            generator
+                The identities.
+
+        """
+        n = self.get_method(None)
+        if n is not None:
+            yield f"method:{n}"
+
     def creation_commands(
         self, namespace=None, indent=0, string=True, name="c", header=True
     ):
@@ -469,11 +484,7 @@ class CellMethod(mixin.Container, core.CellMethod):
         ...
 
         """
-        n = self.get_method(None)
-        if n is not None:
-            return ["method:" + n]
-
-        return []
+        return super().identities(generator=generator, **kwargs)
 
     def sorted(self, indices=None):
         """Return a new cell method construct with sorted axes.

@@ -606,7 +606,7 @@ class Constructs(mixin.Container, core.Constructs):
         return construct._equals(value1, value0)
 
     @classmethod
-    def _short_circuit_test(cls, x):
+    def _short_iteration(cls, x):
         """The default short cicuit test.
 
         If this method returns True then only ther first identity
@@ -1249,12 +1249,27 @@ class Constructs(mixin.Container, core.Constructs):
         )
 
         data_axes = self._construct_axes
+
         if not axes:
             for cid in tuple(out.keys()):
                 if cid not in data_axes:
                     pop(cid)
 
             return out
+
+        field_data = self._field_data_axes
+        if field_data:
+            axes2 = []
+            for axis in axes:
+                if not isinstance(axis, str):
+                    try:
+                        axis = field_data[axis]
+                    except (IndexError, TypeError):
+                        pass
+
+                axes2.append(axis)
+
+            axes = axes2
 
         axes = set(axes)
 
@@ -1449,9 +1464,7 @@ class Constructs(mixin.Container, core.Constructs):
         # individual construct identities as possible, as these can be
         # very expensive to compute.
         # ------------------------------------------------------------
-        short_circuit_test = _config.get(
-            "short_circuit_test", self._short_circuit_test
-        )
+        short_iteration = _config.get("short_iteration", self._short_iteration)
         identities_kwargs = _config.get("identities_kwargs", {})
 
         matched = set()
@@ -1472,28 +1485,39 @@ class Constructs(mixin.Container, core.Constructs):
         identities = identities2
 
         if identities:
-            test_for_short_circuit = True
+            #            for cid in matched:
+            #                pop(cid)
+            #
+            #            matched = set()
 
-            for cid in matched:
-                pop(cid)
-
-            matched = set()
-
-            constructs = out.values()
+            constructs = {
+                cid: c for cid, c in out.items() if cid not in matched
+            }
 
             # Dictionary of construct identifiers and construct
             # identity generators
+            if "short" not in identities_kwargs:
+                short = True
+                for value0 in identities:
+                    if not short_iteration(value0):
+                        short = False
+                        break
+
+                identities_kwargs["short"] = short
+            # print        (   identities_kwargs)
+
             generators = {
                 cid: construct.identities(generator=True, **identities_kwargs)
-                for cid, construct in out.items()
+                for cid, construct in constructs.items()
             }
 
             for values in zip_longest(*generators.values(), fillvalue=None):
                 # Loop round the each construct's next identity
-                for cid, construct, value1 in zip(
-                    generators, constructs, values
+                for (cid, generator), construct, value1 in zip(
+                    generators.items(), constructs.values(), values
                 ):
-                    if cid in matched or value1 is None:
+                    # print (repr(construct), value1)
+                    if value1 is None:
                         continue
 
                     # Loop round the given values
@@ -1501,17 +1525,9 @@ class Constructs(mixin.Container, core.Constructs):
                         if self._matching_values(
                             value0, construct, value1, basic=True
                         ):
+                            generator.close()
                             matched.add(cid)
                             break
-
-                if test_for_short_circuit:
-                    identities = [
-                        v for v in identities if not short_circuit_test(v)
-                    ]
-                    if identities:
-                        test_for_short_circuit = False
-                    else:
-                        break
 
         if not matched:
             if isinstance(out, dict):

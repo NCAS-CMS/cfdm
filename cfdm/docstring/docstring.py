@@ -92,6 +92,9 @@ _docstring_substitution_definitions = {
         The standard description-of-file-contents properties are
         always written as netCDF global attributes, if possible, so
         selecting them is optional.""",
+    # asds
+    "{{unique construct}}": """If zero or two or more constructs are selected then an
+        exception is raised, or the *default* parameter is returned.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (3 levels of indentataion)
     # ----------------------------------------------------------------
@@ -274,7 +277,7 @@ _docstring_substitution_definitions = {
 
                 .. versionadded:: (cfdm) 1.8.9.0""",
     # ----------------------------------------------------------------
-    # Method description susbstitutions (3 levels of indentataion)
+    # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------
     # {{string value match}}
     "{{value match}}": """A value may be any object that can match via the

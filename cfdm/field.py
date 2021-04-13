@@ -590,6 +590,14 @@ class Field(
                  defined by their `!identities` methods, that matches
                  any of the given values.
 
+                 Additionally, the values are matched against construct
+                 identifiers, with or without the ``'key%'`` prefix.
+
+                 Additionally, if a value would select a unique domain
+                 axis construct with ``f.domain_axis(value)`` then any
+                 cell method constructs that span exactly that axis are
+                 selected.
+
                  {{value match}}
 
                  {{displayed identity}}
@@ -598,26 +606,35 @@ class Field(
 
         :Returns:
 
-            `Constructs`
-                The selected constructs, unless modified by any
+           `Constructs`
+                 The selected constructs, unless modified by any
                 *filter_kwargs* parameters.
 
-         **Examples:**
-
-         >>> f.cell_methods()
-         Constructs:
-         {}
-
-         >>> f.cell_methods()
-         Constructs:
-         {'cellmethod1': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
-          'cellmethod0': <{{repr}}CellMethod: domainaxis3: maximum>}
-
-         >>> f.cell_methods().ordered()
-         OrderedDict([('cellmethod0', <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
-                      ('cellmethod1', <{{repr}}CellMethod: domainaxis3: maximum>)])
+          **Examples:**
 
         """
+        if identities:
+            if "filter_by_identity" in filter_kwargs:
+                raise TypeError(
+                    f"Can't set {self.__class__.__name__}.cell_method() "
+                    "keyword argument 'filter_by_identity' when "
+                    "positional *identities arguments are also set"
+                )
+        else:
+            identities = filter_kwargs.pop("filter_by_identity", ())
+
+        if identities:
+            c = self.constructs._construct_dict("cell_method")
+            if c:
+                domain_axes = self.domain_axes(*identities, todict=True)
+                if domain_axes:
+                    identities = list(identities)
+                    for axis in domain_axes:
+                        for key, cm in c.items():
+                            if cm.get_axes(None) == (axis,):
+                                identities.append(key)
+        #        print (identities)
+
         return self._filter_interface(
             ("cell_method",), "cell_method", identities, **filter_kwargs
         )

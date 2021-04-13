@@ -79,6 +79,21 @@ class DomainAxis(
         """
         return f"size({self.get_size('')})"
 
+    def _identities_iter(self):
+        """Return all possible identities.
+
+        See `identities` for details and examples.
+
+        :Returns:
+
+            generator
+                The identities.
+
+        """
+        n = self.nc_get_dimension(None)
+        if n is not None:
+            yield f"ncdim%{n}"
+
     def creation_commands(
         self, namespace=None, indent=0, string=True, name="c", header=True
     ):
@@ -304,8 +319,4 @@ class DomainAxis(
         ...
 
         """
-        n = self.nc_get_dimension(None)
-        if n is not None:
-            return ["ncdim%" + n]
-
-        return []
+        return super().identities(generator=generator, **kwargs)

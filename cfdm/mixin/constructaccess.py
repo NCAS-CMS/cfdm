@@ -79,7 +79,7 @@ class ConstructAccess:
                     # Return Constructs or dict
                     return c
 
-                # Return constuct, or key, or both, or default
+                # Return construct, or key, or both, or default
                 n = len(c)
                 if n == 1:
                     k, construct = c.popitem()
@@ -164,98 +164,6 @@ class ConstructAccess:
             f"{self.__class__.__name__}.{_method}() can't return {n} "
             "constructs",
         )
-
-    #    def _select_construct(
-    #        self,
-    #        _ctypes,
-    #        _method,
-    #        identities,
-    #        key=False,
-    #        default=None,
-    #        item=False,
-    #        todict=False,
-    #        cached=None,
-    #        _last_filter=None,
-    #        _identity_config={},
-    #        **filter_kwargs,
-    #    ):
-    #        """An optimised interface for selecting a unique construct.
-    #
-    #        .. versionadded:: (cfdm) 1.8.9.0
-    #
-    #        :Parameters:
-    #
-    #            _ctypes: `tuple` of `str`
-    #                The construct types to restrict the selection to.
-    #
-    #            _method: `str`
-    #                The name of the calling method.
-    #
-    #            identities: `tuple`
-    #                Select constructs that have an identity, defined by
-    #                their `!identities` methods, that matches any of the
-    #                given tuple values.
-    #
-    #                {{value match}}
-    #
-    #            default: optional
-    #                Return the value of the *default* parameter if there
-    #                is no unique construct.
-    #
-    #                {{default Exception}}
-    #
-    #            key: `bool`, optional
-    #                If True the return the construct identifier.
-    #
-    #            item: `bool`, optional
-    #                If True the return the construct identifier and the
-    #                construct.
-    #
-    #            {{todict: `bool`, optional}}
-    #
-    #            {{cached: optional}}
-    #
-    #            {{filter_kwargs: optional}}
-    #
-    #        :Returns:
-    #
-    #                The unique construct, or its identifier, or both.
-    #
-    #        """
-    #        if cached is not None:
-    #            return cached
-    #
-    #        filter_kwargs["todict"] = True
-    #
-    #        c = self._filter_interface(
-    #            _ctypes,
-    #            _method,
-    #            identities,
-    #            cached=cached,
-    #            _last_filter=_last_filter,
-    #            _identity_config=_identity_config,
-    #            **filter_kwargs,
-    #        )
-    #
-    #        n = len(c)
-    #        if n == 1:
-    #            k, construct = c.popitem()
-    #            if key:
-    #                return k
-    #
-    #            if item:
-    #                return k, construct
-    #
-    #            return construct
-    #
-    #        if default is None:
-    #            return default
-    #
-    #        return self._default(
-    #            default,
-    #            f"{self.__class__.__name__}.{_method}() can't return {n} "
-    #            "constructs",
-    #        )
 
     def _unique_construct_names(self):
         """Return unique metadata construct names.
@@ -475,6 +383,22 @@ class ConstructAccess:
                 defined by their `!identities` methods, that matches
                 any of the given values.
 
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                Additionally, if a value would select a unique 1-d
+                coordinate construct with ``f.construct(value)`` then
+                the domain axis construct spanned the coordinate's
+                data is selected.
+
+                Additionally, if there are `Field` data and a value
+                matches the positions of the domain axis construct in
+                that data then the corresponding domain axis
+                constructs are selected.
+
+                If no values are provided then all domain axis
+                constructs are selected.
+
                 {{value match}}
 
                 {{displayed identity}}
@@ -489,18 +413,47 @@ class ConstructAccess:
 
         **Examples:**
 
-        >>> f.domain_axes()
-        Constructs:
-        {}
-
-        >>> f.domain_axes()
-        Constructs:
-        {'domainaxis0': <{{repr}}DomainAxis: size(1)>,
-         'domainaxis1': <{{repr}}DomainAxis: size(10)>,
-         'domainaxis2': <{{repr}}DomainAxis: size(9)>,
-         'domainaxis3': <{{repr}}DomainAxis: size(1)>}
-
         """
+        if identities:
+            if "filter_by_identity" in filter_kwargs:
+                raise TypeError(
+                    f"Can't set {self.__class__.__name__}.domain_axes() "
+                    "keyword argument 'filter_by_identity' when "
+                    "positional *identities arguments are also set"
+                )
+        else:
+            identities = filter_kwargs.pop("filter_by_identity", ())
+
+        if identities:
+            c = self.constructs._construct_dict("domain_axis")
+            if c:
+                data_axes = self.constructs._field_data_axes
+                if data_axes:
+                    identities2 = []
+                    for axis in identities:
+                        if isinstance(axis, str):
+                            if axis not in c:
+                                # Check for 1-d coordinate
+                                axis = self.domain_axis_key(axis, default=axis)
+                        else:
+                            try:
+                                # Check for index
+                                axis = data_axes[axis]
+                            except Exception:
+                                pass
+
+                        identities2.append(axis)
+
+                    identities = identities2
+                else:
+                    # Check for 1-d coordinates
+                    identities = [
+                        self.domain_axis_key(axis, default=axis)
+                        if axis not in c
+                        else axis
+                        for axis in identities
+                    ]
+
         return self._filter_interface(
             ("domain_axis",), "domain_axes", identities, **filter_kwargs
         )
@@ -759,10 +712,7 @@ class ConstructAccess:
     def construct(self, *identity, default=ValueError(), **filter_kwargs):
         """Return a metadata construct.
 
-        If zero or two or more constructs are selected then an
-        exception is raised, or the *default* parameter is returned.
-
-        All constructs that
+        {{unique construct}}
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -795,7 +745,7 @@ class ConstructAccess:
 
         :Returns:
 
-                The selected construct.
+                TODO. asdasdssasd.
 
         **Examples:**
 
@@ -829,16 +779,6 @@ class ConstructAccess:
         'no construct'
 
         """
-        #        return self._select_construct(
-        #            (),
-        #            "construct",
-        #            identity,
-        #            key=False,
-        #            default=default,
-        #            item=False,
-        #            **filter_kwargs,
-        #        )
-
         return self._filter_interface(
             (),
             "construct",
@@ -853,10 +793,7 @@ class ConstructAccess:
     def construct_item(self, *identity, default=ValueError(), **filter_kwargs):
         """Return a metadata construct and its identifier.
 
-        If zero or two or more constructs are selected then an
-        exception is raised, or the *default* parameter is returned.
-
-        All constructs that
+        {{unique construct}}
 
         .. versionadded:: (cfdm) 1.8.9.0
 
@@ -904,21 +841,10 @@ class ConstructAccess:
             **filter_kwargs,
         )
 
-    #        return self._select_construct(
-    #            (),
-    #            "construct",
-    #            identity,
-    #            key=False,
-    #            default=default,
-    #            item=True,
-    #            **filter_kwargs,
-    #        )
-
     def construct_key(self, *identity, default=ValueError(), **filter_kwargs):
         """Return the identifier of a metadata construct.
 
-        If zero or two or more constructs are selected then an
-        exception is raised, or the *default* parameter is returned.
+        {{unique construct}}
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -998,17 +924,6 @@ class ConstructAccess:
             **filter_kwargs,
         )
 
-    #
-    #        return self._select_construct(
-    #            (),
-    #            "construct",
-    #            identity,
-    #            key=True,
-    #            default=default,
-    #            item=False,
-    #            **filter_kwargs,
-    #        )
-
     def domain_axis_key(
         self, *identity, default=ValueError(), **filter_kwargs
     ):
@@ -1063,12 +978,11 @@ class ConstructAccess:
         'domainaxis3'
 
         """
+        filter_kwargs["filter_by_naxes"] = (1,)
+        filter_kwargs["todict"] = True
+
         # Select 1-d coordinate constructs with the given identity
-        c = self.coordinates(
-            *identity,
-            filter_by_naxes=(1,),
-            todict=True,
-        )
+        c = self.coordinates(*identity, **filter_kwargs)
         if not c:
             if default is None:
                 return default

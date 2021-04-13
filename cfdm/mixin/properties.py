@@ -88,16 +88,16 @@ class Properties(Container):
                 yield standard_name
 
             for prop in ("cf_role", "axis", "long_name"):
-                p = properties.pop(prop, None)
-                if p is not None:
-                    yield f"{prop}={p}"
+                value = properties.pop(prop, None)
+                if value is not None:
+                    yield f"{prop}={value}"
 
             for prop, value in sorted(properties.items()):
                 yield f"{prop}={value}"
 
         ncvar = self.nc_get_variable(None)
         if ncvar is not None:
-            yield "ncvar%" + ncvar
+            yield f"ncvar%{ncvar}"
 
     # ----------------------------------------------------------------
     # Methods
@@ -491,11 +491,7 @@ class Properties(Container):
         ncvar%tas
 
         """
-        g = self._identities_iter()
-        if generator:
-            return g
-
-        return list(g)
+        return super().identities(generator=generator, **kwargs)
 
     def _inherited_properties(self):
         """Return the properties inherited from a parent construct.
