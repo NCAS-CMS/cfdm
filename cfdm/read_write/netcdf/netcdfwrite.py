@@ -452,15 +452,7 @@ class NetCDFWrite(IOWrite):
                 try:
                     parent_group.createDimension(ncdim, size)
                 except RuntimeError as error:
-                    if "NetCDF: String match to name in use" in str(error):
-                        if self.write_vars['post_dry_run']:  # 'a' mode, so OK
-                            logger.debug(
-                                "Caught case of 'String match to name in use'"
-                            )
-                        else:  # bad, so raise original error
-                            raise
-                    else:
-                        raise RuntimeError
+                    raise
 
         return ncdim
 
@@ -615,47 +607,39 @@ class NetCDFWrite(IOWrite):
             # its name with its basename (CF>=1.8)
             ncdim = self._remove_group_structure(ncdim)
 
-        if unlimited and not g['dry_run']:
-            # Create an unlimited dimension
-            size = None
-            try:
-                parent_group.createDimension(ncdim, size)
-            except RuntimeError as error:
-                message = (
-                    "Can't create unlimited dimension "
-                    "in {} file ({}).".format(g["netcdf"].file_format, error)
-                )
-
-                error = str(error)
-                if error == "NetCDF: NC_UNLIMITED size already in use":
-                    raise RuntimeError(
-                        message + " In a {} file only one unlimited dimension "
-                        "is allowed. Consider using a netCDF4 format.".format(
-                            g["netcdf"].file_format
-                        )
+        if not g['dry_run']:
+            if unlimited:
+                # Create an unlimited dimension
+                size = None
+                try:
+                    parent_group.createDimension(ncdim, size)
+                except RuntimeError as error:
+                    message = (
+                        "Can't create unlimited dimension "
+                        "in {} file ({}).".format(g["netcdf"].file_format, error)
                     )
 
-                raise RuntimeError(message)
-        elif not g['dry_run']:
-            try:
-                parent_group.createDimension(ncdim, size)
-            except RuntimeError as error:
-                if "NetCDF: String match to name in use" in str(error):
-                    if self.write_vars['post_dry_run']:  # append mode, so OK
-                        logger.debug(
-                            "Caught case of 'String match to name in use'"
+                    error = str(error)
+                    if error == "NetCDF: NC_UNLIMITED size already in use":
+                        raise RuntimeError(
+                            message + " In a {} file only one unlimited dimension "
+                            "is allowed. Consider using a netCDF4 format.".format(
+                                g["netcdf"].file_format
+                            )
                         )
-                        pass
-                    else:  # bad, so raise original error
-                        raise
-                else:
+
+                    raise RuntimeError(message)
+            else:
+                try:
+                    parent_group.createDimension(ncdim, size)
+                except RuntimeError as error:
                     raise RuntimeError(
                         "Can't create size {} dimension {!r} in "
                         "{} file ({})".format(
                             size, ncdim, g["netcdf"].file_format, error
                         )
                     )
-        # --- End: if
+            # --- End: if
 
         g["dimensions"].add(ncdim)
 
@@ -782,22 +766,9 @@ class NetCDFWrite(IOWrite):
             ncvar = seen[id(coord)]["ncvar"]
             ncdimensions = seen[id(coord)]["ncdims"]
 
-        if seen.get(id(coord)):
-            g["axis_to_ncdim"][axis] = seen[id(coord)]["ncdims"][0]
-        else:
-            # g["seen"][id(coord)] = {
-            #     "variable": coord,
-            #     "ncvar": ncvar,
-            #     "ncdims": ncdimensions,
-            # }
-            print(
-                "This probably shouldn't be happening with...",
-                axis, coord, ncvar, ncdimensions, coordinates
-            )
-            return ncvar
-
         g["key_to_ncvar"][key] = ncvar
         g["key_to_ncdims"][key] = ncdimensions
+        g["axis_to_ncdim"][axis] = seen[id(coord)]["ncdims"][0]
 
         if g["coordinates"] and ncvar is not None:
             # Add the dimension coordinate netCDF variable name to the
@@ -1260,7 +1231,7 @@ class NetCDFWrite(IOWrite):
         if not g["dry_run"]:
             self._createVariable(**kwargs)
 
-        g["nc"][ncvar].setncatts(geometry_container)
+            g["nc"][ncvar].setncatts(geometry_container)
 
         # Update the 'geometry_containers' dictionary
         g["geometry_containers"][ncvar] = geometry_container
@@ -2651,6 +2622,13 @@ class NetCDFWrite(IOWrite):
 
         g = self.write_vars
 
+        # Update the 'seen' dictionary
+        g["seen"][id(cfvar)] = {
+            "variable": cfvar,
+            "ncvar": ncvar,
+            "ncdims": ncdimensions,
+        }
+
         # Don't ever write any variables in the 'dry run' read iteration of an
         # append-mode write (only write in the second post-dry-run iteration).
         if g['dry_run']:
@@ -2755,15 +2733,7 @@ class NetCDFWrite(IOWrite):
             self._createVariable(**kwargs)
         except RuntimeError as error:
             error = str(error)
-            if "NetCDF: String match to name in use" in error:
-                if self.write_vars['post_dry_run']:  # append mode, so OK
-                    logger.debug(
-                        "Caught case of 'String match to name in use'"
-                    )
-                    return
-                else:  # bad, so raise original error
-                    raise
-            elif error == (
+            if error == (
                 "NetCDF: Not a valid data type or _FillValue " "type mismatch"
             ):
                 raise ValueError(
@@ -2833,13 +2803,6 @@ class NetCDFWrite(IOWrite):
                 compressed=compressed,
                 attributes=attributes,
             )
-
-        # Update the 'seen' dictionary
-        g["seen"][id(cfvar)] = {
-            "variable": cfvar,
-            "ncvar": ncvar,
-            "ncdims": original_ncdimensions,
-        }
 
     def _customize_createVariable(self, cfvar, kwargs):
         """Customises `netCDF4.Dataset.createVariable` keywords.
@@ -3125,7 +3088,7 @@ class NetCDFWrite(IOWrite):
 
         """
         g = self.write_vars
-        xxx = g["xxx"]
+        xxx = []
         seen = g["seen"]
 
         logger.info("  Writing {!r}:".format(f))  # pragma: no cover
@@ -4115,7 +4078,7 @@ class NetCDFWrite(IOWrite):
         """
         g = self.write_vars
 
-        group_attributes = g["group_attributes"]
+        group_attributes = {}
 
         # ------------------------------------------------------------
         # Add properties that have been marked as group-level on each
