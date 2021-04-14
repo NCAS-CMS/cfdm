@@ -10,10 +10,15 @@ import netCDF4
 
 from .. import IOWrite
 
+from .netcdfread import NetCDFRead
+
+from ...cfdmimplementation import implementation
 from ...decorators import _manage_log_level_via_verbosity
 
 
 logger = logging.getLogger(__name__)
+
+_implementation = implementation()
 
 
 class NetCDFWrite(IOWrite):
@@ -4380,7 +4385,7 @@ class NetCDFWrite(IOWrite):
                 A `netCDF4.Dataset` object for the file.
 
         """
-        if fields:
+        if fields and mode != "r":
             filename = os.path.abspath(filename)
             for f in fields:
                 if filename in self.implementation.get_filenames(f):
@@ -4695,7 +4700,11 @@ class NetCDFWrite(IOWrite):
         }
 
         effective_mode = mode  # actual mode to use for the first IO iteration
+        effective_fields = fields
         if mode == 'a':
+            # First read in the fields from the existing file:
+            effective_fields = NetCDFRead(_implementation).read(filename)
+
             # Read rather than append for the first iteration to ensure nothing
             # gets written; only want to update the 'seen' dictionary first.
             effective_mode = 'r'
@@ -4704,7 +4713,7 @@ class NetCDFWrite(IOWrite):
         self._file_io_iteration(
             mode=effective_mode,
             overwrite=overwrite,
-            fields=fields,
+            fields=effective_fields,
             filename=filename,
             fmt=fmt,
             global_attributes=global_attributes,
@@ -4977,7 +4986,7 @@ class NetCDFWrite(IOWrite):
         for f in fields:
             # Always add to the 'seen' dict if it is a dry run (that is the
             # whole point of a dry run)
-            self._write_field(f, add_to_seen=g['dry_run'])
+            self._write_field(f)
 
         # ------------------------------------------------------------
         # Write all of the buffered data to disk
