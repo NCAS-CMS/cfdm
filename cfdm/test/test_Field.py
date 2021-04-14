@@ -362,13 +362,6 @@ class FieldTest(unittest.TestCase):
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.DomainAncillary)
 
-        constructs = f.domain_axes()
-        n = 4
-        self.assertEqual(len(constructs), n)
-
-        for key, value in constructs.items():
-            self.assertIsInstance(value, cfdm.DomainAxis)
-
         constructs = f.field_ancillaries()
         n = 1
         self.assertEqual(len(constructs), n)
@@ -383,6 +376,17 @@ class FieldTest(unittest.TestCase):
         self.assertIsNone(
             f.domain_axis_key(re.compile("^grid_"), default=None)
         )
+
+    def test_Field_domain_axes(self):
+        """TODO DOCS."""
+        f = self.f1
+
+        regex = re.compile("^atmos")
+
+        self.assertEqual(len(f.domain_axes()), 4)
+        self.assertEqual(len(f.domain_axes("grid_latitude", -1)), 2)
+        self.assertEqual(len(f.domain_axes(regex)), 1)
+        self.assertEqual(len(f.domain_axes(regex, "grid_latitude", -1)), 3)
 
     def test_Field_data_axes(self):
         """TODO DOCS."""

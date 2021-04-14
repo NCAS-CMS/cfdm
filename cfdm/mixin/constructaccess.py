@@ -597,16 +597,13 @@ class ConstructAccess:
                 if data_axes:
                     identities2 = []
                     for axis in identities:
-                        if isinstance(axis, str):
-                            if axis not in c:
-                                # Check for 1-d coordinate
-                                axis = self.domain_axis_key(axis, default=axis)
-                        else:
+                        if axis not in c:
                             try:
                                 # Check for index
                                 axis = data_axes[axis]
                             except Exception:
-                                pass
+                                # Check for 1-d coordinate
+                                axis = self.domain_axis_key(axis, default=axis)
 
                         identities2.append(axis)
 
