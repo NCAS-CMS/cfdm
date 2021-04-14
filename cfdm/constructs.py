@@ -1460,9 +1460,9 @@ class Constructs(mixin.Container, core.Constructs):
             return out
 
         # ------------------------------------------------------------
-        # The overriding principle here is to iterate over as few
-        # individual construct identities as possible, as these can be
-        # very expensive to compute.
+        # The principle here is to iterate over as few individual
+        # construct identities as possible, as these can be very
+        # expensive to compute.
         # ------------------------------------------------------------
         short_iteration = _config.get("short_iteration", self._short_iteration)
         identities_kwargs = _config.get("identities_kwargs", {})
@@ -1472,27 +1472,25 @@ class Constructs(mixin.Container, core.Constructs):
         # Process identities that are construct identifiers
         identities2 = []
         for value0 in identities:
-            is_key = False
-            for cid in out:
-                if value0 == cid or value0 == "key%" + cid:
-                    is_key = True
-                    matched.add(cid)
-                    break
+            if isinstance(value0, str):
+                if value0 in out:
+                    matched.add(value0)
+                    continue
+                elif value0.startswith("key%") and value0[4:] in out:
+                    matched.add(value0[4:])
+                    continue
 
-            if not is_key:
-                identities2.append(value0)
+            identities2.append(value0)
 
         identities = identities2
 
         if identities:
-            #            for cid in matched:
-            #                pop(cid)
-            #
-            #            matched = set()
-
-            constructs = {
-                cid: c for cid, c in out.items() if cid not in matched
-            }
+            if matched:
+                constructs = {
+                    cid: c for cid, c in out.items() if cid not in matched
+                }
+            else:
+                constructs = out
 
             # Dictionary of construct identifiers and construct
             # identity generators
@@ -1511,13 +1509,16 @@ class Constructs(mixin.Container, core.Constructs):
                 for cid, construct in constructs.items()
             }
 
+            constructs = constructs.values()
+
             for values in zip_longest(*generators.values(), fillvalue=None):
                 # Loop round the each construct's next identity
                 for (cid, generator), construct, value1 in zip(
-                    generators.items(), constructs.values(), values
+                    generators.items(), constructs, values
                 ):
                     # print (repr(construct), value1)
                     if value1 is None:
+                        # This construct has run out of identities
                         continue
 
                     # Loop round the given values

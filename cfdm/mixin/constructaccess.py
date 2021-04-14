@@ -242,6 +242,119 @@ class ConstructAccess:
 
         return key_to_name
 
+    def auxiliary_coordinates(self, *identities, **filter_kwargs):
+        """Return auxiliary coordinate constructs.
+
+        Note that ``f.auxiliary_coordinates(*identities,
+        **filter_kwargs)`` is equivalent to
+        ``f.constructs.filter(filter_by_type=["auxiliary_coordinate"],
+        filter_by_identity=identities, **filter_kwargs)``.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `constructs`
+
+        :Parameters:
+
+            identities: optional
+                Select auxiliary coordinate constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values.
+
+                If no identities are provided then all auxiliary
+                coordinate constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns constructs}}
+
+        **Examples:**
+
+        >>> f.auxiliary_coordinates()
+        Constructs:
+        {}
+
+        >>> f.auxiliary_coordinates()
+        Constructs:
+        {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+         'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+         'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
+
+        """
+        return self._filter_interface(
+            ("auxiliary_coordinate",),
+            "auxiliary_coordinates",
+            identities,
+            **filter_kwargs,
+        )
+
+    def coordinates(self, *identities, **filter_kwargs):
+        """Return dimension and auxiliary coordinate constructs.
+
+        Note that ``f.coordinates(*identities, **filter_kwargs)`` is
+        equivalent to
+        ``f.constructs.filter(filter_by_type=["dimension_coordinate",
+        "auxiliary_coordinate"], filter_by_identity=identities,
+        **filter_kwargs)``.
+
+        . versionadded:: (cfdm) 1.7.0
+
+        . seealso:: `auxiliary_coordinates`, `constructs`,
+                    `dimension_coordinates`
+
+        :Parameters:
+
+            identities: optional
+                Select dimension and auxiliary coordinate constructs
+                that have an identity, defined by their `!identities`
+                methods, that matches any of the given values.
+
+                If no identities are provided then all dimension and
+                auxiliary coordinate constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns constructs}}
+
+        *Examples:**
+
+        >> f.coordinates()
+        onstructs:
+        }
+
+        >> f.coordinates()
+        onstructs:
+        'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+        'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+        'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
+        'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+        'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
+        'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
+        'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
+
+        """
+        return self._filter_interface(
+            (
+                "dimension_coordinate",
+                "auxiliary_coordinate",
+            ),
+            "coordinates",
+            identities,
+            **filter_kwargs,
+        )
+
     def coordinate_references(self, *identities, **filter_kwargs):
         """Return coordinate reference constructs.
 
@@ -256,6 +369,9 @@ class ConstructAccess:
                 identity, defined by their `!identities` methods, that
                 matches any of the given values.
 
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
                 If no identities are provided then all coordinate
                 reference constructs are selected.
 
@@ -267,9 +383,7 @@ class ConstructAccess:
 
         :Returns:
 
-            `Constructs`
-                The selected constructs, unless modified by any
-                *filter_kwargs* parameters.
+                {{Returns constructs}}
 
         **Examples:**
 
@@ -369,6 +483,59 @@ class ConstructAccess:
 
         return self._default(default, "Can't find unique construct to remove")
 
+    def dimension_coordinates(self, *identities, **filter_kwargs):
+        """Return dimension coordinate constructs.
+
+        Note that ``f.dimension_coordinates(*identities,
+        **filter_kwargs)`` is equivalent to
+        ``f.constructs.filter(filter_by_type=["dimension_coordinate"],
+        filter_by_identity=identities, **filter_kwargs)``.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `constructs`
+
+        :Parameters:
+
+            identities: optional
+                Select dimension coordinate constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values.
+
+                If no identities are provided then all dimension
+                coordinate constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns constructs}}
+
+        **Examples:**
+
+        >>> f.dimension_coordinates()
+        Constructs:
+        {}
+
+        >>> f.dimension_coordinates()
+        Constructs:
+        {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
+         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
+         'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
+
+        """
+        return self._filter_interface(
+            ("dimension_coordinate",),
+            "dimension_coordinates",
+            identities,
+            **filter_kwargs,
+        )
+
     def domain_axes(self, *identities, **filter_kwargs):
         """Return domain axis constructs.
 
@@ -386,15 +553,16 @@ class ConstructAccess:
                 Additionally, the values are matched against construct
                 identifiers, with or without the ``'key%'`` prefix.
 
-                Additionally, if a value would select a unique 1-d
-                coordinate construct with ``f.construct(value)`` then
-                the domain axis construct spanned the coordinate's
-                data is selected.
+                Additionally, if for a given value
+                ``f.coordinates(value, filter_by_naxes=(1,))`` returns
+                1-d coordinate constructs that all span the same
+                domain axis construct then that domain axis construct
+                is selected. See `coordinates` for details.
 
-                Additionally, if there are `Field` data and a value
-                matches the positions of the domain axis construct in
-                that data then the corresponding domain axis
-                constructs are selected.
+                Additionally, if there is a `Field` data array and a
+                value matches the integer position of an array
+                dimension, then the corresponding domain axis
+                construct is selected.
 
                 If no values are provided then all domain axis
                 constructs are selected.
@@ -407,9 +575,7 @@ class ConstructAccess:
 
         :Returns:
 
-            `Constructs`
-                The selected constructs, unless modified by any
-                *filter_kwargs* parameters.
+                {{Returns constructs}}
 
         **Examples:**
 
@@ -458,164 +624,13 @@ class ConstructAccess:
             ("domain_axis",), "domain_axes", identities, **filter_kwargs
         )
 
-    def auxiliary_coordinates(self, *identities, **filter_kwargs):
-        """Return auxiliary coordinate constructs.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        .. seealso:: `constructs`
-
-        :Parameters:
-
-            identities: optional
-                Select auxiliary coordinate constructs that have an
-                identity, defined by their `!identities` methods, that
-                matches any of the given values.
-
-                If no identities are provided then all auxiliary
-                coordinate constructs are selected.
-
-                {{value match}}
-
-                {{displayed identity}}
-
-            {{filter_kwargs: optional}}
-
-        :Returns:
-
-            `Constructs`
-                The selected constructs, unless modified by any
-                *filter_kwargs* parameters.
-
-        **Examples:**
-
-        >>> f.auxiliary_coordinates()
-        Constructs:
-        {}
-
-        >>> f.auxiliary_coordinates()
-        Constructs:
-        {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
-         'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
-         'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
-
-        """
-        return self._filter_interface(
-            ("auxiliary_coordinate",),
-            "auxiliary_coordinates",
-            identities,
-            **filter_kwargs,
-        )
-
-    def dimension_coordinates(self, *identities, **filter_kwargs):
-        """Return dimension coordinate constructs.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        .. seealso:: `constructs`
-
-        :Parameters:
-
-            identities: optional
-                Select dimension coordinate constructs that have an
-                identity, defined by their `!identities` methods, that
-                matches any of the given values.
-
-                If no identities are provided then all dimension
-                coordinate constructs are selected.
-
-                {{value match}}
-
-                {{displayed identity}}
-
-            {{filter_kwargs: optional}}
-
-        :Returns:
-
-            `Constructs`
-                The selected constructs, unless modified by any
-                *filter_kwargs* parameters.
-
-        **Examples:**
-
-        >>> f.dimension_coordinates()
-        Constructs:
-        {}
-
-        >>> f.dimension_coordinates()
-        Constructs:
-        {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
-         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
-         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
-         'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
-
-        """
-        return self._filter_interface(
-            ("dimension_coordinate",),
-            "dimension_coordinates",
-            identities,
-            **filter_kwargs,
-        )
-
-    def coordinates(self, *identities, **filter_kwargs):
-        """Return dimension and auxiliary coordinate constructs.
-
-        . versionadded:: (cfdm) 1.7.0
-
-        . seealso:: `auxiliary_coordinates`, `constructs`,
-                    `dimension_coordinates`
-
-        :Parameters:
-
-            identities: optional
-                Select coordinate constructs that have an identity,
-                defined by their `!identities` methods, that matches
-                any of the given values.
-
-                If no identities are provided then all coordinate
-                constructs are selected.
-
-                {{value match}}
-
-                {{displayed identity}}
-
-            {{filter_kwargs: optional}}
-
-        :Returns:
-
-            `Constructs`
-                The selected constructs, unless modified by any
-                *filter_kwargs* parameters.
-
-        *Examples:**
-
-        >> f.coordinates()
-        onstructs:
-        }
-
-        >> f.coordinates()
-        onstructs:
-        'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
-        'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
-        'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
-        'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
-        'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
-        'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
-        'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
-
-        """
-        return self._filter_interface(
-            (
-                "dimension_coordinate",
-                "auxiliary_coordinate",
-            ),
-            "coordinates",
-            identities,
-            **filter_kwargs,
-        )
-
     def domain_ancillaries(self, *identities, **filter_kwargs):
         """Return domain ancillary constructs.
+
+        Note that ``f.domain_ancillaries(*identities,
+        **filter_kwargs)`` is equivalent to
+        ``f.constructs.filter(filter_by_type=["domain_ancillary"],
+        filter_by_identity=identities, **filter_kwargs)``.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -636,9 +651,7 @@ class ConstructAccess:
 
         :Returns:
 
-            `Constructs`
-                The selected constructs, unless modified by any
-                *filter_kwargs* parameters.
+                {{Returns constructs}}
 
         **Examples:**
 
@@ -663,9 +676,9 @@ class ConstructAccess:
     def cell_measures(self, *identities, **filter_kwargs):
         """Return cell measure constructs.
 
-        ``c.cell_measures(*identities, **filter_kwargs)`` is
+        ``f.cell_measures(*identities, **filter_kwargs)`` is
         equivalent to
-        ``c.constructs.filter(filter_by_type=["cell_measure"],
+        ``f.constructs.filter(filter_by_type=["cell_measure"],
         filter_by_identity=identities, **filter_kwargs)``.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -690,9 +703,7 @@ class ConstructAccess:
 
         :Returns:
 
-            `Constructs`
-                The selected constructs, unless modified by any
-                *filter_kwargs* parameters.
+                {{Returns constructs}}
 
         **Examples:**
 
@@ -716,7 +727,7 @@ class ConstructAccess:
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `construct_key`, `constructs`
+        .. seealso:: `constructs`, `coordinate`, `domain_axis`
 
         :Parameters:
 

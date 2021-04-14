@@ -276,6 +276,10 @@ _docstring_substitution_definitions = {
                 configure the returned value.
 
                 .. versionadded:: (cfdm) 1.8.9.0""",
+    # {{Returns constructs}}
+    "{{Returns constructs}}": """
+                The selected constructs in a new `Constructs` object,
+                unless modified by any *filter_kwargs* parameters.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------

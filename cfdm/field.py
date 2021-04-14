@@ -522,14 +522,14 @@ class Field(
     def field_ancillaries(self, *identities, **filter_kwargs):
         """Return field ancillary constructs.
 
-        ``c.field_ancillaries(*identities, **filter_kwargs)`` is
+        ``f.field_ancillaries(*identities, **filter_kwargs)`` is
         equivalent to
-        ``c.constructs.filter(filter_by_type=["field_ancillary"],
+        ``f.constructs.filter(filter_by_type=["field_ancillary"],
         filter_by_identity=identities, **filter_kwargs)``.
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `constructs`, `get_construct`
+        .. seealso:: `constructs`
 
         :Parameters:
 
@@ -544,11 +544,9 @@ class Field(
 
             {{filter_kwargs: optional}}
 
-         :Returns:
+        :Returns:
 
-            `Constructs`
-                The selected constructs, unless modified by any
-                *filter_kwargs* parameters.
+                {{Returns constructs}}
 
         **Examples:**
 
@@ -575,28 +573,29 @@ class Field(
     def cell_methods(self, *identities, **filter_kwargs):
         """Return cell method constructs.
 
-         The cell methods are not returned in the order in which they
-         were applied. To achieve this use the `~Constructs.ordered` of
-         the returned `Constructs` instance.
+        .. versionadded:: (cfdm) 1.7.0
 
-         .. versionadded:: (cfdm) 1.7.0
+        .. seealso:: `constructs`
 
-         .. seealso:: `constructs`, `get_construct`, `set_construct`
-
-         :Parameters:
+        :Parameters:
 
              identities: optional
                  Select cell method constructs that have an identity,
                  defined by their `!identities` methods, that matches
                  any of the given values.
 
-                 Additionally, the values are matched against construct
-                 identifiers, with or without the ``'key%'`` prefix.
+                 Additionally, the values are matched against
+                 construct identifiers, with or without the ``'key%'``
+                 prefix.
 
-                 Additionally, if a value would select a unique domain
-                 axis construct with ``f.domain_axis(value)`` then any
-                 cell method constructs that span exactly that axis are
-                 selected.
+                 Additionally, if for a given value
+                 ``f.domain_axes(value)`` returns a unique domain axis
+                 construct then any cell method constructs that span
+                 exactly that axis are selected. See `domain_axes` for
+                 details.
+
+                 If no values are provided then all cell method
+                 constructs are selected.
 
                  {{value match}}
 
@@ -606,11 +605,9 @@ class Field(
 
         :Returns:
 
-           `Constructs`
-                 The selected constructs, unless modified by any
-                *filter_kwargs* parameters.
+                 {{Returns constructs}}
 
-          **Examples:**
+        **Examples:**
 
         """
         if identities:
@@ -633,7 +630,6 @@ class Field(
                         for key, cm in c.items():
                             if cm.get_axes(None) == (axis,):
                                 identities.append(key)
-        #        print (identities)
 
         return self._filter_interface(
             ("cell_method",), "cell_method", identities, **filter_kwargs

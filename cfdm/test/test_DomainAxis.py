@@ -1,5 +1,4 @@
 import datetime
-import os
 import unittest
 
 import faulthandler
@@ -11,6 +10,9 @@ import cfdm
 
 class DomainTest(unittest.TestCase):
     """TODO DOCS."""
+
+    d = cfdm.DomainAxis(size=99)
+    d.nc_set_dimension("ncdim")
 
     def setUp(self):
         """TODO DOCS."""
@@ -25,36 +27,27 @@ class DomainTest(unittest.TestCase):
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
 
-        self.filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
-        )
-        f = cfdm.read(self.filename)
-        self.assertEqual(len(f), 1, "f={!r}".format(f))
-        self.f = f[0]
-
     def test_DomainAxis__repr__str_construct_type(self):
         """TODO DOCS."""
-        f = self.f
+        d = self.d
 
-        for d in f.domain_axes().values():
-            _ = repr(d)
-            _ = str(d)
-            self.assertEqual(d.construct_type, "domain_axis")
-
-    def test_DomainAxis_equals(self):
-        """TODO DOCS."""
-        f = self.f
-
-        d = f.construct("key%domainaxis0")
-        self.assertIsInstance(cfdm.DomainAxis(source=d), cfdm.DomainAxis)
-
-        self.assertIsInstance(cfdm.DomainAxis(source=f), cfdm.DomainAxis)
+        repr(d)
+        str(d)
+        self.assertEqual(d.construct_type, "domain_axis")
 
     def test_DomainAxis_source(self):
         """TODO DOCS."""
-        f = self.f
+        d = self.d
 
-        d = list(f.domain_axes().values())[0]
+        self.assertTrue(d.equals(cfdm.DomainAxis(source=d)))
+
+        self.assertIsInstance(
+            cfdm.DomainAxis(source="QWERTY"), cfdm.DomainAxis
+        )
+
+    def test_DomainAxis_equals(self):
+        """TODO DOCS."""
+        d = self.d
         e = d.copy()
 
         self.assertTrue(d.equals(d, verbose=3))
@@ -63,31 +56,31 @@ class DomainTest(unittest.TestCase):
 
     def test_DomainAxis_size(self):
         """TODO DOCS."""
-        f = self.f
-
-        d = f.construct("key%domainaxis0")
-
-        d.set_size(99)
+        d = self.d.copy()
+        d.set_size(100)
 
         self.assertTrue(d.has_size())
-        self.assertEqual(d.get_size(), 99)
-        self.assertEqual(d.del_size(), 99)
+        self.assertEqual(d.get_size(), 100)
+        self.assertEqual(d.del_size(), 100)
         self.assertIsNone(d.get_size(None))
         self.assertIsNone(d.del_size(None))
         self.assertFalse(d.has_size())
 
     def test_DomainAxis_unlimited(self):
         """TODO DOCS."""
-        f = self.f.copy()
+        d = cfdm.DomainAxis()
+        d.set_size(99)
 
-        for d in f.domain_axes().values():
-            self.assertFalse(d.nc_is_unlimited())
-            d.nc_set_unlimited(False)
-            self.assertFalse(d.nc_is_unlimited())
-            d.nc_set_unlimited(True)
-            self.assertTrue(d.nc_is_unlimited())
-            d.nc_set_unlimited(False)
-            self.assertFalse(d.nc_is_unlimited())
+        self.assertFalse(d.nc_is_unlimited())
+
+        d.nc_set_unlimited(False)
+        self.assertFalse(d.nc_is_unlimited())
+
+        d.nc_set_unlimited(True)
+        self.assertTrue(d.nc_is_unlimited())
+
+        d.nc_set_unlimited(False)
+        self.assertFalse(d.nc_is_unlimited())
 
 
 if __name__ == "__main__":
