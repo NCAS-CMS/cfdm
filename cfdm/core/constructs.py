@@ -1,3 +1,4 @@
+# TODO - remove the next line when Python 3.6 is deprecated
 from collections import OrderedDict
 
 from . import abstract
@@ -125,6 +126,7 @@ class Constructs(abstract.Container):
                 return
 
             source_constructs = source._constructs
+            # TODO - remove the next line when Python 3.6 is deprecated
             source_ordered_constructs = source._ordered_constructs
 
             self._field_data_axes = source._field_data_axes
@@ -132,6 +134,7 @@ class Constructs(abstract.Container):
             self._key_base = source._key_base.copy()
             self._array_constructs = source._array_constructs.copy()
             self._non_array_constructs = source._non_array_constructs.copy()
+            # TODO - remove the next line when Python 3.6 is deprecated
             self._ordered_constructs = source_ordered_constructs.copy()
             self._construct_axes = source._construct_axes.copy()
             self._construct_type = source._construct_type.copy()
@@ -152,6 +155,8 @@ class Constructs(abstract.Container):
                     continue
 
                 if copy:
+                    # TODO - Replace the next four lines when Python
+                    #        3.6 is deprecated with "new_v = {}"
                     if construct_type in source_ordered_constructs:
                         new_v = OrderedDict()
                     else:
@@ -177,6 +182,8 @@ class Constructs(abstract.Container):
                     continue
 
                 if copy:
+                    # TODO - Replace the next four lines when Python
+                    #        3.6 is deprecated with "new_v = {}"
                     if construct_type in source_ordered_constructs:
                         new_v = OrderedDict()
                     else:
@@ -205,6 +212,7 @@ class Constructs(abstract.Container):
 
         self._array_constructs = set()
         self._non_array_constructs = set()
+        # TODO - remove the next line when Python 3.6 is deprecated
         self._ordered_constructs = set()
 
         self._construct_axes = {}
@@ -247,6 +255,7 @@ class Constructs(abstract.Container):
         if cell_method:
             self._key_base["cell_method"] = cell_method
             self._non_array_constructs.add("cell_method")
+            # TODO - remove the next line when Python 3.6 is deprecated
             self._ordered_constructs.add("cell_method")
 
         for x in self._array_constructs:
@@ -255,6 +264,7 @@ class Constructs(abstract.Container):
         for x in self._non_array_constructs:
             self._constructs[x] = {}
 
+        # TODO - remove the next two lines when Python 3.6 is deprecated
         for x in self._ordered_constructs:
             self._constructs[x] = OrderedDict()
 
@@ -771,6 +781,7 @@ class Constructs(abstract.Container):
         self._key_base.clear()
         self._array_constructs.clear()
         self._non_array_constructs.clear()
+        # TODO - remove the next line when Python 3.6 is deprecated
         self._ordered_constructs.clear()
         self._construct_axes.clear()
         self._construct_type.clear()
@@ -819,6 +830,7 @@ class Constructs(abstract.Container):
         self._key_base.update(other._key_base)
         self._array_constructs.update(other._array_constructs)
         self._non_array_constructs.update(other._non_array_constructs)
+        # TODO - remove the next line when Python 3.6 is deprecated
         self._ordered_constructs.update(other._ordered_constructs)
         self._construct_axes.update(other._construct_axes)
         self._construct_type.update(other._construct_type)
@@ -1323,6 +1335,7 @@ class Constructs(abstract.Container):
 
         return key
 
+    # TODO - Deprecate this method when Python 3.6 is deprecated
     def ordered(self):
         """Return the constructs in their predetermined order.
 

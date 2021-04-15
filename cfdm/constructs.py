@@ -229,9 +229,8 @@ class Constructs(mixin.Container, core.Constructs):
         key1_to_key0=None,
     ):
         """Whether two cell method constructs are the same."""
-        # TODO add todict=True calls when ordered goes post Python 3.6
-        cell_methods0 = self.filter_by_type("cell_method")
-        cell_methods1 = other.filter_by_type("cell_method")
+        cell_methods0 = self.filter_by_type("cell_method", todict=True)
+        cell_methods1 = other.filter_by_type("cell_method", todict=True)
 
         len0 = len(cell_methods0)
         if len0 != len(cell_methods1):
@@ -243,9 +242,6 @@ class Constructs(mixin.Container, core.Constructs):
 
         if not len0:
             return True
-
-        cell_methods0 = cell_methods0.ordered()
-        cell_methods1 = cell_methods1.ordered()
 
         axis0_to_axis1 = {
             axis0: axis1 for axis1, axis0 in axis1_to_axis0.items()
@@ -260,7 +256,7 @@ class Constructs(mixin.Container, core.Constructs):
             if len(axes0) != len(axes1):
                 logger.info(
                     f"{cm0.__class__.__name__}: Different cell methods (mismatched axes):"
-                    f"\n  {cell_methods0.ordered()}\n  {cell_methods1.ordered()}"
+                    f"\n  {cell_methods0}\n  {cell_methods1}"
                 )
                 return False
 
@@ -458,6 +454,88 @@ class Constructs(mixin.Container, core.Constructs):
 
         return True
 
+    def _filter_convert_to_domain_axis(self, values, return_existing=False):
+        """Parse values to domain axis construct identifiers.
+
+        If possible, convert each value from a field data array index
+        position to domain axis construct identifiers; or 1-d
+        coordinate construct identifier to a domain axis identifier of
+        the spanned domain axis construct.
+
+        .. note:: If *values* is an empty sequence then calling this
+                  method has no effect, but still takes some time to
+                  execute. In other words, if performance is an issue
+                  then avoid calling this method when *values* is
+                  empty.
+
+        .. versionadded:: (cfdm) 1.8.9.0
+
+        :Parameters:
+
+            values: sequence
+
+            return_existing: `bool` optional
+                If True then include values in the output that are
+                already domain axis construct identifiers. By default
+                these are omitted.
+
+        :Returns:
+
+            `list`
+                The parsed values
+
+        """
+        # Get the original unfiltered constructs. This gives access to
+        # the full collection of domain axis, dimension coordinate and
+        # auxiliary coordinate constructs.
+        unfiltered = self.unfilter(copy=False)
+        unfiltered_domain_axes = unfiltered._constructs.get("domain_axis", ())
+        unfiltered_data_axes = unfiltered._construct_axes
+
+        field_data = self._field_data_axes
+
+        values2 = []
+        for value in values:
+            if value in unfiltered_domain_axes:
+                # This vaue is already a domain axis construct
+                # identifier
+                if return_existing:
+                    values2.append(value)
+
+                continue
+
+            if field_data:
+                # Try to convert a field data array index position
+                # to an domain axis identifier
+                try:
+                    value = field_data[value]
+                except TypeError:
+                    pass
+                except IndexError:
+                    continue
+                else:
+                    values2.append(value)
+                    continue
+
+            # Try to convert a 1-d coordinate into a domain axis
+            # identifier
+            c = unfiltered.filter(
+                filter_by_type=(
+                    "dimension_coordinate",
+                    "auxiliary_coordinate",
+                ),
+                filter_by_naxes=(1,),
+                filter_by_identity=(value,),
+                todict=True,
+            )
+            if c:
+                c_axes = [unfiltered_data_axes[key][0] for key in c]
+                if len(set(c_axes)) == 1:
+                    value = c_axes[0]
+                    values2.append(value)
+
+        return values2
+
     @classmethod
     def _filter_parse_args(
         cls,
@@ -544,7 +622,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         :Returns:
 
-             `Constructs` or `dict`, and its pop method
+            `Constructs` or `dict`, and its pop method
                 If *arg* is a `Constructs` object, then either a
                 shallow copy or its dictionary representation is
                 returned. If *arg* is a `dict` then it is returned
@@ -1039,6 +1117,93 @@ class Constructs(mixin.Container, core.Constructs):
         # ------------------------------------------------------------
         return True
 
+    def domain_axes(self, *identities, **filter_kwargs):
+        """Return domain axis constructs.
+
+        .. versionadded:: (cfdm) 1.8.9.0
+
+        .. seealso:: `constructs`
+
+        :Parameters:
+
+            identities: `tuple`, optional
+                Select domain axis constructs that have an identity,
+                defined by their `!identities` methods, that matches
+                any of the given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                Additionally, if for a given ``value``,
+                ``c.filter(filter_by_type=["dimension_coordinate",
+                "auxiliary_coordinate"], filter_by_naxes=(1,),
+                filter_by_identity=(value,))`` returns 1-d coordinate
+                constructs that all span the same domain axis
+                construct then that domain axis construct is
+                selected. See `filter` for details.
+
+                Additionally, if there is an associated `Field` data
+                array and a value matches the integer position of an
+                array dimension, then the corresponding domain axis
+                construct is selected.
+
+                If no values are provided then all domain axis
+                constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns constructs}}
+
+        **Examples:**
+
+        """
+        cached = filter_kwargs.get("cached")
+        if cached is not None:
+            return cached
+
+        if identities:
+            if "filter_by_identity" in filter_kwargs:
+                raise TypeError(
+                    "Can't set domain_axes() keyword argument "
+                    "'filter_by_identity' when positional *identities "
+                    "arguments are also set"
+                )
+        else:
+            identities = filter_kwargs.pop("filter_by_identity", ())
+
+        if filter_kwargs and "filter_by_type" in filter_kwargs:
+            raise TypeError(
+                "domain_axes() got an unexpected keyword argument "
+                "'filter_by_type'"
+            )
+
+        if identities:
+            # Make sure that filter_by_identity is the last filter
+            # applied
+            filter_kwargs["filter_by_identity"] = identities
+
+            out, keys, hits, misses = self.filter(
+                filter_by_type=("domain_axis",),
+                _identity_config={"return_matched": True},
+                **filter_kwargs,
+            )
+            if out is not None:
+                return out
+
+            keys.update(self._filter_convert_to_domain_axis(misses))
+            filter_kwargs = {
+                "filter_by_key": keys,
+                "todict": filter_kwargs.pop("todict", False),
+            }
+
+        return self.filter(filter_by_type=("domain_axis",), **filter_kwargs)
+
     def filter(
         self,
         axis_mode=None,
@@ -1248,30 +1413,15 @@ class Constructs(mixin.Container, core.Constructs):
             todict=todict,
         )
 
-        data_axes = self._construct_axes
-
         if not axes:
-            for cid in tuple(out.keys()):
-                if cid not in data_axes:
-                    pop(cid)
+            # Return all constructs that could have data if no axes
+            # have been provided
+            return self._filter_by_data(out, todict)
 
-            return out
+        # TODO - comment here based on filter_by_axis docstring
+        axes = self._filter_convert_to_domain_axis(axes, return_existing=True)
 
-        field_data = self._field_data_axes
-        if field_data:
-            axes2 = []
-            for axis in axes:
-                if not isinstance(axis, str):
-                    try:
-                        axis = field_data[axis]
-                    except (IndexError, TypeError):
-                        pass
-
-                axes2.append(axis)
-
-            axes = axes2
-
-        axes = set(axes)
+        data_axes = self._construct_axes
 
         for cid in tuple(out):
             x = data_axes.get(cid)
@@ -1320,21 +1470,23 @@ class Constructs(mixin.Container, core.Constructs):
                 Define the relationship between the given domain axes
                 and the constructs' data.
 
-                ==========  =================================================
+                ==========  ==========================================
                 *mode*      Description
-                ==========  =================================================
-                ``'and'``   A construct is selected if it spans *all* of the
-                            given domain axes, *and possibly others*.
+                ==========  ==========================================
+                ``'and'``   A construct is selected if it spans *all*
+                            of the given domain axes, *and possibly
+                            others*.
 
-                ``'or'``    A construct is selected if it spans *any* of the
-                            domain axes, *and possibly others*.
+                ``'or'``    A construct is selected if it spans *any*
+                            of the domain axes, *and possibly others*.
 
-                ``exact``   A construct is selected if it spans *all* of the
-                            given domain axes, *and no others*.
+                ``exact``   A construct is selected if it spans *all*
+                            of the given domain axes, *and no others*.
 
-                ``subset``  A construct is selected if it spans *a subset* of
-                            the given domain axes, *and no others*.
-                ==========  ==================================================
+                ``subset``  A construct is selected if it spans *a
+                            subset* of the given domain axes, *and no
+                            others*.
+                ==========  ==========================================
 
                 By default *mode* is ``'and'``.
 
@@ -1344,11 +1496,30 @@ class Constructs(mixin.Container, core.Constructs):
                 of domain axis construct identifiers
                 (e.g. ``'domainaxis1'``).
 
-                If no axes are provided then all constructs that do or
-                could have data, spanning any domain axes constructs,
-                are selected.
+                Domain axis constructs may also be specified by these
+                methods:
 
-                {{value match}}
+                * The unique domain axis constuct spanned by all of
+                  the 1-d coordinate constructs that have an identity,
+                  defined by their `!identities` methods, that matches
+                  a given value. For instance, ``'time'`` could define
+                  the domain axis construct spanned by all 1-d
+                  coordinate constructs that have ``'time'`` as an
+                  identity.
+
+                  In this context, a value may be any object that can
+                  match via the ``==`` operator, or a `re.Pattern`
+                  object that matches via its `search` method.
+
+                * The unique domain axis constuct corresponding to a
+                  dimension position, defined by a given value, in an
+                  associated `Field` data array. For instance, ``-1``
+                  could define the domain axis construct corresponding
+                  to the last data dimension.
+
+                If no axes are provided then all constructs that do,
+                or could have data, spanning any domain axes
+                constructs, are selected. TODO
 
             {{todict: `bool`, optional}}
 
@@ -1389,7 +1560,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         return self._filter_by_axis(self, todict, mode, axes)
 
-    def _filter_by_data(self, arg, todict, *ignore):
+    def _filter_by_data(self, arg, todict, *ignored):
         """Worker function for `filter_by_data` and `filter`.
 
         See `filter_by_data` for details.
@@ -1464,10 +1635,12 @@ class Constructs(mixin.Container, core.Constructs):
         # construct identities as possible, as these can be very
         # expensive to compute.
         # ------------------------------------------------------------
+        return_matched = _config.get("return_matched")
         short_iteration = _config.get("short_iteration", self._short_iteration)
         identities_kwargs = _config.get("identities_kwargs", {})
 
         matched = set()
+        hits = []
 
         # Process identities that are construct identifiers
         identities2 = []
@@ -1475,16 +1648,16 @@ class Constructs(mixin.Container, core.Constructs):
             if isinstance(value0, str):
                 if value0 in out:
                     matched.add(value0)
+                    hits.append(value0)
                     continue
                 elif value0.startswith("key%") and value0[4:] in out:
                     matched.add(value0[4:])
+                    hits.append(value0)
                     continue
 
             identities2.append(value0)
 
-        identities = identities2
-
-        if identities:
+        if identities2:
             if matched:
                 constructs = {
                     cid: c for cid, c in out.items() if cid not in matched
@@ -1527,18 +1700,32 @@ class Constructs(mixin.Container, core.Constructs):
                             value0, construct, value1, basic=True
                         ):
                             generator.close()
+                            hits.append(value0)
                             matched.add(cid)
                             break
 
-        if not matched:
-            if isinstance(out, dict):
-                out = {}
-            else:
-                out._clear()
+        if return_matched:
+            hits = set(hits)
+            misses = hits.symmetric_difference(identities)
         else:
-            for cid in tuple(out):
-                if cid not in matched:
-                    pop(cid)
+            misses = False
+
+        if not misses:
+            if not matched:
+                if isinstance(out, dict):
+                    out = {}
+                else:
+                    out._clear()
+            elif len(matched) <= len(out):
+                for cid in tuple(out):
+                    if cid not in matched:
+                        pop(cid)
+
+        if return_matched:
+            if misses:
+                out = None
+
+            return out, matched, hits, misses
 
         return out
 
@@ -1637,21 +1824,8 @@ class Constructs(mixin.Container, core.Constructs):
         if not keys:
             return out
 
-        if isinstance(out, dict):
-            construct_keys = out
-            construct_type = self._construct_type
-            ignore = self._ignore
-        else:
-            construct_keys = out._construct_type
-            construct_type = construct_keys
-            ignore = out._ignore
-
-        for cid in tuple(construct_keys):
-            if cid not in keys:
-                pop(cid)
-
         for cid in tuple(out):
-            if construct_type[cid] in ignore:
+            if cid not in keys:
                 pop(cid)
 
         return out
@@ -1947,16 +2121,18 @@ class Constructs(mixin.Container, core.Constructs):
             todict=todict,
         )
 
-        data_axes = self._construct_axes
         if not naxes:
             # Return all constructs that have data if no naxes have
             # been provided
-            for cid in tuple(out):
-                if cid not in data_axes:
+            return self._filter_by_data(out, todict)
+        #            for cid in tuple(out):
+        #                if cid not in data_axes:
+        #
+        #                    pop(cid)
+        #
+        #            return out
 
-                    pop(cid)
-
-            return out
+        data_axes = self._construct_axes
 
         for key in tuple(out):
             x = data_axes.get(key)
@@ -2792,7 +2968,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         return out
 
-    def unfilter(self, depth=None):
+    def unfilter(self, depth=None, copy=True):
         """Return the constructs that existed prior to previous filters.
 
         By default, the unfiltered constructs are those that existed
@@ -2890,4 +3066,7 @@ class Constructs(mixin.Container, core.Constructs):
                 else:
                     break
 
-        return out.shallow_copy()
+        if copy:
+            out = out.shallow_copy()
+
+        return out

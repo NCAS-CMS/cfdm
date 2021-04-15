@@ -501,7 +501,7 @@ class read_writeTest(unittest.TestCase):
         g = cfdm.read(tmpfile)
 
         self.assertEqual(len(g), 1)
-        self.assertTrue(g[0].equals(f))
+        self.assertTrue(g[0].equals(f, verbose=3))
 
     def test_write_scalar_domain_ancillary(self):
         """TODO DOCS."""

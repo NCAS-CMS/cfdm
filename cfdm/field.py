@@ -588,7 +588,7 @@ class Field(
                  construct identifiers, with or without the ``'key%'``
                  prefix.
 
-                 Additionally, if for a given value
+                 Additionally, if for a given ``value``,
                  ``f.domain_axes(value)`` returns a unique domain axis
                  construct then any cell method constructs that span
                  exactly that axis are selected. See `domain_axes` for
@@ -610,6 +610,10 @@ class Field(
         **Examples:**
 
         """
+        cached = filter_kwargs.get("cached")
+        if cached is not None:
+            return cached
+
         if identities:
             if "filter_by_identity" in filter_kwargs:
                 raise TypeError(
@@ -621,15 +625,34 @@ class Field(
             identities = filter_kwargs.pop("filter_by_identity", ())
 
         if identities:
-            c = self.constructs._construct_dict("cell_method")
-            if c:
-                domain_axes = self.domain_axes(*identities, todict=True)
-                if domain_axes:
-                    identities = list(identities)
-                    for axis in domain_axes:
-                        for key, cm in c.items():
-                            if cm.get_axes(None) == (axis,):
-                                identities.append(key)
+            out, keys, hits, misses = self._filter_interface(
+                ("cell_method",),
+                "cell_method",
+                identities,
+                _identity_config={"return_matched": True},
+                **filter_kwargs,
+            )
+            if out is not None:
+                return out
+
+            # Additionally, if for a given ``value``,
+            # ``f.domain_axes(value)`` returns a unique domain axis
+            # construct then any cell method constructs that span
+            # exactly that axis are selected. See `domain_axes` for
+            # details.
+            domain_axes = self.domain_axes(*misses, todict=True)
+            if domain_axes:
+                c = self.constructs._construct_dict("cell_method")
+                for cm_key, cm in c.items():
+                    cm_axes = cm.get_axes(None)
+                    if len(cm_axes) == 1 and cm_axes[0] in domain_axes:
+                        keys.add(cm_key)
+
+            identities = ()
+            filter_kwargs = {
+                "filter_by_key": keys,
+                "todict": filter_kwargs.pop("todict", False),
+            }
 
         return self._filter_interface(
             ("cell_method",), "cell_method", identities, **filter_kwargs
@@ -761,7 +784,7 @@ class Field(
 
         domain_axes = None
 
-        for key, cm in self.cell_methods().ordered().items():
+        for key, cm in self.cell_methods(todict=True).items():
             qualifiers = cm.qualifiers()
             if not ("within" in qualifiers or "over" in qualifiers):
                 continue

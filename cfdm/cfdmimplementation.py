@@ -567,7 +567,7 @@ class CFDMImplementation(Implementation):
         except KeyError:
             return None
 
-    def get_constructs(self, field, axes=None, data=False):
+    def get_constructs(self, field, axes=(), data=False):
         """Return constructs that span particular axes.
 
         If no axes are specified then all constructs are returned.
@@ -587,10 +587,6 @@ class CFDMImplementation(Implementation):
             `dict`
 
         """
-        # To avoid mutable default argument (an anti-pattern) of axes=[]
-        if axes is None:
-            axes = []
-
         if data:
             return field.constructs.filter_by_data(todict=True)
 

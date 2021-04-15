@@ -63,7 +63,7 @@ class ConstructsTest(unittest.TestCase):
         for todict in (False, True):
             d = c.filter(
                 filter_by_axis=(),
-                filter_by_data=(),
+                filter_by_data=True,
                 filter_by_identity=(),
                 filter_by_key=(),
                 filter_by_measure=(),
@@ -90,7 +90,6 @@ class ConstructsTest(unittest.TestCase):
 
         self.assertEqual(len(c), 20)
         self.assertEqual(len(c.filter_by_identity()), 20)
-        self.assertEqual(len(c.filter_by_axis()), 12)
         self.assertEqual(len(c.filter_by_key()), 20)
         self.assertEqual(len(c.filter_by_data()), 12)
         self.assertEqual(len(c.filter_by_type()), 20)
@@ -232,8 +231,17 @@ class ConstructsTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             c("latitude", filter_by_identity=("longitude",))
 
+    def test_Constructs_filter_by_axis(self):
+        """TODO DOCS."""
+        c = self.f.constructs
+
+        self.assertEqual(len(c.filter_by_axis()), 12)
+        self.assertEqual(len(c.filter_by_axis("or", 0, 1, 2)), 11)
+        self.assertEqual(len(c.filter_by_axis("or", "domainaxis1")), 7)
+        self.assertEqual(len(c.filter_by_axis("or", "grid_longitude")), 6)
+
         with self.assertRaises(ValueError):
-            c.filter_by_axis("bad_mode", None)
+            c.filter_by_axis("bad_mode", 1)
 
     def test_Constructs_filter_by_property(self):
         """TODO DOCS."""

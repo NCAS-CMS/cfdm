@@ -553,15 +553,15 @@ class ConstructAccess:
                 Additionally, the values are matched against construct
                 identifiers, with or without the ``'key%'`` prefix.
 
-                Additionally, if for a given value
+                Additionally, if for a given ``value``,
                 ``f.coordinates(value, filter_by_naxes=(1,))`` returns
                 1-d coordinate constructs that all span the same
                 domain axis construct then that domain axis construct
                 is selected. See `coordinates` for details.
 
-                Additionally, if there is a `Field` data array and a
-                value matches the integer position of an array
-                dimension, then the corresponding domain axis
+                Additionally, if there is an associated `Field` data
+                array and a value matches the integer position of an
+                array dimension, then the corresponding domain axis
                 construct is selected.
 
                 If no values are provided then all domain axis
@@ -580,46 +580,7 @@ class ConstructAccess:
         **Examples:**
 
         """
-        if identities:
-            if "filter_by_identity" in filter_kwargs:
-                raise TypeError(
-                    f"Can't set {self.__class__.__name__}.domain_axes() "
-                    "keyword argument 'filter_by_identity' when "
-                    "positional *identities arguments are also set"
-                )
-        else:
-            identities = filter_kwargs.pop("filter_by_identity", ())
-
-        if identities:
-            c = self.constructs._construct_dict("domain_axis")
-            if c:
-                data_axes = self.constructs._field_data_axes
-                if data_axes:
-                    identities2 = []
-                    for axis in identities:
-                        if axis not in c:
-                            try:
-                                # Check for index
-                                axis = data_axes[axis]
-                            except Exception:
-                                # Check for 1-d coordinate
-                                axis = self.domain_axis_key(axis, default=axis)
-
-                        identities2.append(axis)
-
-                    identities = identities2
-                else:
-                    # Check for 1-d coordinates
-                    identities = [
-                        self.domain_axis_key(axis, default=axis)
-                        if axis not in c
-                        else axis
-                        for axis in identities
-                    ]
-
-        return self._filter_interface(
-            ("domain_axis",), "domain_axes", identities, **filter_kwargs
-        )
+        return self.constructs.domain_axes(*identities, **filter_kwargs)
 
     def domain_ancillaries(self, *identities, **filter_kwargs):
         """Return domain ancillary constructs.

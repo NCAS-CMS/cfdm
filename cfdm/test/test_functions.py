@@ -236,7 +236,7 @@ class FunctionsTest(unittest.TestCase):
         for n in range(top + 1):
             f = cfdm.example_field(n)
 
-            _ = f.data.array
+            f.data.array
 
             self.assertIsInstance(f.dump(display=False), str)
 
@@ -247,7 +247,7 @@ class FunctionsTest(unittest.TestCase):
             self.assertTrue(f.equals(g[0], verbose=3), "n={}".format(n))
 
         with self.assertRaises(Exception):
-            _ = cfdm.example_field(top + 1)
+            cfdm.example_field(top + 1)
 
         with self.assertRaises(ValueError):
             cfdm.example_field(1, 2)
