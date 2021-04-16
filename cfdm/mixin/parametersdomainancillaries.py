@@ -42,13 +42,10 @@ class ParametersDomainAncillaries(Parameters):
 
         """
         out = [super().__str__()]
-
-        out.append(
-            "Ancillaries: {0}".format(
-                ", ".join(sorted(self.domain_ancillaries()))
-            )
-        )
-
+        
+        x = ", ".join(sorted(self.domain_ancillaries()))
+        out.append(f"Ancillaries: {x}")
+                   
         return "; ".join(out)
 
     @_manage_log_level_via_verbosity

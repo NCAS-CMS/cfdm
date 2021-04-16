@@ -1111,9 +1111,9 @@ class Constructs(abstract.Container):
 
                 A type is specified by one of the following strings:
 
-                ==========================  ================================
+                ==========================  ===============================
                 *type*                      Construct selected
-                ==========================  ================================
+                ==========================  ===============================
                 ``'domain_ancillary'``      Domain ancillary constructs
                 ``'dimension_coordinate'``  Dimension coordinate constructs
                 ``'domain_axis'``           Domain axis constructs
@@ -1122,7 +1122,7 @@ class Constructs(abstract.Container):
                 ``'coordinate_reference'``  Coordinate reference constructs
                 ``'cell_method'``           Cell method constructs
                 ``'field_ancillary'``       Field ancillary constructs
-                ==========================  ================================
+                ==========================  ===============================
 
                 If no types are provided then all constructs are
                 selected.
@@ -1161,11 +1161,11 @@ class Constructs(abstract.Container):
 
         if todict:
             # Return a dict
-            ntypes = len(types)
-            if ntypes == 1:
+            n = len(types)
+            if n == 1:
                 return self._construct_dict(types[0], copy=True)
 
-            if not ntypes:
+            if not n:
                 return self.todict()
 
             ignore = self._ignore

@@ -2170,7 +2170,9 @@ class CFDMImplementation(Implementation):
         if ncdim is not None:
             variable.nc_set_sample_dimension(ncdim)
 
-    def set_auxiliary_coordinate(self, field, construct, axes, copy=True):
+    def set_auxiliary_coordinate(
+        self, field, construct, axes, copy=True, **kwargs
+    ):
         """Insert a auxiliary coordinate object into a field.
 
         :Parameters:
@@ -2183,12 +2185,18 @@ class CFDMImplementation(Implementation):
 
             copy: `bool`, optional
 
+            kwargs: optional
+                Additional parameters to `Field.set_construct` that
+                may be used by sublcasses.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
         :Returns:
 
             `str`
 
         """
-        return field.set_construct(construct, axes=axes, copy=copy)
+        return field.set_construct(construct, axes=axes, copy=copy, **kwargs)
 
     def set_bounds(self, construct, bounds, copy=True):
         """Set the bounds component of a construct.
@@ -2414,7 +2422,9 @@ class CFDMImplementation(Implementation):
         """
         coordinate_reference.set_datum(datum)
 
-    def set_dimension_coordinate(self, field, construct, axes, copy=True):
+    def set_dimension_coordinate(
+        self, field, construct, axes, copy=True, **kwargs
+    ):
         """Insert a dimension coordinate object into a field.
 
         :Parameters:
@@ -2427,12 +2437,18 @@ class CFDMImplementation(Implementation):
 
             copy: `bool`, optional
 
+            kwargs: optional
+                Additional parameters to `Field.set_construct` that
+                may be used by sublcasses.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
         :Returns:
 
             `str`
 
         """
-        return field.set_construct(construct, axes=axes, copy=copy)
+        return field.set_construct(construct, axes=axes, copy=copy, **kwargs)
 
     def set_domain_ancillary(self, field, construct, axes, copy=True):
         """Insert a domain ancillary object into a field.

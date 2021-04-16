@@ -43,8 +43,25 @@ class Parameters(Container):
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        return "Parameters: {0}".format(", ".join(sorted(self.parameters())))
+        x = ", ".join(sorted(self.parameters()))
+        return f"Parameters: {x}"
 
+    def _identities_iter(self):
+        """TODO.
+        
+        .. versionadded:: (cfdm) 1.8.9.0
+
+        .. seealso:: `_iter`, `identities`
+
+        :Returns:
+
+            generator
+                The identities.
+        
+        """
+        for x in ():
+            yield x
+    
     @_manage_log_level_via_verbosity
     def equals(
         self,
@@ -148,3 +165,5 @@ class Parameters(Container):
 
         # Still here? Then the two parameter collections are equal
         return True
+
+    

@@ -1,5 +1,6 @@
 import copy
 import datetime
+import re
 import unittest
 
 import faulthandler
@@ -13,6 +14,7 @@ class ConstructsTest(unittest.TestCase):
     """TODO DOCS."""
 
     f = cfdm.example_field(1)
+    c = f.constructs
 
     def setUp(self):
         """TODO DOCS."""
@@ -29,24 +31,25 @@ class ConstructsTest(unittest.TestCase):
 
     def test_Constructs__repr__str__dump(self):
         """TODO DOCS."""
-        f = self.f
+        c = self.c
 
-        c = f.constructs
         repr(c)
         str(c)
 
-    def test_Constructs_key_items_value(self):
+    def test_Constructs_items_key_value(self):
         """TODO DOCS."""
-        f = self.f
+        c = self.c
 
-        for key, value in f.constructs.items():
-            x = f.constructs.filter_by_key(key)
+        for i, (key, value) in enumerate(c.items()):
+            x = c.filter_by_key(key)
             self.assertEqual(x.key(), key)
-            self.assertTrue(x.value().equals(value))
+            self.assertIs(x.value(), value)
+
+        self.assertEqual(i, 19)
 
     def test_Constructs_copy_shallow_copy(self):
         """TODO DOCS."""
-        c = self.f.constructs
+        c = self.c
 
         d = c.copy()
         self.assertTrue(c.equals(d, verbose=3))
@@ -58,7 +61,7 @@ class ConstructsTest(unittest.TestCase):
 
     def test_Constructs_filter(self):
         """TODO DOCS."""
-        c = self.f.constructs
+        c = self.c
 
         for todict in (False, True):
             d = c.filter(
@@ -86,11 +89,10 @@ class ConstructsTest(unittest.TestCase):
 
     def test_Constructs_FILTERING(self):
         """TODO DOCS."""
-        c = self.f.constructs
+        c = self.c
 
         self.assertEqual(len(c), 20)
         self.assertEqual(len(c.filter_by_identity()), 20)
-        self.assertEqual(len(c.filter_by_key()), 20)
         self.assertEqual(len(c.filter_by_data()), 12)
         self.assertEqual(len(c.filter_by_type()), 20)
         self.assertEqual(len(c.filter_by_method()), 2)
@@ -99,7 +101,6 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(len(c.filter_by_ncdim()), 4)
 
         self.assertEqual(len(c.filter_by_identity("qwerty")), 0)
-        self.assertEqual(len(c.filter_by_key("qwerty")), 0)
         self.assertEqual(len(c.filter_by_type("qwerty")), 0)
         self.assertEqual(len(c.filter_by_method("qwerty")), 0)
         self.assertEqual(len(c.filter_by_measure("qwerty")), 0)
@@ -107,7 +108,6 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(len(c.filter_by_ncdim("qwerty")), 0)
 
         self.assertEqual(len(c.filter_by_identity("latitude")), 1)
-        self.assertEqual(len(c.filter_by_key("dimensioncoordinate1")), 1)
         self.assertEqual(len(c.filter_by_type("cell_measure")), 1)
         self.assertEqual(len(c.filter_by_method("mean")), 1)
         self.assertEqual(len(c.filter_by_measure("area")), 1)
@@ -233,7 +233,7 @@ class ConstructsTest(unittest.TestCase):
 
     def test_Constructs_filter_by_axis(self):
         """TODO DOCS."""
-        c = self.f.constructs
+        c = self.c
 
         self.assertEqual(len(c.filter_by_axis()), 12)
         self.assertEqual(len(c.filter_by_axis("or", 0, 1, 2)), 11)
@@ -243,9 +243,16 @@ class ConstructsTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             c.filter_by_axis("bad_mode", 1)
 
+    def test_Constructs_filter_by_naxes(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(len(c.filter_by_naxes()), 12)
+        self.assertEqual(len(c.filter_by_naxes(1)), 7)
+
     def test_Constructs_filter_by_property(self):
         """TODO DOCS."""
-        c = self.f.constructs
+        c = self.c
 
         self.assertEqual(len(c.filter_by_property()), 12)
 
@@ -269,7 +276,7 @@ class ConstructsTest(unittest.TestCase):
 
     def test_Constructs_filter_by_size(self):
         """TODO DOCS."""
-        c = self.f.constructs
+        c = self.c
 
         self.assertEqual(len(c.filter_by_size(9)), 1)
         self.assertEqual(len(c.filter_by_size(9, 10)), 2)
@@ -279,16 +286,24 @@ class ConstructsTest(unittest.TestCase):
         _, construct = c.filter_by_size(9, todict=True).popitem()
         self.assertIsInstance(construct, cfdm.DomainAxis)
 
+    def test_Constructs_filter_by_key(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(len(c.filter_by_key()), 20)
+        self.assertEqual(len(c.filter_by_key("qwerty")), 0)
+        self.assertEqual(len(c.filter_by_key("dimensioncoordinate1")), 1)
+
     def test_Constructs_copy(self):
         """TODO DOCS."""
-        c = self.f.constructs
+        c = self.c
 
         copy.copy(c)
         copy.deepcopy(c)
 
     def test_Constructs__getitem__(self):
         """TODO DOCS."""
-        c = self.f.constructs
+        c = self.c
 
         self.assertIsInstance(
             c["auxiliarycoordinate1"], cfdm.AuxiliaryCoordinate
@@ -299,10 +314,9 @@ class ConstructsTest(unittest.TestCase):
 
     def test_Constructs_todict(self):
         """TODO DOCS."""
-        c = self.f.constructs
-        self.assertIsInstance(c.todict(), dict)
+        c = self.c
 
-        # _check_con
+        self.assertIsInstance(c.todict(), dict)
 
     def test_Constructs_private(self):
         """TODO DOCS."""
@@ -324,7 +338,7 @@ class ConstructsTest(unittest.TestCase):
             x["auxiliarycoordinate1"]
 
         # _del_construct
-        x = self.f.constructs.shallow_copy()
+        x = self.c.shallow_copy()
         x._del_construct("domainancillary0")
 
         with self.assertRaises(ValueError):
@@ -339,14 +353,14 @@ class ConstructsTest(unittest.TestCase):
         self.assertIsInstance(x._del_construct("domainaxis3"), cfdm.DomainAxis)
 
         # _set_construct
-        x = self.f.constructs.shallow_copy()
+        x = self.c.shallow_copy()
         with self.assertRaises(ValueError):
             x._set_construct(
                 self.f.construct("cellmethod0"), axes=["domainaxis0"]
             )
 
         # _set_construct_data_axes
-        x = self.f.constructs.shallow_copy()
+        x = self.c.shallow_copy()
         with self.assertRaises(ValueError):
             x._set_construct_data_axes("qwerty", ["domainaxis"])
 
