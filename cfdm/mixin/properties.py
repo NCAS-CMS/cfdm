@@ -491,7 +491,11 @@ class Properties(Container):
         ncvar%tas
 
         """
-        return super().identities(generator=generator, **kwargs)
+        g = self._iter(body=self._identities_iter(), **kwargs)
+        if generator:
+            return g
+
+        return list(g)
 
     def _inherited_properties(self):
         """Return the properties inherited from a parent construct.

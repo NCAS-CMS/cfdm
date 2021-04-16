@@ -484,7 +484,11 @@ class CellMethod(mixin.Container, core.CellMethod):
         ...
 
         """
-        return super().identities(generator=generator, **kwargs)
+        g = self._iter(body=self._identities_iter(), **kwargs)
+        if generator:
+            return g
+
+        return list(g)
 
     def sorted(self, indices=None):
         """Return a new cell method construct with sorted axes.

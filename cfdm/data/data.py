@@ -520,22 +520,6 @@ class Data(Container, NetCDFHDF5, core.Data):
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-    def _identities_iter(self):
-        """TODO.
-        
-        .. versionadded:: (cfdm) 1.8.9.0
-
-        .. seealso:: `_iter`, `identities`
-
-        :Returns:
-
-            generator
-                The identities.
-        
-        """
-        for x in ():
-            yield x
-            
     def _item(self, index):
         """Return an element of the data as a scalar.
 

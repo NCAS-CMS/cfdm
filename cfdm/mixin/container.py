@@ -228,35 +228,15 @@ class Container:
 
         return other
 
-    def _identities_iter(self):
-        """Return a generator for the core identities of the instance.
-
-        This method must be overloaded in subclasses.
-
-        .. versionadded:: (cfdm) 1.8.9.0
-
-        .. seealso:: `_iter`, `identities`
-
-        :Returns:
-
-            generator
-
-        """
-        raise NotImplementedError(
-            f"Must overload {self.__class__.__name__}._identities_iter()"
-        )
-
     def _iter(self, body=None, pre=None, post=None, short=False, **kwargs):
-        """TODO.
+        """General purpose iterator.
 
         .. versionadded:: (cfdm) 1.8.9.0
-
-        .. seealso:: `_identities_iter`, `identities`
 
         :Returns:
 
             generator
-                The identities.
+                TODO
 
         """
         if pre:
@@ -289,56 +269,3 @@ class Container:
         """
         depth = self.__class__._docstring_package_depth(self.__class__)
         return ".".join(self.__module__.split(".")[0 : depth + 1])
-
-    def identities(self, generator=False, **kwargs):
-        """Return TODO all possible identities.
-
-        The identities comprise:
-
-        * The method, preceded by 'method:'.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        .. seealso:: `identity`
-
-        :Parameters:
-
-            generator: `bool`, optional
-                If True then return a generator for the identities,
-                rather than a list.
-
-                .. versionadded:: (cfdm) 1.8.9.0
-
-            kwargs: optional
-                Additional configuration parameters. Currently
-                none. Unrecognised parameters are ignored.
-
-                .. versionadded:: (cfdm) 1.8.9.0
-
-        :Returns:
-
-            `list` or generator
-                The identities.
-
-        **Examples:**
-
-        >>> f = {{package}}.example_field(1)
-        >>> c = f.get_construct('cellmethod1')
-        >>> c.get_method()
-        'maximum'
-        >>> c.identities()
-        ['method:maximum']
-        >>> c.del_method()
-        'maximum'
-        >>> c.identities()
-        []
-        >>> for i in c.identities(generator=True):
-        ...     print(i)
-        ...
-
-        """
-        g = self._iter(body=self._identities_iter(), **kwargs)
-        if generator:
-            return g
-
-        return list(g)
