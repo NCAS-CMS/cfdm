@@ -241,9 +241,12 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
         try:
             return self._get_component("netcdf").pop("dimension")
         except KeyError:
+            if default is None:
+                return default
+
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no netCDF dimension name",
+                f"{self.__class__.__name__} has no netCDF dimension name",
             )
 
     def nc_get_dimension(self, default=ValueError()):
@@ -286,9 +289,12 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
         try:
             return self._get_component("netcdf")["dimension"]
         except KeyError:
+            if default is None:
+                return default
+
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no netCDF dimension name",
+                f"{self.__class__.__name__} has no netCDF dimension name",
             )
 
     def nc_has_dimension(self):
@@ -590,9 +596,12 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
         try:
             return self._get_component("netcdf").pop("variable")
         except KeyError:
+            if default is None:
+                return default
+
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no netCDF variable name",
+                f"{self.__class__.__name__} has no netCDF variable name",
             )
 
     def nc_get_variable(self, default=ValueError()):
@@ -636,9 +645,12 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
         try:
             return self._get_component("netcdf")["variable"]
         except KeyError:
+            if default is None:
+                return default
+
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no netCDF variable name",
+                f"{self.__class__.__name__} has no netCDF variable name",
             )
 
     def nc_has_variable(self):
@@ -942,9 +954,12 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
         try:
             return self._get_component("netcdf").pop("sample_dimension")
         except KeyError:
+            if default is None:
+                return default
+
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no netCDF sample dimension name",
+                f"{self.__class__.__name__} has no netCDF sample dimension name",
             )
 
     def nc_get_sample_dimension(self, default=ValueError()):
@@ -988,9 +1003,12 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
         try:
             return self._get_component("netcdf")["sample_dimension"]
         except KeyError:
+            if default is None:
+                return default
+
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no netCDF sample dimension name",
+                f"{self.__class__.__name__} has no netCDF sample dimension name",
             )
 
     def nc_has_sample_dimension(self):
@@ -1984,9 +2002,12 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
         try:
             return self._get_component("netcdf").pop("geometry_variable")
         except KeyError:
+            if default is None:
+                return default
+
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no netCDF geometry variable name",
+                f"{self.__class__.__name__} has no netCDF geometry variable name",
             )
 
     def nc_get_geometry_variable(self, default=ValueError()):
@@ -2030,9 +2051,12 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
         try:
             return self._get_component("netcdf")["geometry_variable"]
         except KeyError:
+            if default is None:
+                return default
+
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no netCDF geometry variable name",
+                f"{self.__class__.__name__} has no netCDF geometry variable name",
             )
 
     def nc_has_geometry_variable(self):

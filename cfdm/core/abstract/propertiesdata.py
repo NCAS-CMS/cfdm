@@ -287,6 +287,9 @@ class PropertiesData(Properties):
         data = self._get_component("data", None)
 
         if data is None:
+            if default is None:
+                return
+
             return self._default(
                 default, message=f"{self.__class__.__name__} has no data"
             )

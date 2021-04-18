@@ -288,7 +288,7 @@ class PropertiesDataBounds(PropertiesData):
             return bounds.dtype
 
         raise AttributeError(
-            f"{self.__class__.__name__!r} object has no attribute 'dtype'"
+            f"{self.__class__.__name__} object has no attribute 'dtype'"
         )
 
     @property
@@ -343,7 +343,7 @@ class PropertiesDataBounds(PropertiesData):
             return ndim
 
         raise AttributeError(
-            f"{self.__class__.__name__!r} object has no attribute 'ndim'"
+            f"{self.__class__.__name__} object has no attribute 'ndim'"
         )
 
     @property
@@ -398,7 +398,7 @@ class PropertiesDataBounds(PropertiesData):
             return shape
 
         raise AttributeError(
-            f"{self.__class__.__name__!r} object has no attribute 'shape'"
+            f"{self.__class__.__name__} object has no attribute 'shape'"
         )
 
     @property
@@ -722,9 +722,12 @@ class PropertiesDataBounds(PropertiesData):
         try:
             return self._del_component("node_count")
         except ValueError:
+            if default is None:
+                return default
+
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no node count variable",
+                f"{self.__class__.__name__} has no node count variable",
             )
 
     def del_part_node_count(self, default=ValueError()):
@@ -765,9 +768,12 @@ class PropertiesDataBounds(PropertiesData):
         try:
             return self._del_component("part_node_count")
         except ValueError:
+            if default is None:
+                return default
+
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no part node count variable",
+                f"{self.__class__.__name__} has no part node count variable",
             )
 
     @_display_or_return
@@ -958,11 +964,8 @@ class PropertiesDataBounds(PropertiesData):
         # ------------------------------------------------------------
         if self.get_geometry(None) != other.get_geometry(None):
             logger.info(
-                "{0}: Different geometry types: {1}, {2}".format(
-                    self.__class__.__name__,
-                    self.get_geometry(None),
-                    other.get_geometry(None),
-                )
+                f"{self.__class__.__name__}: Different geometry types: "
+                f"{self.get_geometry(None)}, {other.get_geometry(None)}"
             )
             return False
 
@@ -998,7 +1001,7 @@ class PropertiesDataBounds(PropertiesData):
         self_has_interior_ring = self.has_interior_ring()
         if self_has_interior_ring != other.has_interior_ring():
             logger.info(
-                "{0}: Different interior ring".format(self.__class__.__name__)
+                f"{self.__class__.__name__}: Different interior ring"
             )  # pragma: no cover
 
             return False
@@ -1016,9 +1019,7 @@ class PropertiesDataBounds(PropertiesData):
                 ignore_compression=ignore_compression,
             ):
                 logger.info(
-                    "{0}: Different interior ring".format(
-                        self.__class__.__name__
-                    )
+                    f"{self.__class__.__name__}: Different interior ring"
                 )  # pragma: no cover
 
                 return False
@@ -1083,9 +1084,12 @@ class PropertiesDataBounds(PropertiesData):
         """
         out = self._get_component("node_count", None)
         if out is None:
+            if default is None:
+                return default
+
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no node count variable",
+                f"{self.__class__.__name__} has no node count variable",
             )
 
         return out
@@ -1127,9 +1131,12 @@ class PropertiesDataBounds(PropertiesData):
         """
         out = self._get_component("part_node_count", None)
         if out is None:
+            if default is None:
+                return default
+
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no part node count variable",
+                f"{self.__class__.__name__} has no part node count variable",
             )
 
         return out

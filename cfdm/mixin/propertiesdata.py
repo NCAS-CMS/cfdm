@@ -212,7 +212,7 @@ class PropertiesData(Properties):
             return data.dtype
 
         raise AttributeError(
-            f"{self.__class__.__name__!r} object has no attribute 'dtype'"
+            f"{self.__class__.__name__} object has no attribute 'dtype'"
         )
 
     @property
@@ -257,7 +257,7 @@ class PropertiesData(Properties):
             return data.ndim
 
         raise AttributeError(
-            f"{self.__class__.__name__!r} object has no attribute 'ndim'"
+            f"{self.__class__.__name__} object has no attribute 'ndim'"
         )
 
     @property
@@ -302,7 +302,7 @@ class PropertiesData(Properties):
             return data.shape
 
         raise AttributeError(
-            f"{self.__class__.__name__!r} object has no attribute 'shape'"
+            f"{self.__class__.__name__} object has no attribute 'shape'"
         )
 
     @property
@@ -347,7 +347,7 @@ class PropertiesData(Properties):
             return data.size
 
         raise AttributeError(
-            f"{self.__class__.__name__!r} object has no attribute 'size'"
+            f"{self.__class__.__name__} object has no attribute 'size'"
         )
 
     # ----------------------------------------------------------------

@@ -81,11 +81,15 @@ class Properties(Container):
                 The identities.
 
         """
+        standard_name = self.get_property("standard_name", None)
+        if standard_name is not None:
+            yield standard_name
+
         properties = self.properties()
         if properties:
-            standard_name = properties.get("standard_name", None)
-            if standard_name is not None:
-                yield standard_name
+            #            standard_name = properties.get("standard_name", None)
+            #            if standard_name is not None:
+            #                yield standard_name
 
             for prop in ("cf_role", "axis", "long_name"):
                 value = properties.pop(prop, None)

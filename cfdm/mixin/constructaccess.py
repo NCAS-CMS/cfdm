@@ -21,7 +21,6 @@ class ConstructAccess:
         key=False,
         item=False,
         default=None,
-        _last_filter=None,
         _identity_config={},
         **filter_kwargs,
     ):
@@ -126,12 +125,6 @@ class ConstructAccess:
                     "positional *identities arguments are also set"
                 )
 
-        if _last_filter:
-            for ftype in _last_filter:
-                value = kwargs.pop(ftype, None)
-                if value is not None:
-                    kwargs[ftype] = value
-
         if construct:
             kwargs["todict"] = True
 
@@ -145,8 +138,7 @@ class ConstructAccess:
             return c
 
         # Return constuct, or key, or both, or default
-        n = len(c)
-        if n == 1:
+        if len(c) == 1:
             k, construct = c.popitem()
             if key:
                 return k
@@ -161,7 +153,7 @@ class ConstructAccess:
 
         return self._default(
             default,
-            f"{self.__class__.__name__}.{_method}() can't return {n} "
+            f"{self.__class__.__name__}.{_method}() can't return {len(c)} "
             "constructs",
         )
 
@@ -976,8 +968,7 @@ class ConstructAccess:
 
         keys = set(keys)
 
-        n = len(keys)
-        if n == 1:
+        if len(keys) == 1:
             return keys.pop()
 
         if default is None:
@@ -1043,15 +1034,6 @@ class ConstructAccess:
         False
 
         """
-        if (
-            len(identity) == 1
-            and not filter_kwargs
-            and identity[0] in self.constructs
-        ):
-            # Faster return for when identity is a single construct
-            # identifier
-            return True
-
         return bool(
             self.construct(*identity, default=None, **filter_kwargs)
             is not None

@@ -2635,6 +2635,7 @@ class Constructs(mixin.Container, core.Constructs):
             if types:
                 pop = arg.pop
                 construct_type = self._construct_type
+                types = set(types)
                 for cid in tuple(arg):
                     if construct_type[cid] not in types:
                         pop(cid)

@@ -344,8 +344,8 @@ class Constructs(abstract.Container):
 
             copy: `bool`, optional
                 If True and some constructs exisit then the dictionary
-                is a copy of of that stored in the `_constructs`
-                attirbute, otherwise it is the same dictionary.
+                is a shallow copy of that stored in the `_constructs`
+                attribute, otherwise it is the same dictionary.
 
         :Returns:
 
@@ -1111,18 +1111,18 @@ class Constructs(abstract.Container):
 
                 A type is specified by one of the following strings:
 
-                ==========================  ===============================
+                ==========================  ==========================
                 *type*                      Construct selected
-                ==========================  ===============================
-                ``'domain_ancillary'``      Domain ancillary constructs
-                ``'dimension_coordinate'``  Dimension coordinate constructs
-                ``'domain_axis'``           Domain axis constructs
-                ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
-                ``'cell_measure'``          Cell measure constructs
-                ``'coordinate_reference'``  Coordinate reference constructs
-                ``'cell_method'``           Cell method constructs
-                ``'field_ancillary'``       Field ancillary constructs
-                ==========================  ===============================
+                ==========================  ==========================
+                ``'domain_ancillary'``      Domain ancillary
+                ``'dimension_coordinate'``  Dimension coordinate
+                ``'domain_axis'``           Domain axis
+                ``'auxiliary_coordinate'``  Auxiliary coordinate
+                ``'cell_measure'``          Cell measure
+                ``'coordinate_reference'``  Coordinate reference
+                ``'cell_method'``           Cell method
+                ``'field_ancillary'``       Field ancillary
+                ==========================  ==========================
 
                 If no types are provided then all constructs are
                 selected.
@@ -1160,21 +1160,18 @@ class Constructs(abstract.Container):
             return cached
 
         if todict:
-            # Return a dict
-            n = len(types)
-            if n == 1:
-                return self._construct_dict(types[0], copy=True)
-
-            if not n:
+            # Return a dictionary
+            if not types:
                 return self.todict()
 
-            ignore = self._ignore
-            constructs = self._constructs
+            out = self._construct_dict(types[0], copy=True)
 
-            out = {}
-            for t in types:
-                if t not in ignore:
-                    out.update(constructs.get(t, {}))
+            if len(types) > 1:
+                ignore = self._ignore
+                constructs = self._constructs
+                for t in types[1:]:
+                    if t in constructs and t not in ignore:
+                        out.update(constructs[t])
 
             return out
 
@@ -1472,7 +1469,7 @@ class Constructs(abstract.Container):
                 out.update(value)
 
         if copy:
-            for key, construct in tuple(out.items()):
+            for key, construct in out.items():
                 out[key] = construct.copy()
 
         return out

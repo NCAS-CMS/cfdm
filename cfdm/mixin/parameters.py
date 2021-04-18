@@ -115,11 +115,9 @@ class Parameters(Container):
         parameters1 = other.parameters()
         if set(parameters0) != set(parameters1):
             logger.info(
-                "{0}: Different parameter-valued terms "
-                "({1} != {2})".format(
-                    self.__class__.__name__, set(parameters0), set(parameters1)
-                )
-            )
+                f"{self.__class__.__name__}: Different parameter-valued terms "
+                f"({set(parameters0)} != {set(parameters1)})"
+            )  # pragma: no cover
             return False
 
         # Check that the parameter values are equal
@@ -141,10 +139,9 @@ class Parameters(Container):
                 ignore_type=ignore_type,
             ):
                 logger.info(
-                    "{}: Unequal {!r} terms ({!r} != {!r})".format(
-                        self.__class__.__name__, term, value0, value1
-                    )
-                )
+                    f"{self.__class__.__name__}: Unequal {term!r} terms "
+                    f"({value0!r} != {value1!r})"
+                )  # pragma: no cover
                 return False
 
         # Still here? Then the two parameter collections are equal

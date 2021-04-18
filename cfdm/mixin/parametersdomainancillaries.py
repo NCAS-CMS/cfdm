@@ -119,13 +119,10 @@ class ParametersDomainAncillaries(Parameters):
         domain_ancillaries1 = other.domain_ancillaries()
         if set(domain_ancillaries0) != set(domain_ancillaries1):
             logger.info(
-                "{0}: Different domain ancillary terms "
-                "({1} != {2})".format(
-                    self.__class__.__name__,
-                    set(domain_ancillaries0),
-                    set(domain_ancillaries1),
-                )
-            )
+                f"{ self.__class__.__name__}: Different domain ancillary "
+                "terms "
+                f"({set(domain_ancillaries0)} != {set(domain_ancillaries1)})"
+            )  # pragma: no cover
             return False
 
         for term, value0 in domain_ancillaries0.items():
@@ -135,11 +132,9 @@ class ParametersDomainAncillaries(Parameters):
 
             if value0 is None or value1 is None:
                 logger.info(
-                    "{}: Unequal {!r} domain ancillary terms "
-                    "({!r} != {!r})".format(
-                        self.__class__.__name__, term, value0, value1
-                    )
-                )
+                    f"{self.__class__.__name__}: Unequal {term!r} domain "
+                    f"ancillary terms ({value0!r} != {value1!r})"
+                )  # pragma: no cover
                 return False
 
         # Still here? Then the two instances are as equal as can be
