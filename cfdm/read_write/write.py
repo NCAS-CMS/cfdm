@@ -10,6 +10,7 @@ def write(
     fields,
     filename,
     fmt="NETCDF4",
+    mode="w",
     overwrite=True,
     global_attributes=None,
     variable_attributes=None,
@@ -164,6 +165,22 @@ def write(
 
             ``'NETCDF4'`` files use the version 4 disk format (HDF5)
             and use the new features of the version 4 API.
+
+        mode: `str`, optional
+            Specify the mode of write access for the output file. One of:
+            =======  =================================================
+            *mode*   Description
+            =======  =================================================
+            ``'w'``  Open a new file for writing to. If it exists and
+                     *overwrite* is True then the file is deleted
+                     prior to being recreated.
+            ``'a'``  Open an existing file for appending new
+                     information to. The new information will be
+                     incorporated whilst the original contents of the
+                     file will be preserved.
+            =======  =================================================
+            By default the file is opened with write access mode
+            ``'w'``.
 
         overwrite: `bool`, optional
             If False then raise an error if the output file
@@ -468,6 +485,7 @@ def write(
             fields,
             filename,
             fmt=fmt,
+            mode=mode,
             overwrite=overwrite,
             global_attributes=global_attributes,
             variable_attributes=variable_attributes,

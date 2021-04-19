@@ -69,7 +69,19 @@ class read_writeTest(unittest.TestCase):
             os.path.dirname(os.path.abspath(__file__)), "string_char.nc"
         )
 
-        self.test_only = []
+        self.netcdf3_fmts = [
+            'NETCDF3_CLASSIC',
+            'NETCDF3_64BIT',
+            'NETCDF3_64BIT_OFFSET',
+            'NETCDF3_64BIT_DATA',
+        ]
+        self.netcdf4_fmts = [
+            'NETCDF4',
+            'NETCDF4_CLASSIC',
+        ]
+        self.netcdf_fmts = self.netcdf3_fmts + self.netcdf4_fmts
+
+        ### self.test_only = []  # TODO reinstate this one at PR end
         # self.test_only = ['NOTHING!!!!!']
         # self.test_only = ['test_write_filename']
         # self.test_only = ['test_read_write_unlimited']
@@ -78,6 +90,7 @@ class read_writeTest(unittest.TestCase):
         # self.test_only = ['test_read_write_format']
         # self.test_only = ['test_read_write_Conventions']
         # self.test_only = ['test_read_write_multiple_geometries']
+        self.test_only = ['test_write_netcdf_mode']
 
     def test_write_filename(self):
         """TODO DOCS."""
@@ -176,14 +189,7 @@ class read_writeTest(unittest.TestCase):
             return
 
         f = cfdm.read(self.filename)[0]
-        for fmt in (
-            "NETCDF3_CLASSIC",
-            "NETCDF3_64BIT",
-            "NETCDF3_64BIT_OFFSET",
-            "NETCDF3_64BIT_DATA",
-            "NETCDF4",
-            "NETCDF4_CLASSIC",
-        ):
+        for fmt in self.netcdf_fmts:
             cfdm.write(f, tmpfile, fmt=fmt)
             g = cfdm.read(tmpfile)
             self.assertEqual(len(g), 1, "g = " + repr(g))
@@ -193,13 +199,70 @@ class read_writeTest(unittest.TestCase):
                 "Bad read/write of format: {}".format(fmt),
             )
 
+    def test_write_netcdf_mode(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        g = cfdm.read(self.filename)
+        g_copy = g.copy()
+        g_orig_length = len(g)
+
+        for fmt in self.netcdf_fmts:
+            # Other tests cover write as default mode (i.e. test with no mode
+            # argument); here test explicit provision of 'w' as argument:
+            cfdm.write(g, tmpfile, fmt=fmt, mode='w')
+            f = cfdm.read(tmpfile)
+            self.assertEqual(len(f), g_orig_length)
+            self.assertTrue(f[0].equals(g[0]))
+
+            # Main aspect of this test: testing the append mode ('a')
+            h = cfdm.example_field(0)
+            cfdm.write(h, tmpfile, fmt=fmt, mode='a')  # now includes h with g
+            f = cfdm.read(tmpfile)
+
+            # After append, file should emerge with a number of fields
+            # equal to the sum of all fields appended to them.
+            self.assertEqual(len(f), g_orig_length + 1)
+            self.assertTrue(f[0].equals(g[0]))  # should remain True...
+            self.assertTrue(f[1].equals(h))  # ...but also has the new field
+
+            # Now append all other example fields, to check a diverse variety:
+            new_length = 2
+            for field_id in range(1, 7):
+                print("\n>>>>>>>>>>> ONTO FIELD ID", field_id)
+                ex_field = cfdm.example_field(field_id)
+                cfdm.write(ex_field, tmpfile, fmt=fmt, mode='a')
+                f = cfdm.read(tmpfile)
+
+                print("$$$$$$$$$$$$$$$$$$$$$ OVERALL F IS", f)
+                print("$$$$$$$$$$$$$$$$$$$$$ NEED:")
+                ex_field.dump()
+                print("$$$$$$$$$$$$$$$$$$$$$ BUT GOT:")
+                f[0].dump()
+
+                new_length += 1  # there should be exactly one more field now
+                self.assertEqual(len(f), new_length)
+                # Can't guarantee order of fields read in after the appends, so
+                # check that the field is *somewhere* in the read-in fieldlist
+                self.assertTrue(any([ex_field.equals(field) for field in f]))
+
+            # Check behaviour when append identical fields, as an edge case:
+            cfdm.write(g, tmpfile, fmt=fmt, mode='w', overwrite=True)
+            cfdm.write(g_copy, tmpfile, fmt=fmt, mode='a')
+            f = cfdm.read(tmpfile)
+            self.assertEqual(len(f), 2*len(g))
+            position = 1
+            for g_field in g_copy:
+                self.assertTrue(f[len(g) + 1].equals(g_field))
+                position += 1
+
     def test_read_write_netCDF4_compress_shuffle(self):
         """TODO DOCS."""
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         f = cfdm.read(self.filename)[0]
-        for fmt in ("NETCDF4", "NETCDF4_CLASSIC"):
+        for fmt in self.netcdf4_fmts:
             for shuffle in (True,):
                 for compress in (4,):  # range(10):
                     cfdm.write(
@@ -219,14 +282,7 @@ class read_writeTest(unittest.TestCase):
             return
 
         f = cfdm.read(self.filename)[0]
-        for fmt in (
-            "NETCDF3_CLASSIC",
-            "NETCDF3_64BIT",
-            "NETCDF3_64BIT_OFFSET",
-            "NETCDF3_64BIT_DATA",
-            "NETCDF4",
-            "NETCDF4_CLASSIC",
-        ):
+        for fmt in self.netcdf_fmts:
             cfdm.write(f, tmpfile, fmt=fmt)
             g = cfdm.read(tmpfile)[0]
             self.assertTrue(
@@ -302,14 +358,7 @@ class read_writeTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for fmt in (
-            "NETCDF4",
-            "NETCDF4_CLASSIC",
-            "NETCDF3_CLASSIC",
-            "NETCDF3_64BIT",
-            "NETCDF3_64BIT_OFFSET",
-            "NETCDF3_64BIT_DATA",
-        ):
+        for fmt in self.netcdf_fmts:
             f = cfdm.read(self.filename)[0]
 
             f.domain_axes["domainaxis0"].nc_set_unlimited(True)
@@ -318,11 +367,10 @@ class read_writeTest(unittest.TestCase):
             f = cfdm.read(tmpfile)[0]
             self.assertTrue(f.domain_axes["domainaxis0"].nc_is_unlimited())
 
-        fmt = "NETCDF4"
         f = cfdm.read(self.filename)[0]
-        f.domain_axes["domainaxis0"].nc_set_unlimited(True)
-        f.domain_axes["domainaxis2"].nc_set_unlimited(True)
-        cfdm.write(f, tmpfile, fmt=fmt)
+        f.domain_axes['domainaxis0'].nc_set_unlimited(True)
+        f.domain_axes['domainaxis2'].nc_set_unlimited(True)
+        cfdm.write(f, tmpfile, fmt='NETCDF4')
 
         f = cfdm.read(tmpfile)[0]
         self.assertTrue(f.domain_axes["domainaxis0"].nc_is_unlimited())
@@ -459,11 +507,11 @@ class read_writeTest(unittest.TestCase):
 
         f0 = cfdm.read(self.string_filename)
         for string0 in (True, False):
-            for fmt0 in ("NETCDF4", "NETCDF3_CLASSIC"):
+            for fmt0 in self.netcdf_fmts:
                 cfdm.write(f0, tmpfile0, fmt=fmt0, string=string0)
 
                 for string1 in (True, False):
-                    for fmt1 in ("NETCDF4", "NETCDF3_CLASSIC"):
+                    for fmt1 in self.netcdf_fmts:
                         cfdm.write(f0, tmpfile1, fmt=fmt1, string=string1)
 
                         for i, j in zip(
