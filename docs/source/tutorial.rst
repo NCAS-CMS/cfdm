@@ -1434,7 +1434,7 @@ construct key, by any of the following techniques:
              identity and use the key to get the construct itself*
 	     
    >>> key = t.construct_key('latitude')
-   >>> t.get_construct(key)
+   >>> t.construct(key)
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
 
 * with the `~Field.construct_item` method of a field construct:
@@ -1446,14 +1446,14 @@ construct key, by any of the following techniques:
    >>> key, lat = t.construct_item('latitude')
    ('auxiliarycoordinate0', <AuxiliaryCoordinate: latitude(10, 9) degrees_N>)
 
-* with the `~Constructs.value` method of a `Constructs` instance
-  that contains one construct,
+* by indexing a `Constructs` instance with  a construct key.
 
 .. code-block:: python
-   :caption: *Get the "latitude" metadata construct via its identity
-             and the 'value' method.*
+   :caption: *Get the "latitude" metadata construct via its construct
+             key and indexing*
 	     
-   >>> t.constructs('latitude').value()
+   >>> key = t.construct_key('latitude')
+   >>> t.constructs[key]
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
 
 * with the `~Constructs.get` method of a `Constructs` instance, or
@@ -1462,16 +1462,8 @@ construct key, by any of the following techniques:
    :caption: *Get the "latitude" metadata construct via its construct
              key and the 'get' method.*
 	     
+   >>> key = t.construct_key('latitude')
    >>> c = t.constructs.get(key)
-   <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
-
-* by indexing a `Constructs` instance with  a construct key.
-
-.. code-block:: python
-   :caption: *Get the "latitude" metadata construct via its construct
-             key and indexing*
-	     
-   >>> t.constructs[key]
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
 
 The `~Field.construct` method of the field construct and the
@@ -1491,32 +1483,22 @@ customised exception:
    ValueError: Can't return zero constructs
    >>> t.construct('measure:volume', default=False)
    False
-   >>> c = t.constructs.filter_by_measure('volume')
+   >>> t.construct('measure:volume', default=Exception("my error"))  # Raises Exception
+   Traceback (most recent call last):
+      ...
+   Exception: my error
+   >>> c = t.constructs.filter_by_measure("volume")
    >>> len(c)
    0
-   >>> c.value()                                    # Raises Exception
-   Traceback (most recent call last):
-      ...
-   ValueError: Can't return zero constructs
-   >>> c.value(default='No construct')
-   'No construct'
-   >>> c.value(default=KeyError('My message'))      # Raises Exception
-   Traceback (most recent call last):
-      ...
-   KeyError: 'My message'
-   >>> d = t.constructs('units=degrees')
+   >>> d = t.constructs("units=degrees")
    >>> len(d)
    2
-   >>> d.value()                                    # Raises Exception
+   >>> t.construct("units=degrees")  # Raises Exception
    Traceback (most recent call last):
       ...
-   ValueError: Can't return 2 constructs 
-   >>> print(d.value(default=None))
+   ValueError: Field.construct() can't return 2 constructs
+   >>> print(t.construct("units=degrees", default=None))
    None
-
-The `~Constructs.get` method of a `Constructs` instance accepts an
-optional second argument to be returned if the construct key does not
-exist, exactly like the Python `dict.get` method.
 
 .. _Metadata-construct-properties:
 

@@ -140,34 +140,30 @@ print(t.constructs.filter_by_type('cell_measure'))
 print(t.cell_measures())
 t.construct('latitude')
 key = t.construct_key('latitude')
-t.get_construct(key)
+t.construct(key)
 key, lat = t.construct_item('latitude')
-t.constructs('latitude').value()
-c = t.constructs.get(key)
+key = t.construct_key('latitude')
 t.constructs[key]
+key = t.construct_key('latitude')
+c = t.constructs.get(key)
 try:
     t.construct('measure:volume')                # Raises Exception
 except:
     pass
 t.construct('measure:volume', default=False)
-c = t.constructs.filter_by_measure('volume')
+try:
+    t.construct('measure:volume', default=Exception("my error"))  # Raises Exception
+except:
+    pass
+c = t.constructs.filter_by_measure("volume")
 len(c)
-try:
-    c.value()                                    # Raises Exception
-except:
-    pass
-c.value(default='No construct')
-try:
-    c.value(default=KeyError('My message'))      # Raises Exception
-except:
-    pass
-d = t.constructs('units=degrees')
+d = t.constructs("units=degrees")
 len(d)
 try:
-    d.value()                                    # Raises Exception
+    t.construct("units=degrees")  # Raises Exception
 except:
     pass
-print(d.value(default=None))
+print(t.construct("units=degrees", default=None))
 lon = q.construct('longitude')
 lon
 lon.set_property('long_name', 'Longitude')
@@ -541,8 +537,7 @@ u = t.copy()
 u.data[0, 0, 0] = -1e30
 u.data[0, 0, 0]
 t.data[0, 0, 0]
-key = u.construct_key('grid_latitude')
-u.del_construct(key)
+u.del_construct('grid_latitude')
 u.constructs('grid_latitude')
 t.constructs('grid_latitude')
 import copy

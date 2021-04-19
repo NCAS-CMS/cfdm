@@ -446,8 +446,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         return True
 
-    def _filter_convert_to_domain_axis(self, values):
-        """Parse values to domain axis construct identifiers.
+    def _filter_convert_to_domain_axis(self, values, identities=True):
+        """Convert values to domain axis construct identifiers.
 
         If possible, convert each value from a field data array index
         position to domain axis construct identifiers; or 1-d
@@ -466,10 +466,8 @@ class Constructs(mixin.Container, core.Constructs):
 
             values: sequence
 
-            return_existing: `bool` optional
-                If True then include values in the output that are
-                already domain axis construct identifiers. By default
-                these are omitted.
+            identities: `bool` optional
+                If True then check for domain axis identities.
 
         :Returns:
 
@@ -523,6 +521,22 @@ class Constructs(mixin.Container, core.Constructs):
                 if len(set(c_axes)) == 1:
                     value = c_axes[0]
                     values2.append(value)
+
+                continue
+
+            if identities:
+                # Try to convert a domain axis identity into a domain
+                # axis identifier
+                c = self.filter(
+                    filter_by_type=("domain_axis",),
+                    filter_by_identity=(value,),
+                    todict=True,
+                )
+                if len(c) == 1:
+                    key, _ = c.popitem()
+                    values2.append(key)
+
+                continue
 
         return values2
 
@@ -1186,7 +1200,9 @@ class Constructs(mixin.Container, core.Constructs):
             if out is not None:
                 return out
 
-            keys.update(self._filter_convert_to_domain_axis(misses))
+            keys.update(
+                self._filter_convert_to_domain_axis(misses, identities=False)
+            )
             filter_kwargs = {
                 "filter_by_key": keys,
                 "todict": filter_kwargs.pop("todict", False),
@@ -1413,8 +1429,9 @@ class Constructs(mixin.Container, core.Constructs):
             todict=todict,
         )
 
-        # TODO - comment here based on filter_by_axis docstring
-        axes = self._filter_convert_to_domain_axis(axes)
+        # Convert values to domain axis construct identifiers, if any
+        # can be.
+        axes = self._filter_convert_to_domain_axis(axes, identities=True)
 
         data_axes = self._construct_axes
 
@@ -1486,35 +1503,43 @@ class Constructs(mixin.Container, core.Constructs):
                 By default *mode* is ``'and'``.
 
             axes: optional
-                Select the constructs whose data spans the given
-                domain axis constructs, specified by the given values
-                of domain axis construct identifiers
-                (e.g. ``'domainaxis1'``).
+                Select constructs that whose data spans the domain
+                axis constructs specified by the given values. A value
+                may be:
 
-                Domain axis constructs may also be specified by these
-                methods:
+                * A domain axis construct identifier, with or without
+                  the ``'key%'`` prefix.
 
                 * The unique domain axis constuct spanned by all of
-                  the 1-d coordinate constructs that have an identity,
+                  the 1-d coordinate constructs returned by, for a
+                  given ``value``,
+                  ``c.filter(filter_by_type=["dimension_coordinate",
+                  "auxiliary_coordinate"], filter_by_naxes=(1,),
+                  filter_by_identity=(value,))``. See `filter` for
+                  details.
+
+                * If there is an associated `Field` data array and a
+                  value matches the integer position of an array
+                  dimension, then the corresponding domain axis
+                  construct is specified.
+
+                * The unique domain axis constuct spanned by all of
+                  the 1-d coordinate constructs that have an idepppntity,
                   defined by their `!identities` methods, that matches
                   a given value. For instance, ``'time'`` could define
                   the domain axis construct spanned by all 1-d
                   coordinate constructs that have ``'time'`` as an
                   identity.
 
-                  In this context, a value may be any object that can
-                  match via the ``==`` operator, or a `re.Pattern`
-                  object that matches via its `search` method.
-
-                * The unique domain axis constuct corresponding to a
-                  dimension position, defined by a given value, in an
-                  associated `Field` data array. For instance, ``-1``
-                  could define the domain axis construct corresponding
-                  to the last data dimension.
+                * A domain axis construict identity, defined by their
+                  `!identities` methods. In this case a value may be
+                  any object that can match via the ``==`` operator,
+                  or a `re.Pattern` object that matches via its
+                  `~re.Pattern.search` method.
 
                 If no axes are provided then all constructs that do,
                 or could have data, spanning any domain axes
-                constructs, are selected. TODO
+                constructs, are selected.
 
             {{todict: `bool`, optional}}
 
@@ -2395,8 +2420,8 @@ class Constructs(mixin.Container, core.Constructs):
         # Parse mode
         if len(mode) > 1:
             raise ValueError(
-                "filter_by_property() accepts at most one positional "
-                f"parameter, got {len(mode)}"
+                f"{self.__class__.__name__}.filter_by_property() "
+                f"accepts at most one positional parameter, got {len(mode)}"
             )
 
         if not mode:
@@ -2410,8 +2435,9 @@ class Constructs(mixin.Container, core.Constructs):
                 _or = False
             else:
                 raise ValueError(
-                    "filter_by_property() has incorrect 'mode' value "
-                    f"({mode!r}). If set must be one of 'and', 'or', None"
+                    f"{self.__class__.__name__}.filter_by_property() "
+                    f"has incorrect 'mode' value ({mode!r}). "
+                    "If set must be one of 'or', 'and', None"
                 )
 
         out, pop = self._filter_preprocess(
@@ -2439,8 +2465,11 @@ class Constructs(mixin.Container, core.Constructs):
             ok = True
             for name, value0 in properties.items():
                 value1 = get_property(name, None)
+
                 if value1 is None:
                     ok = False
+                elif value0 is None:
+                    ok = True
                 else:
                     ok = self._matching_values(value0, construct, value1)
 
@@ -2489,24 +2518,21 @@ class Constructs(mixin.Container, core.Constructs):
                 least one of its properties matches.
 
             properties:  optional
-                Select constructs that have properties with the given
-                values.
+                Select constructs that have a CF property, defined by
+                their `!properties` methods, that matches any of the
+                given values.
 
-                By default a construct is selected if it matches all
-                of the given properties, but it may alternatively be
-                selected when at least one of its properties matches
-                (see the *mode* positional parameter).
+                A property names and their given values are specified
+                by keyword argument names and values.
 
-                A property value is given by a keyword parameter of
-                the property name. The value may be a scalar or vector
-                (e.g. ``'latitude'``, ``4``, ``['foo', 'bar']``); or a
-                compiled regular expression
-                (e.g. ``re.compile('^ocean')``), for which all
-                constructs whose methods match (via `re.search`) are
-                selected.
+                {{value match}}
+
+                The special value of `None` selects any construct that
+                has that property, regardless of the construct's
+                property value.
 
                 If no properties are provided then all constructs that
-                do or could have properties, with any values, are
+                do or could have CF properties, with any values, are
                 selected.
 
         :Returns:

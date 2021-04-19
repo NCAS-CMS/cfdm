@@ -35,7 +35,7 @@ class Field(
     mixin.NetCDFGeometry,
     mixin.NetCDFGlobalAttributes,
     mixin.NetCDFGroupAttributes,
-    mixin.ConstructAccess,
+    mixin.FieldDomain,  # ConstructAccess,
     mixin.PropertiesData,
     core.Field,
 ):
@@ -353,73 +353,73 @@ class Field(
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-    def _get_data_compression_variables(self, component):
-        """Returns data compression variables for a component."""
-        out = []
-        data_constructs = self.constructs.filter_by_data(todict=True)
-        for construct in data_constructs.values():
-            data = construct.get_data(None)
-            if data is None:
-                continue
-
-            x = getattr(data, "get_" + component)(None)
-            if x is None:
-                continue
-
-            out.append(x)
-
-        for construct in data_constructs.values():
-            if not construct.has_bounds():
-                continue
-
-            data = construct.get_bounds_data(None)
-            if data is None:
-                continue
-
-            x = getattr(data, "get_" + component)(None)
-            if x is None:
-                continue
-
-            out.append(x)
-
-        for construct in self.coordinates(todict=True).values():
-            interior_ring = construct.get_interior_ring(None)
-            if interior_ring is None:
-                continue
-
-            data = interior_ring.get_data(None)
-            if data is None:
-                continue
-
-            x = getattr(data, "get_" + component)(None)
-            if x is None:
-                continue
-
-            out.append(x)
-
-        return out
-
-    def _get_coordinate_geometry_variables(self, component):
-        """Return the list of variables for the geometry coordinates.
-
-        :Parameters:
-
-            component: `str`
-
-        :Returns:
-
-            `list'
-
-        """
-        out = []
-        for construct in self.coordinates(todict=True).values():
-            x = getattr(construct, "get_" + component)(None)
-            if x is None:
-                continue
-
-            out.append(x)
-
-        return out
+    #    def _get_data_compression_variables(self, component):
+    #        """Returns data compression variables for a component."""
+    #        out = []
+    #        data_constructs = self.constructs.filter_by_data(todict=True)
+    #        for construct in data_constructs.values():
+    #            data = construct.get_data(None)
+    #            if data is None:
+    #                continue
+    #
+    #            x = getattr(data, "get_" + component)(None)
+    #            if x is None:
+    #                continue
+    #
+    #            out.append(x)
+    #
+    #        for construct in data_constructs.values():
+    #            if not construct.has_bounds():
+    #                continue
+    #
+    #            data = construct.get_bounds_data(None)
+    #            if data is None:
+    #                continue
+    #
+    #            x = getattr(data, "get_" + component)(None)
+    #            if x is None:
+    #                continue
+    #
+    #            out.append(x)
+    #
+    #        for construct in self.coordinates(todict=True).values():
+    #            interior_ring = construct.get_interior_ring(None)
+    #            if interior_ring is None:
+    #                continue
+    #
+    #            data = interior_ring.get_data(None)
+    #            if data is None:
+    #                continue
+    #
+    #            x = getattr(data, "get_" + component)(None)
+    #            if x is None:
+    #                continue
+    #
+    #            out.append(x)
+    #
+    #        return out
+    #
+    #    def _get_coordinate_geometry_variables(self, component):
+    #        """Return the list of variables for the geometry coordinates.
+    #
+    #        :Parameters:
+    #
+    #            component: `str`
+    #
+    #        :Returns:
+    #
+    #            `list'
+    #
+    #        """
+    #        out = []
+    #        for construct in self.coordinates(todict=True).values():
+    #            x = getattr(construct, "get_" + component)(None)
+    #            if x is None:
+    #                continue
+    #
+    #            out.append(x)
+    #
+    #        return out
 
     def _one_line_description(self, axis_names_sizes=None):
         """Returns a one-line description of the field."""
@@ -661,6 +661,7 @@ class Field(
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+    @_inplace_enabled(default=False)
     def apply_masking(self, inplace=False):
         """Apply masking as defined by the CF conventions.
 
@@ -731,20 +732,23 @@ class Field(
          [   --    --    --    --    --    --    --    --]]
 
         """
-        if inplace:
-            f = self
-        else:
-            f = self.copy()
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        #        if inplace:
+        #            f = self
+        #        else:
+        #            f = self.copy()
 
         # Apply masking to the field construct
         super(Field, f).apply_masking(inplace=True)
 
         # Apply masking to the metadata constructs
-        for c in f.constructs.filter_by_data(todict=True).values():
-            c.apply_masking(inplace=True)
-
-        if inplace:
-            f = None
+        self._apply_masking_constructs()
+        #        for c in f.constructs.filter_by_data(todict=True).values():
+        #            c.apply_masking(inplace=True)
+        #
+        #        if inplace:
+        #            f = None
 
         return f
 
@@ -1873,29 +1877,29 @@ class Field(
 
         return out
 
-    def has_geometry(self):
-        """Whether any coordinate constructs have cell geometries.
-
-        .. versionadded:: (cfdm) 1.8.7.0
-
-        :Returns:
-
-            `bool`
-                Whether or not there is a geometry type on any coordinate
-                construct.
-
-        **Examples:**
-
-        >>> f = {{package}}.Field()
-        >>> f.has_geometry()
-        False
-
-        """
-        for c in self.coordinates(todict=True).values():
-            if c.has_geometry():
-                return True
-
-        return False
+    #    def has_geometry(self):
+    #        """Whether any coordinate constructs have cell geometries.
+    #
+    #        .. versionadded:: (cfdm) 1.8.7.0
+    #
+    #        :Returns:
+    #
+    #            `bool`
+    #                Whether or not there is a geometry type on any coordinate
+    #                construct.
+    #
+    #        **Examples:**
+    #
+    #        >>> f = {{package}}.Field()
+    #        >>> f.has_geometry()
+    #        False
+    #
+    #        """
+    #        for c in self.coordinates(todict=True).values():
+    #            if c.has_geometry():
+    #                return True
+    #
+    #        return False
 
     @_inplace_enabled(default=False)
     def insert_dimension(self, axis, position=0, inplace=False):

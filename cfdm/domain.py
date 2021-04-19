@@ -5,13 +5,18 @@ from . import core
 
 from . import Constructs
 
-from .decorators import _manage_log_level_via_verbosity, _display_or_return
+from .decorators import (
+    _display_or_return,
+    _inplace_enabled,
+    _inplace_enabled_define_and_cleanup,
+    _manage_log_level_via_verbosity,
+)
 
 
 logger = logging.getLogger(__name__)
 
 
-class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
+class Domain(mixin.FieldDomain, mixin.Container, core.Domain):
     """A domain of the CF data model.
 
     The domain represents a set of discrete "locations" in what
@@ -46,7 +51,7 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
         """
         shape = sorted(
             [
-                domain_axis.get_size()
+                domain_axis.get_size(None)
                 for domain_axis in self.domain_axes(todict=True).values()
             ]
         )
@@ -112,13 +117,13 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
 
         axis_names = self._unique_domain_axis_identities()
 
-        constructs_data_axes = self.constructs.data_axes()
+        construct_data_axes = self.constructs.data_axes()
 
         x = []
         dimension_coordinates = self.dimension_coordinates(todict=True)
         for axis_cid in sorted(self.domain_axes(todict=True)):
             for cid, dim in dimension_coordinates.items():
-                if constructs_data_axes[cid] == (axis_cid,):
+                if construct_data_axes[cid] == (axis_cid,):
                     name = dim.identity(default=f"key%{0}")
                     y = "{0}({1})".format(name, dim.get_data().size)
                     if y != axis_names[axis_cid]:
@@ -134,7 +139,7 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
 
         # Auxiliary coordinates
         x = [
-            _print_item(self, cid, v, constructs_data_axes[cid])
+            _print_item(self, cid, v, construct_data_axes[cid])
             for cid, v in sorted(
                 self.auxiliary_coordinates(todict=True).items()
             )
@@ -145,7 +150,7 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
 
         # Cell measures
         x = [
-            _print_item(self, cid, v, constructs_data_axes[cid])
+            _print_item(self, cid, v, construct_data_axes[cid])
             for cid, v in sorted(self.cell_measures(todict=True).items())
         ]
         if x:
@@ -167,7 +172,7 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
 
         # Domain ancillary variables
         x = [
-            _print_item(self, cid, anc, constructs_data_axes[cid])
+            _print_item(self, cid, anc, construct_data_axes[cid])
             for cid, anc in sorted(
                 self.domain_ancillaries(todict=True).items()
             )
@@ -209,6 +214,132 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
 
         return "\n".join(w)
 
+    def _one_line_description(self, axis_names_sizes=None):
+        """Return a one-line description of the domain.
+
+        :Returns:
+
+            `str`
+                The description.
+
+        """
+        if axis_names_sizes is None:
+            axis_names_sizes = self._unique_domain_axis_identities()
+
+        axis_names = ", ".join(sorted(axis_names_sizes.values()))
+
+        return f"{self.identity('')}{{{axis_names}}}"
+
+    @_inplace_enabled(default=False)
+    def apply_masking(self, inplace=False):
+        """Apply masking as defined by the CF conventions.
+
+        Masking is applied to all metadata constructs with data.
+
+        Masking is applied according to any of the following criteria
+        that are applicable:
+
+        * where data elements are equal to the value of the
+          ``missing_value`` property;
+
+        * where data elements are equal to the value of the
+          ``_FillValue`` property;
+
+        * where data elements are strictly less than the value of the
+          ``valid_min`` property;
+
+        * where data elements are strictly greater than the value of
+          the ``valid_max`` property;
+
+        * where data elements are within the inclusive range specified
+          by the two values of ``valid_range`` property.
+
+        If any of the above properties have not been set the no
+        masking is applied for that method.
+
+        Elements that are already masked remain so.
+
+        .. note:: If using the `apply_masking` method on a construct
+                  that has been read from a dataset with the
+                  ``mask=False`` parameter to the `read` function,
+                  then the mask defined in the dataset can only be
+                  recreated if the ``missing_value``, ``_FillValue``,
+                  ``valid_min``, ``valid_max``, and ``valid_range``
+                  properties have not been updated.
+
+        .. versionadded:: (cfdm) 1.8.9.0
+
+        .. seealso:: `{{package}}.Data.apply_masking`, `read`, `write`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Domain` or `None`
+                A new domain construct with masked values, or `None`
+                if the operation was in-place.
+
+        **Examples:**
+
+        >>> d = cfdm.example_field(0).domain
+        >>> x = d.construct('longitude')
+        >>> x.data[[0, -1]] = cfdm.masked
+        >>> print(x.data.array)
+        [-- 67.5 112.5 157.5 202.5 247.5 292.5 --]
+        >>> cfdm.write(d, 'masked.nc')
+        >>> no_mask = {{package}}.read('masked.nc', domain=True, mask=False)[0]
+        >>> no_mask_x = no_mask.construct('longitude')
+        >>> print(no_mask_x.data.array)
+        [9.96920997e+36 6.75000000e+01 1.12500000e+02 1.57500000e+02
+         2.02500000e+02 2.47500000e+02 2.92500000e+02 9.96920997e+36]
+        >>> masked = no_mask.apply_masking()
+        >>> masked_x = masked.construct('longitude')
+        >>> print(masked_x.data.array)
+        [-- 67.5 112.5 157.5 202.5 247.5
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        # Apply masking to the metadata constructs
+        d._apply_masking_constructs()
+
+        return d
+
+    def climatological_time_axes(self):
+        """Return all axes which are climatological time axes.
+
+        This is ascertained by inspecting the values returned by each
+        coordinate construct's `is_climatology` method.
+
+        .. versionadded:: (cfdm) 1.8.9.0
+
+        :Returns:
+
+            `set`
+                The keys of the domain axeis constructs that are
+                climatological time axes.
+
+        **Examples:**
+
+        >>> d = cfdm.example_field(0)
+        >>> d.climatological_time_axes()
+        set()
+
+        """
+        data_axes = self.constructs.data_axes()
+
+        out = []
+
+        for ckey, c in self.coordinates(todict=True).items():
+            if not c.is_climatology():
+                continue
+
+            out.extend(data_axes.get(ckey, ()))
+
+        return set(out)
+
     @_display_or_return
     def dump(self, display=True, _level=0, _title=None):
         """A full description of the domain.
@@ -241,7 +372,7 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
 
         construct_name = self._unique_construct_names()
 
-        constructs_data_axes = self.constructs.data_axes()
+        construct_data_axes = self.constructs.data_axes()
 
         string = []
 
@@ -259,7 +390,7 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
                     display=False,
                     _level=_level,
                     _title=f"Dimension coordinate: {construct_name[cid]}",
-                    _axes=constructs_data_axes[cid],
+                    _axes=construct_data_axes[cid],
                     _axis_names=axis_to_name,
                 )
             )
@@ -273,7 +404,7 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
                     display=False,
                     _level=_level,
                     _title=f"Auxiliary coordinate: {construct_name[cid]}",
-                    _axes=constructs_data_axes[cid],
+                    _axes=construct_data_axes[cid],
                     _axis_names=axis_to_name,
                 )
             )
@@ -286,7 +417,7 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
                     display=False,
                     _level=_level,
                     _title=f"Domain ancillary: {construct_name[cid]}",
-                    _axes=constructs_data_axes[cid],
+                    _axes=construct_data_axes[cid],
                     _axis_names=axis_to_name,
                 )
             )
@@ -316,7 +447,7 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
                     _key=cid,
                     _level=_level,
                     _title=f"Cell measure: {construct_name[cid]}",
-                    _axes=constructs_data_axes[cid],
+                    _axes=construct_data_axes[cid],
                     _axis_names=axis_to_name,
                 )
             )
@@ -382,3 +513,29 @@ class Domain(mixin.ConstructAccess, mixin.Container, core.Domain):
             return False
 
         return True
+
+    def get_filenames(self):
+        """Return the file names containing the metadata construct data.
+
+        :Returns:
+
+            `set`
+                The file names in normalized, absolute form. If all of
+                the data are in memory then an empty `set` is
+                returned.
+
+        **Examples:**
+
+        >>> d = {{package}}.example_field(0).domain
+        >>> {{package}}.write(d, 'temp_file.nc')
+        >>> e = {{package}}.read('temp_file.nc', domain=True)[0]
+        >>> e.get_filenames()
+        {'temp_file.nc'}
+
+        """
+        out = set()
+
+        for c in self.constructs.filter_by_data().values():
+            out.update(c.get_filenames())
+
+        return out

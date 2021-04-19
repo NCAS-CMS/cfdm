@@ -19,4 +19,4 @@ from .netcdf import (
     NetCDFVariable,
 )
 
-from .constructaccess import ConstructAccess
+from .fielddomain import FieldDomain

@@ -1015,7 +1015,7 @@ class ConstructAccess:
 
         :Returns:
 
-                The removed metadata construct.
+                TODO write me.
 
         **Examples:**
 

@@ -33,6 +33,7 @@ Filtering
    ~cfdm.Constructs.filter_by_ncdim
    ~cfdm.Constructs.filter_by_ncvar
    ~cfdm.Constructs.filter
+   ~cfdm.Constructs.domain_axes
    ~cfdm.Constructs.filters_applied
    ~cfdm.Constructs.clear_filters_applied
    ~cfdm.Constructs.inverse_filter

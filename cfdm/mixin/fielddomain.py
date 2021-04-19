@@ -30,7 +30,7 @@ class FieldDomain:
             c.apply_masking(inplace=True)
 
     def _get_data_compression_variables(self, component):
-        """TODO."""
+        """Get all occurences of a type of compression variable."""
         out = []
 
         data_constructs = self.constructs.filter_by_data(todict=True)
@@ -765,7 +765,7 @@ class FieldDomain:
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `constructs`, `coordinate`, `domain_axis`
+        .. seealso:: `constructs`, `construct_item`, `construct_key`
 
         :Parameters:
 
@@ -794,38 +794,33 @@ class FieldDomain:
 
         :Returns:
 
-                TODO. asdasdssasd.
+                The selected construct.
 
         **Examples:**
 
-        >>> print(f.constructs)
+        >>> f = {{package}}.example_{{class_lower}}(0)
+
+        Select the construct that has the "standard_name" property of
+        'latitude':
+
+        >>> print(f.constructs.filter_by_property(standard_name=None))
         Constructs:
-        {'cellmethod0': {{repr}}<CellMethod: area: mean>,
-         'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+        {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
          'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
-         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: long_name=time(1) days since 2018-12-01 >,
-         'domainaxis0': <{{repr}}DomainAxis: size(5)>,
-         'domainaxis1': <{{repr}}DomainAxis: size(8)>,
-         'domainaxis2': <{{repr}}DomainAxis: size(1)>}
-
-        Select the construct that has the "standard_name" property of 'latitude':
-
+         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: long_name=time(1) days since 2018-12-01 >}
         >>> f.construct('latitude')
         <{{repr}}DimensionCoordinate: latitude(5) degrees_north>
 
-        Select the cell method construct that has a "method" of 'mean':
-
-        >>> f.construct('method:mean')
-        <{{repr}}CellMethod: area: mean>
-
-        Attempt to select the construct whose "standard_name" start with the
-        letter 'l':
+        Attempt to select a unique construct whose "standard_name"
+        start with the letter 'l':
 
         >>> import re
         >>> f.construct(re.compile('^l'))
-        ValueError: Can't return 2 constructs
-        >>> f.construct(re.compile('^l'), default='no construct')
-        'no construct'
+        Traceback
+            ...
+        ValueError: {{class}}.construct() can't return 2 constructs
+        >>> f.construct(re.compile('^l'), default='no unique construct')
+        'no unique construct'
 
         """
         return self._filter_interface(
@@ -846,7 +841,7 @@ class FieldDomain:
 
         .. versionadded:: (cfdm) 1.8.9.0
 
-        .. seealso:: `construct_key`, `constructs`
+        .. seealso:: `constructs`, `construct`, `construct_key`
 
         :Parameters:
 
@@ -878,6 +873,32 @@ class FieldDomain:
             `tuple`
                 The selected construct and its construct identifer.
 
+        **Examples:**
+
+        >>> f = {{package}}.example_{{class_lower}}(0)
+
+        Select the construct that has the "standard_name" property of
+        'latitude':
+
+        >>> print(f.constructs.filter_by_property(standard_name=None))
+        Constructs:
+        {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: long_name=time(1) days since 2018-12-01 >}
+        >>> f.construct_item('latitude')
+        ('dimensioncoordinate1', <{{repr}}DimensionCoordinate: latitude(5) degrees_north>)
+
+        Attempt to select a unique construct whose "standard_name"
+        start with the letter 'l':
+
+        >>> import re
+        >>> f.construct(re.compile('^l'))
+        Traceback
+            ...
+        ValueError: {{class}}.construct() can't return 2 constructs
+        >>> f.construct(re.compile('^l'), default='no unique construct')
+        'no unique construct'
+
         """
         return self._filter_interface(
             (),
@@ -897,7 +918,7 @@ class FieldDomain:
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `construct`, `constructs`
+        .. seealso:: `constructs`, `construct`, `construct_item`
 
         :Parameters:
 
@@ -931,35 +952,29 @@ class FieldDomain:
 
         **Examples:**
 
-        >>> print(f.constructs)
-        Constructs:
-        {'cellmethod0': <{{repr}}ellMethod: area: mean>,
-         'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
-         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
-         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: long_name=time(1) days since 2018-12-01 >,
-         'domainaxis0': <{{repr}}DomainAxis: size(5)>,
-         'domainaxis1': <{{repr}}DomainAxis: size(8)>,
-         'domainaxis2': <{{repr}}DomainAxis: size(1)>}
+        >>> f = {{package}}.example_{{class_lower}}(0)
 
         Select the construct that has the "standard_name" property of
         'latitude':
 
+        >>> print(f.constructs.filter_by_property(standard_name=None))
+        Constructs:
+        {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: long_name=time(1) days since 2018-12-01 >}
         >>> f.construct_key('latitude')
-         'dimensioncoordinate0'
+        'dimensioncoordinate1'
 
-        Select the cell method construct that has a "method" of 'mean':
-
-        >>> f.construct_key('method:mean')
-        'cellmethod0'
-
-        Attempt to select the construct whose "standard_name" start with
-        the letter 'l':
+        Attempt to select a unique construct whose "standard_name"
+        start with the letter 'l':
 
         >>> import re
-        >>> f.construct_key(re.compile('^l'))
-        ValueError: Can't return the key of 2 constructs
-        >>> f.construct_key(re.compile('^l'), default='no construct')
-        'no construct'
+        >>> f.construct(re.compile('^l'))
+        Traceback
+            ...
+        ValueError: {{class}}.construct() can't return 2 constructs
+        >>> f.construct(re.compile('^l'), default='no unique construct')
+        'no unique construct'
 
         """
         return self._filter_interface(
@@ -1103,7 +1118,7 @@ class FieldDomain:
 
         :Returns:
 
-                TODO write me.
+                Whether or not a unique construct can be identified.
 
         **Examples:**
 

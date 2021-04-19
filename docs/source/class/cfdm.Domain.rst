@@ -79,6 +79,7 @@ Miscellaneous
    ~cfdm.Domain.creation_commands
    ~cfdm.Domain.equals
    ~cfdm.Domain.fromconstructs
+   ~cfdm.Domain.has_geometry
 
 Special
 -------
