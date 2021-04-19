@@ -186,14 +186,14 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(len(constructs), n)
 
         # Axis
-        for mode in ("and", "or", "exact", "subset"):
+        for axis_mode in ("and", "or", "exact", "subset"):
             for args in (
                 ["qwerty"],
                 ["domainaxis0"],
                 ["domainaxis0", "domainaxis1"],
                 ["domainaxis0", "domainaxis1", "domainaxis2"],
             ):
-                d = c.filter_by_axis(mode, *args)
+                d = c.filter_by_axis(*args, axis_mode=axis_mode)
                 e = d.inverse_filter()
                 self.assertEqual(len(e), len(c) - len(d))
 
@@ -236,12 +236,14 @@ class ConstructsTest(unittest.TestCase):
         c = self.c
 
         self.assertEqual(len(c.filter_by_axis()), 12)
-        self.assertEqual(len(c.filter_by_axis("or", 0, 1, 2)), 11)
-        self.assertEqual(len(c.filter_by_axis("or", "domainaxis1")), 7)
-        self.assertEqual(len(c.filter_by_axis("or", "grid_longitude")), 6)
+        self.assertEqual(len(c.filter_by_axis(0, 1, 2, axis_mode="or")), 11)
+        self.assertEqual(
+            len(c.filter_by_axis("domainaxis1", axis_mode="or")), 7
+        )
+        self.assertEqual(len(c.filter_by_axis("grid_longitude")), 6)
 
         with self.assertRaises(ValueError):
-            c.filter_by_axis("bad_mode", 1)
+            c.filter_by_axis(0, 1, axis_mode="bad_mode")
 
     def test_Constructs_filter_by_naxes(self):
         """TODO DOCS."""

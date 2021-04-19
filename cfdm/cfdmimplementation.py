@@ -364,18 +364,22 @@ class CFDMImplementation(Implementation):
         """
         # To avoid mutable default argument (an anti-pattern) of axes=[]
         if axes is None:
-            axes = []
+            return field.auxiliary_coordinates(todict=True)
 
         if exact:
-            mode = "exact"
+            axis_mode = "exact"
         else:
-            mode = "and"
+            axis_mode = "and"
 
-        return (
-            field.auxiliary_coordinates()  # TODO OPT
-            .filter_by_axis(mode, *axes)
-            .todict()
+        return field.auxiliary_coordinates(
+            filter_by_axis=axes, axis_mode=axis_mode, todict=True
         )
+
+    #        return (
+    #            field.auxiliary_coordinates()  # TODO OPT
+    #            .filter_by_axis(*axes, axis_mode=mode)
+    #            .todict()
+    #        )
 
     def get_bounds(self, parent, default=None):
         """Return the bounds of a construct.
@@ -590,7 +594,9 @@ class CFDMImplementation(Implementation):
         if data:
             return field.constructs.filter_by_data(todict=True)
 
-        return field.constructs.filter_by_axis("and", *axes, todict=True)
+        return field.constructs.filter_by_axis(
+            *axes, axis_mode="and", todict=True
+        )
 
     def get_coordinate_reference_coordinates(self, coordinate_reference):
         """Return the coordinates of a coordinate reference construct.

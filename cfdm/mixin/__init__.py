@@ -8,6 +8,7 @@ from .parameters import Parameters
 from .parametersdomainancillaries import ParametersDomainAncillaries
 
 from .netcdf import (
+    NetCDFComponents,
     NetCDFGlobalAttributes,
     NetCDFGroupAttributes,
     NetCDFUnlimitedDimension,
@@ -16,6 +17,7 @@ from .netcdf import (
     NetCDFGeometry,
     NetCDFHDF5,
     NetCDFSampleDimension,
+    NetCDFUnreferenced,
     NetCDFVariable,
 )
 

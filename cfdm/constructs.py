@@ -572,12 +572,12 @@ class Constructs(mixin.Container, core.Constructs):
                 The value of the filter method's *todict* parameter.
 
             axis_mode: `str`, optional
-                Provide a value for the *mode* parameter of the
+                Provide a value for the *axis_mode* parameter of the
                 `filter_by_axis` method.
 
             property_mode: `str`, optional
-                Provide a value for the *mode* parameter of the
-                `filter_by_property` method.
+                Provide a value for the *property_mode* parameter of
+                the `filter_by_property` method.
 
             _identity_config: optional
                 Provide a value for the *_config* parameter of the
@@ -1212,8 +1212,8 @@ class Constructs(mixin.Container, core.Constructs):
 
     def filter(
         self,
-        axis_mode=None,
-        property_mode=None,
+        axis_mode="and",
+        property_mode="and",
         todict=False,
         cached=None,
         _identity_config={},
@@ -1330,12 +1330,19 @@ class Constructs(mixin.Container, core.Constructs):
                 ======================  ==============================
 
             axis_mode: `str`, optional
-                Provide a value for the *mode* parameter of the
-                `filter_by_axis` method.
+                Provide a value for the *axis_mode* parameter of the
+                `filter_by_axis` method. By default **axis_mode*
+                is``'and'``.
 
             property_mode: `str`, optional
                 Provide a value for the *mode* parameter of the
-                `filter_by_property` method.
+                `filter_by_property` method. By default
+                **property_mode* is ``'and'``.
+
+            property_mode: `str`, optional
+                Provide a value for the *mode* parameter of the
+                `filter_by_property` method. By default
+                **property_mode* is ``'and'``.
 
             {{todict: `bool`, optional}}
 
@@ -1385,7 +1392,7 @@ class Constructs(mixin.Container, core.Constructs):
         self,
         arg,
         todict,
-        mode,
+        axis_mode,
         axes,
     ):
         """Worker function for `filter_by_axis` and `filter`.
@@ -1395,37 +1402,37 @@ class Constructs(mixin.Container, core.Constructs):
         .. versionadded:: (cfdm) 1.8.9.0
 
         """
-        # Parse the mode parameter
+        # Parse the axis_mode parameter
         _or = False
         _exact = False
         _subset = False
-        if mode in ("and", None):
+        if axis_mode in ("and", None):
             pass
-        elif mode == "or":
+        elif axis_mode == "or":
             _or = True
-        elif mode == "exact":
+        elif axis_mode == "exact":
             _exact = True
-        elif mode == "subset":
+        elif axis_mode == "subset":
             _subset = True
         elif axes:
             raise ValueError(
-                f"filter_by_axis() has incorrect 'mode' value {mode!r}. "
-                "Expected one of  'and', 'or', 'exact', 'subset', None"
+                f"{self.__class__.__name__}.filter_by_axis() has incorrect "
+                f"'axis_mode' value {axis_mode!r}. "
+                "Expected one of 'or', 'and', 'exact', 'subset'"
             )
+
+        filter_applied = {"filter_by_axis": (axes, {"axis_mode": axis_mode})}
 
         if not axes:
             # Return all constructs that could have data if no axes
             # have been provided
             return self._filter_by_data(
-                arg,
-                todict,
-                None,
-                filter_applied={"filter_by_axis": (mode, axes)},
+                arg, todict, None, filter_applied=filter_applied
             )
 
         out, pop = self._filter_preprocess(
             arg,
-            filter_applied={"filter_by_axis": (mode, axes)},
+            filter_applied=filter_applied,
             todict=todict,
         )
 
@@ -1464,8 +1471,8 @@ class Constructs(mixin.Container, core.Constructs):
 
     def filter_by_axis(
         self,
-        mode="and",
         *axes,
+        axis_mode="and",
         todict=False,
         cached=None,
     ):
@@ -1478,29 +1485,9 @@ class Constructs(mixin.Container, core.Constructs):
 
         :Parameters:
 
-            mode: `str`, optional
-                Define the relationship between the given domain axes
-                and the constructs' data.
-
-                ==========  ==========================================
-                *mode*      Description
-                ==========  ==========================================
-                ``'and'``   A construct is selected if it spans *all*
-                            of the given domain axes, *and possibly
-                            others*.
-
-                ``'or'``    A construct is selected if it spans *any*
-                            of the domain axes, *and possibly others*.
-
-                ``exact``   A construct is selected if it spans *all*
-                            of the given domain axes, *and no others*.
-
-                ``subset``  A construct is selected if it spans *a
-                            subset* of the given domain axes, *and no
-                            others*.
-                ==========  ==========================================
-
-                By default *mode* is ``'and'``.
+            mode: `str`
+                Deprecated at version 1.8.9.0. Use the *axis_mode*
+                parameter instead.
 
             axes: optional
                 Select constructs that whose data spans the domain
@@ -1541,6 +1528,32 @@ class Constructs(mixin.Container, core.Constructs):
                 or could have data, spanning any domain axes
                 constructs, are selected.
 
+            axis_mode: `str`
+                Define the relationship between the given domain axes
+                and the constructs' data.
+
+                ===========  =========================================
+                *axis_mode*  Description
+                ===========  =========================================
+                ``'and'``    A construct is selected if it spans *all*
+                             of the given domain axes, *and possibly
+                             others*.
+
+                ``'or'``     A construct is selected if it spans *any*
+                             of the domain axes, *and possibly
+                             others*.
+
+                ``exact``    A construct is selected if it spans *all*
+                             of the given domain axes, *and no
+                             others*.
+
+                ``subset``   A construct is selected if it spans *a
+                             subset* of the given domain axes, *and no
+                             others*.
+                ===========  =========================================
+
+                By default *axis_mode* is ``'and'``.
+
             {{todict: `bool`, optional}}
 
             {{cached: optional}}
@@ -1555,30 +1568,30 @@ class Constructs(mixin.Container, core.Constructs):
         Select constructs whose data spans the "domainaxis1" domain
         axis construct:
 
-        >>> d = c.filter_by_axis('and', 'domainaxis1')
+        >>> d = c.filter_by_axis('domainaxis1')
 
         Select constructs whose data does not span the "domainaxis2"
         domain axis construct:
 
-        >>> d = c.filter_by_axis('and', 'domainaxis2').inverse_filter()
+        >>> d = c.filter_by_axis('domainaxis2').inverse_filter()
 
         Select constructs whose data spans the "domainaxis1", but not
         the "domainaxis2" domain axis constructs:
 
-        >>> d = c.filter_by_axis('and', 'domainaxis1')
-        >>> d = d.filter_by_axis('and', 'domainaxis2')
+        >>> d = c.filter_by_axis('domainaxis1')
+        >>> d = d.filter_by_axis('domainaxis2')
         >>> d  = d.inverse_filter(1)
 
         Select constructs whose data spans the "domainaxis1" or the
         "domainaxis2" domain axis constructs:
 
-        >>> d = c.filter_by_axis('or', 'domainaxis1', 'domainaxis2')
+        >>> d = c.filter_by_axis('domainaxis1', 'domainaxis2', axis_mode="or")
 
         """
         if cached is not None:
             return cached
 
-        return self._filter_by_axis(self, todict, mode, axes)
+        return self._filter_by_axis(self, todict, axis_mode, axes)
 
     def _filter_by_data(self, arg, todict, ignored, filter_applied=None):
         """Worker function for `filter_by_data` and `filter`.
@@ -1697,7 +1710,6 @@ class Constructs(mixin.Container, core.Constructs):
                         break
 
                 identities_kwargs["short"] = short
-            # print        (   identities_kwargs)
 
             generators = {
                 cid: construct.identities(generator=True, **identities_kwargs)
@@ -2409,7 +2421,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         return self._filter_by_ncvar(self, todict, ncvars)
 
-    def _filter_by_property(self, arg, todict, mode, properties):
+    def _filter_by_property(self, arg, todict, property_mode, properties):
         """Worker function for `filter_by_property` and `filter`.
 
         See `filter_by_property`  for details.
@@ -2417,32 +2429,33 @@ class Constructs(mixin.Container, core.Constructs):
         .. versionadded:: (cfdm) 1.8.9.0
 
         """
-        # Parse mode
-        if len(mode) > 1:
-            raise ValueError(
-                f"{self.__class__.__name__}.filter_by_property() "
-                f"accepts at most one positional parameter, got {len(mode)}"
-            )
-
-        if not mode:
-            # mode is 'and' by default
+        if not property_mode:
+            # property_mode is 'and' by default
             _or = False
         else:
-            mode = mode[0]
+            # Parse property_mode
+            if len(property_mode) > 1:
+                raise ValueError(
+                    f"{self.__class__.__name__}.filter_by_property() accepts"
+                    "at most one positional parameter, "
+                    f"got {len(property_mode)}"
+                )
+
+            mode = property_mode[0]
             if mode == "or":
                 _or = True
-            elif mode in ("and", None):
+            elif mode == "and":
                 _or = False
             else:
                 raise ValueError(
-                    f"{self.__class__.__name__}.filter_by_property() "
-                    f"has incorrect 'mode' value ({mode!r}). "
-                    "If set must be one of 'or', 'and', None"
+                    f"{self.__class__.__name__}.filter_by_property() has "
+                    f"incorrect 'property_mode' value ({mode!r}). "
+                    "If set must be one of 'or', 'and'"
                 )
 
         out, pop = self._filter_preprocess(
             arg,
-            filter_applied={"filter_by_property": (mode, properties)},
+            filter_applied={"filter_by_property": (property_mode, properties)},
             todict=todict,
         )
 
@@ -2469,6 +2482,9 @@ class Constructs(mixin.Container, core.Constructs):
                 if value1 is None:
                     ok = False
                 elif value0 is None:
+                    # If a given value is None then match if the
+                    # construct the property, regardless of the
+                    # construct's property value.
                     ok = True
                 else:
                     ok = self._matching_values(value0, construct, value1)
@@ -2484,7 +2500,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         return out
 
-    def filter_by_property(self, *mode, **properties):
+    def filter_by_property(self, *property_mode, **properties):
         """Select metadata constructs by property.
 
         Unlike the other "filter_by_" methods, this method has no
@@ -2507,15 +2523,21 @@ class Constructs(mixin.Container, core.Constructs):
 
         :Parameters:
 
-            mode: optional
+            property_mode: optional
                 Define the behaviour when multiple properties are
-                provided.
+                provided:
 
-                By default (or if the *mode* parameter is ``'and'`` or
-                `None`) a construct is selected if it matches all of
-                the given properties, but if the *mode* parameter is
-                ``'or'`` then a construct will be selected when at
-                least one of its properties matches.
+                ===============  =====================================
+                *property_mode*  Description
+                ===============  =====================================
+                ``'and'``        A construct is selected if it matches
+                                 all of the given properties.
+
+                ``'or'``         A construct is selected when at least
+                                 one of its properties matches.
+                ===============  =====================================
+
+                By default *property_mode* is ``'and'``.
 
             properties:  optional
                 Select constructs that have a CF property, defined by
@@ -2537,8 +2559,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         :Returns:
 
-            `Constructs` or `dict` or *cached*
-                The selected constructs, or a cached valued.
+            `Constructs`
+                The selected constructs.
 
         **Examples:**
 
@@ -2563,7 +2585,7 @@ class Constructs(mixin.Container, core.Constructs):
         >>> d = c.filter_by_property(standard_name=re.compile('^air'))
 
         """
-        return self._filter_by_property(self, False, mode, properties)
+        return self._filter_by_property(self, False, property_mode, properties)
 
     def _filter_by_size(self, arg, todict, sizes):
         """Worker function for `filter_by_size` and `filter`.
