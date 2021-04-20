@@ -241,6 +241,7 @@ class ConstructsTest(unittest.TestCase):
             len(c.filter_by_axis("domainaxis1", axis_mode="or")), 7
         )
         self.assertEqual(len(c.filter_by_axis("grid_longitude")), 6)
+        self.assertEqual(len(c.filter_by_axis(re.compile("^grid_lon"))), 6)
 
         with self.assertRaises(ValueError):
             c.filter_by_axis(0, 1, axis_mode="bad_mode")
