@@ -26,9 +26,6 @@ class Properties(Container):
         """
         return f"{self.identity('')}"
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
     def _dump_properties(self, _prefix="", _level=0, _omit_properties=None):
         """Dump the properties.
 
@@ -166,14 +163,11 @@ class Properties(Container):
 
         properties = self.properties()
         if properties:
-            for prop in self._inherited_properties():
-                properties.pop(prop, None)
-
             out.append(f"{name}.set_properties({properties})")
 
         nc = self.nc_get_variable(None)
         if nc is not None:
-            out.append(f"{name}.nc_set_variable({nc!r})")
+            out.append(f"{name}.nc_set_variable('{nc}')")
 
         if string:
             indent = " " * indent
@@ -258,16 +252,16 @@ class Properties(Container):
 
         Equality is strict by default. This means that:
 
-        * the same descriptive properties must be present, with the same
-          values and data types, and vector-valued properties must also have
-          same the size and be element-wise equal (see the *ignore_properties*
-          and *ignore_data_type* parameters).
+        * the same descriptive properties must be present, with the
+          same values and data types, and vector-valued properties
+          must also have same the size and be element-wise equal (see
+          the *ignore_properties* and *ignore_data_type* parameters).
 
         {{equals tolerance}}
 
-        Any type of object may be tested but, in general, equality is only
-        possible with another object of the same type, or a subclass of
-        one. See the *ignore_type* parameter.
+        Any type of object may be tested but, in general, equality is
+        only possible with another object of the same type, or a
+        subclass of one. See the *ignore_type* parameter.
 
         {{equals netCDF}}
 
@@ -500,27 +494,3 @@ class Properties(Container):
             return g
 
         return list(g)
-
-    def _inherited_properties(self):
-        """Return the properties inherited from a parent construct.
-
-        There are always no inherited properties. This method exists as a
-        convenience to simplify the source code.
-
-        .. versionadded:: (cfdm) 1.8.7.0
-
-        .. seealso:: `properties`
-
-        :Returns:
-
-            `dict`
-                The inherited properties. Always an empty dictionary.
-
-        **Examples:**
-
-        >>> f = {{package}}.{{class}}()
-        >>> f._inherited_properties()
-        {}
-
-        """
-        return {}

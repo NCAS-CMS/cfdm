@@ -145,11 +145,11 @@ class PropertiesDataBounds(PropertiesData):
         components to the original construct, but the latter are also
         subspaced over their corresponding axes.
 
-        Indexing follows rules that are very similar to the numpy indexing
-        rules, the only differences being:
+        Indexing follows rules that are very similar to the numpy
+        indexing rules, the only differences being:
 
-        * An integer index i takes the i-th element but does not reduce
-          the rank by one.
+        * An integer index i takes the i-th element but does not
+          reduce the rank by one.
 
         * When two or more dimensions' indices are sequences of integers
           then these indices work independently along each dimension
@@ -194,7 +194,7 @@ class PropertiesDataBounds(PropertiesData):
         # Subspace the bounds, if there are any.
         self_bounds = self.get_bounds(None)
         if self_bounds is not None:
-            data = self_bounds.get_data(None)
+            data = self_bounds.get_data(None, _units=False, _fill_value=False)
             if data is not None:
                 # There is a bounds array
                 bounds_indices = list(data._parse_indices(indices))
@@ -227,7 +227,7 @@ class PropertiesDataBounds(PropertiesData):
 
         """
         shape = None
-        data = self.get_data(None)
+        data = self.get_data(None, _units=False, _fill_value=False)
         bounds = self.get_bounds(None)
         if data is not None:
             shape = data.shape
@@ -279,11 +279,11 @@ class PropertiesDataBounds(PropertiesData):
         <type 'numpy.dtype'>
 
         """
-        data = self.get_data(None)
+        data = self.get_data(None, _units=False, _fill_value=False)
         if data is not None:
             return data.dtype
 
-        bounds = self.get_bounds_data(None)
+        bounds = self.get_bounds_data(None, _units=False, _fill_value=False)
         if bounds is not None:
             return bounds.dtype
 
@@ -328,11 +328,11 @@ class PropertiesDataBounds(PropertiesData):
         1
 
         """
-        data = self.get_data(None)
+        data = self.get_data(None, _units=False, _fill_value=False)
         if data is not None:
             return data.ndim
 
-        bounds = self.get_bounds_data(None)
+        bounds = self.get_bounds_data(None, _units=False, _fill_value=False)
         if bounds is not None:
             ndim = bounds.ndim
             if self.has_geometry():
@@ -383,11 +383,11 @@ class PropertiesDataBounds(PropertiesData):
         1
 
         """
-        data = self.get_data(None)
+        data = self.get_data(None, _units=False, _fill_value=False)
         if data is not None:
             return data.shape
 
-        bounds = self.get_bounds_data(None)
+        bounds = self.get_bounds_data(None, _units=False, _fill_value=False)
         if bounds is not None:
             shape = bounds.shape
             if self.has_geometry():
@@ -447,42 +447,42 @@ class PropertiesDataBounds(PropertiesData):
     def apply_masking(self, bounds=True, inplace=False):
         """Apply masking as defined by the CF conventions.
 
-        Masking is applied according to any of the following criteria that
-        are applicable:
+        Masking is applied according to any of the following criteria
+        that are applicable:
 
         * where data elements are equal to the value of the
           ``missing_value`` property;
 
-        * where data elements are equal to the value of the ``_FillValue``
-          property;
+        * where data elements are equal to the value of the
+          ``_FillValue`` property;
 
         * where data elements are strictly less than the value of the
           ``valid_min`` property;
 
-        * where data elements are strictly greater than the value of the
-          ``valid_max`` property;
+        * where data elements are strictly greater than the value of
+          the ``valid_max`` property;
 
-        * where data elements are within the inclusive range specified by
-          the two values of ``valid_range`` property.
+        * where data elements are within the inclusive range specified
+          by the two values of ``valid_range`` property.
 
-        If any of the above properties have not been set the no masking is
-        applied for that method.
+        If any of the above properties have not been set the no
+        masking is applied for that method.
 
         The cell bounds, if any, are also masked according to the same
-        criteria as the parent construct. If, however, any of the relevant
-        properties are explicitly set on the bounds instance then their
-        values will be used in preference to those of the parent
-        construct.
+        criteria as the parent construct. If, however, any of the
+        relevant properties are explicitly set on the bounds instance
+        then their values will be used in preference to those of the
+        parent construct.
 
         Elements that are already masked remain so.
 
-        .. note:: If using the `apply_masking` method on a construct that
-                  has been read from a dataset with the ``mask=False``
-                  parameter to the `read` function, then the mask defined
-                  in the dataset can only be recreated if the
-                  ``missing_value``, ``_FillValue``, ``valid_min``,
-                  ``valid_max``, and ``valid_range`` properties have not
-                  been updated.
+        .. note:: If using the `apply_masking` method on a construct
+                  that has been read from a dataset with the
+                  ``mask=False`` parameter to the `read` function,
+                  then the mask defined in the dataset can only be
+                  recreated if the ``missing_value``, ``_FillValue``,
+                  ``valid_min``, ``valid_max``, and ``valid_range``
+                  properties have not been updated.
 
         .. versionadded:: (cfdm) 1.8.2
 
@@ -520,7 +520,7 @@ class PropertiesDataBounds(PropertiesData):
         c = _inplace_enabled_define_and_cleanup(self)
         super(PropertiesDataBounds, c).apply_masking(inplace=True)
 
-        data = c.get_bounds_data(None)
+        data = c.get_bounds_data(None, _units=False, _fill_value=False)
         if data is not None:
             b = c.get_bounds()
 
@@ -573,8 +573,8 @@ class PropertiesDataBounds(PropertiesData):
             {{data_name: `str`, optional}}
 
             bounds_name: `str`, optional
-                The name of the construct's `Bounds` instance created by
-                the returned commands.
+                The name of the construct's `Bounds` instance created
+                by the returned commands.
 
                 *Parameter example:*
                   ``name='bounds1'``
@@ -690,13 +690,14 @@ class PropertiesDataBounds(PropertiesData):
 
         .. versionadded:: (cfdm) 1.8.0
 
-        .. seealso:: `get_node_count`, `has_node_count`, `set_node_count`
+        .. seealso:: `get_node_count`, `has_node_count`,
+                     `set_node_count`
 
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if the node
-                count variable has not been set.
+                Return the value of the *default* parameter if the
+                node count variable has not been set.
 
                 {{default Exception}}
 
@@ -880,23 +881,25 @@ class PropertiesDataBounds(PropertiesData):
 
         Equality is strict by default. This means that:
 
-        * the same descriptive properties must be present, with the same
-          values and data types, and vector-valued properties must also
-          have same the size and be element-wise equal (see the
-          *ignore_properties* and *ignore_data_type* parameters), and
+        * the same descriptive properties must be present, with the
+          same values and data types, and vector-valued properties
+          must also have same the size and be element-wise equal (see
+          the *ignore_properties* and *ignore_data_type* parameters),
+          and
 
         ..
 
-        * if there are data arrays then they must have same shape and data
-          type, the same missing data mask, and be element-wise equal (see
-          the *ignore_data_type* parameter).
+        * if there are data arrays then they must have same shape and
+          data type, the same missing data mask, and be element-wise
+          equal (see the *ignore_data_type* parameter).
 
         ..
 
-        * if there are bounds then their descriptive properties (if any)
-          must be the same and their data arrays must have same shape and
-          data type, the same missing data mask, and be element-wise equal
-          (see the *ignore_properties* and *ignore_data_type* parameters).
+        * if there are bounds then their descriptive properties (if
+          any) must be the same and their data arrays must have same
+          shape and data type, the same missing data mask, and be
+          element-wise equal (see the *ignore_properties* and
+          *ignore_data_type* parameters).
 
         {{equals tolerance}}
 
@@ -1042,7 +1045,7 @@ class PropertiesDataBounds(PropertiesData):
         """
         out = super().get_filenames()
 
-        data = self.get_bounds_data(None)
+        data = self.get_bounds_data(None, _units=False, _fill_value=False)
         if data is not None:
             out.update(data.get_filenames())
 
@@ -1392,15 +1395,22 @@ class PropertiesDataBounds(PropertiesData):
         bounds = super().get_bounds(default=None)
 
         if bounds is None:
-            return super().get_bounds(default=default)
+            if default is None:
+                return
 
-        inherited_properties = self.properties()
+            return self._default(
+                default, f"{self.__class__.__name__} has no bounds"
+            )
 
-        bounds._set_component("inherited_properties", inherited_properties)
+        bounds._set_component(
+            "inherited_properties", self.properties(), copy=False
+        )
 
         return bounds
 
-    def get_bounds_data(self, default=ValueError(), _fill_value=True):
+    def get_bounds_data(
+        self, default=ValueError(), _units=True, _fill_value=True
+    ):
         """Return the bounds data.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -1422,15 +1432,33 @@ class PropertiesDataBounds(PropertiesData):
 
         **Examples:**
 
-        >>> c.get_bounds_data()
-        <{{repr}}Data(96, 2): [[0, ..., 360.0]] degrees_east>
+        >>> f = {{package}}.example_field(0)
+        >>> x = f.construct('latitude')
+        >>> x.get_bounds_data()
+        <{{repr}}Data(5, 2): [[-90.0, ..., 90.0]] degrees_north>
 
         """
         bounds = self.get_bounds(default=None)
         if bounds is None:
-            return self.get_bounds(default=default)
+            if default is None:
+                return
 
-        return bounds.get_data(default=default, _fill_value=_fill_value)
+            return self._default(
+                default, f"{self.__class__.__name__} has no bounds data"
+            )
+
+        data = bounds.get_data(
+            default=None, _units=_units, _fill_value=_fill_value
+        )
+        if data is None:
+            if default is None:
+                return
+
+            return self._default(
+                default, f"{self.__class__.__name__} has no bounds data"
+            )
+
+        return data
 
     @_inplace_enabled(default=False)
     def insert_dimension(self, position, inplace=False):
@@ -1446,10 +1474,10 @@ class PropertiesDataBounds(PropertiesData):
         :Parameters:
 
             position: `int`, optional
-                Specify the position that the new axis will have in the
-                data array. By default the new axis has position 0, the
-                slowest varying position. Negative integers counting from
-                the last position are allowed.
+                Specify the position that the new axis will have in
+                the data array. By default the new axis has position
+                0, the slowest varying position. Negative integers
+                counting from the last position are allowed.
 
                 *Parameter example:*
                   ``position=2``
@@ -1514,7 +1542,8 @@ class PropertiesDataBounds(PropertiesData):
 
         .. versionadded:: (cfdm) 1.8.0
 
-        .. seealso:: `del_node_count`, `get_node_count`, `has_node_count`
+        .. seealso:: `del_node_count`, `get_node_count`,
+                     `has_node_count`
 
         :Parameters:
 
@@ -1522,8 +1551,8 @@ class PropertiesDataBounds(PropertiesData):
                 The node count variable to be inserted.
 
             copy: `bool`, optional
-                If False then do not copy the node count variable prior to
-                insertion. By default it is copied.
+                If False then do not copy the node count variable
+                prior to insertion. By default it is copied.
 
         :Returns:
 
@@ -1593,9 +1622,9 @@ class PropertiesDataBounds(PropertiesData):
     def squeeze(self, axes=None, inplace=False):
         """Remove size one axes from the data array.
 
-        By default all size one axes are removed, but particular size one
-        axes may be selected for removal. Corresponding axes are also
-        removed from the bounds data array, if present.
+        By default all size one axes are removed, but particular size
+        one axes may be selected for removal. Corresponding axes are
+        also removed from the bounds data array, if present.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -1614,8 +1643,8 @@ class PropertiesDataBounds(PropertiesData):
         :Returns:
 
             `{{class}}` or `None`
-                The new construct with removed data axes. If the operation
-                was in-place then `None` is returned.
+                The new construct with removed data axes. If the
+                operation was in-place then `None` is returned.
 
         **Examples:**
 
@@ -1660,14 +1689,15 @@ class PropertiesDataBounds(PropertiesData):
     def transpose(self, axes=None, inplace=False):
         """Permute the axes of the data array.
 
-        Corresponding axes of the bounds data array, if present, are also
-        permuted.
+        Corresponding axes of the bounds data array, if present, are
+        also permuted.
 
         Note that if i) the data array is two-dimensional, ii) the two
         axes have been permuted, and iii) each cell has four bounds
-        values; then columns 1 and 3 (counting from 0) of the bounds axis
-        are swapped to preserve contiguity bounds in adjacent cells. See
-        section 7.1 "Cell Boundaries" of the CF conventions for details.
+        values; then columns 1 and 3 (counting from 0) of the bounds
+        axis are swapped to preserve contiguity bounds in adjacent
+        cells. See section 7.1 "Cell Boundaries" of the CF conventions
+        for details.
 
         .. seealso:: `insert_dimension`, `squeeze`
 
@@ -1717,13 +1747,13 @@ class PropertiesDataBounds(PropertiesData):
         # Transpose the bounds
         # ------------------------------------------------------------
         bounds = c.get_bounds(None)
-        data = c.get_bounds_data(None)
+        data = c.get_bounds_data(None, _fill_value=False)
         if bounds is not None:
             b_axes = axes[:]
             b_axes.extend(list(range(ndim, data.ndim)))
             bounds.transpose(b_axes, inplace=True)
 
-            data = bounds.get_data(None)
+            data = bounds.get_data(None, _fill_value=False)
             if (
                 data is not None
                 and ndim == 2
@@ -1762,9 +1792,9 @@ class PropertiesDataBounds(PropertiesData):
 
         The following type of compression are available:
 
-            * Ragged arrays for discrete sampling geometries (DSG). Three
-              different types of ragged array representation are
-              supported.
+            * Ragged arrays for discrete sampling geometries
+              (DSG). Three different types of ragged array
+              representation are supported.
 
             ..
 
@@ -1779,8 +1809,8 @@ class PropertiesDataBounds(PropertiesData):
         :Returns:
 
             `{{class}}` or `None`
-                The uncompressed construct, or `None` if the operation was
-                in-place.
+                The uncompressed construct, or `None` if the operation
+                was in-place.
 
         **Examples:**
 

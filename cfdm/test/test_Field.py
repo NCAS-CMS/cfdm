@@ -341,6 +341,7 @@ class FieldTest(unittest.TestCase):
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.CellMethod)
 
+        # TODO - remove the next two lines when Python 3.6 is deprecated
         ordered = f.cell_methods().ordered()
         self.assertIsInstance(ordered, collections.OrderedDict)
 

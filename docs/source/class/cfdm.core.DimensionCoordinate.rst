@@ -116,6 +116,21 @@ Geometries
 
    ~cfdm.core.DimensionCoordinate.interior_ring
 
+Climatology
+^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.DimensionCoordinate.del_climatology
+   ~cfdm.core.DimensionCoordinate.get_climatology
+   ~cfdm.core.DimensionCoordinate.is_climatology
+   ~cfdm.core.DimensionCoordinate.set_climatology
+
 Miscellaneous
 -------------
 

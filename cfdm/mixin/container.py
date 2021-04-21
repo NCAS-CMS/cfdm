@@ -43,8 +43,8 @@ class Container:
     def __docstring_substitutions__(self):
         """Define docstring substitutions for the class hierarchy.
 
-        The defined substitutions apply to this class along with
-        all of its subclasses.
+        The defined substitutions apply to this class along with all
+        of its subclasses.
 
         These are in addtion to, and take precendence over, docstring
         substitutions defined by the base classes of this class.
@@ -102,8 +102,8 @@ class Container:
         """Whether two objects are the same.
 
         Equality either uses one or other of the objects `!equals`
-        methods, or casts them as numpy arrays and carried aout numericlly
-        tolerant equality checks.
+        methods, or casts them as numpy arrays and carried aout
+        numericlly tolerant equality checks.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -202,12 +202,12 @@ class Container:
         * If the LHS operand is (object identity) the RHS operand then
           return True.
 
-        * If ignore_type=False and the LHS operand is not of the same type, or
-          a squblcass of, the RHS operand then return False
+        * If ignore_type=False and the LHS operand is not of the same
+          type, or a squblcass of, the RHS operand then return False
 
-        * If ignore_type=True and the LHS operand is not of the same type,
-          or a sublcass of, the RHS operand then instantiate a new
-          instance based on the the RHS class and return it.
+        * If ignore_type=True and the LHS operand is not of the same
+          type, or a sublcass of, the RHS operand then instantiate a
+          new instance based on the the RHS class and return it.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -228,15 +228,34 @@ class Container:
 
         return other
 
-    def _iter(self, body=None, pre=None, post=None, short=False, **kwargs):
+    def _iter(self, body, pre=None, post=None, short=False, **kwargs):
         """General purpose iterator.
 
         .. versionadded:: (cfdm) 1.8.9.0
 
-        :Returns:
+        :Parameters:
+
+            body: iterable
+               An iterable to step through.
+
+            pre: sequence of iterable, optional
+               Iterables to step through before *body* is iterated.
+
+            post: sequence of iterable, optional
+               Iterables to step through after *body* has been
+               iterated.
+
+            short: `bool`, optional
+                If True then stop after the first element of either
+                *pre*, *body* or *post* is realized.
+
+            kwargs: optional
+                Ignored.
+
+        :Return:
 
             generator
-                TODO
+                The elements of *pre*, *body* and *post*.
 
         """
         if pre:

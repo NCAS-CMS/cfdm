@@ -55,6 +55,7 @@ Metadata constructs
    ~cfdm.Domain.dimension_coordinates
    ~cfdm.Domain.domain_ancillaries
    ~cfdm.Domain.domain_axes
+   ~cfdm.Domain.climatological_time_axes
    
 .. rubric:: Attributes
    
@@ -80,7 +81,9 @@ Miscellaneous
    ~cfdm.Domain.equals
    ~cfdm.Domain.fromconstructs
    ~cfdm.Domain.has_geometry
-
+   ~cfdm.Domain.apply_masking   
+   ~cfdm.Domain.get_filenames
+   
 Special
 -------
 

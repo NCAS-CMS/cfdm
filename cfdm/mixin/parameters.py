@@ -25,16 +25,6 @@ class Parameters(Container):
         """
         return bool(self.parameters())
 
-    def __nonzero__(self):
-        """Called by the `bool` built-in function.
-
-        x.__nonzero__() <==> bool(x)
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        """
-        return bool(self.parameters())
-
     def __str__(self):
         """Called by the `str` built-in function.
 
@@ -61,16 +51,16 @@ class Parameters(Container):
 
         Equality is strict by default. This means that:
 
-        * the named parameters must be the same, with the same values and
-          data types, and vector-valued parameters must also have same the
-          size and be element-wise equal (see the *ignore_data_type*
-          parameter).
+        * the named parameters must be the same, with the same values
+          and data types, and vector-valued parameters must also have
+          same the size and be element-wise equal (see the
+          *ignore_data_type* parameter).
 
         {{equals tolerance}}
 
-        Any type of object may be tested but, in general, equality is only
-        possible with another object of the same type, or a subclass of
-        one. See the *ignore_type* parameter.
+        Any type of object may be tested but, in general, equality is
+        only possible with another object of the same type, or a
+        subclass of one. See the *ignore_type* parameter.
 
         :Parameters:
 
@@ -115,8 +105,8 @@ class Parameters(Container):
         parameters1 = other.parameters()
         if set(parameters0) != set(parameters1):
             logger.info(
-                f"{self.__class__.__name__}: Different parameter-valued terms "
-                f"({set(parameters0)} != {set(parameters1)})"
+                f"{self.__class__.__name__}: Different parameter-valued "
+                f"terms: {set(parameters0)} != {set(parameters1)}"
             )  # pragma: no cover
             return False
 
@@ -139,8 +129,8 @@ class Parameters(Container):
                 ignore_type=ignore_type,
             ):
                 logger.info(
-                    f"{self.__class__.__name__}: Unequal {term!r} terms "
-                    f"({value0!r} != {value1!r})"
+                    f"{self.__class__.__name__}: Unequal {term!r} terms: "
+                    f"{value0!r} != {value1!r}"
                 )  # pragma: no cover
                 return False
 

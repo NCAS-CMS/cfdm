@@ -242,6 +242,7 @@ class ConstructsTest(unittest.TestCase):
         )
         self.assertEqual(len(c.filter_by_axis("grid_longitude")), 6)
         self.assertEqual(len(c.filter_by_axis(re.compile("^grid_lon"))), 6)
+        self.assertEqual(len(c.filter_by_axis(re.compile("^grid"))), 12)
 
         with self.assertRaises(ValueError):
             c.filter_by_axis(0, 1, axis_mode="bad_mode")
@@ -272,7 +273,7 @@ class ConstructsTest(unittest.TestCase):
                 self.assertEqual(len(e), len(c) - len(d))
 
         with self.assertRaises(ValueError):
-            c.filter_by_property("mode1", "mode2")
+            c.filter_by_property("too many", "modes")
 
         with self.assertRaises(ValueError):
             c.filter_by_property("bad_mode")
@@ -286,9 +287,6 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(len(c.filter_by_size()), 4)
         self.assertEqual(len(c.filter_by_size(-1)), 0)
 
-        _, construct = c.filter_by_size(9, todict=True).popitem()
-        self.assertIsInstance(construct, cfdm.DomainAxis)
-
     def test_Constructs_filter_by_key(self):
         """TODO DOCS."""
         c = self.c
@@ -296,6 +294,7 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(len(c.filter_by_key()), 20)
         self.assertEqual(len(c.filter_by_key("qwerty")), 0)
         self.assertEqual(len(c.filter_by_key("dimensioncoordinate1")), 1)
+        self.assertEqual(len(c.filter_by_key(re.compile("^dim"))), 4)
 
     def test_Constructs_copy(self):
         """TODO DOCS."""

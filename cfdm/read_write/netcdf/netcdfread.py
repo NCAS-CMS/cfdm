@@ -1629,10 +1629,13 @@ class NetCDFRead(IORead):
     def _customize_read_vars(self):
         """Customize the read parameters.
 
+        This method is primarily aimed at providing a customization
+        entry point for subclasses.
+
         .. versionadded:: (cfdm) 1.7.3
 
         """
-        pass  # TODO do something here?
+        pass
 
     def _get_variables_from_external_files(self, netcdf_external_variables):
         """Get external variables from external files.
@@ -3189,12 +3192,12 @@ class NetCDFRead(IORead):
             for node_ncvar in geometry["node_coordinates"]:
                 found = any(
                     [
-                        (self.implementation.get_bounds_ncvar(a) == node_ncvar)
-                        for a in f.auxiliary_coordinates().values()
+                        self.implementation.get_bounds_ncvar(a) == node_ncvar
+                        for a in self.implementation.get_auxiliary_coordinates(
+                            f
+                        ).values()
                     ]
                 )
-                # TODO: replace f.auxiliary_coordinates() wth
-                # self.implementation call
                 if found:
                     continue
 

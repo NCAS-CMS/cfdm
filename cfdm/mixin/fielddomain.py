@@ -50,7 +50,9 @@ class FieldDomain:
             if not construct.has_bounds():
                 continue
 
-            data = construct.get_bounds_data(None)
+            data = construct.get_bounds_data(
+                None, _units=False, _fill_value=False
+            )
             if data is None:
                 continue
 
@@ -65,7 +67,9 @@ class FieldDomain:
             if interior_ring is None:
                 continue
 
-            data = interior_ring.get_data(None)
+            data = interior_ring.get_data(
+                None, _units=False, _fill_value=False
+            )
             if data is None:
                 continue
 
@@ -348,7 +352,9 @@ class FieldDomain:
 
                 {{displayed identity}}
 
-            {{filter_kwargs: optional}}
+            {{filter_kwargs: optional}} Also to configure the returned value.
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -402,7 +408,9 @@ class FieldDomain:
 
                 {{displayed identity}}
 
-            {{filter_kwargs: optional}}
+            {{filter_kwargs: optional}} Also to configure the returned value.
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -459,7 +467,9 @@ class FieldDomain:
 
                 {{displayed identity}}
 
-            {{filter_kwargs: optional}}
+            {{filter_kwargs: optional}} Also to configure the returned value.
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -520,6 +530,8 @@ class FieldDomain:
                 {{default Exception}}
 
             {{filter_kwargs: optional}}
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -589,7 +601,9 @@ class FieldDomain:
 
                 {{displayed identity}}
 
-            {{filter_kwargs: optional}}
+            {{filter_kwargs: optional}} Also to configure the returned value.
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -651,7 +665,9 @@ class FieldDomain:
 
                 {{displayed identity}}
 
-            {{filter_kwargs: optional}}
+            {{filter_kwargs: optional}} Also to configure the returned value.
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -685,7 +701,9 @@ class FieldDomain:
 
                 {{displayed identity}}
 
-            {{filter_kwargs: optional}}
+            {{filter_kwargs: optional}} Also to configure the returned value.
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -737,7 +755,9 @@ class FieldDomain:
 
                 {{displayed identity}}
 
-            {{filter_kwargs: optional}}
+            {{filter_kwargs: optional}} Also to configure the returned value.
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -791,6 +811,8 @@ class FieldDomain:
                 {{default Exception}}
 
             {{filter_kwargs: optional}}
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -867,6 +889,8 @@ class FieldDomain:
                 {{default Exception}}
 
             {{filter_kwargs: optional}}
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -945,6 +969,8 @@ class FieldDomain:
 
             {{filter_kwargs: optional}}
 
+                .. versionadded:: (cfdm) 1.8.9.0
+
         :Returns:
 
             `str`
@@ -1017,6 +1043,8 @@ class FieldDomain:
                 {{default Exception}}
 
             {{filter_kwargs: optional}}
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -1115,6 +1143,8 @@ class FieldDomain:
                 .. versionadded:: (cfdm) 1.8.9.0
 
             {{filter_kwargs: optional}}
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 

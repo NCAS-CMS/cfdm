@@ -7,13 +7,7 @@ Special docstring substitutions, as defined by a class's
 `_docstring_special_substitutions` method, may be used in the
 replacement text, and will be substituted as usual.
 
-Replacement text may contain other non-special substitutions.
-
-.. note:: The values are only checked once for embedded non-special
-          substitutions, so if the embedded substitution itself
-          contains a non-special substitution then the latter will
-          *not* be replaced. This restriction is to prevent the
-          possibility of infinite recursion.
+Replacement text may not contain other non-special substitutions.
 
 Keys must be `str` or `re.Pattern` objects:
 

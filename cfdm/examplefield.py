@@ -11,6 +11,8 @@ def example_field(n, _implementation=_implementation):
 
     .. versionadded:: (cfdm) 1.8.0
 
+    .. seealso:: `cfdm.example_fields`, `cfdm.example_domain`
+
     :Parameters:
 
         n: `int`
@@ -5100,9 +5102,9 @@ def example_field(n, _implementation=_implementation):
 def example_fields(*n, _func=example_field):
     """Return example field constructs.
 
-    .. versionadded:: (cfdm) 1.9.0.0
+    .. versionadded:: (cfdm) 1.8.9.0
 
-    .. seealso:: `cfdm.example_field`
+    .. seealso:: `cfdm.example_field`, `cfdm.example_domain`
 
     :Parameters:
 
@@ -5204,6 +5206,8 @@ def example_domain(n, _func=example_field):
 
     .. versionadded:: (cfdm) 1.8.9.0
 
+    .. seealso:: `cfdm.example_field`, `cfdm.example_fields`
+
     :Parameters:
 
         n: `int`
@@ -5218,17 +5222,18 @@ def example_domain(n, _func=example_field):
             ``1``  A domain construct with at least one of every
                    possible type of metadata construct.
 
-            ``2``  TODO A domain construct that contains a monthly time
+            ``2``  A domain construct dimension coordinate constructs
+                   with bounds.
                    series at each latitude-longitude location.
 
-            ``3``  TODO A field construct that contains discrete sampling
-                   geometry (DSG) "timeSeries" features.
+            ``3``  A domain construct for discrete sampling geometry
+                   (DSG) "timeSeries" features.
 
-            ``4``  TODO A field construct that contains discrete sampling
-                   geometry (DSG) "timeSeriesProfile" features.
+            ``4``  A domain construct or discrete sampling geometry
+                   (DSG) "timeSeriesProfile" features.
 
-            ``5``  TODO A field construct that contains a 12 hourly time
-                   series at each latitude-longitude location.
+            ``5``  A domain construct dimension coordinate constructs
+                   with bounds.
 
             ``6``  A domain construct that has polygon geometry
                    coordinate cells with interior ring variables.
@@ -5246,7 +5251,7 @@ def example_domain(n, _func=example_field):
 
     :Returns:
 
-        `Domain
+        `Domain`
             The example domain construct.
 
     **Examples:**

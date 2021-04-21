@@ -9,7 +9,6 @@ from . import Index
 from . import List
 
 from .constants import masked as cfdm_masked
-from .core.functions import deepcopy
 
 from .data import (
     RaggedContiguousArray,
@@ -304,7 +303,7 @@ class Field(
         (1, 10, 1)
 
         """
-        data = self.get_data()
+        data = self.get_data(_fill_value=False)
 
         indices = data._parse_indices(indices)
         indices = tuple(indices)
@@ -473,7 +472,9 @@ class Field(
 
                 {{displayed identity}}
 
-            {{filter_kwargs: optional}}
+            {{filter_kwargs: optional}} Also to configure the returned value.
+
+                 .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -532,7 +533,9 @@ class Field(
 
                  {{displayed identity}}
 
-             {{filter_kwargs: optional}}
+             {{filter_kwargs: optional}} Also to configure the returned value.
+
+                 .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -665,21 +668,11 @@ class Field(
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        #        if inplace:
-        #            f = self
-        #        else:
-        #            f = self.copy()
-
         # Apply masking to the field construct
         super(Field, f).apply_masking(inplace=True)
 
         # Apply masking to the metadata constructs
         self._apply_masking_constructs()
-        #        for c in f.constructs.filter_by_data(todict=True).values():
-        #            c.apply_masking(inplace=True)
-        #
-        #        if inplace:
-        #            f = None
 
         return f
 
@@ -982,7 +975,7 @@ class Field(
 
                 # Initialise the compressed data for the metadata
                 # construct
-                data = c.get_data(None)
+                data = c.get_data(None, _fill_value=False)
                 if data is not None:
                     compressed_data = _empty_compressed_data(data, (N,))
 
@@ -1018,7 +1011,7 @@ class Field(
                 data._set_CompressedArray(y, copy=False)
 
                 if c.has_bounds():
-                    data = c.get_bounds_data(None)
+                    data = c.get_bounds_data(None, _fill_value=False)
                     if data is None:
                         continue
 
@@ -1060,7 +1053,7 @@ class Field(
 
         f = _inplace_enabled_define_and_cleanup(self)
 
-        data = f.get_data(None)
+        data = f.get_data(None, _fill_value=False)
         if data is None:
             return f
 
@@ -1784,11 +1777,15 @@ class Field(
         """Return the domain.
 
         .. versionadded:: (cfdm) 1.7.0
+
         .. seealso:: `domain`
+
         :Returns:
             `Domain`
                  The domain.
+
         **Examples:**
+
         >>> d = f.get_domain()
 
         """
@@ -1797,8 +1794,7 @@ class Field(
         # Set climatological time axes for the domain
         climatological_time_axes = self.climatological_time_axes()
         if climatological_time_axes:
-            coordinates = self.coordinates
-            for key, c in coordinates.items():
+            for key, c in self.coordinates(todict=True).items():
                 axes = self.get_data_axes(key, default=())
                 if len(axes) == 1 and axes[0] in climatological_time_axes:
                     c.set_climatology(True)
@@ -2228,9 +2224,8 @@ class Field(
         except ValueError as error:
             raise ValueError(f"Can't transpose data: {error}")
 
-        ndim = f.data.ndim
         if iaxes is None:
-            iaxes = tuple(range(ndim - 1, -1, -1))
+            iaxes = tuple(range(f.data.ndim - 1, -1, -1))
 
         data_axes = f.get_data_axes(default=None)
 
@@ -2245,7 +2240,9 @@ class Field(
             for key, construct in f.constructs.filter_by_data(
                 todict=True
             ).items():
-                data = construct.get_data(None)
+                data = construct.get_data(
+                    None, _units=False, _fill_value=False
+                )
                 if data is None:
                     continue
 

@@ -375,12 +375,6 @@ class CFDMImplementation(Implementation):
             filter_by_axis=axes, axis_mode=axis_mode, todict=True
         )
 
-    #        return (
-    #            field.auxiliary_coordinates()  # TODO OPT
-    #            .filter_by_axis(*axes, axis_mode=mode)
-    #            .todict()
-    #        )
-
     def get_bounds(self, parent, default=None):
         """Return the bounds of a construct.
 
@@ -439,6 +433,7 @@ class CFDMImplementation(Implementation):
         :Returns:
 
         """
+        # TODO - remove the ".ordered()" when Python 3.6 is deprecated
         return field.cell_methods().ordered()
 
     def get_cell_method_axes(self, cell_method, default=None):

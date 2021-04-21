@@ -75,7 +75,9 @@ class Constructs(mixin.Container, core.Constructs):
 
                 {{displayed identity}}
 
-            {{filter_kwargs: optional}}
+            {{filter_kwargs: optional}} Also to configure the returned value.
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -565,8 +567,8 @@ class Constructs(mixin.Container, core.Constructs):
                 The name of a filter method (e.g. "filter_by_data").
 
             args: sequence or `dict`
-                The input arguments for the filter method
-                (e.g. "_filter_by_data").
+                The input arguments for the filter method defined by
+                *method*.
 
             todict: `bool`
                 The value of the filter method's *todict* parameter.
@@ -590,7 +592,10 @@ class Constructs(mixin.Container, core.Constructs):
                 underscore filter method.
 
         """
-        out = (todict,)
+        out = (args, todict)
+
+        if method == "filter_by_type":
+            return out
 
         if method == "filter_by_identity":
             out += (_identity_config,)
@@ -598,8 +603,6 @@ class Constructs(mixin.Container, core.Constructs):
             out += (axis_mode,)
         elif method == "filter_by_property":
             out += ((property_mode,),)
-
-        out += (args,)
 
         return out
 
@@ -668,7 +671,8 @@ class Constructs(mixin.Container, core.Constructs):
 
             basic: `bool`
                 If True then replace the expensive `_equals` method
-                with ``==``.
+                with ``==``. In this case, *construct* is not used and
+                may take any value.
 
         :Returns:
 
@@ -1158,7 +1162,9 @@ class Constructs(mixin.Container, core.Constructs):
 
                 {{displayed identity}}
 
-            {{filter_kwargs: optional}}
+            {{filter_kwargs: optional}} Also to configure the returned value.
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -1245,7 +1251,7 @@ class Constructs(mixin.Container, core.Constructs):
            ...              filter_by_identity=['time'],
            ...              todict=True)
 
-        is equivalent to, but faster, than
+        is equivalent to, but faster than
 
            >>> c2 = c.filter_by_type('dimension_coordinate')
            >>> d = c2.filter_by_identity('time', todict=True)
@@ -1266,8 +1272,9 @@ class Constructs(mixin.Container, core.Constructs):
             filters: optional
                 Keyword arguments defining the filters to apply. Each
                 filter keyword defines a filter method, and its value
-                provides the arguments for that method. For instance,
-                the parameter ``filter_by_type=['domain_axis']`` will
+                provides the arguments for that method.
+
+                For instance, ``filter_by_type=['domain_axis']`` will
                 cause the `filter_by_type` method to be called with
                 positional arguments ``*['domain_axis']``.
 
@@ -1331,18 +1338,13 @@ class Constructs(mixin.Container, core.Constructs):
 
             axis_mode: `str`, optional
                 Provide a value for the *axis_mode* parameter of the
-                `filter_by_axis` method. By default **axis_mode*
-                is``'and'``.
+                `filter_by_axis` method. By default *axis_mode* is
+                ``'and'``.
 
             property_mode: `str`, optional
-                Provide a value for the *mode* parameter of the
-                `filter_by_property` method. By default
-                **property_mode* is ``'and'``.
-
-            property_mode: `str`, optional
-                Provide a value for the *mode* parameter of the
-                `filter_by_property` method. By default
-                **property_mode* is ``'and'``.
+                Provide a value for the *property_mode* parameter of
+                the `filter_by_property` method. By default
+                *property_mode* is ``'and'``.
 
             {{todict: `bool`, optional}}
 
@@ -1366,6 +1368,7 @@ class Constructs(mixin.Container, core.Constructs):
             return out
 
         out = self
+
         for method, args in filters.items():
             try:
                 filter_method = getattr(self, "_" + method)
@@ -1391,9 +1394,9 @@ class Constructs(mixin.Container, core.Constructs):
     def _filter_by_axis(
         self,
         arg,
+        axes,
         todict,
         axis_mode,
-        axes,
     ):
         """Worker function for `filter_by_axis` and `filter`.
 
@@ -1427,7 +1430,7 @@ class Constructs(mixin.Container, core.Constructs):
             # Return all constructs that could have data if no axes
             # have been provided
             return self._filter_by_data(
-                arg, todict, None, filter_applied=filter_applied
+                arg, None, todict, filter_applied=filter_applied
             )
 
         out, pop = self._filter_preprocess(
@@ -1510,15 +1513,7 @@ class Constructs(mixin.Container, core.Constructs):
                   dimension, then the corresponding domain axis
                   construct is specified.
 
-                * The unique domain axis constuct spanned by all of
-                  the 1-d coordinate constructs that have an idepppntity,
-                  defined by their `!identities` methods, that matches
-                  a given value. For instance, ``'time'`` could define
-                  the domain axis construct spanned by all 1-d
-                  coordinate constructs that have ``'time'`` as an
-                  identity.
-
-                * A domain axis construict identity, defined by their
+                * A domain axis construct identity, defined by its
                   `!identities` methods. In this case a value may be
                   any object that can match via the ``==`` operator,
                   or a `re.Pattern` object that matches via its
@@ -1591,18 +1586,25 @@ class Constructs(mixin.Container, core.Constructs):
         if cached is not None:
             return cached
 
-        return self._filter_by_axis(self, todict, axis_mode, axes)
+        return self._filter_by_axis(self, axes, todict, axis_mode)
 
-    def _filter_by_data(self, arg, todict, ignored, filter_applied=None):
+    def _filter_by_data(self, arg, ignored, todict, filter_applied=None):
         """Worker function for `filter_by_data` and `filter`.
 
         See `filter_by_data` for details.
+
+        :Parameters:
+
+            ignored:
+                This paramaeter is always ignored, but needs to be set
+                to something in order to satisfy with the `filter`
+                API.
 
         .. versionadded:: (cfdm) 1.8.9.0
 
         """
         return self._filter_by_type(
-            arg, todict, self._array_constructs, filter_applied=filter_applied
+            arg, self._array_constructs, todict, filter_applied=filter_applied
         )
 
     def filter_by_data(self, todict=False, cached=None):
@@ -1639,14 +1641,14 @@ class Constructs(mixin.Container, core.Constructs):
         if cached is not None:
             return cached
 
-        return self._filter_by_data(self, todict, None, filter_applied=None)
+        return self._filter_by_data(self, None, todict, filter_applied=None)
 
     def _filter_by_identity(
         self,
         arg,
+        identities,
         todict,
         _config,
-        identities,
     ):
         """Worker function for `filter_by_identity` and `filter`.
 
@@ -1700,8 +1702,6 @@ class Constructs(mixin.Container, core.Constructs):
             else:
                 constructs = out
 
-            # Dictionary of construct identifiers and construct
-            # identity generators
             if "short" not in identities_kwargs:
                 short = True
                 for value0 in identities:
@@ -1711,19 +1711,18 @@ class Constructs(mixin.Container, core.Constructs):
 
                 identities_kwargs["short"] = short
 
+            # Dictionary of construct identifiers and construct
+            # identity generators
             generators = {
                 cid: construct.identities(generator=True, **identities_kwargs)
                 for cid, construct in constructs.items()
             }
 
-            constructs = constructs.values()
-
             for values in zip_longest(*generators.values(), fillvalue=None):
                 # Loop round the each construct's next identity
-                for (cid, generator), construct, value1 in zip(
-                    generators.items(), constructs, values
+                for (cid, generator), value1 in zip(
+                    generators.items(), values
                 ):
-                    # print (repr(construct), value1)
                     if value1 is None:
                         # This construct has run out of identities
                         continue
@@ -1731,7 +1730,7 @@ class Constructs(mixin.Container, core.Constructs):
                     # Loop round the given values
                     for value0 in identities:
                         if self._matching_values(
-                            value0, construct, value1, basic=True
+                            value0, None, value1, basic=True
                         ):
                             generator.close()
                             hits.append(value0)
@@ -1834,14 +1833,9 @@ class Constructs(mixin.Container, core.Constructs):
         if cached is not None:
             return cached
 
-        return self._filter_by_identity(
-            self,
-            todict,
-            _config,
-            identities,
-        )
+        return self._filter_by_identity(self, identities, todict, _config)
 
-    def _filter_by_key(self, arg, todict, keys):
+    def _filter_by_key(self, arg, keys, todict):
         """Worker function for `filter_by_key` and `filter`.
 
         See `filter_by_key` for details.
@@ -1859,7 +1853,16 @@ class Constructs(mixin.Container, core.Constructs):
             return out
 
         for cid in tuple(out):
-            if cid not in keys:
+            if cid in keys:
+                continue
+
+            ok = False
+            for value0 in keys:
+                ok = self._matching_values(value0, None, cid, basic=True)
+                if ok:
+                    break
+
+            if not ok:
                 pop(cid)
 
         return out
@@ -1882,8 +1885,7 @@ class Constructs(mixin.Container, core.Constructs):
                 If no keys are provided then all constructs are
                 selected.
 
-                A value may be any object that can match a construct
-                identifer via the ``==`` operator.
+                {{value match}}
 
             {{todict: `bool`, optional}}
 
@@ -1909,9 +1911,9 @@ class Constructs(mixin.Container, core.Constructs):
         if cached is not None:
             return cached
 
-        return self._filter_by_key(self, todict, keys)
+        return self._filter_by_key(self, keys, todict)
 
-    def _filter_by_measure(self, arg, todict, measures):
+    def _filter_by_measure(self, arg, measures, todict):
         """Worker function for `filter_by_measure` and `filter`.
 
         See `filter_by_measure` for details.
@@ -1944,7 +1946,7 @@ class Constructs(mixin.Container, core.Constructs):
             if value1 is not None:
                 for value0 in measures:
                     ok = self._matching_values(
-                        value0, construct, value1, basic=True
+                        value0, None, value1, basic=True
                     )
                     if ok:
                         break
@@ -2028,9 +2030,9 @@ class Constructs(mixin.Container, core.Constructs):
         if cached is not None:
             return cached
 
-        return self._filter_by_measure(self, todict, measures)
+        return self._filter_by_measure(self, measures, todict)
 
-    def _filter_by_method(self, arg, todict, methods):
+    def _filter_by_method(self, arg, methods, todict):
         """Worker function for `filter_by_measure` and `filter`.
 
         See `filter_by_method` for details.
@@ -2063,7 +2065,7 @@ class Constructs(mixin.Container, core.Constructs):
             if value1 is not None:
                 for value0 in methods:
                     ok = self._matching_values(
-                        value0, construct, value1, basic=True
+                        value0, None, value1, basic=True
                     )
                     if ok:
                         break
@@ -2142,9 +2144,9 @@ class Constructs(mixin.Container, core.Constructs):
         if cached is not None:
             return cached
 
-        return self._filter_by_method(self, todict, methods)
+        return self._filter_by_method(self, methods, todict)
 
-    def _filter_by_naxes(self, arg, todict, naxes):
+    def _filter_by_naxes(self, arg, naxes, todict):
         """Worker function for `filter_by_naxes` and `filter`.
 
         See `filter_by_naxes` for details.
@@ -2156,7 +2158,7 @@ class Constructs(mixin.Container, core.Constructs):
             # If no naxes have been provided then return all
             # constructs that could have data
             return self._filter_by_data(
-                arg, todict, None, filter_applied={"filter_by_naxes": naxes}
+                arg, None, todict, filter_applied={"filter_by_naxes": naxes}
             )
 
         out, pop = self._filter_preprocess(
@@ -2228,9 +2230,9 @@ class Constructs(mixin.Container, core.Constructs):
         if cached is not None:
             return cached
 
-        return self._filter_by_naxes(self, todict, naxes)
+        return self._filter_by_naxes(self, naxes, todict)
 
-    def _filter_by_ncdim(self, arg, todict, ncdims):
+    def _filter_by_ncdim(self, arg, ncdims, todict):
         """Worker function for `filter_by_ncdim` and `filter`.
 
         See `filter_by_ncdim` for details.
@@ -2268,7 +2270,7 @@ class Constructs(mixin.Container, core.Constructs):
             if value1 is not None:
                 for value0 in ncdims:
                     ok = self._matching_values(
-                        value0, construct, value1, basic=True
+                        value0, None, value1, basic=True
                     )
                     if ok:
                         break
@@ -2324,9 +2326,9 @@ class Constructs(mixin.Container, core.Constructs):
         if cached is not None:
             return cached
 
-        return self._filter_by_ncdim(self, todict, ncdims)
+        return self._filter_by_ncdim(self, ncdims, todict)
 
-    def _filter_by_ncvar(self, arg, todict, ncvars):
+    def _filter_by_ncvar(self, arg, ncvars, todict):
         """Worker function for `filter_by_ncvar` and `filter`.
 
         See `filter_by_ncvar` for details.
@@ -2364,7 +2366,7 @@ class Constructs(mixin.Container, core.Constructs):
             if value1 is not None:
                 for value0 in ncvars:
                     ok = self._matching_values(
-                        value0, construct, value1, basic=True
+                        value0, None, value1, basic=True
                     )
                     if ok:
                         break
@@ -2419,9 +2421,9 @@ class Constructs(mixin.Container, core.Constructs):
         if cached is not None:
             return cached
 
-        return self._filter_by_ncvar(self, todict, ncvars)
+        return self._filter_by_ncvar(self, ncvars, todict)
 
-    def _filter_by_property(self, arg, todict, property_mode, properties):
+    def _filter_by_property(self, arg, properties, todict, property_mode):
         """Worker function for `filter_by_property` and `filter`.
 
         See `filter_by_property`  for details.
@@ -2429,11 +2431,11 @@ class Constructs(mixin.Container, core.Constructs):
         .. versionadded:: (cfdm) 1.8.9.0
 
         """
+        # Parse property_mode
         if not property_mode:
             # property_mode is 'and' by default
             _or = False
         else:
-            # Parse property_mode
             if len(property_mode) > 1:
                 raise ValueError(
                     f"{self.__class__.__name__}.filter_by_property() accepts"
@@ -2585,9 +2587,9 @@ class Constructs(mixin.Container, core.Constructs):
         >>> d = c.filter_by_property(standard_name=re.compile('^air'))
 
         """
-        return self._filter_by_property(self, False, property_mode, properties)
+        return self._filter_by_property(self, properties, False, property_mode)
 
-    def _filter_by_size(self, arg, todict, sizes):
+    def _filter_by_size(self, arg, sizes, todict):
         """Worker function for `filter_by_size` and `filter`.
 
         See `filter_by_size` for details.
@@ -2600,8 +2602,8 @@ class Constructs(mixin.Container, core.Constructs):
             # axis constructs
             return self._filter_by_type(
                 arg,
-                todict,
                 ("domain_axis",),
+                todict,
                 filter_applied={"filter_by_size": sizes},
             )
 
@@ -2669,9 +2671,9 @@ class Constructs(mixin.Container, core.Constructs):
         if cached is not None:
             return cached
 
-        return self._filter_by_size(self, todict, sizes)
+        return self._filter_by_size(self, sizes, todict)
 
-    def _filter_by_type(self, arg, todict, types, filter_applied=None):
+    def _filter_by_type(self, arg, types, todict, filter_applied=None):
         """Worker function for `filter_by_type` and `filter`.
 
         See `filter_by_type` for details.
@@ -2755,7 +2757,7 @@ class Constructs(mixin.Container, core.Constructs):
         if cached is not None:
             return cached
 
-        return self._filter_by_type(self, todict, types)
+        return self._filter_by_type(self, types, todict)
 
     def filters_applied(self):
         """A history of filters that have been applied.
@@ -2778,7 +2780,6 @@ class Constructs(mixin.Container, core.Constructs):
                 The history of filters that have been applied, ordered
                 from first to last. If no filters have been applied
                 then the tuple is empty.
-
 
         **Examples:**
 

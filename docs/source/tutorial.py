@@ -112,10 +112,13 @@ print(t.constructs.filter_by_property(
             'or',
            standard_name='air_temperature standard_error',
             units='m'))
-print(t.constructs.filter_by_axis('and', 'domainaxis1'))
+print(t.constructs.filter_by_axis('grid_latitude', 'grid_longitude',
+                                  axis_mode='or'))
 print(t.constructs.filter_by_measure('area'))
 print(t.constructs.filter_by_method('maximum'))
-print(t.constructs.filter_by_type('auxiliary_coordinate').filter_by_axis('and', 'domainaxis2'))
+print(
+    t.constructs.filter_by_type('auxiliary_coordinate').filter_by_axis('domainaxis2')
+)
 c = t.constructs.filter_by_type('dimension_coordinate')
 d = c.filter_by_property(units='degrees')
 print(d)

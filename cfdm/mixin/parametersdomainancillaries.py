@@ -25,16 +25,6 @@ class ParametersDomainAncillaries(Parameters):
         """
         return super().__bool__() or bool(self.domain_ancillaries())
 
-    def __nonzero__(self):
-        """Called by the `bool` built-in function.
-
-        x.__nonzero__() <==> bool(x)
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        """
-        return self.__bool__()
-
     def __str__(self):
         """Called by the `str` built-in function.
 
@@ -63,10 +53,10 @@ class ParametersDomainAncillaries(Parameters):
 
         Equality is strict by default. This means that:
 
-        * the named parameters must be the same, with the same values and
-          data types, and vector-valued parameters must also have same the
-          size and be element-wise equal (see the *ignore_data_type*
-          parameter), and
+        * the named parameters must be the same, with the same values
+          and data types, and vector-valued parameters must also have
+          same the size and be element-wise equal (see the
+          *ignore_data_type* parameter), and
 
         ..
 
@@ -74,9 +64,9 @@ class ParametersDomainAncillaries(Parameters):
 
         {{equals tolerance}}
 
-        Any type of object may be tested but, in general, equality is only
-        possible with another object of the same type, or a subclass of
-        one. See the *ignore_type* parameter.
+        Any type of object may be tested but, in general, equality is
+        only possible with another object of the same type, or a
+        subclass of one. See the *ignore_type* parameter.
 
         :Parameters:
 

@@ -1158,6 +1158,7 @@ that meet various criteria:
 ================================  ==========================================================================  
 Method                            Filter criteria                                                             
 ================================  ==========================================================================  
+`~Constructs.filter`              General purpose interface to all other filter methods
 `~Constructs.filter_by_identity`  Metadata construct identity                
 `~Constructs.filter_by_type`      Metadata construct type                       
 `~Constructs.filter_by_property`  Property values                                     
@@ -1172,8 +1173,8 @@ Method                            Filter criteria
 `~Constructs.filter_by_ncdim`     NetCDF dimension name (see the :ref:`netCDF interface <NetCDF-interface>`)
 ================================  ==========================================================================  
 
-In addition, the `~Constructs.filter` method of a `Constructs`
-instance allows these filters to be chained together in a single call.
+The `~Constructs.filter` method of a `Constructs` instance allows
+these filters to be chained together in a single call.
 
 Each of these methods returns a new `Constructs` instance by default
 that contains the selected constructs.
@@ -1215,11 +1216,11 @@ that contains the selected constructs.
     'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
    
 .. code-block:: python
-   :caption: *Get constructs whose data span the 'domainaxis1' domain
-             axis construct; and those which also do not span the
-             'domainaxis2' domain axis construct.*
+   :caption: *Get constructs whose data span at least one of the
+             'grid_latitude' and 'grid_longitude' domain axis constructs.*
 
-   >>> print(t.constructs.filter_by_axis('and', 'domainaxis1'))
+   >>> print(t.constructs.filter_by_axis('grid_latitude', 'grid_longitude',
+   ...                                   axis_mode='or'))
    Constructs:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
     'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
@@ -1249,7 +1250,9 @@ it is easy to perform further filters on their results:
 .. code-block:: python
    :caption: *Make selections from previous selections.*
 	     
-   >>> print(t.constructs.filter_by_type('auxiliary_coordinate').filter_by_axis('and', 'domainaxis2'))
+   >>> print(
+   ...     t.constructs.filter_by_type('auxiliary_coordinate').filter_by_axis('domainaxis2')
+   ... )
    Constructs:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
     'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
@@ -1426,8 +1429,7 @@ construct key, by any of the following techniques:
    >>> t.construct('latitude')
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
 
-* with the `~Field.construct_key` and `~Field.get_construct` methods of
-  a field construct:
+* with the `~Field.construct_key` method of a field construct:
 
 .. code-block:: python
    :caption: *Get the "latitude" metadata construct key with its construct

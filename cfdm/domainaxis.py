@@ -171,12 +171,13 @@ class DomainAxis(
 
         * the axis sizes must be the same.
 
-        Any type of object may be tested but, in general, equality is only
-        possible with another domain axis construct, or a subclass of
-        one. See the *ignore_type* parameter.
+        Any type of object may be tested but, in general, equality is
+        only possible with another domain axis construct, or a
+        subclass of one. See the *ignore_type* parameter.
 
-        NetCDF elements, such as netCDF variable and dimension names, do
-        not constitute part of the CF data model and so are not checked.
+        NetCDF elements, such as netCDF variable and dimension names,
+        do not constitute part of the CF data model and so are not
+        checked.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -245,8 +246,8 @@ class DomainAxis(
         :Parameters:
 
             default: optional
-                If no identity can be found then return the value of the
-                default parameter.
+                If no identity can be found then return the value of
+                the default parameter.
 
         :Returns:
 
