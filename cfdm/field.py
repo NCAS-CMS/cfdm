@@ -975,7 +975,7 @@ class Field(
 
                 # Initialise the compressed data for the metadata
                 # construct
-                data = c.get_data(None, _fill_value=False)
+                data = c.get_data(None)
                 if data is not None:
                     compressed_data = _empty_compressed_data(data, (N,))
 
@@ -1011,7 +1011,7 @@ class Field(
                 data._set_CompressedArray(y, copy=False)
 
                 if c.has_bounds():
-                    data = c.get_bounds_data(None, _fill_value=False)
+                    data = c.get_bounds_data(None)
                     if data is None:
                         continue
 
@@ -1053,7 +1053,7 @@ class Field(
 
         f = _inplace_enabled_define_and_cleanup(self)
 
-        data = f.get_data(None, _fill_value=False)
+        data = f.get_data(None)
         if data is None:
             return f
 
