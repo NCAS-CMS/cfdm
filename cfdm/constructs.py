@@ -1,7 +1,9 @@
 import logging
 
 from itertools import zip_longest
-from re import Pattern
+
+# TODO - reinstate the next line when Python 3.6 is deprecated
+# from re import Pattern
 
 from . import core
 from . import mixin
@@ -682,11 +684,20 @@ class Constructs(mixin.Container, core.Constructs):
                 Whether or not the two values match.
 
         """
-        if isinstance(value0, Pattern):
-            try:
-                return value0.search(value1)
-            except TypeError:
-                return False
+        # TODO - delete the next 6 lines when Python 3.6 is deprecated
+        try:
+            return value0.search(value1)
+        except AttributeError:
+            pass
+        except TypeError:
+            return False
+
+        # TODO - reinstate the next 5 lines when Python 3.6 is deprecated
+        # if isinstance(value0, Pattern):
+        #     try:
+        #         return value0.search(value1)
+        #     except TypeError:
+        #         return False
 
         if basic:
             return value0 == value1
