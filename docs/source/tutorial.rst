@@ -1263,6 +1263,48 @@ it is easy to perform further filters on their results:
    {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>}
 
+Filters can also be chained with the `~Constructs.filter` method of a
+`Constructs` instance
+   
+.. code-block:: python
+   :caption: *Make a chain of selections.*
+	  
+   >>> c = t.constructs.filter(filter_by_type=('dimension_coordinate',),
+   ...                         filter_by_property={'units': 'degrees'})
+   >>> print(c)
+   Constructs:
+   {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+    'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>}
+
+If the result are only required as a `dict`, rather than a
+`Constructs` instance, the "todict" parameter can be used to give
+faster performance:
+    
+.. code-block:: python
+   :caption: *Make a chain of selections and return as a dictionary.*
+	  
+   >>> d = t.constructs.filter(filter_by_type=('dimension_coordinate',),
+   ...                         filter_by_property={'units': 'degrees'},
+   ...                         todict=True)
+   >>> type(d)
+   dict
+   >>> print(d)
+   {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+    'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>}
+
+Filters can also be chained with the `~Constructs.filter` method of a
+`Constructs` instance
+   
+.. code-block:: python
+   :caption: *Make a chain of selections.*
+	  
+   >>> c = t.constructs.filter(filter_by_type=('dimension_coordinate',),
+   ...                         filter_by_property={'units': 'degrees'})
+   >>> print(c)
+   Constructs:
+   {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+    'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>}
+
 Another method of selection is by metadata construct "identity".
 Construct identities are used to describe constructs when they are
 inspected, and so it is often convenient to copy these identities

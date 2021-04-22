@@ -239,7 +239,7 @@ class Constructs(mixin.Container, core.Constructs):
             logger(
                 "Different numbers of cell methods: "
                 f"{cell_methods0!r} != {cell_methods1!r}"
-            )
+            )  # pragma: no cover
             return False
 
         if not len0:
@@ -259,7 +259,7 @@ class Constructs(mixin.Container, core.Constructs):
                 logger.info(
                     f"{cm0.__class__.__name__}: Different cell methods "
                     f"(mismatched axes):\n  {cell_methods0}\n  {cell_methods1}"
-                )
+                )  # pragma: no cover
                 return False
 
             indices = []
@@ -281,7 +281,7 @@ class Constructs(mixin.Container, core.Constructs):
                             f"{cm0.__class__.__name__}: Different cell "
                             "methods (mismatched axes):\n  "
                             f"{ cell_methods0}\n  {cell_methods1}"
-                        )
+                        )  # pragma: no cover
                         return False
                     elif axis0 == axis1:
                         # axes0 and axis 1 are identical standard
@@ -294,14 +294,14 @@ class Constructs(mixin.Container, core.Constructs):
                             f"{cm0.__class__.__name__}: Different cell "
                             "methods (mismatched axes):\n  "
                             f"{cell_methods0}\n  {cell_methods1}"
-                        )
+                        )  # pragma: no cover
                         return False
 
             if len(cm1.get_axes(())) != len(indices):
                 logger.info(
                     f"{cm0.__class__.__name__}: [4] Different cell methods "
                     f"(mismatched axes):\n  {cell_methods0}\n  {cell_methods1}"
-                )
+                )  # pragma: no cover
                 return False
 
             cm1 = cm1.sorted(indices=indices)
@@ -317,7 +317,7 @@ class Constructs(mixin.Container, core.Constructs):
                 logger.info(
                     f"{cm0.__class__.__name__}: Different cell methods: "
                     f"{cell_methods0!r}, {cell_methods1!r}"
-                )
+                )  # pragma: no cover
                 return False
 
         return True
@@ -345,7 +345,7 @@ class Constructs(mixin.Container, core.Constructs):
                     len(refs0),
                     len(refs1),
                 )
-            )
+            )  # pragma: no cover
 
             return False
 
@@ -448,7 +448,9 @@ class Constructs(mixin.Container, core.Constructs):
 
         return True
 
-    def _filter_convert_to_domain_axis(self, values, identities=True):
+    def _filter_convert_to_domain_axis(
+        self, values, check_axis_identities=True
+    ):
         """Convert values to domain axis construct identifiers.
 
         If possible, convert each value from a field data array index
@@ -468,7 +470,7 @@ class Constructs(mixin.Container, core.Constructs):
 
             values: sequence
 
-            identities: `bool` optional
+            check_axis_identities: `bool` optional
                 If True then check for domain axis identities.
 
         :Returns:
@@ -526,7 +528,7 @@ class Constructs(mixin.Container, core.Constructs):
 
                 continue
 
-            if identities:
+            if check_axis_identities:
                 # Try to convert a domain axis identity into a domain
                 # axis identifier
                 c = self.filter(
@@ -923,7 +925,7 @@ class Constructs(mixin.Container, core.Constructs):
             logger.info(
                 f"{self.__class__.__name__}: Incompatible type: "
                 f"{other.__class__.__name__}"
-            )
+            )  # pragma: no cover
             if not _return_axis_map:
                 return False
 
@@ -1177,21 +1179,22 @@ class Constructs(mixin.Container, core.Constructs):
         if cached is not None:
             return cached
 
-        if identities:
-            if "filter_by_identity" in filter_kwargs:
+        if filter_kwargs:
+            if "filter_by_type" in filter_kwargs:
                 raise TypeError(
-                    "Can't set domain_axes() keyword argument "
-                    "'filter_by_identity' when positional *identities "
-                    "arguments are also set"
+                    "domain_axes() got an unexpected keyword argument "
+                    "'filter_by_type'"
                 )
-        else:
-            identities = filter_kwargs.pop("filter_by_identity", ())
 
-        if filter_kwargs and "filter_by_type" in filter_kwargs:
-            raise TypeError(
-                "domain_axes() got an unexpected keyword argument "
-                "'filter_by_type'"
-            )
+            if identities:
+                if "filter_by_identity" in filter_kwargs:
+                    raise TypeError(
+                        "Can't set domain_axes() keyword argument "
+                        "'filter_by_identity' when positional *identities "
+                        "arguments are also set"
+                    )
+            elif "filter_by_identity" in filter_kwargs:
+                identities = filter_kwargs["filter_by_identity"]
 
         if identities:
             # Make sure that filter_by_identity is the last filter
@@ -1207,7 +1210,9 @@ class Constructs(mixin.Container, core.Constructs):
                 return out
 
             keys.update(
-                self._filter_convert_to_domain_axis(misses, identities=False)
+                self._filter_convert_to_domain_axis(
+                    misses, check_axis_identities=False
+                )
             )
             filter_kwargs = {
                 "filter_by_key": keys,
@@ -1441,7 +1446,20 @@ class Constructs(mixin.Container, core.Constructs):
 
         # Convert values to domain axis construct identifiers, if any
         # can be.
-        axes = self._filter_convert_to_domain_axis(axes, identities=True)
+        axes2 = self._filter_convert_to_domain_axis(
+            axes, check_axis_identities=True
+        )
+
+        if not axes2:
+            # No arguments found unique domain axis constructs
+            if isinstance(out, dict):
+                out = {}
+            else:
+                out._clear()
+
+            return out
+
+        axes = set(axes2)
 
         data_axes = self._construct_axes
 
@@ -1513,11 +1531,11 @@ class Constructs(mixin.Container, core.Constructs):
                   dimension, then the corresponding domain axis
                   construct is specified.
 
-                * A domain axis construct identity, defined by its
-                  `!identities` methods. In this case a value may be
-                  any object that can match via the ``==`` operator,
-                  or a `re.Pattern` object that matches via its
-                  `~re.Pattern.search` method.
+                * A unique domain axis construct identity, defined by
+                  its `!identities` methods. In this case a value may
+                  be any object that can match via the ``==``
+                  operator, or a `re.Pattern` object that matches via
+                  its `~re.Pattern.search` method.
 
                 If no axes are provided then all constructs that do,
                 or could have data, spanning any domain axes
@@ -2818,6 +2836,11 @@ class Constructs(mixin.Container, core.Constructs):
 
     def clear_filters_applied(self):
         """Remove the history of filters that have been applied.
+
+        This method does not change the metadata constructs, it just
+        forgets the hisory of any filters that have previously been
+        applied. Use `inverse_filter` or `unfilter` retrieve
+        previously filtered constructs.
 
         The removed history is returned in a tuple. The last element
         of the tuple describes the last filter applied. Each element

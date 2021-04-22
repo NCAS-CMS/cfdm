@@ -158,7 +158,8 @@ class FieldDomain:
             # Ensure that filter_by_types is the first filter
             # applied, as it's the cheapest
             if not (identities or filter_kwargs):
-                # Calling filter_by_type directly is faster
+                # This a very common pattern for which calling
+                # filter_by_type directly is faster
                 if construct:
                     todict = True
                 else:
@@ -204,18 +205,35 @@ class FieldDomain:
 
         # Ensure that filter_by_identity is the one of the last
         # filters applied, as it's expensive.
-        filter_by_identity = kwargs.pop("filter_by_identity", None)
-        if filter_by_identity is None:
+        if filter_kwargs:
             if identities:
+                if "filter_by_identity" in filter_kwargs:
+                    raise TypeError(
+                        f"Can't set {self.__class__.__name__}.{_method}() "
+                        "keyword argument 'filter_by_identity' when "
+                        "positional *identities arguments are also set"
+                    )
+
                 kwargs["filter_by_identity"] = identities
-        else:
-            kwargs["filter_by_identity"] = filter_by_identity
-            if identities:
-                raise TypeError(
-                    f"Can't set {self.__class__.__name__}.{_method}() "
-                    "keyword argument 'filter_by_identity' when "
-                    "positional *identities arguments are also set"
-                )
+            elif "filter_by_identity" in filter_kwargs:
+                kwargs["filter_by_identity"] = filter_kwargs[
+                    "filter_by_identity"
+                ]
+        elif identities:
+            kwargs["filter_by_identity"] = identities
+
+        #        filter_by_identity = kwargs.pop("filter_by_identity", None)
+        #        if filter_by_identity is None:
+        #            if identities:
+        #                kwargs["filter_by_identity"] = identities
+        #        else:
+        #            kwargs["filter_by_identity"] = filter_by_identity
+        #            if identities:
+        #                raise TypeError(
+        #                    f"Can't set {self.__class__.__name__}.{_method}() "
+        #                    "keyword argument 'filter_by_identity' when "
+        #                    "positional *identities arguments are also set"
+        #                )
 
         if construct:
             kwargs["todict"] = True

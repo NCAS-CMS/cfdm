@@ -122,6 +122,17 @@ print(
 c = t.constructs.filter_by_type('dimension_coordinate')
 d = c.filter_by_property(units='degrees')
 print(d)
+c = t.constructs.filter(filter_by_type=('dimension_coordinate',),
+                        filter_by_property={'units': 'degrees'})
+print(c)
+d = t.constructs.filter(filter_by_type=('dimension_coordinate',),
+                        filter_by_property={'units': 'degrees'},
+                        todict=True)
+type(d)
+print(d)
+c = t.constructs.filter(filter_by_type=('dimension_coordinate',),
+                        filter_by_property={'units': 'degrees'})
+print(c)
 print(t)
 print(t.constructs.filter_by_identity('latitude'))
 print(t.constructs.filter_by_identity('long_name=Grid latitude name'))
