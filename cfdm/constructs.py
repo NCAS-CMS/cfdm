@@ -5,9 +5,11 @@ from itertools import zip_longest
 # TODO - replace the try block with "from re import Pattern" when
 #        Python 3.6 is deprecated
 try:
-    from re import regex as Pattern  # Python 3.6
+    from re import Pattern
 except ImportError:
-    from re import Pattern  # Python 3.7+
+    python36 = True
+else:
+    python36 = False
 
 from . import core
 from . import mixin
@@ -688,11 +690,20 @@ class Constructs(mixin.Container, core.Constructs):
                 Whether or not the two values match.
 
         """
-        if isinstance(value0, Pattern):
+        # TODO - delete the "if python36:" clause Python 3.6 is deprecated
+        if python36:
             try:
                 return value0.search(value1)
+            except AttributeError:
+                pass
             except TypeError:
                 return False
+        else:
+            if isinstance(value0, Pattern):
+                try:
+                    return value0.search(value1)
+                except TypeError:
+                    return False
 
         if basic:
             return value0 == value1
