@@ -547,7 +547,7 @@ class Constructs(abstract.Container):
         Use `todict` instead.
 
         """
-        return self.todict()
+        return self.todict()  # pragma: no cover
 
     def _set_construct(self, construct, key=None, axes=None, copy=True):
         """Set a metadata construct.
@@ -805,19 +805,6 @@ class Constructs(abstract.Container):
             return d[0]
 
         raise KeyError(k)
-
-    def _popitem(self):
-        """Remove and return a (key, value) pair as a 2-tuple.
-
-        Pairs are returned in random order. Raises KeyError if the dict
-        is empty.
-
-        """
-        k, v = self.todict().popitem()
-
-        self._pop(k)
-
-        return k, v
 
     def _update(self, other):
         """D.update(E) -> None.
@@ -1380,7 +1367,9 @@ class Constructs(abstract.Container):
 
         number_construct_types = len(existing_construct_types)
         if number_construct_types > 1:
-            raise ValueError(f"Can't order multiple construct types: {self!r}")
+            raise ValueError(
+                f"Can't order multiple construct types: {self!r}"
+            )  # pragma: no cover
         elif number_construct_types == 0:
             return existing_construct_types
 
@@ -1388,7 +1377,7 @@ class Constructs(abstract.Container):
         if self._ordered_constructs != existing_construct_types.keys():
             raise ValueError(
                 f"Can't order un-orderable construct type: {self!r}"
-            )
+            )  # pragma: no cover
 
         return existing_construct_types[
             tuple(self._ordered_constructs)[0]
@@ -1446,7 +1435,7 @@ class Constructs(abstract.Container):
         )
 
     def todict(self, copy=False):
-        """Return a dictionary represntation of the metadata constructs.
+        """Return a dictionary of the metadata constructs.
 
         .. versionadded:: (cfdm) 1.8.9.0
 

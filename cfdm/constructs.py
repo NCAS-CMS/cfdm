@@ -6,8 +6,8 @@ from itertools import zip_longest
 #        Python 3.6 is deprecated
 try:
     from re import Pattern
-except ImportError:
-    python36 = True
+except ImportError:  # pragma: no cover
+    python36 = True  # pragma: no cover
 else:
     python36 = False
 
@@ -692,12 +692,12 @@ class Constructs(mixin.Container, core.Constructs):
         """
         # TODO - delete the "if python36:" clause Python 3.6 is deprecated
         if python36:
-            try:
-                return value0.search(value1)
-            except AttributeError:
-                pass
-            except TypeError:
-                return False
+            try:  # pragma: no cover
+                return value0.search(value1)  # pragma: no cover
+            except AttributeError:  # pragma: no cover
+                pass  # pragma: no cover
+            except TypeError:  # pragma: no cover
+                return False  # pragma: no cover
         else:
             if isinstance(value0, Pattern):
                 try:
@@ -871,6 +871,107 @@ class Constructs(mixin.Container, core.Constructs):
 
         # Get the identity from the domain axis construct key
         return f"key%{key}"
+
+    def domain_axes(self, *identities, **filter_kwargs):
+        """Return domain axis constructs.
+
+        .. versionadded:: (cfdm) 1.8.9.0
+
+        .. seealso:: `constructs`
+
+        :Parameters:
+
+            identities: `tuple`, optional
+                Select domain axis constructs that have an identity,
+                defined by their `!identities` methods, that matches
+                any of the given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                Additionally, if for a given ``value``,
+                ``c.filter(filter_by_type=["dimension_coordinate",
+                "auxiliary_coordinate"], filter_by_naxes=(1,),
+                filter_by_identity=(value,))`` returns 1-d coordinate
+                constructs that all span the same domain axis
+                construct then that domain axis construct is
+                selected. See `filter` for details.
+
+                Additionally, if there is an associated `Field` data
+                array and a value matches the integer position of an
+                array dimension, then the corresponding domain axis
+                construct is selected.
+
+                If no values are provided then all domain axis
+                constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{filter_kwargs: optional}} Also to configure the returned value.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
+        :Returns:
+
+                {{Returns constructs}}
+
+        **Examples:**
+
+        """
+        cached = filter_kwargs.get("cached")
+        if cached is not None:
+            return cached
+
+        if filter_kwargs:
+            if "filter_by_type" in filter_kwargs:
+                raise TypeError(
+                    "domain_axes() got an unexpected keyword argument "
+                    "'filter_by_type'"
+                )
+
+            if identities:
+                if "filter_by_identity" in filter_kwargs:
+                    raise TypeError(
+                        "Can't set domain_axes() keyword argument "
+                        "'filter_by_identity' when positional *identities "
+                        "arguments are also set"
+                    )
+            elif "filter_by_identity" in filter_kwargs:
+                identities = filter_kwargs["filter_by_identity"]
+
+        if identities:
+            # Make sure that filter_by_identity is the last filter
+            # applied
+            filter_kwargs["filter_by_identity"] = identities
+
+            out, keys, hits, misses = self.filter(
+                filter_by_type=("domain_axis",),
+                _identity_config={"return_matched": True},
+                **filter_kwargs,
+            )
+            if out is not None:
+                return out
+
+            keys.update(
+                self._filter_convert_to_domain_axis(
+                    misses, check_axis_identities=False
+                )
+            )
+
+            if not keys:
+                # No keys were found but some criteria were provided,
+                # so force filter_by_key to return no domain axis
+                # constructs.
+                keys = (None,)
+
+            filter_kwargs = {
+                "filter_by_key": keys,
+                "todict": filter_kwargs.get("todict", False),
+            }
+
+        return self.filter(filter_by_type=("domain_axis",), **filter_kwargs)
 
     @_manage_log_level_via_verbosity
     def equals(
@@ -1143,100 +1244,6 @@ class Constructs(mixin.Container, core.Constructs):
         # Still here? Then the two objects are equal
         # ------------------------------------------------------------
         return True
-
-    def domain_axes(self, *identities, **filter_kwargs):
-        """Return domain axis constructs.
-
-        .. versionadded:: (cfdm) 1.8.9.0
-
-        .. seealso:: `constructs`
-
-        :Parameters:
-
-            identities: `tuple`, optional
-                Select domain axis constructs that have an identity,
-                defined by their `!identities` methods, that matches
-                any of the given values.
-
-                Additionally, the values are matched against construct
-                identifiers, with or without the ``'key%'`` prefix.
-
-                Additionally, if for a given ``value``,
-                ``c.filter(filter_by_type=["dimension_coordinate",
-                "auxiliary_coordinate"], filter_by_naxes=(1,),
-                filter_by_identity=(value,))`` returns 1-d coordinate
-                constructs that all span the same domain axis
-                construct then that domain axis construct is
-                selected. See `filter` for details.
-
-                Additionally, if there is an associated `Field` data
-                array and a value matches the integer position of an
-                array dimension, then the corresponding domain axis
-                construct is selected.
-
-                If no values are provided then all domain axis
-                constructs are selected.
-
-                {{value match}}
-
-                {{displayed identity}}
-
-            {{filter_kwargs: optional}} Also to configure the returned value.
-
-                .. versionadded:: (cfdm) 1.8.9.0
-
-        :Returns:
-
-                {{Returns constructs}}
-
-        **Examples:**
-
-        """
-        cached = filter_kwargs.get("cached")
-        if cached is not None:
-            return cached
-
-        if filter_kwargs:
-            if "filter_by_type" in filter_kwargs:
-                raise TypeError(
-                    "domain_axes() got an unexpected keyword argument "
-                    "'filter_by_type'"
-                )
-
-            if identities:
-                if "filter_by_identity" in filter_kwargs:
-                    raise TypeError(
-                        "Can't set domain_axes() keyword argument "
-                        "'filter_by_identity' when positional *identities "
-                        "arguments are also set"
-                    )
-            elif "filter_by_identity" in filter_kwargs:
-                identities = filter_kwargs["filter_by_identity"]
-
-        if identities:
-            # Make sure that filter_by_identity is the last filter
-            # applied
-            filter_kwargs["filter_by_identity"] = identities
-
-            out, keys, hits, misses = self.filter(
-                filter_by_type=("domain_axis",),
-                _identity_config={"return_matched": True},
-                **filter_kwargs,
-            )
-            if out is not None:
-                return out
-
-            keys.update(
-                self._filter_convert_to_domain_axis(
-                    misses, check_axis_identities=False
-                )
-            )
-            filter_kwargs = {
-                "filter_by_key": keys,
-                "todict": filter_kwargs.pop("todict", False),
-            }
-
-        return self.filter(filter_by_type=("domain_axis",), **filter_kwargs)
 
     def filter(
         self,
@@ -2720,7 +2727,6 @@ class Constructs(mixin.Container, core.Constructs):
             if types:
                 pop = arg.pop
                 construct_type = self._construct_type
-                types = set(types)
                 for cid in tuple(arg):
                     if construct_type[cid] not in types:
                         pop(cid)

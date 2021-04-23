@@ -39,6 +39,30 @@ class ConstructsTest(unittest.TestCase):
         c = cfdm.Constructs()
         str(c)
 
+    def test_Constructs__len__(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(len(c), 20)
+        self.assertEqual(len(self.f.domain.constructs), 17)
+
+    def test_Constructs_check_construct_type(self):
+        """TODO DOCS."""
+        c = self.c
+
+        with self.assertRaises(ValueError):
+            c._check_construct_type("bad type")
+
+    def test_Constructs_construct_type(self):
+        """TODO DOCS."""
+        d = self.f.domain.constructs
+        self.assertIsNone(d.construct_type("cell_method"))
+
+    def test_Constructs_construct_types(self):
+        """TODO DOCS."""
+        d = self.f.domain.constructs
+        self.assertEqual(len(d.construct_types()), len(d))
+
     def test_Constructs_items_key_value(self):
         """TODO DOCS."""
         c = self.c
@@ -54,13 +78,21 @@ class ConstructsTest(unittest.TestCase):
         """TODO DOCS."""
         c = self.c
 
-        d = c.copy()
-        self.assertTrue(c.equals(d, verbose=3))
-        self.assertTrue(d.equals(c, verbose=3))
+        d = c.filter_by_type("domain_axis")
+        e = d.copy()
+        self.assertTrue(d.equals(e, verbose=3))
+        self.assertTrue(e.equals(d, verbose=3))
 
         d = c.shallow_copy()
         self.assertTrue(c.equals(d, verbose=3))
         self.assertTrue(d.equals(c, verbose=3))
+
+    def test_Constructs_domain_axis_identity(self):
+        """TODO DOCS."""
+        c = self.c
+
+        with self.assertRaises(ValueError):
+            c.domain_axis_identity(999)
 
     def test_Constructs_filter(self):
         """TODO DOCS."""
@@ -93,23 +125,6 @@ class ConstructsTest(unittest.TestCase):
     def test_Constructs_FILTERING(self):
         """TODO DOCS."""
         c = self.c
-
-        self.assertEqual(len(c), 20)
-        self.assertEqual(len(c.filter_by_data()), 12)
-        self.assertEqual(len(c.filter_by_method()), 2)
-        self.assertEqual(len(c.filter_by_measure()), 1)
-        self.assertEqual(len(c.filter_by_ncvar()), 14)
-        self.assertEqual(len(c.filter_by_ncdim()), 4)
-
-        self.assertEqual(len(c.filter_by_method("qwerty")), 0)
-        self.assertEqual(len(c.filter_by_measure("qwerty")), 0)
-        self.assertEqual(len(c.filter_by_ncvar("qwerty")), 0)
-        self.assertEqual(len(c.filter_by_ncdim("qwerty")), 0)
-
-        self.assertEqual(len(c.filter_by_method("mean")), 1)
-        self.assertEqual(len(c.filter_by_measure("area")), 1)
-        self.assertEqual(len(c.filter_by_ncvar("a")), 1)
-        self.assertEqual(len(c.filter_by_ncdim("y")), 1)
 
         # Axis
         for axis_mode in ("and", "or", "exact", "subset"):
@@ -154,9 +169,46 @@ class ConstructsTest(unittest.TestCase):
         self.assertTrue(d.unfilter(1).equals(c, verbose=3))
         self.assertTrue(c.unfilter(1).equals(c, verbose=3))
 
+    def test_Constructs_domain_axes(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(c.domain_axes(cached=999), 999)
+        self.assertEqual(
+            len(c.domain_axes(filter_by_identity=("grid_longitude",))), 1
+        )
+
+        keys = tuple(c.domain_axes(todict=True))
+        self.assertEqual(len(c.domain_axes(*keys)), 4)
+        self.assertEqual(len(c.domain_axes(keys)), 0)
+
+        with self.assertRaises(TypeError):
+            c.domain_axes(filter_by_type=("dimension_coordinate",))
+
+        with self.assertRaises(TypeError):
+            c.domain_axes(
+                "grid_latitude", filter_by_identity=("grid_longitude",)
+            )
+
+    def test_Constructs_filter_by_data(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(len(c.filter_by_data()), 12)
+        self.assertEqual(c.filter_by_data(cached=999), 999)
+
     def test_Constructs_filter_by_type(self):
         """TODO DOCS."""
         c = self.c
+
+        self.assertEqual(c.filter_by_type(cached=999), 999)
+
+        d = c.filter(
+            filter_by_property={"standard_name": None},
+            filter_by_type=("dimension_coordinate",),
+            todict=True,
+        )
+        self.assertEqual(len(d), 4)
 
         constructs = c.filter_by_type(
             "auxiliary_coordinate",
@@ -231,6 +283,42 @@ class ConstructsTest(unittest.TestCase):
 
         self.assertEqual(len(c.filter_by_type("qwerty")), 0)
 
+    def test_Constructs_filter_by_method(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(len(c.filter_by_method()), 2)
+        self.assertEqual(len(c.filter_by_method("mean")), 1)
+        self.assertEqual(len(c.filter_by_method("qwerty")), 0)
+        self.assertEqual(c.filter_by_method(cached=999), 999)
+
+    def test_Constructs_filter_by_ncdim(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(len(c.filter_by_ncdim()), 4)
+        self.assertEqual(len(c.filter_by_ncdim("y")), 1)
+        self.assertEqual(len(c.filter_by_ncdim("qwerty")), 0)
+        self.assertEqual(c.filter_by_ncdim(cached=999), 999)
+
+    def test_Constructs_filter_by_ncvar(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(len(c.filter_by_ncvar()), 14)
+        self.assertEqual(len(c.filter_by_ncvar("qwerty")), 0)
+        self.assertEqual(len(c.filter_by_ncvar("a")), 1)
+        self.assertEqual(c.filter_by_ncvar(cached=999), 999)
+
+    def test_Constructs_filter_by_measure(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(len(c.filter_by_measure()), 1)
+        self.assertEqual(len(c.filter_by_measure("qwerty")), 0)
+        self.assertEqual(len(c.filter_by_measure("area")), 1)
+        self.assertEqual(c.filter_by_measure(cached=999), 999)
+
     def test_Constructs_filter_by_identity(self):
         """TODO DOCS."""
         c = self.c
@@ -238,6 +326,11 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(len(c.filter_by_identity()), 20)
         self.assertEqual(len(c.filter_by_identity("qwerty")), 0)
         self.assertEqual(len(c.filter_by_identity("latitude")), 1)
+        self.assertEqual(c.filter_by_identity(cached=999), 999)
+
+        self.assertEqual(
+            len(c.filter_by_identity("dimensioncoordinate1", "longitude")), 2
+        )
 
         with self.assertRaises(TypeError):
             c("latitude", filter_by_identity=("longitude",))
@@ -259,6 +352,7 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(c.filter_by_axis(cached=999), 999)
 
         self.assertEqual(len(c.filter_by_axis(99)), 0)
+        self.assertEqual(len(c.filter_by_axis(99, todict=True)), 0)
 
         with self.assertRaises(ValueError):
             c.filter_by_axis(0, 1, axis_mode="bad_mode")
@@ -295,6 +389,8 @@ class ConstructsTest(unittest.TestCase):
                 d = c.filter_by_property(*mode, **kwargs)
                 e = d.inverse_filter()
                 self.assertEqual(len(e), len(c) - len(d))
+
+        self.assertEqual(len(c.filter_by_property(standard_name=None)), 8)
 
         with self.assertRaises(ValueError):
             c.filter_by_property("too many", "modes")
@@ -339,6 +435,13 @@ class ConstructsTest(unittest.TestCase):
 
         with self.assertRaises(KeyError):
             c["bad_key"]
+
+    def test_Constructs_get_data_axes(self):
+        """TODO DOCS."""
+        c = self.c
+
+        with self.assertRaises(ValueError):
+            c.get_data_axes("bad key")
 
     def test_Constructs_todict(self):
         """TODO DOCS."""
