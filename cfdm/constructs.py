@@ -2,8 +2,12 @@ import logging
 
 from itertools import zip_longest
 
-# TODO - reinstate the next line when Python 3.6 is deprecated
-# from re import Pattern
+# TODO - replace the try block with "from re import Pattern" when
+#        Python 3.6 is deprecated
+try:
+    from re import regex as Pattern  # Python 3.6
+except ImportError:
+    from re import Pattern  # Python 3.7+
 
 from . import core
 from . import mixin
@@ -684,20 +688,11 @@ class Constructs(mixin.Container, core.Constructs):
                 Whether or not the two values match.
 
         """
-        # TODO - delete the next 6 lines when Python 3.6 is deprecated
-        try:
-            return value0.search(value1)
-        except AttributeError:
-            pass
-        except TypeError:
-            return False
-
-        # TODO - reinstate the next 5 lines when Python 3.6 is deprecated
-        # if isinstance(value0, Pattern):
-        #     try:
-        #         return value0.search(value1)
-        #     except TypeError:
-        #         return False
+        if isinstance(value0, Pattern):
+            try:
+                return value0.search(value1)
+            except TypeError:
+                return False
 
         if basic:
             return value0 == value1
