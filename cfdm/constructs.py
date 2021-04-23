@@ -1260,8 +1260,8 @@ class Constructs(mixin.Container, core.Constructs):
         "filter_by_*" methods to be chained in an alternative manner
         to calling the individual methods in sequence.
 
-        For instance, to select the domain axis constucts with size 73
-        or 96
+        For instance, to select the domain axis constructs with size
+        73 or 96
 
            >>> c2 = c.filter(filter_by_type=['domain_axis'],
            ...               filter_by_size=[73, 96])
@@ -1542,7 +1542,7 @@ class Constructs(mixin.Container, core.Constructs):
                 * A domain axis construct identifier, with or without
                   the ``'key%'`` prefix.
 
-                * The unique domain axis constuct spanned by all of
+                * The unique domain axis construct spanned by all of
                   the 1-d coordinate constructs returned by, for a
                   given ``value``,
                   ``c.filter(filter_by_type=["dimension_coordinate",
@@ -1593,7 +1593,11 @@ class Constructs(mixin.Container, core.Constructs):
 
             {{todict: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 1.8.9.0
+
             {{cached: optional}}
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -1666,7 +1670,11 @@ class Constructs(mixin.Container, core.Constructs):
 
             {{todict: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 1.8.9.0
+
             {{cached: optional}}
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -1837,7 +1845,11 @@ class Constructs(mixin.Container, core.Constructs):
 
             {{todict: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 1.8.9.0
+
             {{cached: optional}}
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
             _config: optional
                 Additional parameters for configuring the application
@@ -1931,7 +1943,11 @@ class Constructs(mixin.Container, core.Constructs):
 
             {{todict: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 1.8.9.0
+
             {{cached: optional}}
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -2020,7 +2036,11 @@ class Constructs(mixin.Container, core.Constructs):
 
             {{todict: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 1.8.9.0
+
             {{cached: optional}}
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -2139,7 +2159,11 @@ class Constructs(mixin.Container, core.Constructs):
 
             {{todict: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 1.8.9.0
+
             {{cached: optional}}
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -2249,7 +2273,11 @@ class Constructs(mixin.Container, core.Constructs):
 
             {{todict: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 1.8.9.0
+
             {{cached: optional}}
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -2345,7 +2373,11 @@ class Constructs(mixin.Container, core.Constructs):
 
             {{todict: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 1.8.9.0
+
             {{cached: optional}}
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -2441,7 +2473,11 @@ class Constructs(mixin.Container, core.Constructs):
 
             {{todict: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 1.8.9.0
+
             {{cached: optional}}
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -2692,7 +2728,11 @@ class Constructs(mixin.Container, core.Constructs):
 
             {{todict: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 1.8.9.0
+
             {{cached: optional}}
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -2777,7 +2817,11 @@ class Constructs(mixin.Container, core.Constructs):
 
             {{todict: `bool`, optional}}
 
+                .. versionadded:: (cfdm) 1.8.9.0
+
             {{cached: optional}}
+
+                .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 

@@ -318,7 +318,7 @@ class Domain(mixin.FieldDomain, mixin.Container, core.Domain):
         :Returns:
 
             `set`
-                The keys of the domain axeis constructs that are
+                The keys of the domain axis constructs that are
                 climatological time axes.
 
         **Examples:**

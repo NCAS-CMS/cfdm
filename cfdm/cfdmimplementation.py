@@ -1750,7 +1750,7 @@ class CFDMImplementation(Implementation):
 
         :Parameters:
 
-            auxiliary_coordinate: auxiliary coordiante consturct
+            auxiliary_coordinate: auxiliary coordinate construct
 
             copy: `bool`,optional
 

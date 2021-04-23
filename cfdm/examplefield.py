@@ -5151,7 +5151,7 @@ def example_fields(*n, _func=example_field):
             See the `cfdm.example_field` for details.
 
         _func: function
-            The function that returns each individual field constuct.
+            The function that returns each individual field construct.
 
     :Returns:
 
@@ -5246,7 +5246,7 @@ def example_domain(n, _func=example_field):
             See the examples for details.
 
         _func: function
-            The function that creates the field constuct from which
+            The function that creates the field construct from which
             the domain construct is derived.
 
     :Returns:

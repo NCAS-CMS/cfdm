@@ -247,7 +247,7 @@ class FieldDomain:
             # Return Constructs or dict
             return c
 
-        # Return constuct, or key, or both, or default
+        # Return construct, or key, or both, or default
         if len(c) == 1:
             k, construct = c.popitem()
             if key:
@@ -913,7 +913,7 @@ class FieldDomain:
         :Returns:
 
             `tuple`
-                The selected construct and its construct identifer.
+                The selected construct and its construct identifier.
 
         **Examples:**
 

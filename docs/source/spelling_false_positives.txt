@@ -21,6 +21,7 @@ Chunksizes
 cls
 CompressedArray
 conda
+config
 CoordinateConversion
 CoordinateReference
 datatype
