@@ -437,11 +437,11 @@ class FieldDomain:
         *Examples:**
 
         >> f.coordinates()
-        onstructs:
+        Constructs:
         }
 
         >> f.coordinates()
-        onstructs:
+        Constructs:
         'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
         'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
         'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name=Grid latitude name(10) >,

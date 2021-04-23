@@ -2262,7 +2262,7 @@ class Constructs(mixin.Container, core.Constructs):
 
             naxes: optional
                 Select constructs that have data whose number of
-                dimensions matchs any of the given values.
+                dimensions matches any of the given values.
 
                 If no values are provided then all constructs that do
                 or could have data, spanning any domain axes
@@ -2905,7 +2905,7 @@ class Constructs(mixin.Container, core.Constructs):
         """Remove the history of filters that have been applied.
 
         This method does not change the metadata constructs, it just
-        forgets the hisory of any filters that have previously been
+        forgets the history of any filters that have previously been
         applied. Use `inverse_filter` or `unfilter` retrieve
         previously filtered constructs.
 

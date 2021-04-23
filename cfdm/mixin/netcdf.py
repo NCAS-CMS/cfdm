@@ -2548,7 +2548,7 @@ class NetCDFComponents(NetCDF):
         Some components exist within multiple constructs, but when
         written to a netCDF dataset the netCDF names associated with
         such components will be arbitrarily taken from one of
-        them. The netCDF names can be set on all such occurences
+        them. The netCDF names can be set on all such occurrences
         individually, or preferably by using this method to ensure
         consistency across all such components.
 
@@ -2617,7 +2617,7 @@ class NetCDFComponents(NetCDF):
         Some components exist within multiple constructs, but when
         written to a netCDF dataset the netCDF names associated with
         such components will be arbitrarily taken from one of
-        them. The netCDF names can be set on all such occurences
+        them. The netCDF names can be set on all such occurrences
         individually, or preferably by using this method to ensure
         consistency across all such components.
 
@@ -2682,7 +2682,7 @@ class NetCDFComponents(NetCDF):
         Some components exist within multiple constructs, but when
         written to a netCDF dataset the netCDF names associated with
         such components will be arbitrarily taken from one of
-        them. The netCDF names can be set on all such occurences
+        them. The netCDF names can be set on all such occurrences
         individually, or preferably by using this method to ensure
         consistency across all such components.
 
@@ -2750,7 +2750,7 @@ class NetCDFComponents(NetCDF):
         Some components exist within multiple constructs, but when
         written to a netCDF dataset the netCDF names associated with
         such components will be arbitrarily taken from one of
-        them. The netCDF names can be set on all such occurences
+        them. The netCDF names can be set on all such occurrences
         individually, or preferably by using this method to ensure
         consistency across all such components.
 
@@ -2815,7 +2815,7 @@ class NetCDFComponents(NetCDF):
         Some components exist within multiple constructs, but when
         written to a netCDF dataset the netCDF names associated with
         such components will be arbitrarily taken from one of
-        them. The netCDF names can be set on all such occurences
+        them. The netCDF names can be set on all such occurrences
         individually, or preferably by using this method to ensure
         consistency across all such components.
 
@@ -2877,7 +2877,7 @@ class NetCDFComponents(NetCDF):
         Some components exist within multiple constructs, but when
         written to a netCDF dataset the netCDF names associated with
         such components will be arbitrarily taken from one of
-        them. The netCDF names can be set on all such occurences
+        them. The netCDF names can be set on all such occurrences
         individually, or preferably by using this method to ensure
         consistency across all such components.
 
@@ -2936,7 +2936,7 @@ class NetCDFComponents(NetCDF):
         Some components exist within multiple constructs, but when
         written to a netCDF dataset the netCDF names associated with
         such components will be arbitrarily taken from one of
-        them. The netCDF names can be set on all such occurences
+        them. The netCDF names can be set on all such occurrences
         individually, or preferably by using this method to ensure
         consistency across all such components.
 
@@ -2998,7 +2998,7 @@ class NetCDFComponents(NetCDF):
         Some components exist within multiple constructs, but when
         written to a netCDF dataset the netCDF names associated with
         such components will be arbitrarily taken from one of
-        them. The netCDF names can be set on all such occurences
+        them. The netCDF names can be set on all such occurrences
         individually, or preferably by using this method to ensure
         consistency across all such components.
 
@@ -3057,7 +3057,7 @@ class NetCDFComponents(NetCDF):
         Some components exist within multiple constructs, but when
         written to a netCDF dataset the netCDF names associated with
         such components will be arbitrarily taken from one of
-        them. The netCDF names can be set on all such occurences
+        them. The netCDF names can be set on all such occurrences
         individually, or preferably by using this method to ensure
         consistency across all such components.
 
@@ -3112,7 +3112,7 @@ class NetCDFComponents(NetCDF):
         Some components exist within multiple constructs, but when
         written to a netCDF dataset the netCDF names associated with
         such components will be arbitrarily taken from one of
-        them. The netCDF names can be set on all such occurences
+        them. The netCDF names can be set on all such occurrences
         individually, or preferably by using this method to ensure
         consistency across all such components.
 
@@ -3163,7 +3163,7 @@ class NetCDFComponents(NetCDF):
         Some components exist within multiple constructs, but when
         written to a netCDF dataset the netCDF names associated with
         such components will be arbitrarily taken from one of
-        them. The netCDF names can be set on all such occurences
+        them. The netCDF names can be set on all such occurrences
         individually, or preferably by using this method to ensure
         consistency across all such components.
 
@@ -3217,7 +3217,7 @@ class NetCDFComponents(NetCDF):
         Some components exist within multiple constructs, but when
         written to a netCDF dataset the netCDF names associated with
         such components will be arbitrarily taken from one of
-        them. The netCDF names can be set on all such occurences
+        them. The netCDF names can be set on all such occurrences
         individually, or preferably by using this method to ensure
         consistency across all such components.
 

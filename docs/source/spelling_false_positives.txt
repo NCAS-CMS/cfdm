@@ -6,6 +6,7 @@ args
 atol
 ATOL
 AuxiliaryCoordinate
+auxiliarycoordinate
 basenames
 bool
 broadcastable
