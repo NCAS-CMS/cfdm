@@ -1,10 +1,10 @@
 from ..meta import DocstringRewriteMeta
 
 
-class ConstructAccess(metaclass=DocstringRewriteMeta):
-    """Mixin class for accessing an embedded `Constructs` object.
+class FieldDomain(metaclass=DocstringRewriteMeta):
+    """Mixin class for methods of field and domain constructs.
 
-    .. versionadded:: (cfdm) 1.7.0
+    .. versionadded:: (cfdm) 1.8.9.0
 
     """
 
