@@ -269,7 +269,8 @@ class NetCDFWrite(IOWrite):
                 )
         # --- End: for
 
-        g["nc"][ncvar].setncatts(netcdf_attrs)
+        if not g['dry_run']:
+            g["nc"][ncvar].setncatts(netcdf_attrs)
 
         return netcdf_attrs
 
@@ -452,7 +453,7 @@ class NetCDFWrite(IOWrite):
                 try:
                     parent_group.createDimension(ncdim, size)
                 except RuntimeError as error:
-                    raise
+                    pass  # TODO convert to 'raise' via fixes upstream
 
         return ncdim
 
@@ -1361,15 +1362,7 @@ class NetCDFWrite(IOWrite):
                     try:
                         parent_group.createDimension(base_bounds_ncdim, size)
                     except RuntimeError as error:
-                        error = str(error)
-                        if error == "NetCDF: String match to name in use":
-                            if self.write_vars['post_dry_run']:  # 'a' mode, OK
-                                logger.debug(
-                                    "Caught case of "
-                                    "'String match to name in use'"
-                                )
-                            else:  # bad, so raise original error
-                                raise
+                        raise
 
                 # Set the netCDF bounds variable name
                 default = coord_ncvar + "_bounds"
@@ -3776,7 +3769,10 @@ class NetCDFWrite(IOWrite):
                 ncvar = g["key_to_ncvar"][owning_coord_key]
                 formula_terms = " ".join(formula_terms)
                 if not g['dry_run']:
-                    g["nc"][ncvar].setncattr("formula_terms", formula_terms)
+                    try:
+                        g["nc"][ncvar].setncattr("formula_terms", formula_terms)
+                    except:
+                        pass  # TODO convert to 'raise' via fixes upstream
 
                 logger.info(
                     "    Writing formula_terms attribute to "
@@ -3789,9 +3785,12 @@ class NetCDFWrite(IOWrite):
                 if bounds_ncvar is not None:
                     bounds_formula_terms = " ".join(bounds_formula_terms)
                     if not g['dry_run']:
-                        g["nc"][bounds_ncvar].setncattr(
-                            "formula_terms", bounds_formula_terms
-                        )
+                        try:
+                            g["nc"][bounds_ncvar].setncattr(
+                                "formula_terms", bounds_formula_terms
+                            )
+                        except:
+                            pass  # TODO convert to 'raise' via fixes upstream
 
                     logger.info(
                         "    Writing formula_terms to netCDF "
@@ -4135,7 +4134,8 @@ class NetCDFWrite(IOWrite):
                     nc = self._create_netcdf_group(nc, group)
             # --- End: for
 
-            nc.setncatts(this_group_attributes)
+            if not g["dry_run"]:
+                nc.setncatts(this_group_attributes)
 
             group_attributes[groups] = tuple(this_group_attributes)
         # --- End: for
@@ -4914,19 +4914,22 @@ class NetCDFWrite(IOWrite):
         #        -------------------------------------------------------------
         #        g['netcdf'].set_fill_off()
 
-        # ------------------------------------------------------------
-        # Write global properties to the file first. This is important
-        # as doing it later could slow things down enormously. This
-        # function also creates the g['global_attributes'] set, which
-        # is used in the _write_field function.
-        # ------------------------------------------------------------
-        self._write_global_attributes(fields)
+        if not g["dry_run"]:
+            # ------------------------------------------------------------
+            # Write global properties to the file first. This is important
+            # as doing it later could slow things down enormously. This
+            # function also creates the g['global_attributes'] set, which
+            # is used in the _write_field function.
+            # ------------------------------------------------------------
+            self._write_global_attributes(fields)
 
-        # ------------------------------------------------------------
-        # Write group-level properties to the file next
-        # ------------------------------------------------------------
-        if g["group"]:
-            self._write_group_attributes(fields)
+            # ------------------------------------------------------------
+            # Write group-level properties to the file next
+            # ------------------------------------------------------------
+            if g["group"]:
+                self._write_group_attributes(fields)
+        else:
+            g["output_version"] = g["latest_version"]
 
         if external is not None:
             if g["output_version"] < g["CF-1.7"]:
