@@ -343,6 +343,9 @@ class CoordinateReference(abstract.Container):
             coordinates.remove(key)
             return key
 
+        if default is None:
+            return
+
         return self._default(
             default, f"{self.__class__.__name__!r} has no {key!r} coordinate"
         )

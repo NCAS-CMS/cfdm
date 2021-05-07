@@ -1,5 +1,4 @@
 import datetime
-import inspect
 import os
 import unittest
 
@@ -31,16 +30,11 @@ class CellMethodTest(unittest.TestCase):
         self.assertEqual(len(f), 1, "f={!r}".format(f))
         self.f = f[0]
 
-        self.test_only = []
-
     def test_CellMethod__repr__str__dump_construct_type(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f
 
-        for c in f.cell_methods.values():
+        for c in f.cell_methods().values():
             _ = repr(c)
             _ = str(c)
             self.assertIsInstance(c.dump(display=False), str)
@@ -48,15 +42,12 @@ class CellMethodTest(unittest.TestCase):
 
     def test_CellMethod(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = self.f
 
         # ------------------------------------------------------------
         # Equals and idenities
         # ------------------------------------------------------------
-        for c in f.cell_methods.values():
+        for c in f.cell_methods().values():
             d = c.copy()
             self.assertTrue(c.equals(c, verbose=3))
             self.assertTrue(c.equals(d, verbose=3))
@@ -102,9 +93,6 @@ class CellMethodTest(unittest.TestCase):
 
     def test_CellMethod_axes(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.CellMethod()
 
         self.assertFalse(f.has_axes())
@@ -117,9 +105,6 @@ class CellMethodTest(unittest.TestCase):
 
     def test_CellMethod_method(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.CellMethod()
 
         self.assertFalse(f.has_method())
@@ -132,9 +117,6 @@ class CellMethodTest(unittest.TestCase):
 
     def test_CellMethod_qualifier(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.CellMethod()
 
         self.assertEqual(f.qualifiers(), {})
@@ -147,9 +129,6 @@ class CellMethodTest(unittest.TestCase):
         self.assertEqual(f.del_qualifier("within"), "years")
         self.assertIsNone(f.del_qualifier("within", None))
         self.assertEqual(f.qualifiers(), {})
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

@@ -277,7 +277,6 @@ class create_fieldTest_2(unittest.TestCase):
                 g.equals(f, verbose=verbose),
                 "Field not equal to itself read back in",
             )
-        # --- End: for
 
         x = g.dump(display=False)
         x = f.dump(display=False)
@@ -288,9 +287,6 @@ class create_fieldTest_2(unittest.TestCase):
             extra=["domain_ancillary"],
             warnings=warnings,
         )
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

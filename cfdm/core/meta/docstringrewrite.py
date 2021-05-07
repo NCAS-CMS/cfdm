@@ -1,5 +1,10 @@
 import inspect
 
+from ..functions import CF
+
+
+_VN = CF()
+
 
 class DocstringRewriteMeta(type):
     """Modify docstrings.
@@ -35,6 +40,8 @@ class DocstringRewriteMeta(type):
         from the class closest to the child class.
 
         """
+        class_name_lower = class_name.lower()
+
         docstring_rewrite = {}
 
         for parent in parents[::-1]:
@@ -132,6 +139,7 @@ class DocstringRewriteMeta(type):
                 DocstringRewriteMeta._docstring_update(
                     package_name,
                     class_name,
+                    class_name_lower,
                     attr,
                     attr_name,
                     docstring_rewrite,
@@ -178,7 +186,12 @@ class DocstringRewriteMeta(type):
 
             # Update docstring
             DocstringRewriteMeta._docstring_update(
-                package_name, class_name, attr, attr_name, docstring_rewrite
+                package_name,
+                class_name,
+                class_name_lower,
+                attr,
+                attr_name,
+                docstring_rewrite,
             )
 
             # Redecorate
@@ -271,6 +284,7 @@ class DocstringRewriteMeta(type):
                     DocstringRewriteMeta._docstring_update(
                         package_name,
                         class_name,
+                        class_name_lower,
                         attr,
                         attr_name,
                         docstring_rewrite,
@@ -352,6 +366,7 @@ class DocstringRewriteMeta(type):
             doc = DocstringRewriteMeta._docstring_update(
                 package_name,
                 class_name,
+                class_name_lower,
                 None,
                 None,
                 docstring_rewrite,
@@ -378,6 +393,9 @@ class DocstringRewriteMeta(type):
 
         ``{{class}}`` is replaced by the name of the class.
 
+        ``{{class_lower}}`` is replaced by the name of the class
+        convert to all lower case.
+
         ``{{package}}`` is replaced by the name of the package, as defined
         by the first N ``.`` (dot) separated fields of the class's
         `__module__` attribute, where is N determined by
@@ -400,7 +418,9 @@ class DocstringRewriteMeta(type):
         """
         return (
             "{{class}}",
+            "{{class_lower}}",
             "{{package}}",
+            "{{VN}}",
         )
 
     @staticmethod
@@ -580,6 +600,7 @@ class DocstringRewriteMeta(type):
         cls,
         package_name,
         class_name,
+        class_name_lower,
         f,
         method_name,
         config,
@@ -605,16 +626,19 @@ class DocstringRewriteMeta(type):
             # this value, updating the value if any are found. Note
             # that any non-special substitutions embedded within the
             # embedded substituion are *not* replaced.
-            for k, v in config.items():
-                if k not in value:
-                    continue
-
-                try:
-                    # Compiled regular expression substitution
-                    value = key.sub(v, value)
-                except AttributeError:
-                    # String substitution
-                    value = value.replace(k, v)
+            # for k, v in config.items():
+            #    try:
+            #        if k not in value:
+            #            continue
+            #    except TypeError:
+            #        continue
+            #
+            #    try:
+            #        # Compiled regular expression substitution
+            #        value = key.sub(v, value)
+            #    except AttributeError:
+            #        # String substitution
+            #        value = value.replace(k, v)
 
             # Substitute the key for the value
             try:
@@ -632,6 +656,12 @@ class DocstringRewriteMeta(type):
 
         # Insert the name of the class containing this method
         doc = doc.replace("{{class}}", class_name)
+
+        # Insert the lower case name of the class containing this method
+        doc = doc.replace("{{class_lower}}", class_name_lower)
+
+        # Insert the CF version
+        doc = doc.replace("{{VN}}", _VN)
 
         # ----------------------------------------------------------------
         # Set the rewritten docstring on the method

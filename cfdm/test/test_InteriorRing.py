@@ -47,9 +47,6 @@ class InteriorRingTest(unittest.TestCase):
         self.assertIsInstance(i.dump(display=False), str)
 
 
-# --- End: class
-
-
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cfdm.environment()

@@ -364,14 +364,16 @@ class CFDMImplementation(Implementation):
         """
         # To avoid mutable default argument (an anti-pattern) of axes=[]
         if axes is None:
-            axes = []
+            return field.auxiliary_coordinates(todict=True)
 
         if exact:
-            arg = "exact"
+            axis_mode = "exact"
         else:
-            arg = "and"
+            axis_mode = "and"
 
-        return dict(field.auxiliary_coordinates.filter_by_axis(arg, *axes))
+        return field.auxiliary_coordinates(
+            filter_by_axis=axes, axis_mode=axis_mode, todict=True
+        )
 
     def get_bounds(self, parent, default=None):
         """Return the bounds of a construct.
@@ -419,7 +421,7 @@ class CFDMImplementation(Implementation):
         :Returns:
 
         """
-        return field.cell_measures
+        return field.cell_measures()
 
     def get_cell_methods(self, field):
         """Return all of the cell method constructs of a field.
@@ -431,7 +433,8 @@ class CFDMImplementation(Implementation):
         :Returns:
 
         """
-        return field.cell_methods.ordered()
+        # TODO - remove the ".ordered()" when Python 3.6 is deprecated
+        return field.cell_methods().ordered()
 
     def get_cell_method_axes(self, cell_method, default=None):
         """Return the axes of a cell method construct.
@@ -563,7 +566,7 @@ class CFDMImplementation(Implementation):
         except KeyError:
             return None
 
-    def get_constructs(self, field, axes=None, data=False):
+    def get_constructs(self, field, axes=(), data=False):
         """Return constructs that span particular axes.
 
         If no axes are specified then all constructs are returned.
@@ -583,14 +586,12 @@ class CFDMImplementation(Implementation):
             `dict`
 
         """
-        # To avoid mutable default argument (an anti-pattern) of axes=[]
-        if axes is None:
-            axes = []
-
         if data:
-            return dict(field.constructs.filter_by_data())
+            return field.constructs.filter_by_data(todict=True)
 
-        return dict(field.constructs.filter_by_axis("and", *axes))
+        return field.constructs.filter_by_axis(
+            *axes, axis_mode="and", todict=True
+        )
 
     def get_coordinate_reference_coordinates(self, coordinate_reference):
         """Return the coordinates of a coordinate reference construct.
@@ -633,7 +634,7 @@ class CFDMImplementation(Implementation):
         :Returns:
 
         """
-        return field.coordinate_references
+        return field.coordinate_references()
 
     def get_coordinates(self, field):
         """Return all of the coordinate constructs of a field.
@@ -645,7 +646,7 @@ class CFDMImplementation(Implementation):
         :Returns:
 
         """
-        return field.coordinates
+        return field.coordinates()
 
     def get_data_calendar(self, data, default=None):
         """Return the calendar of date-time data.
@@ -854,7 +855,7 @@ class CFDMImplementation(Implementation):
         :Returns:
 
         """
-        return field.dimension_coordinates
+        return field.dimension_coordinates()
 
     def get_domain_ancillaries(self, field):
         """Return all of the domain ancillary constructs of a field.
@@ -866,7 +867,7 @@ class CFDMImplementation(Implementation):
         :Returns:
 
         """
-        return field.domain_ancillaries
+        return field.domain_ancillaries()
 
     def get_domain_axes(self, field):
         """Return all of the domain axis constructs of a field.
@@ -878,7 +879,7 @@ class CFDMImplementation(Implementation):
         :Returns:
 
         """
-        return field.domain_axes
+        return field.domain_axes()
 
     def get_domain_axis_size(self, field, axis):
         """Return the size a of domrain axis construct.
@@ -892,7 +893,7 @@ class CFDMImplementation(Implementation):
         :Returns:
 
         """
-        return field.domain_axes[axis].get_size()
+        return field.domain_axes(todict=True)[axis].get_size()
 
     def get_sample_dimension_position(self, construct):
         """Returns the position of the compressed data sample dimension.
@@ -1224,7 +1225,7 @@ class CFDMImplementation(Implementation):
         <Constructs: field_ancillary(1)>
 
         """
-        return field.field_ancillaries
+        return field.field_ancillaries()
 
     def get_field_data_axes(self, field):
         """Returns the construct keys of the field's data dimensions.
@@ -1749,7 +1750,7 @@ class CFDMImplementation(Implementation):
 
         :Parameters:
 
-            auxiliary_coordinate: auxiliary coordiante consturct
+            auxiliary_coordinate: auxiliary coordinate construct
 
             copy: `bool`,optional
 
@@ -2170,7 +2171,9 @@ class CFDMImplementation(Implementation):
         if ncdim is not None:
             variable.nc_set_sample_dimension(ncdim)
 
-    def set_auxiliary_coordinate(self, field, construct, axes, copy=True):
+    def set_auxiliary_coordinate(
+        self, field, construct, axes, copy=True, **kwargs
+    ):
         """Insert a auxiliary coordinate object into a field.
 
         :Parameters:
@@ -2183,12 +2186,18 @@ class CFDMImplementation(Implementation):
 
             copy: `bool`, optional
 
+            kwargs: optional
+                Additional parameters to `Field.set_construct` that
+                may be used by sublcasses.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
         :Returns:
 
             `str`
 
         """
-        return field.set_construct(construct, axes=axes, copy=copy)
+        return field.set_construct(construct, axes=axes, copy=copy, **kwargs)
 
     def set_bounds(self, construct, bounds, copy=True):
         """Set the bounds component of a construct.
@@ -2414,7 +2423,9 @@ class CFDMImplementation(Implementation):
         """
         coordinate_reference.set_datum(datum)
 
-    def set_dimension_coordinate(self, field, construct, axes, copy=True):
+    def set_dimension_coordinate(
+        self, field, construct, axes, copy=True, **kwargs
+    ):
         """Insert a dimension coordinate object into a field.
 
         :Parameters:
@@ -2427,15 +2438,20 @@ class CFDMImplementation(Implementation):
 
             copy: `bool`, optional
 
+            kwargs: optional
+                Additional parameters to `Field.set_construct` that
+                may be used by sublcasses.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
         :Returns:
 
             `str`
 
         """
-        return field.set_construct(construct, axes=axes, copy=copy)
+        return field.set_construct(construct, axes=axes, copy=copy, **kwargs)
 
     def set_domain_ancillary(self, field, construct, axes, copy=True):
-        #                    extra_axes=0, copy=True):
         """Insert a domain ancillary object into a field.
 
         :Parameters:

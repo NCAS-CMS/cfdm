@@ -94,7 +94,6 @@ class DimensionCoordinateTest(unittest.TestCase):
         with self.assertRaises(Exception):
             y = x.set_data(cfdm.Data(1))
 
-    @unittest.skip("until 1.9.0.0")
     def test_DimensionCoordinate_climatology(self):
         """TODO DOCS."""
         x = cfdm.DimensionCoordinate()
@@ -108,9 +107,6 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertTrue(x.is_climatology())
         self.assertTrue(x.del_climatology())
         self.assertIsNone(x.del_climatology(None))
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

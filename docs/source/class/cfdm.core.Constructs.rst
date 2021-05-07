@@ -50,6 +50,7 @@ Data axes
    :template: method.rst
 
    ~cfdm.core.Constructs.data_axes
+   ~cfdm.core.Constructs.get_data_axes
 
 Miscellaneous
 -------------
@@ -64,6 +65,7 @@ Miscellaneous
    ~cfdm.core.Constructs.copy
    ~cfdm.core.Constructs.shallow_copy
    ~cfdm.core.Constructs.ordered
+   ~cfdm.core.Constructs.todict
 
 Dictionary-access methods
 -------------------------

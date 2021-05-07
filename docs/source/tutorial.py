@@ -27,13 +27,13 @@ t.clear_properties()
 t.properties()
 t.set_properties(original)
 t.properties()
-t.coordinate_references
-print(t.coordinate_references)
-list(t.coordinate_references.keys())
-for key, value in t.coordinate_references.items():
+t.coordinate_references()
+print(t.coordinate_references())
+list(t.coordinate_references().keys())
+for key, value in t.coordinate_references().items():
     print(key, repr(value))
-print(t.dimension_coordinates)
-print(t.domain_axes)
+print(t.dimension_coordinates())
+print(t.domain_axes())
 q.constructs
 print(q.constructs)
 t.constructs
@@ -45,7 +45,7 @@ t.ndim
 t.shape
 t.size
 t.data.size
-print(t.domain_axes)
+print(t.domain_axes())
 t
 t.shape
 t.get_data_axes()
@@ -64,7 +64,7 @@ q, t = cfdm.read('file.nc')
 t
 t2 = t.squeeze()
 t2
-print(t2.dimension_coordinates)
+print(t2.dimension_coordinates())
 t3 = t2.insert_dimension(axis='domainaxis3', position=1)
 t3
 t3.transpose([2, 0, 1])
@@ -112,13 +112,27 @@ print(t.constructs.filter_by_property(
             'or',
            standard_name='air_temperature standard_error',
             units='m'))
-print(t.constructs.filter_by_axis('and', 'domainaxis1'))
+print(t.constructs.filter_by_axis('grid_latitude', 'grid_longitude',
+                                  axis_mode='or'))
 print(t.constructs.filter_by_measure('area'))
 print(t.constructs.filter_by_method('maximum'))
-print(t.constructs.filter_by_type('auxiliary_coordinate').filter_by_axis('and', 'domainaxis2'))
+print(
+    t.constructs.filter_by_type('auxiliary_coordinate').filter_by_axis('domainaxis2')
+)
 c = t.constructs.filter_by_type('dimension_coordinate')
 d = c.filter_by_property(units='degrees')
 print(d)
+c = t.constructs.filter(filter_by_type=('dimension_coordinate',),
+                        filter_by_property={'units': 'degrees'})
+print(c)
+d = t.constructs.filter(filter_by_type=('dimension_coordinate',),
+                        filter_by_property={'units': 'degrees'},
+                        todict=True)
+type(d)
+print(d)
+c = t.constructs.filter(filter_by_type=('dimension_coordinate',),
+                        filter_by_property={'units': 'degrees'})
+print(c)
 print(t)
 print(t.constructs.filter_by_identity('latitude'))
 print(t.constructs.filter_by_identity('long_name=Grid latitude name'))
@@ -137,36 +151,33 @@ c = t.constructs.filter_by_type('auxiliary_coordinate')
 c
 c.inverse_filter()
 print(t.constructs.filter_by_type('cell_measure'))
-print(t.cell_measures)
+print(t.cell_measures())
 t.construct('latitude')
 key = t.construct_key('latitude')
-t.get_construct(key)
-t.constructs('latitude').value()
-c = t.constructs.get(key)
+t.construct(key)
+key, lat = t.construct_item('latitude')
+key = t.construct_key('latitude')
 t.constructs[key]
+key = t.construct_key('latitude')
+c = t.constructs.get(key)
 try:
     t.construct('measure:volume')                # Raises Exception
 except:
     pass
-t.construct('measure:volume', False)
-c = t.constructs.filter_by_measure('volume')
+t.construct('measure:volume', default=False)
+try:
+    t.construct('measure:volume', default=Exception("my error"))  # Raises Exception
+except:
+    pass
+c = t.constructs.filter_by_measure("volume")
 len(c)
-try:
-    c.value()                                    # Raises Exception
-except:
-    pass
-c.value(default='No construct')
-try:
-    c.value(default=KeyError('My message'))      # Raises Exception
-except:
-    pass
-d = t.constructs('units=degrees')
+d = t.constructs("units=degrees")
 len(d)
 try:
-    d.value()                                    # Raises Exception
+    t.construct("units=degrees")  # Raises Exception
 except:
     pass
-print(d.value(default=None))
+print(t.construct("units=degrees", default=None))
 lon = q.construct('longitude')
 lon
 lon.set_property('long_name', 'Longitude')
@@ -203,11 +214,11 @@ field_latitude.set_property('test', 'set by field')
 print(domain_latitude.get_property('test'))
 domain_latitude.del_property('test')
 field_latitude.has_property('test')
-print(q.domain_axes)
-d = q.domain_axes.get('domainaxis1')
+print(q.domain_axes())
+d = q.domain_axes().get('domainaxis1')
 d
 d.get_size()
-print(t.coordinates)
+print(t.coordinates())
 lon = t.constructs('grid_longitude').value()
 bounds = lon.bounds
 bounds
@@ -236,8 +247,8 @@ crs.datum.parameters()
 crs.coordinate_conversion
 crs.coordinate_conversion.parameters()
 crs.coordinate_conversion.domain_ancillaries()
-print(t.cell_methods)
-t.cell_methods.ordered()
+print(t.cell_methods())
+t.cell_methods().ordered()
 cm = t.constructs('method:mean').value()
 cm
 cm.get_axes()
@@ -540,8 +551,7 @@ u = t.copy()
 u.data[0, 0, 0] = -1e30
 u.data[0, 0, 0]
 t.data[0, 0, 0]
-key = u.construct_key('grid_latitude')
-u.del_construct(key)
+u.del_construct('grid_latitude')
 u.constructs('grid_latitude')
 t.constructs('grid_latitude')
 import copy

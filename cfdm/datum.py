@@ -33,12 +33,12 @@ class Datum(mixin.Parameters, mixin.NetCDFVariable, core.Datum):
         :Parameters:
 
             parameters: `dict`, optional
-               Set parameters. The dictionary keys are parameter names,
-               with corresponding values. Ignored if the *source*
-               parameter is set.
+               Set parameters. The dictionary keys are parameter
+               names, with corresponding values. Ignored if the
+               *source* parameter is set.
 
-               Parameters may also be set after initialisation with the
-               `set_parameters` and `set_parameter` methods.
+               Parameters may also be set after initialisation with
+               the `set_parameters` and `set_parameter` methods.
 
                *Parameter example:*
                  ``parameters={'earth_radius': 6371007.}``

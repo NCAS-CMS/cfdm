@@ -1,6 +1,5 @@
 import atexit
 import datetime
-import inspect
 import os
 import tempfile
 import unittest
@@ -39,8 +38,6 @@ atexit.register(_remove_tmpfiles)
 class NetCDFTest(unittest.TestCase):
     """TODO DOCS."""
 
-    test_only = []
-
     def setUp(self):
         """TODO DOCS."""
         # Disable log messages to silence expected warnings
@@ -75,9 +72,6 @@ class NetCDFTest(unittest.TestCase):
 
     def test_netCDF_variable_dimension(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.Field()
 
         f.nc_set_variable("qwerty")
@@ -258,9 +252,6 @@ class NetCDFTest(unittest.TestCase):
 
     def test_netCDF_geometry_variable(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.Field()
 
         f.nc_set_geometry_variable("qwerty")
@@ -284,9 +275,6 @@ class NetCDFTest(unittest.TestCase):
 
     def test_netCDF_group_attributes(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.Field()
 
         attrs = f.nc_group_attributes()
@@ -335,9 +323,6 @@ class NetCDFTest(unittest.TestCase):
 
     def test_netCDF_dimension_groups(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cfdm.DomainAxis()
 
         d.nc_set_dimension("ncdim")
@@ -394,9 +379,6 @@ class NetCDFTest(unittest.TestCase):
 
     def test_netCDF_variable_groups(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.Field()
 
         f.nc_set_variable("ncdim")
@@ -456,9 +438,6 @@ class NetCDFTest(unittest.TestCase):
 
     def test_netCDF_geometry_variable_groups(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.Field()
 
         f.nc_set_geometry_variable("ncvar")
@@ -518,9 +497,6 @@ class NetCDFTest(unittest.TestCase):
 
     def test_netCDF_sample_dimension_groups(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         c = cfdm.Count()
 
         c.nc_set_sample_dimension("ncvar")
@@ -697,16 +673,10 @@ class NetCDFTest(unittest.TestCase):
 
     def test_netCDF_to_memory(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.example_field(4)
         f.data.to_memory()  # on non-compressed array
         f.compress("indexed_contiguous", inplace=True)
         f.data.to_memory()  # on compressed array
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

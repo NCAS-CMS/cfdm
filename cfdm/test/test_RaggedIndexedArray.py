@@ -40,9 +40,6 @@ class RaggedIndexedArrayTest(unittest.TestCase):
         self.assertIsNone(r.get_index(None))
 
 
-# --- End: class
-
-
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cfdm.environment()

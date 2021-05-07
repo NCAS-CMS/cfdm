@@ -216,7 +216,7 @@ All cfdm classes have a `_custom` attribute that contains a dictionary
 meant for use in external subclasses.
 
 It is intended for the storage of extra objects that are required by
-an external subclass, yet can be transfered to copied instances using
+an external subclass, yet can be transferred to copied instances using
 the inherited cfdm infrastructure. The `_custom` dictionary is shallow
 copied, rather than deep copied, when using the standard cfdm deep
 copy method techniques (i.e. the `!copy` method, initialisation with

@@ -401,7 +401,7 @@ class CellMeasure(
 
         return default
 
-    def identities(self):
+    def identities(self, generator=False, **kwargs):
         """Return all possible identities.
 
         The identities comprise:
@@ -416,9 +416,23 @@ class CellMeasure(
 
         .. seealso:: `identity`
 
+        :Parameters:
+
+            generator: `bool`, optional
+                If True then return a generator for the identities,
+                rather than a list.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
+            kwargs: optional
+                Additional configuration parameters. Currently
+                none. Unrecognised parameters are ignored.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
         :Returns:
 
-            `list`
+            `list` or generator
                 The identities.
 
         **Examples:**
@@ -434,12 +448,21 @@ class CellMeasure(
         'cell_measure'
         >>> c.identities()
         ['measure:area', 'units=km2', 'ncvar%cell_measure']
+        >>> for i in c.identities(generator=True):
+        ...     print(i)
+        ...
+        measure:area
+        units=km2
+        ncvar%cell_measure
 
         """
-        out = super().identities()
+        measure = self.get_measure(None)
+        if measure is not None:
+            pre = ((f"measure:{measure}",),)
+            pre0 = kwargs.pop("pre", None)
+            if pre0:
+                pre = tuple(pre0) + pre
 
-        n = self.get_measure(None)
-        if n is not None:
-            out.insert(0, f"measure:{n}")
+            kwargs["pre"] = pre
 
-        return out
+        return super().identities(generator=generator, **kwargs)

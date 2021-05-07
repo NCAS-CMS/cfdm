@@ -240,15 +240,9 @@ class create_fieldTest(unittest.TestCase):
             .value()
             .data.array
         )
-        self.assertEqual(
-            array[1], b"beta", "greek_letters = {!r}".format(array)
-        )
+        self.assertEqual(array[1], b"beta")
 
-        self.assertEqual(
-            len(g),
-            1,
-            "Read produced the wrong number of fields: {} != 1".format(len(g)),
-        )
+        self.assertEqual(len(g), 1)
 
         g = g[0].squeeze()
 
@@ -294,9 +288,6 @@ class create_fieldTest(unittest.TestCase):
             extra="domain_ancillary",
             warnings=warnings,
         )
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

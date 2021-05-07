@@ -54,14 +54,15 @@ class Count(
             {{init properties: `dict`, optional}}
 
                 *Parameter example:*
-                  ``properties={'long_name': 'number of obs for this station'}``
+                  ``properties={'long_name': 'number of obs'}``
 
             {{init data: data_like, optional}}
 
                 {{data_like}}
 
             source: optional
-                Initialise the properties and data from those of *source*.
+                Initialise the properties and data from those of
+                *source*.
 
                 {{init source}}
 

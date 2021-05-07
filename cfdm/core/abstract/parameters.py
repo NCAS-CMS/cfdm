@@ -132,6 +132,9 @@ class Parameters(Container):
         try:
             return self._get_component("parameters").pop(parameter)
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
                 f"{self.__class__.__name__!r} has no {parameter!r} parameter",
@@ -178,6 +181,9 @@ class Parameters(Container):
         try:
             return self._get_component("parameters")[parameter]
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
                 f"{self.__class__.__name__!r} has no {parameter!r} parameter",

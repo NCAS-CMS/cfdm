@@ -164,7 +164,6 @@ cfdm package version {1} of {2}""".format(
         else:
             print(short_help)
             assert False, "Unhandled option: " + option
-    # --- End: for
 
     # ----------------------------------------------------------------
     # Read the input file

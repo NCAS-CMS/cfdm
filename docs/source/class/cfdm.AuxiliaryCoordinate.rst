@@ -146,6 +146,21 @@ Geometries
 
    ~cfdm.AuxiliaryCoordinate.interior_ring
 
+Climatology
+^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.AuxiliaryCoordinate.del_climatology
+   ~cfdm.AuxiliaryCoordinate.get_climatology
+   ~cfdm.AuxiliaryCoordinate.is_climatology
+   ~cfdm.AuxiliaryCoordinate.set_climatology
+
 Miscellaneous
 -------------
 
@@ -154,7 +169,7 @@ Miscellaneous
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
-   :template: method.rst
+   :template: method.rst	     
 
    ~cfdm.AuxiliaryCoordinate.copy
    ~cfdm.AuxiliaryCoordinate.creation_commands

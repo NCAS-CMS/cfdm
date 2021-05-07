@@ -130,6 +130,9 @@ class Properties(Container):
         try:
             return self._get_component("properties").pop(prop)
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
                 f"{self.__class__.__name__!r} has no {prop!r} property",
@@ -182,6 +185,9 @@ class Properties(Container):
         try:
             return self._get_component("properties")[prop]
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
                 f"{self.__class__.__name__!r} has no {prop!r} property",

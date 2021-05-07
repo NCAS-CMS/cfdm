@@ -103,6 +103,9 @@ from .functions import (
     Configuration,
     Constant,
     ConstantAccess,
+    is_log_level_debug,
+    is_log_level_detail,
+    is_log_level_info,
 )
 
 # Though these are internal-use methods, include them in the namespace
@@ -156,7 +159,7 @@ from .cfdmimplementation import CFDMImplementation, implementation
 
 from .read_write import read, write
 
-from .examplefield import example_field
+from .examplefield import example_field, example_fields, example_domain
 
 from .abstract import Container
 

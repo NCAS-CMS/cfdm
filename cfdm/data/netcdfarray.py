@@ -167,7 +167,6 @@ class NetCDFArray(abstract.Array):
                     variable.set_auto_mask(mask)
                     array = variable[indices]
                     break
-        # --- End: if
 
         if self._get_component("close"):
             # Close the netCDF file

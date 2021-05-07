@@ -1,6 +1,5 @@
 import atexit
 import datetime
-import inspect
 import os
 import tempfile
 import unittest
@@ -50,13 +49,8 @@ class StringTest(unittest.TestCase):
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
 
-        self.test_only = []
-
     def test_STRING(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for array in (
             numpy.ma.array(list("abcdefghij"), dtype="S"),
             numpy.ma.array(
@@ -130,9 +124,6 @@ class StringTest(unittest.TestCase):
             ).value()
             self.assertEqual(aux0.data.shape, array.shape, aux0.data.shape)
             self.assertEqual(aux1.data.shape, array.shape, aux1.data.shape)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

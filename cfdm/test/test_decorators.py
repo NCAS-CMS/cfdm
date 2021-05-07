@@ -1,6 +1,5 @@
 import copy
 import datetime
-import inspect
 import itertools
 import unittest
 from unittest.mock import patch
@@ -130,21 +129,11 @@ class dummyClass:
         logger.warning(self.warning_message)
 
 
-# --- End: class
-
-
 class DecoratorsTest(unittest.TestCase):
     """TODO DOCS."""
 
-    def setUp(self):
-        """TODO DOCS."""
-        self.test_only = []
-
     def test_inplace_enabled(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # Note we must initiate separate classes as a list is mutable:
         test_class_1 = dummyClass()
         test_class_2 = dummyClass()
@@ -169,9 +158,6 @@ class DecoratorsTest(unittest.TestCase):
 
     def test_manage_log_level_via_verbosity(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # Order of decreasing severity/verbosity is crucial to one test below
         levels = ["WARNING", "INFO", "DETAIL", "DEBUG"]
 
@@ -272,9 +258,6 @@ class DecoratorsTest(unittest.TestCase):
     @patch("builtins.print")
     def test_display_or_return(self, mock_print):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         test_class = dummyClass()
 
         # Compare results with display=False:
@@ -295,9 +278,6 @@ class DecoratorsTest(unittest.TestCase):
         res_4 = test_class.print_or_return_string_by_decorator()
         mock_print.assert_called_with(new_string)
         self.assertEqual(res_4, None)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":
