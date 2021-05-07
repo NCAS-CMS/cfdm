@@ -373,7 +373,7 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
         >>> f = {{package}}.example_field(0)
         >>> f.get_data_axes()
         ('domainaxis0', 'domainaxis1')
-        >>> f.get_data_axes(key='dimensioncoordinate2')
+        >>> f.get_data_axes('dimensioncoordinate2')
         ('domainaxis2',)
         >>> f.has_data_axes()
         True
@@ -386,7 +386,11 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
         'no axes'
 
         """
-        axes = self.get_data_axes(key, default=None)
+        if key is None:
+            axes = self.get_data_axes(default=None)
+        else:
+            axes = self.get_data_axes(key, default=None)
+
         if axes is None:
             return False
 

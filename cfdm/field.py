@@ -1528,7 +1528,7 @@ class Field(
             out.append(f"{name}.set_construct(c)")
 
         # Field data axes
-        data_axes = self.get_data_axes(None)
+        data_axes = self.get_data_axes(default=None)
         if data_axes is not None:
             if header:
                 out.append("#")
