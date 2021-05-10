@@ -202,12 +202,12 @@ class Container:
         * If the LHS operand is (object identity) the RHS operand then
           return True.
 
-        * If ignore_type=False and the LHS operand is not of the same
-          type, or a sublcass of, the RHS operand then return False
+        * If ignore_type=False and the LHS operand is not of exactly
+          the same type as the RHS operand then return False.
 
-        * If ignore_type=True and the LHS operand is not of the same
-          type, or a sublcass of, the RHS operand then instantiate a
-          new instance based on the the RHS class and return it.
+        * If ignore_type=True and the LHS operand is not of exactly
+          the same type as the RHS operand then instantiate a new
+          instance based on the the RHS class and return it.
 
         .. versionadded:: (cfdm) 1.7.0
 
