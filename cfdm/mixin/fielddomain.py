@@ -103,6 +103,53 @@ class FieldDomain:
 
         return out
 
+    def _filter_return_construct(self, c, key, item, default, _method):
+        """Return construct, or key, or both, or default.
+
+        :Parameters:
+
+            c: `Constructs` or `dict`
+
+            key: `bool`, optional
+                If True then return the selected construct
+                identifier. By default the construct itself is
+                returned.
+
+            item: `bool`, optional
+                If True then return the selected construct identifier
+                and the construct itself. By default the construct
+                itself is returned. If *key* is True then *item* is
+                ignored.
+
+            _method: `str`
+                The name of the ultimate calling method.
+
+        :Returns:
+
+                The selected construct, or its identifier if *key* is
+                True, or a tuple of both if *item* is True.
+
+        """
+        n = len(c)
+        if n == 1:
+            k, construct = c.popitem()
+            if key:
+                return k
+
+            if item:
+                return k, construct
+
+            return construct
+
+        if default is None:
+            return default
+
+        return self._default(
+            default,
+            f"{self.__class__.__name__}.{_method}() can't return {n} "
+            "constructs",
+        )
+
     def _filter_interface(
         self,
         _ctypes,
@@ -172,25 +219,28 @@ class FieldDomain:
                     return c
 
                 # Return construct, or key, or both, or default
-                n = len(c)
-                if n == 1:
-                    k, construct = c.popitem()
-                    if key:
-                        return k
-
-                    if item:
-                        return k, construct
-
-                    return construct
-
-                if default is None:
-                    return default
-
-                return self._default(
-                    default,
-                    f"{self.__class__.__name__}.{_method}() can't return {n} "
-                    "constructs",
+                return self._filter_return_construct(
+                    c, key, item, default, _method
                 )
+                # n = len(c)
+                # if n == 1:
+                #    k, construct = c.popitem()
+                #    if key:
+                #        return k
+                #
+                #    if item:
+                #        return k, construct
+                #
+                #    return construct
+                #
+                # if default is None:
+                #    return default
+                #
+                # return self._default(
+                #    default,
+                #    f"{self.__class__.__name__}.{_method}() can't return {n} "
+                #    "constructs",
+                # )
 
             kwargs = {"filter_by_type": _ctypes}
 
@@ -222,19 +272,6 @@ class FieldDomain:
         elif identities:
             kwargs["filter_by_identity"] = identities
 
-        #        filter_by_identity = kwargs.pop("filter_by_identity", None)
-        #        if filter_by_identity is None:
-        #            if identities:
-        #                kwargs["filter_by_identity"] = identities
-        #        else:
-        #            kwargs["filter_by_identity"] = filter_by_identity
-        #            if identities:
-        #                raise TypeError(
-        #                    f"Can't set {self.__class__.__name__}.{_method}() "
-        #                    "keyword argument 'filter_by_identity' when "
-        #                    "positional *identities arguments are also set"
-        #                )
-
         if construct:
             kwargs["todict"] = True
 
@@ -248,24 +285,26 @@ class FieldDomain:
             return c
 
         # Return construct, or key, or both, or default
-        if len(c) == 1:
-            k, construct = c.popitem()
-            if key:
-                return k
+        return self._filter_return_construct(c, key, item, default, _method)
 
-            if item:
-                return k, construct
-
-            return construct
-
-        if default is None:
-            return default
-
-        return self._default(
-            default,
-            f"{self.__class__.__name__}.{_method}() can't return {len(c)} "
-            "constructs",
-        )
+        # if len(c) == 1:
+        #    k, construct = c.popitem()
+        #    if key:
+        #        return k
+        #
+        #    if item:
+        #        return k, construct
+        #
+        #    return construct
+        #
+        # if default is None:
+        #    return default
+        #
+        # return self._default(
+        #    default,
+        #    f"{self.__class__.__name__}.{_method}() can't return {len(c)} "
+        #    "constructs",
+        # )
 
     def _unique_construct_names(self):
         """Return unique metadata construct names.

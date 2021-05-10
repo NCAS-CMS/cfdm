@@ -103,7 +103,7 @@ class Container:
 
         Equality either uses one or other of the objects `!equals`
         methods, or casts them as numpy arrays and carried aout
-        numericlly tolerant equality checks.
+        numerically tolerant equality checks.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -203,7 +203,7 @@ class Container:
           return True.
 
         * If ignore_type=False and the LHS operand is not of the same
-          type, or a squblcass of, the RHS operand then return False
+          type, or a sublcass of, the RHS operand then return False
 
         * If ignore_type=True and the LHS operand is not of the same
           type, or a sublcass of, the RHS operand then instantiate a

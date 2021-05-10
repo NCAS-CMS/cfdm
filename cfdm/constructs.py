@@ -548,8 +548,6 @@ class Constructs(mixin.Container, core.Constructs):
                     key, _ = c.popitem()
                     values2.append(key)
 
-                continue
-
         return values2
 
     @classmethod
@@ -562,7 +560,7 @@ class Constructs(mixin.Container, core.Constructs):
         property_mode=None,
         _identity_config=None,
     ):
-        """Parse argument designed to a filter method.
+        """Parse arguments destined for a filter method.
 
         Specifically transforms the arguments to a filter method
         (e.g. `filter_by_property`) so that they can be used in the
@@ -669,7 +667,7 @@ class Constructs(mixin.Container, core.Constructs):
         :Parameters:
 
             value0:
-                The first value to be matched. Could a `re.Pattern`
+                The first value to be matched. Could be a `re.Pattern`
                 object.
 
             construct:
