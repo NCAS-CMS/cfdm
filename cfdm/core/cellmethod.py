@@ -264,6 +264,9 @@ class CellMethod(abstract.Container):
         try:
             return self._get_component("qualifiers").pop(qualifier)
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
                 f"{self.__class__.__name__!r} has no {qualifier!r} qualifier",
@@ -392,6 +395,9 @@ class CellMethod(abstract.Container):
         try:
             return self._get_component("qualifiers")[qualifier]
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
                 f"{self.__class__.__name__!r} has no {qualifier!r} qualifier",

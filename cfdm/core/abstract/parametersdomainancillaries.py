@@ -153,6 +153,9 @@ class ParametersDomainAncillaries(Parameters):
                 domain_ancillary
             )
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
                 f"{self.__class__.__name__!r} has no {domain_ancillary!r} domain ancillary",
@@ -240,6 +243,9 @@ class ParametersDomainAncillaries(Parameters):
         try:
             return self._get_component("domain_ancillaries")[domain_ancillary]
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
                 f"{self.__class__.__name__!r} has no {domain_ancillary!r} domain ancillary",

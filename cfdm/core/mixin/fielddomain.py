@@ -1,15 +1,10 @@
 from ..meta import DocstringRewriteMeta
 
-# --------------------------------------------------------------------
-# See cfdm.core.mixin.container.__docstring_substitution__ for
-# {{...}}  docstring substitutions
-# --------------------------------------------------------------------
 
+class FieldDomain(metaclass=DocstringRewriteMeta):
+    """Mixin class for methods of field and domain constructs.
 
-class ConstructAccess(metaclass=DocstringRewriteMeta):
-    """Mixin class for accessing an embedded `Constructs` object.
-
-    .. versionadded:: (cfdm) 1.7.0
+    .. versionadded:: (cfdm) 1.8.9.0
 
     """
 
@@ -105,7 +100,14 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         <{[repr}}DimensionCoordinate: grid_latitude(10) degrees>
 
         """
-        return self.constructs.filter_by_key(key).value(default=default)
+        construct = self.constructs.get(key)
+        if construct is not None:
+            return construct
+
+        if default is None:
+            return default
+
+        return self._default(default, f"No construct for key {key!r}")
 
     def has_construct(self, key):
         """Whether a metadata construct exists.
@@ -137,13 +139,7 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         False
 
         """
-        # Assume construct keys can (uncommonly) be Falsy e.g. '' or 0
-        # (this is tested explicitly) but not None (so None untested).
-        try_get_construct = self.get_construct(key, default=None)
-        if try_get_construct is None:
-            return False
-
-        return True
+        return key in self.constructs
 
     def set_construct(self, construct, key=None, axes=None, copy=True):
         """Set a metadata construct.
@@ -205,7 +201,7 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         )
 
     def get_data_axes(self, key, default=ValueError):
-        """Gets the keys of the axes spanned by the construct data.
+        """Gets the keys of the axes spanned by a construct's data.
 
         Specifically, returns the keys of the domain axis constructs
         spanned by the data of a metadata construct.
@@ -246,16 +242,20 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         None
 
         """
-        try:
-            return self.constructs.data_axes()[key]
-        except KeyError:
-            return self._default(
-                default,
-                message=(
-                    f"{self.__class__.__name__!r} has no data axes for the "
-                    f"metadata construct {key!r}"
-                ),
-            )
+        data_axes = self.constructs.get_data_axes(key, default=None)
+        if data_axes is not None:
+            return data_axes
+
+        if default is None:
+            return default
+
+        return self._default(
+            default,
+            message=(
+                f"{self.__class__.__name__!r} has no data axes for "
+                f"construct {key!r}"
+            ),
+        )
 
     def del_data_axes(self, key, default=ValueError()):
         """Removes the keys of the axes spanned by the construct data.
@@ -297,20 +297,21 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         'no axes'
 
         """
-        try:
-            data_axes = self.constructs.data_axes()[key]
-        except KeyError:
-            return self._default(
-                default,
-                message=(
-                    f"{self.__class__.__name__!r} has no data axes for the "
-                    f"metadata construct {key!r}"
-                ),
-            )
-        else:
+        data_axes = self.constructs.get_data_axes(key, default=None)
+        if data_axes is not None:
             self.constructs._del_data_axes(key)
+            return data_axes
 
-        return data_axes
+        if default is None:
+            return default
+
+        return self._default(
+            default,
+            message=(
+                f"{self.__class__.__name__!r} has no data axes for "
+                f"construct {key!r}"
+            ),
+        )
 
     def has_data_axes(self, key=None):
         """Whether the axes spanned by the construct data have been set.
@@ -349,11 +350,7 @@ class ConstructAccess(metaclass=DocstringRewriteMeta):
         None
 
         """
-        axes = self.get_data_axes(key, default=None)
-        if axes is None:
-            return False
-
-        return True
+        return self.get_data_axes(key, default=None) is not None
 
     def set_data_axes(self, axes, key):
         """Sets domain axis constructs spanned by the construct data.

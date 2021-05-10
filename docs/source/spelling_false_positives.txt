@@ -6,6 +6,7 @@ args
 atol
 ATOL
 AuxiliaryCoordinate
+auxiliarycoordinate
 basenames
 bool
 broadcastable
@@ -21,6 +22,7 @@ Chunksizes
 cls
 CompressedArray
 conda
+config
 CoordinateConversion
 CoordinateReference
 datatype
@@ -58,6 +60,7 @@ int
 InteriorRing
 iter
 iterable
+Iwi
 Juckes
 kwargs
 lat
@@ -65,6 +68,7 @@ len
 mercator
 Mixin
 mro
+mutables
 naxes
 nc
 ncdim
@@ -111,6 +115,7 @@ th
 timeseries
 timeSeries
 timeSeriesProfile
+todict
 trajectoryProfile
 Treshansky
 Typecode

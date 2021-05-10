@@ -26,9 +26,6 @@ class Properties(Container):
         """
         return f"{self.identity('')}"
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
     def _dump_properties(self, _prefix="", _level=0, _omit_properties=None):
         """Dump the properties.
 
@@ -69,6 +66,39 @@ class Properties(Container):
             )
 
         return "\n".join(string)
+
+    def _identities_iter(self):
+        """Return all possible identities.
+
+        See `identities` for details and examples.
+
+        :Returns:
+
+            generator
+                The identities.
+
+        """
+        standard_name = self.get_property("standard_name", None)
+        if standard_name is not None:
+            yield standard_name
+
+        properties = self.properties()
+        if properties:
+            #            standard_name = properties.get("standard_name", None)
+            #            if standard_name is not None:
+            #                yield standard_name
+
+            for prop in ("cf_role", "axis", "long_name"):
+                value = properties.pop(prop, None)
+                if value is not None:
+                    yield f"{prop}={value}"
+
+            for prop, value in sorted(properties.items()):
+                yield f"{prop}={value}"
+
+        ncvar = self.nc_get_variable(None)
+        if ncvar is not None:
+            yield f"ncvar%{ncvar}"
 
     # ----------------------------------------------------------------
     # Methods
@@ -133,14 +163,11 @@ class Properties(Container):
 
         properties = self.properties()
         if properties:
-            for prop in self._inherited_properties():
-                properties.pop(prop, None)
-
             out.append(f"{name}.set_properties({properties})")
 
         nc = self.nc_get_variable(None)
         if nc is not None:
-            out.append(f"{name}.nc_set_variable({nc!r})")
+            out.append(f"{name}.nc_set_variable('{nc}')")
 
         if string:
             indent = " " * indent
@@ -225,16 +252,16 @@ class Properties(Container):
 
         Equality is strict by default. This means that:
 
-        * the same descriptive properties must be present, with the same
-          values and data types, and vector-valued properties must also have
-          same the size and be element-wise equal (see the *ignore_properties*
-          and *ignore_data_type* parameters).
+        * the same descriptive properties must be present, with the
+          same values and data types, and vector-valued properties
+          must also have same the size and be element-wise equal (see
+          the *ignore_properties* and *ignore_data_type* parameters).
 
         {{equals tolerance}}
 
-        Any type of object may be tested but, in general, equality is only
-        possible with another object of the same type, or a subclass of
-        one. See the *ignore_type* parameter.
+        Any type of object may be tested but, in general, equality is
+        only possible with another object of the same type, or a
+        subclass of one. See the *ignore_type* parameter.
 
         {{equals netCDF}}
 
@@ -405,7 +432,7 @@ class Properties(Container):
 
         return default
 
-    def identities(self):
+    def identities(self, generator=False, **kwargs):
         """Return all possible identities.
 
         The identities comprise:
@@ -419,9 +446,23 @@ class Properties(Container):
 
         .. seealso:: `identity`
 
+        :Parameters:
+
+            generator: `bool`, optional
+                If True then return a generator for the identities,
+                rather than a list.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
+            kwargs: optional
+                Additional configuration parameters. Currently
+                none. Unrecognised parameters are ignored.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
         :Returns:
 
-            `list`
+            `list` or generator
                 The identities.
 
         **Examples:**
@@ -438,61 +479,18 @@ class Properties(Container):
          'foo=bar',
          'standard_name=air_temperature',
          'ncvar%tas']
+        >>> for i in f.identities(generator=True):
+        ...     print(i)
+        ...
+        air_temperature
+        long_name=Air Temperature
+        foo=bar
+        standard_name=air_temperature
+        ncvar%tas
 
         """
-        properties = self.properties()
-        cf_role = properties.pop("cf_role", None)
-        axis = properties.pop("axis", None)
-        long_name = properties.pop("long_name", None)
-        standard_name = properties.pop("standard_name", None)
+        g = self._iter(body=self._identities_iter(), **kwargs)
+        if generator:
+            return g
 
-        out = []
-
-        if standard_name is not None:
-            out.append(standard_name)
-
-        if cf_role is not None:
-            out.append(f"cf_role={cf_role}")
-
-        if axis is not None:
-            out.append(f"axis={axis}")
-
-        if long_name is not None:
-            out.append(f"long_name={long_name}")
-
-        out += [
-            f"{prop}={value}" for prop, value in sorted(properties.items())
-        ]
-
-        if standard_name is not None:
-            out.append(f"standard_name={standard_name}")
-
-        n = self.nc_get_variable(None)
-        if n is not None:
-            out.append(f"ncvar%{n}")
-
-        return out
-
-    def _inherited_properties(self):
-        """Return the properties inherited from a parent construct.
-
-        There are always no inherited properties. This method exists as a
-        convenience to simplify the source code.
-
-        .. versionadded:: (cfdm) 1.8.7.0
-
-        .. seealso:: `properties`
-
-        :Returns:
-
-            `dict`
-                The inherited properties. Always an empty dictionary.
-
-        **Examples:**
-
-        >>> f = {{package}}.{{class}}()
-        >>> f._inherited_properties()
-        {}
-
-        """
-        return {}
+        return list(g)

@@ -201,7 +201,6 @@ class ArrayMixin:
                 if n_axes_with_list_indices < len(indices):
                     # Apply subspace defined by slices
                     array = array[tuple(indices)]
-        # --- End: if
 
         if copy:
             if numpy.ma.isMA(array) and not array.ndim:

@@ -1392,3 +1392,66 @@ def ATOL(*new_atol):
 def RTOL(*new_rtol):
     """Alias for `cfdm.rtol`."""
     return rtol(*new_rtol)
+
+
+def is_log_level_debug(logger):
+    """Return True if and only if log level is at least DEBUG.
+
+    .. versionadded:: (cfdm) 1.8.9.0
+
+    .. seealso:: `log_level`
+
+    :Parameters:
+
+        logger: `logging.Logger`
+           The logger in use.
+
+    :Returns:
+
+        `bool`
+            Whether or not the log level is at least DEBUG.
+
+    """
+    return logger.parent.level <= logging.DEBUG
+
+
+def is_log_level_detail(logger):
+    """Return True if and only if log level is at least DETAIL.
+
+    .. versionadded:: (cfdm) 1.8.9.0
+
+    .. seealso:: `log_level`
+
+    :Parameters:
+
+        logger: `logging.Logger`
+           The logger in use.
+
+    :Returns:
+
+        `bool`
+            Whether or not the log level is at least DETAIL.
+
+    """
+    return logger.parent.level <= logging.DETAIL
+
+
+def is_log_level_info(logger):
+    """Return True if and only if log level is at least INFO.
+
+    .. versionadded:: (cfdm) 1.8.9.0
+
+    .. seealso:: `log_level`
+
+    :Parameters:
+
+        logger: `logging.Logger`
+           The logger in use.
+
+    :Returns:
+
+        `bool`
+            Whether or not the log level is at least INFO.
+
+    """
+    return logger.parent.level <= logging.INFO

@@ -179,9 +179,12 @@ class Container(metaclass=DocstringRewriteMeta):
         try:
             return self._components.pop(component)
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
-                f"{ self.__class__.__name__!r} has no {component!r} component",
+                f"{self.__class__.__name__} has no {component!r} component",
             )
 
     @property
@@ -253,9 +256,12 @@ class Container(metaclass=DocstringRewriteMeta):
         try:
             return self._components[component]
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no {component!r} component",
+                f"{self.__class__.__name__} has no {component!r} component",
             )
 
     def _has_component(self, component):

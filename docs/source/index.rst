@@ -36,4 +36,3 @@
 
 * :ref:`genindex`
 * :ref:`Search <search>`
-

@@ -1,6 +1,5 @@
 import copy
 import datetime
-import inspect
 import itertools
 import os
 import unittest
@@ -41,21 +40,8 @@ class DataTest(unittest.TestCase):
             os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
         )
 
-        self.test_only = []
-        #    self.test_only = ['NOTHING!!!!!']
-        #    self.test_only = ['test_Data__asdatetime__asreftime__isdatetime']
-        #    self.test_only = ['test_Data__setitem__']
-        #    self.test_only = ['test_Data_ceil', 'test_Data_floor',
-        #                      'test_Data_trunc', 'test_Data_rint']
-        #    self.test_only = ['test_Data_array', 'test_Data_datetime_array']
-        #    self.test_only = ['test_dumpd_loadd']
-        #    self.test_only = ['test_Data_BINARY_AND_UNARY_OPERATORS']
-
     def test_Data_any(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cfdm.Data([[0, 0, 0]])
         self.assertFalse(d.any())
         d[0, 0] = numpy.ma.masked
@@ -67,9 +53,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data__repr__str(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for d in [
             cfdm.Data(9, units="km"),
             cfdm.Data([9], units="km"),
@@ -87,14 +70,8 @@ class DataTest(unittest.TestCase):
             _ = str(d)
 
     #    def test_Data__getitem__(self):
-    #        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-    #            return
-
     def test_Data__setitem__(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         a = numpy.ma.arange(3000).reshape(50, 60)
 
         d = cfdm.Data(a.filled(), units="m")
@@ -132,7 +109,6 @@ class DataTest(unittest.TestCase):
                     + "\nnumpy.ma.getmaskarray(a)="
                     + repr(numpy.ma.getmaskarray(a)),
                 )
-        # --- End: for
 
         a = numpy.ma.arange(3000).reshape(50, 60)
 
@@ -149,7 +125,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue((x == a).all() in (True, numpy.ma.masked), message)
             m = numpy.ma.getmaskarray(x)
             self.assertTrue((m == numpy.ma.getmaskarray(a)).all(), message)
-        # --- End: for
 
         # Scalar numeric array
         d = cfdm.Data(9, units="km")
@@ -160,9 +135,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_apply_masking(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         a = numpy.ma.arange(12).reshape(3, 4)
         a[1, 1] = numpy.ma.masked
 
@@ -214,9 +186,6 @@ class DataTest(unittest.TestCase):
         self.assertTrue((b.mask == e.mask.array).all())
 
     #    def test_Data_astype(self):
-    #        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-    #            return
-    #
     #        a = numpy.array([1.5, 2, 2.5], dtype=float)
     #        d = cfdm.Data(a)
     #
@@ -238,9 +207,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_array(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # ------------------------------------------------------------
         # Numpy array interface (__array__)
         # ------------------------------------------------------------
@@ -283,9 +249,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_datetime_array(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cfdm.Data([11292.5, 11293], units="days since 1970-1-1")
         dt = d.datetime_array
         self.assertEqual(dt[0], datetime.datetime(2000, 12, 1, 12, 0))
@@ -306,9 +269,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_flatten(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         ma = numpy.ma.arange(24).reshape(1, 2, 3, 4)
         ma[0, 1, 1, 2] = cfdm.masked
         ma[0, 0, 2, 1] = cfdm.masked
@@ -361,9 +321,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_transpose(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         a = numpy.arange(2 * 3 * 5).reshape(2, 1, 3, 5)
         d = cfdm.Data(a.copy())
 
@@ -377,7 +334,6 @@ class DataTest(unittest.TestCase):
                 )
                 self.assertEqual(d.shape, a.shape, message)
                 self.assertTrue((d.array == a).all(), message)
-        # --- End: for
 
         with self.assertRaises(ValueError):
             d.transpose(axes=99)
@@ -390,9 +346,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_unique(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cfdm.Data([[4, 2, 1], [1, 2, 3]], units="metre")
         u = d.unique()
         self.assertEqual(u.shape, (4,))
@@ -407,9 +360,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_equals(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         a = numpy.ma.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
         a[0, 0, 2, 3] = numpy.ma.masked
 
@@ -422,9 +372,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_maximum_minimum_sum_squeeze(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         a = numpy.ma.arange(2 * 3 * 5).reshape(2, 1, 3, 5)
         a[0, 0, 0, 0] = numpy.ma.masked
         a[-1, -1, -1, -1] = numpy.ma.masked
@@ -500,9 +447,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_dtype_mask(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         a = numpy.ma.array(
             [[280.0, -99, -99, -99], [281.0, 279.0, 278.0, 279.0]],
             dtype=float,
@@ -539,33 +483,21 @@ class DataTest(unittest.TestCase):
 
     def test_Data_get_index(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cfdm.Data([[281, 279, 278, 279]])
         self.assertIsNone(d.get_index(default=None))
 
     def test_Data_get_list(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cfdm.Data([[281, 279, 278, 279]])
         self.assertIsNone(d.get_list(default=None))
 
     def test_Data_get_count(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cfdm.Data([[281, 279, 278, 279]])
         self.assertIsNone(d.get_count(default=None))
 
     def test_Data_filled(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cfdm.Data([[1, 2, 3]])
         self.assertTrue((d.filled().array == [[1, 2, 3]]).all())
 
@@ -615,9 +547,6 @@ class DataTest(unittest.TestCase):
 
     def test_Data_insert_dimension(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cfdm.Data([list(range(12))])
         self.assertEqual(d.shape, (1, 12))
         e = d.squeeze()
@@ -669,14 +598,8 @@ class DataTest(unittest.TestCase):
 
     def test_Data_get_compressed_dimension(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cfdm.Data([[281, 279, 278, 279]])
         self.assertIsNone(d.get_compressed_dimension(None))
-
-
-# --- End: class
 
 
 if __name__ == "__main__":
