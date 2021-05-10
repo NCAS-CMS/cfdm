@@ -330,7 +330,7 @@ html_sidebars = {
         "searchbox.html",
         "globaltoc.html",
         "relations.html",
-        # 'sourcelink.html',
+        "sponsors.html",  # file found in docs/_templates
     ]
 }
 
