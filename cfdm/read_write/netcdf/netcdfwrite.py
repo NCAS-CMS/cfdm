@@ -3085,7 +3085,7 @@ class NetCDFWrite(IOWrite):
 
         """
         g = self.write_vars
-        xxx = []
+        ncdim_size_to_spanning_constructs = []
         seen = g["seen"]
 
         logger.info("  Writing {!r}:".format(f))  # pragma: no cover
@@ -3384,7 +3384,7 @@ class NetCDFWrite(IOWrite):
                                 axes.index(axis),
                             )
 
-                        for b1 in g["xxx"]:
+                        for b1 in g["ncdim_size_to_spanning_constructs"]:
                             (ncdim1, axis_size1), constructs1 = list(
                                 b1.items()
                             )[0]
@@ -3489,7 +3489,9 @@ class NetCDFWrite(IOWrite):
                             ncdim, f, axis, unlimited=unlimited
                         )
 
-                        xxx.append({(ncdim, axis_size0): spanning_constructs})
+                        ncdim_size_to_spanning_constructs.append(
+                            {(ncdim, axis_size0): spanning_constructs}
+                        )
                 # --- End: if
             # --- End: if
         # --- End: for
@@ -3957,8 +3959,10 @@ class NetCDFWrite(IOWrite):
                 "ncdims": ncdimensions,
             }
 
-        if xxx:
-            g["xxx"].extend(xxx)
+        if ncdim_size_to_spanning_constructs:
+            g["ncdim_size_to_spanning_constructs"].extend(
+                ncdim_size_to_spanning_constructs
+            )
 
     def _create_vertical_datum(self, ref, coord_key):
         """Deal with a vertical datum.
@@ -4632,7 +4636,7 @@ class NetCDFWrite(IOWrite):
             "string": string,
             # Conventions
             "Conventions": Conventions,
-            "xxx": [],
+            "ncdim_size_to_spanning_constructs": [],
             "count_variable_sample_dimension": {},
             "index_variable_sample_dimension": {},
             "external_variables": "",
