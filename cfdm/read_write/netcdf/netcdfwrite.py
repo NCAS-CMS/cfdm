@@ -269,7 +269,7 @@ class NetCDFWrite(IOWrite):
                 )
         # --- End: for
 
-        if not g['dry_run']:
+        if not g["dry_run"]:
             g["nc"][ncvar].setncatts(netcdf_attrs)
 
         return netcdf_attrs
@@ -449,10 +449,10 @@ class NetCDFWrite(IOWrite):
             # place this netCDF dimension.
             parent_group = self._parent_group(ncdim)
 
-            if not g['dry_run']:
+            if not g["dry_run"]:
                 try:
                     parent_group.createDimension(ncdim, size)
-                except RuntimeError as error:
+                except RuntimeError:
                     pass  # TODO convert to 'raise' via fixes upstream
 
         return ncdim
@@ -608,7 +608,7 @@ class NetCDFWrite(IOWrite):
             # its name with its basename (CF>=1.8)
             ncdim = self._remove_group_structure(ncdim)
 
-        if not g['dry_run']:
+        if not g["dry_run"]:
             if unlimited:
                 # Create an unlimited dimension
                 size = None
@@ -617,13 +617,16 @@ class NetCDFWrite(IOWrite):
                 except RuntimeError as error:
                     message = (
                         "Can't create unlimited dimension "
-                        "in {} file ({}).".format(g["netcdf"].file_format, error)
+                        "in {} file ({}).".format(
+                            g["netcdf"].file_format, error
+                        )
                     )
 
                     error = str(error)
                     if error == "NetCDF: NC_UNLIMITED size already in use":
                         raise RuntimeError(
-                            message + " In a {} file only one unlimited dimension "
+                            message
+                            + " In a {} file only one unlimited dimension "
                             "is allowed. Consider using a netCDF4 format.".format(
                                 g["netcdf"].file_format
                             )
@@ -1360,10 +1363,10 @@ class NetCDFWrite(IOWrite):
                 else:
                     base_bounds_ncdim = bounds_ncdim
 
-                if not g['dry_run']:
+                if not g["dry_run"]:
                     try:
                         parent_group.createDimension(base_bounds_ncdim, size)
-                    except RuntimeError as error:
+                    except RuntimeError:
                         raise
 
                 # Set the netCDF bounds variable name
@@ -1555,7 +1558,7 @@ class NetCDFWrite(IOWrite):
                     # replace its name with its basename (CF>=1.8)
                     ncdim = self._remove_group_structure(ncdim)
 
-                if not g['dry_run']:
+                if not g["dry_run"]:
                     parent_group.createDimension(ncdim, size)
 
             # Set an appropriate default netCDF node coordinates
@@ -1978,7 +1981,7 @@ class NetCDFWrite(IOWrite):
                     # replace its name with its basename (CF>=1.8)
                     ncdim = self._remove_group_structure(ncdim)
 
-                if not g['dry_run']:
+                if not g["dry_run"]:
                     parent_group.createDimension(ncdim, size)
 
             ncvar = self._netcdf_name(ncvar)
@@ -2067,7 +2070,7 @@ class NetCDFWrite(IOWrite):
                     # replace its name with its basename (CF>=1.8)
                     ncdim = self._remove_group_structure(ncdim)
 
-                if not g['dry_run']:
+                if not g["dry_run"]:
                     parent_group.createDimension(ncdim, size)
 
             ncvar = self._netcdf_name(ncvar)
@@ -2127,8 +2130,7 @@ class NetCDFWrite(IOWrite):
             # bounds netCDF variable and add the 'bounds' or
             # 'climatology' (as appropriate) attribute to the
             # dictionary of extra attributes
-            bounds_extra = self._write_bounds(
-                f, scalar_coord, key, (), ncvar)
+            bounds_extra = self._write_bounds(f, scalar_coord, key, (), ncvar)
 
             # Create a new scalar coordinate variable
             self._write_netcdf_variable(
@@ -2426,7 +2428,7 @@ class NetCDFWrite(IOWrite):
             external_variables = ncvar
             g["global_attributes"].add("external_variables")
 
-        if not g['dry_run']:
+        if not g["dry_run"]:
             g["netcdf"].setncattr("external_variables", external_variables)
 
         g["external_variables"] = external_variables
@@ -2520,7 +2522,7 @@ class NetCDFWrite(IOWrite):
             }
             kwargs.update(g["netcdf_compression"])
 
-            if not g['dry_run']:
+            if not g["dry_run"]:
                 self._createVariable(**kwargs)
 
             # Add named parameters
@@ -2539,7 +2541,7 @@ class NetCDFWrite(IOWrite):
 
                 parameters[term] = value
 
-            if not g['dry_run']:
+            if not g["dry_run"]:
                 g["nc"][ncvar].setncatts(parameters)
 
             # Update the 'seen' dictionary
@@ -2626,7 +2628,7 @@ class NetCDFWrite(IOWrite):
 
         # Don't ever write any variables in the 'dry run' read iteration of an
         # append-mode write (only write in the second post-dry-run iteration).
-        if g['dry_run']:
+        if g["dry_run"]:
             return
 
         logger.info("    Writing {!r}".format(cfvar))  # pragma: no cover
@@ -2636,8 +2638,6 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         datatype = self._datatype(cfvar)
         data = self.implementation.get_data(cfvar, None)
-
-        original_ncdimensions = ncdimensions
 
         data, ncdimensions = self._transform_strings(cfvar, data, ncdimensions)
 
@@ -2739,8 +2739,10 @@ class NetCDFWrite(IOWrite):
                     )
                 )
             elif error == "NetCDF: NC_UNLIMITED in the wrong index":
-                message = "Can't create variable in {} file from {} ({})".format(
-                    g["netcdf"].file_format, cfvar, error
+                message = (
+                    "Can't create variable in {} file from {} ({})".format(
+                        g["netcdf"].file_format, cfvar, error
+                    )
                 )
                 raise RuntimeError(
                     message + ". In a {} file the unlimited dimension must "
@@ -3769,10 +3771,12 @@ class NetCDFWrite(IOWrite):
             if formula_terms:
                 ncvar = g["key_to_ncvar"][owning_coord_key]
                 formula_terms = " ".join(formula_terms)
-                if not g['dry_run']:
+                if not g["dry_run"]:
                     try:
-                        g["nc"][ncvar].setncattr("formula_terms", formula_terms)
-                    except:
+                        g["nc"][ncvar].setncattr(
+                            "formula_terms", formula_terms
+                        )
+                    except KeyError:
                         pass  # TODO convert to 'raise' via fixes upstream
 
                 logger.info(
@@ -3785,12 +3789,12 @@ class NetCDFWrite(IOWrite):
                 bounds_ncvar = g["bounds"].get(ncvar)
                 if bounds_ncvar is not None:
                     bounds_formula_terms = " ".join(bounds_formula_terms)
-                    if not g['dry_run']:
+                    if not g["dry_run"]:
                         try:
                             g["nc"][bounds_ncvar].setncattr(
                                 "formula_terms", bounds_formula_terms
                             )
-                        except:
+                        except KeyError:
                             pass  # TODO convert to 'raise' via fixes upstream
 
                     logger.info(
@@ -4288,8 +4292,10 @@ class NetCDFWrite(IOWrite):
             # space, so join them with commas.
             delimiter = ","
 
-        if not g['dry_run']:
-            g["netcdf"].setncattr("Conventions", delimiter.join(g["Conventions"]))
+        if not g["dry_run"]:
+            g["netcdf"].setncattr(
+                "Conventions", delimiter.join(g["Conventions"])
+            )
 
             # ------------------------------------------------------------
             # Write the file descriptors to the file
@@ -4584,7 +4590,7 @@ class NetCDFWrite(IOWrite):
         # Initialise netCDF write parameters
         # ------------------------------------------------------------
         self.write_vars = {
-            'filename': os.path.expanduser(os.path.expandvars(filename)),
+            "filename": os.path.expanduser(os.path.expandvars(filename)),
             # Format of output file
             "fmt": None,
             # netCDF4.Dataset instance
@@ -4647,7 +4653,6 @@ class NetCDFWrite(IOWrite):
             # Whether or not to name dimension corodinates in the
             # 'coordinates' attribute
             "coordinates": bool(coordinates),
-
             # Dictionary of netCDF variable names and netCDF
             # dimensions keyed by items of the field (such as a
             # coordinate or a coordinate reference)
@@ -4665,15 +4670,15 @@ class NetCDFWrite(IOWrite):
 
         effective_mode = mode  # actual mode to use for the first IO iteration
         effective_fields = fields
-        if mode == 'a':
+        if mode == "a":
             # First read in the fields from the existing file:
             effective_fields = NetCDFRead(_implementation).read(filename)
 
             # Read rather than append for the first iteration to ensure nothing
             # gets written; only want to update the 'seen' dictionary first.
-            effective_mode = 'r'
+            effective_mode = "r"
             overwrite = False
-            self.write_vars['dry_run'] = True
+            self.write_vars["dry_run"] = True
         self._file_io_iteration(
             mode=effective_mode,
             overwrite=overwrite,
@@ -4698,11 +4703,11 @@ class NetCDFWrite(IOWrite):
             group=group,
         )
 
-        if mode == 'w':  # only one iteration required in this simple case
+        if mode == "w":  # only one iteration required in this simple case
             return
-        elif mode == 'a':  # need another iteration to append after reading
-            self.write_vars['dry_run'] = False
-            self.write_vars['post_dry_run'] = True  # i.e. follows a dry run
+        elif mode == "a":  # need another iteration to append after reading
+            self.write_vars["dry_run"] = False
+            self.write_vars["post_dry_run"] = True  # i.e. follows a dry run
 
             # Perform a second iteration to append, with knowledge of the
             # constructs existing in the file from the first iteration.
@@ -4754,24 +4759,24 @@ class NetCDFWrite(IOWrite):
         warn_valid,
         group,
     ):
-        ''' TODO
+        """TODO
 
         ...
 
         Note that a verbose keyword as in cfdm.write is not necessary, since
         verbosity is managed and effectively passed through by the
         @_manage_log_level_via_verbosity decorator.
-        '''
+        """
         # ------------------------------------------------------------
         # Initiate file IO with given write variables
         # ------------------------------------------------------------
-        if mode == 'w':
-            desc = 'Writing to'
-        elif mode == 'a':
-            desc = 'Appending to'
+        if mode == "w":
+            desc = "Writing to"
+        elif mode == "a":
+            desc = "Appending to"
         else:
-            desc = 'Reading from'
-        logger.info('{} {}'.format(desc, fmt))  # pragma: no cover
+            desc = "Reading from"
+        logger.info("{} {}".format(desc, fmt))  # pragma: no cover
 
         g = self.write_vars
 
@@ -4892,7 +4897,7 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Open the output netCDF file
         # ------------------------------------------------------------
-        if os.path.isfile(filename) and mode == 'w':
+        if os.path.isfile(filename) and mode == "w":
             if not overwrite:
                 raise IOError(
                     "Can't write to an existing file unless "
@@ -4977,6 +4982,5 @@ class NetCDFWrite(IOWrite):
                 compress=compress,
                 fletcher32=fletcher32,
                 shuffle=shuffle,
-                verbose=verbose,
                 extra_write_vars=extra_write_vars,
             )
