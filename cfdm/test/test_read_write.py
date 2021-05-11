@@ -178,9 +178,6 @@ class read_writeTest(unittest.TestCase):
             )
 
     def test_write_netcdf_mode(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         g = cfdm.read(self.filename)
         g_copy = g.copy()
         g_orig_length = len(g)
