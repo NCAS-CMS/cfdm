@@ -205,7 +205,12 @@ class read_writeTest(unittest.TestCase):
 
             # Now append all other example fields, to check a diverse variety:
             new_length = 2
-            for field_id in [2, 3, 4, 5, 7]:  # eventually -> range(1, 8):
+            for field_id in [0] + list(range(2, 8)):  # TODO final range(1, 8):
+                # Skip since "Can't write int64 data from <Count: (2) > to a
+                # NETCDF3_CLASSIC file" causes a ValueError i.e. not possible:
+                if fmt in self.netcdf3_fmts and field_id == 6:
+                    continue
+
                 print("\n>>>>>>>>>>> ONTO FIELD ID", field_id)
                 ex_field = cfdm.example_field(field_id)
                 cfdm.write(ex_field, tmpfile, fmt=fmt, mode='a')
