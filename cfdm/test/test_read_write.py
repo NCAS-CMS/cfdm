@@ -222,20 +222,21 @@ class read_writeTest(unittest.TestCase):
                 print("$$$$$$$$$$$$$$$$$$$$$ BUT GOT:")
                 f[0].dump()
 
-                # Temporary fixes that, for now, demonstrate that the
-                # example fields 5 and 7 are successfully appended except
-                # for the "featureType" property, to be handled as part of the
-                # global and group property strategy TBC:
-                if field_id == 5:  # temp fix for field 5 append to work!
-                    f[1].del_property("featureType")
-                if field_id == 7:  # temp fix for field 7 append to work!
-                    f[-1].del_property("featureType")
-
                 new_length += 1  # there should be exactly one more field now
                 self.assertEqual(len(f), new_length)
                 # Can't guarantee order of fields read in after the appends, so
                 # check that the field is *somewhere* in the read-in fieldlist
-                self.assertTrue(any([ex_field.equals(field) for field in f]))
+                self.assertTrue(
+                    any(
+                        [
+                            ex_field.equals(
+                                field,
+                                ignore_properties=["comment", "featureType"]
+                            )
+                            for field in f
+                        ]
+                    )
+                )
 
             # Check behaviour when append identical fields, as an edge case:
             cfdm.write(g, tmpfile, fmt=fmt, mode='w', overwrite=True)  # wipe
