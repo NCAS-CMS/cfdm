@@ -7,7 +7,7 @@ from . import Constructs
 from . import Domain
 
 
-class Field(mixin.ConstructAccess, abstract.PropertiesData):
+class Field(mixin.FieldDomain, abstract.PropertiesData):
     """A field construct of the CF data model.
 
     The field construct is central to the CF data model, and includes
@@ -66,7 +66,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
     def __init__(
         self, properties=None, source=None, copy=True, _use_data=True
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -76,8 +76,8 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
                    ``properties={'standard_name': 'air_temperature'}``
 
             source: optional
-                Initialize the properties, data and metadata constructs
-                from those of *source*.
+                Initialise the properties, data and metadata
+                constructs from those of *source*.
 
                 {{init source}}
 
@@ -261,13 +261,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         if key is not None:
             return super().del_data_axes(key, default=default)
 
-        try:
-            return self._del_component("data_axes")
-        except ValueError:
-            return self._default(
-                default,
-                "{!r} has no data axes".format(self.__class__.__name__),
-            )
+        return self._del_component("data_axes", default=default)
 
     def get_domain(self):
         """Return the domain.
@@ -347,13 +341,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         if key is not None:
             return super().get_data_axes(key, default=default)
 
-        try:
-            return self._get_component("data_axes")
-        except ValueError:
-            return self._default(
-                default,
-                "{!r} has no data axes".format(self.__class__.__name__),
-            )
+        return self._get_component("data_axes", default=default)
 
     def has_data_axes(self, key=None):
         """Whether the axes spanned by the construct data have been set.
@@ -385,7 +373,7 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         >>> f = {{package}}.example_field(0)
         >>> f.get_data_axes()
         ('domainaxis0', 'domainaxis1')
-        >>> f.get_data_axes(key='dimensioncoordinate2')
+        >>> f.get_data_axes('dimensioncoordinate2')
         ('domainaxis2',)
         >>> f.has_data_axes()
         True
@@ -398,7 +386,11 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         'no axes'
 
         """
-        axes = self.get_data_axes(key, default=None)
+        if key is None:
+            axes = self.get_data_axes(default=None)
+        else:
+            axes = self.get_data_axes(key, default=None)
+
         if axes is None:
             return False
 
@@ -407,11 +399,12 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
     def del_construct(self, key, default=ValueError()):
         """Remove a metadata construct.
 
-        If a domain axis construct is selected for removal then it can't
-        be spanned by any data arrays of the field nor metadata
+        If a domain axis construct is selected for removal then it
+        can't be spanned by any data arrays of the field nor metadata
         constructs, nor be referenced by any cell method
-        constructs. However, a domain ancillary construct may be removed
-        even if it is referenced by coordinate reference construct.
+        constructs. However, a domain ancillary construct may be
+        removed even if it is referenced by coordinate reference
+        construct.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -421,15 +414,15 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         :Parameters:
 
             key: `str`
-                The construct identifier of the metadata construct to be
-                removed.
+                The construct identifier of the metadata construct to
+                be removed.
 
                 *Parameter example:*
                   ``key='auxiliarycoordinate0'``
 
             default: optional
-                Return the value of the *default* parameter if the data
-                axes have not been set.
+                Return the value of the *default* parameter if the
+                data axes have not been set.
 
                 {{default Exception}}
 
@@ -452,10 +445,13 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
         False
 
         """
-        if key in self.domain_axes and key in self.get_data_axes(default=()):
+        domain_axes = self.constructs.filter_by_type(
+            "domain_axis", todict=True
+        )
+        if key in domain_axes and key in self.get_data_axes(default=()):
             raise ValueError(
-                "Can't remove domain axis {!r} that is spanned by the data "
-                "of the field construct".format(key)
+                f"Can't remove domain axis {key!r} that is spanned by the "
+                "data of the field construct"
             )
 
         return super().del_construct(key, default=default)
@@ -463,8 +459,8 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
     def set_data(self, data, axes=None, copy=True, inplace=True):
         """Set the data of the field construct.
 
-        The units, calendar and fill value properties of the data object
-        are removed prior to insertion.
+        The units, calendar and fill value properties of the data
+        object are removed prior to insertion.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -618,16 +614,17 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
             data = self.get_data(None)
             if data is not None:
                 _shape = data.shape
-        # --- End: if
 
         if _shape is not None:
-            domain_axes = self.constructs.filter_by_type("domain_axis")
+            domain_axes = self.constructs.filter_by_type(
+                "domain_axis", todict=True
+            )
             axes_shape = []
             for axis in axes:
                 if axis not in domain_axes:
                     raise ValueError(
                         "Can't set field construct data axes: Domain axis "
-                        "{!r} doesn't exist".format(axis)
+                        f"{axis!r} doesn't exist"
                     )
 
                 axes_shape.append(domain_axes[axis].get_size())
@@ -635,17 +632,11 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
             if _shape != tuple(axes_shape):
                 raise ValueError(
                     "Can't set field construct data axes: Data array shape "
-                    "of {!r} does not match the shape of the given domain "
-                    "axes {}: {}".format(
-                        _shape, tuple(axes), tuple(axes_shape)
-                    )
+                    f"of {_shape!r} does not match the shape of the given "
+                    f"domain axes {tuple(axes)}: {tuple(axes_shape)}"
                 )
-        # --- End: if
 
         axes = tuple(axes)
         self._set_component("data_axes", axes, copy=False)
 
         self.constructs._field_data_axes = axes
-
-
-# --- End: class

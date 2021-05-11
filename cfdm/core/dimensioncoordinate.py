@@ -109,10 +109,7 @@ class DimensionCoordinate(abstract.Coordinate):
         if numpy.ndim(data) != 1:
             raise ValueError(
                 "Dimension coordinate construct must have 1-dimensional data. "
-                "Got {!r}".format(data)
+                f"Got {data!r}"
             )
 
         return super().set_data(data, copy=copy, inplace=inplace)
-
-
-# --- End: class

@@ -28,7 +28,7 @@ class RaggedIndexedArray(mixin.RaggedIndexed, abstract.CompressedArray):
         ndim=None,
         index_variable=None,
     ):
-        """Initialises the `RaggedIndexedArray` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -130,6 +130,3 @@ class RaggedIndexedArray(mixin.RaggedIndexed, abstract.CompressedArray):
         super().to_memory()
         self.get_index().data.to_memory()
         return self
-
-
-# --- End: class

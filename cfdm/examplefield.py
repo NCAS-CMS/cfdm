@@ -11,6 +11,8 @@ def example_field(n, _implementation=_implementation):
 
     .. versionadded:: (cfdm) 1.8.0
 
+    .. seealso:: `cfdm.example_fields`, `cfdm.example_domain`
+
     :Parameters:
 
         n: `int`
@@ -173,8 +175,8 @@ def example_field(n, _implementation=_implementation):
     """
     if not 0 <= n <= 7:
         raise ValueError(
-            "Must select an example field construct with an "
-            "integer argument between 0 and 7 inclusive. Got {!r}".format(n)
+            "Must select an example construct with an integer"
+            f"argument between 0 and 7 inclusive. Got {n!r}"
         )
 
     # For safety given the private second argument which we might not
@@ -183,7 +185,7 @@ def example_field(n, _implementation=_implementation):
     # AttributeError: 'int' object has no attribute 'get_class'
     if isinstance(_implementation, int):
         raise ValueError(
-            "Only one example field construct can be returned at a time. "
+            "Only one example construct can be returned at a time. "
             "Provide a single integer argument only."
         )
 
@@ -5095,3 +5097,239 @@ def example_field(n, _implementation=_implementation):
         f.set_construct(c)
 
     return f
+
+
+def example_fields(*n, _func=example_field):
+    """Return example field constructs.
+
+    .. versionadded:: (cfdm) 1.8.9.0
+
+    .. seealso:: `cfdm.example_field`, `cfdm.example_domain`
+
+    :Parameters:
+
+        n: zero or more `int`, optional
+            Select the example field constructs to return, any
+            combination of:
+
+            =====  ===================================================
+            *n*    Description
+            =====  ===================================================
+            ``0``  A field construct with properties as well as a
+                   cell method construct and dimension coordinate
+                   constructs with bounds.
+
+            ``1``  A field construct with properties as well as at
+                   least one of every type of metadata construct.
+
+            ``2``  A field construct that contains a monthly time
+                   series at each latitude-longitude location.
+
+            ``3``  A field construct that contains discrete sampling
+                   geometry (DSG) "timeSeries" features.
+
+            ``4``  A field construct that contains discrete sampling
+                   geometry (DSG) "timeSeriesProfile" features.
+
+            ``5``  A field construct that contains a 12 hourly time
+                   series at each latitude-longitude location.
+
+            ``6``  A field construct that has polygon geometry
+                   coordinate cells with interior ring variables.
+
+            ``7``  A field construct that has rotated pole dimension
+                   coordinate constructs and 2-d latitude and
+                   longitude auxiliary coordinate constructs.
+            =====  ===================================================
+
+            If no individual field constructs are selected then all
+            available field constructs will be returned.
+
+            Field constructs may be selected multiple time, and will
+            be output in the order that they are given.
+
+            See the `cfdm.example_field` for details.
+
+        _func: function
+            The function that returns each individual field construct.
+
+    :Returns:
+
+       `list`
+            The example field constructs.
+
+    **Examples**
+
+    >>> cfdm.example_fields()
+    [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
+     <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
+     <Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K>,
+     <Field: precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1>,
+     <Field: air_temperature(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) K>,
+     <Field: air_potential_temperature(time(118), latitude(5), longitude(8)) K>,
+     <Field: precipitation_amount(cf_role=timeseries_id(2), time(4))>,
+     <Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1>]
+
+    >>> cfdm.example_fields(7, 1)
+    [<Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1>,
+     <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
+
+    >>> cfdm.example_fields(3)
+    [<Field: precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1>]
+
+    >>> cfdm.example_fields(3, 3, 4)
+    [<Field: precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1>,
+     <Field: precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1>,
+     <Field: air_temperature(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) K>]
+
+    See the `cfdm.example_field` for more details.
+
+    """
+    if not n:
+        out = []
+        i = 0
+        while True:
+            try:
+                out.append(_func(i))
+            except ValueError:
+                break
+
+            i += 1
+    else:
+        out = [_func(i) for i in n]
+
+    return out
+
+
+def example_domain(n, _func=example_field):
+    """Return an example domain construct.
+
+    .. versionadded:: (cfdm) 1.8.9.0
+
+    .. seealso:: `cfdm.example_field`, `cfdm.example_fields`
+
+    :Parameters:
+
+        n: `int`
+            Select the example domain construct to return, one of:
+
+            =====  ===================================================
+            *n*    Description
+            =====  ===================================================
+            ``0``  A domain construct dimension coordinate constructs
+                   with bounds.
+
+            ``1``  A domain construct with at least one of every
+                   possible type of metadata construct.
+
+            ``2``  A domain construct dimension coordinate constructs
+                   with bounds.
+                   series at each latitude-longitude location.
+
+            ``3``  A domain construct for discrete sampling geometry
+                   (DSG) "timeSeries" features.
+
+            ``4``  A domain construct or discrete sampling geometry
+                   (DSG) "timeSeriesProfile" features.
+
+            ``5``  A domain construct dimension coordinate constructs
+                   with bounds.
+
+            ``6``  A domain construct that has polygon geometry
+                   coordinate cells with interior ring variables.
+
+            ``7``  A domain construct that has rotated pole dimension
+                   coordinate constructs and 2-d latitude and
+                   longitude auxiliary coordinate constructs.
+            =====  ===================================================
+
+            See the examples for details.
+
+        _func: function
+            The function that creates the field construct from which
+            the domain construct is derived.
+
+    :Returns:
+
+        `Domain`
+            The example domain construct.
+
+    **Examples:**
+
+    >>> f = cfdm.example_domain(0)
+    >>> print(f)
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+
+    >>> f = cfdm.example_domain(1)
+    >>> print(f)
+    Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                    : grid_latitude(10) = [2.2, ..., -1.76] degrees
+                    : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                    : time(1) = [2019-01-01 00:00:00]
+    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                    : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+    Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+    Coord references: grid_mapping_name:rotated_latitude_longitude
+                    : standard_name:atmosphere_hybrid_height_coordinate
+    Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+
+    >>> f = cfdm.example_domain(2)
+    >>> print(f)
+    Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]
+                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : air_pressure(1) = [850.0] hPa
+
+    >>> f = cfdm.example_domain(3)
+    >>> print(f)
+    Auxiliary coords: time(cf_role=timeseries_id(4), ncdim%timeseries(9)) = [[1969-12-29 00:00:00, ..., 1970-01-07 00:00:00]]
+                    : latitude(cf_role=timeseries_id(4)) = [-9.0, ..., 78.0] degrees_north
+                    : longitude(cf_role=timeseries_id(4)) = [-23.0, ..., 178.0] degrees_east
+                    : height(cf_role=timeseries_id(4)) = [0.5, ..., 345.0] m
+                    : cf_role=timeseries_id(cf_role=timeseries_id(4)) = [b'station1', ..., b'station4']
+                    : long_name=station information(cf_role=timeseries_id(4)) = [-10, ..., -7]
+
+    >>> f = cfdm.example_domain(4)
+    >>> print(f)
+    Auxiliary coords: time(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[1970-01-04 00:00:00, ..., --]]
+                    : latitude(cf_role=timeseries_id(3)) = [-9.0, 2.0, 34.0] degrees_north
+                    : longitude(cf_role=timeseries_id(3)) = [-23.0, 0.0, 67.0] degrees_east
+                    : height(cf_role=timeseries_id(3)) = [0.5, 12.6, 23.7] m
+                    : altitude(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) = [[[2.07, ..., --]]] km
+                    : cf_role=timeseries_id(cf_role=timeseries_id(3)) = [b'station1', b'station2', b'station3']
+                    : long_name=station information(cf_role=timeseries_id(3)) = [-10, -9, -8]
+                    : cf_role=profile_id(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[102, ..., --]]
+
+    >>> f = cfdm.example_domain(5)
+    >>> print(f)
+    Dimension coords: time(118) = [1959-01-01 06:00:00, ..., 1959-02-28 18:00:00]
+                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : air_pressure(1) = [850.0] hPa
+
+    >>> f = cfdm.example_domain(6)
+    >>> print(f)
+    Dimension coords: time(4) = [2000-01-16 12:00:00, ..., 2000-04-15 00:00:00]
+    Auxiliary coords: latitude(cf_role=timeseries_id(2)) = [25.0, 7.0] degrees_north
+                    : longitude(cf_role=timeseries_id(2)) = [10.0, 40.0] degrees_east
+                    : cf_role=timeseries_id(cf_role=timeseries_id(2)) = [b'x1', b'y2']
+                    : ncvar%z(cf_role=timeseries_id(2), 3, 4) = [[[1.0, ..., --]]] m
+    Coord references: grid_mapping_name:latitude_longitude
+
+    >>> f = cfdm.example_domain(7)
+    >>> print(f)
+    Dimension coords: time(3) = [1979-05-01 12:00:00, 1979-05-02 12:00:00, 1979-05-03 12:00:00] gregorian
+                    : air_pressure(1) = [850.0] hPa
+                    : grid_latitude(4) = [0.44, ..., -0.88] degrees
+                    : grid_longitude(5) = [-1.18, ..., 0.58] degrees
+    Auxiliary coords: latitude(grid_latitude(4), grid_longitude(5)) = [[52.4243, ..., 51.1163]] degrees_north
+                    : longitude(grid_latitude(4), grid_longitude(5)) = [[8.0648, ..., 10.9238]] degrees_east
+    Coord references: grid_mapping_name:rotated_latitude_longitude
+
+    """
+    return _func(n).get_domain()

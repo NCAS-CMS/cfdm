@@ -6,7 +6,12 @@ version NEXT
 
 * Fix for zero-sized unlimited dimensions when read from a grouped
   netCDF file (https://github.com/NCAS-CMS/cfdm/issues/113)
+* Performance enhancements (https://github.com/NCAS-CMS/cfdm/issues/124)
+* Better error message in the case of a `numpy.ma.core.MaskError` occurring
+  upon reading of CDL files with only header or coordinate information
+  (https://github.com/NCAS-CMS/cfdm/issues/128)
 * Changed dependency: ``cftime>=1.4.1``
+* Changed dependency: ``netCDF4>=1.5.4``
 
 version 1.8.8.0
 ---------------

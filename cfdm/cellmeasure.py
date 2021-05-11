@@ -37,13 +37,7 @@ class CellMeasure(
 
     **NetCDF interface**
 
-    The netCDF variable name of the construct may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-    `nc_has_variable` methods.
-
-    The netCDF variable group structure may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+    {{netCDF variable}}
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -58,16 +52,17 @@ class CellMeasure(
         copy=True,
         _use_data=True,
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
             measure: `str`, optional
-                Set the measure that indicates which metric given by the
-                data array. Ignored if the *source* parameter is set.
+                Set the measure that indicates which metric given by
+                the data array. Ignored if the *source* parameter is
+                set.
 
-                The measure may also be set after initialisation with the
-                `set_measure` method.
+                The measure may also be set after initialisation with
+                the `set_measure` method.
 
                 *Parameter example:*
                   ``measure='area'``
@@ -80,8 +75,8 @@ class CellMeasure(
             {{init data: data_like, optional}}
 
             source: optional
-                Initialize the measure, properties and data from those of
-                *source*.
+                Initialise the measure, properties and data from those
+                of *source*.
 
                 {{init source}}
 
@@ -163,7 +158,7 @@ class CellMeasure(
 
         measure = self.get_measure(None)
         if measure is not None:
-            out.append("{}.set_measure({!r})".format(name, measure))
+            out.append(f"{name}.set_measure({measure!r})")
 
         if string:
             indent = " " * indent
@@ -202,17 +197,17 @@ class CellMeasure(
         """
         if _title is None:
             name = self.identity(default=self.get_property("units", ""))
-            _title = "Cell Measure: " + name
+            _title = f"Cell Measure: {name}"
 
         if self.nc_get_external():
             if not (self.has_data() or self.properties()):
                 ncvar = self.nc_get_variable(None)
                 if ncvar is not None:
-                    ncvar = "ncvar%" + ncvar
+                    ncvar = f"ncvar%{ncvar}"
                 else:
                     ncvar = ""
-                _title += " (external variable: {0})".format(ncvar)
-        # --- End: if
+
+                _title += f" (external variable: {ncvar})"
 
         return super().dump(
             display=display,
@@ -328,9 +323,8 @@ class CellMeasure(
         measure1 = other.get_measure(None)
         if measure0 != measure1:
             logger.info(
-                "{0}: Different measure ({1} != {2})".format(
-                    self.__class__.__name__, measure0, measure1
-                )
+                f"{self.__class__.__name__}: Different measure "
+                f"({measure0} != {measure1})"
             )
             return False
 
@@ -390,7 +384,7 @@ class CellMeasure(
         """
         n = self.get_measure(None)
         if n is not None:
-            return "measure:{0}".format(n)
+            return f"measure:{n}"
 
         n = self.get_property("standard_name", None)
         if n is not None:
@@ -399,16 +393,15 @@ class CellMeasure(
         for prop in ("cf_role", "long_name"):
             n = self.get_property(prop, None)
             if n is not None:
-                return "{0}={1}".format(prop, n)
-        # --- End: for
+                return f"{prop}={n}"
 
         n = self.nc_get_variable(None)
         if n is not None:
-            return "ncvar%{0}".format(n)
+            return f"ncvar%{n}"
 
         return default
 
-    def identities(self):
+    def identities(self, generator=False, **kwargs):
         """Return all possible identities.
 
         The identities comprise:
@@ -423,9 +416,23 @@ class CellMeasure(
 
         .. seealso:: `identity`
 
+        :Parameters:
+
+            generator: `bool`, optional
+                If True then return a generator for the identities,
+                rather than a list.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
+            kwargs: optional
+                Additional configuration parameters. Currently
+                none. Unrecognised parameters are ignored.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
         :Returns:
 
-            `list`
+            `list` or generator
                 The identities.
 
         **Examples:**
@@ -441,15 +448,21 @@ class CellMeasure(
         'cell_measure'
         >>> c.identities()
         ['measure:area', 'units=km2', 'ncvar%cell_measure']
+        >>> for i in c.identities(generator=True):
+        ...     print(i)
+        ...
+        measure:area
+        units=km2
+        ncvar%cell_measure
 
         """
-        out = super().identities()
+        measure = self.get_measure(None)
+        if measure is not None:
+            pre = ((f"measure:{measure}",),)
+            pre0 = kwargs.pop("pre", None)
+            if pre0:
+                pre = tuple(pre0) + pre
 
-        n = self.get_measure(None)
-        if n is not None:
-            out.insert(0, "measure:{0}".format(n))
+            kwargs["pre"] = pre
 
-        return out
-
-
-# --- End: class
+        return super().identities(generator=generator, **kwargs)

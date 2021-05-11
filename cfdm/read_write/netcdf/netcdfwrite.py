@@ -1016,7 +1016,9 @@ class NetCDFWrite(IOWrite):
             # Grid mapping
             grid_mappings = [
                 g["seen"][id(cr)]["ncvar"]
-                for cr in field.coordinate_references.values()
+                # TODO replace field.coordinate_references with
+                # self.implemenetation call
+                for cr in field.coordinate_references().values()
                 if (
                     cr.coordinate_conversion.get_parameter(
                         "grid_mapping_name", None
@@ -3250,7 +3252,6 @@ class NetCDFWrite(IOWrite):
             )
             #            if ncdim is not None:
             #                ncdim = self._netcdf_name(ncdim)
-
             found_dimension_coordinate = False
             for key, dim_coord in dimension_coordinates.items():
                 if self.implementation.get_construct_data_axes(f, key) != (
@@ -4979,6 +4980,3 @@ class NetCDFWrite(IOWrite):
                 verbose=verbose,
                 extra_write_vars=extra_write_vars,
             )
-
-
-# --- End: class

@@ -44,7 +44,7 @@ class DomainAxis(
     """
 
     def __init__(self, size=None, source=None, copy=True):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -58,7 +58,7 @@ class DomainAxis(
                   ``size=192``
 
             source: optional
-                Initialize the size from that of *source*.
+                Initialise the size from that of *source*.
 
                 {{init source}}
 
@@ -77,7 +77,22 @@ class DomainAxis(
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        return "size({0})".format(self.get_size(""))
+        return f"size({self.get_size('')})"
+
+    def _identities_iter(self):
+        """Return all possible identities.
+
+        See `identities` for details and examples.
+
+        :Returns:
+
+            generator
+                The identities.
+
+        """
+        n = self.nc_get_dimension(None)
+        if n is not None:
+            yield f"ncdim%{n}"
 
     def creation_commands(
         self, namespace=None, indent=0, string=True, name="c", header=True
@@ -123,31 +138,28 @@ class DomainAxis(
 
         if header:
             out.append("#")
-            out.append("# {}:".format(self.construct_type))
+            out.append(f"# {self.construct_type}:")
             identity = self.identity()
             if identity:
-                out[-1] += " {}".format(identity)
-        # --- End: if
+                out[-1] += f" {identity}"
 
-        out.append(
-            "{} = {}{}()".format(name, namespace, self.__class__.__name__)
-        )
+        out.append(f"{name} = {namespace}{self.__class__.__name__}()")
 
         size = self.get_size(None)
         if size is not None:
-            out.append("{}.set_size({})".format(name, size))
+            out.append(f"{name}.set_size({size})")
 
         nc = self.nc_get_dimension(None)
         if nc is not None:
-            out.append("{}.nc_set_dimension({!r})".format(name, nc))
+            out.append(f"{name}.nc_set_dimension({nc!r})")
 
         if self.nc_is_unlimited():
-            out.append("c.nc_set_unlimited({})".format(True))
+            out.append("fc.nc_set_unlimited({True})")
 
         if string:
             indent = " " * indent
             out[0] = indent + out[0]
-            out = ("\n" + indent).join(out)
+            out = (f"\n{indent}").join(out)
 
         return out
 
@@ -159,12 +171,13 @@ class DomainAxis(
 
         * the axis sizes must be the same.
 
-        Any type of object may be tested but, in general, equality is only
-        possible with another domain axis construct, or a subclass of
-        one. See the *ignore_type* parameter.
+        Any type of object may be tested but, in general, equality is
+        only possible with another domain axis construct, or a
+        subclass of one. See the *ignore_type* parameter.
 
-        NetCDF elements, such as netCDF variable and dimension names, do
-        not constitute part of the CF data model and so are not checked.
+        NetCDF elements, such as netCDF variable and dimension names,
+        do not constitute part of the CF data model and so are not
+        checked.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -211,9 +224,8 @@ class DomainAxis(
         other_size = other.get_size(None)
         if not self_size == other_size:
             logger.info(
-                "{0}: Different axis sizes: {1} != {2}".format(
-                    self.__class__.__name__, self_size, other_size
-                )
+                f"{self.__class__.__name__}: Different axis sizes: "
+                f"{self_size} != {other_size}"
             )
             return False
 
@@ -234,8 +246,8 @@ class DomainAxis(
         :Parameters:
 
             default: optional
-                If no identity can be found then return the value of the
-                default parameter.
+                If no identity can be found then return the value of
+                the default parameter.
 
         :Returns:
 
@@ -259,11 +271,11 @@ class DomainAxis(
         """
         n = self.nc_get_dimension(None)
         if n is not None:
-            return "ncdim%{0}".format(n)
+            return f"ncdim%{n}"
 
         return default
 
-    def identities(self):
+    def identities(self, generator=False, **kwargs):
         """Return all possible identities.
 
         The identities comprise:
@@ -274,9 +286,23 @@ class DomainAxis(
 
         .. seealso:: `identity`
 
+        :Parameters:
+
+            generator: `bool`, optional
+                If True then return a generator for the identities,
+                rather than a list.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
+            kwargs: optional
+                Additional configuration parameters. Currently
+                none. Unrecognised parameters are ignored.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
         :Returns:
 
-            `list`
+            `list` or generator
                 The identities.
 
         **Examples:**
@@ -289,15 +315,13 @@ class DomainAxis(
         'time'
         >>> d.identities()
         []
+        >>> for i in d.identities(generator=True):
+        ...     print(i)
+        ...
 
         """
-        out = []
+        g = self._iter(body=self._identities_iter(), **kwargs)
+        if generator:
+            return g
 
-        n = self.nc_get_dimension(None)
-        if n is not None:
-            out.append("ncdim%{0}".format(n))
-
-        return out
-
-
-# --- End: class
+        return list(g)

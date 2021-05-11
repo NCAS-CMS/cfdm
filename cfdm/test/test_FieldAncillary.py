@@ -52,6 +52,7 @@ class FieldAncillaryTest(unittest.TestCase):
         """TODO DOCS."""
         f = self.f.copy()
         x = f.domain_ancillaries("ncvar%a").value()
+        x = cfdm.FieldAncillary(source=x)
 
         x.set_property("long_name", "qwerty")
 
@@ -104,9 +105,6 @@ class FieldAncillaryTest(unittest.TestCase):
 
         x.squeeze(2, inplace=True)
         self.assertEqual(x.shape, (1, 9, 10))
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

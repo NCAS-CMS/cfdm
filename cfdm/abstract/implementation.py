@@ -5,7 +5,7 @@ class Implementation(metaclass=abc.ABCMeta):
     """Store an implementation of the CF data model."""
 
     def __init__(self, cf_version=None, **kwargs):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -92,9 +92,7 @@ class Implementation(metaclass=abc.ABCMeta):
         try:
             return self._class[name]
         except KeyError:
-            raise ValueError(
-                "Implementation does not have class {!r}".format(name)
-            )
+            raise ValueError(f"Implementation does not have class {name!r}")
 
     def get_cf_version(self):
         """Return the CF version of the implementation.
@@ -148,6 +146,3 @@ class Implementation(metaclass=abc.ABCMeta):
 
         """
         self._class[name] = cls
-
-
-# --- End: class

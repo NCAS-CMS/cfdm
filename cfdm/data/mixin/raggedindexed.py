@@ -9,8 +9,8 @@ class RaggedIndexed:
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if the index
-                variable has not been set.
+                Return the value of the *default* parameter if the
+                index variable has not been set.
 
                 {{default Exception}}
 
@@ -23,13 +23,10 @@ class RaggedIndexed:
         >>> i = d.get_index()
 
         """
-        try:
-            return self._get_component("index_variable")
-        except ValueError:
+        out = self._get_component("index_variable", None)
+        if out is None:
             return self._default(
-                default,
-                "{!r} has no index variable".format(self.__class__.__name__),
+                default, f"{self.__class__.__name__} has no index variable"
             )
 
-
-# --- End: class
+        return out

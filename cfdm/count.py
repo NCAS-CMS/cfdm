@@ -21,9 +21,7 @@ class Count(
 
     **NetCDF interface**
 
-    The netCDF variable name of the count variable may be accessed
-    with the `nc_set_variable`, `nc_get_variable`, `nc_del_variable`
-    and `nc_has_variable` methods.
+    {{netCDF variable}}
 
     The name of the netCDF dimension spanned by the count variable's
     data may be accessed with the `nc_set_dimension`,
@@ -37,10 +35,6 @@ class Count(
     `nc_get_sample_dimension`, `nc_del_sample_dimension` and
     `nc_has_sample_dimension` methods.
 
-    The netCDF variable group structure may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
-
     .. versionadded:: (cfdm) 1.7.0
 
     """
@@ -53,21 +47,22 @@ class Count(
         copy=True,
         _use_data=True,
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
             {{init properties: `dict`, optional}}
 
                 *Parameter example:*
-                  ``properties={'long_name': 'number of obs for this station'}``
+                  ``properties={'long_name': 'number of obs'}``
 
             {{init data: data_like, optional}}
 
                 {{data_like}}
 
             source: optional
-                Initialize the properties and data from those of *source*.
+                Initialise the properties and data from those of
+                *source*.
 
                 {{init source}}
 
@@ -128,6 +123,3 @@ class Count(
             _axes=_axes,
             _axis_names=_axis_names,
         )
-
-
-# --- End: class

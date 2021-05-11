@@ -5,7 +5,7 @@ class IO(metaclass=abc.ABCMeta):
     """Abstract base class for reading and writing Fields."""
 
     def __init__(self, implementation):
-        """Initialises the `IO` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -26,9 +26,6 @@ class IO(metaclass=abc.ABCMeta):
         raise NotImplementedError()  # pragma: no cover
 
 
-# --- End: class
-
-
 class IORead(IO, metaclass=abc.ABCMeta):
     """Abstract base class for instantiating Fields from a dataset."""
 
@@ -38,9 +35,6 @@ class IORead(IO, metaclass=abc.ABCMeta):
         raise NotImplementedError()  # pragma: no cover
 
 
-# --- End: class
-
-
 class IOWrite(IO, metaclass=abc.ABCMeta):
     """Abstract base class for writing Fields to a dataset."""
 
@@ -48,6 +42,3 @@ class IOWrite(IO, metaclass=abc.ABCMeta):
     def write(self, *args, **kwargs):
         """Write fields to a netCDF file."""
         raise NotImplementedError()  # pragma: no cover
-
-
-# --- End: class

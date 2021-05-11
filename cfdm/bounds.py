@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 from . import mixin
 from . import core
 
@@ -31,18 +29,12 @@ class Bounds(
 
     **NetCDF interface**
 
-    The netCDF variable name of the bounds may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-    `nc_has_variable` methods.
+    {{netCDF variable}}
 
     The name of the trailing netCDF dimension spanned by bounds (which
     does not correspond to a domain axis construct) may be accessed
     with the `nc_set_dimension`, `nc_get_dimension`,
     `nc_del_dimension` and `nc_has_dimension` methods.
-
-    The netCDF variable group structure may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -56,7 +48,7 @@ class Bounds(
         copy=True,
         _use_data=True,
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -68,7 +60,7 @@ class Bounds(
             {{init data: data_like, optional}}
 
             source: optional
-                Initialize the properties and data from those of *source*.
+                Initialise the properties and data from those of *source*.
 
                 {{init source}}
 
@@ -91,27 +83,11 @@ class Bounds(
         else:
             inherited_properties = {}
 
-        self._set_component("inherited_properties", inherited_properties)
+        self._set_component(
+            "inherited_properties", inherited_properties, copy=False
+        )
 
         self._initialise_netcdf(source)
-
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
-    def _inherited_properties(self):
-        """Return the properties inherited from a coordinate construct.
-
-        .. versionadded:: (cfdm) 1.8.7.0
-
-        .. seealso:: `inherited_properties`, `properties`
-
-        :Returns:
-
-            `dict`
-                The inherited properties.
-
-        """
-        return self.inherited_properties()
 
     # ----------------------------------------------------------------
     # Methods
@@ -209,29 +185,34 @@ class Bounds(
         data = super().get_data(
             default=None, _units=_units, _fill_value=_fill_value
         )
-
         if data is None:
-            return super().get_data(default=default)
+            if default is None:
+                return
 
-        if _units:
-            if not data.has_units():
-                units = self.inherited_properties().get("units")
-                if units is not None:
-                    data.set_units(units)
-            # --- End: if
+            return self._default(
+                default, f"{self.__class__.__name__} has no data"
+            )
 
-            if not data.has_calendar():
-                calendar = self.inherited_properties().get("calendar")
-                if calendar is not None:
-                    data.set_calendar(calendar)
-        # --- End: if
+        if _units or _fill_value:
+            inherited_properties = self._get_component(
+                "inherited_properties", {}
+            )
 
-        if _fill_value:
-            if not data.has_fill_value():
-                _ = self.inherited_properties().get("fill_value")  # TODO
-                if _ is not None:
-                    data.set_fill_value(_)
-        # --- End: if
+            if _units:
+                if not data.has_units():
+                    units = inherited_properties.get("units")
+                    if units is not None:
+                        data.set_units(units)
+
+                if not data.has_calendar():
+                    calendar = inherited_properties.get("calendar")
+                    if calendar is not None:
+                        data.set_calendar(calendar)
+
+            if _fill_value and not data.has_fill_value():
+                fv = inherited_properties.get("fill_value")  # TODO
+                if fv is not None:
+                    data.set_fill_value(fv)
 
         return data
 
@@ -249,17 +230,17 @@ class Bounds(
 
         **Examples:**
 
-        >>> f = cfdm.example_field(6)
+        >>> f = {{package}}.example_field(6)
         >>> d = f.constructs('longitude').value()
         >>> b = d.bounds
         >>> b
-        <Bounds: longitude(2, 3, 4) degrees_east>
+        <{{repr}}Bounds: longitude(2, 3, 4) degrees_east>
 
         >>> b.inherited_properties()
         {'units': 'degrees_east', 'standard_name': 'longitude'}
 
         """
-        return deepcopy(self._get_component("inherited_properties", {}))
+        return self._get_component("inherited_properties", {}).copy()
 
     def identity(self, default=""):
         """Return the canonical identity.
@@ -290,16 +271,18 @@ class Bounds(
 
         **Examples:**
 
-        >>> f = cfdm.example_field(6)
+        >>> f = {{package}}.example_field(6)
         >>> d = f.constructs('longitude').value()
         >>> b = d.bounds
         >>> b
-        <Bounds: longitude(2, 3, 4) degrees_east>
+        <{{repr}}Bounds: longitude(2, 3, 4) degrees_east>
         >>> b.identity()
         'longitude'
 
         """
-        inherited_properties = self.inherited_properties()
+        inherited_properties = self._get_component(
+            "inherited_properties", None
+        )
         if inherited_properties:
             bounds = self.copy()
             properties = bounds.properties()
@@ -308,6 +291,3 @@ class Bounds(
             self = bounds
 
         return super().identity(default=default)
-
-
-# --- End: class

@@ -33,13 +33,7 @@ class AuxiliaryCoordinate(
 
     **NetCDF interface**
 
-    The netCDF variable name of the construct may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-    `nc_has_variable` methods.
-
-    The netCDF variable group structure may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+    {{netCDF variable}}
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -56,7 +50,7 @@ class AuxiliaryCoordinate(
         copy=True,
         _use_data=True,
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -74,7 +68,7 @@ class AuxiliaryCoordinate(
             {{init interior_ring: `InteriorRing`, optional}}
 
             source: optional
-                Initialize the properties, data and bounds from those of
+                Initialise the properties, data and bounds from those of
                 *source*.
 
                 {{init source}}
@@ -135,6 +129,3 @@ class AuxiliaryCoordinate(
             _axes=_axes,
             _axis_names=_axis_names,
         )
-
-
-# --- End: class

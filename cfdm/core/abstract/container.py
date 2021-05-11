@@ -1,8 +1,8 @@
-from copy import copy, deepcopy
-
 from ..meta import DocstringRewriteMeta
 
 from ..docstring import _docstring_substitution_definitions
+
+from ..functions import deepcopy
 
 
 class Container(metaclass=DocstringRewriteMeta):
@@ -13,12 +13,12 @@ class Container(metaclass=DocstringRewriteMeta):
     """
 
     def __init__(self, source=None, copy=True):
-        """Initialises the `{{class}}` instance.
+        """**Initialiation**
 
         :Parameters:
 
             source: optional
-                Initialize the components from those of *source*.
+                Initialise the components from those of *source*.
 
                 {{init source}}
 
@@ -134,8 +134,7 @@ class Container(metaclass=DocstringRewriteMeta):
         """
         if isinstance(default, Exception):
             if message is not None and not default.args:
-                default = copy(default)
-                default.args = (message,)
+                default = type(default)(message)
 
             raise default
 
@@ -180,11 +179,12 @@ class Container(metaclass=DocstringRewriteMeta):
         try:
             return self._components.pop(component)
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
-                "{!r} has no {!r} component".format(
-                    self.__class__.__name__, component
-                ),
+                f"{self.__class__.__name__} has no {component!r} component",
             )
 
     @property
@@ -256,11 +256,12 @@ class Container(metaclass=DocstringRewriteMeta):
         try:
             return self._components[component]
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
-                "{!r} has no {!r} component".format(
-                    self.__class__.__name__, component
-                ),
+                f"{self.__class__.__name__} has no {component!r} component",
             )
 
     def _has_component(self, component):
@@ -356,6 +357,3 @@ class Container(metaclass=DocstringRewriteMeta):
 
         """
         return type(self)(source=self, copy=True)
-
-
-# --- End: class

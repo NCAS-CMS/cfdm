@@ -27,7 +27,7 @@ class Container:
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        return "<{0}: {1}>".format(self.__class__.__name__, str(self))
+        return f"<{self.__class__.__name__}: {self}>"
 
     def __str__(self):
         """Called by the `str` built-in function.
@@ -43,8 +43,8 @@ class Container:
     def __docstring_substitutions__(self):
         """Define docstring substitutions for the class hierarchy.
 
-        The defined substitutions apply to this class along with
-        all of its subclasses.
+        The defined substitutions apply to this class along with all
+        of its subclasses.
 
         These are in addtion to, and take precendence over, docstring
         substitutions defined by the base classes of this class.
@@ -90,13 +90,20 @@ class Container:
         return rtol().value
 
     def _equals(
-        self, x, y, rtol=None, atol=None, ignore_data_type=False, **kwargs
+        self,
+        x,
+        y,
+        rtol=None,
+        atol=None,
+        ignore_data_type=False,
+        basic=False,
+        **kwargs,
     ):
         """Whether two objects are the same.
 
         Equality either uses one or other of the objects `!equals`
-        methods, or casts them as numpy arrays and carried aout numericlly
-        tolerant equality checks.
+        methods, or casts them as numpy arrays and carried aout
+        numerically tolerant equality checks.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -107,6 +114,10 @@ class Container:
             {{rtol: number, optional}}
 
         """
+        if basic:
+            # x and y can be compared with the basic == operator
+            return bool(x == y)
+
         if rtol is None:
             rtol = self._rtol
         else:
@@ -126,15 +137,6 @@ class Container:
             # --------------------------------------------------------
             # x has a callable "equals" method
             # --------------------------------------------------------
-            # Check that the kwargs are OK
-            try:
-                # Python 3
-                pass
-            #                parameters = inspect.signature(eq).bind_partial(**kwargs)
-            except AttributeError:
-                # Python 2
-                pass
-
             return eq(y, **kwargs)
 
         eq = getattr(y, "equals", None)
@@ -142,27 +144,21 @@ class Container:
             # --------------------------------------------------------
             # y has a callable "equals" method
             # --------------------------------------------------------
-            # Check that the kwargs are OK
-            try:
-                # Python 3
-                pass
-            #                parameters = inspect.signature(eq).bind_partial(**kwargs)
-            except AttributeError:
-                # Python 2
-                pass
             return eq(x, **kwargs)
 
-        if numpy.shape(x) != numpy.shape(y):
+        x = numpy.asanyarray(x)
+        y = numpy.asanyarray(y)
+        if x.shape != y.shape:
             return False
 
-        # ------------------------------------------------------------
-        # Cast x and y as numpy arrays
-        # ------------------------------------------------------------
-        if not isinstance(x, numpy.ndarray):
-            x = numpy.asanyarray(x)
-
-        if not isinstance(y, numpy.ndarray):
-            y = numpy.asanyarray(y)
+        #        # ------------------------------------------------------------
+        #        # Cast x and y as numpy arrays
+        #        # ------------------------------------------------------------
+        #        if not isinstance(x, numpy.ndarray):
+        #            x = numpy.asanyarray(x)
+        #
+        #        if not isinstance(y, numpy.ndarray):
+        #            y = numpy.asanyarray(y)
 
         # THIS IS WHERE SOME NUMPY FUTURE WARNINGS ARE COMING FROM
 
@@ -206,11 +202,11 @@ class Container:
         * If the LHS operand is (object identity) the RHS operand then
           return True.
 
-        * If ignore_type=False and the LHS operand is not of the same type, or
-          a squblcass of, the RHS operand then return False
+        * If ignore_type=False and the LHS operand is not of exactly
+          the same type as the RHS operand then return False.
 
-        * If ignore_type=True and the LHS operand is not of the same type,
-          or a sublcass of, the RHS operand then instantiate a new
+        * If ignore_type=True and the LHS operand is not of exactly
+          the same type as the RHS operand then instantiate a new
           instance based on the the RHS class and return it.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -226,13 +222,60 @@ class Container:
                 other = type(self)(source=other, copy=False)
         elif not isinstance(other, self.__class__):
             logger.info(
-                "{}: Incompatible type: {}".format(
-                    self.__class__.__name__, type(other)
-                )
+                f"{self.__class__.__name__}: Incompatible type: {type(other)}"
             )
             return False
 
         return other
+
+    def _iter(self, body, pre=None, post=None, short=False, **kwargs):
+        """General purpose iterator.
+
+        .. versionadded:: (cfdm) 1.8.9.0
+
+        :Parameters:
+
+            body: iterable
+               An iterable to step through.
+
+            pre: sequence of iterable, optional
+               Iterables to step through before *body* is iterated.
+
+            post: sequence of iterable, optional
+               Iterables to step through after *body* has been
+               iterated.
+
+            short: `bool`, optional
+                If True then stop after the first element of either
+                *pre*, *body* or *post* is realized.
+
+            kwargs: optional
+                Ignored.
+
+        :Return:
+
+            generator
+                The elements of *pre*, *body* and *post*.
+
+        """
+        if pre:
+            for it in pre:
+                for x in it:
+                    yield x
+                    if short:
+                        return
+
+        for x in body:
+            yield x
+            if short:
+                return
+
+        if post:
+            for it in post:
+                for x in it:
+                    yield x
+                    if short:
+                        return
 
     def _package(self):
         """Return the name of the package in which this class resides.
@@ -245,6 +288,3 @@ class Container:
         """
         depth = self.__class__._docstring_package_depth(self.__class__)
         return ".".join(self.__module__.split(".")[0 : depth + 1])
-
-
-# --- End: class

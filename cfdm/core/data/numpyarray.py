@@ -11,7 +11,7 @@ class NumpyArray(abstract.Array):
     """
 
     def __init__(self, array=None):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -22,25 +22,6 @@ class NumpyArray(abstract.Array):
         super().__init__()
 
         self._set_component("array", array, copy=False)
-
-    #    def __deepcopy__(self, memo):
-    #        '''Called by the `copy.deepcopy` function.
-    #
-    #    x.__deepcopy__() <==> copy.deepcopy(x)
-    #
-    #    Copy-on-write is employed. Therefore, after copying, care must be
-    #    taken when making in-place modifications to attributes of either
-    #    the original or the new copy.
-    #
-    #    .. versionadded:: (cfdm) 1.8.7.0
-    #
-    #    **Examples:**
-    #
-    #    >>> import copy
-    #    >>> y = copy.deepcopy(x)
-    #
-    #        '''
-    #        return self.copy()
 
     @property
     def dtype(self):
@@ -210,6 +191,3 @@ class NumpyArray(abstract.Array):
         new = klass.__new__(klass)
         new.__dict__ = self.__dict__.copy()
         return new
-
-
-# --- End: class

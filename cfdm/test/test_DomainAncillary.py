@@ -34,14 +34,15 @@ class DomainAncillaryTest(unittest.TestCase):
     def test_DomainAncillary__repr__str__dump(self):
         """TODO DOCS."""
         f = cfdm.read(self.filename)[0]
-        x = f.domain_ancillaries("ncvar%a").value()
+        domain_ancillaries = f.domain_ancillaries("ncvar%a")
 
+        x = domain_ancillaries.value()
         _ = repr(x)
         _ = str(x)
         self.assertIsInstance(x.dump(display=False), str)
 
         self.assertIsInstance(
-            x.dump(display=False, _key=f.domain_ancillaries("ncvar%a").key()),
+            x.dump(display=False, _key=domain_ancillaries.key()),
             str,
         )
 
@@ -128,9 +129,6 @@ class DomainAncillaryTest(unittest.TestCase):
         x.squeeze(2, inplace=True)
         self.assertEqual(x.shape, (1, 9, 10))
         self.assertEqual(x.bounds.shape, (1, 9, 10, 4), x.bounds.shape)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

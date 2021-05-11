@@ -1,6 +1,5 @@
 import atexit
 import datetime
-import inspect
 import os
 import tempfile
 import unittest
@@ -72,19 +71,14 @@ class DSGTest(unittest.TestCase):
             "geometry_interior_ring_2.nc",
         )
 
-        self.test_only = []
-
     def test_node_count(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.read(self.geometry_1_file, verbose=False)
 
         self.assertEqual(len(f), 2, "f = " + repr(f))
         for g in f:
             self.assertTrue(g.equals(g.copy(), verbose=1))
-            self.assertEqual(len(g.auxiliary_coordinates), 2)
+            self.assertEqual(len(g.auxiliary_coordinates()), 2)
 
         g = f[0]
         for axis in ("X", "Y"):
@@ -124,16 +118,13 @@ class DSGTest(unittest.TestCase):
 
     def test_geometry_2(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.read(self.geometry_2_file, verbose=False)
 
         self.assertEqual(len(f), 2, "f = " + repr(f))
 
         for g in f:
             self.assertTrue(g.equals(g.copy(), verbose=3))
-            self.assertEqual(len(g.auxiliary_coordinates), 3)
+            self.assertEqual(len(g.auxiliary_coordinates()), 3)
 
         g = f[0]
         for axis in ("X", "Y", "Z"):
@@ -162,16 +153,13 @@ class DSGTest(unittest.TestCase):
 
     def test_geometry_3(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.read(self.geometry_3_file, verbose=False)
 
         self.assertEqual(len(f), 2, "f = " + repr(f))
 
         for g in f:
             self.assertTrue(g.equals(g.copy(), verbose=3))
-            self.assertEqual(len(g.auxiliary_coordinates), 3)
+            self.assertEqual(len(g.auxiliary_coordinates()), 3)
 
         g = f[0]
         for axis in ("X", "Y", "Z"):
@@ -191,16 +179,13 @@ class DSGTest(unittest.TestCase):
 
     def test_geometry_4(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         f = cfdm.read(self.geometry_4_file, verbose=False)
 
         self.assertEqual(len(f), 2, "f = " + repr(f))
 
         for g in f:
             self.assertTrue(g.equals(g.copy(), verbose=3))
-            self.assertEqual(len(g.auxiliary_coordinates), 3)
+            self.assertEqual(len(g.auxiliary_coordinates()), 3)
 
         for axis in ("X", "Y"):
             coord = g.construct("axis=" + axis)
@@ -228,9 +213,6 @@ class DSGTest(unittest.TestCase):
 
     def test_geometry_interior_ring(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         for geometry_file in (
             self.geometry_interior_ring_file,
             self.geometry_interior_ring_file_2,
@@ -241,7 +223,7 @@ class DSGTest(unittest.TestCase):
 
             for g in f:
                 self.assertTrue(g.equals(g.copy(), verbose=3))
-                self.assertEqual(len(g.auxiliary_coordinates), 4)
+                self.assertEqual(len(g.auxiliary_coordinates()), 4)
 
             g = f[0]
             for axis in ("X", "Y"):
@@ -325,9 +307,6 @@ class DSGTest(unittest.TestCase):
 
             pnc.nc_set_dimension("new_dim_name")
             cfdm.write(f, tempfile)
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

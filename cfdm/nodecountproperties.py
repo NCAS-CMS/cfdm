@@ -9,20 +9,14 @@ class NodeCountProperties(
 
     **NetCDF interface**
 
-    The netCDF node count variable name may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-    `nc_has_variable` methods.
-
-    The netCDF variable group structure may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+    {{netCDF variable}}
 
     .. versionadded:: (cfdm) 1.8.0
 
     """
 
     def __init__(self, properties=None, source=None, copy=True):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -33,7 +27,7 @@ class NodeCountProperties(
                   geometry'}``
 
             source: optional
-                Initialize the properties from those of *source*.
+                Initialise the properties from those of *source*.
 
             {{init copy: `bool`, optional}}
 
@@ -81,6 +75,3 @@ class NodeCountProperties(
             _title=_title,
             _create_title=_create_title,
         )
-
-
-# --- End: class

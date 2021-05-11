@@ -13,9 +13,9 @@ class PropertiesData(Properties):
     def __new__(cls, *args, **kwargs):
         """Store component classes.
 
-        NOTE: If a child class requires a different component classes than
-        the ones defined here, then they must be redefined in the child
-        class.
+        NOTE: If a child class requires a different component classes
+        than the ones defined here, then they must be redefined in the
+        child class.
 
         """
         instance = super().__new__(cls)
@@ -30,7 +30,7 @@ class PropertiesData(Properties):
         copy=True,
         _use_data=True,
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -42,7 +42,7 @@ class PropertiesData(Properties):
             {{init data: data_like, optional}}
 
             source: optional
-                Initialize the properties and data from those of *source*.
+                Initialise the properties and data from those of *source*.
 
                 {{init source}}
 
@@ -59,7 +59,6 @@ class PropertiesData(Properties):
                     data = source.get_data(None)
                 except AttributeError:
                     data = None
-        # --- End: if
 
         if _use_data and data is not None:
             self.set_data(data, copy=copy)
@@ -84,7 +83,7 @@ class PropertiesData(Properties):
         if data is not None:
             return data.__array__(*dtype)
 
-        raise ValueError("{} has no data".format(self.__class__.__name__))
+        raise ValueError(f"{self.__class__.__name__} has no data")
 
     def __data__(self):
         """Defines the data interface.
@@ -109,7 +108,7 @@ class PropertiesData(Properties):
         if data is not None:
             return data
 
-        raise ValueError("{} has no data".format(self.__class__.__name__))
+        raise ValueError(f"{self.__class__.__name__} has no data")
 
     # ----------------------------------------------------------------
     # Attributes
@@ -230,9 +229,10 @@ class PropertiesData(Properties):
         None
 
         """
-        data = self.get_data(None)
-        self._del_component("data", default=default)
-        return data
+        # data = self.get_data(None)
+        # self._del_component("data", default=default)
+        # return data
+        return self._del_component("data", default=default)
 
     def get_data(self, default=ValueError(), _units=True, _fill_value=True):
         """Return the data.
@@ -287,9 +287,11 @@ class PropertiesData(Properties):
         data = self._get_component("data", None)
 
         if data is None:
+            if default is None:
+                return
+
             return self._default(
-                default,
-                message="{!r} has no data".format(self.__class__.__name__),
+                default, message=f"{self.__class__.__name__} has no data"
             )
 
         if _units:
@@ -305,7 +307,6 @@ class PropertiesData(Properties):
                 data.set_calendar(calendar)
             else:
                 data.del_calendar(default=None)
-        # --- End: if
 
         if _fill_value:
             # Copy the fill_value to the data
@@ -316,7 +317,6 @@ class PropertiesData(Properties):
                 data.set_fill_value(fill_value)
             else:
                 data.del_fill_value(default=None)
-        # --- End: if
 
         return data
 
@@ -435,7 +435,9 @@ class PropertiesData(Properties):
         None
 
         """
-        data = self._Data(data, copy=False)
+        _Data = self._Data
+        if not isinstance(data, _Data):
+            data = _Data(data, copy=False)
 
         if copy:
             data = data.copy()
@@ -451,6 +453,3 @@ class PropertiesData(Properties):
             return
 
         return f
-
-
-# --- End: class

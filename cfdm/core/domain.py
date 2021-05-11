@@ -4,7 +4,7 @@ from . import mixin
 from . import Constructs
 
 
-class Domain(mixin.ConstructAccess, abstract.Container):
+class Domain(mixin.FieldDomain, abstract.Container):
     """A domain of the CF data model.
 
     The domain represents a set of discrete "locations" in what
@@ -38,12 +38,13 @@ class Domain(mixin.ConstructAccess, abstract.Container):
         return instance
 
     def __init__(self, source=None, copy=True, _use_data=True):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
             source: optional
-                Initialize the metadata constructs from those of *source*.
+                Initialise the metadata constructs from those of
+                *source*.
 
                 {{init source}}
 
@@ -92,7 +93,7 @@ class Domain(mixin.ConstructAccess, abstract.Container):
 
         **Examples:**
 
-        >>> d = cfdm.example_field(0)
+        >>> d = {{package}}.example_field(0)
         >>> print(d.constructs)
         Constructs:
         {'cellmethod0': <CellMethod: area: mean>,
@@ -131,7 +132,7 @@ class Domain(mixin.ConstructAccess, abstract.Container):
 
         **Examples:**
 
-        >>> d = cfdm.example_field(0)
+        >>> d = {{package}}.{{class}}()
         >>> e = d.copy()
         >>> e.equals(d)
         True
@@ -145,22 +146,23 @@ class Domain(mixin.ConstructAccess, abstract.Container):
     def fromconstructs(cls, constructs, copy=False):
         """Create a domain from existing metadata constructs.
 
-        The new domain act as a view to the given constructs, i.e. changes
-        to the domain, such as the addition or removal of a construct,
-        will also affect the input `Constructs` instance.
+        The new domain act as a view to the given constructs,
+        i.e. changes to the domain, such as the addition or removal of
+        a construct, will also affect the input `Constructs` instance.
 
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
 
             constructs: `Constructs`
-                The constructs from which to create the new domain. Cell
-                method and field ancillary constructs are ignored.
+                The constructs from which to create the new
+                domain. Cell method and field ancillary constructs are
+                ignored.
 
             copy: `bool`, optional
-                If True then deep copy the metadata constructs prior to
-                initialization. By default the metadata constructs are not
-                copied.
+                If True then deep copy the metadata constructs prior
+                to initialisation. By default the metadata constructs
+                are not copied.
 
         :Returns:
 
@@ -169,7 +171,7 @@ class Domain(mixin.ConstructAccess, abstract.Container):
 
         **Examples:**
 
-        >>> f = cfdm.example_field(0)
+        >>> f = {{package}}.example_field(0)
         >>> d = {{package}}.{{class}}.fromconstructs(f.constructs)
         >>> d
         <Domain: {1, 5, 8}>
@@ -185,6 +187,3 @@ class Domain(mixin.ConstructAccess, abstract.Container):
         domain.constructs._field_data_axes = None
 
         return domain
-
-
-# --- End: class

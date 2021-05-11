@@ -38,19 +38,19 @@ class ArrayMixin:
 
         x.__getitem__(indices) <==> x[indices]
 
-        Indexing follows rules that are very similar to the numpy indexing
-        rules, the only differences being:
+        Indexing follows rules that are very similar to the numpy
+        indexing rules, the only differences being:
 
-        * An integer index i takes the i-th element but does not reduce
-          the rank by one.
+        * An integer index i takes the i-th element but does not
+          reduce the rank by one.
 
         ..
 
-        * When two or more dimensions' indices are sequences of integers
-          then these indices work independently along each dimension
-          (similar to the way vector subscripts work in Fortran). This is
-          the same behaviour as indexing on a Variable object of the
-          netCDF4 package.
+        * When two or more dimensions' indices are sequences of
+          integers then these indices work independently along each
+          dimension (similar to the way vector subscripts work in
+          Fortran). This is the same behaviour as indexing on a
+          Variable object of the netCDF4 package.
 
         .. versionadded:: (cfdm) 1.8.7.0
 
@@ -68,7 +68,7 @@ class ArrayMixin:
         .. versionadded:: (cfdm) 1.8.7.0
 
         """
-        return "<{0}{1}: >".format(self.__class__.__name__, self.shape)
+        return f"<{self.__class__.__name__}{self.shape}: >"
 
     def __str__(self):
         """Called by the `str` built-in function.
@@ -78,7 +78,7 @@ class ArrayMixin:
         .. versionadded:: (cfdm) 1.8.7.0
 
         """
-        return "shape={0}, dtype={1}".format(self.shape, self.dtype)
+        return f"shape={self.shape}, dtype={self.dtype}"
 
     def __docstring_package_depth__(self):
         """Returns the package depth for {{package}} substitutions.
@@ -201,7 +201,6 @@ class ArrayMixin:
                 if n_axes_with_list_indices < len(indices):
                     # Apply subspace defined by slices
                     array = array[tuple(indices)]
-        # --- End: if
 
         if copy:
             if numpy.ma.isMA(array) and not array.ndim:
@@ -212,9 +211,5 @@ class ArrayMixin:
                 array = ma_array
             else:
                 array = array.copy()
-        # --- End: if
 
         return array
-
-
-# --- End: class

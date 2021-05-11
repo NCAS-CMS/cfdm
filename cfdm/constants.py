@@ -37,7 +37,7 @@ CONSTANTS = {
 # logging
 # --------------------------------------------------------------------
 class ValidLogLevels(Enum):
-    """TODO DOCS."""
+    """Enumerates all valid log levels for the logging in cfdm."""
 
     DISABLE = 0
     WARNING = 1

@@ -1,6 +1,5 @@
 import atexit
 import datetime
-import inspect
 import os
 import tempfile
 import unittest
@@ -60,13 +59,8 @@ class ExternalVariableTest(unittest.TestCase):
             dataset_dir, "external_missing.nc"
         )
 
-        self.test_only = []
-
     def test_EXTERNAL_READ(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         # Read the parent file on its own, without the external file
         f = cfdm.read(self.parent_file)
 
@@ -143,9 +137,6 @@ class ExternalVariableTest(unittest.TestCase):
 
     def test_EXTERNAL_WRITE(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         parent = cfdm.read(self.parent_file)
         combined = cfdm.read(self.combined_file)
 
@@ -193,9 +184,6 @@ class ExternalVariableTest(unittest.TestCase):
 
         for i in range(len(h)):
             self.assertTrue(external[i].equals(h[i], verbose=3))
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

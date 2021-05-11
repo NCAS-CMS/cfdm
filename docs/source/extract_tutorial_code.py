@@ -56,7 +56,6 @@ for tutorial_rst in tutorials_rst:
                     continue
 
                 tutorial.append(line.replace("   ", "", 1))
-    # --- End: with
 
     tutorial.append("")
 
@@ -64,4 +63,3 @@ for tutorial_rst in tutorials_rst:
 
     with open(tutorial_py, "w") as f:
         f.write("\n".join(tutorial))
-# --- End: for

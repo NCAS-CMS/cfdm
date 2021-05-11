@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, ubuntu-16.04, macos-latest, macos-10.15]
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.6, 3.7, 3.8, 3.9]
 
     # Run on new and old(er) versions of the distros we support (Linux, Mac OS)
     runs-on: ${{ matrix.os }}
@@ -71,9 +71,7 @@ jobs:
         pip install pycodestyle
 
         # Install Python-based deps and our dev version of cfdm to test:
-        # NOTE: temporarily bypassing latest netCDF4, v.1.5.4, as it is
-        # causing setup issues relating to HDF5 headers not being found:
-        pip install netCDF4==1.5.3
+        pip install netCDF4
         pip install -e .
 
     # Install the coverage library

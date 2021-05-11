@@ -25,16 +25,6 @@ class ParametersDomainAncillaries(Parameters):
         """
         return super().__bool__() or bool(self.domain_ancillaries())
 
-    def __nonzero__(self):
-        """Called by the `bool` built-in function.
-
-        x.__nonzero__() <==> bool(x)
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        """
-        return self.__bool__()
-
     def __str__(self):
         """Called by the `str` built-in function.
 
@@ -43,11 +33,8 @@ class ParametersDomainAncillaries(Parameters):
         """
         out = [super().__str__()]
 
-        out.append(
-            "Ancillaries: {0}".format(
-                ", ".join(sorted(self.domain_ancillaries()))
-            )
-        )
+        x = ", ".join(sorted(self.domain_ancillaries()))
+        out.append(f"Ancillaries: {x}")
 
         return "; ".join(out)
 
@@ -66,10 +53,10 @@ class ParametersDomainAncillaries(Parameters):
 
         Equality is strict by default. This means that:
 
-        * the named parameters must be the same, with the same values and
-          data types, and vector-valued parameters must also have same the
-          size and be element-wise equal (see the *ignore_data_type*
-          parameter), and
+        * the named parameters must be the same, with the same values
+          and data types, and vector-valued parameters must also have
+          same the size and be element-wise equal (see the
+          *ignore_data_type* parameter), and
 
         ..
 
@@ -77,9 +64,9 @@ class ParametersDomainAncillaries(Parameters):
 
         {{equals tolerance}}
 
-        Any type of object may be tested but, in general, equality is only
-        possible with another object of the same type, or a subclass of
-        one. See the *ignore_type* parameter.
+        Any type of object may be tested but, in general, equality is
+        only possible with another object of the same type, or a
+        subclass of one. See the *ignore_type* parameter.
 
         :Parameters:
 
@@ -122,13 +109,10 @@ class ParametersDomainAncillaries(Parameters):
         domain_ancillaries1 = other.domain_ancillaries()
         if set(domain_ancillaries0) != set(domain_ancillaries1):
             logger.info(
-                "{0}: Different domain ancillary terms "
-                "({1} != {2})".format(
-                    self.__class__.__name__,
-                    set(domain_ancillaries0),
-                    set(domain_ancillaries1),
-                )
-            )
+                f"{ self.__class__.__name__}: Different domain ancillary "
+                "terms "
+                f"({set(domain_ancillaries0)} != {set(domain_ancillaries1)})"
+            )  # pragma: no cover
             return False
 
         for term, value0 in domain_ancillaries0.items():
@@ -138,17 +122,11 @@ class ParametersDomainAncillaries(Parameters):
 
             if value0 is None or value1 is None:
                 logger.info(
-                    "{}: Unequal {!r} domain ancillary terms "
-                    "({!r} != {!r})".format(
-                        self.__class__.__name__, term, value0, value1
-                    )
-                )
+                    f"{self.__class__.__name__}: Unequal {term!r} domain "
+                    f"ancillary terms ({value0!r} != {value1!r})"
+                )  # pragma: no cover
                 return False
-        # --- End: for
 
         # Still here? Then the two instances are as equal as can be
         # ascertained in the absence of domains.
         return True
-
-
-# --- End: class

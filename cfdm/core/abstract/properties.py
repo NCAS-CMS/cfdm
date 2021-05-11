@@ -1,6 +1,6 @@
-from copy import deepcopy
-
 from .container import Container
+
+from ..functions import deepcopy
 
 
 class Properties(Container):
@@ -11,7 +11,7 @@ class Properties(Container):
     """
 
     def __init__(self, properties=None, source=None, copy=True):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -21,7 +21,7 @@ class Properties(Container):
                    ``properties={'standard_name': 'altitude'}``
 
             source: optional
-                Initialize the properties from those of *source*.
+                Initialise the properties from those of *source*.
 
                 {{init source}}
 
@@ -35,7 +35,6 @@ class Properties(Container):
                 properties = source.properties()
             except AttributeError:
                 properties = None
-        # --- End: if
 
         self._set_component("properties", {}, copy=False)
 
@@ -81,8 +80,8 @@ class Properties(Container):
 
         """
         out = self._get_component("properties")
-        self._set_component("properties", {})
-        return out.copy()
+        self._set_component("properties", {}, copy=False)
+        return out
 
     def del_property(self, prop, default=ValueError()):
         """Remove a property.
@@ -131,11 +130,12 @@ class Properties(Container):
         try:
             return self._get_component("properties").pop(prop)
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
-                "{!r} has no {!r} property".format(
-                    self.__class__.__name__, prop
-                ),
+                f"{self.__class__.__name__!r} has no {prop!r} property",
             )
 
     def get_property(self, prop, default=ValueError()):
@@ -185,11 +185,12 @@ class Properties(Container):
         try:
             return self._get_component("properties")[prop]
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
-                "{!r} has no {!r} property".format(
-                    self.__class__.__name__, prop
-                ),
+                f"{self.__class__.__name__!r} has no {prop!r} property",
             )
 
     def has_property(self, prop):
@@ -321,8 +322,8 @@ class Properties(Container):
         """
         if copy:
             properties = deepcopy(properties)
-        else:
-            properties = properties.copy()
+        #        else:
+        #            properties = properties.copy()
 
         self._get_component("properties").update(properties)
 
@@ -371,6 +372,3 @@ class Properties(Container):
             value = deepcopy(value)
 
         self._get_component("properties")[prop] = value
-
-
-# --- End: class

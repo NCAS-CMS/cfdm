@@ -25,7 +25,7 @@ class NetCDFArray(abstract.Array):
         size=None,
         mask=True,
     ):
-        """Initialises the `NetCDFArray` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -37,17 +37,18 @@ class NetCDFArray(abstract.Array):
                 array. Required unless *varid* is set.
 
             varid: `int`, optional
-                The UNIDATA netCDF interface ID of the variable containing
-                the array. Required if *ncvar* is not set, ignored if
-                *ncvar* is set.
+                The UNIDATA netCDF interface ID of the variable
+                containing the array. Required if *ncvar* is not set,
+                ignored if *ncvar* is set.
 
             group: `None` or sequence of `str`, optional
                 Specify the netCDF4 group to which the netCDF variable
-                belongs. By default, or if *group* is `None` or an empty
-                sequence, it assumed to be in the root group. The last
-                element in the sequence is the name of the group in which
-                the variable lies, with other elements naming any parent
-                groups (excluding the root group).
+                belongs. By default, or if *group* is `None` or an
+                empty sequence, it assumed to be in the root
+                group. The last element in the sequence is the name of
+                the group in which the variable lies, with other
+                elements naming any parent groups (excluding the root
+                group).
 
                 *Parameter example:*
                   To specify that a variable is in the root group:
@@ -107,16 +108,16 @@ class NetCDFArray(abstract.Array):
         self._set_component("close", True, copy=False)
 
         if ndim is not None:
-            self._set_component("ndim", ndim)
+            self._set_component("ndim", ndim, copy=False)
 
         if size is not None:
-            self._set_component("size", size)
+            self._set_component("size", size, copy=False)
 
         if shape is not None:
-            self._set_component("shape", shape)
+            self._set_component("shape", shape, copy=False)
 
-        self._set_component("dtype", dtype)
-        self._set_component("mask", mask)
+        self._set_component("dtype", dtype, copy=False)
+        self._set_component("mask", mask, copy=False)
 
     def __getitem__(self, indices):
         """Returns a subspace of the array as a numpy array.
@@ -166,7 +167,6 @@ class NetCDFArray(abstract.Array):
                     variable.set_auto_mask(mask)
                     array = variable[indices]
                     break
-        # --- End: if
 
         if self._get_component("close"):
             # Close the netCDF file
@@ -520,6 +520,3 @@ class NetCDFArray(abstract.Array):
 
         """
         return NumpyArray(self[...])
-
-
-# --- End: class

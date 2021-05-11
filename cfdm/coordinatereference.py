@@ -64,14 +64,7 @@ class CoordinateReference(
 
     **NetCDF interface**
 
-    The netCDF grid mapping variable name of a coordinate reference
-    construct may be accessed with the `nc_set_variable`,
-    `nc_get_variable`, `nc_del_variable` and `nc_has_variable`
-    methods.
-
-    The netCDF variable group structure may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+    {{netCDF variable}}
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -93,17 +86,18 @@ class CoordinateReference(
         source=None,
         copy=True,
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
             coordinates: sequence of `str`, optional
-                Identify the related dimension and auxiliary coordinate
-                constructs by their construct identifiers. Ignored if the
-                *source* parameter is set.
+                Identify the related dimension and auxiliary
+                coordinate constructs by their construct
+                identifiers. Ignored if the *source* parameter is set.
 
-                The coordinates may also be set after initialisation with
-                the `set_coordinates` and `set_coordinate` methods.
+                The coordinates may also be set after initialisation
+                with the `set_coordinates` and `set_coordinate`
+                methods.
 
                 *Parameter example:*
                   ``coordinates=['dimensioncoordinate2']``
@@ -115,20 +109,20 @@ class CoordinateReference(
                 Set the datum component of the coordinate reference
                 construct. Ignored if the *source* parameter is set.
 
-                The datum may also be set after initialisation with the
-                `set_datum` method.
+                The datum may also be set after initialisation with
+                the `set_datum` method.
 
             coordinate_conversion: `CoordinateConversion`, optional
-                Set the coordinate conversion component of the coordinate
-                reference construct. Ignored if the *source* parameter is
-                set.
+                Set the coordinate conversion component of the
+                coordinate reference construct. Ignored if the
+                *source* parameter is set.
 
                 The coordinate conversion may also be set after
                 initialisation with the `set_coordinate_conversion`
                 method.
 
             source: optional
-                Initialize the coordinates, datum and coordinate
+                Initialise the coordinates, datum and coordinate
                 conversion from those of *source*.
 
                 {{init source}}
@@ -155,6 +149,27 @@ class CoordinateReference(
 
         """
         return self.identity(default=self.nc_get_variable(""))
+
+    def _identities_iter(self):
+        """Return all possible identities.
+
+        See `identities` for details and examples.
+
+        :Returns:
+
+            generator
+                The identities.
+
+        """
+        cc = self.coordinate_conversion
+        for prop in ("standard_name", "grid_mapping_name"):
+            n = cc.get_parameter(prop, None)
+            if n is not None:
+                yield f"{prop}:{n}"
+
+        ncvar = self.nc_get_variable(None)
+        if ncvar is not None:
+            yield f"ncvar%{ncvar}"
 
     def creation_commands(
         self, namespace=None, indent=0, string=True, name="c", header=True
@@ -186,7 +201,7 @@ class CoordinateReference(
 
         **Examples:**
 
-        >>> x = {{package}}.CoordinateReference(
+        >>> x = {{package}}.{{class}}(
         ...     coordinates=['dimensioncoordinate0']
         ... )
         >>> x.datum.set_parameter('earth_radius', 6371007)
@@ -200,7 +215,7 @@ class CoordinateReference(
         ...      'orog': 'domainancillary2'}
         ... )
         >>> print(x.creation_commands(header=False))
-        c = {{package}}.CoordinateReference()
+        c = {{package}}.{{class}}()
         c.set_coordinates({'dimensioncoordinate0'})
         c.datum.set_parameter('earth_radius', 6371007)
         c.coordinate_conversion.set_parameter('standard_name', 'atmosphere_hybrid_height_coordinate')
@@ -218,23 +233,20 @@ class CoordinateReference(
 
         if header:
             out.append("#")
-            out.append("# {}:".format(self.construct_type))
+            out.append(f"# {self.construct_type}:")
             identity = self.identity()
             if identity:
-                out[-1] += " {}".format(identity)
-        # -- End: if
+                out[-1] += f" {identity}"
 
-        out.append(
-            "{} = {}{}()".format(name, namespace, self.__class__.__name__)
-        )
+        out.append(f"{name} = {namespace}{self.__class__.__name__}()")
 
         nc = self.nc_get_variable(None)
         if nc is not None:
-            out.append("{}.nc_set_variable({!r})".format(name, nc))
+            out.append(f"{name}.nc_set_variable({nc!r})")
 
         coordinates = self.coordinates()
         if coordinates:
-            out.append("{}.set_coordinates({})".format(name, coordinates))
+            out.append(f"{name}.set_coordinates({coordinates})")
 
         for term, value in self.datum.parameters().items():
             if isinstance(value, self._Data):
@@ -248,9 +260,7 @@ class CoordinateReference(
             else:
                 value = repr(value)
 
-            out.append(
-                "{}.datum.set_parameter({!r}, {})".format(name, term, value)
-            )
+            out.append(f"{name}.datum.set_parameter({term!r}, {value})")
 
         for term, value in self.coordinate_conversion.parameters().items():
             if isinstance(value, self._Data):
@@ -265,17 +275,13 @@ class CoordinateReference(
                 value = repr(value)
 
             out.append(
-                "{}.coordinate_conversion.set_parameter({!r}, {})".format(
-                    name, term, value
-                )
+                f"{name}.coordinate_conversion.set_parameter({term!r}, {value})"
             )
 
         domain_ancillaries = self.coordinate_conversion.domain_ancillaries()
         if domain_ancillaries:
             out.append(
-                "{}.coordinate_conversion.set_domain_ancillaries({})".format(
-                    name, domain_ancillaries
-                )
+                f"{name}.coordinate_conversion.set_domain_ancillaries({domain_ancillaries})"
             )
 
         if string:
@@ -321,9 +327,7 @@ class CoordinateReference(
 
         if _title is None:
             string = [
-                "{0}Coordinate Reference: {1}".format(
-                    indent0, self.identity(default="")
-                )
+                f"{indent0}Coordinate Reference: {self.identity(default='')}"
             ]
         else:
             string = [indent0 + _title]
@@ -331,11 +335,7 @@ class CoordinateReference(
         # Coordinate conversion parameter-valued terms
         coordinate_conversion = self.get_coordinate_conversion()
         for term, value in sorted(coordinate_conversion.parameters().items()):
-            string.append(
-                "{0}Coordinate conversion:{1} = {2}".format(
-                    indent1, term, value
-                )
-            )
+            string.append(f"{indent1}Coordinate conversion:{term} = {value}")
 
         # Coordinate conversion domain ancillary-valued terms
         if _construct_names:
@@ -345,46 +345,40 @@ class CoordinateReference(
                 if key in _construct_names:
                     construct_name = (
                         "Domain Ancillary: "
-                        + _construct_names.get(key, "key:{}".format(key))
+                        + _construct_names.get(key, f"key:{key}")
                     )
                 else:
                     construct_name = ""
 
                 string.append(
-                    "{0}Coordinate conversion:{1} = {2}".format(
-                        indent1, term, construct_name
-                    )
+                    f"{indent1}Coordinate conversion:{term} = {construct_name}"
                 )
         else:
             for term, value in sorted(
                 coordinate_conversion.domain_ancillaries().items()
             ):
                 string.append(
-                    "{0}Coordinate conversion:{1} = {2}".format(
-                        indent1, term, str(value)
-                    )
+                    f"{indent1}Coordinate conversion:{term} = {value}"
                 )
 
         # Datum parameter-valued terms
         datum = self.get_datum()
         for term, value in sorted(datum.parameters().items()):
-            string.append("{0}Datum:{1} = {2}".format(indent1, term, value))
+            string.append(f"{indent1}Datum:{term} = {value}")
 
         # Coordinates
         if _construct_names:
             for key in sorted(self.coordinates(), reverse=True):
-                coord = "{}".format(
-                    _construct_names.get(key, "key:{}".format(key))
-                )
+                coord = "{}".format(_construct_names.get(key, f"key:{key}"))
                 if key in _dimension_coordinates:
                     coord = "Dimension Coordinate: " + coord
                 elif key in _auxiliary_coordinates:
                     coord = "Auxiliary Coordinate: " + coord
 
-                string.append("{0}{1}".format(indent1, coord))
+                string.append(f"{indent1}{coord}")
         else:
             for identifier in sorted(self.coordinates()):
-                string.append("{0}Coordinate: {1}".format(indent1, identifier))
+                string.append(f"{indent1}Coordinate: {identifier}")
 
         return "\n".join(string)
 
@@ -436,7 +430,7 @@ class CoordinateReference(
 
         **Examples:**
 
-        >>> c = {{package}}.CoordinateReference(
+        >>> c = {{package}}.{{class}}(
         ...     coordinates=['dimensioncoordinate0']
         ... )
         >>> c.equals(c)
@@ -459,8 +453,8 @@ class CoordinateReference(
         coords1 = other.coordinates()
         if len(coords0) != len(coords1):
             logger.info(
-                "{}: Different sized collections of coordinates "
-                "({}, {})".format(self.__class__.__name__, coords0, coords1)
+                f"{self.__class__.__name__}: Different sized collections of "
+                f"coordinates ({coords0}, {coords1})"
             )
 
             return False
@@ -473,9 +467,7 @@ class CoordinateReference(
             ignore_type=ignore_type,
         ):
             logger.info(
-                "{}: Different coordinate conversions".format(
-                    self.__class__.__name__
-                )
+                f"{self.__class__.__name__}: Different coordinate conversions"
             )
 
             return False
@@ -487,7 +479,7 @@ class CoordinateReference(
             verbose=verbose,
             ignore_type=ignore_type,
         ):
-            logger.info("{}: Different datums".format(self.__class__.__name__))
+            logger.info(f"{self.__class__.__name__}: Different datums")
 
             return False
 
@@ -524,7 +516,7 @@ class CoordinateReference(
 
         **Examples:**
 
-        >>> f = cfdm.example_field(1)
+        >>> f = {{package}}.example_field(1)
         >>> c = f.get_construct('coordinatereference0')
         >>> c.identity()
         'standard_name:atmosphere_hybrid_height_coordinate'
@@ -533,7 +525,7 @@ class CoordinateReference(
         >>> c.identity()
         'grid_mapping_name:rotated_latitude_longitude'
 
-        >>> c = cfdm.CoordinateReference()
+        >>> c = {{package}}.{{class}}()
         >>> c.identity()
         ''
         >>> c.identity(default='no identity')
@@ -543,16 +535,15 @@ class CoordinateReference(
         for prop in ("standard_name", "grid_mapping_name"):
             n = self.coordinate_conversion.get_parameter(prop, None)
             if n is not None:
-                return "{0}:{1}".format(prop, n)
-        # --- End: for
+                return f"{prop}:{n}"
 
         n = self.nc_get_variable(None)
         if n is not None:
-            return "ncvar%{0}".format(n)
+            return f"ncvar%{n}"
 
         return default
 
-    def identities(self):
+    def identities(self, generator=False, **kwargs):
         """Returns all possible identities.
 
         The identities comprise:
@@ -568,14 +559,28 @@ class CoordinateReference(
 
         .. seealso:: `identity`
 
+        :Parameters:
+
+            generator: `bool`, optional
+                If True then return a generator for the identities,
+                rather than a list.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
+            kwargs: optional
+                Additional configuration parameters. Currently
+                none. Unrecognised parameters are ignored.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
         :Returns:
 
-            `list`
+            `list` or generator
                 The identities.
 
         **Examples:**
 
-        >>> f = cfdm.example_field(1)
+        >>> f = {{package}}.example_field(1)
         >>> c = f.get_construct('coordinatereference0')
         >>> c.identities()
         ['standard_name:atmosphere_hybrid_height_coordinate']
@@ -584,25 +589,19 @@ class CoordinateReference(
         >>> c.identities()
         ['grid_mapping_name:rotated_latitude_longitude',
          'ncvar%rotated_latitude_longitude']
+        >>> for i in c.identities(generator=True):
+        ...     print(i)
+        ...
+        grid_mapping_name:rotated_latitude_longitude
+        ncvar%rotated_latitude_longitude
 
-        >>> c = cfdm.CoordinateReference()
+        >>> c = {{package}}.{{class}}()
         >>> c.identities()
         []
 
         """
-        out = []
+        g = self._iter(body=self._identities_iter(), **kwargs)
+        if generator:
+            return g
 
-        for prop in ("standard_name", "grid_mapping_name"):
-            n = self.coordinate_conversion.get_parameter(prop, None)
-            if n is not None:
-                out.append("{0}:{1}".format(prop, n))
-        # --- End: for
-
-        n = self.nc_get_variable(None)
-        if n is not None:
-            out.append("ncvar%{0}".format(n))
-
-        return out
-
-
-# --- End: class
+        return list(g)

@@ -13,8 +13,8 @@ class RaggedContiguous:
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter if the count
-                variable has not been set.
+                Return the value of the *default* parameter if the
+                count variable has not been set.
 
                 {{default Exception}}
 
@@ -27,13 +27,10 @@ class RaggedContiguous:
         >>> c = d.get_count()
 
         """
-        try:
-            return self._get_component("count_variable")
-        except ValueError:
+        out = self._get_component("count_variable", None)
+        if out is None:
             return self._default(
-                default,
-                "{!r} has no count variable".format(self.__class__.__name__),
+                default, f"{self.__class__.__name__!r} has no count variable"
             )
 
-
-# --- End: class
+        return out

@@ -4,7 +4,7 @@ from ... import abstract
 class Array(abstract.Container):
     """Abstract base class for a container of an array.
 
-    The form of the array is defined by the initialization parameters
+    The form of the array is defined by the initialisation parameters
     of a subclass.
 
     See `cfdm.core.NumpyArray` for an example implementation.
@@ -14,12 +14,13 @@ class Array(abstract.Container):
     """
 
     def __init__(self, **kwargs):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
             kwargs: *optional*
-                Named parameters and their values that define the array.
+                Named parameters and their values that define the
+                array.
 
         """
         super().__init__()
@@ -235,6 +236,3 @@ class Array(abstract.Container):
         new = klass.__new__(klass)
         new.__dict__ = self.__dict__.copy()
         return new
-
-
-# --- End: class

@@ -30,7 +30,7 @@ class RaggedContiguousArray(mixin.RaggedContiguous, abstract.CompressedArray):
         ndim=None,
         count_variable=None,
     ):
-        """Initialises the `RaggedContiguousArray` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -139,6 +139,3 @@ class RaggedContiguousArray(mixin.RaggedContiguous, abstract.CompressedArray):
         super().to_memory()
         self.get_count().data.to_memory()
         return self
-
-
-# --- End: class

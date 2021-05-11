@@ -49,4 +49,9 @@ Miscellaneous
    cfdm.abspath
    cfdm.environment
    cfdm.example_field
+   cfdm.example_fields
+   cfdm.example_domain
    cfdm.implementation
+   cfdm.is_log_level_info
+   cfdm.is_log_level_detail
+   cfdm.is_log_level_debug

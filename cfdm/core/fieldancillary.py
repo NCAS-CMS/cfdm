@@ -46,6 +46,3 @@ class FieldAncillary(abstract.PropertiesData):
 
         """
         return "field_ancillary"
-
-
-# --- End: class

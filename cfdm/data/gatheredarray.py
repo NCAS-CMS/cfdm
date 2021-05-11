@@ -29,7 +29,7 @@ class GatheredArray(abstract.CompressedArray):
         compressed_dimension=None,
         list_variable=None,
     ):
-        """Initialises the `GatheredArray` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -125,7 +125,7 @@ class GatheredArray(abstract.CompressedArray):
                 if b >= z:
                     (a, b) = divmod(b, z)
                     u_indices[i] = a
-            # --- End: for
+
             u_indices[compressed_axes[-1]] = b
 
             compressed = compressed_array[tuple(sample_indices)]
@@ -181,6 +181,3 @@ class GatheredArray(abstract.CompressedArray):
         super().to_memory()
         self.get_list().data.to_memory()
         return self
-
-
-# --- End: class
