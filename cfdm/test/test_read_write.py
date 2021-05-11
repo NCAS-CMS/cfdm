@@ -206,7 +206,7 @@ class read_writeTest(unittest.TestCase):
 
             # Now append all other example fields, to check a diverse variety:
             new_length = 2
-            for field_id in [0] + list(range(2, 8)):  # TODO final range(1, 8):
+            for field_id in list(range(2, 8)):  # TODO final range(1, 8):
                 # Skip since "Can't write int64 data from <Count: (2) > to a
                 # NETCDF3_CLASSIC file" causes a ValueError i.e. not possible:
                 if fmt in self.netcdf3_fmts and field_id == 6:
@@ -239,8 +239,19 @@ class read_writeTest(unittest.TestCase):
                     )
                 )
 
+            # Now do the same test, but appending all of the example fields in
+            # one operation rather than one at a time, to check that it works:
+            cfdm.write(g, tmpfile, fmt=fmt, mode="w")  # overwrites to wipe
+            ex_fields = cfdm.example_fields()
+            del ex_fields[1]  # TODO: excluded first given known limitation
+            print("fmt is", fmt)
+            if fmt in self.netcdf3_fmts:
+                # skip, for reason given above
+                del ex_fields[5]  # n=6 field but minus 1 from del above
+            cfdm.write(ex_fields, tmpfile, fmt=fmt, mode="a")
+
             # Check behaviour when append identical fields, as an edge case:
-            cfdm.write(g, tmpfile, fmt=fmt, mode="w", overwrite=True)  # wipe
+            cfdm.write(g, tmpfile, fmt=fmt, mode="w")  # overwrites to wipe
             cfdm.write(g_copy, tmpfile, fmt=fmt, mode="a")
             f = cfdm.read(tmpfile)
             self.assertEqual(len(f), 2 * len(g))
