@@ -179,45 +179,39 @@ class read_writeTest(unittest.TestCase):
 
     def test_write_netcdf_mode(self):
         """TODO DOCS."""
-        g = cfdm.read(self.filename)
+        g = cfdm.read(self.filename)  # note g has one field
         g_copy = g.copy()
-        g_orig_length = len(g)
 
-        # NOTE: first trying to get netCDF3 working only as netCDF4 runs into
-        # seg faulting :( so deal with that difficulty afterwards.
-        for fmt in self.netcdf3_fmts:  # + self.netcdf4_fmts:
+        for fmt in self.netcdf_fmts:  # test over all netCDF 3 and 4 formats
             # Other tests cover write as default mode (i.e. test with no mode
             # argument); here test explicit provision of 'w' as argument:
             cfdm.write(g, tmpfile, fmt=fmt, mode="w")
             f = cfdm.read(tmpfile)
-            self.assertEqual(len(f), g_orig_length)
+
+            new_length = 1  # since 1 == len(g)
+            self.assertEqual(len(f), new_length)
             self.assertTrue(f[0].equals(g[0]))
 
-            # Main aspect of this test: testing the append mode ('a')
-            h = cfdm.example_field(0)
-            cfdm.write(h, tmpfile, fmt=fmt, mode="a")  # now includes h with g
-            f = cfdm.read(tmpfile)
-
-            # After append, file should emerge with a number of fields
-            # equal to the sum of all fields appended to them.
-            self.assertEqual(len(f), g_orig_length + 1)
-            self.assertTrue(f[0].equals(g[0]))  # should remain True...
-            self.assertTrue(f[1].equals(h))  # ...but also has the new field
-
-            # Now append all other example fields, to check a diverse variety:
-            new_length = 2
-            for field_id in list(range(2, 8)):  # TODO final range(1, 8):
+            # Main aspect of this test: testing the append mode ('a'): now
+            # append all other example fields, to check a diverse variety.
+            for ex_field_n, ex_field in enumerate(cfdm.example_fields()):
+                # Note: after Issue #141, this skip can be removed.
+                if ex_field_n == 1:
+                    continue
                 # Skip since "Can't write int64 data from <Count: (2) > to a
-                # NETCDF3_CLASSIC file" causes a ValueError i.e. not possible:
-                if fmt in self.netcdf3_fmts and field_id == 6:
+                # NETCDF3_CLASSIC file" causes a ValueError i.e. not possible.
+                # Note: can remove this when Issue #140 is closed.
+                if fmt in self.netcdf3_fmts and ex_field_n == 6:
                     continue
 
-                print("\n>>>>>>>>>>> ONTO FIELD ID", field_id)
-                ex_field = cfdm.example_field(field_id)
+                # TODO: for review and debugging, remove at end!
+                print("\n>>>>>>>>>>> ONTO FIELD N =", ex_field_n)
+
                 cfdm.write(ex_field, tmpfile, fmt=fmt, mode="a")
                 f = cfdm.read(tmpfile)
 
-                print("$$$$$$$$$$$$$$$$$$$$$ OVERALL F IS", f)
+                # TODO: for review and debugging, remove at end!
+                print("$$$$$$$$$$$$$$$$$$$$$ OVERALL F IS:", f)
                 print("$$$$$$$$$$$$$$$$$$$$$ NEED:")
                 ex_field.dump()
                 print("$$$$$$$$$$$$$$$$$$$$$ BUT GOT:")
@@ -231,32 +225,32 @@ class read_writeTest(unittest.TestCase):
                     any(
                         [
                             ex_field.equals(
-                                field,
+                                file_field,
                                 ignore_properties=["comment", "featureType"],
                             )
-                            for field in f
+                            for file_field in f
                         ]
                     )
                 )
 
             # Now do the same test, but appending all of the example fields in
             # one operation rather than one at a time, to check that it works:
-            cfdm.write(g, tmpfile, fmt=fmt, mode="w")  # overwrites to wipe
-            ex_fields = cfdm.example_fields()
-            del ex_fields[1]  # TODO: excluded first given known limitation
-            print("fmt is", fmt)
+            cfdm.write(g, tmpfile, fmt=fmt, mode="w")  # 1. overwrite to wipe
+            append_ex_fields = cfdm.example_fields()
+            del append_ex_fields[1]  # note: can remove after Issue #141 closed
+            # Note: can remove this del when Issue #140 is closed:
             if fmt in self.netcdf3_fmts:
-                # skip, for reason given above
-                del ex_fields[5]  # n=6 field but minus 1 from del above
-            cfdm.write(ex_fields, tmpfile, fmt=fmt, mode="a")
+                del append_ex_fields[5]  # n=6 ex_field, minus 1 for above del
+            cfdm.write(
+                append_ex_fields, tmpfile, fmt=fmt, mode="a")  # 2. now append
 
             # Check behaviour when append identical fields, as an edge case:
-            cfdm.write(g, tmpfile, fmt=fmt, mode="w")  # overwrites to wipe
-            cfdm.write(g_copy, tmpfile, fmt=fmt, mode="a")
+            cfdm.write(g, tmpfile, fmt=fmt, mode="w")  # 1. overwrite to wipe
+            cfdm.write(g_copy, tmpfile, fmt=fmt, mode="a")  # 2. now append
             f = cfdm.read(tmpfile)
             self.assertEqual(len(f), 2 * len(g))
-            for g_field in g_copy:
-                self.assertTrue(any([field.equals(g_field) for field in f]))
+            self.assertTrue(
+                any([file_field.equals(g[0], verbose=-1) for file_field in f]))
 
     def test_read_write_netCDF4_compress_shuffle(self):
         """TODO DOCS."""

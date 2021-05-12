@@ -3316,7 +3316,7 @@ class NetCDFWrite(IOWrite):
                         )
                 # --- End: if
 
-                # If it's a 'dry run' for append moed, assume a dimension
+                # If it's a 'dry run' for append mode, assume a dimension
                 # coordinate has not been found in order to run through the
                 # remaining logic below.
                 found_dimension_coordinate = True
