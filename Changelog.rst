@@ -1,15 +1,24 @@
-version NEXT
-------------
+version 1.8.9.0
+---------------
 ----
 
-**2021-??-??**
+**2021-05-12**
 
-* Fix for zero-sized unlimited dimensions when read from a grouped
-  netCDF file (https://github.com/NCAS-CMS/cfdm/issues/113)
-* Performance enhancements (https://github.com/NCAS-CMS/cfdm/issues/124)
+* Construct access API changes
+  (https://github.com/NCAS-CMS/cfdm/issues/124,
+  https://github.com/NCAS-CMS/cfdm/issues/130,
+  https://github.com/NCAS-CMS/cfdm/issues/132,
+  https://github.com/NCAS-CMS/cfdm/issues/137)
+* Performance enhancements
+  (https://github.com/NCAS-CMS/cfdm/issues/124,
+  https://github.com/NCAS-CMS/cfdm/issues/130)
 * Better error message in the case of a `numpy.ma.core.MaskError` occurring
   upon reading of CDL files with only header or coordinate information
   (https://github.com/NCAS-CMS/cfdm/issues/128)
+* Fix for zero-sized unlimited dimensions when read from a grouped
+  netCDF file (https://github.com/NCAS-CMS/cfdm/issues/113)
+* Fix bug causing occasional non-symmetric `equals` operations
+  (https://github.com/NCAS-CMS/cfdm/issues/133)
 * Changed dependency: ``cftime>=1.4.1``
 * Changed dependency: ``netCDF4>=1.5.4``
 

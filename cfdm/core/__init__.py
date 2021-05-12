@@ -1,6 +1,5 @@
 """"""
 
-__author__ = "David Hassell"
 __date__ = "2021-05-12"
 __cf_version__ = "1.8"
 __version__ = "1.8.9.0"
@@ -13,7 +12,7 @@ _requires = (
     "netCDF4",
 )
 
-_error0 = "cfdm.core requires the modules {}. ".format(", ".join(_requires))
+_error0 = f"cfdm.core requires the modules {', '.join(_requires)}. "
 
 try:
     import netCDF4
@@ -29,26 +28,24 @@ except ImportError as error1:
 _minimum_vn = "3.6.0"
 if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
     raise ValueError(
-        "Bad python version: cfdm.core requires python>={}. "
-        "Got {}".format(_minimum_vn, platform.python_version())
+        f"Bad python version: cfdm.core requires python>={_minimum_vn}. "
+        f"Got {platform.python_version()}"
     )
 
 # Check the version of netCDF4
-minimum_vn = "1.5.4"
-if LooseVersion(netCDF4.__version__) < LooseVersion(minimum_vn):
+_minimum_vn = "1.5.4"
+if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
     raise ValueError(
-        "Bad netCDF4 version: cfdm.core requires netCDF4>={}. "
-        "Got {} at {}".format(
-            minimum_vn, netCDF4.__version__, netCDF4.__file__
-        )
+        f"Bad netCDF4 version: cfdm.core requires netCDF4>={_minimum_vn}. "
+        f"Got {netCDF4.__version__} at {netCDF4.__file__}"
     )
 
 # Check the version of numpy
-minimum_vn = "1.15"
-if LooseVersion(numpy.__version__) < LooseVersion(minimum_vn):
+_minimum_vn = "1.15"
+if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
     raise ValueError(
-        "Bad numpy version: cfdm.core requires numpy>={}. "
-        "Got {} at {}".format(minimum_vn, numpy.__version__, numpy.__file__)
+        f"Bad numpy version: cfdm.core requires numpy>={_minimum_vn}. "
+        f"Got {numpy.__version__} at {numpy.__file__}"
     )
 
 from .constructs import Constructs
