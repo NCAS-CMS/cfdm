@@ -241,16 +241,115 @@ class read_writeTest(unittest.TestCase):
             # Note: can remove this del when Issue #140 is closed:
             if fmt in self.netcdf3_fmts:
                 del append_ex_fields[5]  # n=6 ex_field, minus 1 for above del
+            overall_length = len(append_ex_fields) + 1  # 1 for original 'g'
             cfdm.write(
-                append_ex_fields, tmpfile, fmt=fmt, mode="a")  # 2. now append
+                append_ex_fields, tmpfile, fmt=fmt, mode="a"
+            )  # 2. now append
+            f = cfdm.read(tmpfile)
+            self.assertEqual(len(f), overall_length)
+
+            # The appended fields themselves are now known to be correct,
+            # but we also need to check that any coordinates that are
+            # equal across different fields have been shared in the
+            # source netCDF, rather than written in separately.
+            #
+            # Note that the coordinates that are shared across the set of
+            # all example fields plus the field 'g' from the contents of
+            # the original file (self.filename) are as follows:
+            #
+            # 1. Example fields n=0 and n=1 share:
+            #    <DimensionCoordinate: time(1) days since 2018-12-01 >
+            # 2. Example fields n=0, n=2 and n=5 share:
+            #    <DimensionCoordinate: latitude(5) degrees_north> and
+            #    <DimensionCoordinate: longitude(8) degrees_east>
+            # 3. Example fields n=2 and n=5 share:
+            #    <DimensionCoordinate: air_pressure(1) hPa>
+            # 4. The original file field ('g') and example field n=1 share:
+            #    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+            #    <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+            #    <Dimension...: atmosphere_hybrid_height_coordinate(1) >,
+            #    <DimensionCoordinate: grid_latitude(10) degrees>,
+            #    <DimensionCoordinate: grid_longitude(9) degrees> and
+            #    <DimensionCoordinate: time(1) days since 2018-12-01 >
+            #
+            # Therefore we check all of those coordinates for singularity,
+            # i.e. the same underlying netCDF variables, in turn.
+
+            # But first, since the order of the fields appended isn't
+            # guaranteed, we must find the mapping of the example fields to
+            # their position in the read-in FieldList.
+            f = cfdm.read(tmpfile)
+            # Element at index N gives position of example field n=N in file
+            file_field_order = []
+            for ex_field in cfdm.example_fields():
+                position = [
+                    f.index(file_field)
+                    for file_field in f
+                    if ex_field.equals(
+                        file_field,
+                        ignore_properties=["comment", "featureType"],
+                    )
+                ]
+                if not position:
+                    position = [None]  # to record skipped example fields
+                file_field_order.append(position[0])
+
+            equal_coors = {
+                ((0, "dimensioncoordinate2"), (1, "dimensioncoordinate3")),
+                ((0, "dimensioncoordinate0"), (2, "dimensioncoordinate1")),
+                ((0, "dimensioncoordinate1"), (2, "dimensioncoordinate2")),
+                ((0, "dimensioncoordinate0"), (5, "dimensioncoordinate1")),
+                ((0, "dimensioncoordinate1"), (5, "dimensioncoordinate2")),
+                ((2, "dimensioncoordinate3"), (5, "dimensioncoordinate3")),
+            }
+            for coor_1, coor_2 in equal_coors:
+                ex_field_1_position, c_1 = coor_1
+                ex_field_2_position, c_2 = coor_2
+                # Now map the appropriate example field to the file FieldList
+                f_1 = file_field_order[ex_field_1_position]
+                f_2 = file_field_order[ex_field_2_position]
+                # None for fields skipped in test, distinguish from falsy 0
+                if f_1 is None or f_2 is None:
+                    continue
+                self.assertEqual(
+                    f[f_1]
+                    .constructs()
+                    .filter_by_identity(c_1)
+                    .value()
+                    .nc_get_variable(),
+                    f[f_2]
+                    .constructs()
+                    .filter_by_identity(c_2)
+                    .value()
+                    .nc_get_variable(),
+                )
+
+            # Note: after Issue #141, the block below should be un-commented.
+            #
+            # The original file field 'g' must be at the remaining position:
+            # rem_position = list(set(
+            #     range(len(f))).difference(set(file_field_order)))[0]
+            # # In the final cases, it is easier to remove the one differing
+            # # coordinate to get the equal coordinates that should be shared:
+            # original_field_coors = dict(f[rem_position].coordinates())
+            # ex_field_1_coors = dict(f[file_field_order[1]].coordinates())
+            # for orig_coor, ex_1_coor in zip(
+            #         original_field_coors.values(), ex_field_1_coors.values()):
+            #     # The 'auxiliarycoordinate2' construct differs for both, so
+            #     # skip that but otherwise the two fields have the same coors:
+            #     if orig_coor.identity == "auxiliarycoordinate2":
+            #         continue
+            #     self.assertEqual(
+            #         orig_coor.nc_get_variable(),
+            #         ex_1_coor.nc_get_variable(),
+            #     )
 
             # Check behaviour when append identical fields, as an edge case:
             cfdm.write(g, tmpfile, fmt=fmt, mode="w")  # 1. overwrite to wipe
             cfdm.write(g_copy, tmpfile, fmt=fmt, mode="a")  # 2. now append
             f = cfdm.read(tmpfile)
             self.assertEqual(len(f), 2 * len(g))
-            self.assertTrue(
-                any([file_field.equals(g[0], verbose=-1) for file_field in f]))
+            self.assertTrue(any([file_field.equals(g[0]) for file_field in f]))
 
     def test_read_write_netCDF4_compress_shuffle(self):
         """TODO DOCS."""
