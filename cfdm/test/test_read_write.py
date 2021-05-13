@@ -178,7 +178,7 @@ class read_writeTest(unittest.TestCase):
             )
 
     def test_write_netcdf_mode(self):
-        """TODO DOCS."""
+        """Test the `mode` parameter to `write`, notably append mode."""
         g = cfdm.read(self.filename)  # note g has one field
         g_copy = g.copy()
 
@@ -204,18 +204,8 @@ class read_writeTest(unittest.TestCase):
                 if fmt in self.netcdf3_fmts and ex_field_n == 6:
                     continue
 
-                # TODO: for review and debugging, remove at end!
-                print("\n>>>>>>>>>>> ONTO FIELD N =", ex_field_n)
-
                 cfdm.write(ex_field, tmpfile, fmt=fmt, mode="a")
                 f = cfdm.read(tmpfile)
-
-                # TODO: for review and debugging, remove at end!
-                print("$$$$$$$$$$$$$$$$$$$$$ OVERALL F IS:", f)
-                print("$$$$$$$$$$$$$$$$$$$$$ NEED:")
-                ex_field.dump()
-                print("$$$$$$$$$$$$$$$$$$$$$ BUT GOT:")
-                f[0].dump()
 
                 new_length += 1  # there should be exactly one more field now
                 self.assertEqual(len(f), new_length)
