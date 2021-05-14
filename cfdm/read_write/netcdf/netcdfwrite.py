@@ -17,7 +17,6 @@ from ...decorators import _manage_log_level_via_verbosity
 
 logger = logging.getLogger(__name__)
 
-_implementation = implementation()
 
 
 class NetCDFWrite(IOWrite):
