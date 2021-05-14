@@ -4676,7 +4676,7 @@ class NetCDFWrite(IOWrite):
         effective_fields = fields
         if mode == "a":
             # First read in the fields from the existing file:
-            effective_fields = NetCDFRead(_implementation).read(filename)
+            effective_fields = NetCDFRead(self.implementation).read(filename)
 
             # Read rather than append for the first iteration to ensure nothing
             # gets written; only want to update the 'seen' dictionary first.
