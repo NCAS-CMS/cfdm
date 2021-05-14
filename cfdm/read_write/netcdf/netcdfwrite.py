@@ -18,7 +18,6 @@ from ...decorators import _manage_log_level_via_verbosity
 logger = logging.getLogger(__name__)
 
 
-
 class NetCDFWrite(IOWrite):
     """A container for writing Fields to a netCDF dataset."""
 
@@ -4899,17 +4898,20 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Open the output netCDF file
         # ------------------------------------------------------------
-        if os.path.isfile(filename) and mode == "w":
-            if not overwrite:
+        if os.path.isfile(filename):
+            if mode == "w" and not overwrite:
                 raise IOError(
-                    "Can't write to an existing file unless "
-                    "overwrite=True: {}".format(os.path.abspath(filename))
+                    "Can't write with mode {mode!r} to existing file "
+                    f"{os.path.abspath(filename)} unless overwrite=True"
                 )
+
             if not os.access(filename, os.W_OK):
                 raise IOError(
-                    "Can't overwrite an existing file without "
-                    "permission: {}".format(os.path.abspath(filename))
+                    "Can't write to existing file "
+                    f"{os.path.abspath(filename)} without permission"
                 )
+        else:
+            g["overwrite"] = False
 
         g["filename"] = filename
         g["netcdf"] = self.file_open(filename, mode, fmt, fields)
