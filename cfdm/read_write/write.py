@@ -168,17 +168,35 @@ def write(
 
         mode: `str`, optional
             Specify the mode of write access for the output file. One of:
+
             =======  =================================================
             *mode*   Description
             =======  =================================================
             ``'w'``  Open a new file for writing to. If it exists and
                      *overwrite* is True then the file is deleted
                      prior to being recreated.
+
             ``'a'``  Open an existing file for appending new
                      information to. The new information will be
                      incorporated whilst the original contents of the
                      file will be preserved.
+
+                     In practice this means that new fields will be
+                     created, whilst the original fields will not be
+                     edited at all. Coordinates on the fields, where
+                     equal, will be shared as standard.
+
+                     Note that the global attributes on the file
+                     will remain the same as they were originally,
+                     so will become inaccurate where appended fields
+                     have incompatible attributes. To rectify this,
+                     manually inspect and edit them as appropriate
+                     after the append operation using methods such as
+                     `nc_clear_global_attributes` and
+                     `nc_set_global_attribute`.
+
             =======  =================================================
+
             By default the file is opened with write access mode
             ``'w'``.
 
