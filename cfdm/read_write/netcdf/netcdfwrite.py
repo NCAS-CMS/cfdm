@@ -2425,7 +2425,7 @@ class NetCDFWrite(IOWrite):
             external_variables = ncvar
             g["global_attributes"].add("external_variables")
 
-        if not g["dry_run"]:
+        if not g["dry_run"] and not g["post_dry_run"]:
             g["netcdf"].setncattr("external_variables", external_variables)
 
         g["external_variables"] = external_variables
@@ -3770,7 +3770,7 @@ class NetCDFWrite(IOWrite):
             if formula_terms:
                 ncvar = g["key_to_ncvar"][owning_coord_key]
                 formula_terms = " ".join(formula_terms)
-                if not g["dry_run"]:
+                if not g["dry_run"] and not g["post_dry_run"]:
                     try:
                         g["nc"][ncvar].setncattr(
                             "formula_terms", formula_terms
@@ -3788,7 +3788,7 @@ class NetCDFWrite(IOWrite):
                 bounds_ncvar = g["bounds"].get(ncvar)
                 if bounds_ncvar is not None:
                     bounds_formula_terms = " ".join(bounds_formula_terms)
-                    if not g["dry_run"]:
+                    if not g["dry_run"] and not g["post_dry_run"]:
                         try:
                             g["nc"][bounds_ncvar].setncattr(
                                 "formula_terms", bounds_formula_terms
@@ -4293,7 +4293,7 @@ class NetCDFWrite(IOWrite):
             # space, so join them with commas.
             delimiter = ","
 
-        if not g["dry_run"]:
+        if not g["dry_run"] and not g["post_dry_run"]:
             g["netcdf"].setncattr(
                 "Conventions", delimiter.join(g["Conventions"])
             )
@@ -4778,14 +4778,7 @@ class NetCDFWrite(IOWrite):
         warn_valid,
         group,
     ):
-        """TODO
-
-        ...
-
-        Note that a verbose keyword as in cfdm.write is not necessary, since
-        verbosity is managed and effectively passed through by the
-        @_manage_log_level_via_verbosity decorator.
-        """
+        """Perform a file-writing iteration with the given settings."""
         # ------------------------------------------------------------
         # Initiate file IO with given write variables
         # ------------------------------------------------------------

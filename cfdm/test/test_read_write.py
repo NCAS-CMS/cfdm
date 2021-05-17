@@ -179,18 +179,36 @@ class read_writeTest(unittest.TestCase):
 
     def test_write_netcdf_mode(self):
         """Test the `mode` parameter to `write`, notably append mode."""
-        g = cfdm.read(self.filename)  # note g has one field
+        g = cfdm.read(self.filename)  # note 'g' has one field
+
+        # Set a non-trivial (i.e. not only 'Conventions') global attribute to
+        # make the global attribute testing more robust:
+        add_global_attr = ["remark", "A global comment."]
+        original_global_attrs = g[0].nc_global_attributes()
+        original_global_attrs[add_global_attr[0]] = None  # -> None on fields
+        g[0].nc_set_global_attribute(*add_global_attr)
+
         g_copy = g.copy()
 
         for fmt in self.netcdf_fmts:  # test over all netCDF 3 and 4 formats
             # Other tests cover write as default mode (i.e. test with no mode
             # argument); here test explicit provision of 'w' as argument:
-            cfdm.write(g, tmpfile, fmt=fmt, mode="w")
+            cfdm.write(
+                g,
+                tmpfile,
+                fmt=fmt,
+                mode="w",
+                global_attributes=add_global_attr,
+            )
             f = cfdm.read(tmpfile)
 
             new_length = 1  # since 1 == len(g)
             self.assertEqual(len(f), new_length)
-            self.assertTrue(f[0].equals(g[0]))
+            # Ignore as 'remark' should be 'None' on the field as tested below
+            self.assertTrue(f[0].equals(g[0], ignore_properties=["remark"]))
+            self.assertEqual(
+                f[0].nc_global_attributes(), original_global_attrs
+            )
 
             # Main aspect of this test: testing the append mode ('a'): now
             # append all other example fields, to check a diverse variety.
@@ -216,12 +234,21 @@ class read_writeTest(unittest.TestCase):
                         [
                             ex_field.equals(
                                 file_field,
-                                ignore_properties=["comment", "featureType"],
+                                ignore_properties=[
+                                    "comment",
+                                    "featureType",
+                                    "remark",
+                                ],
                             )
                             for file_field in f
                         ]
                     )
                 )
+                for file_field in f:
+                    self.assertEqual(
+                        file_field.nc_global_attributes(),
+                        original_global_attrs,
+                    )
 
             # Now do the same test, but appending all of the example fields in
             # one operation rather than one at a time, to check that it works:
@@ -277,7 +304,7 @@ class read_writeTest(unittest.TestCase):
                     for file_field in f
                     if ex_field.equals(
                         file_field,
-                        ignore_properties=["comment", "featureType"],
+                        ignore_properties=["comment", "featureType", "remark"],
                     )
                 ]
                 if not position:
@@ -339,7 +366,17 @@ class read_writeTest(unittest.TestCase):
             cfdm.write(g_copy, tmpfile, fmt=fmt, mode="a")  # 2. now append
             f = cfdm.read(tmpfile)
             self.assertEqual(len(f), 2 * len(g))
-            self.assertTrue(any([file_field.equals(g[0]) for file_field in f]))
+            self.assertTrue(
+                any(
+                    [
+                        file_field.equals(g[0], ignore_properties=["remark"])
+                        for file_field in f
+                    ]
+                )
+            )
+            self.assertEqual(
+                f[0].nc_global_attributes(), original_global_attrs
+            )
 
     def test_read_write_netCDF4_compress_shuffle(self):
         """TODO DOCS."""
