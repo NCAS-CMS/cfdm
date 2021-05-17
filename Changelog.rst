@@ -4,9 +4,11 @@ version NEXT
 
 **2021-??-??**
 
+* Performance enhancements (https://github.com/NCAS-CMS/cfdm/issues/124)
+* New write mode ``mode='a'`` for appending to, rather than over-writing,
+  a netCDF file on disk (https://github.com/NCAS-CMS/cfdm/issues/143)
 * Fix for zero-sized unlimited dimensions when read from a grouped
   netCDF file (https://github.com/NCAS-CMS/cfdm/issues/113)
-* Performance enhancements (https://github.com/NCAS-CMS/cfdm/issues/124)
 * Better error message in the case of a `numpy.ma.core.MaskError` occurring
   upon reading of CDL files with only header or coordinate information
   (https://github.com/NCAS-CMS/cfdm/issues/128)
