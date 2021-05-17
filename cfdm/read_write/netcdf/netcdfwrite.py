@@ -2257,6 +2257,14 @@ class NetCDFWrite(IOWrite):
         """
         g = self.write_vars
 
+        if g["post_dry_run"]:
+            logger.warning(
+                "At present domain ancillary constructs of appended fields "
+                "may not be handled correctly by netCDF write append mode "
+                "and can appear as extra fields. Set them on fields using "
+                "`set_domain_ancillary` and similar methods if required."
+            )
+
         ncdimensions = self._netcdf_dimensions(f, key, anc)
 
         create = not self._already_in_file(anc, ncdimensions, ignore_type=True)
