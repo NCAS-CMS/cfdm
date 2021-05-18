@@ -3422,13 +3422,15 @@ in that file:
    :caption: *Append field constructs to a netCDF dataset on
              disk.*
 
-   >>> cfdm.read('file.nc')
+   >>> g = cfdm.example_field(2)
+   >>> cfdm.write(g, 'append-example-file.nc')
+   >>> cfdm.read('append-example-file.nc')
    [<Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K>]
-   >>> g = cfdm.example_field(0)
-   >>> g
+   >>> h = cfdm.example_field(0)
+   >>> h
    <Field: specific_humidity(latitude(5), longitude(8)) 1>
-   >>> cfdm.write(g, 'file.nc', mode='a')
-   >>> cfdm.read('file.nc')
+   >>> cfdm.write(h, 'append-example-file.nc', mode='a')
+   >>> cfdm.read('append-example-file.nc')
    [<Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K>,
     <Field: specific_humidity(latitude(5), longitude(8)) 1>]
 
