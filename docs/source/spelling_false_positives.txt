@@ -27,6 +27,7 @@ CoordinateConversion
 CoordinateReference
 datatype
 datetime
+datetimes
 deepcopy
 del
 dimensioncoordinate
@@ -98,6 +99,7 @@ repr
 Rew
 rtol
 RTOL
+seealso
 setdefault
 setitem
 Signell
@@ -123,3 +125,4 @@ Udunits
 uncompresses
 unfilter
 varid
+versionadded
