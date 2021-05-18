@@ -181,15 +181,6 @@ class read_writeTest(unittest.TestCase):
         """Test the `mode` parameter to `write`, notably append mode."""
         g = cfdm.read(self.filename)  # note 'g' has one field
 
-        # Set a non-trivial (i.e. not only 'Conventions') global attribute to
-        # make the global attribute testing more robust:
-        add_global_attr = ["remark", "A global comment."]
-        original_global_attrs = g[0].nc_global_attributes()
-        original_global_attrs[add_global_attr[0]] = None  # -> None on fields
-        g[0].nc_set_global_attribute(*add_global_attr)
-
-        g_copy = g.copy()
-
         # Test special case #1: attempt to append fields with groups
         # (other than 'root') which should be forbidden. Using fmt="NETCDF4"
         # since it is the only format where groups are allowed.
@@ -202,7 +193,35 @@ class read_writeTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             cfdm.write(g[0], tmpfile, fmt="NETCDF4", mode="a")
 
-        g[0].nc_clear_variable_groups()  # clear group now to test generally
+        # Test special case #2: attempt to append fields with contradictory
+        # featureType to the original file:
+        g[0].nc_clear_variable_groups()
+        g[0].nc_set_global_attribute("featureType", "profile")
+        cfdm.write(
+            g,
+            tmpfile,
+            fmt="NETCDF4",
+            mode="w",
+            global_attributes=("featureType", "profile"),
+        )  # 1. overwrite to wipe
+        h = cfdm.example_field(3)
+        h.nc_set_global_attribute("featureType", "timeSeries")
+        with self.assertRaises(ValueError):
+            cfdm.write(h, tmpfile, fmt="NETCDF4", mode="a")
+        # Now remove featureType attribute for subsquent tests:
+        g_attrs = g[0].nc_clear_global_attributes()
+        del g_attrs["featureType"]
+        g[0].nc_set_global_attributes(g_attrs)
+
+        # Set a non-trivial (i.e. not only 'Conventions') global attribute to
+        # make the global attribute testing more robust:
+        add_global_attr = ["remark", "A global comment."]
+        original_global_attrs = g[0].nc_global_attributes()
+        original_global_attrs[add_global_attr[0]] = None  # -> None on fields
+        g[0].nc_set_global_attribute(*add_global_attr)
+
+        g_copy = g.copy()
+
         for fmt in self.netcdf_fmts:  # test over all netCDF 3 and 4 formats
             # Other tests cover write as default mode (i.e. test with no mode
             # argument); here test explicit provision of 'w' as argument:

@@ -4723,6 +4723,61 @@ class NetCDFWrite(IOWrite):
             effective_mode = "r"
             overwrite = False
             self.write_vars["dry_run"] = True
+
+            # Make lists of the fields to aid with iteration over them below:
+            if not isinstance(fields, list):
+                fields = [fields]
+            if not isinstance(effective_fields, list):
+                effective_fields = [effective_fields]
+
+            # Fail ASAP if can't perform the operation:
+            # 1. because attempting to append at least one field with group(s)
+            if fmt == "NETCDF4":
+                if not isinstance(fields, list):
+                    fields = [fields]
+                for f in fields:
+                    if self.implementation.nc_get_variable_groups(f):
+                        raise ValueError(
+                            "At present append mode is unable to append fields "
+                            "which have groups, however groups can be cleared, "
+                            "the fields appended, and groups re-applied, via "
+                            "methods such as 'nc_clear_variable_groups' and "
+                            "'nc_set_variable_groups', to achieve the same."
+                        )
+
+            # 2. because the featureType on the original fields and the fields
+            # to be appended are incompatible:
+            original_ft = False  # no FT, distinguish from 'None' attr. value
+            appended_fields_fts = []
+            for ef in effective_fields:  # i.e original fields
+                if "featureType" in ef.nc_global_attributes():
+                    original_ft = ef.nc_global_attributes()["featureType"]
+            for f in fields:  # i.e. fields to be appended
+                if (
+                    "featureType" in f.nc_global_attributes()
+                    and f.nc_global_attributes()["featureType"] is not None
+                ):
+                    appended_fields_fts.append(
+                        f.nc_global_attributes()["featureType"]
+                    )
+            # Incompatible if: 1) the appended fields have more than one
+            # FT between them, 2) the original FT is not appropriate for
+            # all appended fields, or 3) there is no original FT but one
+            # or more across all appended fields.
+            if (
+                len(appended_fields_fts) > 1
+                or (
+                    len(appended_fields_fts) == 1
+                    and original_ft is not False
+                    and original_ft != appended_fields_fts[0]
+                )
+                or (appended_fields_fts and original_ft is not False)
+            ):
+                raise ValueError(
+                    "Can't append fields with an incompatible 'featureType' "
+                    "global attribute to the original file."
+                )
+
         self._file_io_iteration(
             mode=effective_mode,
             overwrite=overwrite,
@@ -4816,19 +4871,6 @@ class NetCDFWrite(IOWrite):
         logger.info("{} {}".format(desc, fmt))  # pragma: no cover
 
         g = self.write_vars
-
-        # Fail ASAP if can't perform the operation:
-        # 1. because attempting to append at least one field with group(s)
-        if g["dry_run"] and fmt == "NETCDF4":
-            for f in fields:
-                if self.implementation.nc_get_variable_groups(f):
-                    raise ValueError(
-                        "At present append mode is unable to append fields "
-                        "which have groups, however groups can be cleared, "
-                        "the fields appended, and groups re-applied, via "
-                        "methods such as 'nc_clear_variable_groups' and "
-                        "'nc_set_variable_groups', to achieve the same."
-                    )
 
         # ------------------------------------------------------------
         # Set possible versions
@@ -5011,8 +5053,6 @@ class NetCDFWrite(IOWrite):
         # Write each field construct
         # ------------------------------------------------------------
         for f in fields:
-            # Always add to the 'seen' dict if it is a dry run (that is the
-            # whole point of a dry run)
             self._write_field(f)
 
         # ------------------------------------------------------------
