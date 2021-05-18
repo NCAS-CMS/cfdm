@@ -190,6 +190,19 @@ class read_writeTest(unittest.TestCase):
 
         g_copy = g.copy()
 
+        # Test special case #1: attempt to append fields with groups
+        # (other than 'root') which should be forbidden. Using fmt="NETCDF4"
+        # since it is the only format where groups are allowed.
+        #
+        # Note: this is not the most natural test to do first, but putting
+        # it before the rest reduces spurious seg faults for me, so...
+        g[0].nc_set_variable_groups(["forecast", "model"])
+        cfdm.write(g, tmpfile, fmt="NETCDF4", mode="w")  # 1. overwrite to wipe
+        f = cfdm.read(tmpfile)
+        with self.assertRaises(ValueError):
+            cfdm.write(g[0], tmpfile, fmt="NETCDF4", mode="a")
+
+        g[0].nc_clear_variable_groups()  # clear group now to test generally
         for fmt in self.netcdf_fmts:  # test over all netCDF 3 and 4 formats
             # Other tests cover write as default mode (i.e. test with no mode
             # argument); here test explicit provision of 'w' as argument:

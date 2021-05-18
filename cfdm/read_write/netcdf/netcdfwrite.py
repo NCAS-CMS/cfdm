@@ -2733,6 +2733,9 @@ class NetCDFWrite(IOWrite):
             self._createVariable(**kwargs)
         except RuntimeError as error:
             error = str(error)
+            message = "Can't create variable in {} file from {} ({})".format(
+                g["netcdf"].file_format, cfvar, error
+            )
             if error == (
                 "NetCDF: Not a valid data type or _FillValue " "type mismatch"
             ):
@@ -2744,11 +2747,6 @@ class NetCDFWrite(IOWrite):
                     )
                 )
             elif error == "NetCDF: NC_UNLIMITED in the wrong index":
-                message = (
-                    "Can't create variable in {} file from {} ({})".format(
-                        g["netcdf"].file_format, cfvar, error
-                    )
-                )
                 raise RuntimeError(
                     message + ". In a {} file the unlimited dimension must "
                     "be the first (leftmost) dimension of the variable. "
@@ -4792,13 +4790,26 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         if mode == "w":
             desc = "Writing to"
-        elif mode == "a":
+        elif mode == "a":  # append mode on a post-dry run when it appends
             desc = "Appending to"
-        else:
+        else:  # includes append mode on a dry-run when it does just read
             desc = "Reading from"
         logger.info("{} {}".format(desc, fmt))  # pragma: no cover
 
         g = self.write_vars
+
+        # Fail ASAP if can't perform the operation:
+        # 1. because attempting to append at least one field with group(s)
+        if g["dry_run"] and fmt == "NETCDF4":
+            for f in fields:
+                if self.implementation.nc_get_variable_groups(f):
+                    raise ValueError(
+                        "At present append mode is unable to append fields "
+                        "which have groups, however groups can be cleared, "
+                        "the fields appended, and groups re-applied, via "
+                        "methods such as 'nc_clear_variable_groups' and "
+                        "'nc_set_variable_groups', to achieve the same."
+                    )
 
         # ------------------------------------------------------------
         # Set possible versions
@@ -4955,7 +4966,9 @@ class NetCDFWrite(IOWrite):
             # ------------------------------------------------------------
             # Write group-level properties to the file next
             # ------------------------------------------------------------
-            if g["group"]:
+            if (
+                g["group"] and not g["post_dry_run"]
+            ):  # i.e. not for append mode
                 self._write_group_attributes(fields)
         else:
             g["output_version"] = g["latest_version"]
