@@ -1,10 +1,17 @@
-version NEXT
-------------
+version 1.8.9.0
+---------------
 ----
 
-**2021-??-??**
+**2021-05-18**
 
-* Performance enhancements (https://github.com/NCAS-CMS/cfdm/issues/124)
+* Construct access API changes
+  (https://github.com/NCAS-CMS/cfdm/issues/124,
+  https://github.com/NCAS-CMS/cfdm/issues/130,
+  https://github.com/NCAS-CMS/cfdm/issues/132,
+  https://github.com/NCAS-CMS/cfdm/issues/137)
+* Performance enhancements
+  (https://github.com/NCAS-CMS/cfdm/issues/124,
+  https://github.com/NCAS-CMS/cfdm/issues/130)
 * New write mode ``mode='a'`` for appending to, rather than over-writing,
   a netCDF file on disk (https://github.com/NCAS-CMS/cfdm/issues/143)
 * Fix for zero-sized unlimited dimensions when read from a grouped
