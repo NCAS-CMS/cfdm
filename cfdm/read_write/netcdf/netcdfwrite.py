@@ -267,10 +267,10 @@ class NetCDFWrite(IOWrite):
         # --- End: for
 
         skip_set_fill_value = False
-        if not g["dry_run"]:
+        if g["post_dry_run"] and parent is not None:
             # Manage possibly pre-existing fill values:
             data = self.implementation.get_data(parent, None)
-            if g["post_dry_run"] and data is not None:
+            if data is not None:
                 # Check if there is already a fill value applied to the data,
                 # and if so, that it is compatible with the one set to be set:
                 if data.has_fill_value() and "_FillValue" in netcdf_attrs:
@@ -288,6 +288,7 @@ class NetCDFWrite(IOWrite):
             if skip_set_fill_value and "_FillValue" in netcdf_attrs:
                 del netcdf_attrs["_FillValue"]
 
+        if not g["dry_run"]:
             g["nc"][ncvar].setncatts(netcdf_attrs)
 
         if skip_set_fill_value:
