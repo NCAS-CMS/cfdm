@@ -248,6 +248,13 @@ class read_writeTest(unittest.TestCase):
                 # Note: after Issue #141, this skip can be removed.
                 if ex_field_n == 1:
                     continue
+
+                # Skip since "RuntimeError: Can't create variable in
+                # NETCDF4_CLASSIC file from (2)  (NetCDF: Attempting netcdf-4
+                # operation on strict nc3 netcdf-4 file)" i.e. not possible.
+                if fmt == "NETCDF4_CLASSIC" and ex_field_n in (6, 7):
+                    continue
+
                 # Skip since "Can't write int64 data from <Count: (2) > to a
                 # NETCDF3_CLASSIC file" causes a ValueError i.e. not possible.
                 # Note: can remove this when Issue #140 is closed.
@@ -290,6 +297,10 @@ class read_writeTest(unittest.TestCase):
             # Note: can remove this del when Issue #140 is closed:
             if fmt in self.netcdf3_fmts:
                 del append_ex_fields[5]  # n=6 ex_field, minus 1 for above del
+            if fmt in "NETCDF4_CLASSIC":
+                # Remove n=5, 6, 7 for reasons as given above (del => minus 1)
+                append_ex_fields = append_ex_fields[:4]
+
             overall_length = len(append_ex_fields) + 1  # 1 for original 'g'
             cfdm.write(
                 append_ex_fields, tmpfile, fmt=fmt, mode="a"

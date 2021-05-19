@@ -267,8 +267,34 @@ class NetCDFWrite(IOWrite):
         # --- End: for
 
         if not g["dry_run"]:
+            skip_set_fill_value = False
+
+            data = self.implementation.get_data(parent, None)
+            if g["post_dry_run"] and data is not None:
+                # Check if there is already a fill value applied to the data,
+                # and if so, that it is compatible with the one set to be set:
+                if data.has_fill_value() and "_FillValue" in netcdf_attrs:
+                    if data.get_fill_value() == netcdf_attrs["_FillValue"]:
+                        # The fill value to be set is the same as the one
+                        # that already applies to the already-set data,
+                        # so we should not (and indeed can't) set it again.
+                        skip_set_fill_value = True
+                    else:  # can't have incompatible FV to the existing data
+                        raise ValueError(
+                            "Cannot set an incompatible fill value on "
+                            "data with a fill value already defined."
+                        )
+
+            if skip_set_fill_value and "_FillValue" in netcdf_attrs:
+                del netcdf_attrs["_FillValue"]
+
             g["nc"][ncvar].setncatts(netcdf_attrs)
 
+        if skip_set_fill_value:
+            # Re-add as known attribute since this FV is already set
+            netcdf_attrs["_FillValue"] = self.implementation.get_data(
+                parent, None
+            ).get_fill_value()
         return netcdf_attrs
 
     def _character_array(self, array):
@@ -2651,15 +2677,12 @@ class NetCDFWrite(IOWrite):
         # filled before any data is written. if the fill value is
         # False then the variable is not pre-filled.
         # ------------------------------------------------------------
-        # if fill:
-        #    fill_value = self.implementation.get_property(
-        #        cfvar, '_FillValue', None)
-        # else:
-        #        fill_value = None #False
-
-        #        fill_value = None
-        #        if g['fmt'] == 'NETCDF4' and datatype == str:
-        #            fill_value = '\x00'
+        if fill or g["post_dry_run"]:  # or append mode's appending iteration
+            fill_value = self.implementation.get_property(
+                cfvar, "_FillValue", None
+            )
+        else:
+            fill_value = None
 
         if data_variable:
             lsd = g["least_significant_digit"]
@@ -2714,8 +2737,9 @@ class NetCDFWrite(IOWrite):
             "endian": g["endian"],
             "chunksizes": chunksizes,
             "least_significant_digit": lsd,
-            # 'fill_value': fill_value,
         }
+        if fill_value is not None:
+            kwargs["fill_value"] = fill_value
 
         kwargs.update(g["netcdf_compression"])
 
@@ -2760,7 +2784,6 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Write attributes to the netCDF variable
         # ------------------------------------------------------------
-
         attributes = self._write_attributes(
             cfvar, ncvar, extra=extra, omit=omit
         )
@@ -4725,16 +4748,14 @@ class NetCDFWrite(IOWrite):
             self.write_vars["dry_run"] = True
 
             # Make lists of the fields to aid with iteration over them below:
-            if not isinstance(fields, list):
+            if not isinstance(fields, (list, tuple)):
                 fields = [fields]
-            if not isinstance(effective_fields, list):
+            if not isinstance(effective_fields, (list, tuple)):
                 effective_fields = [effective_fields]
 
             # Fail ASAP if can't perform the operation:
             # 1. because attempting to append at least one field with group(s)
             if fmt == "NETCDF4":
-                if not isinstance(fields, list):
-                    fields = [fields]
                 for f in fields:
                     if self.implementation.nc_get_variable_groups(f):
                         raise ValueError(
