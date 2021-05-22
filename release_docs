@@ -65,8 +65,15 @@ if [[ $2 = "latest" ]] ; then
   cp source/_static/customise-alabaster.css _static/customise-alabaster.css
 fi
 
+
+# Copy the templates to the target directory
+if [[ $2 != "latest" ]] ; then
+  rm -fr $dir/_templates
+  cp -pr _templates $dir
+fi
+
 # --------------------------------------------------------------------
-# Add and commit the latest or archive
+# Add and commit
 # --------------------------------------------------------------------
 if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
   cd $dir
@@ -79,6 +86,7 @@ if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
 	  *.inv \
 	  *.js \
 	  _static \
+	  _templates \
 	  _downloads/cfdm_tutorial_files.zip \
 	  _downloads/tutorial.py \
 	  _images/*.png
