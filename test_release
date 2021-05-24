@@ -29,7 +29,7 @@ rm -fr ~/tmp/test ~/tmp/bin ~/tmp/lib ~/tmp/cfdm-$vn
 tar zxvf cfdm-$vn.tar.gz
 cd cfdm-$vn
 
-export PYTHONPATH=~/tmp/lib/python:$PYTHONPATH
+export PYTHONPATH=~/tmp/lib/python/cfdm-$vn-py$py.egg:$PYTHONPATH
 
 python setup.py install --home=~/tmp
 
