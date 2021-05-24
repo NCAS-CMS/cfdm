@@ -220,6 +220,10 @@ class read_writeTest(unittest.TestCase):
         original_global_attrs[add_global_attr[0]] = None  # -> None on fields
         g[0].nc_set_global_attribute(*add_global_attr)
 
+        # First test a bad mode value:
+        with self.assertRaises(ValueError):
+            cfdm.write(g[0], tmpfile, mode="g")
+
         g_copy = g.copy()
 
         for fmt in self.netcdf_fmts:  # test over all netCDF 3 and 4 formats
@@ -290,7 +294,7 @@ class read_writeTest(unittest.TestCase):
                     )
 
             # Now do the same test, but appending all of the example fields in
-            # one operation rather than one at a time, to check that it works:
+            # one operation rather than one at a time, to check that it works.
             cfdm.write(g, tmpfile, fmt=fmt, mode="w")  # 1. overwrite to wipe
             append_ex_fields = cfdm.example_fields()
             del append_ex_fields[1]  # note: can remove after Issue #141 closed
@@ -304,6 +308,14 @@ class read_writeTest(unittest.TestCase):
             overall_length = len(append_ex_fields) + 1  # 1 for original 'g'
             cfdm.write(
                 append_ex_fields, tmpfile, fmt=fmt, mode="a"
+            )  # 2. now append
+            f = cfdm.read(tmpfile)
+            self.assertEqual(len(f), overall_length)
+
+            # Also test the mode="r+" alias for mode="a".
+            cfdm.write(g, tmpfile, fmt=fmt, mode="w")  # 1. overwrite to wipe
+            cfdm.write(
+                append_ex_fields, tmpfile, fmt=fmt, mode="r+"
             )  # 2. now append
             f = cfdm.read(tmpfile)
             self.assertEqual(len(f), overall_length)
