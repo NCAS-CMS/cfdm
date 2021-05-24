@@ -143,10 +143,12 @@ setup(
     version=version,
     description="A Python reference implementation of the CF data model",
     author="David Hassell, Sadie Bartholomew",
+    author_email="david.hassell@ncas.ac.uk",
     maintainer="David Hassell, Sadie Bartholomew",
     url="https://ncas-cms.github.io/cfdm",
     download_url="https://pypi.org/project/cfdm/#files",
     platforms=["Linux", "MacOS", "Windows"],
+    license="MIT",
     keywords=[
         "cf",
         "netcdf",

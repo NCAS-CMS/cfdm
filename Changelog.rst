@@ -21,7 +21,7 @@ version 1.8.9.0
   netCDF file (https://github.com/NCAS-CMS/cfdm/issues/113)
 * Fix bug causing occasional non-symmetric `equals` operations
   (https://github.com/NCAS-CMS/cfdm/issues/133)
-* Changed dependency: ``cftime>=1.4.1``
+* Changed dependency: ``cftime>=1.5.0``
 * Changed dependency: ``netCDF4>=1.5.4``
 
 version 1.8.8.0
