@@ -2,7 +2,7 @@ version 1.8.9.0
 ---------------
 ----
 
-**2021-05-17**
+**2021-05-18**
 
 * Construct access API changes
   (https://github.com/NCAS-CMS/cfdm/issues/124,
@@ -12,6 +12,8 @@ version 1.8.9.0
 * Performance enhancements
   (https://github.com/NCAS-CMS/cfdm/issues/124,
   https://github.com/NCAS-CMS/cfdm/issues/130)
+* New write mode ``mode='a'`` for appending to, rather than over-writing,
+  a netCDF file on disk (https://github.com/NCAS-CMS/cfdm/issues/143)
 * Better error message in the case of a `numpy.ma.core.MaskError` occurring
   upon reading of CDL files with only header or coordinate information
   (https://github.com/NCAS-CMS/cfdm/issues/128)

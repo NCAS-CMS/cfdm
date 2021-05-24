@@ -818,7 +818,7 @@ class CFDMImplementation(Implementation):
         return data.get_units(default=default)
 
     def get_datum(self, coordinate_reference):
-        """Return the datum of a coordiante reference construct.
+        """Return the datum of a coordinate reference construct.
 
         :Parameters:
 
@@ -2072,7 +2072,7 @@ class CFDMImplementation(Implementation):
 
         :Parameters:
 
-            coordiante: coordinate construct
+            coordinate: coordinate construct
 
         :Returns:
 
@@ -2605,7 +2605,7 @@ class CFDMImplementation(Implementation):
         parent.set_part_node_count(part_node_count, copy=copy)
 
     def set_interior_ring(self, parent, interior_ring, copy=True):
-        """Insert an interior ring array into a coordiante.
+        """Insert an interior ring array into a coordinate.
 
         .. versionadded:: (cfdm) 1.8.0
 

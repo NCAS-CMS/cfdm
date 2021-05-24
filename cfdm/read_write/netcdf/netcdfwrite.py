@@ -10,6 +10,8 @@ import netCDF4
 
 from .. import IOWrite
 
+from .netcdfread import NetCDFRead
+
 from ...decorators import _manage_log_level_via_verbosity
 
 
@@ -264,7 +266,36 @@ class NetCDFWrite(IOWrite):
                 )
         # --- End: for
 
-        g["nc"][ncvar].setncatts(netcdf_attrs)
+        skip_set_fill_value = False
+        if g["post_dry_run"] and parent is not None:
+            # Manage possibly pre-existing fill values:
+            data = self.implementation.get_data(parent, None)
+            if data is not None:
+                # Check if there is already a fill value applied to the data,
+                # and if so, that it is compatible with the one set to be set:
+                if data.has_fill_value() and "_FillValue" in netcdf_attrs:
+                    if data.get_fill_value() == netcdf_attrs["_FillValue"]:
+                        # The fill value to be set is the same as the one
+                        # that already applies to the already-set data,
+                        # so we should not (and indeed can't) set it again.
+                        skip_set_fill_value = True
+                    else:  # can't have incompatible FV to the existing data
+                        raise ValueError(
+                            "Cannot set an incompatible fill value on "
+                            "data with a fill value already defined."
+                        )
+
+            if skip_set_fill_value and "_FillValue" in netcdf_attrs:
+                del netcdf_attrs["_FillValue"]
+
+        if not g["dry_run"]:
+            g["nc"][ncvar].setncatts(netcdf_attrs)
+
+        if skip_set_fill_value:
+            # Re-add as known attribute since this FV is already set
+            netcdf_attrs["_FillValue"] = self.implementation.get_data(
+                parent, None
+            ).get_fill_value()
 
         return netcdf_attrs
 
@@ -443,7 +474,11 @@ class NetCDFWrite(IOWrite):
             # place this netCDF dimension.
             parent_group = self._parent_group(ncdim)
 
-            parent_group.createDimension(ncdim, size)
+            if not g["dry_run"]:
+                try:
+                    parent_group.createDimension(ncdim, size)
+                except RuntimeError:
+                    pass  # TODO convert to 'raise' via fixes upstream
 
         return ncdim
 
@@ -598,38 +633,42 @@ class NetCDFWrite(IOWrite):
             # its name with its basename (CF>=1.8)
             ncdim = self._remove_group_structure(ncdim)
 
-        if unlimited:
-            # Create an unlimited dimension
-            size = None
-            try:
-                parent_group.createDimension(ncdim, size)
-            except RuntimeError as error:
-                message = (
-                    "Can't create unlimited dimension "
-                    "in {} file ({}).".format(g["netcdf"].file_format, error)
-                )
-
-                error = str(error)
-                if error == "NetCDF: NC_UNLIMITED size already in use":
-                    raise RuntimeError(
-                        message + " In a {} file only one unlimited dimension "
-                        "is allowed. Consider using a netCDF4 format.".format(
-                            g["netcdf"].file_format
+        if not g["dry_run"]:
+            if unlimited:
+                # Create an unlimited dimension
+                size = None
+                try:
+                    parent_group.createDimension(ncdim, size)
+                except RuntimeError as error:
+                    message = (
+                        "Can't create unlimited dimension "
+                        "in {} file ({}).".format(
+                            g["netcdf"].file_format, error
                         )
                     )
 
-                raise RuntimeError(message)
-        else:
-            try:
-                parent_group.createDimension(ncdim, size)
-            except RuntimeError as error:
-                raise RuntimeError(
-                    "Can't create size {} dimension {!r} in "
-                    "{} file ({})".format(
-                        size, ncdim, g["netcdf"].file_format, error
+                    error = str(error)
+                    if error == "NetCDF: NC_UNLIMITED size already in use":
+                        raise RuntimeError(
+                            message
+                            + " In a {} file only one unlimited dimension "
+                            "is allowed. Consider using a netCDF4 format.".format(
+                                g["netcdf"].file_format
+                            )
+                        )
+
+                    raise RuntimeError(message)
+            else:
+                try:
+                    parent_group.createDimension(ncdim, size)
+                except RuntimeError as error:
+                    raise RuntimeError(
+                        "Can't create size {} dimension {!r} in "
+                        "{} file ({})".format(
+                            size, ncdim, g["netcdf"].file_format, error
+                        )
                     )
-                )
-        # --- End: if
+            # --- End: if
 
         g["dimensions"].add(ncdim)
 
@@ -693,9 +732,9 @@ class NetCDFWrite(IOWrite):
                 ncvar = ncdim
 
             if ncvar is None:
-                # No netCDF variable name not correponding netCDF
+                # No netCDF variable name not correponding to a netCDF
                 # dimension name has been set, so create a default
-                # netCDf variable name.
+                # netCDF variable name.
                 ncvar = self._create_netcdf_variable_name(
                     coord, default="coordinate"
                 )
@@ -758,12 +797,11 @@ class NetCDFWrite(IOWrite):
 
         g["key_to_ncvar"][key] = ncvar
         g["key_to_ncdims"][key] = ncdimensions
-
         g["axis_to_ncdim"][axis] = seen[id(coord)]["ncdims"][0]
 
         if g["coordinates"] and ncvar is not None:
             # Add the dimension coordinate netCDF variable name to the
-            # 'coordinates' arttribute
+            # 'coordinates' attribute
             coordinates.append(ncvar)
 
         return ncvar
@@ -1221,9 +1259,10 @@ class NetCDFWrite(IOWrite):
         }
         kwargs.update(g["netcdf_compression"])
 
-        self._createVariable(**kwargs)
+        if not g["dry_run"]:
+            self._createVariable(**kwargs)
 
-        g["nc"][ncvar].setncatts(geometry_container)
+            g["nc"][ncvar].setncatts(geometry_container)
 
         # Update the 'geometry_containers' dictionary
         g["geometry_containers"][ncvar] = geometry_container
@@ -1349,7 +1388,11 @@ class NetCDFWrite(IOWrite):
                 else:
                     base_bounds_ncdim = bounds_ncdim
 
-                parent_group.createDimension(base_bounds_ncdim, size)
+                if not g["dry_run"]:
+                    try:
+                        parent_group.createDimension(base_bounds_ncdim, size)
+                    except RuntimeError:
+                        raise
 
                 # Set the netCDF bounds variable name
                 default = coord_ncvar + "_bounds"
@@ -1497,7 +1540,7 @@ class NetCDFWrite(IOWrite):
             ]
 
             if geometry_dimension == coord_ncdimensions[0]:
-                # The node coordiante variable already exists, and the
+                # The node coordinate variable already exists, and the
                 # corresponding encoding variables span the correct
                 # dimension.
                 create = False
@@ -1511,7 +1554,7 @@ class NetCDFWrite(IOWrite):
                     "ncdims": None,
                 }
             else:
-                # The node coordiante variable already exists, but the
+                # The node coordinate variable already exists, but the
                 # corresponding encoding variables span the wrong
                 # dimension => we have to create a new node
                 # coordinates variable.
@@ -1540,7 +1583,8 @@ class NetCDFWrite(IOWrite):
                     # replace its name with its basename (CF>=1.8)
                     ncdim = self._remove_group_structure(ncdim)
 
-                parent_group.createDimension(ncdim, size)
+                if not g["dry_run"]:
+                    parent_group.createDimension(ncdim, size)
 
             # Set an appropriate default netCDF node coordinates
             # variable name
@@ -1673,7 +1717,7 @@ class NetCDFWrite(IOWrite):
 
             ncvar = self._netcdf_name(ncvar)
 
-            # Create the netCDF node cuont variable
+            # Create the netCDF node count variable
             self._write_netcdf_variable(ncvar, (geometry_dimension,), count)
         # --- End: if
 
@@ -1739,7 +1783,7 @@ class NetCDFWrite(IOWrite):
 
         :Returns:
 
-            `netCDF.Dataset` or `netCDF._netCDf4.Group`
+            `netCDF.Dataset` or `netCDF._netCDF4.Group`
 
         """
         g = self.write_vars
@@ -1962,7 +2006,8 @@ class NetCDFWrite(IOWrite):
                     # replace its name with its basename (CF>=1.8)
                     ncdim = self._remove_group_structure(ncdim)
 
-                parent_group.createDimension(ncdim, size)
+                if not g["dry_run"]:
+                    parent_group.createDimension(ncdim, size)
 
             ncvar = self._netcdf_name(ncvar)
 
@@ -2050,7 +2095,8 @@ class NetCDFWrite(IOWrite):
                     # replace its name with its basename (CF>=1.8)
                     ncdim = self._remove_group_structure(ncdim)
 
-                parent_group.createDimension(ncdim, size)
+                if not g["dry_run"]:
+                    parent_group.createDimension(ncdim, size)
 
             ncvar = self._netcdf_name(ncvar)
 
@@ -2105,7 +2151,6 @@ class NetCDFWrite(IOWrite):
             ncvar = self._create_netcdf_variable_name(
                 scalar_coord, default="scalar"
             )
-
             # If this scalar coordinate has bounds then create the
             # bounds netCDF variable and add the 'bounds' or
             # 'climatology' (as appropriate) attribute to the
@@ -2239,6 +2284,14 @@ class NetCDFWrite(IOWrite):
 
         """
         g = self.write_vars
+
+        if g["post_dry_run"]:
+            logger.warning(
+                "At present domain ancillary constructs of appended fields "
+                "may not be handled correctly by netCDF write append mode "
+                "and can appear as extra fields. Set them on fields using "
+                "`set_domain_ancillary` and similar methods if required."
+            )
 
         ncdimensions = self._netcdf_dimensions(f, key, anc)
 
@@ -2408,7 +2461,8 @@ class NetCDFWrite(IOWrite):
             external_variables = ncvar
             g["global_attributes"].add("external_variables")
 
-        g["netcdf"].setncattr("external_variables", external_variables)
+        if not g["dry_run"] and not g["post_dry_run"]:
+            g["netcdf"].setncattr("external_variables", external_variables)
 
         g["external_variables"] = external_variables
 
@@ -2501,7 +2555,8 @@ class NetCDFWrite(IOWrite):
             }
             kwargs.update(g["netcdf_compression"])
 
-            self._createVariable(**kwargs)
+            if not g["dry_run"]:
+                self._createVariable(**kwargs)
 
             # Add named parameters
             parameters = self.implementation.get_datum_parameters(ref)
@@ -2519,7 +2574,8 @@ class NetCDFWrite(IOWrite):
 
                 parameters[term] = value
 
-            g["nc"][ncvar].setncatts(parameters)
+            if not g["dry_run"]:
+                g["nc"][ncvar].setncatts(parameters)
 
             # Update the 'seen' dictionary
             g["seen"][id(ref)] = {
@@ -2596,6 +2652,18 @@ class NetCDFWrite(IOWrite):
 
         g = self.write_vars
 
+        # Update the 'seen' dictionary
+        g["seen"][id(cfvar)] = {
+            "variable": cfvar,
+            "ncvar": ncvar,
+            "ncdims": ncdimensions,
+        }
+
+        # Don't ever write any variables in the 'dry run' read iteration of an
+        # append-mode write (only write in the second post-dry-run iteration).
+        if g["dry_run"]:
+            return
+
         logger.info("    Writing {!r}".format(cfvar))  # pragma: no cover
 
         # ------------------------------------------------------------
@@ -2604,8 +2672,6 @@ class NetCDFWrite(IOWrite):
         datatype = self._datatype(cfvar)
         data = self.implementation.get_data(cfvar, None)
 
-        original_ncdimensions = ncdimensions
-
         data, ncdimensions = self._transform_strings(cfvar, data, ncdimensions)
 
         # ------------------------------------------------------------
@@ -2613,15 +2679,12 @@ class NetCDFWrite(IOWrite):
         # filled before any data is written. if the fill value is
         # False then the variable is not pre-filled.
         # ------------------------------------------------------------
-        # if fill:
-        #    fill_value = self.implementation.get_property(
-        #        cfvar, '_FillValue', None)
-        # else:
-        #        fill_value = None #False
-
-        #        fill_value = None
-        #        if g['fmt'] == 'NETCDF4' and datatype == str:
-        #            fill_value = '\x00'
+        if fill or g["post_dry_run"]:  # or append mode's appending iteration
+            fill_value = self.implementation.get_property(
+                cfvar, "_FillValue", None
+            )
+        else:
+            fill_value = None
 
         if data_variable:
             lsd = g["least_significant_digit"]
@@ -2676,8 +2739,9 @@ class NetCDFWrite(IOWrite):
             "endian": g["endian"],
             "chunksizes": chunksizes,
             "least_significant_digit": lsd,
-            # 'fill_value': fill_value,
         }
+        if fill_value is not None:
+            kwargs["fill_value"] = fill_value
 
         kwargs.update(g["netcdf_compression"])
 
@@ -2695,6 +2759,9 @@ class NetCDFWrite(IOWrite):
             self._createVariable(**kwargs)
         except RuntimeError as error:
             error = str(error)
+            message = "Can't create variable in {} file from {} ({})".format(
+                g["netcdf"].file_format, cfvar, error
+            )
             if error == (
                 "NetCDF: Not a valid data type or _FillValue " "type mismatch"
             ):
@@ -2705,12 +2772,7 @@ class NetCDFWrite(IOWrite):
                         cfvar.data.dtype.name, cfvar, g["netcdf"].file_format
                     )
                 )
-
-            message = "Can't create variable in {} file from {} ({})".format(
-                g["netcdf"].file_format, cfvar, error
-            )
-
-            if error == "NetCDF: NC_UNLIMITED in the wrong index":
+            elif error == "NetCDF: NC_UNLIMITED in the wrong index":
                 raise RuntimeError(
                     message + ". In a {} file the unlimited dimension must "
                     "be the first (leftmost) dimension of the variable. "
@@ -2718,13 +2780,12 @@ class NetCDFWrite(IOWrite):
                         g["netcdf"].file_format
                     )
                 )
-
-            raise RuntimeError(message)
+            else:
+                raise RuntimeError(message)
 
         # ------------------------------------------------------------
         # Write attributes to the netCDF variable
         # ------------------------------------------------------------
-
         attributes = self._write_attributes(
             cfvar, ncvar, extra=extra, omit=omit
         )
@@ -2767,13 +2828,6 @@ class NetCDFWrite(IOWrite):
                 compressed=compressed,
                 attributes=attributes,
             )
-
-        # Update the 'seen' dictionary
-        g["seen"][id(cfvar)] = {
-            "variable": cfvar,
-            "ncvar": ncvar,
-            "ncdims": original_ncdimensions,
-        }
 
     def _customize_createVariable(self, cfvar, kwargs):
         """Customises `netCDF4.Dataset.createVariable` keywords.
@@ -3059,12 +3113,10 @@ class NetCDFWrite(IOWrite):
 
         """
         g = self.write_vars
+        ncdim_size_to_spanning_constructs = []
+        seen = g["seen"]
 
         logger.info("  Writing {!r}:".format(f))  # pragma: no cover
-
-        xxx = []
-
-        seen = g["seen"]
 
         org_f = f
         if add_to_seen:
@@ -3127,7 +3179,7 @@ class NetCDFWrite(IOWrite):
                 raise ValueError(
                     "Can't write {!r}: node count, part node count, "
                     "or interior ring variables have "
-                    "inconistent properties".format(f)
+                    "inconsistent properties".format(f)
                 )
         # --- End: if
 
@@ -3292,6 +3344,9 @@ class NetCDFWrite(IOWrite):
                         )
                 # --- End: if
 
+                # If it's a 'dry run' for append mode, assume a dimension
+                # coordinate has not been found in order to run through the
+                # remaining logic below.
                 found_dimension_coordinate = True
                 break
             # --- End: for
@@ -3357,7 +3412,7 @@ class NetCDFWrite(IOWrite):
                                 axes.index(axis),
                             )
 
-                        for b1 in g["xxx"]:
+                        for b1 in g["ncdim_size_to_spanning_constructs"]:
                             (ncdim1, axis_size1), constructs1 = list(
                                 b1.items()
                             )[0]
@@ -3462,7 +3517,9 @@ class NetCDFWrite(IOWrite):
                             ncdim, f, axis, unlimited=unlimited
                         )
 
-                        xxx.append({(ncdim, axis_size0): spanning_constructs})
+                        ncdim_size_to_spanning_constructs.append(
+                            {(ncdim, axis_size0): spanning_constructs}
+                        )
                 # --- End: if
             # --- End: if
         # --- End: for
@@ -3614,7 +3671,7 @@ class NetCDFWrite(IOWrite):
                 )
             else:
                 # This auxiliary coordinate needs to be written as a
-                # scalar coordiante variable
+                # scalar coordinate variable
                 coordinates = self._write_scalar_coordinate(
                     f, key, aux_coord, axis, coordinates
                 )
@@ -3744,7 +3801,13 @@ class NetCDFWrite(IOWrite):
             if formula_terms:
                 ncvar = g["key_to_ncvar"][owning_coord_key]
                 formula_terms = " ".join(formula_terms)
-                g["nc"][ncvar].setncattr("formula_terms", formula_terms)
+                if not g["dry_run"] and not g["post_dry_run"]:
+                    try:
+                        g["nc"][ncvar].setncattr(
+                            "formula_terms", formula_terms
+                        )
+                    except KeyError:
+                        pass  # TODO convert to 'raise' via fixes upstream
 
                 logger.info(
                     "    Writing formula_terms attribute to "
@@ -3756,9 +3819,13 @@ class NetCDFWrite(IOWrite):
                 bounds_ncvar = g["bounds"].get(ncvar)
                 if bounds_ncvar is not None:
                     bounds_formula_terms = " ".join(bounds_formula_terms)
-                    g["nc"][bounds_ncvar].setncattr(
-                        "formula_terms", bounds_formula_terms
-                    )
+                    if not g["dry_run"] and not g["post_dry_run"]:
+                        try:
+                            g["nc"][bounds_ncvar].setncattr(
+                                "formula_terms", bounds_formula_terms
+                            )
+                        except KeyError:
+                            pass  # TODO convert to 'raise' via fixes upstream
 
                     logger.info(
                         "    Writing formula_terms to netCDF "
@@ -3920,8 +3987,10 @@ class NetCDFWrite(IOWrite):
                 "ncdims": ncdimensions,
             }
 
-        if xxx:
-            g["xxx"].extend(xxx)
+        if ncdim_size_to_spanning_constructs:
+            g["ncdim_size_to_spanning_constructs"].extend(
+                ncdim_size_to_spanning_constructs
+            )
 
     def _create_vertical_datum(self, ref, coord_key):
         """Deal with a vertical datum.
@@ -4102,7 +4171,8 @@ class NetCDFWrite(IOWrite):
                     nc = self._create_netcdf_group(nc, group)
             # --- End: for
 
-            nc.setncatts(this_group_attributes)
+            if not g["dry_run"]:
+                nc.setncatts(this_group_attributes)
 
             group_attributes[groups] = tuple(this_group_attributes)
         # --- End: for
@@ -4254,27 +4324,30 @@ class NetCDFWrite(IOWrite):
             # space, so join them with commas.
             delimiter = ","
 
-        g["netcdf"].setncattr("Conventions", delimiter.join(g["Conventions"]))
-
-        # ------------------------------------------------------------
-        # Write the file descriptors to the file
-        # ------------------------------------------------------------
-        for attr, value in g["file_descriptors"].items():
-            g["netcdf"].setncattr(attr, value)
-
-        # ------------------------------------------------------------
-        # Write other global attributes to the file
-        # ------------------------------------------------------------
-        for attr in global_attributes - set(("Conventions",)):
+        if not g["dry_run"] and not g["post_dry_run"]:
             g["netcdf"].setncattr(
-                attr, self.implementation.get_property(f0, attr)
+                "Conventions", delimiter.join(g["Conventions"])
             )
 
-        # ------------------------------------------------------------
-        # Write "forced" global attributes to the file
-        # ------------------------------------------------------------
-        for attr, v in force_global.items():
-            g["netcdf"].setncattr(attr, v)
+            # ------------------------------------------------------------
+            # Write the file descriptors to the file
+            # ------------------------------------------------------------
+            for attr, value in g["file_descriptors"].items():
+                g["netcdf"].setncattr(attr, value)
+
+            # ------------------------------------------------------------
+            # Write other global attributes to the file
+            # ------------------------------------------------------------
+            for attr in global_attributes - set(("Conventions",)):
+                g["netcdf"].setncattr(
+                    attr, self.implementation.get_property(f0, attr)
+                )
+
+            # ------------------------------------------------------------
+            # Write "forced" global attributes to the file
+            # ------------------------------------------------------------
+            for attr, v in force_global.items():
+                g["netcdf"].setncattr(attr, v)
 
         g["global_attributes"] = global_attributes
 
@@ -4314,7 +4387,7 @@ class NetCDFWrite(IOWrite):
                 A `netCDF4.Dataset` object for the file.
 
         """
-        if fields:
+        if fields and mode != "r":
             filename = os.path.abspath(filename)
             for f in fields:
                 if filename in self.implementation.get_filenames(f):
@@ -4324,7 +4397,10 @@ class NetCDFWrite(IOWrite):
                     )
         # --- End: if
 
-        if self.write_vars["overwrite"]:
+        # mode == 'w' is safer than != 'a' in case of a typo (the letters
+        # are neighbours on a QWERTY keyboard) since 'w' is destructive.
+        # Note that for append ('a') mode the original file is never wiped.
+        if mode == "w" and self.write_vars["overwrite"]:
             os.remove(filename)
 
         try:
@@ -4340,6 +4416,7 @@ class NetCDFWrite(IOWrite):
         fields,
         filename,
         fmt="NETCDF4",
+        mode="w",
         overwrite=True,
         global_attributes=None,
         variable_attributes=None,
@@ -4389,6 +4466,61 @@ class NetCDFWrite(IOWrite):
                 The output CF-netCDF file.
 
                 See `cfdm.write` for details.
+
+            mode: `str`, optional
+                Specify the mode of write access for the output file. One of:
+
+                ========  =================================================
+                *mode*    Description
+                ========  =================================================
+                ``'w'``   Open a new file for writing to. If it exists and
+                          *overwrite* is True then the file is deleted
+                          prior to being recreated.
+
+                ``'a'``   Open an existing file for appending new
+                          information to. The new information will be
+                          incorporated whilst the original contents of the
+                          file will be preserved.
+
+                          In practice this means that new fields will be
+                          created, whilst the original fields will not be
+                          edited at all. Coordinates on the fields, where
+                          equal, will be shared as standard.
+
+                          For append mode, note the following:
+
+                          * Global attributes on the file
+                            will remain the same as they were originally,
+                            so will become inaccurate where appended fields
+                            have incompatible attributes. To rectify this,
+                            manually inspect and edit them as appropriate
+                            after the append operation using methods such as
+                            `nc_clear_global_attributes` and
+                            `nc_set_global_attribute`.
+
+                          * Fields with incompatible ``featureType`` to
+                            the original file cannot be appended.
+
+                          * At present fields with groups cannot be
+                            appended, but this will be possible in a future
+                            version. Groups can however be cleared, the
+                            fields appended, and groups re-applied, via
+                            methods such as `nc_clear_variable_groups` and
+                            `nc_set_variable_groups`, to achieve the same
+                            for now.
+
+                          * At present domain ancillary constructs of
+                            appended fields may not be handled correctly
+                            and can appear as extra fields. Set them on the
+                            resultant fields using `set_domain_ancillary`
+                            and similar methods if required.
+
+                ``'r+'``  Alias for ``'a'``.
+
+                ========  =================================================
+
+                By default the file is opened with write access mode
+                ``'w'``.
 
             overwrite: bool, optional
                 If False then raise an exception if the output file
@@ -4529,6 +4661,7 @@ class NetCDFWrite(IOWrite):
         # Initialise netCDF write parameters
         # ------------------------------------------------------------
         self.write_vars = {
+            "filename": os.path.expanduser(os.path.expandvars(filename)),
             # Format of output file
             "fmt": None,
             # netCDF4.Dataset instance
@@ -4537,10 +4670,6 @@ class NetCDFWrite(IOWrite):
             "nc": {},
             # Map netCDF dimension names to netCDF dimension sizes
             "ncdim_to_size": {},
-            # Dictionary of netCDF variable names and netCDF
-            # dimensions keyed by items of the field (such as a
-            # coordinate or a coordinate reference)
-            "seen": {},
             # Set of all netCDF dimension and netCDF variable names.
             "ncvar_names": set(()),
             # Set of global or non-standard CF properties which have
@@ -4574,7 +4703,7 @@ class NetCDFWrite(IOWrite):
             "string": string,
             # Conventions
             "Conventions": Conventions,
-            "xxx": [],
+            "ncdim_size_to_spanning_constructs": [],
             "count_variable_sample_dimension": {},
             "index_variable_sample_dimension": {},
             "external_variables": "",
@@ -4595,7 +4724,186 @@ class NetCDFWrite(IOWrite):
             # Whether or not to name dimension corodinates in the
             # 'coordinates' attribute
             "coordinates": bool(coordinates),
+            # Dictionary of netCDF variable names and netCDF
+            # dimensions keyed by items of the field (such as a
+            # coordinate or a coordinate reference)
+            "seen": {},
+            # Dry run: populate 'seen' dict without actually writing to file.
+            "dry_run": False,
+            # To indicate if the previous iteration was a dry run:
+            "post_dry_run": False,
+            # Note: need write_vars keys to specify dry runs (iterations)
+            # and subsequent runs despite them being implied by the mode ('r'
+            # and 'a' for dry_run and post_dry_run respectively) so that the
+            # mode does not need to be passed to various methods, where a
+            # pair of such keys seem clearer than one "effective mode" key.
         }
+
+        if mode not in ("w", "a", "r+"):
+            raise ValueError(
+                "cfdm.write mode parameter must be one of 'w', 'a' or 'r+', "
+                f"but got '{mode}'"
+            )
+        elif mode == "r+":  # support alias used by netCDF4.Dataset mode
+            mode = "a"
+
+        effective_mode = mode  # actual mode to use for the first IO iteration
+        effective_fields = fields
+
+        if mode == "a":
+            # First read in the fields from the existing file:
+            effective_fields = NetCDFRead(self.implementation).read(filename)
+
+            # Read rather than append for the first iteration to ensure nothing
+            # gets written; only want to update the 'seen' dictionary first.
+            effective_mode = "r"
+            overwrite = False
+            self.write_vars["dry_run"] = True
+
+            # Make lists of the fields to aid with iteration over them below:
+            if not isinstance(fields, (list, tuple)):
+                fields = [fields]
+            if not isinstance(effective_fields, (list, tuple)):
+                effective_fields = [effective_fields]
+
+            # Fail ASAP if can't perform the operation:
+            # 1. because attempting to append at least one field with group(s)
+            if fmt == "NETCDF4":
+                for f in fields:
+                    if self.implementation.nc_get_variable_groups(f):
+                        raise ValueError(
+                            "At present append mode is unable to append fields "
+                            "which have groups, however groups can be cleared, "
+                            "the fields appended, and groups re-applied, via "
+                            "methods such as 'nc_clear_variable_groups' and "
+                            "'nc_set_variable_groups', to achieve the same."
+                        )
+
+            # 2. because the featureType on the original fields and the fields
+            # to be appended are incompatible:
+            original_ft = False  # no FT, distinguish from 'None' attr. value
+            appended_fields_fts = []
+            for ef in effective_fields:  # i.e original fields
+                if "featureType" in ef.nc_global_attributes():
+                    original_ft = ef.nc_global_attributes()["featureType"]
+            for f in fields:  # i.e. fields to be appended
+                if (
+                    "featureType" in f.nc_global_attributes()
+                    and f.nc_global_attributes()["featureType"] is not None
+                ):
+                    appended_fields_fts.append(
+                        f.nc_global_attributes()["featureType"]
+                    )
+            # Incompatible if: 1) the appended fields have more than one
+            # FT between them, 2) the original FT is not appropriate for
+            # all appended fields, or 3) there is no original FT but one
+            # or more across all appended fields.
+            if (
+                len(appended_fields_fts) > 1
+                or (
+                    len(appended_fields_fts) == 1
+                    and original_ft is not False
+                    and original_ft != appended_fields_fts[0]
+                )
+                or (appended_fields_fts and original_ft is not False)
+            ):
+                raise ValueError(
+                    "Can't append fields with an incompatible 'featureType' "
+                    "global attribute to the original file."
+                )
+
+        self._file_io_iteration(
+            mode=effective_mode,
+            overwrite=overwrite,
+            fields=effective_fields,
+            filename=filename,
+            fmt=fmt,
+            global_attributes=global_attributes,
+            variable_attributes=variable_attributes,
+            file_descriptors=file_descriptors,
+            external=external,
+            Conventions=Conventions,
+            datatype=datatype,
+            least_significant_digit=least_significant_digit,
+            endian=endian,
+            compress=compress,
+            fletcher32=fletcher32,
+            shuffle=shuffle,
+            scalar=scalar,
+            string=string,
+            extra_write_vars=extra_write_vars,
+            warn_valid=warn_valid,
+            group=group,
+        )
+
+        if mode == "w":  # only one iteration required in this simple case
+            return
+        elif mode == "a":  # need another iteration to append after reading
+            self.write_vars["dry_run"] = False
+            self.write_vars["post_dry_run"] = True  # i.e. follows a dry run
+
+            # Perform a second iteration to append, with knowledge of the
+            # constructs existing in the file from the first iteration.
+            return self._file_io_iteration(
+                mode=mode,
+                overwrite=overwrite,
+                fields=fields,
+                filename=filename,
+                fmt=fmt,
+                global_attributes=global_attributes,
+                variable_attributes=variable_attributes,
+                file_descriptors=file_descriptors,
+                external=external,
+                Conventions=Conventions,
+                datatype=datatype,
+                least_significant_digit=least_significant_digit,
+                endian=endian,
+                compress=compress,
+                fletcher32=fletcher32,
+                shuffle=shuffle,
+                scalar=scalar,
+                string=string,
+                extra_write_vars=extra_write_vars,
+                warn_valid=warn_valid,
+                group=group,
+            )
+
+    def _file_io_iteration(
+        self,
+        mode,
+        overwrite,
+        fields,
+        filename,
+        fmt,
+        global_attributes,
+        variable_attributes,
+        file_descriptors,
+        external,
+        Conventions,
+        datatype,
+        least_significant_digit,
+        endian,
+        compress,
+        fletcher32,
+        shuffle,
+        scalar,
+        string,
+        extra_write_vars,
+        warn_valid,
+        group,
+    ):
+        """Perform a file-writing iteration with the given settings."""
+        # ------------------------------------------------------------
+        # Initiate file IO with given write variables
+        # ------------------------------------------------------------
+        if mode == "w":
+            desc = "Writing to"
+        elif mode == "a":  # append mode on a post-dry run when it appends
+            desc = "Appending to"
+        else:  # includes append mode on a dry-run when it does just read
+            desc = "Reading from"
+        logger.info("{} {}".format(desc, fmt))  # pragma: no cover
+
         g = self.write_vars
 
         # ------------------------------------------------------------
@@ -4610,32 +4918,24 @@ class NetCDFWrite(IOWrite):
         compress = int(compress)
         zlib = bool(compress)
 
-        if fmt not in (
+        netcdf3_fmts = (
             "NETCDF3_CLASSIC",
             "NETCDF3_64BIT",
+            "NETCDF3_64BIT_OFFSET",
+            "NETCDF3_64BIT_DATA",
+        )
+        netcdf4_fmts = (
             "NETCDF4",
             "NETCDF4_CLASSIC",
-            "NETCDF3_64BIT_OFFSET",
-            "NETCDF3_64BIT_DATA",
-        ):
+        )
+        if fmt not in netcdf3_fmts + netcdf4_fmts:
             raise ValueError("Unknown output file format: {}".format(fmt))
-
-        if compress and fmt in (
-            "NETCDF3_CLASSIC",
-            "NETCDF3_64BIT",
-            "NETCDF3_64BIT_OFFSET",
-            "NETCDF3_64BIT_DATA",
-        ):
-            raise ValueError("Can't compress {} format file".format(fmt))
-
-        if group and fmt in (
-            "NETCDF3_CLASSIC",
-            "NETCDF3_64BIT",
-            "NETCDF3_64BIT_OFFSET",
-            "NETCDF3_64BIT_DATA",
-        ):
-            # Can't write groups to a netCDF3 file
-            g["group"] = False
+        elif fmt in netcdf3_fmts:
+            if compress in netcdf3_fmts:
+                raise ValueError("Can't compress {} format file".format(fmt))
+            if group in netcdf3_fmts:
+                # Can't write groups to a netCDF3 file
+                g["group"] = False
 
         # ------------------------------------------------------------
         # Set up global/non-global attributes
@@ -4723,23 +5023,21 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Open the output netCDF file
         # ------------------------------------------------------------
-        filename = os.path.expanduser(os.path.expandvars(filename))
         if os.path.isfile(filename):
-            if not overwrite:
+            if mode == "w" and not overwrite:
                 raise IOError(
-                    "Can't write to an existing file unless "
-                    "overwrite=True: {}".format(os.path.abspath(filename))
+                    "Can't write with mode {mode!r} to existing file "
+                    f"{os.path.abspath(filename)} unless overwrite=True"
                 )
 
             if not os.access(filename, os.W_OK):
                 raise IOError(
-                    "Can't overwrite an existing file without "
-                    "permission: {}".format(os.path.abspath(filename))
+                    "Can't write to existing file "
+                    f"{os.path.abspath(filename)} without permission"
                 )
         else:
             g["overwrite"] = False
 
-        mode = "w"
         g["filename"] = filename
         g["netcdf"] = self.file_open(filename, mode, fmt, fields)
 
@@ -4751,19 +5049,24 @@ class NetCDFWrite(IOWrite):
         #        -------------------------------------------------------------
         #        g['netcdf'].set_fill_off()
 
-        # ------------------------------------------------------------
-        # Write global properties to the file first. This is important
-        # as doing it later could slow things down enormously. This
-        # function also creates the g['global_attributes'] set, which
-        # is used in the _write_field function.
-        # ------------------------------------------------------------
-        self._write_global_attributes(fields)
+        if not g["dry_run"]:
+            # ------------------------------------------------------------
+            # Write global properties to the file first. This is important
+            # as doing it later could slow things down enormously. This
+            # function also creates the g['global_attributes'] set, which
+            # is used in the _write_field function.
+            # ------------------------------------------------------------
+            self._write_global_attributes(fields)
 
-        # ------------------------------------------------------------
-        # Write group-level properties to the file next
-        # ------------------------------------------------------------
-        if g["group"]:
-            self._write_group_attributes(fields)
+            # ------------------------------------------------------------
+            # Write group-level properties to the file next
+            # ------------------------------------------------------------
+            if (
+                g["group"] and not g["post_dry_run"]
+            ):  # i.e. not for append mode
+                self._write_group_attributes(fields)
+        else:
+            g["output_version"] = g["latest_version"]
 
         if external is not None:
             if g["output_version"] < g["CF-1.7"]:
@@ -4789,6 +5092,9 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Write all of the buffered data to disk
         # ------------------------------------------------------------
+        # For append mode, it is cleaner code-wise to close the file
+        # on the read iteration and re-open it for the append
+        # iteration. So we always close it here.
         self.file_close(filename)
 
         # ------------------------------------------------------------
@@ -4805,6 +5111,5 @@ class NetCDFWrite(IOWrite):
                 compress=compress,
                 fletcher32=fletcher32,
                 shuffle=shuffle,
-                verbose=verbose,
                 extra_write_vars=extra_write_vars,
             )

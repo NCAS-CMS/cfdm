@@ -3320,7 +3320,7 @@ Method                                         Classes                          
 -------------------
 
 The `cfdm.write` function writes a field construct, or a sequence of
-field constructs, to a new netCDF file on disk:
+field constructs, to a netCDF file on disk:
 
 .. code-block:: python
    :caption: *Write a field construct to a netCDF dataset on disk.*
@@ -3384,11 +3384,13 @@ A sequence of field constructs is written in exactly the same way:
    >>> cfdm.write(x, 'new_file.nc')
 
 By default the output file will be for CF-|version|.
-   
+
 The `cfdm.write` function has optional parameters to
 
 * set the output netCDF format (all netCDF3 and netCDF4 formats are
   possible);
+
+* append to the netCDF file rather than over-writing it by default;
 
 * specify which field construct properties should become netCDF data
   variable attributes and which should become netCDF global
@@ -3411,6 +3413,26 @@ The `cfdm.write` function has optional parameters to
 
 * specify whether or not :ref:`netCDF string arrays <Strings>` are to
   be used.
+
+For example, to use the `mode` parameter to append a new field, or fields,
+to a netCDF file whilst preserving the field or fields already contained
+in that file:
+
+.. code-block:: python
+   :caption: *Append field constructs to a netCDF dataset on
+             disk.*
+
+   >>> g = cfdm.example_field(2)
+   >>> cfdm.write(g, 'append-example-file.nc')
+   >>> cfdm.read('append-example-file.nc')
+   [<Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K>]
+   >>> h = cfdm.example_field(0)
+   >>> h
+   <Field: specific_humidity(latitude(5), longitude(8)) 1>
+   >>> cfdm.write(h, 'append-example-file.nc', mode='a')
+   >>> cfdm.read('append-example-file.nc')
+   [<Field: air_potential_temperature(time(36), latitude(5), longitude(8)) K>,
+    <Field: specific_humidity(latitude(5), longitude(8)) 1>]
 
 Output netCDF variable and dimension names read from a netCDF dataset
 are stored in the resulting field constructs, and may also be set
