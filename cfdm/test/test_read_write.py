@@ -654,13 +654,17 @@ class read_writeTest(unittest.TestCase):
                 "{!r} {!r}".format(f[j], f[i]),
             )
 
+        # Note: Don't loop round all netCDF formats for better
+        #       performance. Just one netCDF3 and one netCDF4 format
+        #       is sufficient to test the functionality
+
         f0 = cfdm.read(self.string_filename)
         for string0 in (True, False):
-            for fmt0 in self.netcdf_fmts:
+            for fmt0 in ("NETCDF4", "NETCDF3_CLASSIC"):
                 cfdm.write(f0, tmpfile0, fmt=fmt0, string=string0)
 
                 for string1 in (True, False):
-                    for fmt1 in self.netcdf_fmts:
+                    for fmt1 in ("NETCDF4", "NETCDF3_CLASSIC"):
                         cfdm.write(f0, tmpfile1, fmt=fmt1, string=string1)
 
                         for i, j in zip(
