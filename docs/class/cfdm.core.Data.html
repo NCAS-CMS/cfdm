@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cfdm.core.Data &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.9.0</a></h1>
 
 
 
@@ -92,6 +93,24 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cfdm development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/786427">Couplet</a>;
+by the <a href="https://ec.europa.eu/programmes/horizon2020/">EC
+Horizon 2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -102,41 +121,41 @@
             
 
 
-  <div class="section" id="cfdm-core-data">
+  <section id="cfdm-core-data">
 <h1>cfdm.core.Data<a class="headerlink" href="#cfdm-core-data" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.core.Data">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.core.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_array=True</em>, <em class="sig-param">_custom_deep_copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.8.0/cfdm/core/data/data.py#L9-L886"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.core.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_array=True</em>, <em class="sig-param">_custom_deep_copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/core/data/data.py#L9-L910"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.container.Container</span></code></p>
-<p>An orthogonal multidimensional array with masked values and units.</p>
+<p>An orthogonal multidimensional array with masking and units.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
-<p><strong>Initialization</strong></p>
+<p><strong>Initialisation</strong></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
 <dt>array: data_like, optional</dt><dd><p>The array of values.</p>
-<p>A data_like object is any object that can be converted to
-a <a class="reference internal" href="#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects, <a class="reference internal" href="#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
-objects, and cfdm.core instances that contain <a class="reference internal" href="#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
-objects.</p>
-<p>Note that for Data` objects and cfdm.core objects
-that contain <a class="reference internal" href="#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects,
+<p>A data_like object is any object that can be converted
+to a <a class="reference internal" href="#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+<a class="reference internal" href="#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cfdm.core instances that contain
+<a class="reference internal" href="#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
+<p>Note that for <a class="reference internal" href="#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects and cfdm.core
+objects that contain <a class="reference internal" href="#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects,
 <code class="docutils literal notranslate"><span class="pre">cfdm.core.Data(array)</span></code> is equivalent to
 <code class="docutils literal notranslate"><span class="pre">cfdm.core.Data(source=array.__data__())</span></code>.</p>
 <p>Ignored if the <em>source</em> parameter is set.</p>
 </dd>
-<dt>array: <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like, optional</dt><dd><p>The array of values.</p>
-<p>Note that if <em>array</em> is another <a class="reference internal" href="#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance then
-<code class="docutils literal notranslate"><span class="pre">cfdm.core.Data(array)</span></code> is equivalent to
+<dt>array: <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like, optional</dt><dd><p>The array of values.</p>
+<p>Note that if <em>array</em> is another <a class="reference internal" href="#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance
+then <code class="docutils literal notranslate"><span class="pre">cfdm.core.Data(array)</span></code> is equivalent to
 <code class="docutils literal notranslate"><span class="pre">cfdm.core.Data(source=array)</span></code>.</p>
 <p>Ignored if the <em>source</em> parameter is set.</p>
 </dd>
-<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The physical units of the data. Ignored if the <em>source</em>
-parameter is set.</p>
-<p>The units may also be set after initialisation with the
-<a class="reference internal" href="../method/cfdm.core.Data.set_units.html#cfdm.core.Data.set_units" title="cfdm.core.Data.set_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_units</span></code></a> method.</p>
+<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The physical units of the data. Ignored if the
+<em>source</em> parameter is set.</p>
+<p>The units may also be set after initialisation with
+the <a class="reference internal" href="../method/cfdm.core.Data.set_units.html#cfdm.core.Data.set_units" title="cfdm.core.Data.set_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_units</span></code></a> method.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">units='km</span> <span class="pre">hr-1'</span></code></p>
 </dd>
@@ -146,37 +165,38 @@ parameter is set.</p>
 </dd>
 <dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The calendar for reference time units. Ignored if the
 <em>source</em> parameter is set.</p>
-<p>The calendar may also be set after initialisation with the
-<a class="reference internal" href="../method/cfdm.core.Data.set_calendar.html#cfdm.core.Data.set_calendar" title="cfdm.core.Data.set_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_calendar</span></code></a> method.</p>
+<p>The calendar may also be set after initialisation with
+the <a class="reference internal" href="../method/cfdm.core.Data.set_calendar.html#cfdm.core.Data.set_calendar" title="cfdm.core.Data.set_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_calendar</span></code></a> method.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">calendar='360_day'</span></code></p>
 </dd>
 </dl>
 </dd>
 <dt>fill_value: optional</dt><dd><p>The fill value of the data. By default, or if set to
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> fill value appropriate to the array’s
-data type will be used (see
-<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ma.default_fill_value.html#numpy.ma.default_fill_value" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.default_fill_value</span></code></a>). Ignored if the <em>source</em>
-parameter is set.</p>
-<p>The fill value may also be set after initialisation with
-the <a class="reference internal" href="../method/cfdm.core.Data.set_fill_value.html#cfdm.core.Data.set_fill_value" title="cfdm.core.Data.set_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fill_value</span></code></a> method.</p>
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> fill value appropriate to the
+array’s data type will be used (see
+<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ma.default_fill_value.html#numpy.ma.default_fill_value" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.default_fill_value</span></code></a>). Ignored if the
+<em>source</em> parameter is set.</p>
+<p>The fill value may also be set after initialisation
+with the <a class="reference internal" href="../method/cfdm.core.Data.set_fill_value.html#cfdm.core.Data.set_fill_value" title="cfdm.core.Data.set_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fill_value</span></code></a> method.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">fill_value=-999.</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>source: <em>optional</em></dt><dd><p>Initialize the data, units, calendar and fill value from
-those of <em>source</em>.</p>
+<dt>source: <em>optional</em></dt><dd><p>Initialise the data, units, calendar and fill value
+from those of <em>source</em>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior to
-initialization. By default arguments are deep copied.</p>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior
+to initialisation. By default arguments are deep
+copied.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 </dd></dl>
 
-<div class="section" id="inspection">
+<section id="inspection">
 <h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Attributes</p>
 <table class="longtable docutils align-default">
@@ -202,8 +222,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="units">
+</section>
+<section id="units">
 <h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -237,10 +257,10 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="data-creation-routines">
+</section>
+<section id="data-creation-routines">
 <h2>Data creation routines<a class="headerlink" href="#data-creation-routines" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="from-existing-data">
+<section id="from-existing-data">
 <h3>From existing data<a class="headerlink" href="#from-existing-data" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -253,9 +273,9 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="date-time-support">
+</section>
+</section>
+<section id="date-time-support">
 <h2>Date-time support<a class="headerlink" href="#date-time-support" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -277,8 +297,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="mask-support">
+</section>
+<section id="mask-support">
 <h2>Mask support<a class="headerlink" href="#mask-support" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -300,8 +320,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="miscellaneous">
+</section>
+<section id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -314,8 +334,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="special">
+</section>
+<section id="special">
 <h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -334,8 +354,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="docstring-substitutions">
+</section>
+<section id="docstring-substitutions">
 <h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -348,18 +368,18 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Return the special docstring substitutions.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Data._docstring_substitutions.html#cfdm.core.Data._docstring_substitutions" title="cfdm.core.Data._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
-<td><p>Return the docstring substitutions that apply to methods of the given class.</p></td>
+<td><p>Returns the substitutions that apply to methods of the class.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Data._docstring_package_depth.html#cfdm.core.Data._docstring_package_depth" title="cfdm.core.Data._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
-<td><p>Return the package depth, N, for {{package}} docstring substitutions for the given class.</p></td>
+<td><p>Returns the class {{package}} substitutions package depth.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Data._docstring_method_exclusions.html#cfdm.core.Data._docstring_method_exclusions" title="cfdm.core.Data._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
-<td><p>Return the names of methods to exclude from docstring substitutions for the given class.</p></td>
+<td><p>Returns method names excluded in the class substitutions.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
 
@@ -370,7 +390,7 @@ initialization. By default arguments are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

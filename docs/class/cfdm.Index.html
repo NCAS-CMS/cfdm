@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cfdm.Index &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.9.0</a></h1>
 
 
 
@@ -92,6 +93,24 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cfdm development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/786427">Couplet</a>;
+by the <a href="https://ec.europa.eu/programmes/horizon2020/">EC
+Horizon 2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -102,12 +121,12 @@
             
 
 
-  <div class="section" id="cfdm-index">
+  <section id="cfdm-index">
 <h1>cfdm.Index<a class="headerlink" href="#cfdm-index" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Index">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Index</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.8.0/cfdm/index.py#L5-L111"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Index" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Index</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/index.py#L5-L132"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFDimension</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFSampleDimension</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.propertiesdata.PropertiesData</span></code></p>
 <p>An index variable required to uncompress a ragged array.</p>
 <p>A collection of features stored using an indexed ragged array
@@ -118,9 +137,13 @@ are interleaved.</p>
 index variable that specifies the feature that each element of the
 sample dimension belongs to.</p>
 <p><strong>NetCDF interface</strong></p>
-<p>The netCDF variable name of the index variable may be accessed
-with the <a class="reference internal" href="../method/cfdm.Index.nc_set_variable.html#cfdm.Index.nc_set_variable" title="cfdm.Index.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.Index.nc_get_variable.html#cfdm.Index.nc_get_variable" title="cfdm.Index.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.Index.nc_del_variable.html#cfdm.Index.nc_del_variable" title="cfdm.Index.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a>
-and <a class="reference internal" href="../method/cfdm.Index.nc_has_variable.html#cfdm.Index.nc_has_variable" title="cfdm.Index.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a> methods.</p>
+<p>The netCDF variable name may be accessed with the
+<a class="reference internal" href="../method/cfdm.Index.nc_set_variable.html#cfdm.Index.nc_set_variable" title="cfdm.Index.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.Index.nc_get_variable.html#cfdm.Index.nc_get_variable" title="cfdm.Index.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.Index.nc_del_variable.html#cfdm.Index.nc_del_variable" title="cfdm.Index.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a> and
+<a class="reference internal" href="../method/cfdm.Index.nc_has_variable.html#cfdm.Index.nc_has_variable" title="cfdm.Index.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a> methods.</p>
+<p>The netCDF variable group structure may be accessed with the
+<a class="reference internal" href="../method/cfdm.Index.nc_set_variable.html#cfdm.Index.nc_set_variable" title="cfdm.Index.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.Index.nc_get_variable.html#cfdm.Index.nc_get_variable" title="cfdm.Index.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.Index.nc_variable_groups.html#cfdm.Index.nc_variable_groups" title="cfdm.Index.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a>,
+<a class="reference internal" href="../method/cfdm.Index.nc_clear_variable_groups.html#cfdm.Index.nc_clear_variable_groups" title="cfdm.Index.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a> and <a class="reference internal" href="../method/cfdm.Index.nc_set_variable_groups.html#cfdm.Index.nc_set_variable_groups" title="cfdm.Index.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a>
+methods.</p>
 <p>The name of the netCDF dimension spanned by the index variable’s
 data (which does not correspond to a domain axis construct) may be
 accessed with the <a class="reference internal" href="../method/cfdm.Index.nc_set_dimension.html#cfdm.Index.nc_set_dimension" title="cfdm.Index.nc_set_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dimension</span></code></a>, <a class="reference internal" href="../method/cfdm.Index.nc_get_dimension.html#cfdm.Index.nc_get_dimension" title="cfdm.Index.nc_get_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_dimension</span></code></a>,
@@ -143,48 +166,47 @@ different.</p>
 <p>The name of the netCDF instance dimension (that is stored in the
 “instance_dimension” netCDF attribute) is accessed via the
 corresponding domain axis construct.</p>
-<p>The netCDF variable group structure may be accessed with the
-<a class="reference internal" href="../method/cfdm.Index.nc_set_variable.html#cfdm.Index.nc_set_variable" title="cfdm.Index.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.Index.nc_get_variable.html#cfdm.Index.nc_get_variable" title="cfdm.Index.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.Index.nc_variable_groups.html#cfdm.Index.nc_variable_groups" title="cfdm.Index.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a>,
-<a class="reference internal" href="../method/cfdm.Index.nc_clear_variable_groups.html#cfdm.Index.nc_clear_variable_groups" title="cfdm.Index.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a> and <a class="reference internal" href="../method/cfdm.Index.nc_set_variable_groups.html#cfdm.Index.nc_set_variable_groups" title="cfdm.Index.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a> methods.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
-<p><strong>Initialization</strong></p>
+<p><strong>Initialisation</strong></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
 <dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
-property names, with corresponding values. Ignored if the
-<em>source</em> parameter is set.</p>
-<p>Properties may also be set after initialisation with the
-<a class="reference internal" href="../method/cfdm.Index.set_properties.html#cfdm.Index.set_properties" title="cfdm.Index.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.Index.set_property.html#cfdm.Index.set_property" title="cfdm.Index.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+property names, with corresponding values. Ignored if
+the <em>source</em> parameter is set.</p>
+<p>Properties may also be set after initialisation with
+the <a class="reference internal" href="../method/cfdm.Index.set_properties.html#cfdm.Index.set_properties" title="cfdm.Index.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.Index.set_property.html#cfdm.Index.set_property" title="cfdm.Index.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'long_name':</span> <span class="pre">'which</span> <span class="pre">station</span> <span class="pre">this</span> <span class="pre">obs</span> <span class="pre">is</span> <span class="pre">for'}</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>data: data_like, optional</dt><dd><p>Set the data. Ignored if the <em>source</em> parameter is set.</p>
-<p>A data_like object is any object that can be converted to
-a <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects, <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
-objects, and cfdm instances that contain <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
-objects.</p>
+<dt>data: data_like, optional</dt><dd><p>Set the data. Ignored if the <em>source</em> parameter is
+set.</p>
+<p>A data_like object is any object that can be converted
+to a <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+<a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cfdm instances that contain
+<a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
 <p>The data also may be set after initialisation with the
 <a class="reference internal" href="../method/cfdm.Index.set_data.html#cfdm.Index.set_data" title="cfdm.Index.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
 </dd>
-<dt>source: optional</dt><dd><p>Initialize the properties and data from those of <em>source</em>.</p>
+<dt>source: optional</dt><dd><p>Initialise the properties and data from those of <em>source</em>.</p>
 <p>Note that if <em>source</em> is a <a class="reference internal" href="#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a> instance then
-<code class="docutils literal notranslate"><span class="pre">cfdm.Index(source=source)</span></code> is equivalent to
-<code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">cfdm.Index(source=source)</span></code> is equivalent
+to <code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior to
-initialization. By default arguments are deep copied.</p>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior
+to initialisation. By default arguments are deep
+copied.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 </dd></dl>
 
-<div class="section" id="inspection">
+<section id="inspection">
 <h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -204,8 +226,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="properties">
+</section>
+<section id="properties">
 <h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -237,8 +259,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="data">
+</section>
+<section id="data">
 <h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -297,8 +319,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="miscellaneous">
+</section>
+<section id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -327,8 +349,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="netcdf">
+</section>
+<section id="netcdf">
 <h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -363,7 +385,7 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-<div class="section" id="groups">
+<section id="groups">
 <h3>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -392,8 +414,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="sample-dimension">
+</section>
+<section id="sample-dimension">
 <h3>Sample dimension<a class="headerlink" href="#sample-dimension" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -425,9 +447,9 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="special">
+</section>
+</section>
+<section id="special">
 <h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -440,7 +462,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Index.__getitem__.html#cfdm.Index.__getitem__" title="cfdm.Index.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
-<td><p>Return a subspace defined by indices</p></td>
+<td><p>Return a subspace defined by indices.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Index.__repr__.html#cfdm.Index.__repr__" title="cfdm.Index.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
@@ -450,8 +472,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="docstring-substitutions">
+</section>
+<section id="docstring-substitutions">
 <h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -464,18 +486,18 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Return the special docstring substitutions.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Index._docstring_substitutions.html#cfdm.Index._docstring_substitutions" title="cfdm.Index._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
-<td><p>Return the docstring substitutions that apply to methods of the given class.</p></td>
+<td><p>Returns the substitutions that apply to methods of the class.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Index._docstring_package_depth.html#cfdm.Index._docstring_package_depth" title="cfdm.Index._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
-<td><p>Return the package depth, N, for {{package}} docstring substitutions for the given class.</p></td>
+<td><p>Returns the class {{package}} substitutions package depth.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Index._docstring_method_exclusions.html#cfdm.Index._docstring_method_exclusions" title="cfdm.Index._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
-<td><p>Return the names of methods to exclude from docstring substitutions for the given class.</p></td>
+<td><p>Returns method names excluded in the class substitutions.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
 
@@ -486,7 +508,7 @@ initialization. By default arguments are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cfdm.core.Field &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.9.0</a></h1>
 
 
 
@@ -92,6 +93,24 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cfdm development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/786427">Couplet</a>;
+by the <a href="https://ec.europa.eu/programmes/horizon2020/">EC
+Horizon 2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -102,13 +121,13 @@
             
 
 
-  <div class="section" id="cfdm-core-field">
+  <section id="cfdm-core-field">
 <h1>cfdm.core.Field<a class="headerlink" href="#cfdm-core-field" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.core.Field">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.core.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.8.0/cfdm/core/field.py#L10-L599"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Field" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.mixin.constructaccess.ConstructAccess</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.propertiesdata.PropertiesData</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.core.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/core/field.py#L10-L642"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.mixin.fielddomain.FieldDomain</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.propertiesdata.PropertiesData</span></code></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes
 all the other constructs. A field corresponds to a CF-netCDF data
@@ -134,35 +153,36 @@ attributes (e.g. history and institution).</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
-<p><strong>Initialization</strong></p>
+<p><strong>Initialisation</strong></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
 <dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
-property names, with corresponding values. Ignored if the
-<em>source</em> parameter is set.</p>
-<p>Properties may also be set after initialisation with the
-<a class="reference internal" href="../method/cfdm.core.Field.set_properties.html#cfdm.core.Field.set_properties" title="cfdm.core.Field.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.core.Field.set_property.html#cfdm.core.Field.set_property" title="cfdm.core.Field.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+property names, with corresponding values. Ignored if
+the <em>source</em> parameter is set.</p>
+<p>Properties may also be set after initialisation with
+the <a class="reference internal" href="../method/cfdm.core.Field.set_properties.html#cfdm.core.Field.set_properties" title="cfdm.core.Field.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.core.Field.set_property.html#cfdm.core.Field.set_property" title="cfdm.core.Field.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'standard_name':</span> <span class="pre">'air_temperature'}</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>source: optional</dt><dd><p>Initialize the properties, data and metadata constructs
-from those of <em>source</em>.</p>
+<dt>source: optional</dt><dd><p>Initialise the properties, data and metadata
+constructs from those of <em>source</em>.</p>
 <p>Note that if <em>source</em> is a <a class="reference internal" href="#cfdm.core.Field" title="cfdm.core.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> instance then
-<code class="docutils literal notranslate"><span class="pre">cfdm.core.Field(source=source)</span></code> is equivalent to
-<code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">cfdm.core.Field(source=source)</span></code> is equivalent
+to <code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior to
-initialization. By default arguments are deep copied.</p>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior
+to initialisation. By default arguments are deep
+copied.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 </dd></dl>
 
-<div class="section" id="inspection">
+<section id="inspection">
 <span id="core-field-inspection"></span><h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Attributes</p>
 <table class="longtable docutils align-default">
@@ -176,8 +196,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="properties">
+</section>
+<section id="properties">
 <span id="core-field-properties"></span><h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -209,8 +229,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="data">
+</section>
+<section id="data">
 <span id="core-field-data"></span><h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -232,16 +252,16 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Set the data of the field construct.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Field.del_data_axes.html#cfdm.core.Field.del_data_axes" title="cfdm.core.Field.del_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data_axes</span></code></a></p></td>
-<td><p>Remove the keys of the domain axis constructs spanned by the data of the field or of a metadata construct.</p></td>
+<td><p>Removes the keys of the axes spanned by the construct data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Field.get_data_axes.html#cfdm.core.Field.get_data_axes" title="cfdm.core.Field.get_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_axes</span></code></a></p></td>
-<td><p>Return the keys of the domain axis constructs spanned by the data of the field or of a metadata construct.</p></td>
+<td><p>Gets the keys of the axes spanned by the construct data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Field.has_data_axes.html#cfdm.core.Field.has_data_axes" title="cfdm.core.Field.has_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data_axes</span></code></a></p></td>
-<td><p>Whether the domain axis constructs spanned by the data of the field or of a metadata construct have been set.</p></td>
+<td><p>Whether the axes spanned by the construct data have been set.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Field.set_data_axes.html#cfdm.core.Field.set_data_axes" title="cfdm.core.Field.set_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data_axes</span></code></a></p></td>
-<td><p>Set the domain axis constructs spanned by the data of the field or of a metadata construct.</p></td>
+<td><p>Sets the axes spanned by the construct data.</p></td>
 </tr>
 </tbody>
 </table>
@@ -257,8 +277,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="metadata-constructs">
+</section>
+<section id="metadata-constructs">
 <span id="core-field-metadata-constructs"></span><h2>Metadata constructs<a class="headerlink" href="#metadata-constructs" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -280,16 +300,16 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Set a metadata construct.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Field.del_data_axes.html#cfdm.core.Field.del_data_axes" title="cfdm.core.Field.del_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data_axes</span></code></a></p></td>
-<td><p>Remove the keys of the domain axis constructs spanned by the data of the field or of a metadata construct.</p></td>
+<td><p>Removes the keys of the axes spanned by the construct data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Field.get_data_axes.html#cfdm.core.Field.get_data_axes" title="cfdm.core.Field.get_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_axes</span></code></a></p></td>
-<td><p>Return the keys of the domain axis constructs spanned by the data of the field or of a metadata construct.</p></td>
+<td><p>Gets the keys of the axes spanned by the construct data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Field.has_data_axes.html#cfdm.core.Field.has_data_axes" title="cfdm.core.Field.has_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data_axes</span></code></a></p></td>
-<td><p>Whether the domain axis constructs spanned by the data of the field or of a metadata construct have been set.</p></td>
+<td><p>Whether the axes spanned by the construct data have been set.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Field.set_data_axes.html#cfdm.core.Field.set_data_axes" title="cfdm.core.Field.set_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data_axes</span></code></a></p></td>
-<td><p>Set the domain axis constructs spanned by the data of the field or of a metadata construct.</p></td>
+<td><p>Sets the axes spanned by the construct data.</p></td>
 </tr>
 </tbody>
 </table>
@@ -305,8 +325,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="domain">
+</section>
+<section id="domain">
 <span id="core-field-domain"></span><h2>Domain<a class="headerlink" href="#domain" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -332,8 +352,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="miscellaneous">
+</section>
+<section id="miscellaneous">
 <span id="core-field-miscellaneous"></span><h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -350,8 +370,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="special">
+</section>
+<section id="special">
 <span id="core-field-special"></span><h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -365,8 +385,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="docstring-substitutions">
+</section>
+<section id="docstring-substitutions">
 <h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -379,18 +399,18 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Return the special docstring substitutions.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Field._docstring_substitutions.html#cfdm.core.Field._docstring_substitutions" title="cfdm.core.Field._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
-<td><p>Return the docstring substitutions that apply to methods of the given class.</p></td>
+<td><p>Returns the substitutions that apply to methods of the class.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Field._docstring_package_depth.html#cfdm.core.Field._docstring_package_depth" title="cfdm.core.Field._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
-<td><p>Return the package depth, N, for {{package}} docstring substitutions for the given class.</p></td>
+<td><p>Returns the class {{package}} substitutions package depth.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Field._docstring_method_exclusions.html#cfdm.core.Field._docstring_method_exclusions" title="cfdm.core.Field._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
-<td><p>Return the names of methods to exclude from docstring substitutions for the given class.</p></td>
+<td><p>Returns method names excluded in the class substitutions.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
 
@@ -401,7 +421,7 @@ initialization. By default arguments are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Change log &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.8.8.0</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.8.9.0</a></h1>
 
 
 
@@ -86,6 +87,24 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cfdm development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/786427">Couplet</a>;
+by the <a href="https://ec.europa.eu/programmes/horizon2020/">EC
+Horizon 2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="_templates/logo_EC.png" height="40">
+<img src="_templates/logo_ERC.png" height="40">
+<img src="_templates/logo_NERC.png" height="40">
+<br>
+<img src="_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -96,9 +115,35 @@
             
 
 
-  <div class="section" id="change-log">
+  <section id="change-log">
 <h1><strong>Change log</strong><a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="version-1-8-8-0">
+<section id="version-1-8-9-0">
+<h2>version 1.8.9.0<a class="headerlink" href="#version-1-8-9-0" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p><strong>2021-05-25</strong></p>
+<ul class="simple">
+<li><p>Construct access API changes
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/124">https://github.com/NCAS-CMS/cfdm/issues/124</a>,
+<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/130">https://github.com/NCAS-CMS/cfdm/issues/130</a>,
+<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/132">https://github.com/NCAS-CMS/cfdm/issues/132</a>,
+<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/137">https://github.com/NCAS-CMS/cfdm/issues/137</a>)</p></li>
+<li><p>Performance enhancements
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/124">https://github.com/NCAS-CMS/cfdm/issues/124</a>,
+<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/130">https://github.com/NCAS-CMS/cfdm/issues/130</a>)</p></li>
+<li><p>New write mode <code class="docutils literal notranslate"><span class="pre">mode='a'</span></code> for appending to, rather than over-writing,
+a netCDF file on disk (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/143">https://github.com/NCAS-CMS/cfdm/issues/143</a>)</p></li>
+<li><p>Better error message in the case of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.core.MaskError</span></code> occurring
+upon reading of CDL files with only header or coordinate information
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/128">https://github.com/NCAS-CMS/cfdm/issues/128</a>)</p></li>
+<li><p>Fix for zero-sized unlimited dimensions when read from a grouped
+netCDF file (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/113">https://github.com/NCAS-CMS/cfdm/issues/113</a>)</p></li>
+<li><p>Fix bug causing occasional non-symmetric <code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code> operations
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/133">https://github.com/NCAS-CMS/cfdm/issues/133</a>)</p></li>
+<li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">cftime&gt;=1.5.0</span></code></p></li>
+<li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">netCDF4&gt;=1.5.4</span></code></p></li>
+</ul>
+</section>
+<section id="version-1-8-8-0">
 <h2>version 1.8.8.0<a class="headerlink" href="#version-1-8-8-0" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2020-12-18</strong></p>
@@ -110,8 +155,8 @@ a scalar domain ancillary construct
 (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/98">https://github.com/NCAS-CMS/cfdm/issues/98</a>)</p></li>
 <li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">cftime&gt;=1.3.0</span></code></p></li>
 </ul>
-</div>
-<div class="section" id="version-1-8-7-0">
+</section>
+<section id="version-1-8-7-0">
 <h2>version 1.8.7.0<a class="headerlink" href="#version-1-8-7-0" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2020-10-09</strong></p>
@@ -138,8 +183,8 @@ that contains multiple geometry containers
 <li><p>Fixed bug that prevented the writing of multiple fields to netCDF when
 at least one dimension was shared between some of the fields.</p></li>
 </ul>
-</div>
-<div class="section" id="version-1-8-6-0">
+</section>
+<section id="version-1-8-6-0">
 <h2>version 1.8.6.0<a class="headerlink" href="#version-1-8-6-0" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2020-07-24</strong></p>
@@ -181,8 +226,8 @@ missing from a dataset (<a class="reference external" href="https://github.com/N
 <li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">cftime&gt;=1.2.1</span></code></p></li>
 <li><p>Removed dependency: <code class="docutils literal notranslate"><span class="pre">future</span></code></p></li>
 </ul>
-</div>
-<div class="section" id="version-1-8-5">
+</section>
+<section id="version-1-8-5">
 <h2>version 1.8.5<a class="headerlink" href="#version-1-8-5" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2020-06-10</strong></p>
@@ -190,8 +235,8 @@ missing from a dataset (<a class="reference external" href="https://github.com/N
 <li><p>Fixed bug that prevented the reading of certain netCDF files, such
 as those with at least one external variable.</p></li>
 </ul>
-</div>
-<div class="section" id="version-1-8-4">
+</section>
+<section id="version-1-8-4">
 <h2>version 1.8.4<a class="headerlink" href="#version-1-8-4" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2020-06-08</strong></p>
@@ -211,8 +256,8 @@ functionality (<a class="reference external" href="https://github.com/NCAS-CMS/c
 specifies Conventions other than CF
 (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/36">https://github.com/NCAS-CMS/cfdm/issues/36</a>).</p></li>
 </ul>
-</div>
-<div class="section" id="version-1-8-3">
+</section>
+<section id="version-1-8-3">
 <h2>version 1.8.3<a class="headerlink" href="#version-1-8-3" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2020-04-30</strong></p>
@@ -226,8 +271,8 @@ specifies Conventions other than CF
 <li><p>New keyword parameter to <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a>: <code class="docutils literal notranslate"><span class="pre">warn_valid</span></code>
 (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/30">https://github.com/NCAS-CMS/cfdm/issues/30</a>)</p></li>
 </ul>
-</div>
-<div class="section" id="version-1-8-2">
+</section>
+<section id="version-1-8-2">
 <h2>version 1.8.2<a class="headerlink" href="#version-1-8-2" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2020-04-24</strong></p>
@@ -243,8 +288,8 @@ specifies Conventions other than CF
 string-valued scalar auxiliary coordinates to not be written to disk
 as such, or even an exception to be raised.</p></li>
 </ul>
-</div>
-<div class="section" id="version-1-8-1">
+</section>
+<section id="version-1-8-1">
 <h2>version 1.8.1<a class="headerlink" href="#version-1-8-1" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2020-04-16</strong></p>
@@ -254,8 +299,8 @@ as such, or even an exception to be raised.</p></li>
 <li><p>Fixed bug that erroneously required netCDF geometry container
 variables to have a <code class="docutils literal notranslate"><span class="pre">geometry_dimension</span></code> netCDF attribute.</p></li>
 </ul>
-</div>
-<div class="section" id="version-1-8-0">
+</section>
+<section id="version-1-8-0">
 <h2>version 1.8.0<a class="headerlink" href="#version-1-8-0" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2020-03-23</strong></p>
@@ -284,8 +329,8 @@ specified with the <code class="docutils literal notranslate"><span class="pre">
 <li><p>Fixed bug whereby <a class="reference internal" href="method/cfdm.Field.has_construct.html#cfdm.Field.has_construct" title="cfdm.Field.has_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.has_construct</span></code></a> would try to delete the
 construct rather than check whether it existed.</p></li>
 </ul>
-</div>
-<div class="section" id="version-1-7-11">
+</section>
+<section id="version-1-7-11">
 <h2>version 1.7.11<a class="headerlink" href="#version-1-7-11" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2019-11-27</strong></p>
@@ -296,8 +341,8 @@ construct rather than check whether it existed.</p></li>
 <li><p>Changed the default value of the <code class="docutils literal notranslate"><span class="pre">ignore_compression</span></code> parameter to
 <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p></li>
 </ul>
-</div>
-<div class="section" id="version-1-7-10">
+</section>
+<section id="version-1-7-10">
 <h2>version 1.7.10<a class="headerlink" href="#version-1-7-10" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2019-11-14</strong></p>
@@ -308,8 +353,8 @@ construct rather than check whether it existed.</p></li>
 <li><p>Fixed bug relating numpy warning when printing a field with masked
 reference time values (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/8">https://github.com/NCAS-CMS/cfdm/issues/8</a>).</p></li>
 </ul>
-</div>
-<div class="section" id="version-1-7-9">
+</section>
+<section id="version-1-7-9">
 <h2>version 1.7.9<a class="headerlink" href="#version-1-7-9" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2019-11-07</strong></p>
@@ -318,8 +363,8 @@ reference time values (<a class="reference external" href="https://github.com/NC
 conversion objects of coordinate conversion constructs
 (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/6">https://github.com/NCAS-CMS/cfdm/issues/6</a>).</p></li>
 </ul>
-</div>
-<div class="section" id="version-1-7-8">
+</section>
+<section id="version-1-7-8">
 <h2>version 1.7.8<a class="headerlink" href="#version-1-7-8" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2019-10-04</strong></p>
@@ -333,8 +378,8 @@ field constructs.</p></li>
 saved/set value is written out to disk.</p></li>
 <li><p>Now reads CDL files (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/5">https://github.com/NCAS-CMS/cfdm/issues/5</a>)</p></li>
 </ul>
-</div>
-<div class="section" id="version-1-7-7">
+</section>
+<section id="version-1-7-7">
 <h2>version 1.7.7<a class="headerlink" href="#version-1-7-7" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2019-06-13</strong></p>
@@ -344,8 +389,8 @@ saved/set value is written out to disk.</p></li>
 (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/4">https://github.com/NCAS-CMS/cfdm/issues/4</a>).</p></li>
 <li><p>Updated documentation</p></li>
 </ul>
-</div>
-<div class="section" id="version-1-7-6">
+</section>
+<section id="version-1-7-6">
 <h2>version 1.7.6<a class="headerlink" href="#version-1-7-6" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2019-06-05</strong></p>
@@ -354,8 +399,8 @@ saved/set value is written out to disk.</p></li>
 <li><p>Fixed bug in <a class="reference internal" href="method/cfdm.Field.convert.html#cfdm.Field.convert" title="cfdm.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.convert</span></code></a>.</p></li>
 <li><p>Fixed bug in <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.constructs.new_identifier</span></code>.</p></li>
 </ul>
-</div>
-<div class="section" id="version-1-7-5">
+</section>
+<section id="version-1-7-5">
 <h2>version 1.7.5<a class="headerlink" href="#version-1-7-5" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2019-05-15</strong></p>
@@ -364,8 +409,8 @@ saved/set value is written out to disk.</p></li>
 <a class="reference internal" href="method/cfdm.Datum.nc_has_variable.html#cfdm.Datum.nc_has_variable" title="cfdm.Datum.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum.nc_has_variable</span></code></a>, <a class="reference internal" href="method/cfdm.Datum.nc_set_variable.html#cfdm.Datum.nc_set_variable" title="cfdm.Datum.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum.nc_set_variable</span></code></a>
 (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/3">https://github.com/NCAS-CMS/cfdm/issues/3</a>).</p></li>
 </ul>
-</div>
-<div class="section" id="version-1-7-4">
+</section>
+<section id="version-1-7-4">
 <h2>version 1.7.4<a class="headerlink" href="#version-1-7-4" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2019-05-14</strong></p>
@@ -401,8 +446,8 @@ deprecated.</p></li>
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CFDMImplementation.nc_set_unlimited_dimensions</span></code>, which is
 deprecated.</p></li>
 </ul>
-</div>
-<div class="section" id="version-1-7-3">
+</section>
+<section id="version-1-7-3">
 <h2>version 1.7.3<a class="headerlink" href="#version-1-7-3" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2019-04-24</strong></p>
@@ -432,8 +477,8 @@ subclassing.</p></li>
 <li><p>Added <code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDFRead._customize_read_vars</span></code> to facilitate subclassing.</p></li>
 <li><p>Added <code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDFWrite._transform_strings</span></code> to facilitate subclassing.</p></li>
 </ul>
-</div>
-<div class="section" id="version-1-7-2">
+</section>
+<section id="version-1-7-2">
 <h2>version 1.7.2<a class="headerlink" href="#version-1-7-2" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2019-04-05</strong></p>
@@ -444,8 +489,8 @@ subclassing.</p></li>
 <li><p>Fixed bug that caused coordinate bounds to be not sliced during
 subspacing (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/1">https://github.com/NCAS-CMS/cfdm/issues/1</a>).</p></li>
 </ul>
-</div>
-<div class="section" id="version-1-7-1">
+</section>
+<section id="version-1-7-1">
 <h2>version 1.7.1<a class="headerlink" href="#version-1-7-1" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2019-04-02</strong></p>
@@ -456,16 +501,16 @@ subspacing (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Constructs.inverse_filters</span></code>: added depth keyword and changed
 default.</p></li>
 </ul>
-</div>
-<div class="section" id="version-1-7-0">
+</section>
+<section id="version-1-7-0">
 <h2>version 1.7.0<a class="headerlink" href="#version-1-7-0" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><strong>2019-04-02</strong></p>
 <ul class="simple">
 <li><p>First release for CF-1.7</p></li>
 </ul>
-</div>
-</div>
+</section>
+</section>
 
 
 
@@ -476,7 +521,7 @@ default.</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

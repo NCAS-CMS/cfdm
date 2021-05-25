@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cfdm.CoordinateReference &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.9.0</a></h1>
 
 
 
@@ -92,6 +93,24 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cfdm development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/786427">Couplet</a>;
+by the <a href="https://ec.europa.eu/programmes/horizon2020/">EC
+Horizon 2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -102,12 +121,12 @@
             
 
 
-  <div class="section" id="cfdm-coordinatereference">
+  <section id="cfdm-coordinatereference">
 <span id="id1"></span><h1>cfdm.CoordinateReference<a class="headerlink" href="#cfdm-coordinatereference" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.CoordinateReference">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">CoordinateReference</code><span class="sig-paren">(</span><em class="sig-param">coordinates=None</em>, <em class="sig-param">datum=None</em>, <em class="sig-param">coordinate_conversion=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.8.0/cfdm/coordinatereference.py#L17-L560"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">CoordinateReference</code><span class="sig-paren">(</span><em class="sig-param">coordinates=None</em>, <em class="sig-param">datum=None</em>, <em class="sig-param">coordinate_conversion=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/coordinatereference.py#L16-L607"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.coordinatereference.CoordinateReference</span></code></p>
 <p>A coordinate reference construct of the CF data model.</p>
 <p>A coordinate reference construct relates the coordinate values of
@@ -151,25 +170,26 @@ coordinate reference construct relates the coordinate values of
 the field to locations in a planetary reference frame.</p></li>
 </ul>
 <p><strong>NetCDF interface</strong></p>
-<p>The netCDF grid mapping variable name of a coordinate reference
-construct may be accessed with the <a class="reference internal" href="../method/cfdm.CoordinateReference.nc_set_variable.html#cfdm.CoordinateReference.nc_set_variable" title="cfdm.CoordinateReference.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>,
-<a class="reference internal" href="../method/cfdm.CoordinateReference.nc_get_variable.html#cfdm.CoordinateReference.nc_get_variable" title="cfdm.CoordinateReference.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.CoordinateReference.nc_del_variable.html#cfdm.CoordinateReference.nc_del_variable" title="cfdm.CoordinateReference.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a> and <a class="reference internal" href="../method/cfdm.CoordinateReference.nc_has_variable.html#cfdm.CoordinateReference.nc_has_variable" title="cfdm.CoordinateReference.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a>
-methods.</p>
+<p>The netCDF variable name may be accessed with the
+<a class="reference internal" href="../method/cfdm.CoordinateReference.nc_set_variable.html#cfdm.CoordinateReference.nc_set_variable" title="cfdm.CoordinateReference.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.CoordinateReference.nc_get_variable.html#cfdm.CoordinateReference.nc_get_variable" title="cfdm.CoordinateReference.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.CoordinateReference.nc_del_variable.html#cfdm.CoordinateReference.nc_del_variable" title="cfdm.CoordinateReference.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a> and
+<a class="reference internal" href="../method/cfdm.CoordinateReference.nc_has_variable.html#cfdm.CoordinateReference.nc_has_variable" title="cfdm.CoordinateReference.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a> methods.</p>
 <p>The netCDF variable group structure may be accessed with the
 <a class="reference internal" href="../method/cfdm.CoordinateReference.nc_set_variable.html#cfdm.CoordinateReference.nc_set_variable" title="cfdm.CoordinateReference.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.CoordinateReference.nc_get_variable.html#cfdm.CoordinateReference.nc_get_variable" title="cfdm.CoordinateReference.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.CoordinateReference.nc_variable_groups.html#cfdm.CoordinateReference.nc_variable_groups" title="cfdm.CoordinateReference.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a>,
-<a class="reference internal" href="../method/cfdm.CoordinateReference.nc_clear_variable_groups.html#cfdm.CoordinateReference.nc_clear_variable_groups" title="cfdm.CoordinateReference.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a> and <a class="reference internal" href="../method/cfdm.CoordinateReference.nc_set_variable_groups.html#cfdm.CoordinateReference.nc_set_variable_groups" title="cfdm.CoordinateReference.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a> methods.</p>
+<a class="reference internal" href="../method/cfdm.CoordinateReference.nc_clear_variable_groups.html#cfdm.CoordinateReference.nc_clear_variable_groups" title="cfdm.CoordinateReference.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a> and <a class="reference internal" href="../method/cfdm.CoordinateReference.nc_set_variable_groups.html#cfdm.CoordinateReference.nc_set_variable_groups" title="cfdm.CoordinateReference.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a>
+methods.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
-<p><strong>Initialization</strong></p>
+<p><strong>Initialisation</strong></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>coordinates: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Identify the related dimension and auxiliary coordinate
-constructs by their construct identifiers. Ignored if the
-<em>source</em> parameter is set.</p>
-<p>The coordinates may also be set after initialisation with
-the <a class="reference internal" href="../method/cfdm.CoordinateReference.set_coordinates.html#cfdm.CoordinateReference.set_coordinates" title="cfdm.CoordinateReference.set_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinates</span></code></a> and <a class="reference internal" href="../method/cfdm.CoordinateReference.set_coordinate.html#cfdm.CoordinateReference.set_coordinate" title="cfdm.CoordinateReference.set_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate</span></code></a> methods.</p>
+<dt>coordinates: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Identify the related dimension and auxiliary
+coordinate constructs by their construct
+identifiers. Ignored if the <em>source</em> parameter is set.</p>
+<p>The coordinates may also be set after initialisation
+with the <a class="reference internal" href="../method/cfdm.CoordinateReference.set_coordinates.html#cfdm.CoordinateReference.set_coordinates" title="cfdm.CoordinateReference.set_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinates</span></code></a> and <a class="reference internal" href="../method/cfdm.CoordinateReference.set_coordinate.html#cfdm.CoordinateReference.set_coordinate" title="cfdm.CoordinateReference.set_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate</span></code></a>
+methods.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">coordinates=['dimensioncoordinate2']</span></code></p>
 </dd>
@@ -179,31 +199,32 @@ the <a class="reference internal" href="../method/cfdm.CoordinateReference.set_c
 </dd>
 <dt>datum: <a class="reference internal" href="cfdm.Datum.html#cfdm.Datum" title="cfdm.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum</span></code></a>, optional</dt><dd><p>Set the datum component of the coordinate reference
 construct. Ignored if the <em>source</em> parameter is set.</p>
-<p>The datum may also be set after initialisation with the
-<a class="reference internal" href="../method/cfdm.CoordinateReference.set_datum.html#cfdm.CoordinateReference.set_datum" title="cfdm.CoordinateReference.set_datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_datum</span></code></a> method.</p>
+<p>The datum may also be set after initialisation with
+the <a class="reference internal" href="../method/cfdm.CoordinateReference.set_datum.html#cfdm.CoordinateReference.set_datum" title="cfdm.CoordinateReference.set_datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_datum</span></code></a> method.</p>
 </dd>
-<dt>coordinate_conversion: <a class="reference internal" href="cfdm.CoordinateConversion.html#cfdm.CoordinateConversion" title="cfdm.CoordinateConversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateConversion</span></code></a>, optional</dt><dd><p>Set the coordinate conversion component of the coordinate
-reference construct. Ignored if the <em>source</em> parameter is
-set.</p>
+<dt>coordinate_conversion: <a class="reference internal" href="cfdm.CoordinateConversion.html#cfdm.CoordinateConversion" title="cfdm.CoordinateConversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateConversion</span></code></a>, optional</dt><dd><p>Set the coordinate conversion component of the
+coordinate reference construct. Ignored if the
+<em>source</em> parameter is set.</p>
 <p>The coordinate conversion may also be set after
 initialisation with the <a class="reference internal" href="../method/cfdm.CoordinateReference.set_coordinate_conversion.html#cfdm.CoordinateReference.set_coordinate_conversion" title="cfdm.CoordinateReference.set_coordinate_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate_conversion</span></code></a>
 method.</p>
 </dd>
-<dt>source: optional</dt><dd><p>Initialize the coordinates, datum and coordinate
+<dt>source: optional</dt><dd><p>Initialise the coordinates, datum and coordinate
 conversion from those of <em>source</em>.</p>
 <p>Note that if <em>source</em> is a <a class="reference internal" href="#cfdm.CoordinateReference" title="cfdm.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference</span></code></a> instance then
-<code class="docutils literal notranslate"><span class="pre">cfdm.CoordinateReference(source=source)</span></code> is equivalent to
-<code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">cfdm.CoordinateReference(source=source)</span></code> is equivalent
+to <code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior to
-initialization. By default arguments are deep copied.</p>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior
+to initialisation. By default arguments are deep
+copied.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 </dd></dl>
 
-<div class="section" id="inspection">
+<section id="inspection">
 <h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -219,7 +240,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Return the canonical identity.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CoordinateReference.identities.html#cfdm.CoordinateReference.identities" title="cfdm.CoordinateReference.identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code></a></p></td>
-<td><p>Return all possible identities.</p></td>
+<td><p>Returns all possible identities.</p></td>
 </tr>
 </tbody>
 </table>
@@ -235,8 +256,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="coordinates">
+</section>
+<section id="coordinates">
 <h2>Coordinates<a class="headerlink" href="#coordinates" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -265,8 +286,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="datum">
+</section>
+<section id="datum">
 <h2>Datum<a class="headerlink" href="#datum" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -298,8 +319,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="coordinate-conversion">
+</section>
+<section id="coordinate-conversion">
 <h2>Coordinate conversion<a class="headerlink" href="#coordinate-conversion" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -331,8 +352,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="miscellaneous">
+</section>
+<section id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -345,15 +366,15 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Return a deep copy.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CoordinateReference.creation_commands.html#cfdm.CoordinateReference.creation_commands" title="cfdm.CoordinateReference.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
-<td><p>Return the commands that would create the coordinate reference construct.</p></td>
+<td><p>Returns the commands to create the coordinate reference.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CoordinateReference.equals.html#cfdm.CoordinateReference.equals" title="cfdm.CoordinateReference.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
 <td><p>Whether two coordinate reference constructs are the same.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="netcdf">
+</section>
+<section id="netcdf">
 <h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -376,7 +397,7 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-<div class="section" id="groups">
+<section id="groups">
 <h3>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -396,9 +417,9 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="special">
+</section>
+</section>
+<section id="special">
 <h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -418,8 +439,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="docstring-substitutions">
+</section>
+<section id="docstring-substitutions">
 <h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -432,18 +453,18 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Return the special docstring substitutions.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CoordinateReference._docstring_substitutions.html#cfdm.CoordinateReference._docstring_substitutions" title="cfdm.CoordinateReference._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
-<td><p>Return the docstring substitutions that apply to methods of the given class.</p></td>
+<td><p>Returns the substitutions that apply to methods of the class.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CoordinateReference._docstring_package_depth.html#cfdm.CoordinateReference._docstring_package_depth" title="cfdm.CoordinateReference._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
-<td><p>Return the package depth, N, for {{package}} docstring substitutions for the given class.</p></td>
+<td><p>Returns the class {{package}} substitutions package depth.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CoordinateReference._docstring_method_exclusions.html#cfdm.CoordinateReference._docstring_method_exclusions" title="cfdm.CoordinateReference._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
-<td><p>Return the names of methods to exclude from docstring substitutions for the given class.</p></td>
+<td><p>Returns method names excluded in the class substitutions.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
 
@@ -454,7 +475,7 @@ initialization. By default arguments are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

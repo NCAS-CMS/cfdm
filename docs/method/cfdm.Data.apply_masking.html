@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cfdm.Data.apply_masking &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.9.0</a></h1>
 
 
 
@@ -94,6 +95,24 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cfdm development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/786427">Couplet</a>;
+by the <a href="https://ec.europa.eu/programmes/horizon2020/">EC
+Horizon 2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -104,11 +123,11 @@
             
 
 
-  <div class="section" id="cfdm-data-apply-masking">
+  <section id="cfdm-data-apply-masking">
 <h1>cfdm.Data.apply_masking<a class="headerlink" href="#cfdm-data-apply-masking" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Data.apply_masking">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">apply_masking</code><span class="sig-paren">(</span><em class="sig-param">fill_values=None</em>, <em class="sig-param">valid_min=None</em>, <em class="sig-param">valid_max=None</em>, <em class="sig-param">valid_range=None</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.8.0/cfdm/data/data.py#L932-L1128"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.apply_masking" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">apply_masking</code><span class="sig-paren">(</span><em class="sig-param">fill_values=None</em>, <em class="sig-param">valid_min=None</em>, <em class="sig-param">valid_max=None</em>, <em class="sig-param">valid_range=None</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/data/data.py#L945-L1148"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.apply_masking" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply masking.</p>
 <p>Masking is applied according to the values of the keyword
 parameters.</p>
@@ -176,9 +195,8 @@ then <a class="reference external" href="https://docs.python.org/3/library/const
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s1">&#39;m&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">masked</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s1">&#39;m&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">masked</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0  1  2  3]</span>
 <span class="go"> [4 --  6  7]</span>
@@ -190,27 +208,27 @@ then <a class="reference external" href="https://docs.python.org/3/library/const
 <span class="go"> [4 --  6  7]</span>
 <span class="go"> [8  9 10 11]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">apply_masking</span><span class="p">(</span><span class="n">fill_values</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[[--  1  2  3]</span>
-<span class="go"> [ 4 --  6  7]</span>
-<span class="go"> [ 8  9 10 11]]</span>
+<span class="go">[[-- 1 2 3]</span>
+<span class="go"> [4 -- 6 7]</span>
+<span class="go"> [8 9 10 11]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">apply_masking</span><span class="p">(</span><span class="n">fill_values</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">11</span><span class="p">])</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[[--  1  2  3]</span>
-<span class="go"> [ 4 --  6  7]</span>
-<span class="go"> [ 8  9 10 --]]</span>
+<span class="go">[[-- 1 2 3]</span>
+<span class="go"> [4 -- 6 7]</span>
+<span class="go"> [8 9 10 --]]</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">apply_masking</span><span class="p">(</span><span class="n">valid_min</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[[-- -- --  3]</span>
-<span class="go"> [ 4 --  6  7]</span>
-<span class="go"> [ 8  9 10 11]]</span>
+<span class="go">[[-- -- -- 3]</span>
+<span class="go"> [4 -- 6 7]</span>
+<span class="go"> [8 9 10 11]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">apply_masking</span><span class="p">(</span><span class="n">valid_max</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[[ 0  1  2  3]</span>
-<span class="go"> [ 4 --  6 --]</span>
+<span class="go">[[0 1 2 3]</span>
+<span class="go"> [4 -- 6 --]</span>
 <span class="go"> [-- -- -- --]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">apply_masking</span><span class="p">(</span><span class="n">valid_range</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[[-- --  2  3]</span>
-<span class="go"> [ 4 --  6  7]</span>
-<span class="go"> [ 8 -- -- --]]</span>
+<span class="go">[[-- -- 2 3]</span>
+<span class="go"> [4 -- 6 7]</span>
+<span class="go"> [8 -- -- --]]</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">set_fill_value</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
@@ -220,14 +238,14 @@ then <a class="reference external" href="https://docs.python.org/3/library/const
 <span class="go"> [8  9 10 11]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">apply_masking</span><span class="p">(</span><span class="n">fill_values</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="gp">... </span>                      <span class="n">valid_range</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[[-- --  2  3]</span>
-<span class="go"> [ 4 --  6 --]</span>
-<span class="go"> [ 8 -- -- --]]</span>
+<span class="go">[[-- -- 2 3]</span>
+<span class="go"> [4 -- 6 --]</span>
+<span class="go"> [8 -- -- --]]</span>
 </pre></div>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
 
@@ -238,7 +256,7 @@ then <a class="reference external" href="https://docs.python.org/3/library/const
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

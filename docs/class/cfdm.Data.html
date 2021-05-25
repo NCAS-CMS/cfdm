@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cfdm.Data &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.8.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.8.9.0</a></h1>
 
 
 
@@ -92,6 +93,24 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cfdm development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/786427">Couplet</a>;
+by the <a href="https://ec.europa.eu/programmes/horizon2020/">EC
+Horizon 2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -102,25 +121,25 @@
             
 
 
-  <div class="section" id="cfdm-data">
+  <section id="cfdm-data">
 <h1>cfdm.Data<a class="headerlink" href="#cfdm-data" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.Data">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">mask=None</em>, <em class="sig-param">_use_array=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.8.0/cfdm/data/data.py#L28-L2632"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">mask=None</em>, <em class="sig-param">_use_array=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/data/data.py#L28-L2671"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFHDF5</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.data.data.Data</span></code></p>
-<p>An orthogonal multidimensional array with masked values and units.</p>
+<p>An orthogonal multidimensional array with masking and units.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
-<p><strong>Initialization</strong></p>
+<p><strong>Initialisation</strong></p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
 <dt>array: data_like, optional</dt><dd><p>The array of values.</p>
-<p>A data_like object is any object that can be converted to
-a <a class="reference internal" href="#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects, <a class="reference internal" href="#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
-objects, and cfdm instances that contain <a class="reference internal" href="#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
-objects.</p>
+<p>A data_like object is any object that can be converted
+to a <a class="reference internal" href="#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+<a class="reference internal" href="#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cfdm instances that contain
+<a class="reference internal" href="#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
 <p>Ignored if the <em>source</em> parameter is set.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">array=[34.6]</span></code></p>
@@ -152,9 +171,9 @@ parameter is set.</p>
 </dl>
 </dd>
 <dt>fill_value: optional</dt><dd><p>The fill value of the data. By default, or if set to
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> fill value appropriate to the array’s
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> fill value appropriate to the array’s
 data type will be used (see
-<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ma.default_fill_value.html#numpy.ma.default_fill_value" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.default_fill_value</span></code></a>). Ignored if the <em>source</em>
+<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ma.default_fill_value.html#numpy.ma.default_fill_value" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.default_fill_value</span></code></a>). Ignored if the <em>source</em>
 parameter is set.</p>
 <p>The fill value may also be set after initialisation with
 the <a class="reference internal" href="../method/cfdm.Data.set_fill_value.html#cfdm.Data.set_fill_value" title="cfdm.Data.set_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fill_value</span></code></a> method.</p>
@@ -165,8 +184,8 @@ the <a class="reference internal" href="../method/cfdm.Data.set_fill_value.html#
 </dd>
 <dt>dtype: data-type, optional</dt><dd><p>The desired data-type for the data. By default the
 data-type will be inferred form the <em>array</em> parameter.</p>
-<p>The data-type may also be set after initialisation with
-the <a class="reference internal" href="../attribute/cfdm.Data.dtype.html#cfdm.Data.dtype" title="cfdm.Data.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a> attribute.</p>
+<p>The data-type may also be set after initialisation
+with the <a class="reference internal" href="../attribute/cfdm.Data.dtype.html#cfdm.Data.dtype" title="cfdm.Data.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a> attribute.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">dtype=float</span></code></p>
 </dd>
@@ -177,25 +196,26 @@ the <a class="reference internal" href="../attribute/cfdm.Data.dtype.html#cfdm.D
 </dl>
 </dd>
 <dt>mask: data_like, optional</dt><dd><p>Apply this mask to the data given by the <em>array</em>
-parameter. By default, or if <em>mask</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, no mask is
-applied. May be any data_like object that broadcasts to
-<em>array</em>. Masking will be carried out where mask elements
-evaluate to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
-<p>A data_like object is any object that can be converted to
-a <a class="reference internal" href="#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.19)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects, <a class="reference internal" href="#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
-objects, and cfdm instances that contain <a class="reference internal" href="#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
-objects.</p>
+parameter. By default, or if <em>mask</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, no mask
+is applied. May be any data_like object that
+broadcasts to <em>array</em>. Masking will be carried out
+where mask elements evaluate to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
+<p>A data_like object is any object that can be converted
+to a <a class="reference internal" href="#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+<a class="reference internal" href="#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cfdm instances that contain
+<a class="reference internal" href="#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
 <p>This mask will applied in addition to any mask already
 defined by the <em>array</em> parameter.</p>
 </dd>
-<dt>source: optional</dt><dd><p>Initialize the array, units, calendar and fill value from
-those of <em>source</em>.</p>
+<dt>source: optional</dt><dd><p>Initialise the array, units, calendar and fill value
+from those of <em>source</em>.</p>
 <p>Note that if <em>source</em> is a <a class="reference internal" href="#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance then
-<code class="docutils literal notranslate"><span class="pre">cfdm.Data(source=source)</span></code> is equivalent to
-<code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">cfdm.Data(source=source)</span></code> is equivalent
+to <code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior to
-initialization. By default arguments are deep copied.</p>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not deep copy input parameters prior
+to initialisation. By default arguments are deep
+copied.</p>
 </dd>
 <dt>kwargs: ignored</dt><dd><p>Not used. Present to facilitate subclassing.</p>
 </dd>
@@ -204,7 +224,7 @@ initialization. By default arguments are deep copied.</p>
 </dl>
 </dd></dl>
 
-<div class="section" id="inspection">
+<section id="inspection">
 <h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Attributes</p>
 <table class="longtable docutils align-default">
@@ -230,8 +250,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="units">
+</section>
+<section id="units">
 <h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -265,10 +285,10 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="data-creation-routines">
+</section>
+<section id="data-creation-routines">
 <h2>Data creation routines<a class="headerlink" href="#data-creation-routines" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="ones-and-zeros">
+<section id="ones-and-zeros">
 <h3>Ones and zeros<a class="headerlink" href="#ones-and-zeros" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -277,12 +297,12 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.empty.html#cfdm.Data.empty" title="cfdm.Data.empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">empty</span></code></a></p></td>
-<td><p>Create a new data array without initializing the elements.</p></td>
+<td><p>Create a new data array without initialising the elements.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="from-existing-data">
+</section>
+<section id="from-existing-data">
 <h3>From existing data<a class="headerlink" href="#from-existing-data" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -295,11 +315,11 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="data-manipulation-routines">
+</section>
+</section>
+<section id="data-manipulation-routines">
 <h2>Data manipulation routines<a class="headerlink" href="#data-manipulation-routines" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="changing-data-shape">
+<section id="changing-data-shape">
 <h3>Changing data shape<a class="headerlink" href="#changing-data-shape" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -308,12 +328,12 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.flatten.html#cfdm.Data.flatten" title="cfdm.Data.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a></p></td>
-<td><p>Flatten axes of the data</p></td>
+<td><p>Flatten axes of the data.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="transpose-like-operations">
+</section>
+<section id="transpose-like-operations">
 <h3>Transpose-like operations<a class="headerlink" href="#transpose-like-operations" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -326,8 +346,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="changing-number-of-dimensions">
+</section>
+<section id="changing-number-of-dimensions">
 <h3>Changing number of dimensions<a class="headerlink" href="#changing-number-of-dimensions" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -343,8 +363,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="adding-and-removing-elements">
+</section>
+<section id="adding-and-removing-elements">
 <h3>Adding and removing elements<a class="headerlink" href="#adding-and-removing-elements" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -357,9 +377,9 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="date-time-support">
+</section>
+</section>
+<section id="date-time-support">
 <h2>Date-time support<a class="headerlink" href="#date-time-support" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -389,17 +409,17 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.Data.datetime_array.html#cfdm.Data.datetime_array" title="cfdm.Data.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a></p></td>
-<td><p>Return an independent numpy array containing the date-time objects corresponding to times since a reference date.</p></td>
+<td><p>Returns an independent numpy array of datetimes.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cfdm.Data.datetime_as_string.html#cfdm.Data.datetime_as_string" title="cfdm.Data.datetime_as_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_as_string</span></code></a></p></td>
-<td><p>Return an independent numpy array containing string representations of times since a reference date.</p></td>
+<td><p>Returns an independent numpy array with datetimes as strings.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="indexing-routines">
+</section>
+<section id="indexing-routines">
 <h2>Indexing routines<a class="headerlink" href="#indexing-routines" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="single-value-selection">
+<section id="single-value-selection">
 <h3>Single value selection<a class="headerlink" href="#single-value-selection" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -418,11 +438,11 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="logic-functions">
+</section>
+</section>
+<section id="logic-functions">
 <h2>Logic functions<a class="headerlink" href="#logic-functions" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="truth-value-testing">
+<section id="truth-value-testing">
 <h3>Truth value testing<a class="headerlink" href="#truth-value-testing" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -435,8 +455,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="comparison">
+</section>
+<section id="comparison">
 <h3>Comparison<a class="headerlink" href="#comparison" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -449,9 +469,9 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="mask-support">
+</section>
+</section>
+<section id="mask-support">
 <h2>Mask support<a class="headerlink" href="#mask-support" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -491,10 +511,10 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="mathematical-functions">
+</section>
+<section id="mathematical-functions">
 <h2>Mathematical functions<a class="headerlink" href="#mathematical-functions" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="sums-products-differences">
+<section id="sums-products-differences">
 <h3>Sums, products, differences<a class="headerlink" href="#sums-products-differences" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -507,11 +527,11 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="set-routines">
+</section>
+</section>
+<section id="set-routines">
 <h2>Set routines<a class="headerlink" href="#set-routines" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="making-proper-sets">
+<section id="making-proper-sets">
 <h3>Making proper sets<a class="headerlink" href="#making-proper-sets" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -524,14 +544,14 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="sorting-searching-and-counting">
+</section>
+</section>
+<section id="sorting-searching-and-counting">
 <h2>Sorting, searching, and counting<a class="headerlink" href="#sorting-searching-and-counting" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="statistics">
+</section>
+<section id="statistics">
 <h2>Statistics<a class="headerlink" href="#statistics" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="order-statistics">
+<section id="order-statistics">
 <h3>Order statistics<a class="headerlink" href="#order-statistics" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -546,15 +566,15 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Return the minimum of an array or minimum along axes.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.max.html#cfdm.Data.max" title="cfdm.Data.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a></p></td>
-<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum</span></code></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.min.html#cfdm.Data.min" title="cfdm.Data.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a></p></td>
-<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum</span></code></p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="sums">
+</section>
+<section id="sums">
 <h3>Sums<a class="headerlink" href="#sums" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -567,9 +587,9 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="compression-by-convention">
+</section>
+</section>
+<section id="compression-by-convention">
 <h2>Compression by convention<a class="headerlink" href="#compression-by-convention" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -578,13 +598,13 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.get_compressed_axes.html#cfdm.Data.get_compressed_axes" title="cfdm.Data.get_compressed_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_axes</span></code></a></p></td>
-<td><p>Return the dimensions that have compressed in the underlying array.</p></td>
+<td><p>Returns the dimensions that are compressed in the array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.get_compressed_dimension.html#cfdm.Data.get_compressed_dimension" title="cfdm.Data.get_compressed_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_dimension</span></code></a></p></td>
-<td><p>Return the position of the compressed dimension in the compressed array.</p></td>
+<td><p>Returns the compressed dimension’s array position.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.get_compression_type.html#cfdm.Data.get_compression_type" title="cfdm.Data.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a></p></td>
-<td><p>Return the type of compression applied to the underlying array.</p></td>
+<td><p>Returns the type of compression applied to the array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.get_count.html#cfdm.Data.get_count" title="cfdm.Data.get_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_count</span></code></a></p></td>
 <td><p>Return the count variable for a compressed array.</p></td>
@@ -608,12 +628,12 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.Data.compressed_array.html#cfdm.Data.compressed_array" title="cfdm.Data.compressed_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compressed_array</span></code></a></p></td>
-<td><p>Return an independent numpy array containing the compressed data.</p></td>
+<td><p>Returns an independent numpy array of the compressed data.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="miscellaneous">
+</section>
+<section id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -632,8 +652,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="performance">
+</section>
+<section id="performance">
 <h2>Performance<a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -655,8 +675,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="special">
+</section>
+<section id="special">
 <h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -671,7 +691,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data.__getitem__.html#cfdm.Data.__getitem__" title="cfdm.Data.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
-<td><p>Return a subspace of the data defined by indices</p></td>
+<td><p>Return a subspace of the data defined by indices.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data.__int__.html#cfdm.Data.__int__" title="cfdm.Data.__int__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__int__</span></code></a></p></td>
 <td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> built-in function.</p></td>
@@ -690,8 +710,8 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="docstring-substitutions">
+</section>
+<section id="docstring-substitutions">
 <h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -704,18 +724,18 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Return the special docstring substitutions.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data._docstring_substitutions.html#cfdm.Data._docstring_substitutions" title="cfdm.Data._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
-<td><p>Return the docstring substitutions that apply to methods of the given class.</p></td>
+<td><p>Returns the substitutions that apply to methods of the class.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Data._docstring_package_depth.html#cfdm.Data._docstring_package_depth" title="cfdm.Data._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
-<td><p>Return the package depth, N, for {{package}} docstring substitutions for the given class.</p></td>
+<td><p>Returns the class {{package}} substitutions package depth.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Data._docstring_method_exclusions.html#cfdm.Data._docstring_method_exclusions" title="cfdm.Data._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
-<td><p>Return the names of methods to exclude from docstring substitutions for the given class.</p></td>
+<td><p>Returns method names excluded in the class substitutions.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
 
@@ -726,7 +746,7 @@ initialization. By default arguments are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-12-18.
+      &copy;2021, NCAS | Page built on 2021-05-25.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
