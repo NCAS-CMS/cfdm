@@ -2,7 +2,7 @@ version 1.8.9.0
 ---------------
 ----
 
-**2021-05-18**
+**2021-05-25**
 
 * Construct access API changes
   (https://github.com/NCAS-CMS/cfdm/issues/124,
