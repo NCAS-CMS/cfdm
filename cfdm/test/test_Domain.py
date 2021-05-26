@@ -1,5 +1,4 @@
 import datetime
-import os
 import unittest
 
 import faulthandler
@@ -13,10 +12,7 @@ import cfdm
 class DomainTest(unittest.TestCase):
     """TODO DOCS."""
 
-    filename = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
-    )
-    f = cfdm.read(filename)[0]
+    f = cfdm.example_field(1)
     d = f.domain
 
     def setUp(self):
@@ -34,24 +30,19 @@ class DomainTest(unittest.TestCase):
 
     def test_Domain__repr__str__dump(self):
         """TODO DOCS."""
-        d = cfdm.example_field(1).domain
+        d = self.d
 
-        # repr
-        _ = repr(d)
-
-        # str
-        _ = str(d)
-
-        # dump
+        repr(d)
+        str(d)
         self.assertIsInstance(d.dump(display=False), str)
 
         d.nc_set_variable("domain1")
         for title in (None, "title"):
-            _ = d.dump(display=False, _title=title)
+            d.dump(display=False, _title=title)
 
         d.nc_del_variable()
         for title in (None, "title"):
-            _ = d.dump(display=False, _title=title)
+            d.dump(display=False, _title=title)
 
     def test_Domain__init__(self):
         """TODO DOCS."""
@@ -59,7 +50,7 @@ class DomainTest(unittest.TestCase):
 
     def test_Domain_equals(self):
         """TODO DOCS."""
-        d = cfdm.example_field(1).domain
+        d = self.d
         e = d.copy()
 
         self.assertTrue(d.equals(d, verbose=3))
@@ -93,7 +84,7 @@ class DomainTest(unittest.TestCase):
 
     def test_Domain_del_construct(self):
         """TODO DOCS."""
-        d = cfdm.example_field(1).domain
+        d = self.d.copy()
 
         self.assertIsInstance(
             d.del_construct("dimensioncoordinate1"), cfdm.DimensionCoordinate
@@ -114,7 +105,7 @@ class DomainTest(unittest.TestCase):
 
     def test_Domain_creation_commands(self):
         """TODO DOCS."""
-        d = cfdm.example_field(1).domain
+        d = self.d.copy()
 
         with self.assertRaises(ValueError):
             d.creation_commands(name="c")
@@ -127,7 +118,7 @@ class DomainTest(unittest.TestCase):
 
     def test_Domain_identity(self):
         """TODO DOCS."""
-        d = cfdm.example_field(1).domain
+        d = self.d
 
         d.nc_set_variable("qwerty")
         self.assertEqual(d.identity(), "ncvar%qwerty")
@@ -137,7 +128,7 @@ class DomainTest(unittest.TestCase):
 
     def test_Domain_identites(self):
         """TODO DOCS."""
-        d = cfdm.example_field(1).domain
+        d = self.d.copy()
 
         d.nc_set_variable("qwerty")
         d.set_property("cf_role", "qwerty")

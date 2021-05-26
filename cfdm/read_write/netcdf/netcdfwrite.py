@@ -2658,13 +2658,6 @@ class NetCDFWrite(IOWrite):
 
         g = self.write_vars
 
-        # Don't ever write any variables in the 'dry run' read iteration of an
-        # append-mode write (only write in the second post-dry-run iteration).
-        if g["dry_run"]:
-            return
-
-        logger.info("    Writing {!r}".format(cfvar))  # pragma: no cover
-
         # ------------------------------------------------------------
         # Set the netCDF4.createVariable datatype
         # ------------------------------------------------------------
@@ -2690,6 +2683,13 @@ class NetCDFWrite(IOWrite):
             "ncdims": original_ncdimensions,
         }
 
+        # Don't ever write any variables in the 'dry run' read iteration of an
+        # append-mode write (only write in the second post-dry-run iteration).
+        if g["dry_run"]:
+            return
+
+        logger.info(f"    Writing {cfvar!r}")  # pragma: no cover
+
         # ------------------------------------------------------------
         # Find the fill value - the value that the variable's data get
         # filled before any data is written. if the fill value is
@@ -2714,7 +2714,7 @@ class NetCDFWrite(IOWrite):
 
         if chunksizes is not None:
             logger.detail(
-                "      HDF5 chunksizes: {}".format(chunksizes)
+                f"      HDF5 chunksizes: {chunksizes}"
             )  # pragma: no cover
 
         # ------------------------------------------------------------
@@ -2727,20 +2727,15 @@ class NetCDFWrite(IOWrite):
                 ncdim_groups = self._groups(ncdim)
                 if not groups.startswith(ncdim_groups):
                     raise ValueError(
-                        "Can't create netCDF variable {!r} from {!r} "
-                        "with dimension {!r} that is not in the same group or "
-                        "a sub-group as the variable.".format(
-                            ncvar, cfvar, ncdim
-                        )
+                        f"Can't create netCDF variable {ncvar!r} from "
+                        f"{cfvar!r} with dimension {ncdim!r} that is not in "
+                        "the same group or a sub-group as the variable."
                     )
-        # --- End: if
 
         # ------------------------------------------------------------
         # Replace netCDF dimension names with their basenames
         # (CF>=1.8)
         # ------------------------------------------------------------
-        #        ncdimensions_basename = [ncdim.split('/')[-1]
-        #                                 for ncdim in ncdimensions]
         ncdimensions_basename = [
             self._remove_group_structure(ncdim) for ncdim in ncdimensions
         ]
@@ -2766,35 +2761,33 @@ class NetCDFWrite(IOWrite):
         kwargs = self._customize_createVariable(cfvar, kwargs)
 
         logger.info(
-            "        to netCDF variable: {}({})".format(
-                ncvar, ", ".join(ncdimensions)
-            )
+            "        to netCDF variable: "
+            f"{ncvar}({ncvar, ', '.join(ncdimensions)})"
         )  # pragma: no cover
 
         try:
             self._createVariable(**kwargs)
         except RuntimeError as error:
             error = str(error)
-            message = "Can't create variable in {} file from {} ({})".format(
-                g["netcdf"].file_format, cfvar, error
+            message = (
+                f"Can't create variable in {g['netcdf'].file_format} file "
+                f"from {cfvar!r} ({error})"
             )
             if error == (
-                "NetCDF: Not a valid data type or _FillValue " "type mismatch"
+                "NetCDF: Not a valid data type or _FillValue type mismatch"
             ):
                 raise ValueError(
-                    "Can't write {} data from {!r} to a {} file. "
+                    f"Can't write {cfvar.data.dtype.name} data from "
+                    f"{cfvar!r} to a {g['netcdf'].file_format} file. "
                     "Consider using a netCDF4 format, or use the 'datatype' "
-                    "parameter, or change the datatype before writing.".format(
-                        cfvar.data.dtype.name, cfvar, g["netcdf"].file_format
-                    )
+                    "parameter, or change the datatype before writing."
                 )
             elif error == "NetCDF: NC_UNLIMITED in the wrong index":
                 raise RuntimeError(
-                    message + ". In a {} file the unlimited dimension must "
-                    "be the first (leftmost) dimension of the variable. "
-                    "Consider using a netCDF4 format.".format(
-                        g["netcdf"].file_format
-                    )
+                    f"{message}. In a {g['netcdf'].file_format} file the "
+                    "unlimited dimension must be the first (leftmost) "
+                    "dimension of the variable. "
+                    "Consider using a netCDF4 format."
                 )
             else:
                 raise RuntimeError(message)
