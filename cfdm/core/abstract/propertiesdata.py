@@ -13,9 +13,9 @@ class PropertiesData(Properties):
     def __new__(cls, *args, **kwargs):
         """Store component classes.
 
-        NOTE: If a child class requires a different component classes than
-        the ones defined here, then they must be redefined in the child
-        class.
+        NOTE: If a child class requires a different component classes
+        than the ones defined here, then they must be redefined in the
+        child class.
 
         """
         instance = super().__new__(cls)
@@ -30,7 +30,7 @@ class PropertiesData(Properties):
         copy=True,
         _use_data=True,
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -42,7 +42,7 @@ class PropertiesData(Properties):
             {{init data: data_like, optional}}
 
             source: optional
-                Initialize the properties and data from those of *source*.
+                Initialise the properties and data from those of *source*.
 
                 {{init source}}
 
@@ -59,7 +59,6 @@ class PropertiesData(Properties):
                     data = source.get_data(None)
                 except AttributeError:
                     data = None
-        # --- End: if
 
         if _use_data and data is not None:
             self.set_data(data, copy=copy)
@@ -288,8 +287,11 @@ class PropertiesData(Properties):
         data = self._get_component("data", None)
 
         if data is None:
+            if default is None:
+                return
+
             return self._default(
-                default, message=f"{self.__class__.__name__!r} has no data"
+                default, message=f"{self.__class__.__name__} has no data"
             )
 
         if _units:

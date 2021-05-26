@@ -77,7 +77,6 @@ for core in ("", "_core"):
         except FileNotFoundError:
             n_missing_files += 1
             print(f"File {rst_file} does not exist")
-# --- End: for
 
 # Raise an exception to ensure a non-zero shell return code
 if n_undocumented_methods:

@@ -18,7 +18,7 @@ class CompressedArray(Array):
         compression_type=None,
         **kwargs
     ):
-        """Initialises the `CompressedArray` instance.
+        """**Initialisation**
 
         :Parameters:
 

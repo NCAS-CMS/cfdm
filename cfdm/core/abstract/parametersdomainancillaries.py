@@ -11,26 +11,26 @@ class ParametersDomainAncillaries(Parameters):
     def __init__(
         self, parameters=None, domain_ancillaries=None, source=None, copy=True
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
             parameters: `dict`, optional
-               Set parameters. The dictionary keys are term names, with
-               corresponding parameter values. Ignored if the *source*
-               parameter is set.
+               Set parameters. The dictionary keys are term names,
+               with corresponding parameter values. Ignored if the
+               *source* parameter is set.
 
-               Parameters may also be set after initialisation with the
-               `set_parameters` and `set_parameter` methods.
+               Parameters may also be set after initialisation with
+               the `set_parameters` and `set_parameter` methods.
 
                *Parameter example:*
                  ``parameters={'earth_radius': 6371007.}``
 
             domain_ancillaries: `dict`, optional
                Set references to domain ancillary constructs. The
-               dictionary keys are term names, with corresponding domain
-               ancillary construct keys. Ignored if the *source* parameter
-               is set.
+               dictionary keys are term names, with corresponding
+               domain ancillary construct keys. Ignored if the
+               *source* parameter is set.
 
                Domain ancillaries may also be set after initialisation
                with the `set_domain_ancillaries` and
@@ -40,8 +40,8 @@ class ParametersDomainAncillaries(Parameters):
                  ``domain_ancillaries={'orog': 'domainancillary2'}``
 
             source: optional
-                Initialize the parameters and domain ancillary terms from
-                those of *source*.
+                Initialise the parameters and domain ancillary terms
+                from those of *source*.
 
                 {{init source}}
 
@@ -153,6 +153,9 @@ class ParametersDomainAncillaries(Parameters):
                 domain_ancillary
             )
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
                 f"{self.__class__.__name__!r} has no {domain_ancillary!r} domain ancillary",
@@ -240,6 +243,9 @@ class ParametersDomainAncillaries(Parameters):
         try:
             return self._get_component("domain_ancillaries")[domain_ancillary]
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
                 f"{self.__class__.__name__!r} has no {domain_ancillary!r} domain ancillary",

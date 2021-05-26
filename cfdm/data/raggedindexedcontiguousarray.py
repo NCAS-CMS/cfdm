@@ -34,7 +34,7 @@ class RaggedIndexedContiguousArray(
         count_variable=None,
         index_variable=None,
     ):
-        """Initialises the `RaggedIndexedContiguousArray` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -141,8 +141,6 @@ class RaggedIndexedContiguousArray(
                 # slice(0, sample_indices.stop - sample_indices.start))
 
                 uarray[u_indices] = compressed_array[(sample_indices,)]
-            # --- End: for
-        # --- End: for
 
         return self.get_subspace(uarray, indices, copy=True)
 

@@ -62,7 +62,7 @@ class Bounds(
             {{init data: data_like, optional}}
 
             source: optional
-                Initialize the properties and data from those of *source*.
+                Initialise the properties and data from those of *source*.
 
                 {{init source}}
 
@@ -187,9 +187,13 @@ class Bounds(
         data = super().get_data(
             default=None, _units=_units, _fill_value=_fill_value
         )
-
         if data is None:
-            return super().get_data(default=default)
+            if default is None:
+                return
+
+            return self._default(
+                default, f"{self.__class__.__name__} has no data"
+            )
 
         if _units or _fill_value:
             inherited_properties = self._get_component(
@@ -278,7 +282,9 @@ class Bounds(
         'longitude'
 
         """
-        inherited_properties = self._get_component("inherited_properties", {})
+        inherited_properties = self._get_component(
+            "inherited_properties", None
+        )
         if inherited_properties:
             bounds = self.copy()
             properties = bounds.properties()

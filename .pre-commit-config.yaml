@@ -10,7 +10,7 @@ repos:
   # Use specific format-enforcing pre-commit hooks from the core library
   # with the default configuration (see pre-commit.com for documentation)
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.4.0
+    rev: v3.4.0
     hooks:
       - id: check-ast
       - id: debug-statements
@@ -23,7 +23,7 @@ repos:
   # (see https://black.readthedocs.io/en/stable/ for documentation and see
   # the cfdm pyproject.toml file for our custom black configuration)
   - repo: https://github.com/ambv/black
-    rev: 20.8b1
+    rev: 21.5b0
     hooks:
       - id: black
         language_version: python3
@@ -47,9 +47,9 @@ repos:
   # Check the docstrings conforms to Google docstring format as much as can
   # be detected by the 'pydocstyle' checker
   # (see http://www.pydocstyle.org/en/stable/index.html for
-  # docs and see the cfunits .pydocstyle.ini file for our custom configuration)
+  # docs and see the cfdm .pydocstyle.ini file for our custom configuration)
   - repo: https://github.com/pycqa/pydocstyle
-    rev: 5.1.1
+    rev: 6.0.0
     hooks:
       - id: pydocstyle
         # pydocstyle bug, see https://github.com/PyCQA/pydocstyle/issues/526
@@ -59,6 +59,6 @@ repos:
   # (see https://flake8.pycqa.org/en/latest/ for documentation and see
   # the cfdm .flake8 file for our custom flake8 configuration)
   - repo: https://gitlab.com/pycqa/flake8
-    rev: 3.8.3
+    rev: 3.9.1
     hooks:
       - id: flake8

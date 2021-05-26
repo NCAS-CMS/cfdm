@@ -146,11 +146,11 @@ Geometries
 
    ~cfdm.AuxiliaryCoordinate.interior_ring
 
-Climatological time
-^^^^^^^^^^^^^^^^^^^
+Climatology
+^^^^^^^^^^^
 
 .. rubric:: Methods
-	    
+
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
@@ -169,7 +169,7 @@ Miscellaneous
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
-   :template: method.rst
+   :template: method.rst	     
 
    ~cfdm.AuxiliaryCoordinate.copy
    ~cfdm.AuxiliaryCoordinate.creation_commands

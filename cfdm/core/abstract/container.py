@@ -23,12 +23,12 @@ class Container(metaclass=DocstringRewriteMeta):
     """
 
     def __init__(self, source=None, copy=True):
-        """Initialises the `{{class}}` instance.
+        """**Initialiation**
 
         :Parameters:
 
             source: optional
-                Initialize the components from those of *source*.
+                Initialise the components from those of *source*.
 
                 {{init source}}
 
@@ -189,9 +189,12 @@ class Container(metaclass=DocstringRewriteMeta):
         try:
             return self._components.pop(component)
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
-                f"{ self.__class__.__name__!r} has no {component!r} component",
+                f"{self.__class__.__name__} has no {component!r} component",
             )
 
     @property
@@ -263,9 +266,12 @@ class Container(metaclass=DocstringRewriteMeta):
         try:
             return self._components[component]
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no {component!r} component",
+                f"{self.__class__.__name__} has no {component!r} component",
             )
 
     def _has_component(self, component):

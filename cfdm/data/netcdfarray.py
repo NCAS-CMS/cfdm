@@ -25,7 +25,7 @@ class NetCDFArray(abstract.Array):
         size=None,
         mask=True,
     ):
-        """Initialises the `NetCDFArray` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -37,17 +37,18 @@ class NetCDFArray(abstract.Array):
                 array. Required unless *varid* is set.
 
             varid: `int`, optional
-                The UNIDATA netCDF interface ID of the variable containing
-                the array. Required if *ncvar* is not set, ignored if
-                *ncvar* is set.
+                The UNIDATA netCDF interface ID of the variable
+                containing the array. Required if *ncvar* is not set,
+                ignored if *ncvar* is set.
 
             group: `None` or sequence of `str`, optional
                 Specify the netCDF4 group to which the netCDF variable
-                belongs. By default, or if *group* is `None` or an empty
-                sequence, it assumed to be in the root group. The last
-                element in the sequence is the name of the group in which
-                the variable lies, with other elements naming any parent
-                groups (excluding the root group).
+                belongs. By default, or if *group* is `None` or an
+                empty sequence, it assumed to be in the root
+                group. The last element in the sequence is the name of
+                the group in which the variable lies, with other
+                elements naming any parent groups (excluding the root
+                group).
 
                 *Parameter example:*
                   To specify that a variable is in the root group:
@@ -166,7 +167,6 @@ class NetCDFArray(abstract.Array):
                     variable.set_auto_mask(mask)
                     array = variable[indices]
                     break
-        # --- End: if
 
         if self._get_component("close"):
             # Close the netCDF file

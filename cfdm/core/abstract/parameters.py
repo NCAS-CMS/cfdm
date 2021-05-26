@@ -11,23 +11,23 @@ class Parameters(Container):
     """
 
     def __init__(self, parameters=None, source=None, copy=True):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
             parameters: `dict`, optional
-               Set parameters. The dictionary keys are parameter names,
-               with corresponding values. Ignored if the *source*
-               parameter is set.
+               Set parameters. The dictionary keys are parameter
+               names, with corresponding values. Ignored if the
+               *source* parameter is set.
 
-               Parameters may also be set after initialisation with the
-               `set_parameters` and `set_parameter` methods.
+               Parameters may also be set after initialisation with
+               the `set_parameters` and `set_parameter` methods.
 
                *Parameter example:*
                  ``parameters={'earth_radius': 6371007.}``
 
             source: optional
-                Initialize the parameters from those of *source*.
+                Initialise the parameters from those of *source*.
 
                 {{init source}}
 
@@ -132,6 +132,9 @@ class Parameters(Container):
         try:
             return self._get_component("parameters").pop(parameter)
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
                 f"{self.__class__.__name__!r} has no {parameter!r} parameter",
@@ -178,6 +181,9 @@ class Parameters(Container):
         try:
             return self._get_component("parameters")[parameter]
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
                 f"{self.__class__.__name__!r} has no {parameter!r} parameter",

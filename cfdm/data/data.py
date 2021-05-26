@@ -45,7 +45,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         _use_array=True,
         **kwargs,
     ):
-        """Initialises the `Data` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -105,8 +105,8 @@ class Data(Container, NetCDFHDF5, core.Data):
                 The desired data-type for the data. By default the
                 data-type will be inferred form the *array* parameter.
 
-                The data-type may also be set after initialisation with
-                the `dtype` attribute.
+                The data-type may also be set after initialisation
+                with the `dtype` attribute.
 
                 *Parameter example:*
                     ``dtype=float``
@@ -119,10 +119,10 @@ class Data(Container, NetCDFHDF5, core.Data):
 
             mask: data_like, optional
                 Apply this mask to the data given by the *array*
-                parameter. By default, or if *mask* is `None`, no mask is
-                applied. May be any data_like object that broadcasts to
-                *array*. Masking will be carried out where mask elements
-                evaluate to `True`.
+                parameter. By default, or if *mask* is `None`, no mask
+                is applied. May be any data_like object that
+                broadcasts to *array*. Masking will be carried out
+                where mask elements evaluate to `True`.
 
                 {{data_like}}
 
@@ -130,14 +130,15 @@ class Data(Container, NetCDFHDF5, core.Data):
                 defined by the *array* parameter.
 
             source: optional
-                Initialize the array, units, calendar and fill value from
-                those of *source*.
+                Initialise the array, units, calendar and fill value
+                from those of *source*.
 
                 {{init source}}
 
             copy: `bool`, optional
-                If False then do not deep copy input parameters prior to
-                initialization. By default arguments are deep copied.
+                If False then do not deep copy input parameters prior
+                to initialisation. By default arguments are deep
+                copied.
 
             kwargs: ignored
                 Not used. Present to facilitate subclassing.
@@ -686,7 +687,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                             step = stop - start
                             stop += 1
                             y.append(slice(start, stop, step))
-                    # --- End: for
+
                     indices1[i] = y
                 else:
                     indices1[i] = (x,)
@@ -717,7 +718,6 @@ class Data(Container, NetCDFHDF5, core.Data):
                     itertools.product(*indices1), itertools.product(*indices2)
                 ):
                     array[i] = value[j]
-        # --- End: if
 
     # ----------------------------------------------------------------
     # Attributes
@@ -1333,7 +1333,6 @@ class Data(Container, NetCDFHDF5, core.Data):
                         "Can't determine fill value for "
                         f"data type {d.dtype.str!r}"
                     )  # pragma: no cover
-        # --- End: if
 
         array = self.array
 
@@ -1570,8 +1569,8 @@ class Data(Container, NetCDFHDF5, core.Data):
         if not isinstance(indices, tuple):
             indices = (indices,)
 
-        # Initialize the list of parsed indices as the input indices with any
-        # Ellipsis objects expanded
+        # Initialise the list of parsed indices as the input indices
+        # with any Ellipsis objects expanded
         length = len(indices)
         n = len(shape)
         ndim = n
@@ -1644,7 +1643,6 @@ class Data(Container, NetCDFHDF5, core.Data):
                     else:
                         # E.g. [1, 3, 4] -> [1, 3, 4]
                         pass
-            # --- End: if
 
             parsed_indices[i] = index
 
@@ -1856,7 +1854,6 @@ class Data(Container, NetCDFHDF5, core.Data):
                         "Can't squeeze data: "
                         f"Can't remove axis of size {shape[i]}"
                     )
-        # --- End: if
 
         if not axes:
             return d
@@ -2079,7 +2076,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
     @classmethod
     def empty(cls, shape, dtype=None, units=None, calendar=None):
-        """Create a new data array without initializing the elements.
+        """Create a new data array without initialising the elements.
 
         Note that the mask of the returned empty data is hard.
 
@@ -2091,8 +2088,8 @@ class Data(Container, NetCDFHDF5, core.Data):
                 The shape of the new array.
 
             dtype: `numpy.dtype` or any object convertible to `numpy.dtype`
-                The data-type of the new array. By default the data-type
-                is ``float``.
+                The data-type of the new array. By default the
+                data-type is ``float``.
 
             units: `str` or `Units`
                 The units for the empty data array.
@@ -2283,7 +2280,6 @@ class Data(Container, NetCDFHDF5, core.Data):
                         )
                     )  # pragma: no cover
                     return False
-        # --- End: if
 
         # ------------------------------------------------------------
         # Check for equal (uncompressed) array values
@@ -2308,8 +2304,8 @@ class Data(Container, NetCDFHDF5, core.Data):
         :Returns:
 
             `set`
-                The file name in normalized, absolute form. If the data is
-                are memory then an empty `set` is returned.
+                The file name in normalised, absolute form. If the
+                data is are memory then an empty `set` is returned.
 
         **Examples:**
 

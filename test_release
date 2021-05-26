@@ -2,6 +2,10 @@
 
 # --------------------------------------------------------------------
 # Install and run tests in ~/tmp
+#
+# Usage:
+#
+# $ ./test_release 1.8.9.0
 # --------------------------------------------------------------------
 
 set -x
@@ -13,21 +17,23 @@ fi
 
 vn=$1
 
+# Get the major.minor Python version
+py=$(python -V | cut -d " " -f 2 | cut -d "." -f 1,2)
+
 mkdir -p ~/tmp
 
 cp dist/cfdm-$vn.tar.gz ~/tmp
 cd ~/tmp
 rm -fr ~/tmp/test ~/tmp/bin ~/tmp/lib ~/tmp/cfdm-$vn
-#mkdir -p ~/tmp/lib/python
 
 tar zxvf cfdm-$vn.tar.gz
 cd cfdm-$vn
 
-export PYTHONPATH=~/tmp/lib/python:$PYTHONPATH
+export PYTHONPATH=~/tmp/lib/python/cfdm-$vn-py$py.egg:$PYTHONPATH
 
 python setup.py install --home=~/tmp
 
-cd ~/tmp/lib/python/cfdm/test
+cd ~/tmp/lib/python/cfdm-$vn-py$py.egg/cfdm/test
 python run_tests.py
 
 set -x

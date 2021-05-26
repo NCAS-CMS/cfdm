@@ -1,7 +1,10 @@
-class FieldDomain:
-    """Mixin class for methods common to field and domain constructs.
+from ..meta import DocstringRewriteMeta
 
-    .. versionadded:: (cfdm) 1.9.0.0
+
+class FieldDomain(metaclass=DocstringRewriteMeta):
+    """Mixin class for methods of field and domain constructs.
+
+    .. versionadded:: (cfdm) 1.8.9.0
 
     """
 
@@ -14,46 +17,48 @@ class FieldDomain:
         return 1
 
     # ----------------------------------------------------------------
-    # Attributes
+    # Methods
     # ----------------------------------------------------------------
-    @property
-    def constructs(self):
-        """Return the metdata constructs.
+    def del_construct(self, key, default=ValueError()):
+        """Remove a metadata construct.
+
+        If a domain axis construct is selected for removal then it
+        can't be spanned by any metadata construct data, nor the field
+        construct's data; nor be referenced by any cell method
+        constructs.
+
+        However, a domain ancillary construct may be removed even if
+        it is referenced by coordinate reference construct. In this
+        case the reference is replace with `None`.
 
         .. versionadded:: (cfdm) 1.7.0
 
+        .. seealso:: `constructs`, `get_construct`, `has_construct`,
+                     `set_construct`
+        :Parameters:
+
+            key: `str`
+                The key of the metadata construct to be removed.
+                *Parameter example:*
+                  ``key='auxiliarycoordinate0'``
+
+            default: optional
+                Return the value of the *default* parameter if the
+                construct can not be removed, or does not exist.
+                {{default Exception}}
+
         :Returns:
 
-            `Constructs`
-                The constructs.
+                The removed metadata construct.
 
         **Examples:**
 
-        >>> f = {{package}}.example_field(0)
-        >>> print(f.constructs)
-        Constructs:
-        {'cellmethod0': <{{repr}}CellMethod: area: mean>,
-         'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
-         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
-         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
-         'domainaxis0': <{{repr}}DomainAxis: size(5)>,
-         'domainaxis1': <{{repr}}DomainAxis: size(8)>,
-         'domainaxis2': <{{repr}}DomainAxis: size(1)>}
-        >>> print(f.domain.constructs)
-        Constructs:
-        {'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
-         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
-         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
-         'domainaxis0': <{{repr}}DomainAxis: size(5)>,
-         'domainaxis1': <{{repr}}DomainAxis: size(8)>,
-         'domainaxis2': <{{repr}}DomainAxis: size(1)>}
+        >>> f.del_construct('dimensioncoordinate1')
+        <{{repr}}DimensionCoordinate: grid_latitude(111) degrees>
 
         """
-        return self._get_component("constructs")
+        return self.constructs._del_construct(key, default=default)
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def get_construct(self, key, default=ValueError()):
         """Return a metadata construct.
 
@@ -95,14 +100,14 @@ class FieldDomain:
         <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>
 
         """
+        construct = self.constructs.get(key)
+        if construct is not None:
+            return construct
 
-        c = self.constructs.get(key)
-        if c is None:
-            return self._default(
-                default, message=f"{key!r} construct does not exist"
-            )
+        if default is None:
+            return default
 
-        return c
+        return self._default(default, f"No construct for key {key!r}")
 
     def has_construct(self, key):
         """Whether a metadata construct exists.
@@ -196,7 +201,7 @@ class FieldDomain:
         )
 
     def get_data_axes(self, key, default=ValueError):
-        """Gets the keys of the axes spanned by the construct data.
+        """Gets the keys of the axes spanned by a construct's data.
 
         Specifically, returns the keys of the domain axis constructs
         spanned by the data of a metadata construct.
@@ -238,16 +243,20 @@ class FieldDomain:
         None
 
         """
-        try:
-            return self.constructs.data_axes()[key]
-        except KeyError:
-            return self._default(
-                default,
-                message=(
-                    f"{self.__class__.__name__!r} has no data axes for the "
-                    f"metadata construct {key!r}"
-                ),
-            )
+        data_axes = self.constructs.get_data_axes(key, default=None)
+        if data_axes is not None:
+            return data_axes
+
+        if default is None:
+            return default
+
+        return self._default(
+            default,
+            message=(
+                f"{self.__class__.__name__!r} has no data axes for "
+                f"construct {key!r}"
+            ),
+        )
 
     def del_data_axes(self, key, default=ValueError()):
         """Removes the keys of the axes spanned by the construct data.
@@ -291,20 +300,21 @@ class FieldDomain:
         'no axes'
 
         """
-        try:
-            data_axes = self.constructs.data_axes()[key]
-        except KeyError:
-            return self._default(
-                default,
-                message=(
-                    f"{self.__class__.__name__!r} has no data axes for the "
-                    f"metadata construct {key!r}"
-                ),
-            )
-        else:
+        data_axes = self.constructs.get_data_axes(key, default=None)
+        if data_axes is not None:
             self.constructs._del_data_axes(key)
+            return data_axes
 
-        return data_axes
+        if default is None:
+            return default
+
+        return self._default(
+            default,
+            message=(
+                f"{self.__class__.__name__!r} has no data axes for "
+                f"construct {key!r}"
+            ),
+        )
 
     def has_data_axes(self, key):
         """Whether the axes spanned by the construct data have been set.
@@ -343,8 +353,7 @@ class FieldDomain:
         None
 
         """
-        axes = self.get_data_axes(key, default=None)
-        return axes is not None
+        return self.get_data_axes(key, default=None) is not None
 
     def set_data_axes(self, axes, key):
         """Sets domain axis constructs spanned by the construct data.

@@ -11,7 +11,7 @@ class Coordinate(PropertiesDataBounds):
     def del_climatology(self, default=ValueError()):
         """Remove the climatology setting.
 
-        .. versionadded:: (cfdm) 1.9.0.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         .. seealso:: `get_climatology`, `is_climatology`,
                      `set_climatology`,
@@ -50,18 +50,22 @@ class Coordinate(PropertiesDataBounds):
         False
 
         """
-        try:
-            return self._del_component("climatology")
-        except ValueError:
-            return self._default(
-                default,
-                f"{self.__class__.__name__!r} has no climatology setting",
-            )
+        out = self._del_component("climatology", None)
+        if out is not None:
+            return out
+
+        if default is None:
+            return
+
+        return self._default(
+            default,
+            f"{self.__class__.__name__!r} has no climatology set",
+        )
 
     def get_climatology(self, default=ValueError()):
         """Return the climatology setting.
 
-        .. versionadded:: (cfdm) 1.9.0.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         .. seealso:: `del_climatology`, `is_climatology`,
                      `set_climatology`,
@@ -99,18 +103,22 @@ class Coordinate(PropertiesDataBounds):
         False
 
         """
-        try:
-            return self._get_component("climatology")
-        except ValueError:
-            return self._default(
-                default,
-                f"{self.__class__.__name__!r} has no climatology setting",
-            )
+        out = self._get_component("climatology", None)
+        if out is not None:
+            return out
+
+        if default is None:
+            return
+
+        return self._default(
+            default,
+            f"{self.__class__.__name__!r} has no climatology set",
+        )
 
     def is_climatology(self):
         """True if the coordinates are climatological.
 
-        .. versionadded:: (cfdm) 1.9.0.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         .. seealso:: `del_climatology`, `get_climatology`,
                      `set_climatology`,
@@ -141,7 +149,7 @@ class Coordinate(PropertiesDataBounds):
         False
 
         """
-        return bool(self._get_component("climatology", False))
+        return bool(self._get_component("climatology", None))
 
     def set_climatology(self, climatology):
         """Set whether or not coordinates are climatological.
@@ -149,7 +157,7 @@ class Coordinate(PropertiesDataBounds):
         Only coordinate constructs with units of reference time (or unset
         units) can be set as climatological.
 
-        .. versionadded:: (cfdm) 1.9.0.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         .. seealso:: `del_climatology`, `get_climatology`,
                      `is_climatology`, `set_climatology`,
@@ -194,6 +202,5 @@ class Coordinate(PropertiesDataBounds):
                     f"Can't set {self!r} set as climatological: "
                     f"Incorrect units: {units!r}"
                 )
-        # --- End: if
 
         self._set_component("climatology", climatology, copy=False)

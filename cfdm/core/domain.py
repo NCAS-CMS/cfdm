@@ -41,7 +41,7 @@ class Domain(mixin.FieldDomain, abstract.Properties):
     def __init__(
         self, properties=None, source=None, copy=True, _use_data=True
     ):
-        """Initialisation.
+        """**Initialisation**
 
         :Parameters:
 
@@ -51,7 +51,7 @@ class Domain(mixin.FieldDomain, abstract.Properties):
                ``properties={'long_name': 'Domain for model'}``
 
             source: optional
-                Initialize the metadata constructs from those of
+                Initialise the metadata constructs from those of
                 *source*.
 
                 {{init source}}
@@ -106,6 +106,33 @@ class Domain(mixin.FieldDomain, abstract.Properties):
 
         """
         return "domain"
+
+    @property
+    def constructs(self):
+        """Return the metadata constructs.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        :Returns:
+
+            `Constructs`
+                The constructs.
+
+        **Examples:**
+
+        >>> d = {{package}}.example_field(0)
+        >>> print(d.constructs)
+        Constructs:
+        {'cellmethod0': <CellMethod: area: mean>,
+         'dimensioncoordinate0': <{{repr}}DimensionCoordinate: latitude(5) degrees_north>,
+         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: longitude(8) degrees_east>,
+         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >,
+         'domainaxis0': <{{repr}}DomainAxis: size(5)>,
+         'domainaxis1': <{{repr}}DomainAxis: size(8)>,
+         'domainaxis2': <{{repr}}DomainAxis: size(1)>}
+
+        """
+        return self._get_component("constructs")
 
     # ----------------------------------------------------------------
     # Methods

@@ -1,5 +1,4 @@
 import datetime
-import inspect
 import os
 import unittest
 
@@ -32,13 +31,9 @@ class DomainTest(unittest.TestCase):
         # cfdm.LOG_LEVEL('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
-        self.test_only = []
 
     def test_Domain__repr__str__dump(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cfdm.example_field(1).domain
 
         # repr
@@ -59,13 +54,11 @@ class DomainTest(unittest.TestCase):
             _ = d.dump(display=False, _title=title)
 
     def test_Domain__init__(self):
+        """TODO DOCS."""
         cfdm.Domain(source="qwerty")
 
     def test_Domain_equals(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
         d = cfdm.example_field(1).domain
         e = d.copy()
 
@@ -80,6 +73,7 @@ class DomainTest(unittest.TestCase):
         self.assertFalse(e.equals(d))
 
     def test_Domain_properties(self):
+        """TODO DOCS."""
         d = cfdm.Domain()
 
         d.set_property("long_name", "qwerty")
@@ -98,6 +92,7 @@ class DomainTest(unittest.TestCase):
         self.assertEqual(d.properties(), {"long_name": "qwerty", "foo": "bar"})
 
     def test_Domain_del_construct(self):
+        """TODO DOCS."""
         d = cfdm.example_field(1).domain
 
         self.assertIsInstance(
@@ -105,6 +100,7 @@ class DomainTest(unittest.TestCase):
         )
 
     def test_Domain_climatological_time_axes(self):
+        """TODO DOCS."""
         f = cfdm.example_field(7)
         d = f.domain
 
@@ -117,6 +113,7 @@ class DomainTest(unittest.TestCase):
         self.assertEqual(d.climatological_time_axes(), set(("domainaxis0",)))
 
     def test_Domain_creation_commands(self):
+        """TODO DOCS."""
         d = cfdm.example_field(1).domain
 
         with self.assertRaises(ValueError):
@@ -129,6 +126,7 @@ class DomainTest(unittest.TestCase):
         d = d.creation_commands(namespace="my_cfdm", header=True)
 
     def test_Domain_identity(self):
+        """TODO DOCS."""
         d = cfdm.example_field(1).domain
 
         d.nc_set_variable("qwerty")
@@ -138,6 +136,7 @@ class DomainTest(unittest.TestCase):
         self.assertEqual(d.identity(), "long_name=qwerty")
 
     def test_Domain_identites(self):
+        """TODO DOCS."""
         d = cfdm.example_field(1).domain
 
         d.nc_set_variable("qwerty")
@@ -151,28 +150,19 @@ class DomainTest(unittest.TestCase):
         )
 
     def test_Domain_apply_masking(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
+        """TODO DOCS."""
         d = self.d.copy()
 
         self.assertIsNone(d.apply_masking(inplace=True))
         self.assertTrue(d.equals(d.apply_masking()))
 
     def test_Domain_data(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
+        """TODO DOCS."""
         self.assertFalse(self.d.has_data())
 
     def test_Domain_has_bounds(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
+        """TODO DOCS."""
         self.assertFalse(self.d.has_bounds())
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

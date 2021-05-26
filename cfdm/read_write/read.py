@@ -1,5 +1,7 @@
 import os
 
+from numpy.ma.core import MaskError
+
 from ..cfdmimplementation import implementation
 
 from .netcdf import NetCDFRead
@@ -324,17 +326,35 @@ def read(
         filename = netcdf.cdl_to_netcdf(filename)
 
     if netcdf.is_netcdf_file(filename):
-        fields = netcdf.read(
-            filename,
-            external=external,
-            extra=extra,
-            verbose=verbose,
-            warnings=warnings,
-            warn_valid=warn_valid,
-            mask=mask,
-            domain=domain,
-            extra_read_vars=None,
-        )
+        # See https://github.com/NCAS-CMS/cfdm/issues/128 for context on the
+        # try/except here, which acts as a temporary fix pending decisions on
+        # the best way to handle CDL with only header or coordinate info.
+        try:
+            fields = netcdf.read(
+                filename,
+                external=external,
+                extra=extra,
+                verbose=verbose,
+                warnings=warnings,
+                warn_valid=warn_valid,
+                mask=mask,
+                domain=domain,
+                extra_read_vars=None,
+            )
+        except MaskError:
+            # Some data required for field interpretation is missing,
+            # manifesting downstream as a NumPy MaskError.
+            if cdl:
+                raise ValueError(
+                    "Unable to convert CDL without data to field construct(s) "
+                    "because there is insufficient information provided by "
+                    "the header and/or coordinates alone in this case."
+                )
+            else:
+                raise ValueError(
+                    "Unable to convert netCDF to field construct(s) because "
+                    "there is missing data."
+                )
     elif cdl:
         raise IOError(
             f"Can't determine format of file {filename} "

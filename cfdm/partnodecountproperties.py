@@ -12,25 +12,19 @@ class PartNodeCountProperties(
 
     **NetCDF interface**
 
-    The netCDF part node count variable name may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-    `nc_has_variable` methods.
+    {{netCDF variable}}
 
     The name of the netCDF dimension spanned by the netCDF part node
     count variable's data may be accessed with the `nc_set_dimension`,
     `nc_get_dimension`, `nc_del_dimension` and `nc_has_dimension`
     methods.
 
-    The netCDF variable group structure may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
-
     .. versionadded:: (cfdm) 1.8.0
 
     """
 
     def __init__(self, properties=None, source=None, copy=True):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -41,7 +35,7 @@ class PartNodeCountProperties(
                   station'}``
 
             source: optional
-                Initialize the properties from those of *source*.
+                Initialise the properties from those of *source*.
 
             {{init copy: `bool`, optional}}
 

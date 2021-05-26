@@ -37,9 +37,6 @@ class CountTest(unittest.TestCase):
         self.assertIsInstance(count.dump(display=False), str)
 
 
-# --- End: class
-
-
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cfdm.environment()

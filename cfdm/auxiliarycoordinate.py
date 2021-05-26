@@ -70,7 +70,7 @@ class AuxiliaryCoordinate(
             {{init interior_ring: `InteriorRing`, optional}}
 
             source: optional
-                Initialize the properties, data and bounds from those of
+                Initialise the properties, data and bounds from those of
                 *source*.
 
                 {{init source}}

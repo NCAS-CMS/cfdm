@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 
 # from setuptools import setup
 
@@ -68,7 +68,7 @@ The **cfdm** package can
 
 * read field constructs from netCDF and CDL datasets,
 * create new field constructs in memory,
-* write field constructs to netCDF datasets on disk,
+* write and append field constructs to netCDF datasets on disk,
 * read, write, and create coordinates defined by geometry cells,
 * read and write netCDF4 string data-type variables,
 * read, write, and create datasets containing hierarchical groups,
@@ -114,18 +114,41 @@ up-to-date source."""
 requirements = open("requirements.txt", "r")
 install_requires = requirements.read().splitlines()
 
+tests_require = (
+    [
+        "pytest",
+        "pycodestyle",
+        "coverage",
+    ],
+)
+extras_require = {
+    "documentation": [
+        "sphinx>=2,<=4",
+        "sphinx-copybutton",
+        "sphinx-toggleprompt",
+        "sphinxcontrib-spelling",
+    ],
+    "pre-commit hooks": [
+        "pre-commit",
+        "black",
+        "docformatter",
+        "flake8",
+        "pydocstyle",
+    ],
+}
+
 setup(
     name="cfdm",
     long_description=long_description,
     version=version,
     description="A Python reference implementation of the CF data model",
-    author="David Hassell",
-    maintainer="David Hassell",
-    maintainer_email="david.hassell@ncas.ac.uk",
+    author="David Hassell, Sadie Bartholomew",
     author_email="david.hassell@ncas.ac.uk",
+    maintainer="David Hassell, Sadie Bartholomew",
     url="https://ncas-cms.github.io/cfdm",
     download_url="https://pypi.org/project/cfdm/#files",
     platforms=["Linux", "MacOS", "Windows"],
+    license="MIT",
     keywords=[
         "cf",
         "netcdf",
@@ -172,4 +195,6 @@ setup(
     scripts=["scripts/cfdump"],
     python_requires=">=3.6",
     install_requires=install_requires,
+    tests_require=tests_require,
+    extras_require=extras_require,
 )

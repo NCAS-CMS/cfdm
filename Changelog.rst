@@ -1,5 +1,6 @@
 version 1.9.0.0
 ---------------
+----
 
 **2021-??-??**
 
@@ -18,10 +19,31 @@ version 1.9.0.0
 * New method: `cfdm.DimensionCoordinate.set_climatology`
 * New function: `cfdm.unique_constructs`
 * New function: `cfdm.example_fields`
+
+version 1.8.9.0
+---------------
+----
+
+**2021-05-25**
+
+* Construct access API changes
+  (https://github.com/NCAS-CMS/cfdm/issues/124,
+  https://github.com/NCAS-CMS/cfdm/issues/130,
+  https://github.com/NCAS-CMS/cfdm/issues/132,
+  https://github.com/NCAS-CMS/cfdm/issues/137)
+* Performance enhancements
+  (https://github.com/NCAS-CMS/cfdm/issues/124,
+  https://github.com/NCAS-CMS/cfdm/issues/130)
+* New write mode ``mode='a'`` for appending to, rather than over-writing,
+  a netCDF file on disk (https://github.com/NCAS-CMS/cfdm/issues/143)
+* Better error message in the case of a `numpy.ma.core.MaskError` occurring
+  upon reading of CDL files with only header or coordinate information
+  (https://github.com/NCAS-CMS/cfdm/issues/128)
 * Fix for zero-sized unlimited dimensions when read from a grouped
   netCDF file (https://github.com/NCAS-CMS/cfdm/issues/113)
-* Performance enhancements (https://github.com/NCAS-CMS/cfdm/issues/124)
-* Changed dependency: ``cftime>=1.4.1``
+* Fix bug causing occasional non-symmetric `equals` operations
+  (https://github.com/NCAS-CMS/cfdm/issues/133)
+* Changed dependency: ``cftime>=1.5.0``
 * Changed dependency: ``netCDF4>=1.5.4``
 
 version 1.8.8.0

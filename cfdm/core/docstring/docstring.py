@@ -7,13 +7,7 @@ Special docstring substitutions, as defined by a class's
 `_docstring_special_substitutions` method, may be used in the
 replacement text, and will be substituted as usual.
 
-Replacement text may contain other non-special substitutions.
-
-.. note:: The values are only checked once for embedded non-special
-          substitutions, so if the embedded substitution itself
-          contains a non-special substitution then the latter will
-          *not* be replaced. This restriction is to prevent the
-          possibility of infinite recursion.
+Replacement text may not contain other non-special substitutions.
 
 Keys must be `str` or `re.Pattern` objects:
 
@@ -34,7 +28,15 @@ _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # # Method description susbstitutions (2 levels of indentation)
     # ----------------------------------------------------------------
-    #
+    # cached: optional
+    "{{cached: optional}}": """cached: optional
+                If any value other than `None` then return *cached*
+                without selecting any constructs.""",
+    # todict: `bool`, optional
+    "{{todict: `bool`, optional}}": """todict: `bool`, optional
+                If True then return a dictionary of constructs keyed
+                by their construct identifiers, instead of a
+                `Constructs` object. This is a faster option.""",
     # ----------------------------------------------------------------
     # # Method description susbstitutions (3 levels of indentation)
     # ----------------------------------------------------------------
@@ -104,7 +106,7 @@ _docstring_substitution_definitions = {
     # init copy
     "{{init copy: `bool`, optional}}": """copy: `bool`, optional
                 If False then do not deep copy input parameters prior
-                to initialization. By default arguments are deep
+                to initialisation. By default arguments are deep
                 copied.""",
     # init source
     "{{init source}}": """Note that if *source* is a `{{class}}` instance then

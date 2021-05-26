@@ -1,7 +1,6 @@
 import copy
 import datetime
-import inspect
-import os
+import re
 import unittest
 
 import faulthandler
@@ -13,6 +12,9 @@ import cfdm
 
 class ConstructsTest(unittest.TestCase):
     """TODO DOCS."""
+
+    f = cfdm.example_field(1)
+    c = f.constructs
 
     def setUp(self):
         """TODO DOCS."""
@@ -27,252 +29,115 @@ class ConstructsTest(unittest.TestCase):
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
 
-        self.filename = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
-        )
-        f = cfdm.read(self.filename)
-        self.assertEqual(len(f), 1, "f={!r}".format(f))
-        self.f = f[0]
-
-        self.test_only = []
-
     def test_Constructs__repr__str__dump(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        c = self.c
 
-        f = self.f
+        repr(c)
+        str(c)
 
-        c = f.constructs
-        _ = repr(c)
-        _ = str(c)
+        c = cfdm.Constructs()
+        str(c)
 
-    def test_Constructs_key_items_value(self):
+    def test_Constructs__len__(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        c = self.c
 
-        f = self.f
+        self.assertEqual(len(c), 20)
+        self.assertEqual(len(self.f.domain.constructs), 17)
 
-        for key, value in f.constructs.items():
-            x = f.constructs.filter_by_key(key)
+    def test_Constructs_check_construct_type(self):
+        """TODO DOCS."""
+        c = self.c
+
+        with self.assertRaises(ValueError):
+            c._check_construct_type("bad type")
+
+    def test_Constructs_construct_type(self):
+        """TODO DOCS."""
+        d = self.f.domain.constructs
+        self.assertIsNone(d.construct_type("cell_method"))
+
+    def test_Constructs_construct_types(self):
+        """TODO DOCS."""
+        d = self.f.domain.constructs
+        self.assertEqual(len(d.construct_types()), len(d))
+
+    def test_Constructs_items_key_value(self):
+        """TODO DOCS."""
+        c = self.c
+
+        for i, (key, value) in enumerate(c.items()):
+            x = c.filter_by_key(key)
             self.assertEqual(x.key(), key)
-            self.assertTrue(x.value().equals(value))
+            self.assertIs(x.value(), value)
+
+        self.assertEqual(i, 19)
 
     def test_Constructs_copy_shallow_copy(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        c = self.c
 
-        c = self.f.constructs
+        d = c.filter_by_type("domain_axis")
+        e = d.copy()
 
-        d = c.copy()
-        self.assertTrue(c.equals(d, verbose=3))
-        self.assertTrue(d.equals(c, verbose=3))
+        self.assertTrue(d.equals(e, verbose=3))
+        self.assertTrue(e.equals(d, verbose=3))
 
         d = c.shallow_copy()
         self.assertTrue(c.equals(d, verbose=3))
         self.assertTrue(d.equals(c, verbose=3))
 
-    def test_Constructs_FILTER(self):
+    def test_Constructs_domain_axis_identity(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
+        c = self.c
 
-        self.f.copy()
+        with self.assertRaises(ValueError):
+            c.domain_axis_identity(999)
 
-        c = self.f.constructs
+    def test_Constructs_filter(self):
+        """TODO DOCS."""
+        c = self.c
 
-        self.assertEqual(len(c), 20)
-        self.assertEqual(len(c.filter_by_identity()), 20)
-        self.assertEqual(len(c.filter_by_axis()), 13)
-        self.assertEqual(len(c.filter_by_key()), 20)
-        self.assertEqual(len(c.filter_by_data()), 13)
-        self.assertEqual(len(c.filter_by_property()), 13)
-        self.assertEqual(len(c.filter_by_type()), 20)
-        self.assertEqual(len(c.filter_by_method()), 2)
-        self.assertEqual(len(c.filter_by_measure()), 1)
-        self.assertEqual(len(c.filter_by_ncvar()), 15)
-        self.assertEqual(len(c.filter_by_ncdim()), 3)
+        for todict in (False, True):
+            d = c.filter(
+                filter_by_axis=(),
+                filter_by_data=True,
+                filter_by_identity=(),
+                filter_by_key=(),
+                filter_by_measure=(),
+                filter_by_method=(),
+                filter_by_naxes=(),
+                filter_by_ncdim=(),
+                filter_by_ncvar=(),
+                filter_by_property={},
+                filter_by_size=(),
+                filter_by_type=(),
+                todict=todict,
+            )
+            self.assertEqual(len(d), 0)
 
-        self.assertEqual(len(c.filter_by_identity("qwerty")), 0)
-        self.assertEqual(len(c.filter_by_key("qwerty")), 0)
-        self.assertEqual(len(c.filter_by_type("qwerty")), 0)
-        self.assertEqual(len(c.filter_by_method("qwerty")), 0)
-        self.assertEqual(len(c.filter_by_measure("qwerty")), 0)
-        self.assertEqual(len(c.filter_by_ncvar("qwerty")), 0)
-        self.assertEqual(len(c.filter_by_ncdim("qwerty")), 0)
-        self.assertEqual(len(c.filter_by_size(-1)), 0)
+        self.assertEqual(c.filter(cached=999), 999)
+        self.assertTrue(c.filter().equals(c))
 
-        self.assertEqual(len(c.filter_by_identity("latitude")), 1)
-        self.assertEqual(len(c.filter_by_key("dimensioncoordinate1")), 1)
-        self.assertEqual(len(c.filter_by_type("cell_measure")), 1)
-        self.assertEqual(len(c.filter_by_method("mean")), 1)
-        self.assertEqual(len(c.filter_by_measure("area")), 1)
-        self.assertEqual(len(c.filter_by_ncvar("areacella")), 1)
-        self.assertEqual(len(c.filter_by_ncdim("grid_latitude")), 1)
-        self.assertEqual(len(c.filter_by_size(9)), 1)
+        with self.assertRaises(TypeError):
+            c.filter(bad_kwarg=None)
 
-        constructs = c.filter_by_type(
-            "auxiliary_coordinate",
-            "cell_measure",
-            "cell_method",
-            "coordinate_reference",
-            "dimension_coordinate",
-            "domain_ancillary",
-            "domain_axis",
-            "field_ancillary",
-        )
-        n = 20
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
-
-        constructs = c.filter_by_type("auxiliary_coordinate")
-        n = 3
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
-        for key, value in constructs.items():
-            self.assertIsInstance(value, cfdm.AuxiliaryCoordinate)
-
-        constructs = c.filter_by_type("cell_measure")
-        n = 1
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
-        for key, value in constructs.items():
-            self.assertIsInstance(value, cfdm.CellMeasure)
-
-        constructs = c.filter_by_size(9, 10)
-        n = 2
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
-        for key, value in constructs.items():
-            self.assertIsInstance(value, cfdm.DomainAxis)
-
-        constructs = c.filter_by_type("cell_method")
-        n = 2
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
-        for key, value in constructs.items():
-            self.assertIsInstance(value, cfdm.CellMethod)
-
-        constructs = c.filter_by_type("dimension_coordinate")
-        n = 3
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
-        for key, value in constructs.items():
-            self.assertIsInstance(value, cfdm.DimensionCoordinate)
-
-        constructs = c.filter_by_type("coordinate_reference")
-        n = 2
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
-        for key, value in constructs.items():
-            self.assertIsInstance(value, cfdm.CoordinateReference)
-
-        constructs = c.filter_by_type("domain_ancillary")
-        n = 3
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
-        for key, value in constructs.items():
-            self.assertIsInstance(value, cfdm.DomainAncillary)
-
-        constructs = c.filter_by_type("field_ancillary")
-        n = 3
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
-        for key, value in constructs.items():
-            self.assertIsInstance(value, cfdm.FieldAncillary)
-
-        constructs = c.filter_by_type("domain_axis")
-        n = 3
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
-        for key, value in constructs.items():
-            self.assertIsInstance(value, cfdm.DomainAxis)
-
-        constructs = c.filter_by_type(*["domain_ancillary"])
-        n = 3
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
-        for key, value in constructs.items():
-            self.assertIsInstance(value, cfdm.DomainAncillary)
-
-        constructs = c.filter_by_type(*["domain_axis"])
-        n = 3
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
-        for key, value in constructs.items():
-            self.assertIsInstance(value, cfdm.DomainAxis)
-
-        constructs = c.filter_by_type("domain_ancillary", "domain_axis")
-        n = 6
-        self.assertEqual(
-            len(constructs),
-            n,
-            "Got {} constructs, expected {}".format(len(constructs), n),
-        )
-
-        # Property
-        for mode in ([], ["and"], ["or"]):
-            for kwargs in (
-                {"qwerty": 34},
-                {"standard_name": "surface_altitude"},
-                {"standard_name": "surface_altitude", "units": "m"},
-                {"standard_name": "surface_altitude", "units": "degrees"},
-                {"standard_name": "surface_altitude", "units": "qwerty"},
-            ):
-                d = c.filter_by_property(*mode, **kwargs)
-                e = d.inverse_filter()
-                self.assertEqual(len(e), len(c) - len(d))
+    def test_Constructs_FILTERING(self):
+        """TODO DOCS."""
+        c = self.c
 
         # Axis
-        for mode in ("and", "or", "exact", "subset"):
+        for axis_mode in ("and", "or", "exact", "subset"):
             for args in (
                 ["qwerty"],
                 ["domainaxis0"],
                 ["domainaxis0", "domainaxis1"],
                 ["domainaxis0", "domainaxis1", "domainaxis2"],
             ):
-                d = c.filter_by_axis(mode, *args)
+                d = c.filter_by_axis(*args, axis_mode=axis_mode)
                 e = d.inverse_filter()
                 self.assertEqual(len(e), len(c) - len(d))
-        # --- End: for
 
         # Inverse filter, filters applied
         self.assertEqual(len(c.filters_applied()), 0)
@@ -305,49 +170,289 @@ class ConstructsTest(unittest.TestCase):
         self.assertTrue(d.unfilter(1).equals(c, verbose=3))
         self.assertTrue(c.unfilter(1).equals(c, verbose=3))
 
+    def test_Constructs_domain_axes(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(c.domain_axes(cached=999), 999)
+        self.assertEqual(
+            len(c.domain_axes(filter_by_identity=("grid_longitude",))), 1
+        )
+
+        keys = tuple(c.domain_axes(todict=True))
+        self.assertEqual(len(c.domain_axes(*keys)), 4)
+        self.assertEqual(len(c.domain_axes(keys)), 0)
+
+        with self.assertRaises(TypeError):
+            c.domain_axes(filter_by_type=("dimension_coordinate",))
+
+        with self.assertRaises(TypeError):
+            c.domain_axes(
+                "grid_latitude", filter_by_identity=("grid_longitude",)
+            )
+
+    def test_Constructs_filter_by_data(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(len(c.filter_by_data()), 12)
+        self.assertEqual(c.filter_by_data(cached=999), 999)
+
+    def test_Constructs_filter_by_type(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(c.filter_by_type(cached=999), 999)
+
+        d = c.filter(
+            filter_by_property={"standard_name": None},
+            filter_by_type=("dimension_coordinate",),
+            todict=True,
+        )
+        self.assertEqual(len(d), 4)
+
+        constructs = c.filter_by_type(
+            "auxiliary_coordinate",
+            "cell_measure",
+            "cell_method",
+            "coordinate_reference",
+            "dimension_coordinate",
+            "domain_ancillary",
+            "domain_axis",
+            "field_ancillary",
+        )
+        n = 20
+        self.assertEqual(len(constructs), n)
+
+        constructs = c.filter_by_type("auxiliary_coordinate")
+        n = 3
+        self.assertEqual(len(constructs), n)
+        for key, value in constructs.items():
+            self.assertIsInstance(value, cfdm.AuxiliaryCoordinate)
+
+        constructs = c.filter_by_type("cell_measure")
+        n = 1
+        self.assertEqual(len(constructs), n)
+        for key, value in constructs.items():
+            self.assertIsInstance(value, cfdm.CellMeasure)
+
+        constructs = c.filter_by_type("cell_method")
+        n = 2
+        self.assertEqual(len(constructs), n)
+        for key, value in constructs.items():
+            self.assertIsInstance(value, cfdm.CellMethod)
+
+        constructs = c.filter_by_type("dimension_coordinate")
+        n = 4
+        self.assertEqual(len(constructs), n)
+        for key, value in constructs.items():
+            self.assertIsInstance(value, cfdm.DimensionCoordinate)
+
+        constructs = c.filter_by_type("coordinate_reference")
+        n = 2
+        self.assertEqual(len(constructs), n)
+        for key, value in constructs.items():
+            self.assertIsInstance(value, cfdm.CoordinateReference)
+
+        constructs = c.filter_by_type("domain_ancillary")
+        n = 3
+        self.assertEqual(len(constructs), n)
+        for key, value in constructs.items():
+            self.assertIsInstance(value, cfdm.DomainAncillary)
+
+        constructs = c.filter_by_type("field_ancillary")
+        n = 1
+        self.assertEqual(len(constructs), n)
+        for key, value in constructs.items():
+            self.assertIsInstance(value, cfdm.FieldAncillary)
+
+        constructs = c.filter_by_type("domain_axis")
+        n = 4
+        self.assertEqual(len(constructs), n)
+        for key, value in constructs.items():
+            self.assertIsInstance(value, cfdm.DomainAxis)
+
+        constructs = c.filter_by_type(*["domain_ancillary"])
+        n = 3
+        self.assertEqual(len(constructs), n)
+        for key, value in constructs.items():
+            self.assertIsInstance(value, cfdm.DomainAncillary)
+
+        constructs = c.filter_by_type("domain_ancillary", "domain_axis")
+        n = 7
+        self.assertEqual(len(constructs), n)
+
+        self.assertEqual(len(c.filter_by_type("qwerty")), 0)
+
+    def test_Constructs_filter_by_method(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(len(c.filter_by_method()), 2)
+        self.assertEqual(len(c.filter_by_method("mean")), 1)
+        self.assertEqual(len(c.filter_by_method("qwerty")), 0)
+        self.assertEqual(c.filter_by_method(cached=999), 999)
+
+    def test_Constructs_filter_by_ncdim(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(len(c.filter_by_ncdim()), 4)
+        self.assertEqual(len(c.filter_by_ncdim("y")), 1)
+        self.assertEqual(len(c.filter_by_ncdim("qwerty")), 0)
+        self.assertEqual(c.filter_by_ncdim(cached=999), 999)
+
+    def test_Constructs_filter_by_ncvar(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(len(c.filter_by_ncvar()), 14)
+        self.assertEqual(len(c.filter_by_ncvar("qwerty")), 0)
+        self.assertEqual(len(c.filter_by_ncvar("a")), 1)
+        self.assertEqual(c.filter_by_ncvar(cached=999), 999)
+
+    def test_Constructs_filter_by_measure(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(len(c.filter_by_measure()), 1)
+        self.assertEqual(len(c.filter_by_measure("qwerty")), 0)
+        self.assertEqual(len(c.filter_by_measure("area")), 1)
+        self.assertEqual(c.filter_by_measure(cached=999), 999)
+
+    def test_Constructs_filter_by_identity(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(len(c.filter_by_identity()), 20)
+        self.assertEqual(len(c.filter_by_identity("qwerty")), 0)
+        self.assertEqual(len(c.filter_by_identity("latitude")), 1)
+        self.assertEqual(c.filter_by_identity(cached=999), 999)
+
+        self.assertEqual(
+            len(c.filter_by_identity("dimensioncoordinate1", "longitude")), 2
+        )
+
+        with self.assertRaises(TypeError):
+            c("latitude", filter_by_identity=("longitude",))
+
+    def test_Constructs_filter_by_axis(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(len(c.filter_by_axis()), 12)
+        self.assertEqual(len(c.filter_by_axis(0, 1, 2, axis_mode="or")), 11)
+        self.assertEqual(
+            len(c.filter_by_axis("domainaxis1", axis_mode="or")), 7
+        )
+        self.assertEqual(len(c.filter_by_axis("grid_longitude")), 6)
+        self.assertEqual(len(c.filter_by_axis(re.compile("^grid_lon"))), 6)
+        self.assertEqual(len(c.filter_by_axis(re.compile("^grid"))), 0)
+        self.assertEqual(len(c.filter_by_axis("ncdim%x")), 6)
+
+        self.assertEqual(c.filter_by_axis(cached=999), 999)
+
+        self.assertEqual(len(c.filter_by_axis(99)), 0)
+        self.assertEqual(len(c.filter_by_axis(99, todict=True)), 0)
+
+        with self.assertRaises(ValueError):
+            c.filter_by_axis(0, 1, axis_mode="bad_mode")
+
+    def test_Constructs_clear_filters_applied(self):
+        """TODO DOCS."""
+        c = self.c
+
+        d = c.shallow_copy()
+        d.clear_filters_applied()
+
+    def test_Constructs_filter_by_naxes(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(len(c.filter_by_naxes()), 12)
+        self.assertEqual(len(c.filter_by_naxes(1)), 7)
+        self.assertEqual(c.filter_by_naxes(cached=999), 999)
+
+    def test_Constructs_filter_by_property(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(len(c.filter_by_property()), 12)
+
+        for mode in ([], ["and"], ["or"]):
+            for kwargs in (
+                {"qwerty": 34},
+                {"standard_name": "surface_altitude"},
+                {"standard_name": "surface_altitude", "units": "m"},
+                {"standard_name": "surface_altitude", "units": "degrees"},
+                {"standard_name": "surface_altitude", "units": "qwerty"},
+            ):
+                d = c.filter_by_property(*mode, **kwargs)
+                e = d.inverse_filter()
+                self.assertEqual(len(e), len(c) - len(d))
+
+        self.assertEqual(len(c.filter_by_property(standard_name=None)), 8)
+
+        with self.assertRaises(ValueError):
+            c.filter_by_property("too many", "modes")
+
+        with self.assertRaises(ValueError):
+            c.filter_by_property("bad_mode")
+
+    def test_Constructs_filter_by_size(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(len(c.filter_by_size(9)), 1)
+        self.assertEqual(len(c.filter_by_size(9, 10)), 2)
+        self.assertEqual(len(c.filter_by_size()), 4)
+        self.assertEqual(len(c.filter_by_size(-1)), 0)
+        self.assertEqual(c.filter_by_size(cached=999), 999)
+
+    def test_Constructs_filter_by_key(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertEqual(len(c.filter_by_key()), 20)
+        self.assertEqual(len(c.filter_by_key("qwerty")), 0)
+        self.assertEqual(len(c.filter_by_key("dimensioncoordinate1")), 1)
+        self.assertEqual(len(c.filter_by_key(re.compile("^dim"))), 4)
+        self.assertEqual(c.filter_by_key(cached=999), 999)
+
     def test_Constructs_copy(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        f = cfdm.example_field(1)
-        c = f.constructs
+        c = self.c
 
         copy.copy(c)
         copy.deepcopy(c)
 
     def test_Constructs__getitem__(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        f = cfdm.example_field(1)
-        c = f.constructs
-
-        with self.assertRaises(KeyError):
-            c["qwerty"]
+        c = self.c
 
         self.assertIsInstance(
             c["auxiliarycoordinate1"], cfdm.AuxiliaryCoordinate
         )
 
-        del c._constructs["auxiliary_coordinate"]
         with self.assertRaises(KeyError):
-            c["auxiliarycoordinate1"]
+            c["bad_key"]
 
-        with self.assertRaises(KeyError):
-            c["qwerty"]
+    def test_Constructs_get_data_axes(self):
+        """TODO DOCS."""
+        c = self.c
+
+        with self.assertRaises(ValueError):
+            c.get_data_axes("bad key")
+
+    def test_Constructs_todict(self):
+        """TODO DOCS."""
+        c = self.c
+
+        self.assertIsInstance(c.todict(), dict)
 
     def test_Constructs_private(self):
         """TODO DOCS."""
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        f = cfdm.example_field(1)
-        c = f.domain.constructs
-
-        # _dictionary
-        self.assertIsInstance(c._dictionary(copy=True), dict)
+        c = self.f.domain.constructs
 
         # _construct_type_description
         self.assertEqual(
@@ -359,17 +464,13 @@ class ConstructsTest(unittest.TestCase):
         self.assertIsNone(c._check_construct_type(None))
         self.assertIsNone(c._check_construct_type("cell_method", None))
 
-        x = c.copy()
+        x = c.shallow_copy()
         del x._constructs["auxiliary_coordinate"]
         with self.assertRaises(KeyError):
             x["auxiliarycoordinate1"]
 
-        with self.assertRaises(KeyError):
-            x["qwerty"]
-
         # _del_construct
-        x = f.constructs.copy()
-
+        x = self.c.shallow_copy()
         x._del_construct("domainancillary0")
 
         with self.assertRaises(ValueError):
@@ -379,17 +480,19 @@ class ConstructsTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             x._del_construct("domainaxis3")
 
-        x = f.domain.constructs.copy()
+        x = c.shallow_copy()
         x._del_construct("dimensioncoordinate3")
         self.assertIsInstance(x._del_construct("domainaxis3"), cfdm.DomainAxis)
 
         # _set_construct
-        x = f.constructs.copy()
+        x = self.c.shallow_copy()
         with self.assertRaises(ValueError):
-            x._set_construct(f.construct("cellmethod0"), axes=["domainaxis0"])
+            x._set_construct(
+                self.f.construct("cellmethod0"), axes=["domainaxis0"]
+            )
 
         # _set_construct_data_axes
-        x = f.constructs.copy()
+        x = self.c.shallow_copy()
         with self.assertRaises(ValueError):
             x._set_construct_data_axes("qwerty", ["domainaxis"])
 
@@ -400,12 +503,9 @@ class ConstructsTest(unittest.TestCase):
             x._set_construct_data_axes("auxiliarycoordinate1", ["domainaxis0"])
 
         # _pop
-        x = c.copy()
+        x = c.shallow_copy()
         with self.assertRaises(KeyError):
             x._pop("qwerty")
-
-
-# --- End: class
 
 
 if __name__ == "__main__":

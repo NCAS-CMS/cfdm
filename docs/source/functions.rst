@@ -49,5 +49,7 @@ Miscellaneous
    cfdm.abspath
    cfdm.environment
    cfdm.example_field
+   cfdm.example_fields
+   cfdm.example_domain
    cfdm.implementation
    cfdm.unique_constructs

@@ -6,9 +6,9 @@ from . import core
 from . import Constructs
 
 from .decorators import (
+    _display_or_return,
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
-    _display_or_return,
 )
 
 
@@ -124,8 +124,8 @@ class Domain(
         """
         shape = sorted(
             [
-                domain_axis.get_size()
-                for domain_axis in list(self.domain_axes.values())
+                domain_axis.get_size(None)
+                for domain_axis in self.domain_axes(todict=True).values()
             ]
         )
         shape = str(shape)
@@ -186,20 +186,19 @@ class Domain(
 
             return "".join(x)
 
-        # --- End: def
-
         string = []
 
         axis_names = self._unique_domain_axis_identities()
 
-        constructs_data_axes = self.constructs.data_axes()
+        construct_data_axes = self.constructs.data_axes()
 
         x = []
-        for axis_cid in sorted(self.domain_axes):
-            for cid, dim in list(self.dimension_coordinates.items()):
-                if constructs_data_axes[cid] == (axis_cid,):
-                    name = dim.identity(default=f"key%{cid}")
-                    y = f"{name}({dim.get_data().size})"
+        dimension_coordinates = self.dimension_coordinates(todict=True)
+        for axis_cid in sorted(self.domain_axes(todict=True)):
+            for cid, dim in dimension_coordinates.items():
+                if construct_data_axes[cid] == (axis_cid,):
+                    name = dim.identity(default=f"key%{0}")
+                    y = "{0}({1})".format(name, dim.get_data().size)
                     if y != axis_names[axis_cid]:
                         y = f"{name}({axis_names[axis_cid]})"
                     if dim.has_data():
@@ -213,8 +212,10 @@ class Domain(
 
         # Auxiliary coordinates
         x = [
-            _print_item(self, cid, v, constructs_data_axes[cid])
-            for cid, v in sorted(self.auxiliary_coordinates.items())
+            _print_item(self, cid, v, construct_data_axes[cid])
+            for cid, v in sorted(
+                self.auxiliary_coordinates(todict=True).items()
+            )
         ]
         if x:
             x = "\n                : ".join(x)
@@ -222,8 +223,8 @@ class Domain(
 
         # Cell measures
         x = [
-            _print_item(self, cid, v, constructs_data_axes[cid])
-            for cid, v in sorted(self.cell_measures.items())
+            _print_item(self, cid, v, construct_data_axes[cid])
+            for cid, v in sorted(self.cell_measures(todict=True).items())
         ]
         if x:
             x = "\n                : ".join(x)
@@ -231,7 +232,12 @@ class Domain(
 
         # Coordinate references
         x = sorted(
-            [str(ref) for ref in list(self.coordinate_references.values())]
+            [
+                str(ref)
+                for ref in list(
+                    self.coordinate_references(todict=True).values()
+                )
+            ]
         )
         if x:
             x = "\n                : ".join(x)
@@ -239,8 +245,10 @@ class Domain(
 
         # Domain ancillary variables
         x = [
-            _print_item(self, cid, anc, constructs_data_axes[cid])
-            for cid, anc in sorted(self.domain_ancillaries.items())
+            _print_item(self, cid, anc, construct_data_axes[cid])
+            for cid, anc in sorted(
+                self.domain_ancillaries(todict=True).items()
+            )
         ]
         if x:
             x = "\n                : ".join(x)
@@ -271,10 +279,11 @@ class Domain(
         """
         indent1 = "    " * _level
 
-        axes = self.domain_axes
-
         w = sorted(
-            [f"{indent1}Domain Axis: {axis_names[axis]}" for axis in axes]
+            [
+                f"{indent1}Domain Axis: {axis_names[axis]}"
+                for axis in self.domain_axes(todict=True)
+            ]
         )
 
         return "\n".join(w)
@@ -295,9 +304,6 @@ class Domain(
 
         return f"{self.identity('')}{{{axis_names}}}"
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     @_inplace_enabled(default=False)
     def apply_masking(self, inplace=False):
         """Apply masking as defined by the CF conventions.
@@ -335,7 +341,7 @@ class Domain(
                   ``valid_min``, ``valid_max``, and ``valid_range``
                   properties have not been updated.
 
-        .. versionadded:: (cfdm) 1.9.0.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         .. seealso:: `{{package}}.Data.apply_masking`, `read`, `write`
 
@@ -368,12 +374,12 @@ class Domain(
         [-- 67.5 112.5 157.5 202.5 247.5
 
         """
-        f = _inplace_enabled_define_and_cleanup(self)
+        d = _inplace_enabled_define_and_cleanup(self)
 
         # Apply masking to the metadata constructs
-        f._apply_masking_constructs()
+        d._apply_masking_constructs()
 
-        return f
+        return d
 
     def climatological_time_axes(self):
         """Return all axes which are climatological time axes.
@@ -381,12 +387,12 @@ class Domain(
         This is ascertained by inspecting the values returned by each
         coordinate construct's `is_climatology` method.
 
-        .. versionadded:: (cfdm) 1.9.0.0
+        .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
             `set`
-                The keys of the domain axeis constructs that are
+                The keys of the domain axis constructs that are
                 climatological time axes.
 
         **Examples:**
@@ -400,7 +406,7 @@ class Domain(
 
         out = []
 
-        for ckey, c in self.coordinates.items():
+        for ckey, c in self.coordinates(todict=True).items():
             if not c.is_climatology():
                 continue
 
@@ -596,7 +602,7 @@ class Domain(
             out = []
 
         # Domain axis constructs
-        for key, c in self.domain_axes.items():
+        for key, c in self.domain_axes(todict=True).items():
             out.extend(
                 c.creation_commands(
                     indent=0,
@@ -632,7 +638,7 @@ class Domain(
             )
 
         # Coordinate reference constructs
-        for key, c in self.coordinate_references.items():
+        for key, c in self.coordinate_references(todict=True).items():
             out.extend(
                 c.creation_commands(
                     namespace=namespace0,
@@ -720,7 +726,7 @@ class Domain(
 
         construct_name = self._unique_construct_names()
 
-        constructs_data_axes = self.constructs.data_axes()
+        construct_data_axes = self.constructs.data_axes()
 
         # Domain axes
         axes = self._dump_axes(axis_to_name, display=False, _level=_level)
@@ -728,46 +734,50 @@ class Domain(
             string.append(axes)
 
         # Dimension coordinates
-        for cid, value in sorted(self.dimension_coordinates.items()):
+        dimension_coordinates = self.dimension_coordinates(todict=True)
+        for cid, value in sorted(dimension_coordinates.items()):
             string.append("")
             string.append(
                 value.dump(
                     display=False,
                     _level=_level,
                     _title=f"Dimension coordinate: {construct_name[cid]}",
-                    _axes=constructs_data_axes[cid],
+                    _axes=construct_data_axes[cid],
                     _axis_names=axis_to_name,
                 )
             )
 
         # Auxiliary coordinates
-        for cid, value in sorted(self.auxiliary_coordinates.items()):
+        auxiliary_coordinates = self.auxiliary_coordinates(todict=True)
+        for cid, value in sorted(auxiliary_coordinates.items()):
             string.append("")
             string.append(
                 value.dump(
                     display=False,
                     _level=_level,
                     _title=f"Auxiliary coordinate: {construct_name[cid]}",
-                    _axes=constructs_data_axes[cid],
+                    _axes=construct_data_axes[cid],
                     _axis_names=axis_to_name,
                 )
             )
 
         # Domain ancillaries
-        for cid, value in sorted(self.domain_ancillaries.items()):
+        for cid, value in sorted(self.domain_ancillaries(todict=True).items()):
             string.append("")
             string.append(
                 value.dump(
                     display=False,
                     _level=_level,
                     _title=f"Domain ancillary: {construct_name[cid]}",
-                    _axes=constructs_data_axes[cid],
+                    _axes=construct_data_axes[cid],
                     _axis_names=axis_to_name,
                 )
             )
 
         # Coordinate references
-        for cid, value in sorted(self.coordinate_references.items()):
+        for cid, value in sorted(
+            self.coordinate_references(todict=True).items()
+        ):
             string.append("")
             string.append(
                 value.dump(
@@ -775,13 +785,13 @@ class Domain(
                     _level=_level,
                     _title=f"Coordinate reference: {construct_name[cid]}",
                     _construct_names=construct_name,
-                    _auxiliary_coordinates=tuple(self.auxiliary_coordinates),
-                    _dimension_coordinates=tuple(self.dimension_coordinates),
+                    _auxiliary_coordinates=tuple(auxiliary_coordinates),
+                    _dimension_coordinates=tuple(dimension_coordinates),
                 )
             )
 
         # Cell measures
-        for cid, value in sorted(self.cell_measures.items()):
+        for cid, value in sorted(self.cell_measures(todict=True).items()):
             string.append("")
             string.append(
                 value.dump(
@@ -789,7 +799,7 @@ class Domain(
                     _key=cid,
                     _level=_level,
                     _title=f"Cell measure: {construct_name[cid]}",
-                    _axes=constructs_data_axes[cid],
+                    _axes=construct_data_axes[cid],
                     _axis_names=axis_to_name,
                 )
             )

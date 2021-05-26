@@ -11,7 +11,7 @@ class Properties(Container):
     """
 
     def __init__(self, properties=None, source=None, copy=True):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -21,7 +21,7 @@ class Properties(Container):
                    ``properties={'standard_name': 'altitude'}``
 
             source: optional
-                Initialize the properties from those of *source*.
+                Initialise the properties from those of *source*.
 
                 {{init source}}
 
@@ -130,6 +130,9 @@ class Properties(Container):
         try:
             return self._get_component("properties").pop(prop)
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
                 f"{self.__class__.__name__!r} has no {prop!r} property",
@@ -182,6 +185,9 @@ class Properties(Container):
         try:
             return self._get_component("properties")[prop]
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
                 f"{self.__class__.__name__!r} has no {prop!r} property",

@@ -25,7 +25,7 @@ class CellMethod(abstract.Container):
     def __init__(
         self, axes=None, method=None, qualifiers=None, source=None, copy=True
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
@@ -79,7 +79,7 @@ class CellMethod(abstract.Container):
                   ``qualifiers={'where': 'sea', ''over': 'ice'}``
 
             source: optional
-                Initialize the axes, method and qualifiers from those of
+                Initialise the axes, method and qualifiers from those of
                 *source*.
 
                 {{init source}}
@@ -264,6 +264,9 @@ class CellMethod(abstract.Container):
         try:
             return self._get_component("qualifiers").pop(qualifier)
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
                 f"{self.__class__.__name__!r} has no {qualifier!r} qualifier",
@@ -392,6 +395,9 @@ class CellMethod(abstract.Container):
         try:
             return self._get_component("qualifiers")[qualifier]
         except KeyError:
+            if default is None:
+                return
+
             return self._default(
                 default,
                 f"{self.__class__.__name__!r} has no {qualifier!r} qualifier",

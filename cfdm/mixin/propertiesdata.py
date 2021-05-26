@@ -26,9 +26,9 @@ class PropertiesData(Properties):
     def __new__(cls, *args, **kwargs):
         """Store component classes.
 
-        NOTE: If a child class requires a different component classes than
-        the ones defined here, then they must be redefined in the child
-        class.
+        NOTE: If a child class requires a different component classes
+        than the ones defined here, then they must be redefined in the
+        child class.
 
         """
         instance = super().__new__(cls)
@@ -40,17 +40,17 @@ class PropertiesData(Properties):
 
         f.__getitem__(indices) <==> f[indices]
 
-        Indexing follows rules that are very similar to the numpy indexing
-        rules, the only differences being:
+        Indexing follows rules that are very similar to the numpy
+        indexing rules, the only differences being:
 
-        * An integer index i takes the i-th element but does not reduce
-          the rank by one.
+        * An integer index i takes the i-th element but does not
+          reduce the rank by one.
 
-        * When two or more dimensions' indices are sequences of integers
-          then these indices work independently along each dimension
-          (similar to the way vector subscripts work in Fortran). This is
-          the same behaviour as indexing on a Variable object of the
-          netCDF4 package.
+        * When two or more dimensions' indices are sequences of
+          integers then these indices work independently along each
+          dimension (similar to the way vector subscripts work in
+          Fortran). This is the same behaviour as indexing on a
+          Variable object of the netCDF4 package.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -76,7 +76,7 @@ class PropertiesData(Properties):
         """
         new = self.copy()
 
-        data = self.get_data(None)
+        data = self.get_data(None, _fill_value=False)
         if data is not None:
             new.set_data(data[indices], copy=False)
 
@@ -90,7 +90,7 @@ class PropertiesData(Properties):
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        data = self.get_data(None)
+        data = self.get_data(None, _units=False, _fill_value=False)
         if data is not None:
             dims = ", ".join([str(x) for x in data.shape])
             dims = f"({dims})"
@@ -207,12 +207,12 @@ class PropertiesData(Properties):
         <type 'numpy.dtype'>
 
         """
-        data = self.get_data(None)
+        data = self.get_data(None, _units=False, _fill_value=False)
         if data is not None:
             return data.dtype
 
         raise AttributeError(
-            f"{self.__class__.__name__!r} object has no attribute 'dtype'"
+            f"{self.__class__.__name__} object has no attribute 'dtype'"
         )
 
     @property
@@ -252,12 +252,12 @@ class PropertiesData(Properties):
         1
 
         """
-        data = self.get_data(None)
+        data = self.get_data(None, _units=False, _fill_value=False)
         if data is not None:
             return data.ndim
 
         raise AttributeError(
-            f"{self.__class__.__name__!r} object has no attribute 'ndim'"
+            f"{self.__class__.__name__} object has no attribute 'ndim'"
         )
 
     @property
@@ -297,12 +297,12 @@ class PropertiesData(Properties):
         1
 
         """
-        data = self.get_data(None)
+        data = self.get_data(None, _units=False, _fill_value=False)
         if data is not None:
             return data.shape
 
         raise AttributeError(
-            f"{self.__class__.__name__!r} object has no attribute 'shape'"
+            f"{self.__class__.__name__} object has no attribute 'shape'"
         )
 
     @property
@@ -342,12 +342,12 @@ class PropertiesData(Properties):
         1
 
         """
-        data = self.get_data(None)
+        data = self.get_data(None, _units=False, _fill_value=False)
         if data is not None:
             return data.size
 
         raise AttributeError(
-            f"{self.__class__.__name__!r} object has no attribute 'size'"
+            f"{self.__class__.__name__} object has no attribute 'size'"
         )
 
     # ----------------------------------------------------------------
@@ -380,13 +380,13 @@ class PropertiesData(Properties):
 
         Elements that are already masked remain so.
 
-        .. note:: If using the `apply_masking` method on a construct that
-                  has been read from a dataset with the ``mask=False``
-                  parameter to the `read` function, then the mask defined
-                  in the dataset can only be recreated if the
-                  ``missing_value``, ``_FillValue``, ``valid_min``,
-                  ``valid_max``, and ``valid_range`` properties have not
-                  been updated.
+        .. note:: If using the `apply_masking` method on a construct
+                  that has been read from a dataset with the
+                  ``mask=False`` parameter to the `read` function,
+                  then the mask defined in the dataset can only be
+                  recreated if the ``missing_value``, ``_FillValue``,
+                  ``valid_min``, ``valid_max``, and ``valid_range``
+                  properties have not been updated.
 
         .. versionadded:: (cfdm) 1.8.2
 
@@ -422,7 +422,7 @@ class PropertiesData(Properties):
         """
         v = _inplace_enabled_define_and_cleanup(self)
 
-        data = v.get_data(None)
+        data = v.get_data(None, _units=False, _fill_value=False)
         if data is not None:
             fill_values = []
             for prop in ("_FillValue", "missing_value"):
@@ -627,22 +627,23 @@ class PropertiesData(Properties):
 
         Equality is strict by default. This means that:
 
-        * the same descriptive properties must be present, with the same
-          values and data types, and vector-valued properties must also
-          have same the size and be element-wise equal (see the
-          *ignore_properties* and *ignore_data_type* parameters), and
+        * the same descriptive properties must be present, with the
+          same values and data types, and vector-valued properties
+          must also have same the size and be element-wise equal (see
+          the *ignore_properties* and *ignore_data_type* parameters),
+          and
 
         ..
 
-        * if there are data arrays then they must have same shape and data
-          type, the same missing data mask, and be element-wise equal (see
-          the *ignore_data_type* parameter).
+        * if there are data arrays then they must have same shape and
+          data type, the same missing data mask, and be element-wise
+          equal (see the *ignore_data_type* parameter).
 
         {{equals tolerance}}
 
-        Any type of object may be tested but, in general, equality is only
-        possible with another object of the same type, or a subclass of
-        one. See the *ignore_type* parameter.
+        Any type of object may be tested but, in general, equality is
+        only possible with another object of the same type, or a
+        subclass of one. See the *ignore_type* parameter.
 
         {{equals compression}}
 
@@ -710,9 +711,10 @@ class PropertiesData(Properties):
             # Both variables are external
             if self.nc_get_variable(None) != other.nc_get_variable(None):
                 logger.info(
-                    f"{self.__class__.__name__}: External variables have different "
-                    "netCDF variable names: "
-                    f"{self.nc_get_variable(None)} != {other.nc_get_variable(None)})"
+                    f"{self.__class__.__name__}: External variables have "
+                    "different netCDF variable names: "
+                    f"{self.nc_get_variable(None)} != "
+                    f"{other.nc_get_variable(None)})"
                 )
                 return False
 
@@ -738,7 +740,7 @@ class PropertiesData(Properties):
         # ------------------------------------------------------------
         if self.has_data() != other.has_data():
             logger.info(
-                f"{self.__class__.__name__}: Different data: Only one {0} has data"
+                f"{self.__class__.__name__}: Different data: Only one has data"
             )
             return False
 
@@ -763,40 +765,15 @@ class PropertiesData(Properties):
 
         :Returns:
 
-            `set`
-                The file names in normalized, absolute form. If the data
-                are in memory then an empty `set` is returned.
+            `set` The file names in normalised, absolute form. If the
+                data are in memory then an empty `set` is returned.
 
         """
-        data = self.get_data(None)
+        data = self.get_data(None, _units=False, _fill_value=False)
         if data is not None:
             return data.get_filenames()
 
         return set()
-
-    #    def inherited_properties(self):
-    #        '''Return the properties inherited from a parent construct.
-    #
-    #    There are always no inherited properties. This method exists as a
-    #    convenience to simplify the source code.
-    #
-    #    .. versionadded:: (cfdm) 1.8.6.0
-    #
-    #    .. seealso:: `properties`
-    #
-    #    :Returns:
-    #
-    #        `dict`
-    #            The inherited properties. Always an empty dictionary.
-    #
-    #    **Examples:**
-    #
-    #    >>> f = {{package}}.{{class}}()
-    #    >>> f.inherited_properties()
-    #    {}
-    #
-    #        '''
-    #        return {}
 
     @_inplace_enabled(default=False)
     def insert_dimension(self, position=0, inplace=False):
@@ -811,10 +788,10 @@ class PropertiesData(Properties):
         :Parameters:
 
             position: `int`, optional
-                Specify the position that the new axis will have in the
-                data array. By default the new axis has position 0, the
-                slowest varying position. Negative integers counting from
-                the last position are allowed.
+                Specify the position that the new axis will have in
+                the data array. By default the new axis has position
+                0, the slowest varying position. Negative integers
+                counting from the last position are allowed.
 
                 *Parameter example:*
                   ``position=2``
@@ -827,8 +804,8 @@ class PropertiesData(Properties):
         :Returns:
 
             `{{class}}` or `None`
-                A new instance with expanded data axes. If the operation
-                was in-place then `None` is returned.
+                A new instance with expanded data axes. If the
+                operation was in-place then `None` is returned.
 
         **Examples:**
 
@@ -842,7 +819,7 @@ class PropertiesData(Properties):
         """
         v = _inplace_enabled_define_and_cleanup(self)
 
-        data = v.get_data(None)
+        data = v.get_data(None, _units=False, _fill_value=False)
         if data is not None:
             data.insert_dimension(position, inplace=True)
 
@@ -852,8 +829,8 @@ class PropertiesData(Properties):
     def squeeze(self, axes=None, inplace=False):
         """Remove size one axes from the data array.
 
-        By default all size one axes are removed, but particular size one
-        axes may be selected for removal.
+        By default all size one axes are removed, but particular size
+        one axes may be selected for removal.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -872,8 +849,8 @@ class PropertiesData(Properties):
         :Returns:
 
             `{{class}}` or `None`
-                A new instance with removed size 1 one data axes. If the
-                operation was in-place then `None` is returned.
+                A new instance with removed size 1 one data axes. If
+                the operation was in-place then `None` is returned.
 
         **Examples:**
 
@@ -893,7 +870,7 @@ class PropertiesData(Properties):
         """
         v = _inplace_enabled_define_and_cleanup(self)
 
-        data = v.get_data(None)
+        data = v.get_data(None, _units=False, _fill_value=False)
         if data is not None:
             data.squeeze(axes, inplace=True)
 
@@ -934,7 +911,7 @@ class PropertiesData(Properties):
         """
         v = _inplace_enabled_define_and_cleanup(self)
 
-        data = v.get_data(None)
+        data = v.get_data(None, _units=False, _fill_value=False)
         if data is not None:
             data.transpose(axes, inplace=True)
 
@@ -956,9 +933,9 @@ class PropertiesData(Properties):
 
         The following type of compression are available:
 
-            * Ragged arrays for discrete sampling geometries (DSG). Three
-              different types of ragged array representation are
-              supported.
+            * Ragged arrays for discrete sampling geometries
+              (DSG). Three different types of ragged array
+              representation are supported.
 
             ..
 
@@ -973,8 +950,8 @@ class PropertiesData(Properties):
         :Returns:
 
             `{{class}}` or `None`
-                The uncompressed construct, or `None` if the operation was
-                in-place.
+                The uncompressed construct, or `None` if the operation
+                was in-place.
 
         **Examples:**
 
@@ -989,7 +966,7 @@ class PropertiesData(Properties):
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        data = f.get_data(None)
+        data = f.get_data(None, _units=False, _fill_value=False)
         if data is not None:
             data.uncompress(inplace=True)
 

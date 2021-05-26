@@ -64,14 +64,7 @@ class CoordinateReference(
 
     **NetCDF interface**
 
-    The netCDF grid mapping variable name of a coordinate reference
-    construct may be accessed with the `nc_set_variable`,
-    `nc_get_variable`, `nc_del_variable` and `nc_has_variable`
-    methods.
-
-    The netCDF variable group structure may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_variable_groups` methods.
+    {{netCDF variable}}
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -93,17 +86,18 @@ class CoordinateReference(
         source=None,
         copy=True,
     ):
-        """Initialises the `{{class}}` instance.
+        """**Initialisation**
 
         :Parameters:
 
             coordinates: sequence of `str`, optional
-                Identify the related dimension and auxiliary coordinate
-                constructs by their construct identifiers. Ignored if the
-                *source* parameter is set.
+                Identify the related dimension and auxiliary
+                coordinate constructs by their construct
+                identifiers. Ignored if the *source* parameter is set.
 
-                The coordinates may also be set after initialisation with
-                the `set_coordinates` and `set_coordinate` methods.
+                The coordinates may also be set after initialisation
+                with the `set_coordinates` and `set_coordinate`
+                methods.
 
                 *Parameter example:*
                   ``coordinates=['dimensioncoordinate2']``
@@ -115,20 +109,20 @@ class CoordinateReference(
                 Set the datum component of the coordinate reference
                 construct. Ignored if the *source* parameter is set.
 
-                The datum may also be set after initialisation with the
-                `set_datum` method.
+                The datum may also be set after initialisation with
+                the `set_datum` method.
 
             coordinate_conversion: `CoordinateConversion`, optional
-                Set the coordinate conversion component of the coordinate
-                reference construct. Ignored if the *source* parameter is
-                set.
+                Set the coordinate conversion component of the
+                coordinate reference construct. Ignored if the
+                *source* parameter is set.
 
                 The coordinate conversion may also be set after
                 initialisation with the `set_coordinate_conversion`
                 method.
 
             source: optional
-                Initialize the coordinates, datum and coordinate
+                Initialise the coordinates, datum and coordinate
                 conversion from those of *source*.
 
                 {{init source}}
@@ -155,6 +149,27 @@ class CoordinateReference(
 
         """
         return self.identity(default=self.nc_get_variable(""))
+
+    def _identities_iter(self):
+        """Return all possible identities.
+
+        See `identities` for details and examples.
+
+        :Returns:
+
+            generator
+                The identities.
+
+        """
+        cc = self.coordinate_conversion
+        for prop in ("standard_name", "grid_mapping_name"):
+            n = cc.get_parameter(prop, None)
+            if n is not None:
+                yield f"{prop}:{n}"
+
+        ncvar = self.nc_get_variable(None)
+        if ncvar is not None:
+            yield f"ncvar%{ncvar}"
 
     def creation_commands(
         self, namespace=None, indent=0, string=True, name="c", header=True
@@ -528,7 +543,7 @@ class CoordinateReference(
 
         return default
 
-    def identities(self):
+    def identities(self, generator=False, **kwargs):
         """Returns all possible identities.
 
         The identities comprise:
@@ -544,9 +559,23 @@ class CoordinateReference(
 
         .. seealso:: `identity`
 
+        :Parameters:
+
+            generator: `bool`, optional
+                If True then return a generator for the identities,
+                rather than a list.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
+            kwargs: optional
+                Additional configuration parameters. Currently
+                none. Unrecognised parameters are ignored.
+
+                .. versionadded:: (cfdm) 1.8.9.0
+
         :Returns:
 
-            `list`
+            `list` or generator
                 The identities.
 
         **Examples:**
@@ -560,21 +589,19 @@ class CoordinateReference(
         >>> c.identities()
         ['grid_mapping_name:rotated_latitude_longitude',
          'ncvar%rotated_latitude_longitude']
+        >>> for i in c.identities(generator=True):
+        ...     print(i)
+        ...
+        grid_mapping_name:rotated_latitude_longitude
+        ncvar%rotated_latitude_longitude
 
         >>> c = {{package}}.{{class}}()
         >>> c.identities()
         []
 
         """
-        out = []
+        g = self._iter(body=self._identities_iter(), **kwargs)
+        if generator:
+            return g
 
-        for prop in ("standard_name", "grid_mapping_name"):
-            n = self.coordinate_conversion.get_parameter(prop, None)
-            if n is not None:
-                out.append(f"{prop}:{n}")
-
-        n = self.nc_get_variable(None)
-        if n is not None:
-            out.append(f"ncvar%{n}")
-
-        return out
+        return list(g)
