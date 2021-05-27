@@ -4332,7 +4332,11 @@ class NetCDFRead(IORead):
                 g["bounds"][field_ncvar][ncvar] = bounds_ncvar
 
             if attribute == "climatology":
-                self.implementation.set_climatology(c)
+                try:
+                    self.implementation.set_climatology(c)
+                except ValueError as error:
+                    # Warn about non-CF-compliant file
+                    logger.warning(f"WARNING: {error} in file {g['filename']}")
 
             # --------------------------------------------------------
             # Geometries
