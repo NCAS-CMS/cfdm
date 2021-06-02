@@ -58,7 +58,7 @@ class FunctionsTest(unittest.TestCase):
         # (no tearDownClass necessary)
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warning, but
         # save original state for test on logging (see test_log_level)
         cfdm.log_level("DISABLE")

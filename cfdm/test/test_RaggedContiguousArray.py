@@ -12,7 +12,7 @@ class RaggedContiguousArrayTest(unittest.TestCase):
     """TODO DOCS."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or calls (those

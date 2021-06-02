@@ -42,7 +42,7 @@ class DocstringTest(unittest.TestCase):
     """TODO DOCS."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         self.package = "cfdm"
         self.repr = ""
 

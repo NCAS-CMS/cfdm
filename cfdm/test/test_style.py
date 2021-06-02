@@ -14,7 +14,7 @@ class styleTest(unittest.TestCase):
     """Test PEP8 compliance on all Python files in the codebase."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         self.cfdm_dir = os.path.dirname(os.path.abspath(__file__))
         os.chdir(self.cfdm_dir)
 
