@@ -10,7 +10,7 @@ import cfdm
 
 
 class CellMeasureTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the CellMeasure class."""
 
     def setUp(self):
         """Preparations called immediately before each test method."""

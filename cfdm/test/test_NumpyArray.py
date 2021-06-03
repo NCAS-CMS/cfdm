@@ -11,7 +11,7 @@ import cfdm
 
 
 class NumpyArrayTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the NumpyArray class."""
 
     def setUp(self):
         """Preparations called immediately before each test method."""

@@ -9,7 +9,7 @@ import cfdm
 
 
 class ListTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the List class."""
 
     def setUp(self):
         """Preparations called immediately before each test method."""

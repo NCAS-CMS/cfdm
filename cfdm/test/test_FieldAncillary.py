@@ -10,7 +10,7 @@ import cfdm
 
 
 class FieldAncillaryTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the FieldAncillary class."""
 
     filename = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "test_file.nc"

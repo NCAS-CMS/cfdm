@@ -36,7 +36,7 @@ atexit.register(_remove_tmpfiles)
 
 
 class NetCDFTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the NetCDF class."""
 
     def setUp(self):
         """Preparations called immediately before each test method."""

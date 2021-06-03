@@ -10,7 +10,7 @@ import cfdm
 
 
 class PartNodeCountPropertiesTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the PartNodeCountProperties class."""
 
     def setUp(self):
         """Preparations called immediately before each test method."""

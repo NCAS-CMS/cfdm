@@ -12,7 +12,7 @@ import cfdm
 
 
 class DomainAncillaryTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the DomainAncillary class."""
 
     def setUp(self):
         """Preparations called immediately before each test method."""

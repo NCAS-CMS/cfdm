@@ -10,7 +10,7 @@ import cfdm
 
 
 class InteriorRingTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the InteriorRing class."""
 
     def setUp(self):
         """Preparations called immediately before each test method."""

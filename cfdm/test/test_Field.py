@@ -36,7 +36,7 @@ atexit.register(_remove_tmpfiles)
 
 
 class FieldTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the Field class."""
 
     f0 = cfdm.example_field(0)
     f1 = cfdm.example_field(1)

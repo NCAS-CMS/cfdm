@@ -9,7 +9,7 @@ import cfdm
 
 
 class RaggedIndexedContiguousArrayTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the RaggedIndexedContiguousArray class."""
 
     def setUp(self):
         """Preparations called immediately before each test method."""

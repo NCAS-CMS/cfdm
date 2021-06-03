@@ -9,7 +9,7 @@ import cfdm
 
 
 class CFDMImplementationTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the CFDMImplementation class."""
 
     def setUp(self):
         """Preparations called immediately before each test method."""

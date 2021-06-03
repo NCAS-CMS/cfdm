@@ -9,7 +9,7 @@ import cfdm
 
 
 class CountTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the Count class."""
 
     def setUp(self):
         """Preparations called immediately before each test method."""

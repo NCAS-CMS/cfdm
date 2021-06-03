@@ -32,7 +32,7 @@ atexit.register(_remove_tmpfiles)
 
 
 class CoordinateReferenceTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the CoordinateReference class."""
 
     def setUp(self):
         """Preparations called immediately before each test method."""

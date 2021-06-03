@@ -23,7 +23,7 @@ def axes_combinations(ndim):
 
 
 class DataTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the Data class."""
 
     def setUp(self):
         """Preparations called immediately before each test method."""

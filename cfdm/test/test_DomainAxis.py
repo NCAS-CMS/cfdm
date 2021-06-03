@@ -9,7 +9,7 @@ import cfdm
 
 
 class DomainTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the Domain class."""
 
     d = cfdm.DomainAxis(size=99)
     d.nc_set_dimension("ncdim")

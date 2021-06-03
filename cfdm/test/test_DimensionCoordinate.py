@@ -12,7 +12,7 @@ import cfdm
 
 
 class DimensionCoordinateTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the DimensionCoordinate class."""
 
     filename = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
