@@ -436,6 +436,12 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f.convert("qwerty")
 
+        # Test some constructs which can never have data
+        with self.assertRaises(ValueError):
+            f.convert("cellmethod0")
+        with self.assertRaises(ValueError):
+            f.convert("domainaxis0")
+
     def test_Field_equals(self):
         """TODO DOCS."""
         f = self.f1
