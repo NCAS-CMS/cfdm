@@ -264,6 +264,11 @@ class CFDMImplementation(Implementation):
     def convert(self, field=None, construct_id=None):
         """Convert a metadata construct into a field construct.
 
+        Only metadata constructs that can have data may be converted
+        and they can be converted even if they do not actually have
+        any data. Constructs such as cell methods which cannot have
+        data cannot be converted.
+
         :Parameters:
 
             field: field construct

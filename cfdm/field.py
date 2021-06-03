@@ -1947,6 +1947,11 @@ class Field(
         constructs (such as dimension coordinate and coordinate
         reference constructs) that define its domain.
 
+        Only metadata constructs that can have data may be converted
+        and they can be converted even if they do not actually have
+        any data. Constructs such as cell methods which cannot have
+        data cannot be converted.
+
         The `{{package}}.read` function allows a field construct to be
         derived directly from a netCDF variable that corresponds to a
         metadata construct. In this case, the new field construct will
@@ -2022,6 +2027,10 @@ class Field(
         if c is None:
             raise ValueError("Can't return zero constructs")
 
+        if not hasattr(c, "has_data"):  # i.e. a construct that never has data
+            raise ValueError(
+                "Can't convert a construct that does not have data"
+            )
         # ------------------------------------------------------------
         # Create a new field with the properties and data from the
         # construct
