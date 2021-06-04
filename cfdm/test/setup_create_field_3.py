@@ -16,7 +16,7 @@ warnings = False
 
 
 class create_fieldTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Test ab initio creation of field constructs in memory."""
 
     def setUp(self):
         """Preparations called immediately before each test method."""
@@ -36,7 +36,7 @@ class create_fieldTest(unittest.TestCase):
         )
 
     def test_create_field_3(self):
-        """TODO DOCS."""
+        """Test ab initio creation of a third variation of field."""
         # Dimension coordinates
         data = numpy.arange(9.0) + 20
         data[-1] = 34
