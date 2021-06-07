@@ -20,7 +20,7 @@ VN = cfdm.CF()
 # DSG files
 # --------------------------------------------------------------------
 def _make_contiguous_file(filename):
-    """TODO DOCS."""
+    """Make a netCDF file with a contiguous ragged array DSG feature."""
     n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
     n.Conventions = "CF-" + VN
@@ -112,7 +112,7 @@ def _make_contiguous_file(filename):
 
 
 def _make_indexed_file(filename):
-    """TODO DOCS."""
+    """Make a netCDF file with an indexed ragged array DSG feature."""
     n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
     n.Conventions = "CF-" + VN
@@ -245,7 +245,7 @@ def _make_indexed_file(filename):
 
 
 def _make_indexed_contiguous_file(filename):
-    """TODO DOCS."""
+    """Make a netCDF file with an indexed contiguous ragged array."""
     n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
     n.Conventions = "CF-" + VN
@@ -625,7 +625,7 @@ indexed_contiguous_file = _make_indexed_contiguous_file(
 # External variable files
 # --------------------------------------------------------------------
 def _make_external_files():
-    """TODO DOCS."""
+    """Make netCDF files with external variables."""
 
     def _pp(
         filename,
@@ -634,7 +634,7 @@ def _make_external_files():
         combined=False,
         external_missing=False,
     ):
-        """TODO DOCS."""
+        """Make a netCDF file with some external variables."""
         nc = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
         nc.createDimension("grid_latitude", 10)
@@ -730,10 +730,10 @@ def _make_external_files():
 # Gathered files
 # --------------------------------------------------------------------
 def _make_gathered_file(filename):
-    """TODO DOCS."""
+    """Make a netCDF file with a gathered array."""
 
     def _jj(shape, list_values):
-        """TODO DOCS."""
+        """Create and return a gathered array."""
         array = numpy.ma.masked_all(shape)
         for i, (index, x) in enumerate(numpy.ndenumerate(array)):
             if i in list_values:
