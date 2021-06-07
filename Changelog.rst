@@ -1,3 +1,12 @@
+version 1.8.?.?
+---------------
+----
+
+**2021-??-??**
+
+* Construct access API changes from 1.8.9.0 applied to `Field.convert`
+* Improved error message for invalid inputs to `Field.convert`
+
 version 1.8.9.0
 ---------------
 ----
