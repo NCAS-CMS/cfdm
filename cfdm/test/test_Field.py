@@ -55,7 +55,7 @@ class FieldTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
     def test_Field__repr__str__dump_construct_type(self):
-        """TODO DOCS."""
+        """Test all means of Field inspection."""
         f = self.f1
 
         repr(f)

@@ -34,7 +34,7 @@ class InteriorRingTest(unittest.TestCase):
         )
 
     def test_InteriorRing__repr__str__dump(self):
-        """TODO DOCS."""
+        """Test all means of InteriorRing inspection."""
         f = cfdm.read(self.geometry_interior_ring_file)[0]
 
         coord = f.construct("axis=X")

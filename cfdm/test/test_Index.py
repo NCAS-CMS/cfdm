@@ -27,7 +27,7 @@ class IndexTest(unittest.TestCase):
         self.indexed = "DSG_timeSeries_indexed.nc"
 
     def test_Index__repr__str__dump(self):
-        """TODO DOCS."""
+        """Test all means of Index inspection."""
         f = cfdm.read(self.indexed)[0]
 
         index = f.data.get_index()

@@ -32,7 +32,7 @@ class DomainAncillaryTest(unittest.TestCase):
         )
 
     def test_DomainAncillary__repr__str__dump(self):
-        """TODO DOCS."""
+        """Test all means of DomainAncillary inspection."""
         f = cfdm.read(self.filename)[0]
         domain_ancillaries = f.domain_ancillaries("ncvar%a")
 

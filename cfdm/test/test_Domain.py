@@ -33,7 +33,7 @@ class DomainTest(unittest.TestCase):
         self.f = f[0]
 
     def test_Domain__repr__str__dump(self):
-        """TODO DOCS."""
+        """Test all means of Domain inspection."""
         d = self.f.domain
 
         _ = repr(d)

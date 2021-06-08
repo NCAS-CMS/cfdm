@@ -31,7 +31,7 @@ class CellMethodTest(unittest.TestCase):
         self.f = f[0]
 
     def test_CellMethod__repr__str__dump_construct_type(self):
-        """TODO DOCS."""
+        """Test all means of CellMethod inspection."""
         f = self.f
 
         for c in f.cell_methods().values():

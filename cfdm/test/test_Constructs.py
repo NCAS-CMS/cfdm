@@ -30,7 +30,7 @@ class ConstructsTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
     def test_Constructs__repr__str__dump(self):
-        """TODO DOCS."""
+        """Test all means of Constructs inspection."""
         c = self.c
 
         repr(c)

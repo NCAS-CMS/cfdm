@@ -55,6 +55,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         self.f = f[0]
 
     def test_CoordinateReference__repr__str__dump_construct_type(self):
+        """Test all means of CoordinateReference inspection."""
         """TODO DOCS."""
         f = self.f
 

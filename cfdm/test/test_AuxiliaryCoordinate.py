@@ -59,7 +59,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
     def test_AuxiliaryCoordinate__repr__str__dump(self):
-        """TODO DOCS."""
+        """Test all means of AuxiliaryCoordinate inspection."""
         f = cfdm.read(self.filename, verbose=1)[0]
         x = f.auxiliary_coordinates("latitude").value()
 

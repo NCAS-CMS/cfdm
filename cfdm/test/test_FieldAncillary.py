@@ -33,7 +33,7 @@ class FieldAncillaryTest(unittest.TestCase):
         self.f = cfdm.read(self.filename)[0]
 
     def test_FieldAncillary__repr__str__dump(self):
-        """TODO DOCS."""
+        """Test all means of FieldAncillary inspection."""
         f = self.f.copy()
         x = f.field_ancillaries("ancillaryA").value()
 

@@ -27,7 +27,7 @@ class CountTest(unittest.TestCase):
         self.contiguous = "DSG_timeSeries_contiguous.nc"
 
     def test_Count__repr__str__dump(self):
-        """TODO DOCS."""
+        """Test all means of Count inspection."""
         f = cfdm.read(self.contiguous)[0]
 
         count = f.data.get_count()

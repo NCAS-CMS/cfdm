@@ -37,7 +37,7 @@ class CellMeasureTest(unittest.TestCase):
         cfdm.CellMeasure(source="qwerty")
 
     def test_CellMeasure__repr__str__dump_construct_type(self):
-        """TODO DOCS."""
+        """Test all means of CellMeasure inspection."""
         f = self.f
 
         for cm in f.cell_measures().values():

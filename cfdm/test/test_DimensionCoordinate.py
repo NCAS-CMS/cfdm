@@ -59,7 +59,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
     def test_DimensionCoordinate__repr__str__dump(self):
-        """TODO DOCS."""
+        """Test all means of DimensionCoordinate inspection."""
         f = cfdm.read(self.filename)[0]
         x = f.dimension_coordinates("grid_latitude").value()
 
