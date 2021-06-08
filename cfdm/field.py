@@ -1938,7 +1938,7 @@ class Field(
 
         return f
 
-    def convert(self, key, full_domain=True):
+    def convert(self, *identity, full_domain=True, **filter_kwargs):
         """Convert a metadata construct into a new field construct.
 
         The new field construct has the properties and data of the
@@ -1946,6 +1946,11 @@ class Field(
         to the data. By default it also contains other metadata
         constructs (such as dimension coordinate and coordinate
         reference constructs) that define its domain.
+
+        Only metadata constructs that can have data may be converted
+        and they can be converted even if they do not actually have
+        any data. Constructs such as cell methods which cannot have
+        data cannot be converted.
 
         The `{{package}}.read` function allows a field construct to be
         derived directly from a netCDF variable that corresponds to a
@@ -1962,7 +1967,7 @@ class Field(
 
         :Parameters:
 
-            key: `str`
+            identity: `str`, optional
                 Convert the metadata construct with the given
                 construct key.
 
@@ -1971,6 +1976,10 @@ class Field(
                 the domain of the new field construct. By default as
                 much of the domain as possible is copied to the new
                 field construct.
+
+            {{filter_kwargs: optional}} Also to configure the returned value.
+
+                 .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -2018,10 +2027,14 @@ class Field(
         Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
 
         """
-        c = self.constructs.get(key)
+        c = self.constructs.get(*identity, **filter_kwargs)
         if c is None:
             raise ValueError("Can't return zero constructs")
 
+        if not hasattr(c, "has_data"):  # i.e. a construct that never has data
+            raise ValueError(
+                "Can't convert a construct that does not have data"
+            )
         # ------------------------------------------------------------
         # Create a new field with the properties and data from the
         # construct
@@ -2035,7 +2048,7 @@ class Field(
         # Add domain axes
         # ------------------------------------------------------------
         constructs_data_axes = self.constructs.data_axes()
-        data_axes = constructs_data_axes.get(key)
+        data_axes = constructs_data_axes.get(*identity, **filter_kwargs)
         if data_axes is not None:
             domain_axes = self.domain_axes(todict=True)
             for domain_axis in data_axes:
