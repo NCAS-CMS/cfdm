@@ -73,7 +73,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         f = cfdm.read(self.filename)[0]
 
         d = f.dimension_coordinates("grid_longitude").value()
-        cfdm.AuxiliaryCoordinate(source=d)
+        cfdm.AuxiliaryCoordinate(bounds=d)
 
     def test_AuxiliaryCoordinate_properties(self):
         """TODO DOCS."""
