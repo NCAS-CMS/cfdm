@@ -36,7 +36,7 @@ class DomainTest(unittest.TestCase):
         self.assertEqual(d.construct_type, "domain_axis")
 
     def test_DomainAxis_source(self):
-        """TODO DOCS."""
+        """Test the source keyword argument to Domain."""
         d = self.d
 
         self.assertTrue(d.equals(cfdm.DomainAxis(source=d)))

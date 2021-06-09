@@ -69,7 +69,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertIsInstance(x.dump(display=False, _title=None), str)
 
     def test_AuxiliaryCoordinate_bounds(self):
-        """TODO DOCS."""
+        """Test the bounds keyword argument to AuxiliaryCoordinate."""
         f = cfdm.read(self.filename)[0]
 
         d = f.dimension_coordinates("grid_longitude").value()
@@ -88,7 +88,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertIsNone(x.del_property("long_name", None))
 
     def test_AuxiliaryCoordinate_source(self):
-        """TODO DOCS."""
+        """Test the source keyword argument to AuxiliaryCoordinate."""
         f = cfdm.read(self.filename)[0]
         d = f.dimension_coordinates("grid_longitude").value()
         cfdm.AuxiliaryCoordinate(source=d)

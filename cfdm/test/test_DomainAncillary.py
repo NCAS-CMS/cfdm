@@ -50,7 +50,7 @@ class DomainAncillaryTest(unittest.TestCase):
         self.assertIsInstance(x.dump(display=False), str)
 
     def test_DomainAncillary_bounds(self):
-        """TODO DOCS."""
+        """Test the bounds keyword argument to DomainAncillary."""
         f = cfdm.read(self.filename)[0]
 
         a = f.auxiliary_coordinates("latitude").value()

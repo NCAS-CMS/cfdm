@@ -42,7 +42,7 @@ class FieldAncillaryTest(unittest.TestCase):
         self.assertIsInstance(x.dump(display=False), str)
 
     def test_FieldAncillary_source(self):
-        """TODO DOCS."""
+        """Test the source keyword argument to FieldAncillary."""
         f = self.f.copy()
 
         a = f.auxiliary_coordinates("latitude").value()
