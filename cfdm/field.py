@@ -2027,14 +2027,13 @@ class Field(
         Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
 
         """
-        c = self.constructs.get(*identity, **filter_kwargs)
+        filter_kwargs.pop("item", None)
+        key, c = self.construct_item(*identity, **filter_kwargs)
         if c is None:
             raise ValueError("Can't return zero constructs")
 
         if not hasattr(c, "has_data"):  # i.e. a construct that never has data
-            raise ValueError(
-                "Can't convert a construct that does not have data"
-            )
+            raise ValueError("Can't convert a construct that cannot have data")
         # ------------------------------------------------------------
         # Create a new field with the properties and data from the
         # construct
@@ -2048,7 +2047,7 @@ class Field(
         # Add domain axes
         # ------------------------------------------------------------
         constructs_data_axes = self.constructs.data_axes()
-        data_axes = constructs_data_axes.get(*identity, **filter_kwargs)
+        data_axes = constructs_data_axes.get(key)
         if data_axes is not None:
             domain_axes = self.domain_axes(todict=True)
             for domain_axis in data_axes:
