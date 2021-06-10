@@ -76,7 +76,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         cfdm.AuxiliaryCoordinate(bounds=d)
 
     def test_AuxiliaryCoordinate_properties(self):
-        """TODO DOCS."""
+        """Test the property access methods of AuxiliaryCoordinate."""
         f = cfdm.read(self.filename)[0]
         x = f.auxiliary_coordinates("latitude").value()
 
@@ -94,7 +94,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         cfdm.AuxiliaryCoordinate(source=d)
 
     def test_AuxiliaryCoordinate_insert_dimension(self):
-        """TODO DOCS."""
+        """Test the `insert_dimension` method of AuxiliaryCoordinate."""
         f = cfdm.read(self.filename)[0]
         d = f.dimension_coordinates("grid_longitude").value()
         x = cfdm.AuxiliaryCoordinate(source=d)
@@ -111,7 +111,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertEqual(x.bounds.shape, (9, 1, 2), x.bounds.shape)
 
     def test_AuxiliaryCoordinate_transpose(self):
-        """TODO DOCS."""
+        """Test the transpose method of AuxiliaryCoordinate."""
         f = cfdm.read(self.filename)[0]
         x = f.auxiliary_coordinates("longitude").value()
 
@@ -132,7 +132,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertEqual(x.bounds.shape, (10, 9, 4), x.bounds.shape)
 
     def test_AuxiliaryCoordinate_squeeze(self):
-        """TODO DOCS."""
+        """Test the squeeze method of AuxiliaryCoordinate."""
         f = cfdm.read(self.filename)[0]
         x = f.auxiliary_coordinates("longitude").value()
 
@@ -155,7 +155,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertEqual(x.bounds.shape, (1, 9, 10, 4), x.bounds.shape)
 
     def test_AuxiliaryCoordinate_interior_ring(self):
-        """TODO DOCS."""
+        """Test the interior ring access AuxiliaryCoordinate methods."""
         c = cfdm.AuxiliaryCoordinate()
 
         i = cfdm.InteriorRing(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
