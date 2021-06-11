@@ -33,7 +33,7 @@ class CellMeasureTest(unittest.TestCase):
         self.f = f[0]
 
     def test_CellMeasure__init__(self):
-        """TODO DOCS."""
+        """Test the CellMeasure constructor and source keyword."""
         cfdm.CellMeasure(source="qwerty")
 
     def test_CellMeasure__repr__str__dump_construct_type(self):
@@ -47,7 +47,7 @@ class CellMeasureTest(unittest.TestCase):
             self.assertEqual(cm.construct_type, "cell_measure")
 
     def test_CellMeasure(self):
-        """TODO DOCS."""
+        """Test measure access and (un)setting CellMeasure methods."""
         f = self.f.copy()
 
         cm = f.construct("measure:area")

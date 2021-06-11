@@ -56,7 +56,6 @@ class CoordinateReferenceTest(unittest.TestCase):
 
     def test_CoordinateReference__repr__str__dump_construct_type(self):
         """Test all means of CoordinateReference inspection."""
-        """TODO DOCS."""
         f = self.f
 
         for cr in f.coordinate_references().values():
@@ -66,7 +65,7 @@ class CoordinateReferenceTest(unittest.TestCase):
             self.assertEqual(cr.construct_type, "coordinate_reference")
 
     def test_CoordinateReference_equals(self):
-        """TODO DOCS."""
+        """Test the equality-testing CoordinateReference method."""
         # Create a vertical grid mapping coordinate reference
         t = cfdm.CoordinateReference(
             coordinates=("coord1",),
@@ -140,7 +139,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         self.assertTrue(t.equals(t.copy(), verbose=3))
 
     def test_CoordinateConversion(self):
-        """TODO DOCS."""
+        """Test a CoordinateReference coordinate conversion element."""
         f = self.f.copy()
 
         cr = f.construct("standard_name:atmosphere_hybrid_height_coordinate")
@@ -185,7 +184,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         self.assertTrue(_.equals(cc))
 
     def test_Datum(self):
-        """TODO DOCS."""
+        """Test a CoordinateReference datum component."""
         f = self.f.copy()
 
         cr = f.construct("standard_name:atmosphere_hybrid_height_coordinate")

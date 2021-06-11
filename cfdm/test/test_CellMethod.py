@@ -41,11 +41,11 @@ class CellMethodTest(unittest.TestCase):
             self.assertEqual(c.construct_type, "cell_method")
 
     def test_CellMethod(self):
-        """TODO DOCS."""
+        """Test CellMethod equality, identity and sorting methods."""
         f = self.f
 
         # ------------------------------------------------------------
-        # Equals and idenities
+        # Equals and identities
         # ------------------------------------------------------------
         for c in f.cell_methods().values():
             d = c.copy()
@@ -92,7 +92,7 @@ class CellMethodTest(unittest.TestCase):
         c = cfdm.CellMethod(source="qwerty")
 
     def test_CellMethod_axes(self):
-        """TODO DOCS."""
+        """Test the axes access and (un)setting CellMethod methods."""
         f = cfdm.CellMethod()
 
         self.assertFalse(f.has_axes())
@@ -104,7 +104,7 @@ class CellMethodTest(unittest.TestCase):
         self.assertIsNone(f.del_axes(None))
 
     def test_CellMethod_method(self):
-        """TODO DOCS."""
+        """Test the method access and (un)setting CellMethod methods."""
         f = cfdm.CellMethod()
 
         self.assertFalse(f.has_method())
@@ -116,7 +116,7 @@ class CellMethodTest(unittest.TestCase):
         self.assertIsNone(f.del_method(None))
 
     def test_CellMethod_qualifier(self):
-        """TODO DOCS."""
+        """Test qualifier access and (un)setting CellMethod methods."""
         f = cfdm.CellMethod()
 
         self.assertEqual(f.qualifiers(), {})
