@@ -40,31 +40,31 @@ class ConstructsTest(unittest.TestCase):
         str(c)
 
     def test_Constructs__len__(self):
-        """TODO DOCS."""
+        """Test the length returned for Constructs."""
         c = self.c
 
         self.assertEqual(len(c), 20)
         self.assertEqual(len(self.f.domain.constructs), 17)
 
     def test_Constructs_check_construct_type(self):
-        """TODO DOCS."""
+        """Test the `check_construct_type` Constructs method."""
         c = self.c
 
         with self.assertRaises(ValueError):
             c._check_construct_type("bad type")
 
     def test_Constructs_construct_type(self):
-        """TODO DOCS."""
+        """Test the `construct_type` Constructs method."""
         d = self.f.domain.constructs
         self.assertIsNone(d.construct_type("cell_method"))
 
     def test_Constructs_construct_types(self):
-        """TODO DOCS."""
+        """Test the `construct_types` Constructs method."""
         d = self.f.domain.constructs
         self.assertEqual(len(d.construct_types()), len(d))
 
     def test_Constructs_items_key_value(self):
-        """TODO DOCS."""
+        """Test the items, key and value Constructs methods."""
         c = self.c
 
         for i, (key, value) in enumerate(c.items()):
@@ -75,7 +75,7 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(i, 19)
 
     def test_Constructs_copy_shallow_copy(self):
-        """TODO DOCS."""
+        """Test the Constructs methods for copying."""
         c = self.c
 
         d = c.filter_by_type("domain_axis")
@@ -88,14 +88,14 @@ class ConstructsTest(unittest.TestCase):
         self.assertTrue(d.equals(c, verbose=3))
 
     def test_Constructs_domain_axis_identity(self):
-        """TODO DOCS."""
+        """Test the `domain_axis_identity` Constructs method."""
         c = self.c
 
         with self.assertRaises(ValueError):
             c.domain_axis_identity(999)
 
     def test_Constructs_filter(self):
-        """TODO DOCS."""
+        """Trivial test of constructs-filtering Constructs methods."""
         c = self.c
 
         for todict in (False, True):
@@ -123,7 +123,7 @@ class ConstructsTest(unittest.TestCase):
             c.filter(bad_kwarg=None)
 
     def test_Constructs_FILTERING(self):
-        """TODO DOCS."""
+        """Test Constructs methods that invert or reverse filters."""
         c = self.c
 
         # Axis
@@ -170,7 +170,7 @@ class ConstructsTest(unittest.TestCase):
         self.assertTrue(c.unfilter(1).equals(c, verbose=3))
 
     def test_Constructs_domain_axes(self):
-        """TODO DOCS."""
+        """Test the `domain_axes` Constructs method."""
         c = self.c
 
         self.assertEqual(c.domain_axes(cached=999), 999)
@@ -191,14 +191,14 @@ class ConstructsTest(unittest.TestCase):
             )
 
     def test_Constructs_filter_by_data(self):
-        """TODO DOCS."""
+        """Test the `filter_by_data` Constructs method."""
         c = self.c
 
         self.assertEqual(len(c.filter_by_data()), 12)
         self.assertEqual(c.filter_by_data(cached=999), 999)
 
     def test_Constructs_filter_by_type(self):
-        """TODO DOCS."""
+        """Test the `filter_by_type` Constructs method."""
         c = self.c
 
         self.assertEqual(c.filter_by_type(cached=999), 999)
@@ -284,7 +284,7 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(len(c.filter_by_type("qwerty")), 0)
 
     def test_Constructs_filter_by_method(self):
-        """TODO DOCS."""
+        """Test the `filter_by_method` Constructs method."""
         c = self.c
 
         self.assertEqual(len(c.filter_by_method()), 2)
@@ -293,7 +293,7 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(c.filter_by_method(cached=999), 999)
 
     def test_Constructs_filter_by_ncdim(self):
-        """TODO DOCS."""
+        """Test the `filter_by_ncdim` Constructs method."""
         c = self.c
 
         self.assertEqual(len(c.filter_by_ncdim()), 4)
@@ -302,7 +302,7 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(c.filter_by_ncdim(cached=999), 999)
 
     def test_Constructs_filter_by_ncvar(self):
-        """TODO DOCS."""
+        """Test the `filter_by_ncvar` Constructs method."""
         c = self.c
 
         self.assertEqual(len(c.filter_by_ncvar()), 14)
@@ -311,7 +311,7 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(c.filter_by_ncvar(cached=999), 999)
 
     def test_Constructs_filter_by_measure(self):
-        """TODO DOCS."""
+        """Test the `filter_by_measure` Constructs method."""
         c = self.c
 
         self.assertEqual(len(c.filter_by_measure()), 1)
@@ -320,7 +320,7 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(c.filter_by_measure(cached=999), 999)
 
     def test_Constructs_filter_by_identity(self):
-        """TODO DOCS."""
+        """Test the `filter_by_identity` Constructs method."""
         c = self.c
 
         self.assertEqual(len(c.filter_by_identity()), 20)
@@ -336,7 +336,7 @@ class ConstructsTest(unittest.TestCase):
             c("latitude", filter_by_identity=("longitude",))
 
     def test_Constructs_filter_by_axis(self):
-        """TODO DOCS."""
+        """Test the `filter_by_axis` Constructs method."""
         c = self.c
 
         self.assertEqual(len(c.filter_by_axis()), 12)
@@ -358,14 +358,14 @@ class ConstructsTest(unittest.TestCase):
             c.filter_by_axis(0, 1, axis_mode="bad_mode")
 
     def test_Constructs_clear_filters_applied(self):
-        """TODO DOCS."""
+        """Test the `clear_filters_applied` Constructs method."""
         c = self.c
 
         d = c.shallow_copy()
         d.clear_filters_applied()
 
     def test_Constructs_filter_by_naxes(self):
-        """TODO DOCS."""
+        """Test the `filter_by_naxes` Constructs method."""
         c = self.c
 
         self.assertEqual(len(c.filter_by_naxes()), 12)
@@ -373,7 +373,7 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(c.filter_by_naxes(cached=999), 999)
 
     def test_Constructs_filter_by_property(self):
-        """TODO DOCS."""
+        """Test the `filter_by_property` Constructs method."""
         c = self.c
 
         self.assertEqual(len(c.filter_by_property()), 12)
@@ -399,7 +399,7 @@ class ConstructsTest(unittest.TestCase):
             c.filter_by_property("bad_mode")
 
     def test_Constructs_filter_by_size(self):
-        """TODO DOCS."""
+        """Test the `filter_by_size` Constructs method."""
         c = self.c
 
         self.assertEqual(len(c.filter_by_size(9)), 1)
@@ -409,7 +409,7 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(c.filter_by_size(cached=999), 999)
 
     def test_Constructs_filter_by_key(self):
-        """TODO DOCS."""
+        """Test the `filter_by_key` Constructs method."""
         c = self.c
 
         self.assertEqual(len(c.filter_by_key()), 20)
@@ -419,14 +419,14 @@ class ConstructsTest(unittest.TestCase):
         self.assertEqual(c.filter_by_key(cached=999), 999)
 
     def test_Constructs_copy(self):
-        """TODO DOCS."""
+        """Test the copy module copying behaviour of Constructs."""
         c = self.c
 
         copy.copy(c)
         copy.deepcopy(c)
 
     def test_Constructs__getitem__(self):
-        """TODO DOCS."""
+        """Test the lookup access of construct items from Constructs."""
         c = self.c
 
         self.assertIsInstance(
@@ -437,20 +437,20 @@ class ConstructsTest(unittest.TestCase):
             c["bad_key"]
 
     def test_Constructs_get_data_axes(self):
-        """TODO DOCS."""
+        """Test the `get_data_axes` Constructs method."""
         c = self.c
 
         with self.assertRaises(ValueError):
             c.get_data_axes("bad key")
 
     def test_Constructs_todict(self):
-        """TODO DOCS."""
+        """Test the todict Constructs method."""
         c = self.c
 
         self.assertIsInstance(c.todict(), dict)
 
     def test_Constructs_private(self):
-        """TODO DOCS."""
+        """Test internal (designated as private) Constructs methods."""
         c = self.f.domain.constructs
 
         # _construct_type_description
