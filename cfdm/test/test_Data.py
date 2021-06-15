@@ -14,7 +14,7 @@ import cfdm
 
 
 def axes_combinations(ndim):
-    """TODO DOCS."""
+    """Create axes permutations for `test_Data_flatten`."""
     return [
         axes
         for n in range(1, ndim + 1)
@@ -41,7 +41,7 @@ class DataTest(unittest.TestCase):
         )
 
     def test_Data_any(self):
-        """TODO DOCS."""
+        """Test the any Data method."""
         d = cfdm.Data([[0, 0, 0]])
         self.assertFalse(d.any())
         d[0, 0] = numpy.ma.masked
@@ -52,7 +52,7 @@ class DataTest(unittest.TestCase):
         self.assertFalse(d.any())
 
     def test_Data__repr__str(self):
-        """TODO DOCS."""
+        """Test all means of Data inspection."""
         for d in [
             cfdm.Data(9, units="km"),
             cfdm.Data([9], units="km"),
@@ -71,7 +71,7 @@ class DataTest(unittest.TestCase):
 
     #    def test_Data__getitem__(self):
     def test_Data__setitem__(self):
-        """TODO DOCS."""
+        """Test the assignment of data items on Data."""
         a = numpy.ma.arange(3000).reshape(50, 60)
 
         d = cfdm.Data(a.filled(), units="m")
@@ -134,7 +134,7 @@ class DataTest(unittest.TestCase):
         self.assertIs(a[()], numpy.ma.masked)
 
     def test_Data_apply_masking(self):
-        """TODO DOCS."""
+        """Test the `apply_masking` Data method."""
         a = numpy.ma.arange(12).reshape(3, 4)
         a[1, 1] = numpy.ma.masked
 
@@ -206,7 +206,7 @@ class DataTest(unittest.TestCase):
     #            pass
 
     def test_Data_array(self):
-        """TODO DOCS."""
+        """Test the array Data method."""
         # ------------------------------------------------------------
         # Numpy array interface (__array__)
         # ------------------------------------------------------------
@@ -248,7 +248,7 @@ class DataTest(unittest.TestCase):
         self.assertFalse((a2 == a).all())
 
     def test_Data_datetime_array(self):
-        """TODO DOCS."""
+        """Test the `datetime_array` Data method."""
         d = cfdm.Data([11292.5, 11293], units="days since 1970-1-1")
         dt = d.datetime_array
         self.assertEqual(dt[0], datetime.datetime(2000, 12, 1, 12, 0))
@@ -268,7 +268,7 @@ class DataTest(unittest.TestCase):
         self.assertIs(dt[()], numpy.ma.masked)
 
     def test_Data_flatten(self):
-        """TODO DOCS."""
+        """Test the flatten Data method."""
         ma = numpy.ma.arange(24).reshape(1, 2, 3, 4)
         ma[0, 1, 1, 2] = cfdm.masked
         ma[0, 0, 2, 1] = cfdm.masked
@@ -320,7 +320,7 @@ class DataTest(unittest.TestCase):
             d.flatten(0)
 
     def test_Data_transpose(self):
-        """TODO DOCS."""
+        """Test the transpose Data method."""
         a = numpy.arange(2 * 3 * 5).reshape(2, 1, 3, 5)
         d = cfdm.Data(a.copy())
 
@@ -345,7 +345,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.equals(d.transpose()))
 
     def test_Data_unique(self):
-        """TODO DOCS."""
+        """Test the unique Data method."""
         d = cfdm.Data([[4, 2, 1], [1, 2, 3]], units="metre")
         u = d.unique()
         self.assertEqual(u.shape, (4,))
@@ -359,7 +359,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((u.array == cfdm.Data([1, 2, 4], "metre").array).all())
 
     def test_Data_equals(self):
-        """TODO DOCS."""
+        """Test the equality-testing Data method."""
         a = numpy.ma.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
         a[0, 0, 2, 3] = numpy.ma.masked
 
@@ -371,7 +371,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(e.equals(d, verbose=3))
 
     def test_Data_maximum_minimum_sum_squeeze(self):
-        """TODO DOCS."""
+        """Test the maximum, minimum, sum and squeeze Data methods."""
         a = numpy.ma.arange(2 * 3 * 5).reshape(2, 1, 3, 5)
         a[0, 0, 0, 0] = numpy.ma.masked
         a[-1, -1, -1, -1] = numpy.ma.masked
@@ -446,7 +446,7 @@ class DataTest(unittest.TestCase):
             d.maximum(axes=0)
 
     def test_Data_dtype_mask(self):
-        """TODO DOCS."""
+        """Test the dtype and mask Data methods."""
         a = numpy.ma.array(
             [[280.0, -99, -99, -99], [281.0, 279.0, 278.0, 279.0]],
             dtype=float,
@@ -482,22 +482,22 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.mask.array == numpy.ma.getmaskarray(a)).all())
 
     def test_Data_get_index(self):
-        """TODO DOCS."""
+        """Test the `get_index` Data method."""
         d = cfdm.Data([[281, 279, 278, 279]])
         self.assertIsNone(d.get_index(default=None))
 
     def test_Data_get_list(self):
-        """TODO DOCS."""
+        """Test the `get_list` Data method."""
         d = cfdm.Data([[281, 279, 278, 279]])
         self.assertIsNone(d.get_list(default=None))
 
     def test_Data_get_count(self):
-        """TODO DOCS."""
+        """Test the `get_count` Data method."""
         d = cfdm.Data([[281, 279, 278, 279]])
         self.assertIsNone(d.get_count(default=None))
 
     def test_Data_filled(self):
-        """TODO DOCS."""
+        """Test the filled Data method."""
         d = cfdm.Data([[1, 2, 3]])
         self.assertTrue((d.filled().array == [[1, 2, 3]]).all())
 
@@ -546,7 +546,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.filled().array == ["", "b", "c"]).all())
 
     def test_Data_insert_dimension(self):
-        """TODO DOCS."""
+        """Test the `insert_dimension` Data method."""
         d = cfdm.Data([list(range(12))])
         self.assertEqual(d.shape, (1, 12))
         e = d.squeeze()
@@ -597,7 +597,7 @@ class DataTest(unittest.TestCase):
             d.insert_dimension(1000)
 
     def test_Data_get_compressed_dimension(self):
-        """TODO DOCS."""
+        """Test the `get_compressed_dimension` Data method."""
         d = cfdm.Data([[281, 279, 278, 279]])
         self.assertIsNone(d.get_compressed_dimension(None))
 
