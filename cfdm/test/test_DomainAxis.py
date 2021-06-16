@@ -8,7 +8,7 @@ faulthandler.enable()  # to debug seg faults and timeouts
 import cfdm
 
 
-class DomainTest(unittest.TestCase):
+class DomainAxisTest(unittest.TestCase):
     """Unit test for the DomainAxis class."""
 
     d = cfdm.DomainAxis(size=99)
