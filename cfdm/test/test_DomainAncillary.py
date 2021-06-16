@@ -57,7 +57,7 @@ class DomainAncillaryTest(unittest.TestCase):
         cfdm.DomainAncillary(bounds=a)
 
     def test_DomainAncillary_properties(self):
-        """TODO DOCS."""
+        """Test the property access methods of DomainAncillary."""
         f = cfdm.read(self.filename)[0]
         x = f.domain_ancillaries("ncvar%a").value()
 
@@ -69,7 +69,7 @@ class DomainAncillaryTest(unittest.TestCase):
         self.assertIsNone(x.del_property("long_name", None))
 
     def test_DomainAncillary_insert_dimension(self):
-        """TODO DOCS."""
+        """Test the `insert_dimension` DomainAncillary method."""
         f = cfdm.read(self.filename)[0]
         d = f.dimension_coordinates("grid_longitude").value()
         x = cfdm.DomainAncillary(source=d)
@@ -86,7 +86,7 @@ class DomainAncillaryTest(unittest.TestCase):
         self.assertEqual(x.bounds.shape, (9, 1, 2), x.bounds.shape)
 
     def test_DomainAncillary_transpose(self):
-        """TODO DOCS."""
+        """Test the transpose DomainAncillary method."""
         f = cfdm.read(self.filename)[0]
         a = f.auxiliary_coordinates("longitude").value()
         bounds = cfdm.Bounds(
@@ -107,7 +107,7 @@ class DomainAncillaryTest(unittest.TestCase):
         self.assertEqual(x.bounds.shape, (10, 9, 4), x.bounds.shape)
 
     def test_DomainAncillary_squeeze(self):
-        """TODO DOCS."""
+        """Test the squeeze DomainAncillary method."""
         f = cfdm.read(self.filename)[0]
         a = f.auxiliary_coordinates("longitude").value()
         bounds = cfdm.Bounds(

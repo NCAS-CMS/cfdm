@@ -9,7 +9,7 @@ import cfdm
 
 
 class DomainTest(unittest.TestCase):
-    """Unit test for the Domain class."""
+    """Unit test for the DomainAxis class."""
 
     d = cfdm.DomainAxis(size=99)
     d.nc_set_dimension("ncdim")
@@ -28,7 +28,7 @@ class DomainTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
     def test_DomainAxis__repr__str_construct_type(self):
-        """TODO DOCS."""
+        """Test DomainAxis inspection and `construct_type` method."""
         d = self.d
 
         repr(d)
@@ -36,7 +36,7 @@ class DomainTest(unittest.TestCase):
         self.assertEqual(d.construct_type, "domain_axis")
 
     def test_DomainAxis_source(self):
-        """Test the source keyword argument to Domain."""
+        """Test the source keyword argument to DomainAxis."""
         d = self.d
 
         self.assertTrue(d.equals(cfdm.DomainAxis(source=d)))
@@ -46,7 +46,7 @@ class DomainTest(unittest.TestCase):
         )
 
     def test_DomainAxis_equals(self):
-        """TODO DOCS."""
+        """Test the equality-testing DomainAxis method."""
         d = self.d
         e = d.copy()
 
@@ -55,7 +55,7 @@ class DomainTest(unittest.TestCase):
         self.assertTrue(e.equals(d, verbose=3))
 
     def test_DomainAxis_size(self):
-        """TODO DOCS."""
+        """Test the size access and (un)setting DomainAxis method."""
         d = self.d.copy()
         d.set_size(100)
 
@@ -67,7 +67,7 @@ class DomainTest(unittest.TestCase):
         self.assertFalse(d.has_size())
 
     def test_DomainAxis_unlimited(self):
-        """TODO DOCS."""
+        """Test the netCDF unlimited DomainAxis methods."""
         d = cfdm.DomainAxis()
         d.set_size(99)
 

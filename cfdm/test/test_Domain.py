@@ -10,7 +10,7 @@ import cfdm
 
 
 class DomainTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the Domain class."""
 
     def setUp(self):
         """Preparations called immediately before each test method."""
@@ -41,7 +41,7 @@ class DomainTest(unittest.TestCase):
         self.assertIsInstance(d.dump(display=False), str)
 
     def test_Domain_equals(self):
-        """TODO DOCS."""
+        """Test the equality-testing Domain method."""
         f = self.f
 
         d = f.domain

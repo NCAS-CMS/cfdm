@@ -69,11 +69,11 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertIsInstance(x.dump(display=False, _key="qwerty"), str)
 
     def test_DimensionCoordinate__init__(self):
-        """TODO DOCS."""
+        """Test the constructor of DimensionCoordinate."""
         cfdm.DimensionCoordinate(source="qwerty")
 
     def test_DimensionCoordinate_set_data(self):
-        """TODO DOCS."""
+        """Test the `set_data` DimensionCoordinate method."""
         x = cfdm.DimensionCoordinate()
 
         y = x.set_data(cfdm.Data([1, 2, 3]))
@@ -95,7 +95,7 @@ class DimensionCoordinateTest(unittest.TestCase):
             y = x.set_data(cfdm.Data(1))
 
     def test_DimensionCoordinate_climatology(self):
-        """TODO DOCS."""
+        """Test the climatology DimensionCoordinate methods."""
         x = cfdm.DimensionCoordinate()
 
         self.assertFalse(x.is_climatology())
