@@ -49,7 +49,7 @@ class FieldAncillaryTest(unittest.TestCase):
         cfdm.FieldAncillary(source=a)
 
     def test_FieldAncillary_properties(self):
-        """TODO DOCS."""
+        """Test the property access methods of FieldAncillary."""
         f = self.f.copy()
         x = f.domain_ancillaries("ncvar%a").value()
         x = cfdm.FieldAncillary(source=x)
@@ -62,7 +62,7 @@ class FieldAncillaryTest(unittest.TestCase):
         self.assertIsNone(x.del_property("long_name", None))
 
     def test_FieldAncillary_insert_dimension(self):
-        """TODO DOCS."""
+        """Test the `insert_dimension` FieldAncillary method."""
         f = self.f.copy()
         d = f.dimension_coordinates("grid_longitude").value()
         x = cfdm.FieldAncillary(source=d)
@@ -76,7 +76,7 @@ class FieldAncillaryTest(unittest.TestCase):
         self.assertEqual(x.shape, (9, 1))
 
     def test_FieldAncillary_transpose(self):
-        """TODO DOCS."""
+        """Test the transpose FieldAncillary method."""
         f = self.f.copy()
         a = f.auxiliary_coordinates("longitude").value()
         x = cfdm.FieldAncillary(source=a)
@@ -90,7 +90,7 @@ class FieldAncillaryTest(unittest.TestCase):
         self.assertEqual(x.shape, (10, 9))
 
     def test_FieldAncillary_squeeze(self):
-        """TODO DOCS."""
+        """Test the squeeze FieldAncillary method."""
         f = self.f.copy()
         a = f.auxiliary_coordinates("longitude").value()
         x = cfdm.FieldAncillary(source=a)

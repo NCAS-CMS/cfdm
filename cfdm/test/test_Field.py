@@ -64,11 +64,11 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(f.construct_type, "field")
 
     def test_Field__init__(self):
-        """TODO DOCS."""
+        """Test the Field constructor and source keyword."""
         cfdm.Field(source="qwerty")
 
     def test_Field___getitem__(self):
-        """TODO DOCS."""
+        """Test the access of field subspsaces from Field."""
         f = self.f1
         f = f.squeeze()
 
@@ -171,7 +171,7 @@ class FieldTest(unittest.TestCase):
     #            self.assertEqual(counts[0], array.size)
 
     def test_Field_get_filenames(self):
-        """TODO DOCS."""
+        """Test the `get_filenames` Field method."""
         cfdm.write(self.f0, tmpfile)
         g = cfdm.read(tmpfile)[0]
 
@@ -195,7 +195,7 @@ class FieldTest(unittest.TestCase):
         os.remove(tmpfile)
 
     def test_Field_apply_masking(self):
-        """TODO DOCS."""
+        """Test the `apply_masking` Field method."""
         f = self.f0.copy()
 
         for prop in (
@@ -248,7 +248,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(e.equals(g.data, verbose=3))
 
     def test_Field_PROPERTIES(self):
-        """TODO DOCS."""
+        """Test the property access methods of Field."""
         f = self.f1.copy()
         for name, value in f.properties().items():
             self.assertTrue(f.has_property(name))
@@ -266,7 +266,7 @@ class FieldTest(unittest.TestCase):
         f.set_properties(d, copy=False)
 
     def test_Field_set_get_del_has_data(self):
-        """TODO DOCS."""
+        """Test the data access and (un)setting methods of Field."""
         f = self.f1.copy()
 
         self.assertTrue(f.has_data())
@@ -303,7 +303,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(g.data.equals(d))
 
     def test_Field_construct_item(self):
-        """TODO DOCS."""
+        """Test the `construct_item` Field method."""
         f = self.f1
 
         out = f.construct_item("key%domainaxis0")
@@ -312,7 +312,7 @@ class FieldTest(unittest.TestCase):
         self.assertIsInstance(out[1], cfdm.DomainAxis)
 
     def test_Field_CONSTRUCTS(self):
-        """TODO DOCS."""
+        """Test the construct access Field methods."""
         f = self.f1
 
         f.construct("latitude")
@@ -379,7 +379,7 @@ class FieldTest(unittest.TestCase):
         )
 
     def test_Field_domain_axes(self):
-        """TODO DOCS."""
+        """Test the `domain_axes` Field method."""
         f = self.f1
 
         regex = re.compile("^atmos")
@@ -390,7 +390,7 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(len(f.domain_axes(regex, "grid_latitude", -1)), 3)
 
     def test_Field_data_axes(self):
-        """TODO DOCS."""
+        """Test the data axes access and (un)setting Field methods."""
         f = self.f1.copy()
 
         ref = f.get_data_axes()
@@ -404,7 +404,7 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(f.get_data_axes(), ref)
 
     def test_Field_convert(self):
-        """TODO DOCS."""
+        """Test the convert Field method."""
         f = self.f1
 
         key = f.construct_key("grid_latitude")
@@ -443,7 +443,7 @@ class FieldTest(unittest.TestCase):
             f.convert("domainaxis0")
 
     def test_Field_equals(self):
-        """TODO DOCS."""
+        """Test the equality-testing Field method."""
         f = self.f1
 
         self.assertTrue(f.equals(f, verbose=3))
@@ -474,7 +474,7 @@ class FieldTest(unittest.TestCase):
         self.assertFalse(g.equals(f))
 
     def test_Field_del_construct(self):
-        """TODO DOCS."""
+        """Test the `del_construct` Field method."""
         f = self.f1.copy()
 
         self.assertIsInstance(
@@ -493,7 +493,7 @@ class FieldTest(unittest.TestCase):
         )
 
     def test_Field_has_construct(self):
-        """TODO DOCS."""
+        """Test the `has_construct` Field method."""
         f = self.f1.copy()
 
         self.assertTrue(f.has_construct("latitude"))
@@ -507,7 +507,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.has_construct(""))
 
     def test_Field_squeeze_transpose_insert_dimension(self):
-        """TODO DOCS."""
+        """Test squeeze, transpose and `insert_dimension` methods."""
         f = self.f1
 
         g = f.transpose()
@@ -535,7 +535,7 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(h.get_data_axes()[:-1], f.get_data_axes())
 
     def test_Field_compress_uncompress(self):
-        """TODO DOCS."""
+        """Test the compress and uncompress Field methods."""
         contiguous = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
             "DSG_timeSeries_contiguous.nc",
@@ -595,7 +595,7 @@ class FieldTest(unittest.TestCase):
                     self.assertTrue(f.equals(c, verbose=3), message)
 
     def test_Field_creation_commands(self):
-        """TODO DOCS."""
+        """Test the `creation_commands` Field method."""
         for i in range(7):
             f = cfdm.example_field(i)
 
@@ -614,7 +614,7 @@ class FieldTest(unittest.TestCase):
             f.creation_commands(namespace=ns)
 
     def test_Field_has_geometry(self):
-        """TODO DOCS."""
+        """Test the `creation_commands` Field method."""
         f = self.f1
         self.assertFalse(f.has_geometry())
 
