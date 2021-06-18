@@ -26,7 +26,7 @@ class NumpyArrayTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
     def test_NumpyArray_copy(self):
-        """TODO DOCS."""
+        """Test the copy module copying behaviour of NumpyArray."""
         a = numpy.array([1, 2, 3, 4])
 
         x = cfdm.NumpyArray(a)
@@ -35,7 +35,7 @@ class NumpyArrayTest(unittest.TestCase):
         self.assertTrue((x.array == y.array).all())
 
     def test_NumpyArray__array__(self):
-        """TODO DOCS."""
+        """Test the NumPy array conversion of NumpyArray."""
         a = numpy.array([1, 2, 3, 4])
 
         x = cfdm.NumpyArray(a)

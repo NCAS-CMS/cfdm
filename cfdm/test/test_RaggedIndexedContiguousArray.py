@@ -23,7 +23,7 @@ class RaggedIndexedContiguousArrayTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
     def test_RaggedIndexedContiguousArray_to_memory(self):
-        """TODO DOCS."""
+        """Test the `to_memory` RaggedIndexedContiguousArray method."""
         compressed_data = cfdm.Data(
             [
                 280.0,
