@@ -39,7 +39,7 @@ def _get_all_abbrev_subclasses(klass):
 
 
 class DocstringTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Test the system for cross-package docstring substitutions."""
 
     def setUp(self):
         """Preparations called immediately before each test method."""
@@ -77,7 +77,7 @@ class DocstringTest(unittest.TestCase):
         )
 
     def test_class_docstring_rewrite(self):
-        """TODO DOCS."""
+        """Test the DocstringRewriteMeta (meta)class."""
 
         class parent(metaclass=cfdm.core.meta.DocstringRewriteMeta):
             pass
@@ -176,8 +176,7 @@ class DocstringTest(unittest.TestCase):
         self.assertEqual(grandchild.__doc__, "grandchild.")
 
     def test_docstring(self):
-        """TODO DOCS."""
-        # Test that all {{ occurrences have been substituted
+        """Test that all '{{' occurrences have been substituted."""
         for klass in self.subclasses_of_Container:
             for x in (klass, klass()):
                 for name in dir(x):
@@ -207,7 +206,7 @@ class DocstringTest(unittest.TestCase):
                     )
 
     def test_docstring_package(self):
-        """TODO DOCS."""
+        """Test the docstring substitution of the pacakage name."""
         string = ">>> f = {}.".format(self.package)
         for klass in self.subclasses_of_Container:
             for x in (klass, klass()):
@@ -219,7 +218,7 @@ class DocstringTest(unittest.TestCase):
                 self.assertIn(string, x.clear_properties.__doc__, klass)
 
     def test_docstring_class(self):
-        """TODO DOCS."""
+        """Test the docstring substitution of the class name."""
         for klass in self.subclasses_of_Properties:
             string = ">>> f = {}.{}".format(self.package, klass.__name__)
             for x in (klass, klass()):
@@ -252,21 +251,21 @@ class DocstringTest(unittest.TestCase):
                 )
 
     def test_docstring_repr(self):
-        """TODO DOCS."""
+        """Test docstring substitution of the object representation."""
         string = "<{}Data".format(self.repr)
         for klass in self.subclasses_of_PropertiesData:
             for x in (klass, klass()):
                 self.assertIn(string, x.has_data.__doc__, klass)
 
     def test_docstring_default(self):
-        """TODO DOCS."""
-        string = "Return the value of the *default* parameter"
+        """Test a given string gets substituted into a docstring."""
+        string = "Return the value of the *default* parameterY"
         for klass in self.subclasses_of_Properties:
             for x in (klass, klass()):
                 self.assertIn(string, x.del_property.__doc__, klass)
 
     def test_docstring_staticmethod(self):
-        """TODO DOCS."""
+        """Test docstring substitution on a static method."""
         for klass in self.subclasses_of_PropertiesData:
             x = klass
             self.assertEqual(
@@ -274,7 +273,7 @@ class DocstringTest(unittest.TestCase):
             )
 
     def test_docstring_classmethod(self):
-        """TODO DOCS."""
+        """Test docstring substitution on a class method."""
         for klass in self.subclasses_of_PropertiesData:
             for x in (klass, klass()):
                 self.assertEqual(
@@ -282,7 +281,7 @@ class DocstringTest(unittest.TestCase):
                 )
 
     def test_docstring_docstring_substitutions(self):
-        """TODO DOCS."""
+        """Test the `_docstring substitution` internal method."""
         for klass in self.subclasses_of_Container:
             for x in (klass,):
                 d = x._docstring_substitutions(klass)
