@@ -34,7 +34,7 @@ atexit.register(_remove_tmpfiles)
 
 
 class GatheredTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Test management of constructs with underlying gathered arrays."""
 
     def setUp(self):
         """Preparations called immediately before each test method."""
@@ -256,7 +256,7 @@ class GatheredTest(unittest.TestCase):
         self.b = b
 
     def test_GATHERING(self):
-        """TODO DOCS."""
+        """Test reading and writing of a field with a gathered array."""
         f = cfdm.read(self.gathered, verbose=False)
 
         self.assertEqual(len(f), 3)
@@ -273,7 +273,7 @@ class GatheredTest(unittest.TestCase):
             self.assertTrue(g[i].equals(f[i], verbose=3))
 
     def test_GATHERING_create(self):
-        """TODO DOCS."""
+        """Test the creation of a construct with a gathered array."""
         # Define the gathered values
         gathered_array = numpy.array(
             [[280, 282.5, 281], [279, 278, 277.5]], dtype="float32"

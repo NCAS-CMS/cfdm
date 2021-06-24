@@ -34,7 +34,7 @@ atexit.register(_remove_tmpfiles)
 
 
 class DSGTest(unittest.TestCase):
-    """Test discrete sampling geometry features."""
+    """Test discrete sampling geometry ragged array representations."""
 
     contiguous = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
