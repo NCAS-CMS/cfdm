@@ -34,7 +34,7 @@ atexit.register(_remove_tmpfiles)
 VN = cfdm.CF()
 
 
-class DSGTest(unittest.TestCase):
+class GeometryTest(unittest.TestCase):
     """Test the management of geometry cells."""
 
     def setUp(self):
