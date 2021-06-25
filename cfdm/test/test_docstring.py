@@ -176,7 +176,7 @@ class DocstringTest(unittest.TestCase):
         self.assertEqual(grandchild.__doc__, "grandchild.")
 
     def test_docstring(self):
-        """Test that all '{{' occurrences have been substituted."""
+        """Test that all double-brace markers have been substituted."""
         for klass in self.subclasses_of_Container:
             for x in (klass, klass()):
                 for name in dir(x):
@@ -259,7 +259,7 @@ class DocstringTest(unittest.TestCase):
 
     def test_docstring_default(self):
         """Test a given string gets substituted into a docstring."""
-        string = "Return the value of the *default* parameterY"
+        string = "Return the value of the *default* parameter"
         for klass in self.subclasses_of_Properties:
             for x in (klass, klass()):
                 self.assertIn(string, x.del_property.__doc__, klass)
