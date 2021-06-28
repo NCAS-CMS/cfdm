@@ -34,11 +34,11 @@ atexit.register(_remove_tmpfiles)
 VN = cfdm.CF()
 
 
-class DSGTest(unittest.TestCase):
-    """TODO DOCS."""
+class GeometryTest(unittest.TestCase):
+    """Test the management of geometry cells."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -72,7 +72,7 @@ class DSGTest(unittest.TestCase):
         )
 
     def test_node_count(self):
-        """TODO DOCS."""
+        """Test geometry coordinate node count variables."""
         f = cfdm.read(self.geometry_1_file, verbose=False)
 
         self.assertEqual(len(f), 2, "f = " + repr(f))
@@ -117,7 +117,7 @@ class DSGTest(unittest.TestCase):
         self.assertFalse(c.has_node_count())
 
     def test_geometry_2(self):
-        """TODO DOCS."""
+        """Test nodes not tied to auxiliary coordinate variables."""
         f = cfdm.read(self.geometry_2_file, verbose=False)
 
         self.assertEqual(len(f), 2, "f = " + repr(f))
@@ -152,7 +152,7 @@ class DSGTest(unittest.TestCase):
         cfdm.write(f, tempfile, verbose=False)
 
     def test_geometry_3(self):
-        """TODO DOCS."""
+        """Test nodes in a file with no node count variable."""
         f = cfdm.read(self.geometry_3_file, verbose=False)
 
         self.assertEqual(len(f), 2, "f = " + repr(f))
@@ -178,7 +178,7 @@ class DSGTest(unittest.TestCase):
             self.assertTrue(a.equals(b, verbose=3))
 
     def test_geometry_4(self):
-        """TODO DOCS."""
+        """Test nodes all not tied to auxiliary coordinate variables."""
         f = cfdm.read(self.geometry_4_file, verbose=False)
 
         self.assertEqual(len(f), 2, "f = " + repr(f))
@@ -212,7 +212,7 @@ class DSGTest(unittest.TestCase):
         cfdm.write(f, tempfile, verbose=False)
 
     def test_geometry_interior_ring(self):
-        """TODO DOCS."""
+        """Test the management of interior ring geometries."""
         for geometry_file in (
             self.geometry_interior_ring_file,
             self.geometry_interior_ring_file_2,

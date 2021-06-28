@@ -10,10 +10,10 @@ import cfdm
 
 
 class CellMeasureTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the CellMeasure class."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -33,11 +33,11 @@ class CellMeasureTest(unittest.TestCase):
         self.f = f[0]
 
     def test_CellMeasure__init__(self):
-        """TODO DOCS."""
+        """Test the CellMeasure constructor and source keyword."""
         cfdm.CellMeasure(source="qwerty")
 
     def test_CellMeasure__repr__str__dump_construct_type(self):
-        """TODO DOCS."""
+        """Test all means of CellMeasure inspection."""
         f = self.f
 
         for cm in f.cell_measures().values():
@@ -47,7 +47,7 @@ class CellMeasureTest(unittest.TestCase):
             self.assertEqual(cm.construct_type, "cell_measure")
 
     def test_CellMeasure(self):
-        """TODO DOCS."""
+        """Test measure access and (un)setting CellMeasure methods."""
         f = self.f.copy()
 
         cm = f.construct("measure:area")

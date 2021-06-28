@@ -10,7 +10,7 @@ import cfdm
 
 
 class FieldAncillaryTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the FieldAncillary class."""
 
     filename = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
@@ -19,7 +19,7 @@ class FieldAncillaryTest(unittest.TestCase):
     #    f = cfdm.read(filename)[0]
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -33,7 +33,7 @@ class FieldAncillaryTest(unittest.TestCase):
         self.f = cfdm.read(self.filename)[0]
 
     def test_FieldAncillary__repr__str__dump(self):
-        """TODO DOCS."""
+        """Test all means of FieldAncillary inspection."""
         f = self.f.copy()
         x = f.field_ancillaries("ancillaryA").value()
 
@@ -42,14 +42,14 @@ class FieldAncillaryTest(unittest.TestCase):
         self.assertIsInstance(x.dump(display=False), str)
 
     def test_FieldAncillary_source(self):
-        """TODO DOCS."""
+        """Test the source keyword argument to FieldAncillary."""
         f = self.f.copy()
 
         a = f.auxiliary_coordinates("latitude").value()
         cfdm.FieldAncillary(source=a)
 
     def test_FieldAncillary_properties(self):
-        """TODO DOCS."""
+        """Test the property access methods of FieldAncillary."""
         f = self.f.copy()
         x = f.domain_ancillaries("ncvar%a").value()
         x = cfdm.FieldAncillary(source=x)
@@ -62,7 +62,7 @@ class FieldAncillaryTest(unittest.TestCase):
         self.assertIsNone(x.del_property("long_name", None))
 
     def test_FieldAncillary_insert_dimension(self):
-        """TODO DOCS."""
+        """Test the `insert_dimension` FieldAncillary method."""
         f = self.f.copy()
         d = f.dimension_coordinates("grid_longitude").value()
         x = cfdm.FieldAncillary(source=d)
@@ -76,7 +76,7 @@ class FieldAncillaryTest(unittest.TestCase):
         self.assertEqual(x.shape, (9, 1))
 
     def test_FieldAncillary_transpose(self):
-        """TODO DOCS."""
+        """Test the transpose FieldAncillary method."""
         f = self.f.copy()
         a = f.auxiliary_coordinates("longitude").value()
         x = cfdm.FieldAncillary(source=a)
@@ -90,7 +90,7 @@ class FieldAncillaryTest(unittest.TestCase):
         self.assertEqual(x.shape, (10, 9))
 
     def test_FieldAncillary_squeeze(self):
-        """TODO DOCS."""
+        """Test the squeeze FieldAncillary method."""
         f = self.f.copy()
         a = f.auxiliary_coordinates("longitude").value()
         x = cfdm.FieldAncillary(source=a)

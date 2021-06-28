@@ -47,10 +47,10 @@ atexit.register(_remove_tmpfiles)
 
 
 class read_writeTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Test the reading and writing of field constructs from/to disk."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -81,7 +81,7 @@ class read_writeTest(unittest.TestCase):
         self.netcdf_fmts = self.netcdf3_fmts + self.netcdf4_fmts
 
     def test_write_filename(self):
-        """TODO DOCS."""
+        """Test the writing of a named netCDF file."""
         f = cfdm.example_field(0)
         a = f.data.array
 
@@ -94,7 +94,7 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue((a == g[0].data.array).all())
 
     def test_read_field(self):
-        """TODO DOCS."""
+        """Test the `extra` keyword argument of the `read` function."""
         # Test field keyword of cfdm.read
         filename = self.filename
 
@@ -166,7 +166,7 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(len(f), 14, "\n" + str(f))
 
     def test_read_write_format(self):
-        """TODO DOCS."""
+        """Test the `fmt` keyword argument of the `read` function."""
         f = cfdm.read(self.filename)[0]
         for fmt in self.netcdf_fmts:
             cfdm.write(f, tmpfile, fmt=fmt)
@@ -434,7 +434,7 @@ class read_writeTest(unittest.TestCase):
             )
 
     def test_read_write_netCDF4_compress_shuffle(self):
-        """TODO DOCS."""
+        """Test the `compress` and `shuffle` parameters to `write`."""
         f = cfdm.read(self.filename)[0]
         for fmt in self.netcdf4_fmts:
             for shuffle in (True,):
@@ -450,7 +450,7 @@ class read_writeTest(unittest.TestCase):
                     )
 
     def test_read_write_missing_data(self):
-        """TODO DOCS."""
+        """Test reading and writing of netCDF with missing data."""
         f = cfdm.read(self.filename)[0]
         for fmt in self.netcdf_fmts:
             cfdm.write(f, tmpfile, fmt=fmt)
@@ -460,7 +460,7 @@ class read_writeTest(unittest.TestCase):
             )
 
     def test_read_mask(self):
-        """TODO DOCS."""
+        """Test reading and writing of netCDF with masked data."""
         f = cfdm.example_field(0)
 
         N = f.size
@@ -496,7 +496,7 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(numpy.ma.count(g.data.array), N - 2)
 
     def test_write_datatype(self):
-        """TODO DOCS."""
+        """Test the `datatype` keyword argument to `write`."""
         f = cfdm.read(self.filename)[0]
         self.assertEqual(f.data.dtype, numpy.dtype(float))
 
@@ -517,7 +517,7 @@ class read_writeTest(unittest.TestCase):
         )
 
     def test_read_write_unlimited(self):
-        """TODO DOCS."""
+        """Test reading and writing with an unlimited dimension."""
         for fmt in self.netcdf_fmts:
 
             f = cfdm.read(self.filename)[0]
@@ -544,7 +544,7 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(domain_axes["domainaxis2"].nc_is_unlimited())
 
     def test_read_CDL(self):
-        """TODO DOCS."""
+        """Test the reading of files in CDL format."""
         subprocess.run(
             " ".join(["ncdump", self.filename, ">", tmpfile]),
             shell=True,
@@ -650,7 +650,7 @@ class read_writeTest(unittest.TestCase):
     #        subprocess.run(' '.join(['head', tmpfileh]),  shell=True, check=True)
 
     def test_read_write_string(self):
-        """TODO DOCS."""
+        """Test the `string` keyword argument to `read` and `write`."""
         f = cfdm.read(self.string_filename)
 
         n = int(len(f) / 2)
@@ -685,7 +685,7 @@ class read_writeTest(unittest.TestCase):
                             self.assertTrue(i.equals(j, verbose=3))
 
     def test_read_write_Conventions(self):
-        """TODO DOCS."""
+        """Test the `Conventions` keyword argument to `write`."""
         f = cfdm.read(self.filename)[0]
 
         version = "CF-" + cfdm.CF()
@@ -746,7 +746,7 @@ class read_writeTest(unittest.TestCase):
             )
 
     def test_read_write_multiple_geometries(self):
-        """TODO DOCS."""
+        """Test reading and writing with a mixture of geometry cells."""
         a = []
         for filename in (
             "geometry_1.nc",
@@ -776,7 +776,7 @@ class read_writeTest(unittest.TestCase):
         self.assertFalse(f)
 
     def test_write_coordinates(self):
-        """TODO DOCS."""
+        """Test the `coordinates` keyword argument of `write`."""
         f = cfdm.example_field(0)
 
         cfdm.write(f, tmpfile, coordinates=True)
@@ -786,7 +786,7 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(g[0].equals(f, verbose=3))
 
     def test_write_scalar_domain_ancillary(self):
-        """TODO DOCS."""
+        """Test the writing of a file with a scalar domain ancillary."""
         f = cfdm.example_field(1)
 
         # Create scalar domain ancillary

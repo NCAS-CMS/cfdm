@@ -36,10 +36,10 @@ atexit.register(_remove_tmpfiles)
 
 
 class NetCDFTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the NetCDF class."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -71,7 +71,7 @@ class NetCDFTest(unittest.TestCase):
         ]
 
     def test_netCDF_variable_dimension(self):
-        """TODO DOCS."""
+        """Test variable and dimension access NetCDF methods."""
         f = cfdm.Field()
 
         f.nc_set_variable("qwerty")
@@ -251,7 +251,7 @@ class NetCDFTest(unittest.TestCase):
             self.assertTrue(y.equals(x, verbose=3))
 
     def test_netCDF_geometry_variable(self):
-        """TODO DOCS."""
+        """Test geometry variable access and (un)setting methods."""
         f = cfdm.Field()
 
         f.nc_set_geometry_variable("qwerty")
@@ -274,7 +274,7 @@ class NetCDFTest(unittest.TestCase):
                 f.nc_set_geometry_variable(nc_var_name)
 
     def test_netCDF_group_attributes(self):
-        """TODO DOCS."""
+        """Test group attributes access and (un)setting methods."""
         f = cfdm.Field()
 
         attrs = f.nc_group_attributes()
@@ -322,7 +322,7 @@ class NetCDFTest(unittest.TestCase):
         )
 
     def test_netCDF_dimension_groups(self):
-        """TODO DOCS."""
+        """Test dimension groups access and (un)setting methods."""
         d = cfdm.DomainAxis()
 
         d.nc_set_dimension("ncdim")
@@ -378,7 +378,7 @@ class NetCDFTest(unittest.TestCase):
         self.assertFalse(attrs)
 
     def test_netCDF_variable_groups(self):
-        """TODO DOCS."""
+        """Test variable groups access and (un)setting methods."""
         f = cfdm.Field()
 
         f.nc_set_variable("ncdim")
@@ -437,7 +437,7 @@ class NetCDFTest(unittest.TestCase):
             f.nc_set_variable_groups(["forecast", "model"])
 
     def test_netCDF_geometry_variable_groups(self):
-        """TODO DOCS."""
+        """Test geometry variable groups access NetCDF methods."""
         f = cfdm.Field()
 
         f.nc_set_geometry_variable("ncvar")
@@ -496,7 +496,7 @@ class NetCDFTest(unittest.TestCase):
             f.nc_set_geometry_variable_groups(["forecast", "model"])
 
     def test_netCDF_sample_dimension_groups(self):
-        """TODO DOCS."""
+        """Test sample dimension groups access NetCDF methods."""
         c = cfdm.Count()
 
         c.nc_set_sample_dimension("ncvar")
@@ -555,7 +555,7 @@ class NetCDFTest(unittest.TestCase):
             c.nc_set_sample_dimension_groups(["forecast", "model"])
 
     def test_netCDF_field_components(self):
-        """TODO DOCS."""
+        """Test field component access and (un)setting methods."""
         # Geometries
         f = cfdm.example_field(6)
 
@@ -672,7 +672,7 @@ class NetCDFTest(unittest.TestCase):
                 f.nc_clear_component_variable_groups(component)
 
     def test_netCDF_to_memory(self):
-        """TODO DOCS."""
+        """Test the `to_memory` NetCDF method."""
         f = cfdm.example_field(4)
         f.data.to_memory()  # on non-compressed array
         f.compress("indexed_contiguous", inplace=True)

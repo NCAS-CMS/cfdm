@@ -9,10 +9,10 @@ import cfdm
 
 
 class ListTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the List class."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -27,7 +27,7 @@ class ListTest(unittest.TestCase):
         self.gathered = "gathered.nc"
 
     def test_List__repr__str__dump(self):
-        """TODO DOCS."""
+        """Test all means of List inspection."""
         f = cfdm.read(self.gathered)[0]
 
         list_ = f.data.get_list()

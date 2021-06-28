@@ -16,10 +16,10 @@ warnings = False
 
 
 class create_fieldTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Test ab initio creation of field constructs in memory."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or calls (those
@@ -39,7 +39,7 @@ class create_fieldTest(unittest.TestCase):
             pass
 
     def test_create_field(self):
-        """TODO DOCS."""
+        """Test ab initio creation of a first variation of field."""
         # Dimension coordinates
         dim1 = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(10.0)))
         dim1.set_property("standard_name", "grid_latitude")

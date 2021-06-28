@@ -38,11 +38,11 @@ atexit.register(_remove_tmpfiles)
 
 
 class FunctionsTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Test the functions of the non-core functions module."""
 
     @classmethod
     def setUpClass(cls):
-        """TODO DOCS."""
+        """Preparations called before the test class runs."""
         # Need to run this per-class, not per-method, to access the
         # original value of log_level to use to test the default (see
         # test_log_level)
@@ -58,7 +58,7 @@ class FunctionsTest(unittest.TestCase):
         # (no tearDownClass necessary)
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warning, but
         # save original state for test on logging (see test_log_level)
         cfdm.log_level("DISABLE")
@@ -89,7 +89,7 @@ class FunctionsTest(unittest.TestCase):
         ]
 
     def test_atol_rtol(self):
-        """TODO DOCS."""
+        """Test the atol and rtol functions."""
         org = cfdm.RTOL()
         self.assertEqual(cfdm.RTOL(1e-5), org)
         self.assertEqual(cfdm.RTOL(), 1e-5)
@@ -111,7 +111,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertTrue(cfdm.atol() == org)
 
     def test_log_level(self):
-        """TODO DOCS."""
+        """Test the `log_level` function."""
         original = self.__class__.original  # original to module i.e. default
 
         self.assertEqual(original, "WARNING")  # test default
@@ -142,7 +142,7 @@ class FunctionsTest(unittest.TestCase):
             cfdm.LOG_LEVEL("ERROR")
 
     def test_reset_log_emergence_level(self):
-        """TODO DOCS."""
+        """Test the `_reset_log_emergence_level` internal function."""
         # 'DISABLE' is special case so test it afterwards (see below)
         for value in self.valid_level_values:
             cfdm.functions._reset_log_emergence_level(value)
@@ -170,7 +170,7 @@ class FunctionsTest(unittest.TestCase):
         )
 
     def test_disable_logging(self):
-        """TODO DOCS."""
+        """Test the `_disable_logging` internal function."""
         # Re-set to avoid coupling; use set level to check it is
         # restored after
         cfdm.log_level("DETAIL")
@@ -200,11 +200,11 @@ class FunctionsTest(unittest.TestCase):
         self.assertFalse(cfdm.logging.getLogger().isEnabledFor(logging.DEBUG))
 
     def test_CF(self):
-        """TODO DOCS."""
+        """Test the CF function."""
         self.assertEqual(cfdm.CF(), cfdm.core.__cf_version__)
 
     def test_environment(self):
-        """TODO DOCS."""
+        """Test the `environment` function."""
         e = cfdm.environment(display=False)
         ep = cfdm.environment(display=False, paths=False)
 
@@ -230,7 +230,7 @@ class FunctionsTest(unittest.TestCase):
             self.assertIn(component, ep)
 
     def test_example_field(self):
-        """TODO DOCS."""
+        """Test the `example_field` function."""
         top = 7
 
         for n in range(top + 1):
@@ -253,7 +253,7 @@ class FunctionsTest(unittest.TestCase):
             cfdm.example_field(1, 2)
 
     def test_abspath(self):
-        """TODO DOCS."""
+        """Test the abspath function."""
         filename = "test_file.nc"
         self.assertEqual(cfdm.abspath(filename), os.path.abspath(filename))
         filename = "http://test_file.nc"
@@ -262,7 +262,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(cfdm.abspath(filename), filename)
 
     def test_configuration(self):
-        """TODO DOCS."""
+        """Test the configuration function."""
         # Test getting of all config. and store original values to test on:
         org = cfdm.configuration()
         self.assertIsInstance(org, dict)
@@ -365,7 +365,7 @@ class FunctionsTest(unittest.TestCase):
             )
 
     def test_context_managers(self):
-        """TODO DOCS."""
+        """Test the context manager support of the functions."""
         # rtol and atol
         for func in (
             cfdm.atol,
@@ -419,7 +419,7 @@ class FunctionsTest(unittest.TestCase):
         func(**org)
 
     def test_Constant(self):
-        """TODO DOCS."""
+        """Test the Constant class."""
         c = cfdm.Constant(20)
         d = cfdm.Constant(10)
         e = cfdm.Constant(999)
@@ -507,7 +507,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertFalse(cfdm.Constant(False))
 
     def test_Configuration(self):
-        """TODO DOCS."""
+        """Test the Configuration class."""
         c = cfdm.configuration()
 
         self.assertIsInstance(repr(c), str)

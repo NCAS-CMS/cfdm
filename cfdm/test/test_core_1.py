@@ -13,10 +13,10 @@ verbose = False
 
 
 class create_fieldTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the `cfdm.core` package."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -29,7 +29,7 @@ class create_fieldTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
     def test_core_create_field(self):
-        """TODO DOCS."""
+        """Test ab initio creation of a `cfdm.core` Field."""
         # Dimension coordinates
         dim1 = cfdm.core.DimensionCoordinate(
             data=cfdm.core.Data(cfdm.core.NumpyArray(numpy.arange(10.0)))
@@ -253,7 +253,7 @@ class create_fieldTest(unittest.TestCase):
         f.set_construct(cm1)
 
     def test_core_FUNCTIONS(self):
-        """TODO DOCS."""
+        """Test the functions of the `cfdm.core` functions module."""
         self.assertEqual(cfdm.core.CF(), cfdm.core.__cf_version__)
 
         self.assertIsInstance(cfdm.core.environment(display=False), list)

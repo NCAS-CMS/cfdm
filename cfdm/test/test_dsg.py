@@ -34,7 +34,7 @@ atexit.register(_remove_tmpfiles)
 
 
 class DSGTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Test discrete sampling geometry ragged array representations."""
 
     contiguous = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
@@ -160,7 +160,7 @@ class DSGTest(unittest.TestCase):
     b = numpy.ma.where(b == -99, numpy.ma.masked, b)
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -271,7 +271,7 @@ class DSGTest(unittest.TestCase):
     #        self.b = b
 
     def test_DSG_contiguous(self):
-        """TODO DOCS."""
+        """Test the contiguous ragged array DSG representation."""
         f = self.c.copy()
 
         self.assertEqual(len(f), 2)
@@ -340,7 +340,7 @@ class DSGTest(unittest.TestCase):
         cfdm.write(tas, tempfile)
 
     def test_DSG_indexed(self):
-        """TODO DOCS."""
+        """Test the indexed ragged array DSG representation."""
         f = self.i.copy()
 
         self.assertEqual(len(f), 2)
@@ -363,7 +363,7 @@ class DSGTest(unittest.TestCase):
             self.assertTrue(g[i].equals(f[i], verbose=3))
 
     def test_DSG_indexed_contiguous(self):
-        """TODO DOCS."""
+        """Test the indexed contiguous ragged array representation."""
         f = self.ic.copy()
 
         self.assertEqual(len(f), 2)
@@ -395,7 +395,7 @@ class DSGTest(unittest.TestCase):
             self.assertTrue(g[i].equals(f[i], verbose=3))
 
     def test_DSG_create_contiguous(self):
-        """TODO DOCS."""
+        """Test the creation of a contiguous ragged array."""
         # Define the ragged array values
         ragged_array = numpy.array([1, 3, 4, 3, 6], dtype="float32")
         # Define the count array values
