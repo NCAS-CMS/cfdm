@@ -17,7 +17,7 @@ import cfdm
 warnings = False
 
 # Set up temporary files
-n_tmpfiles = 8
+n_tmpfiles = 9
 tmpfiles = [
     tempfile.mkstemp("_test_read_write.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
@@ -29,6 +29,7 @@ tmpfiles = [
     tmpfileh3,
     tmpfilec,
     tmpfilec2,
+    tmpfilec3,
     tmpfile0,
     tmpfile1,
 ) = tmpfiles
@@ -647,7 +648,17 @@ class read_writeTest(unittest.TestCase):
 
                 cfdm.read(tmpfileh)[0]
 
-    #        subprocess.run(' '.join(['head', tmpfileh]),  shell=True, check=True)
+        # Finally test an invalid CDL input
+        with open(tmpfilec3, "w") as file:
+            file.write("netcdf test_file {\n  add badness\n}")
+        # TODO: work out (if it is even possible in a farily simple way) how
+        # to suppress the expected error in stderr of the ncdump command
+        # called by cfdm.read under the hood. Note that it can be easily
+        # suppressed at subprocess call-time (but we don't want to do that in
+        # case of genuine errors) and the following doesn't work as it doesn't
+        # influence the subprocess: with contextlib.redirect_stdout(os.devnull)
+        with self.assertRaises(ValueError):
+            cfdm.read(tmpfilec3)
 
     def test_read_write_string(self):
         """Test the `string` keyword argument to `read` and `write`."""
