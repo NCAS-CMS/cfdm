@@ -369,7 +369,8 @@ class CoordinateReference(
         # Coordinates
         if _construct_names:
             for key in sorted(self.coordinates(), reverse=True):
-                coord = "{}".format(_construct_names.get(key, f"key:{key}"))
+                coord_name = _construct_names.get(key, f"key:{key}")
+                coord = f"{coord_name}"
                 if key in _dimension_coordinates:
                     coord = "Dimension Coordinate: " + coord
                 elif key in _auxiliary_coordinates:
