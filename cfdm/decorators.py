@@ -130,20 +130,15 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg, calls=[0]):
         # crucial to usage.
         verbose = kwargs.get("verbose")
 
+        possible_levels = ", ".join(
+            [val.name + " = " + str(val.value) for val in ValidLogLevels]
+        )
         invalid_arg_msg = (
-            "Invalid value '{}' for the 'verbose' keyword argument. "
+            f"Invalid value '{verbose}' for the 'verbose' keyword argument. "
             "Accepted values are integers corresponding in positive "
-            "cases to increasing verbosity (namely {}), or None, "
-            "to configure the verbosity according to the global "
-            "log_level setting.".format(
-                verbose,
-                ", ".join(
-                    [
-                        val.name + " = " + str(val.value)
-                        for val in ValidLogLevels
-                    ]
-                ),
-            )
+            f"cases to increasing verbosity (namely {possible_levels}), or "
+            "None, to configure the verbosity according to the global "
+            "log_level setting."
         )
         # First convert valid string inputs to the enum-mapped int constant:
         if isinstance(verbose, str):
