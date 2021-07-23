@@ -4,8 +4,8 @@ __date__ = "2021-05-25"
 __cf_version__ = "1.8"
 __version__ = "1.8.9.0"
 
-import platform
 from distutils.version import LooseVersion
+import platform
 
 _requires = (
     "numpy",
@@ -48,24 +48,36 @@ if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
         f"Got {numpy.__version__} at {numpy.__file__}"
     )
 
-from .abstract import (Container, Coordinate, Parameters,
-                       ParametersDomainAncillaries, Properties, PropertiesData,
-                       PropertiesDataBounds)
-from .auxiliarycoordinate import AuxiliaryCoordinate
+from .constructs import Constructs
+
+from .functions import CF, environment
+
+from .data import Data, Array, NumpyArray
+
 from .bounds import Bounds
+from .coordinateconversion import CoordinateConversion
+from .datum import Datum
+from .domain import Domain
+from .interiorring import InteriorRing
+
+from .auxiliarycoordinate import AuxiliaryCoordinate
 from .cellmeasure import CellMeasure
 from .cellmethod import CellMethod
-from .constructs import Constructs
-from .coordinateconversion import CoordinateConversion
 from .coordinatereference import CoordinateReference
-from .data import Array, Data, NumpyArray
-from .datum import Datum
 from .dimensioncoordinate import DimensionCoordinate
-from .domain import Domain
 from .domainancillary import DomainAncillary
 from .domainaxis import DomainAxis
 from .field import Field
 from .fieldancillary import FieldAncillary
-from .functions import CF, environment
-from .interiorring import InteriorRing
+
+from .abstract import (
+    Container,
+    Properties,
+    PropertiesData,
+    PropertiesDataBounds,
+    Coordinate,
+    Parameters,
+    ParametersDomainAncillaries,
+)
+
 from .meta import DocstringRewriteMeta
