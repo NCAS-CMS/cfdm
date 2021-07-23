@@ -12,3 +12,9 @@ line-length = 79
 # Set for compatibility of 'black' and 'isort' auto-formatting tools
 [tool.isort]
 profile = "black"
+# Prevent isort from auto-formatting '__init__.py' file imports because
+# they require a specific non-aphabetical (etc.) ordering else they will
+# cause errors due to bad or circular importing across the modules.
+extend_skip_glob = [
+  "**/__init__.py",
+]
