@@ -8,3 +8,7 @@
 # the 'black' documentation.
 [tool.black]
 line-length = 79
+
+# Set for compatibility of 'black' and 'isort' auto-formatting tools
+[tool.isort]
+profile = "black"
