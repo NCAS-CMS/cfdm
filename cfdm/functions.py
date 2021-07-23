@@ -10,9 +10,9 @@ import netcdf_flattener
 from . import __cf_version__, __file__, __version__, core
 from .constants import CONSTANTS, ValidLogLevels
 from .core import DocstringRewriteMeta
-from .core.docstring import \
-    _docstring_substitution_definitions as \
-    _core_docstring_substitution_definitions
+from .core.docstring import (
+    _docstring_substitution_definitions as _core_docstring_substitution_definitions,
+)
 from .docstring import _docstring_substitution_definitions
 
 # --------------------------------------------------------------------

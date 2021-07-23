@@ -6,9 +6,11 @@ import numpy
 
 from .. import core
 from ..constants import masked as cfdm_masked
-from ..decorators import (_inplace_enabled,
-                          _inplace_enabled_define_and_cleanup,
-                          _manage_log_level_via_verbosity)
+from ..decorators import (
+    _inplace_enabled,
+    _inplace_enabled_define_and_cleanup,
+    _manage_log_level_via_verbosity,
+)
 from ..functions import abspath
 from ..mixin.container import Container
 from ..mixin.netcdf import NetCDFHDF5

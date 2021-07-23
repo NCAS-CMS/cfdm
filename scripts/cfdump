@@ -6,6 +6,7 @@ if __name__ == "__main__":
     import getopt
     import os
     import sys
+
     import cfdm
 
     def print_help(version, date):
