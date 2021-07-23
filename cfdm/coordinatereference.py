@@ -1,14 +1,8 @@
 import logging
 
-from . import mixin
-from . import core
-from . import CoordinateConversion
-from . import Datum
-
+from . import CoordinateConversion, Datum, core, mixin
 from .data import Data
-
-from .decorators import _manage_log_level_via_verbosity, _display_or_return
-
+from .decorators import _display_or_return, _manage_log_level_via_verbosity
 
 logger = logging.getLogger(__name__)
 

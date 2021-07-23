@@ -1,8 +1,6 @@
-from ..meta import DocstringRewriteMeta
-
 from ..docstring import _docstring_substitution_definitions
-
 from ..functions import deepcopy
+from ..meta import DocstringRewriteMeta
 
 
 class Container(metaclass=DocstringRewriteMeta):

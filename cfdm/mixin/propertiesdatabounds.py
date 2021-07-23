@@ -1,17 +1,11 @@
 import logging
-
 from functools import reduce
 from operator import mul
 
+from ..decorators import (_display_or_return, _inplace_enabled,
+                          _inplace_enabled_define_and_cleanup,
+                          _manage_log_level_via_verbosity)
 from . import PropertiesData
-
-from ..decorators import (
-    _display_or_return,
-    _inplace_enabled,
-    _inplace_enabled_define_and_cleanup,
-    _manage_log_level_via_verbosity,
-)
-
 
 logger = logging.getLogger(__name__)
 

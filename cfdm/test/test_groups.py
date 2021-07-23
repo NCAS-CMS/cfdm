@@ -1,17 +1,15 @@
 import atexit
 import datetime
+import faulthandler
 import os
 import tempfile
 import unittest
-
-import faulthandler
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import netCDF4
 
 import cfdm
-
 
 n_tmpfiles = 9
 tmpfiles = [

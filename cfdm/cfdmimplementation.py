@@ -1,36 +1,11 @@
-from . import (
-    AuxiliaryCoordinate,
-    CellMethod,
-    CellMeasure,
-    CoordinateReference,
-    DimensionCoordinate,
-    DomainAncillary,
-    DomainAxis,
-    Field,
-    FieldAncillary,
-    Bounds,
-    InteriorRing,
-    CoordinateConversion,
-    Datum,
-    Count,
-    List,
-    Index,
-    NodeCountProperties,
-    PartNodeCountProperties,
-)
-
-from .data import (
-    Data,
-    GatheredArray,
-    NetCDFArray,
-    RaggedContiguousArray,
-    RaggedIndexedArray,
-    RaggedIndexedContiguousArray,
-)
-
+from . import (CF, AuxiliaryCoordinate, Bounds, CellMeasure, CellMethod,
+               CoordinateConversion, CoordinateReference, Count, Datum,
+               DimensionCoordinate, DomainAncillary, DomainAxis, Field,
+               FieldAncillary, Index, InteriorRing, List, NodeCountProperties,
+               PartNodeCountProperties)
 from .abstract import Implementation
-
-from . import CF
+from .data import (Data, GatheredArray, NetCDFArray, RaggedContiguousArray,
+                   RaggedIndexedArray, RaggedIndexedContiguousArray)
 
 
 class CFDMImplementation(Implementation):

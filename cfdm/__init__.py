@@ -38,7 +38,6 @@ up to the user to use them in a CF-compliant way.
 """
 import logging
 import sys
-
 from distutils.version import LooseVersion
 
 from . import core
@@ -78,86 +77,48 @@ if LooseVersion(netcdf_flattener.__version__) < LooseVersion(_minimum_vn):
         f"at {netcdf_flattener.__file__}"
     )
 
+from .abstract import Container, Implementation
+from .auxiliarycoordinate import AuxiliaryCoordinate
+from .bounds import Bounds
+from .cellmeasure import CellMeasure
+from .cellmethod import CellMethod
+from .cfdmimplementation import CFDMImplementation, implementation
 from .constants import masked
-
-# Internal ones passed on so they can be used in cf-python (see
-# comment below)
-from .functions import (
-    ATOL,
-    CF,
-    LOG_LEVEL,
-    RTOL,
-    abspath,
-    atol,
-    configuration,
-    environment,
-    log_level,
-    rtol,
-    _disable_logging,
-    _reset_log_emergence_level,
-    _is_valid_log_level_int,
-    Configuration,
-    Constant,
-    ConstantAccess,
-    is_log_level_debug,
-    is_log_level_detail,
-    is_log_level_info,
-)
-
+from .constructs import Constructs
+from .coordinateconversion import CoordinateConversion
+from .coordinatereference import CoordinateReference
+from .count import Count
+from .data import (Array, CompressedArray, Data, GatheredArray, NetCDFArray,
+                   NumpyArray, RaggedContiguousArray, RaggedIndexedArray,
+                   RaggedIndexedContiguousArray)
+from .datum import Datum
 # Though these are internal-use methods, include them in the namespace
 # (without documenting them) so that cf-python can use them internally
 # too:
-from .decorators import (
-    _inplace_enabled,
-    _inplace_enabled_define_and_cleanup,
-    _manage_log_level_via_verbosity,
-    _display_or_return,
-)
-
-from .constructs import Constructs
-
-from .data import (
-    Data,
-    Array,
-    CompressedArray,
-    NumpyArray,
-    NetCDFArray,
-    GatheredArray,
-    RaggedContiguousArray,
-    RaggedIndexedArray,
-    RaggedIndexedContiguousArray,
-)
-
-from .count import Count
+from .decorators import (_display_or_return, _inplace_enabled,
+                         _inplace_enabled_define_and_cleanup,
+                         _manage_log_level_via_verbosity)
+from .dimensioncoordinate import DimensionCoordinate
+from .domain import Domain
+from .domainancillary import DomainAncillary
+from .domainaxis import DomainAxis
+from .examplefield import example_domain, example_field, example_fields
+from .field import Field
+from .fieldancillary import FieldAncillary
+# Internal ones passed on so they can be used in cf-python (see
+# comment below)
+from .functions import (ATOL, CF, LOG_LEVEL, RTOL, Configuration, Constant,
+                        ConstantAccess, _disable_logging,
+                        _is_valid_log_level_int, _reset_log_emergence_level,
+                        abspath, atol, configuration, environment,
+                        is_log_level_debug, is_log_level_detail,
+                        is_log_level_info, log_level, rtol)
 from .index import Index
+from .interiorring import InteriorRing
 from .list import List
 from .nodecountproperties import NodeCountProperties
 from .partnodecountproperties import PartNodeCountProperties
-
-from .bounds import Bounds
-from .coordinateconversion import CoordinateConversion
-from .datum import Datum
-from .domain import Domain
-from .interiorring import InteriorRing
-
-from .auxiliarycoordinate import AuxiliaryCoordinate
-from .cellmeasure import CellMeasure
-from .cellmethod import CellMethod
-from .coordinatereference import CoordinateReference
-from .dimensioncoordinate import DimensionCoordinate
-from .domainancillary import DomainAncillary
-from .domainaxis import DomainAxis
-from .field import Field
-from .fieldancillary import FieldAncillary
-
-from .abstract import Implementation
-from .cfdmimplementation import CFDMImplementation, implementation
-
 from .read_write import read, write
-
-from .examplefield import example_field, example_fields, example_domain
-
-from .abstract import Container
 
 # --------------------------------------------------------------------
 # Set up basic logging for the full project with a root logger

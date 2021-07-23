@@ -1,5 +1,6 @@
 import atexit
 import datetime
+import faulthandler
 import os
 import platform
 import subprocess
@@ -7,8 +8,6 @@ import tempfile
 import unittest
 
 import numpy
-
-import faulthandler
 
 faulthandler.enable()  # to debug seg faults and timeouts
 

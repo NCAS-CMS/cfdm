@@ -3,9 +3,7 @@ import os
 from numpy.ma.core import MaskError
 
 from ..cfdmimplementation import implementation
-
 from .netcdf import NetCDFRead
-
 
 _implementation = implementation()
 

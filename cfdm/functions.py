@@ -1,28 +1,19 @@
 import logging
 import os
 import urllib.parse
-
 from copy import deepcopy
-
 from functools import total_ordering
 
 import cftime
 import netcdf_flattener
 
-from . import core
-
-from . import __version__, __cf_version__, __file__
-
-from .core import DocstringRewriteMeta
-
-from .core.docstring import (
-    _docstring_substitution_definitions as _core_docstring_substitution_definitions,
-)
-
-from .docstring import _docstring_substitution_definitions
-
+from . import __cf_version__, __file__, __version__, core
 from .constants import CONSTANTS, ValidLogLevels
-
+from .core import DocstringRewriteMeta
+from .core.docstring import \
+    _docstring_substitution_definitions as \
+    _core_docstring_substitution_definitions
+from .docstring import _docstring_substitution_definitions
 
 # --------------------------------------------------------------------
 # Merge core and non-core docstring substitution dictionaries without

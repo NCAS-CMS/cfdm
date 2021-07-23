@@ -1,10 +1,8 @@
 import logging
 import sys
-
 from enum import Enum
 
 import numpy
-
 
 """A dictionary of useful constants.
 

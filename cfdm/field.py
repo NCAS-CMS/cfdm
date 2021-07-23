@@ -1,30 +1,12 @@
 import logging
 
-from . import mixin
-from . import core
-from . import Constructs
-from . import Domain
-from . import Count
-from . import Index
-from . import List
-
+from . import Constructs, Count, Domain, Index, List, core, mixin
 from .constants import masked as cfdm_masked
-
-from .data import (
-    RaggedContiguousArray,
-    RaggedIndexedArray,
-    RaggedIndexedContiguousArray,
-    GatheredArray,
-)
-
-from .decorators import (
-    _inplace_enabled,
-    _inplace_enabled_define_and_cleanup,
-    _manage_log_level_via_verbosity,
-    _test_decorator_args,
-    _display_or_return,
-)
-
+from .data import (GatheredArray, RaggedContiguousArray, RaggedIndexedArray,
+                   RaggedIndexedContiguousArray)
+from .decorators import (_display_or_return, _inplace_enabled,
+                         _inplace_enabled_define_and_cleanup,
+                         _manage_log_level_via_verbosity, _test_decorator_args)
 
 logger = logging.getLogger(__name__)
 

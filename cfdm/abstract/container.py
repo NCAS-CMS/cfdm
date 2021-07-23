@@ -1,5 +1,4 @@
-from .. import core
-from .. import mixin
+from .. import core, mixin
 
 
 class Container(mixin.Container, core.abstract.Container):
