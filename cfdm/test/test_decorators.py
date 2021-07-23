@@ -1,15 +1,13 @@
 import copy
 import datetime
+import faulthandler
 import itertools
 import unittest
 from unittest.mock import patch
 
-import faulthandler
-
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
-
 
 # Note: it is important we test on the cfdm logging config rather than the
 # generic Python module logging (i.e. 'cfdm.logging' not just 'logging').

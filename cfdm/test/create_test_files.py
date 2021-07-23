@@ -1,17 +1,15 @@
 import datetime
+import faulthandler
 import os
 import unittest
 
 import numpy
-
-import faulthandler
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import netCDF4
 
 import cfdm
-
 
 VN = cfdm.CF()
 

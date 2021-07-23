@@ -2,18 +2,14 @@ import copy
 import logging
 import os
 import re
-
 from distutils.version import LooseVersion
 
-import numpy
 import netCDF4
-
-from .. import IOWrite
-
-from .netcdfread import NetCDFRead
+import numpy
 
 from ...decorators import _manage_log_level_via_verbosity
-
+from .. import IOWrite
+from .netcdfread import NetCDFRead
 
 logger = logging.getLogger(__name__)
 

@@ -1,8 +1,7 @@
-import numpy
 import netCDF4
+import numpy
 
 from . import abstract
-
 from .numpyarray import NumpyArray
 
 

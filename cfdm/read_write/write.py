@@ -1,7 +1,5 @@
 from ..cfdmimplementation import implementation
-
 from .netcdf import NetCDFWrite
-
 
 _implementation = implementation()
 

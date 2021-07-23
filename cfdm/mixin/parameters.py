@@ -1,9 +1,7 @@
 import logging
 
-from . import Container
-
 from ..decorators import _manage_log_level_via_verbosity
-
+from . import Container
 
 logger = logging.getLogger(__name__)
 

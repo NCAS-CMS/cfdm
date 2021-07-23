@@ -1,6 +1,5 @@
-from .mixin import ArrayMixin
-
 from .. import core
+from .mixin import ArrayMixin
 
 
 class NumpyArray(ArrayMixin, core.NumpyArray):

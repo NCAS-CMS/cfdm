@@ -1,24 +1,25 @@
 from . import (
+    CF,
     AuxiliaryCoordinate,
-    CellMethod,
+    Bounds,
     CellMeasure,
+    CellMethod,
+    CoordinateConversion,
     CoordinateReference,
+    Count,
+    Datum,
     DimensionCoordinate,
     DomainAncillary,
     DomainAxis,
     Field,
     FieldAncillary,
-    Bounds,
-    InteriorRing,
-    CoordinateConversion,
-    Datum,
-    Count,
-    List,
     Index,
+    InteriorRing,
+    List,
     NodeCountProperties,
     PartNodeCountProperties,
 )
-
+from .abstract import Implementation
 from .data import (
     Data,
     GatheredArray,
@@ -27,10 +28,6 @@ from .data import (
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
 )
-
-from .abstract import Implementation
-
-from . import CF
 
 
 class CFDMImplementation(Implementation):

@@ -1,9 +1,9 @@
 import datetime
+import faulthandler
 import os
-import pycodestyle
 import unittest
 
-import faulthandler
+import pycodestyle
 
 faulthandler.enable()  # to debug seg faults and timeouts
 

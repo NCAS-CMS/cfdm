@@ -1,7 +1,6 @@
 import numpy
 
 from .. import abstract
-
 from .abstract import Array
 from .numpyarray import NumpyArray
 

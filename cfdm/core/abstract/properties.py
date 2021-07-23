@@ -1,6 +1,5 @@
-from .container import Container
-
 from ..functions import deepcopy
+from .container import Container
 
 
 class Properties(Container):

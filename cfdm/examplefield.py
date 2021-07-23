@@ -1,7 +1,5 @@
-from .functions import CF
-
 from .cfdmimplementation import implementation
-
+from .functions import CF
 
 _implementation = implementation()
 

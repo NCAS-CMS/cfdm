@@ -1,5 +1,4 @@
 import logging
-
 from itertools import zip_longest
 
 # TODO - replace the try block with "from re import Pattern" when
@@ -11,12 +10,9 @@ except ImportError:  # pragma: no cover
 else:
     python36 = False
 
-from . import core
-from . import mixin
-
-from .decorators import _manage_log_level_via_verbosity
+from . import core, mixin
 from .core.functions import deepcopy
-
+from .decorators import _manage_log_level_via_verbosity
 
 logger = logging.getLogger(__name__)
 

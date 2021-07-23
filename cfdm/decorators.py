@@ -1,17 +1,12 @@
-from functools import (
-    wraps,
-    partial,
-)
-
-from .functions import (
-    log_level,
-    _disable_logging,
-    _reset_log_emergence_level,
-    _is_valid_log_level_int,
-)
+from functools import partial, wraps
 
 from .constants import ValidLogLevels
-
+from .functions import (
+    _disable_logging,
+    _is_valid_log_level_int,
+    _reset_log_emergence_level,
+    log_level,
+)
 
 # Identifier for '_inplace_enabled' to use as a (temporary) attribute name
 INPLACE_ENABLED_PLACEHOLDER = "_inplace_store"
