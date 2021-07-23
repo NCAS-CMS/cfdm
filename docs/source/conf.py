@@ -13,12 +13,11 @@
 # out serve to show the default.
 
 import datetime
-import sys
+import inspect
 import os
 import re
-import inspect
-
-from os.path import relpath, dirname
+import sys
+from os.path import dirname, relpath
 
 import cfdm
 
