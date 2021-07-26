@@ -166,10 +166,10 @@ class NetCDFWrite(IOWrite):
         if base in existing_names:
             counter = g.setdefault("count_" + base, 1)
 
-            ncvar = "{0}_{1}".format(base, counter)
+            ncvar = f"{base}_{counter}"
             while ncvar in existing_names:
                 counter += 1
-                ncvar = "{0}_{1}".format(base, counter)
+                ncvar = f"{base}_{counter}"
         else:
             ncvar = base
 
@@ -438,7 +438,7 @@ class NetCDFWrite(IOWrite):
         if new_dtype is not None:
             dtype = new_dtype
 
-        return "{0}{1}".format(dtype.kind, dtype.itemsize)
+        return f"{dtype.kind}{dtype.itemsize}"
 
     def _string_length_dimension(self, size):
         """Creates a netCDF dimension for string variables if necessary.
@@ -459,7 +459,7 @@ class NetCDFWrite(IOWrite):
         # Create a new dimension for the maximum string length
         # ------------------------------------------------------------
         ncdim = self._netcdf_name(
-            "strlen{0}".format(size), dimsize=size, role="string_length"
+            f"strlen{size}", dimsize=size, role="string_length"
         )
 
         if ncdim not in g["ncdim_to_size"]:
@@ -565,9 +565,8 @@ class NetCDFWrite(IOWrite):
                 pass
             else:
                 raise ValueError(
-                    "Can't write {!r}: Unknown compression type: {!r}".format(
-                        construct, compression_type
-                    )
+                    f"Can't write {construct!r}: Unknown compression "
+                    f"type: {compression_type!r}"
                 )
 
             n = len(compressed_ncdims)
