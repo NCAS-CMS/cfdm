@@ -609,9 +609,7 @@ class NetCDFWrite(IOWrite):
         if axis is not None:
             domain_axis = self.implementation.get_domain_axes(f)[axis]
             logger.info(
-                "    Writing {!r} to netCDF dimension: {}".format(
-                    domain_axis, ncdim
-                )
+                f"    Writing {domain_axis!r} to netCDF dimension: {ncdim}"
             )  # pragma: no cover
 
             size = self.implementation.get_domain_axis_size(f, axis)
@@ -637,19 +635,16 @@ class NetCDFWrite(IOWrite):
                 except RuntimeError as error:
                     message = (
                         "Can't create unlimited dimension "
-                        "in {} file ({}).".format(
-                            g["netcdf"].file_format, error
-                        )
+                        f"in {g['netcdf'].file_format} file ({error})."
                     )
 
                     error = str(error)
                     if error == "NetCDF: NC_UNLIMITED size already in use":
                         raise RuntimeError(
                             message
-                            + " In a {} file only one unlimited dimension "
-                            "is allowed. Consider using a netCDF4 format.".format(
-                                g["netcdf"].file_format
-                            )
+                            + f" In a {g['netcdf'].file_format} file only one "
+                            "unlimited dimension is allowed. Consider using "
+                            "a netCDF4 format."
                         )
 
                     raise RuntimeError(message)
@@ -658,10 +653,8 @@ class NetCDFWrite(IOWrite):
                     parent_group.createDimension(ncdim, size)
                 except RuntimeError as error:
                     raise RuntimeError(
-                        "Can't create size {} dimension {!r} in "
-                        "{} file ({})".format(
-                            size, ncdim, g["netcdf"].file_format, error
-                        )
+                        f"Can't create size {size} dimension {ncdim!r} in "
+                        f"{g['netcdf'].file_format} file ({error})"
                     )
             # --- End: if
 
@@ -1101,10 +1094,8 @@ class NetCDFWrite(IOWrite):
                 x["grid_mapping"] = grid_mappings.pop()
             elif len(grid_mappings) > 1:
                 raise ValueError(
-                    "Can't write {!r}: Geometry container has multiple "
-                    "grid mapping variables: {!r}".format(
-                        field, x["grid_mapping"]
-                    )
+                    f"Can't write {field!r}: Geometry container has multiple "
+                    f"grid mapping variables: {x['grid_mapping']!r}"
                 )
 
             # Node count
@@ -1113,8 +1104,8 @@ class NetCDFWrite(IOWrite):
                 x["node_count"] = nc.pop()
             elif len(nc) > 1:
                 raise ValueError(
-                    "Can't write {!r}: Geometry container has multiple "
-                    "node count variables: {!r}".format(field, x["node_count"])
+                    f"Can't write {field!r}: Geometry container has multiple "
+                    f"node count variables: {x['node_count']!r}"
                 )
 
             # Part node count
@@ -1123,10 +1114,8 @@ class NetCDFWrite(IOWrite):
                 x["part_node_count"] = pnc.pop()
             elif len(pnc) > 1:
                 raise ValueError(
-                    "Can't write {!r}: Geometry container has multiple "
-                    "part node count variables: {!r}".format(
-                        field, x["part_node_count"]
-                    )
+                    f"Can't write {field!r}: Geometry container has multiple "
+                    f"part node count variables: {x['part_node_count']!r}"
                 )
 
             # Interior ring
@@ -1135,18 +1124,15 @@ class NetCDFWrite(IOWrite):
                 x["interior_ring"] = ir.pop()
             elif len(ir) > 1:
                 raise ValueError(
-                    "Can't write {!r}: Geometry container has multiple "
-                    "interior ring variables: {!r}".format(
-                        field, x["interior_ring"]
-                    )
+                    f"Can't write {field!r}: Geometry container has multiple "
+                    f"interior ring variables: {x['interior_ring']!r}"
                 )
         # --- End: for
 
         if len(gc) > 1:
             raise ValueError(
-                "Can't write {!r}: Multiple geometry containers: {!r}".format(
-                    field, list(gc.values())
-                )
+                f"Can't write {field!r}: Multiple geometry containers: "
+                f"{list(gc.values())!r}"
             )
 
         _, geometry_container = gc.popitem()
@@ -1240,11 +1226,9 @@ class NetCDFWrite(IOWrite):
         ncvar = self._netcdf_name(ncvar)
 
         logger.info(
-            "    Writing geometry container variable: {}".format(ncvar)
+            f"    Writing geometry container variable: {ncvar}"
         )  # pragma: no cover
-        logger.info(
-            "        {}".format(geometry_container)
-        )  # pragma: no cover
+        logger.info(f"        {geometry_container}")  # pragma: no cover
 
         kwargs = {
             "varname": ncvar,
