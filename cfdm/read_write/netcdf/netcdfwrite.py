@@ -1324,7 +1324,7 @@ class NetCDFWrite(IOWrite):
         #                                  dimsize=size, role='bounds')
 
         bounds_ncdim = self.implementation.nc_get_dimension(
-            bounds, "bounds{0}".format(size)
+            bounds, f"bounds{size}"
         )
         if not g["group"]:
             # A flat file has been requested, so strip off any group
@@ -1348,8 +1348,8 @@ class NetCDFWrite(IOWrite):
             ncdim_to_size = g["ncdim_to_size"]
             if bounds_ncdim not in ncdim_to_size:
                 logger.info(
-                    "    Writing size {} netCDF dimension for "
-                    "bounds: {}".format(size, bounds_ncdim)
+                    f"    Writing size {size} netCDF dimension for "
+                    f"bounds: {bounds_ncdim}"
                 )  # pragma: no cover
 
                 ncdim_to_size[bounds_ncdim] = size
@@ -1547,8 +1547,8 @@ class NetCDFWrite(IOWrite):
             if ncdim not in ncdim_to_size:
                 size = self.implementation.get_data_size(nodes)
                 logger.info(
-                    "    Writing size {} netCDF node dimension: "
-                    "{}".format(size, ncdim)
+                    f"    Writing size {size} netCDF node dimension: "
+                    f"{ncdim}"
                 )  # pragma: no cover
 
                 ncdim_to_size[ncdim] = size
@@ -1774,7 +1774,7 @@ class NetCDFWrite(IOWrite):
 
         if not name.startswith("/"):
             raise ValueError(
-                "Invalid netCDF name {!r}: missing a leading '/'".format(name)
+                f"Invalid netCDF name {name!r}: missing a leading '/'"
             )
 
         for group_name in name.split("/")[1:-1]:
@@ -1970,8 +1970,7 @@ class NetCDFWrite(IOWrite):
             ncdim_to_size = g["ncdim_to_size"]
             if ncdim not in ncdim_to_size:
                 logger.info(
-                    "    Writing size {} netCDF part "
-                    "dimension{}".format(size, ncdim)
+                    f"    Writing size {size} netCDF part " f"dimension{ncdim}"
                 )  # pragma: no cover
 
                 ncdim_to_size[ncdim] = size
@@ -2060,8 +2059,7 @@ class NetCDFWrite(IOWrite):
             ncdim_to_size = g["ncdim_to_size"]
             if ncdim not in ncdim_to_size:
                 logger.info(
-                    "    Writing size {} netCDF part "
-                    "dimension{}".format(size, ncdim)
+                    f"    Writing size {size} netCDF part " f"dimension{ncdim}"
                 )  # pragma: no cover
                 ncdim_to_size[ncdim] = size
 
@@ -2426,7 +2424,7 @@ class NetCDFWrite(IOWrite):
         g["key_to_ncdims"][key] = ncdimensions
 
         # Update the field's cell_measures list
-        return "{0}: {1}".format(measure, ncvar)
+        return f"{measure}: {ncvar}"
 
     def _set_external_variables(self, ncvar):
         """Add ncvar to the global external_variables attribute."""
@@ -2435,7 +2433,7 @@ class NetCDFWrite(IOWrite):
         external_variables = g["external_variables"]
 
         if external_variables:
-            external_variables = "{} {}".format(external_variables, ncvar)
+            external_variables = f"{external_variables} {ncvar}"
         else:
             external_variables = ncvar
             g["global_attributes"].add("external_variables")
@@ -2523,7 +2521,7 @@ class NetCDFWrite(IOWrite):
             ncvar = self._create_netcdf_variable_name(ref, default=default)
 
             logger.info(
-                "    Writing {!r} to netCDF variable: {}".format(ref, ncvar)
+                f"    Writing {ref!r} to netCDF variable: {ncvar}"
             )  # pragma: no cover
 
             kwargs = {
@@ -2566,19 +2564,17 @@ class NetCDFWrite(IOWrite):
         # --- End: if
 
         if multiple_grid_mappings:
-            return "{0}: {1}".format(
-                ncvar,
-                " ".join(
-                    sorted(
-                        [
-                            g["key_to_ncvar"][key]
-                            for key in self.implementation.get_coordinate_reference_coordinates(
-                                ref
-                            )
-                        ]
-                    )
-                ),
+            keys_to_ncvars = " ".join(
+                sorted(
+                    [
+                        g["key_to_ncvar"][key]
+                        for key in self.implementation.get_coordinate_reference_coordinates(
+                            ref
+                        )
+                    ]
+                )
             )
+            return f"{ncvar}: {keys_to_ncvars}"
         else:
             return ncvar
 
@@ -2643,7 +2639,7 @@ class NetCDFWrite(IOWrite):
         if g["dry_run"]:
             return
 
-        logger.info("    Writing {!r}".format(cfvar))  # pragma: no cover
+        logger.info(f"    Writing {cfvar!r}")  # pragma: no cover
 
         # ------------------------------------------------------------
         # Set the netCDF4.createVariable datatype
@@ -2677,7 +2673,7 @@ class NetCDFWrite(IOWrite):
 
         if chunksizes is not None:
             logger.detail(
-                "      HDF5 chunksizes: {}".format(chunksizes)
+                f"      HDF5 chunksizes: {chunksizes}"
             )  # pragma: no cover
 
         # ------------------------------------------------------------
