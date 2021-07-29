@@ -2686,11 +2686,9 @@ class NetCDFWrite(IOWrite):
                 ncdim_groups = self._groups(ncdim)
                 if not groups.startswith(ncdim_groups):
                     raise ValueError(
-                        "Can't create netCDF variable {!r} from {!r} "
-                        "with dimension {!r} that is not in the same group or "
-                        "a sub-group as the variable.".format(
-                            ncvar, cfvar, ncdim
-                        )
+                        f"Can't create netCDF variable {ncvar!r} from "
+                        f"{cfvar!r} with dimension {ncdim!r} that is not in "
+                        "the same group or a sub-group as the variable."
                     )
         # --- End: if
 
@@ -2725,35 +2723,32 @@ class NetCDFWrite(IOWrite):
         kwargs = self._customize_createVariable(cfvar, kwargs)
 
         logger.info(
-            " to netCDF variable: {}({})".format(
-                ncvar, ", ".join(ncdimensions)
-            )
+            f" to netCDF variable: {ncvar}({', '.join(ncdimensions)})"
         )  # pragma: no cover
 
         try:
             self._createVariable(**kwargs)
         except RuntimeError as error:
             error = str(error)
-            message = "Can't create variable in {} file from {} ({})".format(
-                g["netcdf"].file_format, cfvar, error
+            message = (
+                f"Can't create variable in {g['netcdf'].file_format} file "
+                f"from {cfvar} ({error})"
             )
             if error == (
                 "NetCDF: Not a valid data type or _FillValue " "type mismatch"
             ):
                 raise ValueError(
-                    "Can't write {} data from {!r} to a {} file. "
+                    f"Can't write {cfvar.data.dtype.name} data from {cfvar!r} "
+                    f"to a {g['netcdf'].file_format} file. "
                     "Consider using a netCDF4 format, or use the 'datatype' "
-                    "parameter, or change the datatype before writing.".format(
-                        cfvar.data.dtype.name, cfvar, g["netcdf"].file_format
-                    )
+                    "parameter, or change the datatype before writing."
                 )
             elif error == "NetCDF: NC_UNLIMITED in the wrong index":
                 raise RuntimeError(
-                    message + ". In a {} file the unlimited dimension must "
-                    "be the first (leftmost) dimension of the variable. "
-                    "Consider using a netCDF4 format.".format(
-                        g["netcdf"].file_format
-                    )
+                    message
+                    + f". In a {g['netcdf'].file_format} file the unlimited "
+                    "dimension must be the first (leftmost) dimension of the "
+                    f"variable. Consider using a netCDF4 format."
                 )
             else:
                 raise RuntimeError(message)
@@ -2933,7 +2928,7 @@ class NetCDFWrite(IOWrite):
             ).size:
                 raise ValueError(
                     "ERROR: Can't write data that has _FillValue or "
-                    "missing_value at unmasked point: {!r}".format(ncvar)
+                    f"missing_value at unmasked point: {ncvar!r}"
                 )
         # --- End: if
 
@@ -2986,6 +2981,7 @@ class NetCDFWrite(IOWrite):
             valid_range = True
             valid_min, valid_max = attributes[prop]
 
+        # Note: leave this as str.format() as different variables are applied
         message = (
             "WARNING: {!r} has data values written to {} "
             "that are strictly {} than the valid {} "
@@ -2997,8 +2993,8 @@ class NetCDFWrite(IOWrite):
             prop = "valid_min"
             if valid_range:
                 raise ValueError(
-                    "Can't write {!r} with both {} and "
-                    "valid_range properties".format(cfvar, prop)
+                    f"Can't write {cfvar!r} with both {prop} and "
+                    "valid_range properties"
                 )
 
             valid_min = attributes[prop]
@@ -3020,8 +3016,8 @@ class NetCDFWrite(IOWrite):
             prop = "valid_max"
             if valid_range:
                 raise ValueError(
-                    "Can't write {!r} with both {} and "
-                    "valid_range properties".format(cfvar, prop)
+                    f"Can't write {cfvar!r} with both {prop} and "
+                    "valid_range properties"
                 )
 
             valid_max = attributes[prop]
@@ -3091,7 +3087,7 @@ class NetCDFWrite(IOWrite):
         ncdim_size_to_spanning_constructs = []
         seen = g["seen"]
 
-        logger.info("  Writing {!r}:".format(f))  # pragma: no cover
+        logger.info(f"  Writing {f!r}:")  # pragma: no cover
 
         org_f = f
         if add_to_seen:
@@ -3135,7 +3131,7 @@ class NetCDFWrite(IOWrite):
         compression_type = self.implementation.get_compression_type(f)
         g["compression_type"] = compression_type
         logger.info(
-            "    Compression = {!r}".format(g["compression_type"])
+            f"    Compression = {g['compression_type']!r}"
         )  # pragma: no cover
 
         #
@@ -3152,9 +3148,9 @@ class NetCDFWrite(IOWrite):
         if g["output_version"] >= g["CF-1.8"]:
             if not self.implementation.conform_geometry_variables(f):
                 raise ValueError(
-                    "Can't write {!r}: node count, part node count, "
+                    f"Can't write {f!r}: node count, part node count, "
                     "or interior ring variables have "
-                    "inconsistent properties".format(f)
+                    "inconsistent properties"
                 )
         # --- End: if
 
@@ -3437,9 +3433,7 @@ class NetCDFWrite(IOWrite):
                     ):
                         # Do not create a netCDF dimension for the
                         # element dimension
-                        g["axis_to_ncdim"][axis] = "ragged_{}".format(
-                            "contiguous_element"
-                        )
+                        g["axis_to_ncdim"][axis] = "ragged_contiguous_element"
                     elif (
                         g["compression_type"] == "ragged indexed"
                         and len(data_axes) == 2
@@ -3447,9 +3441,7 @@ class NetCDFWrite(IOWrite):
                     ):
                         # Do not create a netCDF dimension for the
                         # element dimension
-                        g["axis_to_ncdim"][axis] = "ragged_{}".format(
-                            "indexed_element"
-                        )
+                        g["axis_to_ncdim"][axis] = "ragged_indexed_element"
                     elif (
                         g["compression_type"] == "ragged indexed contiguous"
                         and len(data_axes) == 3
@@ -3457,9 +3449,9 @@ class NetCDFWrite(IOWrite):
                     ):
                         # Do not create a netCDF dimension for the
                         # element dimension
-                        g["axis_to_ncdim"][axis] = "ragged_{}".format(
-                            "indexed_contiguous_element1"
-                        )
+                        g["axis_to_ncdim"][
+                            axis
+                        ] = "ragged_indexed_contiguous_element1"
                     elif (
                         g["compression_type"] == "ragged indexed contiguous"
                         and len(data_axes) == 3
@@ -3467,9 +3459,9 @@ class NetCDFWrite(IOWrite):
                     ):
                         # Do not create a netCDF dimension for the
                         # element dimension
-                        g["axis_to_ncdim"][axis] = "ragged_{}".format(
-                            "indexed_contiguous_element2"
-                        )
+                        g["axis_to_ncdim"][
+                            axis
+                        ] = "ragged_indexed_contiguous_element2"
                     else:
                         domain_axis = self.implementation.get_domain_axes(f)[
                             axis
