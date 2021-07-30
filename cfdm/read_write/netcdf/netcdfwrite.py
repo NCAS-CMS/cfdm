@@ -3596,9 +3596,8 @@ class NetCDFWrite(IOWrite):
 
             else:
                 raise ValueError(
-                    "Can't write {!r}: Unknown compression type: {!r}".format(
-                        org_f, compression_type
-                    )
+                    f"Can't write {org_f!r}: Unknown compression type: "
+                    f"{compression_type!r}"
                 )
 
             g["sample_ncdim"][compressed_ncdims] = sample_ncdim
@@ -3720,8 +3719,8 @@ class NetCDFWrite(IOWrite):
 
                     ncvar = self._write_scalar_data(value, ncvar=term)
 
-                    formula_terms.append("{0}: {1}".format(term, ncvar))
-                    bounds_formula_terms.append("{0}: {1}".format(term, ncvar))
+                    formula_terms.append(f"{term}: {ncvar}")
+                    bounds_formula_terms.append(f"{term}: {ncvar}")
 
                 for (
                     term,
@@ -3744,7 +3743,7 @@ class NetCDFWrite(IOWrite):
                     # Get the netCDF variable name for the domain
                     # ancillary and add it to the formula_terms attribute
                     ncvar = seen[id(domain_anc)]["ncvar"]
-                    formula_terms.append("{0}: {1}".format(term, ncvar))
+                    formula_terms.append(f"{term}: {ncvar}")
 
                     bounds = g["bounds"].get(ncvar, None)
                     if bounds is not None:
@@ -3754,13 +3753,9 @@ class NetCDFWrite(IOWrite):
                             bounds = None
 
                     if bounds is None:
-                        bounds_formula_terms.append(
-                            "{0}: {1}".format(term, ncvar)
-                        )
+                        bounds_formula_terms.append(f"{term}: {ncvar}")
                     else:
-                        bounds_formula_terms.append(
-                            "{0}: {1}".format(term, bounds)
-                        )
+                        bounds_formula_terms.append(f"{term}: {bounds}")
             # --- End: if
 
             # Add the formula_terms attribute to the parent coordinate
@@ -3778,7 +3773,7 @@ class NetCDFWrite(IOWrite):
 
                 logger.info(
                     "    Writing formula_terms attribute to "
-                    "netCDF variable {}: {!r}".format(ncvar, formula_terms)
+                    f"netCDF variable {ncvar}: {formula_terms!r}"
                 )  # pragma: no cover
 
                 # Add the formula_terms attribute to the parent
@@ -3795,10 +3790,8 @@ class NetCDFWrite(IOWrite):
                             pass  # TODO convert to 'raise' via fixes upstream
 
                     logger.info(
-                        "    Writing formula_terms to netCDF "
-                        "bounds variable {}: {!r}".format(
-                            bounds_ncvar, bounds_formula_terms
-                        )
+                        "    Writing formula_terms to netCDF bounds variable "
+                        f"{bounds_ncvar}: {bounds_formula_terms!r}"
                     )  # pragma: no cover
             # --- End: if
 
@@ -3845,7 +3838,7 @@ class NetCDFWrite(IOWrite):
             cell_measures = " ".join(cell_measures)
             logger.info(
                 "    Writing cell_measures attribute to "
-                "netCDF variable {}: {!r}".format(ncvar, cell_measures)
+                f"netCDF variable {ncvar}: {cell_measures!r}"
             )  # pragma: no cover
 
             extra["cell_measures"] = cell_measures
@@ -3855,7 +3848,7 @@ class NetCDFWrite(IOWrite):
             coordinates = " ".join(coordinates)
             logger.info(
                 "    Writing coordinates attribute to "
-                "netCDF variable {}: {!r}".format(ncvar, coordinates)
+                f"netCDF variable {ncvar}: {coordinates!r}"
             )  # pragma: no cover
 
             extra["coordinates"] = coordinates
@@ -3865,7 +3858,7 @@ class NetCDFWrite(IOWrite):
             grid_mapping = " ".join(grid_mapping)
             logger.info(
                 "    Writing grid_mapping attribute to "
-                "netCDF variable {}: {!r}".format(ncvar, grid_mapping)
+                f"netCDF variable {ncvar}: {grid_mapping!r}"
             )  # pragma: no cover
 
             extra["grid_mapping"] = grid_mapping
@@ -3875,7 +3868,7 @@ class NetCDFWrite(IOWrite):
             ancillary_variables = " ".join(ancillary_variables)
             logger.info(
                 "    Writing ancillary_variables attribute to "
-                "netCDF variable {}: {!r}".format(ncvar, ancillary_variables)
+                f"netCDF variable {ncvar}: {ancillary_variables!r}"
             )  # pragma: no cover
 
             extra["ancillary_variables"] = ancillary_variables
@@ -3893,8 +3886,8 @@ class NetCDFWrite(IOWrite):
                     self.implementation.get_cell_method_qualifiers(cm)
                 ):
                     raise ValueError(
-                        "Can't write {!r}: Unknown cell method "
-                        "property: {!r}".format(org_f, cm.properties())
+                        f"Can't write {org_f!r}: Unknown cell method "
+                        f"property: {cm.properties()!r}"
                     )
 
                 axes = [
@@ -3911,7 +3904,7 @@ class NetCDFWrite(IOWrite):
             cell_methods = " ".join(cell_methods_strings)
             logger.info(
                 "    Writing cell_methods attribute to "
-                "netCDF variable {}: {}".format(ncvar, cell_methods)
+                f"netCDF variable {ncvar}: {cell_methods}"
             )  # pragma: no cover
 
             extra["cell_methods"] = cell_methods
@@ -3982,7 +3975,7 @@ class NetCDFWrite(IOWrite):
             # Add the vertical coordinate to an existing
             # horizontal coordinate reference
             logger.info(
-                "      Adding {!r} to {!r}".format(coord_key, grid_mapping)
+                f"      Adding {coord_key!r} to {grid_mapping!r}"
             )  # pragma: no cover
 
             grid_mapping = count[1]
@@ -4276,9 +4269,7 @@ class NetCDFWrite(IOWrite):
 
         if [x for x in g["Conventions"] if "," in x]:
             raise ValueError(
-                "Conventions names can not contain commas: {0}".format(
-                    g["Conventions"]
-                )
+                f"Conventions names can not contain commas: {g['Conventions']}"
             )
 
         g["output_version"] = g["latest_version"]
