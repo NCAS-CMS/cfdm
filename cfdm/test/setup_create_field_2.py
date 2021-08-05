@@ -252,19 +252,19 @@ class create_fieldTest_2(unittest.TestCase):
 
             g = cfdm.read(self.filename, verbose=verbose)
 
-            self.assertEqual(len(g), 1, "{} != 1".format(len(g)))
+            self.assertEqual(len(g), 1, f"{len(g)} != 1")
 
             g = g[0].squeeze()
 
             self.assertEqual(
                 sorted(f.constructs),
                 sorted(g.constructs),
-                "\n\nf\n{}\n\n{}\n\ng\n{}\n\n{}".format(
-                    sorted(f.constructs),
-                    sorted(f.constructs.items()),
-                    sorted(g.constructs),
-                    sorted(g.constructs.items()),
-                ),
+                f"\n\nf (created in memory)"
+                f"\n{f.constructs}"
+                f"\n\n{f.constructs.items()}"
+                f"\n\ng (read from disk)"
+                f"\n{g.constructs}"
+                f"\n\n{g.constructs.items()}",
             )
 
             self.assertTrue(

@@ -247,13 +247,12 @@ class create_fieldTest(unittest.TestCase):
         self.assertEqual(
             sorted(f.constructs),
             sorted(g.constructs),
-            "\n\nf (created in memory)\n{}\n\n{}\n\ng "
-            "(read from disk)\n{}\n\n{}".format(
-                sorted(f.constructs),
-                sorted(f.constructs.items()),
-                sorted(g.constructs),
-                sorted(g.constructs.items()),
-            ),
+            f"\n\nf (created in memory)"
+            f"\n{f.constructs}"
+            f"\n\n{f.constructs.items()}"
+            f"\n\ng (read from disk)"
+            f"\n{g.constructs}"
+            f"\n\n{g.constructs.items()}",
         )
 
         self.assertTrue(
