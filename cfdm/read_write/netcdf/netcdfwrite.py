@@ -4351,7 +4351,7 @@ class NetCDFWrite(IOWrite):
                 if filename in self.implementation.get_filenames(f):
                     raise ValueError(
                         "Can't write to a file that contains data "
-                        "that needs to be read: {}".format(filename)
+                        f"that needs to be read: {filename}"
                     )
         # --- End: if
 
@@ -4364,7 +4364,7 @@ class NetCDFWrite(IOWrite):
         try:
             nc = netCDF4.Dataset(filename, mode, format=fmt)
         except RuntimeError as error:
-            raise RuntimeError("{}: {}".format(error, filename))
+            raise RuntimeError(f"{error}: {filename}")
 
         return nc
 
@@ -4613,7 +4613,7 @@ class NetCDFWrite(IOWrite):
         See `cfdm.write` for examples.
 
         """
-        logger.info("Writing to {}".format(fmt))  # pragma: no cover
+        logger.info(f"Writing to {fmt}")  # pragma: no cover
 
         # ------------------------------------------------------------
         # Initialise netCDF write parameters
@@ -4860,7 +4860,7 @@ class NetCDFWrite(IOWrite):
             desc = "Appending to"
         else:  # includes append mode on a dry-run when it does just read
             desc = "Reading from"
-        logger.info("{} {}".format(desc, fmt))  # pragma: no cover
+        logger.info(f"{desc} {fmt}")  # pragma: no cover
 
         g = self.write_vars
 
@@ -4887,10 +4887,10 @@ class NetCDFWrite(IOWrite):
             "NETCDF4_CLASSIC",
         )
         if fmt not in netcdf3_fmts + netcdf4_fmts:
-            raise ValueError("Unknown output file format: {}".format(fmt))
+            raise ValueError(f"Unknown output file format: {fmt}")
         elif fmt in netcdf3_fmts:
             if compress in netcdf3_fmts:
-                raise ValueError("Can't compress {} format file".format(fmt))
+                raise ValueError(f"Can't compress {fmt} format file")
             if group in netcdf3_fmts:
                 # Can't write groups to a netCDF3 file
                 g["group"] = False
@@ -4909,7 +4909,7 @@ class NetCDFWrite(IOWrite):
             if "Conventions" in variable_attributes:
                 raise ValueError(
                     "Can't prevent the 'Conventions' property from being "
-                    "a netCDF global variable: {0}".format(variable_attributes)
+                    f"a netCDF global variable: {variable_attributes}"
                 )
         # --- End: if
 
@@ -5029,8 +5029,8 @@ class NetCDFWrite(IOWrite):
         if external is not None:
             if g["output_version"] < g["CF-1.7"]:
                 raise ValueError(
-                    "Can't create external variables at CF-{} "
-                    "(version too old)".format(g["output_version"])
+                    "Can't create external variables at "
+                    f"CF-{g['output_version']} (version too old)"
                 )
 
             external = os.path.expanduser(os.path.expandvars(external))
