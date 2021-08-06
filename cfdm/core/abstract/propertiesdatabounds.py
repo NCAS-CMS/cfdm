@@ -2,7 +2,6 @@ import numpy
 
 from .propertiesdata import PropertiesData
 
-
 # --------------------------------------------------------------------
 # See cfdm.core.mixin.container.__docstring_substitution__ for {{...}}
 # docstring substitutions

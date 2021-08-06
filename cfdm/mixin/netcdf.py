@@ -3365,16 +3365,13 @@ class NetCDFUnreferenced:
             for key1, value1 in sorted(value0["non-compliance"].items()):
                 for x in value1:
                     print(f"        {key1!r}: [")
-                    print(
-                        "            {{{0}}},".format(
-                            "\n             ".join(
-                                [
-                                    f"{key2!r}: {value2!r},"
-                                    for key2, value2 in sorted(x.items())
-                                ]
-                            )
-                        )
+                    vals = "\n             ".join(
+                        [
+                            f"{key2!r}: {value2!r},"
+                            for key2, value2 in sorted(x.items())
+                        ]
                     )
+                    print(f"            {{{vals}}},")
 
                 print("        ],")
 

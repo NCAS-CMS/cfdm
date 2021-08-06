@@ -1,14 +1,12 @@
 import datetime
 import doctest
+import faulthandler
 import importlib
 import os
 import pkgutil
 import unittest
-
 from argparse import ArgumentParser
 from random import choice, shuffle
-
-import faulthandler
 
 faulthandler.enable()  # to debug seg faults and timeouts
 

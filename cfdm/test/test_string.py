@@ -1,17 +1,15 @@
 import atexit
 import datetime
+import faulthandler
 import os
 import tempfile
 import unittest
 
 import numpy
 
-import faulthandler
-
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
-
 
 n_tmpfiles = 1
 tmpfiles = [
@@ -34,10 +32,10 @@ atexit.register(_remove_tmpfiles)
 
 
 class StringTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Test constructs with underlying arrays of string data type."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -50,7 +48,7 @@ class StringTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
     def test_STRING(self):
-        """TODO DOCS."""
+        """Test constructs with underlying string type arrays."""
         for array in (
             numpy.ma.array(list("abcdefghij"), dtype="S"),
             numpy.ma.array(

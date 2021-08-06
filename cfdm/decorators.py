@@ -1,17 +1,12 @@
-from functools import (
-    wraps,
-    partial,
-)
-
-from .functions import (
-    log_level,
-    _disable_logging,
-    _reset_log_emergence_level,
-    _is_valid_log_level_int,
-)
+from functools import partial, wraps
 
 from .constants import ValidLogLevels
-
+from .functions import (
+    _disable_logging,
+    _is_valid_log_level_int,
+    _reset_log_emergence_level,
+    log_level,
+)
 
 # Identifier for '_inplace_enabled' to use as a (temporary) attribute name
 INPLACE_ENABLED_PLACEHOLDER = "_inplace_store"
@@ -130,20 +125,15 @@ def _manage_log_level_via_verbosity(method_with_verbose_kwarg, calls=[0]):
         # crucial to usage.
         verbose = kwargs.get("verbose")
 
+        possible_levels = ", ".join(
+            [val.name + " = " + str(val.value) for val in ValidLogLevels]
+        )
         invalid_arg_msg = (
-            "Invalid value '{}' for the 'verbose' keyword argument. "
+            f"Invalid value '{verbose}' for the 'verbose' keyword argument. "
             "Accepted values are integers corresponding in positive "
-            "cases to increasing verbosity (namely {}), or None, "
-            "to configure the verbosity according to the global "
-            "log_level setting.".format(
-                verbose,
-                ", ".join(
-                    [
-                        val.name + " = " + str(val.value)
-                        for val in ValidLogLevels
-                    ]
-                ),
-            )
+            f"cases to increasing verbosity (namely {possible_levels}), or "
+            "None, to configure the verbosity according to the global "
+            "log_level setting."
         )
         # First convert valid string inputs to the enum-mapped int constant:
         if isinstance(verbose, str):

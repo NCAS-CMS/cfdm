@@ -1,7 +1,4 @@
-from . import abstract
-
-from . import CoordinateConversion
-from . import Datum
+from . import CoordinateConversion, Datum, abstract
 
 
 class CoordinateReference(abstract.Container):

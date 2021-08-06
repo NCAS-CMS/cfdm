@@ -2,12 +2,9 @@ import logging
 
 import numpy
 
-from ..functions import atol, rtol
-
 from ..decorators import _manage_log_level_via_verbosity
-
 from ..docstring import _docstring_substitution_definitions
-
+from ..functions import atol, rtol
 
 logger = logging.getLogger(__name__)
 

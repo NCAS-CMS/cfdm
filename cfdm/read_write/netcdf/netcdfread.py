@@ -5,24 +5,19 @@ import re
 import struct
 import subprocess
 import tempfile
-
 from ast import literal_eval
 from collections import OrderedDict
 from copy import deepcopy
 from distutils.version import LooseVersion
 from functools import reduce
 
-import numpy
 import netCDF4
-
 import netcdf_flattener
+import numpy
 
 from ...decorators import _manage_log_level_via_verbosity
-
 from ...functions import is_log_level_debug
-
 from .. import IORead
-
 
 logger = logging.getLogger(__name__)
 
@@ -421,7 +416,21 @@ class NetCDFRead(IORead):
         # ----------------------------------------------------------------
         _cached_temporary_files[tmpfile] = x
 
-        subprocess.run(["ncgen", "-knc4", "-o", tmpfile, filename], check=True)
+        try:
+            subprocess.run(
+                ["ncgen", "-knc4", "-o", tmpfile, filename], check=True
+            )
+        except subprocess.CalledProcessError as error:
+            msg = str(error)
+            if msg.startswith(
+                "Command '['ncgen', '-knc4', '-o'"
+            ) and msg.endswith("returned non-zero exit status 1."):
+                raise ValueError(
+                    "The CDL provided is invalid so cannot be converted "
+                    "to netCDF."
+                )
+            else:
+                raise
 
         return tmpfile
 

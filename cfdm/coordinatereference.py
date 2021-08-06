@@ -1,14 +1,8 @@
 import logging
 
-from . import mixin
-from . import core
-from . import CoordinateConversion
-from . import Datum
-
+from . import CoordinateConversion, Datum, core, mixin
 from .data import Data
-
-from .decorators import _manage_log_level_via_verbosity, _display_or_return
-
+from .decorators import _display_or_return, _manage_log_level_via_verbosity
 
 logger = logging.getLogger(__name__)
 
@@ -369,7 +363,8 @@ class CoordinateReference(
         # Coordinates
         if _construct_names:
             for key in sorted(self.coordinates(), reverse=True):
-                coord = "{}".format(_construct_names.get(key, f"key:{key}"))
+                coord_name = _construct_names.get(key, f"key:{key}")
+                coord = f"{coord_name}"
                 if key in _dimension_coordinates:
                     coord = "Dimension Coordinate: " + coord
                 elif key in _auxiliary_coordinates:

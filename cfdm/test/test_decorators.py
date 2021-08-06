@@ -1,15 +1,13 @@
 import copy
 import datetime
+import faulthandler
 import itertools
 import unittest
 from unittest.mock import patch
 
-import faulthandler
-
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
-
 
 # Note: it is important we test on the cfdm logging config rather than the
 # generic Python module logging (i.e. 'cfdm.logging' not just 'logging').
@@ -47,7 +45,7 @@ class dummyClass:
     """
 
     def __init__(self):
-        """TODO DOCS."""
+        """Constructor for dummyClass."""
         self._list = [1]
 
         self.debug_message = DEBUG_MSG
@@ -58,7 +56,7 @@ class dummyClass:
         self.dummy_string = "foo bar baz"
 
     def copy(self):
-        """TODO DOCS."""
+        """Creates a deep copy."""
         return copy.deepcopy(self)  # note a shallow copy is not sufficient
 
     def func(self, inplace):
@@ -129,11 +127,11 @@ class dummyClass:
         logger.warning(self.warning_message)
 
 
-class DecoratorsTest(unittest.TestCase):
-    """TODO DOCS."""
+class decoratorsTest(unittest.TestCase):
+    """Test the decorators module."""
 
     def test_inplace_enabled(self):
-        """TODO DOCS."""
+        """Test the `_inplace_enabled` decorator."""
         # Note we must initiate separate classes as a list is mutable:
         test_class_1 = dummyClass()
         test_class_2 = dummyClass()
@@ -157,7 +155,7 @@ class DecoratorsTest(unittest.TestCase):
         self.assertEqual(res_4, None)  # as return None if inplace=True
 
     def test_manage_log_level_via_verbosity(self):
-        """TODO DOCS."""
+        """Test the `_manage_log_level_via_verbosity` decorator."""
         # Order of decreasing severity/verbosity is crucial to one test below
         levels = ["WARNING", "INFO", "DETAIL", "DEBUG"]
 
@@ -257,7 +255,7 @@ class DecoratorsTest(unittest.TestCase):
 
     @patch("builtins.print")
     def test_display_or_return(self, mock_print):
-        """TODO DOCS."""
+        """Test the `_display_or_return` decorator."""
         test_class = dummyClass()
 
         # Compare results with display=False:
