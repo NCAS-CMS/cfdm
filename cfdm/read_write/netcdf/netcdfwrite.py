@@ -2517,7 +2517,7 @@ class NetCDFWrite(IOWrite):
             common = set(parameters).intersection(cc_parameters)
             if common:
                 raise ValueError(
-                    "Can't create CF-netDF grid mapping variable: "
+                    "Can't create CF-netCDF grid mapping variable: "
                     f"{common.pop()!r} is defined as both a coordinate "
                     "conversion and a datum parameter."
                 )

@@ -7,7 +7,7 @@ version 1.8.?.?
 * Construct access API changes from 1.8.9.0 applied to `Field.convert`
 * Improved error message for invalid inputs to `Field.convert`
 * Raise exception when attempting to write multiply defined coordinate
-  reference parameters(https://github.com/NCAS-CMS/cfdm/issues/148)
+  reference parameters (https://github.com/NCAS-CMS/cfdm/issues/148)
 
 version 1.8.9.0
 ---------------
