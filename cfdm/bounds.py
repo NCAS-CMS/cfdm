@@ -1,5 +1,4 @@
-from . import mixin
-from . import core
+from . import core, mixin
 
 
 class Bounds(

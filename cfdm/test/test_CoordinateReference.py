@@ -1,15 +1,13 @@
 import atexit
 import datetime
+import faulthandler
 import os
 import tempfile
 import unittest
 
-import faulthandler
-
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
-
 
 n_tmpfiles = 1
 tmpfiles = [
@@ -32,10 +30,10 @@ atexit.register(_remove_tmpfiles)
 
 
 class CoordinateReferenceTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the CoordinateReference class."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -55,7 +53,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         self.f = f[0]
 
     def test_CoordinateReference__repr__str__dump_construct_type(self):
-        """TODO DOCS."""
+        """Test all means of CoordinateReference inspection."""
         f = self.f
 
         for cr in f.coordinate_references().values():
@@ -65,7 +63,7 @@ class CoordinateReferenceTest(unittest.TestCase):
             self.assertEqual(cr.construct_type, "coordinate_reference")
 
     def test_CoordinateReference_equals(self):
-        """TODO DOCS."""
+        """Test the equality-testing CoordinateReference method."""
         # Create a vertical grid mapping coordinate reference
         t = cfdm.CoordinateReference(
             coordinates=("coord1",),
@@ -139,7 +137,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         self.assertTrue(t.equals(t.copy(), verbose=3))
 
     def test_CoordinateConversion(self):
-        """TODO DOCS."""
+        """Test a CoordinateReference coordinate conversion element."""
         f = self.f.copy()
 
         cr = f.construct("standard_name:atmosphere_hybrid_height_coordinate")
@@ -184,7 +182,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         self.assertTrue(_.equals(cc))
 
     def test_Datum(self):
-        """TODO DOCS."""
+        """Test a CoordinateReference datum component."""
         f = self.f.copy()
 
         cr = f.construct("standard_name:atmosphere_hybrid_height_coordinate")

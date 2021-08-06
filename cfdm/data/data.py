@@ -1,26 +1,20 @@
 import itertools
 import logging
 
-import numpy
 import netCDF4
+import numpy
 
 from .. import core
-
-from ..mixin.container import Container
-from ..mixin.netcdf import NetCDFHDF5
-
 from ..constants import masked as cfdm_masked
-from ..functions import abspath
-
 from ..decorators import (
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
-
-from . import abstract
-from . import NumpyArray
-
+from ..functions import abspath
+from ..mixin.container import Container
+from ..mixin.netcdf import NetCDFHDF5
+from . import NumpyArray, abstract
 
 logger = logging.getLogger(__name__)
 
@@ -1262,17 +1256,8 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         out = []
         out.append(
-            "{0}{1}{2}({3}{4}{5}, dtype={6!r}{7}{8})".format(
-                name,
-                namespace,
-                self.__class__.__name__,
-                array,
-                units,
-                calendar,
-                dtype,
-                mask,
-                fill_value,
-            )
+            f"{name}{namespace}{self.__class__.__name__}({array}{units}"
+            f"{calendar}, dtype={dtype!r}{mask}{fill_value})"
         )
 
         if string:
@@ -2202,9 +2187,8 @@ class Data(Container, NetCDFHDF5, core.Data):
         # Check that each instance has the same shape
         if self.shape != other.shape:
             logger.info(
-                "{0}: Different shapes: {1} != {2}".format(
-                    self.__class__.__name__, self.shape, other.shape
-                )
+                f"{self.__class__.__name__}: Different shapes: "
+                f"{self.shape} != {other.shape}"
             )  # pragma: no cover
             return False
 
@@ -2213,20 +2197,16 @@ class Data(Container, NetCDFHDF5, core.Data):
             None
         ) != other.get_fill_value(None):
             logger.info(
-                "{0}: Different fill value: {1} != {2}".format(
-                    self.__class__.__name__,
-                    self.get_fill_value(None),
-                    other.get_fill_value(None),
-                )
+                f"{self.__class__.__name__}: Different fill value: "
+                f"{self.get_fill_value(None)} != {other.get_fill_value(None)}"
             )  # pragma: no cover
             return False
 
         # Check that each instance has the same data type
         if not ignore_data_type and self.dtype != other.dtype:
             logger.info(
-                "{0}: Different data types: {1} != {2}".format(
-                    self.__class__.__name__, self.dtype, other.dtype
-                )
+                f"{self.__class__.__name__}: Different data types: "
+                f"{self.dtype} != {other.dtype}"
             )  # pragma: no cover
             return False
 
@@ -2241,9 +2221,8 @@ class Data(Container, NetCDFHDF5, core.Data):
             y = getattr(other, "get_" + attr)(None)
             if x != y:
                 logger.info(
-                    "{0}: Different {1}: {2!r} != {3!r}".format(
-                        self.__class__.__name__, attr, x, y
-                    )
+                    f"{self.__class__.__name__}: Different {attr}: "
+                    f"{x!r} != {y!r}"
                 )  # pragma: no cover
                 return False
 
@@ -2254,12 +2233,8 @@ class Data(Container, NetCDFHDF5, core.Data):
             compression_type = self.get_compression_type()
             if compression_type != other.get_compression_type():
                 logger.info(
-                    "{0}: Different compression types: "
-                    "{1} != {2}".format(
-                        self.__class__.__name__,
-                        compression_type,
-                        other.get_compression_type(),
-                    )
+                    f"{self.__class__.__name__}: Different compression types: "
+                    f"{compression_type} != {other.get_compression_type()}"
                 )  # pragma: no cover
 
                 return False
@@ -2275,9 +2250,8 @@ class Data(Container, NetCDFHDF5, core.Data):
                     atol=atol,
                 ):
                     logger.info(
-                        "{0}: Different compressed array values".format(
-                            self.__class__.__name__
-                        )
+                        f"{self.__class__.__name__}: Different compressed "
+                        "array values"
                     )  # pragma: no cover
                     return False
 
@@ -2286,9 +2260,8 @@ class Data(Container, NetCDFHDF5, core.Data):
         # ------------------------------------------------------------
         if not self._equals(self.array, other.array, rtol=rtol, atol=atol):
             logger.info(
-                "{0}: Different array values (atol={1}, rtol={2})".format(
-                    self.__class__.__name__, atol, rtol
-                )
+                f"{self.__class__.__name__}: Different array values "
+                f"(atol={atol}, rtol={rtol})"
             )  # pragma: no cover
 
             return False

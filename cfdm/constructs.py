@@ -1,5 +1,4 @@
 import logging
-
 from itertools import zip_longest
 
 # TODO - replace the try block with "from re import Pattern" when
@@ -11,12 +10,9 @@ except ImportError:  # pragma: no cover
 else:
     python36 = False
 
-from . import core
-from . import mixin
-
-from .decorators import _manage_log_level_via_verbosity
+from . import core, mixin
 from .core.functions import deepcopy
-
+from .decorators import _manage_log_level_via_verbosity
 
 logger = logging.getLogger(__name__)
 
@@ -437,12 +433,8 @@ class Constructs(mixin.Container, core.Constructs):
 
         if len(refs0) != len(refs1):
             logger.info(
-                "{}: Different numbers of coordinate reference constructs: "
-                "{} != {}".format(
-                    self.__class__.__name__,
-                    len(refs0),
-                    len(refs1),
-                )
+                f"{self.__class__.__name__}: Different numbers of coordinate "
+                f"reference constructs: {len(refs0)} != {len(refs1)}"
             )  # pragma: no cover
 
             return False
@@ -457,9 +449,8 @@ class Constructs(mixin.Container, core.Constructs):
                 found_match = False
                 for key1, ref1 in tuple(refs1.items()):
                     logger.debug(
-                        "{0}: Comparing {1!r}, {2!r}: ".format(
-                            self.__class__.__name__, ref0, ref1
-                        )
+                        f"{self.__class__.__name__}: Comparing {ref0!r}, "
+                        f"{ref1!r}: "
                     )  # pragma: no cover
 
                     if not ref0.equals(
@@ -510,9 +501,7 @@ class Constructs(mixin.Container, core.Constructs):
 
                 if not found_match:
                     logger.info(
-                        "{}: No match for {!r})".format(
-                            self.__class__.__name__, ref0
-                        )
+                        f"{self.__class__.__name__}: No match for {ref0!r}"
                     )  # pragma: no cover
                     return False
 
@@ -1344,13 +1333,10 @@ class Constructs(mixin.Container, core.Constructs):
                         # constructs of this type
                         matched_all_constructs_with_these_axes = False
                         log.append(
-                            "{0}: Different numbers of {1} "
-                            "constructs: {2} != {3}".format(
-                                self.__class__.__name__,
-                                construct_type,
-                                len(role_constructs0),
-                                len(role_constructs1),
-                            )
+                            f"{self.__class__.__name__}: Different numbers "
+                            f"of {construct_type} constructs: "
+                            f"{len(role_constructs0)} != "
+                            f"{len(role_constructs1)}"
                         )
                         break
 
@@ -1366,9 +1352,8 @@ class Constructs(mixin.Container, core.Constructs):
                         matched_construct = False
                         for key1, item1 in tuple(role_constructs1.items()):
                             logger.debug(
-                                "{}: Comparing {!r}, {!r}: ".format(
-                                    self.__class__.__name__, item0, item1
-                                )
+                                f"{self.__class__.__name__}: Comparing "
+                                f"{item0!r}, {item1!r}: "
                             )  # pragma: no cover
 
                             if item0.equals(
@@ -1390,9 +1375,8 @@ class Constructs(mixin.Container, core.Constructs):
 
                         if not matched_construct:
                             log.append(
-                                "{0}: Can't match {1!r}".format(
-                                    self.__class__.__name__, item0
-                                )
+                                f"{self.__class__.__name__}: Can't match "
+                                f"{item0!r}"
                             )
                             break
 
@@ -1413,8 +1397,8 @@ class Constructs(mixin.Container, core.Constructs):
             if not matched_all_constructs_with_these_axes:
                 names = [self.domain_axis_identity(axis0) for axis0 in axes0]
                 logger.info(
-                    "{0}: Can't match constructs "
-                    "spanning axes {1}".format(self.__class__.__name__, names)
+                    f"{self.__class__.__name__}: Can't match constructs "
+                    f"spanning axes {names}"
                 )
                 if log:
                     logger.info("\n".join(log))
@@ -1428,13 +1412,10 @@ class Constructs(mixin.Container, core.Constructs):
             for axis0, axis1 in zip(axes0, axes1):
                 if axis0 in axis0_to_axis1 and axis1 != axis0_to_axis1[axis0]:
                     logger.info(
-                        "{0}: Ambiguous axis mapping "
-                        "({1} -> both {2} and {3})".format(
-                            self.__class__.__name__,
-                            self.domain_axis_identity(axes0),
-                            other.domain_axis_identity(axis1),
-                            other.domain_axis_identity(axis0_to_axis1[axis0]),
-                        )
+                        f"{self.__class__.__name__}: Ambiguous axis mapping "
+                        f"({self.domain_axis_identity(axes0)} -> both "
+                        f"{other.domain_axis_identity(axis1)} and "
+                        f"{other.domain_axis_identity(axis0_to_axis1[axis0])})"
                     )  # pragma: no cover
                     if not _return_axis_map:
                         return False
@@ -1442,13 +1423,10 @@ class Constructs(mixin.Container, core.Constructs):
                     axis1 in axis1_to_axis0 and axis0 != axis1_to_axis0[axis1]
                 ):
                     logger.info(
-                        "{0}: Ambiguous axis mapping "
-                        "({1} -> both {2} and {3})".format(
-                            self.__class__.__name__,
-                            self.domain_axis_identity(axis0),
-                            self.domain_axis_identity(axis1_to_axis0[axis0]),
-                            other.domain_axis_identity(axes1),
-                        )
+                        f"{self.__class__.__name__}: Ambiguous axis mapping "
+                        f"({self.domain_axis_identity(axis0)} -> both "
+                        f"{self.domain_axis_identity(axis1_to_axis0[axis0])} "
+                        f"and {other.domain_axis_identity(axes1)})"
                     )  # pragma: no cover
                     if not _return_axis_map:
                         return False

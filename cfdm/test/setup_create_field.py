@@ -1,25 +1,23 @@
 import datetime
+import faulthandler
 import os
 import unittest
 
 import numpy
 
-import faulthandler
-
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
-
 
 verbose = False
 warnings = False
 
 
 class create_fieldTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Test ab initio creation of field constructs in memory."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or calls (those
@@ -39,7 +37,7 @@ class create_fieldTest(unittest.TestCase):
             pass
 
     def test_create_field(self):
-        """TODO DOCS."""
+        """Test ab initio creation of a first variation of field."""
         # Dimension coordinates
         dim1 = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(10.0)))
         dim1.set_property("standard_name", "grid_latitude")
@@ -249,13 +247,12 @@ class create_fieldTest(unittest.TestCase):
         self.assertEqual(
             sorted(f.constructs),
             sorted(g.constructs),
-            "\n\nf (created in memory)\n{}\n\n{}\n\ng "
-            "(read from disk)\n{}\n\n{}".format(
-                sorted(f.constructs),
-                sorted(f.constructs.items()),
-                sorted(g.constructs),
-                sorted(g.constructs.items()),
-            ),
+            f"\n\nf (created in memory)"
+            f"\n{f.constructs}"
+            f"\n\n{f.constructs.items()}"
+            f"\n\ng (read from disk)"
+            f"\n{g.constructs}"
+            f"\n\n{g.constructs.items()}",
         )
 
         self.assertTrue(

@@ -1,10 +1,9 @@
 import datetime
+import faulthandler
 import os
 import unittest
 
 import numpy
-
-import faulthandler
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -12,7 +11,7 @@ import cfdm
 
 
 class DimensionCoordinateTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the DimensionCoordinate class."""
 
     filename = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
@@ -46,7 +45,7 @@ class DimensionCoordinateTest(unittest.TestCase):
     dim.set_bounds(bounds)
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -59,7 +58,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
     def test_DimensionCoordinate__repr__str__dump(self):
-        """TODO DOCS."""
+        """Test all means of DimensionCoordinate inspection."""
         f = cfdm.read(self.filename)[0]
         x = f.dimension_coordinates("grid_latitude").value()
 
@@ -69,11 +68,11 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertIsInstance(x.dump(display=False, _key="qwerty"), str)
 
     def test_DimensionCoordinate__init__(self):
-        """TODO DOCS."""
+        """Test the constructor of DimensionCoordinate."""
         cfdm.DimensionCoordinate(source="qwerty")
 
     def test_DimensionCoordinate_set_data(self):
-        """TODO DOCS."""
+        """Test the `set_data` DimensionCoordinate method."""
         x = cfdm.DimensionCoordinate()
 
         y = x.set_data(cfdm.Data([1, 2, 3]))
@@ -95,7 +94,7 @@ class DimensionCoordinateTest(unittest.TestCase):
             y = x.set_data(cfdm.Data(1))
 
     def test_DimensionCoordinate_climatology(self):
-        """TODO DOCS."""
+        """Test the climatology DimensionCoordinate methods."""
         x = cfdm.DimensionCoordinate()
 
         self.assertFalse(x.is_climatology())

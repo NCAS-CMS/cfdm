@@ -1,10 +1,7 @@
 import logging
 
-from . import mixin
-from . import core
-
+from . import core, mixin
 from .decorators import _manage_log_level_via_verbosity
-
 
 logger = logging.getLogger(__name__)
 

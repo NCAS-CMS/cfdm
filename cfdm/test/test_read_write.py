@@ -1,5 +1,6 @@
 import atexit
 import datetime
+import faulthandler
 import os
 import platform
 import subprocess
@@ -8,8 +9,6 @@ import unittest
 
 import numpy
 
-import faulthandler
-
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
@@ -17,7 +16,7 @@ import cfdm
 warnings = False
 
 # Set up temporary files
-n_tmpfiles = 8
+n_tmpfiles = 9
 tmpfiles = [
     tempfile.mkstemp("_test_read_write.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
@@ -29,6 +28,7 @@ tmpfiles = [
     tmpfileh3,
     tmpfilec,
     tmpfilec2,
+    tmpfilec3,
     tmpfile0,
     tmpfile1,
 ) = tmpfiles
@@ -47,10 +47,10 @@ atexit.register(_remove_tmpfiles)
 
 
 class read_writeTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Test the reading and writing of field constructs from/to disk."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -81,7 +81,7 @@ class read_writeTest(unittest.TestCase):
         self.netcdf_fmts = self.netcdf3_fmts + self.netcdf4_fmts
 
     def test_write_filename(self):
-        """TODO DOCS."""
+        """Test the writing of a named netCDF file."""
         f = cfdm.example_field(0)
         a = f.data.array
 
@@ -94,7 +94,7 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue((a == g[0].data.array).all())
 
     def test_read_field(self):
-        """TODO DOCS."""
+        """Test the `extra` keyword argument of the `read` function."""
         # Test field keyword of cfdm.read
         filename = self.filename
 
@@ -166,7 +166,7 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(len(f), 14, "\n" + str(f))
 
     def test_read_write_format(self):
-        """TODO DOCS."""
+        """Test the `fmt` keyword argument of the `read` function."""
         f = cfdm.read(self.filename)[0]
         for fmt in self.netcdf_fmts:
             cfdm.write(f, tmpfile, fmt=fmt)
@@ -434,7 +434,7 @@ class read_writeTest(unittest.TestCase):
             )
 
     def test_read_write_netCDF4_compress_shuffle(self):
-        """TODO DOCS."""
+        """Test the `compress` and `shuffle` parameters to `write`."""
         f = cfdm.read(self.filename)[0]
         for fmt in self.netcdf4_fmts:
             for shuffle in (True,):
@@ -450,7 +450,7 @@ class read_writeTest(unittest.TestCase):
                     )
 
     def test_read_write_missing_data(self):
-        """TODO DOCS."""
+        """Test reading and writing of netCDF with missing data."""
         f = cfdm.read(self.filename)[0]
         for fmt in self.netcdf_fmts:
             cfdm.write(f, tmpfile, fmt=fmt)
@@ -460,7 +460,7 @@ class read_writeTest(unittest.TestCase):
             )
 
     def test_read_mask(self):
-        """TODO DOCS."""
+        """Test reading and writing of netCDF with masked data."""
         f = cfdm.example_field(0)
 
         N = f.size
@@ -496,7 +496,7 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(numpy.ma.count(g.data.array), N - 2)
 
     def test_write_datatype(self):
-        """TODO DOCS."""
+        """Test the `datatype` keyword argument to `write`."""
         f = cfdm.read(self.filename)[0]
         self.assertEqual(f.data.dtype, numpy.dtype(float))
 
@@ -517,7 +517,7 @@ class read_writeTest(unittest.TestCase):
         )
 
     def test_read_write_unlimited(self):
-        """TODO DOCS."""
+        """Test reading and writing with an unlimited dimension."""
         for fmt in self.netcdf_fmts:
 
             f = cfdm.read(self.filename)[0]
@@ -544,7 +544,7 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(domain_axes["domainaxis2"].nc_is_unlimited())
 
     def test_read_CDL(self):
-        """TODO DOCS."""
+        """Test the reading of files in CDL format."""
         subprocess.run(
             " ".join(["ncdump", self.filename, ">", tmpfile]),
             shell=True,
@@ -647,10 +647,20 @@ class read_writeTest(unittest.TestCase):
 
                 cfdm.read(tmpfileh)[0]
 
-    #        subprocess.run(' '.join(['head', tmpfileh]),  shell=True, check=True)
+        # Finally test an invalid CDL input
+        with open(tmpfilec3, "w") as file:
+            file.write("netcdf test_file {\n  add badness\n}")
+        # TODO: work out (if it is even possible in a farily simple way) how
+        # to suppress the expected error in stderr of the ncdump command
+        # called by cfdm.read under the hood. Note that it can be easily
+        # suppressed at subprocess call-time (but we don't want to do that in
+        # case of genuine errors) and the following doesn't work as it doesn't
+        # influence the subprocess: with contextlib.redirect_stdout(os.devnull)
+        with self.assertRaises(ValueError):
+            cfdm.read(tmpfilec3)
 
     def test_read_write_string(self):
-        """TODO DOCS."""
+        """Test the `string` keyword argument to `read` and `write`."""
         f = cfdm.read(self.string_filename)
 
         n = int(len(f) / 2)
@@ -684,7 +694,7 @@ class read_writeTest(unittest.TestCase):
                             self.assertTrue(i.equals(j, verbose=3))
 
     def test_read_write_Conventions(self):
-        """TODO DOCS."""
+        """Test the `Conventions` keyword argument to `write`."""
         f = cfdm.read(self.filename)[0]
 
         version = "CF-" + cfdm.CF()
@@ -737,7 +747,7 @@ class read_writeTest(unittest.TestCase):
             )
 
     def test_read_write_multiple_geometries(self):
-        """TODO DOCS."""
+        """Test reading and writing with a mixture of geometry cells."""
         a = []
         for filename in (
             "geometry_1.nc",
@@ -812,7 +822,7 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(e[0].equals(e[1]))
 
     def test_write_coordinates(self):
-        """TODO DOCS."""
+        """Test the `coordinates` keyword argument of `write`."""
         f = cfdm.example_field(0)
 
         cfdm.write(f, tmpfile, coordinates=True)
@@ -822,7 +832,7 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(g[0].equals(f, verbose=3))
 
     def test_write_scalar_domain_ancillary(self):
-        """TODO DOCS."""
+        """Test the writing of a file with a scalar domain ancillary."""
         f = cfdm.example_field(1)
 
         # Create scalar domain ancillary

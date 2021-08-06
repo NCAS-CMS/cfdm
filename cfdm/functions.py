@@ -1,28 +1,19 @@
 import logging
 import os
 import urllib.parse
-
 from copy import deepcopy
-
 from functools import total_ordering
 
 import cftime
 import netcdf_flattener
 
-from . import core
-
-from . import __version__, __cf_version__, __file__
-
+from . import __cf_version__, __file__, __version__, core
+from .constants import CONSTANTS, ValidLogLevels
 from .core import DocstringRewriteMeta
-
 from .core.docstring import (
     _docstring_substitution_definitions as _core_docstring_substitution_definitions,
 )
-
 from .docstring import _docstring_substitution_definitions
-
-from .constants import CONSTANTS, ValidLogLevels
-
 
 # --------------------------------------------------------------------
 # Merge core and non-core docstring substitution dictionaries without
@@ -724,8 +715,8 @@ class Constant(metaclass=DocstringRewriteMeta):
         """Enter the runtime context."""
         if getattr(self, "_func", None) is None:
             raise AttributeError(
-                "Can't use {!r} as a context manager because the '_func' "
-                "attribute is not defined".format(self)
+                f"Can't use {self!r} as a context manager because the "
+                "'_func' attribute is not defined"
             )
 
         return self
@@ -938,7 +929,7 @@ class Constant(metaclass=DocstringRewriteMeta):
 
     def __repr__(self):
         """Called by the `repr` built-in function."""
-        return "<{0}: {1!r}>".format(self.__class__.__name__, self.value)
+        return f"<{self.__class__.__name__}: {self.value!r}>"
 
     def __str__(self):
         """Called by the `str` built-in function."""
@@ -1062,7 +1053,7 @@ class Configuration(dict, metaclass=DocstringRewriteMeta):
 
     def __repr__(self):
         """Called by the `repr` built-in function."""
-        return "<{0}: {1}>".format(self.__class__.__name__, super().__repr__())
+        return f"<{self.__class__.__name__}: {super().__repr__()}>"
 
     def __str__(self):
         """Called by the `str` built-in function.
@@ -1467,18 +1458,16 @@ class log_level(ConstantAccess):
             arg = cls._ValidLogLevels(arg).name
 
         if not hasattr(cls._ValidLogLevels, arg):
+            listed_levels = ", '".join(
+                [
+                    val.name + "' = " + str(val.value)
+                    for val in cls._ValidLogLevels
+                ]
+            )
             raise ValueError(
-                "Logging level {!r} is not one of the valid values '{}', "
-                "where either the string or the corrsponding integer is "
-                "accepted. Value remains as it was.".format(
-                    arg,
-                    ", '".join(
-                        [
-                            val.name + "' = " + str(val.value)
-                            for val in cls._ValidLogLevels
-                        ]
-                    ),
-                )
+                f"Logging level {arg!r} is not one of the valid values "
+                f"'{listed_levels}', where either the string or the "
+                "corresponding integer is accepted. Value remains as it was."
             )
 
         # Safe to reset now as guaranteed to be valid:

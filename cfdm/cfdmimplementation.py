@@ -1,25 +1,26 @@
 from . import (
+    CF,
     AuxiliaryCoordinate,
-    CellMethod,
+    Bounds,
     CellMeasure,
+    CellMethod,
+    CoordinateConversion,
     CoordinateReference,
+    Count,
+    Datum,
     DimensionCoordinate,
     Domain,
     DomainAncillary,
     DomainAxis,
     Field,
     FieldAncillary,
-    Bounds,
-    InteriorRing,
-    CoordinateConversion,
-    Datum,
-    Count,
-    List,
     Index,
+    InteriorRing,
+    List,
     NodeCountProperties,
     PartNodeCountProperties,
 )
-
+from .abstract import Implementation
 from .data import (
     Data,
     GatheredArray,
@@ -28,10 +29,6 @@ from .data import (
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
 )
-
-from .abstract import Implementation
-
-from . import CF
 
 
 class CFDMImplementation(Implementation):
@@ -350,6 +347,11 @@ class CFDMImplementation(Implementation):
 
     def convert(self, field=None, construct_id=None):
         """Convert a metadata construct into a field construct.
+
+        Only metadata constructs that can have data may be converted
+        and they can be converted even if they do not actually have
+        any data. Constructs such as cell methods which cannot have
+        data cannot be converted.
 
         :Parameters:
 

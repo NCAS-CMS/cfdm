@@ -1,9 +1,7 @@
 import logging
 import re
 
-from ..decorators import (
-    _manage_log_level_via_verbosity,
-)
+from ..decorators import _manage_log_level_via_verbosity
 
 logger = logging.getLogger(__name__)
 
@@ -342,9 +340,8 @@ class FieldDomain:
                     continue
 
                 for key in keys:
-                    key_to_name[key] = "{0}{{{1}}}".format(
-                        name, re.findall(r"\d+$", key)[0]
-                    )
+                    found = re.findall(r"\d+$", key)[0]
+                    key_to_name[key] = f"{name}{{{found}}}"
 
         return key_to_name
 
@@ -377,9 +374,8 @@ class FieldDomain:
                 key_to_name[keys[0]] = f"{name}({size})"
             else:
                 for key in keys:
-                    key_to_name[key] = "{0}{{{1}}}({2})".format(
-                        name, re.findall(r"\d+$", key)[0], size
-                    )
+                    found = re.findall(r"\d+$", key)[0]
+                    key_to_name[key] = f"{name}{{{found}}}({size})"
 
         return key_to_name
 

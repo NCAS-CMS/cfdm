@@ -1,10 +1,8 @@
 import logging
 import textwrap
 
+from ..decorators import _display_or_return, _manage_log_level_via_verbosity
 from . import Container
-
-from ..decorators import _manage_log_level_via_verbosity, _display_or_return
-
 
 logger = logging.getLogger(__name__)
 

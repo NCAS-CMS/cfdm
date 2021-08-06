@@ -1,30 +1,20 @@
 import logging
 
-from . import mixin
-from . import core
-from . import Constructs
-from . import Domain
-from . import Count
-from . import Index
-from . import List
-
+from . import Constructs, Count, Domain, Index, List, core, mixin
 from .constants import masked as cfdm_masked
-
 from .data import (
+    GatheredArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
-    GatheredArray,
 )
-
 from .decorators import (
+    _display_or_return,
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
     _test_decorator_args,
-    _display_or_return,
 )
-
 
 logger = logging.getLogger(__name__)
 
@@ -1855,7 +1845,7 @@ class Field(
 
         return f
 
-    def convert(self, key, full_domain=True):
+    def convert(self, *identity, full_domain=True, **filter_kwargs):
         """Convert a metadata construct into a new field construct.
 
         The new field construct has the properties and data of the
@@ -1863,6 +1853,11 @@ class Field(
         to the data. By default it also contains other metadata
         constructs (such as dimension coordinate and coordinate
         reference constructs) that define its domain.
+
+        Only metadata constructs that can have data may be converted
+        and they can be converted even if they do not actually have
+        any data. Constructs such as cell methods which cannot have
+        data cannot be converted.
 
         The `{{package}}.read` function allows a field construct to be
         derived directly from a netCDF variable that corresponds to a
@@ -1879,7 +1874,7 @@ class Field(
 
         :Parameters:
 
-            key: `str`
+            identity: `str`, optional
                 Convert the metadata construct with the given
                 construct key.
 
@@ -1888,6 +1883,10 @@ class Field(
                 the domain of the new field construct. By default as
                 much of the domain as possible is copied to the new
                 field construct.
+
+            {{filter_kwargs: optional}} Also to configure the returned value.
+
+                 .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
@@ -1935,10 +1934,13 @@ class Field(
         Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
 
         """
-        c = self.constructs.get(key)
+        filter_kwargs.pop("item", None)
+        key, c = self.construct_item(*identity, **filter_kwargs)
         if c is None:
             raise ValueError("Can't return zero constructs")
 
+        if not hasattr(c, "has_data"):  # i.e. a construct that never has data
+            raise ValueError("Can't convert a construct that cannot have data")
         # ------------------------------------------------------------
         # Create a new field with the properties and data from the
         # construct

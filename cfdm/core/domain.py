@@ -1,7 +1,4 @@
-from . import abstract
-from . import mixin
-
-from . import Constructs
+from . import Constructs, abstract, mixin
 
 
 class Domain(mixin.FieldDomain, abstract.Properties):

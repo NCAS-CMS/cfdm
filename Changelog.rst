@@ -19,6 +19,8 @@ version 1.9.0.0
 * New method: `cfdm.DimensionCoordinate.set_climatology`
 * New function: `cfdm.unique_constructs`
 * New function: `cfdm.example_fields`
+* Construct access API changes from 1.8.9.0 applied to `Field.convert`
+* Improved error message for invalid inputs to `Field.convert`
 
 version 1.8.9.0
 ---------------

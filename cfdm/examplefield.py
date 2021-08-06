@@ -1,7 +1,5 @@
-from .functions import CF
-
 from .cfdmimplementation import implementation
-
+from .functions import CF
 
 _implementation = implementation()
 
@@ -176,7 +174,7 @@ def example_field(n, _implementation=_implementation):
     """
     if not 0 <= n <= 7:
         raise ValueError(
-            "Must select an example construct with an integer"
+            "Must select an example construct with an integer "
             f"argument between 0 and 7 inclusive. Got {n!r}"
         )
 

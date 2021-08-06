@@ -1,16 +1,11 @@
 import logging
-
 from copy import deepcopy
 
 import numpy
 
+from . import core, mixin
 from .data import Data
-
-from . import mixin
-from . import core
-
 from .decorators import _manage_log_level_via_verbosity
-
 
 logger = logging.getLogger(__name__)
 
@@ -357,11 +352,9 @@ class CellMethod(mixin.Container, core.CellMethod):
 
             if len(intervals0) != len(intervals1):
                 logger.info(
-                    "{0}: Different numbers of interval qualifiers: "
-                    "{1!r} != {2!r}".format(
-                        self.__class__.__name__, intervals0, intervals1
-                    )  # pragma: no cover
-                )
+                    f"{self.__class__.__name__}: Different numbers of "
+                    f"interval qualifiers: {intervals0!r} != {intervals1!r}"
+                )  # pragma: no cover
                 return False
 
             for data0, data1 in zip(intervals0, intervals1):

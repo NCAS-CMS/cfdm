@@ -1,22 +1,20 @@
 import datetime
+import faulthandler
 import unittest
 
-import faulthandler
-
 faulthandler.enable()  # to debug seg faults and timeouts
-
 
 import cfdm
 
 
 class DomainTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the Domain class."""
 
     f = cfdm.example_field(1)
     d = f.domain
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -29,7 +27,7 @@ class DomainTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
     def test_Domain__repr__str__dump(self):
-        """TODO DOCS."""
+        """Test all means of Domain inspection."""
         d = self.d
 
         repr(d)

@@ -1,8 +1,7 @@
 import datetime
+import faulthandler
 import os
 import unittest
-
-import faulthandler
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -10,10 +9,10 @@ import cfdm
 
 
 class CellMethodTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the CellMethod class."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or calls (those
@@ -31,7 +30,7 @@ class CellMethodTest(unittest.TestCase):
         self.f = f[0]
 
     def test_CellMethod__repr__str__dump_construct_type(self):
-        """TODO DOCS."""
+        """Test all means of CellMethod inspection."""
         f = self.f
 
         for c in f.cell_methods().values():
@@ -41,11 +40,11 @@ class CellMethodTest(unittest.TestCase):
             self.assertEqual(c.construct_type, "cell_method")
 
     def test_CellMethod(self):
-        """TODO DOCS."""
+        """Test CellMethod equality, identity and sorting methods."""
         f = self.f
 
         # ------------------------------------------------------------
-        # Equals and idenities
+        # Equals and identities
         # ------------------------------------------------------------
         for c in f.cell_methods().values():
             d = c.copy()
@@ -92,7 +91,7 @@ class CellMethodTest(unittest.TestCase):
         c = cfdm.CellMethod(source="qwerty")
 
     def test_CellMethod_axes(self):
-        """TODO DOCS."""
+        """Test the axes access and (un)setting CellMethod methods."""
         f = cfdm.CellMethod()
 
         self.assertFalse(f.has_axes())
@@ -104,7 +103,7 @@ class CellMethodTest(unittest.TestCase):
         self.assertIsNone(f.del_axes(None))
 
     def test_CellMethod_method(self):
-        """TODO DOCS."""
+        """Test the method access and (un)setting CellMethod methods."""
         f = cfdm.CellMethod()
 
         self.assertFalse(f.has_method())
@@ -116,7 +115,7 @@ class CellMethodTest(unittest.TestCase):
         self.assertIsNone(f.del_method(None))
 
     def test_CellMethod_qualifier(self):
-        """TODO DOCS."""
+        """Test qualifier access and (un)setting CellMethod methods."""
         f = cfdm.CellMethod()
 
         self.assertEqual(f.qualifiers(), {})

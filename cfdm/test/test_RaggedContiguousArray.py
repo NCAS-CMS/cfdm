@@ -1,7 +1,6 @@
 import datetime
-import unittest
-
 import faulthandler
+import unittest
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -9,10 +8,10 @@ import cfdm
 
 
 class RaggedContiguousArrayTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the RaggedContiguousArray class."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or calls (those
@@ -29,11 +28,11 @@ class RaggedContiguousArrayTest(unittest.TestCase):
         )
 
     def test_RaggedContiguousArray_to_memory(self):
-        """TODO DOCS."""
+        """Test the `to_memory` RaggedContiguousArray method."""
         self.assertIsInstance(self.r.to_memory(), cfdm.RaggedContiguousArray)
 
     def test_RaggedContiguousArray_get_count(self):
-        """TODO DOCS."""
+        """Test the `get_count` RaggedContiguousArray method."""
         r = self.r
         self.assertIsInstance(r.get_count(), cfdm.Count)
         r._del_component("count_variable")

@@ -1,9 +1,9 @@
 import datetime
+import faulthandler
 import os
-import pycodestyle
 import unittest
 
-import faulthandler
+import pycodestyle
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -11,10 +11,10 @@ import cfdm
 
 
 class styleTest(unittest.TestCase):
-    """Test PEP8 compliance on all Python files in the codebase."""
+    """Test all Python files against Python style conventions."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         self.cfdm_dir = os.path.dirname(os.path.abspath(__file__))
         os.chdir(self.cfdm_dir)
 
@@ -34,7 +34,7 @@ class styleTest(unittest.TestCase):
         ]
 
     def test_pep8_compliance(self):
-        """TODO DOCS."""
+        """Test PEP8 compliance on all Python files in the codebase."""
         pep8_check = pycodestyle.StyleGuide()
 
         # Directories to skip in the recursive walk of the directory:

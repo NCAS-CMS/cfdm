@@ -1,13 +1,12 @@
 import os
 import platform
 import sys
-
 from pickle import dumps, loads
 
 import netCDF4
 import numpy
 
-from . import __version__, __cf_version__, __file__
+from . import __cf_version__, __file__, __version__
 
 
 def environment(display=True, paths=True):
