@@ -2560,6 +2560,15 @@ class NetCDFWrite(IOWrite):
 
             # Add named parameters
             parameters = self.implementation.get_datum_parameters(ref)
+
+            common = set(parameters).intersection(cc_parameters)
+            if common:
+                raise ValueError(
+                    "Can't create CF-netDF grid mapping variable: "
+                    f"{common.pop()!r} is defined as both a coordinate "
+                    "conversion and a datum parameter."
+                )
+
             parameters.update(cc_parameters)
 
             for term, value in list(parameters.items()):
@@ -2584,22 +2593,17 @@ class NetCDFWrite(IOWrite):
                 # Grid mappings have no netCDF dimensions
                 "ncdims": (),
             }
-        # --- End: if
 
         if multiple_grid_mappings:
-            return "{0}: {1}".format(
-                ncvar,
-                " ".join(
-                    sorted(
-                        [
-                            g["key_to_ncvar"][key]
-                            for key in self.implementation.get_coordinate_reference_coordinates(
-                                ref
-                            )
-                        ]
+            coordinates = sorted(
+                [
+                    g["key_to_ncvar"][key]
+                    for key in self.implementation.get_coordinate_reference_coordinates(
+                        ref
                     )
-                ),
+                ]
             )
+            return f"{ncvar}: {coordinates}"
         else:
             return ncvar
 
