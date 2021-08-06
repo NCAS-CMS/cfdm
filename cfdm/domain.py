@@ -1,17 +1,12 @@
 import logging
 
-from . import mixin
-from . import core
-
-from . import Constructs
-
+from . import Constructs, core, mixin
 from .decorators import (
     _display_or_return,
     _inplace_enabled,
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
-
 
 logger = logging.getLogger(__name__)
 
@@ -125,11 +120,11 @@ class Domain(mixin.FieldDomain, mixin.Container, core.Domain):
             for cid, dim in dimension_coordinates.items():
                 if construct_data_axes[cid] == (axis_cid,):
                     name = dim.identity(default=f"key%{0}")
-                    y = "{0}({1})".format(name, dim.get_data().size)
+                    y = f"{name}({dim.get_data().size})"
                     if y != axis_names[axis_cid]:
-                        y = "{0}({1})".format(name, axis_names[axis_cid])
+                        y = f"{name}({axis_names[axis_cid]})"
                     if dim.has_data():
-                        y += " = {0}".format(dim.get_data())
+                        y += f" = {dim.get_data()}"
 
                     x.append(y)
 

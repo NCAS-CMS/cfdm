@@ -1,8 +1,7 @@
-import numpy
 import netCDF4
+import numpy
 
 from . import abstract
-
 from .numpyarray import NumpyArray
 
 
@@ -178,7 +177,7 @@ class NetCDFArray(abstract.Array):
             # A netCDF string type scalar variable comes out as Python
             # str object, so convert it to a numpy array.
             # --------------------------------------------------------
-            array = numpy.array(array, dtype="S{0}".format(len(array)))
+            array = numpy.array(array, dtype=f"S{len(array)}")
 
         if not self.ndim:
             # Hmm netCDF4 has a thing for making scalar size 1 , 1d
@@ -233,9 +232,9 @@ class NetCDFArray(abstract.Array):
         """
         name = self.get_ncvar()
         if name is None:
-            name = "varid={0}".format(self.get_varid())
+            name = f"varid={self.get_varid()}"
         else:
-            name = "variable={0}".format(name)
+            name = f"variable={name}"
 
         return f"file={self.get_filename()} {name}"
 

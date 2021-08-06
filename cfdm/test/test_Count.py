@@ -1,7 +1,6 @@
 import datetime
-import unittest
-
 import faulthandler
+import unittest
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -9,10 +8,10 @@ import cfdm
 
 
 class CountTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the Count class."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -27,7 +26,7 @@ class CountTest(unittest.TestCase):
         self.contiguous = "DSG_timeSeries_contiguous.nc"
 
     def test_Count__repr__str__dump(self):
-        """TODO DOCS."""
+        """Test all means of Count inspection."""
         f = cfdm.read(self.contiguous)[0]
 
         count = f.data.get_count()

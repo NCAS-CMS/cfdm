@@ -1,9 +1,7 @@
 import logging
 
-from . import Parameters
-
 from ..decorators import _manage_log_level_via_verbosity
-
+from . import Parameters
 
 logger = logging.getLogger(__name__)
 

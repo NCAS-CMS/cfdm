@@ -1,10 +1,6 @@
 import numpy
 
-from . import abstract
-from . import mixin
-
-from . import Constructs
-from . import Domain
+from . import Constructs, Domain, abstract, mixin
 
 
 class Field(mixin.FieldDomain, abstract.PropertiesData):

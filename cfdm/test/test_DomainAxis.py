@@ -1,21 +1,20 @@
 import datetime
-import unittest
-
 import faulthandler
+import unittest
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
 
 
-class DomainTest(unittest.TestCase):
-    """TODO DOCS."""
+class DomainAxisTest(unittest.TestCase):
+    """Unit test for the DomainAxis class."""
 
     d = cfdm.DomainAxis(size=99)
     d.nc_set_dimension("ncdim")
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -28,7 +27,7 @@ class DomainTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
     def test_DomainAxis__repr__str_construct_type(self):
-        """TODO DOCS."""
+        """Test DomainAxis inspection and `construct_type` method."""
         d = self.d
 
         repr(d)
@@ -36,7 +35,7 @@ class DomainTest(unittest.TestCase):
         self.assertEqual(d.construct_type, "domain_axis")
 
     def test_DomainAxis_source(self):
-        """TODO DOCS."""
+        """Test the source keyword argument to DomainAxis."""
         d = self.d
 
         self.assertTrue(d.equals(cfdm.DomainAxis(source=d)))
@@ -46,7 +45,7 @@ class DomainTest(unittest.TestCase):
         )
 
     def test_DomainAxis_equals(self):
-        """TODO DOCS."""
+        """Test the equality-testing DomainAxis method."""
         d = self.d
         e = d.copy()
 
@@ -55,7 +54,7 @@ class DomainTest(unittest.TestCase):
         self.assertTrue(e.equals(d, verbose=3))
 
     def test_DomainAxis_size(self):
-        """TODO DOCS."""
+        """Test the size access and (un)setting DomainAxis method."""
         d = self.d.copy()
         d.set_size(100)
 
@@ -67,7 +66,7 @@ class DomainTest(unittest.TestCase):
         self.assertFalse(d.has_size())
 
     def test_DomainAxis_unlimited(self):
-        """TODO DOCS."""
+        """Test the netCDF unlimited DomainAxis methods."""
         d = cfdm.DomainAxis()
         d.set_size(99)
 

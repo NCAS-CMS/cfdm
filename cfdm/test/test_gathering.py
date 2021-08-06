@@ -1,17 +1,15 @@
 import atexit
 import datetime
+import faulthandler
 import os
 import tempfile
 import unittest
 
 import numpy
 
-import faulthandler
-
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
-
 
 n_tmpfiles = 1
 tmpfiles = [
@@ -34,10 +32,10 @@ atexit.register(_remove_tmpfiles)
 
 
 class GatheredTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Test management of constructs with underlying gathered arrays."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -256,7 +254,7 @@ class GatheredTest(unittest.TestCase):
         self.b = b
 
     def test_GATHERING(self):
-        """TODO DOCS."""
+        """Test reading and writing of a field with a gathered array."""
         f = cfdm.read(self.gathered, verbose=False)
 
         self.assertEqual(len(f), 3)
@@ -273,7 +271,7 @@ class GatheredTest(unittest.TestCase):
             self.assertTrue(g[i].equals(f[i], verbose=3))
 
     def test_GATHERING_create(self):
-        """TODO DOCS."""
+        """Test the creation of a construct with a gathered array."""
         # Define the gathered values
         gathered_array = numpy.array(
             [[280, 282.5, 281], [279, 278, 277.5]], dtype="float32"

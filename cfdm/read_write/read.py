@@ -3,9 +3,7 @@ import os
 from numpy.ma.core import MaskError
 
 from ..cfdmimplementation import implementation
-
 from .netcdf import NetCDFRead
-
 
 _implementation = implementation()
 
@@ -281,10 +279,10 @@ def read(
     filename = os.path.expanduser(os.path.expandvars(filename))
 
     if os.path.isdir(filename):
-        raise IOError("Can't read directory {}".format(filename))
+        raise IOError(f"Can't read directory {filename}")
 
     if not os.path.isfile(filename):
-        raise IOError("Can't read non-existent file {}".format(filename))
+        raise IOError(f"Can't read non-existent file {filename}")
 
     # ----------------------------------------------------------------
     # Read the file into field constructs
@@ -331,11 +329,11 @@ def read(
                 )
     elif cdl:
         raise IOError(
-            "Can't determine format of file {} "
-            "generated from CDL file {}".format(filename, cdl_filename)
+            f"Can't determine format of file {filename} "
+            f"generated from CDL file {cdl_filename}"
         )
     else:
-        raise IOError("Can't determine format of file {}".format(filename))
+        raise IOError(f"Can't determine format of file {filename}")
 
     # ----------------------------------------------------------------
     # Return the field constructs

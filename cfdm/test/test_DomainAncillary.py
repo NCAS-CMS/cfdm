@@ -1,10 +1,9 @@
 import datetime
+import faulthandler
 import os
 import unittest
 
 import numpy
-
-import faulthandler
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -12,10 +11,10 @@ import cfdm
 
 
 class DomainAncillaryTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the DomainAncillary class."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -32,7 +31,7 @@ class DomainAncillaryTest(unittest.TestCase):
         )
 
     def test_DomainAncillary__repr__str__dump(self):
-        """TODO DOCS."""
+        """Test all means of DomainAncillary inspection."""
         f = cfdm.read(self.filename)[0]
         domain_ancillaries = f.domain_ancillaries("ncvar%a")
 
@@ -50,14 +49,14 @@ class DomainAncillaryTest(unittest.TestCase):
         self.assertIsInstance(x.dump(display=False), str)
 
     def test_DomainAncillary_bounds(self):
-        """TODO DOCS."""
+        """Test the bounds keyword argument to DomainAncillary."""
         f = cfdm.read(self.filename)[0]
 
         a = f.auxiliary_coordinates("latitude").value()
-        cfdm.DomainAncillary(source=a)
+        cfdm.DomainAncillary(bounds=a)
 
     def test_DomainAncillary_properties(self):
-        """TODO DOCS."""
+        """Test the property access methods of DomainAncillary."""
         f = cfdm.read(self.filename)[0]
         x = f.domain_ancillaries("ncvar%a").value()
 
@@ -69,7 +68,7 @@ class DomainAncillaryTest(unittest.TestCase):
         self.assertIsNone(x.del_property("long_name", None))
 
     def test_DomainAncillary_insert_dimension(self):
-        """TODO DOCS."""
+        """Test the `insert_dimension` DomainAncillary method."""
         f = cfdm.read(self.filename)[0]
         d = f.dimension_coordinates("grid_longitude").value()
         x = cfdm.DomainAncillary(source=d)
@@ -86,7 +85,7 @@ class DomainAncillaryTest(unittest.TestCase):
         self.assertEqual(x.bounds.shape, (9, 1, 2), x.bounds.shape)
 
     def test_DomainAncillary_transpose(self):
-        """TODO DOCS."""
+        """Test the transpose DomainAncillary method."""
         f = cfdm.read(self.filename)[0]
         a = f.auxiliary_coordinates("longitude").value()
         bounds = cfdm.Bounds(
@@ -107,7 +106,7 @@ class DomainAncillaryTest(unittest.TestCase):
         self.assertEqual(x.bounds.shape, (10, 9, 4), x.bounds.shape)
 
     def test_DomainAncillary_squeeze(self):
-        """TODO DOCS."""
+        """Test the squeeze DomainAncillary method."""
         f = cfdm.read(self.filename)[0]
         a = f.auxiliary_coordinates("longitude").value()
         bounds = cfdm.Bounds(

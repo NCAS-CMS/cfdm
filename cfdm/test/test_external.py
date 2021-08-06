@@ -1,15 +1,13 @@
 import atexit
 import datetime
+import faulthandler
 import os
 import tempfile
 import unittest
 
-import faulthandler
-
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
-
 
 n_tmpfiles = 3
 tmpfiles = [
@@ -36,10 +34,10 @@ atexit.register(_remove_tmpfiles)
 
 
 class ExternalVariableTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Test handling of variables stored in external netCDF files."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.LOG_LEVEL("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -60,7 +58,7 @@ class ExternalVariableTest(unittest.TestCase):
         )
 
     def test_EXTERNAL_READ(self):
-        """TODO DOCS."""
+        """Test read function reading of external netCDF variables."""
         # Read the parent file on its own, without the external file
         f = cfdm.read(self.parent_file)
 
@@ -136,7 +134,7 @@ class ExternalVariableTest(unittest.TestCase):
             self.assertTrue(c[i].equals(f[i], verbose=3))
 
     def test_EXTERNAL_WRITE(self):
-        """TODO DOCS."""
+        """Test write function writing of external netCDF variables."""
         parent = cfdm.read(self.parent_file)
         combined = cfdm.read(self.combined_file)
 

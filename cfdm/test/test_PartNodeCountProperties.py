@@ -1,8 +1,7 @@
 import datetime
+import faulthandler
 import os
 import unittest
-
-import faulthandler
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -10,10 +9,10 @@ import cfdm
 
 
 class PartNodeCountPropertiesTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Unit test for the PartNodeCountProperties class."""
 
     def setUp(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or
@@ -34,7 +33,7 @@ class PartNodeCountPropertiesTest(unittest.TestCase):
         )
 
     def test_PartNodeCountProperties__repr__str__dump(self):
-        """TODO DOCS."""
+        """Test all means of PartNodeCountProperties inspection."""
         f = cfdm.read(self.geometry_interior_ring_file)[0]
 
         coord = f.construct("axis=X")

@@ -1,7 +1,6 @@
 import numpy
 
-from . import abstract
-from . import mixin
+from . import abstract, mixin
 
 
 class RaggedContiguousArray(mixin.RaggedContiguous, abstract.CompressedArray):
