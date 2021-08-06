@@ -214,6 +214,18 @@ class CoordinateReferenceTest(unittest.TestCase):
         cr.datum.nc_set_variable("my_name")
         cfdm.write(f, tempfile1)
 
+    def test_CoordinateReference_parameters(self):
+        """TODO DOCS."""
+        f = self.f.copy()
+
+        cr = f.construct("grid_mapping_name:rotated_latitude_longitude")
+
+        cr.datum.set_parameter("test", 999)
+        cr.coordinate_conversion.set_parameter("test", 111)
+
+        with self.assertRaises(ValueError):
+            cfdm.write(f, tempfile1)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
