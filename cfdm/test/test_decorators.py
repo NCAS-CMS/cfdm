@@ -163,10 +163,10 @@ class decoratorsTest(unittest.TestCase):
         # one output overall at runtime, but the specific module logger name
         # should be registered within the log message:
         log_message = [
-            "WARNING:{}:{}".format(log_name, WARNING_MSG),
-            "INFO:{}:{}".format(log_name, INFO_MSG),
-            "DETAIL:{}:{}".format(log_name, DETAIL_MSG),
-            "DEBUG:{}:{}".format(log_name, DEBUG_MSG),
+            f"WARNING:{log_name}:{WARNING_MSG}",
+            f"INFO:{log_name}:{INFO_MSG}",
+            f"DETAIL:{log_name}:{DETAIL_MSG}",
+            f"DEBUG:{log_name}:{DEBUG_MSG}",
         ]
 
         test_class = dummyClass()

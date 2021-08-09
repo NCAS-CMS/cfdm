@@ -49,7 +49,7 @@ class CoordinateReferenceTest(unittest.TestCase):
             os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
         )
         f = cfdm.read(self.filename)
-        self.assertEqual(len(f), 1, "f={!r}".format(f))
+        self.assertEqual(len(f), 1, f"f={f!r}")
         self.f = f[0]
 
     def test_CoordinateReference__repr__str__dump_construct_type(self):
