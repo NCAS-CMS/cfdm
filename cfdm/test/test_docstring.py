@@ -189,29 +189,27 @@ class DocstringTest(unittest.TestCase):
 
                     self.assertIsNotNone(
                         f.__doc__,
-                        "\n\nCLASS: {}\n"
-                        "METHOD NAME: {}\n"
-                        "METHOD: {}\n__doc__: {}".format(
-                            klass, name, f, f.__doc__
-                        ),
+                        f"\n\nCLASS: {klass}\n"
+                        f"METHOD NAME: {name}\n"
+                        f"METHOD: {f}\n__doc__: {f.__doc__}",
                     )
 
                     self.assertNotIn(
                         "{{",
                         f.__doc__,
-                        "\n\nCLASS: {}\n"
-                        "METHOD NAME: {}\n"
-                        "METHOD: {}".format(klass, name, f),
+                        f"\n\nCLASS: {klass}\n"
+                        f"METHOD NAME: {name}\n"
+                        f"METHOD: {f}",
                     )
 
     def test_docstring_package(self):
         """Test the docstring substitution of the pacakage name."""
-        string = ">>> f = {}.".format(self.package)
+        string = f">>> f = {self.package}."
         for klass in self.subclasses_of_Container:
             for x in (klass, klass()):
                 self.assertIn(string, x._has_component.__doc__, klass)
 
-        string = ">>> f = {}.".format(self.package)
+        string = f">>> f = {self.package}."
         for klass in self.subclasses_of_Properties:
             for x in (klass, klass()):
                 self.assertIn(string, x.clear_properties.__doc__, klass)
@@ -219,16 +217,14 @@ class DocstringTest(unittest.TestCase):
     def test_docstring_class(self):
         """Test the docstring substitution of the class name."""
         for klass in self.subclasses_of_Properties:
-            string = ">>> f = {}.{}".format(self.package, klass.__name__)
+            string = f">>> f = {self.package}.{klass.__name__}"
             for x in (klass, klass()):
                 self.assertIn(
                     string,
                     x.clear_properties.__doc__,
-                    "\n\nCLASS: {}\n"
-                    "METHOD NAME: {}\n"
-                    "METHOD: {}".format(
-                        klass, "clear_properties", x.clear_properties
-                    ),
+                    f"\n\nCLASS: {klass}\n"
+                    "METHOD NAME: clear_properties\n"
+                    f"METHOD: {x.clear_properties}",
                 )
 
         for klass in self.subclasses_of_Container:
@@ -237,21 +233,19 @@ class DocstringTest(unittest.TestCase):
                 self.assertIn(string, x.copy.__doc__, klass)
 
         for klass in self.subclasses_of_PropertiesDataBounds:
-            string = "{}".format(klass.__name__)
+            string = f"{klass.__name__}"
             for x in (klass, klass()):
                 self.assertIn(
                     string,
                     x.insert_dimension.__doc__,
-                    "\n\nCLASS: {}\n"
-                    "METHOD NAME: {}\n"
-                    "METHOD: {}".format(
-                        klass, klass.__name__, "insert_dimension"
-                    ),
+                    f"\n\nCLASS: {klass}\n"
+                    f"METHOD NAME: {klass.__name__}\n"
+                    "METHOD: insert_dimension",
                 )
 
     def test_docstring_repr(self):
         """Test docstring substitution of the object representation."""
-        string = "<{}Data".format(self.repr)
+        string = f"<{self.repr}Data"
         for klass in self.subclasses_of_PropertiesData:
             for x in (klass, klass()):
                 self.assertIn(string, x.has_data.__doc__, klass)
