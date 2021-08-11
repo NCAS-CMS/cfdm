@@ -669,11 +669,11 @@ class read_writeTest(unittest.TestCase):
             j = i + n
             self.assertTrue(
                 f[i].data.equals(f[j].data, verbose=3),
-                "{!r} {!r}".format(f[i], f[j]),
+                f"{f[i]!r} {f[j]!r}",
             )
             self.assertTrue(
                 f[j].data.equals(f[i].data, verbose=3),
-                "{!r} {!r}".format(f[j], f[i]),
+                f"{f[j]!r} {f[i]!r}",
             )
 
         # Note: Don't loop round all netCDF formats for better
@@ -707,9 +707,7 @@ class read_writeTest(unittest.TestCase):
             self.assertEqual(
                 g.get_property("Conventions"),
                 " ".join([version, other]),
-                "{!r}, {!r}".format(
-                    g.get_property("Conventions"), Conventions
-                ),
+                f"{g.get_property('Conventions')!r}, {Conventions!r}",
             )
 
         for Conventions in (
@@ -725,9 +723,7 @@ class read_writeTest(unittest.TestCase):
             self.assertEqual(
                 g.get_property("Conventions"),
                 version,
-                "{!r}, {!r}".format(
-                    g.get_property("Conventions"), Conventions
-                ),
+                f"{g.get_property('Conventions')!r}, {Conventions!r}",
             )
 
         for Conventions in (
@@ -739,9 +735,7 @@ class read_writeTest(unittest.TestCase):
             self.assertEqual(
                 g.get_property("Conventions"),
                 " ".join(Conventions),
-                "{!r}, {!r}".format(
-                    g.get_property("Conventions"), Conventions
-                ),
+                f"{g.get_property('Conventions')!r}, {Conventions!r}",
             )
 
         for Conventions in ([other, version],):
@@ -750,9 +744,7 @@ class read_writeTest(unittest.TestCase):
             self.assertEqual(
                 g.get_property("Conventions"),
                 " ".join([version, other]),
-                "{!r}, {!r}".format(
-                    g.get_property("Conventions"), Conventions
-                ),
+                f"{g.get_property('Conventions')!r}, {Conventions!r}",
             )
 
     def test_read_write_multiple_geometries(self):

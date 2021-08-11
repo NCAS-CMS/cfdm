@@ -214,16 +214,14 @@ class FunctionsTest(unittest.TestCase):
             self.assertTrue(any(s.startswith(component) for s in e))
             self.assertTrue(any(s.startswith(component) for s in ep))
         for component in [
-            "cfdm: {} {}".format(
-                cfdm.__version__, os.path.abspath(cfdm.__file__)
-            ),
-            "Python: {} {}".format(platform.python_version(), sys.executable),
+            f"cfdm: {cfdm.__version__} {os.path.abspath(cfdm.__file__)}",
+            f"Python: {platform.python_version()} {sys.executable}",
         ]:
             self.assertIn(component, e)
             self.assertNotIn(component, ep)  # paths shouldn't be present here
         for component in [
-            "cfdm: {}".format(cfdm.__version__),
-            "Python: {}".format(platform.python_version()),
+            f"cfdm: {cfdm.__version__}",
+            f"Python: {platform.python_version()}",
         ]:
             self.assertIn(component, ep)
 
@@ -242,7 +240,7 @@ class FunctionsTest(unittest.TestCase):
             g = cfdm.read(temp_file, verbose=1)
 
             self.assertEqual(len(g), 1)
-            self.assertTrue(f.equals(g[0], verbose=3), "n={}".format(n))
+            self.assertTrue(f.equals(g[0], verbose=3), f"n={n}")
 
         with self.assertRaises(Exception):
             cfdm.example_field(top + 1)
