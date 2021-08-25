@@ -8,6 +8,8 @@ version 1.8.?.?
 * Improved error message for invalid inputs to `Field.convert`
 * Raise exception when attempting to write multiply defined coordinate
   reference parameters (https://github.com/NCAS-CMS/cfdm/issues/148)
+* Interpret format specifiers for size 1 `cfdm.Data` arrays
+  (https://github.com/NCAS-CMS/cfdm/issues/152)
 
 version 1.8.9.0
 ---------------
