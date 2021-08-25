@@ -220,6 +220,56 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         return f"<{ self.__class__.__name__}{shape}: {self}>"
 
+    def __format__(self, format_spec):
+        """Interpret format specifiers for size 1 arrays.
+
+        **Examples:**
+
+        >>> d = {{package}}.{{class}}(9, 'metres')
+        >>> f"{d}"
+        '9 metres'
+        >>> f"{d!s}"
+        '9 metres'
+        >>> f"{d!r}"
+        '<{{repr}}{{class}}(): 9 metres>'
+        >>> f"{d:.3f}"
+        '9.000'
+
+        >>> d = {{package}}.{{class}}([[9]], 'metres')
+        >>> f"{d}"
+        '[[9]] metres'
+        >>> f"{d!s}"
+        '[[9]] metres'
+        >>> f"{d!r}"
+        '<{{repr}}{{class}}(1, 1): [[9]] metres>'
+        >>> f"{d:.3f}"
+        '9.000'
+
+        >>> d = {{package}}.{{class}}([9, 10], 'metres')
+        >>> f"{d}"
+        >>> '[9, 10] metres'
+        >>> f"{d!s}"
+        >>> '[9, 10] metres'
+        >>> f"{d!r}"
+        '<{{repr}}{{class}}(2): [9, 10] metres>'
+        >>> f"{d:.3f}"
+        Traceback (most recent call last):
+            ...
+        ValueError: Can't format Data array of size 2 with format code .3f
+
+        """
+        if not format_spec:
+            return super().__format__("")
+
+        n = self.size
+        if n == 1:
+            return "{x:{f}}".format(x=self.first_element(), f=format_spec)
+
+        raise ValueError(
+            f"Can't format Data array of size {n} with "
+            f"format code {format_spec}"
+        )
+
     def __getitem__(self, indices):
         """Return a subspace of the data defined by indices.
 

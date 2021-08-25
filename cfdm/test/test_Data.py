@@ -598,6 +598,27 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data([[281, 279, 278, 279]])
         self.assertIsNone(d.get_compressed_dimension(None))
 
+    def test_Data__format__(self):
+        """Test the `__format__` Data method."""
+        d = cfdm.Data(9, "metres")
+        self.assertEqual(f"{d}", "9 metres")
+        self.assertEqual(f"{d!s}", "9 metres")
+        self.assertEqual(f"{d!r}", "<Data(): 9 metres>")
+        self.assertEqual(f"{d:.3f}", "9.000")
+
+        d = cfdm.Data([[9]], "metres")
+        self.assertEqual(f"{d}", "[[9]] metres")
+        self.assertEqual(f"{d!s}", "[[9]] metres")
+        self.assertEqual(f"{d!r}", "<Data(1, 1): [[9]] metres>")
+        self.assertEqual(f"{d:.3f}", "9.000")
+
+        d = cfdm.Data([9, 10], "metres")
+        self.assertEqual(f"{d}", "[9, 10] metres")
+        self.assertEqual(f"{d!s}", "[9, 10] metres")
+        self.assertEqual(f"{d!r}", "<Data(2): [9, 10] metres>")
+        with self.assertRaises(ValueError):
+            f"{d:.3f}"
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
