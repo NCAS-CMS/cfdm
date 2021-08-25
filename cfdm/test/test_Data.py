@@ -91,9 +91,7 @@ class DataTest(unittest.TestCase):
                 (cfdm.masked, numpy.ma.masked),
                 (n, n),
             ):
-                message = "cfdm.Data[{}, {}]={}={} failed".format(
-                    j, i, dvalue, avalue
-                )
+                message = f"cfdm.Data[{j}, {i}]={dvalue}={avalue} failed"
                 d[j, i] = dvalue
                 a[j, i] = avalue
                 x = d.array
@@ -328,8 +326,8 @@ class DataTest(unittest.TestCase):
                 a = numpy.transpose(a, axes)
                 d = d.transpose(axes)
                 message = (
-                    "cfdm.Data.transpose({}) failed: d.shape={}, "
-                    "a.shape={}".format(axes, d.shape, a.shape)
+                    f"cfdm.Data.transpose({axes}) failed: d.shape={d.shape}, "
+                    f"a.shape={a.shape}"
                 )
                 self.assertEqual(d.shape, a.shape, message)
                 self.assertTrue((d.array == a).all(), message)

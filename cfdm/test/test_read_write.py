@@ -668,7 +668,8 @@ class read_writeTest(unittest.TestCase):
         for i in range(0, n):
             j = i + n
             self.assertTrue(
-                f[i].data.equals(f[j].data, verbose=3), f"{f[i]!r} {f[j]!r}"
+                f[i].data.equals(f[j].data, verbose=3),
+                f"{f[i]!r} {f[j]!r}",
             )
             self.assertTrue(
                 f[j].data.equals(f[i].data, verbose=3),

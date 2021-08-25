@@ -49,7 +49,7 @@ class CoordinateReferenceTest(unittest.TestCase):
             os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
         )
         f = cfdm.read(self.filename)
-        self.assertEqual(len(f), 1, "f={!r}".format(f))
+        self.assertEqual(len(f), 1, f"f={f!r}")
         self.f = f[0]
 
     def test_CoordinateReference__repr__str__dump_construct_type(self):
@@ -213,6 +213,18 @@ class CoordinateReferenceTest(unittest.TestCase):
         cr = f.construct("standard_name:atmosphere_hybrid_height_coordinate")
         cr.datum.nc_set_variable("my_name")
         cfdm.write(f, tempfile1)
+
+    def test_CoordinateReference_parameters(self):
+        """TODO DOCS."""
+        f = self.f.copy()
+
+        cr = f.construct("grid_mapping_name:rotated_latitude_longitude")
+
+        cr.datum.set_parameter("test", 999)
+        cr.coordinate_conversion.set_parameter("test", 111)
+
+        with self.assertRaises(ValueError):
+            cfdm.write(f, tempfile1)
 
 
 if __name__ == "__main__":
