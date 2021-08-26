@@ -29,24 +29,25 @@ del _subs
 def configuration(atol=None, rtol=None, log_level=None):
     """Views and sets constants in the project-wide configuration.
 
-    The full list of global constants that are provided in a dictionary to
-    view, and can be set in any combination, are:
+    The full list of global constants that are provided in a
+    dictionary to view, and can be set in any combination, are:
 
     * `atol`
     * `rtol`
     * `log_level`
 
-    These are all constants that apply throughout `cfdm`, except for in
-    specific functions only if overridden by the corresponding keyword
-    argument to that function.
+    These are all constants that apply throughout `cfdm`, except for
+    in specific functions only if overridden by the corresponding
+    keyword argument to that function.
 
-    The value of `None`, either taken by default or supplied as a value,
-    will result in the constant in question not being changed from the
-    current value. That is, it will have no effect.
+    The value of `None`, either taken by default or supplied as a
+    value, will result in the constant in question not being changed
+    from the current value. That is, it will have no effect.
 
-    Note that setting a constant using this function is equivalent to setting
-    it by means of a specific function of the same name, e.g. via `cfdm.atol`,
-    but in this case multiple constants can be set at once.
+    Note that setting a constant using this function is equivalent to
+    setting it by means of a specific function of the same name,
+    e.g. via `cfdm.atol`, but in this case multiple constants can be
+    set at once.
 
     .. versionadded:: (cfdm) 1.8.6
 
@@ -76,7 +77,7 @@ def configuration(atol=None, rtol=None, log_level=None):
 
     :Returns:
 
-         `Configuration`
+        `Configuration`
             The dictionary-like object containing the names and values
             of the project-wide constants prior to the change, or the
             current names and values if no new values are specified.
@@ -152,15 +153,18 @@ def configuration(atol=None, rtol=None, log_level=None):
 def _configuration(_Configuration, **kwargs):
     """Internal helper function with logic for `cfdm.configuration`.
 
-    We delegate from the user-facing `cfdm.configuration` for two main reasons:
+    We delegate from the user-facing `cfdm.configuration` for two main
+    reasons:
 
-    1) to avoid a name clash there between the keyword arguments and the
-    functions which they each call (e.g. `atol` and `cfdm.atol`) which
-    would otherwise necessitate aliasing every such function name; and
+    1) to avoid a name clash there between the keyword arguments and
+       the functions which they each call (e.g. `atol` and
+       `cfdm.atol`) which would otherwise necessitate aliasing every
+       such function name; and
 
-    2) because the user-facing function must have the appropriate keywords
-    explicitly listed, but the very similar logic applied for each keyword
-    can be consolidated by iterating over the full dictionary of input kwargs.
+    2) because the user-facing function must have the keywords
+       explicitly listed, but the very similar logic applied for each
+       keyword can be consolidated by iterating over the full
+       dictionary of input kwargs.
 
     :Parameters:
 
@@ -382,8 +386,8 @@ def CF():
 
     **Examples:**
 
-    >>> cfdm.CF()
-    '1.8'
+    >>> CF()
+    '1.9'
 
     """
     return __cf_version__
@@ -425,6 +429,105 @@ def abspath(filename):
         return filename
 
     return os.path.abspath(filename)
+
+
+def unique_constructs(constructs, copy=True):
+    """Return the unique constructs from a sequence.
+
+    .. versionadded:: (cfdm) 1.9.0.0
+
+    :Parameters:
+
+        constructs: sequence of constructs
+            The constructs to be compared. The constructs may comprise
+            a mixture of types. The sequence can be empty.
+
+        copy: `bool`, optional
+            If False then do not copy returned constructs. By default
+            they are deep copies.
+
+    :Returns:
+
+        `list`
+            The unique constructs. May be an empty list.
+
+    **Examples:**
+
+    >>> f = cfdm.example_field(0)
+    >>> g = cfdm.example_field(1)
+    >>> f
+    <Field: specific_humidity(latitude(5), longitude(8)) 1>
+    >>> g
+    <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
+
+    >>> fields = [f, f, g]
+    >>> cfdm.unique_constructs(fields)
+    [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
+     <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
+
+    >>> domains = [x.domain for x in fields]
+    >>> cfdm.unique_constructs(domains)
+    [<Domain: {latitude(5), longitude(8), time(1)}>,
+     <Domain: {atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9), time(1)}>]
+
+    >>> cfdm.unique_constructs(domains + fields + [f.domain])
+    [<Domain: {latitude(5), longitude(8), time(1)}>,
+     <Domain: {atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9), time(1)}>,
+     <Field: specific_humidity(latitude(5), longitude(8)) 1>,
+     <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
+
+    >>> cfdm.unique_constructs(x for x in fields)
+    [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
+     <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
+
+    """
+    if not constructs:
+        # constructs is an empty sequence
+        return []
+
+    # ----------------------------------------------------------------
+    # Find the first construct in the sequence and create an iterator
+    # for the rest
+    # ----------------------------------------------------------------
+    try:
+        # constructs is a sequence?
+        construct0 = constructs[0]
+        constructs = (c for c in constructs[1:])
+    except TypeError:
+        try:
+            # constructs is a generator?
+            construct0 = next(constructs)
+        except StopIteration:
+            # constructs is an empty generator
+            return []
+    # --- End: try
+
+    if copy:
+        construct0 = construct0.copy()
+
+    # Initialise the output list
+    out = [construct0]
+
+    # ----------------------------------------------------------------
+    # Loop round the iterator, adding any "new" constructs to the
+    # output list
+    # ----------------------------------------------------------------
+    for construct in constructs:
+        is_equal = False
+        for c in out:
+            if construct.equals(c, verbose="DISABLE"):
+                is_equal = True
+                break
+        # --- End: for
+
+        if not is_equal:
+            if copy:
+                construct = construct.copy()
+
+            out.append(construct)
+    # --- End: for
+
+    return out
 
 
 @total_ordering
@@ -1145,8 +1248,8 @@ class atol(ConstantAccess):
 
         :Returns:
 
-                A version of the new constant value suitable for insertion
-                into the `CONSTANTS` dictionary.
+                A version of the new constant value suitable for
+                insertion into the `CONSTANTS` dictionary.
 
         """
         return float(arg)
@@ -1259,7 +1362,7 @@ class log_level(ConstantAccess):
 
     :Parameters:
 
-         log_level: `str` or `int` or `Constant`, optional
+        log_level: `str` or `int` or `Constant`, optional
             The new value of the minimal log severity level. This can
             be specified either as a string equal (ignoring case) to
             the named set of log levels or identifier ``'DISABLE'``,

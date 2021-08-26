@@ -227,12 +227,13 @@ class FunctionsTest(unittest.TestCase):
 
     def test_example_field(self):
         """Test the `example_field` function."""
-        top = 7
+        top = 8
 
-        for n in range(top + 1):
-            f = cfdm.example_field(n)
+        example_fields = cfdm.example_fields()
+        self.assertEqual(len(example_fields), top)
 
-            f.data.array
+        for f in example_fields:
+            _ = f.data.array
 
             self.assertIsInstance(f.dump(display=False), str)
 
@@ -240,13 +241,20 @@ class FunctionsTest(unittest.TestCase):
             g = cfdm.read(temp_file, verbose=1)
 
             self.assertEqual(len(g), 1)
-            self.assertTrue(f.equals(g[0], verbose=3), f"n={n}")
+            self.assertTrue(f.equals(g[0], verbose=3))
 
         with self.assertRaises(Exception):
             cfdm.example_field(top + 1)
 
         with self.assertRaises(ValueError):
             cfdm.example_field(1, 2)
+
+        with self.assertRaises(TypeError):
+            cfdm.example_field(1, 2, 3)
+
+        self.assertEqual(len(cfdm.example_fields(0)), 1)
+        self.assertEqual(len(cfdm.example_fields(0, 2)), 2)
+        self.assertEqual(len(cfdm.example_fields(0, 2, 0)), 3)
 
     def test_abspath(self):
         """Test the abspath function."""
@@ -359,6 +367,37 @@ class FunctionsTest(unittest.TestCase):
             raise RuntimeError(
                 "A ValueError should have been raised, but wasn't"
             )
+
+    def test_unique_constructs(self):
+        """TODO DOCS."""
+        f = cfdm.example_field(0)
+        g = cfdm.example_field(1)
+
+        self.assertFalse(cfdm.unique_constructs([]))
+
+        self.assertEqual(len(cfdm.unique_constructs([f])), 1)
+        self.assertEqual(len(cfdm.unique_constructs([f, f])), 1)
+        self.assertEqual(len(cfdm.unique_constructs([f, f.copy()])), 1)
+        self.assertEqual(len(cfdm.unique_constructs([f, f.copy(), g])), 2)
+
+        fields = [f, f, g]
+        domains = [x.domain for x in (f, f, g)]
+
+        self.assertEqual(len(cfdm.unique_constructs(domains)), 2)
+        self.assertEqual(len(cfdm.unique_constructs(domains + fields)), 4)
+        self.assertEqual(
+            len(cfdm.unique_constructs(domains + fields + [f.domain])), 4
+        )
+
+        # Test generator
+        domains = (x.domain for x in ())
+        self.assertEqual(len(cfdm.unique_constructs(domains)), 0)
+
+        domains = (x.domain for x in (f,))
+        self.assertEqual(len(cfdm.unique_constructs(domains)), 1)
+
+        domains = (x.domain for x in (f, f, g))
+        self.assertEqual(len(cfdm.unique_constructs(domains)), 2)
 
     def test_context_managers(self):
         """Test the context manager support of the functions."""

@@ -34,6 +34,8 @@ class AuxiliaryCoordinate(
 
     {{netCDF variable}}
 
+    {{netCDF variable group}}
+
     .. versionadded:: (cfdm) 1.7.0
 
     """

@@ -1,9 +1,24 @@
-version 1.8.?.?
+version 1.9.0.0
 ---------------
 ----
 
 **2021-??-??**
 
+* Conversion of `cfdm.Domain` to a non-abstract that may be read from
+  and written to a netCDF dataset
+  (https://github.com/NCAS-CMS/cfdm/issues/111)
+* New method: `cfdm.Domain.creation_commands`
+* New method: `cfdm.Domain.climatological_time_axes`
+* New method: `cfdm.AuxiliaryCoordinate.del_climatology`
+* New method: `cfdm.AuxiliaryCoordinate.get_climatology`
+* New method: `cfdm.AuxiliaryCoordinate.is_climatology`
+* New method: `cfdm.AuxiliaryCoordinate.set_climatology`
+* New method: `cfdm.DimensionCoordinate.del_climatology`
+* New method: `cfdm.DimensionCoordinate.get_climatology`
+* New method: `cfdm.DimensionCoordinate.is_climatology`
+* New method: `cfdm.DimensionCoordinate.set_climatology`
+* New function: `cfdm.unique_constructs`
+* New function: `cfdm.example_fields`
 * Construct access API changes from 1.8.9.0 applied to `Field.convert`
 * Improved error message for invalid inputs to `Field.convert`
 * Raise exception when attempting to write multiply defined coordinate

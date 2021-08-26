@@ -108,7 +108,7 @@ class Properties(Container):
 
         .. versionadded:: (cfdm) 1.8.7.0
 
-        .. seealso:: `{{package}}.Data.creation_commands`,
+        .. seealso:: `{{package}}.Domain.creation_commands`,
                      `{{package}}.Field.creation_commands`
 
         :Parameters:
@@ -245,6 +245,7 @@ class Properties(Container):
         ignore_fill_value=False,
         ignore_properties=(),
         ignore_type=False,
+        ignore_compression=True,
     ):
         """Whether two instances are the same.
 
@@ -284,6 +285,9 @@ class Properties(Container):
 
             {{ignore_type: `bool`, optional}}
 
+            ignore_compression:
+                Ignored, since properties do not have data arrays.
+
         :Returns:
 
             `bool`
@@ -303,8 +307,8 @@ class Properties(Container):
         >>> p.equals(q)
         False
         >>> p.equals(q, verbose=3)
-        Field: Non-common property name: foo
-        Field: Different properties
+        {{class}}: Non-common property name: foo
+        {{class}}: Different properties
         False
 
         """
@@ -436,9 +440,9 @@ class Properties(Container):
         The identities comprise:
 
         * The ``standard_name`` property.
-        * All properties, preceded by the property name and a colon,
-          e.g. ``'long_name:Air temperature'``.
-        * The netCDF variable name, preceded by ``'ncvar%'``.
+        * All properties, preceeded by the property name and an equals
+          e.g. ``'long_name=Air temperature'``.
+        * The netCDF variable name, preceeded by ``'ncvar%'``.
 
         .. versionadded:: (cfdm) 1.7.0
 

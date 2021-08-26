@@ -93,7 +93,6 @@ Special
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.core.Constructs.__call__
    ~cfdm.core.Constructs.__contains__
    ~cfdm.core.Constructs.__copy__
    ~cfdm.core.Constructs.__deepcopy__

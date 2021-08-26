@@ -547,6 +547,7 @@ class PropertiesDataBounds(PropertiesData):
         bounds_name="b",
         interior_ring_name="i",
         header=True,
+        _coordinate=False,
     ):
         """Return the commands that would create the construct.
 
@@ -621,7 +622,7 @@ class PropertiesDataBounds(PropertiesData):
             raise ValueError(
                 "The 'data_name' parameter can not have "
                 "the same value as any of the 'name', 'bounds_name', "
-                f"or 'interior_ring_name' parameters: {name!r}"
+                f"or 'interior_ring_name' parameters: {data_name!r}"
             )
 
         namespace0 = namespace
@@ -644,6 +645,10 @@ class PropertiesDataBounds(PropertiesData):
         geometry = self.get_geometry(None)
         if geometry is not None:
             out.append(f"{name}.set_geometry({geometry!r})")
+
+        # Climatology
+        if _coordinate and self.get_climatology(False):
+            out.append("{}.set_climatology(True)".format(name))
 
         bounds = self.get_bounds(None)
         if bounds is not None:

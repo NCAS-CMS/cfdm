@@ -30,9 +30,7 @@ else:
 
 
 if not source.endswith("source"):
-    raise ValueError(
-        "Given directory {} does not end with 'source'".format(source)
-    )
+    raise ValueError(f"Given directory {source} does not end with 'source'")
 
 n_undocumented_methods = 0
 n_missing_files = 0
@@ -73,13 +71,12 @@ for core in ("", "_core"):
                 if method not in rst_contents:
                     n_undocumented_methods += 1
                     print(
-                        "Method {} not in {}".format(
-                            method, os.path.join(source, "class", rst_file)
-                        )
+                        f"Method {method} not in "
+                        f"{os.path.join(source, 'class', rst_file)}"
                     )
         except FileNotFoundError:
             n_missing_files += 1
-            print("File {} does not exist".format(rst_file))
+            print(f"File {rst_file} does not exist")
 
 # Raise an exception to ensure a non-zero shell return code
 if n_undocumented_methods:
@@ -90,9 +87,8 @@ if n_missing_files:
 
 if n_undocumented_methods or n_missing_files:
     raise ValueError(
-        "Found undocumented methods ({}) or missing .rst files ({})".format(
-            n_undocumented_methods, n_missing_files
-        )
+        f"Found undocumented methods ({n_undocumented_methods}) "
+        f"or missing .rst files ({n_missing_files})"
     )
 
 print("All non-private methods are documented")

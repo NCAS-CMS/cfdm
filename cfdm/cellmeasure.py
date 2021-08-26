@@ -36,6 +36,8 @@ class CellMeasure(
 
     {{netCDF variable}}
 
+    {{netCDF global attributes}}
+
     .. versionadded:: (cfdm) 1.7.0
 
     """

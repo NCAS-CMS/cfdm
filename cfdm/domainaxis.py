@@ -252,8 +252,8 @@ class DomainAxis(
 
         **Examples:**
 
-        >>> d.nc_get_dimension()
-        'time'
+        >>> d = {{package}}.DomainAxis(size=9)
+        >>> d.nc_set_dimension('time')
         >>> d.identity()
         'ncdim%time'
         >>> d.identity(default='no identity')
@@ -304,8 +304,8 @@ class DomainAxis(
 
         **Examples:**
 
-        >>> d.nc_get_dimension()
-        'time'
+        >>> d = {{package}}.DomainAxis(size=9)
+        >>> d.nc_set_dimension('time')
         >>> d.identities()
         ['ncdim%time']
         >>> d.nc_del_dimension()

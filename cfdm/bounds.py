@@ -35,6 +35,8 @@ class Bounds(
     with the `nc_set_dimension`, `nc_get_dimension`,
     `nc_del_dimension` and `nc_has_dimension` methods.
 
+    {{netCDF variable group}}
+
     .. versionadded:: (cfdm) 1.7.0
 
     """

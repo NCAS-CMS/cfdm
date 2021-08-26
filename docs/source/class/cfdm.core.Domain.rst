@@ -10,6 +10,18 @@ cfdm.core.Domain
    :no-members:
    :no-inherited-members:
 
+Inspection
+----------
+
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.core.Domain.construct_type
+   
 Metadata constructs
 -------------------
 
@@ -38,6 +50,24 @@ Metadata constructs
 
    ~cfdm.core.Domain.constructs
    
+Properties
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.Domain.del_property
+   ~cfdm.core.Domain.get_property
+   ~cfdm.core.Domain.has_property
+   ~cfdm.core.Domain.set_property
+   ~cfdm.core.Domain.properties
+   ~cfdm.core.Domain.clear_properties
+   ~cfdm.core.Domain.set_properties
+
 Miscellaneous
 -------------
 
@@ -50,6 +80,8 @@ Miscellaneous
 
    ~cfdm.core.Domain.copy
    ~cfdm.core.Domain.fromconstructs
+   ~cfdm.core.Domain.has_bounds
+   ~cfdm.core.Domain.has_data
 
 Special
 -------

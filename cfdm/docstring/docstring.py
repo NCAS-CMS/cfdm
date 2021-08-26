@@ -24,11 +24,11 @@ Keys must be `str` or `re.Pattern` objects:
 
 _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
-    # General susbstitutions (not indent-dependent)
+    # General substitutions (not indent-dependent)
     # ----------------------------------------------------------------
     #
     # ----------------------------------------------------------------
-    # Class description susbstitutions (1 level of indentation)
+    # Class description substitutions (1 level of indentation)
     # ----------------------------------------------------------------
     # netCDF variable
     "{{netCDF variable}}": """The netCDF variable name may be accessed with the
@@ -55,7 +55,7 @@ _docstring_substitution_definitions = {
     `nc_clear_variable_groups` and `nc_set_geometry_variable_groups`
     methods.""",
     # ----------------------------------------------------------------
-    # Method description susbstitutions (2 levels of indentation)
+    # Method description substitutions (2 levels of indentation)
     # ----------------------------------------------------------------
     # equals tolerance
     "{{equals tolerance}}": """Two real numbers ``x`` and ``y`` are considered equal if
@@ -88,7 +88,7 @@ _docstring_substitution_definitions = {
     "{{unique construct}}": """If zero or two or more constructs are selected then an
         exception is raised, or the *default* parameter is returned.""",
     # ----------------------------------------------------------------
-    # Method description susbstitutions (3 levels of indentataion)
+    # Method description substitutions (3 levels of indentataion)
     # ----------------------------------------------------------------
     # init properties: `dict`, optional
     "{{init properties: `dict`, optional}}": """properties: `dict`, optional

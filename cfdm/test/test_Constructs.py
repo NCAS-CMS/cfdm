@@ -79,6 +79,7 @@ class ConstructsTest(unittest.TestCase):
 
         d = c.filter_by_type("domain_axis")
         e = d.copy()
+
         self.assertTrue(d.equals(e, verbose=3))
         self.assertTrue(e.equals(d, verbose=3))
 

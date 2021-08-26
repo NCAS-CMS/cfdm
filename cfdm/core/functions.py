@@ -39,7 +39,7 @@ def environment(display=True, paths=True):
     python: 3.7.3 /home/user/anaconda3/bin/python
     netCDF4: 1.5.3 /home/user/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py
     numpy: 1.16.2 /home/user/anaconda3/lib/python3.7/site-packages/numpy/__init__.py
-    cfdm.core: 1.8.0
+    cfdm.core: 1.9.0
 
     >>> environment(paths=False)
     Platform: Linux-4.15.0-72-generic-x86_64-with-debian-stretch-sid
@@ -48,7 +48,7 @@ def environment(display=True, paths=True):
     python: 3.7.3
     netCDF4: 1.5.3
     numpy: 1.16.2
-    cfdm.core: 1.8.0
+    cfdm.core: 1.9.0
 
     """
     dependency_version_paths_mapping = {
@@ -92,7 +92,7 @@ def CF():
     **Examples:**
 
     >>> cfdm.core.CF()
-    '1.8'
+    '1.9'
 
     """
     return __cf_version__

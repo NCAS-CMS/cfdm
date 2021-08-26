@@ -199,8 +199,8 @@ class Coordinate(PropertiesDataBounds):
             if units is not None and " since " not in units:
                 # Construct does not have reference time units
                 raise ValueError(
-                    f"Can't set {self!r} set as climatological: "
-                    f"Incorrect units: {units!r}"
+                    f"Can't set {self!r} as climatological: "
+                    f"Non-reference time units {units!r}"
                 )
 
         self._set_component("climatology", climatology, copy=False)

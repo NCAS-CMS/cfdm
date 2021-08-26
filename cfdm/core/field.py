@@ -283,7 +283,7 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
         True
 
         """
-        return self._Domain.fromconstructs(self.constructs)
+        return self._Domain.fromconstructs(self.constructs, copy=False)
 
     def get_data_axes(self, key=None, default=ValueError()):
         """Gets the keys of the axes spanned by the construct data.
@@ -390,7 +390,7 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
         if axes is None:
             return False
 
-        return True
+        return super().has_data_axes(key)
 
     def del_construct(self, key, default=ValueError()):
         """Remove a metadata construct.
@@ -450,7 +450,7 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
                 "data of the field construct"
             )
 
-        return super().del_construct(key, default=default)
+        return self.constructs._del_construct(key, default=default)
 
     def set_data(self, data, axes=None, copy=True, inplace=True):
         """Set the data of the field construct.

@@ -617,6 +617,23 @@ class FieldTest(unittest.TestCase):
         f = cfdm.example_field(6)
         self.assertTrue(f.has_geometry())
 
+    def test_Field_climatological_time_axes(self):
+        """TODO DOCS."""
+        f = cfdm.example_field(7)
+
+        self.assertEqual(f.climatological_time_axes(), set())
+
+        cm = cfdm.CellMethod(axes="domainaxis0", method="mean")
+        cm.set_qualifier("over", "years")
+        f.set_construct(cm)
+
+        self.assertEqual(f.climatological_time_axes(), set(("domainaxis0",)))
+
+    def test_Field_bounds(self):
+        """TODO DOCS."""
+        f = cfdm.example_field(0)
+        self.assertFalse(f.has_bounds())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

@@ -140,13 +140,7 @@ class Field(
 
         self._initialise_netcdf(source)
 
-        if source is not None:
-            try:
-                dc = source._get_component("dataset_compliance", {})
-            except AttributeError:
-                dc = {}
-
-            self._set_dataset_compliance(dc)
+        self._set_dataset_compliance(self.dataset_compliance(), copy=True)
 
     def __repr__(self):
         """Called by the `repr` built-in function.
@@ -347,6 +341,7 @@ class Field(
             axis_names_sizes = self._unique_domain_axis_identities()
 
         x = [axis_names_sizes[axis] for axis in self.get_data_axes(default=())]
+
         axis_names = ", ".join(x)
         if axis_names:
             axis_names = f"({axis_names})"
@@ -363,28 +358,6 @@ class Field(
             units += f" {calendar}"
 
         return f"{self.identity('')}{axis_names}{units}"
-
-    def _set_dataset_compliance(self, value):
-        """Sets the dataset compliance report.
-
-        Specifically, sets the report of problems encountered whilst
-        reading the field construct from a dataset.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        .. seealso:: `dataset_compliance`
-
-        :Parameters:
-
-            value:
-               The value of the ``dataset_compliance`` component.
-
-        :Returns:
-
-            `None`
-
-        """
-        self._set_component("dataset_compliance", value, copy=False)
 
     @property
     def _test_docstring_substitution_property_Field(self):
@@ -478,11 +451,12 @@ class Field(
 
         >>> print(f.field_ancillaries())
         Constructs:
-        {'fieldancillary0': <{{repr}}FieldAncillary: air_temperature standard_error(10, 9) K>}
+        {'cellmethod1': <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+         'cellmethod0': <{{repr}}CellMethod: domainaxis3: maximum>}
 
-        >>> print(f.field_ancillaries('specific_humuidity standard_error'))
-        Constructs:
-        {'fieldancillary0': <{{repr}}FieldAncillary: specific_humidity standard_error(10, 9) K>}
+        >>> f.cell_methods.ordered()
+        OrderedDict([('cellmethod0', <{{repr}}CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
+                     ('cellmethod1', <{{repr}}CellMethod: domainaxis3: maximum>)])
 
         """
         return self._filter_interface(
@@ -639,7 +613,17 @@ class Field(
 
         **Examples:**
 
+        >>> f = {{package}}.example_field(0)
+        >>> f.data[[0, -1]] = numpy.ma.masked
         >>> print(f.data.array)
+        [[   --    --    --    --    --    --    --    --]
+         [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+         [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+         [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+         [   --    --    --    --    --    --    --    --]]
+        >>> {{package}}.write(f, 'masked.nc')
+        >>> no_mask = {{package}}.read('masked.nc', mask=False)[0]
+        >>> print(no_mask.data.array)
         [9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,
          9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36],
          [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
@@ -647,8 +631,8 @@ class Field(
          [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
         [9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,
          9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36]])
-        >>> masked_f = f.apply_masking()
-        >>> print(masked_f.data.array)
+        >>> masked = no_mask.apply_masking()
+        >>> print(masked.data.array)
         [[   --    --    --    --    --    --    --    --]
          [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
          [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
@@ -669,14 +653,16 @@ class Field(
     def climatological_time_axes(self):
         """Return all axes which are climatological time axes.
 
+        This is ascertained by inspecting the axes of any cell methods
+        cnstructs.
+
         .. versionadded:: (cfdm) 1.7.0
 
         :Returns:
 
-            `list`
-                The list of all axes on the field which are
-                climatological time axes. If there are none, this will
-                be an empty list.
+            `set`
+                The axes on the field which are climatological time
+                axes. If there are none, this will be an empty set.
 
         **Examples:**
 
@@ -687,20 +673,19 @@ class Field(
         {'cellmethod0': <{{repr}}CellMethod: domainaxis0: minimum within days>,
          'cellmethod1': <{{repr}}CellMethod: domainaxis0: mean over days>}
         >>> f.climatological_time_axes()
-        [('domainaxis0',), ('domainaxis0',)]
-
+        {'domainaxis0'}
         >>> g
         <Field: air_potential_temperature(time(120), latitude(5), longitude(8)) K>
         >>> print(g.cell_methods())
         Constructs:
         {'cellmethod0': <{{repr}}CellMethod: area: mean>}
         >>> g.climatological_time_axes()
-        []
+        set()
 
         """
-        out = []
+        out = set()
 
-        domain_axes = None
+        domain_axes = self.domain_axes(todict=True)
 
         for key, cm in self.cell_methods(todict=True).items():
             qualifiers = cm.qualifiers()
@@ -711,16 +696,39 @@ class Field(
             if len(axes) != 1:
                 continue
 
-            domain_axes = self.domain_axes(cached=domain_axes, todict=True)
-
             axis = axes[0]
             if axis not in domain_axes:
                 continue
 
             # Still here? Then this axis is a climatological time axis
-            out.append((axis,))
+            #            out.append((axis,))
+            out.add(axis)
 
         return out
+
+    #        out = []
+    #
+    #        domain_axes = None
+    #
+    #        for key, cm in self.cell_methods(todict=True).items():
+    #            qualifiers = cm.qualifiers()
+    #            if not ("within" in qualifiers or "over" in qualifiers):
+    #                continue
+    #
+    #            axes = cm.get_axes(default=())
+    #            if len(axes) != 1:
+    #                continue
+    #
+    #            domain_axes = self.domain_axes(cached=domain_axes, todict=True)
+    #
+    #            axis = axes[0]
+    #            if axis not in domain_axes:
+    #                continue
+    #
+    #            # Still here? Then this axis is a climatological time axis
+    #            out.append((axis,))
+    #
+    #        return out
 
     @_inplace_enabled(default=False)
     def compress(
@@ -878,7 +886,7 @@ class Field(
         [3 7 5 9]
         >>> g.compress('indexed', inplace=True)
         >>> g.data.get_index()
-         <{{repr}}Index: (24) >
+        <{{repr}}Index: (24) >
         >>> print(g.data.get_index().array)
         [0 0 0 1 1 1 1 1 1 1 2 2 2 2 2 3 3 3 3 3 3 3 3 3]
         >>> {{package}}.write(g, 'compressed_file_indexed.nc')
@@ -1264,6 +1272,7 @@ class Field(
 
         .. seealso:: `set_construct`,
                      `{{package}}.Data.creation_commands`,
+                     `{{package}}.Domain.creation_commands`,
                      `{{package}}.example_field`
 
         :Parameters:
@@ -1301,7 +1310,7 @@ class Field(
         #
         # field: specific_humidity
         field = {{package}}.Field()
-        field.set_properties({'Conventions': 'CF-1.8', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+        field.set_properties({'Conventions': 'CF-1.9', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
         field.nc_set_variable('q')
         data = {{package}}.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
         field.set_data(data)
@@ -1368,7 +1377,7 @@ class Field(
         >>> print(q.creation_commands(representative_data=True, namespace='',
         ...                           indent=4, header=False))
             field = Field()
-            field.set_properties({'Conventions': 'CF-1.8', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+            field.set_properties({'Conventions': 'CF-1.9', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
             field.nc_set_variable('q')
             data = <Data(5, 8): [[0.007, ..., 0.013]] 1>  # Representative data
             field.set_data(data)
@@ -1453,28 +1462,22 @@ class Field(
                 f"{name}.nc_set_global_attributes({nc_global_attributes!r})"
             )
 
-        # Domain axes
-        for key, c in self.domain_axes(todict=True).items():
-            out.extend(
-                c.creation_commands(
-                    indent=0,
-                    string=False,
-                    namespace=namespace0,
-                    name="c",
-                    header=header,
-                )
+        # Domain
+        out.extend(
+            self.domain.creation_commands(
+                representative_data=representative_data,
+                string=False,
+                indent=0,
+                namespace=namespace0,
+                name=name,
+                data_name=data_name,
+                header=header,
+                _domain=False,
             )
-            out.append(f"{name}.set_construct(c, key={key!r}, copy=False)")
+        )
 
-        # Metadata constructs with data
-        for key, c in self.constructs.filter_by_type(
-            "dimension_coordinate",
-            "auxiliary_coordinate",
-            "cell_measure",
-            "domain_ancillary",
-            "field_ancillary",
-            todict=True,
-        ).items():
+        # Field ancillary constructs
+        for key, c in self.field_ancillaries().items():
             out.extend(
                 c.creation_commands(
                     representative_data=representative_data,
@@ -1493,19 +1496,6 @@ class Field(
 
         # Cell method constructs
         for key, c in self.cell_methods(todict=True).items():
-            out.extend(
-                c.creation_commands(
-                    namespace=namespace0,
-                    indent=0,
-                    string=False,
-                    name="c",
-                    header=header,
-                )
-            )
-            out.append(f"{name}.set_construct(c)")
-
-        # Coordinate reference constructs
-        for key, c in self.coordinate_references(todict=True).items():
             out.extend(
                 c.creation_commands(
                     namespace=namespace0,
@@ -1623,145 +1613,70 @@ class Field(
             )
             string.append("")
 
-        string.append(self.get_domain().dump(display=False))
+        string.append(
+            self.get_domain().dump(display=False, _create_title=False)
+        )
 
         return "\n".join(string)
 
-    @_manage_log_level_via_verbosity
-    def equals(
-        self,
-        other,
-        rtol=None,
-        atol=None,
-        verbose=None,
-        ignore_data_type=False,
-        ignore_fill_value=False,
-        ignore_properties=(),
-        ignore_compression=True,
-        ignore_type=False,
-    ):
-        """Whether two field constructs are the same.
+    def get_data_axes(self, key=None, default=ValueError()):
+        """Gets the keys of the axes spanned by the construct data.
 
-        Equality is strict by default. This means that for two field
-        constructs to be considered equal they must have corresponding
-        metadata constructs and for each pair of constructs:
-
-        * the same descriptive properties must be present, with the
-          same values and data types, and vector-valued properties
-          must also have same the size and be element-wise equal (see
-          the *ignore_properties* and *ignore_data_type* parameters),
-          and
-
-        ..
-
-        * if there are data arrays then they must have same shape and
-          data type, the same missing data mask, and be element-wise
-          equal (see the *ignore_data_type* parameter).
-
-        {{equals tolerance}}
-
-        {{equals compression}}
-
-        Any type of object may be tested but, in general, equality is
-        only possible with another field construct, or a subclass of
-        one. See the *ignore_type* parameter.
-
-        {{equals netCDF}}
+        Specifically, returns the keys of the domain axis constructs
+        spanned by the data of the field or of a metadata construct.
 
         .. versionadded:: (cfdm) 1.7.0
 
+        .. seealso:: `del_data_axes`, `get_data`, `set_data_axes`
+
         :Parameters:
 
-            other:
-                The object to compare for equality.
+            key: `str`, optional
+                Specify a metadata construct, instead of the field
+                construct.
 
-            {{atol: number, optional}}
+                *Parameter example:*
+                  ``key='auxiliarycoordinate0'``
 
-            {{rtol: number, optional}}
+            default: optional
+                Return the value of the *default* parameter if the data
+                axes have not been set.
 
-            ignore_fill_value: `bool`, optional
-                If True then the ``_FillValue`` and ``missing_value``
-                properties are omitted from the comparison, for the
-                field construct and metadata constructs.
-
-            ignore_properties: sequence of `str`, optional
-                The names of properties of the field construct (not
-                the metadata constructs) to omit from the
-                comparison. Note that the ``Conventions`` property is
-                always omitted.
-
-            {{ignore_data_type: `bool`, optional}}
-
-            {{ignore_compression: `bool`, optional}}
-
-            {{ignore_type: `bool`, optional}}
-
-            {{verbose: `int` or `str` or `None`, optional}}
+                {{default Exception}}
 
         :Returns:
 
-            `bool`
-                Whether the two field constructs are equal.
+            `tuple`
+                The keys of the domain axis constructs spanned by the
+                data.
 
         **Examples:**
 
-        >>> f.equals(f)
+        >>> f = {{package}}.example_field(0)
+        >>> f.get_data_axes()
+        ('domainaxis0', 'domainaxis1')
+        >>> f.get_data_axes(key='dimensioncoordinate2')
+        ('domainaxis2',)
+        >>> f.has_data_axes()
         True
-        >>> f.equals(f.copy())
-        True
-        >>> f.equals(f[...])
-        True
-        >>> f.equals('not a Field instance')
+        >>> f.del_data_axes()
+        ('domainaxis0', 'domainaxis1')
+        >>> f.has_data_axes()
         False
-
-        >>> g = f.copy()
-        >>> g.set_property('foo', 'bar')
-        >>> f.equals(g)
-        False
-        >>> f.equals(g, verbose=3)
-        Field: Non-common property name: foo
-        Field: Different properties
-        False
+        >>> f.get_data_axes(default='no axes')
+        'no axes'
 
         """
-        # ------------------------------------------------------------
-        # Check the properties and data
-        # ------------------------------------------------------------
-        ignore_properties = tuple(ignore_properties) + ("Conventions",)
+        if key is not None:
+            return super().get_data_axes(key, default=default)
 
-        if not super().equals(
-            other,
-            rtol=rtol,
-            atol=atol,
-            verbose=verbose,
-            ignore_data_type=ignore_data_type,
-            ignore_fill_value=ignore_fill_value,
-            ignore_properties=ignore_properties,
-            ignore_compression=ignore_compression,
-            ignore_type=ignore_type,
-        ):
-            return False
-
-        # ------------------------------------------------------------
-        # Check the constructs
-        # ------------------------------------------------------------
-        if not self._equals(
-            self.constructs,
-            other.constructs,
-            rtol=rtol,
-            atol=atol,
-            verbose=verbose,
-            ignore_data_type=ignore_data_type,
-            ignore_fill_value=ignore_fill_value,
-            ignore_compression=ignore_compression,
-            _ignore_type=False,
-        ):
-            logger.info(
-                f"{self.__class__.__name__}: Different metadata constructs"
+        try:
+            return self._get_component("data_axes")
+        except ValueError:
+            return self._default(
+                default,
+                "{!r} has no data axes".format(self.__class__.__name__),
             )
-            return False
-
-        return True
 
     def get_domain(self):
         """Return the domain.
@@ -1771,6 +1686,7 @@ class Field(
         .. seealso:: `domain`
 
         :Returns:
+
             `Domain`
                  The domain.
 
@@ -1784,7 +1700,8 @@ class Field(
         # Set climatological time axes for the domain
         climatological_time_axes = self.climatological_time_axes()
         if climatological_time_axes:
-            for key, c in self.coordinates(todict=True).items():
+            coordinates = self.coordinates
+            for key, c in coordinates.items():
                 axes = self.get_data_axes(key, default=())
                 if len(axes) == 1 and axes[0] in climatological_time_axes:
                     c.set_climatology(True)
@@ -1792,10 +1709,10 @@ class Field(
         return domain
 
     def get_filenames(self):
-        """Return the name of the file or files containing the data.
+        """Return the names of the files containing the data.
 
-        The names of the file or files containing the data of metadata
-        constructs are also returned.
+        The names of the files containing the data of the field
+        constructs and of any metadata constructs are returned.
 
         :Returns:
 
@@ -1810,7 +1727,7 @@ class Field(
         >>> {{package}}.write(f, 'temp_file.nc')
         >>> g = {{package}}.read('temp_file.nc')[0]
         >>> g.get_filenames()
-        {'/data/user/file1.nc'}
+        {'temp_file.nc'}
 
         """
         out = super().get_filenames()
@@ -2117,8 +2034,8 @@ class Field(
     def squeeze(self, axes=None, inplace=False):
         """Remove size one axes from the data.
 
-        By default all size one axes are removed, but particular size one
-        axes may be selected for removal.
+        By default all size one axes are removed, but particular size
+        one axes may be selected for removal.
 
         .. versionadded:: (cfdm) 1.7.0
 

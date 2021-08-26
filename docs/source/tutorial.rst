@@ -61,7 +61,7 @@ the `cfdm.CF` function:
    :caption: *Retrieve the version of the CF conventions.*
       
    >>> cfdm.CF()
-   '1.8'
+   '1.9'
 
 This indicates which version of the CF conventions are represented by
 this release of the cfdm package, and therefore the version can not be
@@ -71,40 +71,53 @@ Note, however, that datasets of different versions may be :ref:`read
 <Reading-datasets>` from, or :ref:`written <Writing-to-disk>` to,
 disk.
 
-
-
 ----
 
-**Field construct**
--------------------
+.. _Field-and-domain-constructs:
 
-The central construct (i.e. element) to CF is the :term:`field
-construct`. The field construct, that corresponds to a CF-netCDF data
-variable, includes all of the metadata to describe it:
+**Field and domain constructs**
+-------------------------------
+
+The central constructs of CF are the :term:`field construct` and
+:term:`domain construct`.
+
+The field construct, that corresponds to a CF-netCDF data variable,
+includes all of the metadata to describe it:
 
     * descriptive properties that apply to field construct as a whole
       (e.g. the standard name),
     * a data array, and
     * "metadata constructs" that describe the locations of each cell
-      of the data array, and the physical nature of each cell's datum.
+      (i.e. the "domain") of the data array, and the physical nature
+      of each cell's datum.
 
-A field construct is stored in a `cfdm.Field` instance, and henceforth
-the phrase "field construct" will be assumed to mean "`cfdm.Field`
-instance".
+Likewise, the domain construct, that corresponds to a CF-netCDF domain
+variable or to the domain of a field construct, includes all of the
+metadata to describe it:
+
+    * descriptive properties that apply to field construct as a whole
+      (e.g. the long name), and
+    * metadata constructs that describe the locations of each cell of
+      the domain.
+
+A field construct or domain construct is stored in a `cfdm.Field`
+instance or `cfdm.Domain` instance respectively. Henceforth the phrase
+"field construct" will be assumed to mean "`cfdm.Field` instance", and
+"domain construct" will be assumed to mean "`cfdm.Domain` instance.
 
 ----
 
 .. _Reading-datasets:
 
-**Reading field constructs from datasets**
-------------------------------------------
+**Reading field or domain constructs from datasets**
+----------------------------------------------------
 
 The `cfdm.read` function reads a `netCDF
 <https://www.unidata.ucar.edu/software/netcdf/>`_ file from disk, or
-from an `OPeNDAP <https://www.opendap.org/>`_ URL [#dap]_, and returns
-the contents as a Python list of zero or field constructs. The list
-contains a field construct to represent each of the CF-netCDF data
-variables in the file.
+from an `OPeNDAP <https://www.opendap.org/>`_ URL [#dap]_, and by
+default returns the contents as a Python list of zero or more field
+constructs. This list contains a field construct to represent each of
+the CF-netCDF data variables in the file.
 
 Datasets of any version of CF up to and including CF-|version| can be
 read.
@@ -122,11 +135,6 @@ The following file types can be read:
   <https://www.unidata.ucar.edu/software/netcdf/docs/netcdf_working_with_netcdf_files.html#netcdf_utilities>`_,
   with or without the data array values.
 
-Note that when reading netCDF4 files that contain :ref:`hierachical
-groups <Hierarchical-groups>`, the group structure is saved via the
-:ref:`netCDF interface <NetCDF-interface>` so that it may be re-used,
-or modified, if the field constructs are written to back to disk.
-       
 For example, to read the file ``file.nc`` (found in the :ref:`sample
 datasets <Sample-datasets>`), which contains two field constructs:
 
@@ -147,6 +155,11 @@ data is required for inspection or to modify the array contents. This
 maximises the number of field constructs that may be read within a
 session, and makes the read operation fast.
 
+Note that when reading netCDF4 files that contain :ref:`hierachical
+groups <Hierarchical-groups>`, the group structure is saved via the
+:ref:`netCDF interface <NetCDF-interface>` so that it may be re-used,
+or modified, if the field constructs are written to back to disk.
+
 The `cfdm.read` function has optional parameters to
 
 * allow the user to provide files that contain :ref:`external
@@ -156,6 +169,9 @@ The `cfdm.read` function has optional parameters to
   netCDF variables <Creation-by-reading>`, i.e. those that are
   referenced from CF-netCDF data variables, but which are not regarded
   by default as data variables in their own right;
+
+* return only domain constructs derived from CF-netCDF domain
+  variables;
 
 * request that masking is *not* applied by convention to data elements
   (see :ref:`data masking <Data-mask>`);
@@ -1687,12 +1703,11 @@ method of the `Data` instance.
 **Domain**
 ----------
 
-The :ref:`domain of the CF data model <CF-data-model>` is *not* a
-construct, but is defined collectively by various other metadata
-constructs included in the field construct. It is represented by the
-`Domain` class. The domain instance may be accessed with the
-`~Field.domain` attribute, or `~Field.get_domain` method, of the field
-construct.
+The :ref:`domain of the CF data model <CF-data-model>` is defined
+collectively by various other metadata constructs. It is represented
+by the `Domain` class. A domain construct may exist indpendently, or
+is accessed from a field construct with its `~Field.domain` attribute,
+or `~Field.get_domain` method.
 
 .. code-block:: python
    :caption: *Get the domain, and inspect it.*
@@ -1716,13 +1731,11 @@ construct.
                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
    >>> description = domain.dump(display=False)
 
-Changes to domain instance are seen by the field construct, and vice
-versa. This is because the domain instance is merely a "view" of the
-relevant metadata constructs contained in the field construct.
-
-.. The field construct also has a `~Field.domain` attribute that is an
-   alias for the `~Field.get_domain` method, which makes it easier to
-   access attributes and methods of the domain instance.
+The domain construct returned by a field construct is not independent
+of its parent field instance, i.e. changes to domain construct are
+seen by the field construct, and vice versa. This is because, in this
+case, the domain instance is a "view" of the relevant metadata
+constructs contained in the field construct.
 
 .. code-block:: python
    :caption: *Change a property of a metadata construct of the domain
@@ -1741,9 +1754,6 @@ relevant metadata constructs contained in the field construct.
    'set by field'
    >>> field_latitude.has_property('test')
    False
-
-All of the methods and attributes related to the domain are listed
-:ref:`here <Field-Domain>`.
 
 ----
 

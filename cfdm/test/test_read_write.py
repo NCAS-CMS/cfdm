@@ -777,6 +777,51 @@ class read_writeTest(unittest.TestCase):
 
         self.assertFalse(f)
 
+    def test_read_write_domain(self):
+        """TODO DOCS."""
+        f = cfdm.example_field(1)
+        d = f.domain.copy()
+
+        # 1 domain
+        cfdm.write(d, tmpfile)
+        e = cfdm.read(tmpfile)
+        self.assertTrue(len(e), 10)
+
+        e = cfdm.read(tmpfile, domain=True, verbose=1)
+        self.assertEqual(len(e), 1)
+        e = e[0]
+        self.assertIsInstance(e, cfdm.Domain)
+        self.assertTrue(e.equals(e.copy(), verbose=3))
+        self.assertTrue(d.equals(e, verbose=3))
+        self.assertTrue(e.equals(d, verbose=3))
+
+        # 1 field and 1 domain
+        cfdm.write([f, d], tmpfile)
+        g = cfdm.read(tmpfile)
+        self.assertTrue(len(g), 1)
+        g = g[0]
+        self.assertIsInstance(g, cfdm.Field)
+        self.assertTrue(g.equals(f, verbose=3))
+
+        e = cfdm.read(tmpfile, domain=True, verbose=1)
+        self.assertEqual(len(e), 1)
+        e = e[0]
+        self.assertIsInstance(e, cfdm.Domain)
+
+        # 1 field and 2 domains
+        cfdm.write([f, d, d], tmpfile)
+        g = cfdm.read(tmpfile)
+        self.assertTrue(len(g), 1)
+        g = g[0]
+        self.assertIsInstance(g, cfdm.Field)
+        self.assertTrue(g.equals(f, verbose=3))
+
+        e = cfdm.read(tmpfile, domain=True, verbose=1)
+        self.assertEqual(len(e), 2)
+        self.assertIsInstance(e[0], cfdm.Domain)
+        self.assertIsInstance(e[1], cfdm.Domain)
+        self.assertTrue(e[0].equals(e[1]))
+
     def test_write_coordinates(self):
         """Test the `coordinates` keyword argument of `write`."""
         f = cfdm.example_field(0)

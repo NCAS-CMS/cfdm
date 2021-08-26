@@ -46,9 +46,11 @@ datasets may be ingested from existing datasets and written to new
 datasets. This is so that datasets which are partially conformant may
 nonetheless be modified in memory.
 
-The central element defined by the CF data model is the **field
-construct**, which corresponds to a CF-netCDF data variable with all
-of its metadata.
+The central elements defined by the CF data model are the **field
+construct**, which corresponds to CF-netCDF data variable with all of
+its metadata; and the **domain contruct**, which may be the domain of
+a field construct or corresponds to a CF-netCDF domain variable with
+all of its metadata.
 
 A simple example of reading a field construct from a file and
 inspecting it:
@@ -69,17 +71,17 @@ inspecting it:
 
 The ``cfdm`` package can:
 
-* read field constructs from netCDF and CDL datasets,
-* create new field constructs in memory,
-* write and append field constructs to netCDF datasets on disk,
+* read field and domain constructs from netCDF and CDL datasets,
+* create new field and domain constructs in memory,
+* write and append field and domain constructs to netCDF datasets on disk,
 * read, write, and create coordinates defined by geometry cells,
 * read and write netCDF4 string data-type variables,
 * read, write, and create netCDF and CDL datasets containing
   hierarchical groups,
-* inspect field constructs,
-* test whether two field constructs are the same,
-* modify field construct metadata and data,
-* create subspaces of field constructs,
+* inspect field and domain constructs,
+* test whether two constructs are the same,
+* modify field and domain construct metadata and data,
+* create subspaces of field and domain constructs,
 * incorporate, and create, metadata stored in external files, and
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the

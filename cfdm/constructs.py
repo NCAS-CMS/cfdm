@@ -44,7 +44,7 @@ class Constructs(mixin.Container, core.Constructs):
     Calling a `Constructs` instance selects metadata constructs by
     identity and is an alias for the `filter_by_identity` method. For
     example, to select constructs that have an identity of
-    'air_temperature': ``d = c('air_temperature')``.
+    "air_temperature": ``d = c('air_temperature')``.
 
     Note that ``c(*identities, **filter_kwargs)`` is equivalent to
     ``c.filter(filter_by_identity=identities, **filter_kwargs)``.
@@ -208,11 +208,15 @@ class Constructs(mixin.Container, core.Constructs):
         data_axes = self.data_axes()
         array_constructs = self._array_constructs
         construct_type = self._construct_type
+        constructs = self._constructs
+
         ignore = self._ignore
 
         out = {
             axes: {
-                ctype: {} for ctype in array_constructs if ctype not in ignore
+                ctype: {}
+                for ctype in array_constructs
+                if ctype not in ignore and constructs.get(ctype)
             }
             for axes in data_axes.values()
         }
@@ -220,6 +224,92 @@ class Constructs(mixin.Container, core.Constructs):
         for cid, construct in self.filter_by_data(todict=True).items():
             axes = data_axes.get(cid)
             out[axes][construct_type[cid]][cid] = construct
+
+        return out
+
+    def _del_construct(self, key, default=ValueError()):
+        """Remove a metadata construct.
+
+        If a domain axis construct is selected for removal then it can't
+        be spanned by any metdata construct data arrays, nor be referenced
+        by any cell method constructs.
+
+        However, a domain ancillary construct may be removed even if it is
+        referenced by coordinate reference construct. In this case the
+        reference is replace with `None`.
+
+        If a climatological time cell method construct is removed then the
+        climatological status of its corresponding coordinate constructs
+        will be reviewed.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `_get_construct`, `_set_construct`
+
+        :Parameters:
+
+            key: `str`
+                The key of the construct to be removed.
+
+                *Parameter example:*
+                  ``key='auxiliarycoordinate0'``
+
+            default: optional
+                Return the value of the *default* parameter if the
+                construct can not be removed, or does not exist.
+
+                {{default Exception}}
+
+        :Returns:
+
+                The removed construct.
+
+        **Examples:**
+
+        >>> x = c._del_construct('auxiliarycoordinate2')
+
+        """
+        out = super()._del_construct(key, default=default)
+
+        try:
+            is_cell_method = out.construct_type == "cell_method"
+        except AttributeError:
+            is_cell_method = False
+
+        if is_cell_method:
+            # --------------------------------------------------------
+            # Since a cell method construct was deleted, check to see
+            # if it was for climatological time, and if so reset the
+            # climatology status of approriate coordinate constructs.
+            # --------------------------------------------------------
+            qualifiers = out.qualifiers()
+            if "within" in qualifiers or "over" in qualifiers:
+                axes = out.get_axes(default=())
+                if len(axes) == 1 and axes[0] not in self.filter_by_type(
+                    "domain_axis", todict=True
+                ):
+                    coordinates = {}
+                    for ckey, c in self.filter_by_type(
+                        "dimension_coordinate",
+                        "auxiliary_coordinate",
+                        todict=True,
+                    ).items():
+                        if axes != self.data_axes().get(ckey, ()):
+                            continue
+
+                        # This coordinate construct spans the deleted
+                        # cell method axes, so unset its climatology
+                        # setting.
+                        c.set_climatology(False)
+                        coordinates[ckey] = c
+
+                    # Reset the climatology settings of all the
+                    # modified coordinate constructs. Do this because
+                    # there may still be non-deleted cell methods for
+                    # the same axes that still define climatological
+                    # time.
+                    if coordinates:
+                        self._set_climatology(coordinates=coordinates)
 
         return out
 
@@ -445,6 +535,152 @@ class Constructs(mixin.Container, core.Constructs):
 
         return True
 
+    def _set_climatology(self, cell_methods=None, coordinates=None):
+        """Set the climatology flag on approriate coordinate constructs.
+
+        The setting is based on the cell method constructs.
+
+        .. versionadded:: (cfdm) 1.9.0.0
+
+        :Parameters:
+
+            cell_methods: `dict`, optional
+                TODO
+
+            coordinates: `dict`, optional
+                TODO
+
+        :Returns:
+
+            `list` of `str`
+                The domain axis construct identifiers of all
+                climatological time axes. The list may contain axis
+                duplications.
+
+        """
+        out = []
+
+        domain_axes = self.filter_by_type("domain_axis", todict=True)
+
+        if coordinates:
+            cell_methods = self.filter_by_type("cell_method", todict=True)
+        elif cell_methods:
+            coordinates = self.filter_by_type(
+                "dimension_coordinate", "auxiliary_coordinate", todict=True
+            )
+        else:
+            cell_methods = self.filter_by_type("cell_method", todict=True)
+            coordinates = self.filter_by_type(
+                "dimension_coordinate", "auxiliary_coordinate", todict=True
+            )
+
+        for key, cm in cell_methods.items():
+            qualifiers = cm.qualifiers()
+            if not ("within" in qualifiers or "over" in qualifiers):
+                continue
+
+            axes = cm.get_axes(default=())
+            if len(axes) != 1:
+                continue
+
+            axis = axes[0]
+            if axis not in domain_axes:
+                continue
+
+            # Still here? Then this axis is a climatological time axis
+            out.append(axis)
+
+            # Flag the appropriate coordinates as being for
+            # climatological time.
+            axes = set(axes)
+            for ckey, c in coordinates.items():
+                if axes != set(self.data_axes().get(ckey, ())):
+                    # Construct does not span the cell method axes
+                    continue
+
+                # Construct spans the correct axes and has reference
+                # time units
+                c.set_climatology(True)
+
+        return out
+
+    def _set_construct(self, construct, key=None, axes=None, copy=True):
+        """Set a metadata construct.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `_del_construct`, `_get_construct`,
+                     `_set_construct_data_axes`
+
+        :Parameters:
+
+            construct:
+                The metadata construct to be inserted.
+
+            key: `str`, optional
+                The construct identifier to be used for the construct. If
+                not set then a new, unique identifier is created
+                automatically. If the identifier already exists then the
+                exisiting construct will be replaced.
+
+                *Parameter example:*
+                  ``key='cellmeasure0'``
+
+            axes: (sequence of) `str`, optional
+                The construct identifiers of the domain axis constructs
+                spanned by the data array. An exception is raised if used
+                for a metadata construct that can not have a data array,
+                i.e. domain axis, cell method and coordinate reference
+                constructs.
+
+                The axes may also be set afterwards with the
+                `_set_construct_data_axes` method.
+
+                *Parameter example:*
+                  ``axes='domainaxis1'``
+
+                *Parameter example:*
+                  ``axes=['domainaxis1']``
+
+                *Parameter example:*
+                  ``axes=('domainaxis1', 'domainaxis0')``
+
+            copy: `bool`, optional
+                If True then return a copy of the unique selected
+                construct. By default the construct is copied.
+
+        :Returns:
+
+             `str`
+                The construct identifier for the construct.
+
+        **Examples:**
+
+        >>> key = f._set_construct(c)
+        >>> key = f._set_construct(c, copy=False)
+        >>> key = f._set_construct(c, axes='domainaxis2')
+        >>> key = f._set_construct(c, key='cellmeasure0')
+
+        """
+        if copy:
+            # Create a deep copy of the construct
+            construct = construct.copy()
+
+        key = super()._set_construct(construct, key=key, axes=axes, copy=False)
+
+        # Set any appropriate climatology flags
+        construct_type = construct.construct_type
+        if construct_type in ("dimension_coordinate", "auxiliary_coordinate"):
+            self._set_climatology(coordinates={key: construct})
+        elif construct_type == "cell_method":
+            self._set_climatology(cell_methods={key: construct})
+
+        # Return the identifier of the construct
+        return key
+
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def _filter_convert_to_domain_axis(
         self, values, check_axis_identities=True
     ):
@@ -1077,7 +1313,6 @@ class Constructs(mixin.Container, core.Constructs):
 
             len_axes0 = len(axes0)
             for axes1, constructs1 in tuple(axes_to_constructs1.items()):
-
                 constructs1 = constructs1.copy()
 
                 if len_axes0 != len(axes1):
@@ -1112,6 +1347,7 @@ class Constructs(mixin.Container, core.Constructs):
                     # Check that there are matching pairs of equal
                     # constructs
                     matched_construct = True
+
                     for key0, item0 in role_constructs0.items():
                         matched_construct = False
                         for key1, item1 in tuple(role_constructs1.items()):
@@ -1812,8 +2048,14 @@ class Constructs(mixin.Container, core.Constructs):
                 their `!identities` methods, that matches any of the
                 given values.
 
-                If no identities are provided then all constructs are
-                selected.
+            * A metadata construct identity.
+
+              {{construct selection identity}}
+
+            * The key of a metadata construct
+
+            *Parameter example:*
+              ``identity='latitude'``
 
                 {{value match}}
 

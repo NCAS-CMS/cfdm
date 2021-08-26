@@ -16,15 +16,16 @@ def read(
     warnings=False,
     warn_valid=False,
     mask=True,
+    domain=False,
     _implementation=_implementation,
 ):
-    """Read field constructs from a dataset.
+    """Read field or domain constructs from a dataset.
 
     The dataset may be a netCDF file on disk or on an OPeNDAP server,
     or a CDL file on disk (see below).
 
-    The returned field constructs are sorted by the netCDF variable
-    names of their corresponding data variables.
+    The returned constructs are sorted by the netCDF variable names of
+    their corresponding data or domain variables.
 
 
     **CDL files**
@@ -43,7 +44,6 @@ def read(
     constructs in memory will be created with data with all missing
     values.
 
-
     **NetCDF unlimited dimensions**
 
     Domain axis constructs that correspond to NetCDF unlimited
@@ -61,9 +61,10 @@ def read(
     rules in the CF conventions for resolving references to
     out-of-group netCDF variables and dimensions. The group structure
     is preserved in the field construct's netCDF interface. Groups
-    were incorporated into C-1.8. For files with groups that state
+    were incorporated into CF-1.8. For files with groups that state
     compliance to earlier versions of the CF conventions, the groups
-    will be interpreted as per the latest release of CF.
+    will be interpreted as per the latest release of the CF
+    conventions.
 
 
     **CF-compliance**
@@ -82,9 +83,9 @@ def read(
     variable. Other types of non-compliance are not checked, such
     whether or not controlled vocabularies have been adhered to. The
     structural compliance of the dataset may be checked with the
-    `~cfdm.Field.dataset_compliance` method of the field construct, as
-    well as optionally displayed when the dataset is read by setting
-    the *warnings* parameter.
+    `~cfdm.Field.dataset_compliance` method of the returned
+    constructs, as well as optionally displayed when the dataset is
+    read by setting the *warnings* parameter.
 
 
     **Performance**
@@ -98,8 +99,8 @@ def read(
 
     .. versionadded:: (cfdm) 1.7.0
 
-    .. seealso:: `cfdm.write`, `cfdm.Field.convert`,
-                 `cfdm.Field.dataset_compliance`
+    .. seealso:: `cfdm.write`, `cfdm.Field`, `cfdm.Domain`,
+                 `cfdm.unique_constructs`
 
     :Parameters:
 
@@ -140,20 +141,22 @@ def read(
               ``external=('cell_measure_A.nc', 'cell_measure_O.nc')``
 
         extra: (sequence of) `str`, optional
-            Create extra, independent fields from netCDF variables
-            that correspond to particular types metadata
-            constructs. The *extra* parameter may be one, or a
-            sequence, of:
 
-              ==========================  ================================
-              *extra*                     Metadata constructs
-              ==========================  ================================
-              ``'field_ancillary'``       Field ancillary constructs
-              ``'domain_ancillary'``      Domain ancillary constructs
-              ``'dimension_coordinate'``  Dimension coordinate constructs
-              ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
-              ``'cell_measure'``          Cell measure constructs
-              ==========================  ================================
+            Create extra, independent fields from netCDF variables
+            that correspond to particular types metadata constructs.
+            Ignored if *domain* is True.
+
+            The *extra* parameter may be one, or a sequence, of:
+
+            ==========================  ===============================
+            *extra*                     Metadata constructs
+            ==========================  ===============================
+            ``'field_ancillary'``       Field ancillary constructs
+            ``'domain_ancillary'``      Domain ancillary constructs
+            ``'dimension_coordinate'``  Dimension coordinate constructs
+            ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+            ``'cell_measure'``          Cell measure constructs
+            ==========================  ===============================
 
             *Parameter example:*
               To create fields from auxiliary coordinate constructs:
@@ -224,9 +227,9 @@ def read(
             .. versionadded:: (cfdm) 1.8.3
 
         mask: `bool`, optional
-            If False then do not mask by convention when reading the
-            data of field or metadata constructs from disk. By default
-            data is masked by convention.
+            If False then do not mask by convention the data of field
+            and metadata constructs. By default all data is masked by
+            convention.
 
             The masking by convention of a netCDF array depends on the
             values of any of the netCDF variable attributes
@@ -239,15 +242,37 @@ def read(
 
             .. versionadded:: (cfdm) 1.8.2
 
+        domain: `bool`, optional
+            If True then return only the domain constructs that are
+            explicitly defined by CF-netCDF domain variables, ignoring
+            all CF-netCDF data variables. By default only the field
+            constructs defined by CF-netCDF data variables are
+            returned.
+
+            CF-netCDF domain variables are only defined from CF-1.9,
+            so older datasets automatically contain no CF-netCDF
+            domain variables.
+
+            The unique domain constructs of the dataset are easily
+            found with the `cfdm.unique_constructs` function. For
+            example::
+
+               >>> d = cfdm.read('file.nc', domain=True)
+               >>> ud = cfdm.unique_constructs(d)
+               >>> f = cfdm.read('file.nc')
+               >>> ufd = cfdm.unique_constructs(x.domain for x in f)
+
+            .. versionadded:: (cfdm) 1.9.0.0
+
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that provides the
             returned field constructs.
 
     :Returns:
 
-        `list`
-            The field constructs found in the dataset. The list may be
-            empty.
+        `list` of `Field` or `Domain`
+            The field constructs found in the dataset, or the domain
+            constructs if *domain* is True. The list may be empty.
 
     **Examples:**
 
@@ -285,7 +310,7 @@ def read(
         raise IOError(f"Can't read non-existent file {filename}")
 
     # ----------------------------------------------------------------
-    # Read the file into field constructs
+    # Read the file into field/domain contructs
     # ----------------------------------------------------------------
 
     # Initialise a netCDF read object
@@ -311,6 +336,7 @@ def read(
                 warnings=warnings,
                 warn_valid=warn_valid,
                 mask=mask,
+                domain=domain,
                 extra_read_vars=None,
             )
         except MaskError:
@@ -336,6 +362,6 @@ def read(
         raise IOError(f"Can't determine format of file {filename}")
 
     # ----------------------------------------------------------------
-    # Return the field constructs
+    # Return the field or domain constructs
     # ----------------------------------------------------------------
     return fields

@@ -54,8 +54,9 @@ def example_field(n, _implementation=_implementation):
 
     :Returns:
 
-        `Field`
-            The example field construct.
+        `Field` or `int`
+            The example field construct, or if *n_field* is True, the
+            number of field constructs that are avaiable.
 
     **Examples:**
 
@@ -4480,7 +4481,7 @@ def example_field(n, _implementation=_implementation):
         f = Field()
         f.set_properties(
             {
-                "Conventions": "CF-1.8",
+                "Conventions": "CF-1.9",
                 "featureType": "timeSeries",
                 "comment": "global comment",
                 "standard_name": "precipitation_amount",
@@ -4786,7 +4787,7 @@ def example_field(n, _implementation=_implementation):
         f = Field()
         f.set_properties(
             {
-                "Conventions": "CF-1.8",
+                "Conventions": "CF-1.9",
                 "_FillValue": -1073741824.0,
                 "standard_name": "eastward_wind",
                 "units": "m s-1",
