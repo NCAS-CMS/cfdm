@@ -1310,7 +1310,7 @@ class Field(
         #
         # field: specific_humidity
         field = {{package}}.Field()
-        field.set_properties({'Conventions': 'CF-1.8', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+        field.set_properties({'Conventions': 'CF-1.9', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
         field.nc_set_variable('q')
         data = {{package}}.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
         field.set_data(data)
@@ -1377,7 +1377,7 @@ class Field(
         >>> print(q.creation_commands(representative_data=True, namespace='',
         ...                           indent=4, header=False))
             field = Field()
-            field.set_properties({'Conventions': 'CF-1.8', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+            field.set_properties({'Conventions': 'CF-1.9', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
             field.nc_set_variable('q')
             data = <Data(5, 8): [[0.007, ..., 0.013]] 1>  # Representative data
             field.set_data(data)
