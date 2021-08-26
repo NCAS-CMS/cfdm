@@ -32,11 +32,11 @@ In order to satisfy both needs there is a stand-alone core
 implementation, the :ref:`cfdm.core <class_core>` package, that
 includes no functionality beyond that mandated by the CF data model
 (and therefore excludes any information about the netCDF encoding of
-field constructs). The core implementation provides the basis (via
+constructs). The core implementation provides the basis (via
 inheritance) for the :ref:`cfdm <class_extended>` package that allows,
 in addition, the reading and writing of netCDF datasets, as well as
-comprehensive inspection capabilities and extra field construct
-modification capabilities.
+comprehensive inspection capabilities and extra field and domain
+construct modification capabilities.
 
 ----
 
@@ -51,11 +51,11 @@ whose value is not a valid `UDUNITS
 <https://www.unidata.ucar.edu/software/udunits>`_ string is not
 CF-compliant, but is allowed by the CF data model. This is also true,
 in general, for the cfdm package. The few exceptions to this occur
-when field constructs are read from, or written to, a netCDF file: it
-may not be possible to parse a non-CF-compliant netCDF variable or
-attribute to create an unambiguous CF data model construct; or create
-an unambiguous netCDF variable or attribute from a non-CF-compliant CF
-data model construct.
+when field and domain constructs are read from, or written to, a
+netCDF file: it may not be possible to parse a non-CF-compliant netCDF
+variable or attribute to create an unambiguous CF data model
+construct; or create an unambiguous netCDF variable or attribute from
+a non-CF-compliant CF data model construct.
 
 ----
 
@@ -64,7 +64,7 @@ data model construct.
 
 The cfdm package has, with few exceptions, only the functionality
 required to read and write datasets, and to create, modify and inspect
-field constructs in memory.
+field and domain constructs in memory.
 
 The cfdm package is not, and is not meant to be, a general analysis
 package. Therefore it can't, for example, regrid field constructs to
