@@ -248,7 +248,6 @@ crs.coordinate_conversion
 crs.coordinate_conversion.parameters()
 crs.coordinate_conversion.domain_ancillaries()
 print(t.cell_methods())
-t.cell_methods().ordered()
 cm = t.constructs('method:mean').value()
 cm
 cm.get_axes()

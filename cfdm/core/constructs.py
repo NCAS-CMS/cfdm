@@ -1,6 +1,3 @@
-# TODO - remove the next line when Python 3.6 is deprecated
-from collections import OrderedDict
-
 from . import abstract
 
 
@@ -126,16 +123,12 @@ class Constructs(abstract.Container):
                 return
 
             source_constructs = source._constructs
-            # TODO - remove the next line when Python 3.6 is deprecated
-            source_ordered_constructs = source._ordered_constructs
 
             self._field_data_axes = source._field_data_axes
 
             self._key_base = source._key_base.copy()
             self._array_constructs = source._array_constructs.copy()
             self._non_array_constructs = source._non_array_constructs.copy()
-            # TODO - remove the next line when Python 3.6 is deprecated
-            self._ordered_constructs = source_ordered_constructs.copy()
             self._construct_axes = source._construct_axes.copy()
             self._construct_type = source._construct_type.copy()
 
@@ -155,13 +148,7 @@ class Constructs(abstract.Container):
                     continue
 
                 if copy:
-                    # TODO - Replace the next four lines when Python
-                    #        3.6 is deprecated with "new_v = {}"
-                    if construct_type in source_ordered_constructs:
-                        new_v = OrderedDict()
-                    else:
-                        new_v = {}
-
+                    new_v = {}
                     for cid, construct in source_constructs[
                         construct_type
                     ].items():
@@ -182,13 +169,7 @@ class Constructs(abstract.Container):
                     continue
 
                 if copy:
-                    # TODO - Replace the next four lines when Python
-                    #        3.6 is deprecated with "new_v = {}"
-                    if construct_type in source_ordered_constructs:
-                        new_v = OrderedDict()
-                    else:
-                        new_v = {}
-
+                    new_v = {}
                     for cid, construct in source_constructs[
                         construct_type
                     ].items():
@@ -212,8 +193,6 @@ class Constructs(abstract.Container):
 
         self._array_constructs = set()
         self._non_array_constructs = set()
-        # TODO - remove the next line when Python 3.6 is deprecated
-        self._ordered_constructs = set()
 
         self._construct_axes = {}
 
@@ -255,18 +234,12 @@ class Constructs(abstract.Container):
         if cell_method:
             self._key_base["cell_method"] = cell_method
             self._non_array_constructs.add("cell_method")
-            # TODO - remove the next line when Python 3.6 is deprecated
-            self._ordered_constructs.add("cell_method")
 
         for x in self._array_constructs:
             self._constructs[x] = {}
 
         for x in self._non_array_constructs:
             self._constructs[x] = {}
-
-        # TODO - remove the next two lines when Python 3.6 is deprecated
-        for x in self._ordered_constructs:
-            self._constructs[x] = OrderedDict()
 
     def __contains__(self, key):
         """Implements membership test operators for construct keys.
@@ -781,8 +754,6 @@ class Constructs(abstract.Container):
         self._key_base.clear()
         self._array_constructs.clear()
         self._non_array_constructs.clear()
-        # TODO - remove the next line when Python 3.6 is deprecated
-        self._ordered_constructs.clear()
         self._construct_axes.clear()
         self._construct_type.clear()
         self._constructs.clear()
@@ -817,8 +788,6 @@ class Constructs(abstract.Container):
         self._key_base.update(other._key_base)
         self._array_constructs.update(other._array_constructs)
         self._non_array_constructs.update(other._non_array_constructs)
-        # TODO - remove the next line when Python 3.6 is deprecated
-        self._ordered_constructs.update(other._ordered_constructs)
         self._construct_axes.update(other._construct_axes)
         self._construct_type.update(other._construct_type)
         self._constructs.update(other._constructs)
@@ -1319,7 +1288,6 @@ class Constructs(abstract.Container):
 
         return key
 
-    # TODO - Deprecate this method when Python 3.6 is deprecated
     def ordered(self):
         """Return the constructs in their predetermined order.
 
@@ -1327,6 +1295,10 @@ class Constructs(abstract.Container):
         which they where added. There is no predetermined ordering for
         all other construct types, and a exception is raised if any
         non-cell method constructs are present.
+
+        Deprecated at version (cfdm) 1.9.0.0, since all metadata
+        constructs are now stored in the order in which they where
+        added.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -1357,31 +1329,10 @@ class Constructs(abstract.Container):
                      ('cell_method_for_axis_0', <{{repr}}CellMethod: domainaxis0: minimum>)])
 
         """
-        # Filter out all construct types not present i.e. with value of {}
-        ignore = self._ignore
-        existing_construct_types = {
-            c_type: c
-            for c_type, c in self._constructs.items()
-            if c and c_type not in ignore
-        }
-
-        number_construct_types = len(existing_construct_types)
-        if number_construct_types > 1:
-            raise ValueError(
-                f"Can't order multiple construct types: {self!r}"
-            )  # pragma: no cover
-        elif number_construct_types == 0:
-            return existing_construct_types
-
-        # Only one existing construct type as guaranteed above, so check items
-        if self._ordered_constructs != existing_construct_types.keys():
-            raise ValueError(
-                f"Can't order un-orderable construct type: {self!r}"
-            )  # pragma: no cover
-
-        return existing_construct_types[
-            tuple(self._ordered_constructs)[0]
-        ].copy()
+        raise DeprecationWarning(
+            "This method is no longer required from v1.9.0.0, and"
+            "will be removed at a later date"
+        )
 
     def replace(self, key, construct, axes=None, copy=True):
         """Replace one metadata construct with another.

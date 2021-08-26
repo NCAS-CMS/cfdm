@@ -1,14 +1,6 @@
 import logging
 from itertools import zip_longest
-
-# TODO - replace the try block with "from re import Pattern" when
-#        Python 3.6 is deprecated
-try:
-    from re import Pattern
-except ImportError:  # pragma: no cover
-    python36 = True  # pragma: no cover
-else:
-    python36 = False
+from re import Pattern
 
 from . import core, mixin
 from .core.functions import deepcopy
@@ -913,20 +905,11 @@ class Constructs(mixin.Container, core.Constructs):
                 Whether or not the two values match.
 
         """
-        # TODO - delete the "if python36:" clause Python 3.6 is deprecated
-        if python36:
-            try:  # pragma: no cover
-                return value0.search(value1)  # pragma: no cover
-            except AttributeError:  # pragma: no cover
-                pass  # pragma: no cover
-            except TypeError:  # pragma: no cover
-                return False  # pragma: no cover
-        else:
-            if isinstance(value0, Pattern):
-                try:
-                    return value0.search(value1)
-                except TypeError:
-                    return False
+        if isinstance(value0, Pattern):
+            try:
+                return value0.search(value1)
+            except TypeError:
+                return False
 
         if basic:
             return value0 == value1

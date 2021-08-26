@@ -2090,19 +2090,10 @@ cell method constructs to be recorded.
     'cellmethod1': <CellMethod: domainaxis3: maximum>}
 
 The application of cell methods is not commutative (e.g. a mean of
-variances is generally not the same as a variance of means), so a
-`Constructs` instance has an `~Constructs.ordered` method to retrieve
-the cell method constructs in the same order that they were were added
-to the field construct during :ref:`field construct creation
-<Field-creation-in-memory>`.
-
-.. code-block:: python
-   :caption: *Retrieve the cell method constructs in the same order
-             that they were applied.*
-	     
-   >>> t.cell_methods().ordered()
-   OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
-                ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
+variances is generally not the same as a variance of means), and the
+cell methods are assumed to have been applied in the order in which
+they were added to the field construct during :ref:`field construct
+creation <Field-creation-in-memory>`.
 
 The axes to which the method applies, the method itself, and any
 qualifying properties are accessed with the
