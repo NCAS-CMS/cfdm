@@ -107,7 +107,7 @@ class Implementation(metaclass=abc.ABCMeta):
 
         >>> i = cfdm.implementation()  # child CF data model implementation
         >>> i.get_cf_version()
-        '1.8'
+        '1.9'
 
         """
         return self._cf_version
