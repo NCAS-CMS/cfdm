@@ -74,7 +74,7 @@
     * If there are words that are in fact valid, add the valid words to
       the list of false positives for the spelling checker extension,
       `docs/source/spelling_false_positives.txt`.
-    * Correct any words that are not valid in the codebase under `cf` or
+    * Correct any words that are not valid in the codebase under `cfdm` or
       in the `docs/source` content files.
 
   * Note that, in the case there are many words raised as warnings, it
