@@ -654,7 +654,7 @@ class Field(
         """Return all axes which are climatological time axes.
 
         This is ascertained by inspecting the axes of any cell methods
-        cnstructs.
+        constructs.
 
         .. versionadded:: (cfdm) 1.7.0
 

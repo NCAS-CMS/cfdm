@@ -1705,7 +1705,7 @@ method of the `Data` instance.
 
 The :ref:`domain of the CF data model <CF-data-model>` is defined
 collectively by various other metadata constructs. It is represented
-by the `Domain` class. A domain construct may exist indpendently, or
+by the `Domain` class. A domain construct may exist independently, or
 is accessed from a field construct with its `~Field.domain` attribute,
 or `~Field.get_domain` method.
 
@@ -3870,7 +3870,7 @@ The fields constructs read from a grouped file are identical to those
 read from the flat version of the file:
    
 .. code-block:: python
-   :caption: *Demonstrate that the field constructs are indpendent of
+   :caption: *Demonstrate that the field constructs are independent of
              the dataset structure.*
 
    >>> f = cfdm.read('flat.nc')[0]
