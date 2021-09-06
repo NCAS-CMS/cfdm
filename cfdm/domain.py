@@ -834,9 +834,9 @@ class Domain(
 
         By default the identity is the first found of the following:
 
-        * The ``cf_role`` property, preceeded by ``'cf_role='``.
-        * The ``long_name`` property, preceeded by ``'long_name='``.
-        * The netCDF variable name, preceeded by ``'ncvar%'``.
+        * The ``cf_role`` property, preceded by ``'cf_role='``.
+        * The ``long_name`` property, preceded by ``'long_name='``.
+        * The netCDF variable name, preceded by ``'ncvar%'``.
         * The value of the *default* parameter.
 
         .. versionadded:: (cfdm) 1.9.0.0
@@ -891,11 +891,11 @@ class Domain(
 
         The identities comprise:
 
-        * The ``cf_role`` property, preceeded by ``'cf_role='``.
-        * The ``long_name`` property, preceeded by ``'long_name='``.
-        * All other properties, preceeded by the property name and a
+        * The ``cf_role`` property, preceded by ``'cf_role='``.
+        * The ``long_name`` property, preceded by ``'long_name='``.
+        * All other properties, preceded by the property name and a
           equals e.g. ``'foo=bar'``.
-        * The netCDF variable name, preceeded by ``'ncvar%'``.
+        * The netCDF variable name, preceded by ``'ncvar%'``.
 
         .. versionadded:: (cfdm) 1.9.0.0
 

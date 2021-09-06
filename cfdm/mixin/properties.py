@@ -440,9 +440,9 @@ class Properties(Container):
         The identities comprise:
 
         * The ``standard_name`` property.
-        * All properties, preceeded by the property name and an equals
+        * All properties, preceded by the property name and an equals
           e.g. ``'long_name=Air temperature'``.
-        * The netCDF variable name, preceeded by ``'ncvar%'``.
+        * The netCDF variable name, preceded by ``'ncvar%'``.
 
         .. versionadded:: (cfdm) 1.7.0
 

@@ -56,7 +56,7 @@ def example_field(n, _implementation=_implementation):
 
         `Field` or `int`
             The example field construct, or if *n_field* is True, the
-            number of field constructs that are avaiable.
+            number of field constructs that are available.
 
     **Examples:**
 

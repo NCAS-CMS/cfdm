@@ -209,7 +209,7 @@ class Domain(mixin.FieldDomain, abstract.Properties):
 
     @classmethod
     def fromconstructs(cls, constructs, copy=False):
-        """Return a new domain contining the given metadata constructs.
+        """Return a new domain containing the given metadata constructs.
 
         The new domain acts as a view to the given constructs,
         i.e. changes to the domain, such as the addition or removal of

@@ -112,7 +112,6 @@ Bounds
 
 Geometries
 ^^^^^^^^^^
->>>>>>> ab1f99fdad464f98cab1cba48688c93f68aba46e
 
 .. rubric:: Methods
 	    
