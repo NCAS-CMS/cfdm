@@ -522,8 +522,7 @@ class CFDMImplementation(Implementation):
         :Returns:
 
         """
-        # TODO - remove the ".ordered()" when Python 3.6 is deprecated
-        return field.cell_methods().ordered()
+        return field.cell_methods()
 
     def get_cell_method_axes(self, cell_method, default=None):
         """Return the axes of a cell method construct.

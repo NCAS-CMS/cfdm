@@ -82,9 +82,9 @@ Miscellaneous
    ~cfdm.Constructs.copy
    ~cfdm.Constructs.shallow_copy
    ~cfdm.Constructs.equals
-   ~cfdm.Constructs.ordered
    ~cfdm.Constructs.replace
    ~cfdm.Constructs.todict
+   ~cfdm.Constructs.ordered
 
 Dictionary-access methods
 -------------------------

@@ -1,5 +1,4 @@
 import atexit
-import collections
 import datetime
 import faulthandler
 import os
@@ -336,10 +335,6 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(len(constructs), n)
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.CellMethod)
-
-        # TODO - remove the next two lines when Python 3.6 is deprecated
-        ordered = f.cell_methods().ordered()
-        self.assertIsInstance(ordered, collections.OrderedDict)
 
         constructs = f.coordinate_references()
         n = 2
