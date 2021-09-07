@@ -2,8 +2,10 @@ version 1.9.0.0
 ---------------
 ----
 
-**2021-??-??**
+**2021-09-??**
 
+* Python 3.6 support removed
+  (https://github.com/NCAS-CMS/cfdm/issues/139)
 * Conversion of `cfdm.Domain` to a non-abstract that may be read from
   and written to a netCDF dataset
   (https://github.com/NCAS-CMS/cfdm/issues/111)
