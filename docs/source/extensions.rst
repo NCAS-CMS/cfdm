@@ -209,8 +209,8 @@ subclassed, and a new write-to-disk function defined, to override
 aspects of the mapping from CF data model constructs to netCDF
 elements in a dataset.
 
-The _custom dictionary
-^^^^^^^^^^^^^^^^^^^^^^
+**The _custom dictionary**
+--------------------------
 
 All cfdm classes have a `_custom` attribute that contains a dictionary
 meant for use in external subclasses.
@@ -242,8 +242,9 @@ equivalent) operation is called. The latter approach should be
 implemented in the subclass's `__init__` method, similarly to this:
 
 .. code-block:: python
-   :caption: *Ensure that the _custom dictionary 'x' value is deep
-             copied when a deep copy of an instance is requested.*
+   :caption: *If desired, ensure that the _custom dictionary 'x'
+             value is deep copied when a deep copy of an instance is
+             requested.*
 
    import copy
    
@@ -259,12 +260,12 @@ implemented in the subclass's `__init__` method, similarly to this:
                except (AttributeError, KeyError):
                    pass  
 	   
-Documentation
-^^^^^^^^^^^^^
+**Documentation**
+-----------------
 
 The cfdm package uses a "docstring rewriter" that allows commonly used
-parts of class method docstrings to be written once in a central
-location, and then inserted into each class at import time. In
+parts of class and class method docstrings to be written once in a
+central location, and then inserted into each class at import time. In
 addition, parts of a docstring are modified to reflect the appropriate
 package and class names. This functionality extends to subclasses of
 cfdm classes. New docstring substitutions may also be defined for the
@@ -275,8 +276,8 @@ create new docstring substitutions for extensions, and how to modify
 the substitutions defined in the cfdm package.
 
 
-A complete example
-^^^^^^^^^^^^^^^^^^
+**A complete example**
+----------------------
 
 See `cf-python <https://github.com/NCAS-CMS/cf-python>`_ for a
 complete example of extending the cfdm package in the manner described
