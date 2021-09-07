@@ -316,23 +316,23 @@ def environment(display=True, paths=True):
 
     >>> cfdm.environment()
     Platform: Linux-4.15.0-72-generic-x86_64-with-debian-stretch-sid
-    HDF5 library: 1.10.2
-    netcdf library: 4.6.1
-    python: 3.7.3 /home/user/anaconda3/bin/python
-    netCDF4: 1.5.3 /home/user/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py
-    cftime: 1.2.1 /home/user/anaconda3/lib/python3.7/site-packages/cftime/__init__.py
-    numpy: 1.16.2 /home/user/anaconda3/lib/python3.7/site-packages/numpy/__init__.py
-    cfdm: 1.8.8.0
+    HDF5 library: 1.10.6
+    netcdf library: 4.7.4
+    python: 3.8.2 /home/user/anaconda3/bin/python
+    netCDF4: 1.5.6 /home/user/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py
+    cftime: 1.5.0 /home/user/anaconda3/lib/python3.7/site-packages/cftime/__init__.py
+    numpy: 1.18.1 /home/user/anaconda3/lib/python3.7/site-packages/numpy/__init__.py
+    cfdm: 1.9.0.0
 
     >>> cfdm.environment(paths=False)
     Platform: Linux-4.15.0-72-generic-x86_64-with-debian-stretch-sid
-    HDF5 library: 1.10.2
-    netcdf library: 4.6.1
-    python: 3.7.3
-    netCDF4: 1.5.3
-    cftime: 1.2.1
-    numpy: 1.16.2
-    cfdm: 1.8.8.0
+    HDF5 library: 1.10.6
+    netcdf library: 4.7.4
+    python: 3.8.2
+    netCDF4: 1.5.6
+    cftime: 1.5.0
+    numpy: 1.18.1
+    cfdm: 1.9.0.0
 
     """
     out = core.environment(display=False, paths=paths)  # get all core env
