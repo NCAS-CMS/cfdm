@@ -7,9 +7,18 @@
 ============
 ----
 
+Documentation for all versions of cfdm.
+
 .. contents::
    :local:
    :backlinks: entry
+
+**CF-1.9**
+----------
+
+* `Version 1.9.0.0 <https://ncas-cms.github.io/cfdm/1.9.0.0>`_ (2021-09-??)
+
+----
 
 **CF-1.8**
 ----------
