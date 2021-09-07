@@ -124,6 +124,9 @@ read [#caveat]_.
 
 All formats of netCDF3 and netCDF4 files can be read.
 
+The file name may describe relative paths, and standard tilde and
+shell parameter expansions are applied to it.
+
 The following file types can be read:
 
 * All formats of netCDF3 and netCDF4 files can be read, containing
@@ -3336,6 +3339,9 @@ field constructs, to a netCDF file on disk:
                    : time(1) = [2019-01-01 00:00:00]
    >>> cfdm.write(q, 'q_file.nc')
 
+The file name may describe relative paths, and standard tilde and
+shell parameter expansions are applied to it.
+
 The new dataset is structured as follows:
 
 .. code-block:: console
@@ -3891,6 +3897,9 @@ other netCDF files known as "external files". External variables may,
 however, be incorporated into the field constructs of the dataset, as
 if they had actually been stored in the same file, simply by providing
 the external file names to the `cfdm.read` function.
+
+An external variables file name may describe relative paths, and
+standard tilde and shell parameter expansions are applied to it.
 
 This is illustrated with the files ``parent.nc`` (found in the
 :ref:`sample datasets <Sample-datasets>`):

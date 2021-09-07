@@ -4641,11 +4641,14 @@ class NetCDFWrite(IOWrite):
         """
         logger.info(f"Writing to {fmt}")  # pragma: no cover
 
+        # Expand file name
+        filename = os.path.expanduser(os.path.expandvars(filename))
+
         # ------------------------------------------------------------
         # Initialise netCDF write parameters
         # ------------------------------------------------------------
         self.write_vars = {
-            "filename": os.path.expanduser(os.path.expandvars(filename)),
+            "filename": filename,
             # Format of output file
             "fmt": None,
             # netCDF4.Dataset instance
