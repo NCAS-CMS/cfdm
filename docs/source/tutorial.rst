@@ -67,9 +67,9 @@ This indicates which version of the CF conventions are represented by
 this release of the cfdm package, and therefore the version can not be
 changed.
 
-Note, however, that datasets of different versions may be :ref:`read
-<Reading-datasets>` from, or :ref:`written <Writing-to-disk>` to,
-disk.
+Note, however, that datasets of different versions may also be
+:ref:`read <Reading-datasets>` from, or :ref:`written
+<Writing-to-disk>` to, disk.
 
 ----
 
@@ -120,7 +120,7 @@ constructs. This list contains a field construct to represent each of
 the CF-netCDF data variables in the file.
 
 Datasets of any version of CF up to and including CF-|version| can be
-read.
+read [#caveat]_.
 
 All formats of netCDF3 and netCDF4 files can be read.
 
@@ -300,7 +300,7 @@ components, and shows the first and last values of all data arrays:
    ----------------------------------
    Field: specific_humidity (ncvar%q)
    ----------------------------------
-   Conventions = 'CF-1.7'
+   Conventions = 'CF-1.9'
    project = 'research'
    standard_name = 'specific_humidity'
    units = '1'
@@ -334,7 +334,7 @@ components, and shows the first and last values of all data arrays:
    ---------------------------------
    Field: air_temperature (ncvar%ta)
    ---------------------------------
-   Conventions = 'CF-1.7'
+   Conventions = 'CF-1.9'
    project = 'research'
    standard_name = 'air_temperature'
    units = 'K'
@@ -471,7 +471,7 @@ retrieved with the `~Field.properties` method:
    :caption: *Retrieve all of the descriptive properties*
 	     
    >>> t.properties()
-   {'Conventions': 'CF-1.7',
+   {'Conventions': 'CF-1.9',
     'project': 'research',
     'standard_name': 'air_temperature',
     'units': 'K'}
@@ -507,19 +507,19 @@ properties may be completely removed with the
 	     
    >>> original = t.properties()
    >>> original
-   {'Conventions': 'CF-1.7',
+   {'Conventions': 'CF-1.9',
     'project': 'research',
     'standard_name': 'air_temperature',
     'units': 'K'}
    >>> t.set_properties({'foo': 'bar', 'units': 'K'})
    >>> t.properties()
-   {'Conventions': 'CF-1.7',
+   {'Conventions': 'CF-1.9',
     'foo': 'bar',
     'project': 'research',
     'standard_name': 'air_temperature',
     'units': 'K'}
    >>> t.clear_properties()
-    {'Conventions': 'CF-1.7',
+    {'Conventions': 'CF-1.9',
     'foo': 'bar',
     'project': 'research',
     'standard_name': 'air_temperature',
@@ -528,7 +528,7 @@ properties may be completely removed with the
    {}
    >>> t.set_properties(original)
    >>> t.properties()
-   {'Conventions': 'CF-1.7',
+   {'Conventions': 'CF-1.9',
     'project': 'research',
     'standard_name': 'air_temperature',
     'units': 'K'}
@@ -2640,7 +2640,7 @@ the desired field construct. The commands are produced by the
    #
    # field: specific_humidity
    field = cfdm.Field()
-   field.set_properties({'Conventions': 'CF-1.8', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+   field.set_properties({'Conventions': 'CF-1.9', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
    field.nc_set_variable('q')
    data = cfdm.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
    field.set_data(data)
@@ -3369,7 +3369,7 @@ The new dataset is structured as follows:
    		humidity:coordinates = "time" ;
    
    // global attributes:
-   		:Conventions = "CF-1.7" ;
+   		:Conventions = "CF-1.9" ;
    		:project = "research" ;
    }
 
@@ -3493,9 +3493,9 @@ netCDF data variable.
    {'Conventions': None, 'project': None}
    >>> f.nc_set_global_attribute('model')
    >>> f.nc_global_attributes()
-   {'Conventions': None, 'model': None, 'project': None}
+   {'Conventions': None, 'project': None, 'model': None}
    >>> f.nc_global_attributes(values=True)
-   {'Conventions': 'CF-1.7', 'project': 'research', 'model': 'model_A'}
+   {'Conventions': 'CF-1.9', 'project': 'research', 'model': 'model_A'}
    >>> cfdm.write(f, 'f_file.nc')
 
 It is possible to create both a netCDF global attribute and a netCDF
@@ -3516,17 +3516,18 @@ attribute from the file.
 	     
    >>> f.set_property('information', 'variable information')
    >>> f.properties()
-   {'Conventions': 'CF-1.7',
-    'information': 'variable information',
+   {'Conventions': 'CF-1.9',
     'project': 'research',
     'standard_name': 'specific_humidity',
-    'units': '1'}
+    'units': '1',
+    'model': 'model_A',
+    'information': 'variable information'}
    >>> f.nc_set_global_attribute('information', 'global information')
    >>> f.nc_global_attributes()
    {'Conventions': None,
-   'information': 'global information',
+    'project': None,
     'model': None,
-    'project': None}
+    'information': 'global information'}
    >>> cfdm.write(f, 'f_file.nc')
 
 NetCDF global attributes defined with the *file_descriptors* keyword
@@ -3540,22 +3541,22 @@ constructs.
    :caption: *Insist that the "history" property is written as netCDF
              a global attribute, with the "file_descriptors" keyword.*
 	     
-   >>> cfdm.write(f, 'f_file_nc', file_descriptors={'history': 'created in 2020'})
+   >>> cfdm.write(f, 'f_file.nc', file_descriptors={'history': 'created in 2021'})
    >>> f_file = cfdm.read('f_file.nc')[0]
-   >>> f_file.nc_global_attributes()
    >>> f_file.properties()
-   {'Conventions': 'CF-1.7',
-    'history': 'created in 2020',
-    'information': 'variable information',
+   {'Conventions': 'CF-1.9',
+    'history': 'created in 2021',
     'model': 'model_A',
     'project': 'research',
+    'information': 'variable information',
     'standard_name': 'specific_humidity',
     'units': '1'}
    >>> f_file.nc_global_attributes()
    {'Conventions': None,
     'history': None,
-    'information': 'global information',
-    'project': None}
+    'model': None,
+    'project': None,
+    'information': 'global information'}
 
 .. _Conventions:
 
@@ -3572,7 +3573,7 @@ either technique.
 .. code-block:: python
    :caption: *Two ways to add additional conventions to the
              "Conventions" netCDF global attribute.*
-	     
+	     f_file_
    >>> f_file.set_property('Conventions', 'UGRID1.0')
    >>> cfdm.write(f, 'f_file.nc', Conventions='UGRID1.0')   
 
@@ -3656,7 +3657,7 @@ variable):
    		humidity:cell_methods = "area: mean" ;
    
    // global attributes:
-   		:Conventions = "CF-1.7" ;
+   		:Conventions = "CF-1.9" ;
    		:project = "research" ;
    }
 
@@ -4637,6 +4638,16 @@ The content of the new file is:
      4, 0, 5 ;
    }
 
+
+.. _Coordinate-subampling:
+
+Coordinate subsampling
+^^^^^^^^^^^^^^^^^^^^^^
+
+`Lossy compression by coordinate subsampling`_ was introduced into the
+CF conventions at CF-1.9, but is not yet available in cfdm. It will be
+ready in a future 1.9.x.0 release.
+
 ----
 
 .. _Controlling-output-messages:
@@ -4777,27 +4788,20 @@ if any, are filtered out.
           OPeNDAP support enabled. See
           http://unidata.github.io/netcdf4-python for details.
 
-.. .. [#language] In the terminology of the CF data model, a "construct"
-                  is an abstract concept which is distinct from its
-                  realization, e.g. a `Field` instance is not, strictly
-                  speaking, a field construct. However, the distinction
-                  is moot and the descriptive language used in this
-                  tutorial is greatly simplified by allowing the term
-                  "construct" to mean "class instance" (e.g. "field
-                  construct" means "`Field` instance"), and this
-                  convention is applied throughout this tutorial. The
-                  phrase "CF data model construct" is used on the few
-                  occasions when the original abstract meaning is
-                  intended.
-	    
+.. [#caveat] `Lossy compression by coordinate subsampling`_ was
+             introduced into the CF conventions at CF-1.9, but is not
+             yet available in cfdm. It will be ready in a future
+             1.9.x.0 release.
+
 .. External links to the CF conventions (will need updating with new versions of CF)
    
-.. _External variables:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#external-variables
-.. _Discrete sampling geometry (DSG): http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#discrete-sampling-geometries
-.. _incomplete multidimensional form: http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_incomplete_multidimensional_array_representation
-.. _Compression by gathering:         http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#compression-by-gathering
-.. _contiguous:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_contiguous_ragged_array_representation
-.. _indexed:                          http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_indexed_ragged_array_representation
-.. _indexed contiguous:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
-.. _geometries:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#geometries
-.. _Hierarchical groups:              http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#groups
+.. _External variables:                          http://cfconventions.org/Data/cf-conventions/cf-conventions-1.9/cf-conventions.html#external-variables
+.. _Discrete sampling geometry (DSG):            http://cfconventions.org/Data/cf-conventions/cf-conventions-1.9/cf-conventions.html#discrete-sampling-geometries
+.. _incomplete multidimensional form:            http://cfconventions.org/Data/cf-conventions/cf-conventions-1.9/cf-conventions.html#_incomplete_multidimensional_array_representation
+.. _Compression by gathering:                    http://cfconventions.org/Data/cf-conventions/cf-conventions-1.9/cf-conventions.html#compression-by-gathering
+.. _contiguous:                                  http://cfconventions.org/Data/cf-conventions/cf-conventions-1.9/cf-conventions.html#_contiguous_ragged_array_representation
+.. _indexed:                                     http://cfconventions.org/Data/cf-conventions/cf-conventions-1.9/cf-conventions.html#_indexed_ragged_array_representation
+.. _indexed contiguous:                          http://cfconventions.org/Data/cf-conventions/cf-conventions-1.9/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
+.. _geometries:                                  http://cfconventions.org/Data/cf-conventions/cf-conventions-1.9/cf-conventions.html#geometries
+.. _Hierarchical groups:                         http://cfconventions.org/Data/cf-conventions/cf-conventions-1.9/cf-conventions.html#groups
+.. _Lossy compression by coordinate subsampling: http://cfconventions.org/Data/cf-conventions/cf-conventions-1.9/cf-conventions.html#compression-by-coordinate-subsampling
