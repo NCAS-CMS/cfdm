@@ -1,6 +1,9 @@
-version 1.9.0.0
+.. contents::
+   :local:
+   :backlinks: entry
+
+Version 1.9.0.0
 ---------------
-----
 
 **2021-09-??**
 
@@ -30,9 +33,10 @@ version 1.9.0.0
 * Fix file name expansions in `cfdm.write`
   (https://github.com/NCAS-CMS/cfdm/issues/157)
   
-version 1.8.9.0
----------------
 ----
+
+Version 1.8.9.0
+---------------
 
 **2021-05-25**
 
@@ -56,9 +60,10 @@ version 1.8.9.0
 * Changed dependency: ``cftime>=1.5.0``
 * Changed dependency: ``netCDF4>=1.5.4``
 
-version 1.8.8.0
----------------
 ----
+
+Version 1.8.8.0
+---------------
 
 **2020-12-18**
 
@@ -69,9 +74,10 @@ version 1.8.8.0
   (https://github.com/NCAS-CMS/cfdm/issues/98)
 * Changed dependency: ``cftime>=1.3.0``
 
-version 1.8.7.0
----------------
 ----
+
+Version 1.8.7.0
+---------------
 
 **2020-10-09**
 
@@ -97,9 +103,10 @@ version 1.8.7.0
 * Fixed bug that prevented the writing of multiple fields to netCDF when
   at least one dimension was shared between some of the fields.
 
-version 1.8.6.0
----------------
 ----
+
+Version 1.8.6.0
+---------------
 
 **2020-07-24**
 
@@ -140,18 +147,20 @@ version 1.8.6.0
 * Changed dependency: ``cftime>=1.2.1``
 * Removed dependency: ``future``
 
-version 1.8.5
--------------
 ----
+
+Version 1.8.5
+-------------
 
 **2020-06-10**
 
 * Fixed bug that prevented the reading of certain netCDF files, such
   as those with at least one external variable.
 
-version 1.8.4
--------------
 ----
+
+Version 1.8.4
+-------------
 
 **2020-06-08**
 
@@ -170,9 +179,10 @@ version 1.8.4
   specifies Conventions other than CF
   (https://github.com/NCAS-CMS/cfdm/issues/36).
 
-version 1.8.3
--------------
 ----
+
+Version 1.8.3
+-------------
 
 **2020-04-30**
 
@@ -185,9 +195,11 @@ version 1.8.3
 * New keyword parameter to `cfdm.write`: ``warn_valid``
   (https://github.com/NCAS-CMS/cfdm/issues/30)
   
-version 1.8.2
--------------
+
 ----
+
+Version 1.8.2
+-------------
 
 **2020-04-24**
 
@@ -202,9 +214,10 @@ version 1.8.2
   string-valued scalar auxiliary coordinates to not be written to disk
   as such, or even an exception to be raised.
   
-version 1.8.1
--------------
 ----
+
+Version 1.8.1
+-------------
 
 **2020-04-16**
 
@@ -212,10 +225,11 @@ version 1.8.1
   (https://github.com/NCAS-CMS/cfdm/issues/21).
 * Fixed bug that erroneously required netCDF geometry container
   variables to have a ``geometry_dimension`` netCDF attribute.
-  
-version 1.8.0
--------------
+
 ----
+
+Version 1.8.0
+-------------
 
 **2020-03-23**
 
@@ -243,9 +257,10 @@ version 1.8.0
 * Fixed bug whereby `cfdm.Field.has_construct` would try to delete the
   construct rather than check whether it existed.
 
-version 1.7.11
---------------
 ----
+
+Version 1.7.11
+--------------
 
 **2019-11-27**
 
@@ -254,10 +269,11 @@ version 1.7.11
 * New  ``dtype`` and ``mask`` keyword parameters to `cfdm.Data`
 * Changed the default value of the ``ignore_compression`` parameter to
   `True`.
-  
-version 1.7.10
---------------
+
 ----
+
+Version 1.7.10
+--------------
 
 **2019-11-14**
 
@@ -267,9 +283,10 @@ version 1.7.10
 * Fixed bug relating numpy warning when printing a field with masked
   reference time values (https://github.com/NCAS-CMS/cfdm/issues/8).
 
-version 1.7.9
--------------
 ----
+
+Version 1.7.9
+-------------
 
 **2019-11-07**
 
@@ -277,9 +294,10 @@ version 1.7.9
   conversion objects of coordinate conversion constructs
   (https://github.com/NCAS-CMS/cfdm/issues/6).
 
-version 1.7.8
--------------
 ----
+
+Version 1.7.8
+-------------
 
 **2019-10-04**
 
@@ -292,9 +310,10 @@ version 1.7.8
   saved/set value is written out to disk.
 * Now reads CDL files (https://github.com/NCAS-CMS/cfdm/issues/5)
 
-version 1.7.7
--------------
 ----
+
+Version 1.7.7
+-------------
 
 **2019-06-13**
 
@@ -303,9 +322,10 @@ version 1.7.7
   (https://github.com/NCAS-CMS/cfdm/issues/4).
 * Updated documentation
   
-version 1.7.6
--------------
 ----
+
+Version 1.7.6
+-------------
 
 **2019-06-05**
 
@@ -313,9 +333,10 @@ version 1.7.6
 * Fixed bug in `cfdm.Field.convert`.
 * Fixed bug in `cfdm.core.constructs.new_identifier`.
   
-version 1.7.5
--------------
 ----
+
+Version 1.7.5
+-------------
 
 **2019-05-15**
 
@@ -323,9 +344,10 @@ version 1.7.5
   `Datum.nc_has_variable`, `Datum.nc_set_variable`
   (https://github.com/NCAS-CMS/cfdm/issues/3).
   
-version 1.7.4
--------------
 ----
+
+Version 1.7.4
+-------------
 
 **2019-05-14**
 
@@ -360,9 +382,10 @@ version 1.7.4
   `cfdm.CFDMImplementation.nc_set_unlimited_dimensions`, which is
   deprecated.
   
-version 1.7.3
--------------
 ----
+
+Version 1.7.3
+-------------
 
 **2019-04-24**
 
@@ -391,9 +414,10 @@ version 1.7.3
 * Added `NetCDFRead._customize_read_vars` to facilitate subclassing.
 * Added `NetCDFWrite._transform_strings` to facilitate subclassing.
 
-version 1.7.2
--------------
 ----
+
+Version 1.7.2
+-------------
 
 **2019-04-05**
 
@@ -403,9 +427,10 @@ version 1.7.2
 * Fixed bug that caused coordinate bounds to be not sliced during
   subspacing (https://github.com/NCAS-CMS/cfdm/issues/1).
 
-version 1.7.1
--------------
 ----
+
+Version 1.7.1
+-------------
 
 **2019-04-02**
 
@@ -415,10 +440,13 @@ version 1.7.1
   `cfdm.Constructs.inverse_filters`: added depth keyword and changed
   default.
 
-version 1.7.0
--------------
 ----
+
+Version 1.7.0
+-------------
 
 **2019-04-02**
 
 * First release for CF-1.7
+
+----
