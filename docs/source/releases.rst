@@ -72,7 +72,7 @@ be found with the `cfdm.CF` function:
 	     
    >>> import cfdm
    >>> cfdm.CF()
-   '1.8'
+   '1.9'
 
 This indicates which version of the CF conventions are represented by
 this release of the cfdm package, and therefore the version can not be
@@ -86,7 +86,7 @@ integer values for updates that apply to the same version of CF:
    :caption: *Retrieve the version of the cfdm package.*
 	     	     
    >>> cfdm.__version__
-   '1.8.9.0'
+   '1.9.0.0'
 
 The next section outlines the scheme used to set version identifiers.
 
