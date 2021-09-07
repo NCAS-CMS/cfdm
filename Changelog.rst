@@ -27,7 +27,9 @@ version 1.9.0.0
   reference parameters (https://github.com/NCAS-CMS/cfdm/issues/148)
 * Interpret format specifiers for size 1 `cfdm.Data` arrays
   (https://github.com/NCAS-CMS/cfdm/issues/152)
-
+* Fix file name expansions in `cfdm.write`
+  (https://github.com/NCAS-CMS/cfdm/issues/157)
+  
 version 1.8.9.0
 ---------------
 ----

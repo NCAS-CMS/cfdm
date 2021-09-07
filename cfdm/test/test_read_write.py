@@ -847,6 +847,12 @@ class read_writeTest(unittest.TestCase):
 
         cfdm.write(f, tmpfile)
 
+    def test_write_filename_expansion(self):
+        """Test the writing to a file name that requires expansions."""
+        f = cfdm.example_field(0)
+        filename = os.path.join("$PWD", os.path.basename(tmpfile))
+        cfdm.write(f, filename)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
