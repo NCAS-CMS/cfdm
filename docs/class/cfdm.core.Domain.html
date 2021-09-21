@@ -3,8 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta charset="utf-8" />
     <title>cfdm.core.Domain &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -22,8 +21,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.core.Domain.del_construct" href="../method/cfdm.core.Domain.del_construct.html" />
-    <link rel="prev" title="cfdm.core.InteriorRing._docstring_method_exclusions" href="../method/cfdm.core.InteriorRing._docstring_method_exclusions.html" />
+    <link rel="next" title="cfdm.core.Domain.construct_type" href="../attribute/cfdm.core.Domain.construct_type.html" />
+    <link rel="prev" title="cfdm.core.Field._docstring_method_exclusions" href="../method/cfdm.core.Field._docstring_method_exclusions.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -38,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.9.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.9.0.0</a></h1>
 
 
 
@@ -86,8 +85,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.core.InteriorRing._docstring_method_exclusions.html" title="previous chapter">cfdm.core.InteriorRing._docstring_method_exclusions</a></li>
-      <li>Next: <a href="../method/cfdm.core.Domain.del_construct.html" title="next chapter">cfdm.core.Domain.del_construct</a></li>
+      <li>Previous: <a href="../method/cfdm.core.Field._docstring_method_exclusions.html" title="previous chapter">cfdm.core.Field._docstring_method_exclusions</a></li>
+      <li>Next: <a href="../attribute/cfdm.core.Domain.construct_type.html" title="next chapter">cfdm.core.Domain.construct_type</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -121,22 +120,23 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <section id="cfdm-core-domain">
+  <div class="section" id="cfdm-core-domain">
 <h1>cfdm.core.Domain<a class="headerlink" href="#cfdm-core-domain" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.core.Domain">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.core.</code><code class="sig-name descname">Domain</code><span class="sig-paren">(</span><em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/core/domain.py#L7-L189"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Domain" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.mixin.fielddomain.FieldDomain</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.container.Container</span></code></p>
-<p>A domain of the CF data model.</p>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.core.</code><code class="sig-name descname">Domain</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/core/domain.py#L4-L256"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Domain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.mixin.fielddomain.FieldDomain</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.properties.Properties</span></code></p>
+<p>A domain construct of the CF data model.</p>
 <p>The domain represents a set of discrete “locations” in what
 generally would be a multi-dimensional space, either in the real
-world or in a model’s simulated world. These locations correspond
-to individual data array elements of a field construct</p>
-<p>The domain is defined collectively by the following constructs of
-the CF data model: domain axis, dimension coordinate, auxiliary
-coordinate, cell measure, coordinate reference and domain
-ancillary constructs.</p>
+world or in a model’s simulated world. The data array elements of
+a field construct correspond to individual location of a domain.</p>
+<p>The domain construct is defined collectively by the following
+constructs of the CF data model: domain axis, dimension
+coordinate, auxiliary coordinate, cell measure, coordinate
+reference, and domain ancillary constructs; as well as properties
+to describe the domain.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
@@ -144,6 +144,14 @@ ancillary constructs.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
+property names, with corresponding values. Ignored if
+the <em>source</em> parameter is set.</p>
+<p>Properties may also be set after initialisation with
+the <a class="reference internal" href="../method/cfdm.core.Domain.set_properties.html#cfdm.core.Domain.set_properties" title="cfdm.core.Domain.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.core.Domain.set_property.html#cfdm.core.Domain.set_property" title="cfdm.core.Domain.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">properties={'long_name':</span> <span class="pre">'Domain</span> <span class="pre">for</span> <span class="pre">model'}</span></code></p>
+</dd>
 <dt>source: optional</dt><dd><p>Initialise the metadata constructs from those of
 <em>source</em>.</p>
 <p>Note that if <em>source</em> is a <a class="reference internal" href="#cfdm.core.Domain" title="cfdm.core.Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code></a> instance then
@@ -161,7 +169,22 @@ copied.</p>
 </dl>
 </dd></dl>
 
-<section id="metadata-constructs">
+<div class="section" id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.core.Domain.construct_type.html#cfdm.core.Domain.construct_type" title="cfdm.core.Domain.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></p></td>
+<td><p>Return a description of the construct type.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="metadata-constructs">
 <h2>Metadata constructs<a class="headerlink" href="#metadata-constructs" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -208,8 +231,41 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="miscellaneous">
+</div>
+<div class="section" id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Domain.del_property.html#cfdm.core.Domain.del_property" title="cfdm.core.Domain.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></p></td>
+<td><p>Remove a property.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Domain.get_property.html#cfdm.core.Domain.get_property" title="cfdm.core.Domain.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></p></td>
+<td><p>Return a property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Domain.has_property.html#cfdm.core.Domain.has_property" title="cfdm.core.Domain.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></p></td>
+<td><p>Whether a property has been set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Domain.set_property.html#cfdm.core.Domain.set_property" title="cfdm.core.Domain.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></p></td>
+<td><p>Set a property.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Domain.properties.html#cfdm.core.Domain.properties" title="cfdm.core.Domain.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></p></td>
+<td><p>Return all properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Domain.clear_properties.html#cfdm.core.Domain.clear_properties" title="cfdm.core.Domain.clear_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_properties</span></code></a></p></td>
+<td><p>Remove all properties.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Domain.set_properties.html#cfdm.core.Domain.set_properties" title="cfdm.core.Domain.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a></p></td>
+<td><p>Set properties.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -222,12 +278,18 @@ copied.</p>
 <td><p>Return a deep copy.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Domain.fromconstructs.html#cfdm.core.Domain.fromconstructs" title="cfdm.core.Domain.fromconstructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromconstructs</span></code></a></p></td>
-<td><p>Create a domain from existing metadata constructs.</p></td>
+<td><p>Return a new domain containing the given metadata constructs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Domain.has_bounds.html#cfdm.core.Domain.has_bounds" title="cfdm.core.Domain.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></p></td>
+<td><p>Whether or not there are cell bounds.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Domain.has_data.html#cfdm.core.Domain.has_data" title="cfdm.core.Domain.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></p></td>
+<td><p>Whether or not the construct has data.</p></td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="special">
+</div>
+<div class="section" id="special">
 <h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -241,8 +303,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="docstring-substitutions">
+</div>
+<div class="section" id="docstring-substitutions">
 <h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -265,8 +327,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
+</div>
+</div>
 
 
 
@@ -277,7 +339,7 @@ copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-05-25.
+      &copy;2021, NCAS | Page built on 2021-09-21.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

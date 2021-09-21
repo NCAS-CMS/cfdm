@@ -3,8 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta charset="utf-8" />
     <title>cfdm.Field.equals &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -38,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.9.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.9.0.0</a></h1>
 
 
 
@@ -123,13 +122,13 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <section id="cfdm-field-equals">
+  <div class="section" id="cfdm-field-equals">
 <h1>cfdm.Field.equals<a class="headerlink" href="#cfdm-field-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.equals">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">ignore_data_type=False</em>, <em class="sig-param">ignore_fill_value=False</em>, <em class="sig-param">ignore_properties=()</em>, <em class="sig-param">ignore_compression=True</em>, <em class="sig-param">ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/field.py#L1640-L1774"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.equals" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether two field constructs are the same.</p>
-<p>Equality is strict by default. This means that for two field
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/decorators.py#L117-L190"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.equals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether two constructs are the same.</p>
+<p>Equality is strict by default. This means that for two
 constructs to be considered equal they must have corresponding
 metadata constructs and for each pair of constructs:</p>
 <ul class="simple">
@@ -174,14 +173,12 @@ numbers. The default value is set by the
 numbers. The default value is set by the
 <a class="reference internal" href="../function/cfdm.rtol.html#cfdm.rtol" title="cfdm.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.rtol</span></code></a> function.</p>
 </dd>
-<dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then the <code class="docutils literal notranslate"><span class="pre">_FillValue</span></code> and <code class="docutils literal notranslate"><span class="pre">missing_value</span></code>
-properties are omitted from the comparison, for the
-field construct and metadata constructs.</p>
+<dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then all <code class="docutils literal notranslate"><span class="pre">_FillValue</span></code> and <code class="docutils literal notranslate"><span class="pre">missing_value</span></code>
+properties are omitted from the comparison.</p>
 </dd>
-<dt>ignore_properties: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The names of properties of the field construct (not
-the metadata constructs) to omit from the
-comparison. Note that the <code class="docutils literal notranslate"><span class="pre">Conventions</span></code> property is
-always omitted.</p>
+<dt>ignore_properties: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The names of properties of the construct (not the
+metadata constructs) to omit from the comparison. Note
+that the <code class="docutils literal notranslate"><span class="pre">Conventions</span></code> property is always omitted.</p>
 </dd>
 <dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then ignore the data types in all numerical
 comparisons. By default different numerical data types
@@ -230,7 +227,7 @@ about the operation.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether the two field constructs are equal.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether the two constructs are equal.</p>
 </dd>
 </dl>
 </dd>
@@ -242,7 +239,7 @@ about the operation.</p>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="s1">&#39;not a Field instance&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="s1">&#39;a string, not a construct&#39;</span><span class="p">)</span>
 <span class="go">False</span>
 </pre></div>
 </div>
@@ -258,7 +255,7 @@ about the operation.</p>
 </div>
 </dd></dl>
 
-</section>
+</div>
 
 
 
@@ -269,7 +266,7 @@ about the operation.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-05-25.
+      &copy;2021, NCAS | Page built on 2021-09-21.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

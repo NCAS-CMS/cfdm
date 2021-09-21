@@ -3,8 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta charset="utf-8" />
     <title>cfdm.core.AuxiliaryCoordinate &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -23,7 +22,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.core.AuxiliaryCoordinate.construct_type" href="../attribute/cfdm.core.AuxiliaryCoordinate.construct_type.html" />
-    <link rel="prev" title="cfdm.core.Field._docstring_method_exclusions" href="../method/cfdm.core.Field._docstring_method_exclusions.html" />
+    <link rel="prev" title="cfdm.core.Domain._docstring_method_exclusions" href="../method/cfdm.core.Domain._docstring_method_exclusions.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -38,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.9.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.9.0.0</a></h1>
 
 
 
@@ -86,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.core.Field._docstring_method_exclusions.html" title="previous chapter">cfdm.core.Field._docstring_method_exclusions</a></li>
+      <li>Previous: <a href="../method/cfdm.core.Domain._docstring_method_exclusions.html" title="previous chapter">cfdm.core.Domain._docstring_method_exclusions</a></li>
       <li>Next: <a href="../attribute/cfdm.core.AuxiliaryCoordinate.construct_type.html" title="next chapter">cfdm.core.AuxiliaryCoordinate.construct_type</a></li>
   </ul></li>
   </ul></li>
@@ -121,12 +120,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <section id="cfdm-core-auxiliarycoordinate">
+  <div class="section" id="cfdm-core-auxiliarycoordinate">
 <h1>cfdm.core.AuxiliaryCoordinate<a class="headerlink" href="#cfdm-core-auxiliarycoordinate" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.core.AuxiliaryCoordinate">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.core.</code><code class="sig-name descname">AuxiliaryCoordinate</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/core/auxiliarycoordinate.py#L4-L53"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.core.</code><code class="sig-name descname">AuxiliaryCoordinate</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/core/auxiliarycoordinate.py#L4-L53"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.coordinate.Coordinate</span></code></p>
 <p>An auxiliary coordinate construct of the CF data model.</p>
 <p>An auxiliary coordinate construct provides information which
@@ -171,7 +170,7 @@ the <a class="reference internal" href="../method/cfdm.core.AuxiliaryCoordinate.
 <dt>data: data_like, optional</dt><dd><p>Set the data. Ignored if the <em>source</em> parameter is
 set.</p>
 <p>A data_like object is any object that can be converted
-to a <a class="reference internal" href="cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+to a <a class="reference internal" href="cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
 <a class="reference internal" href="cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cfdm.core instances that contain
 <a class="reference internal" href="cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
 <p>The data also may be set after initialisation with the
@@ -211,7 +210,7 @@ copied.</p>
 </dl>
 </dd></dl>
 
-<section id="inspection">
+<div class="section" id="inspection">
 <h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Attributes</p>
 <table class="longtable docutils align-default">
@@ -225,8 +224,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="properties">
+</div>
+<div class="section" id="properties">
 <h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -258,8 +257,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="data">
+</div>
+<div class="section" id="data">
 <h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -275,7 +274,7 @@ copied.</p>
 <td><p>Return the data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.AuxiliaryCoordinate.has_data.html#cfdm.core.AuxiliaryCoordinate.has_data" title="cfdm.core.AuxiliaryCoordinate.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></p></td>
-<td><p>Whether a data has been set.</p></td>
+<td><p>Whether or not the construct has data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.AuxiliaryCoordinate.set_data.html#cfdm.core.AuxiliaryCoordinate.set_data" title="cfdm.core.AuxiliaryCoordinate.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p></td>
 <td><p>Set the data.</p></td>
@@ -294,8 +293,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="bounds">
+</div>
+<div class="section" id="bounds">
 <h2>Bounds<a class="headerlink" href="#bounds" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -330,7 +329,7 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-<section id="geometries">
+<div class="section" id="geometries">
 <h3>Geometries<a class="headerlink" href="#geometries" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -377,8 +376,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="climatology">
+</div>
+<div class="section" id="climatology">
 <h3>Climatology<a class="headerlink" href="#climatology" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -401,9 +400,9 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
-<section id="miscellaneous">
+</div>
+</div>
+<div class="section" id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -417,8 +416,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="special">
+</div>
+<div class="section" id="special">
 <h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -432,8 +431,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="docstring-substitutions">
+</div>
+<div class="section" id="docstring-substitutions">
 <h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -456,8 +455,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
+</div>
+</div>
 
 
 
@@ -468,7 +467,7 @@ copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-05-25.
+      &copy;2021, NCAS | Page built on 2021-09-21.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

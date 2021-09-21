@@ -3,8 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta charset="utf-8" />
     <title>cfdm.Field.convert &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -38,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.9.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.9.0.0</a></h1>
 
 
 
@@ -123,17 +122,21 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <section id="cfdm-field-convert">
+  <div class="section" id="cfdm-field-convert">
 <h1>cfdm.Field.convert<a class="headerlink" href="#cfdm-field-convert" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.convert">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">convert</code><span class="sig-paren">(</span><em class="sig-param">key</em>, <em class="sig-param">full_domain=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/field.py#L1941-L2112"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.convert" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">convert</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">full_domain=True</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/field.py#L1848-L2031"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.convert" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a metadata construct into a new field construct.</p>
 <p>The new field construct has the properties and data of the
 metadata construct, and domain axis constructs corresponding
 to the data. By default it also contains other metadata
 constructs (such as dimension coordinate and coordinate
 reference constructs) that define its domain.</p>
+<p>Only metadata constructs that can have data may be converted
+and they can be converted even if they do not actually have
+any data. Constructs such as cell methods which cannot have
+data cannot be converted.</p>
 <p>The <a class="reference internal" href="../function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a> function allows a field construct to be
 derived directly from a netCDF variable that corresponds to a
 metadata construct. In this case, the new field construct will
@@ -149,16 +152,25 @@ method.</p>
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="../function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a></p>
 </div>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt>key: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Convert the metadata construct with the given
+<dd class="field-odd"><dl>
+<dt>identity: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Convert the metadata construct with the given
 construct key.</p>
 </dd>
 <dt>full_domain: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then only create domain axis constructs for
 the domain of the new field construct. By default as
 much of the domain as possible is copied to the new
 field construct.</p>
+</dd>
+<dt>filter_kwargs: optional</dt><dd><p>Keyword arguments as accepted by <a class="reference internal" href="cfdm.Constructs.filter.html#cfdm.Constructs.filter" title="cfdm.Constructs.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs.filter</span></code></a>
+that define additional construct selection
+criteria. Also to configure the returned value.</p>
+<blockquote>
+<div><div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.8.9.0</p>
+</div>
+</div></blockquote>
 </dd>
 </dl>
 </dd>
@@ -211,7 +223,7 @@ field construct.</p>
 </div>
 </dd></dl>
 
-</section>
+</div>
 
 
 
@@ -222,7 +234,7 @@ field construct.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-05-25.
+      &copy;2021, NCAS | Page built on 2021-09-21.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

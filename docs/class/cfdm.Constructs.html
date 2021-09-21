@@ -3,8 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta charset="utf-8" />
     <title>cfdm.Constructs &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -38,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.9.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.9.0.0</a></h1>
 
 
 
@@ -121,12 +120,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <section id="cfdm-constructs">
+  <div class="section" id="cfdm-constructs">
 <h1>cfdm.Constructs<a class="headerlink" href="#cfdm-constructs" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Constructs">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Constructs</code><span class="sig-paren">(</span><em class="sig-param">auxiliary_coordinate=None</em>, <em class="sig-param">dimension_coordinate=None</em>, <em class="sig-param">domain_ancillary=None</em>, <em class="sig-param">field_ancillary=None</em>, <em class="sig-param">cell_measure=None</em>, <em class="sig-param">coordinate_reference=None</em>, <em class="sig-param">domain_axis=None</em>, <em class="sig-param">cell_method=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em>, <em class="sig-param">_view=False</em>, <em class="sig-param">_ignore=()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/constructs.py#L24-L3199"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Constructs</code><span class="sig-paren">(</span><em class="sig-param">auxiliary_coordinate=None</em>, <em class="sig-param">dimension_coordinate=None</em>, <em class="sig-param">domain_ancillary=None</em>, <em class="sig-param">field_ancillary=None</em>, <em class="sig-param">cell_measure=None</em>, <em class="sig-param">coordinate_reference=None</em>, <em class="sig-param">domain_axis=None</em>, <em class="sig-param">cell_method=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em>, <em class="sig-param">_view=False</em>, <em class="sig-param">_ignore=()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/constructs.py#L12-L3402"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.constructs.Constructs</span></code></p>
 <p>A container for metadata constructs.</p>
 <p>The following metadata constructs can be included:</p>
@@ -149,7 +148,7 @@ usual dictionary methods.</p>
 <p>Calling a <a class="reference internal" href="#cfdm.Constructs" title="cfdm.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instance selects metadata constructs by
 identity and is an alias for the <a class="reference internal" href="../method/cfdm.Constructs.filter_by_identity.html#cfdm.Constructs.filter_by_identity" title="cfdm.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a> method. For
 example, to select constructs that have an identity of
-‘air_temperature’: <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">c('air_temperature')</span></code>.</p>
+“air_temperature”: <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">c('air_temperature')</span></code>.</p>
 <p>Note that <code class="docutils literal notranslate"><span class="pre">c(*identities,</span> <span class="pre">**filter_kwargs)</span></code> is equivalent to
 <code class="docutils literal notranslate"><span class="pre">c.filter(filter_by_identity=identities,</span> <span class="pre">**filter_kwargs)</span></code>.</p>
 <div class="versionadded">
@@ -228,7 +227,7 @@ default such metadata constructs are deep copied.</p>
 </dl>
 </dd></dl>
 
-<section id="filtering">
+<div class="section" id="filtering">
 <h2>Filtering<a class="headerlink" href="#filtering" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -293,8 +292,8 @@ default such metadata constructs are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="constructs-and-identifiers">
+</div>
+<div class="section" id="constructs-and-identifiers">
 <h2>Constructs and identifiers<a class="headerlink" href="#constructs-and-identifiers" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -323,8 +322,8 @@ default such metadata constructs are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="data-axes">
+</div>
+<div class="section" id="data-axes">
 <h2>Data axes<a class="headerlink" href="#data-axes" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -341,8 +340,8 @@ default such metadata constructs are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="miscellaneous">
+</div>
+<div class="section" id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -360,19 +359,19 @@ default such metadata constructs are deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Constructs.equals.html#cfdm.Constructs.equals" title="cfdm.Constructs.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
 <td><p>Whether two <a class="reference internal" href="#cfdm.Constructs" title="cfdm.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instances are the same.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Constructs.replace.html#cfdm.Constructs.replace" title="cfdm.Constructs.replace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace</span></code></a></p></td>
+<td><p>Replace one metadata construct with another.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Constructs.todict.html#cfdm.Constructs.todict" title="cfdm.Constructs.todict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">todict</span></code></a></p></td>
+<td><p>Return a dictionary of the metadata constructs.</p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Constructs.ordered.html#cfdm.Constructs.ordered" title="cfdm.Constructs.ordered"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ordered</span></code></a></p></td>
 <td><p>Return the constructs in their predetermined order.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Constructs.replace.html#cfdm.Constructs.replace" title="cfdm.Constructs.replace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace</span></code></a></p></td>
-<td><p>Replace one metadata construct with another.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Constructs.todict.html#cfdm.Constructs.todict" title="cfdm.Constructs.todict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">todict</span></code></a></p></td>
-<td><p>Return a dictionary of the metadata constructs.</p></td>
-</tr>
 </tbody>
 </table>
-</section>
-<section id="dictionary-access-methods">
+</div>
+<div class="section" id="dictionary-access-methods">
 <h2>Dictionary-access methods<a class="headerlink" href="#dictionary-access-methods" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -398,8 +397,8 @@ default such metadata constructs are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="special">
+</div>
+<div class="section" id="special">
 <h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -437,8 +436,8 @@ default such metadata constructs are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="docstring-substitutions">
+</div>
+<div class="section" id="docstring-substitutions">
 <h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -461,8 +460,8 @@ default such metadata constructs are deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
+</div>
+</div>
 
 
 
@@ -473,7 +472,7 @@ default such metadata constructs are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-05-25.
+      &copy;2021, NCAS | Page built on 2021-09-21.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

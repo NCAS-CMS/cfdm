@@ -3,8 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta charset="utf-8" />
     <title>cfdm.read &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -38,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.9.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.9.0.0</a></h1>
 
 
 
@@ -121,16 +120,16 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <section id="cfdm-read">
+  <div class="section" id="cfdm-read">
 <h1>cfdm.read<a class="headerlink" href="#cfdm-read" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cfdm.read">
-<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">external=None</em>, <em class="sig-param">extra=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">warnings=False</em>, <em class="sig-param">warn_valid=False</em>, <em class="sig-param">mask=True</em>, <em class="sig-param">_implementation=&lt;CFDMImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/read_write/read.py#L13-L343"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.read" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read field constructs from a dataset.</p>
+<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">external=None</em>, <em class="sig-param">extra=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">warnings=False</em>, <em class="sig-param">warn_valid=False</em>, <em class="sig-param">mask=True</em>, <em class="sig-param">domain=False</em>, <em class="sig-param">_implementation=&lt;CFDMImplementation: &gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/read_write/read.py#L11-L367"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read field or domain constructs from a dataset.</p>
 <p>The dataset may be a netCDF file on disk or on an OPeNDAP server,
 or a CDL file on disk (see below).</p>
-<p>The returned field constructs are sorted by the netCDF variable
-names of their corresponding data variables.</p>
+<p>The returned constructs are sorted by the netCDF variable names of
+their corresponding data or domain variables.</p>
 <p><strong>CDL files</strong></p>
 <p>A file is considered to be a CDL representation of a netCDF
 dataset if it is a text file whose first non-comment line starts
@@ -158,9 +157,10 @@ constructed from grouped datasets by applying the well defined
 rules in the CF conventions for resolving references to
 out-of-group netCDF variables and dimensions. The group structure
 is preserved in the field construct’s netCDF interface. Groups
-were incorporated into C-1.8. For files with groups that state
+were incorporated into CF-1.8. For files with groups that state
 compliance to earlier versions of the CF conventions, the groups
-will be interpreted as per the latest release of CF.</p>
+will be interpreted as per the latest release of the CF
+conventions.</p>
 <p><strong>CF-compliance</strong></p>
 <p>If the dataset is partially CF-compliant to the extent that it is
 not possible to unambiguously map an element of the netCDF dataset
@@ -175,9 +175,9 @@ spans a netCDF dimension that does not apply to the data
 variable. Other types of non-compliance are not checked, such
 whether or not controlled vocabularies have been adhered to. The
 structural compliance of the dataset may be checked with the
-<a class="reference internal" href="../method/cfdm.Field.dataset_compliance.html#cfdm.Field.dataset_compliance" title="cfdm.Field.dataset_compliance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dataset_compliance</span></code></a> method of the field construct, as
-well as optionally displayed when the dataset is read by setting
-the <em>warnings</em> parameter.</p>
+<a class="reference internal" href="../method/cfdm.Field.dataset_compliance.html#cfdm.Field.dataset_compliance" title="cfdm.Field.dataset_compliance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dataset_compliance</span></code></a> method of the returned
+constructs, as well as optionally displayed when the dataset is
+read by setting the <em>warnings</em> parameter.</p>
 <p><strong>Performance</strong></p>
 <p>Descriptive properties are always read into memory, but lazy
 loading is employed for all data arrays, which means that no data
@@ -190,8 +190,8 @@ operation fast.</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a>, <a class="reference internal" href="../method/cfdm.Field.convert.html#cfdm.Field.convert" title="cfdm.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.convert</span></code></a>,
-<a class="reference internal" href="../method/cfdm.Field.dataset_compliance.html#cfdm.Field.dataset_compliance" title="cfdm.Field.dataset_compliance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.dataset_compliance</span></code></a></p>
+<p><a class="reference internal" href="cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a>, <a class="reference internal" href="../class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field</span></code></a>, <a class="reference internal" href="../class/cfdm.Domain.html#cfdm.Domain" title="cfdm.Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Domain</span></code></a>,
+<a class="reference internal" href="cfdm.unique_constructs.html#cfdm.unique_constructs" title="cfdm.unique_constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.unique_constructs</span></code></a></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -228,15 +228,17 @@ any metadata or data. In this case the construct’s
 </dd>
 </dl>
 </dd>
-<dt>extra: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Create extra, independent fields from netCDF variables
-that correspond to particular types metadata
-constructs. The <em>extra</em> parameter may be one, or a
-sequence, of:</p>
+</dl>
+<p>extra: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</p>
 <blockquote>
-<div><table class="docutils align-default">
+<div><p>Create extra, independent fields from netCDF variables
+that correspond to particular types metadata constructs.
+Ignored if <em>domain</em> is True.</p>
+<p>The <em>extra</em> parameter may be one, or a sequence, of:</p>
+<table class="docutils align-default">
 <colgroup>
-<col style="width: 45%" />
-<col style="width: 55%" />
+<col style="width: 46%" />
+<col style="width: 54%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p><em>extra</em></p></th>
@@ -261,7 +263,6 @@ sequence, of:</p>
 </tr>
 </tbody>
 </table>
-</div></blockquote>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p>To create fields from auxiliary coordinate constructs:
 <code class="docutils literal notranslate"><span class="pre">extra='auxiliary_coordinate'</span></code> or
@@ -281,7 +282,8 @@ metadata constructs that do incorporate as much of the
 parent field construct’s domain as possible by using the
 <a class="reference internal" href="../method/cfdm.Field.convert.html#cfdm.Field.convert" title="cfdm.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert</span></code></a> method of a returned field
 construct, instead of setting the <em>extra</em> parameter.</p>
-</dd>
+</div></blockquote>
+<dl>
 <dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent string
 equal ignoring case to one of:</p>
 <ul class="simple">
@@ -324,9 +326,9 @@ for details.</p>
 <p><span class="versionmodified added">New in version (cfdm): </span>1.8.3</p>
 </div>
 </dd>
-<dt>mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not mask by convention when reading the
-data of field or metadata constructs from disk. By default
-data is masked by convention.</p>
+<dt>mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not mask by convention the data of field
+and metadata constructs. By default all data is masked by
+convention.</p>
 <p>The masking by convention of a netCDF array depends on the
 values of any of the netCDF variable attributes
 <code class="docutils literal notranslate"><span class="pre">_FillValue</span></code>, <code class="docutils literal notranslate"><span class="pre">missing_value</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_min</span></code>,
@@ -338,6 +340,27 @@ for details.</p>
 <p><span class="versionmodified added">New in version (cfdm): </span>1.8.2</p>
 </div>
 </dd>
+<dt>domain: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return only the domain constructs that are
+explicitly defined by CF-netCDF domain variables, ignoring
+all CF-netCDF data variables. By default only the field
+constructs defined by CF-netCDF data variables are
+returned.</p>
+<p>CF-netCDF domain variables are only defined from CF-1.9,
+so older datasets automatically contain no CF-netCDF
+domain variables.</p>
+<p>The unique domain constructs of the dataset are easily
+found with the <a class="reference internal" href="cfdm.unique_constructs.html#cfdm.unique_constructs" title="cfdm.unique_constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.unique_constructs</span></code></a> function. For
+example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ud</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">unique_constructs</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ufd</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">unique_constructs</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">domain</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.9.0.0</p>
+</div>
+</dd>
 <dt>_implementation: (subclass of) <code class="xref py py-obj docutils literal notranslate"><span class="pre">CFDMImplementation</span></code>, optional</dt><dd><p>Define the CF data model implementation that provides the
 returned field constructs.</p>
 </dd>
@@ -345,8 +368,8 @@ returned field constructs.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></dt><dd><p>The field constructs found in the dataset. The list may be
-empty.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference internal" href="../class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference internal" href="../class/cfdm.Domain.html#cfdm.Domain" title="cfdm.Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code></a></dt><dd><p>The field constructs found in the dataset, or the domain
+constructs if <em>domain</em> is True. The list may be empty.</p>
 </dd>
 </dl>
 </dd>
@@ -373,7 +396,7 @@ particular types metadata constructs:</p>
 </div>
 </dd></dl>
 
-</section>
+</div>
 
 
 
@@ -384,7 +407,7 @@ particular types metadata constructs:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-05-25.
+      &copy;2021, NCAS | Page built on 2021-09-21.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

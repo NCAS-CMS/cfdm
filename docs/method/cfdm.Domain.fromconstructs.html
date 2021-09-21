@@ -3,8 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta charset="utf-8" />
     <title>cfdm.Domain.fromconstructs &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -22,7 +21,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Domain.has_geometry" href="cfdm.Domain.has_geometry.html" />
+    <link rel="next" title="cfdm.Domain.get_filenames" href="cfdm.Domain.get_filenames.html" />
     <link rel="prev" title="cfdm.Domain.equals" href="cfdm.Domain.equals.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -38,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.9.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.9.0.0</a></h1>
 
 
 
@@ -88,7 +87,7 @@
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Domain.html">cfdm.Domain</a><ul>
       <li>Previous: <a href="cfdm.Domain.equals.html" title="previous chapter">cfdm.Domain.equals</a></li>
-      <li>Next: <a href="cfdm.Domain.has_geometry.html" title="next chapter">cfdm.Domain.has_geometry</a></li>
+      <li>Next: <a href="cfdm.Domain.get_filenames.html" title="next chapter">cfdm.Domain.get_filenames</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -123,13 +122,13 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <section id="cfdm-domain-fromconstructs">
+  <div class="section" id="cfdm-domain-fromconstructs">
 <h1>cfdm.Domain.fromconstructs<a class="headerlink" href="#cfdm-domain-fromconstructs" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Domain.fromconstructs">
-<em class="property">classmethod </em><code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">fromconstructs</code><span class="sig-paren">(</span><em class="sig-param">constructs</em>, <em class="sig-param">copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/core/domain.py#L145-L189"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.fromconstructs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a domain from existing metadata constructs.</p>
-<p>The new domain act as a view to the given constructs,
+<em class="property">classmethod </em><code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">fromconstructs</code><span class="sig-paren">(</span><em class="sig-param">constructs</em>, <em class="sig-param">copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/core/domain.py#L210-L256"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.fromconstructs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new domain containing the given metadata constructs.</p>
+<p>The new domain acts as a view to the given constructs,
 i.e. changes to the domain, such as the addition or removal of
 a construct, will also affect the input <a class="reference internal" href="../class/cfdm.Constructs.html#cfdm.Constructs" title="cfdm.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instance.</p>
 <div class="versionadded">
@@ -143,8 +142,9 @@ domain. Cell method and field ancillary constructs are
 ignored.</p>
 </dd>
 <dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then deep copy the metadata constructs prior
-to initialisation. By default the metadata constructs
-are not copied.</p>
+to initialization. By default the metadata constructs
+are not copied. Note that even when <em>copy</em> is True,
+the input <a class="reference internal" href="../class/cfdm.Constructs.html#cfdm.Constructs" title="cfdm.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> container is not copied.</p>
 </dd>
 </dl>
 </dd>
@@ -160,11 +160,12 @@ are not copied.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">fromconstructs</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">constructs</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
 <span class="go">&lt;Domain: {1, 5, 8}&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Domain</span><span class="o">.</span><span class="n">fromconstructs</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">constructs</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 </pre></div>
 </div>
 </dd></dl>
 
-</section>
+</div>
 
 
 
@@ -175,7 +176,7 @@ are not copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-05-25.
+      &copy;2021, NCAS | Page built on 2021-09-21.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

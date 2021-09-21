@@ -3,8 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta charset="utf-8" />
     <title>cfdm.Domain.set_construct &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -38,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.9.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.9.0.0</a></h1>
 
 
 
@@ -123,11 +122,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <section id="cfdm-domain-set-construct">
+  <div class="section" id="cfdm-domain-set-construct">
 <h1>cfdm.Domain.set_construct<a class="headerlink" href="#cfdm-domain-set-construct" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Domain.set_construct">
-<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">set_construct</code><span class="sig-paren">(</span><em class="sig-param">construct</em>, <em class="sig-param">key=None</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/core/mixin/fielddomain.py#L144-L201"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.set_construct" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">set_construct</code><span class="sig-paren">(</span><em class="sig-param">construct</em>, <em class="sig-param">key=None</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/core/mixin/fielddomain.py#L144-L201"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.set_construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a metadata construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
@@ -142,20 +141,20 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dd class="field-odd"><dl>
 <dt>construct:</dt><dd><p>The metadata construct to be inserted.</p>
 </dd>
-<dt>key: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The construct identifier to be used for the construct. If
-not set then a new, unique identifier is created
-automatically. If the identifier already exists then the
-existing construct will be replaced.</p>
+<dt>key: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The construct identifier to be used for the
+construct. If not set then a new, unique identifier is
+created automatically. If the identifier already
+exists then the existing construct will be replaced.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">key='cellmeasure0'</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The construct identifiers of the domain axis constructs
-spanned by the data array. An exception is raised if used
-for a metadata construct that can not have a data array,
-i.e. domain axis, cell method and coordinate reference
-constructs.</p>
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The construct identifiers of the domain axis
+constructs spanned by the data array. An exception is
+raised if used for a metadata construct that can not
+have a data array, i.e. domain axis, cell method and
+coordinate reference constructs.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">axes='domainaxis1'</span></code></p>
 </dd>
@@ -165,8 +164,8 @@ constructs.</p>
 </dd>
 </dl>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then set a copy of the construct. By default the
-construct is copied.</p>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then set a copy of the construct. By default
+the construct is copied.</p>
 </dd>
 </dl>
 </dd>
@@ -186,7 +185,7 @@ construct is copied.</p>
 </div>
 </dd></dl>
 
-</section>
+</div>
 
 
 
@@ -197,7 +196,7 @@ construct is copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-05-25.
+      &copy;2021, NCAS | Page built on 2021-09-21.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

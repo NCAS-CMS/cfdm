@@ -35,7 +35,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.7.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.9.0.0</a></h1>
 
 
 
@@ -84,6 +84,24 @@
   </ul></li>
 </ul>
 </div>
+
+<br>
+cfdm development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/786427">Couplet</a>;
+by the <a href="https://ec.europa.eu/programmes/horizon2020/">EC
+Horizon 2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="../_templates/logo_EC.png" height="40">
+<img src="../_templates/logo_ERC.png" height="40">
+<img src="../_templates/logo_NERC.png" height="40">
+<br>
+<img src="../_templates/logo_NCAS.png" height="40">
         </div>
       </div>
       <div class="documentwrapper">
@@ -92,11 +110,13 @@
 
           <div class="body" role="main">
             
+
+
   <div class="section" id="cfdm-core-abstract-propertiesdatabounds-clear-properties">
 <h1>cfdm.core.abstract.PropertiesDataBounds.clear_properties<a class="headerlink" href="#cfdm-core-abstract-propertiesdatabounds-clear-properties" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.clear_properties">
-<code class="sig-prename descclassname">PropertiesDataBounds.</code><code class="sig-name descname">clear_properties</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.7.0/cfdm/core/abstract/properties.py#L49-L87"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.clear_properties" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">PropertiesDataBounds.</code><code class="sig-name descname">clear_properties</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/core/abstract/properties.py#L46-L83"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.clear_properties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove all properties.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
@@ -121,17 +141,16 @@
 <span class="gp">... </span>                  <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Air Pressure&#39;</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
 <span class="go">{&#39;standard_name&#39;: &#39;air_pressure&#39;,</span>
-<span class="go"> &#39;foo&#39;: &#39;bar&#39;,</span>
 <span class="go"> &#39;long_name&#39;: &#39;Air Pressure&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_properties</span><span class="p">({</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;air_pressure&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">:</span> <span class="s1">&#39;bar&#39;</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
 <span class="go">{&#39;standard_name&#39;: &#39;air_pressure&#39;,</span>
-<span class="go"> &#39;foo&#39;: &#39;bar&#39;,</span>
-<span class="go"> &#39;long_name&#39;: &#39;Air Pressure&#39;}</span>
+<span class="go"> &#39;long_name&#39;: &#39;Air Pressure&#39;,</span>
+<span class="go"> &#39;foo&#39;: &#39;bar&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">clear_properties</span><span class="p">()</span>
 <span class="go">{&#39;standard_name&#39;: &#39;air_pressure&#39;,</span>
-<span class="go"> &#39;foo&#39;: &#39;bar&#39;,</span>
-<span class="go"> &#39;long_name&#39;: &#39;Air Pressure&#39;}</span>
+<span class="go"> &#39;long_name&#39;: &#39;Air Pressure&#39;,</span>
+<span class="go"> &#39;foo&#39;: &#39;bar&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
 <span class="go">{}</span>
 </pre></div>
@@ -141,6 +160,7 @@
 </div>
 
 
+
           </div>
           
         </div>
@@ -148,11 +168,11 @@
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-10-09.
+      &copy;2021, NCAS | Page built on 2021-09-21.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

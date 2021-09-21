@@ -3,8 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta charset="utf-8" />
     <title>cfdm.Constructs.equals &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -22,7 +21,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Constructs.ordered" href="cfdm.Constructs.ordered.html" />
+    <link rel="next" title="cfdm.Constructs.replace" href="cfdm.Constructs.replace.html" />
     <link rel="prev" title="cfdm.Constructs.shallow_copy" href="cfdm.Constructs.shallow_copy.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -38,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.9.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.9.0.0</a></h1>
 
 
 
@@ -88,7 +87,7 @@
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Constructs.html">cfdm.Constructs</a><ul>
       <li>Previous: <a href="cfdm.Constructs.shallow_copy.html" title="previous chapter">cfdm.Constructs.shallow_copy</a></li>
-      <li>Next: <a href="cfdm.Constructs.ordered.html" title="next chapter">cfdm.Constructs.ordered</a></li>
+      <li>Next: <a href="cfdm.Constructs.replace.html" title="next chapter">cfdm.Constructs.replace</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -123,11 +122,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <section id="cfdm-constructs-equals">
+  <div class="section" id="cfdm-constructs-equals">
 <h1>cfdm.Constructs.equals<a class="headerlink" href="#cfdm-constructs-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Constructs.equals">
-<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">ignore_data_type=False</em>, <em class="sig-param">ignore_fill_value=False</em>, <em class="sig-param">ignore_compression=True</em>, <em class="sig-param">_ignore_type=False</em>, <em class="sig-param">_return_axis_map=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/constructs.py#L974-L1244"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs.equals" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">verbose=None</em>, <em class="sig-param">ignore_data_type=False</em>, <em class="sig-param">ignore_fill_value=False</em>, <em class="sig-param">ignore_compression=True</em>, <em class="sig-param">_ignore_type=False</em>, <em class="sig-param">_return_axis_map=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/constructs.py#L1182-L1441"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two <a class="reference internal" href="../class/cfdm.Constructs.html#cfdm.Constructs" title="cfdm.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instances are the same.</p>
 <p>Two real numbers <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are considered equal if
 <code class="docutils literal notranslate"><span class="pre">|x-y|&lt;=atol+rtol|y|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on
@@ -218,7 +217,7 @@ about the operation.</p>
 </div>
 </dd></dl>
 
-</section>
+</div>
 
 
 
@@ -229,7 +228,7 @@ about the operation.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-05-25.
+      &copy;2021, NCAS | Page built on 2021-09-21.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

@@ -3,8 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta charset="utf-8" />
     <title>cfdm.configuration &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -38,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.9.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.9.0.0</a></h1>
 
 
 
@@ -121,28 +120,29 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <section id="cfdm-configuration">
+  <div class="section" id="cfdm-configuration">
 <h1>cfdm.configuration<a class="headerlink" href="#cfdm-configuration" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cfdm.configuration">
-<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">configuration</code><span class="sig-paren">(</span><em class="sig-param">atol=None</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">log_level=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/functions.py#L38-L158"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.configuration" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">configuration</code><span class="sig-paren">(</span><em class="sig-param">atol=None</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">log_level=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/functions.py#L29-L150"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.configuration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Views and sets constants in the project-wide configuration.</p>
-<p>The full list of global constants that are provided in a dictionary to
-view, and can be set in any combination, are:</p>
+<p>The full list of global constants that are provided in a
+dictionary to view, and can be set in any combination, are:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="cfdm.atol.html#cfdm.atol" title="cfdm.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atol</span></code></a></p></li>
 <li><p><a class="reference internal" href="cfdm.rtol.html#cfdm.rtol" title="cfdm.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rtol</span></code></a></p></li>
 <li><p><a class="reference internal" href="cfdm.log_level.html#cfdm.log_level" title="cfdm.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_level</span></code></a></p></li>
 </ul>
-<p>These are all constants that apply throughout <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm</span></code>, except for in
-specific functions only if overridden by the corresponding keyword
-argument to that function.</p>
-<p>The value of <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, either taken by default or supplied as a value,
-will result in the constant in question not being changed from the
-current value. That is, it will have no effect.</p>
-<p>Note that setting a constant using this function is equivalent to setting
-it by means of a specific function of the same name, e.g. via <a class="reference internal" href="cfdm.atol.html#cfdm.atol" title="cfdm.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.atol</span></code></a>,
-but in this case multiple constants can be set at once.</p>
+<p>These are all constants that apply throughout <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm</span></code>, except for
+in specific functions only if overridden by the corresponding
+keyword argument to that function.</p>
+<p>The value of <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, either taken by default or supplied as a
+value, will result in the constant in question not being changed
+from the current value. That is, it will have no effect.</p>
+<p>Note that setting a constant using this function is equivalent to
+setting it by means of a specific function of the same name,
+e.g. via <a class="reference internal" href="cfdm.atol.html#cfdm.atol" title="cfdm.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.atol</span></code></a>, but in this case multiple constants can be
+set at once.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.8.6</p>
 </div>
@@ -245,7 +245,7 @@ using its bespoke function:</p>
 </div>
 </dd></dl>
 
-</section>
+</div>
 
 
 
@@ -256,7 +256,7 @@ using its bespoke function:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-05-25.
+      &copy;2021, NCAS | Page built on 2021-09-21.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

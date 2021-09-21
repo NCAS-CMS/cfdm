@@ -248,7 +248,6 @@ crs.coordinate_conversion
 crs.coordinate_conversion.parameters()
 crs.coordinate_conversion.domain_ancillaries()
 print(t.cell_methods())
-t.cell_methods().ordered()
 cm = t.constructs('method:mean').value()
 cm
 cm.get_axes()
@@ -607,9 +606,8 @@ f.properties()
 f.nc_set_global_attribute('information', 'global information')
 f.nc_global_attributes()
 cfdm.write(f, 'f_file.nc')
-cfdm.write(f, 'f_file_nc', file_descriptors={'history': 'created in 2020'})
+cfdm.write(f, 'f_file.nc', file_descriptors={'history': 'created in 2021'})
 f_file = cfdm.read('f_file.nc')[0]
-f_file.nc_global_attributes()
 f_file.properties()
 f_file.nc_global_attributes()
 f_file.set_property('Conventions', 'UGRID1.0')

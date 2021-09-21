@@ -3,8 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta charset="utf-8" />
     <title>cfdm.CellMeasure &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -38,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.9.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.9.0.0</a></h1>
 
 
 
@@ -121,12 +120,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <section id="cfdm-cellmeasure">
+  <div class="section" id="cfdm-cellmeasure">
 <span id="id1"></span><h1>cfdm.CellMeasure<a class="headerlink" href="#cfdm-cellmeasure" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.CellMeasure">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">CellMeasure</code><span class="sig-paren">(</span><em class="sig-param">measure=None</em>, <em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/cellmeasure.py#L12-L468"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">CellMeasure</code><span class="sig-paren">(</span><em class="sig-param">measure=None</em>, <em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/cellmeasure.py#L9-L467"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFExternal</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.cellmeasure.CellMeasure</span></code></p>
 <p>A cell measure construct of the CF data model.</p>
 <p>A cell measure construct provides information that is needed about
@@ -152,6 +151,10 @@ to cell measure constructs.</p>
 <p>The netCDF variable group structure may be accessed with the
 <a class="reference internal" href="../method/cfdm.CellMeasure.nc_set_variable.html#cfdm.CellMeasure.nc_set_variable" title="cfdm.CellMeasure.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.CellMeasure.nc_get_variable.html#cfdm.CellMeasure.nc_get_variable" title="cfdm.CellMeasure.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cfdm.CellMeasure.nc_variable_groups.html#cfdm.CellMeasure.nc_variable_groups" title="cfdm.CellMeasure.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_variable_groups</span></code></a>,
 <a class="reference internal" href="../method/cfdm.CellMeasure.nc_clear_variable_groups.html#cfdm.CellMeasure.nc_clear_variable_groups" title="cfdm.CellMeasure.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_variable_groups</span></code></a> and <a class="reference internal" href="../method/cfdm.CellMeasure.nc_set_variable_groups.html#cfdm.CellMeasure.nc_set_variable_groups" title="cfdm.CellMeasure.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable_groups</span></code></a>
+methods.</p>
+<p>The selection of properties to be written as netCDF global
+attributes may be accessed with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_global_attributes</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_global_attributes</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_global_attribute</span></code>
 methods.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
@@ -185,7 +188,7 @@ the <a class="reference internal" href="../method/cfdm.CellMeasure.set_propertie
 <dt>data: data_like, optional</dt><dd><p>Set the data. Ignored if the <em>source</em> parameter is
 set.</p>
 <p>A data_like object is any object that can be converted
-to a <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+to a <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
 <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cfdm instances that contain
 <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
 <p>The data also may be set after initialisation with the
@@ -206,7 +209,7 @@ copied.</p>
 </dl>
 </dd></dl>
 
-<section id="inspection">
+<div class="section" id="inspection">
 <h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -238,8 +241,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="properties">
+</div>
+<div class="section" id="properties">
 <h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -283,8 +286,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="data">
+</div>
+<div class="section" id="data">
 <h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -303,7 +306,7 @@ copied.</p>
 <td><p>Return the data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.has_data.html#cfdm.CellMeasure.has_data" title="cfdm.CellMeasure.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></p></td>
-<td><p>Whether a data has been set.</p></td>
+<td><p>Whether or not the construct has data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CellMeasure.set_data.html#cfdm.CellMeasure.set_data" title="cfdm.CellMeasure.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></p></td>
 <td><p>Set the data.</p></td>
@@ -343,8 +346,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="miscellaneous">
+</div>
+<div class="section" id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -373,8 +376,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="netcdf">
+</div>
+<div class="section" id="netcdf">
 <h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -403,7 +406,7 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-<section id="groups">
+<div class="section" id="groups">
 <h3>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -423,9 +426,9 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
-<section id="special">
+</div>
+</div>
+<div class="section" id="special">
 <h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -448,8 +451,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="docstring-substitutions">
+</div>
+<div class="section" id="docstring-substitutions">
 <h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -472,8 +475,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
+</div>
+</div>
 
 
 
@@ -484,7 +487,7 @@ copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-05-25.
+      &copy;2021, NCAS | Page built on 2021-09-21.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

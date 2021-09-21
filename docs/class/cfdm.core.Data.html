@@ -3,8 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta charset="utf-8" />
     <title>cfdm.core.Data &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -23,7 +22,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.core.Data.array" href="../attribute/cfdm.core.Data.array.html" />
-    <link rel="prev" title="cfdm.core.Domain._docstring_method_exclusions" href="../method/cfdm.core.Domain._docstring_method_exclusions.html" />
+    <link rel="prev" title="cfdm.core.InteriorRing._docstring_method_exclusions" href="../method/cfdm.core.InteriorRing._docstring_method_exclusions.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -38,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.8.9.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.9.0.0</a></h1>
 
 
 
@@ -86,7 +85,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.core.Domain._docstring_method_exclusions.html" title="previous chapter">cfdm.core.Domain._docstring_method_exclusions</a></li>
+      <li>Previous: <a href="../method/cfdm.core.InteriorRing._docstring_method_exclusions.html" title="previous chapter">cfdm.core.InteriorRing._docstring_method_exclusions</a></li>
       <li>Next: <a href="../attribute/cfdm.core.Data.array.html" title="next chapter">cfdm.core.Data.array</a></li>
   </ul></li>
   </ul></li>
@@ -121,11 +120,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <section id="cfdm-core-data">
+  <div class="section" id="cfdm-core-data">
 <h1>cfdm.core.Data<a class="headerlink" href="#cfdm-core-data" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.core.Data">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.core.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_array=True</em>, <em class="sig-param">_custom_deep_copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.9.0/cfdm/core/data/data.py#L9-L910"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.core.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_array=True</em>, <em class="sig-param">_custom_deep_copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/core/data/data.py#L8-L909"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.container.Container</span></code></p>
 <p>An orthogonal multidimensional array with masking and units.</p>
 <div class="versionadded">
@@ -137,7 +136,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <dd class="field-odd"><dl>
 <dt>array: data_like, optional</dt><dd><p>The array of values.</p>
 <p>A data_like object is any object that can be converted
-to a <a class="reference internal" href="#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
+to a <a class="reference internal" href="#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
 <a class="reference internal" href="#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cfdm.core instances that contain
 <a class="reference internal" href="#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
 <p>Note that for <a class="reference internal" href="#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects and cfdm.core
@@ -146,7 +145,7 @@ objects that contain <a class="reference internal" href="#cfdm.core.Data" title=
 <code class="docutils literal notranslate"><span class="pre">cfdm.core.Data(source=array.__data__())</span></code>.</p>
 <p>Ignored if the <em>source</em> parameter is set.</p>
 </dd>
-<dt>array: <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like, optional</dt><dd><p>The array of values.</p>
+<dt>array: <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like, optional</dt><dd><p>The array of values.</p>
 <p>Note that if <em>array</em> is another <a class="reference internal" href="#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance
 then <code class="docutils literal notranslate"><span class="pre">cfdm.core.Data(array)</span></code> is equivalent to
 <code class="docutils literal notranslate"><span class="pre">cfdm.core.Data(source=array)</span></code>.</p>
@@ -173,9 +172,9 @@ the <a class="reference internal" href="../method/cfdm.core.Data.set_calendar.ht
 </dl>
 </dd>
 <dt>fill_value: optional</dt><dd><p>The fill value of the data. By default, or if set to
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> fill value appropriate to the
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> fill value appropriate to the
 array’s data type will be used (see
-<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ma.default_fill_value.html#numpy.ma.default_fill_value" title="(in NumPy v1.20)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.default_fill_value</span></code></a>). Ignored if the
+<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ma.default_fill_value.html#numpy.ma.default_fill_value" title="(in NumPy v1.21)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.default_fill_value</span></code></a>). Ignored if the
 <em>source</em> parameter is set.</p>
 <p>The fill value may also be set after initialisation
 with the <a class="reference internal" href="../method/cfdm.core.Data.set_fill_value.html#cfdm.core.Data.set_fill_value" title="cfdm.core.Data.set_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fill_value</span></code></a> method.</p>
@@ -196,7 +195,7 @@ copied.</p>
 </dl>
 </dd></dl>
 
-<section id="inspection">
+<div class="section" id="inspection">
 <h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Attributes</p>
 <table class="longtable docutils align-default">
@@ -222,8 +221,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="units">
+</div>
+<div class="section" id="units">
 <h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -257,10 +256,10 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="data-creation-routines">
+</div>
+<div class="section" id="data-creation-routines">
 <h2>Data creation routines<a class="headerlink" href="#data-creation-routines" title="Permalink to this headline">¶</a></h2>
-<section id="from-existing-data">
+<div class="section" id="from-existing-data">
 <h3>From existing data<a class="headerlink" href="#from-existing-data" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -273,9 +272,9 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
-<section id="date-time-support">
+</div>
+</div>
+<div class="section" id="date-time-support">
 <h2>Date-time support<a class="headerlink" href="#date-time-support" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -297,8 +296,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="mask-support">
+</div>
+<div class="section" id="mask-support">
 <h2>Mask support<a class="headerlink" href="#mask-support" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -320,8 +319,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="miscellaneous">
+</div>
+<div class="section" id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -334,8 +333,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="special">
+</div>
+<div class="section" id="special">
 <h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -354,8 +353,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="docstring-substitutions">
+</div>
+<div class="section" id="docstring-substitutions">
 <h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -378,8 +377,8 @@ copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
+</div>
+</div>
 
 
 
@@ -390,7 +389,7 @@ copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-05-25.
+      &copy;2021, NCAS | Page built on 2021-09-21.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

@@ -3,8 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta charset="utf-8" />
     <title>cfdm functions &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -38,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.8.9.0</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.9.0.0</a></h1>
 
 
 
@@ -119,11 +118,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <section id="cfdm-functions">
+  <div class="section" id="cfdm-functions">
 <span id="function"></span><h1><strong>cfdm functions</strong><a class="headerlink" href="#cfdm-functions" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.8.9.0 for version 1.8 of the CF conventions.</p>
-<section id="reading-and-writing">
+<p>Version 1.9.0.0 for version 1.9 of the CF conventions.</p>
+<div class="section" id="reading-and-writing">
 <h2>Reading and writing<a class="headerlink" href="#reading-and-writing" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -132,15 +131,15 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a></p></td>
-<td><p>Read field constructs from a dataset.</p></td>
+<td><p>Read field or domain constructs from a dataset.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a></p></td>
-<td><p>Write field constructs to a netCDF file.</p></td>
+<td><p>Write field and domain constructs to a netCDF file.</p></td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="constants">
+</div>
+<div class="section" id="constants">
 <h2>Constants<a class="headerlink" href="#constants" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -174,8 +173,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </tr>
 </tbody>
 </table>
-</section>
-<section id="miscellaneous">
+</div>
+<div class="section" id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -201,19 +200,13 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.implementation.html#cfdm.implementation" title="cfdm.implementation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.implementation</span></code></a></p></td>
 <td><p>Return a container for the CF data model implementation.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.is_log_level_info.html#cfdm.is_log_level_info" title="cfdm.is_log_level_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.is_log_level_info</span></code></a></p></td>
-<td><p>Return True if and only if log level is at least INFO.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="function/cfdm.is_log_level_detail.html#cfdm.is_log_level_detail" title="cfdm.is_log_level_detail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.is_log_level_detail</span></code></a></p></td>
-<td><p>Return True if and only if log level is at least DETAIL.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.is_log_level_debug.html#cfdm.is_log_level_debug" title="cfdm.is_log_level_debug"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.is_log_level_debug</span></code></a></p></td>
-<td><p>Return True if and only if log level is at least DEBUG.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cfdm.unique_constructs.html#cfdm.unique_constructs" title="cfdm.unique_constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.unique_constructs</span></code></a></p></td>
+<td><p>Return the unique constructs from a sequence.</p></td>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
+</div>
+</div>
 
 
 
@@ -224,7 +217,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-05-25.
+      &copy;2021, NCAS | Page built on 2021-09-21.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
