@@ -89,7 +89,7 @@ if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
 	  _templates \
 	  _downloads/cfdm_tutorial_files.zip \
 	  _downloads/tutorial.py \
-	  _images/*.png
+	  _images/*.svg
 
   git commit -a -m "v$version $2 documentation"
 fi
