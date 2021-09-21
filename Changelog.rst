@@ -1,11 +1,7 @@
-.. contents::
-   :local:
-   :backlinks: entry
-
 Version 1.9.0.0
 ---------------
 
-**2021-09-??**
+**2021-09-21**
 
 * Python 3.6 support removed
   (https://github.com/NCAS-CMS/cfdm/issues/139)
