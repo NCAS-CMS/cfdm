@@ -148,3 +148,5 @@
   ```bash
   ./upload_to_pypi <vn> # E.g. ./upload_to_pypi 1.8.7.0
   ```
+
+* Upload the new release to Zenodo: https://zenodo.org/record/5521505
