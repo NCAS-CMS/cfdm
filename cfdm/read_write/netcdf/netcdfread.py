@@ -1326,6 +1326,77 @@ class NetCDFRead(IORead):
             )
             g["external_variables"] = set(parsed_external_variables)
 
+        # ------------------------------------------------------------
+        # Lossy compression by subsampled coordinates (CF>=1.9)
+        # ------------------------------------------------------------
+        if g["CF>=1.9"]:
+            for ncvar, attributes in variable_attributes.items():
+                if "coordinate_interpolation" not in attributes:
+                    # This data variable does not have any subsampled
+                    # coordinates
+                    continue
+
+                x = self._parse_coordinate_interpolation(
+                    ncvar, attributes["coordinate_interpolation"]
+                )
+
+                for interpolation_ncvar in x:
+                    if interpolation_ncvar in g["interpolation"]:
+                        continue
+
+                    attrs = variable_attributes[interpolation_ncvar].copy()
+
+                    try:
+                        tie_point_mapping = attrs["tie_point_mapping"]
+                    except KeyError:
+                        # TODO error: interpolation var must have
+                        # tie_point_mapping attr
+                        pass
+
+                    g["interpolation"][interpolation_ncvar] = {}
+
+                    tie_point_mapping = self._parse_x(tie_point_mapping)
+                    for ncdim, zzz in tie_point_mapping.items():
+                        if len(zzz) == 2:
+                            subarea_ncdim = None
+                        elif len(zzz) > 2:
+                            subarea_ncdim = zzz[2]
+                        else:
+                            # TODO - message and further action ...
+                            pass
+
+                        tie_point_index_ncvar = zzz[0]
+                        subsampled_dimension = zzz[1]
+
+                        tpm = {
+                            'tie_point_index_ncvar': tie_point_index_ncvar,
+                            'interpolated_dimension': ncdim,
+                            'interpolation_subarea_ncdim': subarea_ncdim,
+                            'computational_precision': computational_precision,
+                        }
+
+                        g["interpolation"][interpolation_ncvar][subsampled_dimension] = tpm
+
+                        if tie_point_index_ncvar not in g["tie_point_index"]:
+                            tpi = self._create_tie_point_index(
+                                tie_point_index_ncvar, subsampled_dimension
+                            )
+                            g["tie_point_index"][tie_point_index_ncvar] = tpi
+
+
+
+                    # Do not attempt to create field constructs from
+                    # interpolation variables
+                    g["do_not_create_field"].add(interpolation_ncvar)
+
+                for interpolation_ncvar, tie_point_ncvars in x.items():
+                    for tie_point_ncvar in tie_point_ncvars:
+                        g["tie_points"][tie_point_ncvar] = interpolation_ncvar
+
+                    # Do not attempt to create field constructs from
+                    # tie point coordinate variables
+                    g["do_not_create_field"].update(tie_point_ncvars)
+
         # Now that all of the variables have been scanned, customize
         # the read parameters.
         self._customize_read_vars()
@@ -2417,6 +2488,51 @@ class NetCDFRead(IORead):
         }
 
         g["new_dimensions"][element_dimension] = element_dimension_size
+
+        if is_log_level_debug(logger):
+            logger.debug(
+                "    Created "
+                f"read_vars['compression'][{indexed_sample_dimension!r}]['ragged_indexed']"
+            )  # pragma: no cover
+
+        return element_dimension
+
+    def _set_subsampled_linear_parameters(
+            self,
+            tie_points_ncvars=None, # ['lat', 'lon']
+            interpolation_ncvar=None, # 'bl_interpolation'
+            subsampled_dimension=None, # 'tp_xc'
+    ):
+        """Set the TODO DSG ragged indexed compression global attributes.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            index: `Index`
+
+            element_dimension: `str`
+
+            instance_dimension: `str`
+
+        :Returns:
+
+            `str`
+               The element dimension, possibly modified to make sure that it
+               is unique.
+
+        """
+        g = self.read_vars
+
+        for tie_point_ncvar in tie_point_ncvars:
+            tie_point_index = g["tie_point_index"][tie_point_index_ncvar]
+
+            key = "subsampled_linear " + tie_point_ncvar
+            g["compression"].setdefault(subsampled_dimension, {})[key] = {
+                "tie_point_index": tie_point_index,
+                "interpolation_ncvar": interpolation_ncvar,
+                "implied_ncdimensions": (interpolated_dimension,),
+            }
 
         if is_log_level_debug(logger):
             logger.debug(
@@ -4458,6 +4574,57 @@ class NetCDFRead(IORead):
 
         return cell_measure
 
+    def _create_TiePointIndex(self, ncvar, ncdim):
+        """Create a tie point index variable.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            ncvar: `str`
+                The name of the netCDF tie point index variable.
+
+                *Parameter example:*
+                  ``ncvar='x_indices'``
+
+            ncdim: `str`
+                The name of the tie point index variable's netCDF
+                dimension.
+
+                *Parameter example:*
+                  ``ncdim='tp_xc'``
+
+        :Returns:
+
+                 TiePointIndex variable instance
+
+        """
+        g = self.read_vars
+
+        # Initialise the count variable
+        variable = self.implementation.initialise_TiePointIndex()
+
+        # Set the CF properties
+        properties = g["variable_attributes"][ncvar]
+        self.implementation.set_properties(variable, properties)
+
+        if not g["mask"]:
+            self._set_default_FillValue(variable, ncvar)
+
+        # Set the netCDF variable name
+        self.implementation.nc_set_variable(variable, ncvar)
+
+        # Set the name of the netCDF dimension spaned by the variable
+        self.implementation.nc_set_dimension(
+            variable, self._ncdim_abspath(ncdim)
+        )
+
+        data = self._create_data(ncvar, variable, uncompress_override=True)
+
+        self.implementation.set_data(variable, data, copy=False)
+
+        return variable
+
     def _create_Count(self, ncvar, ncdim):
         """Create a count variable.
 
@@ -4915,7 +5082,7 @@ class NetCDFRead(IORead):
             # appear in the netCDF file
             for ncdim in dimensions:
                 if ncdim in compression:
-                    # This dimension represents two or more compressed
+                    # This dimension represents one or more compressed
                     # dimensions
                     c = compression[ncdim]
                     if ncvar not in c.get("netCDF_variables", (ncvar,)):
@@ -5033,6 +5200,30 @@ class NetCDFRead(IORead):
                             ragged_indexed_array=self._create_Data(array),
                             uncompressed_shape=uncompressed_shape,
                             index_variable=c["index_variable"],
+                        )
+                    elif "subsampled_linear " + ncvar in c:
+                        # --------------------------------------------
+                        # Subsampled array with linear interpolation
+                        # --------------------------------------------
+                        c = c["subsampled_linear " + ncvar]
+                        uncompressed_shape = tuple(
+                            [
+                                g["internal_dimension_sizes"][dim]
+                                for dim in self._ncdimensions(ncvar)
+                            ] # TODO
+                        )
+                        compressed_axis = g["variable_dimensions"][
+                            ncvar
+                        ].index(ncdim)
+                        precision = g["interpolation"][c["interpolation_ncvar"]]["computational_precision"]
+                        tie_point_index = g['tie_point_index'][c['tie_point_index_ncvar']]
+
+                        array = self._create_subsampled_linear_array(
+                            subsampled_array=self._create_Data(array),
+                            uncompressed_shape=uncompressed_shape,
+                            compressed_axes=(compressed_axis,),
+                            computational_precision=precision,
+                            tie_point_indices=(tie_point_index,),
                         )
                     else:
                         raise ValueError(
@@ -5272,6 +5463,42 @@ class NetCDFRead(IORead):
 
         return out
 
+    def _parse_coordinate_interpolation(self,
+                                        coordinate_interpolation_string,
+                                        field_ncvar=None):
+        """Parse a CF coordinate_interpolation string.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            coordinate_interpolation_string: `str`
+                A CF coordinate interpolation string.
+
+        :Returns:
+
+            `dict`
+
+        """
+        if field_ncvar:
+            attribute = {field_ncvar + ": coordinate_interpolation":
+                         coordinate_interpolation_string}
+
+        if not coordinate_interpolation_string:
+            return
+
+        x = self._split_string_by_white_space(
+            None,
+            coordinate_interpolation_string,
+            variables=True,
+            remove_trailing_colon=True
+        )
+
+        if not x:
+            return {}
+
+        return {x[-1]: x[::-1]}
+
     def _create_formula_terms_ref(self, f, key, coord, formula_terms):
         """Create a formula terms coordinate reference.
 
@@ -5356,39 +5583,57 @@ class NetCDFRead(IORead):
         return coordref
 
     def _ncdimensions(self, ncvar, ncdimensions=None):
-        """Lists the netCDF dimensions associated with a variable.
+        """Return the netCDF dimensions associated with a variable.
 
-            If the variable has been compressed then the *implied
-            uncompressed* dimensions are returned.
+        If the variable has been compressed then it is the *implied
+        uncompressed* dimensions that are returned.
 
-            .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-            :Parameters:
+        :Parameters:
 
-                ncvar: `str`
-                    The netCDF variable name.
+            ncvar: `str`
+                The netCDF variable name.
 
             ncdimensions: sequence of `str`, optional
-                Use these netCDF dimensions, rather than retrieving them
-                from the netCDF variable itself. This allows the
-                dimensions of a domain variable to be parsed. Note that
-                this only parameter only needs to be used once because the
-                parsed domain dimensions are automatically stored in
-                `self.read_var['domain_ncdimensions'][ncvar]`.
+                Use these netCDF dimensions, rather than retrieving
+                them from the netCDF variable itself. This allows the
+                dimensions of a domain variable to be parsed. Note
+                that this parameter only needs to be used once because
+                the parsed domain dimensions are automatically stored
+                in `self.read_var['domain_ncdimensions'][ncvar]`.
 
                 .. versionadded:: (cfdm) 1.9.0.0
 
         :Returns:
 
+            `list`
+                The list of netCDF dimension names spanned by the
+                netCDF variable.
 
-                `list`
-                    The list of netCDF dimension names spanned by the netCDF
-                    variable.
+        **Examples:**
 
-            **Examples:**
+        >>> n._ncdimensions('humidity')
+        ['time', 'lat', 'lon']
 
-            >>> n._ncdimensions('humidity')
-            ['time', 'lat', 'lon']
+        For a variable compressed by gathering:
+
+           dimensions:
+             lat=73;
+             lon=96;
+             landpoint=2381;
+             depth=4;
+           variables:
+             int landpoint(landpoint);
+               landpoint:compress="lat lon";
+             float landsoilt(depth,landpoint);
+               landsoilt:long_name="soil temperature";
+               landsoilt:units="K";
+
+        we would have
+
+        >>> n._ncdimensions('landsoilt')
+        ['depth', 'lat', 'lon']
 
         """
         g = self.read_vars
@@ -5421,46 +5666,57 @@ class NetCDFRead(IORead):
 
         if compression and set(compression).intersection(ncdimensions):
             for ncdim in ncdimensions:
-                if ncdim in compression:
-                    c = compression[ncdim]
+                if ncdim not in compression:
+                    continue
 
-                    if ncvar not in c.get("netCDF_variables", (ncvar,)):
-                        # This variable is not compressed, even though
-                        # it spans a dimension that is compressed for
-                        # some other variables For example, this sort
-                        # of situation may arise with simple
-                        # geometries.
-                        continue
+                c = compression[ncdim]
 
-                    i = ncdimensions.index(ncdim)
+                if ncvar not in c.get("netCDF_variables", (ncvar,)):
+                    # This variable is not compressed, even though it
+                    # spans a dimension that is compressed for some
+                    # other variables For example, this sort of
+                    # situation may arise with simple geometries.
+                    continue
 
-                    if "gathered" in c:
-                        # Compression by gathering
-                        ncdimensions[i : i + 1] = c["gathered"][
-                            "implied_ncdimensions"
-                        ]
-                    elif "ragged_indexed_contiguous" in c:
-                        # Indexed contiguous ragged array.
-                        #
-                        # Check this before ragged_indexed and
-                        # ragged_contiguous because both of these will
-                        # exist for an array that is both indexed and
-                        # contiguous.
-                        ncdimensions[i : i + 1] = c[
-                            "ragged_indexed_contiguous"
-                        ]["implied_ncdimensions"]
-                    elif "ragged_contiguous" in c:
-                        # Contiguous ragged array
-                        ncdimensions[i : i + 1] = c["ragged_contiguous"][
-                            "implied_ncdimensions"
-                        ]
-                    elif "ragged_indexed" in c:
-                        # Indexed ragged array
-                        ncdimensions[i : i + 1] = c["ragged_indexed"][
-                            "implied_ncdimensions"
-                        ]
+                i = ncdimensions.index(ncdim)
 
-                    break
+                if "gathered" in c:
+                    # Compression by gathering
+                    ncdimensions[i : i + 1] = c["gathered"][
+                        "implied_ncdimensions"
+                    ]
+                elif "ragged_indexed_contiguous" in c:
+                    # Indexed contiguous ragged array.
+                    #
+                    # Check this before ragged_indexed and
+                    # ragged_contiguous because both of these will
+                    # exist for an array that is both indexed and
+                    # contiguous.
+                    ncdimensions[i : i + 1] = c[
+                        "ragged_indexed_contiguous"
+                    ]["implied_ncdimensions"]
+                elif "ragged_contiguous" in c:
+                    # Contiguous ragged array
+                    ncdimensions[i : i + 1] = c["ragged_contiguous"][
+                        "implied_ncdimensions"
+                    ]
+                elif "ragged_indexed" in c:
+                    # Indexed ragged array
+                    ncdimensions[i : i + 1] = c["ragged_indexed"][
+                        "implied_ncdimensions"
+                    ]
+                elif "subsampled_linear " + ncvar in c:
+                    # Subsampled linear interpolation array
+                    ncdimensions[i : i + 1] = c["subsampled_linear "+ ncvar][
+                        "implied_ncdimensions"
+                    ]
+                elif "subsampled_bilinear " + ncvar in c:
+                    # Subsampled bilinear interpolation array
+                    ncdimensions[i : i + 1] = c["subsampled_bilinear " + ncvar][
+                        "implied_ncdimensions"
+                    ]
+
+                break
 
         out = list(map(str, ncdimensions))
 
@@ -6492,7 +6748,8 @@ class NetCDFRead(IORead):
         return sample_dimension in self.read_vars["internal_dimension_sizes"]
 
     def _split_string_by_white_space(
-        self, parent_ncvar, string, variables=False
+            self, parent_ncvar, string, variables=False,
+            remove_trailing_colon=False
     ):
         """Split a string by white space.
 
@@ -6511,6 +6768,12 @@ class NetCDFRead(IORead):
 
                 .. versionadded:: (cfdm) 1.8.6
 
+            remove_trailing_colon: `bool`
+                Remove a trailing colon (``:``) from the split
+                strings.
+
+                .. versionadded:: (cfdm) 1.9.TODO.0
+
         :Returns:
 
             `list`
@@ -6524,6 +6787,9 @@ class NetCDFRead(IORead):
         except AttributeError:
             return []
         else:
+            if remove_trailing_colon:
+                out = [x[::-1] if x.endswith(":") else x for x in out]
+
             if variables and out and self.read_vars["has_groups"]:
                 mapping = self.read_vars["flattener_variables"]
                 out = [mapping[ncvar] for ncvar in out]
