@@ -1,3 +1,13 @@
+Version 1.9.0.1
+---------------
+
+**2021-10-??**
+
+* Fix bug in `cf.Field.get_domain` when there are climatological time
+  axes (https://github.com/NCAS-CMS/cfdm/issues/159)
+
+----
+  
 Version 1.9.0.0
 ---------------
 
