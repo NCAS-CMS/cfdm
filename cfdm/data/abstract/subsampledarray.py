@@ -22,19 +22,19 @@ class SubsampledArray(CompressedArray):
         size=None,
         ndim=None,
         compressed_axes=None,
-        interpolation=None,
-        tie_points=None,
         tie_point_indices={},
         interpolation_parameters={},
         parameter_dimensions={},
+        interpolation_name=None,
+        interpolation_description=None,
         computational_precision=None,
     ):
         """Initialisation.
 
         :Parameters:
 
-            tie_points: `Data`
-                The compressed array.
+            compressed_array: `Data`
+                The tie points array.
 
             shape: `tuple`
                 The uncompressed array dimension sizes.
@@ -55,12 +55,16 @@ class SubsampledArray(CompressedArray):
                 *Parameter example:*
                   ``compressed_axes=(1, 2)``
 
-            interpolation: `str`
+            interpolation_name: `str`
                 The interpolation method used to uncompress the
                 coordinates values.
 
                 *Parameter example:*
-                  ``interpolation='linear'``
+                  ``interpolation_name='linear'``
+
+            interpolation_description: `str`
+                A non-standardized description of the interpolation
+                method used to uncompress the coordinates values.
 
             tie_point_indices: `dict`, optional
                 The tie point index variables cooresponding to the
@@ -75,13 +79,14 @@ class SubsampledArray(CompressedArray):
 
         """
         super().__init__(
-            compressed_array=tie_points,
+            compressed_array=compressed_array,
             shape=shape,
             size=size,
             ndim=ndim,
             compressed_dimension=tuple(sorted(compressed_axes)),
             compression_type="subsampled",
-            interpolation=interpolation,
+            interpolation_name=interpolation_name,
+            interpolation_description=interpolation_description,
             tie_point_indices=tie_point_indices.copy(),
             interpolation_parameters=interpolation_parameters.copy(),
             parameter_dimensions=parameter_dimensions.copy(),
@@ -195,8 +200,13 @@ class SubsampledArray(CompressedArray):
         return _float64
 
     @property
-    def interpolation(self):
-        """The description of the interpolation method."""
+    def interpolation_name(self):
+        """The interpolation method."""
+        raise NotImplementedError("Must implement in subclasses")
+
+    @property
+    def interpolation_description(self):
+        """Non-standardized description of the interpolation method."""
         raise NotImplementedError("Must implement in subclasses")
 
     def get_interpolation_parameters(self):
@@ -540,7 +550,8 @@ class SubsampledArray(CompressedArray):
             ndim=self.ndim,
             size=self.size,
             compressed_dimensions=compressed_dimensions,
-            interpolation=self.interpolation,
+            interpolation_name=self.interpolation_name,
+            interpolation_description=self.interpolation_description,
             tie_point_indices=tie_point_indices,
             interpolation_parameters=self.get_interpolation_parameters(),
             parameter_dimensions=parameter_dimensions,
