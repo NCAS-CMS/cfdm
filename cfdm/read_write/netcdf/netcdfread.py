@@ -3195,7 +3195,7 @@ class NetCDFRead(IORead):
         # to the field/domain
         # ------------------------------------------------------------
         coordinates = self.implementation.del_property(f, "coordinates", None)
-
+               
         if coordinates is not None:
             parsed_coordinates = self._split_string_by_white_space(
                 field_ncvar, coordinates, variables=True
@@ -3231,7 +3231,7 @@ class NetCDFRead(IORead):
                 if not dimensions:
                     scalar = True
                     if self._is_char_or_string(ncvar):
-                        # String valued scalar coordinate. T turn it
+                        # String valued scalar coordinate. Turn it
                         # into a 1-d auxiliary coordinate construct.
                         domain_axis = self._create_domain_axis(1)
                         logger.detail(
@@ -3320,6 +3320,50 @@ class NetCDFRead(IORead):
                 if scalar:
                     ncscalar_to_axis[ncvar] = dimensions[0]
 
+        # ------------------------------------------------------------
+        # Add auxiliary coordinate constructs from tie point
+        # coordinate variables (CF>=1.9)
+        # ------------------------------------------------------------
+        self.implementation.del_property(f, "coordinate_interpolation", None)
+        tie_point_coordinates = g['tie_point_coordinates'].get(field_ncvar, ())
+        for ncvar in tie_point_coordinates:
+            cf_compliant = self._check_tie_point_corodinate(
+                field_ncvar, ncvar
+            )
+            if not cf_compliant:
+                continue
+
+            # Set domain axes for this variable
+            dimensions = self._get_domain_axes(ncvar)
+            
+            if ncvar in g["auxiliary_coordinate"]:
+                coord = g["auxiliary_coordinate"][ncvar].copy()
+            else:
+                coord = self._create_auxiliary_coordinate(
+                    field_ncvar, ncvar, f
+                )
+                g["auxiliary_coordinate"][ncvar] = coord
+                
+            # Insert auxiliary coordinate
+            logger.detail(
+                f"        [f] Inserting {coord.__class__.__name__}"
+            )  # pragma: no cover
+            
+            aux = self.implementation.set_auxiliary_coordinate(
+                f, coord, axes=dimensions, copy=False
+            )
+            
+            self._reference(ncvar, field_ncvar)
+            if self.implementation.has_bounds(coord):
+                bounds = self.implementation.get_bounds(coord)
+                self._reference(
+                    self.implementation.nc_get_variable(bounds),
+                    field_ncvar,
+                )
+                
+            ncvar_to_key[ncvar] = aux
+            
+        
         # ------------------------------------------------------------
         # Add auxiliary coordinate constructs from geometry node
         # coordinates that are not already bounds of existing
@@ -4302,7 +4346,8 @@ class NetCDFRead(IORead):
         # Look for a geometry container
         # ------------------------------------------------------------
         geometry = self._get_geometry(field_ncvar)
-
+        tie_points = ncvar in g['tie_point_coordinates'].get(field_ncvar, ())
+        
         attribute = "bounds"  # TODO Bad default? consider if bounds != None
 
         # If there are bounds then find the name of the attribute that
@@ -4317,6 +4362,12 @@ class NetCDFRead(IORead):
                     bounds_ncvar = properties.pop("nodes", None)
                     if bounds_ncvar is not None:
                         attribute = "nodes"
+                elif tie_points:
+                    # This construct is derived from a tie point
+                    # coordinates variable
+                    bounds_ncvar = properties.pop("bounds_tie_points", None)
+                    if bounds_ncvar is not None:
+                        attribute = "bounds_tie_points"                    
         elif nodes:
             attribute = "nodes"
 
@@ -5471,21 +5522,15 @@ class NetCDFRead(IORead):
 
         :Returns:
 
-            `dict`
-
+#            `list`
+#                The netCDF names of the tie point coordinate
+#                variables.
+             `None`
         """
         attribute = {parent_ncvar + ": coordinate_interpolation":
                      coordinate_interpolation_string}
 
         if not coordinate_interpolation_string:
-            return
-
-        attributes = g["variable_attributes"][parent_ncvar]
-        try:
-            tie_point_mapping = attributes["tie_point_mapping"]
-        except KeyError:
-            # TODO error: interpolation var must have
-            # tie_point_mapping attr
             return
 
         coordinate_interpolation = self._split_string_by_white_space(
@@ -5498,6 +5543,14 @@ class NetCDFRead(IORead):
         if not coordinate_interpolation:
             return
 
+        attributes = g["variable_attributes"][parent_ncvar]
+        try:
+            tie_point_mapping = attributes["tie_point_mapping"]
+        except KeyError:
+            # TODO error: interpolation var must have
+            # tie_point_mapping attr
+            return out
+
         # Still here? Then ...
 
         # Convert, e.g.
@@ -5506,16 +5559,21 @@ class NetCDFRead(IORead):
         # {"bilinear": ["lat", "lon"], "linear": ["time"]}
         c_i = {}
         coords = []
+        tie_point_coordinates = []
         for x in coordinate_interpolation:
             if x.endswith(":"):
                 coords.append(x[::-1])
                 continue
 
             c_i[x] = coords
+            tie_point_coordinates.extend(coords)
+            
             coords = []
 
         coordinate_interpolation = c_i
 
+        g['tie_point_coordinates'][parent_ncvar] = tie_point_coordinates
+        
         # Record the interpolation variables
         for interpolation_ncvar, coords in coordinate_interpolation.items():
             if interpolation_ncvar in g["interpolation"]:
@@ -5588,7 +5646,6 @@ class NetCDFRead(IORead):
                     g["do_not_create_field"].add(param_ncvar)
 
             g["interpolation"][interpolation_ncvar] = record
-
 
     def _create_formula_terms_ref(self, f, key, coord, formula_terms):
         """Create a formula terms coordinate reference.
