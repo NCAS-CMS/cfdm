@@ -2447,51 +2447,6 @@ class NetCDFRead(IORead):
 
         return element_dimension
 
-    def _set_subsampled_linear_parameters(
-            self,
-            tie_points_ncvars=None, # ['lat', 'lon']
-            interpolation_ncvar=None, # 'bl_interpolation'
-            subsampled_dimension=None, # 'tp_xc'
-    ):
-        """Set the TODO DSG ragged indexed compression global attributes.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        :Parameters:
-
-            index: `Index`
-
-            element_dimension: `str`
-
-            instance_dimension: `str`
-
-        :Returns:
-
-            `str`
-               The element dimension, possibly modified to make sure that it
-               is unique.
-
-        """
-        g = self.read_vars
-
-        for tie_point_ncvar in tie_point_ncvars:
-            tie_point_index = g["tie_point_index"][tie_point_index_ncvar]
-
-            key = "subsampled_linear " + tie_point_ncvar
-            g["compression"].setdefault(subsampled_dimension, {})[key] = {
-                "tie_point_index": tie_point_index,
-                "interpolation_ncvar": interpolation_ncvar,
-                "implied_ncdimensions": (interpolated_dimension,),
-            }
-
-        if is_log_level_debug(logger):
-            logger.debug(
-                "    Created "
-                f"read_vars['compression'][{indexed_sample_dimension!r}]['ragged_indexed']"
-            )  # pragma: no cover
-
-        return element_dimension
-
     def _check_external_variables(
         self, external_variables, parsed_external_variables
     ):
@@ -3321,21 +3276,17 @@ class NetCDFRead(IORead):
                     ncscalar_to_axis[ncvar] = dimensions[0]
 
         # ------------------------------------------------------------
-        # Add auxiliary coordinate constructs from tie point
-        # coordinate variables (CF>=1.9)
+        # Add auxiliary coordinate constructs derived from from tie
+        # point coordinate variables (CF>=1.9, introduced at v1.9.TODO.0)
         # ------------------------------------------------------------
         self.implementation.del_property(f, "coordinate_interpolation", None)
-        tie_point_coordinates = g['tie_point_coordinates'].get(field_ncvar, ())
-        for ncvar in tie_point_coordinates:
-            cf_compliant = self._check_tie_point_corodinate(
-                field_ncvar, ncvar
-            )
-            if not cf_compliant:
+        tie_points = g["tie_points"].get(field_ncvar, ())
+        
+        for ncvar in tie_points:
+            ok = self._check_tie_points(field_ncvar, ncvar)        
+            if not ok:
                 continue
 
-            # Set domain axes for this variable
-            dimensions = self._get_domain_axes(ncvar)
-            
             if ncvar in g["auxiliary_coordinate"]:
                 coord = g["auxiliary_coordinate"][ncvar].copy()
             else:
@@ -3346,11 +3297,11 @@ class NetCDFRead(IORead):
                 
             # Insert auxiliary coordinate
             logger.detail(
-                f"        [f] Inserting {coord.__class__.__name__}"
+                f"        [i] Inserting {coord.__class__.__name__}"
             )  # pragma: no cover
             
             aux = self.implementation.set_auxiliary_coordinate(
-                f, coord, axes=dimensions, copy=False
+                f, coord, axes=self._get_domain_axes(ncvar), copy=False
             )
             
             self._reference(ncvar, field_ncvar)
@@ -3363,7 +3314,6 @@ class NetCDFRead(IORead):
                 
             ncvar_to_key[ncvar] = aux
             
-        
         # ------------------------------------------------------------
         # Add auxiliary coordinate constructs from geometry node
         # coordinates that are not already bounds of existing
@@ -5076,202 +5026,214 @@ class NetCDFRead(IORead):
 
         else:
             # The array might be compressed
-            if "gathered" in c or "ragged_indexed_contiguous" in c or "ragged_contiguous" in c or"ragged_indexed" in c:
-                # ----------------------------------------------------
-                # Compression type: There is exactly one compressed
-                #                   dimension that represent two or
-                #                   more uncompressed axes.
-                # ----------------------------------------------------
+#            if (
+#                    "gathered" in c or
+#                    "ragged_indexed_contiguous" in c or
+#                    "ragged_contiguous" in c or
+#                    "ragged_indexed" in c
+#            ):
+#                # ----------------------------------------------------
+#                # Compression type: There is exactly one compressed
+#                #                   dimension that represents two or
+#                #                   more uncompressed axes.
+#                # ----------------------------------------------------
 
-                # Loop round the dimensions of variable in the order
-                # that they appear in the netCDF file
-                for ncdim in dimensions:
-                    if ncdim not in compression:
-                        continue
-
-                    # This dimension represents two or more compressed
-                    # dimensions
-                    c = compression[ncdim]
-                    if ncvar not in c.get("netCDF_variables", (ncvar,)):
-                        # This variable is not compressed, even though
-                        # it spans a dimension that is compressed for
-                        # some other variables For example, this sort
-                        # of situation may arise with simple
-                        # geometries.
-                        continue
-
-                    if "gathered" in c:
-                        # Compression by gathering. Note the
-                        # uncompressed dimensions exist as internal
-                        # dimensions.
-                        c = c["gathered"]
-                        uncompressed_shape = tuple(
-                            [
-                                g["internal_dimension_sizes"][dim]
-                                for dim in self._ncdimensions(ncvar)
-                            ]
-                        )
-                        compressed_dimension = g["variable_dimensions"][
-                            ncvar
-                        ].index(c["sample_dimension"])
-                        array = self._create_gathered_array(
-                            gathered_array=self._create_Data(array),
-                            uncompressed_shape=uncompressed_shape,
-                            compressed_dimension=compressed_dimension,
-                            list_variable=c["list_variable"],
-                        )
-                    elif "ragged_indexed_contiguous" in c:
-                        # Contiguous indexed ragged array. Check this
-                        # before ragged_indexed and ragged_contiguous
-                        # because both of these will exist for an
-                        # indexed and contiguous array.
-                        c = c["ragged_indexed_contiguous"]
-
-                        i = dimensions.index(ncdim)
-                        if i != 0:
-                            raise ValueError(
-                                "Data can only be created when the netCDF "
-                                "dimension spanned by the data variable is the "
-                                "left-most dimension in the ragged array."
-                            )
-
-                        uncompressed_shape = list(array.shape)
-                        uncompressed_shape[i : i + 1] = [
-                            c["instance_dimension_size"],
-                            c["element_dimension_1_size"],
-                            c["element_dimension_2_size"],
+            # Loop round the dimensions of variable in the order
+            # that they appear in the netCDF file
+            for ncdim in dimensions:
+                if ncdim not in compression:
+                    continue
+                
+                # This dimension represents two or more compressed
+                # dimensions
+                c = compression[ncdim]
+                if ncvar not in c.get("netCDF_variables", (ncvar,)):
+                    # This variable is not compressed, even though
+                    # it spans a dimension that is compressed for
+                    # some other variables For example, this sort
+                    # of situation may arise with simple
+                    # geometries.
+                    continue
+                
+                if "gathered" in c:
+                    # ------------------------------------------------
+                    # Compression by gathering
+                    # ------------------------------------------------
+                    # Note the uncompressed dimensions exist as
+                    # internal dimensions.
+                    c = c["gathered"]
+                    uncompressed_shape = tuple(
+                        [
+                            g["internal_dimension_sizes"][dim]
+                            for dim in self._ncdimensions(ncvar)
                         ]
-                        uncompressed_shape = tuple(uncompressed_shape)
+                    )
+                    compressed_dimension = g["variable_dimensions"][
+                        ncvar
+                    ].index(c["sample_dimension"])
+                    array = self._create_gathered_array(
+                        gathered_array=self._create_Data(array),
+                        uncompressed_shape=uncompressed_shape,
+                        compressed_dimension=compressed_dimension,
+                        list_variable=c["list_variable"],
+                    )
+                elif "ragged_indexed_contiguous" in c:
+                    # ------------------------------------------------
+                    # Contiguous indexed ragged array
+                    # ------------------------------------------------
+                    # Check this before ragged_indexed and
+                    # ragged_contiguous because both of these will
+                    # exist for an indexed and contiguous array.
+                    c = c["ragged_indexed_contiguous"]
 
-                        array = self._create_ragged_indexed_contiguous_array(
-                            ragged_indexed_contiguous_array=self._create_Data(
-                                array
-                            ),
-                            uncompressed_shape=uncompressed_shape,
-                            count_variable=c["count_variable"],
-                            index_variable=c["index_variable"],
+                    i = dimensions.index(ncdim)
+                    if i != 0:
+                        raise ValueError(
+                            "Data can only be created when the netCDF "
+                            "dimension spanned by the data variable is the "
+                            "left-most dimension in the ragged array."
                         )
 
-                    elif "ragged_contiguous" in c:
-                        # Contiguous ragged array
-                        c = c["ragged_contiguous"]
+                    uncompressed_shape = list(array.shape)
+                    uncompressed_shape[i : i + 1] = [
+                        c["instance_dimension_size"],
+                        c["element_dimension_1_size"],
+                        c["element_dimension_2_size"],
+                    ]
+                    uncompressed_shape = tuple(uncompressed_shape)
 
-                        i = dimensions.index(ncdim)
-                        if i != 0:
-                            raise ValueError(
-                                "Data can only be created when the netCDF "
-                                "dimension spanned by the data variable is "
-                                "the left-most dimension in the ragged array."
-                            )
+                    array = self._create_ragged_indexed_contiguous_array(
+                        ragged_indexed_contiguous_array=self._create_Data(
+                            array
+                        ),
+                        uncompressed_shape=uncompressed_shape,
+                        count_variable=c["count_variable"],
+                        index_variable=c["index_variable"],
+                    )
 
-                        uncompressed_shape = list(array.shape)
-                        uncompressed_shape[i : i + 1] = [
-                            c["instance_dimension_size"],
-                            c["element_dimension_size"],
-                        ]
-                        uncompressed_shape = tuple(uncompressed_shape)
+                elif "ragged_contiguous" in c:
+                    # ------------------------------------------------
+                    # Contiguous ragged array
+                    # ------------------------------------------------
+                    c = c["ragged_contiguous"]
 
-                        array = self._create_ragged_contiguous_array(
-                            ragged_contiguous_array=self._create_Data(array),
-                            uncompressed_shape=uncompressed_shape,
-                            count_variable=c["count_variable"],
-                        )
-                    elif "ragged_indexed" in c:
-                        # Indexed ragged array
-                        c = c["ragged_indexed"]
-
-                        i = dimensions.index(ncdim)
-                        if i != 0:
-                            raise ValueError(
-                                "Data can only be created when the netCDF "
-                                "dimension spanned by the data variable is "
-                                "the left-most dimension in the ragged array."
-                            )
-
-                        uncompressed_shape = list(array.shape)
-                        uncompressed_shape[i : i + 1] = [
-                            c["instance_dimension_size"],
-                            c["element_dimension_size"],
-                        ]
-                        uncompressed_shape = tuple(uncompressed_shape)
-
-                        array = self._create_ragged_indexed_array(
-                            ragged_indexed_array=self._create_Data(array),
-                            uncompressed_shape=uncompressed_shape,
-                            index_variable=c["index_variable"],
+                    i = dimensions.index(ncdim)
+                    if i != 0:
+                        raise ValueError(
+                            "Data can only be created when the netCDF "
+                            "dimension spanned by the data variable is "
+                            "the left-most dimension in the ragged array."
                         )
 
-            elif "subsampled " + ncvar in c:
-                # ----------------------------------------------------
-                # Compression type: Each compressed dimension
-                #                   corresponds to a unique
-                #                   uncompressed axis.
-                # ----------------------------------------------------
-                c = c["subsampled " + ncvar]
+                    uncompressed_shape = list(array.shape)
+                    uncompressed_shape[i : i + 1] = [
+                        c["instance_dimension_size"],
+                        c["element_dimension_size"],
+                    ]
+                    uncompressed_shape = tuple(uncompressed_shape)
 
-                # Initialize the uncompressed shape as the shape of
-                # the tie point coordinates variable, to be updated so
-                # that the subsampled dimension sizes are replaced by
-                # interpolated dimension sizes.
-                uncompressed_shape = [
-                    g["internal_dimension_sizes"][dim]
-                    for dim in self._ncdimensions(ncvar)
-                ]
+                    array = self._create_ragged_contiguous_array(
+                        ragged_contiguous_array=self._create_Data(array),
+                        uncompressed_shape=uncompressed_shape,
+                        count_variable=c["count_variable"],
+                    )
+                elif "ragged_indexed" in c:
+                    # ------------------------------------------------
+                    # Indexed ragged array
+                    # ------------------------------------------------
+                    c = c["ragged_indexed"]
 
-                # Sort out tie point indices
-                interp_var = g["interpolation"][c["interpolation_ncvar"]]
-                compressed_axes = []
-                tie_point_indices = {}
-                for i, ncdim in enumerate(dimensions):
-                    try:
-                        interp = interp_var["subsampled_ncdim"][ncdim]
-                    except KeyError:
-                        # This dimension has not been subsampled
-                        continue
+                    i = dimensions.index(ncdim)
+                    if i != 0:
+                        raise ValueError(
+                            "Data can only be created when the netCDF "
+                            "dimension spanned by the data variable is "
+                            "the left-most dimension in the ragged array."
+                        )
 
-                    compressed_axes.append(i)
-                    uncompressed_shape[i] = g["internal_dimension_sizes"][interp["interpolated_ncdim"]]
-                    tie_point_indices[i] = g['tie_point_index'][interp["tie_point_index"]]
+                    uncompressed_shape = list(array.shape)
+                    uncompressed_shape[i : i + 1] = [
+                        c["instance_dimension_size"],
+                        c["element_dimension_size"],
+                    ]
+                    uncompressed_shape = tuple(uncompressed_shape)
 
-                # Sort out interpolation parameters
-                interpolation_parameters = {}
-                parameter_dimensions = {}
-                for term, param_ncvar in interp_var["interpolation_parameters"].items():
-                    interpolation_parameters[term] = g['interpolation_parameter'][param_ncvar]
-                    positions = []
-                    for dim in g['variable_dimensions'][param_ncvar]:
+                    array = self._create_ragged_indexed_array(
+                        ragged_indexed_array=self._create_Data(array),
+                        uncompressed_shape=uncompressed_shape,
+                        index_variable=c["index_variable"],
+                    )
+
+                elif "subsampled" + ncvar in c:
+                    # ------------------------------------------------
+                    # Subsampled array
+                    # ------------------------------------------------
+                    c = c["subsampled " + ncvar]
+        
+                    # Initialize the uncompressed shape as the shape of
+                    # the tie point coordinates variable, to be updated by
+                    # replacing the subsampled dimension sizes with their
+                    # corresponding interpolated dimension sizes.
+                    uncompressed_shape = [
+                        g["internal_dimension_sizes"][dim]
+                        for dim in self._ncdimensions(ncvar)
+                    ]
+        
+                    # Sort out tie point indices
+                    interp_var = g["interpolation"][c["interpolation_ncvar"]]
+                    compressed_axes = []
+                    tie_point_indices = {}
+                    for i, ncdim in enumerate(dimensions):
                         try:
-                            # Either the interpolation parameter
-                            # variable spans an interpolated dimension
-                            # or a subsampled dimension ...
-                            position = dimensions.index(dim)
-                        except ValueError:
-                            # ... or the interpolation parameter
-                            # variable spans an interpolation subarea
-                            # dimension.
-                            for d, v in interp_var["subsampled_ncdim"].items():
-                                if dim == v["subarea_ncdim"]:
-                                    position = dimensions.index(d)
-                                    break
-
-                        positions.append(position)
-
-                    parameter_dimensions[term] = positions
-
-                array = self._create_subsampled_array(
-                    subsampled_array=self._create_Data(array),
-                    uncompressed_shape=tuple(uncompressed_shape),
-                    compressed_axes=compressed_axes,
-                    tie_point_indices=tie_point_indices,
-                    interpolation_parameters=interpolation_parameters,
-                    parameter_dimensions=parameter_dimensions,
-                    interpolation_name=interp_var["interpolation_name"),
-                    interpolation_description=interp_var["interpolation_description"],
-                    computational_precision=interp_var["computational_precision"],
-                )
-
-            else:
-                raise ValueError(
+                            interp = interp_var["subsampled_ncdim"][ncdim]
+                        except KeyError:
+                            # This dimension of the tie point
+                            # coordinate variable has not been
+                            # subsampled
+                            continue
+        
+                        compressed_axes.append(i)
+                        uncompressed_shape[i] = g["internal_dimension_sizes"][interp["interpolated_ncdim"]]
+                        tie_point_indices[i] = g['tie_point_index'][interp["tie_point_index"]]
+        
+                    # Sort out interpolation parameters
+                    interpolation_parameters = {}
+                    parameter_dimensions = {}
+                    for term, param_ncvar in interp_var["interpolation_parameters"].items():
+                        interpolation_parameters[term] = g['interpolation_parameter'][param_ncvar]
+                        positions = []
+                        for dim in g['variable_dimensions'][param_ncvar]:
+                            try:
+                                # Either the interpolation parameter
+                                # variable spans an interpolated dimension
+                                # or a subsampled dimension ...
+                                position = dimensions.index(dim)
+                            except ValueError:
+                                # ... or the interpolation parameter
+                                # variable spans an interpolation subarea
+                                # dimension.
+                                for d, v in interp_var["subsampled_ncdim"].items():
+                                    if dim == v["subarea_ncdim"]:
+                                        position = dimensions.index(d)
+                                        break
+        
+                            positions.append(position)
+        
+                        parameter_dimensions[term] = positions
+        
+                    array = self._create_subsampled_array(
+                        subsampled_array=self._create_Data(array),
+                        uncompressed_shape=tuple(uncompressed_shape),
+                        compressed_axes=compressed_axes,
+                        tie_point_indices=tie_point_indices,
+                        interpolation_parameters=interpolation_parameters,
+                        parameter_dimensions=parameter_dimensions,
+                        interpolation_name=interp_var["interpolation_name"),
+                        interpolation_description=interp_var["interpolation_description"],
+                        computational_precision=interp_var["computational_precision"],
+                    )    
+                else:
+                    raise ValueError(
                     f"Bad compression vibes. c.keys()={list(c.keys())}"
                 )
 
@@ -5508,18 +5470,19 @@ class NetCDFRead(IORead):
 
         return out
 
-    def _parse_coordinate_interpolation(self,
-                                        coordinate_interpolation_string,
-                                        parent_ncvar=None):
+    def _parse_coordinate_interpolation(self, string, parent_ncvar):
         """Parse a CF coordinate_interpolation string.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Parameters:
 
-            coordinate_interpolation_string: `str`
+            string: `str`
                 A CF coordinate interpolation string.
 
+        parent_nacvar: `str`
+            TODO
+        
         :Returns:
 
 #            `list`
@@ -5527,36 +5490,17 @@ class NetCDFRead(IORead):
 #                variables.
              `None`
         """
-        attribute = {parent_ncvar + ": coordinate_interpolation":
-                     coordinate_interpolation_string}
-
-        if not coordinate_interpolation_string:
-            return
-
         coordinate_interpolation = self._split_string_by_white_space(
             parent_ncvar,
-            coordinate_interpolation_string,
+            string,
             variables=True,
             trailing_colon=True
         )
 
-        if not coordinate_interpolation:
-            return
-
-        attributes = g["variable_attributes"][parent_ncvar]
-        try:
-            tie_point_mapping = attributes["tie_point_mapping"]
-        except KeyError:
-            # TODO error: interpolation var must have
-            # tie_point_mapping attr
-            return out
-
-        # Still here? Then ...
-
-        # Convert, e.g.
-        # ["lat:", "lon:", "bilinear", "time:", "linear"]
-        # to
-        # {"bilinear": ["lat", "lon"], "linear": ["time"]}
+        # Convert the split-by-white-space `coordinate_interpolation`
+        # attributes to a dictionary. E.g. ["lat:", "lon:",
+        # "bilinear", "time:", "linear"] becomes {"bilinear": ["lat",
+        # "lon"], "linear": ["time"]}
         c_i = {}
         coords = []
         tie_point_coordinates = []
@@ -5572,9 +5516,43 @@ class NetCDFRead(IORead):
 
         coordinate_interpolation = c_i
 
-        g['tie_point_coordinates'][parent_ncvar] = tie_point_coordinates
+        ok = self._check_coordinate_interpolation(ncvar, string,
+                                                  coordinate_interpolation)
+        if not ok:
+            return
+
+        attributes = g["variable_attributes"][parent_ncvar]
+        try:
+            tie_point_mapping = attributes["tie_point_mapping"]
+        except KeyError:
+            # TODO error: interpolation var must have
+            # tie_point_mapping attr
+            return out
+
+        # Still here? Then ...
+
+        # Convert the split-by-white-space `coordinate_interpolation`
+        # attributes to a dictionary. E.g. ["lat:", "lon:",
+        # "bilinear", "time:", "linear"] becomes {"bilinear": ["lat",
+        # "lon"], "linear": ["time"]}
+        c_i = {}
+        coords = []
+        tie_point_coordinates = []
+        for x in coordinate_interpolation:
+            if x.endswith(":"):
+                coords.append(x[::-1])
+                continue
+
+            c_i[x] = coords
+            tie_point_coordinates.extend(coords)
+            
+            coords = []
+
+        coordinate_interpolation = c_i
+
+        g["tie_points"][parent_ncvar] = tie_point_coordinates
         
-        # Record the interpolation variables
+        # Record the interpolation variable contents
         for interpolation_ncvar, coords in coordinate_interpolation.items():
             if interpolation_ncvar in g["interpolation"]:
                 # This interpolation variable has already been
@@ -5614,6 +5592,17 @@ class NetCDFRead(IORead):
                 # interpolation variables
                 g["do_not_create_field"].add(interpolation_ncvar)
 
+                # Record which tie point corodinate variables span
+                # this subsampled dimension, and their interpolation
+                # variable.
+                for tie_point_ncvar in coords:
+                    g["compression"].setdefault(subsampled_ncdim, {})[
+                        "subsampled " + tie_point_ncvar
+                    ] = {
+                        "interpolation_ncvar": interpolation_ncvar,
+                        "implied_ncdimensions": [interpolated_ncdim],
+                    }
+                        
                 # Create the tie point index variable for this
                 # subsampled dimension
                 if tie_point_index_ncvar not in g["tie_point_index"]:
@@ -5626,6 +5615,9 @@ class NetCDFRead(IORead):
                     # tie point index variables
                     g["do_not_create_field"].add(tie_point_index_ncvar)
 
+                
+            g["interpolation"][interpolation_ncvar] = record
+
             # Loop round interpolation parameters
             for y in self._parse_x(attrs.get("interpolation_parameters")):
                 for term, param_ncvar in y.items():
@@ -5636,16 +5628,12 @@ class NetCDFRead(IORead):
                     if param_ncvar in g["interpolation_parameter"]:
                         continue
 
-                    p = self._create_interpolation_parameter(
-                        param_ncvar, subsampled_dimension
-                    )
+                    p = self._create_interpolation_parameter(param_ncvar)
                     g["interpolation_parameter"][param_ncvar] = p
 
                     # Do not attempt to create field constructs from
                     # interpolation parameter variables
                     g["do_not_create_field"].add(param_ncvar)
-
-            g["interpolation"][interpolation_ncvar] = record
 
     def _create_formula_terms_ref(self, f, key, coord, formula_terms):
         """Create a formula terms coordinate reference.
@@ -5833,6 +5821,7 @@ class NetCDFRead(IORead):
                     ncdimensions[i : i + 1] = c["gathered"][
                         "implied_ncdimensions"
                     ]
+                    break
                 elif "ragged_indexed_contiguous" in c:
                     # Indexed contiguous ragged array.
                     #
@@ -5843,29 +5832,27 @@ class NetCDFRead(IORead):
                     ncdimensions[i : i + 1] = c[
                         "ragged_indexed_contiguous"
                     ]["implied_ncdimensions"]
+                    break
                 elif "ragged_contiguous" in c:
                     # Contiguous ragged array
                     ncdimensions[i : i + 1] = c["ragged_contiguous"][
                         "implied_ncdimensions"
                     ]
+                    break
                 elif "ragged_indexed" in c:
                     # Indexed ragged array
                     ncdimensions[i : i + 1] = c["ragged_indexed"][
                         "implied_ncdimensions"
                     ]
-                elif "subsampled_linear " + ncvar in c:
-                    # Subsampled linear interpolation array
-                    ncdimensions[i : i + 1] = c["subsampled_linear "+ ncvar][
+                    break
+                elif "subsampled " + ncvar in c:
+                    # Subsampled array
+                    ncdimensions[i : i + 1] = c["subsampled "+ ncvar][
                         "implied_ncdimensions"
                     ]
-                elif "subsampled_bilinear " + ncvar in c:
-                    # Subsampled bilinear interpolation array
-                    ncdimensions[i : i + 1] = c["subsampled_bilinear " + ncvar][
-                        "implied_ncdimensions"
-                    ]
-
-                # break
-
+                    # Do not break here, because subsampled variables
+                    # can have more than one compreseed dimension.
+                    
         out = list(map(str, ncdimensions))
 
         if domain:
@@ -6040,8 +6027,6 @@ class NetCDFRead(IORead):
             computational_precision=computational_precision,
             interpolation_parameters=interpolation_parameters,
             parameter_dimensions=parameter_dimensions,
-            interpolation_name=interpolation_name
-            interpolation_description=interpolation_description,
         )
 
     def _create_Data(
@@ -6937,6 +6922,67 @@ class NetCDFRead(IORead):
 
         """
         return sample_dimension in self.read_vars["internal_dimension_sizes"]
+
+    def _check_coordinate_interpolation(
+            self,
+            parent_ncvar,
+            coordinate_interpolation,
+            parsed_coordinate_interpolation, 
+    ):
+        """Check a TODO
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        if not parsed_coordinate_interpolation:
+            return True
+
+        attribute = {
+            parent_ncvar + ":coordinate_interplation": coordinate_interpolation
+        }
+
+        g = self.read_vars
+
+        incorrectly_formatted = (
+            "coordinate_interpolation attribute",
+            "is incorrectly formatted",
+        )
+
+        if not parsed_coordinate_interpolation:
+            self._add_message(
+                parent_ncvar,
+                parent_ncvar,
+                message=incorrectly_formatted,
+                attribute=attribute,
+                conformance="TODO",
+            )
+            return False
+
+        ok = True
+
+        for interp_ncvar, coords in parsed_coordinate_interpolation.items()
+            # Check that the variables exist in the file
+            if interp_ncvar not in g["internal_variables"]:
+                ncvar, message = self._check_missing_variable(
+                    interp_ncvar, "Interpolation variable"
+                )
+                self._add_message(
+                    parent_ncvar, ncvar, message=message, attribute=attribute
+                )
+                ok = False
+
+            for tie_point_ncvar in coords:
+                if tie_point_ncvar not in g["internal_variables"]:
+                ncvar, message = self._check_missing_variable(
+                    tie_point_ncvar, "Tie point coordinate variable"
+                )
+                self._add_message(
+                    parent_ncvar, ncvar, message=message, attribute=attribute
+                )
+                ok = False
+
+        return ok
+
 
     def _split_string_by_white_space(
             self, parent_ncvar, string, variables=False,

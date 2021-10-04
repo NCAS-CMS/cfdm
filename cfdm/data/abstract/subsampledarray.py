@@ -25,8 +25,8 @@ class SubsampledArray(CompressedArray):
         tie_point_indices={},
         interpolation_parameters={},
         parameter_dimensions={},
-        interpolation_name=None,
-        interpolation_description=None,
+            interpolation_name="",
+        interpolation_description="",
         computational_precision=None,
     ):
         """Initialisation.
@@ -55,14 +55,14 @@ class SubsampledArray(CompressedArray):
                 *Parameter example:*
                   ``compressed_axes=(1, 2)``
 
-            interpolation_name: `str`
+            interpolation_name: `str`, optional
                 The interpolation method used to uncompress the
                 coordinates values.
 
                 *Parameter example:*
                   ``interpolation_name='linear'``
 
-            interpolation_description: `str`
+            interpolation_description: `str`, optional
                 A non-standardized description of the interpolation
                 method used to uncompress the coordinates values.
 
@@ -202,12 +202,13 @@ class SubsampledArray(CompressedArray):
     @property
     def interpolation_name(self):
         """The interpolation method."""
-        raise NotImplementedError("Must implement in subclasses")
+        return ""
 
     @property
     def interpolation_description(self):
         """Non-standardized description of the interpolation method."""
-        raise NotImplementedError("Must implement in subclasses")
+        return self._get_component("interpolation_description")
+
 
     def get_interpolation_parameters(self):
         """Return the interpolation parameter variables for sampled

@@ -2270,6 +2270,110 @@ class CFDMImplementation(Implementation):
             index_variable=index_variable,
         )
 
+    def initialise_SubsampledLinearArray(
+            self,
+            compressed_array=None,
+            ndim=None,
+            shape=None,
+            size=None,
+            tie_point_indices=None,
+            compressed_axes=None,
+            computational_precision=None,
+            interpolation_parameters=None,
+            parameter_dimensions=None,
+    ):
+        """Return a subsampled linear array instance.
+
+        :Parameters:
+
+            compressed_array: array_like
+
+            ndim: `int`
+
+            shape: sequence of `int`
+
+            size: `int
+
+            tie_point_indices: `dict`
+
+            compressed_axes: sequence of `int`
+
+            computational_precision: `str`
+
+            interpolation_parameters: `dict`
+
+            parameter_dimensions: `dict`
+
+        :Returns:
+
+             Subsampled Linear array
+
+        """
+        cls = self.get_class("SubsampledLinearArray")
+        return cls(
+            compressed_array=compressed_array,
+            ndim=ndim
+            shape=shape,
+            size=size,
+            tie_point_indices=tie_point_indices,
+            compressed_axes=compressed_axes,
+            computational_precision=computational_precision,
+            interpolation_parameters=interpolation_parameters,
+            parameter_dimensions=parameter_dimensions,
+        )
+
+    def initialise_SubsampledBilinearArray(
+            self,
+            compressed_array=None,
+            ndim=None,
+            shape=None,
+            size=None,
+            tie_point_indices=None,
+            compressed_axes=None,
+            computational_precision=None,
+            interpolation_parameters=None,
+            parameter_dimensions=None,
+    ):
+        """Return a subsampled bilinear array instance.
+
+        :Parameters:
+
+            compressed_array: array_like
+
+            ndim: `int`
+
+            shape: sequence of `int`
+
+            size: `int
+
+            tie_point_indices: `dict`
+
+            compressed_axes: sequence of `int`
+
+            computational_precision: `str`
+
+            interpolation_parameters: `dict`
+
+            parameter_dimensions: `dict`
+
+        :Returns:
+
+             Subsampled Bilinear array
+
+        """
+        cls = self.get_class("SubsampledBilinearArray")
+        return cls(
+            compressed_array=compressed_array,
+            ndim=ndim
+            shape=shape,
+            size=size,
+            tie_point_indices=tie_point_indices,
+            compressed_axes=compressed_axes,
+            computational_precision=computational_precision,
+            interpolation_parameters=interpolation_parameters,
+            parameter_dimensions=parameter_dimensions,
+        )
+
     def is_climatology(self, coordinate):
         """Whether or not the coordinate represent climatologies.
 
