@@ -259,12 +259,6 @@ class read_writeTest(unittest.TestCase):
                 if fmt == "NETCDF4_CLASSIC" and ex_field_n in (6, 7):
                     continue
 
-                # Skip since "Can't write int64 data from <Count: (2) > to a
-                # NETCDF3_CLASSIC file" causes a ValueError i.e. not possible.
-                # Note: can remove this when Issue #140 is closed.
-                if fmt in self.netcdf3_fmts and ex_field_n == 6:
-                    continue
-
                 cfdm.write(ex_field, tmpfile, fmt=fmt, mode="a")
                 f = cfdm.read(tmpfile)
 
