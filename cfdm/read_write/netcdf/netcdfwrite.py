@@ -1632,7 +1632,7 @@ class NetCDFWrite(IOWrite):
         else:  # DCH
             array = np.ma.count(array, axis=2).sum(axis=1)  # DCH
 
-        array = self._recast_as_int32(array)
+        array = self._int32(array)
 
         data = self.implementation.initialise_Data(array=array, copy=False)
 
@@ -1906,7 +1906,7 @@ class NetCDFWrite(IOWrite):
             self.implementation.get_data(bounds)
         )
         array = numpy.trim_zeros(numpy.ma.count(array, axis=2).flatten())
-        array = self._recast_as_int32(array)
+        array = self._int32(array)
 
         data = self.implementation.initialise_Data(array=array, copy=False)
 
@@ -5111,8 +5111,8 @@ class NetCDFWrite(IOWrite):
                 extra_write_vars=extra_write_vars,
             )
 
-    def _recast_as_int32(self, array):
-        """Recast an array as 32-bit integers.
+    def _int32(self, array):
+        """Cast an array to 32-bit integers.
 
         This saves space and allows the variables to be written to
         CLASSIC files.
