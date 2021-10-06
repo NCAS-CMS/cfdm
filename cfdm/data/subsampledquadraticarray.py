@@ -1,15 +1,15 @@
 import numpy as np
 
-from .subsampledgeneralarray import SubsampledGeneralArray
+from .sampledlineararray import SampledLinearArray
 
 
-class SampledLinearArray(SubsampledGeneralArray):
+class SampledBiLinearArray(SampledLinearArray):
     """TODO.
 
-    .. versionadded:: (cfdm) 1.9.TODO.0
+    .. versionadded:: (cfdm) TODO
 
     """
-    
+
     def __init__(self, 
         compressed_array=None,
         shape=None,
@@ -53,17 +53,17 @@ class SampledLinearArray(SubsampledGeneralArray):
             size=size,
             ndim=ndim,
             compressed_axes=compressed_axes,
-            interpolation_name="linear"
+            interpolation_name="bilinear"
             tie_point_indices=tie_point_indices,
             interpolation_description=interpolation_description,
         )
         
     def __getitem__(self, indices):
         """x.__getitem__(indices) <==> x[indices]
-
+        
         Returns a subspace of the array as an independent numpy array.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) TODO
 
         """
         try:
@@ -72,14 +72,20 @@ class SampledLinearArray(SubsampledGeneralArray):
             return self._first_or_last_index(indices)
         except IndexError:
             pass
-
+        
         # ------------------------------------------------------------
         # Method: Uncompress the entire array and then subspace it
+        #
+        # u(i) = fq(ua, ub, w, s(i)) = ua + s(ub - ua + 4w(1-s))
+        #                            = ua*(1-s) + ub*s + 4ws(1-s) 
         # ------------------------------------------------------------
         (d0,) = self.get_source_compressed_axes()
 
         tie_points = self.get_tie_points()
 
+        self.conform_interpolation_parameters()
+        w = self.get_interpolation_parameters().get("w")
+        
         # Initialise the un-sliced uncompressed array
         uarray = np.ma.masked_all(self.shape, dtype=float)
 
@@ -91,67 +97,24 @@ class SampledLinearArray(SubsampledGeneralArray):
             tp_index1 = tp_index0[:]
             tp_index0[d0] = tp_index0[d0][:1]
             tp_index1[d0] = tp_index1[d0][1:]
-
+            
             ua = tie_points[tuple(tp_index0)].array,
             ub = tie_points[tuple(tp_index1)].array
             
-             u = self._linear_interpolation(
-                 ua,
-                 ub,
-                 d0,
-                 subarea_size[d],
-                 new_area[d0],
+            u = self._linear_interpolation(
+                ua,
+                ub,
+                d0,
+                subarea_size[d],
+                new_area[d0],
             )
+
+            if w is not None:
+                s, one_minus_s = self._s(d, subarea_size[d]):
+                u -= 4 * w * s * one_minus_sppp    w might have funny dimensions!
+            
             uarray[u_indices] = u
             
         self._s.cache_clear()
 
         return self.get_subspace(uarray, indices, copy=True)
-
-   def _linear_interpolation(self, ua, ub, d, size, new_area):
-       """Interpolate linearly between pairs of tie points.
-
-       This is the function ``fl()`` defined in CF appendix J.
-
-       .. versionadded:: (cfdm) 1.9.TODO.0
-
-       :Parameters:
-
-           ua, ub: array_like
-              The arrays containing the points for pair-wise
-              interpolation along dimension *d*.
-
-           d: `int`
-               The position of a subsampled dimension in the tie
-               points array.
-
-           size: `int`
-               TODO
-
-           new_area: `bool`
-               True if the interpolation subarea is the first (in
-               index space) of a new continuous area, otherwise
-               False.
-
-       :Returns:
-
-           `numpy.ndarray`
-
-       """
-       # Get the interpolation coefficents
-       s, one_minus_s = self._s(d, size)
-
-       # Interpolate
-       u = ua * one_minus_s + ub * s
-
-       if not new_area:
-           # Remove the first point of the interpolation subarea if it
-           # is not the first (in index space) of a continuous
-           # area. This is beacuse this value in the uncompressed data
-           # has already been calculated from the previous (in index
-           # space) interpolation subarea.
-           indices = [slice(None)] * u.ndim
-           indices[d] = slice(1, None)
-           u = u[tuple(indices)]
-
-       return u

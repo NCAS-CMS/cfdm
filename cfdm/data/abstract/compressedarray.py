@@ -259,7 +259,8 @@ class CompressedArray(Array):
         :Returns:
 
             `list`
-                The compressed axes described by their integer positions.
+                The compressed axes described by their integer
+                positions in the uncompressed array.
 
         **Examples:**
 
