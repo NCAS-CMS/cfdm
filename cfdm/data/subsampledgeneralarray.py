@@ -112,7 +112,7 @@ class SubsampledGeneralArray(CompressedArray):
         raise IndexError("Don't know how to uncompress {self!r}")
         
     def _first_or_last_index(self, indices):
-        """Return the first or last element.
+        """Return the first or last element of tie points array
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -128,214 +128,189 @@ class SubsampledGeneralArray(CompressedArray):
             f"Indices {indices} do not select the first nor last element"
         )
         
-    def interpolation_subareas(
-        self, non_interpolation_dimension_value=slice(None)
-    ):
+    def _select_tie_points(self, tie_points, tp_indices, location={}):
+        """Select tie points from a given interpolation subarea location.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+        
+        .. seealso:: `get_tie_points`
+    
+        :Parameters:
+
+            tie_points: array_like
+               The full tie points array.
+
+            tp_indices: `tuple` of `slice`
+                The index of the *tie_points* array that defines the
+                tie points for the interpolation subarea.
+
+            location: `dict`, optional
+                Identify the tie point location. Each key is an
+                integer that specifies a dimension position, with a
+                value of ``0`` or ``1`` that indicates ones of the two
+                tie points along that dimension. If location is an
+                empty dictionary (the default), then all tie points
+                for the interpolation subarea are returned.
+
+        :Returns:
+ 
+            `numpy.ndarray`
+                The selected tie points.
+
+        """
+        tp_indices = list(tp_indices)
+        for dim, position in location.items():
+            tpi0 = tp_indices[dim].start + position
+            tp_indices[dim] = slice(tpi0, tpi0 + 1)
+        
+        return tie_points[tuple(tp_indices)].array
+        
+    def interpolation_subareas(self):
         """TODO.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Returns:
 
-            4-`tuple` of iterators
-               * The indices of the tie point array that correspond to
-                 each interpolation subarea. Each index for the tie
-                 point interpolated dimensions is expressed as a list
-                 of two integers, rather than a `slice` object, to
-                 facilitate retrieval of each tie point individually.
-
+            5-`tuple` of iterators
                * The indices of the uncompressed array that correspond
                  to each interpolation subarea. Each index in the
                  tuple is expressed as a `slice` object. 
 
                  .. note:: If a tie point is shared with a previous
                            interpolation subarea, then that location
-                           is excluded from the index.
+                           is excluded from the index, thereby
+                           avoiding any overlaps between indices.
 
-               * The size of each interpolated subarea along the
-                 interpolated dimensions. Each size includes both tie
-                 points.
+               * The indices of the tie point array that correspond to
+                 each interpolation subarea. Each index for the tie
+                 point interpolated dimensions is expressed as a list
+                 of two integers, rather than a `slice` object, to
+                 facilitate retrieval of each tie point individually.
+
+               * The shape of each interpolation subarea, included all
+                 tie points. Non-interpolated dimensions have a size
+                 of `None`.
 
                * Flags which state, for each interpolated dimension,
                  whether each interplation subarea is at the start of
                  a continuous area.
 
+               * The index of each interpolation subarea along the
+                 interpolation subarea dimensions.
+
+        **Examples** 
+
+        A 3-d array with shape (20, 12, 15) has been compressed with
+        dimensions 0 and 2 being interpolated dimensions. Interpolated
+        dimension 0 (size 20) has two equally-sized continuous areas,
+        each with one interpolation subarea of size 10; and
+        intertolated dimenson 2 (size 15) has a single continuous area
+        divided into has three interpolation subarareas of szes 5, 6,
+        and 6.
+
+        >>> (u_indices,
+        ...  tp_indices,
+        ...  interpolation_subarea_shapes,
+        ...  new_continuous_area,
+        ...  interpolation_subarea_indices) = x.interpolation_subareas()
+
+        >>> for i in u_indices:
+        ...    print(i)
+        ...
+        (slice(0, 10, None), slice(None, None, None), slice(0, 5, None))
+        (slice(0, 10, None), slice(None, None, None), slice(5, 10, None))
+        (slice(0, 10, None), slice(None, None, None), slice(10, 15, None))
+        (slice(10, 20, None), slice(None, None, None), slice(0, 5, None))
+        (slice(10, 20, None), slice(None, None, None), slice(5, 10, None))
+        (slice(10, 20, None), slice(None, None, None), slice(10, 15, None))
+             
+        >>> for i in tp_indices,
+        ...    print(i)
+        ...
+        (slice(0, 2, None), slice(None, None, None), slice(0, 2, None))
+        (slice(0, 2, None), slice(None, None, None), slice(1, 3, None))
+        (slice(0, 2, None), slice(None, None, None), slice(2, 4, None))
+        (slice(2, 4, None), slice(None, None, None), slice(0, 2, None))
+        (slice(2, 4, None), slice(None, None, None), slice(1, 3, None))
+        (slice(2, 4, None), slice(None, None, None), slice(2, 4, None))
+
+        >>> for i in interpolation_subarea_shapes:
+        ...    print(i)
+        ...
+        (10, 12, 5)
+        (10, 12, 6)
+        (10, 12, 6)
+        (10, 12, 5)
+        (10, 12, 6)
+        (10, 12, 6)
+
+        >>> for i in new_continuous_area:
+        ...    print(i)
+        ...
+        (True, None, True)
+        (True, None, False)
+        (True, None, False)
+        (True, None, True)
+        (True, None, False)
+        (True, None, False)
+ 
+        >>> for i in interpolation_subarea_indices:
+        ...    print(i)
+        ...       
+        (slice(0, 1, None), slice(None, None, None), slice(0, 1, None)
+        (slice(0, 1, None), slice(None, None, None), slice(1, 2, None)
+        (slice(0, 1, None), slice(None, None, None), slice(2, 3, None)
+        (slice(1, 2, None), slice(None, None, None), slice(0, 1, None)
+        (slice(1, 2, None), slice(None, None, None), slice(1, 2, None)
+        (slice(1, 2, None), slice(None, None, None), slice(2, 3, None)
+
         """
         tie_point_indices = self.get_tie_point_indices()
 
-        non_interpolated_dimension_value = slice(None)
+        ndim = self.ndim
 
-        # ------------------------------------------------------------
-        # The indices of the tie point array that correspond to each
-        # interpolation subarea.
-        #
-        # Example: The tie point array has three dimensions and
-        #          dimensions 0 and 2 are tie point interpolation
-        #          dimensions; intertolated dimenson 2 (size 15) has a
-        #          single continuous area divided into has three
-        #          equally-sized interpolation subarareas; and
-        #          interpolated dimension 0 (size 20) has two
-        #          equally-sized continuous areas, each with one
-        #          interpolation subarea.
-        #
-        # Initialization:
-        #
-        #   [(slice(None),),
-        #    (slice(None),),
-        #    (slice(None),)]
-        #   
-        # Overwrite tie point interpolated dimension entries with
-        # indices to tie point pairs:
-        #   
-        #   [[[0, 1], [2, 3]],
-        #    (slice(None),),
-        #    [[0, 1], [1, 2], [2, 3]]]
-        #   
-        # Returned cartesian product (one set of indices per
-        # interpolation subarea):
-        #   
-        #   [[0, 1], slice(None), [0, 1]),
-        #    [0, 1], slice(None), [1, 2]),
-        #    [0, 1], slice(None), [2, 3]),
-        #    [2, 3], slice(None), [0, 1]),
-        #    [2, 3], slice(None), [1, 2]),
-        #    [2, 3], slice(None), [2, 3])]
-        # ------------------------------------------------------------
-        tp_interpolation_subareas = [
-            (non_interpolated_dimension_value,)
-        ] * self.ndim
-
-        # ------------------------------------------------------------
         # The indices of the uncompressed array that correspond to
         # each interpolation subarea.
         #
         # .. note:: If a tie point is shared with a previous
         #           interpolation subarea, then that location is
-        #           excluded from the index.
-        #
-        # Example: The tie point array has three dimensions and
-        #          dimensions 0 and 2 are tie point interpolation
-        #          dimensions; intertolated dimenson 2 (size 15) has a
-        #          single continuous area divided into has three
-        #          equally-sized interpolation subarareas(sizes 5, 6,
-        #          and 6); and interpolated dimension 0 (size 20) has
-        #          two equally-sized continuous areas, each with one
-        #          interpolation subarea.
-        #
-        # Initialization:
-        #
-        #   [(slice(None),),
-        #    (slice(None),),
-        #    (slice(None),)]
-        #
-        # Overwrite interpolated dimension entries with indices to tie
-        # point pairs:
-        #
-        #   [[slice(0, 10), slice(10, 20)],
-        #    (slice(None),),
-        #    [slice(0, 5), slice(5, 10), slice(10, 15)]]
-        #
-        # Returned cartesian product (one set of indices per
-        # interpolation subarea):
-        #
-        #   [(slice(0, 10),  slice(None), slice(0, 5)  ),
-        #    (slice(0, 10),  slice(None), slice(5, 10) ),
-        #    (slice(0, 10),  slice(None), slice(10, 15)),
-        #    (slice(10, 20), slice(None), slice(0, 5)  ),
-        #    (slice(10, 20), slice(None), slice(5, 10) ),
-        #    (slice(10, 20), slice(None), slice(10, 15))]
-        # ------------------------------------------------------------
-        u_interpolation_subareas = tp_indices[:]
+        #           excluded from the index, thereby avoiding any
+        #           overlaps between indices.
+        u_indices = [(slice(None),)] * ndim
 
-        # ------------------------------------------------------------
-        # The size of each interpolated subarea along the interpolated
-        # dimensions. Each size includes both tie points.
-        #
-        # Example: The tie point array has three dimensions and
-        #          dimensions 0 and 2 are tie point interpolation
-        #          dimensions; intertolated dimenson 2 (size 15) has a
-        #          single continuous area divided into has three
-        #          equally-sized interpolation subarareas(sizes 5, 6,
-        #          and 6); and interpolated dimension 0 (size 20) has
-        #          two equally-sized continuous areas, each with one
-        #          interpolation subarea.
-        #
-        # Initialization:
-        #
-        #   [(None,),
-        #    (None,),
-        #    (None,)]
-        #
-        # Overwrite interpolated dimension entries with interpolation
-        # subarea sizes: point pairs:
-        #
-        #   [[10, 10],
-        #    (None,),
-        #    [5, 6, 6]]
-        #
-        # Returned cartesian product (one set of sizes per
-        # interpolation subarea):
-        #
-        #   [(10, None, 5),
-        #    (10, None, 6),
-        #    (10, None, 6),
-        #    (10, None, 5),
-        #    (10, None, 6),
-        #    (10, None, 6)]
-        # ------------------------------------------------------------
-        interpolation_subarea_sizes =  [(None,)] * self.ndim
+        # The indices of the tie point array that correspond to each
+        # interpolation subarea.
+        tp_indices = [(slice(None),)] * ndim
 
-        # ------------------------------------------------------------
-        # Initialise the boolean flags which state, for each
-        # interpolated dimension, whether each interplation subarea
-        # is at the start of a continuous area, moving from left to
-        # right in index space. Non-interpolated dimensions are given
-        # the flag `None`.
-        #
-        # Example: The tie point array has three dimensions and
-        #          dimensions 0 and 2 are tie point interpolation
-        #          dimensions; intertolated dimenson 2 (size 15) has a
-        #          single continuous area divided into has three
-        #          equally-sized interpolation subarareas; and
-        #          interpolated dimension 0 (size 20) has two
-        #          equally-sized continuous areas, each with one
-        #          interpolation subarea.
-        #
-        # Initialization:
-        #
-        #   [(None,),
-        #    (None,),
-        #    (None,)]
-        #
-        # Overwrite interpolated dimension entries with flags for
-        # each interpolation subarea:
-        #
-        #  [[True, True],
-        #   (None,),
-        #   [True, False, False]]
-        #
-        # Returned cartesian product (one set of flags per
-        # interpolation suabarea):
-        #
-        #   [(True, None, True),
-        #    (True, None, False),
-        #    (True, None, False),
-        #    (True, None, True),
-        #    (True, None, False),
-        #    (True, None, False)]
-        # ------------------------------------------------------------
-        new_continuous_area = interpolation_subarea_sizes[:]
+        # The shape of each interpolated subarea along the
+        # interpolated dimensions, including all tie points.
+        interpolation_subarea_shapes = list(self.shape)
 
+        # The flags which state, for each dimension, whether (`True`)
+        # or not (`False`) an interplation subarea is at the start of
+        # a continuous area. Non-interpolated dimensions are given the
+        # flag `None`.
+        new_continuous_area = [(None,)] * ndim
+
+        # The index of each interpolation subarea along the
+        # interpolation subarea dimensions
+        interpolation_subarea_indices = [(slice(None),)] * ndim
+     
         for d in self.get_compressed_axes():
             tp_index = []
             u_index = []
             new_continuous_area = []
-            subarea_size = []
+            subarea_shape = []
+            interpolation_subarea_index = []
             
             tie_point_indices = tie_point_indices[d].array.flatten().tolist()
 
             new = True
 
+            # Initialize the count alng the interpolation subarea
+            # dimension
+            j = 0
             for i, (index0, index1) in enumerate(
                 zip(tie_point_indices[:-1], tie_point_indices[1:])
             ):
@@ -346,14 +321,19 @@ class SubsampledGeneralArray(CompressedArray):
                     new_continuous_area.pop()
                     continue
 
+                # The index of the interpolation subarea along the
+                # corresponding interpolated subarea dimension
+                interpolation_subarea_index.append(slice(j, j + 1))
+                j += 1
+                
                 # The subspace for the axis of the tie points that
                 # corresponds to this axis of the interpolation
                 # subarea
-                tp_index.append([i, i + 1])
+                tp_index.append(slice(i, i + 2))
 
                 # The size of the interpolation subarea along this
                 # interpolated dimension
-                subarea_size.append(index1 - index0 + 1)
+                subarea_shape.append(index1 - index0 + 1)
                 
                 # The subspace for this axis of the uncompressed array
                 # that corresponds to the interpolation suabrea, only
@@ -366,16 +346,18 @@ class SubsampledGeneralArray(CompressedArray):
 
                 new = False
 
-            tp_interpolation_subareas[d] = tp_index
-            u_interpolation_subareas[d] = u_index
-            interpolation_subarea_sizes[d] = subarea_size
+            tp_indices[d] = tp_index
+            u_indices[d] = u_index
+            interpolation_subarea_shapes[d] = subarea_shape
             new_continuous_area[d] = new_area
+            interpolation_subarea_indices[d] = interpolation_subarea_index
             
         return (
-            product(*tp_interpolation_subareas),
-            product(*u_interpolation_subareas),
-            product(*interpolation_subarea_sizes),
+            product(*tp_indices),
+            product(*u_indices),
+            product(*interpolation_subarea_shapes),
             product(*new_continuous_area),
+            product(*interpolation_subarea_indices),
         )
 
     @lru_cache(maxsize=32)

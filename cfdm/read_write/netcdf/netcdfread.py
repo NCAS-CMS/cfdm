@@ -5045,7 +5045,9 @@ class NetCDFRead(IORead):
             subsampled = False
             compressed_axes = []
             tie_point_indices = {}
-
+            interpolation_parameters = {}
+            parameter_dimensions = {}
+ 
             # Loop round the dimensions of variable in the order
             # that they appear in the netCDF file
             for i, ncdim in enumerate(dimensions):
@@ -5182,8 +5184,6 @@ class NetCDFRead(IORead):
                     )
                     
                     # Sort out interpolation parameters
-                    interpolation_parameters = {}
-                    parameter_dimensions = {}
                     for term, param_ncvar in (
                             rec["interpolation_parameters"].items()
                     ):
@@ -6004,27 +6004,38 @@ class NetCDFRead(IORead):
         uncompressed_ndim = len(uncompressed_shape)
         uncompressed_size = int(reduce(operator.mul, uncompressed_shape, 1))
 
+        kwargs = {
+            "compressed_array": subsampled_array,
+            "ndim": uncompressed_ndim,
+            "shape": uncompressed_shape,
+            "size": uncompressed_size,
+            "tie_point_indices": tie_point_indices,
+            "compressed_axes": compressed_axes,
+            "computational_precision": computational_precision,
+            "interpolation_parameters": interpolation_parameters,
+            "parameter_dimensions": parameter_dimensions,
+            "interpolation_name": interpolation_name,
+            "interpolation_description": interpolation_description,
+        }
+        
         if interpolation_name == "linear":
-            func = self.implementation.initialise_SubsampledLinearArray
+            kwargs.pop("interpolation_name")
+            kwargs.pop("interpolation_parameters")
+            kwargs.pop("parameter_dimensions")
+            init_func = self.implementation.initialise_SubsampledLinearArray
         elif interpolation_name == "bilinear":
-            func = self.implementation.initialise_SubsampledBilinearArray
+            kwargs.pop("interpolation_name")
+            kwargs.pop("interpolation_parameters")
+            kwargs.pop("parameter_dimensions")
+            init_func = self.implementation.initialise_SubsampledBilinearArray
+        elif interpolation_name == "quadratic":
+            kwargs.pop("interpolation_name")
+            init_func = self.implementation.initialise_SubsampledQuadraticArray
         else:
-            func = self.implementation.initialise_SubsampledArray
+            init_func = self.implementation.initialise_SubsampledGenealArray
 
-        return func(
-            compressed_array=subsampled_array,
-            ndim=uncompressed_ndim,
-            shape=uncompressed_shape,
-            size=uncompressed_size,
-            tie_point_indices=tie_point_indices,
-            compressed_axes=compressed_axes,
-            computational_precision=computational_precision,
-            interpolation_parameters=interpolation_parameters,
-            parameter_dimensions=parameter_dimensions,
-            interpolation_name=interpolation_name,
-            interpolation_description=interpolation_description,
-        )
-
+        return init_func(**kwargs)
+    
     def _create_Data(
         self, array=None, units=None, calendar=None, ncvar=None, **kwargs
     ):

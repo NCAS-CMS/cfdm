@@ -83,50 +83,66 @@ class SampledBiLinearArray(SampledLinearArray):
         # Initialise the un-sliced uncompressed array
         uarray = np.ma.masked_all(self.shape, dtype=float)
 
-        for tp_indices, u_indices, subarea_size, new_area in zip(
-            *self.interpolation_subareas()
+        for u_indices, tp_indices, subarea_size, first, _ in zip(
+                *self.interpolation_subareas()
         ):
-            index = list(tp_indices)
-            index[d1] = tp_index[d1][:1]
-
-            index0 = list(tp_indices)
-            index0[d1] = tp_index[d1][:1]
-            index0[d0] = tp_index[d0][:1]
-
-            index1 = index0[:]
-            index1[d0] = tp_index[d0][1:]
-            ua =  tie_points[tuple(index0)].array
-            uc = tie_points[tuple(index1)].array
-            
-            uac = self._linear_interpolation(
-                ua,
-                uc,
-                d0,
-                subarea_size[d0],
-                new_area[d0],
-            )
-
-            index0[d1] = tp_index[d1][1:]
-            index1[d1] = index0[d1]
-            ub = tie_points[tuple(index0)].array
-            ud = tie_points[tuple(index1)].array
-            
-            ubd = self._linear_interpolation(
-                ub,
-                ud,
-                d0,
-                subarea_size[d0],
-                new_area[d0],
-            )
-
-            uarray[u_indices] = self._linear_interpolation(
-                uac,
-                ubd,
-                d1,
-                subarea_size[d1],
-                new_area[d1],
-            )
+            ua = self._select_tie_points(tie_points, tp_indices,
+                                         {d0: 0, d1: 0})       
+            uc = self._select_tie_points(tie_points, tp_indices,
+                                         {d0: 1, d1: 0})
+            ub = self._select_tie_points(tie_points, tp_indices,
+                                         {d0: 0, d1: 1})
+            ud = self._select_tie_points(tie_points, tp_indices,
+                                         {d0: 1, d1: 1})
+            u = self._bilinear_interpolation(ua, uc, ub, ud, d0, d1,
+                                             subarea_shape, first)
+                       
+            uarray[u_indices] = u
 
         self._s.cache_clear()
 
         return self.get_subspace(uarray, indices, copy=True)
+
+    def _bilinear_interpolation(self, ua, uc, ub, ud, d0, d1,
+                                subarea_shape, first):
+        """Interpolate quadratically pairs of tie points.
+        
+        Computes the function` defined in CF appendix J:
+
+        uac = fl(ua, uc, s(ia2, ic2, i2))
+        ubd = fl(ub, ud, s(ia2, ic2, i2))
+        u(i2, i1) = fl(uac, ubd, s(ia1, ib1, i1))
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+        
+        .. seealso:: `_linear_interpolation`
+        
+        :Parameters:
+
+            ua, uc, ub, ud: array_like
+               The arrays containing the points for bilinear
+               interpolation along dimensions *d0* and *d1*.
+
+            d0, d1: `int`
+                The positions of the subsampled dimensions in the tie
+                points array.
+ 
+            subarea_shape: `tuple` of `int`
+                The shape of the interpolation subararea, including
+                all tie points.
+ 
+            first: `tuple`
+                For each dimension, True if the interpolation subarea
+                is the first (in index space) of a new continuous
+                area, otherwise False.
+ 
+        :Returns:
+ 
+            `numpy.ndarray`
+
+        """
+        uac = self._linear_interpolation(ua, uc, d0, subarea_shape, first)
+        ubd = self._linear_interpolation(ub, ud, d0, subarea_shape, first)
+        u = self._linear_interpolation(uac, ubd, d1, subarea_shape, first)
+
+        return u

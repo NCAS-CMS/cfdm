@@ -84,74 +84,67 @@ class SampledLinearArray(SubsampledGeneralArray):
         uarray = np.ma.masked_all(self.shape, dtype=float)
 
         # Interpolate the tie points according to CF appendix J
-        for tp_indices, u_indices, subarea_size, new_area in zip(
+        for u_indices, tp_indices, subarea_shape, first, _ in zip(
             *self.interpolation_subareas()
         ):
-            tp_index0 = list(tp_indices)
-            tp_index1 = tp_index0[:]
-            tp_index0[d0] = tp_index0[d0][:1]
-            tp_index1[d0] = tp_index1[d0][1:]
-
-            ua = tie_points[tuple(tp_index0)].array,
-            ub = tie_points[tuple(tp_index1)].array
-            
-             u = self._linear_interpolation(
-                 ua,
-                 ub,
-                 d0,
-                 subarea_size[d],
-                 new_area[d0],
-            )
+            ua = self._select_tie_points(tie_points, tp_indices, {d0: 0})
+            ub = self._select_tie_points(tie_points, tp_indices, {d0: 1})
+            u = self._linear_interpolation(ua, ub d0, subarea_shape,
+                                           first)
             uarray[u_indices] = u
             
         self._s.cache_clear()
 
         return self.get_subspace(uarray, indices, copy=True)
 
-   def _linear_interpolation(self, ua, ub, d, size, new_area):
-       """Interpolate linearly between pairs of tie points.
+    def _linear_interpolation(self, ua, ub, d0, shape, first):
+        """Interpolate linearly between pairs of tie points.
+        
+        This is the function ``fl()`` defined in CF appendix J:
 
-       This is the function ``fl()`` defined in CF appendix J.
+        u = fl(ua, ub, s) = ua + s*(ub-ua)
+                          = ua*(1-s) + ub*s
 
-       .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.9.TODO.0
+        
+        :Parameters:
 
-       :Parameters:
+            ua, ub: array_like
+               The arrays containing the points for pair-wise
+               interpolation along dimension *d0*.
+ 
+            d0: `int`
+                The position of a subsampled dimension in the tie
+                points array.
+ 
+            subarea_shape: `tuple` of `int`
+                The shape of the interpolation subararea, including
+                all tie points.
+ 
+            first: `tuple`
+                For each dimension, True if the interpolation subarea
+                is the first (in index space) of a new continuous
+                area, otherwise False.
+ 
+        :Returns:
+ 
+            `numpy.ndarray`
 
-           ua, ub: array_like
-              The arrays containing the points for pair-wise
-              interpolation along dimension *d*.
-
-           d: `int`
-               The position of a subsampled dimension in the tie
-               points array.
-
-           size: `int`
-               TODO
-
-           new_area: `bool`
-               True if the interpolation subarea is the first (in
-               index space) of a new continuous area, otherwise
-               False.
-
-       :Returns:
-
-           `numpy.ndarray`
-
-       """
-       # Get the interpolation coefficents
-       s, one_minus_s = self._s(d, size)
-
-       # Interpolate
-       u = ua * one_minus_s + ub * s
-
-       if not new_area:
-           # Remove the first point of the interpolation subarea if it
-           # is not the first (in index space) of a continuous
-           # area. This is beacuse this value in the uncompressed data
-           # has already been calculated from the previous (in index
-           # space) interpolation subarea.
-           indices = [slice(None)] * u.ndim
-           indices[d] = slice(1, None)
-           u = u[tuple(indices)]
-
-       return u
+        """
+        # Get the interpolation coefficents
+        s, one_minus_s = self._s(d0, shape[d0])
+ 
+        # Interpolate
+        u = ua * one_minus_s + ub * s
+ 
+        if not first[d]
+            # Remove the first point of the interpolation subarea if
+            # it is not the first (in index space) of a continuous
+            # area. This is beacuse this value in the uncompressed
+            # data has already been calculated from the previous (in
+            # index space) interpolation subarea.
+            indices = [slice(None)] * u.ndim
+            indices[d0] = slice(1, None)
+            u = u[tuple(indices)]
+ 
+        return u
