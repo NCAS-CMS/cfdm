@@ -2632,14 +2632,8 @@ class NetCDFWrite(IOWrite):
             original_ncdimensions = ()
             ncdimensions = ()
         else:
-            datatype = self._datatype(cfvar)
             data = self.implementation.get_data(cfvar, None)
-
             original_ncdimensions = ncdimensions
-
-            data, ncdimensions = self._transform_strings(
-                cfvar, data, ncdimensions
-            )
 
         # Update the 'seen' dictionary
         g["seen"][id(cfvar)] = {
@@ -2652,6 +2646,14 @@ class NetCDFWrite(IOWrite):
         # append-mode write (only write in the second post-dry-run iteration).
         if g["dry_run"]:
             return
+
+        # Do this after the dry_run return else may attempt to transform
+        # the arrays with string dtype on an append-mode read iteration (bad).
+        if not domain_variable:
+            datatype = self._datatype(cfvar)
+            data, ncdimensions = self._transform_strings(
+                cfvar, data, ncdimensions
+            )
 
         logger.info(f"    Writing {cfvar!r}")  # pragma: no cover
 
