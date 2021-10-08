@@ -5996,45 +5996,63 @@ class NetCDFRead(IORead):
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
+        :Parameters:
+
+            compressed_array: optional
+
+            ndim: `int`, optional
+
+            shape: sequence of `int`, optional
+
+            size: `int, optional
+
+            compressed_axes: sequence of `int`, optional 
+        
+            interpolation_description: `str`, optional
+
+            computational_precision: `str`, optional
+                The floating-point arithmetic precision used during
+                the preparation and validation of the compressed
+                coordinates.
+
+            tie_point_indices: `dict`, optional
+
+            interpolation_parameters: `dict`, optional
+
+            parameter_dimensions: `dict`, optional
+
+            interpolation_name: `str`, optional
+
         :Returns:
 
-            `SubsampledArray`
+            (subclass of) `SubsampledGeneralArray`
 
         """
         uncompressed_ndim = len(uncompressed_shape)
         uncompressed_size = int(reduce(operator.mul, uncompressed_shape, 1))
 
-        kwargs = {
-            "compressed_array": subsampled_array,
-            "ndim": uncompressed_ndim,
-            "shape": uncompressed_shape,
-            "size": uncompressed_size,
-            "tie_point_indices": tie_point_indices,
-            "compressed_axes": compressed_axes,
-            "computational_precision": computational_precision,
-            "interpolation_parameters": interpolation_parameters,
-            "parameter_dimensions": parameter_dimensions,
-            "interpolation_name": interpolation_name,
-            "interpolation_description": interpolation_description,
-        }
-        
         if interpolation_name == "linear":
-            kwargs.pop("interpolation_name")
-            kwargs.pop("interpolation_parameters")
-            kwargs.pop("parameter_dimensions")
             init_func = self.implementation.initialise_SubsampledLinearArray
         elif interpolation_name == "bilinear":
-            kwargs.pop("interpolation_name")
-            kwargs.pop("interpolation_parameters")
-            kwargs.pop("parameter_dimensions")
             init_func = self.implementation.initialise_SubsampledBilinearArray
         elif interpolation_name == "quadratic":
-            kwargs.pop("interpolation_name")
             init_func = self.implementation.initialise_SubsampledQuadraticArray
         else:
-            init_func = self.implementation.initialise_SubsampledGenealArray
+            init_func = self.implementation.initialise_SubsampledGeneralArray
 
-        return init_func(**kwargs)
+        return init_func(
+            compressed_array=compressed_array,
+            shape=shape,
+            size=size,
+            ndim=ndim,
+            compressed_axes=compressed_axes,
+            tie_point_indices=tie_point_indices,
+            interpolation_description=interpolation_description,
+            computational_precision=computational_precision,  
+            interpolation_parameters=interpolation_parameters,
+            parameter_dimensions=parameter_dimensions,
+            interpolation_name=interpolation_name,
+        )
     
     def _create_Data(
         self, array=None, units=None, calendar=None, ncvar=None, **kwargs

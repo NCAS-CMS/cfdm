@@ -2048,6 +2048,201 @@ class CFDMImplementation(Implementation):
             compressed_dimension=compressed_dimension,
             list_variable=list_variable,
         )
+    
+   def initialise_SubsampledLinearArray(
+           self, 
+           compressed_array=None,
+           shape=None,
+           size=None,
+           ndim=None,
+           compressed_axes=(),
+           tie_point_indices={},
+           interpolation_description=None,
+           computational_precision=None,
+           interpolation_parameters={},
+           parameter_dimensions={},
+           interpolation_name="",
+    ):
+        """Return a gathered array instance.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            compressed_array: optional
+
+            ndim: `int`, optional
+
+            shape: sequence of `int`, optional
+
+            size: `int, optional
+
+            compressed_axes: sequence of `int`, optional 
+        
+            interpolation_description: `str`, optional
+
+            computational_precision: `str`, optional
+                The floating-point arithmetic precision used during
+                the preparation and validation of the compressed
+                coordinates.
+
+            tie_point_indices: `dict`, optional
+
+            interpolation_parameters: `dict`, optional
+                Ignored.
+
+            parameter_dimensions: `dict`, optional
+                Ignored.
+
+            interpolation_name: `str`, optional
+                Ignored.
+
+        :Returns:
+
+            Subsampled Linear array
+
+        """
+        cls = self.get_class("SubsampledLinearArray")
+        return cls(
+            compressed_array=compressed_array,
+            shape=shape,
+            size=size,
+            ndim=ndim,
+            compressed_axes=compressed_axes,
+            tie_point_indices=tie_point_indices,
+            interpolation_description=interpolation_description,
+            computational_precision=computational_precision,      
+        )
+
+   def initialise_SubsampledBilinearArray(
+           self, 
+           compressed_array=None,
+           shape=None,
+           size=None,
+           ndim=None,
+           compressed_axes=(),
+           tie_point_indices={},
+           interpolation_description="",
+           computational_precision="",
+           interpolation_parameters={},
+           parameter_dimensions={},
+           interpolation_name="",
+    ):
+        """Return a gathered array instance.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            compressed_array: optional
+
+            ndim: `int`, optional
+
+            shape: sequence of `int`, optional
+
+            size: `int, optional
+
+            compressed_axes: sequence of `int`, optional 
+        
+            interpolation_description: `str`, optional
+
+            computational_precision: `str`, optional
+                The floating-point arithmetic precision used during
+                the preparation and validation of the compressed
+                coordinates.
+
+            tie_point_indices: `dict`, optional
+
+            interpolation_parameters: `dict`, optional
+                Ignored.
+
+            parameter_dimensions: `dict`, optional
+                Ignored.
+
+            interpolation_name: `str`, optional
+                Ignored.
+
+        :Returns:
+
+            Subsampled Linear array
+
+        """
+        cls = self.get_class("SubsampledBilinearArray")
+        return cls(
+            compressed_array=compressed_array,
+            shape=shape,
+            size=size,
+            ndim=ndim,
+            compressed_axes=compressed_axes,
+            tie_point_indices=tie_point_indices,
+            interpolation_description=interpolation_description,
+            computational_precision=computational_precision,      
+        )
+
+   def initialise_SubsampledQuadraticArray(
+           self, 
+           compressed_array=None,
+           shape=None,
+           size=None,
+           ndim=None,
+           compressed_axes=(),
+           tie_point_indices={},
+           interpolation_description="",
+           computational_precision="",
+           interpolation_parameters={},
+           parameter_dimensions={},
+           interpolation_name="",
+    ):
+        """Return a gathered array instance.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            compressed_array: optional
+
+            ndim: `int`, optional
+
+            shape: sequence of `int`, optional
+
+            size: `int, optional
+
+            compressed_axes: sequence of `int`, optional 
+        
+            interpolation_description: `str`, optional
+
+            computational_precision: `str`, optional
+                The floating-point arithmetic precision used during
+                the preparation and validation of the compressed
+                coordinates.
+
+            tie_point_indices: `dict`, optional
+
+            interpolation_parameters: `dict`, optional
+
+            parameter_dimensions: `dict`, optional
+
+            interpolation_name: `str`, optional
+                Ignored.
+
+        :Returns:
+
+            Subsampled Linear array
+
+        """
+        cls = self.get_class("SubsampledQuadraticArray")
+        return cls(
+            compressed_array=compressed_array,
+            shape=shape,
+            size=size,
+            ndim=ndim,
+            compressed_axes=compressed_axes,
+            tie_point_indices=tie_point_indices,
+            interpolation_description=interpolation_description,
+            computational_precision=computational_precision,  
+            interpolation_parameters=interpolation_parameters,
+            parameter_dimensions=parameter_dimensions,
+        )
 
     def initialise_Index(self):
         """Return an index variable.

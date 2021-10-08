@@ -78,6 +78,11 @@ class SubsampledGeneralArray(CompressedArray):
             parameter_dimensions: `dict`
                 TODO
 
+            computational_precision: `str`, optional
+                The floating-point arithmetic precision used during
+                the preparation and validation of the compressed
+                coordinates.
+
         """
         super().__init__(
             compressed_array=compressed_array,
@@ -420,6 +425,16 @@ class SubsampledGeneralArray(CompressedArray):
 
         """
         return _float64
+
+    @property
+    def computational_precision(self):
+        """The validation computational precision.
+
+        The floating-point arithmetic precision used during the
+        preparation and validation of the compressed coordinates.
+
+        """
+        return self._get_component("computational_precision")
 
     @property
     def interpolation_name(self):

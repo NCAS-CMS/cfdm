@@ -10,15 +10,16 @@ class SampledLinearArray(SubsampledGeneralArray):
 
     """
     
-    def __init__(self, 
-        compressed_array=None,
-        shape=None,
-        size=None,
-        ndim=None,
-        compressed_axes=None,
-        tie_point_indices={},
-                 interpolation_description=None,
-        computational_precision=None,
+    def __init__(
+            self, 
+            compressed_array=None,
+            shape=None,
+            size=None,
+            ndim=None,
+            compressed_axes=None,
+            tie_point_indices={},
+            interpolation_description=None,
+            computational_precision=None,
     ):
         """Initialisation.
 
@@ -56,6 +57,7 @@ class SampledLinearArray(SubsampledGeneralArray):
             interpolation_name="linear"
             tie_point_indices=tie_point_indices,
             interpolation_description=interpolation_description,
+            computational_precision=computational_precision,            
         )
         
     def __getitem__(self, indices):
