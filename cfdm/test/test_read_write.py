@@ -293,9 +293,6 @@ class read_writeTest(unittest.TestCase):
             # Note: can remove this del when Issue #140 is closed:
             if fmt in self.netcdf3_fmts:
                 del append_ex_fields[5]  # n=6 ex_field, minus 1 for above del
-            if fmt in "NETCDF4_CLASSIC":
-                # Remove n=5, 6, 7 for reasons as given above (del => minus 1)
-                append_ex_fields = append_ex_fields[:4]
 
             overall_length = len(append_ex_fields) + 1  # 1 for original 'g'
             cfdm.write(
