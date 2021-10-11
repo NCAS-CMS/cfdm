@@ -411,6 +411,10 @@ class read_writeTest(unittest.TestCase):
             # Check behaviour when append identical fields, as an edge case
             #   1. Set up the fields and file to use to conduct this test
             g_new = cfdm.read(self.filename)[0]  # note 'g' has one field
+            # There is an unresolved netcdf4-python issue when reading
+            # VLEN arrays (see github.com/Unidata/netcdf4-python/issues/261)
+            # so, until fixed, for NETCDF4 only we must delete the VLEN array
+            # to conduct the test without it (but on a "kitchen sink" field).
             if fmt == "NETCDF4":
                 aux = g_new.constructs.filter_by_property(
                     long_name="greek_letters"
