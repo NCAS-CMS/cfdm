@@ -19,6 +19,7 @@ from . import (
     List,
     NodeCountProperties,
     PartNodeCountProperties,
+    TiePointIndex,
 )
 from .abstract import Implementation
 from .data import (
@@ -28,6 +29,10 @@ from .data import (
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
+    SubsampledBilinearArray,
+    SubsampledGeneralArray,
+    SubsampledLinearArray,
+    SubsampledQuadraticArray,
 )
 
 
@@ -61,11 +66,13 @@ class CFDMImplementation(Implementation):
         RaggedContiguousArray=None,
         RaggedIndexedArray=None,
         RaggedIndexedContiguousArray=None,
+        SubsampledLinearArray=None,           
         List=None,
         Count=None,
         Index=None,
         NodeCountProperties=None,
         PartNodeCountProperties=None,
+        TiePointIndex=None,
     ):
         """**Initialisation**
 
@@ -131,6 +138,9 @@ class CFDMImplementation(Implementation):
             RaggedIndexedContiguousArray:
                 A class for an underlying indexed contiguous ragged array.
 
+            SubsampledLinearArray:
+                A class for an underlying subsampled linear array.
+
             List:
                 A list variable class.
 
@@ -145,6 +155,9 @@ class CFDMImplementation(Implementation):
 
             PartNodeCountProperties:
                 A class for properties of a netCDF part node count variable.
+
+            TiePointIndex:
+                A tie point index variable class.
 
         """
         super().__init__(
@@ -169,11 +182,13 @@ class CFDMImplementation(Implementation):
             RaggedContiguousArray=RaggedContiguousArray,
             RaggedIndexedArray=RaggedIndexedArray,
             RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
+            SubsampledLinearArray=SubsampledLinearArray,
             List=List,
             Count=Count,
             Index=Index,
             NodeCountProperties=NodeCountProperties,
             PartNodeCountProperties=PartNodeCountProperties,
+            TiePointIndex=TiePointIndex,
         )
 
     def __repr__(self):
@@ -245,7 +260,6 @@ class CFDMImplementation(Implementation):
                 )
 
             variable = variable1
-        # --- End: for
 
         return variable
 
@@ -2049,19 +2063,17 @@ class CFDMImplementation(Implementation):
             list_variable=list_variable,
         )
     
-   def initialise_SubsampledLinearArray(
-           self, 
-           compressed_array=None,
-           shape=None,
-           size=None,
-           ndim=None,
-           compressed_axes=(),
-           tie_point_indices={},
-           interpolation_description=None,
-           computational_precision=None,
-           interpolation_parameters={},
-           parameter_dimensions={},
-           interpolation_name="",
+    def initialise_SubsampledLinearArray(
+            self, 
+            compressed_array=None,
+            shape=None,
+            size=None,
+            ndim=None,
+            compressed_axes=(),
+            tie_point_indices={},
+            interpolation_description="",
+            computational_precision="",
+            **kwargs,
     ):
         """Return a gathered array instance.
 
@@ -2088,13 +2100,7 @@ class CFDMImplementation(Implementation):
 
             tie_point_indices: `dict`, optional
 
-            interpolation_parameters: `dict`, optional
-                Ignored.
-
-            parameter_dimensions: `dict`, optional
-                Ignored.
-
-            interpolation_name: `str`, optional
+            kwargs: optional
                 Ignored.
 
         :Returns:
@@ -2102,8 +2108,7 @@ class CFDMImplementation(Implementation):
             Subsampled Linear array
 
         """
-        cls = self.get_class("SubsampledLinearArray")
-        return cls(
+        return self.get_class("SubsampledLinearArray")(
             compressed_array=compressed_array,
             shape=shape,
             size=size,
@@ -2114,7 +2119,63 @@ class CFDMImplementation(Implementation):
             computational_precision=computational_precision,      
         )
 
-   def initialise_SubsampledBilinearArray(
+    def initialise_SubsampledBilinearArray(
+           self, 
+           compressed_array=None,
+           shape=None,
+           size=None,
+           ndim=None,
+           compressed_axes=(),
+           tie_point_indices={},
+           interpolation_description="",
+           computational_precision="",
+            **kwargs,
+    ):
+        """Return a gathered array instance.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            compressed_array: optional
+
+            ndim: `int`, optional
+
+            shape: sequence of `int`, optional
+
+            size: `int, optional
+
+            compressed_axes: sequence of `int`, optional 
+        
+            interpolation_description: `str`, optional
+
+            computational_precision: `str`, optional
+                The floating-point arithmetic precision used during
+                the preparation and validation of the compressed
+                coordinates.
+
+            tie_point_indices: `dict`, optional
+
+            kwargs: optional
+                Ignored.
+
+        :Returns:
+
+            Subsampled Linear array
+
+        """
+        return self.get_class("SubsampledBilinearArray")(
+            compressed_array=compressed_array,
+            shape=shape,
+            size=size,
+            ndim=ndim,
+            compressed_axes=compressed_axes,
+            tie_point_indices=tie_point_indices,
+            interpolation_description=interpolation_description,
+            computational_precision=computational_precision,      
+        )
+
+    def initialise_SubsampledQuadraticArray(
            self, 
            compressed_array=None,
            shape=None,
@@ -2126,72 +2187,7 @@ class CFDMImplementation(Implementation):
            computational_precision="",
            interpolation_parameters={},
            parameter_dimensions={},
-           interpolation_name="",
-    ):
-        """Return a gathered array instance.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        :Parameters:
-
-            compressed_array: optional
-
-            ndim: `int`, optional
-
-            shape: sequence of `int`, optional
-
-            size: `int, optional
-
-            compressed_axes: sequence of `int`, optional 
-        
-            interpolation_description: `str`, optional
-
-            computational_precision: `str`, optional
-                The floating-point arithmetic precision used during
-                the preparation and validation of the compressed
-                coordinates.
-
-            tie_point_indices: `dict`, optional
-
-            interpolation_parameters: `dict`, optional
-                Ignored.
-
-            parameter_dimensions: `dict`, optional
-                Ignored.
-
-            interpolation_name: `str`, optional
-                Ignored.
-
-        :Returns:
-
-            Subsampled Linear array
-
-        """
-        cls = self.get_class("SubsampledBilinearArray")
-        return cls(
-            compressed_array=compressed_array,
-            shape=shape,
-            size=size,
-            ndim=ndim,
-            compressed_axes=compressed_axes,
-            tie_point_indices=tie_point_indices,
-            interpolation_description=interpolation_description,
-            computational_precision=computational_precision,      
-        )
-
-   def initialise_SubsampledQuadraticArray(
-           self, 
-           compressed_array=None,
-           shape=None,
-           size=None,
-           ndim=None,
-           compressed_axes=(),
-           tie_point_indices={},
-           interpolation_description="",
-           computational_precision="",
-           interpolation_parameters={},
-           parameter_dimensions={},
-           interpolation_name="",
+            **kwargs,
     ):
         """Return a gathered array instance.
 
@@ -2222,7 +2218,7 @@ class CFDMImplementation(Implementation):
 
             parameter_dimensions: `dict`, optional
 
-            interpolation_name: `str`, optional
+            kwargs: optional
                 Ignored.
 
         :Returns:
@@ -2230,8 +2226,7 @@ class CFDMImplementation(Implementation):
             Subsampled Linear array
 
         """
-        cls = self.get_class("SubsampledQuadraticArray")
-        return cls(
+        return self.get_class("SubsampledQuadraticArray")(
             compressed_array=compressed_array,
             shape=shape,
             size=size,
@@ -2275,6 +2270,17 @@ class CFDMImplementation(Implementation):
 
         """
         cls = self.get_class("List")
+        return cls()
+
+    def initialise_TiePointIndex(self):
+        """Return an index variable.
+
+        :Returns:
+
+            Index variable
+
+        """
+        cls = self.get_class("TiePointIndex")
         return cls()
 
     def initialise_NetCDFArray(
@@ -2463,110 +2469,6 @@ class CFDMImplementation(Implementation):
             size=size,
             count_variable=count_variable,
             index_variable=index_variable,
-        )
-
-    def initialise_SubsampledLinearArray(
-            self,
-            compressed_array=None,
-            ndim=None,
-            shape=None,
-            size=None,
-            tie_point_indices=None,
-            compressed_axes=None,
-            computational_precision=None,
-            interpolation_parameters=None,
-            parameter_dimensions=None,
-    ):
-        """Return a subsampled linear array instance.
-
-        :Parameters:
-
-            compressed_array: array_like
-
-            ndim: `int`
-
-            shape: sequence of `int`
-
-            size: `int
-
-            tie_point_indices: `dict`
-
-            compressed_axes: sequence of `int`
-
-            computational_precision: `str`
-
-            interpolation_parameters: `dict`
-
-            parameter_dimensions: `dict`
-
-        :Returns:
-
-             Subsampled Linear array
-
-        """
-        cls = self.get_class("SubsampledLinearArray")
-        return cls(
-            compressed_array=compressed_array,
-            ndim=ndim
-            shape=shape,
-            size=size,
-            tie_point_indices=tie_point_indices,
-            compressed_axes=compressed_axes,
-            computational_precision=computational_precision,
-            interpolation_parameters=interpolation_parameters,
-            parameter_dimensions=parameter_dimensions,
-        )
-
-    def initialise_SubsampledBilinearArray(
-            self,
-            compressed_array=None,
-            ndim=None,
-            shape=None,
-            size=None,
-            tie_point_indices=None,
-            compressed_axes=None,
-            computational_precision=None,
-            interpolation_parameters=None,
-            parameter_dimensions=None,
-    ):
-        """Return a subsampled bilinear array instance.
-
-        :Parameters:
-
-            compressed_array: array_like
-
-            ndim: `int`
-
-            shape: sequence of `int`
-
-            size: `int
-
-            tie_point_indices: `dict`
-
-            compressed_axes: sequence of `int`
-
-            computational_precision: `str`
-
-            interpolation_parameters: `dict`
-
-            parameter_dimensions: `dict`
-
-        :Returns:
-
-             Subsampled Bilinear array
-
-        """
-        cls = self.get_class("SubsampledBilinearArray")
-        return cls(
-            compressed_array=compressed_array,
-            ndim=ndim
-            shape=shape,
-            size=size,
-            tie_point_indices=tie_point_indices,
-            compressed_axes=compressed_axes,
-            computational_precision=computational_precision,
-            interpolation_parameters=interpolation_parameters,
-            parameter_dimensions=parameter_dimensions,
         )
 
     def is_climatology(self, coordinate):
@@ -3413,6 +3315,8 @@ _implementation = CFDMImplementation(
     RaggedContiguousArray=RaggedContiguousArray,
     RaggedIndexedArray=RaggedIndexedArray,
     RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
+    SubsampledLinearArray=SubsampledLinearArray,
+    TiePointIndex=TiePointIndex,
 )
 
 

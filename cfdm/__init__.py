@@ -127,11 +127,16 @@ from .data import (
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
+    SubsampledBilinearArray,
+    SubsampledGeneralArray,
+    SubsampledLinearArray,
+    SubsampledQuadraticArray,
 )
 
 from .count import Count
 from .index import Index
 from .list import List
+from .tiepointindex import TiePointIndex
 from .nodecountproperties import NodeCountProperties
 from .partnodecountproperties import PartNodeCountProperties
 

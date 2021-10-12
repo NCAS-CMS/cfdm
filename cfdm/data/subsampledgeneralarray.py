@@ -1,3 +1,4 @@
+from functools import lru_cache
 from itertools import product
 
 import numpy as np
@@ -22,12 +23,12 @@ class SubsampledGeneralArray(CompressedArray):
         size=None,
         ndim=None,
         compressed_axes=None,
-        tie_point_indices={},
+            tie_point_indices=None,
         interpolation_parameters={},
         parameter_dimensions={},
-            interpolation_name="",
-        interpolation_description="",
-            computational_precision="",
+            interpolation_name=None,
+        interpolation_description=None,
+            computational_precision=None,
     ):
         """Initialisation.
 
@@ -108,8 +109,8 @@ class SubsampledGeneralArray(CompressedArray):
 
         """
         try:
-            # If the first or last element is requested then we don't
-            # need to interpolate
+            # If exactly the first or last element is requested then
+            # we don't need to interpolate
             return self._first_or_last_index(indices)
         except IndexError:
             pass
@@ -124,14 +125,14 @@ class SubsampledGeneralArray(CompressedArray):
         """
         ndim = self.ndim
         if (
-                indices == (slice(0, 1),) * ndim or
+                indices == (slice(0, 1, 1),) * ndim or
+                indices == tuple([slice(n-1, n, 1) for n in self.shape]) or
                 indices == (slice(-1, None),) * ndim
         ):
             return self.get_tie_points()[indices]
-        
-        raise IndexError(
-            f"Indices {indices} do not select the first nor last element"
-        )
+
+        # Indices do not (acceptably) select the first nor last element
+        raise IndexError()
         
     def _select_tie_points(self, tie_points, tp_indices, location={}):
         """Select tie points from a given interpolation subarea location.
@@ -305,11 +306,13 @@ class SubsampledGeneralArray(CompressedArray):
         for d in self.get_compressed_axes():
             tp_index = []
             u_index = []
-            new_continuous_area = []
+            continuous_area = []
             subarea_shape = []
             interpolation_subarea_index = []
             
-            tie_point_indices = tie_point_indices[d].array.flatten().tolist()
+            tie_point_indices = (
+                tie_point_indices[d].data.array.flatten().tolist()
+            )
 
             new = True
 
@@ -319,11 +322,11 @@ class SubsampledGeneralArray(CompressedArray):
             for i, (index0, index1) in enumerate(
                 zip(tie_point_indices[:-1], tie_point_indices[1:])
             ):
-                new_continuous_area.append(new)
+                continuous_area.append(new)
 
                 if index1 - index0 <= 1:
                     new = True
-                    new_continuous_area.pop()
+                    continuous_area.pop()
                     continue
 
                 # The index of the interpolation subarea along the
@@ -354,12 +357,12 @@ class SubsampledGeneralArray(CompressedArray):
             tp_indices[d] = tp_index
             u_indices[d] = u_index
             interpolation_subarea_shapes[d] = subarea_shape
-            new_continuous_area[d] = new_area
+            new_continuous_area[d] = continuous_area
             interpolation_subarea_indices[d] = interpolation_subarea_index
             
         return (
-            product(*tp_indices),
             product(*u_indices),
+            product(*tp_indices),
             product(*interpolation_subarea_shapes),
             product(*new_continuous_area),
             product(*interpolation_subarea_indices),
@@ -587,7 +590,7 @@ class SubsampledGeneralArray(CompressedArray):
         [1, 3)
 
         """
-       return list(self.get_compressed_dimension())
+        return list(self.get_compressed_dimension())
 
     def to_memory(self):
         """Bring an array on disk into memory.

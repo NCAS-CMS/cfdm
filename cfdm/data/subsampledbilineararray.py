@@ -1,9 +1,9 @@
 import numpy as np
 
-from .sampledlineararray import SampledLinearArray
+from .subsampledlineararray import SubsampledLinearArray
 
 
-class SampledBiLinearArray(SampledLinearArray):
+class SubsampledBilinearArray(SubsampledLinearArray):
     """TODO.
 
     .. versionadded:: (cfdm) TODO
@@ -16,8 +16,8 @@ class SampledBiLinearArray(SampledLinearArray):
         size=None,
         ndim=None,
         compressed_axes=None,
-        tie_point_indices={},
-                 interpolation_description=None,
+        tie_point_indices=None,
+        interpolation_description=None,
         computational_precision=None,
     ):
         """Initialisation.
@@ -53,7 +53,7 @@ class SampledBiLinearArray(SampledLinearArray):
             size=size,
             ndim=ndim,
             compressed_axes=compressed_axes,
-            interpolation_name="bilinear"
+            interpolation_name="bilinear",
             tie_point_indices=tie_point_indices,
             interpolation_description=interpolation_description,
         )

@@ -3,7 +3,7 @@ import numpy as np
 from .subsampledgeneralarray import SubsampledGeneralArray
 
 
-class SampledLinearArray(SubsampledGeneralArray):
+class SubsampledLinearArray(SubsampledGeneralArray):
     """TODO.
 
     .. versionadded:: (cfdm) 1.9.TODO.0
@@ -17,7 +17,7 @@ class SampledLinearArray(SubsampledGeneralArray):
             size=None,
             ndim=None,
             compressed_axes=None,
-            tie_point_indices={},
+            tie_point_indices=None,
             interpolation_description=None,
             computational_precision=None,
     ):
@@ -54,7 +54,7 @@ class SampledLinearArray(SubsampledGeneralArray):
             size=size,
             ndim=ndim,
             compressed_axes=compressed_axes,
-            interpolation_name="linear"
+            interpolation_name="linear",
             tie_point_indices=tie_point_indices,
             interpolation_description=interpolation_description,
             computational_precision=computational_precision,            
@@ -69,16 +69,20 @@ class SampledLinearArray(SubsampledGeneralArray):
 
         """
         try:
-            # If the first or last element is requested then we don't
-            # need to interpolate
-            return self._first_or_last_index(indices)
+            super().__getitem__(indices)
         except IndexError:
             pass
+#        try:
+#            # If exactly the first or last element is requested then
+#            # we don't need to interpolate
+#            return self._first_or_last_index(indices)
+#        except IndexError:
+#            pass
 
         # ------------------------------------------------------------
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
-        (d0,) = self.get_source_compressed_axes()
+        (d0,) = self.get_compressed_axes()
 
         tie_points = self.get_tie_points()
 
@@ -91,10 +95,11 @@ class SampledLinearArray(SubsampledGeneralArray):
         ):
             ua = self._select_tie_points(tie_points, tp_indices, {d0: 0})
             ub = self._select_tie_points(tie_points, tp_indices, {d0: 1})
-            u = self._linear_interpolation(ua, ub d0, subarea_shape,
-                                           first)
+            u = self._linear_interpolation(
+                ua, ub, d0, subarea_shape, first
+            )
             uarray[u_indices] = u
-            
+
         self._s.cache_clear()
 
         return self.get_subspace(uarray, indices, copy=True)
@@ -139,7 +144,7 @@ class SampledLinearArray(SubsampledGeneralArray):
         # Interpolate
         u = ua * one_minus_s + ub * s
  
-        if not first[d]
+        if not first[d0]:
             # Remove the first point of the interpolation subarea if
             # it is not the first (in index space) of a continuous
             # area. This is beacuse this value in the uncompressed

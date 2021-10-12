@@ -289,7 +289,8 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        g["references"][ncvar] = g["references"].setdefault(ncvar, 0) + 1
+        count = g["references"].setdefault(ncvar, 0) + 1
+        g["references"][ncvar] = count
 
         # Keep a note of which variables are doing the referencing
         g["referencers"].setdefault(ncvar, set()).add(referencing_ncvar)
@@ -702,6 +703,17 @@ class NetCDFRead(IORead):
             # Domains
             # --------------------------------------------------------
             "domain": bool(domain),
+            # --------------------------------------------------------
+            # Lossy compression by coordinate subsampling
+            # --------------------------------------------------------
+            # NetCDF names of tie point coordinate variables
+            "tie_points": {},
+            # Tie point index variables
+            "tie_point_index": {},
+            # Parsed contents of interpolation variables
+            "interpolation": {},
+            # Interpolation parameter variables
+            "interpolation_parameters": {},
         }
 
         g = self.read_vars
@@ -2863,12 +2875,13 @@ class NetCDFRead(IORead):
         g["domain_ancillary_key"] = {}
 
         dimensions = g["variable_dimensions"][field_ncvar]
-        g["dataset_compliance"][field_ncvar] = {
-            "CF version": self.implementation.get_cf_version(),
-            "dimensions": dimensions,
-            "non-compliance": {},
-        }
-
+        g["dataset_compliance"].setdefault(field_ncvar, {})
+        g["dataset_compliance"][field_ncvar]["CF version"] = (
+            self.implementation.get_cf_version()
+        )
+        g["dataset_compliance"][field_ncvar]["dimensions"] = dimensions
+        g["dataset_compliance"][field_ncvar].setdefault("non-compliance", {})
+       
         logger.info(
             "    Converting netCDF variable "
             f"{field_ncvar}({', '.join(dimensions)}) to a {construct_type}:"
@@ -3279,11 +3292,15 @@ class NetCDFRead(IORead):
         # Add auxiliary coordinate constructs derived from from tie
         # point coordinate variables (CF>=1.9, introduced at v1.9.TODO.0)
         # ------------------------------------------------------------
-        self.implementation.del_property(f, "coordinate_interpolation", None)
+        string = self.implementation.del_property(
+            f, "coordinate_interpolation", None
+        )
         tie_points = g["tie_points"].get(field_ncvar, ())
         
         for ncvar in tie_points:
-            ok = self._check_tie_points(field_ncvar, ncvar)        
+            ok = self._check_tie_point_coordinates(
+                field_ncvar, ncvar, string
+            )
             if not ok:
                 continue
 
@@ -4045,6 +4062,11 @@ class NetCDFRead(IORead):
         if variable is None:
             variable = ncvar
 
+        if field_ncvar not in g["dataset_compliance"]:
+            g["dataset_compliance"].setdefault(
+                field_ncvar, {"non-compliance": {}}
+            )
+            
         g["dataset_compliance"][field_ncvar]["non-compliance"].setdefault(
             ncvar, []
         ).append(d)
@@ -4292,11 +4314,10 @@ class NetCDFRead(IORead):
         else:
             properties = {}
 
-        tie_points = ncvar in g['tie_point_coordinates'].get(field_ncvar, ())
+        # Check for tie points
+        tie_points = ncvar in g["tie_points"].get(field_ncvar, ())
         
-        # ------------------------------------------------------------
         # Look for a geometry container
-        # ------------------------------------------------------------
         geometry = self._get_geometry(field_ncvar)
         
         attribute = "bounds"  # TODO Bad default? consider if bounds != None
@@ -4526,7 +4547,7 @@ class NetCDFRead(IORead):
 
         return cell_measure
 
-    def _create_TiePointIndex(self, ncvar, ncdim):
+    def _create_tie_point_index(self, ncvar, ncdim):
         """Create a tie point index variable.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
@@ -4534,14 +4555,14 @@ class NetCDFRead(IORead):
         :Parameters:
 
             ncvar: `str`
-                The name of the netCDF tie point index variable.
+                The netCDF name of the tie point index variable.
 
                 *Parameter example:*
                   ``ncvar='x_indices'``
 
             ncdim: `str`
-                The name of the tie point index variable's netCDF
-                dimension.
+                The netCDF name of the tie point index variable's
+                subsampled dimension.
 
                 *Parameter example:*
                   ``ncdim='tp_xc'``
@@ -5166,7 +5187,7 @@ class NetCDFRead(IORead):
                         index_variable=c["index_variable"],
                     )
 
-                elif "subsampled" + ncvar in c:
+                elif "subsampled " + ncvar in c:
                     # ------------------------------------------------
                     # Subsampled array
                     # ------------------------------------------------
@@ -5175,7 +5196,7 @@ class NetCDFRead(IORead):
         
                     rec = g["interpolation"][c["interpolation_ncvar"]]
                     tie_point_index_ncvar = (
-                        rec["subsampled_ncdim"]["tie_point_index"]
+                        rec["subsampled_ncdim"][ncdim]["tie_point_index_ncvar"]
                     )
                         
                     compressed_axes.append(i)
@@ -5210,7 +5231,8 @@ class NetCDFRead(IORead):
                         parameter_dimensions[term] = positions       
                 else:
                     raise ValueError(
-                    f"Bad compression vibes. c.keys()={list(c.keys())}"
+                        f"Bad compression type: ncvar={ncvar}, "
+                        f"c.keys()={list(c.keys())}"
                 )
 
             if subsampled:
@@ -5479,6 +5501,8 @@ class NetCDFRead(IORead):
 #                variables.
              `None`
         """
+        g = self.read_vars
+        
         # Separate the attribute string into components. E.g. "lat:
         # lon: bilinear time: linear" becomes ["lat:", "lon:",
         # "bilinear", "time:", "linear"]
@@ -5498,7 +5522,9 @@ class NetCDFRead(IORead):
         tie_point_coordinates = []
         for x in coordinate_interpolation:
             if x.endswith(":"):
-                coords.append(x[::-1])
+                # Strip trailing colon from tie point coordinate
+                # variable name
+                coords.append(x[:-1])
                 continue
 
             c_i[x] = coords
@@ -5513,27 +5539,6 @@ class NetCDFRead(IORead):
         if not ok:
             return
         
-        # Still here? Then ...
-
-        # Convert the split-by-white-space `coordinate_interpolation`
-        # attributes to a dictionary. E.g. ["lat:", "lon:",
-        # "bilinear", "time:", "linear"] becomes {"bilinear": ["lat",
-        # "lon"], "linear": ["time"]}
-        c_i = {}
-        coords = []
-        tie_point_coordinates = []
-        for x in coordinate_interpolation:
-            if x.endswith(":"):
-                coords.append(x[::-1])
-                continue
-
-            c_i[x] = coords
-            tie_point_coordinates.extend(coords)
-            
-            coords = []
-
-        coordinate_interpolation = c_i
-
         g["tie_points"][parent_ncvar] = tie_point_coordinates
         
         # Record the interpolation variable contents
@@ -5553,79 +5558,86 @@ class NetCDFRead(IORead):
             }
 
             # Loop round interpolated dimensions
-            tie_point_mapping = self._parse_x(attrs["tie_point_mapping"])
-            for interpolated_ncdim, x in tie_point_mapping.items():
-                if len(x) < 2:
-                    self._add_message(
-                        parent_ncvar,
-                        interpolation_ncvar,
-                        message=("tie_point_mapping attribute",
-                                 "is incorrectly formatted"),
-                        attribute={
-                            interpolation_ncvar + ":coordinate_interplation":
-                            coordinate_interpolation},
-                    )
-                    continue
-
-                tie_point_index_ncvar, subsampled_ncdim = x[0:2]
-                if len(x) == 2:
-                    subarea_ncdim = None
-                else:
-                    subarea_ncdim = x[2]
-
-                record["subsampled_ncdim"][subsampled_ncdim] = {
-                    'interpolated_ncdim': interpolated_ncdim,
-                    'tie_point_index_ncvar': tie_point_index_ncvar,
-                    'interpolation_subarea_ncdim': subarea_ncdim,
-                }
-
-                # Do not attempt to create field constructs from
-                # interpolation variables
-                g["do_not_create_field"].add(interpolation_ncvar)
-
-                # Record which tie point corodinate variables span
-                # this subsampled dimension, and note the
-                # corresponding interpolation variable and
-                # interpolated dimension.
-                for tie_point_ncvar in coords:
-                    g["compression"].setdefault(subsampled_ncdim, {})[
-                        "subsampled " + tie_point_ncvar
-                    ] = {
-                        "interpolation_ncvar": interpolation_ncvar,
-                        "implied_ncdimensions": [interpolated_ncdim],
+            tie_point_mappings = self._parse_x(
+                parent_ncvar, attrs["tie_point_mapping"]
+            )
+            for tie_point_mapping in tie_point_mappings:
+                for interpolated_ncdim, x in tie_point_mapping.items():
+                    if len(x) < 2:
+                        self._add_message(
+                            parent_ncvar,
+                            interpolation_ncvar,
+                            message=("tie_point_mapping attribute",
+                                     "is incorrectly formatted"),
+                            attribute={
+                                interpolation_ncvar + ":coordinate_interplation":
+                                coordinate_interpolation},
+                        )
+                        continue
+    
+                    tie_point_index_ncvar, subsampled_ncdim = x[0:2]
+                    if len(x) == 2:
+                        subarea_ncdim = None
+                    else:
+                        subarea_ncdim = x[2]
+    
+                    record["subsampled_ncdim"][subsampled_ncdim] = {
+                        'interpolated_ncdim': interpolated_ncdim,
+                        'tie_point_index_ncvar': tie_point_index_ncvar,
+                        'interpolation_subarea_ncdim': subarea_ncdim,
                     }
-                        
-                # Create the tie point index variable for this
-                # subsampled dimension
-                if tie_point_index_ncvar not in g["tie_point_index"]:
-                    tpi = self._create_tie_point_index(
-                        tie_point_index_ncvar, subsampled_dimension
-                    )
-                    g["tie_point_index"][tie_point_index_ncvar] = tpi
-
+    
                     # Do not attempt to create field constructs from
-                    # tie point index variables
-                    g["do_not_create_field"].add(tie_point_index_ncvar)
+                    # interpolation variables
+                    g["do_not_create_field"].add(interpolation_ncvar)
+    
+                    # Record which tie point corodinate variables span
+                    # this subsampled dimension, and note the
+                    # corresponding interpolation variable and
+                    # interpolated dimension.
+                    for tie_point_ncvar in coords:
+                        g["compression"].setdefault(subsampled_ncdim, {})[
+                            "subsampled " + tie_point_ncvar
+                        ] = {
+                            "interpolation_ncvar": interpolation_ncvar,
+                            "implied_ncdimensions": [interpolated_ncdim],
+                        }
+                            
+                    # Create the tie point index variable for this
+                    # subsampled dimension
+                    if tie_point_index_ncvar not in g["tie_point_index"]:
+                        tpi = self._create_tie_point_index(
+                            tie_point_index_ncvar, subsampled_ncdim
+                        )
+                        g["tie_point_index"][tie_point_index_ncvar] = tpi
+    
+                        # Do not attempt to create field constructs from
+                        # tie point index variables
+                        g["do_not_create_field"].add(tie_point_index_ncvar)
 
                 
             g["interpolation"][interpolation_ncvar] = record
 
-            # Loop round interpolation parameters
-            for y in self._parse_x(attrs.get("interpolation_parameters")):
-                for term, param_ncvar in y.items():
-                    record["interpolation_parameters"][term] = param_ncvar
-
-                    # Create the interpolation parameter variable for
-                    # this term
-                    if param_ncvar in g["interpolation_parameter"]:
-                        continue
-
-                    p = self._create_interpolation_parameter(param_ncvar)
-                    g["interpolation_parameter"][param_ncvar] = p
-
-                    # Do not attempt to create field constructs from
-                    # interpolation parameter variables
-                    g["do_not_create_field"].add(param_ncvar)
+            # Create interpolation parameter variables
+            interpolation_parameters = attrs.get("interpolation_parameters")
+            if interpolation_parameters is not None:                
+                for y in self._parse_x(
+                        interpolation_ncvar, interpolation_parameters
+                ):
+                    for term, param_ncvar in y.items():
+                        record["interpolation_parameters"][term] = param_ncvar
+                        
+                        # Create the interpolation parameter variable for
+                        # this term
+                        if param_ncvar in g["interpolation_parameters"]:
+                            continue
+                        
+                        p = self._create_interpolation_parameter(param_ncvar)
+                        g["interpolation_parameters"][param_ncvar] = p
+                        
+                        # Do not attempt to create field constructs from
+                        # interpolation parameter variables
+                        g["do_not_create_field"].add(param_ncvar)
 
     def _create_formula_terms_ref(self, f, key, coord, formula_terms):
         """Create a formula terms coordinate reference.
@@ -5986,11 +5998,11 @@ class NetCDFRead(IORead):
             uncompressed_shape=(),
             compressed_axes=(),
             tie_point_indices={},
-            interpolation_parameters={},
             parameter_dimensions={},
-            interpolation_name=None,
-            interpolation_description=None,
-            computational_precision=None,
+            interpolation_parameters={},
+            interpolation_name="",
+            interpolation_description="",
+            computational_precision="",
     ):
         """Creates Data for a tie point coordinates variable.
 
@@ -5998,13 +6010,9 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            compressed_array: optional
-
-            ndim: `int`, optional
+            subsampled_array: optional
 
             shape: sequence of `int`, optional
-
-            size: `int, optional
 
             compressed_axes: sequence of `int`, optional 
         
@@ -6028,9 +6036,6 @@ class NetCDFRead(IORead):
             (subclass of) `SubsampledGeneralArray`
 
         """
-        uncompressed_ndim = len(uncompressed_shape)
-        uncompressed_size = int(reduce(operator.mul, uncompressed_shape, 1))
-
         if interpolation_name == "linear":
             init_func = self.implementation.initialise_SubsampledLinearArray
         elif interpolation_name == "bilinear":
@@ -6040,17 +6045,20 @@ class NetCDFRead(IORead):
         else:
             init_func = self.implementation.initialise_SubsampledGeneralArray
 
+        uncompressed_ndim = len(uncompressed_shape)
+        uncompressed_size = int(reduce(operator.mul, uncompressed_shape, 1))
+        
         return init_func(
-            compressed_array=compressed_array,
-            shape=shape,
-            size=size,
-            ndim=ndim,
+            compressed_array=subsampled_array,
+            shape=uncompressed_shape,
+            size=uncompressed_size,
+            ndim=uncompressed_ndim,
             compressed_axes=compressed_axes,
             tie_point_indices=tie_point_indices,
             interpolation_description=interpolation_description,
             computational_precision=computational_precision,  
-            interpolation_parameters=interpolation_parameters,
             parameter_dimensions=parameter_dimensions,
+            interpolation_parameters=interpolation_parameters,
             interpolation_name=interpolation_name,
         )
     
@@ -6567,6 +6575,67 @@ class NetCDFRead(IORead):
 
         return True
 
+
+    def _check_tie_point_coordinates(
+        self, parent_ncvar, tie_point_ncvar, string
+    ):
+        """Checks requirements.
+
+        * 8.3.requirement.1
+        * 8.3.requirement.5
+
+        :Parameters:
+
+        parent_ncvar: `str`
+            NetCDF name of parent data or domain variable.
+
+        :Returns:
+
+            `bool`
+
+        """
+        attribute = {parent_ncvar + ":coordinate_interpolation": string}
+
+        incorrect_dimensions = (
+            "Tie point coordinate variable",
+            "spans incorrect dimensions",
+        )
+
+        g = self.read_vars
+
+        if tie_point_ncvar not in g["internal_variables"]:
+            ncvar, message = self._missing_variable(
+                tie_point_ncvar, "Tie point coordinate variable"
+            )
+            self._add_message(
+                parent_ncvar,
+                ncvar,
+                message=message,
+                attribute=attribute,
+                conformance="8.3.requirement.1",
+            )
+            return False
+
+        # Check that the variable's dimensions span a subset of the
+        # parent variable's dimensions (allowing for char variables
+        # with a trailing dimension)
+        if not self._dimensions_are_subset(
+            tie_point_ncvar,
+            self._ncdimensions(tie_point_ncvar),
+            self._ncdimensions(parent_ncvar),
+        ):
+            self._add_message(
+                parent_ncvar,
+                tie_point_ncvar,
+                message=incorrect_dimensions,
+                attribute=attribute,
+                dimensions=g["variable_dimensions"][tie_point_ncvar],
+                conformance="8.3.requirement.5",
+            )
+            return False
+
+        return True
+
     def _dimensions_are_subset(self, ncvar, dimensions, parent_dimensions):
         """True if dimensions are a subset of the parent dimensions."""
         if not set(dimensions).issubset(parent_dimensions):
@@ -6998,7 +7067,7 @@ class NetCDFRead(IORead):
 
         ok = True
 
-        for interp_ncvar, coords in parsed_coordinate_interpolation.items()
+        for interp_ncvar, coords in parsed_coordinate_interpolation.items():
             # Check that the interpolation variable exists in the file
             if interp_ncvar not in g["internal_variables"]:
                 ncvar, message = self._missing_variable(
@@ -7009,12 +7078,12 @@ class NetCDFRead(IORead):
                 )
                 ok = False
   
-            attrs = g["variable_attributes"][interpolation_ncvar]
+            attrs = g["variable_attributes"][interp_ncvar]
             try:
                 tie_point_mapping = attrs["tie_point_mapping"]
             except KeyError:
                 self._add_message(
-                    parent_ncvar, interpolation_ncvar,
+                    parent_ncvar, interp_ncvar,
                     message=("Interpolation variable",
                              "has no tie_point_mapping attribute"),
                     attribute=attribute
@@ -7083,7 +7152,7 @@ class NetCDFRead(IORead):
                 mapping = self.read_vars["flattener_variables"]
                 if trailing_colon:
                     out = [
-                        mapping[ncvar[::-1]] + ":"  if ncvar.endswith(":")
+                        mapping[ncvar[:-1]] + ":"  if ncvar.endswith(":")
                         else mapping[ncvar]
                         for ncvar in out
                     ]
@@ -7119,7 +7188,8 @@ class NetCDFRead(IORead):
 
         return out
 
-    def _parse_x(self, parent_ncvar, string, keys_are_variables=False):
+    def _parse_x(self, parent_ncvar, string, keys_are_variables=False,
+                 keys_are_dimensions=False):
         """Parse CF-netCDF strings.
 
         Handling of CF-compliant strings:

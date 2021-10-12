@@ -250,9 +250,6 @@ class CompressedArray(Array):
 
         return ca.array
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def get_compressed_axes(self):
         """Return axes that are compressed in the underlying array.
 

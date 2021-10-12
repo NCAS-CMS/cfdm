@@ -1,9 +1,9 @@
 import numpy as np
 
-from .sampledlineararray import SampledLinearArray
+from .subsampledlineararray import SubsampledLinearArray
 
 
-class SampledBiLinearArray(SampledLinearArray):
+class SubsampledQuadraticArray(SubsampledLinearArray):
     """TODO.
 
     .. versionadded:: (cfdm) TODO
@@ -56,7 +56,7 @@ class SampledBiLinearArray(SampledLinearArray):
             size=size,
             ndim=ndim,
             compressed_axes=compressed_axes,
-            interpolation_name="bilinear"
+            interpolation_name="bilinear",
             tie_point_indices=tie_point_indices,
             interpolation_description=interpolation_description,
             interpolation_parameters=interpolation_parameters.copy(),
@@ -72,8 +72,8 @@ class SampledBiLinearArray(SampledLinearArray):
 
         """
         try:
-            # If the first or last element is requested then we don't
-            # need to interpolate
+            # If exactly the first or last element is requested then
+            # we don't need to interpolate
             return self._first_or_last_index(indices)
         except IndexError:
             pass
@@ -97,9 +97,9 @@ class SampledBiLinearArray(SampledLinearArray):
         ):
             ua = self._select_tie_points(tie_points, tp_indices, {d0: 0})
             ub = self._select_tie_points(tie_points, tp_indices, {d0: 1})
-            u = self._quadratic_interpolation(ua, ub, d0,
-                                              subarea_size, first, w,
-                                              subarea_index)
+            u = self._quadratic_interpolation(
+                ua, ub, d0, subarea_size, first, w, subarea_index
+            )
             uarray[u_indices] = u
             
         self._s.cache_clear()
@@ -134,7 +134,7 @@ class SampledBiLinearArray(SampledLinearArray):
                 The shape of the interpolation subararea, including
                 all tie points.
  
-            first: `tuple`
+            first: `tuple` of `bool`
                 For each dimension, True if the interpolation subarea
                 is the first (in index space) of a new continuous
                 area, otherwise False.
@@ -158,7 +158,7 @@ class SampledBiLinearArray(SampledLinearArray):
         u = self._linear_interpolation(ua, ub, d0, subarea_shape, first)
 
         if w is not None:
-            s, one_minus_s = self._s(d0, subarea_shape[d0]):
+            s, one_minus_s = self._s(d0, subarea_shape[d0])
             u += 4 * w[subarea_index] * s * one_minus_s
 
         return u

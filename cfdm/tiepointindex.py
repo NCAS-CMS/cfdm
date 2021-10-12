@@ -2,7 +2,7 @@ from . import core, mixin
 
 
 class TiePointIndex(
-    mixin.NetCDFVariable, mixin.PropertiesData, core.abstract.PropertiesData
+        mixin.NetCDFVariable, mixin.NetCDFDimension, mixin.PropertiesData, core.abstract.PropertiesData
 ):
     """A tie point index variable containing subsampled coordinate values.
 
