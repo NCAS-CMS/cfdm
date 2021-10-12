@@ -35,7 +35,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.9.0.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.9.0.1</a></h1>
 
 
 
@@ -116,7 +116,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.core.abstract.PropertiesDataBounds.set_data<a class="headerlink" href="#cfdm-core-abstract-propertiesdatabounds-set-data" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.set_data">
-<code class="sig-prename descclassname">PropertiesDataBounds.</code><code class="sig-name descname">set_data</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">inplace=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/core/abstract/propertiesdata.py#L382-L454"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.set_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">PropertiesDataBounds.</code><code class="sig-name descname">set_data</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">inplace=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.1/cfdm/core/abstract/propertiesdata.py#L382-L454"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.set_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the data.</p>
 <p>The units, calendar and fill value of the incoming <code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code> instance
 are removed prior to insertion.</p>
@@ -136,12 +136,12 @@ to a <code class="xref py py-obj docutils literal notranslate"><span class="pre"
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code> objects, and cfdm.core instances that contain
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code> objects.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not copy the data prior to insertion. By
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not copy the data prior to insertion. By
 default the data are copied.</p>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional:</dt><dd><p>If False then do not do the operation in-place and
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional:</dt><dd><p>If False then do not do the operation in-place and
 return a new, modified <code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertiesDataBounds</span></code> instance. By
-default the operation is in-place and <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is
+default the operation is in-place and <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is
 returned.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.8.7.0</p>
@@ -151,7 +151,7 @@ returned.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertiesDataBounds</span></code></dt><dd><p>If the operation was in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned,
+<dt><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertiesDataBounds</span></code></dt><dd><p>If the operation was in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned,
 otherwise return a new <code class="xref py py-obj docutils literal notranslate"><span class="pre">PropertiesDataBounds</span></code> instance containing the
 new data.</p>
 </dd>
@@ -193,7 +193,7 @@ new data.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-09-21.
+      &copy;2021, NCAS | Page built on 2021-10-12.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

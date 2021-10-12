@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.9.0.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.9.0.1</a></h1>
 
 
 
@@ -125,7 +125,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.GatheredArray">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">GatheredArray</code><span class="sig-paren">(</span><em class="sig-param">compressed_array=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">compressed_dimension=None</em>, <em class="sig-param">list_variable=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/data/gatheredarray.py#L9-L183"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.GatheredArray" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">GatheredArray</code><span class="sig-paren">(</span><em class="sig-param">compressed_array=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">compressed_dimension=None</em>, <em class="sig-param">list_variable=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.1/cfdm/data/gatheredarray.py#L9-L183"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.GatheredArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.abstract.compressedarray.CompressedArray</span></code></p>
 <p>An underlying gathered array.</p>
 <p>Compression by gathering combines axes of a multidimensional array
@@ -142,13 +142,13 @@ variable” that gives the indices of the required points.</p>
 <dd class="field-odd"><dl class="simple">
 <dt>compressed_array: <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></dt><dd><p>The compressed array.</p>
 </dd>
-<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>The uncompressed array dimension sizes.</p>
+<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>The uncompressed array dimension sizes.</p>
 </dd>
-<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Number of elements in the uncompressed array.</p>
+<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Number of elements in the uncompressed array.</p>
 </dd>
-<dt>ndim: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The number of uncompressed array dimensions</p>
+<dt>ndim: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The number of uncompressed array dimensions</p>
 </dd>
-<dt>compressed_dimension: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The position of the compressed dimension in the compressed
+<dt>compressed_dimension: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The position of the compressed dimension in the compressed
 array.</p>
 </dd>
 <dt>list_variable: <a class="reference internal" href="cfdm.List.html#cfdm.List" title="cfdm.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code></a></dt><dd><p>The “list variable” required to uncompress the data,
@@ -247,16 +247,16 @@ identical to the data of a CF-netCDF list variable.</p>
 <td><p>The numpy array interface.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray.__deepcopy__.html#cfdm.GatheredArray.__deepcopy__" title="cfdm.GatheredArray.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray.__getitem__.html#cfdm.GatheredArray.__getitem__" title="cfdm.GatheredArray.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
 <td><p>Returns a subspace of the uncompressed data as a numpy array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray.__repr__.html#cfdm.GatheredArray.__repr__" title="cfdm.GatheredArray.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray.__str__.html#cfdm.GatheredArray.__str__" title="cfdm.GatheredArray.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 </tbody>
 </table>
@@ -296,7 +296,7 @@ identical to the data of a CF-netCDF list variable.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-09-21.
+      &copy;2021, NCAS | Page built on 2021-10-12.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

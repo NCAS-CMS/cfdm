@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.9.0.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.9.0.1</a></h1>
 
 
 
@@ -125,7 +125,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.RaggedContiguousArray">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">RaggedContiguousArray</code><span class="sig-paren">(</span><em class="sig-param">compressed_array=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">count_variable=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.0/cfdm/data/raggedcontiguousarray.py#L6-L140"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.RaggedContiguousArray" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">RaggedContiguousArray</code><span class="sig-paren">(</span><em class="sig-param">compressed_array=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">count_variable=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.1/cfdm/data/raggedcontiguousarray.py#L6-L140"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.RaggedContiguousArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.mixin.raggedcontiguous.RaggedContiguous</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.abstract.compressedarray.CompressedArray</span></code></p>
 <p>An underlying contiguous ragged array.</p>
 <p>A collection of features stored using a contiguous ragged array
@@ -145,11 +145,11 @@ dimension in the compressed array.</p>
 <dd class="field-odd"><dl class="simple">
 <dt>compressed_array: <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></dt><dd><p>The compressed data.</p>
 </dd>
-<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>The uncompressed array dimension sizes.</p>
+<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>The uncompressed array dimension sizes.</p>
 </dd>
-<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Number of elements in the uncompressed array.</p>
+<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Number of elements in the uncompressed array.</p>
 </dd>
-<dt>ndim: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The number of uncompressed array dimensions</p>
+<dt>ndim: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>The number of uncompressed array dimensions</p>
 </dd>
 <dt>count_variable: <a class="reference internal" href="cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a></dt><dd><p>The count variable required to uncompress the data,
 corresponding to a CF-netCDF count variable.</p>
@@ -247,16 +247,16 @@ corresponding to a CF-netCDF count variable.</p>
 <td><p>The numpy array interface.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.RaggedContiguousArray.__deepcopy__.html#cfdm.RaggedContiguousArray.__deepcopy__" title="cfdm.RaggedContiguousArray.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.RaggedContiguousArray.__getitem__.html#cfdm.RaggedContiguousArray.__getitem__" title="cfdm.RaggedContiguousArray.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
 <td><p>Returns a subspace of the array defined by the given indices.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.RaggedContiguousArray.__repr__.html#cfdm.RaggedContiguousArray.__repr__" title="cfdm.RaggedContiguousArray.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.RaggedContiguousArray.__str__.html#cfdm.RaggedContiguousArray.__str__" title="cfdm.RaggedContiguousArray.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 </tbody>
 </table>
@@ -296,7 +296,7 @@ corresponding to a CF-netCDF count variable.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2021, NCAS | Page built on 2021-09-21.
+      &copy;2021, NCAS | Page built on 2021-10-12.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
