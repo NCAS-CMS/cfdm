@@ -2387,7 +2387,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         foo <class 'str'>
 
         """
-        return self._item((slice(0, 1),) * self.ndim)
+        return self._item((slice(0, 1, 1),) * self.ndim)
 
     @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
@@ -2554,7 +2554,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         bar <class 'str'>
 
         """
-        return self._item((slice(-1, None),) * self.ndim)
+        return self._item((slice(-1, None, 1),) * self.ndim)
 
     def second_element(self):
         """Return the second element of the data as a scalar.
@@ -2584,7 +2584,9 @@ class Data(Container, NetCDFHDF5, core.Data):
         bar <class 'str'>
 
         """
-        return self._item((slice(0, 1),) * (self.ndim - 1) + (slice(1, 2),))
+        return self._item(
+            (slice(0, 1, 1),) * (self.ndim - 1) + (slice(1, 2, 1),)
+        )
 
     def to_memory(self):
         """Bring data on disk into memory and retain it there.

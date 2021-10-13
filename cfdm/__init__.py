@@ -135,10 +135,11 @@ from .data import (
 
 from .count import Count
 from .index import Index
+from .interpolation import Interpolation
 from .list import List
-from .tiepointindex import TiePointIndex
 from .nodecountproperties import NodeCountProperties
 from .partnodecountproperties import PartNodeCountProperties
+from .tiepointindex import TiePointIndex
 
 from .bounds import Bounds
 from .coordinateconversion import CoordinateConversion

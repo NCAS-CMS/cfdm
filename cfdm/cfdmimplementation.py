@@ -16,6 +16,7 @@ from . import (
     FieldAncillary,
     Index,
     InteriorRing,
+    Interpolation,
     List,
     NodeCountProperties,
     PartNodeCountProperties,
@@ -66,13 +67,15 @@ class CFDMImplementation(Implementation):
         RaggedContiguousArray=None,
         RaggedIndexedArray=None,
         RaggedIndexedContiguousArray=None,
-        SubsampledLinearArray=None,           
+        SubsampledBilinearArray=None,
+        SubsampledLinearArray=None,
         List=None,
         Count=None,
         Index=None,
         NodeCountProperties=None,
         PartNodeCountProperties=None,
         TiePointIndex=None,
+        Interpolation=None,
     ):
         """**Initialisation**
 
@@ -138,6 +141,9 @@ class CFDMImplementation(Implementation):
             RaggedIndexedContiguousArray:
                 A class for an underlying indexed contiguous ragged array.
 
+            SubsampledBilinearArray:
+                A class for an underlying subsampled bilinear array.
+
             SubsampledLinearArray:
                 A class for an underlying subsampled linear array.
 
@@ -158,6 +164,9 @@ class CFDMImplementation(Implementation):
 
             TiePointIndex:
                 A tie point index variable class.
+
+            Interpolation:
+                An interpolation variable class.
 
         """
         super().__init__(
@@ -182,6 +191,7 @@ class CFDMImplementation(Implementation):
             RaggedContiguousArray=RaggedContiguousArray,
             RaggedIndexedArray=RaggedIndexedArray,
             RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
+            SubsampledBilinearArray=SubsampledBilinearArray,
             SubsampledLinearArray=SubsampledLinearArray,
             List=List,
             Count=Count,
@@ -189,6 +199,7 @@ class CFDMImplementation(Implementation):
             NodeCountProperties=NodeCountProperties,
             PartNodeCountProperties=PartNodeCountProperties,
             TiePointIndex=TiePointIndex,
+            Interpolation=Interpolation,
         )
 
     def __repr__(self):
@@ -2062,18 +2073,19 @@ class CFDMImplementation(Implementation):
             compressed_dimension=compressed_dimension,
             list_variable=list_variable,
         )
-    
+
     def initialise_SubsampledLinearArray(
-            self, 
-            compressed_array=None,
-            shape=None,
-            size=None,
-            ndim=None,
-            compressed_axes=(),
-            tie_point_indices={},
-            interpolation_description="",
+        self,
+        compressed_array=None,
+        shape=None,
+        size=None,
+        ndim=None,
+        compressed_axes=(),
+        tie_point_indices={},
             computational_precision="",
-            **kwargs,
+        bounds=False,
+            interpolation_variable=None,
+        **kwargs,
     ):
         """Return a gathered array instance.
 
@@ -2089,9 +2101,7 @@ class CFDMImplementation(Implementation):
 
             size: `int, optional
 
-            compressed_axes: sequence of `int`, optional 
-        
-            interpolation_description: `str`, optional
+            compressed_axes: sequence of `int`, optional
 
             computational_precision: `str`, optional
                 The floating-point arithmetic precision used during
@@ -2099,6 +2109,8 @@ class CFDMImplementation(Implementation):
                 coordinates.
 
             tie_point_indices: `dict`, optional
+
+            bounds: `bool` optional
 
             kwargs: optional
                 Ignored.
@@ -2115,21 +2127,22 @@ class CFDMImplementation(Implementation):
             ndim=ndim,
             compressed_axes=compressed_axes,
             tie_point_indices=tie_point_indices,
-            interpolation_description=interpolation_description,
-            computational_precision=computational_precision,      
+            computational_precision=computational_precision,
+            bounds=bounds,
+            interpolation_variable=interpolation_variable,
         )
 
     def initialise_SubsampledBilinearArray(
-           self, 
-           compressed_array=None,
-           shape=None,
-           size=None,
-           ndim=None,
-           compressed_axes=(),
-           tie_point_indices={},
-           interpolation_description="",
-           computational_precision="",
-            **kwargs,
+        self,
+        compressed_array=None,
+        shape=None,
+        size=None,
+        ndim=None,
+        compressed_axes=(),
+        tie_point_indices={},
+        computational_precision="",
+        bounds=False,
+        **kwargs,
     ):
         """Return a gathered array instance.
 
@@ -2145,8 +2158,8 @@ class CFDMImplementation(Implementation):
 
             size: `int, optional
 
-            compressed_axes: sequence of `int`, optional 
-        
+            compressed_axes: sequence of `int`, optional
+
             interpolation_description: `str`, optional
 
             computational_precision: `str`, optional
@@ -2156,12 +2169,14 @@ class CFDMImplementation(Implementation):
 
             tie_point_indices: `dict`, optional
 
+            bounds: `bool` optional
+
             kwargs: optional
                 Ignored.
 
         :Returns:
 
-            Subsampled Linear array
+            Subsampled Bilinear array
 
         """
         return self.get_class("SubsampledBilinearArray")(
@@ -2171,23 +2186,24 @@ class CFDMImplementation(Implementation):
             ndim=ndim,
             compressed_axes=compressed_axes,
             tie_point_indices=tie_point_indices,
-            interpolation_description=interpolation_description,
-            computational_precision=computational_precision,      
+            computational_precision=computational_precision,
+            bounds=bounds,
         )
 
     def initialise_SubsampledQuadraticArray(
-           self, 
-           compressed_array=None,
-           shape=None,
-           size=None,
-           ndim=None,
-           compressed_axes=(),
-           tie_point_indices={},
-           interpolation_description="",
-           computational_precision="",
-           interpolation_parameters={},
-           parameter_dimensions={},
-            **kwargs,
+        self,
+        compressed_array=None,
+        shape=None,
+        size=None,
+        ndim=None,
+        compressed_axes=(),
+        tie_point_indices={},
+        interpolation_description="",
+        computational_precision="",
+        interpolation_parameters={},
+        parameter_dimensions={},
+        bounds=False,
+        **kwargs,
     ):
         """Return a gathered array instance.
 
@@ -2203,8 +2219,8 @@ class CFDMImplementation(Implementation):
 
             size: `int, optional
 
-            compressed_axes: sequence of `int`, optional 
-        
+            compressed_axes: sequence of `int`, optional
+
             interpolation_description: `str`, optional
 
             computational_precision: `str`, optional
@@ -2218,12 +2234,14 @@ class CFDMImplementation(Implementation):
 
             parameter_dimensions: `dict`, optional
 
+            bounds: `bool` optional
+
             kwargs: optional
                 Ignored.
 
         :Returns:
 
-            Subsampled Linear array
+            Subsampled quadratic array
 
         """
         return self.get_class("SubsampledQuadraticArray")(
@@ -2234,9 +2252,10 @@ class CFDMImplementation(Implementation):
             compressed_axes=compressed_axes,
             tie_point_indices=tie_point_indices,
             interpolation_description=interpolation_description,
-            computational_precision=computational_precision,  
+            computational_precision=computational_precision,
             interpolation_parameters=interpolation_parameters,
             parameter_dimensions=parameter_dimensions,
+            bounds=bounds,
         )
 
     def initialise_Index(self):
@@ -2259,6 +2278,17 @@ class CFDMImplementation(Implementation):
 
         """
         cls = self.get_class("InteriorRing")
+        return cls()
+
+    def initialise_Interpolation(self):
+        """Return an interpolation variable.
+
+        :Returns:
+
+            Interpolation variable
+
+        """
+        cls = self.get_class("Interpolation")
         return cls()
 
     def initialise_List(self):
@@ -2331,7 +2361,7 @@ class CFDMImplementation(Implementation):
             mask=mask,
         )
 
-    def initialise_NodeCount(self):
+    def initialise_NodeCountProperties(self):
         """Return a node count properties variable.
 
         :Returns:
@@ -2559,8 +2589,8 @@ class CFDMImplementation(Implementation):
             variable:
 
             ncdim: `str` or `None`
-                The netCDF dimension name. If `None` then the name is not
-                set.
+                The netCDF dimension name. If `None` then the name is
+                not set.
 
         :Returns:
 
@@ -2578,8 +2608,8 @@ class CFDMImplementation(Implementation):
             variable:
 
             ncdim: `str` or `None`
-                The netCDF dimension name. If `None` then the name is not
-                set.
+                The netCDF dimension name. If `None` then the name is
+                not set.
 
         :Returns:
 
@@ -2588,6 +2618,25 @@ class CFDMImplementation(Implementation):
         """
         if ncdim is not None:
             variable.nc_set_sample_dimension(ncdim)
+
+    def nc_set_subsampled_dimension(self, variable, ncdim):
+        """Set the netCDF subsampled dimension name.
+
+        :Parameters:
+
+            variable:
+
+            ncdim: `str` or `None`
+                The netCDF dimension name. If `None` then the name is
+                not set.
+
+        :Returns:
+
+            `None`
+
+        """
+        if ncdim is not None:
+            variable.nc_set_subsampled_dimension(ncdim)
 
     def set_auxiliary_coordinate(
         self, field, construct, axes, copy=True, **kwargs
@@ -2998,7 +3047,27 @@ class CFDMImplementation(Implementation):
         """
         parent.set_properties(inherited_properties, copy=copy)
 
-    def set_node_count(self, parent, node_count, copy=True):
+    def set_interpolation(self, parent, interpolation, copy=True):
+        """Set an interpolation variable.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            parent:
+
+            interpolation: Interplation properties variable
+
+            copy: `bool`, optional
+
+        :Returns:
+
+            `None`
+
+        """
+        parent.set_interpolation(interpolation, copy=copy)
+
+    def set_node_count_properties(self, parent, node_count, copy=True):
         """Set a node count properties variable.
 
         .. versionadded:: (cfdm) 1.8.0
@@ -3018,7 +3087,8 @@ class CFDMImplementation(Implementation):
         """
         parent.set_node_count(node_count, copy=copy)
 
-    def set_part_node_count(self, parent, part_node_count, copy=True):
+    def set_part_node_count_properties(self, parent, part_node_count,
+                                       copy=True):
         """Set a part node count properties variable.
 
         .. versionadded:: (cfdm) 1.8.0
@@ -3088,8 +3158,8 @@ class CFDMImplementation(Implementation):
             construct: construct
 
             ncdim: `str` or `None`
-                The netCDF dimension name. If `None` then the name is not
-                set.
+                The netCDF dimension name. If `None` then the name is
+                not set.
 
         :Returns:
 
@@ -3107,8 +3177,8 @@ class CFDMImplementation(Implementation):
             field: field construct
 
             ncvar: `str` or `None`
-                The netCDF variable name. If `None` then the name is not
-                set.
+                The netCDF variable name. If `None` then the name is
+                not set.
 
         :Returns:
 
@@ -3126,8 +3196,8 @@ class CFDMImplementation(Implementation):
             parent:
 
             ncvar: `str` or `None`
-                The netCDF variable name. If `None` then the name is not
-                set.
+                The netCDF variable name. If `None` then the name is
+                not set.
 
         :Returns:
 
@@ -3316,7 +3386,9 @@ _implementation = CFDMImplementation(
     RaggedIndexedArray=RaggedIndexedArray,
     RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
     SubsampledLinearArray=SubsampledLinearArray,
+    SubsampledBilinearArray=SubsampledBilinearArray,
     TiePointIndex=TiePointIndex,
+    Interpolation=Interpolation,
 )
 
 

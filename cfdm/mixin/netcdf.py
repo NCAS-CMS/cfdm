@@ -30,7 +30,7 @@ class NetCDF:
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f._initialise_netcdf(source)
 
@@ -83,7 +83,7 @@ class _NetCDFGroupsMixin:
             `tuple` of `str`
                 The group structure.
 
-        **Examples:**
+        **Examples**
 
         See the examples in classes which inherit this method.
 
@@ -125,7 +125,7 @@ class _NetCDFGroupsMixin:
             `tuple` of `str`
                 The group structure prior to being reset.
 
-        **Examples:**
+        **Examples**
 
         See the examples in classes which inherit this method.
 
@@ -182,7 +182,7 @@ class _NetCDFGroupsMixin:
             `tuple` of `str`
                 The removed group structure.
 
-        **Examples:**
+        **Examples**
 
         See the examples in classes which inherit this method.
 
@@ -224,7 +224,7 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
             `str`
                 The removed netCDF dimension name.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_dimension('time')
         >>> f.nc_has_dimension()
@@ -272,7 +272,7 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
             `str`
                 The netCDF dimension name.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_dimension('time')
         >>> f.nc_has_dimension()
@@ -314,7 +314,7 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
                 `True` if the netCDF dimension name has been set,
                 otherwise `False`.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_dimension('time')
         >>> f.nc_has_dimension()
@@ -356,7 +356,7 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_dimension('time')
         >>> f.nc_has_dimension()
@@ -413,7 +413,7 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
             `tuple` of `str`
                 The group structure.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_dimension('time')
         >>> f.nc_dimension_groups()
@@ -467,7 +467,7 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
             `tuple` of `str`
                 The group structure prior to being reset.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_dimension('time')
         >>> f.nc_dimension_groups()
@@ -521,7 +521,7 @@ class NetCDFDimension(NetCDF, _NetCDFGroupsMixin):
             `tuple` of `str`
                 The removed group structure.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_dimension('time')
         >>> f.nc_dimension_groups()
@@ -579,7 +579,7 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
             `str`
                 The removed netCDF variable name.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_variable('tas')
         >>> f.nc_has_variable()
@@ -628,7 +628,7 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
                 The netCDF variable name. If unset then *default* is
                 returned, if provided.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_variable('tas')
         >>> f.nc_has_variable()
@@ -670,7 +670,7 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
                 `True` if the netCDF variable name has been set, otherwise
                 `False`.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_variable('tas')
         >>> f.nc_has_variable()
@@ -712,7 +712,7 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_variable('tas')
         >>> f.nc_has_variable()
@@ -769,7 +769,7 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
             `tuple` of `str`
                 The group structure.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_variable('time')
         >>> f.nc_variable_groups()
@@ -823,7 +823,7 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
             `tuple` of `str`
                 The group structure prior to being reset.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_variable('time')
         >>> f.nc_variable_groups()
@@ -877,7 +877,7 @@ class NetCDFVariable(NetCDF, _NetCDFGroupsMixin):
             `tuple` of `str`
                 The removed group structure.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_variable('time')
         >>> f.nc_variable_groups()
@@ -937,7 +937,7 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
             `str`
                 The removed netCDF sample dimension name.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_sample_dimension('time')
         >>> f.nc_has_sample_dimension()
@@ -986,7 +986,7 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
             `str`
                 The netCDF sample dimension name.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_sample_dimension('time')
         >>> f.nc_has_sample_dimension()
@@ -1028,7 +1028,7 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
                 `True` if the netCDF sample dimension name has been set,
                 otherwise `False`.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_sample_dimension('time')
         >>> f.nc_has_sample_dimension()
@@ -1070,7 +1070,7 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_sample_dimension('time')
         >>> f.nc_has_sample_dimension()
@@ -1129,7 +1129,7 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
             `tuple` of `str`
                 The group structure.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_sample_dimension('element')
         >>> f.nc_sample_dimension_groups()
@@ -1183,7 +1183,7 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
             `tuple` of `str`
                 The group structure prior to being reset.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_sample_dimension('element')
         >>> f.nc_sample_dimension_groups()
@@ -1237,7 +1237,7 @@ class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
             `tuple` of `str`
                 The removed group structure.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_sample_dimension('element')
         >>> f.nc_sample_dimension_groups()
@@ -1311,7 +1311,7 @@ class NetCDFGlobalAttributes(NetCDF):
                 The selection of properties requested for writing to
                 netCDF global attributes.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_global_attributes()
         {'Conventions': None, 'comment': None}
@@ -1374,7 +1374,7 @@ class NetCDFGlobalAttributes(NetCDF):
                 The removed selection of properties requested for
                 writing to netCDF global attributes.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_global_attributes()
         {'Conventions': None, 'comment': None}
@@ -1439,7 +1439,7 @@ class NetCDFGlobalAttributes(NetCDF):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_global_attributes()
         {'Conventions': None, 'comment': None}
@@ -1509,7 +1509,7 @@ class NetCDFGlobalAttributes(NetCDF):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_global_attributes()
         {'Conventions': None, 'comment': None}
@@ -1567,7 +1567,7 @@ class NetCDFGroupAttributes(NetCDF):
                 The selection of properties requested for writing to
                 netCDF group attributes.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_group_attributes()
         {'comment': None}
@@ -1617,7 +1617,7 @@ class NetCDFGroupAttributes(NetCDF):
                 The removed selection of properties requested for writing
                 to netCDF group attributes.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_group_attributes()
         {'comment': None}
@@ -1671,7 +1671,7 @@ class NetCDFGroupAttributes(NetCDF):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_group_attributes()
         {'comment': None}
@@ -1730,7 +1730,7 @@ class NetCDFGroupAttributes(NetCDF):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_group_attributes()
         {'comment': None}
@@ -1789,7 +1789,7 @@ class NetCDFUnlimitedDimensions(NetCDF):
                 The selection of domain axis constructs to be written as
                 netCDF unlimited dimensions.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_unlimited_dimensions(['domainaxis0'])
         >>> f.nc_unlimited_dimensions()
@@ -1838,7 +1838,7 @@ class NetCDFUnlimitedDimensions(NetCDF):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_unlimited_dimensions(['domainaxis0'])
         >>> f.nc_unlimited_dimensions()
@@ -1875,7 +1875,7 @@ class NetCDFUnlimitedDimensions(NetCDF):
             `set`
                 The selection of domain axis constructs that has been removed.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_unlimited_dimensions(['domainaxis0'])
         >>> f.nc_unlimited_dimensions()
@@ -1915,7 +1915,7 @@ class NetCDFExternal(NetCDF):
             `bool`
                 The external status.
 
-        **Examples:**
+        **Examples**
 
         >>> c.nc_get_external()
         False
@@ -1945,7 +1945,7 @@ class NetCDFExternal(NetCDF):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> c.nc_get_external()
         False
@@ -1985,7 +1985,7 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
             `str`
                 The removed netCDF geometry container variable name.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_geometry_variable('geometry')
         >>> f.nc_has_geometry_variable()
@@ -2034,7 +2034,7 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
             `str`
                 The netCDF geometry container variable name.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_geometry_variable('geometry')
         >>> f.nc_has_geometry_variable()
@@ -2076,7 +2076,7 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
                 `True` if the netCDF geometry container variable name has
                 been set, otherwise `False`.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_geometry_variable('geometry')
         >>> f.nc_has_geometry_variable()
@@ -2118,7 +2118,7 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
         :Returns:
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_geometry_variable('geometry')
         >>> f.nc_has_geometry_variable()
@@ -2177,7 +2177,7 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
             `tuple` of `str`
                 The group structure.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_geometry_variable('geometry1')
         >>> f.nc_geometry_variable_groups()
@@ -2232,7 +2232,7 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
             `tuple` of `str`
                 The group structure prior to being reset.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_geometry_variable('geometry1')
         >>> f.nc_geometry_variable_groups()
@@ -2287,7 +2287,7 @@ class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
             `tuple` of `str`
                 The removed group structure.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_geometry_variable('geometry1')
         >>> f.nc_geometry_variable_groups()
@@ -2343,7 +2343,7 @@ class NetCDFHDF5(NetCDF):
             `tuple`
                 The current chunksizes.
 
-        **Examples:**
+        **Examples**
 
         >>> d.shape
         (1, 96, 73)
@@ -2376,7 +2376,7 @@ class NetCDFHDF5(NetCDF):
             `tuple`
                 The chunksizes defined prior to being cleared.
 
-        **Examples:**
+        **Examples**
 
         >>> d.shape
         (1, 96, 73)
@@ -2414,7 +2414,7 @@ class NetCDFHDF5(NetCDF):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d.shape
         (1, 96, 73)
@@ -2470,7 +2470,7 @@ class NetCDFUnlimitedDimension(NetCDF):
                 The existing unlimited status. True and False signify
                 "unlimited" and "not unlimited" respectively.
 
-        **Examples:**
+        **Examples**
 
         >>> da = f.domain_axis('domainaxis1')
         >>> da.nc_is_unlimited()
@@ -2506,7 +2506,7 @@ class NetCDFUnlimitedDimension(NetCDF):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> da = f.domain_axis('domainaxis1')
         >>> da.nc_is_unlimited()
@@ -2593,7 +2593,7 @@ class NetCDFComponents(NetCDF):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_component_variable('interior_ring', 'interiorring_1')
 
@@ -2658,7 +2658,7 @@ class NetCDFComponents(NetCDF):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_del_component_variable('interior_ring')
 
@@ -2726,7 +2726,7 @@ class NetCDFComponents(NetCDF):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_component_variable_groups('interior_ring', ['forecast'])
 
@@ -2791,7 +2791,7 @@ class NetCDFComponents(NetCDF):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_clear_component_variable_groups('interior_ring')
 
@@ -2853,7 +2853,7 @@ class NetCDFComponents(NetCDF):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_component_dimension('interior_ring', 'part')
 
@@ -2912,7 +2912,7 @@ class NetCDFComponents(NetCDF):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_del_component_dimension('interior_ring')
 
@@ -2974,7 +2974,7 @@ class NetCDFComponents(NetCDF):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_component_dimension_groups('interior_ring', ['forecast'])
 
@@ -3033,7 +3033,7 @@ class NetCDFComponents(NetCDF):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_clear_component_dimension_groups('interior_ring')
 
@@ -3090,7 +3090,7 @@ class NetCDFComponents(NetCDF):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_component_sample_dimension('count', 'obs')
 
@@ -3141,7 +3141,7 @@ class NetCDFComponents(NetCDF):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_del_component_sample_dimension('count')
 
@@ -3195,7 +3195,7 @@ class NetCDFComponents(NetCDF):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_component_sample_dimension_groups('count', ['forecast'])
 
@@ -3246,7 +3246,7 @@ class NetCDFComponents(NetCDF):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_del_component_sample_dimension_groups('count')
 
@@ -3261,7 +3261,7 @@ class NetCDFComponents(NetCDF):
 
 
 class NetCDFUnreferenced:
-    """Mixin class for constructs of unrefereced netCDF variables.
+    """Mixin class for constructs of unreferenced netCDF variables.
 
     .. versionadded:: (cfdm) 1.8.9.0
 
@@ -3291,7 +3291,7 @@ class NetCDFUnreferenced:
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         """
         self._set_component("dataset_compliance", value, copy=copy)
@@ -3337,7 +3337,7 @@ class NetCDFUnreferenced:
                 printed and `None` is returned. Otherwise the report is
                 returned as a dictionary.
 
-        **Examples:**
+        **Examples**
 
         If no problems were encountered, an empty dictionary is returned:
 
@@ -3407,7 +3407,7 @@ class NetCDFSubsampledDimension(NetCDF, _NetCDFGroupsMixin):
             `str`
                 The removed netCDF subsampled dimension name.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_subsampled_dimension('time')
         >>> f.nc_has_subsampled_dimension()
@@ -3458,7 +3458,7 @@ class NetCDFSubsampledDimension(NetCDF, _NetCDFGroupsMixin):
             `str`
                 The netCDF subsampled dimension name.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_subsampled_dimension('time')
         >>> f.nc_has_subsampled_dimension()
@@ -3502,7 +3502,7 @@ class NetCDFSubsampledDimension(NetCDF, _NetCDFGroupsMixin):
                 `True` if the netCDF subsampled dimension name has
                 been set, otherwise `False`.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_subsampled_dimension('time')
         >>> f.nc_has_subsampled_dimension()
@@ -3545,7 +3545,7 @@ class NetCDFSubsampledDimension(NetCDF, _NetCDFGroupsMixin):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_subsampled_dimension('time')
         >>> f.nc_has_subsampled_dimension()
@@ -3604,7 +3604,7 @@ class NetCDFSubsampledDimension(NetCDF, _NetCDFGroupsMixin):
             `tuple` of `str`
                 The group structure.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_subsampled_dimension('element')
         >>> f.nc_subsampled_dimension_groups()
@@ -3658,7 +3658,7 @@ class NetCDFSubsampledDimension(NetCDF, _NetCDFGroupsMixin):
             `tuple` of `str`
                 The group structure prior to being reset.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_subsampled_dimension('element')
         >>> f.nc_subsampled_dimension_groups()
@@ -3712,7 +3712,7 @@ class NetCDFSubsampledDimension(NetCDF, _NetCDFGroupsMixin):
             `tuple` of `str`
                 The removed group structure.
 
-        **Examples:**
+        **Examples**
 
         >>> f.nc_set_subsampled_dimension('element')
         >>> f.nc_subsampled_dimension_groups()
@@ -3740,4 +3740,377 @@ class NetCDFSubsampledDimension(NetCDF, _NetCDFGroupsMixin):
             nc_get=self.nc_get_subsampled_dimension,
             nc_set=self.nc_set_subsampled_dimension,
             nc_groups=self.nc_subsampled_dimension_groups,
+        )
+
+
+class NetCDFInterpolationSubareaDimension(NetCDF, _NetCDFGroupsMixin):
+    """Mixin class for accessing the netCDF interpolation subarea
+    dimension name.
+
+    .. versionadded:: (cfdm) 1.9.TODO.0
+
+    """
+
+    def nc_del_interpolation_subarea_dimension(self, default=ValueError()):
+        """Remove the netCDF interpolation subarea dimension name.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `nc_get_interpolation_subarea_dimension`,
+                     `nc_has_interpolation_subarea_dimension`,
+                     `nc_set_interpolation_subarea_dimension`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                netCDF subsampled dimension name has not been set. If
+                set to an `Exception` instance then it will be raised
+                instead.
+
+        :Returns:
+
+            `str`
+                The removed netCDF subsampled dimension name.
+
+        **Examples**
+
+        >>> f.nc_set_interpolation_subarea_dimension('time')
+        >>> f.nc_has_interpolation_subarea_dimension()
+        True
+        >>> f.nc_get_interpolation_subarea_dimension()
+        'time'
+        >>> f.nc_del_interpolation_subarea_dimension()
+        'time'
+        >>> f.nc_has_interpolation_subarea_dimension()
+        False
+        >>> print(f.nc_get_interpolation_subarea_dimension(None))
+        None
+        >>> print(f.nc_del_interpolation_subarea_dimension(None))
+        None
+
+        """
+        try:
+            return self._get_component("netcdf").pop("interpolation_subarea_dimension")
+        except KeyError:
+            if default is None:
+                return default
+
+            return self._default(
+                default,
+                f"{self.__class__.__name__} has no netCDF subsampled "
+                "dimension name",
+            )
+
+    def nc_get_interpolation_subarea_dimension(self, default=ValueError()):
+        """Return the netCDF interpolation subarea dimension name.
+
+        .. versionadded:: (cfdm)  1.9.TODO.0
+
+        .. seealso:: `nc_del_interpolation_subarea_dimension`,
+                     `nc_has_interpolation_subarea_dimension`,
+                     `nc_set_interpolation_subarea_dimension`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                netCDF subsampled dimension name has not been set. If
+                set to an `Exception` instance then it will be raised
+                instead.
+
+        :Returns:
+
+            `str`
+                The netCDF subsampled dimension name.
+
+        **Examples**
+
+        >>> f.nc_set_interpolation_subarea_dimension('time')
+        >>> f.nc_has_interpolation_subarea_dimension()
+        True
+        >>> f.nc_get_interpolation_subarea_dimension()
+        'time'
+        >>> f.nc_del_interpolation_subarea_dimension()
+        'time'
+        >>> f.nc_has_interpolation_subarea_dimension()
+        False
+        >>> print(f.nc_get_interpolation_subarea_dimension(None))
+        None
+        >>> print(f.nc_del_interpolation_subarea_dimension(None))
+        None
+
+        """
+        try:
+            return self._get_component("netcdf")["interpolation_subarea_dimension"]
+        except KeyError:
+            if default is None:
+                return default
+
+            return self._default(
+                default,
+                f"{self.__class__.__name__} has no netCDF subsampled "
+                "dimension name",
+            )
+
+    def nc_has_interpolation_subarea_dimension(self):
+        """Whether the netCDF interpolation subarea dimension name has been
+        set.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `nc_del_interpolation_subarea_dimension`,
+                     `nc_get_interpolation_subarea_dimension`,
+                     `nc_set_interpolation_subarea_dimension`
+
+        :Returns:
+
+            `bool`
+                `True` if the netCDF subsampled dimension name has
+                been set, otherwise `False`.
+
+        **Examples**
+
+        >>> f.nc_set_interpolation_subarea_dimension('time')
+        >>> f.nc_has_interpolation_subarea_dimension()
+        True
+        >>> f.nc_get_interpolation_subarea_dimension()
+        'time'
+        >>> f.nc_del_interpolation_subarea_dimension()
+        'time'
+        >>> f.nc_has_interpolation_subarea_dimension()
+        False
+        >>> print(f.nc_get_interpolation_subarea_dimension(None))
+        None
+        >>> print(f.nc_del_interpolation_subarea_dimension(None))
+        None
+
+        """
+        return "interpolation_subarea_dimension" in self._get_component("netcdf")
+
+    def nc_set_interpolation_subarea_dimension(self, value):
+        """Set the netCDF interpolation subarea dimension name.
+
+        If there are any ``/`` (slash) characters in the netCDF name
+        then these act as delimiters for a group hierarchy. By
+        default, or if the name starts with a ``/`` character and
+        contains no others, the name is assumed to be in the root
+        group.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `nc_del_interpolation_subarea_dimension`,
+                     `nc_get_interpolation_subarea_dimension`,
+                     `nc_has_interpolation_subarea_dimension`
+
+        :Parameters:
+
+            value: `str`
+                The value for the netCDF subsampled dimension name.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f.nc_set_interpolation_subarea_dimension('time')
+        >>> f.nc_has_interpolation_subarea_dimension()
+        True
+        >>> f.nc_get_interpolation_subarea_dimension()
+        'time'
+        >>> f.nc_del_interpolation_subarea_dimension()
+        'time'
+        >>> f.nc_has_interpolation_subarea_dimension()
+        False
+        >>> print(f.nc_get_interpolation_subarea_dimension(None))
+        None
+        >>> print(f.nc_del_interpolation_subarea_dimension(None))
+        None
+
+        """
+        if not value or value == "/":
+            raise ValueError(
+                f"Invalid netCDF subsampled dimension name: {value!r}"
+            )
+
+        if "/" in value:
+            if not value.startswith("/"):
+                raise ValueError(
+                    "A netCDF subsampled dimension name with a group "
+                    f"structure must start with a '/'. Got {value!r}"
+                )
+
+            if value.count("/") == 1:
+                value = value[1:]
+            elif value.endswith("/"):
+                raise ValueError(
+                    "A netCDF subsampled dimension name with a group "
+                    f"structure can't end with a '/'. Got {value!r}"
+                )
+
+        self._get_component("netcdf")["interpolation_subarea_dimension"] = value
+
+    def nc_interpolation_subarea_dimension_groups(self):
+        """Return the netCDF interpolation subarea dimension group hierarchy.
+
+        The group hierarchy is defined by the netCDF name. Groups are
+        delimited by ``/`` (slash) characters in the netCDF name. The
+        groups are returned, in hierarchical order, as a sequence of
+        strings. If the name is not set, or contains no ``/``
+        characters then an empty sequence is returned, signifying the
+        root group.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `nc_clear_interpolation_subarea_dimension_groups`,
+                     `nc_set_interpolation_subarea_dimension_groups`
+
+        :Returns:
+
+            `tuple` of `str`
+                The group structure.
+
+        **Examples**
+
+        >>> f.nc_set_interpolation_subarea_dimension('element')
+        >>> f.nc_interpolation_subarea_dimension_groups()
+        ()
+        >>> f.nc_set_interpolation_subarea_dimension_groups(['forecast', 'model'])
+        >>> f.nc_interpolation_subarea_dimension_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_interpolation_subarea_dimension()
+        '/forecast/model/element'
+        >>> f.nc_clear_interpolation_subarea_dimension_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_interpolation_subarea_dimension()
+        'element'
+
+        >>> f.nc_set_interpolation_subarea_dimension('/forecast/model/element')
+        >>> f.nc_interpolation_subarea_dimension_groups()
+        ('forecast', 'model')
+        >>> f.nc_del_interpolation_subarea_dimension('/forecast/model/element')
+        '/forecast/model/element'
+        >>> f.nc_interpolation_subarea_dimension_groups()
+        ()
+
+        """
+        return self._nc_groups(
+            nc_get=self.nc_get_interpolation_subarea_dimension
+        )
+
+    def nc_set_interpolation_subarea_dimension_groups(self, groups):
+        """Set the netCDF interpolation subarea dimension group hierarchy.
+
+        The group hierarchy is defined by the netCDF name. Groups are
+        delimited by ``/`` (slash) characters in the netCDF name. The
+        groups are returned, in hierarchical order, as a sequence of
+        strings. If the name is not set, or contains no ``/``
+        characters then an empty sequence is returned, signifying the
+        root group.
+
+        An alternative technique for setting the group structure is to
+        set the netCDF dimension name, with
+        `nc_set_interpolation_subarea_dimension`, with the group
+        structure delimited by ``/`` characters.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `nc_clear_interpolation_subarea_dimension_groups`,
+                     `nc_interpolation_subarea_dimension_groups`
+
+        :Parameters:
+
+            groups: sequence of `str`
+                The new group structure.
+
+        :Returns:
+
+            `tuple` of `str`
+                The group structure prior to being reset.
+
+        **Examples**
+
+        >>> f.nc_set_interpolation_subarea_dimension('element')
+        >>> f.nc_interpolation_subarea_dimension_groups()
+        ()
+        >>> f.nc_set_interpolation_subarea_dimension_groups(['forecast', 'model'])
+        >>> f.nc_interpolation_subarea_dimension_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_interpolation_subarea_dimension()
+        '/forecast/model/element'
+        >>> f.nc_clear_interpolation_subarea_dimension_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_interpolation_subarea_dimension()
+        'element'
+
+        >>> f.nc_set_interpolation_subarea_dimension('/forecast/model/element')
+        >>> f.nc_interpolation_subarea_dimension_groups()
+        ('forecast', 'model')
+        >>> f.nc_del_interpolation_subarea_dimension('/forecast/model/element')
+        '/forecast/model/element'
+        >>> f.nc_interpolation_subarea_dimension_groups()
+        ()
+
+        """
+        return self._nc_set_groups(
+            groups,
+            nc_get=self.nc_get_interpolation_subarea_dimension,
+            nc_set=self.nc_set_interpolation_subarea_dimension,
+            nc_groups=self.nc_interpolation_subarea_dimension_groups,
+        )
+
+    def nc_clear_interpolation_subarea_dimension_groups(self):
+        """Remove the netCDF interpolation subarea dimension group hierarchy.
+
+        The group hierarchy is defined by the netCDF name. Groups are
+        delimited by ``/`` (slash) characters in the netCDF name. The
+        groups are returned, in hierarchical order, as a sequence of
+        strings. If the name is not set, or contains no ``/``
+        characters then an empty sequence is returned, signifying the
+        root group.
+
+        An alternative technique for removing the group structure is
+        to set the netCDF dimension name, with
+        `nc_set_interpolation_subarea_dimension`, with no ``/``
+        characters.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `nc_interpolation_subarea_dimension_groups`,
+                     `nc_set_interpolation_subarea_dimension_groups`
+
+        :Returns:
+
+            `tuple` of `str`
+                The removed group structure.
+
+        **Examples**
+
+        >>> f.nc_set_interpolation_subarea_dimension('element')
+        >>> f.nc_interpolation_subarea_dimension_groups()
+        ()
+        >>> f.nc_set_interpolation_subarea_dimension_groups(['forecast', 'model'])
+        >>> f.nc_interpolation_subarea_dimension_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_interpolation_subarea_dimension()
+        '/forecast/model/element'
+        >>> f.nc_clear_interpolation_subarea_dimension_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_interpolation_subarea_dimension()
+        'element'
+
+        >>> f.nc_set_interpolation_subarea_dimension('/forecast/model/element')
+        >>> f.nc_interpolation_subarea_dimension_groups()
+        ('forecast', 'model')
+        >>> f.nc_del_interpolation_subarea_dimension('/forecast/model/element')
+        '/forecast/model/element'
+        >>> f.nc_interpolation_subarea_dimension_groups()
+        ()
+
+        """
+        return self._nc_clear_groups(
+            nc_get=self.nc_get_interpolation_subarea_dimension,
+            nc_set=self.nc_set_interpolation_subarea_dimension,
+            nc_groups=self.nc_interpolation_subarea_dimension_groups,
         )

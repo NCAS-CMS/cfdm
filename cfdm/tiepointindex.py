@@ -2,9 +2,12 @@ from . import core, mixin
 
 
 class TiePointIndex(
-        mixin.NetCDFVariable, mixin.NetCDFDimension, mixin.PropertiesData, core.abstract.PropertiesData
+    mixin.NetCDFVariable,
+    mixin.NetCDFSubsampledDimension,
+    mixin.PropertiesData,
+    core.abstract.PropertiesData,
 ):
-    """A tie point index variable containing subsampled coordinate values.
+    """A tie point index variable with propoerties.
 
     Space may be saved by storing a subsample of the coordinates. The
     uncompressed coordinates can be reconstituted by interpolation
@@ -18,6 +21,8 @@ class TiePointIndex(
     **NetCDF interface**
 
     {{netCDF variable}}
+
+    TODO
 
     .. versionadded:: (cfdm) 1.9.TODO.0
 
