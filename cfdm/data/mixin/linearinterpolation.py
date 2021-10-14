@@ -1,0 +1,71 @@
+class LinearInterpolation:
+    """TODO.
+
+    .. versionadded:: (cfdm) 1.9.TODO.0
+
+    """
+
+    def _linear_interpolation(
+        self, ua, ub, subsampled_dimensions, subarea_shape, first
+    ):
+        """Interpolate linearly between pairs of tie points.
+
+        This is the linear interpolation operator ``fl`` defined in CF
+        appendix J:
+
+        u = fl(ua, ub, s) = ua + s*(ub-ua)
+                          = ua*(1-s) + ub*s
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            ua, ub: array_like
+               The arrays containing the points for pair-wise
+               interpolation along dimension *d0*.
+
+            subsampled_dimensions: 1-`tuple` of `int`
+                The position of a subsampled dimension in the tie
+                points array.
+
+            subarea_shape: `tuple` of `int`
+                The shape of the uncompressed interpolation subararea,
+                including all tie points, but excluding a bounds
+                dimension.
+
+            first: `tuple`
+                For each tie point array dimension, True if the
+                interpolation subarea is the first (in index space) of
+                a new continuous area, otherwise False.
+
+        :Returns:
+
+            `numpy.ndarray`
+
+        """
+        (d0,) = subsampled_dimensions
+
+        # Get the interpolation coefficents
+        s, one_minus_s = self._s(d0, subarea_shape, first)
+
+        # Interpolate
+        u = ua * one_minus_s + ub * s
+
+        if not self.bounds and not first[d0]:
+            # Remove the first point of the interpolation subarea when
+            # it is not the first (in index space) of a continuous
+            # area. This is beacuse this value in the uncompressed
+            # data has already been calculated from the previous (in
+            # index space) interpolation subarea.
+            #
+            # Only do this if the we are interpolating tie point
+            # coordinates.
+            #
+            # If we are interpolating bounds tie points then we do
+            # duplicate the shared tie point for simplicity (although
+            # it would be nice not to ...).
+            indices = [slice(None)] * u.ndim
+            indices[d0] = slice(1, None)
+            u = u[tuple(indices)]
+
+        return u

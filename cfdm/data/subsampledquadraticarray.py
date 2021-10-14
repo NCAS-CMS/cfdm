@@ -1,9 +1,12 @@
 import numpy as np
 
-from .subsampledlineararray import SubsampledLinearArray
+from .abstract import CompressedArray
+from .mixin import LinearInterpolation, SubsampledArray
 
 
-class SubsampledQuadraticArray(SubsampledLinearArray):
+class SubsampledQuadraticArray(
+    LinearInterpolation, SubsampledArray, CompressedArray
+):
     """TODO.
 
     .. versionadded:: (cfdm) TODO
@@ -24,7 +27,7 @@ class SubsampledQuadraticArray(SubsampledLinearArray):
         interpolation_parameters={},
         parameter_dimensions={},
         bounds=False,
-            interpolation_variable=None,
+        interpolation_variable=None,
     ):
         """Initialisation.
 
@@ -93,13 +96,13 @@ class SubsampledQuadraticArray(SubsampledLinearArray):
             interpolation_description=interpolation_description,
             interpolation_parameters=interpolation_parameters.copy(),
             parameter_dimensions=parameter_dimensions.copy(),
-            bounds=bounds,
+            #            bounds=bounds,
             interpolation_variable=interpolation_variable,
         )
 
         if dtype is None:
             dtype = self._default_dtype
-            
+
         self.dtype = dtype
 
     def __getitem__(self, indices):
@@ -146,9 +149,17 @@ class SubsampledQuadraticArray(SubsampledLinearArray):
 
         return self.get_subspace(uarray, indices, copy=True)
 
-    def _quadratic_interpolation( self, ua, ub, subsampled_dimensions,
-                                  subarea_shape, first, w, subarea_index ):
-        """Interpolate quadratically pairs of tie points.
+    def _quadratic_interpolation(
+        self,
+        ua,
+        ub,
+        subsampled_dimensions,
+        subarea_shape,
+        first,
+        w,
+        subarea_index,
+    ):
+        """Interpolate quadratically between pairs of tie points.
 
         Computes the quadratic interpolation operator ``fq`` defined
         in CF appendix J, where ``fl`` is the linear interpolation
@@ -184,7 +195,7 @@ class SubsampledQuadraticArray(SubsampledLinearArray):
             w: array_like or `None`
                 The quadratic coefficient, which must span the
                 interpolation subarea dimension instead of the
-                subsampled dimension. If `None` then it is assumed to
+                subsampled dimension. If `None` then *w* is assumed to
                 be zero.
 
             subarea_index: `tuple` of `slice`

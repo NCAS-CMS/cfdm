@@ -121,7 +121,7 @@ class RaggedIndexedArray(mixin.RaggedIndexed, abstract.CompressedArray):
             `{{class}}`
                 The array that is stored in memory.
 
-        **Examples:**
+        **Examples**
 
         >>> b = a.to_memory()
 

@@ -1,12 +1,12 @@
 import numpy as np
 
 from .abstract import CompressedArray
-from .mixin import SubsampledArray
-#
-#from .subsampledlineararray import SubsampledLinearArray
+from .mixin import LinearInterpolation, SubsampledArray
 
 
-class SubsampledBilinearArray(SubsampledArray, CompressedArray): #(SubsampledLinearArray):
+class SubsampledBilinearArray(
+    LinearInterpolation, SubsampledArray, CompressedArray
+):
     """TODO.
 
     .. versionadded:: (cfdm) TODO
@@ -24,8 +24,7 @@ class SubsampledBilinearArray(SubsampledArray, CompressedArray): #(SubsampledLin
         tie_point_indices=None,
         interpolation_description=None,
         computational_precision=None,
-        bounds=False,
-            interpolation_variable=None,
+        interpolation_variable=None,
     ):
         """Initialisation.
 
@@ -69,11 +68,6 @@ class SubsampledBilinearArray(SubsampledArray, CompressedArray): #(SubsampledLin
                 *Parameter example:*
                   ``computational_precision='64'``
 
-            bounds: `bool`, optional
-                If True then the tie points represent coordinate
-                bounds. See CF section 8.3.9 "Interpolation of Cell
-                Boundaries".
-
              interpolation_variable: `Interpolation`
 
         """
@@ -86,14 +80,13 @@ class SubsampledBilinearArray(SubsampledArray, CompressedArray): #(SubsampledLin
             compression_type="subsampled",
             interpolation_name="bilinear",
             tie_point_indices=tie_point_indices.copy(),
-            bounds=bounds,
             computational_precision=computational_precision,
             interpolation_variable=interpolation_variable,
         )
 
         if dtype is None:
             dtype = self._default_dtype
-            
+
         self.dtype = dtype
 
     def __getitem__(self, indices):
@@ -121,7 +114,7 @@ class SubsampledBilinearArray(SubsampledArray, CompressedArray): #(SubsampledLin
         # Interpolate the tie points for each interpolation subarea
         uarray = np.ma.masked_all(self.shape, dtype=self.dtype)
 
-        for u_indices, tp_indices, subarea_size, first, _ in zip(
+        for u_indices, tp_indices, subarea_shape, first, _ in zip(
             *self.interpolation_subareas()
         ):
             ua = self._select_tie_points(
@@ -149,7 +142,7 @@ class SubsampledBilinearArray(SubsampledArray, CompressedArray): #(SubsampledLin
     def _bilinear_interpolation(
         self, ua, uc, ub, ud, subsampled_dimensions, subarea_shape, first
     ):
-        """Interpolate quadratically pairs of tie points.
+        """Interpolate bilinearly between pairs of tie points.
 
         Computes the function defined in CF appendix J, where ``fl``
         is the linear interpolation operator:
@@ -187,9 +180,9 @@ class SubsampledBilinearArray(SubsampledArray, CompressedArray): #(SubsampledLin
 
         """
         (d0, d1) = subsampled_dimensions
-        
-        uac = self._linear_interpolation(ua, uc, d0, subarea_shape, first)
-        ubd = self._linear_interpolation(ub, ud, d0, subarea_shape, first)
-        u = self._linear_interpolation(uac, ubd, d1, subarea_shape, first)
+
+        uac = self._linear_interpolation(ua, uc, (d0,), subarea_shape, first)
+        ubd = self._linear_interpolation(ub, ud, (d0,), subarea_shape, first)
+        u = self._linear_interpolation(uac, ubd, (d1,), subarea_shape, first)
 
         return u

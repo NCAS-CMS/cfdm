@@ -1,12 +1,57 @@
 import numpy as np
 
 from .abstract import CompressedArray
-from .mixin import SubsampledArray
-#from .subsampledgeneralarray import SubsampledGeneralArray
+from .mixin import LinearInterpolation, SubsampledArray
 
+class SubsampledLinearArray(LinearInterpolation,
+                            SubsampledArray,
+                            CompressedArray):
+    """An underlying subsampled array with linear interpolatin.
 
-class SubsampledLinearArray(SubsampledArray, CompressedArray): #SubsampledGeneralArray):
-    """TODO.
+    The information needed to uncompress the data is stored in an tie
+    point index variable that defines the relationship between the
+    indices of the subsampled dimension and the indices of its
+    corresponding interpolated dimension.
+
+    >>> coords = cfdm.SubsampledLinearArray(
+    ...     compressed_array=cfdm.Data([15, 135, 225, 255, 345]),
+    ...     shape=(12,),
+    ...     ndim=1,
+    ...     size=12,
+    ...     compressed_axes=[0],
+    ...     tie_point_indices={0: cfdm.TiePointIndex(data=[0, 4, 7, 8, 11])},
+    ... )
+    >>> print(coords[...])
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+
+    **Cell boundaries**
+    
+    If the subsampled array contains cell boundaries, then the
+    *shape*, *ndim* and *size* parameters that describe the
+    uncompressed array will take into account the required trailing size 2
+    dimension.
+
+    >>> bounds = cfdm.SubsampledLinearArray(
+        compressed_array=cfdm.Data([0, 150, 240, 240, 360]),
+        shape=(12, 2),
+        ndim=2,
+        size=24,
+        compressed_axes=[0],
+        tie_point_indices={0: cfdm.TiePointIndex(data=[0, 4, 7, 8, 11])},
+    )
+    >>> print(bounds[...])
+    [[0.0 30.0]
+     [30.0 60.0]
+     [60.0 90.00000000000001]
+     [90.00000000000001 120.0]
+     [120.0 150.0]
+     [150.0 180.0]
+     [180.0 210.0]
+     [210.0 240.0]
+     [240.0 270.0]
+     [270.0 300.0]
+     [300.0 330.0]
+     [330.0 360.0]]
 
     .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -22,24 +67,25 @@ class SubsampledLinearArray(SubsampledArray, CompressedArray): #SubsampledGenera
         compressed_axes=None,
         tie_point_indices=None,
         computational_precision=None,
-            bounds=False,
-            interpolation_variable=None,
+        interpolation_variable=None,
     ):
         """Initialisation.
 
         :Parameters:
 
             compressed_array: `Data`
-                The tie points array.
+                The subsampled array.
 
             shape: `tuple`
-                The uncompressed array dimension sizes.
+                The uncompressed array shape.
 
             size: `int`
-                Number of elements in the uncompressed array.
+                Number of elements in the uncompressed array, must be
+                equal to the product of *shape*.
 
             ndim: `int`
-                The number of uncompressed array dimensions.
+                The number of uncompressed array dimensions, equal to
+                the length of *shape*.
 
             dtype: data-type, optional
                The data-type for the uncompressed array. This datatype
@@ -48,16 +94,19 @@ class SubsampledLinearArray(SubsampledArray, CompressedArray): #SubsampledGenera
 
             compressed_axes: sequence of `int`
                 The position of the compressed axis in the tie points
-                array.
+                array. Only one axis may be compressed.
 
                 *Parameter example:*
                   ``compressed_axes=[1]``
 
             tie_point_indices: `dict`, optional
                 The tie point index variable for each subsampled
-                dimension. An integer key indentifies a subsampled
-                dimensions by its position in the tie points array,
-                and the value is a `TiePointIndex` variable.
+                dimension. An key indentifies a subsampled dimensions
+                by its integer position in the tie points array, and
+                the value is a `TiePointIndex` variable.
+        
+                *Parameter example:*
+                  ``tie_point_indices={1: cfdm.TiePointIndex(data=[0, 16])}``
 
             computational_precision: `str`, optional
                 The floating-point arithmetic precision used during
@@ -67,13 +116,9 @@ class SubsampledLinearArray(SubsampledArray, CompressedArray): #SubsampledGenera
                 *Parameter example:*
                   ``computational_precision='64'``
 
-            bounds: `bool`, optional
-                If True then the tie points represent coordinate
-                bounds. See CF section 8.3.9 "Interpolation of Cell
-                Boundaries".
-
              interpolation_variable: `Interpolation`, optional
-        TODO	
+                 TODO
+
         """
         super().__init__(
             compressed_array=compressed_array,
@@ -85,7 +130,6 @@ class SubsampledLinearArray(SubsampledArray, CompressedArray): #SubsampledGenera
             interpolation_name="linear",
             computational_precision=computational_precision,
             tie_point_indices=tie_point_indices.copy(),
-            bounds=bounds,
             interpolation_variable=interpolation_variable,
         )
 
@@ -97,7 +141,8 @@ class SubsampledLinearArray(SubsampledArray, CompressedArray): #SubsampledGenera
     def __getitem__(self, indices):
         """x.__getitem__(indices) <==> x[indices]
 
-        Returns a subspace of the array as an independent numpy array.
+        Returns a subspace of the uncompressed array as an independent
+        numpy array.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -126,66 +171,8 @@ class SubsampledLinearArray(SubsampledArray, CompressedArray): #SubsampledGenera
             ua = self._select_tie_points(tie_points, tp_indices, {d0: 0})
             ub = self._select_tie_points(tie_points, tp_indices, {d0: 1})
             u = self._linear_interpolation(ua, ub, (d0,), subarea_shape, first)
-
             self._set_interpolated_values(uarray, u_indices, (d0,), u)
 
         self._s.cache_clear()
 
         return self.get_subspace(uarray, indices, copy=True)
-
-    def _linear_interpolation(self, ua, ub, subsampled_dimensions,
-                              subarea_shape, first):
-        """Interpolate linearly between pairs of tie points.
-
-        This is the linear interpolation operator ``fl`` defined in CF
-        appendix J:
-
-        u = fl(ua, ub, s) = ua + s*(ub-ua)
-                          = ua*(1-s) + ub*s
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        :Parameters:
-
-            ua, ub: array_like
-               The arrays containing the points for pair-wise
-               interpolation along dimension *d0*.
-
-            subsampled_dimensions: `tuple` of `int`
-                The position of a subsampled dimension in the tie
-                points array.
-
-            subarea_shape: `tuple` of `int`
-                The shape of the uncompressed interpolation subararea,
-                including all tie points, but excluding a bounds
-                dimension.
-
-            first: `tuple`
-                For each tie point array dimension, True if the
-                interpolation subarea is the first (in index space) of
-                a new continuous area, otherwise False.
-
-        :Returns:
-
-            `numpy.ndarray`
-
-        """
-        (d0,) = subsampled_dimensions
-        
-        # Get the interpolation coefficents
-        s, one_minus_s = self._s(d0, subarea_shape)
-
-        # Interpolate
-        u = ua * one_minus_s + ub * s
-
-        if not first[d0]:
-            # Remove the first point of the interpolation subarea if
-            # it is not the first (in index space) of a continuous
-            # area. This is beacuse this value in the uncompressed
-            # data has already been calculated from the previous (in
-            # index space) interpolation subarea.
-            indices = [slice(None)] * u.ndim
-            indices[d0] = slice(1, None)
-            u = u[tuple(indices)]
-
-        return u

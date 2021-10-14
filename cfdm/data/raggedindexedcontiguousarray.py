@@ -155,7 +155,7 @@ class RaggedIndexedContiguousArray(
             `{{class}}`
                 The array that is stored in memory.
 
-        **Examples:**
+        **Examples**
 
         >>> b = a.to_memory()
 

@@ -113,16 +113,16 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
             tie_point_indices=tie_point_indices.copy(),
             interpolation_parameters=interpolation_parameters.copy(),
             parameter_dimensions=parameter_dimensions.copy(),
-#            interpolation_name=interpolation_name,
-#            interpolation_description=interpolation_description,
-#            computational_precision=computational_precision,
-            bounds=bounds,
+            #            interpolation_name=interpolation_name,
+            #            interpolation_description=interpolation_description,
+            #            computational_precision=computational_precision,
+            #            bounds=bounds,
             interpolation_variable=interpolation_variable,
         )
 
         if dtype is None:
             dtype = self._default_dtype
-            
+
         self.dtype = dtype
 
     def __getitem__(self, indices):

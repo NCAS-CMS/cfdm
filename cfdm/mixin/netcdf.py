@@ -3791,7 +3791,9 @@ class NetCDFInterpolationSubareaDimension(NetCDF, _NetCDFGroupsMixin):
 
         """
         try:
-            return self._get_component("netcdf").pop("interpolation_subarea_dimension")
+            return self._get_component("netcdf").pop(
+                "interpolation_subarea_dimension"
+            )
         except KeyError:
             if default is None:
                 return default
@@ -3842,7 +3844,9 @@ class NetCDFInterpolationSubareaDimension(NetCDF, _NetCDFGroupsMixin):
 
         """
         try:
-            return self._get_component("netcdf")["interpolation_subarea_dimension"]
+            return self._get_component("netcdf")[
+                "interpolation_subarea_dimension"
+            ]
         except KeyError:
             if default is None:
                 return default
@@ -3886,7 +3890,9 @@ class NetCDFInterpolationSubareaDimension(NetCDF, _NetCDFGroupsMixin):
         None
 
         """
-        return "interpolation_subarea_dimension" in self._get_component("netcdf")
+        return "interpolation_subarea_dimension" in self._get_component(
+            "netcdf"
+        )
 
     def nc_set_interpolation_subarea_dimension(self, value):
         """Set the netCDF interpolation subarea dimension name.
@@ -3949,7 +3955,9 @@ class NetCDFInterpolationSubareaDimension(NetCDF, _NetCDFGroupsMixin):
                     f"structure can't end with a '/'. Got {value!r}"
                 )
 
-        self._get_component("netcdf")["interpolation_subarea_dimension"] = value
+        self._get_component("netcdf")[
+            "interpolation_subarea_dimension"
+        ] = value
 
     def nc_interpolation_subarea_dimension_groups(self):
         """Return the netCDF interpolation subarea dimension group hierarchy.

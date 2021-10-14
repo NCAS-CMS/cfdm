@@ -69,6 +69,8 @@ class CFDMImplementation(Implementation):
         RaggedIndexedContiguousArray=None,
         SubsampledBilinearArray=None,
         SubsampledLinearArray=None,
+        SubsampledQuadraticArray=None,
+        SubsampledGeneralArray=None,
         List=None,
         Count=None,
         Index=None,
@@ -147,6 +149,12 @@ class CFDMImplementation(Implementation):
             SubsampledLinearArray:
                 A class for an underlying subsampled linear array.
 
+            SubsampledQuadraticArray:
+                A class for an underlying subsampled quadratic array.
+
+            SubsampledGeneralArray:
+                A class for an underlying subsampled array.
+
             List:
                 A list variable class.
 
@@ -193,6 +201,8 @@ class CFDMImplementation(Implementation):
             RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
             SubsampledBilinearArray=SubsampledBilinearArray,
             SubsampledLinearArray=SubsampledLinearArray,
+            SubsampledQuadraticArray=SubsampledQuadraticArray,
+            SubsampledGeneralArray=SubsampledGeneralArray,
             List=List,
             Count=Count,
             Index=Index,
@@ -2082,9 +2092,8 @@ class CFDMImplementation(Implementation):
         ndim=None,
         compressed_axes=(),
         tie_point_indices={},
-            computational_precision="",
-        bounds=False,
-            interpolation_variable=None,
+        computational_precision="",
+        interpolation_variable=None,
         **kwargs,
     ):
         """Return a gathered array instance.
@@ -2110,8 +2119,6 @@ class CFDMImplementation(Implementation):
 
             tie_point_indices: `dict`, optional
 
-            bounds: `bool` optional
-
             kwargs: optional
                 Ignored.
 
@@ -2128,7 +2135,6 @@ class CFDMImplementation(Implementation):
             compressed_axes=compressed_axes,
             tie_point_indices=tie_point_indices,
             computational_precision=computational_precision,
-            bounds=bounds,
             interpolation_variable=interpolation_variable,
         )
 
@@ -2141,7 +2147,6 @@ class CFDMImplementation(Implementation):
         compressed_axes=(),
         tie_point_indices={},
         computational_precision="",
-        bounds=False,
         **kwargs,
     ):
         """Return a gathered array instance.
@@ -2169,8 +2174,6 @@ class CFDMImplementation(Implementation):
 
             tie_point_indices: `dict`, optional
 
-            bounds: `bool` optional
-
             kwargs: optional
                 Ignored.
 
@@ -2187,7 +2190,6 @@ class CFDMImplementation(Implementation):
             compressed_axes=compressed_axes,
             tie_point_indices=tie_point_indices,
             computational_precision=computational_precision,
-            bounds=bounds,
         )
 
     def initialise_SubsampledQuadraticArray(
@@ -2202,7 +2204,6 @@ class CFDMImplementation(Implementation):
         computational_precision="",
         interpolation_parameters={},
         parameter_dimensions={},
-        bounds=False,
         **kwargs,
     ):
         """Return a gathered array instance.
@@ -2234,8 +2235,6 @@ class CFDMImplementation(Implementation):
 
             parameter_dimensions: `dict`, optional
 
-            bounds: `bool` optional
-
             kwargs: optional
                 Ignored.
 
@@ -2255,7 +2254,6 @@ class CFDMImplementation(Implementation):
             computational_precision=computational_precision,
             interpolation_parameters=interpolation_parameters,
             parameter_dimensions=parameter_dimensions,
-            bounds=bounds,
         )
 
     def initialise_Index(self):
@@ -3087,8 +3085,9 @@ class CFDMImplementation(Implementation):
         """
         parent.set_node_count(node_count, copy=copy)
 
-    def set_part_node_count_properties(self, parent, part_node_count,
-                                       copy=True):
+    def set_part_node_count_properties(
+        self, parent, part_node_count, copy=True
+    ):
         """Set a part node count properties variable.
 
         .. versionadded:: (cfdm) 1.8.0
@@ -3387,6 +3386,8 @@ _implementation = CFDMImplementation(
     RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
     SubsampledLinearArray=SubsampledLinearArray,
     SubsampledBilinearArray=SubsampledBilinearArray,
+    SubsampledQuadraticArray=SubsampledQuadraticArray,
+    SubsampledGeneralArray=SubsampledGeneralArray,
     TiePointIndex=TiePointIndex,
     Interpolation=Interpolation,
 )

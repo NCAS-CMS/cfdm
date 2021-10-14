@@ -47,7 +47,7 @@ class NumpyArray(ArrayMixin, core.NumpyArray):
             `{{class}}`
                 The array that is stored in memory.
 
-        **Examples:**
+        **Examples**
 
         >>> b = a.to_memory()
 

@@ -88,7 +88,7 @@ class NetCDFArray(abstract.Array):
 
                 .. versionadded:: (cfdm) 1.8.2
 
-        **Examples:**
+        **Examples**
 
         >>> import netCDF4
         >>> nc = netCDF4.Dataset('file.nc', 'r')
@@ -247,7 +247,7 @@ class NetCDFArray(abstract.Array):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        **Examples:**
+        **Examples**
 
         >>> a.dtype
         dtype('float64')
@@ -263,7 +263,7 @@ class NetCDFArray(abstract.Array):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        **Examples:**
+        **Examples**
 
         >>> a.shape
         (73, 96)
@@ -295,7 +295,7 @@ class NetCDFArray(abstract.Array):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        **Examples:**
+        **Examples**
 
         >>> a.shape
         (73, 96)
@@ -327,7 +327,7 @@ class NetCDFArray(abstract.Array):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        **Examples:**
+        **Examples**
 
         >>> a.shape
         (73, 96)
@@ -358,7 +358,7 @@ class NetCDFArray(abstract.Array):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        **Examples:**
+        **Examples**
 
         >>> a.get_filename()
         'file.nc'
@@ -371,7 +371,7 @@ class NetCDFArray(abstract.Array):
 
         .. versionadded:: (cfdm) 1.8.6.0
 
-        **Examples:**
+        **Examples**
 
         >>> b = a.get_group()
 
@@ -383,7 +383,7 @@ class NetCDFArray(abstract.Array):
 
         .. versionadded:: (cfdm) 1.8.2
 
-        **Examples:**
+        **Examples**
 
         >>> b = a.get_mask()
 
@@ -395,7 +395,7 @@ class NetCDFArray(abstract.Array):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        **Examples:**
+        **Examples**
 
         >>> print(a.netcdf)
         'tas'
@@ -415,7 +415,7 @@ class NetCDFArray(abstract.Array):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        **Examples:**
+        **Examples**
 
         >>> print(a.netcdf)
         'tas'
@@ -442,7 +442,7 @@ class NetCDFArray(abstract.Array):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> a.close()
 
@@ -465,7 +465,7 @@ class NetCDFArray(abstract.Array):
             `numpy.ndarray`
                 An independent numpy array of the data.
 
-        **Examples:**
+        **Examples**
 
         >>> n = numpy.asanyarray(a)
         >>> isinstance(n, numpy.ndarray)
@@ -483,7 +483,7 @@ class NetCDFArray(abstract.Array):
 
             `netCDF4.Dataset`
 
-        **Examples:**
+        **Examples**
 
         >>> netcdf = a.open()
         >>> variable = netcdf.variables[a.get_ncvar()]
@@ -513,7 +513,7 @@ class NetCDFArray(abstract.Array):
             `NumpyArray`
                 The array that is stored in memory.
 
-        **Examples:**
+        **Examples**
 
         >>> b = a.to_memory()
 

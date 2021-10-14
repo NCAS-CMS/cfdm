@@ -19,6 +19,7 @@ from ...functions import is_log_level_debug
 from .. import IORead
 
 logger = logging.getLogger(__name__)
+import pprint
 
 _cached_temporary_files = {}
 
@@ -4414,7 +4415,6 @@ class NetCDFRead(IORead):
                 bounds_ncvar,
                 bounds,
                 parent_ncvar=ncvar,
-                bounds_tie_points=bounds_tie_points,
             )
 
             self.implementation.set_data(bounds, bounds_data, copy=False)
@@ -4498,15 +4498,15 @@ class NetCDFRead(IORead):
                         parent=c, interior_ring=interior_ring
                     )
 
-        if tie_points:            
+        if tie_points:
             # Add interpolation variable properties (CF>=1.9)
             pass
-#            nc = geometry.get("node_count")
-#            if nc is not None:
- #               self.implementation.set_interpolation_properties(
- #                   parent=c, interpolation=i
-  #               )
-            
+        #            nc = geometry.get("node_count")
+        #            if nc is not None:
+        #               self.implementation.set_interpolation_properties(
+        #                   parent=c, interpolation=i
+        #               )
+
         # Store the netCDF variable name
         self.implementation.nc_set_variable(c, ncvar)
 
@@ -5052,7 +5052,6 @@ class NetCDFRead(IORead):
         unpacked_dtype=False,
         uncompress_override=None,
         parent_ncvar=None,
-        bounds_tie_points=False,
     ):
         """Create a data object (Data).
 
@@ -5068,13 +5067,6 @@ class NetCDFRead(IORead):
             unpacked_dtype: `False` or `numpy.dtype`, optional
 
             uncompress_override: `bool`, optional
-
-            bounds_tie_points: `bool`, optional
-                Must be set to True if the variable contains bounds
-                tie bounds (CF 8.3.9. Interpolation of Cell
-                Boundaries).
-
-                .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Returns:
 
@@ -5318,7 +5310,6 @@ class NetCDFRead(IORead):
                     interpolation_name=rec["interpolation_name"],
                     interpolation_description=rec["interpolation_description"],
                     computational_precision=rec["computational_precision"],
-                    bounds=bounds_tie_points,
                     interpolation_variable=rec["variable"],
                 )
 
@@ -5557,7 +5548,7 @@ class NetCDFRead(IORead):
 
     def _parse_coordinate_interpolation(self, string, parent_ncvar):
         """Parse a CF coordinate_interpolation string.
-        
+
         Populate the ``self.read_vars`` with information needed to
         create `Data` objects that represent uncompressed subsampled
         coordinates, and their bounds.
@@ -5640,6 +5631,7 @@ class NetCDFRead(IORead):
             tie_point_mappings = self._parse_x(
                 parent_ncvar, attrs.pop("tie_point_mapping")
             )
+
             for tie_point_mapping in tie_point_mappings:
                 for interpolated_ncdim, x in tie_point_mapping.items():
                     if len(x) < 2:
@@ -5672,36 +5664,6 @@ class NetCDFRead(IORead):
                     # Do not attempt to create field constructs from
                     # interpolation variables
                     g["do_not_create_field"].add(interpolation_ncvar)
-
-                    # Record which tie point corodinate variables span
-                    # this subsampled dimension, and note the
-                    # corresponding interpolation variable and
-                    # interpolated dimension.
-                    for tie_point_ncvar in coords:
-                        g["compression"].setdefault(subsampled_ncdim, {})[
-                            "subsampled " + tie_point_ncvar
-                        ] = {
-                            "interpolation_ncvar": interpolation_ncvar,
-                            "implied_ncdimensions": [interpolated_ncdim],
-                        }
-
-                        # Bounds tie points
-                        bounds = g["variable_attributes"][tie_point_ncvar].get(
-                            "bounds_tie_points"
-                        )
-                        if bounds is not None:
-                            size = len(record["subsampled_ncdim"]) * 2
-                            ncdim = self._new_ncdimension(
-                                f"bounds{size}", size
-                            )
-                            print (g['new_dimension_sizes'])
-                            g["compression"][subsampled_ncdim][
-                                "subsampled " + bounds
-                            ] = {
-                                "interpolation_ncvar": interpolation_ncvar,
-                                "implied_ncdimensions": [interpolated_ncdim],
-                                "implied_bounds_ncdimensions": [ncdim],
-                            }
 
                     # Create the tie point index variable for this
                     # subsampled dimension
@@ -5741,8 +5703,59 @@ class NetCDFRead(IORead):
             record["variable"] = self._create_interpolation(
                 interpolation_ncvar, attrs
             )
-            
+
             g["interpolation"][interpolation_ncvar] = record
+
+        # Record which tie point coordinate variables span this
+        # subsampled dimension, and note the corresponding
+        # interpolation variable and interpolated dimension.
+        for interpolation_ncvar, coords in coordinate_interpolation.items():
+            record = g["interpolation"][interpolation_ncvar]
+            subsampled_ncdims = record["subsampled_ncdim"]
+
+            for tp_ncvar in coords:
+                coord_ncdims = g["variable_dimensions"][tp_ncvar]
+
+                # Bounds tie points: Need to also record an implied
+                # trailing bounds dimension.
+                bounds_ncvar = g["variable_attributes"][tp_ncvar].get(
+                    "bounds_tie_points"
+                )
+                if bounds_ncvar is not None:
+                    n_subsampled_dims = len(
+                        set(coord_ncdims).intersection(subsampled_ncdims)
+                    )
+                    size = n_subsampled_dims * 2
+                    bounds_ncdim = self._new_ncdimension(
+                        f"bounds{size}", size=size, use_existing_new=True
+                    )
+
+                for ncdim in coord_ncdims:
+                    if ncdim not in subsampled_ncdims:
+                        continue
+
+                    # Still here? Then `ncdim` is a subsampled
+                    # dimension.
+                    interpolated_ncdim = subsampled_ncdims[ncdim][
+                        "interpolated_ncdim"
+                    ]
+
+                    g["compression"].setdefault(ncdim, {})[
+                        "subsampled " + tp_ncvar
+                    ] = {
+                        "interpolation_ncvar": interpolation_ncvar,
+                        "implied_ncdimensions": [interpolated_ncdim],
+                    }
+
+                    # Bounds tie points
+                    if bounds_ncvar is not None:
+                        g["compression"][ncdim][
+                            "subsampled " + bounds_ncvar
+                        ] = {
+                            "interpolation_ncvar": interpolation_ncvar,
+                            "implied_ncdimensions": [interpolated_ncdim],
+                            "implied_bounds_ncdimensions": [bounds_ncdim],
+                        }
 
     def _create_formula_terms_ref(self, f, key, coord, formula_terms):
         """Create a formula terms coordinate reference.
@@ -5827,25 +5840,65 @@ class NetCDFRead(IORead):
 
         return coordref
 
-    def _new_ncdimension(self, ncdim, size=None):
+    def _new_ncdimension(self, ncdim, size=None, use_existing_new=False):
         """TODO
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
+        :Parameters:
+
+            ncdim: `str
+                The name for the new dimension. Might be modified if
+                it already exists.
+
+            size: `int`, optional
+                The size of the new dimension, which will be set in
+                ``self.read_vars["new_dimension_sizes"]``.
+
+            use_existing_new: `bool`, optional
+
+                Use an exising dimension name from
+                ``self.read_vars["new_dimension_sizes"]``, if
+                possible. When *use_existing_new* is True, *size* is
+                ignored, i.e. the size may only be set for a new
+                dimension that doesn't already exist in
+                ``self.read_vars["new_dimension_sizes"]``.
+
+        :Returns:
+
+            `str`
+                The new, possibly modified, netCDF dimension name.
+
+        **Examples**
+
+        >>> n._new_ncdimension('bounds2')
+        'bounds2'
+        >>> n._new_ncdimension('bounds2')
+        'bounds2_1'
+        >>> n._new_ncdimension('bounds2', use_existing_new=True)
+        'bounds2'
+
         """
         g = self.read_vars
+        new_dimension_sizes = g["new_dimension_sizes"]
+
+        using_existing_new = False
 
         base = ncdim
         n = 0
         while (
             ncdim in g["internal_dimension_sizes"]
-            or ncdim in g["new_dimension_sizes"]
+            or ncdim in new_dimension_sizes
             or ncdim in g["variables"]
         ):
+            if use_existing_new and ncdim in new_dimension_sizes:
+                using_existing_new = True
+                break
+
             n += 1
             ncdim = f"{base}_{n}"
 
-        if size is not None:
+        if size is not None and not using_existing_new:
             g["new_dimension_sizes"][ncdim] = size
 
         return ncdim
@@ -5974,6 +6027,8 @@ class NetCDFRead(IORead):
         compression = g["compression"]
 
         if compression and set(compression).intersection(ncdimensions):
+            implied_bounds_ncdimensions = None
+
             for ncdim in ncdimensions:
                 if ncdim not in compression:
                     continue
@@ -6019,21 +6074,20 @@ class NetCDFRead(IORead):
                     ]
                     break
                 elif "subsampled " + ncvar in c:
-                    # Subsampled array (CF>=1.9)
+                    # Subsampled array. Do not break here, because
+                    # subsampled variables can have more than one
+                    # compressed dimension. (CF>=1.9)
                     ncdimensions[i : i + 1] = c["subsampled " + ncvar][
                         "implied_ncdimensions"
                     ]
-                    # Do not break here, because subsampled variables
-                    # can have more than one compressed dimension.
+                    implied_bounds_ncdimensions = c["subsampled " + ncvar].get(
+                        "implied_bounds_ncdimensions"
+                    )
 
-            if "subsampled " + ncvar in c:
+            if implied_bounds_ncdimensions:
                 # Add the implied bounds dimension for bounds tie
                 # points (CF>=1.9)
-                implied_bounds_ncdimensions = c["subsampled " + ncvar].get(
-                    "implied_bounds_ncdimensions"
-                )
-                if implied_bounds_ncdimensions:
-                    ncdimensions.extend(implied_bounds_ncdimensions)
+                ncdimensions.extend(implied_bounds_ncdimensions)
 
         out = list(map(str, ncdimensions))
 
@@ -6181,7 +6235,6 @@ class NetCDFRead(IORead):
         interpolation_name="",
         interpolation_description="",
         computational_precision="",
-        bounds=False,
         interpolation_variable=None,
     ):
         """Creates Data for a tie point coordinates variable.
@@ -6211,9 +6264,6 @@ class NetCDFRead(IORead):
 
             interpolation_name: `str`, optional
 
-            bounds: `bool` optional
-                TODO
-
             interpolation_variable: `Interpolation`
                 TODO
 
@@ -6241,12 +6291,11 @@ class NetCDFRead(IORead):
             ndim=uncompressed_ndim,
             compressed_axes=compressed_axes,
             tie_point_indices=tie_point_indices,
-#            interpolation_description=interpolation_description,
-#            computational_precision=computational_precision,
+            #            interpolation_description=interpolation_description,
+            #            computational_precision=computational_precision,
             parameter_dimensions=parameter_dimensions,
             interpolation_parameters=interpolation_parameters,
-#            interpolation_name=interpolation_name,
-            bounds=bounds,
+            #            interpolation_name=interpolation_name,
             interpolation_variable=interpolation_variable,
         )
 
@@ -6350,11 +6399,8 @@ class NetCDFRead(IORead):
         else:
             variable_type = "Bounds variable"
 
-        incorrect_dimensions = (
-            variable_type,
-            "spans incorrect dimensions"
-        )
-                
+        incorrect_dimensions = (variable_type, "spans incorrect dimensions")
+
         g = self.read_vars
 
         if bounds_ncvar not in g["internal_variables"]:
