@@ -2093,7 +2093,7 @@ class CFDMImplementation(Implementation):
         compressed_axes=(),
         tie_point_indices={},
         computational_precision="",
-        interpolation_variable=None,
+#        interpolation_variable=None,
         **kwargs,
     ):
         """Return a gathered array instance.
@@ -2135,7 +2135,7 @@ class CFDMImplementation(Implementation):
             compressed_axes=compressed_axes,
             tie_point_indices=tie_point_indices,
             computational_precision=computational_precision,
-            interpolation_variable=interpolation_variable,
+#            interpolation_variable=interpolation_variable,
         )
 
     def initialise_SubsampledBilinearArray(

@@ -67,7 +67,7 @@ class SubsampledLinearArray(LinearInterpolation,
         compressed_axes=None,
         tie_point_indices=None,
         computational_precision=None,
-        interpolation_variable=None,
+#        interpolation_variable=None,
     ):
         """Initialisation.
 
@@ -116,8 +116,8 @@ class SubsampledLinearArray(LinearInterpolation,
                 *Parameter example:*
                   ``computational_precision='64'``
 
-             interpolation_variable: `Interpolation`, optional
-                 TODO
+#             interpolation_variable: `Interpolation`, optional
+#                 TODO
 
         """
         super().__init__(
@@ -130,7 +130,7 @@ class SubsampledLinearArray(LinearInterpolation,
             interpolation_name="linear",
             computational_precision=computational_precision,
             tie_point_indices=tie_point_indices.copy(),
-            interpolation_variable=interpolation_variable,
+#            interpolation_variable=interpolation_variable,
         )
 
         if dtype is None:            
