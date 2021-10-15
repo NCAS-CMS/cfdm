@@ -24,7 +24,7 @@ class SubsampledBilinearArray(
         tie_point_indices=None,
         interpolation_description=None,
         computational_precision=None,
-        interpolation_variable=None,
+#        interpolation_variable=None,
     ):
         """Initialisation.
 
@@ -68,7 +68,7 @@ class SubsampledBilinearArray(
                 *Parameter example:*
                   ``computational_precision='64'``
 
-             interpolation_variable: `Interpolation`
+#             interpolation_variable: `Interpolation`
 
         """
         super().__init__(
@@ -81,7 +81,7 @@ class SubsampledBilinearArray(
             interpolation_name="bilinear",
             tie_point_indices=tie_point_indices.copy(),
             computational_precision=computational_precision,
-            interpolation_variable=interpolation_variable,
+#            interpolation_variable=interpolation_variable,
         )
 
         if dtype is None:

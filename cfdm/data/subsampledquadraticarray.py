@@ -27,7 +27,7 @@ class SubsampledQuadraticArray(
         interpolation_parameters={},
         parameter_dimensions={},
         bounds=False,
-        interpolation_variable=None,
+#        interpolation_variable=None,
     ):
         """Initialisation.
 
@@ -74,14 +74,6 @@ class SubsampledQuadraticArray(
                 *Parameter example:*
                   ``computational_precision='64'``
 
-            bounds: `bool`, optional
-                If True then the tie points represent coordinate
-                bounds. See CF section 8.3.9 "Interpolation of Cell
-                Boundaries".
-
-             interpolation_variable: `Interpolation`
-
-
         """
         super().__init__(
             compressed_array=compressed_array,
@@ -91,13 +83,13 @@ class SubsampledQuadraticArray(
             dtype=dtype,
             compressed_dimension=tuple(compressed_axes),
             compression_type="subsampled",
-            interpolation_name="bilinear",
+            interpolation_name="quadratic",
             tie_point_indices=tie_point_indices.copy(),
             interpolation_description=interpolation_description,
             interpolation_parameters=interpolation_parameters.copy(),
             parameter_dimensions=parameter_dimensions.copy(),
             #            bounds=bounds,
-            interpolation_variable=interpolation_variable,
+#            interpolation_variable=interpolation_variable,
         )
 
         if dtype is None:

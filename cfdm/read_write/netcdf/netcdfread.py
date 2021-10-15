@@ -703,11 +703,11 @@ class NetCDFRead(IORead):
             # Keep a list of flattened file names
             "flat_files": [],
             # --------------------------------------------------------
-            # Domains
+            # Domains (CF>=1.9)
             # --------------------------------------------------------
             "domain": bool(domain),
             # --------------------------------------------------------
-            # Lossy compression by coordinate subsampling
+            # Compression by coordinate subsampling (CF>=1.9)
             # --------------------------------------------------------
             # NetCDF names of tie point coordinate variables
             "tie_point_ncvar": {},
@@ -722,7 +722,7 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         # Set versions
-        for version in ("1.6", "1.7", "1.8", "1.9"):
+        for version in ("1.6", "1.7", "1.8", "1.9", "1.10"):
             g["version"][version] = LooseVersion(version)
 
         # ------------------------------------------------------------
@@ -1349,7 +1349,7 @@ class NetCDFRead(IORead):
             g["external_variables"] = set(parsed_external_variables)
 
         # ------------------------------------------------------------
-        # Lossy compression by subsampled coordinates (CF>=1.9)
+        # Compression by coordinate subsampling (CF>=1.9)
         # ------------------------------------------------------------
         if g["CF>=1.9"]:
             for ncvar, attributes in variable_attributes.items():
@@ -4612,7 +4612,8 @@ class NetCDFRead(IORead):
         # Set the netCDF variable name
         self.implementation.nc_set_variable(variable, ncvar)
 
-        # Set the name of the netCDF dimension spaned by the variable
+        # Set the name of the netCDF subsampled dimension spaned by
+        # the variable
         self.implementation.nc_set_subsampled_dimension(
             variable, self._ncdim_abspath(ncdim)
         )
@@ -4857,40 +4858,40 @@ class NetCDFRead(IORead):
 
         return variable
 
-    def _create_interpolation(self, ncvar, properties):
-        """Create an interpolation variable.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        :Parameters:
-
-            ncvar: `str`
-                The netCDF interpolation variable name.
-
-                *Parameter example:*
-                  ``ncvar='linear'``
-
-            properties: `dict`
-                The TODO
-
-        :Returns:
-
-            Interpolation properties instance
-
-        """
-        g = self.read_vars
-
-        # Initialise the interpolation variable
-        variable = self.implementation.initialise_Interpolation()
-
-        # Store the netCDF variable name and the properties
-        self.implementation.nc_set_variable(variable, ncvar)
-        self.implementation.set_properties(variable, properties)
-
-        if not g["mask"]:
-            self._set_default_FillValue(variable, ncvar)
-
-        return variable
+#    def _create_interpolation(self, ncvar, properties):
+#        """Create an interpolation variable.
+#
+#        .. versionadded:: (cfdm) 1.9.TODO.0
+#
+#        :Parameters:
+#
+#            ncvar: `str`
+#                The netCDF interpolation variable name.
+#
+#                *Parameter example:*
+#                  ``ncvar='linear'``
+#
+#            properties: `dict`
+#                The TODO
+#
+#        :Returns:
+#
+#            Interpolation properties instance
+#
+#        """
+#        g = self.read_vars
+#
+#        # Initialise the interpolation variable
+#        variable = self.implementation.initialise_Interpolation()
+#
+#        # Store the netCDF variable name and the properties
+#        self.implementation.nc_set_variable(variable, ncvar)
+#        self.implementation.set_properties(variable, properties)
+#
+#        if not g["mask"]:
+#            self._set_default_FillValue(variable, ncvar)
+#
+#        return variable
 
     def _create_PartNodeCount(self, ncvar, ncdim):
         """Create a part node count variable.
@@ -5310,7 +5311,7 @@ class NetCDFRead(IORead):
                     interpolation_name=rec["interpolation_name"],
                     interpolation_description=rec["interpolation_description"],
                     computational_precision=rec["computational_precision"],
-                    interpolation_variable=rec["variable"],
+#                    interpolation_variable=rec["variable"],
                 )
 
         return self._create_Data(array, units=units, calendar=calendar)
@@ -5700,9 +5701,9 @@ class NetCDFRead(IORead):
                         # interpolation parameter variables
                         g["do_not_create_field"].add(param_ncvar)
 
-            record["variable"] = self._create_interpolation(
-                interpolation_ncvar, attrs
-            )
+#            record["variable"] = self._create_interpolation(
+#                interpolation_ncvar, attrs
+#            )
 
             g["interpolation"][interpolation_ncvar] = record
 
@@ -6235,7 +6236,6 @@ class NetCDFRead(IORead):
         interpolation_name="",
         interpolation_description="",
         computational_precision="",
-        interpolation_variable=None,
     ):
         """Creates Data for a tie point coordinates variable.
 
@@ -6264,20 +6264,22 @@ class NetCDFRead(IORead):
 
             interpolation_name: `str`, optional
 
-            interpolation_variable: `Interpolation`
-                TODO
 
         :Returns:
 
-            (subclass of) `SubsampledGeneralArray`
+            A subsampled array.
 
         """
         if interpolation_name == "linear":
             init_func = self.implementation.initialise_SubsampledLinearArray
-        elif interpolation_name == "bilinear":
+        elif interpolation_name == "bi_linear":
             init_func = self.implementation.initialise_SubsampledBilinearArray
         elif interpolation_name == "quadratic":
             init_func = self.implementation.initialise_SubsampledQuadraticArray
+        elif interpolation_name == "quadratic_latitude_longitude":
+            init_func = self.implementation.initialise_SubsampledQuadraticLatitudeLongitudearray
+        elif interpolation_name == "bi_quadratic_latitude_longitude":
+            init_func = self.implementation.initialise_SubsampledBiquadraticLatitudeLongitudearray
         else:
             init_func = self.implementation.initialise_SubsampledGeneralArray
 
@@ -6291,12 +6293,11 @@ class NetCDFRead(IORead):
             ndim=uncompressed_ndim,
             compressed_axes=compressed_axes,
             tie_point_indices=tie_point_indices,
-            #            interpolation_description=interpolation_description,
-            #            computational_precision=computational_precision,
+            interpolation_description=interpolation_description,
+            computational_precision=computational_precision,
             parameter_dimensions=parameter_dimensions,
             interpolation_parameters=interpolation_parameters,
-            #            interpolation_name=interpolation_name,
-            interpolation_variable=interpolation_variable,
+#            interpolation_variable=interpolation_variable,
         )
 
     def _create_Data(

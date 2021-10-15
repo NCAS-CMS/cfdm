@@ -2,6 +2,8 @@ import datetime
 import faulthandler
 import unittest
 
+import numpy as np
+
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
@@ -9,6 +11,26 @@ import cfdm
 
 class SubsampledLinearArrayTest(unittest.TestCase):
     """Unit test for the SubsampledLinearArray class."""
+    tie_point_indices = {0: cfdm.TiePointIndex(data=[0, 4, 7, 8, 11])}
+
+    c = cfdm.SubsampledLinearArray(
+            compressed_array=cfdm.Data([15, 135, 225, 255, 345]),
+            shape=(12,),
+            ndim=1,
+            size=12,
+            compressed_axes=[0],
+            tie_point_indices=tie_point_indices,
+        )
+    
+    # bounds tie points
+    b = cfdm.SubsampledLinearArray(
+        compressed_array=cfdm.Data([0, 150, 240, 240, 360]),
+        shape=(12, 2),
+        ndim=2,
+        size=24,
+        compressed_axes=[0],
+        tie_point_indices=tie_point_indices,
+    )
 
     def setUp(self):
         """Preparations called immediately before each test method."""
@@ -23,37 +45,16 @@ class SubsampledLinearArrayTest(unittest.TestCase):
 
     def test_SubsampledLinearArray__getitem__(self):
         """TODO"""
-        tie_point_indices = {0: cfdm.TiePointIndex(data=[0, 4, 7, 8, 11])}
-
-        s = cfdm.SubsampledLinearArray(
-            compressed_array=cfdm.Data([15, 135, 225, 255, 345]),
-            shape=(12,),
-            ndim=1,
-            size=12,
-            compressed_axes=[0],
-            tie_point_indices=tie_point_indices,
-        )
-
-        d = cfdm.Data(s)
         a = np.linspace(15, 345, 12)
-
+        d = cfdm.Data(self.c)
         self.assertTrue(np.allclose(d[...], np.linspace(15, 345, 12)))
 
         # bounds tie points
-        s = cfdm.SubsampledLinearArray(
-            compressed_array=cfdm.Data([0, 150, 240, 240, 360]),
-            shape=(12, 2),
-            ndim=2,
-            size=24,
-            compressed_axes=[0],
-            tie_point_indices=tie_point_indices,
-        )
-
-        d = cfdm.Data(s)
         a = np.transpose(
             np.stack([np.linspace(0, 330, 12), np.linspace(30, 360, 12)])
         )
-
+        d = cfdm.Data(self.b)
+ 
         self.assertTrue(np.allclose(d[...], a))
 
 

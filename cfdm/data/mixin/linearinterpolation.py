@@ -1,5 +1,5 @@
 class LinearInterpolation:
-    """TODO.
+    """Mixin class for subsampled arrays that need linear interpolation.
 
     .. versionadded:: (cfdm) 1.9.TODO.0
 

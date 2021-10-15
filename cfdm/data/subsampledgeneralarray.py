@@ -25,11 +25,11 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
         tie_point_indices=None,
         interpolation_parameters={},
         parameter_dimensions={},
-        interpolation_name=None,
+#        interpolation_name=None,
         interpolation_description=None,
         computational_precision=None,
         bounds=False,
-        interpolation_variable=None,
+#        interpolation_variable=None,
     ):
         """Initialisation.
 
@@ -93,14 +93,7 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
                 *Parameter example:*
                   ``computational_precision='64'``
 
-            bounds: `bool`, optional
-                If True then the tie points represent coordinate
-                bounds. In this case the uncompressed data has an
-                extra trailing dimension in addition to the tie point
-                dimensions. See CF section 8.3.9 "Interpolation of
-                Cell Boundaries".
-
-             interpolation_variable: `Interpolation`
+#             interpolation_variable: `Interpolation`
 
         """
         super().__init__(
@@ -113,11 +106,11 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
             tie_point_indices=tie_point_indices.copy(),
             interpolation_parameters=interpolation_parameters.copy(),
             parameter_dimensions=parameter_dimensions.copy(),
-            #            interpolation_name=interpolation_name,
-            #            interpolation_description=interpolation_description,
-            #            computational_precision=computational_precision,
+#            interpolation_name=interpolation_name,
+            interpolation_description=interpolation_description,
+            computational_precision=computational_precision,
             #            bounds=bounds,
-            interpolation_variable=interpolation_variable,
+#            interpolation_variable=interpolation_variable,
         )
 
         if dtype is None:
