@@ -6270,6 +6270,7 @@ class NetCDFRead(IORead):
             A subsampled array.
 
         """
+        print (interpolation_name)
         if interpolation_name == "linear":
             init_func = self.implementation.initialise_SubsampledLinearArray
         elif interpolation_name == "bi_linear":
