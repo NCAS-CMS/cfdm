@@ -1,14 +1,14 @@
 from . import core, mixin
 
 
-class TiePointIndex(
+class InterpolationParameter(
     mixin.NetCDFVariable,
     mixin.NetCDFSubsampledDimension,
     mixin.NetCDFInterpolationSubareaDimension,
     mixin.PropertiesData,
     core.abstract.PropertiesData,
 ):
-    """A tie point index variable with propoerties.
+    """TODO A tie point index variable with propoerties.
 
     Space may be saved by storing a subsample of the coordinates. The
     uncompressed coordinates can be reconstituted by interpolation
@@ -46,7 +46,7 @@ class TiePointIndex(
             {{init properties: `dict`, optional}}
 
                 *Parameter example:*
-                  ``properties={'long_name': 'uncompression indices'}``
+                  ``properties={'long_name': 'interpolation parameter'}``
 
             {{init data: data_like, optional}}
 
@@ -81,7 +81,7 @@ class TiePointIndex(
         _axes=None,
         _axis_names=None,
     ):
-        """A full description of the tie point index variable.
+        """A full description of the interpolation parameter variable.
 
         Returns a description of all properties, including those of
         components, and provides selected values of all data arrays.
@@ -100,7 +100,7 @@ class TiePointIndex(
 
         """
         if _create_title and _title is None:
-            _title = "Tie point index: " + self.identity(default="")
+            _title = "Interpolation parameter: " + self.identity(default="")
 
         return super().dump(
             display=display,

@@ -9,6 +9,13 @@ class SubsampledBilinearArray(
 ):
     """TODO.
 
+    **Cell boundaries**
+
+    If the subsampled array contains cell boundaries, then the
+    *shape*, *ndim* and *size* parameters that describe the
+    uncompressed array will include the required trailing size 2
+    dimension.
+
     .. versionadded:: (cfdm) TODO
 
     """
@@ -24,9 +31,8 @@ class SubsampledBilinearArray(
         tie_point_indices=None,
         interpolation_description=None,
         computational_precision=None,
-#        interpolation_variable=None,
     ):
-        """Initialisation.
+        """**Initialisation**
 
         :Parameters:
 
@@ -60,6 +66,9 @@ class SubsampledBilinearArray(
                 dimensions by its position in the tie points array,
                 and the value is a `TiePointIndex` variable.
 
+                *Parameter example:*
+                  ``tie_point_indices={0: cfdm.TiePointIndex(data=[0, 16]), 2: cfdm.TiePointIndex(data=[0, 20, 20])}``
+            
             computational_precision: `str`, optional
                 The floating-point arithmetic precision used during
                 the preparation and validation of the compressed
@@ -67,8 +76,6 @@ class SubsampledBilinearArray(
 
                 *Parameter example:*
                   ``computational_precision='64'``
-
-#             interpolation_variable: `Interpolation`
 
         """
         super().__init__(
@@ -78,10 +85,9 @@ class SubsampledBilinearArray(
             ndim=ndim,
             compressed_dimension=tuple(compressed_axes),
             compression_type="subsampled",
-            interpolation_name="bilinear",
+            interpolation_name="bi_linear",
             tie_point_indices=tie_point_indices.copy(),
             computational_precision=computational_precision,
-#            interpolation_variable=interpolation_variable,
         )
 
         if dtype is None:
@@ -109,7 +115,7 @@ class SubsampledBilinearArray(
         # ------------------------------------------------------------
         (d0, d1) = self.get_compressed_axes()
 
-        tie_points = self.get_tie_points()
+        tie_points = self._get_compressed_Array()
 
         # Interpolate the tie points for each interpolation subarea
         uarray = np.ma.masked_all(self.shape, dtype=self.dtype)
@@ -181,8 +187,8 @@ class SubsampledBilinearArray(
         """
         (d0, d1) = subsampled_dimensions
 
-        uac = self._linear_interpolation(ua, uc, (d0,), subarea_shape, first)
-        ubd = self._linear_interpolation(ub, ud, (d0,), subarea_shape, first)
-        u = self._linear_interpolation(uac, ubd, (d1,), subarea_shape, first)
+        uac = self._linear_interpolation(ua, uc, d0, subarea_shape, first)
+        ubd = self._linear_interpolation(ub, ud, d0, subarea_shape, first)
+        u = self._linear_interpolation(uac, ubd, d1, subarea_shape, first)
 
         return u

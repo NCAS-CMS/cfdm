@@ -7,9 +7,56 @@ from .mixin import LinearInterpolation, SubsampledArray
 class SubsampledQuadraticArray(
     LinearInterpolation, SubsampledArray, CompressedArray
 ):
-    """TODO.
+    """An underlying subsampled array with quadratic interpolation.
 
-    .. versionadded:: (cfdm) TODO
+    The information needed to uncompress the data is stored in an tie
+    point index variable that defines the relationship between the
+    indices of the subsampled dimension and the indices of its
+    corresponding interpolated dimension.
+
+    >>> coords = cfdm.SubsampledQuadraticArray(
+    ...     compressed_array=cfdm.Data([15, 135, 225, 255, 345]),
+    ...     shape=(12,),
+    ...     ndim=1,
+    ...     size=12,
+    ...     compressed_axes=[0],
+    ...     tie_point_indices={0: cfdm.TiePointIndex(data=[0, 4, 7, 8, 11])},
+    ...     interpolation_parameters={},
+    ... )
+    >>> print(coords[...])
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+
+    **Cell boundaries**
+
+    If the subsampled array contains cell boundaries, then the
+    *shape*, *ndim* and *size* parameters that describe the
+    uncompressed array will include the required trailing size 2
+    dimension.
+
+    >>> bounds = cfdm.SubsampledQuadraticArray(
+        compressed_array=cfdm.Data([0, 150, 240, 240, 360]),
+        shape=(12, 2),
+        ndim=2,
+        size=24,
+        compressed_axes=[0],
+        tie_point_indices={0: cfdm.TiePointIndex(data=[0, 4, 7, 8, 11])},
+        interpolation_parameters={},
+    )
+    >>> print(bounds[...])
+    [[0.0 30.0]
+     [30.0 60.0]
+     [60.0 90.00000000000001]
+     [90.00000000000001 120.0]
+     [120.0 150.0]
+     [150.0 180.0]
+     [180.0 210.0]
+     [210.0 240.0]
+     [240.0 270.0]
+     [270.0 300.0]
+     [300.0 330.0]
+     [330.0 360.0]]
+
+    .. versionadded:: (cfdm) 1.9.TODO.0
 
     """
 
@@ -26,10 +73,8 @@ class SubsampledQuadraticArray(
         computational_precision=None,
         interpolation_parameters={},
         parameter_dimensions={},
-        bounds=False,
-#        interpolation_variable=None,
     ):
-        """Initialisation.
+        """**Initialisation**
 
         :Parameters:
 
@@ -66,6 +111,9 @@ class SubsampledQuadraticArray(
                 dimensions by its position in the tie points array,
                 and the value is a `TiePointIndex` variable.
 
+                *Parameter example:*
+                  ``tie_point_indices={1: cfdm.TiePointIndex(data=[0, 16])}``
+
             computational_precision: `str`, optional
                 The floating-point arithmetic precision used during
                 the preparation and validation of the compressed
@@ -88,8 +136,6 @@ class SubsampledQuadraticArray(
             interpolation_description=interpolation_description,
             interpolation_parameters=interpolation_parameters.copy(),
             parameter_dimensions=parameter_dimensions.copy(),
-            #            bounds=bounds,
-#            interpolation_variable=interpolation_variable,
         )
 
         if dtype is None:
@@ -117,7 +163,7 @@ class SubsampledQuadraticArray(
         # ------------------------------------------------------------
         (d0,) = self.get_source_compressed_axes()
 
-        tie_points = self.get_tie_points()
+        tie_points = self._get_compressed_Array()()
 
         self.conform_interpolation_parameters()
         w = self.get_interpolation_parameters().get("w")
@@ -132,7 +178,7 @@ class SubsampledQuadraticArray(
             ua = self._select_tie_points(tie_points, tp_indices, {d0: 0})
             ub = self._select_tie_points(tie_points, tp_indices, {d0: 1})
             u = self._quadratic_interpolation(
-                ua, ub, (d0,), subarea_size, first, w, subarea_index
+                ua, ub, d0, subarea_size, first, w, subarea_index
             )
 
             self._set_interpolated_values(uarray, u_indices, (d0,), u)
@@ -145,7 +191,7 @@ class SubsampledQuadraticArray(
         self,
         ua,
         ub,
-        subsampled_dimensions,
+        subsampled_dimension,
         subarea_shape,
         first,
         w,
@@ -171,7 +217,7 @@ class SubsampledQuadraticArray(
                The arrays containing the points for pair-wise
                interpolation along dimension *d0*.
 
-            subsampled_dimensions: `tuple` of `int`
+            subsampled_dimension: `int`
                 The position of the subsampled dimension in the tie
                 points array.
 
@@ -200,8 +246,9 @@ class SubsampledQuadraticArray(
             `numpy.ndarray`
 
         """
-        (d0,) = subsampled_dimensions
-        u = self._linear_interpolation(ua, ub, d0, subarea_shape, first)
+        u = self._linear_interpolation(
+            ua, ub, subsampled_dimension, subarea_shape, first
+        )
 
         if w is not None:
             s, one_minus_s = self._s(d0, subarea_shape)

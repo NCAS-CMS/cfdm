@@ -3800,8 +3800,8 @@ class NetCDFInterpolationSubareaDimension(NetCDF, _NetCDFGroupsMixin):
 
             return self._default(
                 default,
-                f"{self.__class__.__name__} has no netCDF subsampled "
-                "dimension name",
+                f"{self.__class__.__name__} has no netCDF interpolation "
+                "subarea dimension name",
             )
 
     def nc_get_interpolation_subarea_dimension(self, default=ValueError()):
@@ -3853,8 +3853,8 @@ class NetCDFInterpolationSubareaDimension(NetCDF, _NetCDFGroupsMixin):
 
             return self._default(
                 default,
-                f"{self.__class__.__name__} has no netCDF subsampled "
-                "dimension name",
+                f"{self.__class__.__name__} has no netCDF interpolation "
+                "subarea dimension name",
             )
 
     def nc_has_interpolation_subarea_dimension(self):
@@ -3951,8 +3951,8 @@ class NetCDFInterpolationSubareaDimension(NetCDF, _NetCDFGroupsMixin):
                 value = value[1:]
             elif value.endswith("/"):
                 raise ValueError(
-                    "A netCDF subsampled dimension name with a group "
-                    f"structure can't end with a '/'. Got {value!r}"
+                    "A netCDF interpolation subarea dimension name with a "
+                    f"group structure can't end with a '/'. Got {value!r}"
                 )
 
         self._get_component("netcdf")[

@@ -11,17 +11,18 @@ import cfdm
 
 class SubsampledLinearArrayTest(unittest.TestCase):
     """Unit test for the SubsampledLinearArray class."""
+
     tie_point_indices = {0: cfdm.TiePointIndex(data=[0, 4, 7, 8, 11])}
 
     c = cfdm.SubsampledLinearArray(
-            compressed_array=cfdm.Data([15, 135, 225, 255, 345]),
-            shape=(12,),
-            ndim=1,
-            size=12,
-            compressed_axes=[0],
-            tie_point_indices=tie_point_indices,
-        )
-    
+        compressed_array=cfdm.Data([15, 135, 225, 255, 345]),
+        shape=(12,),
+        ndim=1,
+        size=12,
+        compressed_axes=[0],
+        tie_point_indices=tie_point_indices,
+    )
+
     # bounds tie points
     b = cfdm.SubsampledLinearArray(
         compressed_array=cfdm.Data([0, 150, 240, 240, 360]),
@@ -54,7 +55,7 @@ class SubsampledLinearArrayTest(unittest.TestCase):
             np.stack([np.linspace(0, 330, 12), np.linspace(30, 360, 12)])
         )
         d = cfdm.Data(self.b)
- 
+
         self.assertTrue(np.allclose(d[...], a))
 
 

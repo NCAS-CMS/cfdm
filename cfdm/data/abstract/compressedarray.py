@@ -102,9 +102,6 @@ class CompressedArray(Array):
 
         self._set_component("compressed_Array", array, copy=False)
 
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
     @property
     def array(self):
         """Returns a numpy array containing the uncompressed data.

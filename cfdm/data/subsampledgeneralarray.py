@@ -10,6 +10,13 @@ from .mixin import SubsampledArray
 class SubsampledGeneralArray(SubsampledArray, CompressedArray):
     """TODO.
 
+    **Cell boundaries**
+
+    If the subsampled array contains cell boundaries, then the
+    *shape*, *ndim* and *size* parameters that describe the
+    uncompressed array will include the required trailing size 2
+    dimension.
+
     .. versionadded:: (cfdm) 1.9.TODO.0
 
     """
@@ -25,13 +32,11 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
         tie_point_indices=None,
         interpolation_parameters={},
         parameter_dimensions={},
-#        interpolation_name=None,
+        interpolation_name=None,
         interpolation_description=None,
         computational_precision=None,
-        bounds=False,
-#        interpolation_variable=None,
     ):
-        """Initialisation.
+        """**Initialisation**
 
         :Parameters:
 
@@ -93,8 +98,6 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
                 *Parameter example:*
                   ``computational_precision='64'``
 
-#             interpolation_variable: `Interpolation`
-
         """
         super().__init__(
             compressed_array=compressed_array,
@@ -106,11 +109,9 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
             tie_point_indices=tie_point_indices.copy(),
             interpolation_parameters=interpolation_parameters.copy(),
             parameter_dimensions=parameter_dimensions.copy(),
-#            interpolation_name=interpolation_name,
+            interpolation_name=interpolation_name,
             interpolation_description=interpolation_description,
             computational_precision=computational_precision,
-            #            bounds=bounds,
-#            interpolation_variable=interpolation_variable,
         )
 
         if dtype is None:

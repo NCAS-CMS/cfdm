@@ -848,17 +848,17 @@ class CFDMImplementation(Implementation):
         """
         return field.coordinate_references()
 
-    def get_coordinates(self, field):
-        """Return all of the coordinate constructs of a field.
+    def get_coordinates(self, f):
+        """Return all of the coordinate constructs of a field or domain.
 
         :Parameters:
 
-            field: field construct
+            f: field or domain construct
 
         :Returns:
 
         """
-        return field.coordinates()
+        return f.coordinates()
 
     def get_data_calendar(self, data, default=None):
         """Return the calendar of date-time data.
@@ -2093,7 +2093,7 @@ class CFDMImplementation(Implementation):
         compressed_axes=(),
         tie_point_indices={},
         computational_precision="",
-#        interpolation_variable=None,
+        #        interpolation_variable=None,
         **kwargs,
     ):
         """Return a gathered array instance.
@@ -2135,7 +2135,7 @@ class CFDMImplementation(Implementation):
             compressed_axes=compressed_axes,
             tie_point_indices=tie_point_indices,
             computational_precision=computational_precision,
-#            interpolation_variable=interpolation_variable,
+            #            interpolation_variable=interpolation_variable,
         )
 
     def initialise_SubsampledBilinearArray(
