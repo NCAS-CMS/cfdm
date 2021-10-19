@@ -21,10 +21,16 @@ class SubsampledQuadraticArray(
     ...     size=12,
     ...     compressed_axes=[0],
     ...     tie_point_indices={0: cfdm.TiePointIndex(data=[0, 4, 7, 8, 11])},
-    ...     interpolation_parameters={},
+    ...     interpolation_parameters={
+    ...       "w": cfdm.InterpolationParameter(data=[5, 10, 5])
+    ...     },
+    ...     parameter_dimensions={"w": (0,)},
     ... )
     >>> print(coords[...])
-    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [ 15.          48.75        80.         108.75       135.
+     173.88888889 203.88888889 225.         255.         289.44444444
+     319.44444444 345.        ]
+
 
     **Cell boundaries**
 
@@ -34,27 +40,30 @@ class SubsampledQuadraticArray(
     dimension.
 
     >>> bounds = cfdm.SubsampledQuadraticArray(
-        compressed_array=cfdm.Data([0, 150, 240, 240, 360]),
-        shape=(12, 2),
-        ndim=2,
-        size=24,
-        compressed_axes=[0],
-        tie_point_indices={0: cfdm.TiePointIndex(data=[0, 4, 7, 8, 11])},
-        interpolation_parameters={},
-    )
+    ...     compressed_array=cfdm.Data([0, 150, 240, 240, 360]),
+    ...     shape=(12, 2),
+    ...     ndim=2,
+    ...     size=24,
+    ...     compressed_axes=[0],
+    ...     tie_point_indices={0: cfdm.TiePointIndex(data=[0, 4, 7, 8, 11])},
+    ...     interpolation_parameters={
+    ...       "w": cfdm.InterpolationParameter(data=[5, 10, 5])
+    ...     },
+    ...     parameter_dimensions={"w": (0,)},
+    ... )
     >>> print(bounds[...])
-    [[0.0 30.0]
-     [30.0 60.0]
-     [60.0 90.00000000000001]
-     [90.00000000000001 120.0]
-     [120.0 150.0]
-     [150.0 180.0]
-     [180.0 210.0]
-     [210.0 240.0]
-     [240.0 270.0]
-     [270.0 300.0]
-     [300.0 330.0]
-     [330.0 360.0]]
+    [[  0.          33.2       ]
+     [ 33.2         64.8       ]
+     [ 64.8         94.8       ]
+     [ 94.8        123.2       ]
+     [123.2        150.        ]
+     [150.         188.88888889]
+     [188.88888889 218.88888889]
+     [218.88888889 240.        ]
+     [240.         273.75      ]
+     [273.75       305.        ]
+     [305.         333.75      ]
+     [333.75       360.        ]]
 
     .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -132,6 +141,7 @@ class SubsampledQuadraticArray(
             compressed_dimension=tuple(compressed_axes),
             compression_type="subsampled",
             interpolation_name="quadratic",
+            computational_precision=computational_precision,
             tie_point_indices=tie_point_indices.copy(),
             interpolation_description=interpolation_description,
             interpolation_parameters=interpolation_parameters.copy(),
@@ -148,12 +158,12 @@ class SubsampledQuadraticArray(
 
         Returns a subspace of the array as an independent numpy array.
 
-        .. versionadded:: (cfdm) TODO
+        .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
+        # If the first or last element is requested then we don't need
+        # to interpolate
         try:
-            # If exactly the first or last element is requested then
-            # we don't need to interpolate
             return self._first_or_last_index(indices)
         except IndexError:
             pass
@@ -161,9 +171,9 @@ class SubsampledQuadraticArray(
         # ------------------------------------------------------------
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
-        (d0,) = self.get_source_compressed_axes()
+        (d0,) = self.get_compressed_axes()
 
-        tie_points = self._get_compressed_Array()()
+        tie_points = self._get_compressed_Array()
 
         self.conform_interpolation_parameters()
         w = self.get_interpolation_parameters().get("w")
@@ -173,7 +183,7 @@ class SubsampledQuadraticArray(
 
         # Interpolate the tie points for each interpolation subarea
         for u_indices, tp_indices, subarea_size, first, subarea_index in zip(
-            *self.interpolation_subareas()
+            *self._interpolation_subareas()
         ):
             ua = self._select_tie_points(tie_points, tp_indices, {d0: 0})
             ub = self._select_tie_points(tie_points, tp_indices, {d0: 1})
@@ -181,7 +191,7 @@ class SubsampledQuadraticArray(
                 ua, ub, d0, subarea_size, first, w, subarea_index
             )
 
-            self._set_interpolated_values(uarray, u_indices, (d0,), u)
+            self._set_interpolated_values(uarray, u, u_indices, (d0,))
 
         self._s.cache_clear()
 
@@ -196,6 +206,7 @@ class SubsampledQuadraticArray(
         first,
         w,
         subarea_index,
+        trim=True,
     ):
         """Interpolate quadratically between pairs of tie points.
 
@@ -209,7 +220,7 @@ class SubsampledQuadraticArray(
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
-        .. seealso:: `_linear_interpolation`
+        .. seealso:: `_linear_interpolation`, `_s`, `_trim`
 
         :Parameters:
 
@@ -230,16 +241,22 @@ class SubsampledQuadraticArray(
                 is the first (in index space) of a new continuous
                 area, otherwise False.
 
-            w: array_like or `None`
+            w: `InterpolationParameter` or `None`
                 The quadratic coefficient, which must span the
                 interpolation subarea dimension instead of the
-                subsampled dimension. If `None` then *w* is assumed to
-                be zero.
+                subsampled dimension. If `None` then the values of *w*
+                are assumed to be zero.
 
             subarea_index: `tuple` of `slice`
                 The index of the interpolation subarea along the
                 interpolation subarea dimension. Ignored if *w* is
                 `None`.
+
+            trim: `bool`, optional
+                For the subsampled dimension, remove the first point
+                of the interpolation subarea when it is not the first
+                (in index space) of a continuous area, and when the
+                compressed data are not bounds tie points.
 
         :Returns:
 
@@ -247,11 +264,16 @@ class SubsampledQuadraticArray(
 
         """
         u = self._linear_interpolation(
-            ua, ub, subsampled_dimension, subarea_shape, first
+            ua, ub, subsampled_dimension, subarea_shape, first, trim=False
         )
 
         if w is not None:
-            s, one_minus_s = self._s(d0, subarea_shape)
-            u += 4 * w[subarea_index] * s * one_minus_s
+            s, one_minus_s = self._s(
+                subsampled_dimension, subarea_shape, first
+            )
+            u += 4 * w.data[subarea_index].array * s * one_minus_s
+
+        if trim:
+            u = self._trim(u, (subsampled_dimension,), first)
 
         return u

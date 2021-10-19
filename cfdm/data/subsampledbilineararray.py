@@ -68,7 +68,7 @@ class SubsampledBilinearArray(
 
                 *Parameter example:*
                   ``tie_point_indices={0: cfdm.TiePointIndex(data=[0, 16]), 2: cfdm.TiePointIndex(data=[0, 20, 20])}``
-            
+
             computational_precision: `str`, optional
                 The floating-point arithmetic precision used during
                 the preparation and validation of the compressed
@@ -121,7 +121,7 @@ class SubsampledBilinearArray(
         uarray = np.ma.masked_all(self.shape, dtype=self.dtype)
 
         for u_indices, tp_indices, subarea_shape, first, _ in zip(
-            *self.interpolation_subareas()
+            *self._interpolation_subareas()
         ):
             ua = self._select_tie_points(
                 tie_points, tp_indices, {d0: 0, d1: 0}
@@ -139,14 +139,22 @@ class SubsampledBilinearArray(
                 ua, uc, ub, ud, (d0, d1), subarea_shape, first
             )
 
-            self._set_interpolated_values(uarray, u_indices, (d0, d1), u)
+            self._set_interpolated_values(uarray, u, u_indices, (d0, d1))
 
         self._s.cache_clear()
 
         return self.get_subspace(uarray, indices, copy=True)
 
     def _bilinear_interpolation(
-        self, ua, uc, ub, ud, subsampled_dimensions, subarea_shape, first
+        self,
+        ua,
+        uc,
+        ub,
+        ud,
+        subsampled_dimensions,
+        subarea_shape,
+        first,
+        trim=True,
     ):
         """Interpolate bilinearly between pairs of tie points.
 
@@ -168,8 +176,8 @@ class SubsampledBilinearArray(
                interpolation along dimensions *d0* and *d1*.
 
             subsampled_dimensions: 2-`tuple` of `int`
-                The positions of the subsampled dimensions in the tie
-                points array.
+                The positions of the subsampled dimensions in the
+                compressed data.
 
             subarea_shape: `tuple` of `int`
                 The shape of the interpolation subararea, including
@@ -180,6 +188,12 @@ class SubsampledBilinearArray(
                 is the first (in index space) of a new continuous
                 area, otherwise False.
 
+            trim: `bool`, optional
+                For each subsampled dimension, remove the first point
+                of the interpolation subarea when it is not the first
+                (in index space) of a continuous area, and when the
+                compressed data are not bounds tie points.
+
         :Returns:
 
             `numpy.ndarray`
@@ -187,8 +201,14 @@ class SubsampledBilinearArray(
         """
         (d0, d1) = subsampled_dimensions
 
-        uac = self._linear_interpolation(ua, uc, d0, subarea_shape, first)
-        ubd = self._linear_interpolation(ub, ud, d0, subarea_shape, first)
-        u = self._linear_interpolation(uac, ubd, d1, subarea_shape, first)
+        uac = self._linear_interpolation(
+            ua, uc, d0, subarea_shape, first, trim=trim
+        )
+        ubd = self._linear_interpolation(
+            ub, ud, d0, subarea_shape, first, trim=trim
+        )
+        u = self._linear_interpolation(
+            uac, ubd, d1, subarea_shape, first, trim=trim
+        )
 
         return u

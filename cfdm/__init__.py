@@ -135,7 +135,7 @@ from .data import (
 
 from .count import Count
 from .index import Index
-from .interpolation import Interpolation
+from .interpolationparameter import InterpolationParameter
 from .list import List
 from .nodecountproperties import NodeCountProperties
 from .partnodecountproperties import PartNodeCountProperties

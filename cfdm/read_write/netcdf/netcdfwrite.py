@@ -506,7 +506,29 @@ class NetCDFWrite(IOWrite):
         ncdims = [g["axis_to_ncdim"][axis] for axis in domain_axes]
 
         compression_type = self.implementation.get_compression_type(construct)
-        if compression_type:
+
+        if compression_type == "subsampled":
+            compressed_axes = tuple(
+                self.implementation.get_compressed_axes(field, key, construct)
+            )
+            compressed_ncdims = tuple(
+                [g["axis_to_ncdim"][axis] for axis in compressed_axes]
+            )
+#ppp
+            for position, ncdim in enumerate(compressed_ncdims):
+                tpi = self.implementation.get_tie_point_index(construct)
+                ncvar, subsampled_ncdim = self._write_tie_point_index(
+                    field, tpi, axis=axis
+                )
+                
+                g["subsampled_ncdims"].add(subsampled_ncdim)
+                g["key_to_tie_point_index_ncvar"].setdefault(key, {})[
+                    position
+                ] = ncvar
+                
+                ncdims[position] = subsampled_ncdim
+
+        elif compression_type:
             sample_dimension_position = (
                 self.implementation.get_sample_dimension_position(construct)
             )
@@ -924,6 +946,50 @@ class NetCDFWrite(IOWrite):
 
         return ncvar
 
+    def _write_tie_point_index(self, f, tie_point_index):
+        """Write a tie point index variable to the netCDF file.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+        
+             tie_point_index: `TiePointIndex` 
+
+        :Returns:
+        
+            `str`, `str`
+                The netCDF variable name and the name of its netCDF
+                dimension.
+
+        """
+        g = self.write_vars
+
+        create = not self._already_in_file(tie_point_index)
+
+        if create:
+            ncvar = self._create_netcdf_variable_name(
+                tie_point_index, default="tie_point_index"
+            )
+
+            # Create a new dimension
+            ncdim = self.implementation.nc_get_subsampled_dimension(
+                tie_point_index, "tp_index"
+            )
+            ncdim = self._netcdf_name(ncdim)
+            size = self.implementation.get_data_size(tie_point_index)
+            self._write_dimension(ncdim, f, size=size)
+
+            # Create the new tie point index netCDF variable
+            self._write_netcdf_variable(ncvar, (ncdim,), tie_point_index)
+            
+            g["ncvar_to_ncdims"][ncvar] = (ncdim,)
+            g["tie_point_index_ncvar_to_ncdim"][ncvar] = ncdim
+        else:
+            ncvar = g["seen"][id(tie_point_index)]["ncvar"]
+            ncdim = g["tie_point_index_ncvar_to_ncdim"][ncvar]
+            
+        return ncvar, ncdim
+
     def _write_scalar_data(self, value, ncvar):
         """Write a dimension coordinate and bounds to the netCDF file.
 
@@ -1008,7 +1074,7 @@ class NetCDFWrite(IOWrite):
         return ncvar
 
     def _create_interpolation_containers(self, f):
-        """TODO ppp
+        """TODO
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -1031,12 +1097,12 @@ class NetCDFWrite(IOWrite):
             name = self.implementation.get_interpolation_name(coord)
             if name is not None:
                 interpolation["interpolation_name"] = name
-            
+
             # Create the "computational_precision" attribute
             cp = self.implementation.get_computational_precision(coord)
             if cp is not None:
                 interpolation["computational_precision"] = cp
-                
+
             # Create the "interpolation_description" attribute
             desc = self.implementation.get_interpolation_description(coord)
             if description is not None:
@@ -1044,17 +1110,20 @@ class NetCDFWrite(IOWrite):
 
             # Create the "tie_point_mapping" attribute
             tie_point_mapping = []
-            for position, tp_index in (
-                    self.implementation.get_tie_point_indices(coord).items()
-            ):
+            for (
+                position,
+                tp_index,
+            ) in self.implementation.get_tie_point_indices(coord).items():
                 ncdim = g["key_to_ncdims"][key][position]
+                tp_index_ncvar = g["key_to_tie_point_index_ncvar"][key][
+                    position
+                ]
+                subsampled_ncdim = g["tie_point_index_ncvar_to_ncdim"][
+                    tp_index_ncvar
+                ] #ppp
+                subarea_ncdim = g["tie_point_index_ncvar_to_subarea_ncdim"].get(tp_index_ncvar)
 
-                # Write the netCDF tie point index variable DCH: move to cor write?
-                (tp_index_ncvar,
-                 subsampled_ncdim,
-                 subarea_ncdim) = self._write_tie_point_index(f, tp_index)
-                
-                mapping += f" {ncdim}: {tp_index_ncvar} {subsampled_ncdim}"
+                mapping = f"{ncdim}: {tp_index_ncvar} {subsampled_ncdim}"
                 if subarea_ncdim is not None:
                     mapping += f" {subarea_ncdim}"
 
@@ -1070,7 +1139,7 @@ class NetCDFWrite(IOWrite):
             )
             interpolation_parameters = []
             for term, param in (
-                    self.implementation.get_interpolation_parameters(coord)
+                self.implementation.get_interpolation_parameters(coord)
             ).items():
                 # Write the netCDF interpolation parameter variable
                 param_ncvar = self._write_interpolation_parameter(
@@ -1080,11 +1149,11 @@ class NetCDFWrite(IOWrite):
                     parameter_dimensions=parameter_dimensions[term],
                 )
                 interpolation_parameters.append("{term}: param_ncvar")
-                
+
             interpolation["interpolation_parameters"] = " ".join(
                 sorted(interpolation_parameters)
             )
-                       
+
             # Write the netCDF interpolation variable
             interp_ncvar = self._write_interpolation_container(
                 f, interpolation
@@ -1096,12 +1165,11 @@ class NetCDFWrite(IOWrite):
         coordinate_interpolation = []
         for interp_ncvar, coord_ncvars in sorted(ci.items()):
             coordinate_interpolation.extend(
-                (": ".join(sorted(coord_ncvars)),
-                 interp_ncvar)
+                (": ".join(sorted(coord_ncvars)), interp_ncvar)
             )
 
         return " ".join(coordinate_interpolation)
-        
+
     def _create_geometry_container(self, f):
         """Create a geometry container variable in the netCDF file.
 
@@ -2928,7 +2996,12 @@ class NetCDFWrite(IOWrite):
             compressed = bool(
                 set(ncdimensions).intersection(g["sample_ncdim"].values())
             )
-
+            if not compressed:
+                # Check for subsampled corodinates
+                compressed =  bool(
+                    set(ncdimensions).intersection(g["subsampled_ncdims"])
+                )
+                
             self._write_data(
                 data,
                 cfvar,
@@ -3287,7 +3360,17 @@ class NetCDFWrite(IOWrite):
         # For example: {'dimensioncoordinate1': ['longitude']}
         g["key_to_ncdims"] = {}
 
-        # Type of compression applied to the field/domain
+        # Mapping of TODO
+        #
+        # For example: {'track_indices': 'subarea_track'}
+        g["tie_point_index_ncvar_to_subarea_ncdim"] = {} # ppp
+
+        # Mapping of TODO
+        #
+        # For example: {'auxiliarycoordinate1': {0: 'track_indices'}}
+        g["key_to_tie_point_index_ncvar"] = {}
+
+         # Type of compression applied to the field/domain
         compression_type = self.implementation.get_compression_type(f)
         g["compression_type"] = compression_type
         logger.info(
@@ -4865,7 +4948,11 @@ class NetCDFWrite(IOWrite):
             # and 'a' for dry_run and post_dry_run respectively) so that the
             # mode does not need to be passed to various methods, where a
             # pair of such keys seem clearer than one "effective mode" key.
+
+            # TODO
+            "ncvar_to_ncdims": {},
         }
+
 
         if mode not in ("w", "a", "r+"):
             raise ValueError(

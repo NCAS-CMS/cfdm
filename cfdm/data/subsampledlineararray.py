@@ -68,7 +68,6 @@ class SubsampledLinearArray(
         compressed_axes=None,
         tie_point_indices=None,
         computational_precision=None,
-        #        interpolation_variable=None,
     ):
         """**Initialisation**
 
@@ -163,12 +162,12 @@ class SubsampledLinearArray(
 
         # Interpolate the tie points for each interpolation subarea
         for u_indices, tp_indices, subarea_shape, first, _ in zip(
-            *self.interpolation_subareas()
+            *self._interpolation_subareas()
         ):
             ua = self._select_tie_points(tie_points, tp_indices, {d0: 0})
             ub = self._select_tie_points(tie_points, tp_indices, {d0: 1})
             u = self._linear_interpolation(ua, ub, d0, subarea_shape, first)
-            self._set_interpolated_values(uarray, u_indices, (d0,), u)
+            self._set_interpolated_values(uarray, u, u_indices, (d0,))
 
         self._s.cache_clear()
 

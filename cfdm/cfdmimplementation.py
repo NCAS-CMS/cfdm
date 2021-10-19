@@ -16,7 +16,7 @@ from . import (
     FieldAncillary,
     Index,
     InteriorRing,
-    Interpolation,
+    InterpolationParameter,
     List,
     NodeCountProperties,
     PartNodeCountProperties,
@@ -77,7 +77,7 @@ class CFDMImplementation(Implementation):
         NodeCountProperties=None,
         PartNodeCountProperties=None,
         TiePointIndex=None,
-        Interpolation=None,
+        InterpolationParameter=None,
     ):
         """**Initialisation**
 
@@ -173,8 +173,8 @@ class CFDMImplementation(Implementation):
             TiePointIndex:
                 A tie point index variable class.
 
-            Interpolation:
-                An interpolation variable class.
+            InterpolationParameter:
+                An interpolation parameter variable class.
 
         """
         super().__init__(
@@ -209,7 +209,7 @@ class CFDMImplementation(Implementation):
             NodeCountProperties=NodeCountProperties,
             PartNodeCountProperties=PartNodeCountProperties,
             TiePointIndex=TiePointIndex,
-            Interpolation=Interpolation,
+            InterpolationParameter=InterpolationParameter,
         )
 
     def __repr__(self):
@@ -618,7 +618,7 @@ class CFDMImplementation(Implementation):
         return data.compressed_array
 
     def get_compressed_axes(self, field_or_domain, key=None, construct=None):
-        """Return the indices of the compressed axes.
+        """Return the axes that have been compressed.
 
         :Parameters:
 
@@ -631,7 +631,9 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            `list` of `int`
+            `list` of `str`
+                The domain axis identifiers of dimensions that are
+                compressed.
 
         """
         if construct is not None:
@@ -767,8 +769,8 @@ class CFDMImplementation(Implementation):
         :Returns:
 
             `tuple` or `None`
-                The axes (may be an empty tuple), or `None` if there
-                is no data.
+                The axis identifiers (may be an empty tuple), or
+                `None` if there is no data.
 
         """
         try:
@@ -877,7 +879,7 @@ class CFDMImplementation(Implementation):
         return data.get_calendar(default=default)
 
     def get_data_compressed_axes(self, data):
-        """Return the indices of the compressed axes.
+        """Return the indices of the axes that have been compressed.
 
         :Parameters:
 
@@ -2093,7 +2095,6 @@ class CFDMImplementation(Implementation):
         compressed_axes=(),
         tie_point_indices={},
         computational_precision="",
-        #        interpolation_variable=None,
         **kwargs,
     ):
         """Return a gathered array instance.
@@ -2135,7 +2136,6 @@ class CFDMImplementation(Implementation):
             compressed_axes=compressed_axes,
             tie_point_indices=tie_point_indices,
             computational_precision=computational_precision,
-            #            interpolation_variable=interpolation_variable,
         )
 
     def initialise_SubsampledBilinearArray(
@@ -2278,15 +2278,17 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("InteriorRing")
         return cls()
 
-    def initialise_Interpolation(self):
-        """Return an interpolation variable.
+    def initialise_InterpolationParameter(self):
+        """Return an interpolation parameter variable.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Returns:
 
-            Interpolation variable
+            Interpolation parameter variable
 
         """
-        cls = self.get_class("Interpolation")
+        cls = self.get_class("InterpolationParameter")
         return cls()
 
     def initialise_List(self):
@@ -3389,7 +3391,7 @@ _implementation = CFDMImplementation(
     SubsampledQuadraticArray=SubsampledQuadraticArray,
     SubsampledGeneralArray=SubsampledGeneralArray,
     TiePointIndex=TiePointIndex,
-    Interpolation=Interpolation,
+    InterpolationParameter=InterpolationParameter,
 )
 
 

@@ -3,7 +3,7 @@ import faulthandler
 import os
 import unittest
 
-import numpy
+import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -58,7 +58,7 @@ def _make_contiguous_file(filename):
     )
     station_name.long_name = "station name"
     station_name.cf_role = "timeseries_id"
-    station_name[...] = numpy.array(
+    station_name[...] = np.array(
         [
             [x for x in "station1"],
             [x for x in "station2"],
@@ -93,10 +93,10 @@ def _make_contiguous_file(filename):
     humidity = n.createVariable("humidity", "f8", ("obs",), fill_value=-999.9)
     humidity.standard_name = "specific_humidity"
     humidity.coordinates = "time lat lon alt station_name station_info"
-    humidity[0:3] = numpy.arange(0, 3)
-    humidity[3:10] = numpy.arange(1, 71, 10)
-    humidity[10:15] = numpy.arange(2, 502, 100)
-    humidity[15:24] = numpy.arange(3, 9003, 1000)
+    humidity[0:3] = np.arange(0, 3)
+    humidity[3:10] = np.arange(1, 71, 10)
+    humidity[10:15] = np.arange(2, 502, 100)
+    humidity[15:24] = np.arange(3, 9003, 1000)
 
     temp = n.createVariable("temp", "f8", ("obs",), fill_value=-999.9)
     temp.standard_name = "air_temperature"
@@ -150,7 +150,7 @@ def _make_indexed_file(filename):
     )
     station_name.long_name = "station name"
     station_name.cf_role = "timeseries_id"
-    station_name[...] = numpy.array(
+    station_name[...] = np.array(
         [
             [x for x in "station1"],
             [x for x in "station2"],
@@ -220,10 +220,10 @@ def _make_indexed_file(filename):
     humidity.coordinates = "time lat lon alt station_name station_info"
 
     h = [
-        numpy.arange(0, 3),
-        numpy.arange(1, 71, 10),
-        numpy.arange(2, 502, 100),
-        numpy.arange(3, 9003, 1000),
+        np.arange(0, 3),
+        np.arange(1, 71, 10),
+        np.arange(2, 502, 100),
+        np.arange(3, 9003, 1000),
     ]
 
     ssi = [0, 0, 0, 0]
@@ -286,7 +286,7 @@ def _make_indexed_contiguous_file(filename):
     )
     station_name.long_name = "station name"
     station_name.cf_role = "timeseries_id"
-    station_name[...] = numpy.array(
+    station_name[...] = np.array(
         [
             [x for x in "station1"],
             [x for x in "station2"],
@@ -296,7 +296,7 @@ def _make_indexed_contiguous_file(filename):
 
     profile = n.createVariable("profile", "i4", ("profile"))
     profile.cf_role = "profile_id"
-    profile[...] = numpy.arange(58) + 100
+    profile[...] = np.arange(58) + 100
 
     station_info = n.createVariable("station_info", "i4", ("station",))
     station_info.long_name = "some kind of station info"
@@ -457,8 +457,8 @@ def _make_indexed_contiguous_file(filename):
     #        z0 = [1, 0, 3]
     #        i = 0
     #        for s, r in zip(stationIndex[...], row_size[...]):
-    #            z[i:i+r] = z0[s] + numpy.sort(
-    #                numpy.random.uniform(0, numpy.random.uniform(1, 2), r))
+    #            z[i:i+r] = z0[s] + np.sort(
+    #                np.random.uniform(0, np.random.uniform(1, 2), r))
     #            i += r
 
     data = [
@@ -581,7 +581,7 @@ def _make_indexed_contiguous_file(filename):
         4.10124675852254,
         3.1059214185543,
     ]
-    data = numpy.around(data, 2)
+    data = np.around(data, 2)
     z[...] = data
 
     z_bounds = n.createVariable("z_bounds", "f8", ("obs", "bounds"))
@@ -595,7 +595,7 @@ def _make_indexed_contiguous_file(filename):
     )
 
     data *= 10
-    data = numpy.around(data, 2)
+    data = np.around(data, 2)
     humidity[...] = data
 
     temp = n.createVariable("temp", "f8", ("obs",), fill_value=-999.9)
@@ -604,7 +604,7 @@ def _make_indexed_contiguous_file(filename):
     temp.coordinates = "time lat lon alt z station_name station_info profile"
 
     data += 2731.5
-    data = numpy.around(data, 2)
+    data = np.around(data, 2)
     temp[...] = data
 
     n.close()
@@ -672,7 +672,7 @@ def _make_external_files():
                 {"units": "degree_N", "standard_name": "latitude"}
             )
 
-            latitude[...] = numpy.arange(90).reshape(10, 9)
+            latitude[...] = np.arange(90).reshape(10, 9)
 
             longitude = nc.createVariable(
                 dimensions=("grid_longitude", "grid_latitude"),
@@ -682,7 +682,7 @@ def _make_external_files():
             longitude.setncatts(
                 {"units": "degreeE", "standard_name": "longitude"}
             )
-            longitude[...] = numpy.arange(90).reshape(9, 10)
+            longitude[...] = np.arange(90).reshape(9, 10)
 
             eastward_wind = nc.createVariable(
                 dimensions=("grid_latitude", "grid_longitude"),
@@ -697,7 +697,7 @@ def _make_external_files():
             )
             eastward_wind.cell_measures = "area: areacella"
             eastward_wind.units = "m s-1"
-            eastward_wind[...] = numpy.arange(90).reshape(10, 9) - 45.5
+            eastward_wind[...] = np.arange(90).reshape(10, 9) - 45.5
 
         if external or combined:
             areacella = nc.createVariable(
@@ -706,7 +706,7 @@ def _make_external_files():
                 varname="areacella",
             )
             areacella.setncatts({"units": "m2", "standard_name": "cell_area"})
-            areacella[...] = numpy.arange(90).reshape(9, 10) + 100000.5
+            areacella[...] = np.arange(90).reshape(9, 10) + 100000.5
 
         nc.close()
 
@@ -732,8 +732,8 @@ def _make_gathered_file(filename):
 
     def _jj(shape, list_values):
         """Create and return a gathered array."""
-        array = numpy.ma.masked_all(shape)
-        for i, (index, x) in enumerate(numpy.ndenumerate(array)):
+        array = np.ma.masked_all(shape)
+        for i, (index, x) in enumerate(np.ndenumerate(array)):
             if i in list_values:
                 array[index] = i
         return array
@@ -778,38 +778,38 @@ def _make_gathered_file(filename):
     aux0 = n.createVariable("aux0", "f8", ("list1",))
     aux0.standard_name = "longitude"
     aux0.units = "degrees_east"
-    aux0[...] = numpy.arange(list1.size)
+    aux0[...] = np.arange(list1.size)
 
     aux1 = n.createVariable("aux1", "f8", ("list3",))
-    aux1[...] = numpy.arange(list3.size)
+    aux1[...] = np.arange(list3.size)
 
     aux2 = n.createVariable("aux2", "f8", ("time", "list3", "p"))
-    aux2[...] = numpy.arange(time.size * list3.size * p.size).reshape(
+    aux2[...] = np.arange(time.size * list3.size * p.size).reshape(
         time.size, list3.size, p.size
     )
 
     aux3 = n.createVariable("aux3", "f8", ("p", "list3", "time"))
-    aux3[...] = numpy.arange(p.size * list3.size * time.size).reshape(
+    aux3[...] = np.arange(p.size * list3.size * time.size).reshape(
         p.size, list3.size, time.size
     )
 
     aux4 = n.createVariable("aux4", "f8", ("p", "time", "list3"))
-    aux4[...] = numpy.arange(p.size * time.size * list3.size).reshape(
+    aux4[...] = np.arange(p.size * time.size * list3.size).reshape(
         p.size, time.size, list3.size
     )
 
     aux5 = n.createVariable("aux5", "f8", ("list3", "p", "time"))
-    aux5[...] = numpy.arange(list3.size * p.size * time.size).reshape(
+    aux5[...] = np.arange(list3.size * p.size * time.size).reshape(
         list3.size, p.size, time.size
     )
 
     aux6 = n.createVariable("aux6", "f8", ("list3", "time"))
-    aux6[...] = numpy.arange(list3.size * time.size).reshape(
+    aux6[...] = np.arange(list3.size * time.size).reshape(
         list3.size, time.size
     )
 
     aux7 = n.createVariable("aux7", "f8", ("lat",))
-    aux7[...] = numpy.arange(lat.size)
+    aux7[...] = np.arange(lat.size)
 
     aux8 = n.createVariable(
         "aux8",
@@ -819,10 +819,10 @@ def _make_gathered_file(filename):
             "lat",
         ),
     )
-    aux8[...] = numpy.arange(lon.size * lat.size).reshape(lon.size, lat.size)
+    aux8[...] = np.arange(lon.size * lat.size).reshape(lon.size, lat.size)
 
     aux9 = n.createVariable("aux9", "f8", ("time", "height"))
-    aux9[...] = numpy.arange(time.size * height.size).reshape(
+    aux9[...] = np.arange(time.size * height.size).reshape(
         time.size, height.size
     )
 
@@ -849,19 +849,19 @@ def _make_gathered_file(filename):
     temp1.long_name = "temp1"
     temp1.units = "K"
     temp1.coordinates = "aux0 aux7 aux8 aux9"
-    temp1[...] = numpy.arange(2 * 3 * 4 * 4 * 6).reshape(2, 3, 4, 4, 6)
+    temp1[...] = np.arange(2 * 3 * 4 * 4 * 6).reshape(2, 3, 4, 4, 6)
 
     temp2 = n.createVariable("temp2", "f8", ("time", "height", "list2", "p"))
     temp2.long_name = "temp2"
     temp2.units = "K"
     temp2.coordinates = "aux7 aux8 aux9"
-    temp2[...] = numpy.arange(2 * 3 * 9 * 6).reshape(2, 3, 9, 6)
+    temp2[...] = np.arange(2 * 3 * 9 * 6).reshape(2, 3, 9, 6)
 
     temp3 = n.createVariable("temp3", "f8", ("time", "list3", "p"))
     temp3.long_name = "temp3"
     temp3.units = "K"
     temp3.coordinates = "aux0 aux1 aux2 aux3 aux4 aux5 aux6 aux7 aux8 aux9"
-    temp3[...] = numpy.arange(2 * 14 * 6).reshape(2, 14, 6)
+    temp3[...] = np.arange(2 * 14 * 6).reshape(2, 14, 6)
 
     n.close()
 
@@ -1401,13 +1401,13 @@ def _make_string_char_file(filename):
     n.createDimension("strlen5", 5)
     n.createDimension("strlen3", 3)
 
-    months = numpy.array(["January", "February", "March", "April"], dtype="S8")
+    months = np.array(["January", "February", "March", "April"], dtype="S8")
 
-    months_m = numpy.ma.array(
+    months_m = np.ma.array(
         months, dtype="S7", mask=[0, 1, 0, 0], fill_value=b""
     )
 
-    numbers = numpy.array(
+    numbers = np.array(
         [["one", "two", "three"], ["four", "five", "six"]], dtype="S5"
     )
 
@@ -1417,11 +1417,11 @@ def _make_string_char_file(filename):
 
     s_months1 = n.createVariable("s_months1", str, ("dim1",))
     s_months1.long_name = "string: One month"
-    s_months1[:] = numpy.array(["December"], dtype="S8")
+    s_months1[:] = np.array(["December"], dtype="S8")
 
     s_months0 = n.createVariable("s_months0", str, ())
     s_months0.long_name = "string: One month (scalar)"
-    s_months0[:] = numpy.array(["May"], dtype="S3")
+    s_months0[:] = np.array(["May"], dtype="S3")
 
     s_numbers = n.createVariable("s_numbers", str, ("lat", "lon"))
     s_numbers.long_name = "string: Two dimensional"
@@ -1439,15 +1439,15 @@ def _make_string_char_file(filename):
 
     c_months1 = n.createVariable("c_months1", "S1", ("dim1", "strlen8"))
     c_months1.long_name = "char: One month"
-    c_months1[:] = netCDF4.stringtochar(numpy.array(["December"], dtype="S8"))
+    c_months1[:] = netCDF4.stringtochar(np.array(["December"], dtype="S8"))
 
     c_months0 = n.createVariable("c_months0", "S1", ("strlen3",))
     c_months0.long_name = "char: One month (scalar)"
-    c_months0[:] = numpy.array(list("May"))
+    c_months0[:] = np.array(list("May"))
 
     c_numbers = n.createVariable("c_numbers", "S1", ("lat", "lon", "strlen5"))
     c_numbers.long_name = "char: Two dimensional"
-    numpy.empty((2, 3, 5), dtype="S1")
+    np.empty((2, 3, 5), dtype="S1")
     c_numbers[...] = netCDF4.stringtochar(numbers)
 
     c_months4m = n.createVariable("c_months4m", "S1", ("time", "strlen7"))
@@ -1458,6 +1458,182 @@ def _make_string_char_file(filename):
     n.close()
 
     return filename
+
+
+def _make_subsampled_linear(filename):
+    """Make a netCDF file with lossy compression by coordinate subsampling
+    and reconstitution by linear, bilinear, and quadratic
+    interpolation.
+
+    """
+    n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
+
+    n.Conventions = f"CF-{VN}"
+    n.comment = (
+        "A netCDF file with lossy compression by coordinate subsampling "
+        "and reconstitution by linear, bilinear, and quadratic "
+        "interpolation."
+    )
+
+    # Dimensions
+    n.createDimension("time", 2)
+    n.createDimension("lat", 18)
+    n.createDimension("lon", 12)
+    n.createDimension("tp_lat", 4)
+    n.createDimension("tp_lon", 5)
+    n.createDimension("subarea_lat", 2)
+    n.createDimension("subarea_lon", 3)
+
+    # Tie point index variables
+    lat_indices = n.createVariable("lat_indices", "i4", ("tp_lat",))
+    lat_indices[...] = [0, 8, 9, 17]
+
+    lon_indices = n.createVariable("lon_indices", "i4", ("tp_lon",))
+    lon_indices[...] = [0, 4, 7, 8, 11]
+
+    # Dimension coordinates
+    time = n.createVariable("time", "f4", ("time",))
+    time.standard_name = "time"
+    time.units = "days since 2000-01-01"
+    time[...] = [0, 31]
+
+    # Auxiliary coordinates
+    reftime = n.createVariable("reftime", "f4", ("time",))
+    reftime.standard_name = "forecast_reference_time"
+    reftime.units = "days since 1900-01-01"
+    reftime[...] = [31, 45]
+
+    # Tie point coordinate variables
+    lon = n.createVariable("lon", "f4", ("tp_lon",))
+    lon.standard_name = "longitude"
+    lon.units = "degrees_east"
+    lon.bounds_tie_points = "lon_bounds"
+    lon[...] = [15, 135, 225, 255, 345]
+
+    lat = n.createVariable("lat", "f4", ("tp_lat",))
+    lat.standard_name = "latitude"
+    lat.units = "degrees_north"
+    lat.bounds_tie_points = "lat_bounds"
+    lat[...] = [-85, -5, 5, 85]
+
+    c = np.array(
+        [
+            [0, 4, 7, 8, 11],
+            [96, 100, 103, 104, 107],
+            [108, 112, 115, 116, 119],
+            [204, 208, 211, 212, 215],
+        ],
+        dtype="float32",
+    )
+
+    a_2d = n.createVariable("a_2d", "f4", ("tp_lat", "tp_lon"))
+    a_2d.units = "m"
+    a_2d.bounds_tie_points = "a_2d_bounds"
+    a_2d[...] = c
+
+    b_2d = n.createVariable("b_2d", "f4", ("tp_lat", "tp_lon"))
+    b_2d.units = "m"
+    b_2d.bounds_tie_points = "b_2d_bounds"
+    b_2d[...] = -c
+
+    # Tie point bounds variables
+    lat_bounds = n.createVariable("lat_bounds", "f8", ("tp_lat",))
+    lat_bounds[...] = [-90, 0, 0, 90]
+
+    lon_bounds = n.createVariable("lon_bounds", "f8", ("tp_lon",))
+    lon_bounds[...] = [0, 150, 240, 240, 360]
+
+    bounds_2d = np.array(
+        [
+            [0, 5, 8, 8, 12],
+            [117, 122, 125, 125, 129],
+            [117, 122, 125, 125, 129],
+            [234, 239, 242, 242, 246],
+        ],
+        dtype="float32",
+    )
+
+    a_2d_bounds = n.createVariable("a_2d_bounds", "f4", ("tp_lat", "tp_lon"))
+    a_2d_bounds[...] = bounds_2d
+
+    b_2d_bounds = n.createVariable("b_2d_bounds", "f4", ("tp_lat", "tp_lon"))
+    b_2d_bounds[...] = -bounds_2d
+
+    # Interpolation variables
+    linear_lat = n.createVariable("linear_lat", "i4", ())
+    linear_lat.interpolation_name = "linear"
+    linear_lat.computational_precision = "64"
+    linear_lat.foo = "bar"
+    linear_lat.tie_point_mapping = "lat: lat_indices tp_lat"
+
+    linear_lon = n.createVariable("linear_lon", "i4", ())
+    linear_lon.interpolation_name = "linear"
+    linear_lon.computational_precision = "64"
+    linear_lon.foo = "bar"
+    linear_lon.tie_point_mapping = "lon: lon_indices tp_lon"
+
+    bilinear = n.createVariable("bilinear", "i4", ())
+    bilinear.interpolation_name = "bi_linear"
+    bilinear.computational_precision = "64"
+    bilinear.tie_point_mapping = (
+        "lat: lat_indices tp_lat lon: lon_indices tp_lon"
+    )
+
+    quadratic_lat = n.createVariable("quadratic_lat", "i4", ())
+    quadratic_lat.interpolation_name = "quadratic"
+    quadratic_lat.computational_precision = "64"
+    quadratic_lat.tie_point_mapping = "lat: lat_indices tp_lat subarea_lat"
+    quadratic_lat.interpolation_parameters = "w: w_lat"
+
+    quadratic_lon = n.createVariable("quadratic_lon", "i4", ())
+    quadratic_lon.interpolation_name = "quadratic"
+    quadratic_lon.computational_precision = "64"
+    quadratic_lon.tie_point_mapping = "lon: lon_indices tp_lon subarea_lon"
+    quadratic_lon.interpolation_parameters = "w: w_lon"
+
+    # Interpolation parameters
+    w_lat = n.createVariable("w_lat", "f8", ("subarea_lat",))
+    w_lat.long_name = "quadratic interpolation coefficient (lat)"
+    w_lat[...] = [1, 1]
+
+    w_lon = n.createVariable("w_lon", "f8", ("subarea_lon",))
+    w_lon.long_name = "quadratic interpolation coefficient (lon)"
+    w_lon[...] = [5, 10, 5]
+
+    # Data variable
+    q = n.createVariable("q", "f4", ("lat", "lon"))
+    q.standard_name = "specific_humidity"
+    q.units = "1"
+    q.coordinate_interpolation = "lat: lon: linear a_2d: b_2d: bilinear"
+    q.coordinate_interpolation = (
+        "lat: linear_lat " "lon: linear_lon " "a_2d: b_2d: bilinear"
+    )
+    q[...] = (np.arange(18 * 12).reshape(18, 12) / (18 * 12 + 1)).round(2)
+
+    # Data variable
+    t = n.createVariable("t", "f4", ("time", "lat", "lon"))
+    t.standard_name = "air_temperature"
+    t.units = "K"
+    t.coordinates = "reftime"
+    t.coordinate_interpolation = (
+        "lat: linear_lat " "lon: linear_lon " "a_2d: b_2d: bilinear"
+    )
+    t[...] = np.arange(2 * 18 * 12).reshape(2, 18, 12).round(0)
+
+    # Data variable
+    t2 = n.createVariable("t2", "f4", ("time", "lat", "lon"))
+    t2.standard_name = "air_temperature"
+    t2.units = "K"
+    t2.coordinates = "reftime"
+    t2.coordinate_interpolation = (
+        "lat: quadratic_lat " "lon: quadratic_lon " "a_2d: b_2d: bilinear"
+    )
+    t2[...] = np.arange(2 * 18 * 12).reshape(2, 18, 12).round(0)
+
+    n.close()
+
+    return filename
+
 
 
 (
@@ -1477,6 +1653,8 @@ interior_ring_file_2 = _make_interior_ring_file_2(
 )
 
 string_char_file = _make_string_char_file("string_char.nc")
+
+subsampled_file_1 = _make_subsampled_linear("subsampled_1.nc")
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

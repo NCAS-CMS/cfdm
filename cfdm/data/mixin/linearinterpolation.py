@@ -6,7 +6,7 @@ class LinearInterpolation:
     """
 
     def _linear_interpolation(
-        self, ua, ub, subsampled_dimension, subarea_shape, first
+        self, ua, ub, subsampled_dimension, subarea_shape, first, trim=True
     ):
         """Interpolate linearly between pairs of tie points.
 
@@ -17,6 +17,8 @@ class LinearInterpolation:
                           = ua*(1-s) + ub*s
 
         .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `_s`, `_trim`
 
         :Parameters:
 
@@ -38,6 +40,12 @@ class LinearInterpolation:
                 interpolation subarea is the first (in index space) of
                 a new continuous area, otherwise False.
 
+            trim: `bool`, optional
+                For the subsampled dimension, remove the first point
+                of the interpolation subarea when it is not the first
+                (in index space) of a continuous area, and when the
+                compressed data are not bounds tie points.
+
         :Returns:
 
             `numpy.ndarray`
@@ -49,21 +57,7 @@ class LinearInterpolation:
         # Interpolate
         u = ua * one_minus_s + ub * s
 
-        if not self.bounds and not first[subsampled_dimension]:
-            # Remove the first point of the interpolation subarea when
-            # it is not the first (in index space) of a continuous
-            # area. This is beacuse this value in the uncompressed
-            # data has already been calculated from the previous (in
-            # index space) interpolation subarea.
-            #
-            # Only do this if the we are interpolating tie point
-            # coordinates.
-            #
-            # If we are interpolating bounds tie points then we do
-            # duplicate the shared tie point for simplicity (although
-            # it would be nice not to ...).
-            indices = [slice(None)] * u.ndim
-            indices[subsampled_dimension] = slice(1, None)
-            u = u[tuple(indices)]
+        if trim:
+            u = self._trim(u, (subsampled_dimension,), first)
 
         return u
