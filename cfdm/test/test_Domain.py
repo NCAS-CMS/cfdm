@@ -43,11 +43,11 @@ class DomainTest(unittest.TestCase):
             d.dump(display=False, _title=title)
 
     def test_Domain__init__(self):
-        """TODO DOCS."""
+        """Test the Domain constructor and source keyword."""
         cfdm.Domain(source="qwerty")
 
     def test_Domain_equals(self):
-        """TODO DOCS."""
+        """Test the equality-testing Domain method."""
         d = self.d
         e = d.copy()
 
@@ -62,7 +62,7 @@ class DomainTest(unittest.TestCase):
         self.assertFalse(e.equals(d))
 
     def test_Domain_properties(self):
-        """TODO DOCS."""
+        """Test the property access methods of Domain."""
         d = cfdm.Domain()
 
         d.set_property("long_name", "qwerty")
@@ -81,7 +81,7 @@ class DomainTest(unittest.TestCase):
         self.assertEqual(d.properties(), {"long_name": "qwerty", "foo": "bar"})
 
     def test_Domain_del_construct(self):
-        """TODO DOCS."""
+        """Test the `del_construct` Domain method."""
         d = self.d.copy()
 
         self.assertIsInstance(
@@ -102,7 +102,7 @@ class DomainTest(unittest.TestCase):
         self.assertEqual(d.climatological_time_axes(), set(("domainaxis0",)))
 
     def test_Domain_creation_commands(self):
-        """TODO DOCS."""
+        """Test the `creation_commands` Domain method."""
         d = self.d.copy()
 
         with self.assertRaises(ValueError):
@@ -139,7 +139,7 @@ class DomainTest(unittest.TestCase):
         )
 
     def test_Domain_apply_masking(self):
-        """TODO DOCS."""
+        """Test the `apply_masking` Domain method."""
         d = self.d.copy()
 
         self.assertIsNone(d.apply_masking(inplace=True))
