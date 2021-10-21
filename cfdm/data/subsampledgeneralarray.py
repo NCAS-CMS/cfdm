@@ -3,7 +3,7 @@ from .mixin import SubsampledArray
 
 
 class SubsampledGeneralArray(SubsampledArray, CompressedArray):
-    """TODO.
+    """A subsampled array with non-standardised interpolation.
 
     **Cell boundaries**
 
@@ -22,8 +22,6 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
         shape=None,
         size=None,
         ndim=None,
-        #        dtype=None,
-        compressed_axes=None,
         tie_point_indices={},
         interpolation_parameters={},
         parameter_dimensions={},
@@ -33,68 +31,63 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
     ):
         """**Initialisation**
 
-                :Parameters:
+        :Parameters:
 
-                    compressed_array: `Data`
-                        The tie points array.
-
-                    shape: `tuple`
-                        The uncompressed array dimension sizes.
-
-                    size: `int`
-                        Number of elements in the uncompressed array.
-
-                    ndim: `int`
-                        The number of uncompressed array dimensions.
-
-        #            dtype: data-type, optional
-        #               The data-type for the uncompressed array. This datatype
-        #               type is also used in all interpolation calculations. By
-        #               default, the data-type is double precision float.
-
-                    compressed_axes: sequence of `int`
-                        The positions of the subsampled dimensions in the tie
-                        points array.
-
-                        *Parameter example:*
-                          ``compressed_axes=[1]``
-
-                        *Parameter example:*
-                          ``compressed_axes=(1, 2)``
-
-                    interpolation_name: `str`, optional
-                        The interpolation method used to uncompress the
-                        coordinates values.
-
-                        *Parameter example:*
-                          ``interpolation_name='linear'``
-
-                    interpolation_description: `str`, optional
-                        A non-standardized description of the interpolation
-                        method used to uncompress the coordinates values.
-
-                    tie_point_indices: `dict`
-                        The tie point index variable for each subsampled
-                        dimension. A key indentifies a subsampled dimension by
-                        its integer position in the compressed array, and its
-                        value is a `TiePointIndex` variable.
-
-                        *Parameter example:*
-                          ``tie_point_indices={1: cfdm.TiePointIndex(data=[0, 16])}``
-
-                    interpolation_parameters: `dict`
-                        TODO
-
-                    parameter_dimensions: `dict`
-                        TODO
-
-                    computational_precision: `str`, optional
-                        The floating-point arithmetic precision used during
-                        the preparation and validation of the compressed
-                        coordinates.
-
-                        *Parameter example:*
-                          ``computational_precision='64'``
+            compressed_array: `Data`
+                The tie points array.
+            
+            shape: `tuple`
+                The uncompressed array dimension sizes.
+            
+            size: `int`
+                Number of elements in the uncompressed array.
+            
+            ndim: `int`
+                The number of uncompressed array dimensions.
+            
+            compressed_axes: sequence of `int`
+                The positions of the subsampled dimensions in the tie
+                points array.
+            
+                *Parameter example:*
+                  ``compressed_axes=[1]``
+            
+                *Parameter example:*
+                  ``compressed_axes=(1, 2)``
+            
+            interpolation_name: `str`, optional
+                The interpolation method used to uncompress the
+                coordinates values.
+            
+                *Parameter example:*
+                  ``interpolation_name='linear'``
+            
+            interpolation_description: `str`, optional
+                A non-standardized description of the interpolation
+                method used to uncompress the coordinates values.
+            
+            tie_point_indices: `dict`
+                The tie point index variable for each subsampled
+                dimension. A key indentifies a subsampled dimension by
+                its integer position in the compressed array, and its
+                value is a `TiePointIndex` variable.
+            
+                *Parameter example:*
+                  ``tie_point_indices={1: cfdm.TiePointIndex(data=[0, 16])}``
+            
+            interpolation_parameters: `dict`
+                TODO
+            
+            parameter_dimensions: `dict`
+                TODO
+            
+            computational_precision: `str`, optional
+                The floating-point arithmetic precision used during
+                the preparation and validation of the compressed
+                coordinates.
+            
+                *Parameter example:*
+                  ``computational_precision='64'``
 
         """
         super().__init__(
@@ -106,7 +99,6 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
             tie_point_indices=tie_point_indices.copy(),
             interpolation_parameters=interpolation_parameters.copy(),
             parameter_dimensions=parameter_dimensions.copy(),
-            interpolation_name=interpolation_name,
             interpolation_description=interpolation_description,
             computational_precision=computational_precision,
             compressed_dimensions=tuple(tie_point_indices),
@@ -128,4 +120,8 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
         try:
             return self._first_or_last_index(indices)
         except IndexError:
-            raise IndexError("Don't know how to uncompress {self!r}")
+            raise IndexError(
+                f"Can't subspace subsampled data with non-standarised "
+                "interpolation method"
+            )
+

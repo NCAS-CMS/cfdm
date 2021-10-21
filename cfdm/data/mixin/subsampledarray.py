@@ -658,61 +658,61 @@ class SubsampledArray:
         """
         return self._get_component("tie_point_indices").copy()
 
-    def get_compressed_axes(self):
-        """Return axes that are compressed in the underlying array.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        :Returns:
-
-            `list`
-                The compressed axes described by their integer
-                positions in the uncompressed array.
-
-        **Examples**
-
-        >>> c.get_compressed_dimension()
-        (1, 3)
-        >>> c.compressed_axes()
-        [1, 3]
-
-        """
-        return list(self.get_tie_point_indices())
-
-    def get_compressed_dimension(self, default=ValueError()):
-        """Returns the compressed dimension's position in the array.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        .. seealso:: `get_compressed_axes`, `get_compression_type`
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if the
-                underlying array is not compressed. If set to an
-                `Exception` instance then it will be raised instead.
-
-        :Returns:
-
-            `int`
-                The position of the compressed dimension in the compressed
-                array. If the underlying is not compressed then *default*
-                is returned, if provided.
-
-        **Examples:**
-
-        >>> i = d.get_compressed_dimension()
-
-        """
-        out = tuple(self.get_tie_point_indices())
-        if not out:
-            if default is None:
-                return
-
-            return self._default(default)
-
-        return out
+#    def get_compressed_axes(self):
+#        """Return axes that are compressed in the underlying array.
+#
+#        .. versionadded:: (cfdm) 1.9.TODO.0
+#
+#        :Returns:
+#
+#            `list`
+#                The compressed axes described by their integer
+#                positions in the uncompressed array.
+#
+#        **Examples**
+#
+#        >>> c.get_compressed_dimension()
+#        (1, 3)
+#        >>> c.compressed_axes()
+#        [1, 3]
+#
+#        """
+#        return list(self.get_tie_point_indices())
+#
+#   def get_compressed_dimension(self, default=ValueError()):
+#       """Returns the compressed dimension's position in the array.
+#
+#       .. versionadded:: (cfdm) 1.9.TODO.0
+#
+#       .. seealso:: `get_compressed_axes`, `get_compression_type`
+#
+#       :Parameters:
+#
+#           default: optional
+#               Return the value of the *default* parameter if the
+#               underlying array is not compressed. If set to an
+#               `Exception` instance then it will be raised instead.
+#
+#       :Returns:
+#
+#           `int`
+#               The position of the compressed dimension in the compressed
+#               array. If the underlying is not compressed then *default*
+#               is returned, if provided.
+#
+#       **Examples:**
+#
+#       >>> i = d.get_compressed_dimension()
+#
+#       """
+#       out = tuple(self.get_tie_point_indices())
+#       if not out:
+#           if default is None:
+#               return
+#
+#           return self._default(default)
+#
+#       return out
 
     def to_memory(self):
         """Bring an array on disk into memory.

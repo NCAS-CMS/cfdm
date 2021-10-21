@@ -1,3 +1,5 @@
+import operator
+
 from .array import Array
 
 

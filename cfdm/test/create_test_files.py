@@ -1592,6 +1592,14 @@ def _make_subsampled_linear(filename):
     quadratic_lon.tie_point_mapping = "lon: lon_indices tp_lon subarea_lon"
     quadratic_lon.interpolation_parameters = "w: w_lon"
 
+    general = n.createVariable("general", "i4", ())
+    general.interpolation_description = "A new method"
+    general.computational_precision = "64"
+    general.tie_point_mapping = (
+        "lat: lat_indices tp_lat lon: lon_indices tp_lon subarea_lon"
+    )
+    general.interpolation_parameters = "c: cp"
+
     # Interpolation parameters
     w_lat = n.createVariable("w_lat", "f8", ("subarea_lat",))
     w_lat.long_name = "quadratic interpolation coefficient (lat)"
@@ -1601,7 +1609,11 @@ def _make_subsampled_linear(filename):
     w_lon.long_name = "quadratic interpolation coefficient (lon)"
     w_lon[...] = [5, 10, 5]
 
-    # Data variable
+    cp = n.createVariable("cp", "f8", ("subarea_lon", "tp_lat"))
+    cp.long_name = "interpolation coefficient (lon & lat)"
+    cp[...] = np.arange(3 * 4).reshape(3, 4)
+
+    # Data variables
     q = n.createVariable("q", "f4", ("lat", "lon"))
     q.standard_name = "specific_humidity"
     q.units = "1"
@@ -1611,7 +1623,6 @@ def _make_subsampled_linear(filename):
     )
     q[...] = (np.arange(18 * 12).reshape(18, 12) / (18 * 12 + 1)).round(2)
 
-    # Data variable
     t = n.createVariable("t", "f4", ("time", "lat", "lon"))
     t.standard_name = "air_temperature"
     t.units = "K"
@@ -1621,7 +1632,6 @@ def _make_subsampled_linear(filename):
     )
     t[...] = np.arange(2 * 18 * 12).reshape(2, 18, 12).round(0)
 
-    # Data variable
     t2 = n.createVariable("t2", "f4", ("time", "lat", "lon"))
     t2.standard_name = "air_temperature"
     t2.units = "K"
@@ -1630,6 +1640,13 @@ def _make_subsampled_linear(filename):
         "lat: quadratic_lat " "lon: quadratic_lon " "a_2d: b_2d: bilinear"
     )
     t2[...] = np.arange(2 * 18 * 12).reshape(2, 18, 12).round(0)
+
+    t3 = n.createVariable("t3", "f4", ("time", "lat", "lon"))
+    t3.standard_name = "air_temperature"
+    t3.units = "K"
+    t3.coordinates = "reftime"
+    t3.coordinate_interpolation = "a_2d: b_2d: general"
+    t3[...] = np.arange(2 * 18 * 12).reshape(2, 18, 12).round(0)
 
     n.close()
 

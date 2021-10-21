@@ -2102,7 +2102,7 @@ class CFDMImplementation(Implementation):
         size=None,
         ndim=None,
         tie_point_indices={},
-        computational_precision="",
+        computational_precision=None,
         **kwargs,
     ):
         """Return a gathered array instance.
@@ -2152,7 +2152,7 @@ class CFDMImplementation(Implementation):
         size=None,
         ndim=None,
         tie_point_indices={},
-        computational_precision="",
+        computational_precision=None,
         **kwargs,
     ):
         """Return a gathered array instance.
@@ -2200,7 +2200,7 @@ class CFDMImplementation(Implementation):
         size=None,
         ndim=None,
         tie_point_indices={},
-        computational_precision="",
+        computational_precision=None,
         interpolation_parameters={},
         parameter_dimensions={},
         **kwargs,
@@ -2258,8 +2258,8 @@ class CFDMImplementation(Implementation):
         size=None,
         ndim=None,
         tie_point_indices={},
-        interpolation_description="",
-        computational_precision="",
+        interpolation_description=None,
+        computational_precision=None,
         interpolation_parameters={},
         parameter_dimensions={},
         **kwargs,

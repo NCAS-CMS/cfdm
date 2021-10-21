@@ -7,7 +7,7 @@ from .mixin import LinearInterpolation, SubsampledArray
 class SubsampledLinearArray(
     LinearInterpolation, SubsampledArray, CompressedArray
 ):
-    """An underlying subsampled array with linear interpolatin.
+    """A subsampled array with linear interpolation.
 
     The information needed to uncompress the data is stored in an tie
     point index variable that defines the relationship between the
