@@ -19,7 +19,6 @@ from ...functions import is_log_level_debug
 from .. import IORead
 
 logger = logging.getLogger(__name__)
-import pprint
 
 _cached_temporary_files = {}
 
@@ -3320,16 +3319,15 @@ class NetCDFRead(IORead):
             # Find out if the coordinates are to be dimension or
             # auxiliary coordinate constructs
             axes = self._get_domain_axes(ncvar, parent_ncvar=field_ncvar)
-            dimension_coordinate = (
-                len(axes) == 1
-                and ncvar == g["axis_to_ncdim"].get(axes[0])
-            )
-            
+            dimension_coordinate = len(axes) == 1 and ncvar == g[
+                "axis_to_ncdim"
+            ].get(axes[0])
+
             # Don't try to use an existing coordinate object, since
             # such an instance may have been created from a different
             # interpolation variable (and therefore possibly different
             # tie point indices).
-            if dimension_coordinate:           
+            if dimension_coordinate:
                 coord = self._create_dimension_coordinate(
                     field_ncvar, ncvar, f
                 )
@@ -3342,15 +3340,15 @@ class NetCDFRead(IORead):
             logger.detail(
                 f"        [k] Inserting {coord.__class__.__name__}"
             )  # pragma: no cover
-            if dimension_coordinate: 
+            if dimension_coordinate:
                 key = self.implementation.set_dimension_coordinate(
                     f, coord, axes=axes, copy=False
-                )          
+                )
             else:
                 key = self.implementation.set_auxiliary_coordinate(
                     f, coord, axes=axes, copy=False
                 )
-                
+
             self._reference(ncvar, field_ncvar)
             if self.implementation.has_bounds(coord):
                 bounds = self.implementation.get_bounds(coord)
@@ -4358,7 +4356,6 @@ class NetCDFRead(IORead):
 
         # If there are bounds then find the name of the attribute that
         # names them, and the netCDF variable name of the bounds.
-        bounds_tie_points = False
         if bounds_ncvar is None:
             bounds_ncvar = properties.pop("bounds", None)
             if bounds_ncvar is None:
@@ -4375,7 +4372,6 @@ class NetCDFRead(IORead):
                     bounds_ncvar = properties.pop("bounds_tie_points", None)
                     if bounds_ncvar is not None:
                         attribute = "bounds_tie_points"
-                        bounds_tie_points = True
 
         elif nodes:
             attribute = "nodes"
@@ -5200,7 +5196,7 @@ class NetCDFRead(IORead):
                     # ------------------------------------------------
                     c = c["gathered"]
 
-#                    i = dimensions.index(ncdim)
+                    #                    i = dimensions.index(ncdim)
                     array = self._create_gathered_array(
                         gathered_array=self._create_Data(array),
                         uncompressed_shape=tuple(uncompressed_shape),
@@ -5216,7 +5212,7 @@ class NetCDFRead(IORead):
                     # exist for an indexed and contiguous array.
                     c = c["ragged_indexed_contiguous"]
 
-                    #i = dimensions.index(ncdim)
+                    # i = dimensions.index(ncdim)
                     if dimensions.index(ncdim) != 0:
                         raise ValueError(
                             "Data can only be created when the netCDF "
@@ -5239,7 +5235,7 @@ class NetCDFRead(IORead):
                     # ------------------------------------------------
                     c = c["ragged_contiguous"]
 
-                    #i = dimensions.index(ncdim)
+                    # i = dimensions.index(ncdim)
                     if dimensions.index(ncdim) != 0:
                         raise ValueError(
                             "Data can only be created when the netCDF "
@@ -5259,7 +5255,7 @@ class NetCDFRead(IORead):
                     # ------------------------------------------------
                     c = c["ragged_indexed"]
 
-                    #i = dimensions.index(ncdim)
+                    # i = dimensions.index(ncdim)
                     if dimensions.index(ncdim) != 0:
                         raise ValueError(
                             "Data can only be created when the netCDF "
@@ -5291,19 +5287,19 @@ class NetCDFRead(IORead):
                     tie_point_indices[i] = self._copy_construct(
                         "tie_point_index", parent_ncvar, tie_point_index_ncvar
                     )
-                    
+
                     # Sort out interpolation parameters for all
                     # dimensions
                     if not interpolation_parameters:
                         for term, param_ncvar in rec[
                             "interpolation_parameters"
                         ].items():
-                            interpolation_parameters[term] = (
-                                self._copy_construct(
-                                    "interpolation_parameter",
-                                    parent_ncvar,
-                                    param_ncvar
-                                )
+                            interpolation_parameters[
+                                term
+                            ] = self._copy_construct(
+                                "interpolation_parameter",
+                                parent_ncvar,
+                                param_ncvar,
                             )
 
                             # For each intepolation parameter, record
@@ -5891,7 +5887,7 @@ class NetCDFRead(IORead):
         return coordref
 
     def _new_ncdimension(self, ncdim, size=None, use_existing_new=False):
-        """TODO
+        """TODO.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -7317,7 +7313,7 @@ class NetCDFRead(IORead):
         coordinate_interpolation,
         parsed_coordinate_interpolation,
     ):
-        """Check a TODO
+        """Check a TODO.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -7373,9 +7369,7 @@ class NetCDFRead(IORead):
                 ok = False
 
             attrs = g["variable_attributes"][interp_ncvar]
-            try:
-                tie_point_mapping = attrs["tie_point_mapping"]
-            except KeyError:
+            if "tie_point_mapping" not in attrs:
                 self._add_message(
                     parent_ncvar,
                     interp_ncvar,

@@ -1392,4 +1392,5 @@ class FieldDomain:
 
         return False
 
+
 #    def uncompressaquadratic_latitude_longitude

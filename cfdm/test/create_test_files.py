@@ -687,9 +687,9 @@ def _make_external_files():
             eastward_wind = nc.createVariable(
                 dimensions=("grid_latitude", "grid_longitude"),
                 datatype="f8",
-                varname=u"eastward_wind",
+                varname="eastward_wind",
             )
-            eastward_wind.coordinates = u"latitude longitude"
+            eastward_wind.coordinates = "latitude longitude"
             eastward_wind.standard_name = "eastward_wind"
             eastward_wind.cell_methods = (
                 "grid_longitude: mean (interval: 1 day comment: ok) "
@@ -1461,9 +1461,10 @@ def _make_string_char_file(filename):
 
 
 def _make_subsampled_linear(filename):
-    """Make a netCDF file with lossy compression by coordinate subsampling
-    and reconstitution by linear, bilinear, and quadratic
-    interpolation.
+    """Lossy compression by coordinate subsampling (1).
+
+    Make a netCDF file with lossy compression by coordinate subsampling
+    and reconstitution by linear, bilinear, and quadratic interpolation.
 
     """
     n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
@@ -1633,7 +1634,6 @@ def _make_subsampled_linear(filename):
     n.close()
 
     return filename
-
 
 
 (

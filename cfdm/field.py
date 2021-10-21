@@ -2202,7 +2202,7 @@ class Field(
 
         The field construct data is uncompressed, along with any
         applicable metadata constructs.
-      
+
         A field construct that is already uncompressed will be returned
         uncompressed.
 
@@ -2258,7 +2258,9 @@ class Field(
         f.domain.uncompress(inplace=True)
 
         # Uncompress any field ancillaries
-        for c in f.constructs.filter_by_type("field_ancillary", todict=True).values():
+        for c in f.constructs.filter_by_type(
+            "field_ancillary", todict=True
+        ).values():
             c.uncompress(inplace=True)
 
         return f

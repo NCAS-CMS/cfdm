@@ -2,6 +2,8 @@ from .array import Array
 
 
 class DeprecationError(Exception):
+    """Deprecation error."""
+
     pass
 
 
@@ -47,7 +49,7 @@ class CompressedArray(Array):
             compressed_dimensions: sequence of `int`
                 The positions of the compressed dimensions in the
                 compressed array.
-        
+
                 *Parameter example:*
                   ``compressed_dimensions=[1]``
 
@@ -55,7 +57,7 @@ class CompressedArray(Array):
                   ``compressed_dimensions=(0, 2)``
 
                 .. versionadded:: (cfdm) 1.9.TODO.0
- 
+
             compression_type: `str`
                 The type of compression.
 
@@ -64,7 +66,7 @@ class CompressedArray(Array):
                 a single uncompressed dimension in the same position.
 
                 .. versionadded:: (cfdm) 1.9.TODO.0
- 
+
             kwargs: optional
                 Further named parameters and their values needed to define
                 the compressed array.
@@ -79,7 +81,7 @@ class CompressedArray(Array):
                 "version 1.9.TODO.0 and will be removed at a later version. "
                 "Use the 'compressed_dimensions' keyword instead."
             )
-        
+
         super().__init__(
             shape=shape,
             size=size,
@@ -92,7 +94,7 @@ class CompressedArray(Array):
         )
 
         self._set_compressed_Array(compressed_array, copy=False)
-   
+
     def _get_compressed_Array(self, default=ValueError()):
         """Return the compressed array.
 
@@ -339,7 +341,7 @@ class CompressedArray(Array):
 
         """
         return self._get_component("compressed_dimensions")[0]
-   
+
     def compressed_dimensions(self):
         """Mapping of compressed to uncompressed dimensions.
 
@@ -358,12 +360,12 @@ class CompressedArray(Array):
 
         """
         compressed_dims = self._get_component("compressed_dimensions")
-        
+
         if self._get_component("one_to_one", False):
             # Each compressed dimension corresponds to a single
             # uncompressed dimension in the same position
             return {pos: [pos] for pos in compressed_dims}
-    
+
         compressed_ndim = self._get_compressed_Array().ndim
         ndim = self.ndim
 

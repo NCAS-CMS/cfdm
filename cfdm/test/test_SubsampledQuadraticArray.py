@@ -51,7 +51,7 @@ class SubsampledQuadraticArrayTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
     def test_SubsampledQuadraticArray__getitem__(self):
-        """TODO"""
+        """TODO."""
         a = np.array(
             [
                 15,
@@ -92,13 +92,6 @@ class SubsampledQuadraticArrayTest(unittest.TestCase):
         d = cfdm.Data(self.b)[...]
         self.assertEqual(d.shape, a.shape)
         self.assertTrue(np.allclose(d, a))
-
-    def test_SubsampledQuadraticArray_dtype(self):
-        """TODO"""
-        d = self.c
-        self.assertEqual(d.dtype, d._default_dtype)
-        d.dtype = np.dtype('float32')
-        self.assertEqual(d.dtype, np.dtype('float32'))
 
 
 if __name__ == "__main__":

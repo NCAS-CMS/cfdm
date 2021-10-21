@@ -1,8 +1,3 @@
-from functools import lru_cache
-from itertools import product
-
-import numpy as np
-
 from .abstract import CompressedArray
 from .mixin import SubsampledArray
 
@@ -27,7 +22,7 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
         shape=None,
         size=None,
         ndim=None,
-#        dtype=None,
+        #        dtype=None,
         compressed_axes=None,
         tie_point_indices={},
         interpolation_parameters={},
@@ -38,68 +33,68 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
     ):
         """**Initialisation**
 
-        :Parameters:
+                :Parameters:
 
-            compressed_array: `Data`
-                The tie points array.
+                    compressed_array: `Data`
+                        The tie points array.
 
-            shape: `tuple`
-                The uncompressed array dimension sizes.
+                    shape: `tuple`
+                        The uncompressed array dimension sizes.
 
-            size: `int`
-                Number of elements in the uncompressed array.
+                    size: `int`
+                        Number of elements in the uncompressed array.
 
-            ndim: `int`
-                The number of uncompressed array dimensions.
+                    ndim: `int`
+                        The number of uncompressed array dimensions.
 
-#            dtype: data-type, optional
-#               The data-type for the uncompressed array. This datatype
-#               type is also used in all interpolation calculations. By
-#               default, the data-type is double precision float.
+        #            dtype: data-type, optional
+        #               The data-type for the uncompressed array. This datatype
+        #               type is also used in all interpolation calculations. By
+        #               default, the data-type is double precision float.
 
-            compressed_axes: sequence of `int`
-                The positions of the subsampled dimensions in the tie
-                points array.
+                    compressed_axes: sequence of `int`
+                        The positions of the subsampled dimensions in the tie
+                        points array.
 
-                *Parameter example:*
-                  ``compressed_axes=[1]``
+                        *Parameter example:*
+                          ``compressed_axes=[1]``
 
-                *Parameter example:*
-                  ``compressed_axes=(1, 2)``
+                        *Parameter example:*
+                          ``compressed_axes=(1, 2)``
 
-            interpolation_name: `str`, optional
-                The interpolation method used to uncompress the
-                coordinates values.
+                    interpolation_name: `str`, optional
+                        The interpolation method used to uncompress the
+                        coordinates values.
 
-                *Parameter example:*
-                  ``interpolation_name='linear'``
+                        *Parameter example:*
+                          ``interpolation_name='linear'``
 
-            interpolation_description: `str`, optional
-                A non-standardized description of the interpolation
-                method used to uncompress the coordinates values.
+                    interpolation_description: `str`, optional
+                        A non-standardized description of the interpolation
+                        method used to uncompress the coordinates values.
 
-            tie_point_indices: `dict`
-                The tie point index variable for each subsampled
-                dimension. A key indentifies a subsampled dimension by
-                its integer position in the compressed array, and its
-                value is a `TiePointIndex` variable.
+                    tie_point_indices: `dict`
+                        The tie point index variable for each subsampled
+                        dimension. A key indentifies a subsampled dimension by
+                        its integer position in the compressed array, and its
+                        value is a `TiePointIndex` variable.
 
-                *Parameter example:*
-                  ``tie_point_indices={1: cfdm.TiePointIndex(data=[0, 16])}``
+                        *Parameter example:*
+                          ``tie_point_indices={1: cfdm.TiePointIndex(data=[0, 16])}``
 
-            interpolation_parameters: `dict`
-                TODO
+                    interpolation_parameters: `dict`
+                        TODO
 
-            parameter_dimensions: `dict`
-                TODO
+                    parameter_dimensions: `dict`
+                        TODO
 
-            computational_precision: `str`, optional
-                The floating-point arithmetic precision used during
-                the preparation and validation of the compressed
-                coordinates.
+                    computational_precision: `str`, optional
+                        The floating-point arithmetic precision used during
+                        the preparation and validation of the compressed
+                        coordinates.
 
-                *Parameter example:*
-                  ``computational_precision='64'``
+                        *Parameter example:*
+                          ``computational_precision='64'``
 
         """
         super().__init__(
@@ -118,11 +113,10 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
             one_to_one=True,
         )
 
-#        if dtype is not None:
-#            self.dtype = dtype
-
     def __getitem__(self, indices):
-        """x.__getitem__(indices) <==> x[indices]
+        """Return a subspace of the uncompressed data.
+
+        x.__getitem__(indices) <==> x[indices]
 
         Returns a subspace of the array as an independent numpy array.
 

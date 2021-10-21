@@ -66,7 +66,7 @@ class SubsampledBilinearArrayTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
     def test_SubsampledBilinearArray__getitem__(self):
-        """TODO"""
+        """TODO."""
         a = np.arange(18 * 12).reshape(18, 12)
         d = cfdm.Data(self.c)[...]
         self.assertEqual(d.shape, a.shape)
@@ -81,13 +81,7 @@ class SubsampledBilinearArrayTest(unittest.TestCase):
         d = cfdm.Data(self.b)[...]
         self.assertEqual(d.shape, a.shape)
         self.assertTrue(np.allclose(d, a))
-        
-    def test_SubsampledBilinearArray_dtype(self):
-        """TODO"""
-        d = self.c
-        self.assertEqual(d.dtype, d._default_dtype)
-        d.dtype = np.dtype('float32')
-        self.assertEqual(d.dtype, np.dtype('float32'))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

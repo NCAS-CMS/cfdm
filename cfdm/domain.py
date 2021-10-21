@@ -973,25 +973,25 @@ class Domain(
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        
-#        d.uncompress_quadratic_latitude_longitude(inplace=True)
-        
+
+        #        d.uncompress_quadratic_latitude_longitude(inplace=True)
+
         for c in d.constructs.filter_by_data(todict=True).values():
             c.uncompress(inplace=True)
-            
+
         return d
 
-#    @_inplace_enabled(default=False)
-#    def uncompress_quadratic_latitude_longitude(self, inplace=False):
-#        """TODO."""
-#        d = _inplace_enabled_define_and_cleanup(self)
-##        return
-#
-#        lat = self.construct('').data.get_tie_points()
-#        lon = self.construct('').data.get_tie_points()
-#        va = fll2v(lla); vb = fll2v(llb);
-##        (x, y, z) = fll2v(ll) = (cos(lat)*cos(lon), cos(ll.lat)*sin(ll.lon), #sin(ll.lat))
-##        xyz = (cos(lat)*cos(lon), cos(ll.lat)*sin(ll.lon), sin(ll.lat))
+    #    @_inplace_enabled(default=False)
+    #    def uncompress_quadratic_latitude_longitude(self, inplace=False):
+    #        """TODO."""
+    #        d = _inplace_enabled_define_and_cleanup(self)
+    #        return
+    #
+    #        lat = self.construct('').data.get_tie_points()
+    #        lon = self.construct('').data.get_tie_points()
+    #        va = fll2v(lla); vb = fll2v(llb);
+    #        (x, y, z) = fll2v(ll) = (cos(lat)*cos(lon), cos(ll.lat)*sin(ll.lon), sin(ll.lat))
+    #        xyz = (cos(lat)*cos(lon), cos(ll.lat)*sin(ll.lon), sin(ll.lat))
 
     def get_latitude_coordinates(self):
         """TODO."""

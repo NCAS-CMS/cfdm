@@ -2073,7 +2073,7 @@ class CFDMImplementation(Implementation):
                 compressed array.
 
                  .. versionadded:: (cfdm) 1.9.TODO.0
- 
+
             list_variable: optional
 
             compressed_dimension: deprecated at version 1.9.TODO.0
@@ -2264,7 +2264,7 @@ class CFDMImplementation(Implementation):
         parameter_dimensions={},
         **kwargs,
     ):
-        """Return a subsampled array with non-standardised interpolation.
+        """A subsampled array with non-standardised interpolation.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 

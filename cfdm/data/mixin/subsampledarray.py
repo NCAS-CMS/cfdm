@@ -3,7 +3,6 @@ from itertools import product
 
 import numpy as np
 
-
 _float64 = np.dtype(float)
 
 
@@ -15,7 +14,9 @@ class SubsampledArray:
     """
 
     def __getitem__(self, indices):
-        """x.__getitem__(indices) <==> x[indices]
+        """Return a subspace of the uncompressed data.
+
+        x.__getitem__(indices) <==> x[indices]
 
         Returns a subspace of the uncompressed array as an independent
         numpy array.
@@ -265,7 +266,7 @@ class SubsampledArray:
 
     @lru_cache(maxsize=32)
     def _s(self, subsampled_dimension, subarea_shape, first):
-        """Get the interpolation coefficients for an interpolation subarea.
+        """The interpolation coefficients for an interpolation subarea.
 
         Returns the interpolation coefficients ``s`` and ``1-s`` for
         the specified subsampled dimension of an interpolation subarea
@@ -327,7 +328,7 @@ class SubsampledArray:
             # 8.3.9. "Interpolation of Cell Boundaries".
             size = size + 1
 
-        s = np.linspace(0, 1, size, dtype=_float64) #self.dtype)
+        s = np.linspace(0, 1, size, dtype=_float64)  # self.dtype)
 
         one_minus_s = s[::-1]
 
@@ -343,7 +344,7 @@ class SubsampledArray:
         return (s, one_minus_s)
 
     def _select_tie_points(self, tie_points, tp_indices, location={}):
-        """Select tie points from a given interpolation subarea location.
+        """Select tie points from an interpolation subarea.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -446,7 +447,7 @@ class SubsampledArray:
                 f"Can't (yet) create uncompressed bounds from "
                 f"{n_subsampled_dimensions} subsampled dimensions"
             )
-        
+
     def _trim(self, u, subsampled_dimensions, first):
         """Trim uncompressed data defined on an interpolation subarea.
 
@@ -501,7 +502,7 @@ class SubsampledArray:
             u = u[tuple(indices)]
 
         return u
-    
+
     @property
     def bounds(self):
         """True if the compressed array represent bounds tie points.
@@ -539,11 +540,11 @@ class SubsampledArray:
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        return _float64 #self._get_component("dtype", _float64)
+        return _float64  # self._get_component("dtype", _float64)
 
-#    @dtype.setter
-#    def dtype(self, value):
-#        return self._set_component("dtype", value)
+    #    @dtype.setter
+    #    def dtype(self, value):
+    #        return self._set_component("dtype", value)
 
     @property
     def interpolation_description(self):
@@ -555,6 +556,7 @@ class SubsampledArray:
         """The interpolation method.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
+
         """
         return self._get_component("interpolation_name")
 
@@ -604,8 +606,7 @@ class SubsampledArray:
             parameter_dimensions[term] = dims
 
     def get_interpolation_parameters(self):
-        """Return the interpolation parameter variables for sampled
-        dimensions.
+        """Return the interpolation parameter variables.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -704,15 +705,15 @@ class SubsampledArray:
         >>> i = d.get_compressed_dimension()
 
         """
-        out  = tuple(self.get_tie_point_indices())
+        out = tuple(self.get_tie_point_indices())
         if not out:
             if default is None:
                 return
-            
+
             return self._default(default)
 
         return out
-    
+
     def to_memory(self):
         """Bring an array on disk into memory.
 
@@ -740,4 +741,3 @@ class SubsampledArray:
             v.data.to_memory()
 
         return self
-

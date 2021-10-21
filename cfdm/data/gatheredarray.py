@@ -49,12 +49,12 @@ class GatheredArray(abstract.CompressedArray):
             compressed_dimensions: sequence of `int`
                 The position of the compressed dimension in the
                 compressed array.
-        
+
                 *Parameter example:*
                   ``compressed_dimensions=[1]``
 
                 .. versionadded:: (cfdm) 1.9.TODO.0
- 
+
             list_variable: `List`
                 The "list variable" required to uncompress the data,
                 identical to the data of a CF-netCDF list variable.
@@ -104,10 +104,12 @@ class GatheredArray(abstract.CompressedArray):
         uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
 
         # Initialise the uncomprssed array
-#        compressed_dimension = self.get_compressed_dimension()
-#        compressed_axes = self.get_compressed_axes()
-        (compressed_dimension,
-         compressed_axes) = self.compressed_dimensions().popitem()
+        #        compressed_dimension = self.get_compressed_dimension()
+        #        compressed_axes = self.get_compressed_axes()
+        (
+            compressed_dimension,
+            compressed_axes,
+        ) = self.compressed_dimensions().popitem()
 
         n_compressed_axes = len(compressed_axes)
 
