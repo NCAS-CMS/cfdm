@@ -506,29 +506,7 @@ class NetCDFWrite(IOWrite):
         ncdims = [g["axis_to_ncdim"][axis] for axis in domain_axes]
 
         compression_type = self.implementation.get_compression_type(construct)
-
-        if compression_type == "subsampled":
-            compressed_axes = tuple(
-                self.implementation.get_compressed_axes(field, key, construct)
-            )
-            compressed_ncdims = tuple(
-                [g["axis_to_ncdim"][axis] for axis in compressed_axes]
-            )
-#ppp
-            for position, ncdim in enumerate(compressed_ncdims):
-                tpi = self.implementation.get_tie_point_index(construct)
-                ncvar, subsampled_ncdim = self._write_tie_point_index(
-                    field, tpi, axis=axis
-                )
-                
-                g["subsampled_ncdims"].add(subsampled_ncdim)
-                g["key_to_tie_point_index_ncvar"].setdefault(key, {})[
-                    position
-                ] = ncvar
-                
-                ncdims[position] = subsampled_ncdim
-
-        elif compression_type:
+        if compression_type:
             sample_dimension_position = (
                 self.implementation.get_sample_dimension_position(construct)
             )
@@ -946,50 +924,6 @@ class NetCDFWrite(IOWrite):
 
         return ncvar
 
-    def _write_tie_point_index(self, f, tie_point_index):
-        """Write a tie point index variable to the netCDF file.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        :Parameters:
-        
-             tie_point_index: `TiePointIndex` 
-
-        :Returns:
-        
-            `str`, `str`
-                The netCDF variable name and the name of its netCDF
-                dimension.
-
-        """
-        g = self.write_vars
-
-        create = not self._already_in_file(tie_point_index)
-
-        if create:
-            ncvar = self._create_netcdf_variable_name(
-                tie_point_index, default="tie_point_index"
-            )
-
-            # Create a new dimension
-            ncdim = self.implementation.nc_get_subsampled_dimension(
-                tie_point_index, "tp_index"
-            )
-            ncdim = self._netcdf_name(ncdim)
-            size = self.implementation.get_data_size(tie_point_index)
-            self._write_dimension(ncdim, f, size=size)
-
-            # Create the new tie point index netCDF variable
-            self._write_netcdf_variable(ncvar, (ncdim,), tie_point_index)
-            
-            g["ncvar_to_ncdims"][ncvar] = (ncdim,)
-            g["tie_point_index_ncvar_to_ncdim"][ncvar] = ncdim
-        else:
-            ncvar = g["seen"][id(tie_point_index)]["ncvar"]
-            ncdim = g["tie_point_index_ncvar_to_ncdim"][ncvar]
-            
-        return ncvar, ncdim
-
     def _write_scalar_data(self, value, ncvar):
         """Write a dimension coordinate and bounds to the netCDF file.
 
@@ -1026,172 +960,28 @@ class NetCDFWrite(IOWrite):
 
         return ncvar
 
-    def _write_interpolation_container(self, f, interpolation_container):
-        """Write a netCDF interpolation container variable.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        :Returns:
-
-            `str`
-                The netCDF variable name for the interpolation
-                container.
-
-        """
-        g = self.write_vars
-
-        for ncvar, ic in g["interpolation_containers"].items():
-            if interpolation_container == ic:
-                # Use this existing interpolation container
-                return ncvar
-
-        # Still here? Then write the geometry container to the file
-        ncvar = self.implementation.nc_get_interpolation_variable(
-            f, default="interpolation"
-        )
-        ncvar = self._netcdf_name(ncvar)
-
-        logger.info(
-            f"    Writing interpolation container variable: {ncvar}\n"
-            f"        {interpolation_container}"
-        )  # pragma: no cover
-
-        kwargs = {
-            "varname": ncvar,
-            "datatype": "S1",
-            "dimensions": (),
-            "endian": g["endian"],
-        }
-        kwargs.update(g["netcdf_compression"])
-
-        if not g["dry_run"]:
-            self._createVariable(**kwargs)
-            g["nc"][ncvar].setncatts(interpolation_container)
-
-        # Update the 'interpolation_containers' dictionary
-        g["interpolation_containers"][ncvar] = interpolation_container
-
-        return ncvar
-
-    def _create_interpolation_containers(self, f):
-        """TODO
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        :Parameters:
-
-            f: `Field` or `Domain` construct
-
-        """
-        g = self.write_vars
-
-        ci = {}
-        for key, coord in self.implementation.get_coordinates(f).items():
-            if self.implementation.get_compression_type(coord) != "subsampled":
-                # These coordinates are not subsampled
-                continue
-
-            interpolation = {}
-
-            # Create the "interpolation_name" attribute
-            name = self.implementation.get_interpolation_name(coord)
-            if name is not None:
-                interpolation["interpolation_name"] = name
-
-            # Create the "computational_precision" attribute
-            cp = self.implementation.get_computational_precision(coord)
-            if cp is not None:
-                interpolation["computational_precision"] = cp
-
-            # Create the "interpolation_description" attribute
-            desc = self.implementation.get_interpolation_description(coord)
-            if description is not None:
-                interpolation["interpolation_description"] = desc
-
-            # Create the "tie_point_mapping" attribute
-            tie_point_mapping = []
-            for (
-                position,
-                tp_index,
-            ) in self.implementation.get_tie_point_indices(coord).items():
-                ncdim = g["key_to_ncdims"][key][position]
-                tp_index_ncvar = g["key_to_tie_point_index_ncvar"][key][
-                    position
-                ]
-                subsampled_ncdim = g["tie_point_index_ncvar_to_ncdim"][
-                    tp_index_ncvar
-                ] #ppp
-                subarea_ncdim = g["tie_point_index_ncvar_to_subarea_ncdim"].get(tp_index_ncvar)
-
-                mapping = f"{ncdim}: {tp_index_ncvar} {subsampled_ncdim}"
-                if subarea_ncdim is not None:
-                    mapping += f" {subarea_ncdim}"
-
-                tie_point_mapping.append(mapping)
-
-            interpolation["tie_point_mapping"] = " ".join(
-                sorted(tie_point_mapping)
-            )
-
-            # Create the "interpolation_parameters" attribute
-            parameter_dimensions = (
-                self.implementation.get_parameter_dimensions(coord)
-            )
-            interpolation_parameters = []
-            for term, param in (
-                self.implementation.get_interpolation_parameters(coord)
-            ).items():
-                # Write the netCDF interpolation parameter variable
-                param_ncvar = self._write_interpolation_parameter(
-                    f,
-                    param,
-                    coord=coord,
-                    parameter_dimensions=parameter_dimensions[term],
-                )
-                interpolation_parameters.append("{term}: param_ncvar")
-
-            interpolation["interpolation_parameters"] = " ".join(
-                sorted(interpolation_parameters)
-            )
-
-            # Write the netCDF interpolation variable
-            interp_ncvar = self._write_interpolation_container(
-                f, interpolation
-            )
-
-            # Record which coordinates use this interpolation variable
-            ci.setdefault(interp_ncvar, []).append(g["key_to_ncvar"][key])
-
-        coordinate_interpolation = []
-        for interp_ncvar, coord_ncvars in sorted(ci.items()):
-            coordinate_interpolation.extend(
-                (": ".join(sorted(coord_ncvars)), interp_ncvar)
-            )
-
-        return " ".join(coordinate_interpolation)
-
-    def _create_geometry_container(self, f):
+    def _create_geometry_container(self, field):
         """Create a geometry container variable in the netCDF file.
 
         .. versionadded:: (cfdm) 1.8.0
 
         :Parameters:
 
-            f: `Field` or `Domain` construct
+            field: Field construct
 
         :Returns:
 
             `dict`
                 A representation off the CF-netCDF geometry container
-                variable for field/domain construct. If there is no
-                geometry container then the dictionary is empty.
+                variable for field construct. If there is no geometry
+                container then the dictionary is empty.
 
         """
         g = self.write_vars
 
         gc = {}
         for key, coord in self.implementation.get_auxiliary_coordinates(
-            f
+            field
         ).items():
             geometry_type = self.implementation.get_geometry(coord, None)
             if geometry_type not in self.cf_geometry_types():
@@ -1233,9 +1023,9 @@ class NetCDFWrite(IOWrite):
             # Grid mapping
             grid_mappings = [
                 g["seen"][id(cr)]["ncvar"]
-                # TODO replace f.coordinate_references with
+                # TODO replace field.coordinate_references with
                 # self.implemenetation call
-                for cr in f.coordinate_references().values()
+                for cr in field.coordinate_references().values()
                 if (
                     cr.coordinate_conversion.get_parameter(
                         "grid_mapping_name", None
@@ -1276,7 +1066,7 @@ class NetCDFWrite(IOWrite):
                 gc[geometry_id].setdefault("interior_ring", []).append(ncvar)
 
         if not gc:
-            # This field/domain has no geometries
+            # This field has no geometries
             return {}
 
         for x in gc.values():
@@ -1294,7 +1084,7 @@ class NetCDFWrite(IOWrite):
                 x["grid_mapping"] = grid_mappings.pop()
             elif len(grid_mappings) > 1:
                 raise ValueError(
-                    f"Can't write {f!r}: Geometry container has multiple "
+                    f"Can't write {field!r}: Geometry container has multiple "
                     f"grid mapping variables: {x['grid_mapping']!r}"
                 )
 
@@ -1304,7 +1094,7 @@ class NetCDFWrite(IOWrite):
                 x["node_count"] = nc.pop()
             elif len(nc) > 1:
                 raise ValueError(
-                    f"Can't write {f!r}: Geometry container has multiple "
+                    f"Can't write {field!r}: Geometry container has multiple "
                     f"node count variables: {x['node_count']!r}"
                 )
 
@@ -1314,7 +1104,7 @@ class NetCDFWrite(IOWrite):
                 x["part_node_count"] = pnc.pop()
             elif len(pnc) > 1:
                 raise ValueError(
-                    f"Can't write {f!r}: Geometry container has multiple "
+                    f"Can't write {field!r}: Geometry container has multiple "
                     f"part node count variables: {x['part_node_count']!r}"
                 )
 
@@ -1324,13 +1114,13 @@ class NetCDFWrite(IOWrite):
                 x["interior_ring"] = ir.pop()
             elif len(ir) > 1:
                 raise ValueError(
-                    f"Can't write {f!r}: Geometry container has multiple "
+                    f"Can't write {field!r}: Geometry container has multiple "
                     f"interior ring variables: {x['interior_ring']!r}"
                 )
 
         if len(gc) > 1:
             raise ValueError(
-                f"Can't write {f!r}: Multiple geometry containers: "
+                f"Can't write {field!r}: Multiple geometry containers: "
                 f"{list(gc.values())!r}"
             )
 
@@ -1437,6 +1227,7 @@ class NetCDFWrite(IOWrite):
 
         if not g["dry_run"]:
             self._createVariable(**kwargs)
+
             g["nc"][ncvar].setncatts(geometry_container)
 
         # Update the 'geometry_containers' dictionary
@@ -2996,12 +2787,7 @@ class NetCDFWrite(IOWrite):
             compressed = bool(
                 set(ncdimensions).intersection(g["sample_ncdim"].values())
             )
-            if not compressed:
-                # Check for subsampled corodinates
-                compressed =  bool(
-                    set(ncdimensions).intersection(g["subsampled_ncdims"])
-                )
-                
+
             self._write_data(
                 data,
                 cfvar,
@@ -3360,17 +3146,7 @@ class NetCDFWrite(IOWrite):
         # For example: {'dimensioncoordinate1': ['longitude']}
         g["key_to_ncdims"] = {}
 
-        # Mapping of TODO
-        #
-        # For example: {'track_indices': 'subarea_track'}
-        g["tie_point_index_ncvar_to_subarea_ncdim"] = {} # ppp
-
-        # Mapping of TODO
-        #
-        # For example: {'auxiliarycoordinate1': {0: 'track_indices'}}
-        g["key_to_tie_point_index_ncvar"] = {}
-
-         # Type of compression applied to the field/domain
+        # Type of compression applied to the field/domain
         compression_type = self.implementation.get_compression_type(f)
         g["compression_type"] = compression_type
         logger.info(
@@ -4948,11 +4724,7 @@ class NetCDFWrite(IOWrite):
             # and 'a' for dry_run and post_dry_run respectively) so that the
             # mode does not need to be passed to various methods, where a
             # pair of such keys seem clearer than one "effective mode" key.
-
-            # TODO
-            "ncvar_to_ncdims": {},
         }
-
 
         if mode not in ("w", "a", "r+"):
             raise ValueError(
