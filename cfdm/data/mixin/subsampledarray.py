@@ -14,8 +14,6 @@ class SubsampledArray:
 
     """
 
-    _default_dtype = _float64
-
     def __getitem__(self, indices):
         """x.__getitem__(indices) <==> x[indices]
 
@@ -202,7 +200,7 @@ class SubsampledArray:
         # excluded.
         interpolation_subarea_indices = [(slice(None),)] * ndim
 
-        for d in self.get_compressed_axes():
+        for d in self.compressed_dimensions():
             tp_index = []
             u_index = []
             continuous_area = []
@@ -329,7 +327,7 @@ class SubsampledArray:
             # 8.3.9. "Interpolation of Cell Boundaries".
             size = size + 1
 
-        s = np.linspace(0, 1, size, dtype=self.dtype)
+        s = np.linspace(0, 1, size, dtype=_float64) #self.dtype)
 
         one_minus_s = s[::-1]
 
@@ -393,6 +391,8 @@ class SubsampledArray:
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
+        .. seealso:: `_trim`
+
         :Parameters:
 
             uarray: `numpy.ndarray`
@@ -446,7 +446,62 @@ class SubsampledArray:
                 f"Can't (yet) create uncompressed bounds from "
                 f"{n_subsampled_dimensions} subsampled dimensions"
             )
+        
+    def _trim(self, u, subsampled_dimensions, first):
+        """Trim uncompressed data defined on an interpolation subarea.
 
+        For each subsampled dimension, removes the first point of the
+        interpolation subarea when it is not the first (in index
+        space) of a continuous area. This is beacuse this value in the
+        uncompressed data has already been calculated from the
+        previous (in index space) interpolation subarea.
+
+        Only does this when interpolating tie point coordinates. If
+        interpolating bounds tie points then the first point is always
+        kept so that it may be used during the broadcast to the bounds
+        locations.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `_set_interpolated_values`
+
+        :Parameters:
+
+            u: array_like
+               The uncompressed data for the interpolation subarea
+               that includes all tie point locations.
+
+            subsampled_dimensions: sequence of `int`
+                The positions of the subsampled dimensions in the
+                compressed data.
+
+            first: `tuple`
+                For each dimension, True if the interpolation subarea
+                is the first (in index space) of a new continuous
+                area, otherwise False.
+
+        :Returns:
+
+            `numpy.ndarray`
+
+        """
+        if self.bounds:
+            return u
+
+        take_slice = False
+        indices = [slice(None)] * u.ndim
+        for d in subsampled_dimensions:
+            if first[d]:
+                continue
+
+            take_slice = True
+            indices[d] = slice(1, None)
+
+        if take_slice:
+            u = u[tuple(indices)]
+
+        return u
+    
     @property
     def bounds(self):
         """True if the compressed array represent bounds tie points.
@@ -484,11 +539,11 @@ class SubsampledArray:
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        return self._get_component("dtype")
+        return _float64 #self._get_component("dtype", _float64)
 
-    @dtype.setter
-    def dtype(self, value):
-        return self._set_component("dtype", value)
+#    @dtype.setter
+#    def dtype(self, value):
+#        return self._set_component("dtype", value)
 
     @property
     def interpolation_description(self):
@@ -618,11 +673,46 @@ class SubsampledArray:
         >>> c.get_compressed_dimension()
         (1, 3)
         >>> c.compressed_axes()
-        [1, 3)
+        [1, 3]
 
         """
-        return list(self.get_compressed_dimension())
+        return list(self.get_tie_point_indices())
 
+    def get_compressed_dimension(self, default=ValueError()):
+        """Returns the compressed dimension's position in the array.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `get_compressed_axes`, `get_compression_type`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                underlying array is not compressed. If set to an
+                `Exception` instance then it will be raised instead.
+
+        :Returns:
+
+            `int`
+                The position of the compressed dimension in the compressed
+                array. If the underlying is not compressed then *default*
+                is returned, if provided.
+
+        **Examples:**
+
+        >>> i = d.get_compressed_dimension()
+
+        """
+        out  = tuple(self.get_tie_point_indices())
+        if not out:
+            if default is None:
+                return
+            
+            return self._default(default)
+
+        return out
+    
     def to_memory(self):
         """Bring an array on disk into memory.
 
@@ -651,56 +741,3 @@ class SubsampledArray:
 
         return self
 
-    def _trim(self, u, subsampled_dimensions, first):
-        """Trim uncompressed data on an interpolation subarea.
-
-        Removes the first point of the interpolation subarea when it is
-        not the first (in index space) of a continuous area. This is
-        beacuse this value in the uncompressed data has already been
-        calculated from the previous (in index space) interpolation
-        subarea.
-
-        Only does this when interpolating tie point coordinates. If
-        interpolating bounds tie points then teh first point is always
-        kept so that it may be used during th ebroadcast to the bounds
-        locations.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        :Parameters:
-
-            u: array_like
-               The uncompressed data for the interpolation subarea
-               that includes all tie point locations.
-
-            subsampled_dimensions: sequence of `int`
-                The positions of the subsampled dimensions in the
-                compressed data.
-
-            first: `tuple`
-                For each dimension, True if the interpolation subarea
-                is the first (in index space) of a new continuous
-                area, otherwise False.
-
-        :Returns:
-
-            `numpy.ndarray`
-
-        """
-        if self.bounds:
-            return u
-
-        take_slice = False
-        indices = [slice(None)] * u.ndim
-        for d in subsampled_dimensions:
-            if first[d]:
-                continue
-
-            take_slice = True
-            indices[d] = slice(1, None)
-
-        if take_slice:
-            u = u[tuple(indices)]
-
-        return u
-    

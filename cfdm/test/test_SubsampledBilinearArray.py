@@ -31,7 +31,6 @@ class SubsampledBilinearArrayTest(unittest.TestCase):
         shape=(18, 12),
         ndim=2,
         size=18 * 12,
-        compressed_axes=[0, 1],
         tie_point_indices=tie_point_indices,
         computational_precision="64",
     )
@@ -51,7 +50,6 @@ class SubsampledBilinearArrayTest(unittest.TestCase):
         shape=(18, 12, 4),
         ndim=3,
         size=18 * 12 * 4,
-        compressed_axes=[0, 1],
         tie_point_indices=tie_point_indices,
         computational_precision="64",
     )

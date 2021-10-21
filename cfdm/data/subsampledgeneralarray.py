@@ -27,9 +27,9 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
         shape=None,
         size=None,
         ndim=None,
-        dtype=None,
+#        dtype=None,
         compressed_axes=None,
-        tie_point_indices=None,
+        tie_point_indices={},
         interpolation_parameters={},
         parameter_dimensions={},
         interpolation_name=None,
@@ -52,10 +52,10 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
             ndim: `int`
                 The number of uncompressed array dimensions.
 
-            dtype: data-type, optional
-               The data-type for the uncompressed array. This datatype
-               type is also used in all interpolation calculations. By
-               default, the data-type is double precision float.
+#            dtype: data-type, optional
+#               The data-type for the uncompressed array. This datatype
+#               type is also used in all interpolation calculations. By
+#               default, the data-type is double precision float.
 
             compressed_axes: sequence of `int`
                 The positions of the subsampled dimensions in the tie
@@ -80,9 +80,12 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
 
             tie_point_indices: `dict`
                 The tie point index variable for each subsampled
-                dimension. An integer key indentifies a subsampled
-                dimensions by its position in the tie points array,
-                and the value is a `TiePointIndex` variable.
+                dimension. A key indentifies a subsampled dimension by
+                its integer position in the compressed array, and its
+                value is a `TiePointIndex` variable.
+
+                *Parameter example:*
+                  ``tie_point_indices={1: cfdm.TiePointIndex(data=[0, 16])}``
 
             interpolation_parameters: `dict`
                 TODO
@@ -104,7 +107,6 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
             shape=shape,
             size=size,
             ndim=ndim,
-            compressed_dimension=tuple(sorted(compressed_axes)),
             compression_type="subsampled",
             tie_point_indices=tie_point_indices.copy(),
             interpolation_parameters=interpolation_parameters.copy(),
@@ -112,12 +114,12 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
             interpolation_name=interpolation_name,
             interpolation_description=interpolation_description,
             computational_precision=computational_precision,
+            compressed_dimensions=tuple(tie_point_indices),
+            one_to_one=True,
         )
 
-        if dtype is None:
-            dtype = self._default_dtype
-
-        self.dtype = dtype
+#        if dtype is not None:
+#            self.dtype = dtype
 
     def __getitem__(self, indices):
         """x.__getitem__(indices) <==> x[indices]

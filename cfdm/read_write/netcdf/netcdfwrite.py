@@ -513,6 +513,7 @@ class NetCDFWrite(IOWrite):
             compressed_axes = tuple(
                 self.implementation.get_compressed_axes(field, key, construct)
             )
+
             compressed_ncdims = tuple(
                 [g["axis_to_ncdim"][axis] for axis in compressed_axes]
             )

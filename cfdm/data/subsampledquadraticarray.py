@@ -75,10 +75,8 @@ class SubsampledQuadraticArray(
         shape=None,
         size=None,
         ndim=None,
-        dtype=None,
-        compressed_axes=None,
+#        dtype=None,
         tie_point_indices={},
-        interpolation_description=None,
         computational_precision=None,
         interpolation_parameters={},
         parameter_dimensions={},
@@ -99,10 +97,10 @@ class SubsampledQuadraticArray(
             ndim: `int`
                 The number of uncompressed array dimensions.
 
-            dtype: data-type, optional
-               The data-type for the uncompressed array. This datatype
-               type is also used in all interpolation calculations. By
-               default, the data-type is double precision float.
+#            dtype: data-type, optional
+#               The data-type for the uncompressed array. This datatype
+#               type is also used in all interpolation calculations. By
+#               default, the data-type is double precision float.
 
             compressed_axes: sequence of `int`
                 The position of the compressed axis in the tie points
@@ -116,9 +114,9 @@ class SubsampledQuadraticArray(
 
             tie_point_indices: `dict`
                 The tie point index variable for each subsampled
-                dimension. An integer key indentifies a subsampled
-                dimensions by its position in the tie points array,
-                and the value is a `TiePointIndex` variable.
+                dimension. A key indentifies a subsampled dimension by
+                its integer position in the compressed array, and its
+                value is a `TiePointIndex` variable.
 
                 *Parameter example:*
                   ``tie_point_indices={1: cfdm.TiePointIndex(data=[0, 16])}``
@@ -137,21 +135,21 @@ class SubsampledQuadraticArray(
             shape=shape,
             size=size,
             ndim=ndim,
-            dtype=dtype,
-            compressed_dimension=tuple(compressed_axes),
+#            dtype=dtype,
             compression_type="subsampled",
             interpolation_name="quadratic",
             computational_precision=computational_precision,
             tie_point_indices=tie_point_indices.copy(),
-            interpolation_description=interpolation_description,
             interpolation_parameters=interpolation_parameters.copy(),
             parameter_dimensions=parameter_dimensions.copy(),
+            compressed_dimensions=tuple(tie_point_indices),
+            one_to_one=True,
         )
 
-        if dtype is None:
-            dtype = self._default_dtype
-
-        self.dtype = dtype
+#        if dtype is None:
+#            dtype = self._default_dtype
+#
+#        self.dtype = dtype
 
     def __getitem__(self, indices):
         """x.__getitem__(indices) <==> x[indices]
@@ -171,7 +169,7 @@ class SubsampledQuadraticArray(
         # ------------------------------------------------------------
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
-        (d0,) = self.get_compressed_axes()
+        (d0,) = tuple(self.compressed_dimensions())
 
         tie_points = self._get_compressed_Array()
 
@@ -179,7 +177,7 @@ class SubsampledQuadraticArray(
         w = self.get_interpolation_parameters().get("w")
 
         # Initialise the un-sliced uncompressed array
-        uarray = np.ma.masked_all(self.shape, dtype=self.dtype)
+        uarray = np.ma.masked_all(self.shape, dtype=np.dtype(float))
 
         # Interpolate the tie points for each interpolation subarea
         for u_indices, tp_indices, subarea_size, first, subarea_index in zip(

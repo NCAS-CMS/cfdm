@@ -19,7 +19,6 @@ class SubsampledLinearArrayTest(unittest.TestCase):
         shape=(12,),
         ndim=1,
         size=12,
-        compressed_axes=[0],
         tie_point_indices=tie_point_indices,
         computational_precision="64",
     )
@@ -30,7 +29,6 @@ class SubsampledLinearArrayTest(unittest.TestCase):
         shape=(12, 2),
         ndim=2,
         size=24,
-        compressed_axes=[0],
         tie_point_indices=tie_point_indices,
         computational_precision="64",
     )
