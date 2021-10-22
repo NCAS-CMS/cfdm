@@ -981,18 +981,48 @@ class Domain(
 
         return d
 
-    #    @_inplace_enabled(default=False)
-    #    def uncompress_quadratic_latitude_longitude(self, inplace=False):
-    #        """TODO."""
-    #        d = _inplace_enabled_define_and_cleanup(self)
-    #        return
-    #
-    #        lat = self.construct('').data.get_tie_points()
-    #        lon = self.construct('').data.get_tie_points()
-    #        va = fll2v(lla); vb = fll2v(llb);
-    #        (x, y, z) = fll2v(ll) = (cos(lat)*cos(lon), cos(ll.lat)*sin(ll.lon), sin(ll.lat))
-    #        xyz = (cos(lat)*cos(lon), cos(ll.lat)*sin(ll.lon), sin(ll.lat))
-
-    def get_latitude_coordinates(self):
+    @_inplace_enabled(default=False)
+    def uncompress_quadratic_latitude_longitudeTODO(self, inplace=False):
         """TODO."""
-        pass
+        lat = None
+        lon = None
+        for key, coord in self.coordinates(todict=True).items():
+            if coord.latitude:
+                if lat is not None:
+                    raise ValueError()
+
+                lat = coord
+                lat_axes = self.get_data_axes(key)
+            elif coord.longitude:
+                if lon is not None:
+                    raise ValueError()
+
+                lon = coord
+                lon_axes = self.get_data_axes(key)
+
+            if lon is not None and lat is not None:
+                break
+
+        for c in (lat, lon):
+            if c.data.get_compression_type != "subsampled":
+                raise ValueError()
+
+            if (
+                c.data.source().get_interpolation_name(None)
+                != "quadratic_latitude_longitude"
+            ):
+                raise ValueError()
+
+        # Make sure that lon and lat have the same dimension order
+        if lon_axes != lat_axes:
+            lon = lon.copy()
+            new_axes = [lon_axes.index(axis) for axis in lat_axes]
+            lon.data._set_CompressedArray(
+                lon.data.source().transpose(new_axes)
+            )
+
+        lat = lat.data.source()
+        lon = lon.data.source()
+
+        lat.set_longitude_or_longitude({"longitude": lon})
+        lon.set_longitude_or_longitude({"latitude": lat})

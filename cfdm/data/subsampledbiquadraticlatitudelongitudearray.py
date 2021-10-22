@@ -2,8 +2,12 @@ from .abstract import CompressedArray
 from .mixin import SubsampledArray
 
 
-class SubsampledGeneralArray(SubsampledArray, CompressedArray):
-    """A subsampled array with non-standardised interpolation.
+class SubsampledBiquadraticLatitudeLongitudeArray(
+    SubsampledArray,
+    CompressedArray,
+):
+    """A subsampled array with bi_quadratic_latitude_longitude
+    interpolation.
 
     The information needed to uncompress the data is stored in a tie
     point index variable that defines the relationship between the
@@ -27,7 +31,6 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
         shape=None,
         size=None,
         ndim=None,
-        interpolation_name=None,
         interpolation_description=None,
         computational_precision=None,
         tie_point_indices={},
@@ -51,25 +54,14 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
                 The number of uncompressed array dimensions.
 
             compressed_axes: sequence of `int`
-                The positions of the subsampled dimensions in the tie
-                points array.
+                The position of the compressed axis in the tie points
+                array.
 
                 *Parameter example:*
                   ``compressed_axes=[1]``
 
-                *Parameter example:*
-                  ``compressed_axes=(1, 2)``
-
-            interpolation_name: `str`, optional
-                The interpolation method used to uncompress the
-                coordinates values.
-
-                *Parameter example:*
-                  ``interpolation_name='linear'``
-
-            interpolation_description: `str`, optional
-                A non-standardized description of the interpolation
-                method used to uncompress the coordinates values.
+            tie_point_indices: `dict`, optional
+                TODO
 
             tie_point_indices: `dict`
                 The tie point index variable for each subsampled
@@ -78,13 +70,7 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
                 value is a `TiePointIndex` variable.
 
                 *Parameter example:*
-                  ``tie_point_indices={1: cfdm.TiePointIndex(data=[0, 16])}``
-
-            interpolation_parameters: `dict`
-                TODO
-
-            parameter_dimensions: `dict`
-                TODO
+                  ``tie_point_indices={0: cfdm.TiePointIndex(data=[0, 16]), 2: cfdm.TiePointIndex(data=[0, 20, 20])}``
 
             computational_precision: `str`, optional
                 The floating-point arithmetic precision used during
@@ -101,11 +87,11 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
             size=size,
             ndim=ndim,
             compression_type="subsampled",
+            interpolation_name="bi_quadratic_latitude_longitude",
+            computational_precision=computational_precision,
             tie_point_indices=tie_point_indices.copy(),
             interpolation_parameters=interpolation_parameters.copy(),
             parameter_dimensions=parameter_dimensions.copy(),
-            interpolation_description=interpolation_description,
-            computational_precision=computational_precision,
             compressed_dimensions=tuple(tie_point_indices),
             one_to_one=True,
         )
@@ -121,12 +107,13 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        # If exactly the first or last element is requested then we
-        # don't need to interpolate
+        # If the first or last element is requested then we don't need
+        # to interpolate
         try:
             return self._first_or_last_index(indices)
         except IndexError:
             raise IndexError(
-                "Can't subspace subsampled data with a non-standardised "
-                "interpolation method"
+                "Can't indpendently subspace subsampled data with "
+                f"{self.get_interpolation_name()} interpolation. "
+                "Use the ?? method"
             )

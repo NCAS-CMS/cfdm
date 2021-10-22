@@ -128,9 +128,11 @@ from .data import (
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
     SubsampledBilinearArray,
+    SubsampledBiquadraticLatitudeLongitudeArray,
     SubsampledGeneralArray,
     SubsampledLinearArray,
     SubsampledQuadraticArray,
+    SubsampledQuadraticLatitudeLongitudeArray,
 )
 
 from .count import Count

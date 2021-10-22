@@ -94,9 +94,6 @@ class Container(metaclass=DocstringRewriteMeta):
         """
         return 1
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
     def _default(self, default, message=None):
         """Return a value or raise an Exception for a default case.
 

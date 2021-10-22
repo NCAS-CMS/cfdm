@@ -7,16 +7,21 @@ from .mixin import LinearInterpolation, SubsampledArray
 class SubsampledBilinearArray(
     LinearInterpolation, SubsampledArray, CompressedArray
 ):
-    """TODO.
+    """A subsampled array with bi_linear interpolation.
+
+    The information needed to uncompress the data is stored in a tie
+    point index variable that defines the relationship between the
+    indices of the subsampled dimensions and the indices of the
+    corresponding interpolated dimensions.
 
     **Cell boundaries**
 
-    If the subsampled array contains cell boundaries, then the
+    If the subsampled array represents cell boundaries, then the
     *shape*, *ndim* and *size* parameters that describe the
     uncompressed array will include the required trailing size 2
     dimension.
 
-    .. versionadded:: (cfdm) TODO
+    .. versionadded:: (cfdm) 1.9.TODO.0
 
     """
 
@@ -26,48 +31,42 @@ class SubsampledBilinearArray(
         shape=None,
         size=None,
         ndim=None,
-        #        dtype=None,
-        tie_point_indices={},
         interpolation_description=None,
         computational_precision=None,
+        tie_point_indices={},
     ):
         """**Initialisation**
 
-                :Parameters:
+        :Parameters:
 
-                    compressed_array: `Data`
-                        The tie points array.
+            compressed_array: `Data`
+                The tie points array.
 
-                    shape: `tuple`
-                        The uncompressed array dimension sizes.
+            shape: `tuple`
+                The uncompressed array dimension sizes.
 
-                    size: `int`
-                        Number of elements in the uncompressed array.
+            size: `int`
+                Number of elements in the uncompressed array.
 
-                    ndim: `int`
-                        The number of uncompressed array dimensions.
+            ndim: `int`
+                The number of uncompressed array dimensions.
 
-        #            dtype: data-type, optional
-        #               The data-type for the uncompressed array. This datatype
-        #               type is also used in all interpolation calculations. By
-        #               default, the data-type is double precision float.
+            tie_point_indices: `dict`
+                The tie point index variable for each subsampled
+                dimension. A key indentifies a subsampled dimension by
+                its integer position in the compressed array, and its
+                value is a `TiePointIndex` variable.
 
-                    tie_point_indices: `dict`
-                        The tie point index variable for each subsampled
-                        dimension. A key indentifies a subsampled dimension by
-                        its integer position in the compressed array, and its
-                        value is a `TiePointIndex` variable.
+                *Parameter example:*
+                  ``tie_point_indices={0: cfdm.TiePointIndex(data=[0, 16]), 2: cfdm.TiePointIndex(data=[0, 20, 20])}``
 
-                        *Parameter example:*
-                          ``tie_point_indices={0: cfdm.TiePointIndex(data=[0, 16]), 2: cfdm.TiePointIndex(data=[0, 20, 20])}``
+            computational_precision: `str`, optional
+                The floating-point arithmetic precision used during
+                the preparation and validation of the compressed
+                coordinates.
 
-                    computational_precision: `str`, optional
-                        The floating-point arithmetic precision used during
-                        the preparation and validation of the compressed
-                        coordinates.
-
-                        *Parameter example:*
-                          ``computational_precision='64'``
+                *Parameter example:*
+                  ``computational_precision='64'``
 
         """
         super().__init__(
@@ -88,7 +87,8 @@ class SubsampledBilinearArray(
 
         x.__getitem__(indices) <==> x[indices]
 
-        Returns a subspace of the array as an independent numpy array.
+        Returns a subspace of the uncompressed data as an independent
+        numpy array.
 
         .. versionadded:: (cfdm) TODO
 
@@ -148,8 +148,8 @@ class SubsampledBilinearArray(
     ):
         """Interpolate bilinearly between pairs of tie points.
 
-        Computes the function defined in CF appendix J, where ``fl``
-        is the linear interpolation operator:
+        General purpose two-dimensional linear interpolation
+        method. See CF appendix J for details.
 
         uac = fl(ua, uc, s(ia2, ic2, i2))
         ubd = fl(ub, ud, s(ia2, ic2, i2))
@@ -163,15 +163,16 @@ class SubsampledBilinearArray(
 
             ua, uc, ub, ud: array_like
                The arrays containing the points for bilinear
-               interpolation along dimensions *d0* and *d1*.
+               interpolation along the interpolated dimensions.
 
-            subsampled_dimensions: 2-`tuple` of `int`
-                The positions of the subsampled dimensions in the
+            subsampled_dimensions: seqeunce of `int`
+                The positions of the two subsampled dimensions in the
                 compressed data.
 
             subarea_shape: `tuple` of `int`
-                The shape of the interpolation subararea, including
-                all tie points.
+                The shape of the uncompressed interpolation subararea,
+                including all tie points, but excluding a bounds
+                dimension.
 
             first: `tuple`
                 For each dimension, True if the interpolation subarea
@@ -179,7 +180,7 @@ class SubsampledBilinearArray(
                 area, otherwise False.
 
             trim: `bool`, optional
-                For each subsampled dimension, remove the first point
+                For each interpolated dimension, remove the first point
                 of the interpolation subarea when it is not the first
                 (in index space) of a continuous area, and when the
                 compressed data are not bounds tie points.

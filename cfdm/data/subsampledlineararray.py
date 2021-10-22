@@ -9,9 +9,9 @@ class SubsampledLinearArray(
 ):
     """A subsampled array with linear interpolation.
 
-    The information needed to uncompress the data is stored in an tie
+    The information needed to uncompress the data is stored in a tie
     point index variable that defines the relationship between the
-    indices of the subsampled dimension and the indices of its
+    indices of the subsampled dimension and the indices of the
     corresponding interpolated dimension.
 
     >>> coords = cfdm.SubsampledLinearArray(
@@ -26,7 +26,7 @@ class SubsampledLinearArray(
 
     **Cell boundaries**
 
-    If the subsampled array contains cell boundaries, then the
+    If the subsampled array represents cell boundaries, then the
     *shape*, *ndim* and *size* parameters that describe the
     uncompressed array will include the required trailing size 2
     dimension.
@@ -62,56 +62,50 @@ class SubsampledLinearArray(
         shape=None,
         size=None,
         ndim=None,
-        #        dtype=None,
-        tie_point_indices={},
         computational_precision=None,
+        tie_point_indices={},
     ):
         """**Initialisation**
 
-                :Parameters:
+        :Parameters:
 
-                    compressed_array: `Data`
-                        The subsampled array.
+            compressed_array: `Data`
+                The subsampled array.
 
-                    shape: `tuple`
-                        The uncompressed array shape.
+            shape: `tuple`
+                The uncompressed array shape.
 
-                    size: `int`
-                        Number of elements in the uncompressed array, must be
-                        equal to the product of *shape*.
+            size: `int`
+                Number of elements in the uncompressed array, must be
+                equal to the product of *shape*.
 
-                    ndim: `int`
-                        The number of uncompressed array dimensions, equal to
-                        the length of *shape*.
+            ndim: `int`
+                The number of uncompressed array dimensions, equal to
+                the length of *shape*.
 
-        #            dtype: data-type, optional
-        #               The data-type for the uncompressed array. This datatype
-        #               type is also used in all interpolation calculations. By
-        #               default, the data-type is double precision float.
+            compressed_axes: sequence of `int`
+                The position of the compressed axis in the tie points
+                array. Only one axis may be compressed.
 
-                    compressed_axes: sequence of `int`
-                        The position of the compressed axis in the tie points
-                        array. Only one axis may be compressed.
+                *Parameter example:*
+                  ``compressed_axes=[1]``
 
-                        *Parameter example:*
-                          ``compressed_axes=[1]``
+            tie_point_indices: `dict`
+                The tie point index variable for each subsampled
+                dimension. A key indentifies a subsampled dimension by
+                its integer position in the compressed array, and its
+                value is a `TiePointIndex` variable.
 
-                    tie_point_indices: `dict`
-                        The tie point index variable for each subsampled
-                        dimension. A key indentifies a subsampled dimension by
-                        its integer position in the compressed array, and its
-                        value is a `TiePointIndex` variable.
+                *Parameter example:*
+                  ``tie_point_indices={1: cfdm.TiePointIndex(data=[0, 16])}``
 
-                        *Parameter example:*
-                          ``tie_point_indices={1: cfdm.TiePointIndex(data=[0, 16])}``
+            computational_precision: `str`, optional
+                The floating-point arithmetic precision used during
+                the preparation and validation of the compressed
+                coordinates.
 
-                    computational_precision: `str`, optional
-                        The floating-point arithmetic precision used during
-                        the preparation and validation of the compressed
-                        coordinates.
-
-                        *Parameter example:*
-                          ``computational_precision='64'``
+                *Parameter example:*
+                  ``computational_precision='64'``
 
         """
         super().__init__(
@@ -132,7 +126,7 @@ class SubsampledLinearArray(
 
         x.__getitem__(indices) <==> x[indices]
 
-        Returns a subspace of the uncompressed array as an independent
+        Returns a subspace of the uncompressed data as an independent
         numpy array.
 
         .. versionadded:: (cfdm) 1.9.TODO.0

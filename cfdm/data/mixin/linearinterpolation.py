@@ -10,8 +10,8 @@ class LinearInterpolation:
     ):
         """Interpolate linearly between pairs of tie points.
 
-        This is the linear interpolation operator ``fl`` defined in CF
-        appendix J:
+        General purpose one-dimensional linear interpolation
+        method. See CF appendix J for details.
 
         u = fl(ua, ub, s) = ua + s*(ub-ua)
                           = ua*(1-s) + ub*s
@@ -22,13 +22,15 @@ class LinearInterpolation:
 
         :Parameters:
 
-            ua, ub: array_like
-               The arrays containing the points for pair-wise
-               interpolation along dimension *subsampled_dimension*.
+            ua: array_like
+                The values of the first tie point in index space.
+
+            ub: array_like
+                The values of the second tie point in index space.
 
             subsampled_dimension: `int`
-                The position of a subsampled dimension in the
-                compressed array.
+                The position of the subsampled dimension in the
+                compressed data.
 
             subarea_shape: `tuple` of `int`
                 The shape of the uncompressed interpolation subararea,
@@ -41,7 +43,7 @@ class LinearInterpolation:
                 a new continuous area, otherwise False.
 
             trim: `bool`, optional
-                For the subsampled dimension, remove the first point
+                For the interpolated dimension, remove the first point
                 of the interpolation subarea when it is not the first
                 (in index space) of a continuous area, and when the
                 compressed data are not bounds tie points.
