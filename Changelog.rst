@@ -1,3 +1,18 @@
+Version 1.9.0.1
+---------------
+
+**2021-10-12**
+
+* Fixed bug that prevented some geometry coordinates being written to
+  netCDF CLASSIC files (https://github.com/NCAS-CMS/cfdm/issues/140)
+* Fixed bug that a caused segmentation fault when appending a string
+  data type to netCDF files
+  (https://github.com/NCAS-CMS/cfdm/issues/155)
+* Fixed bug in `cf.Field.get_domain` when there are climatological
+  time axes (https://github.com/NCAS-CMS/cfdm/issues/159)
+
+----
+  
 Version 1.9.0.0
 ---------------
 

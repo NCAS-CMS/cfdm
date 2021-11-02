@@ -1700,7 +1700,7 @@ class Field(
         # Set climatological time axes for the domain
         climatological_time_axes = self.climatological_time_axes()
         if climatological_time_axes:
-            coordinates = self.coordinates
+            coordinates = self.coordinates()
             for key, c in coordinates.items():
                 axes = self.get_data_axes(key, default=())
                 if len(axes) == 1 and axes[0] in climatological_time_axes:

@@ -32,6 +32,11 @@ cd docs/source/sample_files
 zip cfdm_tutorial_files.zip *.nc
 cd -
 
+# Regerenate tutorial.py
+if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
+  ./test_tutorial_code
+fi
+
 # --------------------------------------------------------------------
 # Make the latest docs    
 # --------------------------------------------------------------------
@@ -96,5 +101,5 @@ fi
 
 set +x
 
-echo PYTTHONPATH=$PYTHONPATH
+echo PYTHONPATH=$PYTHONPATH
 

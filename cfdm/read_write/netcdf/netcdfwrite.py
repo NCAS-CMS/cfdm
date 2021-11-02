@@ -6,6 +6,7 @@ from distutils.version import LooseVersion
 
 import netCDF4
 import numpy
+import numpy as np
 
 from ...decorators import _manage_log_level_via_verbosity
 from .. import IOWrite
@@ -1627,9 +1628,11 @@ class NetCDFWrite(IOWrite):
             self.implementation.get_data(bounds)
         )
         if self.implementation.get_data_ndim(bounds) == 2:  # DCH
-            array = numpy.ma.count(array, axis=1)  # DCH
+            array = np.ma.count(array, axis=1)  # DCH
         else:  # DCH
-            array = numpy.ma.count(array, axis=2).sum(axis=1)  # DCH
+            array = np.ma.count(array, axis=2).sum(axis=1)  # DCH
+
+        array = self._int32(array)
 
         data = self.implementation.initialise_Data(array=array, copy=False)
 
@@ -1903,6 +1906,8 @@ class NetCDFWrite(IOWrite):
             self.implementation.get_data(bounds)
         )
         array = numpy.trim_zeros(numpy.ma.count(array, axis=2).flatten())
+        array = self._int32(array)
+
         data = self.implementation.initialise_Data(array=array, copy=False)
 
         # ------------------------------------------------------------
@@ -2627,14 +2632,8 @@ class NetCDFWrite(IOWrite):
             original_ncdimensions = ()
             ncdimensions = ()
         else:
-            datatype = self._datatype(cfvar)
             data = self.implementation.get_data(cfvar, None)
-
             original_ncdimensions = ncdimensions
-
-            data, ncdimensions = self._transform_strings(
-                cfvar, data, ncdimensions
-            )
 
         # Update the 'seen' dictionary
         g["seen"][id(cfvar)] = {
@@ -2647,6 +2646,14 @@ class NetCDFWrite(IOWrite):
         # append-mode write (only write in the second post-dry-run iteration).
         if g["dry_run"]:
             return
+
+        # Do this after the dry_run return else may attempt to transform
+        # the arrays with string dtype on an append-mode read iteration (bad).
+        if not domain_variable:
+            datatype = self._datatype(cfvar)
+            data, ncdimensions = self._transform_strings(
+                cfvar, data, ncdimensions
+            )
 
         logger.info(f"    Writing {cfvar!r}")  # pragma: no cover
 
@@ -5105,3 +5112,38 @@ class NetCDFWrite(IOWrite):
                 shuffle=shuffle,
                 extra_write_vars=extra_write_vars,
             )
+
+    def _int32(self, array):
+        """Cast an array to 32-bit integers.
+
+        This saves space and allows the variables to be written to
+        CLASSIC files.
+
+        If the input array already contins 32-bit integers then it is
+        returned unchanged.
+
+        If the input array is not of integer kind then an exception is
+        raised.
+
+        .. versionadded:: (cfdm) 1.9.0.1
+
+        :Parameters:
+
+            array: `numpy.ndarray`
+                The array to be recast.
+
+        :Returns:
+
+            `numpy.ndarray`
+                The array recast to 32-bit integers.
+
+        """
+        if array.dtype.kind != "i":
+            raise TypeError(
+                f"Won't cast array from {array.dtype.base} to dtype('int32')"
+            )
+
+        if array.max() <= np.iinfo("int32").max:
+            array = array.astype("int32", casting="same_kind")
+
+        return array

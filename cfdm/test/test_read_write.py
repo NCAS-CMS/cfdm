@@ -224,8 +224,6 @@ class read_writeTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             cfdm.write(g[0], tmpfile, mode="g")
 
-        g_copy = g.copy()
-
         for fmt in self.netcdf_fmts:  # test over all netCDF 3 and 4 formats
             # Other tests cover write as default mode (i.e. test with no mode
             # argument); here test explicit provision of 'w' as argument:
@@ -257,12 +255,6 @@ class read_writeTest(unittest.TestCase):
                 # NETCDF4_CLASSIC file from (2)  (NetCDF: Attempting netcdf-4
                 # operation on strict nc3 netcdf-4 file)" i.e. not possible.
                 if fmt == "NETCDF4_CLASSIC" and ex_field_n in (6, 7):
-                    continue
-
-                # Skip since "Can't write int64 data from <Count: (2) > to a
-                # NETCDF3_CLASSIC file" causes a ValueError i.e. not possible.
-                # Note: can remove this when Issue #140 is closed.
-                if fmt in self.netcdf3_fmts and ex_field_n == 6:
                     continue
 
                 cfdm.write(ex_field, tmpfile, fmt=fmt, mode="a")
@@ -301,9 +293,6 @@ class read_writeTest(unittest.TestCase):
             # Note: can remove this del when Issue #140 is closed:
             if fmt in self.netcdf3_fmts:
                 del append_ex_fields[5]  # n=6 ex_field, minus 1 for above del
-            if fmt in "NETCDF4_CLASSIC":
-                # Remove n=5, 6, 7 for reasons as given above (del => minus 1)
-                append_ex_fields = append_ex_fields[:4]
 
             overall_length = len(append_ex_fields) + 1  # 1 for original 'g'
             cfdm.write(
@@ -416,21 +405,35 @@ class read_writeTest(unittest.TestCase):
             #         ex_1_coor.nc_get_variable(),
             #     )
 
-            # Check behaviour when append identical fields, as an edge case:
-            cfdm.write(g, tmpfile, fmt=fmt, mode="w")  # 1. overwrite to wipe
-            cfdm.write(g_copy, tmpfile, fmt=fmt, mode="a")  # 2. now append
+            # Check behaviour when append identical fields, as an edge case
+            #   1. Set up the fields and file to use to conduct this test
+            g_new = cfdm.read(self.filename)[0]  # note 'g' has one field
+            # There is an unresolved netcdf4-python issue when reading
+            # VLEN arrays (see github.com/Unidata/netcdf4-python/issues/261)
+            # so, until fixed, for NETCDF4 only we must delete the VLEN array
+            # to conduct the test without it (but on a "kitchen sink" field).
+            if fmt == "NETCDF4":
+                aux = g_new.constructs.filter_by_property(
+                    long_name="greek_letters"
+                )
+                g_new.del_construct(aux.key())
+            g_copy = g_new.copy()
+            cfdm.write(g_new, tmpfile, fmt=fmt, mode="w")  # overwrite to wipe
+
+            #   2. Conduct the test by appending the identical field g_copy
+            cfdm.write(g_copy, tmpfile, fmt=fmt, mode="a")
             f = cfdm.read(tmpfile)
-            self.assertEqual(len(f), 2 * len(g))
+            self.assertEqual(len(f), 2)  # i.e. len(f) == 2*len(g_new) == 2*1
             self.assertTrue(
                 any(
                     [
-                        file_field.equals(g[0], ignore_properties=["remark"])
+                        file_field.equals(g_new, ignore_properties=["remark"])
                         for file_field in f
                     ]
                 )
             )
             self.assertEqual(
-                f[0].nc_global_attributes(), original_global_attrs
+                f[0].nc_global_attributes(), g_new.nc_global_attributes()
             )
 
     def test_read_write_netCDF4_compress_shuffle(self):

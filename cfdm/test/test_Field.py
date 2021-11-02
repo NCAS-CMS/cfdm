@@ -614,15 +614,21 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_climatological_time_axes(self):
         """TODO DOCS."""
-        f = cfdm.example_field(7)
-
+        f = cfdm.example_field(0)
         self.assertEqual(f.climatological_time_axes(), set())
 
-        cm = cfdm.CellMethod(axes="domainaxis0", method="mean")
-        cm.set_qualifier("over", "years")
-        f.set_construct(cm)
+        f.set_construct(
+            cfdm.CellMethod("domainaxis2", "mean", {"within": "years"})
+        )
+        f.set_construct(
+            cfdm.CellMethod("domainaxis2", "mean", {"over": "years"})
+        )
 
-        self.assertEqual(f.climatological_time_axes(), set(("domainaxis0",)))
+        cta = f.climatological_time_axes()
+        self.assertEqual(cta, set(["domainaxis2"]))
+
+        d = f.get_domain()
+        self.assertEqual(d.climatological_time_axes(), cta)
 
     def test_Field_bounds(self):
         """TODO DOCS."""
