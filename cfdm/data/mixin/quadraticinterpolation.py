@@ -23,7 +23,7 @@ class QuadraticInterpolation(LinearInterpolation):
         See CF appendix J for details.
 
         w = fw(ua, ub, u, s)
-          = ((u - (1-s)*ua - s*ub)/(4*(1-s)*s)
+          = (u - (1-s)*ua - s*ub)/(4*(1-s)*s)
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -100,8 +100,7 @@ class QuadraticInterpolation(LinearInterpolation):
                 dimension.
 
             subarea_index: `tuple` of `slice`
-                The index of the interpolation subarea along the
-                interpolation subarea dimension.
+                The index of the interpolation subarea.
 
             first: `tuple` of `bool`
                 For each dimension, True if the interpolation subarea
