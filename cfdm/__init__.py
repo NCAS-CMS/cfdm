@@ -128,14 +128,16 @@ from .data import (
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
     SubsampledBilinearArray,
+    SubsampledBiquadraticLatitudeLongitudeArray,
     SubsampledGeneralArray,
     SubsampledLinearArray,
     SubsampledQuadraticArray,
+    SubsampledQuadraticLatitudeLongitudeArray,
 )
 
 from .count import Count
 from .index import Index
-from .interpolation import Interpolation
+from .interpolationparameter import InterpolationParameter
 from .list import List
 from .nodecountproperties import NodeCountProperties
 from .partnodecountproperties import PartNodeCountProperties

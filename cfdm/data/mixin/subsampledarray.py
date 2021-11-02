@@ -3,7 +3,6 @@ from itertools import product
 
 import numpy as np
 
-
 _float64 = np.dtype(float)
 
 
@@ -14,10 +13,10 @@ class SubsampledArray:
 
     """
 
-    _default_dtype = _float64
-
     def __getitem__(self, indices):
-        """x.__getitem__(indices) <==> x[indices]
+        """Return a subspace of the uncompressed data.
+
+        x.__getitem__(indices) <==> x[indices]
 
         Returns a subspace of the uncompressed array as an independent
         numpy array.
@@ -27,25 +26,6 @@ class SubsampledArray:
         """
         raise NotImplementedError("Must implement __getitem__ in subclasses")
 
-    @property
-    def bounds(self):
-        """True if the tie points represent coordinate bounds.
-
-        In this case the uncompressed data has an extra trailing
-        dimension in addition to the dimensions of the tie point
-        array. See CF section 8.3.9 "Interpolation of Cell
-        Boundaries".
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        """
-        out = self._get_component("bounds", None)
-        if out is None:
-            out = self.ndim > self.get_tie_points().ndim
-            self._set_component("bounds", out)
-
-        return out
-
     def _first_or_last_index(self, indices):
         """Return the first or last element of tie points array.
 
@@ -53,8 +33,8 @@ class SubsampledArray:
         to perform any interpolation.
 
         Currenly, the first and last elements are only recognised by
-        exact index matches to ``(slice(0, 1, 1),) * self.ndim`` or
-        ``(slice(-1, None, 1),) * self.ndim``
+        exact *indices* matches to ``(slice(0, 1, 1),) * self.ndim``
+        or ``(slice(-1, None, 1),) * self.ndim``
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -76,12 +56,12 @@ class SubsampledArray:
             if self.bounds:
                 indices = indices[:-1]
 
-            return self.get_tie_points()[indices]
+            return self._get_compressed_Array()[indices]
 
         # Indices do not (acceptably) select the first nor last element
         raise IndexError()
 
-    def interpolation_subareas(self):
+    def _interpolation_subareas(self):
         """TODO.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
@@ -118,13 +98,13 @@ class SubsampledArray:
 
         **Examples**
 
-        A 3-d array with shape (20, 12, 15) has been compressed with
-        dimensions 0 and 2 being interpolated dimensions. Interpolated
-        dimension 0 (size 20) has two equally-sized continuous areas,
-        each with one interpolation subarea of size 10; and
-        intertolated dimenson 2 (size 15) has a single continuous area
-        divided into has three interpolation subarareas of szes 5, 6,
-        and 6.
+        An original 3-d array with shape (20, 12, 15) has been
+        compressed by subsampling with dimensions 0 and 2 being
+        interpolated dimensions. Interpolated dimension 0 (size 20)
+        has two equally-sized continuous areas, each with one
+        interpolation subarea of size 10; and interpolated dimenson 2
+        (size 15) has a single continuous area divided into has three
+        interpolation subarareas of szes 5, 6, and 6.
 
         >>> (u_indices,
         ...  tp_indices,
@@ -221,7 +201,7 @@ class SubsampledArray:
         # excluded.
         interpolation_subarea_indices = [(slice(None),)] * ndim
 
-        for d in self.get_compressed_axes():
+        for d in self.compressed_dimensions():
             tp_index = []
             u_index = []
             continuous_area = []
@@ -285,18 +265,18 @@ class SubsampledArray:
         )
 
     @lru_cache(maxsize=32)
-    def _s(self, d, subarea_shape, first):
+    def _s(self, subsampled_dimension, subarea_shape, first):
         """The interpolation coefficients for an interpolation subarea.
 
-        The interpolation coefficients ``s`` and ``1-s`` for the
-        specified subsampled dimension of an interpolation subarea
-        with the given shape, as per CF appendix J.
+        Returns the interpolation coefficients ``s`` and ``1-s`` for
+        the specified subsampled dimension of an interpolation subarea
+        with the given shape. See CF appendix J.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Parameters:
 
-            d: `int`
+            subsampled_dimension: `int`
                 The position of a subsampled dimension in the tie
                 point array.
 
@@ -306,7 +286,9 @@ class SubsampledArray:
                 dimension.
 
             first: `tuple` of `bool`
-                TODO
+                For each dimension of the compressed array, whether or
+                not the interpolation subarea is the first (in index
+                space) of its continuous area.
 
         :Returns:
 
@@ -338,14 +320,15 @@ class SubsampledArray:
         array([[1.  , 0.75, 0.5 , 0.25, 0.  ]])
 
         """
-        size = subarea_shape[d]
-        if self.bounds and first[d]:
+        size = subarea_shape[subsampled_dimension]
+        first = first[subsampled_dimension]
+        if self.bounds and first:
             # For bounds tie points, the first interpolation subarea
-            # of a continuous area has an extra point (CF
-            # 8.3.9. "Interpolation of Cell Boundaries").
+            # of a continuous area has an extra point. See CF
+            # 8.3.9. "Interpolation of Cell Boundaries".
             size = size + 1
 
-        s = np.linspace(0, 1, size, dtype=self.dtype)
+        s = np.linspace(0, 1, size, dtype=_float64)  # self.dtype)
 
         one_minus_s = s[::-1]
 
@@ -354,18 +337,16 @@ class SubsampledArray:
         ndim = len(subarea_shape)
         if ndim > 1:
             new_shape = [1] * ndim
-            new_shape[d] = s.size
+            new_shape[subsampled_dimension] = s.size
             s = s.reshape(new_shape)
             one_minus_s = one_minus_s.reshape(new_shape)
 
         return (s, one_minus_s)
 
     def _select_tie_points(self, tie_points, tp_indices, location={}):
-        """Select tie points from a given interpolation subarea location.
+        """Select tie points from an interpolation subarea.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
-
-        .. seealso:: `get_tie_points`
 
         :Parameters:
 
@@ -400,15 +381,18 @@ class SubsampledArray:
         return tie_points[tuple(tp_indices)].array
 
     def _set_interpolated_values(
-        self, uarray, u_indices, subsampled_dimensions, u
+        self, uarray, u, u_indices, subsampled_dimensions
     ):
-        """TODO
+        """TODO.
 
-        If the data are bounds tie points, then the raw interpolated
-        values are broadcast to each location of the trailing bounds
-        dimension.
+        If the compressed data are bounds tie points, then the
+        interpolated values are broadcast to each location of the
+        trailing bounds dimension. See CF 8.3.9. "Interpolation of
+        Cell Boundaries".
 
         .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `_trim`
 
         :Parameters:
 
@@ -460,19 +444,82 @@ class SubsampledArray:
             uarray[u_indices + (3,)] = u[tuple(indices)]
         else:
             raise ValueError(
-                f"Can't create uncompressed bounds for "
+                f"Can't yet create uncompressed bounds from "
                 f"{n_subsampled_dimensions} subsampled dimensions"
             )
 
-    @property
-    def computational_precision(self):
-        """The validation computational precision.
+    def _trim(self, u, subsampled_dimensions, first):
+        """Trim uncompressed data defined on an interpolation subarea.
 
-        The floating-point arithmetic precision used during the
-        preparation and validation of the compressed coordinates.
+        For each subsampled dimension, removes the first point of the
+        interpolation subarea when it is not the first (in index
+        space) of a continuous area. This is beacuse this value in the
+        uncompressed data has already been calculated from the
+        previous (in index space) interpolation subarea.
+
+        Only does this when interpolating tie point coordinates. If
+        interpolating bounds tie points then the first point is always
+        kept so that it may be used during the broadcast to the bounds
+        locations.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `_set_interpolated_values`
+
+        :Parameters:
+
+            u: array_like
+               The uncompressed data for the interpolation subarea
+               that includes all tie point locations.
+
+            subsampled_dimensions: sequence of `int`
+                The positions of the subsampled dimensions in the
+                compressed data.
+
+            first: `tuple`
+                For each dimension, True if the interpolation subarea
+                is the first (in index space) of a new continuous
+                area, otherwise False.
+
+        :Returns:
+
+            `numpy.ndarray`
 
         """
-        return self._get_component("computational_precision")
+        if self.bounds:
+            return u
+
+        take_slice = False
+        indices = [slice(None)] * u.ndim
+        for d in subsampled_dimensions:
+            if first[d]:
+                continue
+
+            take_slice = True
+            indices[d] = slice(1, None)
+
+        if take_slice:
+            u = u[tuple(indices)]
+
+        return u
+
+    @property
+    def bounds(self):
+        """True if the compressed array represent bounds tie points.
+
+        This is the case when the uncompressed data has an extra
+        trailing dimension compared to the compressed array. See CF
+        section 8.3.9 "Interpolation of Cell Boundaries".
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        b = self._get_component("bounds", None)
+        if b is None:
+            b = self.ndim > self._get_compressed_Array().ndim
+            self._set_component("bounds", b, copy=False)
+
+        return b
 
     @property
     def dtype(self):
@@ -481,27 +528,44 @@ class SubsampledArray:
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        return self._get_component("dtype")
+        return _float64
 
-    @dtype.setter
-    def dtype(self, value):
-        return self._set_component("dtype", value)
+    def get_computational_precision(self, default=ValueError()):
+        """Return the validation computational precision.
 
-    @property
-    def interpolation_description(self):
-        """Non-standardized description of the interpolation method."""
-        return self._get_component("interpolation_description")
+        The validation computational precision is the floating-point
+        arithmetic precision used during the preparation and
+        validation of the compressed coordinates.
 
-    @property
-    def interpolation_name(self):
-        """The interpolation method."""
-        return self._get_component("interpolation_name")
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                computational precision has not been set.
+
+                {{default Exception}}
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        out = self._get_component("computational_precision", None)
+        if out is None:
+            if default is None:
+                return
+
+            return self._default(
+                default,
+                f"{self.__class__.__name__!r} has no "
+                "'computational_precision'",
+            )
+
+        return out
 
     def conform_interpolation_parameters(self):
-        """Conform the interpolation parameters in-place.
+        """Conform the interpolation parameters.
 
         Tranposes the interpolation parameters, if any, to have the
-        same relative dimension order as the tie point array, and
+        same relative dimension order as the compressed array, and
         inserts any missing dimensions as size 1 axes.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
@@ -517,71 +581,114 @@ class SubsampledArray:
 
         parameter_dimensions = self.get_parameter_dimensions()
 
-        dims = tuple(range(self.ndim))
-        for term, c in parameters.items():
-            dimensions = parameter_dimensions[term]
-            if dimensions == tuple(sorted(dimensions)):
-                # Interpolation parameter dimensions are already in
-                # the correct order
+        ndim = self._get_compressed_Array().ndim
+        dims = list(range(ndim))
+
+        for term, param in parameters.items():
+            param_dims = parameter_dimensions[term]
+            if sorted(param_dims) == dims:
+                # The interpolation parameter dimensions are already
+                # in the correct order
                 continue
 
-            new_order = [dimensions.index(i) for i in dims if i in dimensions]
-            c = c.tranpose(new_order)
+            if len(param_dims) > 1:
+                new_order = [
+                    param_dims.index(i) for i in dims if i in param_dims
+                ]
+                param = param.transpose(new_order)
 
             # Add non-interpolated dimensions as size 1 axes, if
             # they're not already there.
-            if len(dimensions) < self.ndim:
-                for d in sorted(set(dims).difference(dimensions)):
-                    c = c.insert_dimension(position=d)
+            if len(param_dims) < ndim:
+                for d in sorted(set(dims).difference(param_dims)):
+                    param = param.insert_dimension(position=d)
 
-            parameters[term] = c
+            parameters[term] = param
             parameter_dimensions[term] = dims
 
-    def get_interpolation(self, default=ValueError()):
-        """Return the interpolation variable for a subsampled array.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
+    def get_interpolation_description(self, default=ValueError()):
+        """Return the non-standardised interpolation method description.
 
         :Parameters:
 
             default: optional
                 Return the value of the *default* parameter if the
-                interpolation variable has not been set.
+                interpolation description has not been set.
 
                 {{default Exception}}
 
-        :Returns:
+        .. versionadded:: (cfdm) 1.9.TODO.0
 
-            `Interpolation`
-                The interpolation variable.
-
-        **Examples**
-
-        >>> c = d.get_interpolation()
+        .. seealso:: `get_interpolation_name`
 
         """
-        out = self._get_component("interpolation_variable", None)
+        out = self._get_component("interpolation_description", None)
         if out is None:
+            if default is None:
+                return
+
             return self._default(
                 default,
-                f"{self.__class__.__name__!r} has no interpolation variable",
+                f"{self.__class__.__name__!r} has no "
+                "'interpolation_description'",
             )
 
         return out
 
-    def get_interpolation_parameters(self):
-        """Return the interpolation parameter variables for sampled
-        dimensions.
+    def get_interpolation_name(self, default=ValueError()):
+        """Return the name a standardised interpolation method.
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                interpolation name has not been set.
+
+                {{default Exception}}
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
-        .. seealso:: `get_parameter_dimensions`
+        .. seealso:: `get_interpolation_description`
+
+        """
+        out = self._get_component("interpolation_name", None)
+        if out is None:
+            if default is None:
+                return
+
+            return self._default(
+                default,
+                f"{self.__class__.__name__!r} has no 'interpolation_name'",
+            )
+
+        return out
+
+    def get_interpolation_parameters(self, conform=False):
+        """Return the interpolation parameter variables.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `conform_interpolation_parameters`,
+                     `get_parameter_dimensions`
+
+        :Parameters:
+
+            conform: `bool`, optional
+                If True then the interpolation parameters are
+                conformed to match the dimensions of the tie
+                points. See `conform_interpolation_parameters` for
+                details.
 
         :Returns:
 
             `dict`
+                TODO. If no interpolation parameter variables have
+                been set then an empty dictionary is returned.
 
         """
+        if conform:
+            self.conform_interpolation_parameters()
+
         return self._get_component("interpolation_parameters").copy()
 
     def get_parameter_dimensions(self):
@@ -594,83 +701,27 @@ class SubsampledArray:
         :Returns:
 
             `dict`
+                If no parameter dimensions have been set then an empty
+                dictionary is returned.
 
         """
         return self._get_component("parameter_dimensions").copy()
 
-    def get_tie_point_indices(self, default=ValueError()):
-        """Return the tie point index variables for sampled dimensions.
+    def get_tie_point_indices(self):
+        """Return the tie point index variables for subsampled
+        dimensions.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if tie point
-                index variables have not been set.
-
-                {{default Exception}}
-
         :Returns:
 
-            `tuple` of `TiePointIndex`
-                The tie point index variables.
-
-        **Examples**
-
-        >>> c = d.get_tie_point_indices()
+            `dict`
+                The tie point index variables. If no tie point index
+                variables have been set then an empty dictionary is
+                returned.
 
         """
         return self._get_component("tie_point_indices").copy()
-
-    def get_tie_points(self, default=ValueError()):
-        """Return the tie points data.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if tie point
-                variables have not been set.
-
-                {{default Exception}}
-
-        :Returns:
-
-            `TiePoint`
-                The tie point variable.
-
-        **Examples**
-
-        >>> c = d.get_tie_points()
-
-        """
-        try:
-            return self._get_compressed_Array()
-        except ValueError:
-            return self._default(
-                default, f"{self.__class__.__name__} has no tie points"
-            )
-
-    def get_compressed_axes(self):
-        """Return axes that are compressed in the underlying array.
-
-        :Returns:
-
-            `list`
-                The compressed axes described by their integer
-                positions in the uncompressed array.
-
-        **Examples**
-
-        >>> c.get_compressed_dimension()
-        (1, 3)
-        >>> c.compressed_axes()
-        [1, 3)
-
-        """
-        return list(self.get_compressed_dimension())
 
     def to_memory(self):
         """Bring an array on disk into memory.
@@ -684,12 +735,8 @@ class SubsampledArray:
             `{{class}}`
                 The array that is stored in memory.
 
-        **Examples**
-
-        >>> b = a.to_memory()
-
         """
-        for v in self.get_tie_points():
+        for v in self._get_compressed_Array():
             v.data.to_memory()
 
         for v in self.get_tie_point_indices().values():
@@ -700,44 +747,66 @@ class SubsampledArray:
 
         return self
 
+    def tranpose(self, axes=None):
+        """Tranpose the compressed array without uncompressing it.
 
-#    def tranpose(self, axes):
-#        """TODO."""
-#        # Tranpose the compressed array
-#        compressed_array = self.source().tranpose(axes=axes)
-#
-#        # Transpose the shape
-#        old_shape = self.shape
-#        shape = tuple([old_shape.index(i) for n in axes])
-#
-#        # Change the compressed dimensions
-#        compressed_dimensions = sorted(
-#            [
-#                axes.index(i)
-#                for i in self._get_component("compressed_dimension")
-#            ]
-#        )
-#
-#        # Change the tie point index dimensions
-#        tie_point_indices = {
-#            axes.index(i): v for i, v in self.tie_point_indices.items()
-#        }
-#
-#        # Change the interpolation parameter dimensions
-#        parameter_dimensions = {
-#            term: tuple([axes.index(i) for i in v])
-#            for term, v in self.parameter_dimensions.items()
-#        }
-#
-#        return type(self)(
-#            compressed_array=compressed_array,
-#            shape=shape,
-#            ndim=self.ndim,
-#            size=self.size,
-#            compressed_dimensions=compressed_dimensions,
-#            interpolation_name=self.interpolation_name,
-#            interpolation_description=self.interpolation_description,
-#            tie_point_indices=tie_point_indices,
-#            interpolation_parameters=self.get_interpolation_parameters(),
-#            parameter_dimensions=parameter_dimensions,
-#        )
+        .. versionadded:: 1.9.TODO.0
+
+        .. seealso:: `conform_interpolation_parameters`
+
+        :Parameters:
+
+            axes: seqeunce of `ints`, optional
+                By default, reverse the dimensions, otherwise permute
+                the axes according to the values given.
+
+        :Returns:
+
+            `{{class}}`
+                 A new instance with the transposed compressed array.
+
+        """
+        # Parse axes
+        ndim = self.ndim
+        if axes:
+            if len(axes) != ndim:
+                raise ValueError("axes don't match array")
+
+            axes = tuple(d + ndim if d < 0 else d for d in axes)
+        else:
+            axes = tuple(range(ndim))[::-1]
+
+        # Tranpose the compressed array
+        compressed_array = self.source().tranpose(axes=axes)
+
+        # Transpose the uncompressed shape
+        shape = self.shape
+        if self.bounds:
+            shape1 = shape[:-1]
+            new_shape = tuple([shape1.index(i) for i in axes]) + (shape[-1],)
+        else:
+            new_shape = tuple([shape.index(i) for i in axes])
+
+        # Change the tie point index dimensions
+        tie_point_indices = {
+            axes.index(i): tpi
+            for i, tpi in self.get_tie_point_indices().items()
+        }
+
+        # Change the interpolation parameter dimensions
+        parameter_dimensions = {
+            term: tuple([axes.index(i) for i in dims])
+            for term, dims in self.get_parameter_dimensions().items()
+        }
+
+        return type(self)(
+            compressed_array=compressed_array,
+            shape=new_shape,
+            ndim=self.ndim,
+            size=self.size,
+            interpolation_name=self.get_interpolation_name(None),
+            interpolation_description=self.get_interpolation_description(None),
+            tie_point_indices=tie_point_indices,
+            interpolation_parameters=self.get_interpolation_parameters(),
+            parameter_dimensions=parameter_dimensions,
+        )

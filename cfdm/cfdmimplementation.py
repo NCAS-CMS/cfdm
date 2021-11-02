@@ -16,7 +16,7 @@ from . import (
     FieldAncillary,
     Index,
     InteriorRing,
-    Interpolation,
+    InterpolationParameter,
     List,
     NodeCountProperties,
     PartNodeCountProperties,
@@ -77,7 +77,7 @@ class CFDMImplementation(Implementation):
         NodeCountProperties=None,
         PartNodeCountProperties=None,
         TiePointIndex=None,
-        Interpolation=None,
+        InterpolationParameter=None,
     ):
         """**Initialisation**
 
@@ -173,8 +173,8 @@ class CFDMImplementation(Implementation):
             TiePointIndex:
                 A tie point index variable class.
 
-            Interpolation:
-                An interpolation variable class.
+            InterpolationParameter:
+                An interpolation parameter variable class.
 
         """
         super().__init__(
@@ -209,7 +209,7 @@ class CFDMImplementation(Implementation):
             NodeCountProperties=NodeCountProperties,
             PartNodeCountProperties=PartNodeCountProperties,
             TiePointIndex=TiePointIndex,
-            Interpolation=Interpolation,
+            InterpolationParameter=InterpolationParameter,
         )
 
     def __repr__(self):
@@ -618,7 +618,7 @@ class CFDMImplementation(Implementation):
         return data.compressed_array
 
     def get_compressed_axes(self, field_or_domain, key=None, construct=None):
-        """Return the indices of the compressed axes.
+        """Return the axes that have been compressed.
 
         :Parameters:
 
@@ -631,7 +631,9 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            `list` of `int`
+            `list` of `str`
+                The domain axis identifiers of dimensions that are
+                compressed.
 
         """
         if construct is not None:
@@ -767,8 +769,8 @@ class CFDMImplementation(Implementation):
         :Returns:
 
             `tuple` or `None`
-                The axes (may be an empty tuple), or `None` if there
-                is no data.
+                The axis identifiers (may be an empty tuple), or
+                `None` if there is no data.
 
         """
         try:
@@ -848,17 +850,17 @@ class CFDMImplementation(Implementation):
         """
         return field.coordinate_references()
 
-    def get_coordinates(self, field):
-        """Return all of the coordinate constructs of a field.
+    def get_coordinates(self, f):
+        """Return all of the coordinate constructs of a field or domain.
 
         :Parameters:
 
-            field: field construct
+            f: field or domain construct
 
         :Returns:
 
         """
-        return field.coordinates()
+        return f.coordinates()
 
     def get_data_calendar(self, data, default=None):
         """Return the calendar of date-time data.
@@ -877,7 +879,7 @@ class CFDMImplementation(Implementation):
         return data.get_calendar(default=default)
 
     def get_data_compressed_axes(self, data):
-        """Return the indices of the compressed axes.
+        """Return the indices of the axes that have been compressed.
 
         :Parameters:
 
@@ -938,7 +940,7 @@ class CFDMImplementation(Implementation):
                 The object containing the data array.
 
             isdata: `bool`
-                If True then the prent is already a data object
+                If True then the parent is already a data object
 
         :Returns:
 
@@ -2051,6 +2053,7 @@ class CFDMImplementation(Implementation):
         shape=None,
         size=None,
         compressed_dimension=None,
+        compressed_dimensions=None,
         list_variable=None,
     ):
         """Return a gathered array instance.
@@ -2065,9 +2068,16 @@ class CFDMImplementation(Implementation):
 
             size: `int, optional
 
-            compressed_dimension: `int`, optional
+            compressed_dimensions: sequence of `int`, optional
+                The position of the compressed dimension in the
+                compressed array.
+
+                 .. versionadded:: (cfdm) 1.9.TODO.0
 
             list_variable: optional
+
+            compressed_dimension: deprecated at version 1.9.TODO.0
+                Use the *compressed_dimensions* parameter instead.
 
         :Returns:
 
@@ -2081,6 +2091,7 @@ class CFDMImplementation(Implementation):
             shape=shape,
             size=size,
             compressed_dimension=compressed_dimension,
+            compressed_dimensions=compressed_dimensions,
             list_variable=list_variable,
         )
 
@@ -2090,10 +2101,8 @@ class CFDMImplementation(Implementation):
         shape=None,
         size=None,
         ndim=None,
-        compressed_axes=(),
         tie_point_indices={},
-        computational_precision="",
-#        interpolation_variable=None,
+        computational_precision=None,
         **kwargs,
     ):
         """Return a gathered array instance.
@@ -2132,10 +2141,8 @@ class CFDMImplementation(Implementation):
             shape=shape,
             size=size,
             ndim=ndim,
-            compressed_axes=compressed_axes,
             tie_point_indices=tie_point_indices,
             computational_precision=computational_precision,
-#            interpolation_variable=interpolation_variable,
         )
 
     def initialise_SubsampledBilinearArray(
@@ -2144,9 +2151,8 @@ class CFDMImplementation(Implementation):
         shape=None,
         size=None,
         ndim=None,
-        compressed_axes=(),
         tie_point_indices={},
-        computational_precision="",
+        computational_precision=None,
         **kwargs,
     ):
         """Return a gathered array instance.
@@ -2162,10 +2168,6 @@ class CFDMImplementation(Implementation):
             shape: sequence of `int`, optional
 
             size: `int, optional
-
-            compressed_axes: sequence of `int`, optional
-
-            interpolation_description: `str`, optional
 
             computational_precision: `str`, optional
                 The floating-point arithmetic precision used during
@@ -2187,7 +2189,6 @@ class CFDMImplementation(Implementation):
             shape=shape,
             size=size,
             ndim=ndim,
-            compressed_axes=compressed_axes,
             tie_point_indices=tie_point_indices,
             computational_precision=computational_precision,
         )
@@ -2198,10 +2199,8 @@ class CFDMImplementation(Implementation):
         shape=None,
         size=None,
         ndim=None,
-        compressed_axes=(),
         tie_point_indices={},
-        interpolation_description="",
-        computational_precision="",
+        computational_precision=None,
         interpolation_parameters={},
         parameter_dimensions={},
         **kwargs,
@@ -2221,8 +2220,6 @@ class CFDMImplementation(Implementation):
             size: `int, optional
 
             compressed_axes: sequence of `int`, optional
-
-            interpolation_description: `str`, optional
 
             computational_precision: `str`, optional
                 The floating-point arithmetic precision used during
@@ -2248,10 +2245,70 @@ class CFDMImplementation(Implementation):
             shape=shape,
             size=size,
             ndim=ndim,
-            compressed_axes=compressed_axes,
             tie_point_indices=tie_point_indices,
-            interpolation_description=interpolation_description,
             computational_precision=computational_precision,
+            interpolation_parameters=interpolation_parameters,
+            parameter_dimensions=parameter_dimensions,
+        )
+
+    def initialise_SubsampledGeneralArray(
+        self,
+        compressed_array=None,
+        shape=None,
+        size=None,
+        ndim=None,
+        tie_point_indices={},
+        interpolation_description=None,
+        computational_precision=None,
+        interpolation_parameters={},
+        parameter_dimensions={},
+        **kwargs,
+    ):
+        """A subsampled array with non-standardised interpolation.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            compressed_array: optional
+
+            ndim: `int`, optional
+
+            shape: sequence of `int`, optional
+
+            size: `int, optional
+
+            compressed_axes: sequence of `int`, optional
+
+            computational_precision: `str`, optional
+                The floating-point arithmetic precision used during
+                the preparation and validation of the compressed
+                coordinates.
+
+            tie_point_indices: `dict`, optional
+
+            interpolation_description: `str`, optional
+
+            interpolation_parameters: `dict`, optional
+
+            parameter_dimensions: `dict`, optional
+
+            kwargs: optional
+                Ignored.
+
+        :Returns:
+
+            Subsampled quadratic array
+
+        """
+        return self.get_class("SubsampledGeneralArray")(
+            compressed_array=compressed_array,
+            shape=shape,
+            size=size,
+            ndim=ndim,
+            tie_point_indices=tie_point_indices,
+            computational_precision=computational_precision,
+            interpolation_description=interpolation_description,
             interpolation_parameters=interpolation_parameters,
             parameter_dimensions=parameter_dimensions,
         )
@@ -2278,15 +2335,17 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("InteriorRing")
         return cls()
 
-    def initialise_Interpolation(self):
-        """Return an interpolation variable.
+    def initialise_InterpolationParameter(self):
+        """Return an interpolation parameter variable.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Returns:
 
-            Interpolation variable
+            Interpolation parameter variable
 
         """
-        cls = self.get_class("Interpolation")
+        cls = self.get_class("InterpolationParameter")
         return cls()
 
     def initialise_List(self):
@@ -3389,7 +3448,7 @@ _implementation = CFDMImplementation(
     SubsampledQuadraticArray=SubsampledQuadraticArray,
     SubsampledGeneralArray=SubsampledGeneralArray,
     TiePointIndex=TiePointIndex,
-    Interpolation=Interpolation,
+    InterpolationParameter=InterpolationParameter,
 )
 
 

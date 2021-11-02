@@ -7,9 +7,21 @@ from .mixin import LinearInterpolation, SubsampledArray
 class SubsampledBilinearArray(
     LinearInterpolation, SubsampledArray, CompressedArray
 ):
-    """TODO.
+    """A subsampled array with bi_linear interpolation.
 
-    .. versionadded:: (cfdm) TODO
+    The information needed to uncompress the data is stored in a tie
+    point index variable that defines the relationship between the
+    indices of the subsampled dimensions and the indices of the
+    corresponding interpolated dimensions.
+
+    **Cell boundaries**
+
+    If the subsampled array represents cell boundaries, then the
+    *shape*, *ndim* and *size* parameters that describe the
+    uncompressed array will include the required trailing size 2
+    dimension.
+
+    .. versionadded:: (cfdm) 1.9.TODO.0
 
     """
 
@@ -19,14 +31,11 @@ class SubsampledBilinearArray(
         shape=None,
         size=None,
         ndim=None,
-        dtype=None,
-        compressed_axes=None,
-        tie_point_indices=None,
         interpolation_description=None,
         computational_precision=None,
-#        interpolation_variable=None,
+        tie_point_indices={},
     ):
-        """Initialisation.
+        """**Initialisation**
 
         :Parameters:
 
@@ -42,23 +51,14 @@ class SubsampledBilinearArray(
             ndim: `int`
                 The number of uncompressed array dimensions.
 
-            dtype: data-type, optional
-               The data-type for the uncompressed array. This datatype
-               type is also used in all interpolation calculations. By
-               default, the data-type is double precision float.
-
-            compressed_axes: sequence of `int`
-                The positions of the subsampled dimensions in the tie
-                points array.
+            tie_point_indices: `dict`
+                The tie point index variable for each subsampled
+                dimension. A key indentifies a subsampled dimension by
+                its integer position in the compressed array, and its
+                value is a `TiePointIndex` variable.
 
                 *Parameter example:*
-                  ``compressed_axes=[1, 2]``
-
-            tie_point_indices: `dict`, optional
-                The tie point index variable for each subsampled
-                dimension. An integer key indentifies a subsampled
-                dimensions by its position in the tie points array,
-                and the value is a `TiePointIndex` variable.
+                  ``tie_point_indices={0: cfdm.TiePointIndex(data=[0, 16]), 2: cfdm.TiePointIndex(data=[0, 20, 20])}``
 
             computational_precision: `str`, optional
                 The floating-point arithmetic precision used during
@@ -68,31 +68,27 @@ class SubsampledBilinearArray(
                 *Parameter example:*
                   ``computational_precision='64'``
 
-#             interpolation_variable: `Interpolation`
-
         """
         super().__init__(
             compressed_array=compressed_array,
             shape=shape,
             size=size,
             ndim=ndim,
-            compressed_dimension=tuple(compressed_axes),
             compression_type="subsampled",
-            interpolation_name="bilinear",
+            interpolation_name="bi_linear",
             tie_point_indices=tie_point_indices.copy(),
             computational_precision=computational_precision,
-#            interpolation_variable=interpolation_variable,
+            compressed_dimensions=tuple(tie_point_indices),
+            one_to_one=True,
         )
 
-        if dtype is None:
-            dtype = self._default_dtype
-
-        self.dtype = dtype
-
     def __getitem__(self, indices):
-        """x.__getitem__(indices) <==> x[indices]
+        """Return a subspace of the uncompressed data.
 
-        Returns a subspace of the array as an independent numpy array.
+        x.__getitem__(indices) <==> x[indices]
+
+        Returns a subspace of the uncompressed data as an independent
+        numpy array.
 
         .. versionadded:: (cfdm) TODO
 
@@ -107,15 +103,15 @@ class SubsampledBilinearArray(
         # ------------------------------------------------------------
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
-        (d0, d1) = self.get_compressed_axes()
+        (d0, d1) = sorted(self.compressed_dimensions())
 
-        tie_points = self.get_tie_points()
+        tie_points = self._get_compressed_Array()
 
         # Interpolate the tie points for each interpolation subarea
-        uarray = np.ma.masked_all(self.shape, dtype=self.dtype)
+        uarray = np.ma.masked_all(self.shape, dtype=np.dtype(float))
 
         for u_indices, tp_indices, subarea_shape, first, _ in zip(
-            *self.interpolation_subareas()
+            *self._interpolation_subareas()
         ):
             ua = self._select_tie_points(
                 tie_points, tp_indices, {d0: 0, d1: 0}
@@ -133,19 +129,27 @@ class SubsampledBilinearArray(
                 ua, uc, ub, ud, (d0, d1), subarea_shape, first
             )
 
-            self._set_interpolated_values(uarray, u_indices, (d0, d1), u)
+            self._set_interpolated_values(uarray, u, u_indices, (d0, d1))
 
         self._s.cache_clear()
 
         return self.get_subspace(uarray, indices, copy=True)
 
     def _bilinear_interpolation(
-        self, ua, uc, ub, ud, subsampled_dimensions, subarea_shape, first
+        self,
+        ua,
+        uc,
+        ub,
+        ud,
+        subsampled_dimensions,
+        subarea_shape,
+        first,
+        trim=True,
     ):
         """Interpolate bilinearly between pairs of tie points.
 
-        Computes the function defined in CF appendix J, where ``fl``
-        is the linear interpolation operator:
+        General purpose two-dimensional linear interpolation
+        method. See CF appendix J for details.
 
         uac = fl(ua, uc, s(ia2, ic2, i2))
         ubd = fl(ub, ud, s(ia2, ic2, i2))
@@ -159,20 +163,27 @@ class SubsampledBilinearArray(
 
             ua, uc, ub, ud: array_like
                The arrays containing the points for bilinear
-               interpolation along dimensions *d0* and *d1*.
+               interpolation along the interpolated dimensions.
 
-            subsampled_dimensions: 2-`tuple` of `int`
-                The positions of the subsampled dimensions in the tie
-                points array.
+            subsampled_dimensions: seqeunce of `int`
+                The positions of the two subsampled dimensions in the
+                compressed data.
 
             subarea_shape: `tuple` of `int`
-                The shape of the interpolation subararea, including
-                all tie points.
+                The shape of the uncompressed interpolation subararea,
+                including all tie points, but excluding a bounds
+                dimension.
 
             first: `tuple`
                 For each dimension, True if the interpolation subarea
                 is the first (in index space) of a new continuous
                 area, otherwise False.
+
+            trim: `bool`, optional
+                For each interpolated dimension, remove the first point
+                of the interpolation subarea when it is not the first
+                (in index space) of a continuous area, and when the
+                compressed data are not bounds tie points.
 
         :Returns:
 
@@ -181,8 +192,14 @@ class SubsampledBilinearArray(
         """
         (d0, d1) = subsampled_dimensions
 
-        uac = self._linear_interpolation(ua, uc, (d0,), subarea_shape, first)
-        ubd = self._linear_interpolation(ub, ud, (d0,), subarea_shape, first)
-        u = self._linear_interpolation(uac, ubd, (d1,), subarea_shape, first)
+        uac = self._linear_interpolation(
+            ua, uc, d0, subarea_shape, first, trim=trim
+        )
+        ubd = self._linear_interpolation(
+            ub, ud, d0, subarea_shape, first, trim=trim
+        )
+        u = self._linear_interpolation(
+            uac, ubd, d1, subarea_shape, first, trim=trim
+        )
 
         return u

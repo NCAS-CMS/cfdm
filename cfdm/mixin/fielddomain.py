@@ -13,9 +13,6 @@ class FieldDomain:
 
     """
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
     def _apply_masking_constructs(self):
         """Apply masking to metadata constructs in-place.
 
@@ -1394,3 +1391,6 @@ class FieldDomain:
                 return True
 
         return False
+
+
+#    def uncompressaquadratic_latitude_longitude

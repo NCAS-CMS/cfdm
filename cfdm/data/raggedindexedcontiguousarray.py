@@ -66,7 +66,7 @@ class RaggedIndexedContiguousArray(
             count_variable=count_variable,
             index_variable=index_variable,
             compression_type="ragged indexed contiguous",
-            compressed_dimension=0,
+            compressed_dimensions=(0,),
         )
 
     def __getitem__(self, indices):

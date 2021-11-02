@@ -7,8 +7,14 @@ from .raggedcontiguousarray import RaggedContiguousArray
 from .raggedindexedarray import RaggedIndexedArray
 from .raggedindexedcontiguousarray import RaggedIndexedContiguousArray
 from .subsampledbilineararray import SubsampledBilinearArray
+from .subsampledbiquadraticlatitudelongitudearray import (
+    SubsampledBiquadraticLatitudeLongitudeArray,
+)
 from .subsampledgeneralarray import SubsampledGeneralArray
 from .subsampledlineararray import SubsampledLinearArray
 from .subsampledquadraticarray import SubsampledQuadraticArray
+from .subsampledquadraticlatitudelongitudearray import (
+    SubsampledQuadraticLatitudeLongitudeArray,
+)
 
 from .data import Data
