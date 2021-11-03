@@ -226,6 +226,14 @@ class CoordinateReferenceTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             cfdm.write(f, tempfile1)
 
+    def test_CoordinateReference_write(self):
+        """Test write when vertical CRS has no coordinates."""
+        f = cfdm.example_field(1)
+        c = f.construct("standard_name:atmosphere_hybrid_height_coordinate")
+        c.clear_coordinates()
+        # This write should not fail ...
+        cfdm.write(f, tempfile1)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
