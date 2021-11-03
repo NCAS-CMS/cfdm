@@ -3721,10 +3721,9 @@ class NetCDFWrite(IOWrite):
 
                 if len(c) == 1:
                     owning_coord_key, _ = c[0]
-
-            z_axis = self.implementation.get_construct_data_axes(
-                f, owning_coord_key
-            )[0]
+                    z_axis = self.implementation.get_construct_data_axes(
+                        f, owning_coord_key
+                    )[0]
 
             if owning_coord_key is not None:
                 # This formula_terms coordinate reference matches up
