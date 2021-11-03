@@ -1,3 +1,14 @@
+Version 1.9.?.?
+---------------
+
+**2021-??-??**
+
+* Fixed bug that caused `cfdm.write` failure for some fields with a
+  vertical coordinate reference system
+  (https://github.com/NCAS-CMS/cfdm/issues/164)
+
+----
+  
 Version 1.9.0.1
 ---------------
 
