@@ -938,6 +938,10 @@ class PropertiesData(Properties):
 
             * Compression by gathering.
 
+            ..
+
+            * Compression by coordinate subsampling
+
         .. versionadded:: (cfdm) 1.7.11
 
         :Parameters:

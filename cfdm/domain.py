@@ -59,7 +59,7 @@ class Domain(
     `nc_clear_component_dimension_groups`,
     `nc_del_component_sample_dimension`,
     `nc_set_component_sample_dimension`,
-    `nc_set_component_sample_dimension_groups`,
+    `nc_set_component_sample_dimension_groups`, and
     `nc_clear_component_sample_dimension_groups` methods.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -978,11 +978,11 @@ class Domain(
 
         for c in d.constructs.filter_by_data(todict=True).values():
             c.uncompress(inplace=True)
-
+                
         return d
 
     @_inplace_enabled(default=False)
-    def uncompress_quadratic_latitude_longitudeTODO(self, inplace=False):
+    def quadratic_latitude_longitudeTODO(self, inplace=False):
         """TODO."""
         lat = None
         lon = None
@@ -1003,15 +1003,23 @@ class Domain(
             if lon is not None and lat is not None:
                 break
 
-        for c in (lat, lon):
-            if c.data.get_compression_type != "subsampled":
-                raise ValueError()
+        if lon is None or lat is None:
+            raise ValueError()
 
-            if (
-                c.data.source().get_interpolation_name(None)
-                != "quadratic_latitude_longitude"
-            ):
-                raise ValueError()
+        if lat.data.get_compression_type() != "subsampled":
+            raise ValueError()
+
+        if lon.data.get_compression_type() != "subsampled":
+            raise ValueError()
+
+        lat_name = lat.data.source().get_interpolation_name(None)
+        lon_name = lon.data.source().get_interpolation_name(None)
+        if lat_name != lon_name:
+            raise ValueError()
+
+        if lat_name not in ("quadratic_latitude_longitude",
+                            "bi_quadratic_latitude_longitude"):
+            raise ValueError()
 
         # Make sure that lon and lat have the same dimension order
         if lon_axes != lat_axes:
@@ -1024,5 +1032,5 @@ class Domain(
         lat = lat.data.source()
         lon = lon.data.source()
 
-        lat.set_longitude_or_longitude({"longitude": lon})
-        lon.set_longitude_or_longitude({"latitude": lat})
+        lat.set_longitude(lon)
+        lon.set_latitude(lat)

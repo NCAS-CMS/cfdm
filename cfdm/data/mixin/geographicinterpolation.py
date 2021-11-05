@@ -18,12 +18,22 @@ class GeographicInterpolation(QuadraticInterpolation):
         Conversion from geocentric (latitude, longitude) to
         three-dimensional cartesian vector (x, y, z)
 
-        (x, y, z) = fll2v(ll)
-                  = (cos(ll.lat)*cos(ll.lon),
-                     cos(ll.lat)*sin(ll.lon),
-                     sin(ll.lat))
+        (x, y, z) = fll2v(lat, lon)
+                  = (cos(lat)*cos(lon),
+                     cos(lat)*sin(lon),
+                     sin(lat))
 
         .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            lat: array_like
+
+            lon: array_like
+                    
+        :Returns:
+        
+            `tuple`
 
         """
         cos_lat = np.cos(lat)
@@ -43,6 +53,16 @@ class GeographicInterpolation(QuadraticInterpolation):
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
+        :Parameters:
+
+            va: `tuple` of array_like
+
+            vb: `tuple` of array_like
+                    
+        :Returns:
+        
+            `tuple`
+
         """
         (x, y, z) = (0, 1, 2)
         return (
@@ -58,6 +78,18 @@ class GeographicInterpolation(QuadraticInterpolation):
                   = (r * v.x,
                      r * v.y,
                      r * v.z)
+
+        .. versionaddedd:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            r: scalar array_like
+
+            v: `tuple` of array_like
+                    
+        :Returns:
+        
+            `tuple`
 
         """
         return tuple(a * r for a in v)
@@ -94,6 +126,16 @@ class GeographicInterpolation(QuadraticInterpolation):
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
+        :Parameters:
+
+           vectors:
+               The vectors to be added, each defined by a `tuple` of
+               array_like.
+                    
+        :Returns:
+        
+            `tuple`
+
         """
         out = []
         for v in zip(*vectors):
@@ -115,16 +157,19 @@ class GeographicInterpolation(QuadraticInterpolation):
         :Parameters:
 
             t: array_like
+       
+        :Returns:
+        
+            The square root of the values.
 
         """
         return t ** 0.5
 
     def _fv2ll(self, v):
-        """Convert cartesian (x, y, z) to geocentric (latitude,
-        longitude).
+        """Convert cartesian to geocentric coordinates.
 
-        Conversion from three-dimensional cartesian vector (x, y, z)
-        to geocentric (latitude, longitude).
+        Converts three-dimensionsal (x, y, x) cartesian coordinates to
+        geocentric (latitude, longitude) coordinates.
 
         (lat, lon) = fv2ll(v)
                    = (atan2(v.y, v.x),
@@ -134,7 +179,7 @@ class GeographicInterpolation(QuadraticInterpolation):
 
         :Parameters:
 
-            v: 3-`tuple`
+            v: `tuple` of array_like
 
         """
         (x, y, z) = (0, 1, 2)
@@ -151,6 +196,26 @@ class GeographicInterpolation(QuadraticInterpolation):
         """TODO."""
         return self._set_component("latitude_or_longitude", value, copy=False)
 
-    def del_latitude_or_longitude(self):
+    def del_latitude(self):
         """TODO."""
-        return self._del_component("latitude_or_longitude", None)
+        return self._del_component("latitude", None)
+
+    def get_latitude(self):
+        """TODO."""
+        return self._get_component("latitude")
+
+    def set_latitude(self, value):
+        """TODO."""
+        return self._set_component("latitude", value, copy=False)
+
+    def del_longitude(self):
+        """TODO."""
+        return self._del_component("longitude", None)
+
+    def get_longitude(self):
+        """TODO."""
+        return self._get_component("longitude")
+
+    def set_longitude(self, value):
+        """TODO."""
+        return self._set_component("longitude", value, copy=False)

@@ -125,22 +125,19 @@ class SubsampledQuadraticLatitudeLongitudeArray(
         # ------------------------------------------------------------
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
-        x = self.get_latitude_or_longitude()
-        if "latitude" in x:
+        lat = self.get_latitude(None)
+        if lat is not None:
             lon = self
-            lat = x["latitude"]
-            is_latitude = False
-        elif "longitude" in x:
-            lat = self
-            lon = x["longitude"]
-            is_latitude = True
         else:
-            raise ValueError(
-                "Can't subsapce: quadratic_latitude_longitude interpolation "
-                "of longitudes requires corresponding latitudes, "
-                "and vice versa. See 'TODO method'."
+            lat = self
+            lon = self.get_longitude(None)            
+            if lon is None:            
+                raise ValueError(
+                    "Can't subspace: quadratic_latitude_longitude "
+                    "interpolation of longitudes requires corresponding "
+                    "latitudes, and vice versa."
             )
-
+       
         (d0,) = tuple(self.compressed_dimensions())
 
         tie_points = self._get_compressed_Array()
@@ -190,7 +187,7 @@ class SubsampledQuadraticLatitudeLongitudeArray(
 
     def _fcea2cv(self, va, vb, ce, ca, subarea_index):
         """TODO.
-
+ 
         cv = fcea2cv(va, vb, ce, ca)
            = fplus(fmultiply(ce, fminus(va, vb)),
                    fmultiply(ca, fcross(va, vb)),

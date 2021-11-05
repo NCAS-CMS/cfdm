@@ -3,31 +3,31 @@ from . import core, mixin
 
 class InterpolationParameter(
     mixin.NetCDFVariable,
-    mixin.NetCDFSubsampledDimension,
-    mixin.NetCDFInterpolationSubareaDimension,
     mixin.PropertiesData,
     core.abstract.PropertiesData,
 ):
-    """TODO A tie point index variable with propoerties.
+    """An interpolation parameter variable.
 
     Space may be saved by storing a subsample of the coordinates. The
     uncompressed coordinates can be reconstituted by interpolation
-    from the tie points, i.e. the subsampled coordinate values.
+    from the subsampled coordinate values, also called either "tie
+    points" or "bounds tie points".
 
-    For each interpolated dimension, the locations of the tie point
-    coordinates are defined by a corresponding tie point index
-    variable, which also indicates the locations of the continuous
-    areas.
+    An interpolation parameter variable provides values for
+    coefficient terms in the interpolation equation, or for any other
+    terms that configure the interpolation process.
 
     **NetCDF interface**
 
     {{netCDF variable}}
 
-    TODO
-
-    TODO
+    The netCDF subsampled dimension name and the netCDF interpolation
+    subarea dimension name, if required, are set on the on the
+    corresponding tie point index variable.
 
     .. versionadded:: (cfdm) 1.9.TODO.0
+
+    .. seealso:: `TiePointIndex`
 
     """
 
