@@ -1392,5 +1392,14 @@ class FieldDomain:
 
         return False
 
-
-#    def uncompressaquadratic_latitude_longitude
+    # def set_construct(self, construct, key=None, axes=None, copy=True):
+    #    """TODO
+    #
+    #    .. versionadded:: (cfdm) 1.7.0
+    #
+    #    .. seealso:: `constructs`, `del_construct`, `get_construct`,
+    #                 `set_data_axes`
+    #
+    #    """
+    #    key = super().set_construct(construct, key=key, axes=axes, copy=copy)
+    #    construct = self.constructs[key]

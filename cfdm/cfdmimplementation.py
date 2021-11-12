@@ -223,7 +223,7 @@ class CFDMImplementation(Implementation):
     def _get_domain_compression_variable(self, variable_type, domain):
         """Get the compression variable of a type of compressed data.
 
-        ..versionadded:: 1.9.0.0
+        ..versionadded:: (cfdm) 1.9.0.0
 
         :Parameters:
 
@@ -656,6 +656,7 @@ class CFDMImplementation(Implementation):
             "ragged indexed contiguous",
             "ragged indexed",
             "ragged contiguous",
+            "subsampled",
         )
 
         compressed_axes = {
@@ -685,7 +686,6 @@ class CFDMImplementation(Implementation):
         for compression_type in compression_types:
             if compressed_axes[compression_type]:
                 return list(compressed_axes[compression_type])
-        # --- End: for
 
         return []
 
@@ -1329,7 +1329,7 @@ class CFDMImplementation(Implementation):
         A "component" is either a metadata construct or a metadata
         construct component (such as a bounds component).
 
-        .. versionadded::: 1.7.0
+        .. versionadded::: (cfdm) 1.7.0
 
         :Parameter:
 
@@ -1573,6 +1573,29 @@ class CFDMImplementation(Implementation):
         """
         return construct.get_interior_ring(default=None)
 
+    def get_interpolation_name(self, construct, default=None):
+        """Return the interior ring variable of geometry coordinates.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            construct: construct
+
+            default:
+
+        :Returns:
+
+            `str`
+
+        """
+        try:
+            return self.get_data_source(construct).get_interpolation_name(
+                default
+            )
+        except AttributeError:
+            return default
+
     def get_list(self, construct):
         """Return the list variable of compressed data.
 
@@ -1791,6 +1814,27 @@ class CFDMImplementation(Implementation):
 
         """
         return parent.get_data(default=default)
+
+    def get_data_source(self, parent, default=None):
+        """Return the data array.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            parent:
+                The object containing the data array.
+
+        :Returns:
+
+                The data.
+
+        """
+        data = self.get_data(parent, None)
+        if data is None:
+            return default
+
+        return data.source(default)
 
     def initialise_AuxiliaryCoordinate(self):
         """Return an auxiliary coordinate construct.
@@ -3029,6 +3073,16 @@ class CFDMImplementation(Implementation):
         """
         return field.set_construct(construct, copy=copy)
 
+    def set_extra_tie_point_dimensions(self, construct, dimensions):
+        """TODO"""
+        source = self.get_data_source(construct)
+        source.set_extra_tie_point_dimensions(dimensions)
+        
+    def set_extra_tie_points(self, construct, tie_points):
+        """TODO"""
+        source = self.get_data_source(construct)
+        source.set_extra_tie_points(tie_points)
+        
     def nc_set_external(self, construct):
         """Set the external status of a construct.
 
@@ -3359,6 +3413,28 @@ class CFDMImplementation(Implementation):
 
         """
         return bool(coordinate_reference.datum)
+
+    def has_identity(self, construct, identity):
+        """Return True if a construct has the given identity.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            construct:
+
+            identity: `str`
+                The identity
+
+                *Parameter example:*
+                   ``'latitude'``
+
+        :Returns:
+
+            `bool`
+
+        """
+        return bool(getattr(construct, identity, False))
 
     def has_property(self, parent, prop):
         """Return True if a property exists.

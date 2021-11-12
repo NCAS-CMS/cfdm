@@ -561,50 +561,122 @@ class SubsampledArray:
 
         return out
 
-    def conform_interpolation_parameters(self):
-        """Conform the interpolation parameters.
+    def conform(
+        self, extra_tie_points=True, parameters=True, expand_dims=False
+    ):
+        """Conform interpolation parameters and extra tie_points.
 
-        Tranposes the interpolation parameters, if any, to have the
-        same relative dimension order as the compressed array, and
-        inserts any missing dimensions as size 1 axes.
+        Tranposes the interpolation parameters and extra tie points, if
+        any, to have the same relative dimension order as the
+        compressed array.
+
+        Missing dimensions in interpolation parameters may be inserted
+        as size 1 axes.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            extra_tie_points: `bool`
+                If False then do not conform any extra tie points.
+
+            parameters: `bool`
+                If False then do not conform any interpolation
+                parameters.
+
+            expand_dims: `bool`
+                If True then missing dimensions in any interpolation
+                parameters will be inserted as size 1 axes. By default
+                they are not.
 
         :Returns:
 
             `None`
 
         """
-        parameters = self.get_interpolation_parameters()
-        if not parameters:
-            return
+        parameter_dimensions = None
+        tie_point_dims = None
 
-        parameter_dimensions = self.get_parameter_dimensions()
+        if parameters:
+            parameters = self._get_component("interpolation_parameters")
+            parameter_dimensions = self._get_component("parameter_dimensions")
+
+        if extra_tie_points:
+            tie_points = self._get_component("extra_tie_points")
+            tie_point_dims = self._get_component("extra_tie_point_dimensions")
+
+        if not (parameter_dimensions or tie_point_dims):
+            return
 
         ndim = self._get_compressed_Array().ndim
         dims = list(range(ndim))
 
-        for term, param in parameters.items():
-            param_dims = parameter_dimensions[term]
-            if sorted(param_dims) == dims:
-                # The interpolation parameter dimensions are already
-                # in the correct order
-                continue
+        if parameter_dimensions:
+            for term, param in parameters.items():
+                param_dims = parameter_dimensions[term]
+                if sorted(param_dims) == dims:
+                    # The interpolation parameter dimensions are already
+                    # in the correct order
+                    continue
 
-            if len(param_dims) > 1:
-                new_order = [
-                    param_dims.index(i) for i in dims if i in param_dims
-                ]
-                param = param.transpose(new_order)
+                if len(param_dims) > 1:
+                    new_order = [
+                        param_dims.index(i) for i in dims if i in param_dims
+                    ]
+                    param = param.transpose(new_order)
 
-            # Add non-interpolated dimensions as size 1 axes, if
-            # they're not already there.
-            if len(param_dims) < ndim:
-                for d in sorted(set(dims).difference(param_dims)):
-                    param = param.insert_dimension(position=d)
+                if expand_dims:
+                    # Add missing interpolation parameter dimensions
+                    # as size 1 axes
+                    if len(param_dims) < ndim:
+                        for d in sorted(set(dims).difference(param_dims)):
+                            param = param.insert_dimension(position=d)
 
-            parameters[term] = param
-            parameter_dimensions[term] = dims
+                parameters[term] = param
+                parameter_dimensions[term] = dims
+
+        if tie_point_dims:
+            for identity, tp in tie_points.items():
+                tp_dims = tie_point_dims[identity]
+                if sorted(tp_dims) == dims:
+                    # The extra tie point dimensions are already in
+                    # the correct order
+                    continue
+
+                if len(tp_dims) > 1:
+                    new_order = [
+                        tp_dims.index(i) for i in dims if i in tp_dims
+                    ]
+                    tp = tp.transpose(new_order)
+
+                tie_points[identity] = tp
+                tie_point_dims[identity] = dims
+
+    def get_extra_tie_points(self, conform=False):
+        """Return the TODO interpolation parameter variables.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `conform_interpolation_parameters`,
+                     `get_parameter_dimensions`
+
+        :Parameters:
+
+            conform: `bool`, optional
+                If True then the extra tie points are conformed to
+                match the dimensions of the tie points.
+
+        :Returns:
+
+            `dict`
+                TODO. If no interpolation parameter variables have
+                been set then an empty dictionary is returned.
+
+        """
+        if conform:
+            self.conform(parameters=False)
+
+        return self._get_component("extra_tie_points").copy()
 
     def get_interpolation_description(self, default=ValueError()):
         """Return the non-standardised interpolation method description.
@@ -668,16 +740,14 @@ class SubsampledArray:
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
-        .. seealso:: `conform_interpolation_parameters`,
-                     `get_parameter_dimensions`
+        .. seealso:: `conform`, `get_parameter_dimensions`
 
         :Parameters:
 
             conform: `bool`, optional
                 If True then the interpolation parameters are
                 conformed to match the dimensions of the tie
-                points. See `conform_interpolation_parameters` for
-                details.
+                points. See `conform` for details.
 
         :Returns:
 
@@ -687,7 +757,7 @@ class SubsampledArray:
 
         """
         if conform:
-            self.conform_interpolation_parameters()
+            self.conform(extra_tie_points=False, expand_dims=True)
 
         return self._get_component("interpolation_parameters").copy()
 
@@ -722,6 +792,19 @@ class SubsampledArray:
 
         """
         return self._get_component("tie_point_indices").copy()
+
+    def set_extra_tie_point_dimensions(self, value, copy=True):
+        """TODO"""
+        self._set_component("extra_tie_points", value.copy(), copy=False)
+
+    def set_extra_tie_points(self, value, copy=True):
+        """TODO"""
+        if copy:
+            value = {k, v.copy(), k, v in value.items()}
+        else:
+            value = value.copy()
+
+        self._set_component("extra_tie_points", value, copy=False)
 
     def to_memory(self):
         """Bring an array on disk into memory.

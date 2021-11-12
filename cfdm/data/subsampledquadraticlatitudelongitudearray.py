@@ -44,6 +44,7 @@ class SubsampledQuadraticLatitudeLongitudeArray(
         tie_point_indices={},
         interpolation_parameters={},
         parameter_dimensions={},
+        extra_tie_points={},
     ):
         """**Initialisation**
 
@@ -125,22 +126,25 @@ class SubsampledQuadraticLatitudeLongitudeArray(
         # ------------------------------------------------------------
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
-        lat = self.get_latitude(None)
-        if lat is not None:
-            lon = self
+
+        extra_tie_points = self.get_extra_tie_points(conform=True)
+        lat_tie_points = extra_tie_points.get("latitude")
+        if lat_tie_points is not None:
+            lon_tie_points = self._get_compressed_Array()
+            is_latitude = False
         else:
-            lat = self
-            lon = self.get_longitude(None)            
-            if lon is None:            
+            lon_tie_points = extra_tie_points.get("longitude")
+            is_latitude = True
+            if lon_tie_points is not None:
+                lat_tie_points = self._get_compressed_Array()
+            else:
                 raise ValueError(
                     "Can't subspace: quadratic_latitude_longitude "
                     "interpolation of longitudes requires corresponding "
                     "latitudes, and vice versa."
-            )
-       
-        (d0,) = tuple(self.compressed_dimensions())
+                )
 
-        tie_points = self._get_compressed_Array()
+        (d0,) = tuple(self.compressed_dimensions())
 
         parameters = self.get_interpolation_parameters(conform=True)
         ce = parameters.get("ce")
@@ -154,10 +158,10 @@ class SubsampledQuadraticLatitudeLongitudeArray(
         for u_indices, tp_indices, subarea_size, first, subarea_index in zip(
             *self._interpolation_subareas()
         ):
-            lat_a = lat._select_tie_points(tie_points, tp_indices, {d0: 0})
-            lon_a = lon._select_tie_points(tie_points, tp_indices, {d0: 0})
-            lat_b = lat._select_tie_points(tie_points, tp_indices, {d0: 1})
-            lon_b = lon._select_tie_points(tie_points, tp_indices, {d0: 1})
+            lat_a = lat._select_tie_points(lat_tie_points, tp_indices, {d0: 0})
+            lon_a = lon._select_tie_points(lon_tie_points, tp_indices, {d0: 0})
+            lat_b = lat._select_tie_points(lat_tie_points, tp_indices, {d0: 1})
+            lon_b = lon._select_tie_points(lon_tie_points, tp_indices, {d0: 1})
 
             lat_p, lon_p = self._quadratic_latitude_longitude_interpolation(
                 lat_a,
@@ -181,13 +185,11 @@ class SubsampledQuadraticLatitudeLongitudeArray(
 
         self._s.cache_clear()
 
-        self.del_latitude_or_longitude()
-
         return self.get_subspace(uarray, indices, copy=True)
 
     def _fcea2cv(self, va, vb, ce, ca, subarea_index):
         """TODO.
- 
+
         cv = fcea2cv(va, vb, ce, ca)
            = fplus(fmultiply(ce, fminus(va, vb)),
                    fmultiply(ca, fcross(va, vb)),
@@ -219,10 +221,10 @@ class SubsampledQuadraticLatitudeLongitudeArray(
         out = self._fmultiply(cr, vr)
 
         if ce is not None:
-            out = self._fmultiply(ce, self._fminus(va, vb))
+            out = self._fplus(out, self._fmultiply(ce, self._fminus(va, vb)))
 
         if ca is not None:
-            out = self._fmultiply(ca, self._fcross(va, vb))
+            out = self._fplus(out, self._fmultiply(ca, self._fcross(va, vb)))
 
         return out
 

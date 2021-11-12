@@ -978,7 +978,7 @@ class Domain(
 
         for c in d.constructs.filter_by_data(todict=True).values():
             c.uncompress(inplace=True)
-                
+
         return d
 
     @_inplace_enabled(default=False)
@@ -1017,8 +1017,76 @@ class Domain(
         if lat_name != lon_name:
             raise ValueError()
 
-        if lat_name not in ("quadratic_latitude_longitude",
-                            "bi_quadratic_latitude_longitude"):
+        if lat_name not in (
+            "quadratic_latitude_longitude",
+            "bi_quadratic_latitude_longitude",
+        ):
+            raise ValueError()
+
+        # Make sure that lon and lat have the same dimension order
+        if lon_axes != lat_axes:
+            lon = lon.copy()
+            new_axes = [lon_axes.index(axis) for axis in lat_axes]
+            lon.data._set_CompressedArray(
+                lon.data.source().transpose(new_axes)
+            )
+
+        lat = lat.data.source()
+        lon = lon.data.source()
+
+        lat.set_longitude(lon)
+        lon.set_latitude(lat)
+
+    def xxx_latitude_longitudeTODO(self, latitiude=None, longitude=None):
+        """TODO."""
+        lat = None
+        lon = None
+
+        if latitude is not None:
+            lat = self.coordinate(latitude)
+
+        if longitude is not None:
+            lon = self.coordinate(longitude)
+
+        if lat is None or lon is None:
+            coordinates = self.coordinates(todict=True)
+
+            if lat is None:
+                for key, coord in coordinates.items():
+                    if coord.latitude:
+                        if lat is not None:
+                            raise ValueError()
+
+                        lat = coord
+                        lat_axes = self.get_data_axes(key)
+
+            if lon is None:
+                for key, coord in coordinates.items():
+                    if coord.longitude:
+                        if lon is not None:
+                            raise ValueError()
+
+                        lon = coord
+                        lon_axes = self.get_data_axes(key)
+
+        if lon is None or lat is None:
+            return False
+
+        if lat.data.get_compression_type() != "subsampled":
+            raise ValueError()
+
+        if lon.data.get_compression_type() != "subsampled":
+            raise ValueError()
+
+        lat_name = lat.data.source().get_interpolation_name(None)
+        lon_name = lon.data.source().get_interpolation_name(None)
+        if lat_name != lon_name:
+            raise ValueError()
+
+        if lat_name not in (
+            "quadratic_latitude_longitude",
+            "bi_quadratic_latitude_longitude",
+        ):
             raise ValueError()
 
         # Make sure that lon and lat have the same dimension order

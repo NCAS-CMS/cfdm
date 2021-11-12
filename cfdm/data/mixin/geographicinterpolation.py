@@ -30,9 +30,9 @@ class GeographicInterpolation(QuadraticInterpolation):
             lat: array_like
 
             lon: array_like
-                    
+
         :Returns:
-        
+
             `tuple`
 
         """
@@ -58,9 +58,9 @@ class GeographicInterpolation(QuadraticInterpolation):
             va: `tuple` of array_like
 
             vb: `tuple` of array_like
-                    
+
         :Returns:
-        
+
             `tuple`
 
         """
@@ -86,9 +86,9 @@ class GeographicInterpolation(QuadraticInterpolation):
             r: scalar array_like
 
             v: `tuple` of array_like
-                    
+
         :Returns:
-        
+
             `tuple`
 
         """
@@ -131,9 +131,9 @@ class GeographicInterpolation(QuadraticInterpolation):
            vectors:
                The vectors to be added, each defined by a `tuple` of
                array_like.
-                    
+
         :Returns:
-        
+
             `tuple`
 
         """
@@ -157,9 +157,9 @@ class GeographicInterpolation(QuadraticInterpolation):
         :Parameters:
 
             t: array_like
-       
+
         :Returns:
-        
+
             The square root of the values.
 
         """
