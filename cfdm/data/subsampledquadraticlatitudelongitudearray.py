@@ -218,15 +218,15 @@ class SubsampledQuadraticLatitudeLongitudeArray(
 
         cr = self._fsqrt(k) - self._fsqrt(rsqr)
 
-        out = self._fmultiply(cr, vr)
+        cv = self._fmultiply(cr, vr)
 
         if ce is not None:
-            out = self._fplus(out, self._fmultiply(ce, self._fminus(va, vb)))
+            cv = self._fplus(out, self._fmultiply(ce, self._fminus(va, vb)))
 
         if ca is not None:
-            out = self._fplus(out, self._fmultiply(ca, self._fcross(va, vb)))
+            cv = self._fplus(out, self._fmultiply(ca, self._fcross(va, vb)))
 
-        return out
+        return cv
 
     def _fcll(self, lat_a, lon_a, lat_b, lon_b, va, vb, cv):
         """TODO.
