@@ -830,66 +830,66 @@ class SubsampledArray:
 
         return self
 
-    def tranpose(self, axes=None):
-        """Tranpose the compressed array without uncompressing it.
-
-        .. versionadded:: 1.9.TODO.0
-
-        .. seealso:: `conform_interpolation_parameters`
-
-        :Parameters:
-
-            axes: seqeunce of `ints`, optional
-                By default, reverse the dimensions, otherwise permute
-                the axes according to the values given.
-
-        :Returns:
-
-            `{{class}}`
-                 A new instance with the transposed compressed array.
-
-        """
-        # Parse axes
-        ndim = self.ndim
-        if axes:
-            if len(axes) != ndim:
-                raise ValueError("axes don't match array")
-
-            axes = tuple(d + ndim if d < 0 else d for d in axes)
-        else:
-            axes = tuple(range(ndim))[::-1]
-
-        # Tranpose the compressed array
-        compressed_array = self.source().tranpose(axes=axes)
-
-        # Transpose the uncompressed shape
-        shape = self.shape
-        if self.bounds:
-            shape1 = shape[:-1]
-            new_shape = tuple([shape1.index(i) for i in axes]) + (shape[-1],)
-        else:
-            new_shape = tuple([shape.index(i) for i in axes])
-
-        # Change the tie point index dimensions
-        tie_point_indices = {
-            axes.index(i): tpi
-            for i, tpi in self.get_tie_point_indices().items()
-        }
-
-        # Change the interpolation parameter dimensions
-        parameter_dimensions = {
-            term: tuple([axes.index(i) for i in dims])
-            for term, dims in self.get_parameter_dimensions().items()
-        }
-
-        return type(self)(
-            compressed_array=compressed_array,
-            shape=new_shape,
-            ndim=self.ndim,
-            size=self.size,
-            interpolation_name=self.get_interpolation_name(None),
-            interpolation_description=self.get_interpolation_description(None),
-            tie_point_indices=tie_point_indices,
-            interpolation_parameters=self.get_interpolation_parameters(),
-            parameter_dimensions=parameter_dimensions,
-        )
+#    def tranpose(self, axes=None):
+#        """Tranpose the compressed array without uncompressing it.
+#
+#        .. versionadded:: 1.9.TODO.0
+#
+#        .. seealso:: `conform_interpolation_parameters`
+#
+#        :Parameters:
+#
+#            axes: seqeunce of `ints`, optional
+#                By default, reverse the dimensions, otherwise permute
+#                the axes according to the values given.
+#
+#        :Returns:
+#
+#            `{{class}}`
+#                 A new instance with the transposed compressed array.
+#
+#        """
+#        # Parse axes
+#        ndim = self.ndim
+#        if axes:
+#            if len(axes) != ndim:
+#                raise ValueError("axes don't match array")
+#
+#            axes = tuple(d + ndim if d < 0 else d for d in axes)
+#        else:
+#            axes = tuple(range(ndim))[::-1]
+#
+#        # Tranpose the compressed array
+#        compressed_array = self.source().tranpose(axes=axes)
+#
+#        # Transpose the uncompressed shape
+#        shape = self.shape
+#        if self.bounds:
+#            shape1 = shape[:-1]
+#            new_shape = tuple([shape1.index(i) for i in axes]) + (shape[-1],)
+#        else:
+#            new_shape = tuple([shape.index(i) for i in axes])
+#
+#        # Change the tie point index dimensions
+#        tie_point_indices = {
+#            axes.index(i): tpi
+#            for i, tpi in self.get_tie_point_indices().items()
+#        }
+#
+#        # Change the interpolation parameter dimensions
+#        parameter_dimensions = {
+#            term: tuple([axes.index(i) for i in dims])
+#            for term, dims in self.get_parameter_dimensions().items()
+#        }
+#
+#        return type(self)(
+#            compressed_array=compressed_array,
+#            shape=new_shape,
+#            ndim=self.ndim,
+#            size=self.size,
+#            interpolation_name=self.get_interpolation_name(None),
+#            interpolation_description=self.get_interpolation_description(None),
+#            tie_point_indices=tie_point_indices,
+#            interpolation_parameters=self.get_interpolation_parameters(),
+#            parameter_dimensions=parameter_dimensions,
+#        )

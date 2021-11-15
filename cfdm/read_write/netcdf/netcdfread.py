@@ -3367,7 +3367,17 @@ class NetCDFRead(IORead):
             coordinates[ncvar] = (coord, axes, is_dimension_coordinate)
 
         # Add any dependent tie points required for multivariate
-        # interpolations
+        # interpolations. This allows each cooridnate to be operated
+        # on (e.g. subspaced, collapsed, etc.) independently
+        #
+        # For example, when decompression is by the
+        # quadratic_latitude_longitude method, the interpolation of
+        # latitudes depends on the longitude, and vice verse -
+        # e.g. uncompressed latitudes = f(subsampled latitudes,
+        # subsampled longitudes). So that the latitude coordinate
+        # construct can be accessed independently of the longitude
+        # construct, then longitude tie points need to be stored
+        # within the latitude coordinate construct.
         multivariate_interpolations = self.cf_multivariate_interolations()
         for ncvar, (
             coord,
@@ -3401,7 +3411,7 @@ class NetCDFRead(IORead):
                     continue
 
                 for identity in identities:
-                    if not self.implementation.has_identity(c, identity):
+                    if not self._has_identity(c, identity):
                         continue
 
                     tp_dims[identity] = tuple([a.index(i) for i in axes])
@@ -4078,6 +4088,94 @@ class NetCDFRead(IORead):
         """
         datatype = self.read_vars["variables"][ncvar].dtype
         return datatype != str and datatype.kind in "SU"
+
+    def _has_identity(self, identity):
+        """TODO
+
+        .. versionadded:: 1.9.TODO.0
+
+        """
+        if identity == 'latitude':
+            return self._is_latitude(construct)
+
+        if identity == 'longitude':
+            return self._is_longitude(construct)
+
+        return False
+    
+    def _is_latitude(self, construct):
+        """True if and only if the data are (grid) latitudes.
+
+        .. versionadded:: 1.9.TODO.0
+
+        .. seealso:: `_is_longitude`
+
+        :Parameters:
+
+            construct:
+        
+                The construct to test.
+
+        :Returns:
+
+            `bool`
+
+        """
+        units = construct.get_property("units", None)
+        if not units:
+            return False
+
+        if units in (
+            "degrees_north",
+            "degree_north" "degree_N",
+            "degrees_N",
+            "degreeN",
+            "degreesN",
+        ):
+            return True
+
+        if units == "degrees":
+            return construct.get_property("standard_name", "grid_latitude")
+
+        return False
+    
+    def _is_longitude(self, construct):
+        """True if and only if the data are (grid) longitudes.
+
+        .. versionadded:: 1.9.TODO.0
+
+        .. seealso:: `_is_longitude`
+
+        :Parameters:
+
+            construct:
+        
+                The construct to test.
+
+        :Returns:
+
+            `bool`
+
+        """
+        units = construct.get_property("units", None)
+        if not units:
+            return False
+
+        if units in (
+            "degrees_east",
+            "degree_east",
+            "degree_E",
+            "degrees_E",
+            "degreeE",
+            "degreesE",
+        ):
+            return True
+
+        if units == "degrees":
+            return construct.get_property("standard_name", "grid_longitude")
+
+        return False
+
 
     def _get_geometry(self, field_ncvar, return_ncvar=False):
         """Return a geometry container for this field construct.

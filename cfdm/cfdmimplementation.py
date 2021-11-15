@@ -3414,27 +3414,27 @@ class CFDMImplementation(Implementation):
         """
         return bool(coordinate_reference.datum)
 
-    def has_identity(self, construct, identity):
-        """Return True if a construct has the given identity.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        :Parameters:
-
-            construct:
-
-            identity: `str`
-                The identity
-
-                *Parameter example:*
-                   ``'latitude'``
-
-        :Returns:
-
-            `bool`
-
-        """
-        return bool(getattr(construct, identity, False))
+#    def has_identity(self, construct, identity):
+#        """Return True if a construct has the given identity.
+#
+#        .. versionadded:: (cfdm) 1.9.TODO.0
+#
+#        :Parameters:
+#
+#            construct:
+#
+#            identity: `str`
+#                The identity
+#
+#                *Parameter example:*
+#                   ``'latitude'``
+#
+#        :Returns:
+#
+#            `bool`
+#
+#        """
+#        return bool(getattr(construct, identity, False))
 
     def has_property(self, parent, prop):
         """Return True if a property exists.
