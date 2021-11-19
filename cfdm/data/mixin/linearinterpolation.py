@@ -6,12 +6,13 @@ class LinearInterpolation:
     """
 
     def _linear_interpolation(
-        self, ua, ub, subsampled_dimension, subarea_shape, first, trim=True
+            self, ua, ub, s, subsampled_dimension, subarea_shape, first, s=None, trim=True
     ):
         """Interpolate linearly between pairs of tie points.
 
-        General purpose one-dimensional linear interpolation
-        method. See CF appendix J for details.
+        General purpose one-dimensional linear interpolation method.
+        See CF Appendix J "Coordinate Interpolation Methods" for
+        details.
 
         u = fl(ua, ub, s) = ua + s*(ub-ua)
                           = ua*(1-s) + ub*s
@@ -27,7 +28,7 @@ class LinearInterpolation:
 
             ub: array_like
                 The values of the second tie point in index space.
-
+        
             subsampled_dimension: `int`
                 The position of the subsampled dimension in the
                 compressed data.
@@ -48,14 +49,17 @@ class LinearInterpolation:
                 (in index space) of a continuous area, and when the
                 compressed data are not bounds tie points.
 
+            s: or `None`
+                TODO
+
         :Returns:
 
             `numpy.ndarray`
 
         """
         # Get the interpolation coefficents
-        s, one_minus_s = self._s(subsampled_dimension, subarea_shape, first)
-
+        s, one_minus_s = self._s(subsampled_dimension, subarea_shape, first, s=s)
+            
         # Interpolate
         u = ua * one_minus_s + ub * s
 

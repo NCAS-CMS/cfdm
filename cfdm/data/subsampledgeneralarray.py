@@ -31,7 +31,7 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
         interpolation_description=None,
         computational_precision=None,
         tie_point_indices={},
-        interpolation_parameters={},
+        parameters={},
         parameter_dimensions={},
     ):
         """**Initialisation**
@@ -80,7 +80,7 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
                 *Parameter example:*
                   ``tie_point_indices={1: cfdm.TiePointIndex(data=[0, 16])}``
 
-            interpolation_parameters: `dict`
+            parameters: `dict`
                 TODO
 
             parameter_dimensions: `dict`
@@ -102,7 +102,7 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
             ndim=ndim,
             compression_type="subsampled",
             tie_point_indices=tie_point_indices.copy(),
-            interpolation_parameters=interpolation_parameters.copy(),
+            parameters=parameters.copy(),
             parameter_dimensions=parameter_dimensions.copy(),
             interpolation_description=interpolation_description,
             computational_precision=computational_precision,

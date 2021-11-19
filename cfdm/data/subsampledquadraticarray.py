@@ -20,7 +20,7 @@ class SubsampledQuadraticArray(
     ...     ndim=1,
     ...     size=12,
     ...     tie_point_indices={0: cfdm.TiePointIndex(data=[0, 4, 7, 8, 11])},
-    ...     interpolation_parameters={
+    ...     parameters={
     ...       "w": cfdm.InterpolationParameter(data=[5, 10, 5])
     ...     },
     ...     parameter_dimensions={"w": (0,)},
@@ -44,7 +44,7 @@ class SubsampledQuadraticArray(
     ...     ndim=2,
     ...     size=24,
     ...     tie_point_indices={0: cfdm.TiePointIndex(data=[0, 4, 7, 8, 11])},
-    ...     interpolation_parameters={
+    ...     parameters={
     ...       "w": cfdm.InterpolationParameter(data=[5, 10, 5])
     ...     },
     ...     parameter_dimensions={"w": (0,)},
@@ -75,7 +75,7 @@ class SubsampledQuadraticArray(
         ndim=None,
         computational_precision=None,
         tie_point_indices={},
-        interpolation_parameters={},
+        parameters={},
         parameter_dimensions={},
     ):
         """**Initialisation**
@@ -131,7 +131,7 @@ class SubsampledQuadraticArray(
             interpolation_name="quadratic",
             computational_precision=computational_precision,
             tie_point_indices=tie_point_indices.copy(),
-            interpolation_parameters=interpolation_parameters.copy(),
+            parameters=parameters.copy(),
             parameter_dimensions=parameter_dimensions.copy(),
             compressed_dimensions=tuple(tie_point_indices),
             one_to_one=True,
@@ -162,7 +162,7 @@ class SubsampledQuadraticArray(
 
         tie_points = self._get_compressed_Array()
 
-        parameters = self.get_interpolation_parameters(conform=True)
+        parameters = self.get_parameters(conform=True)
         w = parameters.get("w")
 
         # Initialise the un-sliced uncompressed array

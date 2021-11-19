@@ -242,7 +242,7 @@ class NetCDFRead(IORead):
             "bi_quadratic_latitude_longitude",
         )
 
-    def cf_multivariate_interolations(self):
+    def cf_multivariate_interpolations(self):
         """The multivariate interpolation methods.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
@@ -3339,8 +3339,10 @@ class NetCDFRead(IORead):
 
         coordinates = {}
         for ncvar in tie_point_ncvars:
+            print("NCVAR=", ncvar)
             ok = self._check_tie_point_coordinates(field_ncvar, ncvar, string)
             if not ok:
+                print(999)
                 continue
 
             # Find out if the coordinates are to be dimension or
@@ -3365,7 +3367,7 @@ class NetCDFRead(IORead):
                 )
 
             coordinates[ncvar] = (coord, axes, is_dimension_coordinate)
-
+        print("coordinates=", coordinates)
         # Add any dependent tie points required for multivariate
         # interpolations. This allows each cooridnate to be operated
         # on (e.g. subspaced, collapsed, etc.) independently
@@ -3378,7 +3380,7 @@ class NetCDFRead(IORead):
         # construct can be accessed independently of the longitude
         # construct, then longitude tie points need to be stored
         # within the latitude coordinate construct.
-        multivariate_interpolations = self.cf_multivariate_interolations()
+        multivariate_interpolations = self.cf_multivariate_interpolations()
         for ncvar, (
             coord,
             axes,
@@ -3428,11 +3430,16 @@ class NetCDFRead(IORead):
                     b_tp[identity] = self.implementation.get_tie_points(b)
                     break
 
-            self.implementation.set_extra_tie_points(coord, c_tp)
-            self.implementation.set_extra_tie_point_dimensions(coord, tp_dims)
+            self.implementation.set_dependent_tie_points(coord, c_tp)
+            self.implementation.set_dependent_tie_point_dimensions(
+                coord, tp_dims
+            )
 
-            self.implementation.set_extra_tie_points(bounds, b_tp)
-            self.implementation.set_extra_tie_point_dimensions(bounds, tp_dims)
+            if bounds is not None:
+                self.implementation.set_dependent_tie_points(bounds, b_tp)
+                self.implementation.set_dependent_tie_point_dimensions(
+                    bounds, tp_dims
+                )
 
         # Set the coordinate constructs on the parent field/domain
         for ncvar, (
@@ -4089,20 +4096,20 @@ class NetCDFRead(IORead):
         datatype = self.read_vars["variables"][ncvar].dtype
         return datatype != str and datatype.kind in "SU"
 
-    def _has_identity(self, identity):
+    def _has_identity(self, construct, identity):
         """TODO
 
         .. versionadded:: 1.9.TODO.0
 
         """
-        if identity == 'latitude':
+        if identity == "latitude":
             return self._is_latitude(construct)
 
-        if identity == 'longitude':
+        if identity == "longitude":
             return self._is_longitude(construct)
 
         return False
-    
+
     def _is_latitude(self, construct):
         """True if and only if the data are (grid) latitudes.
 
@@ -4113,7 +4120,7 @@ class NetCDFRead(IORead):
         :Parameters:
 
             construct:
-        
+
                 The construct to test.
 
         :Returns:
@@ -4135,10 +4142,13 @@ class NetCDFRead(IORead):
             return True
 
         if units == "degrees":
-            return construct.get_property("standard_name", "grid_latitude")
+            return (
+                construct.get_property("standard_name", None)
+                == "grid_latitude"
+            )
 
         return False
-    
+
     def _is_longitude(self, construct):
         """True if and only if the data are (grid) longitudes.
 
@@ -4149,7 +4159,7 @@ class NetCDFRead(IORead):
         :Parameters:
 
             construct:
-        
+
                 The construct to test.
 
         :Returns:
@@ -4172,10 +4182,12 @@ class NetCDFRead(IORead):
             return True
 
         if units == "degrees":
-            return construct.get_property("standard_name", "grid_longitude")
+            return (
+                construct.get_property("standard_name", None)
+                == "grid_longitude"
+            )
 
         return False
-
 
     def _get_geometry(self, field_ncvar, return_ncvar=False):
         """Return a geometry container for this field construct.
@@ -4883,7 +4895,7 @@ class NetCDFRead(IORead):
         # Set the name of the netCDF interpolation subarea dimension
         # associated with the the subsampled dimension.
         if subarea_ncdim is not None:
-            self.implementation.nc_set_interpolated_subarea_dimension(
+            self.implementation.nc_set_interpolation_subarea_dimension(
                 variable, self._ncdim_abspath(subarea_ncdim)
             )
 
@@ -5552,7 +5564,7 @@ class NetCDFRead(IORead):
                     subsampled_array=self._create_Data(array),
                     uncompressed_shape=tuple(uncompressed_shape),
                     tie_point_indices=tie_point_indices,
-                    interpolation_parameters=interpolation_parameters.copy(),
+                    parameters=interpolation_parameters.copy(),
                     parameter_dimensions=parameter_dimensions,
                     interpolation_name=rec["interpolation_name"],
                     interpolation_description=rec["interpolation_description"],
@@ -5955,11 +5967,14 @@ class NetCDFRead(IORead):
         # Record which tie point coordinate variables span this
         # subsampled dimension, and note the corresponding
         # interpolation variable and interpolated dimension.
+        print(1111)
         for interpolation_ncvar, coords in coordinate_interpolation.items():
+            print(interpolation_ncvar)
             record = g["interpolation"][interpolation_ncvar]
             subsampled_ncdims = record["subsampled_ncdim"]
 
             for tp_ncvar in coords:
+                print(tp_ncvar)
                 coord_ncdims = g["variable_dimensions"][tp_ncvar]
 
                 # Bounds tie points: Need to also record an implied
@@ -5978,10 +5993,12 @@ class NetCDFRead(IORead):
 
                 for ncdim in coord_ncdims:
                     if ncdim not in subsampled_ncdims:
+                        print("ncdim", ncdim, subsampled_ncdims)
                         continue
 
                     # Still here? Then `ncdim` is a subsampled
                     # dimension.
+                    print(888888)
                     interpolated_ncdim = subsampled_ncdims[ncdim][
                         "interpolated_ncdim"
                     ]
@@ -6342,6 +6359,7 @@ class NetCDFRead(IORead):
                     parent_ncvar is not None
                     and f"subsampled {parent_ncvar} {ncvar}" in c
                 ):
+                    print("HERERE 33")
                     # Subsampled array. Do not break here because
                     # subsampled variables can have more than one
                     # compressed dimension. (CF>=1.9)
@@ -6501,7 +6519,7 @@ class NetCDFRead(IORead):
         uncompressed_shape=(),
         tie_point_indices={},
         parameter_dimensions={},
-        interpolation_parameters={},
+        parameters={},
         interpolation_name=None,
         interpolation_description=None,
         computational_precision=None,
@@ -6525,7 +6543,7 @@ class NetCDFRead(IORead):
 
             tie_point_indices: `dict`, optional
 
-            interpolation_parameters: `dict`, optional
+            parameters: `dict`, optional
 
             parameter_dimensions: `dict`, optional
 
@@ -6540,16 +6558,16 @@ class NetCDFRead(IORead):
         if interpolation_name == "linear":
             init_func = self.implementation.initialise_SubsampledLinearArray
         elif interpolation_name == "bi_linear":
-            init_func = self.implementation.initialise_SubsampledBilinearArray
+            init_func = self.implementation.initialise_SubsampledBiLinearArray
         elif interpolation_name == "quadratic":
             init_func = self.implementation.initialise_SubsampledQuadraticArray
         elif interpolation_name == "quadratic_latitude_longitude":
             init_func = (
-                self.implementation.initialise_SubsampledQuadraticLatitudeLongitudearray
+                self.implementation.initialise_SubsampledQuadraticLatitudeLongitudeArray
             )
         elif interpolation_name == "bi_quadratic_latitude_longitude":
             init_func = (
-                self.implementation.initialise_SubsampledBiquadraticLatitudeLongitudearray
+                self.implementation.initialise_SubsampledBiQuadraticLatitudeLongitudeArray
             )
         else:
             init_func = self.implementation.initialise_SubsampledGeneralArray
@@ -6566,7 +6584,7 @@ class NetCDFRead(IORead):
             interpolation_description=interpolation_description,
             computational_precision=computational_precision,
             parameter_dimensions=parameter_dimensions,
-            interpolation_parameters=interpolation_parameters,
+            parameters=parameters,
         )
 
     def _create_Data(
@@ -7126,7 +7144,7 @@ class NetCDFRead(IORead):
                 conformance="8.3.requirement.1",
             )
             return False
-
+        print(self._ncdimensions(tie_point_ncvar, parent_ncvar=parent_ncvar))
         # Check that the variable's dimensions span a subset of the
         # parent variable's dimensions (allowing for char variables
         # with a trailing dimension)

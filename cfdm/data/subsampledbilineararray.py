@@ -4,10 +4,10 @@ from .abstract import CompressedArray
 from .mixin import LinearInterpolation, SubsampledArray
 
 
-class SubsampledBilinearArray(
+class SubsampledBiLinearArray(
     LinearInterpolation, SubsampledArray, CompressedArray
 ):
-    """A subsampled array with bi_linear interpolation.
+    """A subsampled array with bi-linear interpolation.
 
     The information needed to uncompress the data is stored in a tie
     point index variable that defines the relationship between the
@@ -105,28 +105,21 @@ class SubsampledBilinearArray(
         # ------------------------------------------------------------
         (d0, d1) = sorted(self.compressed_dimensions())
 
-        tie_points = self._get_compressed_Array()
+        tp = self._get_compressed_Array()
 
-        # Interpolate the tie points for each interpolation subarea
+        # Initialise the un-sliced uncompressed array
         uarray = np.ma.masked_all(self.shape, dtype=np.dtype(float))
 
         for u_indices, tp_indices, subarea_shape, first, _ in zip(
             *self._interpolation_subareas()
         ):
-            ua = self._select_tie_points(
-                tie_points, tp_indices, {d0: 0, d1: 0}
-            )
-            uc = self._select_tie_points(
-                tie_points, tp_indices, {d0: 1, d1: 0}
-            )
-            ub = self._select_tie_points(
-                tie_points, tp_indices, {d0: 0, d1: 1}
-            )
-            ud = self._select_tie_points(
-                tie_points, tp_indices, {d0: 1, d1: 1}
-            )
+            ua = self._select_tie_points(tp, tp_indices, {d0: 0, d1: 0})
+            ub = self._select_tie_points(tp, tp_indices, {d0: 0, d1: 1})
+            uc = self._select_tie_points(tp, tp_indices, {d0: 1, d1: 0})
+            ud = self._select_tie_points(tp, tp_indices, {d0: 1, d1: 1})
+            
             u = self._bilinear_interpolation(
-                ua, uc, ub, ud, (d0, d1), subarea_shape, first
+                ua, ub, uc, ud, (d0, d1), subarea_shape, first
             )
 
             self._set_interpolated_values(uarray, u, u_indices, (d0, d1))
@@ -138,8 +131,8 @@ class SubsampledBilinearArray(
     def _bilinear_interpolation(
         self,
         ua,
-        uc,
         ub,
+        uc,
         ud,
         subsampled_dimensions,
         subarea_shape,
@@ -161,8 +154,8 @@ class SubsampledBilinearArray(
 
         :Parameters:
 
-            ua, uc, ub, ud: array_like
-               The arrays containing the points for bilinear
+            ua, ub, uc, ud: array_like
+               The arrays containing the points for bi-linear
                interpolation along the interpolated dimensions.
 
             subsampled_dimensions: seqeunce of `int`

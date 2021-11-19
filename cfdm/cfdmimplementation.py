@@ -30,10 +30,12 @@ from .data import (
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
-    SubsampledBilinearArray,
+    SubsampledBiLinearArray,
+    SubsampledBiQuadraticLatitudeLongitudeArray,
     SubsampledGeneralArray,
     SubsampledLinearArray,
     SubsampledQuadraticArray,
+    SubsampledQuadraticLatitudeLongitudeArray,
 )
 
 
@@ -67,9 +69,11 @@ class CFDMImplementation(Implementation):
         RaggedContiguousArray=None,
         RaggedIndexedArray=None,
         RaggedIndexedContiguousArray=None,
-        SubsampledBilinearArray=None,
+        SubsampledBiLinearArray=None,
+        SubsampledBiQuadraticLatitudeLongitudeArray=None,
         SubsampledLinearArray=None,
         SubsampledQuadraticArray=None,
+        SubsampledQuadraticLatitudeLongitudeArray=None,
         SubsampledGeneralArray=None,
         List=None,
         Count=None,
@@ -143,14 +147,22 @@ class CFDMImplementation(Implementation):
             RaggedIndexedContiguousArray:
                 A class for an underlying indexed contiguous ragged array.
 
-            SubsampledBilinearArray:
-                A class for an underlying subsampled bilinear array.
+            SubsampledBiLinearArray:
+                A class for an underlying subsampled bi-linear array.
+
+            SubsampledBiQuadraticLatitudeLongitudeArray:
+                A class for an underlying subsampled bi-quadratic
+                latitude-longitude array.
 
             SubsampledLinearArray:
                 A class for an underlying subsampled linear array.
 
             SubsampledQuadraticArray:
                 A class for an underlying subsampled quadratic array.
+
+            SubsampledQuadraticLatitudeLongitudeArray:
+                A class for an underlying subsampled quadratic
+                latitude-longitude array.
 
             SubsampledGeneralArray:
                 A class for an underlying subsampled array.
@@ -199,9 +211,11 @@ class CFDMImplementation(Implementation):
             RaggedContiguousArray=RaggedContiguousArray,
             RaggedIndexedArray=RaggedIndexedArray,
             RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
-            SubsampledBilinearArray=SubsampledBilinearArray,
+            SubsampledBiLinearArray=SubsampledBiLinearArray,
+            SubsampledBiQuadraticLatitudeLongitudeArray=SubsampledBiQuadraticLatitudeLongitudeArray,
             SubsampledLinearArray=SubsampledLinearArray,
             SubsampledQuadraticArray=SubsampledQuadraticArray,
+            SubsampledQuadraticLatitudeLongitudeArray=SubsampledQuadraticLatitudeLongitudeArray,
             SubsampledGeneralArray=SubsampledGeneralArray,
             List=List,
             Count=Count,
@@ -1830,7 +1844,28 @@ class CFDMImplementation(Implementation):
                 The data.
 
         """
-        data = self.get_data(parent, None)
+        data = self.get_data(parent, default=None)
+        if data is None:
+            return default
+
+        return data.source(default)
+
+    def get_tie_points(self, construct, default=None):
+        """TODO
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            parent:
+                The object containing the data array.
+
+        :Returns:
+
+                The data.
+
+        """
+        data = self.get_data_source(construct, None)
         if data is None:
             return default
 
@@ -2189,7 +2224,7 @@ class CFDMImplementation(Implementation):
             computational_precision=computational_precision,
         )
 
-    def initialise_SubsampledBilinearArray(
+    def initialise_SubsampledBiLinearArray(
         self,
         compressed_array=None,
         shape=None,
@@ -2225,10 +2260,10 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Subsampled Bilinear array
+            Subsampled Bi-linear array
 
         """
-        return self.get_class("SubsampledBilinearArray")(
+        return self.get_class("SubsampledBiLinearArray")(
             compressed_array=compressed_array,
             shape=shape,
             size=size,
@@ -2237,7 +2272,7 @@ class CFDMImplementation(Implementation):
             computational_precision=computational_precision,
         )
 
-    def initialise_SubsampledQuadraticArray(
+    def initialise_SubsampledBiQuadraticLatitudeLongitudeArray(
         self,
         compressed_array=None,
         shape=None,
@@ -2245,7 +2280,7 @@ class CFDMImplementation(Implementation):
         ndim=None,
         tie_point_indices={},
         computational_precision=None,
-        interpolation_parameters={},
+        parameters={},
         parameter_dimensions={},
         **kwargs,
     ):
@@ -2272,7 +2307,65 @@ class CFDMImplementation(Implementation):
 
             tie_point_indices: `dict`, optional
 
-            interpolation_parameters: `dict`, optional
+            parameters: `dict`, optional
+
+            parameter_dimensions: `dict`, optional
+
+            kwargs: optional
+                Ignored.
+
+        :Returns:
+
+            Subsampled quadratic array
+
+        """
+        return self.get_class("SubsampledBiQuadraticLatitudeLongitudeArray")(
+            compressed_array=compressed_array,
+            shape=shape,
+            size=size,
+            ndim=ndim,
+            tie_point_indices=tie_point_indices,
+            computational_precision=computational_precision,
+            parameters=parameters,
+            parameter_dimensions=parameter_dimensions,
+        )
+
+    def initialise_SubsampledQuadraticArray(
+        self,
+        compressed_array=None,
+        shape=None,
+        size=None,
+        ndim=None,
+        tie_point_indices={},
+        computational_precision=None,
+        parameters={},
+        parameter_dimensions={},
+        **kwargs,
+    ):
+        """Return a gathered array instance.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            compressed_array: optional
+
+            ndim: `int`, optional
+
+            shape: sequence of `int`, optional
+
+            size: `int, optional
+
+            compressed_axes: sequence of `int`, optional
+
+            computational_precision: `str`, optional
+                The floating-point arithmetic precision used during
+                the preparation and validation of the compressed
+                coordinates.
+
+            tie_point_indices: `dict`, optional
+
+            parameters: `dict`, optional
 
             parameter_dimensions: `dict`, optional
 
@@ -2291,7 +2384,65 @@ class CFDMImplementation(Implementation):
             ndim=ndim,
             tie_point_indices=tie_point_indices,
             computational_precision=computational_precision,
-            interpolation_parameters=interpolation_parameters,
+            parameters=parameters,
+            parameter_dimensions=parameter_dimensions,
+        )
+
+    def initialise_SubsampledQuadraticLatitudeLongitudeArray(
+        self,
+        compressed_array=None,
+        shape=None,
+        size=None,
+        ndim=None,
+        tie_point_indices={},
+        computational_precision=None,
+        parameters={},
+        parameter_dimensions={},
+        **kwargs,
+    ):
+        """Return a gathered array instance.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            compressed_array: optional
+
+            ndim: `int`, optional
+
+            shape: sequence of `int`, optional
+
+            size: `int, optional
+
+            compressed_axes: sequence of `int`, optional
+
+            computational_precision: `str`, optional
+                The floating-point arithmetic precision used during
+                the preparation and validation of the compressed
+                coordinates.
+
+            tie_point_indices: `dict`, optional
+
+            parameters: `dict`, optional
+
+            parameter_dimensions: `dict`, optional
+
+            kwargs: optional
+                Ignored.
+
+        :Returns:
+
+            Subsampled quadratic array
+
+        """
+        return self.get_class("SubsampledQuadraticLatitudeLongitudeArray")(
+            compressed_array=compressed_array,
+            shape=shape,
+            size=size,
+            ndim=ndim,
+            tie_point_indices=tie_point_indices,
+            computational_precision=computational_precision,
+            parameters=parameters,
             parameter_dimensions=parameter_dimensions,
         )
 
@@ -2304,7 +2455,7 @@ class CFDMImplementation(Implementation):
         tie_point_indices={},
         interpolation_description=None,
         computational_precision=None,
-        interpolation_parameters={},
+        parameters={},
         parameter_dimensions={},
         **kwargs,
     ):
@@ -2333,7 +2484,7 @@ class CFDMImplementation(Implementation):
 
             interpolation_description: `str`, optional
 
-            interpolation_parameters: `dict`, optional
+            parameters: `dict`, optional
 
             parameter_dimensions: `dict`, optional
 
@@ -2353,7 +2504,7 @@ class CFDMImplementation(Implementation):
             tie_point_indices=tie_point_indices,
             computational_precision=computational_precision,
             interpolation_description=interpolation_description,
-            interpolation_parameters=interpolation_parameters,
+            parameters=parameters,
             parameter_dimensions=parameter_dimensions,
         )
 
@@ -2701,8 +2852,8 @@ class CFDMImplementation(Implementation):
         if ncdim is not None:
             variable.nc_set_instance_dimension(ncdim)
 
-    def nc_set_sample_dimension(self, variable, ncdim):
-        """Set the netCDF sample dimension name.
+    def nc_set_instance_dimension(self, variable, ncdim):
+        """Set the netCDF instance dimension name.
 
         :Parameters:
 
@@ -2718,7 +2869,26 @@ class CFDMImplementation(Implementation):
 
         """
         if ncdim is not None:
-            variable.nc_set_sample_dimension(ncdim)
+            variable.nc_set_instance_dimension(ncdim)
+
+    def nc_set_interpolation_subarea_dimension(self, variable, ncdim):
+        """Set the netCDF sample dimension name.
+
+        :Parameters:
+
+            variable:
+
+            ncdim: `str` or `None`
+                The netCDF interpolation subarea dimension name. If
+                `None` then the name is not set.
+
+        :Returns:
+
+            `None`
+
+        """
+        if ncdim is not None:
+            variable.nc_set_interpolation_subarea_dimension(ncdim)
 
     def nc_set_subsampled_dimension(self, variable, ncdim):
         """Set the netCDF subsampled dimension name.
@@ -3073,16 +3243,24 @@ class CFDMImplementation(Implementation):
         """
         return field.set_construct(construct, copy=copy)
 
-    def set_extra_tie_point_dimensions(self, construct, dimensions):
-        """TODO"""
-        source = self.get_data_source(construct)
-        source.set_extra_tie_point_dimensions(dimensions)
-        
-    def set_extra_tie_points(self, construct, tie_points):
-        """TODO"""
-        source = self.get_data_source(construct)
-        source.set_extra_tie_points(tie_points)
-        
+    def set_dependent_tie_points(self, construct, tie_points):
+        """TODO
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        data = self.get_data_source(construct)
+        data.set_dependent_tie_points(tie_points)
+
+    def set_dependent_tie_point_dimensions(self, construct, dimensions):
+        """TODO
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        data = self.get_data_source(construct)
+        data.set_dependent_tie_point_dimensions(dimensions)
+
     def nc_set_external(self, construct):
         """Set the external status of a construct.
 
@@ -3414,27 +3592,27 @@ class CFDMImplementation(Implementation):
         """
         return bool(coordinate_reference.datum)
 
-#    def has_identity(self, construct, identity):
-#        """Return True if a construct has the given identity.
-#
-#        .. versionadded:: (cfdm) 1.9.TODO.0
-#
-#        :Parameters:
-#
-#            construct:
-#
-#            identity: `str`
-#                The identity
-#
-#                *Parameter example:*
-#                   ``'latitude'``
-#
-#        :Returns:
-#
-#            `bool`
-#
-#        """
-#        return bool(getattr(construct, identity, False))
+    #    def has_identity(self, construct, identity):
+    #        """Return True if a construct has the given identity.
+    #
+    #        .. versionadded:: (cfdm) 1.9.TODO.0
+    #
+    #        :Parameters:
+    #
+    #            construct:
+    #
+    #            identity: `str`
+    #                The identity
+    #
+    #                *Parameter example:*
+    #                   ``'latitude'``
+    #
+    #        :Returns:
+    #
+    #            `bool`
+    #
+    #        """
+    #        return bool(getattr(construct, identity, False))
 
     def has_property(self, parent, prop):
         """Return True if a property exists.
@@ -3506,6 +3684,7 @@ _implementation = CFDMImplementation(
     FieldAncillary=FieldAncillary,
     Bounds=Bounds,
     InteriorRing=InteriorRing,
+    InterpolationParameter=InterpolationParameter,
     CoordinateConversion=CoordinateConversion,
     Datum=Datum,
     List=List,
@@ -3519,12 +3698,13 @@ _implementation = CFDMImplementation(
     RaggedContiguousArray=RaggedContiguousArray,
     RaggedIndexedArray=RaggedIndexedArray,
     RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
+    SubsampledBiLinearArray=SubsampledBiLinearArray,
+    SubsampledBiQuadraticLatitudeLongitudeArray=SubsampledBiQuadraticLatitudeLongitudeArray,
     SubsampledLinearArray=SubsampledLinearArray,
-    SubsampledBilinearArray=SubsampledBilinearArray,
     SubsampledQuadraticArray=SubsampledQuadraticArray,
+    SubsampledQuadraticLatitudeLongitudeArray=SubsampledQuadraticLatitudeLongitudeArray,
     SubsampledGeneralArray=SubsampledGeneralArray,
     TiePointIndex=TiePointIndex,
-    InterpolationParameter=InterpolationParameter,
 )
 
 

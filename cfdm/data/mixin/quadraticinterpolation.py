@@ -17,10 +17,11 @@ class QuadraticInterpolation(LinearInterpolation):
         """
         return self._quadratic_interpolation(*args, **kwargs)
 
-    def _fw(self, ua, ub, u, s):
+    def _fw(self, ua, ub, u, s=None):
         """TODO.
 
-        See CF appendix J for details.
+        See CF appendix J "Coordinate Interpolation Methods" for
+        details.
 
         w = fw(ua, ub, u, s)
           = (u - (1-s)*ua - s*ub)/(4*(1-s)*s)
@@ -40,7 +41,7 @@ class QuadraticInterpolation(LinearInterpolation):
             u: array_like
                 TODO
 
-            s: array_like
+            s: array_like or `None`
                 TODO
 
         :Returns:
@@ -48,7 +49,11 @@ class QuadraticInterpolation(LinearInterpolation):
             `numpy.ndarray`
 
         """
-        return (u - (1 - s) * ua - s * ub) / (4 * (1 - s) * s)
+        s, one_minus_s = self._s(
+            subsampled_dimension, subarea_shape, first, s=s
+        )
+        
+        return (u - one_minus_s * ua - s * ub) / (4 * one_minus_s * s)
 
     def _quadratic_interpolation(
         self,
@@ -59,17 +64,21 @@ class QuadraticInterpolation(LinearInterpolation):
         subarea_shape,
         subarea_index,
         first,
+        s=None,
         trim=True,
     ):
         """Interpolate quadratically between pairs of tie points.
 
-        Computes the quadratic interpolation operator ``fq`` defined
-        in CF appendix J, where ``fl`` is the linear interpolation
-        operator and ``w`` is the quadratic coefficient:
+        Computes the quadratic interpolation operator ``fq``, where
+        ``fl`` is the linear interpolation operator and ``w`` is the
+        quadratic coefficient:
 
         u = fq(ua, ub, w, s) = ua + s*(ub - ua + 4*w*(1-s))
                              = ua*(1-s) + ub*s + 4*w*s*(1-s)
                              = fl(ua, ub, s) + 4*w*s*(1-s)
+
+        See CF Appendix J "Coordinate Interpolation Methods" for
+        details.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -86,9 +95,8 @@ class QuadraticInterpolation(LinearInterpolation):
             w: `InterpolationParameter` or `None`
                 The quadratic coefficient. It is assumed that the
                 coefficient has the same number of dimensions in the
-                same relative order as the tie points array (see
-                `conform_interpolation_parameters`). If `None` then
-                the quadratic coefficient is assumed to be zero.
+                same relative order as the tie points array. If `None`
+                then the quadratic coefficient is assumed to be zero.
 
             subsampled_dimension: `int`
                 The position of the subsampled dimension in the
@@ -107,6 +115,11 @@ class QuadraticInterpolation(LinearInterpolation):
                 is the first (in index space) of a new continuous
                 area, otherwise False.
 
+            s: array_like or or `None`
+                If `None` then the interpolation coeficient ``s`` is
+                calculated for each uncompressed location. Otherwise
+                the values are taken as specified.
+
             trim: `bool`, optional
                 For the interpolated dimension, remove the first point
                 of the interpolation subarea when it is not the first
@@ -119,14 +132,15 @@ class QuadraticInterpolation(LinearInterpolation):
 
         """
         u = self._linear_interpolation(
-            ua, ub, subsampled_dimension, subarea_shape, first, trim=False
+            ua, ub, subsampled_dimension, subarea_shape, first, s=s, trim=False
         )
 
         if w is not None:
             s, one_minus_s = self._s(
-                subsampled_dimension, subarea_shape, first
+                subsampled_dimension, subarea_shape, first, s=s
             )
-            u += 4 * s * one_minus_s * w.data[subarea_index].array
+            
+            u += 4 * s * one_minus_s * w[subarea_index].array
 
         if trim:
             u = self._trim(u, (subsampled_dimension,), first)

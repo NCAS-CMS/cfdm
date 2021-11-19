@@ -6,9 +6,9 @@ from .numpyarray import NumpyArray
 from .raggedcontiguousarray import RaggedContiguousArray
 from .raggedindexedarray import RaggedIndexedArray
 from .raggedindexedcontiguousarray import RaggedIndexedContiguousArray
-from .subsampledbilineararray import SubsampledBilinearArray
+from .subsampledbilineararray import SubsampledBiLinearArray
 from .subsampledbiquadraticlatitudelongitudearray import (
-    SubsampledBiquadraticLatitudeLongitudeArray,
+    SubsampledBiQuadraticLatitudeLongitudeArray,
 )
 from .subsampledgeneralarray import SubsampledGeneralArray
 from .subsampledlineararray import SubsampledLinearArray

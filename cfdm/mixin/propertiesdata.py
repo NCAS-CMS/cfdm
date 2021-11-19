@@ -106,9 +106,6 @@ class PropertiesData(Properties):
 
         return f"{self.identity('')}{dims} {units}"
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
     def _parse_axes(self, axes):
         """Conform axes.
 
@@ -917,10 +914,6 @@ class PropertiesData(Properties):
     @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
         """Uncompress the construct.
-
-        Compression saves space by identifying and removing unwanted
-        missing data. Such compression techniques store the data more
-        efficiently and result in no precision loss.
 
         Whether or not the construct is compressed does not alter its
         functionality nor external appearance.

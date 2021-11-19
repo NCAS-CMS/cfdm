@@ -14,8 +14,7 @@ class SubsampledQuadraticLatitudeLongitudeArray(
     SubsampledArray,
     CompressedArray,
 ):
-    """A subsampled array with quadratic_latitude_longitude
-    interpolation.
+    """A subsampled array with quadratic latitude-longitude interpolation.
 
     The information needed to uncompress the data is stored in a tie
     point index variable that defines the relationship between the
@@ -28,6 +27,8 @@ class SubsampledQuadraticLatitudeLongitudeArray(
     *shape*, *ndim* and *size* parameters that describe the
     uncompressed array will include the required trailing size 2
     dimension.
+
+    See CF appendix J "Coordinate Interpolation Methods" for details.
 
     .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -42,9 +43,10 @@ class SubsampledQuadraticLatitudeLongitudeArray(
         interpolation_description=None,
         computational_precision=None,
         tie_point_indices={},
-        interpolation_parameters={},
+        parameters={},
         parameter_dimensions={},
-        extra_tie_points={},
+        dependent_tie_points={},
+        dependent_tie_point_dimensions={},
     ):
         """**Initialisation**
 
@@ -99,8 +101,10 @@ class SubsampledQuadraticLatitudeLongitudeArray(
             interpolation_name="quadratic_latitude_longitude",
             computational_precision=computational_precision,
             tie_point_indices=tie_point_indices.copy(),
-            interpolation_parameters=interpolation_parameters.copy(),
+            parameters=parameters.copy(),
             parameter_dimensions=parameter_dimensions.copy(),
+            dependent_tie_points=dependent_tie_points.copy(),
+            dependent_tie_point_dimensions=dependent_tie_point_dimensions.copy(),
             compressed_dimensions=tuple(tie_point_indices),
             one_to_one=True,
         )
@@ -126,27 +130,12 @@ class SubsampledQuadraticLatitudeLongitudeArray(
         # ------------------------------------------------------------
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
-
-        extra_tie_points = self.get_extra_tie_points(conform=True)
-        lat_tie_points = extra_tie_points.get("latitude")
-        if lat_tie_points is not None:
-            lon_tie_points = self._get_compressed_Array()
-            is_latitude = False
-        else:
-            lon_tie_points = extra_tie_points.get("longitude")
-            is_latitude = True
-            if lon_tie_points is not None:
-                lat_tie_points = self._get_compressed_Array()
-            else:
-                raise ValueError(
-                    "Can't subspace: quadratic_latitude_longitude "
-                    "interpolation of longitudes requires corresponding "
-                    "latitudes, and vice versa."
-                )
+        lat, lon = self.codependent_tie_points("latitude", "longitude")
+        is_latitude = 'latitude' not in self.get_dependent_tie_points()
 
         (d0,) = tuple(self.compressed_dimensions())
 
-        parameters = self.get_interpolation_parameters(conform=True)
+        parameters = self.get_parameters(conform=True)
         ce = parameters.get("ce")
         ca = parameters.get("ca")
         flags = parameters.get("interpolation_subarea_flags")
@@ -158,10 +147,10 @@ class SubsampledQuadraticLatitudeLongitudeArray(
         for u_indices, tp_indices, subarea_size, first, subarea_index in zip(
             *self._interpolation_subareas()
         ):
-            lat_a = lat._select_tie_points(lat_tie_points, tp_indices, {d0: 0})
-            lon_a = lon._select_tie_points(lon_tie_points, tp_indices, {d0: 0})
-            lat_b = lat._select_tie_points(lat_tie_points, tp_indices, {d0: 1})
-            lon_b = lon._select_tie_points(lon_tie_points, tp_indices, {d0: 1})
+            lat_a = self._select_tie_points(lat, tp_indices, {d0: 0})
+            lon_a = self._select_tie_points(lon, tp_indices, {d0: 0})
+            lat_b = self._select_tie_points(lat, tp_indices, {d0: 1})
+            lon_b = self._select_tie_points(lon, tp_indices, {d0: 1})
 
             lat_p, lon_p = self._quadratic_latitude_longitude_interpolation(
                 lat_a,
@@ -187,47 +176,6 @@ class SubsampledQuadraticLatitudeLongitudeArray(
 
         return self.get_subspace(uarray, indices, copy=True)
 
-    def _fcea2cv(self, va, vb, ce, ca, subarea_index):
-        """TODO.
-
-        cv = fcea2cv(va, vb, ce, ca)
-           = fplus(fmultiply(ce, fminus(va, vb)),
-                   fmultiply(ca, fcross(va, vb)),
-                   fmultiply(cr, vr))
-
-        where
-
-        vr = fmultiply(0.5, fplus(va, vb))
-        rsqr = fdot(vr, vr)
-        cr = fsqrt(1 - ce*ce - ca*ca) - fsqrt(rsqr)
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        """
-        vr = self._fmultiply(0.5, self._fplus(va, vb))
-        rsqr = self._fdot(vr, vr)
-
-        k = 1
-        if ce is not None:
-            ce = ce[subarea_index]
-            k = k - ce * ce
-
-        if ca is not None:
-            ca = ca[subarea_index]
-            k = k - ca * ca
-
-        cr = self._fsqrt(k) - self._fsqrt(rsqr)
-
-        cv = self._fmultiply(cr, vr)
-
-        if ce is not None:
-            cv = self._fplus(out, self._fmultiply(ce, self._fminus(va, vb)))
-
-        if ca is not None:
-            cv = self._fplus(out, self._fmultiply(ca, self._fcross(va, vb)))
-
-        return cv
-
     def _fcll(self, lat_a, lon_a, lat_b, lon_b, va, vb, cv):
         """TODO.
 
@@ -239,72 +187,26 @@ class SubsampledQuadraticLatitudeLongitudeArray(
 
         llab = fv2ll(fqv(va, vb, cv, 0.5))
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        """
-        (lat_ab, lon_ab) = self._fv2ll(self._fqv(va, vb, cv, 0.5))
-        return (
-            self._fw(lat_a, lat_b, lat_ab, 0.5),
-            self._fw(lon_a, lon_b, lon_ab, 0.5),
-        )
-
-    def _fqll(
-        self,
-        lat_a,
-        lon_a,
-        lat_b,
-        lon_b,
-        lat_c,
-        lon_c,
-        subsampled_dimension,
-        first,
-        subarea_index,
-    ):
-        """Quadratic interpolation in latitude-longitude coordinates.
-
-        llp(i) = (llp(i).lat, llp(i).lon)
-               = fqll(lla, llb, cll, s(i))
-               = (fq(lla.lat, llb.lat, cll.lat, s(i)),
-                  fq(lla.lon, llb.lon, cll.lon, s(i)))
+        See CF appendix J "Coordinate Interpolation Methods" for
+        details.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        d0 = subsampled_dimension
-
-        lat = self._fq(
-            lat_a, lat_b, lat_c, d0, first, subarea_index, trim=False
+        (lat_ab, lon_ab) = self._fv2ll(
+            self._fqv(
+                va, vb,
+                cv,
+                subsampled_dimension,
+                subarea_shape,
+                subarea_index,
+                first,
+                s=0.5
         )
-        lon = self._fq(
-            lon_a, lon_b, lon_c, d0, first, subarea_index, trim=False
-        )
-
-        return (lat, lon)
-
-    def _fqv(self, va, vb, cv, subsampled_dimension, first, subarea_index):
-        """TODO.
-
-        vp(i) = fqv(va, vb, cv, s(i))
-              = (fq(va.x, vb.x, cv.x, s(i)),
-                 fq(va.y, vb.y, cv.y, s(i)),
-                 fq(va.z, vb.z, cv.z, s(i)))
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        """
-        (x, y, z) = (0, 1, 2)
-        d0 = subsampled_dimension
 
         return (
-            self._fq(
-                va[x], vb[x], cv[x], d0, first, subarea_index, trim=False
-            ),
-            self._fq(
-                va[y], vb[y], cv[y], d0, first, subarea_index, trim=False
-            ),
-            self._fq(
-                va[z], vb[z], cv[z], d0, first, subarea_index, trim=False
-            ),
+            self._fw(lat_a, lat_b, lat_ab, s=0.5),
+            self._fw(lon_a, lon_b, lon_ab, s=0.5),
         )
 
     def _quadratic_latitude_longitude_interpolation(
@@ -326,11 +228,12 @@ class SubsampledQuadraticLatitudeLongitudeArray(
         A one-dimensional quadratic method for interpolation of the
         geographic coordinates latitude and longitude, typically used
         for remote sensing products with geographic coordinates on the
-        reference ellipsoid. See CF appendix J for details.
+        reference ellipsoid.
+
+        See CF appendix J "Coordinate Interpolation Methods" for
+        details.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
-
-        .. seealso:: `_quadratic_interpolation`, `_trim`
 
         :Parameters:
 
@@ -342,26 +245,26 @@ class SubsampledQuadraticLatitudeLongitudeArray(
                 The latitudes and longitudes of the second tie point
                 in index space.
 
-            ce: `InterpolationParameter` or `None`
-                The interpolation coefficient "ce". If `None` then the
-                "ce" is assumed to be zero.
-
-            ca: `InterpolationParameter` or `None`
-                The interpolation coefficient "ca". If `None` then the
-                "ca" is assumed to be zero.
+            ce1, ca1: `InterpolationParameter` or `None`
+                The interpolation parameters "ce1", "ca1". It is
+                assumed that each coefficient has the same number of
+                dimensions in the same relative order as the tie
+                points array, or if `None` then the parameter is
+                assumed to be zero.
 
             flags: `InterpolationParameter` or `None`
-                The interpolation coefficient
-                "interpolation_subarea_flags". If `None` then the
-                "interpolation_subarea_flags" is assumed to be zero. TODO.
+                The interpolation parameter
+                "interpolation_subarea_flags". It is assumed that the
+                parameter has the same number of dimensions in the
+                same relative order as the tie points array. If `None`
+                then an exception is raised.
 
             subsampled_dimension: `int`
                 The position of the subsampled dimension in the
                 compressed data.
 
             subarea_index: `tuple` of `slice`
-                The index of the interpolation subarea along the
-                interpolation subarea dimension.
+                The index of the interpolation subarea.
 
             first: `tuple` of `bool`
                 For each dimension, True if the interpolation subarea
@@ -379,29 +282,33 @@ class SubsampledQuadraticLatitudeLongitudeArray(
             `numpy.ndarray`
 
         """
+        use_3d_cartesian = self._use_3d_cartesian(flags, subarea_index)
+        any_cartesian = use_3d_cartesian.any()
+        all_cartesian = use_3d_cartesian.all()
+
         va = self._fll2v(lat_a, lon_a)
         vb = self._fll2v(lat_b, lon_b)
         cv = self._fcea2cv(va, vb, ce, ca, subarea_index)
 
-        if flags is not None and flags[subarea_index]:
-            # Use interpolation in three-dimensional cartesian
-            # coordinates
-            lat_p, lon_p = (None, None)
-        else:
-            # Use interpolation in latitude-longitude coordinates
-            lat_c, lon_c = self._fcll(
-                lat_a,
-                lon_a,
-                lat_b,
-                lon_b,
+        if any_cartesian:
+            # Interpolation in three-dimensional cartesian coordinates
+            vp = self._fqv(
                 va,
                 vb,
                 cv,
                 subsampled_dimension,
-                first,
+                subarea_shape,
                 subarea_index,
+                first,
             )
-            lat_p, lon_p = self._fqll(
+            v_lat_p, v_lon_p = self._fv2ll(vp)
+            if all_cartesian:
+                lat_p, lon_p = v_lat_p, v_lon_p
+
+        if not all_cartesian:
+            # Interpolation in latitude-longitude coordinates
+            lat_c, lon_c = self._fcll(lat_a, lon_a, lat_b, lon_b, va, vb, cv)
+            ll_lat_p, ll_lon_p = self._fqll(
                 lat_a,
                 lon_a,
                 lat_b,
@@ -409,9 +316,18 @@ class SubsampledQuadraticLatitudeLongitudeArray(
                 lat_c,
                 lon_c,
                 subsampled_dimension,
-                first,
+                subarea_shape,
                 subarea_index,
+                first,
             )
+            if not any_cartesian:
+                lat_p, lon_p = ll_lat_p, ll_lon_p
+
+        if any_cartesian and not all_cartesian:
+            # Combine the results of cartesian and latitude-longitude
+            # interpolations
+            lat_p = np.where(use_3d_cartesian, v_lat_p, ll_lat_p)
+            lon_p = np.where(use_3d_cartesian, v_lon_p, ll_lon_p)
 
         if trim:
             lat_p = self._trim(lat_p, (subsampled_dimension,), first)
