@@ -49,12 +49,43 @@ class GeographicInterpolation(QuadraticInterpolation):
         cv = self._fmultiply(cr, vr)
 
         if ce is not None:
-            cv = self._fplus(out, self._fmultiply(ce, self._fminus(va, vb)))
+            cv = self._fplus(cv, self._fmultiply(ce, self._fminus(va, vb)))
 
         if ca is not None:
-            cv = self._fplus(out, self._fmultiply(ca, self._fcross(va, vb)))
+            cv = self._fplus(cv, self._fmultiply(ca, self._fcross(va, vb)))
 
         return cv
+
+    def _fcross(self, va, vb):
+        """Vector cross product.
+
+        (x, y, z) = fcross(va, vb)
+                  = (va.y*vb.z - va.z*vb.y,
+                     va.z*vb.x - va.x*vb.z,
+                     va.x*vb.y - va.y*vb.x)
+
+        See CF appendix J "Coordinate Interpolation Methods" for
+        details.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            va: `tuple` of array_like
+
+            vb: `tuple` of array_like
+
+        :Returns:
+
+            `tuple`
+
+        """
+        (x, y, z) = (0, 1, 2)
+        return (
+            va[y] * vb[z] - va[z] * vb[y],
+            va[z] * vb[x] - va[x] * vb[z],
+            va[x] * vb[y] - va[y] * vb[x],
+        )
 
     def _fll2v(self, lat, lon):
         """TODO.
@@ -90,36 +121,36 @@ class GeographicInterpolation(QuadraticInterpolation):
             np.sin(lat),
         )
 
-    def _fcross(self, va, vb):
-        """Vector cross product.
+    def _fcv(self, va, vb, vp, s):
+        """TODO
 
-        (x, y, z) = fcross(va, vb)
-                  = (va.y*vb.z - va.z*vb.y,
-                     va.z*vb.x - va.x*vb.z,
-                     va.x*vb.y - va.y*vb.x)
+        cv = fcv(va, vb, vp(i), s(i)) = (fw(va.x, vb.x, vp(i).x, s(i)), fw(va.y, vb.y, vp(i).y, s(i)), fw(va.z, vb.z, vp(i).z, s(i))).
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        (x, y, z) = (0, 1, 2)
+        return (
+            self._fw(va[x], vb[x], vp(i)[x], s),
+            self._fw(va[y], vb[y], vp(i)[y], s),
+            self._fw(va[z], vb[z], vp(i)[z], s),        
+        )
+    
+    def _fminus(self, va, vb):
+        """Vector difference.
+
+        (x, y, z) = fminus(va, vb)
+                  = (va.x - vb.x,
+                     va.y - vb.y,
+                     va.z - vb.z)
 
         See CF appendix J "Coordinate Interpolation Methods" for
         details.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
-        :Parameters:
-
-            va: `tuple` of array_like
-
-            vb: `tuple` of array_like
-
-        :Returns:
-
-            `tuple`
-
         """
-        (x, y, z) = (0, 1, 2)
-        return (
-            va[y] * vb[z] - va[z] * vb[y],
-            va[z] * vb[x] - va[x] * vb[z],
-            va[x] * vb[y] - va[y] * vb[x],
-        )
+        return tuple(a - b for a, b in zip(va, vb))
 
     def _fmultiply(self, r, v):
         """Vector multiplied by scalar.
@@ -146,22 +177,6 @@ class GeographicInterpolation(QuadraticInterpolation):
 
         """
         return tuple(a * r for a in v)
-
-    def _fminus(self, va, vb):
-        """Vector difference.
-
-        (x, y, z) = fminus(va, vb)
-                  = (va.x - vb.x,
-                     va.y - vb.y,
-                     va.z - vb.z)
-
-        See CF appendix J "Coordinate Interpolation Methods" for
-        details.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        """
-        return tuple(a - b for a, b in zip(va, vb))
 
     def _fplus(self, *vectors):
         """Vector sum.
@@ -503,18 +518,20 @@ class GeographicInterpolation(QuadraticInterpolation):
 
         **Examples**
 
-        >>> lat, lon = c.codependent_tie_points('latitude', 'longitude')
+        >>> lat, lon = g.codependent_tie_points('latitude', 'longitude')
 
         """
         dependent_tie_points = self.get_dependent_tie_points(conform=True)
-        if len(identities) != len(dependent_tie_points) + 1:
+        if (
+                len(identities) != len(dependent_tie_points) + 1
+                or not set(identities).issubset(dependent_tie_points)
+        ):
             raise ValueError(
-                "Incorrect number of codependent tie point arrays for the "
-                f"{self.get_interpolation_name()} interpolation method."
-                f"Expected {len(identities) - 1}, "
-                f"got {len(dependent_tie_points)}"
+                "Specified identities must comprise all except one of "
+                f"{', '.join(map(str, dependent_tie_points))}. Got "
+                f"{', '.join(map(str, identities))}"
             )
-
+        
         out = []
         for identity in identities:
             tie_points = dependent_tie_points.get(identity)

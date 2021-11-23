@@ -287,22 +287,54 @@ class SubsampledBiQuadraticLatitudeLongitudeArray(
         vd = self._fll2v(lat_d, lon_d)
 
         # cea1(tpi2, is1) = fcv2cea(va, vb, cv_ab) SPACE
-        cea1_0 = self._fcv2cea(va, vb, cv_ab);
+        cea1_p0 = self._fcv2cea(va, vb, cv_ab);
 
         # cea1(tpi2+1, is1) = fcv2cea(vc, vd, cv_cd)     SPACE    
-        cea1_1 = self._fcv2cea(vc, vd, cv_cd)
+        cea1_p1 = self._fcv2cea(vc, vd, cv_cd)
 
         # cea2(is2, tpi1) = fcv2cea( va, vc, cv_ac);
-        cea2_0 = self._fcv2cea(va, vc, cv_ac)
+        cea2_p0 = self._fcv2cea(va, vc, cv_ac)
         
         # cea2(is2, tpi1+1) = fcv2cea( vb, vd, cv_bd);
-        cea2_1 = self._fcv2cea(vb, vd, cv_bd)
+        cea2_p1 = self._fcv2cea(vb, vd, cv_bd)
         
         # cea3(is2, is1) = fcv2cea( vab, vcd, cv_z).
         cea3 = self._fcv2cea(vab, vcd, cv_z)
         
-        cv_ac = self._fcea2cv(va, vc, cea2)
-        cv_bd = self._fcea2cv(vb, vd, cea2_1)
+        vab = self._fqv(va, vb,
+                        self._fcv2cea(va, vb, cea1),
+                        subsampled_dimension,
+                        subarea_shape,
+                        subarea_index,
+                        first,
+                        s=0.5)
+        vcd = self._fqv(vc, vd,
+                        self._fcea2cv(vc, vd, cea1_p1)),
+                        subsampled_dimension,
+                        subarea_shape,
+                        subarea_index,
+                        first,
+                        s=0.5)
+        cv_z = self._fcea2cv(vab, vcd, cea3)
+        
+        vab = self._fqv(va, vb, ,cea1,
+                        subsampled_dimension,
+                        subarea_shape,
+                        subarea_index,
+                        first,
+                        s=0.5)
+        vcd = self._fqv(vc, vd, cea1_p1,
+                        subsampled_dimension,
+                        subarea_shape,
+                        subarea_index,
+                        first,
+                        s=0.5)
+
+        
+
+        
+        cv_ac = self._fcea2cv(va, vc, cea2_p0)
+        cv_bd = self._fcea2cv(vb, vd, cea2_p1)
 
         vab = self._fqv(va, vb, cv_ab,
                         subsampled_dimension,
@@ -310,7 +342,8 @@ class SubsampledBiQuadraticLatitudeLongitudeArray(
                         subarea_index,
                         first,
                         s=0.5)
-        vcd = self._fqv(vc, vd, cv_cd,         subsampled_dimension,
+        vcd = self._fqv(vc, vd, cv_cd,
+                        subsampled_dimension,
                         subarea_shape,
                         subarea_index,
                         first,
