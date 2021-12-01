@@ -19,7 +19,7 @@ jobs:
     # Set-up the build matrix. We run on different distros and Python versions.
     strategy:
       matrix:
-        os: [ubuntu-latest, ubuntu-16.04, macos-latest, macos-10.15]
+        os: [ubuntu-latest, ubuntu-18.04, macos-latest, macos-10.15]
         python-version: [3.7, 3.8, 3.9]
 
     # Run on new and old(er) versions of the distros we support (Linux, Mac OS)
