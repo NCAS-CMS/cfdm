@@ -613,7 +613,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.has_geometry())
 
     def test_Field_climatological_time_axes(self):
-        """TODO DOCS."""
+        """Test the `climatological_time_axes` method of Field."""
         f = cfdm.example_field(0)
         self.assertEqual(f.climatological_time_axes(), set())
 
@@ -631,7 +631,7 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(d.climatological_time_axes(), cta)
 
     def test_Field_bounds(self):
-        """TODO DOCS."""
+        """Test that Field instances do not have cell bounds."""
         f = cfdm.example_field(0)
         self.assertFalse(f.has_bounds())
 
