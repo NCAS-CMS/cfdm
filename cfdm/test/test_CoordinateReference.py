@@ -215,7 +215,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         cfdm.write(f, tempfile1)
 
     def test_CoordinateReference_parameters(self):
-        """TODO DOCS."""
+        """Test the parameter access methods of CoordinateReference."""
         f = self.f.copy()
 
         cr = f.construct("grid_mapping_name:rotated_latitude_longitude")

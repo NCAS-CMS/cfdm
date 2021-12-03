@@ -369,7 +369,7 @@ class FunctionsTest(unittest.TestCase):
             )
 
     def test_unique_constructs(self):
-        """TODO DOCS."""
+        """Test the `unique_constructs` function."""
         f = cfdm.example_field(0)
         g = cfdm.example_field(1)
 

@@ -781,7 +781,7 @@ class read_writeTest(unittest.TestCase):
         self.assertFalse(f)
 
     def test_read_write_domain(self):
-        """TODO DOCS."""
+        """Test the reading and writing of domain constucts."""
         f = cfdm.example_field(1)
         d = f.domain.copy()
 
