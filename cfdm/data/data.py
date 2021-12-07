@@ -3,6 +3,7 @@ import logging
 
 import netCDF4
 import numpy
+import numpy as np
 
 from .. import core
 from ..constants import masked as cfdm_masked
@@ -330,7 +331,23 @@ class Data(Container, NetCDFHDF5, core.Data):
             out.nc_clear_hdf5_chunksizes()
 
         return out
+   
+    def __and__(self, other):
+        """The binary bitwise operation ``&``
 
+        x.__and__(y) <==> x&y
+
+        """
+        return self._binary_operation(other, "__and__")
+
+    def __eq__(self, other):
+        """The rich comparison operator ``==``
+
+        x.__eq__(y) <==> x==y
+
+        """
+        return self._binary_operation(other, "__eq__")
+    
     def __int__(self):
         """Called by the `int` built-in function.
 
@@ -561,9 +578,57 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         return out
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
+    def _binary_operation(self, other, method):
+        """Implement binary arithmetic and comparison operations with the
+        numpy broadcasting rules.
+
+        It is called by the binary arithmetic and comparison methods,
+        such as `__sub__`, `__imul__`, `__rdiv__`, `__lt__`, etc.
+
+        .. seealso:: `_unary_operation`
+
+        :Parameters:
+
+            other:
+                The object on the right hand side of the operator.
+
+            method: `str`
+                The binary arithmetic or comparison method name (such as
+                ``'__imul__'`` or ``'__ge__'``).
+
+        :Returns:
+
+            `Data`
+                A new data object, or if the operation was in place, the
+                same data object.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([0, 1, 2, 3])
+        >>> e = {{package}}.{{class}}([1, 1, 3, 4])
+        >>> f = d._binary_operation(e, '__add__')
+        >>> print(f.array)
+        [1 2 5 7]
+        >>> e = d._binary_operation(e, '__lt__')
+        >>> print(e.array)
+        [ True False  True  True]
+        >>> d._binary_operation(2, '__imul__')
+        >>> print(d.array)
+        [0 2 4 6]
+
+        """
+        inplace = method[2] == "i"
+        if inplace:
+            d = self
+        else:
+            d = self.copy(_use_array=False)
+        
+        array = np.asanyarray(getattr(self.array, method)(other))
+
+        d._set_Array(array, copy=False)
+
+        return d
+
     def _item(self, index):
         """Return an element of the data as a scalar.
 

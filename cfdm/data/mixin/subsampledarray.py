@@ -3,6 +3,7 @@ from itertools import product
 
 import numpy as np
 
+
 _float64 = np.dtype(float)
 
 
@@ -13,18 +14,153 @@ class SubsampledArray:
 
     """
 
+#    def __getitem__(self, indices):
+#        """Return a subspace of the uncompressed data.
+#
+#        x.__getitem__(indices) <==> x[indices]
+#
+#        Returns a subspace of the uncompressed array as an independent
+#        numpy array.
+#
+#        .. versionadded:: (cfdm) 1.9.TODO.0
+#
+#        """
+#        raise NotImplementedError("Must implement __getitem__ in subclasses")
+
     def __getitem__(self, indices):
         """Return a subspace of the uncompressed data.
 
         x.__getitem__(indices) <==> x[indices]
 
-        Returns a subspace of the uncompressed array as an independent
+        Returns a subspace of the uncompressed data as an independent
         numpy array.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        raise NotImplementedError("Must implement __getitem__ in subclasses")
+        # If the first or last element is requested then we don't need
+        # to interpolate
+        try:
+            return self._first_or_last_index(indices)
+        except IndexError:
+            pass
+
+        Subarray = self._Subarray
+        if Subarray is None:
+            raise IndexError(
+                "Can't subspace subsampled data with a non-standardised "
+                "interpolation method"
+            )
+        
+        # ------------------------------------------------------------
+        # Method: Uncompress the entire array and then subspace it
+        # ------------------------------------------------------------
+        subsampled_dimensions = self.compressed_dimensions()
+
+        tie_points = self._get_compressed_Array()
+        
+        self.conform()
+        parameters = self.get_parameters()
+        dependent_tie_points = self.get_dependent_tie_points()
+        
+        # Initialise the un-sliced uncompressed array
+        uarray = np.ma.masked_all(self.shape, dtype=np.dtype(float))
+
+        # Interpolate the tie points for each interpolation subarea
+        for u_indices, tp_indices, subarea_shape, first, subarea_indices in (
+                zip(*self._interpolation_subareas())
+        ):
+            subarray = Subarray(
+                tie_points=tie_points,
+                tp_indices=tp_indices,
+                subsampled_dimensions=subsampled_dimensions,
+                shape=subarea_shape,
+                first=first,
+                subarea_indices=subarea_indices,
+                parameters=parameters,
+                dependent_tie_points=dependent_tie_points,
+            )
+            uarray[u_indices] = subarray[...]
+            
+        return self.get_subspace(uarray, indices, copy=True)
+    
+    def _conform_location_use_3d_cartesian(self):
+        """TODO
+
+        It is assumed that the "interpolation_subarea_flags"
+        interpolation parameters has been checked with
+        `_check_3d_cartesian_flags`.
+
+        See CF section 3.5 "Flags" and Appendix J "Coordinate
+        Interpolation Methods" for details.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Returns:
+
+            `None`
+
+        """
+        location_use_3d_cartesian = "location_use_3d_cartesian"
+
+        flags = self.parameters.get(location_use_3d_cartesian)
+        if flags is None:
+            return
+
+        flag_values = flags.get_property("flag_values", None)
+        flag_masks = flags.get_property("flag_masks", None)
+        flag_meanings = flags.get_property("flag_meanings", None)
+
+        if flag_meanings is None:
+            raise ValueError(
+                "Can't uncompress subsampled coordinates with the "
+                f"{self.get_interpolation_name()} method when the "
+                "interpolation_subarea_flags interpolation parameter "
+                "does not have a flag_meanings property"
+            )
+
+        if flags_masks is None and flags_values is None:
+            raise ValueError(
+                "Can't uncompress subsampled coordinates with the "
+                f"{self.get_interpolation_name()} method when the "
+                "interpolation_subarea_flags interpolation parameter "
+                "does not have either or both of the flag_values "
+                "flag_masks and properties"
+            )
+
+        flag_meanings = flag_meanings.split()
+        if location_use_3d_cartesian not in flag_meanings:
+            raise ValueError(
+                "Can't uncompress subsampled coordinates with the "
+                f"{self.get_interpolation_name()} method when the "
+                "interpolation_subarea_flags interpolation parameter "
+                f"does not have {location_use_3d_cartesian} in its "
+                "flag_meanings property"
+            )
+
+        flag_meanings = np.atleast_1d(flag_meanings)
+        index = np.where(flag_meanings == location_use_3d_cartesian)[0]
+
+        data = flags.data
+        
+        if flags_masks is not None:
+            flag_mask = np.atleast_1d(flag_masks)[index]
+      
+        if flag_values is not None:
+            flag_value = np.atleast_1d(flag_values)[index]
+            if flags_masks is None:
+                # flag_values but no flag_masks
+                new_data = data == flag_value
+            else:
+                # flag_values and flag_masks
+                new_data = data & (flag_mask & flag_value)
+        else:
+            # flag_masks but no flag_values
+            new_data = data & flag_mask
+
+        flags = flags.set_data(new_data, copy=False, inplace=False)
+            
+        self.parameters[location_use_3d_cartesian] = flags
 
     def _first_or_last_index(self, indices):
         """Return the first or last element of tie points array.
@@ -163,17 +299,19 @@ class SubsampledArray:
         (slice(1, 2, None), slice(None, None, None), slice(2, 3, None)
 
         """
-        bounds = self.bounds
         tie_point_indices = self.get_tie_point_indices()
 
-        shape = self.shape
-        if bounds:
-            shape = shape[:-1]
+        shape = self.shape        
+#        if self.bounds:
+#            bounds_size = shape[-1]
+#            shape = shape[:-1]
+#        else:
+#            bounds_size = 0
 
         ndim = len(shape)
 
         # The indices of the uncompressed array that correspond to
-        # each interpolation subarea. A bounds dimension is excluded.
+        # each interpolation subarea. NO A bounds dimension is excluded.
         #
         # .. note:: If a tie point is shared with a previous
         #           interpolation subarea, then that location is
@@ -182,22 +320,22 @@ class SubsampledArray:
         u_indices = [(slice(None),)] * ndim
 
         # The indices of the tie point array that correspond to each
-        # interpolation subarea. A bounds dimension is excluded.
+        # interpolation subarea. NO A bounds dimension is excluded.
         tp_indices = [(slice(None),)] * ndim
 
         # The shape of each uncompressed interpolated subarea along
-        # the interpolated dimensions, including all tie points. A
+        # the interpolated dimensions, including all tie points. NO A
         # bounds dimension is excluded.
         interpolation_subarea_shapes = list(shape)
 
         # The flags which state, for each dimension, whether (`True`)
         # or not (`False`) an interplation subarea is at the start of
         # a continuous area. Non-interpolated dimensions are given the
-        # flag `None`. A bounds dimension is excluded.
+        # flag `None`. NO A bounds dimension is excluded.
         new_continuous_area = [(None,)] * ndim
 
         # The index of each interpolation subarea along the
-        # interpolation subarea dimensions. A bounds dimension is
+        # interpolation subarea dimensions. NO A bounds dimension is
         # excluded.
         interpolation_subarea_indices = [(slice(None),)] * ndim
 
@@ -255,7 +393,7 @@ class SubsampledArray:
             interpolation_subarea_shapes[d] = subarea_shape
             new_continuous_area[d] = continuous_area
             interpolation_subarea_indices[d] = interpolation_subarea_index
-
+                
         return (
             product(*u_indices),
             product(*tp_indices),
@@ -264,252 +402,73 @@ class SubsampledArray:
             product(*interpolation_subarea_indices),
         )
 
-    @lru_cache(maxsize=32)
-    def _s(self, subsampled_dimension, subarea_shape, first, s=None):
-        """The interpolation coefficients for an interpolation subarea.
-
-        Returns the interpolation coefficients ``s`` and ``1-s`` for
-        the specified subsampled dimension of an interpolation subarea
-        with the given shape. See CF appendix J.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        :Parameters:
-
-            subsampled_dimension: `int`
-                The position of a subsampled dimension in the tie
-                point array.
-
-            subarea_shape: `tuple` of `int`
-                The shape of the uncompressed interpolation subarea,
-                including both tie points but excluding a bounds
-                dimension.
-
-            first: `tuple` of `bool`
-                For each dimension of the compressed array, whether or
-                not the interpolation subarea is the first (in index
-                space) of its continuous area.
-
-            s: array_like or or `None`
-                If `None` then the interpolation coeficient ``s`` is
-                calculated for each uncompressed location. Otherwise
-                the values are taken as specified.
-
-        :Returns:
-
-            `numpy.ndarray`, `numpy.ndarray`
-                The interpolation coefficents ``s`` and ``1 - s``, in
-                that order, each of which is a numpy array in the
-                range [0.0, 1.0]. The numpy arrays will have extra
-                size 1 dimensions corresponding to all tie point array
-                dimensions other than *d*.
-
-        **Examples**
-
-        >>> x.bounds
-        False
-        >>> x._s(1, (12, 5), (False, True))
-        array([[0.  , 0.25, 0.5 , 0.75, 1.  ]])
-        array([[1.  , 0.75, 0.5 , 0.25, 0.  ]])
-        >>> x._s(1, (12, 5), (False, False))
-        array([[0.  , 0.25, 0.5 , 0.75, 1.  ]])
-        array([[1.  , 0.75, 0.5 , 0.25, 0.  ]])
-
-        >>> x.bounds
-        True
-        >>> x._s(1, (12, 5), (False, True))
-        array([[0. , 0.2, 0.4, 0.6, 0.8, 1. ]])
-        array([[1. , 0.8, 0.6, 0.4, 0.2, 0. ]])
-        >>> x._s(1, (12, 5), (False, False))
-        array([[0.  , 0.25, 0.5 , 0.75, 1.  ]])
-        array([[1.  , 0.75, 0.5 , 0.25, 0.  ]])
-
-        """
-        if s is not None:
-            return (s, 1.0 - s)
-    
-        size = subarea_shape[subsampled_dimension]
-        first = first[subsampled_dimension]
-        if self.bounds and first:
-            # For bounds tie points, the first interpolation subarea
-            # of a continuous area has an extra point. See CF
-            # 8.3.9. "Interpolation of Cell Boundaries".
-            size = size + 1
-
-        s = np.linspace(0, 1, size, dtype=_float64)  # self.dtype)
-
-        one_minus_s = s[::-1]
-
-        # Add extra size 1 dimensions so that s and 1-s are guaranteed
-        # to be broadcastable to the tie points.
-        ndim = len(subarea_shape)
-        if ndim > 1:
-            new_shape = [1] * ndim
-            new_shape[subsampled_dimension] = s.size
-            s = s.reshape(new_shape)
-            one_minus_s = one_minus_s.reshape(new_shape)
-
-        return (s, one_minus_s)
-
-    def _select_tie_points(self, tie_points, tp_indices, location={}):
-        """Select tie points from an interpolation subarea.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        :Parameters:
-
-            tie_points: array_like
-               A full tie points array.
-
-            tp_indices: `tuple` of `slice`
-                The index of the *tie_points* array that defines the
-                tie points for the interpolation subarea.
-
-            location: `dict`, optional
-                Identify the tie point location. Each key is an
-                integer that specifies a dimension position in the tie
-                points array, with a value of ``0`` or ``1`` that
-                indicates ones of the two tie point positions along
-                that dimension of an interpolation subarea. By
-                default, or if location is an empty dictionary, then
-                all tie points for the interpolation subarea are
-                returned.
-
-        :Returns:
-
-            `numpy.ndarray`
-                The selected tie points.
-
-        """
-        tp_indices = list(tp_indices)
-        for dim, position in location.items():
-            tpi0 = tp_indices[dim].start + position
-            tp_indices[dim] = slice(tpi0, tpi0 + 1)
-
-        return tie_points[tuple(tp_indices)].array
-
-    def _set_interpolated_values(
-        self, uarray, u, u_indices, subsampled_dimensions
-    ):
-        """TODO.
-
-        If the compressed data are bounds tie points, then the
-        interpolated values are broadcast to each location of the
-        trailing bounds dimension. See CF 8.3.9. "Interpolation of
-        Cell Boundaries".
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        .. seealso:: `_trim`
-
-        :Parameters:
-
-            uarray: `numpy.ndarray`
-
-            u_indices: `tuple`
-
-            subsampled_dimensions: sequence of `int`
-
-            u: `numpy.ndarray`
-
-        :Returns:
-
-            `None`
-
-        """
-        if not self.bounds:
-            # Tie point coordinates
-            uarray[u_indices] = u
-            return
-
-        # Bounds tie points
-        indices = [slice(None)] * u.ndim
-        n_subsampled_dimensions = len(subsampled_dimensions)
-        if n_subsampled_dimensions == 1:
-            (d0,) = subsampled_dimensions
-
-            indices[d0] = slice(0, -1)
-            uarray[u_indices + (0,)] = u[tuple(indices)]
-
-            indices[d0] = slice(1, None)
-            uarray[u_indices + (1,)] = u[tuple(indices)]
-        elif n_subsampled_dimensions == 2:
-            (d0, d1) = subsampled_dimensions
-
-            indices[d0] = slice(0, -1)
-            indices[d1] = slice(0, -1)
-            uarray[u_indices + (0,)] = u[tuple(indices)]
-
-            indices[d1] = slice(1, None)
-            uarray[u_indices + (1,)] = u[tuple(indices)]
-
-            indices[d0] = slice(1, None)
-            indices[d1] = slice(1, None)
-            uarray[u_indices + (2,)] = u[tuple(indices)]
-
-            indices[d1] = slice(1, None)
-            indices[d1] = slice(0, -1)
-            uarray[u_indices + (3,)] = u[tuple(indices)]
-        else:
-            raise ValueError(
-                f"Can't yet create uncompressed bounds from "
-                f"{n_subsampled_dimensions} subsampled dimensions"
-            )
-
-    def _trim(self, u, subsampled_dimensions, first):
-        """Trim uncompressed data defined on an interpolation subarea.
-
-        For each subsampled dimension, removes the first point of the
-        interpolation subarea when it is not the first (in index
-        space) of a continuous area. This is beacuse this value in the
-        uncompressed data has already been calculated from the
-        previous (in index space) interpolation subarea.
-
-        Only does this when interpolating tie point coordinates. If
-        interpolating bounds tie points then the first point is always
-        kept so that it may be used during the broadcast to the bounds
-        locations.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        .. seealso:: `_set_interpolated_values`
-
-        :Parameters:
-
-            u: array_like
-               The uncompressed data for the interpolation subarea
-               that includes all tie point locations.
-
-            subsampled_dimensions: sequence of `int`
-                The positions of the subsampled dimensions in the
-                compressed data.
-
-            first: `tuple`
-                For each dimension, True if the interpolation subarea
-                is the first (in index space) of a new continuous
-                area, otherwise False.
-
-        :Returns:
-
-            `numpy.ndarray`
-
-        """
-        if self.bounds:
-            return u
-
-        take_slice = False
-        indices = [slice(None)] * u.ndim
-        for d in subsampled_dimensions:
-            if first[d]:
-                continue
-
-            take_slice = True
-            indices[d] = slice(1, None)
-
-        if take_slice:
-            u = u[tuple(indices)]
-
-        return u
+#    def _set_interpolated_values(
+#        self, uarray, u, u_indices, subsampled_dimensions
+#    ):
+#        """TODO.
+#
+#        If the compressed data are bounds tie points, then the
+#        interpolated values are broadcast to each location of the
+#        trailing bounds dimension. See CF 8.3.9. "Interpolation of
+#        Cell Boundaries".
+#
+#        .. versionadded:: (cfdm) 1.9.TODO.0
+#
+#        .. seealso:: `_trim`
+#
+#        :Parameters:
+#
+#            uarray: `numpy.ndarray`
+#
+#            u_indices: `tuple`
+#
+#            subsampled_dimensions: sequence of `int`
+#
+#            u: `numpy.ndarray`
+#
+#        :Returns:
+#
+#            `None`
+#
+#        """
+#        if not self.bounds:
+#            # Tie point coordinates
+#            uarray[u_indices] = u
+#            return
+#
+#        # Bounds tie points
+#        indices = [slice(None)] * u.ndim
+#        n_subsampled_dimensions = len(subsampled_dimensions)
+#        if n_subsampled_dimensions == 1:
+#            (d0,) = subsampled_dimensions
+#
+#            indices[d0] = slice(0, -1)
+#            uarray[u_indices + (0,)] = u[tuple(indices)]
+#
+#            indices[d0] = slice(1, None)
+#            uarray[u_indices + (1,)] = u[tuple(indices)]
+#        elif n_subsampled_dimensions == 2:
+#            (d0, d1) = subsampled_dimensions
+#
+#            indices[d0] = slice(0, -1)
+#            indices[d1] = slice(0, -1)
+#            uarray[u_indices + (0,)] = u[tuple(indices)]
+#
+#            indices[d1] = slice(1, None)
+#            uarray[u_indices + (1,)] = u[tuple(indices)]
+#
+#            indices[d0] = slice(1, None)
+#            indices[d1] = slice(1, None)
+#            uarray[u_indices + (2,)] = u[tuple(indices)]
+#
+#            indices[d1] = slice(1, None)
+#            indices[d1] = slice(0, -1)
+#            uarray[u_indices + (3,)] = u[tuple(indices)]
+#        else:
+#            raise ValueError(
+#                f"Can't yet create uncompressed bounds from "
+#                f"{n_subsampled_dimensions} subsampled dimensions"
+#            )
 
     @property
     def bounds(self):
@@ -538,6 +497,53 @@ class SubsampledArray:
 
         """
         return _float64
+
+    def codependent_tie_points(self, *identities):
+        """Get all codependent tie points.
+
+        Returns the tie points from `source` as well as those returned
+        by `get_dependent_tie_points`.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            identities:
+                The identities of the codependent tie points, all
+                except one of which must be keys of the dictionary
+                returned by `get_dependent_tie_points`.
+
+        :Returns:
+
+            `list`
+                The codependent tie points, in the order specified by
+                the *identities* parameter.
+
+        **Examples**
+
+        >>> lat, lon = g.codependent_tie_points('latitude', 'longitude')
+
+        """
+        dependent_tie_points = self.get_dependent_tie_points(conform=True)
+        if (
+                len(identities) != len(dependent_tie_points) + 1
+                or not set(identities).issubset(dependent_tie_points)
+        ):
+            raise ValueError(
+                "Specified identities must comprise all except one of "
+                f"{', '.join(map(str, dependent_tie_points))}. Got "
+                f"{', '.join(map(str, identities))}"
+            )
+        
+        out = []
+        for identity in identities:
+            tie_points = dependent_tie_points.get(identity)
+            if tie_points is None:
+                out.append(self.source())
+            else:
+                out.append(tie_points)
+
+        return out
 
     def get_computational_precision(self, default=ValueError()):
         """Return the validation computational precision.
@@ -605,10 +611,10 @@ class SubsampledArray:
         if parameters:
             parameters = self._get_component("parameters")
             parameter_dimensions = self._get_component("parameter_dimensions")
-
+            
         if dependent_tie_points:
             tie_points = self._get_component("dependent_tie_points")
-            tie_point_dims = self._get_component(
+            tie_point_dimensions = self._get_component(
                 "dependent_tie_point_dimensions"
             )
 
@@ -638,12 +644,14 @@ class SubsampledArray:
                 parameters[term] = param
                 parameter_dimensions[term] = dims
 
-        if tie_point_dims:
+            self._conform_location_use_3d_cartesian()
+                
+        if tie_point_dimensions:
             for identity, tp in tie_points.items():
-                tp_dims = tie_point_dims[identity]
+                tp_dims = tie_point_dimensions[identity]
                 if tuple(sorted(tp_dims)) == dims:
-                    # The extra tie point dimensions are already in
-                    # the correct order
+                    # The dependent tie point dimensions are already
+                    # in the correct order
                     continue
 
                 if len(tp_dims) > 1:

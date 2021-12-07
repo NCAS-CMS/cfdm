@@ -1,12 +1,11 @@
 import numpy as np
 
 from .abstract import CompressedArray
-from .mixin import QuadraticInterpolation, SubsampledArray
+from .mixin import Subsampled
+from .subarray import SubsampledQuadraticSubarray
 
 
-class SubsampledQuadraticArray(
-    QuadraticInterpolation, SubsampledArray, CompressedArray
-):
+class SubsampledQuadraticArray(Subsampled, CompressedArray):
     """An subsampled array with quadratic interpolation.
 
     The information needed to uncompress the data is stored in a tie
@@ -66,6 +65,19 @@ class SubsampledQuadraticArray(
     .. versionadded:: (cfdm) 1.9.TODO.0
 
     """
+
+    def __new__(cls, *args, **kwargs):
+        """Store component classes.
+
+        .. note:: If a child class requires different component
+                  classes than the ones defined here, then they must
+                  be redefined in the __new__ method of the child
+                  class.
+
+        """
+        instance = super().__new__(cls)
+        instance._Subarray = SubsampledQuadraticSubarray
+        return instance
 
     def __init__(
         self,
@@ -137,55 +149,49 @@ class SubsampledQuadraticArray(
             one_to_one=True,
         )
 
-    def __getitem__(self, indices):
-        """Return a subspace of the uncompressed data.
-
-        x.__getitem__(indices) <==> x[indices]
-
-        Returns a subspace of the uncompressed data as an independent
-        numpy array.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        """
-        # If the first or last element is requested then we don't need
-        # to interpolate
-        try:
-            return self._first_or_last_index(indices)
-        except IndexError:
-            pass
-
-        # ------------------------------------------------------------
-        # Method: Uncompress the entire array and then subspace it
-        # ------------------------------------------------------------
-        (d0,) = tuple(self.compressed_dimensions())
-
-        tie_points = self._get_compressed_Array()
-
-        parameters = self.get_parameters(conform=True)
-        w = parameters.get("w")
-
-        # Initialise the un-sliced uncompressed array
-        uarray = np.ma.masked_all(self.shape, dtype=np.dtype(float))
-
-        # Interpolate the tie points for each interpolation subarea
-        for u_indices, tp_indices, subarea_size, first, subarea_index in zip(
-            *self._interpolation_subareas()
-        ):
-            ua = self._select_tie_points(tie_points, tp_indices, {d0: 0})
-            ub = self._select_tie_points(tie_points, tp_indices, {d0: 1})
-            u = self._quadratic_interpolation(
-                ua,
-                ub,
-                w,
-                d0,
-                subarea_size,
-                subarea_index,
-                first,
-            )
-
-            self._set_interpolated_values(uarray, u, u_indices, (d0,))
-
-        self._s.cache_clear()
-
-        return self.get_subspace(uarray, indices, copy=True)
+#    def __getitem__(self, indices):
+#        """Return a subspace of the uncompressed data.
+#
+#        x.__getitem__(indices) <==> x[indices]
+#
+#        Returns a subspace of the uncompressed data as an independent
+#        numpy array.
+#
+#        .. versionadded:: (cfdm) 1.9.TODO.0
+#
+#        """
+#        # If the first or last element is requested then we don't need
+#        # to interpolate
+#        try:
+#            return self._first_or_last_index(indices)
+#        except IndexError:
+#            pass
+#
+#        # ------------------------------------------------------------
+#        # Method: Uncompress the entire array and then subspace it
+#        # ------------------------------------------------------------
+#        subsampled_dimensions = self.compressed_dimensions()
+#
+#        tie_points = self._get_compressed_Array()
+#
+#        parameters = self.get_parameters(conform=True)
+#        
+#        # Initialise the un-sliced uncompressed array
+#        uarray = np.ma.masked_all(self.shape, dtype=np.dtype(float))
+#
+#        # Interpolate the tie points for each interpolation subarea
+#        for u_indices, tp_indices, subarea_shape, first, subarea_indices in (
+#                zip(*self._interpolation_subareas())
+#    ):
+#            subarray = self._SubsampledQuadraticSubarray(
+#                array=tie_points,
+#                indices=tp_indices,
+#                subsampled_dimensions=subsampled_dimensions,
+#                shape=subarea_shape,
+#                first=first,
+#                subarea_indices=subarea_indices,
+#                parameters=parameters,
+#            )
+#            uarray[u_indices] = subarray[...]
+#            
+#        return self.get_subspace(uarray, indices, copy=True)

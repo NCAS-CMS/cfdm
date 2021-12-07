@@ -17,4 +17,12 @@ from .subsampledquadraticlatitudelongitudearray import (
     SubsampledQuadraticLatitudeLongitudeArray,
 )
 
+from .subarray import (
+    SubsampledBiLinearSubarray.
+    SubsampledBiQuadraticLatitudeLongitudeSubarray,
+    SubsampledLinearSubarray,
+    SubsampledQuadraticLatitudeLongitudeSubarray,
+    SubsampledQuadraticSubarray,
+)
+
 from .data import Data

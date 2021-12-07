@@ -1,8 +1,8 @@
 from .abstract import CompressedArray
-from .mixin import SubsampledArray
+from .mixin import Subsampled
 
 
-class SubsampledGeneralArray(SubsampledArray, CompressedArray):
+class SubsampledGeneralArray(Subsampled, CompressedArray):
     """A subsampled array with non-standardised interpolation.
 
     The information needed to uncompress the data is stored in a tie
@@ -20,6 +20,19 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
     .. versionadded:: (cfdm) 1.9.TODO.0
 
     """
+
+    def __new__(cls, *args, **kwargs):
+        """Store component classes.
+
+        .. note:: If a child class requires different component
+                  classes than the ones defined here, then they must
+                  be redefined in the __new__ method of the child
+                  class.
+
+        """
+        instance = super().__new__(cls)
+        instance._Subarray = None
+        return instance
 
     def __init__(
         self,
@@ -110,23 +123,23 @@ class SubsampledGeneralArray(SubsampledArray, CompressedArray):
             one_to_one=True,
         )
 
-    def __getitem__(self, indices):
-        """Return a subspace of the uncompressed data.
-
-        x.__getitem__(indices) <==> x[indices]
-
-        Returns a subspace of the uncompressed data as an independent
-        numpy array.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        """
-        # If exactly the first or last element is requested then we
-        # don't need to interpolate
-        try:
-            return self._first_or_last_index(indices)
-        except IndexError:
-            raise IndexError(
-                "Can't subspace subsampled data with a non-standardised "
-                "interpolation method"
-            )
+#    def __getitem__(self, indices):
+#        """Return a subspace of the uncompressed data.
+#
+#        x.__getitem__(indices) <==> x[indices]
+#
+#        Returns a subspace of the uncompressed data as an independent
+#        numpy array.
+#
+#        .. versionadded:: (cfdm) 1.9.TODO.0
+#
+#        """
+#        # If exactly the first or last element is requested then we
+#        # don't need to interpolate
+#        try:
+#            return self._first_or_last_index(indices)
+#        except IndexError:
+#            raise IndexError(
+#                "Can't subspace subsampled data with a non-standardised "
+#                "interpolation method"
+#            )
