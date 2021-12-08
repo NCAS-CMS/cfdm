@@ -220,6 +220,20 @@ _docstring_substitution_definitions = {
                 ``3``/``'DETAIL'``) for increasing verbosity, the more
                 description that is printed to convey information
                 about the operation.""",
+    # subsampled_dimension:
+    "{{subsampled_dimension: `int`}}": """subsampled_dimension: `int`
+                The position of the subsampled dimension in the
+                (bounds)tie points array.""",
+    # s
+    "{{s: array_like, optional}}": """s: array_like, optional
+                The values for the interpolation coeficient ``s`` for
+                the subsampled dimension. By default are calculated
+                for each uncompressed location.""",
+    # s_i
+   "{{s_i: array_like}}": """s_i: array_like
+                A value for the interpolation coeficient ``s`` for the
+                subsampled dimension, at some the location between the
+                two tie points.""",
     # construct selection identity
     "{{construct selection identity}}": """A construct has a number of string-valued identities
                 defined by its `!identities` method, and is selected

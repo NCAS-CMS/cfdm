@@ -1,5 +1,9 @@
-from .subsampledbilinearsubarray import SubsampledBiLinearSubarray
-from .subsampledbiquadraticlatitudelongitudesubarray import SubsampledBiQuadraticLatitudeLongitudeSubarray
-from .subsampledlinearsubarray import SubsampledLinearSubarray
-from .subsampledquadraticlatitudelongitudesubarray import SubsampledQuadraticLatitudeLongitudeSubarray
-from .subsampledquadraticsubarray import SubsampledQuadraticSubarray
+from .bilinearsubarray import BiLinearSubarray
+from .biquadraticlatitudelongitudesubarray import (
+    BiQuadraticLatitudeLongitudeSubarray,
+)
+from .linearsubarray import LinearSubarray
+from .quadraticlatitudelongitudesubarray import (
+    QuadraticLatitudeLongitudeSubarray,
+)
+from .quadraticsubarray import QuadraticSubarray

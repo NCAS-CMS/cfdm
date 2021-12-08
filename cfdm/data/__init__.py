@@ -1,28 +1,19 @@
 from .abstract import Array, CompressedArray
 
+from .subarray import (
+    BiLinearSubarray,
+    BiQuadraticLatitudeLongitudeSubarray,
+    LinearSubarray,
+    QuadraticLatitudeLongitudeSubarray,
+    QuadraticSubarray,
+)
+
 from .gatheredarray import GatheredArray
 from .netcdfarray import NetCDFArray
 from .numpyarray import NumpyArray
 from .raggedcontiguousarray import RaggedContiguousArray
 from .raggedindexedarray import RaggedIndexedArray
 from .raggedindexedcontiguousarray import RaggedIndexedContiguousArray
-from .subsampledbilineararray import SubsampledBiLinearArray
-from .subsampledbiquadraticlatitudelongitudearray import (
-    SubsampledBiQuadraticLatitudeLongitudeArray,
-)
-from .subsampledgeneralarray import SubsampledGeneralArray
-from .subsampledlineararray import SubsampledLinearArray
-from .subsampledquadraticarray import SubsampledQuadraticArray
-from .subsampledquadraticlatitudelongitudearray import (
-    SubsampledQuadraticLatitudeLongitudeArray,
-)
-
-from .subarray import (
-    SubsampledBiLinearSubarray.
-    SubsampledBiQuadraticLatitudeLongitudeSubarray,
-    SubsampledLinearSubarray,
-    SubsampledQuadraticLatitudeLongitudeSubarray,
-    SubsampledQuadraticSubarray,
-)
+from .subsampledarray import SubsampledArray
 
 from .data import Data

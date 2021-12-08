@@ -6515,20 +6515,25 @@ class NetCDFRead(IORead):
 
     def _create_subsampled_array(
         self,
+        interpolation_name=None,
         subsampled_array=None,
         uncompressed_shape=(),
         tie_point_indices={},
-        parameter_dimensions={},
         parameters={},
-        interpolation_name=None,
+        parameter_dimensions={},
         interpolation_description=None,
         computational_precision=None,
     ):
         """Creates Data for a tie point coordinates variable.
 
+        Note that dependent tie points are set elsewhere, if
+        applicable.
+
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Parameters:
+
+            interpolation_name: `str`
 
             subsampled_array: optional
 
@@ -6547,35 +6552,16 @@ class NetCDFRead(IORead):
 
             parameter_dimensions: `dict`, optional
 
-            interpolation_name: `str`, optional
-
-
         :Returns:
 
             A subsampled array.
 
         """
-        if interpolation_name == "linear":
-            init_func = self.implementation.initialise_SubsampledLinearArray
-        elif interpolation_name == "bi_linear":
-            init_func = self.implementation.initialise_SubsampledBiLinearArray
-        elif interpolation_name == "quadratic":
-            init_func = self.implementation.initialise_SubsampledQuadraticArray
-        elif interpolation_name == "quadratic_latitude_longitude":
-            init_func = (
-                self.implementation.initialise_SubsampledQuadraticLatitudeLongitudeArray
-            )
-        elif interpolation_name == "bi_quadratic_latitude_longitude":
-            init_func = (
-                self.implementation.initialise_SubsampledBiQuadraticLatitudeLongitudeArray
-            )
-        else:
-            init_func = self.implementation.initialise_SubsampledGeneralArray
-
         uncompressed_ndim = len(uncompressed_shape)
         uncompressed_size = int(reduce(operator.mul, uncompressed_shape, 1))
 
-        return init_func(
+        return self.implementation.initialise_SubsampledArray(
+            interpolation_name=interpolation_name,
             compressed_array=subsampled_array,
             shape=uncompressed_shape,
             size=uncompressed_size,
@@ -6583,9 +6569,41 @@ class NetCDFRead(IORead):
             tie_point_indices=tie_point_indices,
             interpolation_description=interpolation_description,
             computational_precision=computational_precision,
-            parameter_dimensions=parameter_dimensions,
             parameters=parameters,
+            parameter_dimensions=parameter_dimensions,
         )
+
+    #        if interpolation_name == "linear":
+    #            init_func = self.implementation.initialise_SubsampledLinearArray
+    #        elif interpolation_name == "bi_linear":
+    #            init_func = self.implementation.initialise_SubsampledBiLinearArray
+    #        elif interpolation_name == "quadratic":
+    #            init_func = self.implementation.initialise_SubsampledQuadraticArray
+    #        elif interpolation_name == "quadratic_latitude_longitude":
+    #            init_func = (
+    #                self.implementation.initialise_SubsampledQuadraticLatitudeLongitudeArray
+    #            )
+    #        elif interpolation_name == "bi_quadratic_latitude_longitude":
+    #            init_func = (
+    #                self.implementation.initialise_SubsampledBiQuadraticLatitudeLongitudeArray
+    #            )
+    #        else:
+    #            init_func = self.implementation.initialise_SubsampledGeneralArray
+    #
+    #        uncompressed_ndim = len(uncompressed_shape)
+    #        uncompressed_size = int(reduce(operator.mul, uncompressed_shape, 1))
+    #
+    #        return init_func(
+    #            compressed_array=subsampled_array,
+    #            shape=uncompressed_shape,
+    #            size=uncompressed_size,
+    #            ndim=uncompressed_ndim,
+    #            tie_point_indices=tie_point_indices,
+    #            interpolation_description=interpolation_description,
+    #            computational_precision=computational_precision,
+    #            parameter_dimensions=parameter_dimensions,
+    #            parameters=parameters,
+    #        )
 
     def _create_Data(
         self, array=None, units=None, calendar=None, ncvar=None, **kwargs

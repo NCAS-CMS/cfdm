@@ -114,6 +114,7 @@ class SubsampledQuadraticLatitudeLongitudeArray(Subsampled, CompressedArray):
             one_to_one=True,
         )
 
+
 #    def __getitem__(self, indices):
 #        """Return a subspace of the uncompressed data.
 #
@@ -138,11 +139,11 @@ class SubsampledQuadraticLatitudeLongitudeArray(Subsampled, CompressedArray):
 #        subsampled_dimensions = tuple(self.compressed_dimensions())
 #
 #        tie_points = self._get_compressed_Array()
-#        
+#
 #        self.conform()
 #        parameters = self.get_parameters()
 #        dependent_tie_points = self.get_dependent_tie_points()
-#        
+#
 #        # Initialise the un-sliced uncompressed array
 #        uarray = np.ma.masked_all(self.shape, dtype=np.dtype(float))
 #
@@ -161,6 +162,5 @@ class SubsampledQuadraticLatitudeLongitudeArray(Subsampled, CompressedArray):
 #                dependent_tie_points=dependent_tie_points,
 #            )
 #            uarray[u_indices] = subarray[...]
-#            
+#
 #        return self.get_subspace(uarray, indices, copy=True)
-    

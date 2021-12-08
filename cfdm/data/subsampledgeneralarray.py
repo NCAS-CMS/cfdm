@@ -123,6 +123,7 @@ class SubsampledGeneralArray(Subsampled, CompressedArray):
             one_to_one=True,
         )
 
+
 #    def __getitem__(self, indices):
 #        """Return a subspace of the uncompressed data.
 #

@@ -1,8 +1,8 @@
-from .abstract import SubsampledArray
+from .abstract import SubsampledSubarray
 from .mixin import LinearInterpolation
 
 
-class SubsampledLinearSubarray(LinearInterpolation, SubsampledArray):
+class LinearSubarray(LinearInterpolation, SubsampledSubarray):
     """A subsampled array with linear interpolation.
 
     The information needed to uncompress the data is stored in a tie
@@ -64,15 +64,15 @@ class SubsampledLinearSubarray(LinearInterpolation, SubsampledArray):
 
         """
         (d1,) = self.subsampled_dimensions
-        
+
         u = self._linear_interpolation(
             ua=self._select_tie_point(location={d1: 0}),
             ub=self._select_tie_point(location={d1: 1}),
             subsampled_dimension=d1,
         )
-        u  = self._post_process(u)
-        
+        u = self._post_process(u)
+
         if indices is Ellipsis:
             return u
-        
+
         return self.get_subspace(u, indices, copy=True)

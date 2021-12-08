@@ -118,21 +118,21 @@ from .decorators import (
 from .constructs import Constructs
 
 from .data import (
-    Data,
     Array,
     CompressedArray,
-    NumpyArray,
-    NetCDFArray,
+    Data,
     GatheredArray,
+    NetCDFArray,
+    NumpyArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
-    SubsampledBiLinearArray,
-    SubsampledBiQuadraticLatitudeLongitudeArray,
-    SubsampledGeneralArray,
-    SubsampledLinearArray,
-    SubsampledQuadraticArray,
-    SubsampledQuadraticLatitudeLongitudeArray,
+    SubsampledArray,
+    BiLinearSubarray,
+    BiQuadraticLatitudeLongitudeSubarray,
+    LinearSubarray,
+    QuadraticLatitudeLongitudeSubarray,
+    QuadraticSubarray,
 )
 
 from .count import Count

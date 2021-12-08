@@ -133,6 +133,7 @@ class SubsampledLinearArray(Subsampled, CompressedArray):
             one_to_one=True,
         )
 
+
 #    def __getitem__(self, indices):
 #        """Return a subspace of the uncompressed data.
 #
@@ -157,7 +158,7 @@ class SubsampledLinearArray(Subsampled, CompressedArray):
 #        subsampled_dimensions = self.compressed_dimensions()
 #
 #        tie_points = self._get_compressed_Array()
-#            
+#
 #        # Initialise the un-sliced uncompressed array
 #        uarray = np.ma.masked_all(self.shape, np.dtype(float))
 #
@@ -173,5 +174,5 @@ class SubsampledLinearArray(Subsampled, CompressedArray):
 #                first=first
 #            )
 #            uarray[u_indices] = subarray[...]
-#            
+#
 #        return self.get_subspace(uarray, indices, copy=True)

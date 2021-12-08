@@ -4,6 +4,8 @@ from .linearinterpolation import LinearInterpolation
 class BiLinearInterpolation(LinearInterpolation):
     """Mixin class for subsampled arrays that need linear interpolation.
 
+    See CF appendix J "Coordinate Interpolation Methods".
+
     .. versionadded:: (cfdm) 1.9.TODO.0
 
     """
@@ -12,7 +14,7 @@ class BiLinearInterpolation(LinearInterpolation):
         """Interpolate bilinearly between pairs of tie points.
 
         General purpose two-dimensional linear interpolation
-        method. See CF appendix J for details.
+        method.
 
         uac = fl(ua, uc, s(ia2, ic2, i2))
         ubd = fl(ub, ud, s(ia2, ic2, i2))
@@ -30,7 +32,7 @@ class BiLinearInterpolation(LinearInterpolation):
 
             d0, d1: `int`
                 The positions of the two subsampled dimensions in the
-                tie points array.
+                (bounds) tie points array.
 
         :Returns:
 

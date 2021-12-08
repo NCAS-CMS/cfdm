@@ -109,9 +109,10 @@ class SubsampledBiQuadraticLatitudeLongitudeArray(Subsampled, CompressedArray):
             parameter_dimensions=parameter_dimensions.copy(),
             dependent_tie_points=dependent_tie_points.copy(),
             dependent_tie_point_dimensions=dependent_tie_point_dimensions.copy(),
-            compressed_dimensions=tuple(tie_point_indices),
+            compressed_dimensions=tuple(sorted(tie_point_indices)),
             one_to_one=True,
         )
+
 
 #    def __getitem__(self, indices):
 #        """Return a subspace of the uncompressed data.
@@ -137,11 +138,11 @@ class SubsampledBiQuadraticLatitudeLongitudeArray(Subsampled, CompressedArray):
 #        subsampled_dimensions = tuple(self.compressed_dimensions())
 #
 #        tie_points = self._get_compressed_Array()
-#      
+#
 #        self.conform()
 #        parameters = self.get_parameters()
 #        dependent_tie_points = self.get_dependent_tie_points()
-#        
+#
 #        # Initialise the un-sliced uncompressed array
 #        uarray = np.ma.masked_all(self.shape, dtype=np.dtype(float))
 #

@@ -1,15 +1,23 @@
 import numpy as np
 
-from .abstract import SubsampledArray
+from .abstract import SubsampledSubarray
 from .mixin import QuadraticGeographicInterpolation
 
 
-class SubsampledBiQuadraticLatitudeLongitudeSubArray(
-        QuadraticGeographicInterpolation,
-        SubsampledArray,
+class BiQuadraticLatitudeLongitudeSubarray(
+    QuadraticGeographicInterpolation,
+    SubsampledSubarray,
 ):
-    """A subsampled array with bi-quadratic latitude-longitude
-    interpolation.
+    """The subsampled array for a single interpolation subarea.
+
+    The array is uncompressed with a two-dimensional quadratic method
+    for interpolation of the geographic coordinates latitude and
+    longitude.
+
+    Requires a pair of latitude and longitude tie point variables, one
+    of which is given . For each interpolation subarea, none of the
+    tie points defining the interpolation subarea are permitted to
+    coincide.
 
     The information needed to uncompress the data is stored in a tie
     point index variable that defines the relationship between the
@@ -26,6 +34,7 @@ class SubsampledBiQuadraticLatitudeLongitudeSubArray(
     .. versionadded:: (cfdm) 1.9.TODO.0
 
     """
+
     def __getitem__(self, indices):
         """Return a subspace of the uncompressed data.
 
@@ -39,8 +48,8 @@ class SubsampledBiQuadraticLatitudeLongitudeSubArray(
         """
         (d1, d2) = self.subsampled_dimensions
 
-        lat, lon = self.codependent_tie_points("latitude", "longitude")
-        
+        lat, lon = self._codependent_tie_points("latitude", "longitude")
+
         lat, lon = self._bi_quadratic_latitude_longitude_interpolation(
             lat_a=self._select_tie_point(lat, location={d1: 0, d2: 0}),
             lon_a=self._select_tie_point(lon, location={d1: 0, d2: 0}),
@@ -57,43 +66,43 @@ class SubsampledBiQuadraticLatitudeLongitudeSubArray(
             ce3=self._select_parameter("ce3"),
             ca3=self._select_parameter("ca3"),
             location_use_3d_cartesian=self._select_parameter(
-                "location_use_3d_cartesian"
+                "location_use_3d_cartesian", flag=True
             ),
             d1=d1,
             d2=d2,
         )
-        
-        if 'longitude' in self.dependent_tie_points:
+
+        if "longitude" in self.dependent_tie_points:
             u = lat
         else:
             u = lon
-            
+
         u = self._post_process(u)
-        
+
         if indices is Ellipsis:
             return u
-    
+
         return self.get_subspace(u, indices, copy=True)
-            
+
     def _bi_quadratic_latitude_longitude_interpolation(
-            self,
-            lat_a,
-            lon_a,
-            lat_b,
-            lon_b,
-            lat_c,
-            lon_c,
-            lat_d,
-            lon_d,
-            ce1,
-            ca1,
-            ce2,
-            ca2,
-            ce3,
-            ca3,
-            location_use_3d_cartesian,
-            d1,
-            d2,
+        self,
+        lat_a,
+        lon_a,
+        lat_b,
+        lon_b,
+        lat_c,
+        lon_c,
+        lat_d,
+        lon_d,
+        ce1,
+        ca1,
+        ce2,
+        ca2,
+        ce3,
+        ca3,
+        location_use_3d_cartesian,
+        d1,
+        d2,
     ):
         """Bi-quadratic interpolation of geographic coordinates.
 
@@ -125,37 +134,25 @@ class SubsampledBiQuadraticLatitudeLongitudeSubArray(
                 The latitudes and longitudes of the second tie point
                 in index space.
 
-            ce1, ca1, ce2, ca2, ce3, ca3: `InterpolationParameter` or `None`
-                The interpolation parameters "ce1", "ca1", "ce2",
-                "ca2", "ce3", "ca3". It is assumed that each 
-                coefficient has the same number of dimensions in the
-                same relative order as the tie points array, or if `None`
+            ce1, ca1, ce2, ca2, ce3, ca3: array_like or `None`
+                The interpolation parameters ``ce1``, ``ca1``,
+                ``ce2``, ``ca2``, ``ce3``, and ``ca3`` with the same
+                number of dimensions in the same relative order as the
+                (bounds) tie points array. If any are instead `None`
                 then the parameter is assumed to be zero.
 
-            flags: `InterpolationParameter` or `None`
+            location_use_3d_cartesian: array_like
                 The interpolation parameter
-                "interpolation_subarea_flags". It is assumed that the
-                parameter has the same number of dimensions in the
-                same relative order as the tie points array. If `None`
-                then an exception is raised.
+                ``location_use_3d_cartesian`` with the same number of
+                dimensions in the same relative order as the (bounds)
+                tie points array. True values indicate that
+                interpolation is carried out in three-dimensional
+                cartesian coordinates, as opposed to
+                latitude-longitude coordinates.
 
-            subsampled_dimension: `int`
-                The position of the subsampled dimension in the
-                compressed data.
-
-            subarea_index: `tuple` of `slice`
-                The index of the interpolation subarea.
-
-            first: `tuple` of `bool`
-                For each dimension, True if the interpolation subarea
-                is the first (in index space) of a new continuous
-                area, otherwise False.
-
-            trim: `bool`, optional
-                For the interpolated dimension, remove the first point
-                of the interpolation subarea when it is not the first
-                (in index space) of a continuous area, and when the
-                compressed data are not bounds tie points.
+            d0, d1: `int`
+                The positions of the two subsampled dimensions in the
+                (bounds) tie points array.
 
         :Returns:
 
@@ -168,54 +165,42 @@ class SubsampledBiQuadraticLatitudeLongitudeSubArray(
         llb = lat_b, lon_b
         llc = lat_c, lon_c
         lld = lat_d, lon_d
-        
+
         va = self._fll2v(*lla)
         vb = self._fll2v(*llb)
         vc = self._fll2v(*llc)
         vd = self._fll2v(*lld)
 
         cea2 = (
-            self._parameter_location(ce2, {d2: 'is', d1: 'tp0'}),            
-            self._parameter_location(ca2, {d2: 'is', d1: 'tp0'})
+            self._parameter_location(ce2, {d2: "is", d1: "tp0"}),
+            self._parameter_location(ca2, {d2: "is", d1: "tp0"}),
         )
-        cv_ac = fcea2cv(va, vc, *cea2)                
-                                                       
+        cv_ac = fcea2cv(va, vc, *cea2)
+
         cea2 = (
-            self._parameter_location(ce2, {d2: 'is', d1: 'tp1'}),            
-            self._parameter_location(ca2, {d2: 'is', d1: 'tp1'})
+            self._parameter_location(ce2, {d2: "is", d1: "tp1"}),
+            self._parameter_location(ca2, {d2: "is", d1: "tp1"}),
         )
-        cv_bd = fcea2cv(vb, vd, *cea2)                
-                                                       
-        cea1 = (
-            self._parameter_location(ce1, {d2: 'tp0', d1: 'is'}),
-            self._parameter_location(ca1, {d2: 'tp0', d1: 'is'})
-        )
-        vab = self._fqv(
-            va,
-            vb,
-            self._fcea2cv(va, vb, *cea1),
-            d1,
-            s=0.5
-        )
+        cv_bd = fcea2cv(vb, vd, *cea2)
 
         cea1 = (
-            self._parameter_location(ce1, {d2: 'tp1', d1: 'is'}),
-            self._parameter_location(ca1, {d2: 'tp1', d1: 'is'})
+            self._parameter_location(ce1, {d2: "tp0", d1: "is"}),
+            self._parameter_location(ca1, {d2: "tp0", d1: "is"}),
         )
-        vcd = self._fqv(
-            vc,
-            vd,
-            self._fcea2cv(vc, vd, *cea1),
-            d1,
-            s=0.5
+        vab = self._fqv(va, vb, self._fcea2cv(va, vb, *cea1), d1, s=0.5)
+
+        cea1 = (
+            self._parameter_location(ce1, {d2: "tp1", d1: "is"}),
+            self._parameter_location(ca1, {d2: "tp1", d1: "is"}),
         )
+        vcd = self._fqv(vc, vd, self._fcea2cv(vc, vd, *cea1), d1, s=0.5)
 
         cea3 = (
-            self._parameter_location(ce3, {d1: 'is', d2: 'is'}),
-            self._parameter_location(ca3, {d1: 'is', d2: 'is'})
+            self._parameter_location(ce3, {d1: "is", d2: "is"}),
+            self._parameter_location(ca3, {d1: "is", d2: "is"}),
         )
         cv_z = self._fcea2cv(vab, vcd, *cea3)
-        
+
         any_cartesian = location_use_3d_cartesian.any()
         all_cartesian = location_use_3d_cartesian.all()
 
@@ -238,7 +223,7 @@ class SubsampledBiQuadraticLatitudeLongitudeSubArray(
             llc_ac = self._fcll(
                 *lla,
                 *llc,
-                *self._fv2ll(self._fqv(va, vc, cv_ac, d2, s=0.5))
+                *self._fv2ll(self._fqv(va, vc, cv_ac, d2, s=0.5)),
                 d2,
             )
             llc_bd = self._fcll(
@@ -252,7 +237,7 @@ class SubsampledBiQuadraticLatitudeLongitudeSubArray(
             llc_z = self._fcll(
                 *llab,
                 *llcd,
-                *self._fv2ll(self._fqv(vab, vcd, cv_z, d2, s=0.5))
+                *self._fv2ll(self._fqv(vab, vcd, cv_z, d2, s=0.5)),
                 d2,
             )
 
@@ -262,9 +247,9 @@ class SubsampledBiQuadraticLatitudeLongitudeSubArray(
             cl_zz = self._fcll(*llac, *llbd, *llz, d1)
 
             ll_lat_p, ll_lon_p = self._fqll(*llac, *llbd, *cl_zz, d1)
-            
+
             if not any_cartesian:
-                lat, lon = ll_lat_p,  ll_lon_p 
+                lat, lon = ll_lat_p, ll_lon_p
 
         if any_cartesian and not all_cartesian:
             # Combine the results of cartesian and latitude-longitude

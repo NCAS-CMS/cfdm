@@ -1,8 +1,8 @@
-from .abstract import SubsampledArray
+from .abstract import SubsampledSubarray
 from .mixin import BiLinearInterpolation
 
 
-class SubsampledBiLinearSubarray(BiLinearInterpolation, SubsampledArray):
+class BiLinearSubarray(BiLinearInterpolation, SubsampledSubarray):
     """TODO
 
     .. versionadded:: (cfdm) 1.9.TODO.0
@@ -30,9 +30,9 @@ class SubsampledBiLinearSubarray(BiLinearInterpolation, SubsampledArray):
             d1=d1,
             d2=d2,
         )
-        u  = self._post_process(u)
-            
+        u = self._post_process(u)
+
         if indices is Ellipsis:
             return u
-        
+
         return self.get_subspace(u, indices, copy=True)

@@ -9,12 +9,12 @@ x, y, z = (0, 1, 2)
 class QuadraticGeographicInterpolation(QuadraticInterpolation):
     """Mixin class for quadratic geographic interpolation formulas.
 
-    See CF appendix J "Coordinate Interpolation Methods" for details.
+    See CF appendix J "Coordinate Interpolation Methods".
 
     .. versionadded:: (cfdm) 1.9.TODO.0
 
     """
-        
+
     def _fcea2cv(self, va, vb, ce, ca):
         """TODO.
 
@@ -29,9 +29,6 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
         rsqr = fdot(vr, vr)
         cr = fsqrt(1 - ce*ce - ca*ca) - fsqrt(rsqr)
 
-        See CF appendix J "Coordinate Interpolation Methods" for
-        details.
-
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
@@ -44,7 +41,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
 
         if ca is not None:
             k = k - ca * ca
-            
+
         cr = self._fsqrt(k) - self._fsqrt(rsqr)
 
         cv = self._fmultiply(cr, vr)
@@ -57,10 +54,11 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
 
         return cv
 
-    def _fcll(self, lat_a, lon_a, lat_b, lon_a, lat_ab, lon_ab,
-              subsampled_dimension):
+    def _fcll(
+        self, lat_a, lon_a, lat_b, lon_b, lat_ab, lon_ab, subsampled_dimension
+    ):
         """TODO.
-        
+
         cll = fcll(lla, llb, llab)
             = (fw(lla.lat, llb.lat, llab.lat, 0.5),
                fw(lla.lon, llb.lon, llab.lon, 0.5))
@@ -69,21 +67,22 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
 
         llab = fv2ll(fqv(va, vb, cv, 0.5))
 
-        See CF appendix J "Coordinate Interpolation Methods" for
-        details.
-
         .. versionadded:: (cfdm) 1.9.TODO.0
 
-            subsampled_dimension: `int`
-                The position of the subsampled dimension in the tie
-                points array.
+        :Parameters:
+
+            {{subsampled_dimension: `int`}}
+        
+        :Returns:
+
+            `numpy.ndarray`
 
         """
         return (
-            self._fw(lat_a, lat_b, lat_ab, subsampled_dimension, 0.5),
-            self._fw(lon_a, lon_b, lon_ab, subsampled_dimension, 0.5),
+            self._fw(lat_a, lat_b, lat_ab, subsampled_dimension, s_i=0.5),
+            self._fw(lon_a, lon_b, lon_ab, subsampled_dimension, s_i=0.5),
         )
-    
+
     def _fcross(self, va, vb):
         """Vector cross product.
 
@@ -91,9 +90,6 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
                   = (va.y*vb.z - va.z*vb.y,
                      va.z*vb.x - va.x*vb.z,
                      va.x*vb.y - va.y*vb.x)
-
-        See CF appendix J "Coordinate Interpolation Methods" for
-        details.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -122,9 +118,6 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
               fw(va.y, vb.y, vp(i).y, s(i)),
               fw(va.z, vb.z, vp(i).z, s(i)))
 
-        See CF appendix J "Coordinate Interpolation Methods" for
-        details.
-
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Parameters:
@@ -137,11 +130,9 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
                 The tie point vector representations from the tie
                 point latitude-longitude representations
 
-            subsampled_dimension: `int`
-                The position of the subsampled dimension in the tie
-                points array.
+            {{subsampled_dimension: `int`}}
 
-            s_i: array_like
+            {{s_i: array_like}}
 
         :Returns:
 
@@ -161,7 +152,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
             = (fdot(cv, fminus(va, vb)) / gsqr,
                fdot(cv, fcross(va, vb)) / (rsqr*gsqr))
 
-        where 
+        where
 
         rsqr = fdot(vr, vr)
         gsqr = fdot(vg, vg)
@@ -171,11 +162,8 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
         vr = fmultiply(0.5, fplus(va, vb))
         vg = fminus(va, vb)
 
-        See CF appendix J "Coordinate Interpolation Methods" for
-        details.
-
         .. versionadded:: (cfdm) 1.9.TODO.0
-       
+
         :Parameters:
 
             va, vb: `tuple` of array_like
@@ -185,10 +173,6 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
             cv: array_like
                 The three-dimensional cartesian interpolation
                 parmaeters.
-
-            subsampled_dimension: `int`
-                The position of the subsampled dimension in the tie
-                points array.
 
         :Returns:
 
@@ -202,7 +186,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
 
         return (
             self._fdot(cv, self._fminus(va, vb)) / gsqr,
-            self._fdot(cv, self._fcross(va, vb)) / (rsqr*gsqr)
+            self._fdot(cv, self._fcross(va, vb)) / (rsqr * gsqr),
         )
 
     def _fll2v(self, lat, lon):
@@ -215,9 +199,6 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
                   = (cos(lat)*cos(lon),
                      cos(lat)*sin(lon),
                      sin(lat))
-
-        See CF appendix J "Coordinate Interpolation Methods" for
-        details.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -247,9 +228,6 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
                      va.y - vb.y,
                      va.z - vb.z)
 
-        See CF appendix J "Coordinate Interpolation Methods" for
-        details.
-
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
@@ -262,9 +240,6 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
                   = (r * v.x,
                      r * v.y,
                      r * v.z)
-
-        See CF appendix J "Coordinate Interpolation Methods" for
-        details.
 
         .. versionaddedd:: (cfdm) 1.9.TODO.0
 
@@ -298,9 +273,6 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
                      va.y + vb.y + vc.y,
                      va.z + vb.z + vc.z)
 
-        See CF appendix J "Coordinate Interpolation Methods" for
-        details.
-
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Parameters:
@@ -333,7 +305,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
         lat_c,
         lon_c,
         subsampled_dimension,
-        s=None
+        s=None,
     ):
         """Quadratic interpolation in latitude-longitude coordinates.
 
@@ -341,14 +313,13 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
                          = (fq(lla.lat, llb.lat, cll.lat, s),
                             fq(lla.lon, llb.lon, cll.lon, s))
 
-        See CF appendix J "Coordinate Interpolation Methods" for
-        details.
-
         .. versionadded:: (cfdm) 1.9.TODO.0
 
-            subsampled_dimension: `int`
-                The position of the subsampled dimension in the tie
-                points array.
+        :Parameters:
+        
+            {{subsampled_dimension: `int`}}
+        
+            {{s: array_like, optional}}
 
         """
         lat = self._fq(
@@ -376,9 +347,6 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
                             fq(va.y, vb.y, cv.y, s),
                             fq(va.z, vb.z, cv.z, s))
 
-        See CF appendix J "Coordinate Interpolation Methods" for
-        details.
-
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Parameters:
@@ -396,14 +364,9 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
                 quadratic interpolation parameter ``w``, as calculated
                 by `_fcea2cv`.
 
-            subsampled_dimension: `int`
-                The position of the subsampled dimension in the tie
-                points array.
-
-            s: array_like or `None`
-                If `None` then the interpolation coeficient ``s`` is
-                calculated for each uncompressed location. Otherwise
-                the values are taken as specified.
+            {{subsampled_dimension: `int`}}
+        
+            {{s: array_like, optional}}
 
         :Returns:
 
@@ -419,9 +382,6 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
         """Square root.
 
         s = fsqrt(t)
-
-        See CF appendix J "Coordinate Interpolation Methods" for
-        details.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -445,9 +405,6 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
         (lat, lon) = fv2ll(v)
                    = (atan2(v.y, v.x),
                       atan2(z, sqrt(v.x * v.x + v.y * v.y))
-
-        See CF appendix J "Coordinate Interpolation Methods" for
-        details.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 

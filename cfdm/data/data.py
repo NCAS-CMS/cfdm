@@ -331,7 +331,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             out.nc_clear_hdf5_chunksizes()
 
         return out
-   
+
     def __and__(self, other):
         """The binary bitwise operation ``&``
 
@@ -347,7 +347,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         """
         return self._binary_operation(other, "__eq__")
-    
+
     def __int__(self):
         """Called by the `int` built-in function.
 
@@ -622,7 +622,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             d = self
         else:
             d = self.copy(_use_array=False)
-        
+
         array = np.asanyarray(getattr(self.array, method)(other))
 
         d._set_Array(array, copy=False)
