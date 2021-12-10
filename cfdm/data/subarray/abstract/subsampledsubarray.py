@@ -1,19 +1,16 @@
-from functools import reduce
-from operator import mul
-
 import numpy as np
 
-from ....abstract import Container
+from .subarray import Subarray
 
 _float64 = np.dtype(float)
 
 
-class SubsampledSubarray(Container):
+class SubsampledSubarray(Subarray):
     """Uncompress an interpolation subarea of a subsampled array.
 
     When an instance is indexed, interpolation is carried out to
     uncompress the single interpolation subarea (defined by the
-    *tp_indices* and *subarea_indices* parameters) into an array whose
+    *indices* and *subarea_indices* parameters) into an array whose
     shape is given by the *shape* parameter. This array is then
     indexed as requested.
 
@@ -29,8 +26,8 @@ class SubsampledSubarray(Container):
 
     def __init__(
         self,
-        tie_points=None,
-        tp_indices=None,
+        data=None,
+        indices=None,
         subsampled_dimensions=None,
         shape=None,
         subarea_indices=None,
@@ -42,17 +39,17 @@ class SubsampledSubarray(Container):
 
         :Parameters:
 
-            tie_points: array_like
+            data: array_like
                 The full tie points array for all interpolation
                 subarareas. May be a bounds tie point array. The array
                 must provide values for all interpolation subareas,
                 the applicable elements are defined by the
-                *tp_indices* indices.
+                *indices* indices.
 
-            tp_indices: `tuple` of `slice`
+            indices: `tuple` of `slice`
                 For each dimension of the *tie_points* array, the
                 index that defines the location of the interpolation
-                subarea's tie points in te *tie_points*. An index
+                subarea's tie points in the *tie_points*. An index
                 corresponding to a non-interpolated dimension must be
                 `slice(None)`.
 
@@ -87,7 +84,7 @@ class SubsampledSubarray(Container):
                 this dictionary, keyed by the parameter terms'
                 names. A parameter array must provide values for all
                 interpolation subareas, the applicable elements are
-                defined by the *subarea_indices* and *tp_indices*
+                defined by the *subarea_indices* and *indices*
                 indices.
 
                 Each dimension of a parameter array maps to the
@@ -101,11 +98,11 @@ class SubsampledSubarray(Container):
             dependent_tie_points: `dict`, optional
                 If the interpolation method requires multiple tie
                 points arrays to be interpolated simultaneously, then
-                the array_like dependent (bounds) tie points are given
-                in this dictionary, keyed by the dependent tie points'
+                the array_like dependent tie points are given in this
+                dictionary, keyed by the dependent tie points'
                 identities. A dependent tie points array must provide
                 values for all interpolation subareas, the applicable
-                elements are defined by the *tp_indices* indices.
+                elements are defined by the *indices* indices.
 
                 A dependent tie points array must have the same shape
                 as the *tie_points* array, and each dimension maps to
@@ -113,29 +110,14 @@ class SubsampledSubarray(Container):
                 array.
 
         """
-        super().__init__()
+        super().__init__(data=data, indices=indices,
+                         shape=shape)
 
-        self.tie_points = tie_points
-        self.tp_indices = tp_indices
-        self.subsampled_dimensions = subsampled_dimensions
-        self.shape = shape
+        self.subsampled_dimensions = subsampled_dimensions       
         self.subarea_indices = subarea_indices
         self.first = first
         self.parameters = parameters.copy()
         self.dependent_tie_points = dependent_tie_points.copy()
-
-    def __getitem__(self, indices):
-        """Return a subspace of the uncompressed data.
-
-        x.__getitem__(indices) <==> x[indices]
-
-        Returns a subspace of the uncompressed array as an independent
-        numpy array.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        """
-        raise NotImplementedError("Must implement __getitem__ in subclasses")
 
     def _broadcast_bounds(self, u):
         """TODO
@@ -147,6 +129,19 @@ class SubsampledSubarray(Container):
 
         If the data compressed data are instead tie points, then the
         interpolated values are returned unchanged.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            u: `numpy.ndarray`
+               The uncompressed data for the interpolation subarea
+               that includes all tie point locations. TODO
+
+        :Returns:
+
+            `numpy.ndarray`
+               TODO
 
         """
         if not self.bounds:
@@ -211,7 +206,7 @@ class SubsampledSubarray(Container):
 
         :Returns:
 
-            `list`
+            `list` of array_like
                 The codependent tie points, in the order specified by
                 the *identities* parameter.
 
@@ -221,23 +216,24 @@ class SubsampledSubarray(Container):
 
         """
         dependent_tie_points = self.dependent_tie_points
-        if not (
-            len(identities) == len(dependent_tie_points) + 1
-            and set(dependent_tie_points).issubset(identities)
-        ):
+
+        if len(identities) != len(dependent_tie_points) + 1:
             raise ValueError(
-                "The codependent tie point identities "
-                f"({', '.join(map(str, identities))}) must comprise all of "
-                "the dependent tie point names "
-                f"({', '.join(map(str, dependent_tie_points))}) "
-                "plus one other."
+                f"There must be exactly {len(dependent_tie_points)} "
+                "dependent tie point array(s), got {len(identities)}"
+            )
+        
+        if not set(dependent_tie_points).issubset(identities):
+            raise ValueError(
+                "Each dependent tie point identity must be one of: "
+                f"{', '.join(map(str, identities))}"
             )
 
         out = []
         for identity in identities:
             tie_points = dependent_tie_points.get(identity)
             if tie_points is None:
-                out.append(self.tie_points)
+                out.append(self.data)
             else:
                 out.append(tie_points)
 
@@ -249,7 +245,7 @@ class SubsampledSubarray(Container):
             return
 
         if location:
-            indices = [slice(None)] * self.tie_points.ndim
+            indices = [slice(None)] * self.data.ndim
             shape = parameter.shape
             for subsampled_dimension, loc in location.items():
                 if shape[subsampled_dimension] != 2:
@@ -284,7 +280,7 @@ class SubsampledSubarray(Container):
 
         :Parameters:
 
-            u: array_like
+            u: `numpy.ndarray`
                The uncompressed data for the interpolation subarea
                that includes all tie point locations.
 
@@ -295,15 +291,14 @@ class SubsampledSubarray(Container):
         """
         u = self._broadcast_bounds(u)
         u = self._trim(u)
-
-        return np.asanyarray(u)
+        return u
 
     def _select_parameter(self, name, location={}):
         """Select TODO.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
-        .. seealso:: `parameters`, `subarea_indices`, `tp_indices`
+        .. seealso:: `parameters`, `subarea_indices`, `indices`
 
         :Parameters:
 
@@ -324,49 +319,24 @@ class SubsampledSubarray(Container):
 
         """
         parameter = self.parameters.get(name)
-
         if parameter is None:
             return
-        #            if default is None:
-        #                return
-        #
-        #            # Return a size 1 array containing a default value
-        #            return np.full((1,) * len(self.subarea_indices), default)
-
+        
         # Find the parameter array dimensions which are subsampled
         # dimensions
         subsampled_dimensions = [
             i
             for i, (m, n) in (
-                enumerate(zip(parameter.shape, self.tie_points.shape))
+                enumerate(zip(parameter.shape, self.data.shape))
             )
             if m == n
         ]
 
-        #        if subsampled_dimensions:
-        #            indices = list(self.subarea_indices)
-        ##            indices = []
-        #            for dim, tp_index in enumerate(self.tp_indices)):
-        #                if dim in subsampled_dimensions:
-        #                    if dim in locations:
-        #                        i = tp_index.start + locations[dim]
-        #                        index = slice(i, i + 1)
-        #                    else:
-        #                        index = tp_index
-        #
-        #                    indices[dim] = index
-        ##                else:
-        ##                    index = subarea_index
-        #
-        ##                indices.append(index)
-        #
-        #            indices = tuple(indices)
-        #
         if subsampled_dimensions:
             indices = tuple(
                 tp_index if dim in subsampled_dimensions else subarea_index
                 for dim, (subarea_index, tp_index) in (
-                    enumerate(zip(self.subarea_indices, self.tp_indices))
+                    enumerate(zip(self.subarea_indices, self.indices))
                 )
             )
         else:
@@ -374,18 +344,16 @@ class SubsampledSubarray(Container):
 
         return np.asanyarray(parameter[indices])
 
-    def _select_tie_point(self, tie_points=None, location={}):
+    def _select_data(self, data=None, location={}):
         """Select TODO  tie points from an interpolation subarea.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
-        .. seealso:: `tie_points`, `tp_indices`
-
         :Parameters:
 
-            tie_points: array_like or `None`
-                The full array of tie points. If `None` then the
-                `tie_points` array is used.
+            data: array_like or `None`
+                A full array of tie points. If `None` then the `data`
+                array is used.
 
             location: `dict`, optional
                 Identify the tie point location within the
@@ -404,7 +372,7 @@ class SubsampledSubarray(Container):
                 The selected tie points.
 
         """
-        tp_indices = self.tp_indices
+        tp_indices = self.indices
 
         if location:
             tp_indices = list(tp_indices)
@@ -414,10 +382,10 @@ class SubsampledSubarray(Container):
 
             tp_indices = tuple(tp_indices)
 
-        if tie_points is None:
-            tie_points = self.tie_points
+        if data is None:
+            data = self.data
 
-        return np.asanyarray(tie_points[tp_indices])
+        return np.asanyarray(data[tp_indices])
 
     def _trim(self, u):
         """Trim uncompressed data defined on an interpolation subarea.
@@ -474,7 +442,7 @@ class SubsampledSubarray(Container):
         """
         is_bounds = self._get_component("bounds", None)
         if is_bounds is None:
-            is_bounds = self.ndim > self.tie_points.ndim
+            is_bounds = self.ndim > self.data.ndim
             self._set_component("bounds", is_bounds, copy=False)
 
         return is_bounds
@@ -489,19 +457,10 @@ class SubsampledSubarray(Container):
         return _float64
 
     @property
-    def ndim(self):
-        """The number of dimensions of the uncompressed data.
+    def tie_points(self):
+        """Alias for `data`.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        return len(self.shape)
-
-    @property
-    def size(self):
-        """The size of the uncompressed data.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        """
-        return reduce(mul, self.shape, 1)
+        return self.data

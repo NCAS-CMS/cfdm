@@ -11,7 +11,7 @@ class BiLinearInterpolation(LinearInterpolation):
     """
 
     def _bilinear_interpolation(self, ua, ub, uc, ud, d2, d1):
-        """Interpolate bilinearly between pairs of tie points.
+        """Interpolate bilinearly between TODO pairs of tie points.
 
         General purpose two-dimensional linear interpolation
         method.

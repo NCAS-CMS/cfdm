@@ -172,6 +172,9 @@ class ArrayMixin:
 
         """
         if indices is not Ellipsis:
+            if not isinstance(indices, tuple):
+                indices = (indices,)
+            
             axes_with_list_indices = [
                 i for i, x in enumerate(indices) if not isinstance(x, slice)
             ]

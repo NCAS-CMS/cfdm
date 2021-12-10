@@ -54,7 +54,7 @@ class QuadraticInterpolation(LinearInterpolation):
 
         return (u_i - one_minus_s * ua - s * ub) / (4 * one_minus_s * s)
 
-    def _quadratic_interpolation(self, ua, ub, w, d1, s=None, returns=False):
+    def _quadratic_interpolation(self, ua, ub, w, d, s=None, returns=False):
         """Interpolate quadratically between pairs of tie points.
 
         Computes the quadratic interpolation operator ``fq``, where
@@ -84,7 +84,7 @@ class QuadraticInterpolation(LinearInterpolation):
                 same relative order as the tie points array. If `None`
                 then the quadratic coefficient is assumed to be zero.
 
-            {{d1: `int`}}
+            {{d: `int`}}
 
             {{s: array_like, optional}}
 
@@ -98,10 +98,10 @@ class QuadraticInterpolation(LinearInterpolation):
         """
         if returns or w is not None:
             u, s, one_minus_s = self._linear_interpolation(
-                ua, ub, d1, s=s, returns=True
+                ua, ub, d, s=s, returns=True
             )
         else:
-            u = self._linear_interpolation(a, ub, d1, s=s)
+            u = self._linear_interpolation(a, ub, d, s=s)
 
         if w is not None:
             u += 4 * s * one_minus_s * w

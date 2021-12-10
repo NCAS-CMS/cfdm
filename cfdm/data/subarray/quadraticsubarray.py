@@ -119,8 +119,8 @@ class QuadraticSubarray(QuadraticInterpolation, SubsampledSubarray):
         (d1,) = self.subsampled_dimensions
 
         u = self._quadratic_interpolation(
-            ua=self._select_tie_point(location={d1: 0}),
-            ub=self._select_tie_point(location={d1: 1}),
+            ua=self._select_data(location={d1: 0}),
+            ub=self._select_data(location={d1: 1}),
             w=self._select_parameter("w"),
             d=d1,
         )

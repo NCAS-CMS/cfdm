@@ -13,7 +13,7 @@ class LinearInterpolation:
 
     """
 
-    def _linear_interpolation(self, ua, ub, d1, s=None, returns=False):
+    def _linear_interpolation(self, ua, ub, d, s=None, returns=False):
         """Interpolate linearly between pairs of tie points.
 
         General purpose one-dimensional linear interpolation method.
@@ -33,7 +33,7 @@ class LinearInterpolation:
             ub: `numpy.ndarray`
                 The values of the second tie point in index space.
 
-            {{d1: `int`}}
+            {{d: `int`}}
 
             {{s: array_like, optional}}
 
@@ -45,7 +45,7 @@ class LinearInterpolation:
             `numpy.ndarray`
 
         """
-        s, one_minus_s = self._s(d1, s=s)
+        s, one_minus_s = self._s(d, s=s)
 
         u = ua * one_minus_s + ub * s
 

@@ -34,50 +34,54 @@ class SubsampledArray(CompressedArray):
     degree of subsampling and the choice of interpolation method.
 
     See CF section 8.3 "Lossy Compression by Coordinate Subsampling"
-    and Appendix J "Coordinate Interpolation Methods" for details.
+    and Appendix J "Coordinate Interpolation Methods".
 
-    >>> coords = cfdm.SubsampledArray(
-    ...     interpolation_name='linear',
-    ...     compressed_array=cfdm.Data([15, 135, 225, 255, 345]),
+    >>> tie_point_indices={{package}}.TiePointIndex(data=[0, 4, 7, 8, 11])
+    >>> w = {{package}}.InterpolationParameter(data=[5, 10, 5])
+    >>> coords = {{package}}.SubsampledArray(
+    ...     interpolation_name='quadratic',
+    ...     compressed_array={{package}}.Data([15, 135, 225, 255, 345]),
     ...     shape=(12,),
     ...     ndim=1,
     ...     size=12,
-    ...     tie_point_indices={0: cfdm.TiePointIndex(data=[0, 4, 7, 8, 11])},
+    ...     tie_point_indices={0: tie_point_indices},
+    ...     parameters={"w": w},
+    ...     parameter_dimensions={"w": (0,)},
     ... )
     >>> print(coords[...])
-    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [ 15.          48.75        80.         108.75       135.
+     173.88888889 203.88888889 225.         255.         289.44444444
+     319.44444444 345.        ]
 
     **Cell boundaries**
 
     When the tie points array represents bounds tie points then the
     *shape* parameter describes the uncompressed bounds shape. See CF
-    section 8.3.9 "Interpolation of Cell Boundaries" for details.
+    section 8.3.9 "Interpolation of Cell Boundaries".
 
-    >>> bounds = cfdm.SubsampledArray(
+    >>> bounds = {{package}}.SubsampledArray(
     ...     interpolation_name='quadratic',
-    ...     compressed_array=cfdm.Data([0, 150, 240, 240, 360]),
+    ...     compressed_array={{package}}.Data([0, 150, 240, 240, 360]),
     ...     shape=(12, 2),
     ...     ndim=2,
     ...     size=24,
-    ...     tie_point_indices={0: cfdm.TiePointIndex(data=[0, 4, 7, 8, 11])},
-    ...     parameters={
-    ...       "w": cfdm.InterpolationParameter(data=[5, 10, 5])
-    ...     },
+    ...     tie_point_indices={0: tie_point_indices},
+    ...     parameters={"w": w},
     ...     parameter_dimensions={"w": (0,)},
     ... )
     >>> print(bounds[...])
-    [[  0.          33.2       ]
-     [ 33.2         64.8       ]
-     [ 64.8         94.8       ]
-     [ 94.8        123.2       ]
-     [123.2        150.        ]
-     [150.         188.88888889]
-     [188.88888889 218.88888889]
-     [218.88888889 240.        ]
-     [240.         273.75      ]
-     [273.75       305.        ]
-     [305.         333.75      ]
-     [333.75       360.        ]]
+    [[0.0 33.2]
+     [33.2 64.8]
+     [64.8 94.80000000000001]
+     [94.80000000000001 123.2]
+     [123.2 150.0]
+     [150.0 188.88888888888889]
+     [188.88888888888889 218.88888888888889]
+     [218.88888888888889 240.0]
+     [240.0 273.75]
+     [273.75 305.0]
+     [305.0 333.75]
+     [333.75 360.0]]
 
     .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -86,12 +90,9 @@ class SubsampledArray(CompressedArray):
     def __new__(cls, *args, **kwargs):
         """Store subarray classes.
 
-        If a child class requires different component classes than the
-        ones defined here, then they must be redefined in the __new__
-        method of the child class.
-
-        The dictionary keys are the corresponding "interpolation_name"
-        property values.
+        The subarray classes are stored as values of a dictionary
+        whose keys are the corresponding "interpolation_name" property
+        values.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -141,13 +142,6 @@ class SubsampledArray(CompressedArray):
                 The number of uncompressed array dimensions, equal to
                 the length of *shape*.
 
-            compressed_axes: sequence of `int`
-                The position of the compressed axis in the tie points
-                array. Only one axis may be compressed.
-
-                *Parameter example:*
-                  ``compressed_axes=[1]``
-
             tie_point_indices: `dict`
                 The tie point index variable for each subsampled
                 dimension. A key indentifies a subsampled dimension by
@@ -155,7 +149,7 @@ class SubsampledArray(CompressedArray):
                 value is a `TiePointIndex` variable.
 
                 *Parameter example:*
-                  ``tie_point_indices={1: cfdm.TiePointIndex(data=[0, 16])}``
+                  ``{1: {{package}}.TiePointIndex(data=[0, 16, 31])}``
 
             computational_precision: `str`, optional
                 The floating-point arithmetic precision used during
@@ -163,19 +157,32 @@ class SubsampledArray(CompressedArray):
                 coordinates.
 
                 *Parameter example:*
-                  ``computational_precision='64'``
+                  ``'64'``
 
             parameters: `dict`, optional
+                TODO
+
+                Ignored by interpolation methods that do not need
+                interpolation parameters.
 
             parameter_dimensions: `dict`, optional
+                TODO
+
+                Ignored by interpolation methods that do not need
+                interpolation parameters.
 
             dependent_tie_points: `dict`, optional
-                Ignored when *interpolation_name* is ``'linear'``,
-                ``'bilinear'`` or ``'quadratic'``.
+                TODO
+
+                Ignored by interpolation methods that do not need
+                dependent tie points.
 
             dependent_tie_points_dimensions: `dict`, optional
-                Ignored when *interpolation_name* is ``'linear'``,
-                ``'bilinear'`` or ``'quadratic'``.
+                TODO
+
+                Ignored by interpolation methods that do not need
+                dependent tie points.
+
 
         """
         super().__init__(
@@ -234,31 +241,23 @@ class SubsampledArray(CompressedArray):
         uarray = np.ma.masked_all(self.shape, dtype=_float64)
 
         subsampled_dimensions = tuple(sorted(self.compressed_dimensions()))
-        tie_points = self._get_compressed_Array()
-        parameters = self.conformed_parameters()
-        dependent_tie_points = self.conformed_dependent_tie_points()
+
+        conformed_data = self.conformed_data()
+        tie_points = conformed_data["data"]
+        parameters = conformed_data["parameters"]
+        dependent_tie_points = conformed_data["dependent_tie_points"]
 
         # Interpolate the tie points for each interpolation subarea
-        i = 0
         for (
             u_indices,
             tp_indices,
             subarea_shape,
             first,
             subarea_indices,
-        ) in zip(*self._interpolation_subareas()):
-            i += 1
-            print(
-                i,
-                u_indices,
-                tp_indices,
-                subarea_shape,
-                first,
-                subarea_indices,
-            )
+        ) in zip(*self.subareas()):
             subarray = Subarray(
-                tie_points=tie_points,
-                tp_indices=tp_indices,
+                data=tie_points,
+                indices=tp_indices,
                 subsampled_dimensions=subsampled_dimensions,
                 shape=subarea_shape,
                 first=first,
@@ -273,12 +272,8 @@ class SubsampledArray(CompressedArray):
     def _conform_interpolation_subarea_flags(self):
         """TODO
 
-        It is assumed that the "interpolation_subarea_flags"
-        interpolation parameters has been checked with
-        `_check_3d_cartesian_flags`.
-
         See CF section 3.5 "Flags" and Appendix J "Coordinate
-        Interpolation Methods" for details.
+        Interpolation Methods".
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -341,50 +336,52 @@ class SubsampledArray(CompressedArray):
 
         return out
 
-    def _first_or_last_index(self, indices):
-        """Return the first or last element of tie points array.
-
-        This method will return the firat or last value without having
-        to perform any interpolation.
-
-        Currenly, the first and last elements are only recognised by
-        exact *indices* matches to ``(slice(0, 1, 1),) * self.ndim``
-        or ``(slice(-1, None, 1),) * self.ndim``
+    @property
+    def bounds(self):
+        """True if the compressed array represents bounds tie points.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
-        :Parameters:
+        """
+        is_bounds = self._get_component("bounds", None)
+        if is_bounds is None:
+            is_bounds = self.ndim > self.source().ndim
+            self._set_component("bounds", is_bounds, copy=False)
 
-            indices:
-                Indices to the uncompressed array.
+        return is_bounds
+
+    @property
+    def dtype(self):
+        """Data-type of the uncompressed data.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        return _float64
+
+    def conformed_data(self):
+        """TODO
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Returns:
 
-            `numpy.ndarray`
+            `dict`
 
         """
-        ndim = self.ndim
-        if (
-            indices == (slice(0, 1, 1),) * ndim
-            or indices == (slice(-1, None, 1),) * ndim
-        ):
-            if self.bounds:
-                indices = indices[:-1]
+        out = super().conformed_data()
+        out["parameters"] = self.conformed_parameters()
+        out["dependent_tie_points"] = self.conformed_dependent_tie_points()
 
-            return self._get_compressed_Array()[indices]
-
-        # Indices do not (acceptably) select the first nor last element
-        raise IndexError()
-
-    def _get_conformed_parameters(self):
-        """TODO Return the interpolation parameter variables.
-
-
-        qNote , not a copy is returned
+        return out
+    
+    def conformed_dependent_tie_points(self):
+        """Return the TODO interpolation parameter variables.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
-        .. seealso:: `_conform`, `get_parameters`
+        .. seealso:: `conformed_parameters`,
+                     `get_dependent_tie_points`
 
         :Returns:
 
@@ -393,9 +390,283 @@ class SubsampledArray(CompressedArray):
                 been set then an empty dictionary is returned.
 
         """
-        return self._get_component("conformed_parameters", {})
+        dependent_tie_points = self.get_dependent_tie_points()
 
-    def _interpolation_subareas(self):
+        if dependent_tie_points:
+            dependent_tie_point_dimensions = (
+                self.get_dependent_tie_point_dimensions()
+            )
+
+            tp_ndim = self.source().ndim
+            dims = list(range(tp_ndim))
+
+            for identity, tp in dependent_tie_points.items():
+                tp = tp.data
+                tp_dims = dependent_tie_point_dimensions[identity]
+                if sorted(tp_dims) == dims:
+                    # The dependent tie point dimensions are already
+                    # in the correct order
+                    tp = tp.copy()
+                else:
+                    new_order = [
+                        tp_dims.index(i) for i in dims if i in tp_dims
+                    ]
+                    tp = tp.transpose(new_order)
+
+                dependent_tie_points[identity] = tp
+
+        return dependent_tie_points
+
+    def conformed_parameters(self):
+        """Return the interpolation parameter variables.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `conformed_dependent_tie_points`,
+                     `get_parameters`
+
+        :Returns:
+
+            `dict`
+                TODO. If no interpolation parameter variables have
+                been set then an empty dictionary is returned.
+
+        """
+        parameters = self.get_parameters()
+
+        if parameters:
+            parameter_dimensions = self.get_parameter_dimensions()
+
+            tp_ndim = self.source().ndim
+            dims = list(range(tp_ndim))
+
+            for term, parameter in parameters.items():
+                parameter = parameter.data
+                parameter_dims = parameter_dimensions[term]
+                if sorted(parameter_dims) == dims:
+                    # The interpolation parameter dimensions are
+                    # already in the correct order
+                    parameter = parameter.copy()
+                else:
+                    new_order = [
+                        parameter_dims.index(i)
+                        for i in dims
+                        if i in parameter_dims
+                    ]
+                    parameter = parameter.transpose(new_order)
+
+                    # Add missing interpolation parameter dimensions as
+                    # size 1 axes
+                    if len(parameter_dims) < tp_ndim:
+                        for d in sorted(set(dims).difference(parameter_dims)):
+                            parameter = parameter.insert_dimension(position=d)
+
+                parameters[term] = parameter
+
+            parameters.update(self._conform_interpolation_subarea_flags())
+
+        return parameters
+
+    def get_computational_precision(self, default=ValueError()):
+        """Return the validation computational precision.
+
+        The validation computational precision is the floating-point
+        arithmetic precision used during the preparation and
+        validation of the compressed coordinates.
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                computational precision has not been set.
+
+                {{default Exception}}
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        out = self._get_component("computational_precision", None)
+        if out is None:
+            if default is None:
+                return
+
+            return self._default(
+                default,
+                f"{self.__class__.__name__!r} has no "
+                "'computational_precision'",
+            )
+
+        return out
+
+    def get_dependent_tie_points(self):
+        """Return the TODO interpolation parameter variables.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `get_dependent_tie_point_dimensions`
+
+        :Returns:
+
+            `dict`
+                TODO. If no interpolation parameter variables have
+                been set then an empty dictionary is returned.
+
+        """
+        return self._get_component("dependent_tie_points").copy()
+
+    def get_dependent_tie_point_dimensions(self):
+        """Return the TODO interpolation parameter variables.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `get_dependent_tie_points`
+
+        :Returns:
+
+            `dict`
+                TODO. If no interpolation parameter variables have
+                been set then an empty dictionary is returned.
+
+        """
+        return self._get_component("dependent_tie_point_dimensions").copy()
+
+    def get_interpolation_description(self, default=ValueError()):
+        """Return the non-standardised interpolation method description.
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                interpolation description has not been set.
+
+                {{default Exception}}
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `get_interpolation_name`
+
+        """
+        out = self._get_component("interpolation_description", None)
+        if out is None:
+            if default is None:
+                return
+
+            return self._default(
+                default,
+                f"{self.__class__.__name__!r} has no "
+                "'interpolation_description'",
+            )
+
+        return out
+
+    def get_interpolation_name(self, default=ValueError()):
+        """Return the name a standardised interpolation method.
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                interpolation name has not been set.
+
+                {{default Exception}}
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `get_interpolation_description`
+
+        """
+        out = self._get_component("interpolation_name", None)
+        if out is None:
+            if default is None:
+                return
+
+            return self._default(
+                default,
+                f"{self.__class__.__name__!r} has no 'interpolation_name'",
+            )
+
+        return out
+
+    def get_parameters(self):
+        """Return the interpolation parameter variables.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `get_parameter_dimensions`
+
+        :Returns:
+
+            `dict`
+                TODO. If no interpolation parameter variables have
+                been set then an empty dictionary is returned.
+
+        """
+        return self._get_component("parameters").copy()
+
+    def get_parameter_dimensions(self):
+        """TODO.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `get_parameters`
+
+        :Returns:
+
+            `dict`
+                If no parameter dimensions have been set then an empty
+                dictionary is returned.
+
+        """
+        return self._get_component("parameter_dimensions").copy()
+
+    def set_dependent_tie_point_dimensions(self, value, copy=True):
+        """TODO
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Returns:
+
+            `None`
+
+        """
+        self._set_component(
+            "dependent_tie_point_dimensions", value.copy(), copy=False
+        )
+
+    def set_dependent_tie_points(self, value, copy=True):
+        """TODO
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Returns:
+
+            `None`
+
+        """
+        if copy:
+            value = {key: tp.copy() for key, tp in value.items()}
+        else:
+            value = value.copy()
+
+        self._set_component("dependent_tie_points", value, copy=False)
+
+    def get_tie_point_indices(self):
+        """Return the tie point index variables for subsampled
+        dimensions.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Returns:
+
+            `dict`
+                The tie point index variables. If no tie point index
+                variables have been set then an empty dictionary is
+                returned.
+
+        """
+        return self._get_component("tie_point_indices").copy()
+
+    def subareas(self):
         """TODO.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
@@ -442,7 +713,7 @@ class SubsampledArray(CompressedArray):
         ...  tp_indices,
         ...  interpolation_subarea_shapes,
         ...  new_continuous_area,
-        ...  interpolation_subarea_indices) = x.interpolation_subareas()
+        ...  interpolation_subarea_indices) = x._subareas()
         >>> for i in u_indices:
         ...    print(i)
         ...
@@ -597,7 +868,7 @@ class SubsampledArray(CompressedArray):
             interpolation_subarea_shapes[d] = subarea_shape
             new_continuous_area[d] = continuous_area
             interpolation_subarea_indices[d] = interpolation_subarea_index
-
+            
         return (
             product(*u_indices),
             product(*tp_indices),
@@ -605,447 +876,6 @@ class SubsampledArray(CompressedArray):
             product(*new_continuous_area),
             product(*interpolation_subarea_indices),
         )
-
-    @property
-    def bounds(self):
-        """True if the compressed array represents bounds tie points.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        """
-        is_bounds = self._get_component("bounds", None)
-        if is_bounds is None:
-            is_bounds = self.ndim > self._get_compressed_Array().ndim
-            self._set_component("bounds", is_bounds, copy=False)
-
-        return is_bounds
-
-    @property
-    def dtype(self):
-        """Data-type of the uncompressed data.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        """
-        return _float64
-
-    def conformed_dependent_tie_points(self):
-        """Return the TODO interpolation parameter variables.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        .. seealso:: `conformed_parameters`,
-                     `get_dependent_tie_points`
-
-        :Returns:
-
-            `dict`
-                TODO. If no interpolation parameter variables have
-                been set then an empty dictionary is returned.
-
-        """
-        dependent_tie_points = self.get_dependent_tie_points()
-        print("dependent_tie_points=", dependent_tie_points)
-        if dependent_tie_points:
-            dependent_tie_point_dimensions = (
-                self.get_dependent_tie_point_dimensions()
-            )
-
-            tp_ndim = self._get_compressed_Array().ndim
-            dims = list(range(tp_ndim))
-
-            for identity, tp in dependent_tie_points.items():
-                print(repr(tp))
-                tp = tp.data
-                tp_dims = dependent_tie_point_dimensions[identity]
-                if sorted(tp_dims) == dims:
-                    # The dependent tie point dimensions are already
-                    # in the correct order
-                    tp = tp.copy()
-                else:
-                    new_order = [
-                        tp_dims.index(i) for i in dims if i in tp_dims
-                    ]
-                    tp = tp.transpose(new_order)
-
-                dependent_tie_points[identity] = tp
-
-        return dependent_tie_points
-
-    def conformed_parameters(self):
-        """Return the interpolation parameter variables.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        .. seealso:: `conformed_dependent_tie_points`,
-                     `get_parameters`
-
-        :Returns:
-
-            `dict`
-                TODO. If no interpolation parameter variables have
-                been set then an empty dictionary is returned.
-
-        """
-        parameters = self.get_parameters()
-
-        if parameters:
-            parameter_dimensions = self.get_parameter_dimensions()
-
-            tp_ndim = self._get_compressed_Array().ndim
-            dims = list(range(tp_ndim))
-
-            for term, parameter in parameters.items():
-                parameter = parameter.data
-                parameter_dims = parameter_dimensions[term]
-                if sorted(parameter_dims) == dims:
-                    # The interpolation parameter dimensions are
-                    # already in the correct order
-                    parameter = parameter.copy()
-                else:
-                    new_order = [
-                        parameter_dims.index(i)
-                        for i in dims
-                        if i in parameter_dims
-                    ]
-                    parameter = parameter.transpose(new_order)
-
-                    # Add missing interpolation parameter dimensions as
-                    # size 1 axes
-                    if len(parameter_dims) < tp_ndim:
-                        for d in sorted(set(dims).difference(parameter_dims)):
-                            parameter = parameter.insert_dimension(position=d)
-
-                parameters[term] = parameter
-
-            parameters.update(self._conform_interpolation_subarea_flags())
-
-        return parameters
-
-    def get_computational_precision(self, default=ValueError()):
-        """Return the validation computational precision.
-
-        The validation computational precision is the floating-point
-        arithmetic precision used during the preparation and
-        validation of the compressed coordinates.
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if the
-                computational precision has not been set.
-
-                {{default Exception}}
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        """
-        out = self._get_component("computational_precision", None)
-        if out is None:
-            if default is None:
-                return
-
-            return self._default(
-                default,
-                f"{self.__class__.__name__!r} has no "
-                "'computational_precision'",
-            )
-
-        return out
-
-    def _conform(self, dependent_tie_points=True, parameters=True):
-        """Conform interpolation parameters and extra tie_points.
-
-        Tranposes the interpolation parameters and extra tie points,
-        if any, to have the same relative dimension order as the
-        compressed array.
-
-        Missing dimensions in interpolation parameters may be inserted
-        as size 1 axes.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        :Parameters:
-
-            dependent_tie_points: `bool`
-                If False then do not conform any extra tie points.
-
-            parameters: `bool`
-                If False then do not conform any interpolation
-                parameters.
-
-        :Returns:
-
-            `None`
-
-        """
-        parameters = self.parameters
-        conformed_parameters = self._get_conformed_parameters()
-
-        parameter_dimensions = None
-        tie_point_dims = None
-
-        if parameters:
-            parameters = self._get_component("parameters")
-            parameter_dimensions = self._get_component("parameter_dimensions")
-
-        if dependent_tie_points:
-            dependent_tie_points = self._get_component("dependent_tie_points")
-            dependent_tie_point_dimensions = self._get_component(
-                "dependent_tie_point_dimensions"
-            )
-
-        tp_ndim = self._get_compressed_Array().ndim
-        dims = tuple(range(tp_ndim))
-
-        if parameters:
-            for term, param in parameters.items():
-                param_dims = parameter_dimensions[term]
-                if tuple(sorted(param_dims)) != dims:
-                    # The interpolation parameter dimensions are not
-                    # already in the correct order
-                    if len(param_dims) > 1:
-                        new_order = [
-                            param_dims.index(i)
-                            for i in dims
-                            if i in param_dims
-                        ]
-                        param = param.transpose(new_order)
-
-                    # Add missing interpolation parameter dimensions
-                    # as size 1 axes
-                    if len(param_dims) < tp_ndim:
-                        for d in sorted(set(dims).difference(param_dims)):
-                            param = param.insert_dimension(position=d)
-
-                conformed_parameters[term] = param
-
-            self._conform_interpolation_subarea_flags()
-
-        if dependent_tie_points:
-            for identity, tp in dependent_tie_points.items():
-                tp_dims = dependent_tie_point_dimensions[identity]
-                if tuple(sorted(tp_dims)) == dims:
-                    # The dependent tie point dimensions are already
-                    # in the correct order
-                    continue
-
-                if len(tp_dims) > 1:
-                    new_order = [
-                        tp_dims.index(i) for i in dims if i in tp_dims
-                    ]
-                    tp = tp.transpose(new_order)
-
-                tie_points[identity] = tp
-                tie_point_dims[identity] = dims
-
-    def get_dependent_tie_points(self, conform=False):
-        """Return the TODO interpolation parameter variables.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        .. seealso:: `conform`, `get_dependent_tie_point_dimensions`
-
-        :Parameters:
-
-            conform: `bool`, optional
-                If True then the extra tie points and extra tie point
-                dimensions are conformed to match the dimensions of
-                the tie points.
-
-        :Returns:
-
-            `dict`
-                TODO. If no interpolation parameter variables have
-                been set then an empty dictionary is returned.
-
-        """
-        if conform:
-            self.conform(dependent_tie_points=True, parameters=False)
-
-        return self._get_component("dependent_tie_points").copy()
-
-    def get_dependent_tie_point_dimensions(self, conform=False):
-        """Return the TODO interpolation parameter variables.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        .. seealso:: `conform`, `get_dependent_tie_points`
-
-        :Parameters:
-
-            conform: `bool`, optional
-                If True then the extra tie points and extra tie point
-                dimensions are conformed to match the dimensions of
-                the tie points.
-
-        :Returns:
-
-            `dict`
-                TODO. If no interpolation parameter variables have
-                been set then an empty dictionary is returned.
-
-        """
-        if conform:
-            self.conform(dependent_tie_points=True, parameters=False)
-
-        return self._get_component("dependent_tie_point_dimensions").copy()
-
-    def get_interpolation_description(self, default=ValueError()):
-        """Return the non-standardised interpolation method description.
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if the
-                interpolation description has not been set.
-
-                {{default Exception}}
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        .. seealso:: `get_interpolation_name`
-
-        """
-        out = self._get_component("interpolation_description", None)
-        if out is None:
-            if default is None:
-                return
-
-            return self._default(
-                default,
-                f"{self.__class__.__name__!r} has no "
-                "'interpolation_description'",
-            )
-
-        return out
-
-    def get_interpolation_name(self, default=ValueError()):
-        """Return the name a standardised interpolation method.
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if the
-                interpolation name has not been set.
-
-                {{default Exception}}
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        .. seealso:: `get_interpolation_description`
-
-        """
-        out = self._get_component("interpolation_name", None)
-        if out is None:
-            if default is None:
-                return
-
-            return self._default(
-                default,
-                f"{self.__class__.__name__!r} has no 'interpolation_name'",
-            )
-
-        return out
-
-    def get_parameters(self, conform=False):
-        """Return the interpolation parameter variables.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        .. seealso:: `conform`, `get_parameter_dimensions`
-
-        :Parameters:
-
-            conform: `bool`, optional
-                If True then the interpolation parameters and
-                interpolation parameter dimensions are conformed to
-                match the dimensions of the tie points.
-
-        :Returns:
-
-            `dict`
-                TODO. If no interpolation parameter variables have
-                been set then an empty dictionary is returned.
-
-        """
-        if conform:
-            self.conform(dependent_tie_points=False, parameters=True)
-
-        return self._get_component("parameters").copy()
-
-    def get_parameter_dimensions(self, conform=False):
-        """TODO.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        .. seealso:: `conform`, `get_parameters`
-
-        :Parameters:
-
-            conform: `bool`, optional
-                If True then the interpolation parameters and
-                interpolation parameter dimensions are conformed to
-                match the dimensions of the tie points.
-
-        :Returns:
-
-            `dict`
-                If no parameter dimensions have been set then an empty
-                dictionary is returned.
-
-        """
-        if conform:
-            self.conform(dependent_tie_points=False, parameters=True)
-
-        return self._get_component("parameter_dimensions").copy()
-
-    def set_dependent_tie_point_dimensions(self, value, copy=True):
-        """TODO
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        :Returns:
-
-            `None`
-
-        """
-        self._set_component(
-            "dependent_tie_point_dimensions", value.copy(), copy=False
-        )
-
-    def set_dependent_tie_points(self, value, copy=True):
-        """TODO
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        :Returns:
-
-            `None`
-
-        """
-        if copy:
-            value = {key: tp.copy() for key, tp in value.items()}
-        else:
-            value = value.copy()
-
-        self._set_component("dependent_tie_points", value, copy=False)
-
-    def get_tie_point_indices(self):
-        """Return the tie point index variables for subsampled
-        dimensions.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        :Returns:
-
-            `dict`
-                The tie point index variables. If no tie point index
-                variables have been set then an empty dictionary is
-                returned.
-
-        """
-        return self._get_component("tie_point_indices").copy()
 
     def to_memory(self):
         """Bring an array on disk into memory.
@@ -1060,7 +890,7 @@ class SubsampledArray(CompressedArray):
                 The array that is stored in memory.
 
         """
-        for v in self._get_compressed_Array():
+        for v in self.source():
             v.data.to_memory()
 
         for v in self.get_tie_point_indices().values():
@@ -1074,13 +904,10 @@ class SubsampledArray(CompressedArray):
 
         return self
 
-
 #    def tranpose(self, axes=None):
 #        """Tranpose the compressed array without uncompressing it.
 #
 #        .. versionadded:: 1.9.TODO.0
-#
-#        .. seealso:: `conform`
 #
 #        :Parameters:
 #

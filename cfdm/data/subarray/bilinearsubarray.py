@@ -23,10 +23,10 @@ class BiLinearSubarray(BiLinearInterpolation, SubsampledSubarray):
         (d2, d1) = self.subsampled_dimensions
 
         u = self._bilinear_interpolation(
-            ua=self._select_tie_point(location={d2: 0, d1: 0}),
-            ub=self._select_tie_point(location={d2: 0, d1: 1}),
-            uc=self._select_tie_point(location={d2: 1, d1: 0}),
-            ud=self._select_tie_point(location={d2: 1, d1: 1}),
+            ua=self._select_data(location={d2: 0, d1: 0}),
+            ub=self._select_data(location={d2: 0, d1: 1}),
+            uc=self._select_data(location={d2: 1, d1: 0}),
+            ud=self._select_data(location={d2: 1, d1: 1}),
             d2=d2,
             d1=d1,
         )

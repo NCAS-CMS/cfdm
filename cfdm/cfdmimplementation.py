@@ -2940,16 +2940,16 @@ class CFDMImplementation(Implementation):
         if ncdim is not None:
             variable.nc_set_instance_dimension(ncdim)
 
-    def nc_set_instance_dimension(self, variable, ncdim):
-        """Set the netCDF instance dimension name.
+    def nc_set_sample_dimension(self, variable, ncdim):
+        """Set the netCDF sample dimension name.
 
         :Parameters:
 
             variable:
 
             ncdim: `str` or `None`
-                The netCDF dimension name. If `None` then the name is
-                not set.
+                The netCDF dimension name. If `None` then the name is not
+                set.
 
         :Returns:
 
@@ -2957,7 +2957,7 @@ class CFDMImplementation(Implementation):
 
         """
         if ncdim is not None:
-            variable.nc_set_instance_dimension(ncdim)
+            variable.nc_set_sample_dimension(ncdim)
 
     def nc_set_interpolation_subarea_dimension(self, variable, ncdim):
         """Set the netCDF sample dimension name.

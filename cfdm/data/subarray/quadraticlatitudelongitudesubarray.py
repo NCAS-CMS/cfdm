@@ -44,10 +44,10 @@ class QuadraticLatitudeLongitudeSubarray(
         lat, lon = self._codependent_tie_points("latitude", "longitude")
 
         u = self._quadratic_latitude_longitude_interpolation(
-            lat_a=self._select_tie_point(lat, location={d1: 0}),
-            lon_a=self._select_tie_point(lon, location={d1: 0}),
-            lat_b=self._select_tie_point(lat, location={d1: 1}),
-            lon_b=self._select_tie_point(lon, location={d1: 1}),
+            lat_a=self._select_data(lat, location={d1: 0}),
+            lon_a=self._select_data(lon, location={d1: 0}),
+            lat_b=self._select_data(lat, location={d1: 1}),
+            lon_b=self._select_data(lon, location={d1: 1}),
             ce=self._select_parameter("ce"),
             ca=self._select_parameter("ca"),
             location_use_3d_cartesian=self._select_parameter(

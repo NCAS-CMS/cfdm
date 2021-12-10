@@ -1,3 +1,5 @@
+import numpy as np
+
 from .array import Array
 
 
@@ -13,6 +15,19 @@ class CompressedArray(Array):
     .. versionadded:: (cfdm) 1.7.0
 
     """
+
+    def __new__(cls, *args, **kwargs):
+        """Store subarray classes.
+
+        A child class must define its subarray class(es) in the
+        `_Subarray` dictionary.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        instance = super().__new__(cls)
+        instance._Subarray = {}
+        return instance
 
     def __init__(
         self,
@@ -95,6 +110,56 @@ class CompressedArray(Array):
 
         self._set_compressed_Array(compressed_array, copy=False)
 
+    def __getitem__(self, indices):
+        """Return a subspace of the uncompressed data.
+
+        x.__getitem__(indices) <==> x[indices]
+
+        Returns a subspace of the uncompressed array as an independent
+        numpy array.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        raise NotImplementedError("Must implement __getitem__ in subclasses")
+
+    def _first_or_last_index(self, indices):
+        """Return the first or last element of the uncompressed array.
+
+        This method will return the first or last element without
+        having to perform any decompression.
+
+        .. warning:: It is assumed that the first (last) element of
+                     the compressed array has the same value as the
+                     first (last) element of the uncompressed
+                     array. If this is not the case then an incorrect
+                     value will be returned.
+
+        Currenly, the first and last elements are only recognised by
+        exact *indices* matches to ``(slice(0, 1, 1),) * self.ndim``
+        or ``(slice(-1, None, 1),) * self.ndim``
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            indices:
+                Indices to the uncompressed array.
+
+        :Returns:
+
+            `numpy.ndarray`
+
+        """
+        ndim = self.ndim
+        for index in (slice(0, 1, 1), slice(-1, None, 1)):
+            if indices == (index,) * ndim:
+                data = self.source()        
+                return np.asanyarray(data[(index,) * data.ndim])    
+    
+        # Indices do not (acceptably) select the first nor last element
+        raise IndexError()
+    
     def _get_compressed_Array(self, default=ValueError()):
         """Return the compressed array.
 
@@ -160,17 +225,11 @@ class CompressedArray(Array):
 
     @property
     def dtype(self):
-        """Data-type of the data elements.
-
-        **Examples:**
-
-        >>> a.dtype
-        dtype('float64')
-        >>> print(type(a.dtype))
-        <type 'numpy.dtype'>
+        """Data-type of the uncompressed data.
 
         """
-        return self._get_compressed_Array().dtype
+        # TODO make NotImplemented
+        return self.source().dtype
 
     @property
     def ndim(self):
@@ -374,6 +433,18 @@ class CompressedArray(Array):
             for pos in compressed_dims
         }
 
+    def conformed_data(self):
+        """TODO
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Returns:
+
+            `dict`
+
+        """
+        return {"data": self.source()}
+        
     def to_memory(self):
         """Bring an array on disk into memory and retain it there.
 
@@ -416,3 +487,34 @@ class CompressedArray(Array):
 
         """
         return self._get_compressed_Array(default=default)
+
+    def subareas(self):
+        """TODO.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Returns:
+
+            sequence of sequences
+                Each sequence iterates over a descriptor from each
+                subarea, in the same order.
+
+                There must be at least three sequences. The leading
+                three of which describe:
+
+                1. The indices of the uncompressed array that
+                   correspond to each subarea.
+                
+                2. The indices of the compressed array that correspond
+                   to each subarea.
+                
+                3. The shape of each uncompressed subarea.
+
+                Further sequences may be added by subclasses.
+
+        """
+        # TODO: This is a placeholder for when this is used for all
+        # types of compressed array (not just subsampled)
+        pass
+        #raise NotImplementedError("Must implement subareas in subclasses")
+    

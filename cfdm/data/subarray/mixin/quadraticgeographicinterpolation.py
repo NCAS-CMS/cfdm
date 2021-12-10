@@ -55,31 +55,6 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
 
         return cv
 
-    #    def _fcll(
-    #        self, lat_a, lon_a, lat_b, lon_b, lat_ab, lon_ab, d
-    #    ):
-    #        """TODO.
-    #
-    #        cll = fcll(lla, llb, llab)
-    #            = (fw(lla.lat, llb.lat, llab.lat, 0.5),
-    #               fw(lla.lon, llb.lon, llab.lon, 0.5))
-    #
-    #        .. versionadded:: (cfdm) 1.9.TODO.0
-    #
-    #        :Parameters:
-    #
-    #            {{d: `int`}}
-    #
-    #        :Returns:
-    #
-    #            `tuple`
-    #
-    #        """
-    #        return (
-    #            self._fw(lat_a, lat_b, lat_ab, d, s_i=0.5),
-    #            self._fw(lon_a, lon_b, lon_ab, d, s_i=0.5),
-    #        )
-
     def _fcross(self, va, vb):
         """Vector cross product.
 

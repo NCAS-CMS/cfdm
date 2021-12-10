@@ -51,14 +51,14 @@ class BiQuadraticLatitudeLongitudeSubarray(
         lat, lon = self._codependent_tie_points("latitude", "longitude")
 
         u = self._bi_quadratic_latitude_longitude_interpolation(
-            lat_a=self._select_tie_point(lat, location={d1: 0, d2: 0}),
-            lon_a=self._select_tie_point(lon, location={d1: 0, d2: 0}),
-            lat_b=self._select_tie_point(lat, location={d1: 0, d2: 1}),
-            lon_b=self._select_tie_point(lon, location={d1: 0, d2: 1}),
-            lat_c=self._select_tie_point(lat, location={d1: 1, d2: 0}),
-            lon_c=self._select_tie_point(lon, location={d1: 1, d2: 0}),
-            lat_d=self._select_tie_point(lat, location={d1: 1, d2: 1}),
-            lon_d=self._select_tie_point(lon, location={d1: 1, d2: 1}),
+            lat_a=self._select_data(lat, location={d1: 0, d2: 0}),
+            lon_a=self._select_data(lon, location={d1: 0, d2: 0}),
+            lat_b=self._select_data(lat, location={d1: 0, d2: 1}),
+            lon_b=self._select_data(lon, location={d1: 0, d2: 1}),
+            lat_c=self._select_data(lat, location={d1: 1, d2: 0}),
+            lon_c=self._select_data(lon, location={d1: 1, d2: 0}),
+            lat_d=self._select_data(lat, location={d1: 1, d2: 1}),
+            lon_d=self._select_data(lon, location={d1: 1, d2: 1}),
             ce1=self._select_parameter("ce1"),
             ca1=self._select_parameter("ca1"),
             ce2=self._select_parameter("ce2"),

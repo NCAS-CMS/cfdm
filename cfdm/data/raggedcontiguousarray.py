@@ -101,6 +101,7 @@ class RaggedContiguousArray(mixin.RaggedContiguous, abstract.CompressedArray):
         # dimension, element dimension).
         # --------------------------------------------------------
 
+       
         count_array = self.get_count().data.array
 
         start = 0
@@ -118,6 +119,13 @@ class RaggedContiguousArray(mixin.RaggedContiguous, abstract.CompressedArray):
 
         return self.get_subspace(uarray, indices, copy=True)
 
+    def conformed_xxx(self, func=None):
+        return super().conformed_xxx(
+            func=func,
+            compressed_array="source",
+            count_array="get_count"
+        )
+    
     def to_memory(self):
         """Bring an array on disk into memory and retain it there.
 
