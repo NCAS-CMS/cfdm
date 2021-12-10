@@ -20,15 +20,15 @@ class BiLinearSubarray(BiLinearInterpolation, SubsampledSubarray):
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        (d1, d2) = self.subsampled_dimensions
+        (d2, d1) = self.subsampled_dimensions
 
         u = self._bilinear_interpolation(
-            ua=self._select_tie_point(location={d1: 0, d2: 0}),
-            ub=self._select_tie_point(location={d1: 0, d2: 1}),
-            uc=self._select_tie_point(location={d1: 1, d2: 0}),
-            ud=self._select_tie_point(location={d1: 1, d2: 1}),
-            d1=d1,
+            ua=self._select_tie_point(location={d2: 0, d1: 0}),
+            ub=self._select_tie_point(location={d2: 0, d1: 1}),
+            uc=self._select_tie_point(location={d2: 1, d1: 0}),
+            ud=self._select_tie_point(location={d2: 1, d1: 1}),
             d2=d2,
+            d1=d1,
         )
         u = self._post_process(u)
 

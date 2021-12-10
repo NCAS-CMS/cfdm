@@ -19,7 +19,7 @@ class QuadraticInterpolation(LinearInterpolation):
         """
         return self._quadratic_interpolation(*args, **kwargs)
 
-    def _fw(self, ua, ub, u_i, subsampled_dimension, s_i):
+    def _fw(self, ua, ub, u_i, d, s_i):
         """Calculate the quadratic interpolation parameter ``w``.
 
         w = fw(ua, ub, u(i), s(i))
@@ -31,17 +31,17 @@ class QuadraticInterpolation(LinearInterpolation):
 
         :Parameters:
 
-            ua: array_like
+            ua: `numpy.ndarray`
                 The values of the first tie point in index space.
 
-            ub: array_like
+            ub: `numpy.ndarray`
                 The values of the second tie point in index space.
 
-            u_i: array_like
+            u_i: `numpy.ndarray`
                 The value of the uncompressed value at the midpoint of
-                the subsampled dimension of the interpolation subarea.
+                the subsampled dimension of the interpolation subarea. TODO
 
-            {{subsampled_dimension: `int`}}
+            {{d: `int`}}
 
             {{s_i: array_like}}
 
@@ -50,13 +50,11 @@ class QuadraticInterpolation(LinearInterpolation):
             `numpy.ndarray`
 
         """
-        s, one_minus_s = self._s(subsampled_dimension, s=s_i)
+        s, one_minus_s = self._s(d, s=s_i)
 
         return (u_i - one_minus_s * ua - s * ub) / (4 * one_minus_s * s)
 
-    def _quadratic_interpolation(
-        self, ua, ub, w, subsampled_dimension, s=None, returns=False
-    ):
+    def _quadratic_interpolation(self, ua, ub, w, d1, s=None, returns=False):
         """Interpolate quadratically between pairs of tie points.
 
         Computes the quadratic interpolation operator ``fq``, where
@@ -74,20 +72,20 @@ class QuadraticInterpolation(LinearInterpolation):
 
         :Parameters:
 
-            ua: array_like
+            ua: `numpy.ndarray`
                 The values of the first (in index space) tie point.
 
-            ub: array_like
+            ub: `numpy.ndarray`
                 The values of the second (in index space) tie point.
 
-            w: `array_like` or `None`
+            w: `numpy.ndarray` or `None`
                 The quadratic coefficient. It is assumed that the
                 coefficient has the same number of dimensions in the
                 same relative order as the tie points array. If `None`
                 then the quadratic coefficient is assumed to be zero.
 
-            {{subsampled_dimension: `int`}}
-        
+            {{d1: `int`}}
+
             {{s: array_like, optional}}
 
             returns: `bool`, optional
@@ -98,15 +96,12 @@ class QuadraticInterpolation(LinearInterpolation):
             `numpy.ndarray`
 
         """
-        print("ua=", ua)
-        print("ub=", ub)
-        print(" w=", w)
         if returns or w is not None:
             u, s, one_minus_s = self._linear_interpolation(
-                ua, ub, subsampled_dimension, s=s, returns=True
+                ua, ub, d1, s=s, returns=True
             )
         else:
-            u = self._linear_interpolation(a, ub, subsampled_dimension, s=s)
+            u = self._linear_interpolation(a, ub, d1, s=s)
 
         if w is not None:
             u += 4 * s * one_minus_s * w

@@ -22,7 +22,7 @@ class QuadraticLatitudeLongitudeSubarray(
     uncompressed array will include the required trailing size 2
     dimension.
 
-    See CF appendix J "Coordinate Interpolation Methods" for details.
+    See CF appendix J "Coordinate Interpolation Methods".
 
     .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -43,7 +43,7 @@ class QuadraticLatitudeLongitudeSubarray(
 
         lat, lon = self._codependent_tie_points("latitude", "longitude")
 
-        lat, lon = self._quadratic_latitude_longitude_interpolation(
+        u = self._quadratic_latitude_longitude_interpolation(
             lat_a=self._select_tie_point(lat, location={d1: 0}),
             lon_a=self._select_tie_point(lon, location={d1: 0}),
             lat_b=self._select_tie_point(lat, location={d1: 1}),
@@ -53,14 +53,8 @@ class QuadraticLatitudeLongitudeSubarray(
             location_use_3d_cartesian=self._select_parameter(
                 "location_use_3d_cartesian"
             ),
-            subsampled_dimension=d1,
+            d1=d1,
         )
-
-        if "longitude" in self.dependent_tie_points:
-            u = lat
-        else:
-            u = lon
-
         u = self._post_process(u)
 
         if indices is Ellipsis:
@@ -77,7 +71,7 @@ class QuadraticLatitudeLongitudeSubarray(
         ce,
         ca,
         location_use_3d_cartesian,
-        subsampled_dimension,
+        d1,
     ):
         """Quadratic interpolation of geographic coordinates.
 
@@ -86,48 +80,52 @@ class QuadraticLatitudeLongitudeSubarray(
         typically used for remote sensing products with geographic
         coordinates on the reference ellipsoid.
 
-        See CF appendix J "Coordinate Interpolation Methods" for
-        details.
+        See CF appendix J "Coordinate Interpolation Methods".
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Parameters:
 
-            lat_a, lon_a: array_like
-                The latitudes and longitudes of the first tie point in
-                index space space.
+            lat_a, lon_a: `numpy.ndarray`
+                The latitudes and longitudes of the first (in index
+                space) tie points of the subsampled dimension.
 
-            lat_b, lon_b: array_like
-                The latitudes and longitudes of the second tie point
-                in index space.
+            lat_b, lon_b: `numpy.ndarray`
+                The latitudes and longitudes of the second (in index
+                space) tie points of the subsampled dimension.
 
-            ce, ca: `InterpolationParameter` or `None`
-                The interpolation parameters "ce", "ca". It is
-                assumed that each coefficient has the same number of
-                dimensions in the same relative order as the tie
-                points array, or if `None` then the parameter is
-                assumed to be zero.
+            ce, ca: `numpy.ndarray` or `None`
+                The interpolation parameters ``ce`` and ``ca``, with
+                the same number of dimensions in the same relative
+                order as the tie points array. If any are `None` then
+                the parameter is assumed to be zero.
 
-            location_use_3d_cartesian: `InterpolationParameter` or `None`
-                The interpolation parameter
-                "interpolation_subarea_flags". It is assumed that the
-                parameter has the same number of dimensions in the
-                same relative order as the tie points array. If `None`
-                then an exception is raised.
+            {{location_use_3d_cartesian: `numpy.ndarray` or `None`}}
 
-            first: `tuple` of `bool`
-                For each dimension, True if the interpolation subarea
-                is the first (in index space) of a new continuous
-                area, otherwise False.
+            {{d1: `int`}}
 
-            {{subsampled_dimension: `int`}}
-        
         :Returns:
 
             `numpy.ndarray`
 
         """
-        d1 = subsampled_dimension
+        # TODO: optimise to remove unnecessary lat or lon calculations
+
+        if location_use_3d_cartesian is None:
+            raise ValueError(
+                "Can't uncompress tie points by "
+                "quadratic_latitude_longitude interpolation "
+                "when there is no interpolation_subarea_flags "
+                "interpolation parameter that includes "
+                "'location_use_3d_cartesian' in its flag_meanings "
+                "attribute"
+            )
+
+        any_cartesian = location_use_3d_cartesian.any()
+        all_cartesian = location_use_3d_cartesian.all()
+
+        latitude = "longitude" in self.dependent_tie_points
+        longitude = not latitude
 
         lla = lat_a, lon_a
         llb = lat_b, lon_b
@@ -137,32 +135,40 @@ class QuadraticLatitudeLongitudeSubarray(
 
         cv = self._fcea2cv(va, vb, ce, ca)
 
-        any_cartesian = location_use_3d_cartesian.any()
-        all_cartesian = location_use_3d_cartesian.all()
-
         if any_cartesian:
             # Interpolation in three-dimensional cartesian coordinates
             vp = self._fqv(va, vb, cv, d1)
 
-            v_lat_p, v_lon_p = self._fv2ll(vp)
+            if latitude:
+                fv2ll = self._fv2lat
+            else:
+                # longitude
+                fv2ll = self._fv2lon
+
+            u_c = fv2ll(vp)
 
             if all_cartesian:
-                lat, lon = v_lat_p, v_lon_p
+                llp = u_c
 
         if not all_cartesian:
             # Interpolation in latitude-longitude coordinates
-            llab = self._fv2ll(self._fqv(va, vb, cv, d1, s=0.5))
-            cll = self._fcll(*lla, *llb, *llab)
 
-            ll_lat_p, ll_lon_p = self._fqll(*lla, *llb, *cll, d1)
+            if latitude:
+                lat_ab = self._fv2lat(self._fqv(va, vb, cv, d1, s=0.5))
+                c_lat = self._fw(lat_a, lat_b, lat_ab, s_i=0.5)
+                u_l = self._fq(lat_a, lat_b, c_lat, d1)
+            else:
+                # longitude
+                lon_ab = self._fv2lon(self._fqv(va, vb, cv, d1, s=0.5))
+                c_lon = self._fw(lon_a, lon_b, lon_ab, s_i=0.5)
+                u_l = self._fq(lon_a, lon_b, c_lon, d1)
 
             if not any_cartesian:
-                lat, lon = ll_lat_p, ll_lon_p
+                llp = u_l
 
         if any_cartesian and not all_cartesian:
             # Combine the results of cartesian and latitude-longitude
             # interpolations
-            lat = np.where(location_use_3d_cartesian, v_lat_p, ll_lat_p)
-            lon = np.where(location_use_3d_cartesian, v_lon_p, ll_lon_p)
+            llp = np.where(location_use_3d_cartesian, u_c, u_l)
 
-        return (lat, lon)
+        return llp

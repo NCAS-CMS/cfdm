@@ -621,7 +621,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         if inplace:
             d = self
         else:
-            d = self.copy(_use_array=False)
+            d = self.copy(array=False)
 
         array = np.asanyarray(getattr(self.array, method)(other))
 
@@ -828,9 +828,6 @@ class Data(Container, NetCDFHDF5, core.Data):
                 ):
                     array[i] = value[j]
 
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
     @property
     def compressed_array(self):
         """Returns an independent numpy array of the compressed data.
@@ -856,6 +853,18 @@ class Data(Container, NetCDFHDF5, core.Data):
             raise ValueError("not compressed: can't get compressed array")
 
         return ca.compressed_array
+
+    @property
+    def data(self):
+        """The data as an object identity.
+
+        **Examples:**
+
+        >>> d.data is d
+        True
+
+        """
+        return self
 
     @property
     def datetime_array(self):

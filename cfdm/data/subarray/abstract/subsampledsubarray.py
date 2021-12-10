@@ -243,26 +243,28 @@ class SubsampledSubarray(Container):
 
         return out
 
-    def _parameter_location(self, c, positions):
+    def _parameter_location(self, parameter, location={}):
         """TODO"""
-        indices = [slice(None)] * self.array.ndim
+        if parameter is None:
+            return
 
-        take_slice = False
-        for subsampled_dimension, position in positions.items():
-            if position == "is":
-                continue
+        if location:
+            indices = [slice(None)] * self.tie_points.ndim
+            shape = parameter.shape
+            for subsampled_dimension, loc in location.items():
+                if shape[subsampled_dimension] != 2:
+                    raise ValueError(
+                        f"TODO {shape} {subsampled_dimension} {loc}"
+                    )
 
-            if position == "tp0":
-                indices[subsampled_dimension] = slice(0, 1)
-            elif position == "tp1":
-                indices[subsampled_dimension] = slice(1, 2)
+                if loc == 1:
+                    indices[subsampled_dimension] = slice(1, 2)
+                else:
+                    indices[subsampled_dimension] = slice(0, 1)
 
-            take_slice = True
+            parameter = parameter[tuple(indices)]
 
-        if take_slice:
-            c = c[tuple(indices)]
-
-        return c
+        return parameter
 
     def _post_process(self, u):
         """Trim uncompressed data defined on an interpolation subarea.
@@ -288,14 +290,15 @@ class SubsampledSubarray(Container):
 
         :Returns:
 
-            array_like
+            `numpy.ndarray`
 
         """
         u = self._broadcast_bounds(u)
+        u = self._trim(u)
 
-        return self._trim(u)
+        return np.asanyarray(u)
 
-    def _select_parameter(self, name, default=None, flag=False):
+    def _select_parameter(self, name, location={}):
         """Select TODO.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
@@ -323,13 +326,14 @@ class SubsampledSubarray(Container):
         parameter = self.parameters.get(name)
 
         if parameter is None:
-            if default is None:
-                return
+            return
+        #            if default is None:
+        #                return
+        #
+        #            # Return a size 1 array containing a default value
+        #            return np.full((1,) * len(self.subarea_indices), default)
 
-            # Return a size 1 array containing a default value
-            return np.full((1,) * len(self.subarea_indices), default)
-
-        # Find the parmaeter array dimensions which are subsampled
+        # Find the parameter array dimensions which are subsampled
         # dimensions
         subsampled_dimensions = [
             i
@@ -339,6 +343,25 @@ class SubsampledSubarray(Container):
             if m == n
         ]
 
+        #        if subsampled_dimensions:
+        #            indices = list(self.subarea_indices)
+        ##            indices = []
+        #            for dim, tp_index in enumerate(self.tp_indices)):
+        #                if dim in subsampled_dimensions:
+        #                    if dim in locations:
+        #                        i = tp_index.start + locations[dim]
+        #                        index = slice(i, i + 1)
+        #                    else:
+        #                        index = tp_index
+        #
+        #                    indices[dim] = index
+        ##                else:
+        ##                    index = subarea_index
+        #
+        ##                indices.append(index)
+        #
+        #            indices = tuple(indices)
+        #
         if subsampled_dimensions:
             indices = tuple(
                 tp_index if dim in subsampled_dimensions else subarea_index
@@ -361,7 +384,7 @@ class SubsampledSubarray(Container):
         :Parameters:
 
             tie_points: array_like or `None`
-                A full (bounds) tie points array. If `None` then the
+                The full array of tie points. If `None` then the
                 `tie_points` array is used.
 
             location: `dict`, optional
@@ -378,7 +401,7 @@ class SubsampledSubarray(Container):
         :Returns:
 
             `numpy.ndarray`
-                The selected (bounds) tie points.
+                The selected tie points.
 
         """
         tp_indices = self.tp_indices

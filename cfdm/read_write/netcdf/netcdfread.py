@@ -18,6 +18,10 @@ from ...decorators import _manage_log_level_via_verbosity
 from ...functions import is_log_level_debug
 from .. import IORead
 
+
+from pprint import pprint  # TODO
+
+
 logger = logging.getLogger(__name__)
 
 _cached_temporary_files = {}
@@ -3419,7 +3423,7 @@ class NetCDFRead(IORead):
                     tp_dims[identity] = tuple([a.index(i) for i in axes])
 
                     c_tp[identity] = self.implementation.get_tie_points(c)
-
+                    print(identity, repr(c_tp[identity]))
                     if bounds is None:
                         continue
 
@@ -3430,6 +3434,7 @@ class NetCDFRead(IORead):
                     b_tp[identity] = self.implementation.get_tie_points(b)
                     break
 
+            print("c_tp=", c_tp)
             self.implementation.set_dependent_tie_points(coord, c_tp)
             self.implementation.set_dependent_tie_point_dimensions(
                 coord, tp_dims
@@ -5807,9 +5812,9 @@ class NetCDFRead(IORead):
     def _parse_coordinate_interpolation(self, string, parent_ncvar):
         """Parse a CF coordinate_interpolation string.
 
-        Populate the ``self.read_vars`` with information needed to
-        create `Data` objects that represent uncompressed subsampled
-        coordinates, and their bounds.
+        Populate the ``self.read_vars`` dictionary with information
+        needed to create `Data` objects that represent uncompressed
+        subsampled coordinates, and their bounds.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -6040,6 +6045,8 @@ class NetCDFRead(IORead):
                         # Do not create field/domain constructs from
                         # bounds tie point variables
                         g["do_not_create_field"].add(bounds_ncvar)
+        pprint(g["compression"])
+        pprint(g["tie_point_index"])
 
     def _create_formula_terms_ref(self, f, key, coord, formula_terms):
         """Create a formula terms coordinate reference.
@@ -6359,7 +6366,6 @@ class NetCDFRead(IORead):
                     parent_ncvar is not None
                     and f"subsampled {parent_ncvar} {ncvar}" in c
                 ):
-                    print("HERERE 33")
                     # Subsampled array. Do not break here because
                     # subsampled variables can have more than one
                     # compressed dimension. (CF>=1.9)

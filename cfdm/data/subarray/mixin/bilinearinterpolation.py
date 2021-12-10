@@ -10,7 +10,7 @@ class BiLinearInterpolation(LinearInterpolation):
 
     """
 
-    def _bilinear_interpolation(self, ua, ub, uc, ud, d1, d2):
+    def _bilinear_interpolation(self, ua, ub, uc, ud, d2, d1):
         """Interpolate bilinearly between pairs of tie points.
 
         General purpose two-dimensional linear interpolation
@@ -26,22 +26,22 @@ class BiLinearInterpolation(LinearInterpolation):
 
         :Parameters:
 
-            ua, ub, uc, ud: array_like
+            ua, ub, uc, ud: `numpy.ndarray`
                The arrays containing the points for bi-linear
                interpolation along the interpolated dimensions.
 
-            d0, d1: `int`
-                The positions of the two subsampled dimensions in the
-                (bounds) tie points array.
+            {{d2: `int`}}
+
+            {{d1: `int`}}
 
         :Returns:
 
             `numpy.ndarray`
 
         """
-        uac = self._linear_interpolation(ua, uc, d1)
-        ubd = self._linear_interpolation(ub, ud, d1)
+        uac = self._linear_interpolation(ua, uc, d2)
+        ubd = self._linear_interpolation(ub, ud, d2)
 
-        u = self._linear_interpolation(uac, ubd, d2)
+        u = self._linear_interpolation(uac, ubd, d1)
 
         return u

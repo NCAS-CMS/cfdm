@@ -68,7 +68,7 @@ class LinearSubarray(LinearInterpolation, SubsampledSubarray):
         u = self._linear_interpolation(
             ua=self._select_tie_point(location={d1: 0}),
             ub=self._select_tie_point(location={d1: 1}),
-            subsampled_dimension=d1,
+            d=d1,
         )
         u = self._post_process(u)
 

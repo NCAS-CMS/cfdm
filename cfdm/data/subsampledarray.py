@@ -14,6 +14,8 @@ from .subarray import (
 
 _float64 = np.dtype(float)
 
+_flag_names = ("location_use_3d_cartesian",)
+
 
 class SubsampledArray(CompressedArray):
     """An underlying subsampled array.
@@ -82,12 +84,16 @@ class SubsampledArray(CompressedArray):
     """
 
     def __new__(cls, *args, **kwargs):
-        """Store component classes.
+        """Store subarray classes.
 
-        .. note:: If a child class requires different component
-                  classes than the ones defined here, then they must
-                  be redefined in the __new__ method of the child
-                  class.
+        If a child class requires different component classes than the
+        ones defined here, then they must be redefined in the __new__
+        method of the child class.
+
+        The dictionary keys are the corresponding "interpolation_name"
+        property values.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
         instance = super().__new__(cls)
@@ -210,15 +216,15 @@ class SubsampledArray(CompressedArray):
         interpolation_name = self.get_interpolation_name(None)
         Subarray = self._Subarray.get(interpolation_name)
         if Subarray is None:
-            if interpolation_name is not None:
-                raise ValueError(
-                    "Can't subspace subsampled data with non-standardised "
-                    f"interpolation_name {interpolation_name!r}"
+            if interpolation_name is None:
+                raise IndexError(
+                    "Can't subspace subsampled data without a "
+                    "standardised interpolation_name"
                 )
 
-            raise IndexError(
-                "Can't subspace subsampled data without a standardised "
-                "interpolation_name"
+            raise ValueError(
+                "Can't subspace subsampled data with unknown "
+                f"interpolation_name {interpolation_name!r}"
             )
 
         # ------------------------------------------------------------
@@ -233,6 +239,7 @@ class SubsampledArray(CompressedArray):
         dependent_tie_points = self.conformed_dependent_tie_points()
 
         # Interpolate the tie points for each interpolation subarea
+        i = 0
         for (
             u_indices,
             tp_indices,
@@ -240,6 +247,15 @@ class SubsampledArray(CompressedArray):
             first,
             subarea_indices,
         ) in zip(*self._interpolation_subareas()):
+            i += 1
+            print(
+                i,
+                u_indices,
+                tp_indices,
+                subarea_shape,
+                first,
+                subarea_indices,
+            )
             subarray = Subarray(
                 tie_points=tie_points,
                 tp_indices=tp_indices,
@@ -255,7 +271,6 @@ class SubsampledArray(CompressedArray):
         return self.get_subspace(uarray, indices, copy=True)
 
     def _conform_interpolation_subarea_flags(self):
-#    def _conform_location_use_3d_cartesian(self, *xxx):
         """TODO
 
         It is assumed that the "interpolation_subarea_flags"
@@ -272,81 +287,59 @@ class SubsampledArray(CompressedArray):
             `None`
 
         """
-        parameters = self._get_conformed_parameters()
+        out = {}
 
-        flags = parameters.get("interpolation_subarea_flags")
-        if flags is None:
-            return
+        parameter = self.get_parameters().get("interpolation_subarea_flags")
+        if parameter is None:
+            return out
 
-        flag_names = ("location_use_3d_cartesian",)
-
-        f = self._get_component("flags", None):
-        if f is None:
-            f = {}
-            self._set_component("flags", f, copy=False)
-        
-        parameters = self._get_component("parameters")
-
-        flags = parameters.get("interpolation_subarea_flags")
-        if flags is None:
-            return
-
-        flag_values = flags.get_property("flag_values", None)
-        flag_masks = flags.get_property("flag_masks", None)
-        flag_meanings = flags.get_property("flag_meanings", None)
+        flag_values = parameter.get_property("flag_values", None)
+        flag_masks = parameter.get_property("flag_masks", None)
+        flag_meanings = parameter.get_property("flag_meanings", None)
 
         if flag_meanings is None:
-            raise ValueError(
-                "Can't uncompress subsampled coordinates with the "
-                f"{self.get_interpolation_name()} method when the "
-                "interpolation_subarea_flags interpolation parameter "
-                "does not have a flag_meanings property"
-            )
+            # The interpolation_subarea_flags interpolation parameter
+            # does not have a "flag_meanings" property
+            return out
 
-        if flags_masks is None and flags_values is None:
-            raise ValueError(
-                "Can't uncompress subsampled coordinates with the "
-                f"{self.get_interpolation_name()} method when the "
-                "interpolation_subarea_flags interpolation parameter "
-                "does not have either or both of the flag_values "
-                "flag_masks and properties"
-            )
+        if flag_masks is None and flag_values is None:
+            # The interpolation_subarea_flags interpolation parameter
+            # does not have either nor both of the "flag_values"
+            # "flag_masks" and properties
+            return out
 
         flag_meanings = flag_meanings.split()
-        for flag_name in flag_names:
-#        if location_use_3d_cartesian not in flag_meanings:
-            if flag_name not in flag_meanings:
-                raise ValueError(
-                    "Can't uncompress subsampled coordinates with the "
-                    f"{self.get_interpolation_name()} method when the "
-                    "interpolation_subarea_flags interpolation parameter "
-                    f"does not have {flag_name} in its flag_meanings property"
-                )
+
+        parameter = parameter.data
+
+        for name in _flag_names:
+            if name not in flag_meanings:
+                # The interpolation_subarea_flags interpolation
+                # parameter does not have this name in its
+                # "flag_meanings" property
+                continue
 
             flag_meanings = np.atleast_1d(flag_meanings)
-            index = np.where(flag_meanings == location_use_3d_cartesian)[0]
-            
-            data = flags.data
-            
-            if flags_masks is not None:
-                flag_mask = np.atleast_1d(flag_masks)[index]
-            
+            index = np.where(flag_meanings == name)[0]
+
+            if flag_masks is not None:
+                mask = np.atleast_1d(flag_masks)[index]
+
             if flag_values is not None:
-                flag_value = np.atleast_1d(flag_values)[index]
-                if flags_masks is None:
+                value = np.atleast_1d(flag_values)[index]
+                if flag_masks is None:
                     # flag_values but no flag_masks
-                    new_data = data == flag_value
+                    data = parameter == value
                 else:
                     # flag_values and flag_masks
-                    new_data = data & (flag_mask & flag_value)
+                    data = parameter & (mask & value)
             else:
                 # flag_masks but no flag_values
-                new_data = data & flag_mask
-            
-            f[flag_name] = new_data
-        #flags.set_data(new_data, copy=False, inplace=False)flags.set_data(new_data, copy=False, inplace=False)
+                data = parameter & mask
 
+            out[name] = data
 
+        return out
 
     def _first_or_last_index(self, indices):
         """Return the first or last element of tie points array.
@@ -650,32 +643,35 @@ class SubsampledArray(CompressedArray):
                 TODO. If no interpolation parameter variables have
                 been set then an empty dictionary is returned.
 
-        """      
+        """
         dependent_tie_points = self.get_dependent_tie_points()
-
+        print("dependent_tie_points=", dependent_tie_points)
         if dependent_tie_points:
             dependent_tie_point_dimensions = (
                 self.get_dependent_tie_point_dimensions()
             )
-            
+
             tp_ndim = self._get_compressed_Array().ndim
             dims = list(range(tp_ndim))
 
             for identity, tp in dependent_tie_points.items():
+                print(repr(tp))
                 tp = tp.data
                 tp_dims = dependent_tie_point_dimensions[identity]
-                if sorted(tp_dims) != dims:
-                    # The dependent tie point dimensions are not
-                    # already in the correct order
+                if sorted(tp_dims) == dims:
+                    # The dependent tie point dimensions are already
+                    # in the correct order
+                    tp = tp.copy()
+                else:
                     new_order = [
                         tp_dims.index(i) for i in dims if i in tp_dims
                     ]
                     tp = tp.transpose(new_order)
-                
+
                 dependent_tie_points[identity] = tp
 
         return dependent_tie_points
-    
+
     def conformed_parameters(self):
         """Return the interpolation parameter variables.
 
@@ -692,7 +688,7 @@ class SubsampledArray(CompressedArray):
 
         """
         parameters = self.get_parameters()
-            
+
         if parameters:
             parameter_dimensions = self.get_parameter_dimensions()
 
@@ -702,21 +698,24 @@ class SubsampledArray(CompressedArray):
             for term, parameter in parameters.items():
                 parameter = parameter.data
                 parameter_dims = parameter_dimensions[term]
-                if sorted(parameter_dims) != dims:
-                    # The interpolation parameter dimensions are not
+                if sorted(parameter_dims) == dims:
+                    # The interpolation parameter dimensions are
                     # already in the correct order
+                    parameter = parameter.copy()
+                else:
                     new_order = [
                         parameter_dims.index(i)
-                        for i in dims if i in parameter_dims
+                        for i in dims
+                        if i in parameter_dims
                     ]
                     parameter = parameter.transpose(new_order)
-                    
+
                     # Add missing interpolation parameter dimensions as
                     # size 1 axes
                     if len(parameter_dims) < tp_ndim:
                         for d in sorted(set(dims).difference(parameter_dims)):
                             parameter = parameter.insert_dimension(position=d)
-                        
+
                 parameters[term] = parameter
 
             parameters.update(self._conform_interpolation_subarea_flags())
@@ -782,7 +781,7 @@ class SubsampledArray(CompressedArray):
         """
         parameters = self.parameters
         conformed_parameters = self._get_conformed_parameters()
-            
+
         parameter_dimensions = None
         tie_point_dims = None
 
@@ -808,10 +807,11 @@ class SubsampledArray(CompressedArray):
                     if len(param_dims) > 1:
                         new_order = [
                             param_dims.index(i)
-                            for i in dims if i in param_dims
+                            for i in dims
+                            if i in param_dims
                         ]
                         param = param.transpose(new_order)
-                        
+
                     # Add missing interpolation parameter dimensions
                     # as size 1 axes
                     if len(param_dims) < tp_ndim:

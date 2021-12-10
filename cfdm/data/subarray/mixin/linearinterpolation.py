@@ -13,13 +13,11 @@ class LinearInterpolation:
 
     """
 
-    def _linear_interpolation(
-        self, ua, ub, subsampled_dimension, s=None, returns=False
-    ):
+    def _linear_interpolation(self, ua, ub, d1, s=None, returns=False):
         """Interpolate linearly between pairs of tie points.
 
         General purpose one-dimensional linear interpolation method.
-       
+
         u = fl(ua, ub, s) = ua + s*(ub-ua)
                           = ua*(1-s) + ub*s
 
@@ -29,14 +27,14 @@ class LinearInterpolation:
 
         :Parameters:
 
-            ua: array_like
+            ua: `numpy.ndarray`
                 The values of the first tie point in index space.
 
-            ub: array_like
+            ub: `numpy.ndarray`
                 The values of the second tie point in index space.
 
-            {{subsampled_dimension: `int`}}
-        
+            {{d1: `int`}}
+
             {{s: array_like, optional}}
 
             returns: `bool`, optional
@@ -47,7 +45,7 @@ class LinearInterpolation:
             `numpy.ndarray`
 
         """
-        s, one_minus_s = self._s(subsampled_dimension, s=s)
+        s, one_minus_s = self._s(d1, s=s)
 
         u = ua * one_minus_s + ub * s
 
@@ -56,7 +54,7 @@ class LinearInterpolation:
 
         return u
 
-    def _s(self, subsampled_dimension, s=None, returns=True):
+    def _s(self, d, s=None, returns=True):
         """The interpolation coefficients for an interpolation subarea.
 
         Returns the interpolation coefficients ``s`` and ``1-s`` for
@@ -67,15 +65,12 @@ class LinearInterpolation:
 
         :Parameters:
 
-            subsampled_dimension: `int`
-                The position of a subsampled dimension in the tie
-                point array.
+            {{d: `int`}}
 
-            s: array_like, optional
-                If array_like then the interpolation coefficient ``s``
-                is not calculated, but taken from the specified 0-d or
-                1-d numerical array. If `None`, the default, then
-                ``s`` is calculated for each uncompressed location.
+            {{s: array_like, optional}}
+
+            returns: `bool`, optional
+                TODO
 
         :Returns:
 
@@ -84,8 +79,7 @@ class LinearInterpolation:
                 that order, each of which is a numpy array with values
                 in the numerical range [0.0, 1.0]. The arrays will
                 have extra size 1 dimensions corresponding to all tie
-                point array dimensions other than
-                *subsampled_dimension*.
+                point array dimensions other than *d*.
 
         **Examples**
 
@@ -140,8 +134,8 @@ class LinearInterpolation:
             s = np.asanyarray(s, dtype=_float64)
             one_minus_s = 1.0 - s
         else:
-            size = self.shape[subsampled_dimension]
-            if self.bounds or not self.first[subsampled_dimension]:
+            size = self.shape[d]
+            if self.bounds or not self.first[d]:
                 size += 1
 
             s = np.linspace(0, 1, size, dtype=_float64)
@@ -153,7 +147,7 @@ class LinearInterpolation:
         ndim = self.tie_points.ndim
         if ndim > 1:
             new_shape = [1] * ndim
-            new_shape[subsampled_dimension] = s.size
+            new_shape[d] = s.size
             s = s.reshape(new_shape)
             one_minus_s = one_minus_s.reshape(new_shape)
 
