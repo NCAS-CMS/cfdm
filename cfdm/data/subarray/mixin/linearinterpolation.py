@@ -5,7 +5,7 @@ _float64 = np.dtype(float)
 
 
 class LinearInterpolation:
-    """Mixin class for subsampled arrays that need linear interpolation.
+    """Mixin class for linear interpolation of tie points.
 
     See CF appendix J "Coordinate Interpolation Methods".
 

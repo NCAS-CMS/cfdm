@@ -46,7 +46,7 @@ class BiQuadraticLatitudeLongitudeSubarray(
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        (d2, d1) = self.subsampled_dimensions
+        (d2, d1) = self.compressed_dimensions
 
         lat, lon = self._codependent_tie_points("latitude", "longitude")
 

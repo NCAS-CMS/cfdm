@@ -258,7 +258,7 @@ class SubsampledArray(CompressedArray):
             subarray = Subarray(
                 data=tie_points,
                 indices=tp_indices,
-                subsampled_dimensions=subsampled_dimensions,
+                compressed_dimensions=subsampled_dimensions,
                 shape=subarea_shape,
                 first=first,
                 subarea_indices=subarea_indices,

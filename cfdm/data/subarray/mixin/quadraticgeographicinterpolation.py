@@ -7,7 +7,7 @@ x, y, z = (0, 1, 2)
 
 
 class QuadraticGeographicInterpolation(QuadraticInterpolation):
-    """Mixin class for quadratic geographic interpolation formulas.
+    """Mixin class for quadratic geographic interpolation of tie points.
 
     See CF appendix J "Coordinate Interpolation Methods".
 

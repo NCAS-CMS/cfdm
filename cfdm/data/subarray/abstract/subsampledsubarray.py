@@ -28,7 +28,7 @@ class SubsampledSubarray(Subarray):
         self,
         data=None,
         indices=None,
-        subsampled_dimensions=None,
+        compressed_dimensions=None,
         shape=None,
         subarea_indices=None,
         first=None,
@@ -53,9 +53,9 @@ class SubsampledSubarray(Subarray):
                 corresponding to a non-interpolated dimension must be
                 `slice(None)`.
 
-            subsampled_dimensions: sequence of `int`
+            compressed_dimensions: sequence of `int`
                 The positions of the subsampled dimensions in the
-                *tie_points* array.
+                tie points array.
 
             shape: `tuple` of `int`
                 The shape of the uncompressed array.
@@ -67,16 +67,15 @@ class SubsampledSubarray(Subarray):
                 ommited from the uncompressed array.
 
             first: `tuple` of `bool`
-                For each dimension of the *tie_points* array, True if
+                For each dimension of the tie points array, True if
                 the interpolation subarea is the first along that
                 dimension of the continuous area, otherwise False.
 
             subarea_indices: `tuple` of `slice`
-                For each dimension of the *tie_points* array, the
-                index that defines the location of the interpolation
-                subarea in interpolation-subarea-space. An index
-                corresponding to a non-interpolated dimension must be
-                `slice(None)`.
+                For each dimension of the tie points array, the index
+                that defines the location of the interpolation subarea
+                in interpolation-subarea-space. An index corresponding
+                to a non-interpolated dimension must be `slice(None)`.
 
             parameters: `dict`, optional If the interpolation method
                 requires interpolation parameters then these are
@@ -88,12 +87,12 @@ class SubsampledSubarray(Subarray):
                 indices.
 
                 Each dimension of a parameter array maps to the
-                dimension in the same position of the *tie_points*
+                dimension in the same position of the tie points
                 array. The size of a parameter array dimension is
-                either i) the same as the *tie_points* array
-                dimension; ii) the size of the interpolation subarea
-                dimension corresponding to a *tie_points* array
-                subsampled dimension; or iii) 1.
+                either i) the same as the tie points array dimension;
+                ii) the size of the interpolation subarea dimension
+                corresponding to a tie points array subsampled
+                dimension; or iii) 1.
 
             dependent_tie_points: `dict`, optional
                 If the interpolation method requires multiple tie
@@ -105,15 +104,19 @@ class SubsampledSubarray(Subarray):
                 elements are defined by the *indices* indices.
 
                 A dependent tie points array must have the same shape
-                as the *tie_points* array, and each dimension maps to
-                the dimension in the same position of the *tie_points*
+                as the tie points array, and each dimension maps to
+                the dimension in the same position of the tie points
                 array.
 
         """
-        super().__init__(data=data, indices=indices,
-                         shape=shape)
+        super().__init__(
+            data=data,
+            indices=indices,
+            shape=shape,
+            compressed_dimensions=tuple(sorted(compressed_dimensions))
+        )
 
-        self.subsampled_dimensions = subsampled_dimensions       
+#        self.subsampled_dimensions = self.compressed_dimensions       
         self.subarea_indices = subarea_indices
         self.first = first
         self.parameters = parameters.copy()
@@ -152,7 +155,7 @@ class SubsampledSubarray(Subarray):
         else:
             bounds = np.empty(self.shape, dtype=u.dtype)
 
-        subsampled_dimensions = self.subsampled_dimensions
+        subsampled_dimensions = self.compressed_dimensions
         n = len(subsampled_dimensions)
 
         indices = [slice(None)] * u.ndim
@@ -190,8 +193,8 @@ class SubsampledSubarray(Subarray):
     def _codependent_tie_points(self, *identities):
         """Get all codependent tie points.
 
-        Returns the tie points from `tie_points` as well as those
-        returned by `get_dependent_tie_points`.
+        Returns the tie points from `data as well as those returned by
+        `get_dependent_tie_points`.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -421,7 +424,7 @@ class SubsampledSubarray(Subarray):
 
         take_slice = False
         indices = [slice(None)] * u.ndim
-        for dim in self.subsampled_dimensions:
+        for dim in self.compressed_dimensions:
             if first[dim]:
                 continue
 
@@ -458,7 +461,7 @@ class SubsampledSubarray(Subarray):
 
     @property
     def tie_points(self):
-        """Alias for `data`.
+        """The tie points array. An alias for `data`.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 

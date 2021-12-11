@@ -2,7 +2,7 @@ from .linearinterpolation import LinearInterpolation
 
 
 class BiLinearInterpolation(LinearInterpolation):
-    """Mixin class for subsampled arrays that need linear interpolation.
+    """Mixin class for bi-linear interpolation of tie points.
 
     See CF appendix J "Coordinate Interpolation Methods".
 

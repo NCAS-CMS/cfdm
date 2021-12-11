@@ -2,8 +2,7 @@ from .linearinterpolation import LinearInterpolation
 
 
 class QuadraticInterpolation(LinearInterpolation):
-    """Mixin class for subsampled arrays that need quadratic
-    interpolation.
+    """Mixin class for quadratic interpolation of tie points.
 
     See CF appendix J "Coordinate Interpolation Methods".
 
