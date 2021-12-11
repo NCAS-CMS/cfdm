@@ -171,6 +171,8 @@ class ArrayMixin:
             `numpy.ndarray`
 
         """
+        print (indices, array.shape)
+        
         if indices is not Ellipsis:
             if not isinstance(indices, tuple):
                 indices = (indices,)

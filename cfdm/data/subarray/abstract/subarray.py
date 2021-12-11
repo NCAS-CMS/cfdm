@@ -7,7 +7,17 @@ from ....abstract import Container
 
 
 class Subarray(Container):
-    """TODO
+    """Abstract base class for a subarray of compressed array.
+
+    Each subarray of the compressed array describes a unique part of
+    the uncompressed array defined by the *indices* parameter.
+
+    When an instance is indexed, the subarray is first uncompressed
+    into a `numpy.ndarray` whose shape is given by the *shape*
+    parameter, which is the indexed as requested.
+
+    The decompression method must be defined in subclasses by
+    overriding the `__getitem__` method.
 
     .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -25,21 +35,21 @@ class Subarray(Container):
         :Parameters:
 
             data: array_like
-                The full compressed array for all subarareas. The
-                applicable elements are defined by the *indices*
-                parameter.
+                The full compressed array spanning all subarrays, from
+                which the elements for this subarray are defined by
+                the *indices* indices.
 
             indices: `tuple`
                 For each dimension of the *data* array, the index that
-                defines the location the elements needed to uncompress
-                this subrarea.
+                defines the elements needed to uncompress this
+                subarray
 
             shape: `tuple` of `int`
                 The shape of the uncompressed array.
 
             compressed_dimensions: sequence of `int`
                 The positions of the compressed dimensions in the
-                *data* array.
+                compressed *data* array.
 
         """
         super().__init__()
@@ -47,53 +57,39 @@ class Subarray(Container):
         self.data = data
         self.indices = indices
         self.shape = shape
-        self.compressed_dimensions = compressed_dimensions
+        self.compressed_dimensions = tuple(sorted(compressed_dimensions))
 
     def __getitem__(self, indices):
         """Return a subspace of the uncompressed data.
 
         x.__getitem__(indices) <==> x[indices]
 
-        Returns a subspace of the uncompressed array as an independent
-        numpy array.
+        Returns a subspace of the uncompressed subarray as an
+        independent numpy array.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
         raise NotImplementedError("Must implement __getitem__ in subclasses")
 
-    def _post_process(self, u):
-        """TODO
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        :Parameters:
-
-            u: `numpy.ndarray`
-               TODO
-
-        :Returns:
-
-            `numpy.ndarray`
-
-        """
-        raise NotImplementedError("Must implement _post_process in subclasses")
-
     def _select_data(self, data=None):
-        """Select TODO subarea
+        """Select compressed array elements that correspond to this subarray.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Parameters:
 
             data: array_like or `None`
-                The full compressed array. If `None` then the `data`
+                A full compressed array spanning all subarrays, from
+                which the elements for this subarray will be
+                returned. By default, or if `None` then the `data`
                 array is used.
 
         :Returns:
 
             `numpy.ndarray`
-                The selected values.
+                Values of the compressed array that correspond to this
+                subarray.
 
         """
         if data is None:

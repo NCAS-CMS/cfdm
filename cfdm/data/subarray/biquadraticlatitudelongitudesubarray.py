@@ -40,8 +40,8 @@ class BiQuadraticLatitudeLongitudeSubarray(
 
         x.__getitem__(indices) <==> x[indices]
 
-        Returns a subspace of the uncompressed data as an independent
-        numpy array.
+        Returns a subspace of the uncompressed subarray as an
+        independent numpy array.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -75,8 +75,8 @@ class BiQuadraticLatitudeLongitudeSubarray(
 
         if indices is Ellipsis:
             return u
-
-        return self.get_subspace(u, indices, copy=True)
+        
+        return u[indices] #self.get_subspace(u, indices, copy=True)
 
     def _bi_quadratic_latitude_longitude_interpolation(
         self,
