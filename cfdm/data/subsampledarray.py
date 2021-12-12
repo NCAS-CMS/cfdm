@@ -254,7 +254,7 @@ class SubsampledArray(CompressedArray):
             subarea_shape,
             first,
             subarea_indices,
-        ) in zip(*self.subareas()):
+        ) in zip(*self.subarrays()):
             subarray = Subarray(
                 data=tie_points,
                 indices=tp_indices,
@@ -372,7 +372,6 @@ class SubsampledArray(CompressedArray):
         out = super().conformed_data()
         out["parameters"] = self.conformed_parameters()
         out["dependent_tie_points"] = self.conformed_dependent_tie_points()
-
         return out
     
     def conformed_dependent_tie_points(self):
@@ -666,7 +665,7 @@ class SubsampledArray(CompressedArray):
         """
         return self._get_component("tie_point_indices").copy()
 
-    def subareas(self):
+    def subarrays(self):
         """TODO.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
@@ -713,7 +712,7 @@ class SubsampledArray(CompressedArray):
         ...  tp_indices,
         ...  interpolation_subarea_shapes,
         ...  new_continuous_area,
-        ...  interpolation_subarea_indices) = x._subareas()
+        ...  interpolation_subarea_indices) = x.subarrays()
         >>> for i in u_indices:
         ...    print(i)
         ...

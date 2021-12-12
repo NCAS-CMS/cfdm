@@ -445,24 +445,6 @@ class CompressedArray(Array):
         """
         return {"data": self.source()}
         
-    def to_memory(self):
-        """Bring an array on disk into memory and retain it there.
-
-        There is no change to an array that is already in memory.
-
-        :Returns:
-
-            `{{class}}`
-                The array that is stored in memory.
-
-        **Examples:**
-
-        >>> b = a.to_memory()
-
-        """
-        self._get_compressed_Array(self._get_compressed_Array().to_memory())
-        return self
-
     def source(self, default=ValueError()):
         """Return the underlying array object.
 
@@ -488,7 +470,7 @@ class CompressedArray(Array):
         """
         return self._get_compressed_Array(default=default)
 
-    def subareas(self):
+    def subarrays(self):
         """TODO.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
@@ -497,7 +479,7 @@ class CompressedArray(Array):
 
             sequence of sequences
                 Each sequence iterates over a descriptor from each
-                subarea, in the same order.
+                subarea.
 
                 There must be at least three sequences. The leading
                 three of which describe:
@@ -510,7 +492,11 @@ class CompressedArray(Array):
                 
                 3. The shape of each uncompressed subarea.
 
-                Further sequences may be added by subclasses.
+                Further sequences may be returned added by subclasses.
+
+        **Examples**
+
+        >>> u_indices, indices, shape = x.subarrays()
 
         """
         # TODO: This is a placeholder for when this is used for all
@@ -518,3 +504,20 @@ class CompressedArray(Array):
         pass
         #raise NotImplementedError("Must implement subareas in subclasses")
     
+    def to_memory(self):
+        """Bring an array on disk into memory and retain it there.
+
+        There is no change to an array that is already in memory.
+
+        :Returns:
+
+            `{{class}}`
+                The array that is stored in memory.
+
+        **Examples:**
+
+        >>> b = a.to_memory()
+
+        """
+        self._get_compressed_Array(self._get_compressed_Array().to_memory())
+        return self
