@@ -47,9 +47,24 @@ class Subarray(Container):
             shape: `tuple` of `int`
                 The shape of the uncompressed array.
 
-            compressed_dimensions: sequence of `int`
+            compressed_dimensions: `dict`
                 The positions of the compressed dimensions in the
                 compressed *data* array.
+
+                For each dimension of *data* that represents
+        
+                The mapping of dimensions of *data* that correspond to
+                compressed to
+
+                The positions of dimensions in the compressed data
+                that represent one or more dimensions in the
+                uncompressed data, and maps these to the corresponding
+                dimension positions in the uncompressed data.
+
+                Maps the position of each dimensions in the compressed data
+                that represent one or more dimensions in the
+                uncompressed data, and maps these to the corresponding
+                dimension positions in the uncompressed data.
 
         """
         super().__init__()
