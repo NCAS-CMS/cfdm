@@ -43,11 +43,14 @@ class QuadraticLatitudeLongitudeSubarray(
 
         lat, lon = self._codependent_tie_points("latitude", "longitude")
 
+        lat = self._select_data(lat)
+        lon = self._select_data(lon)
+          
         u = self._quadratic_latitude_longitude_interpolation(
-            lat_a=self._select_data(lat, location={d1: 0}),
-            lon_a=self._select_data(lon, location={d1: 0}),
-            lat_b=self._select_data(lat, location={d1: 1}),
-            lon_b=self._select_data(lon, location={d1: 1}),
+            lat_a=self._select_location(lat, {d1: 0}),
+            lon_a=self._select_location(lon, {d1: 0}),
+            lat_b=self._select_location(lat, {d1: 1}),
+            lon_b=self._select_location(lon, {d1: 1}),
             ce=self._select_parameter("ce"),
             ca=self._select_parameter("ca"),
             location_use_3d_cartesian=self._select_parameter(
@@ -125,6 +128,11 @@ class QuadraticLatitudeLongitudeSubarray(
         latitude = "longitude" in self.dependent_tie_points
         longitude = not latitude
 
+        if latitude:
+            fv2ll = self._fv2lat
+        else:
+            fv2ll = self._fv2lon
+
         va = self._fll2v(lat_a, lon_a)
         vb = self._fll2v(lat_b, lon_b)
 
@@ -133,30 +141,34 @@ class QuadraticLatitudeLongitudeSubarray(
         if any_cartesian:
             # Interpolation in three-dimensional cartesian coordinates
             vp = self._fqv(va, vb, cv, d1)
-
-            if latitude:
-                fv2ll = self._fv2lat
-            else:
-                # longitude
-                fv2ll = self._fv2lon
-
+            if all_cartesian:
+                del va, vb, cv
+                
             u_c = fv2ll(vp)
+            del vp
 
             if all_cartesian:
                 llp = u_c
 
         if not all_cartesian:
             # Interpolation in latitude-longitude coordinates
-
             if latitude:
-                lat_ab = self._fv2lat(self._fqv(va, vb, cv, d1, s=0.5))
-                c_lat = self._fw(lat_a, lat_b, lat_ab, s_i=0.5)
-                u_l = self._fq(lat_a, lat_b, c_lat, d1)
+                lla, llb = lat_a, lat_b
             else:
-                # longitude
-                lon_ab = self._fv2lon(self._fqv(va, vb, cv, d1, s=0.5))
-                c_lon = self._fw(lon_a, lon_b, lon_ab, s_i=0.5)
-                u_l = self._fq(lon_a, lon_b, c_lon, d1)
+                lla, llb = lon_a, lon_b
+
+            llab = fv2ll(self._fqv(va, vb, cv, 0.5))
+            del va, vb, cv
+            
+            cll = self._fw(lla, llab, llab, s_i=0.5)
+            del llab
+                             
+            u_l = self._fq(lla, llb, cll, d1)
+            del lla, llb, cll
+            if latitude:
+                del lat_a, lat_b
+            else:
+                del lon_a, lon_b
 
             if not any_cartesian:
                 llp = u_l

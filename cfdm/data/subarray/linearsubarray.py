@@ -65,10 +65,12 @@ class LinearSubarray(LinearInterpolation, SubsampledSubarray):
         """
         (d1,) = tuple(self.compressed_dimensions)
 
+        u_ab = self._select_data()
+        
         u = self._linear_interpolation(
-            ua=self._select_data(location={d1: 0}),
-            ub=self._select_data(location={d1: 1}),
-            d=d1,
+            ua=self._select_location(u_ab, {d1: 0}),
+            ub=self._select_location(u_ab, {d1: 1}),
+            d1=d1,
         )
         u = self._post_process(u)
 

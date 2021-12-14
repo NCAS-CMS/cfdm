@@ -17,7 +17,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
 
     def _fcea2cv(self, va, vb, ce, ca):
         """The three-dimensional cartesian representation of the interpolation
-        coefficients calcualted from the parametric representation.
+        coefficients calculated from the parametric representation.
 
         cv = fcea2cv(va, vb, ce, ca)
            = fplus(fmultiply(ce, fminus(va, vb)),
@@ -31,6 +31,20 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
         cr = fsqrt(1 - ce*ce - ca*ca) - fsqrt(rsqr)
 
         .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            va: `tuple` of `numpy.ndarray`
+
+            vb: `tuple` of `numpy.ndarray`
+
+            ce: `numpy.ndarray`
+
+            ca: `numpy.ndarray`
+
+        :Returns:
+
+            `numpy.ndarray`
 
         """
         vr = self._fmultiply(0.5, self._fplus(va, vb))
@@ -73,7 +87,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
 
         :Returns:
 
-            `tuple`
+            `tuple` of `numpy.ndarray`
 
         """
         return (
@@ -95,12 +109,11 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
         :Parameters:
 
             va, vb: `tuple` of `numpy.ndarray`
-                The tie point vector representations of the tie point
-                latitude-longitude representations
+                The vector representation of the tie point (latitude,
+                longitude).
 
             vp_i: `tuple` of `numpy.ndarray`
-                The tie point vector representations from the tie
-                point latitude-longitude representations
+                The vector representation of ... TODO
 
             {{d: `int`}}
 
@@ -108,7 +121,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
 
         :Returns:
 
-            `tuple`
+            `tuple` of `numpy.ndarray`
 
         """
         return tuple(
@@ -146,7 +159,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
 
         :Returns:
 
-            `tuple`
+            `tuple` of `numpy.ndarray`
 
         """
         vr = self._fmultiply(0.5, self._fplus(va, vb))
@@ -160,11 +173,28 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
         )
 
     def _fdot(self, va, vb):
-        """(va, vb) = va.x*vb.x + va.y*vb.y + va.z*vb.z"""
+        """Vector dot product.
+
+        d = fdot(va, vb)
+          = va.x*vb.x + va.y*vb.y + va.z*vb.z
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+       :Parameters:
+
+           va, vb: `tuple` of `numpy.ndarray`
+               The vector representations of the tie point (latitude,
+               longitude)
+
+       :Returns:
+
+           `numpy.ndarray`
+
+        """
         return va[x] * vb[x] + va[y] * vb[y] + va[z] * vb[z]
 
     def _fll2v(self, lat, lon):
-        """TODO.
+        """Vector representation of (latitude, longitude).
 
         Conversion from geocentric (latitude, longitude) to
         three-dimensional cartesian vector (x, y, z)
@@ -179,15 +209,21 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
         :Parameters:
 
             lat: `numpy.ndarray`
+                Geocentric latitudes in degrees (not radians).
 
             lon: `numpy.ndarray`
+                Geocentric longitudes in degrees (not radians).
 
         :Returns:
 
             `tuple` of `numpy.ndarray`
 
         """
+        lat = np.deg2rad(lat)
+        lon = np.deg2rad(lon)
+
         cos_lat = np.cos(lat)
+
         return (
             cos_lat * np.cos(lon),
             cos_lat * np.sin(lon),
@@ -203,6 +239,17 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
                      va.z - vb.z)
 
         .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            va: `tuple` of `numpy.ndarray`
+
+            vb: `tuple` of `numpy.ndarray`
+
+        :Returns:
+
+            `tuple` of `numpy.ndarray`
+
 
         """
         return tuple(a - b for a, b in zip(va, vb))
@@ -225,7 +272,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
 
         :Returns:
 
-            `tuple`
+            `tuple` of `numpy.ndarray`
 
         """
         return tuple(a * r for a in v)
@@ -257,7 +304,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
 
         :Returns:
 
-            `tuple`
+            `tuple` of `numpy.ndarray`
 
         """
         out = []
@@ -270,44 +317,48 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
 
         return tuple(out)
 
-    def _fqll(
-        self,
-        lat_a,
-        lon_a,
-        lat_b,
-        lon_b,
-        lat_c,
-        lon_c,
-        d,
-        s=None,
-    ):
-        """Quadratic interpolation in latitude-longitude coordinates.
-
-        llp.lat, llp.lon = fqll(lla, llb, cll, s)
-                         = (fq(lla.lat, llb.lat, cll.lat, s),
-                            fq(lla.lon, llb.lon, cll.lon, s))
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        :Parameters:
-
-            {{d: `int`}}
-
-            {{s: array_like, optional}}
-
-        """
-        return (
-            self._fq(lat_a, lat_b, lat_c, d, s=s),
-            self._fq(lon_a, lon_b, lon_c, d, s=s),
-        )
+#    def _fqll(
+#        self,
+#        lat_a,
+#        lon_a,
+#        lat_b,
+#        lon_b,
+#        lat_c,
+#        lon_c,
+#        d,
+#        s=None,
+#    ):
+#        """Quadratic interpolation in latitude-longitude coordinates.
+#
+#        llp.lat, llp.lon = fqll(lla, llb, cll, s)
+#                         = (fq(lla.lat, llb.lat, cll.lat, s),
+#                            fq(lla.lon, llb.lon, cll.lon, s))
+#
+#        .. versionadded:: (cfdm) 1.9.TODO.0
+#
+#        :Parameters:
+#
+#            {{d: `int`}}
+#
+#            {{s: array_like, optional}}
+#
+#        :Returns:
+#
+#            `tuple` of `numpy.ndarray`
+#
+#        """
+#        return (
+#            self._fq(lat_a, lat_b, lat_c, d, s=s),
+#            self._fq(lon_a, lon_b, lon_c, d, s=s),
+#        )
 
     def _fqv(self, va, vb, wv, d, s=None):
         """Quadratically interpolate points in 3-d cartesian coordinates.
 
-        vp.x, vp.y, vp.z = fqv(va, vb, wv, s)
-                         = (fq(va.x, vb.x, wv.x, s),
-                            fq(va.y, vb.y, wv.y, s),
-                            fq(va.z, vb.z, wv.z, s))
+        (x, y, z) = fqv(va, vb, wv, s)
+                  = (fq(va.x, vb.x, wv.x, s),
+                     fq(va.y, vb.y, wv.y, s),
+                     fq(va.z, vb.z, wv.z, s))
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -369,13 +420,15 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
         :Parameters:
 
             v: `tuple` of `numpy.ndarray`
+                The cartesian (x, y, z) coordinates.
 
         :Returns:
 
             `numpy.ndarray`
+                Geocentric latitudes in degrees (not radians).
 
         """
-        return np.arctan2(v[z], (v[x] * v[x] + v[y] * v[y]) ** 0.5)
+        return np.rad2deg(np.arctan2(v[z], (v[x] * v[x] + v[y] * v[y]) ** 0.5))
 
     def _fv2lon(self, v):
         """Convert cartesian to geocentric longitude coordinates.
@@ -388,10 +441,12 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
         :Parameters:
 
             v: `tuple` of `numpy.ndarray`
+                The cartesian (x, y), or (x, y, z), coordinates.
 
         :Returns:
 
            `numpy.ndarray`
+               Geocentric longitudes in degrees (not radians).
 
         """
-        return np.arctan2(v[y], v[x])
+        return np.rad2deg(np.arctan2(v[y], v[x]))

@@ -222,21 +222,24 @@ _docstring_substitution_definitions = {
                 about the operation.""",
     # d
     "{{d: `int`}}": """d: `int`
-                The position of a subsampled dimension in the tie
-                point array.""",
+                The position in the full tie points array of the
+                subsampled dimension being interpolated.""",
     # d1
     "{{d1: `int`}}": """d1: `int`
-                The position of subsampled dimension 1 in the tie
-                points array.""",
+                The position of subsampled dimension 1 (in the sense
+                of CF Appendix J Figure J.2) in the full tie points
+                array.""",
     # d2
     "{{d2: `int`}}": """d2: `int`
-                The position of subsampled dimension 2 in the tie
-                points array.""",
+                The position of subsampled dimension 2 (in the sense
+                of CF Appendix J Figure J.2) in the full tie points
+                array.""",
     # s
     "{{s: array_like, optional}}": """s: array_like, optional
-                The values for the interpolation coeficient ``s`` for
-                the subsampled dimension. By default are calculated
-                for each uncompressed location.""",
+                If set to a single number in the range [0, 1] then
+                this value is return for the interpolation coeficient
+                ``s``. By default ``s`` is calculated for each
+                uncompressed location.""",
     # s_i
     "{{s_i: array_like}}": """s_i: array_like
                 A value for the interpolation coeficient ``s`` for the
@@ -245,8 +248,8 @@ _docstring_substitution_definitions = {
     # location_use_3d_cartesian
     "{{location_use_3d_cartesian: `numpy.ndarray` or `None`}}": """location_use_3d_cartesian: `numpy.ndarray` or `None`
                 The boolean interpolation parameter
-                ``location_use_3d_cartesian`` with the same number of
-                dimensions in the same relative order as the tie
+                ``location_use_3d_cartesian``, with the same number of
+                dimensions in the same relative order as the full tie
                 points array. True values indicate that interpolation
                 is carried out in three-dimensional cartesian
                 coordinates, as opposed to latitude-longitude

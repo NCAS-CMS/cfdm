@@ -50,15 +50,18 @@ class BiQuadraticLatitudeLongitudeSubarray(
 
         lat, lon = self._codependent_tie_points("latitude", "longitude")
 
+        lat = self._select_data(lat)
+        lon = self._select_data(lon)
+          
         u = self._bi_quadratic_latitude_longitude_interpolation(
-            lat_a=self._select_data(lat, location={d1: 0, d2: 0}),
-            lon_a=self._select_data(lon, location={d1: 0, d2: 0}),
-            lat_b=self._select_data(lat, location={d1: 0, d2: 1}),
-            lon_b=self._select_data(lon, location={d1: 0, d2: 1}),
-            lat_c=self._select_data(lat, location={d1: 1, d2: 0}),
-            lon_c=self._select_data(lon, location={d1: 1, d2: 0}),
-            lat_d=self._select_data(lat, location={d1: 1, d2: 1}),
-            lon_d=self._select_data(lon, location={d1: 1, d2: 1}),
+            lat_a=self._select_location(lat, {d2: 0, d1: 0}),
+            lon_a=self._select_location(lon, {d2: 0, d1: 0}),
+            lat_b=self._select_location(lat, {d2: 0, d1: 1}),
+            lon_b=self._select_location(lon, {d2: 0, d1: 1}),
+            lat_c=self._select_location(lat, {d2: 1, d1: 0}),
+            lon_c=self._select_location(lon, {d2: 1, d1: 0}),
+            lat_d=self._select_location(lat, {d2: 1, d1: 1}),
+            lon_d=self._select_location(lon, {d2: 1, d1: 1}),
             ce1=self._select_parameter("ce1"),
             ca1=self._select_parameter("ca1"),
             ce2=self._select_parameter("ce2"),
@@ -112,27 +115,31 @@ class BiQuadraticLatitudeLongitudeSubarray(
         :Parameters:
 
             lat_a, lon_a: `numpy.ndarray`
-                The latitudes and longitudes of the first (in index
-                space) tie points of the first subsampled dimension.
+                The latitude and longitude of the first tie point in
+                index space of subsampled dimension 1 (in the sense of
+                CF Appendix J Figure J.2).
 
             lat_b, lon_b: `numpy.ndarray`
-                The latitudes and longitudes of the second (in index
-                space) tie points of the first subsampled dimension.
+                The latitude and longitude of the second tie point in
+                index space of subsampled dimension 1 (in the sense of
+                CF Appendix J Figure J.2).
 
             lat_c, lon_c: `numpy.ndarray`
-                The latitudes and longitudes of the first (in index
-                space) tie points of the second subsampled dimension.
+                The latitude and longitude of the first tie point in
+                index space of subsampled dimension 2 (in the sense of
+                CF Appendix J Figure J.2).
 
             lat_d, lon_d: `numpy.ndarray`
-                The latitudes and longitudes of the second (in index
-                space) tie points of the second subsampled dimension.
+                The latitude and longitude of the second tie point in
+                index space of subsampled dimension 2 (in the sense of
+                CF Appendix J Figure J.2).
 
             ce1, ca1, ce2, ca2, ce3, ca3: `numpy.ndarray` or `None`
                 The interpolation parameters ``ce1``, ``ca1``,
-                ``ce2``, ``ca2``, ``ce3``, and ``ca3`` with the same
+                ``ce2``, ``ca2``, ``ce3``, and ``ca3``, with the same
                 number of dimensions in the same relative order as the
-                tie points array. If any are `None` then the parameter
-                is assumed to be zero.
+                full tie points array. If any are `None` then those
+                parameter are assumed to be zero.
 
             {{location_use_3d_cartesian: `numpy.ndarray` or `None`}}
 
@@ -161,57 +168,77 @@ class BiQuadraticLatitudeLongitudeSubarray(
         latitude = "longitude" in self.dependent_tie_points
         longitude = not latitude
 
+        if latitude:
+            fv2ll = self._fv2lat
+        else:
+            fv2ll = self._fv2lon
+
         va = self._fll2v(lat_a, lon_a)
         vb = self._fll2v(lat_b, lon_b)
         vc = self._fll2v(lat_c, lon_c)
         vd = self._fll2v(lat_d, lon_d)
 
+        # ce2, ca2: Span interpolation subarea dimension 2 and
+        #           subsampled dimension 1
         cea2 = (
-            self._parameter_location(ce2, {d1: 0}),
-            self._parameter_location(ca2, {d1: 0}),
+            self._select_location(ce2, {d1: 0}),
+            self._select_location(ca2, {d1: 0}),
         )
         cv_ac = self._fcea2cv(va, vc, *cea2)
 
         cea2 = (
-            self._parameter_location(ce2, {d1: 1}),
-            self._parameter_location(ca2, {d1: 1}),
+            self._select_location(ce2, {d1: 1}),
+            self._select_location(ca2, {d1: 1}),
         )
         cv_bd = self._fcea2cv(vb, vd, *cea2)
+        del cea2
 
+        # ce1, ca1: Span subsampled dimension 2 and interpolation
+        #           subarea dimension 1
         cea1 = (
-            self._parameter_location(ce1, {d2: 0}),
-            self._parameter_location(ca1, {d2: 0}),
+            self._select_location(ce1, {d2: 0}),
+            self._select_location(ca1, {d2: 0}),
         )
         vab = self._fqv(va, vb, self._fcea2cv(va, vb, *cea1), d1, s=0.5)
 
         cea1 = (
-            self._parameter_location(ce1, {d2: 1}),
-            self._parameter_location(ca1, {d2: 1}),
+            self._select_location(ce1, {d2: 1}),
+            self._select_location(ca1, {d2: 1}),
         )
         vcd = self._fqv(vc, vd, self._fcea2cv(vc, vd, *cea1), d1, s=0.5)
+        del cea1
 
+        # ce3, ca3: Span interpolation subarea dimension 2 and
+        #           interpolation subarea dimension 1
         cea3 = (
-            self._parameter_location(ce3, {}),
-            self._parameter_location(ca3, {}),
+            self._select_location(ce3, {}),
+            self._select_location(ca3, {}),
         )
         cv_z = self._fcea2cv(vab, vcd, *cea3)
+        del cea3
 
         if any_cartesian:
             # Interpolation in three-dimensional cartesian coordinates
             vac = self._fqv(va, vc, cv_ac, d2)
+            if all_cartesian:
+                del va, vc, cv_ac
+                
             vbd = self._fqv(vb, vd, cv_bd, d2)
+            if all_cartesian:
+                del vb, vd, cv_bd
+                
             vz = self._fqv(vab, vcd, cv_z, d2)
+            if all_cartesian:
+                del vab, vcd, cv_z
+                
             cv_zz = self._fcv(vac, vbd, vz, d1, s_i=0.5)
+            del vz
 
             vp = self._fqv(vac, vbd, cv_zz, d1)
-
-            if latitude:
-                fv2ll = self._fv2lat
-            else:
-                # longitude
-                fv2ll = self._fv2lon
+            del vac, vbd, cv_zz
 
             u_c = fv2ll(vp)
+            del vp
 
             if all_cartesian:
                 llp = u_c
@@ -219,10 +246,8 @@ class BiQuadraticLatitudeLongitudeSubarray(
         if not all_cartesian:
             # Interpolation in latitude-longitude coordinates
             if latitude:
-                fv2ll = self._fv2lat
                 lla, llb, llc, lld = lat_a, lat_b, lat_c, lat_d
             else:
-                fv2ll = self._fv2lon
                 lla, llb, llc, lld = lon_a, lon_b, lon_c, lon_d
 
             llc_ac = self._fw(
@@ -232,6 +257,15 @@ class BiQuadraticLatitudeLongitudeSubarray(
                 d2,
                 s_i=0.5,
             )
+            del va, vc, cv_ac
+
+            llac = self._fq(lla, llc, llc_ac, d2)
+            del lla, llc, llc_ac
+            if latitude:
+                del lat_a, lat_c
+            else:
+                del lon_a, lon_c
+                
             llc_bd = self._fw(
                 llb,
                 lld,
@@ -239,6 +273,15 @@ class BiQuadraticLatitudeLongitudeSubarray(
                 d2,
                 s_i=0.5,
             )
+            del vb, vd, cv_bd
+
+            llbd = self._fq(llb, lld, llc_bd, d2)
+            del llb, lld, llc_bd
+            if latitude:
+                del lat_b, lat_d
+            else:
+                del lon_b, lon_d
+                
             llab = fv2ll(vab)
             llcd = fv2ll(vcd)
             llc_z = self._fw(
@@ -248,13 +291,16 @@ class BiQuadraticLatitudeLongitudeSubarray(
                 d2,
                 s_i=0.5,
             )
+            del vab, vcd, cv_z
 
-            llac = self._fq(lla, llc, llc_ac, d2)
-            llbd = self._fq(llb, lld, llc_bd, d2)
             llz = self._fq(llab, llcd, llc_z, d2)
-            cl_zz = self._fw(llac, llbd, llz, d1, s_i=0.5)
+            del llc_z
 
-            u_l = self._fq(llac, llbd, llz, d1)
+            cl_zz = self._fw(llac, llbd, llz, d1, s_i=0.5)
+            del llz
+
+            u_l = self._fq(llac, llbd, cl_zz, d1)
+            del llac, llbd, cl_zz
 
             if not any_cartesian:
                 llp = u_l

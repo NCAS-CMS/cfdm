@@ -22,11 +22,13 @@ class BiLinearSubarray(BiLinearInterpolation, SubsampledSubarray):
         """
         (d2, d1) = sorted(self.compressed_dimensions)
 
+        u_abcd = self._select_data()
+        
         u = self._bilinear_interpolation(
-            ua=self._select_data(location={d2: 0, d1: 0}),
-            ub=self._select_data(location={d2: 0, d1: 1}),
-            uc=self._select_data(location={d2: 1, d1: 0}),
-            ud=self._select_data(location={d2: 1, d1: 1}),
+            ua=self._select_location(u_abcd, {d2: 0, d1: 0}),
+            ub=self._select_location(u_abcd, {d2: 0, d1: 1}),
+            uc=self._select_location(u_abcd, {d2: 1, d1: 0}),
+            ud=self._select_location(u_abcd, {d2: 1, d1: 1}),
             d2=d2,
             d1=d1,
         )

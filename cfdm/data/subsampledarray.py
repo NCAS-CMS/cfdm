@@ -330,6 +330,11 @@ class SubsampledArray(CompressedArray):
             first,
             subarea_indices,
         ) in zip(*self.subarrays()):
+#            print(u_indices,
+#            tp_indices,
+#            subarea_shape,
+#            first,
+#            subarea_indices)
             subarray = Subarray(
                 data=tie_points,
                 indices=tp_indices,
@@ -991,10 +996,8 @@ class SubsampledArray(CompressedArray):
         for v in self.get_tie_point_indices().values():
             v.data.to_memory()
 
-        for v in self.get_parameters.values():
+        for v in self.get_parameters().values():
             v.data.to_memory()
 
-        for v in self.get_dependent_tie_points.values():
+        for v in self.get_dependent_tie_points().values():
             v.data.to_memory()
-
-        return self

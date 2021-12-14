@@ -249,51 +249,6 @@ class SubsampledSubarray(Subarray):
 
         return out
 
-    def _parameter_location(self, parameter, location={}):
-        """Select interpolation parameter points that correspond to this
-        interpolation subarea.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        .. seealso:: `_select_parmaeter`
-
-        :Parameters:
-
-            parameter: `numpy.ndaray` or `None`
-
-                All interpolation parameters that apply to this
-                interpolation subarea array, as returned by a call of
-                `_select_parameter`.
-
-            location: `dict`, optional
-                Identify the parameter location within the
-                interpolation subarea. Each key is an integer that
-                specifies a subsampled dimension position in the
-                parameter array, with a value of either ``0`` or ``1``
-                indicating one of the two tie point positions along
-                that dimension. By default, or if location is an empty
-                dictionary, then all parameters for the interpolation
-                subarea are returned.
-
-        :Returns:
-
-            `numpy.ndarray` or `None`
-                The interpolation parameter values, or `None` if there
-                are none.
-
-        """
-        if parameter is None:
-            return
-
-        if location:
-            indices = [slice(None)] * self.data.ndim
-            for subsampled_dimension, loc in location.items():
-                indices[subsampled_dimension] = slice(loc, loc + 1)
-
-            parameter = parameter[tuple(indices)]
-
-        return parameter
-
     def _post_process(self, u):
         """Trim uncompressed data defined on an interpolation subarea.
 
@@ -325,10 +280,100 @@ class SubsampledSubarray(Subarray):
         u = self._trim(u)
         return u
 
-    def _select_data(self, data=None, location={}):
+    def _s(self, d, s=None):
+        """The interpolation coefficient ``s`` for the interpolation subarea.
+
+        Returns the interpolation coefficient ``s`` for the specified
+        subsampled dimension of the interpolation subarea.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            d: `int`
+                The position in the full tie points array of a
+                subsampled dimension.
+
+            {{s: array_like, optional}}
+
+        :Returns:
+
+            `numpy.ndarray`
+                The interpolation coefficent ``s`` with values within
+                the range [0, 1]. The array has extra size 1
+                dimensions corresponding to all full tie point array
+                dimensions other than *d*.
+
+        **Examples**
+
+        >>> x.shape
+        (12, 5)
+        >>> x.bounds
+        False
+         >>> x.first
+        (False, True)
+        >>> print(x._s(1))
+        [[0.   0.25 0.5  0.75 1.  ]]
+
+        >>> x.shape
+        (12, 5)
+        >>> x.bounds
+        False
+        >>> x.first
+        (False, False)
+        >>> print(x._s(1))
+        [[0.  0.2 0.4 0.6 0.8 1. ]]
+
+        >>> x.shape
+        (12, 5)
+        >>> x.bounds
+        True
+         >>> x.first
+        (False, True)
+        >>> print(x._s(1))
+        [[0.  0.2 0.4 0.6 0.8 1. ]]
+
+        >>> x.shape
+        (12, 5)
+        >>> x.bounds
+        True
+        >>> x.first
+        (False, False)
+        >>> print(x._s(1))
+        [[0.  0.2 0.4 0.6 0.8 1. ]]
+
+        >>> x.shape
+        (12, 5)
+        >>> print(x._s(1, s=0.5))
+        [[0.5]]
+
+        """
+        ndim = self.tie_points.ndim
+        
+        if s is not None:
+            return np.full((1,) * ndim, s, dtype=_float64)
+
+        size = self.shape[d]
+        if self.bounds or not self.first[d]:
+            size = size + 1
+
+        s = np.linspace(0, 1, size, dtype=_float64)
+
+        # Add extra size 1 dimensions so that s and 1-s are guaranteed
+        # to be broadcastable to the tie points.
+        if ndim > 1:
+            new_shape = [1] * ndim
+            new_shape[d] = s.size
+            s.resize(new_shape, refcheck=False)
+                
+        return s
+
+    def _select_data(self, data=None):
         """Select tie points that correspond to this interpolation subarea.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `_select_location`, `_select_parameter`
 
         :Parameters:
 
@@ -338,37 +383,59 @@ class SubsampledSubarray(Subarray):
                 subarea will be returned. By default, or if `None`
                 then the `data` array is used.
 
-            location: `dict`, optional
-                Identify the tie point location within the
-                interpolation subarea. Each key is an integer that
-                specifies a subsampled dimension position in the tie
-                points array, with a value of either ``0`` or ``1``
-                indicating one of the two tie point positions along
-                that dimension. By default, or if location is an empty
-                dictionary, then all tie points for the interpolation
-                subarea are returned.
-
         :Returns:
 
             `numpy.ndarray`
-                Values of the tie points array that correspond to this
-                interpolation subarea.
+                The values of the tie points array that correspond to
+                this interpolation subarea.
 
         """
-        tp_indices = self.indices
-
-        if location:
-            tp_indices = list(tp_indices)
-            for dim, position in location.items():
-                i = tp_indices[dim].start + position
-                tp_indices[dim] = slice(i, i + 1)
-
-            tp_indices = tuple(tp_indices)
-
         if data is None:
             data = self.data
 
-        return np.asanyarray(data[tp_indices])
+        return np.asanyarray(data[self.indices])
+
+    def _select_location(self, array, location={}):
+        """Select interpolation parameter points that correspond to this
+        interpolation subarea.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `_select_data`, `_select_parameter`
+
+        :Parameters:
+
+            array: `numpy.ndaray` or `None`
+                All interpolation parameters that apply to this
+                interpolation subarea array, as returned by a call of
+                `_select_parameter`.
+
+            location: `dict`, optional
+                Identify the location within the interpolation
+                subarea. Each key is an integer that specifies a
+                subsampled dimension position in the array, with a
+                value of either ``0`` or ``1`` indicating one of the
+                two tie point positions along that dimension. By
+                default, or if location is an empty dictionary, then
+                all values for the interpolation subarea are returned.
+
+        :Returns:
+
+            `numpy.ndarray` or `None`
+                The selected values, or `None` no array was provided.
+
+        """
+        if array is None:
+            return
+
+        if location:
+            indices = [slice(None)] * array.ndim
+            for subsampled_dimension, loc in location.items():
+                indices[subsampled_dimension] = slice(loc, loc + 1)
+
+            array = array[tuple(indices)]
+
+        return array
 
     def _select_parameter(self, term):
         """Select interpolation parameter values for this interpolation
@@ -376,7 +443,7 @@ class SubsampledSubarray(Subarray):
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
-        .. seealso:: `_parameters_location`
+        .. seealso:: `_select_data`, `_select_location`
 
         :Parameters:
 
@@ -436,13 +503,13 @@ class SubsampledSubarray(Subarray):
 
         :Parameters:
 
-            u: array_like
+            u: `numpy.ndarray`
                The raw interpolated array data for the interpolation
                subarea that includes all tie point locations.
 
         :Returns:
 
-            array_like
+            `numpy.ndarray`
 
         """
         if self.bounds:
