@@ -28,7 +28,7 @@ class Subarray(Container):
         data=None,
         indices=None,
         shape=None,
-        compressed_dimensions=None,
+        compressed_dimensions={},
     ):
         """**Initialisation**
 
@@ -48,23 +48,28 @@ class Subarray(Container):
                 The shape of the uncompressed array.
 
             compressed_dimensions: `dict`
-                The positions of the compressed dimensions in the
-                compressed *data* array.
+                Mapping of compressed to uncompressed dimensions.
 
-                For each dimension of *data* that represents
-        
-                The mapping of dimensions of *data* that correspond to
-                compressed to
+                A dictionary key is a position of a dimension in the
+                compressed data, with a value of the positions of the
+                corresponding dimensions in the uncompressed
+                data. Compressed array dimensions that are not
+                compressed must be omitted from the mapping.
 
-                The positions of dimensions in the compressed data
-                that represent one or more dimensions in the
-                uncompressed data, and maps these to the corresponding
-                dimension positions in the uncompressed data.
+                *Parameter example:*
+                  ``{0: (0, 1)}``
 
-                Maps the position of each dimensions in the compressed data
-                that represent one or more dimensions in the
-                uncompressed data, and maps these to the corresponding
-                dimension positions in the uncompressed data.
+                *Parameter example:*
+                  ``{0: (0, 1, 2)}``
+
+                *Parameter example:*
+                  ``{2: (2, 3)}``
+
+                *Parameter example:*
+                  ``{1: (1,)}``
+
+                *Parameter example:*
+                  ``{0: (0,), 2: (2,)}``
 
         """
         super().__init__()
@@ -72,7 +77,7 @@ class Subarray(Container):
         self.data = data
         self.indices = indices
         self.shape = shape
-        self.compressed_dimensions = tuple(sorted(compressed_dimensions))
+        self.compressed_dimensions = compressed_dimensions.copy()
 
     def __getitem__(self, indices):
         """Return a subspace of the uncompressed data.
@@ -85,7 +90,9 @@ class Subarray(Container):
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        raise NotImplementedError("Must implement __getitem__ in subclasses")
+        raise NotImplementedError(
+            "Must implement __getitem__ in subclasses"
+        )  # pragma: no cover
 
     def _select_data(self, data=None):
         """Select compressed array elements that correspond to this subarray.
@@ -119,7 +126,9 @@ class Subarray(Container):
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        raise NotImplementedError("Must implement dtype in subclasses")
+        raise NotImplementedError(
+            "Must implement dtype in subclasses"
+        )  # pragma: no cover
 
     @property
     def ndim(self):

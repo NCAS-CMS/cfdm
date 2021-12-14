@@ -1,12 +1,12 @@
 from functools import reduce
 from operator import mul
 
-import numpy
+import numpy as np
 
-from . import abstract
+from .abstract import CompressedArray
 
 
-class GatheredArray(abstract.CompressedArray):
+class GatheredArray(CompressedArray):
     """An underlying gathered array.
 
     Compression by gathering combines axes of a multidimensional array
@@ -27,7 +27,7 @@ class GatheredArray(abstract.CompressedArray):
         size=None,
         ndim=None,
         compressed_dimension=None,
-        compressed_dimensions=(),
+        compressed_dimensions={},
         list_variable=None,
     ):
         """**Initialisation**
@@ -46,12 +46,14 @@ class GatheredArray(abstract.CompressedArray):
             ndim: `int`
                 The number of uncompressed array dimensions
 
-            compressed_dimensions: sequence of `int`
-                The position of the compressed dimension in the
-                compressed array.
+            compressed_dimensions: `dict`
+                Mapping of dimensions of the compressed array to their
+                corresponding dimensions in the uncompressed
+                array. Compressed array dimensions that are not
+                compressed must be omitted from the mapping.
 
                 *Parameter example:*
-                  ``compressed_dimensions=[1]``
+                  ``{2: (2, 3)}``
 
                 .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -69,7 +71,7 @@ class GatheredArray(abstract.CompressedArray):
             ndim=ndim,
             size=size,
             compressed_dimension=compressed_dimension,
-            compressed_dimensions=tuple(compressed_dimensions),
+            compressed_dimensions=compressed_dimensions.copy(),
             list_variable=list_variable,
             compression_type="gathered",
         )
@@ -101,11 +103,9 @@ class GatheredArray(abstract.CompressedArray):
         compressed_array = self._get_compressed_Array().array
 
         # Initialise the un-sliced uncompressed array
-        uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
+        uarray = np.ma.masked_all(self.shape, dtype=self.dtype)
 
         # Initialise the uncomprssed array
-        #        compressed_dimension = self.get_compressed_dimension()
-        #        compressed_axes = self.get_compressed_axes()
         (
             compressed_dimension,
             compressed_axes,

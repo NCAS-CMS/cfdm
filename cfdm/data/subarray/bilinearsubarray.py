@@ -20,7 +20,7 @@ class BiLinearSubarray(BiLinearInterpolation, SubsampledSubarray):
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        (d2, d1) = self.compressed_dimensions
+        (d2, d1) = sorted(self.compressed_dimensions)
 
         u = self._bilinear_interpolation(
             ua=self._select_data(location={d2: 0, d1: 0}),

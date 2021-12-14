@@ -63,7 +63,7 @@ class LinearSubarray(LinearInterpolation, SubsampledSubarray):
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        (d1,) = self.compressed_dimensions
+        (d1,) = tuple(self.compressed_dimensions)
 
         u = self._linear_interpolation(
             ua=self._select_data(location={d1: 0}),

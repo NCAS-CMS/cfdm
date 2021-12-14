@@ -35,7 +35,7 @@ class SubsampledSubarray(Subarray):
         data=None,
         indices=None,
         shape=None,
-        compressed_dimensions=None,
+        compressed_dimensions={},
         subarea_indices=None,
         first=None,
         parameters={},
@@ -57,12 +57,23 @@ class SubsampledSubarray(Subarray):
                 defines the tie points elements that correspond to
                 this interpolation subarea.
 
-            compressed_dimensions: sequence of `int`
-                The positions of the subsampled dimensions in the
-                tie points array.
-
             shape: `tuple` of `int`
                 The shape of the uncompressed array.
+
+            compressed_dimensions: `dict`
+                Mapping of compressed to uncompressed dimensions.
+
+                A dictionary key is a position of a dimension in the
+                compressed data, with a value of the positions of the
+                corresponding dimensions in the uncompressed
+                data. Compressed array dimensions that are not
+                compressed miust be omitted from the mapping.
+
+                *Parameter example:*
+                  ``{1: (1,)}``
+
+                *Parameter example:*
+                  ``{0: (0,), 2: (2,)}``
 
             first: `tuple` of `bool`
                 For each dimension of the tie points array, True if
@@ -110,7 +121,7 @@ class SubsampledSubarray(Subarray):
             data=data,
             indices=indices,
             shape=shape,
-            compressed_dimensions=compressed_dimensions
+            compressed_dimensions=compressed_dimensions,
         )
 
         self.subarea_indices = subarea_indices
@@ -151,7 +162,7 @@ class SubsampledSubarray(Subarray):
         else:
             bounds = np.empty(self.shape, dtype=u.dtype)
 
-        subsampled_dimensions = self.compressed_dimensions
+        subsampled_dimensions = sorted(self.compressed_dimensions)
         n = len(subsampled_dimensions)
 
         indices = [slice(None)] * u.ndim
@@ -189,8 +200,8 @@ class SubsampledSubarray(Subarray):
     def _codependent_tie_points(self, *identities):
         """Get all codependent tie points.
 
-        Returns the tie points from `data as well as those returned by
-        `get_dependent_tie_points`.
+        Returns the tie points from `data` as well as those returned
+        by `get_dependent_tie_points`.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -221,7 +232,7 @@ class SubsampledSubarray(Subarray):
                 f"There must be exactly {len(dependent_tie_points)} "
                 "dependent tie point array(s), got {len(identities)}"
             )
-        
+
         if not set(dependent_tie_points).issubset(identities):
             raise ValueError(
                 "Each dependent tie point identity must be one of: "
@@ -239,23 +250,45 @@ class SubsampledSubarray(Subarray):
         return out
 
     def _parameter_location(self, parameter, location={}):
-        """TODO"""
+        """Select interpolation parameter points that correspond to this
+        interpolation subarea.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `_select_parmaeter`
+
+        :Parameters:
+
+            parameter: `numpy.ndaray` or `None`
+
+                All interpolation parameters that apply to this
+                interpolation subarea array, as returned by a call of
+                `_select_parameter`.
+
+            location: `dict`, optional
+                Identify the parameter location within the
+                interpolation subarea. Each key is an integer that
+                specifies a subsampled dimension position in the
+                parameter array, with a value of either ``0`` or ``1``
+                indicating one of the two tie point positions along
+                that dimension. By default, or if location is an empty
+                dictionary, then all parameters for the interpolation
+                subarea are returned.
+
+        :Returns:
+
+            `numpy.ndarray` or `None`
+                The interpolation parameter values, or `None` if there
+                are none.
+
+        """
         if parameter is None:
             return
 
         if location:
             indices = [slice(None)] * self.data.ndim
-            shape = parameter.shape
             for subsampled_dimension, loc in location.items():
-                if shape[subsampled_dimension] != 2:
-                    raise ValueError(
-                        f"TODO {shape} {subsampled_dimension} {loc}"
-                    )
-
-                if loc == 1:
-                    indices[subsampled_dimension] = slice(1, 2)
-                else:
-                    indices[subsampled_dimension] = slice(0, 1)
+                indices[subsampled_dimension] = slice(loc, loc + 1)
 
             parameter = parameter[tuple(indices)]
 
@@ -343,7 +376,7 @@ class SubsampledSubarray(Subarray):
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
-        .. seealso:: `parameters`, `subarea_indices`, `indices`
+        .. seealso:: `_parameters_location`
 
         :Parameters:
 
@@ -364,14 +397,12 @@ class SubsampledSubarray(Subarray):
         parameter = self.parameters.get(term)
         if parameter is None:
             return
-        
+
         # Find the parameter array dimensions which are subsampled
         # dimensions
         subsampled_dimensions = [
             i
-            for i, (m, n) in (
-                enumerate(zip(parameter.shape, self.data.shape))
-            )
+            for i, (m, n) in (enumerate(zip(parameter.shape, self.data.shape)))
             if m == n
         ]
 

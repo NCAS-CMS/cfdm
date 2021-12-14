@@ -31,12 +31,6 @@ from .data import (
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
     SubsampledArray,
-    #    SubsampledBiLinearArray,
-    #    SubsampledBiQuadraticLatitudeLongitudeArray,
-    #    SubsampledGeneralArray,
-    #    SubsampledLinearArray,
-    #    SubsampledQuadraticArray,
-    #    SubsampledQuadraticLatitudeLongitudeArray,
 )
 
 
@@ -71,12 +65,6 @@ class CFDMImplementation(Implementation):
         RaggedIndexedArray=None,
         RaggedIndexedContiguousArray=None,
         SubsampledArray=None,
-        #        SubsampledBiLinearArray=None,
-        #        SubsampledBiQuadraticLatitudeLongitudeArray=None,
-        #        SubsampledLinearArray=None,
-        #        SubsampledQuadraticArray=None,
-        #        SubsampledQuadraticLatitudeLongitudeArray=None,
-        #        SubsampledGeneralArray=None,
         List=None,
         Count=None,
         Index=None,
@@ -152,26 +140,6 @@ class CFDMImplementation(Implementation):
             SubsampledArray:
                 A class for an underlying subsampled array.
 
-            SubsampledBiLinearArray:
-                A class for an underlying subsampled bi-linear array.
-
-            SubsampledBiQuadraticLatitudeLongitudeArray:
-                A class for an underlying subsampled bi-quadratic
-                latitude-longitude array.
-
-            SubsampledLinearArray:
-                A class for an underlying subsampled linear array.
-
-            SubsampledQuadraticArray:
-                A class for an underlying subsampled quadratic array.
-
-            SubsampledQuadraticLatitudeLongitudeArray:
-                A class for an underlying subsampled quadratic
-                latitude-longitude array.
-
-            SubsampledGeneralArray:
-                A class for an underlying subsampled array.
-
             List:
                 A list variable class.
 
@@ -217,12 +185,6 @@ class CFDMImplementation(Implementation):
             RaggedIndexedArray=RaggedIndexedArray,
             RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
             SubsampledArray=SubsampledArray,
-            #            SubsampledBiLinearArray=SubsampledBiLinearArray,
-            #            SubsampledBiQuadraticLatitudeLongitudeArray=SubsampledBiQuadraticL#atitudeLongitudeArray,
-            #            SubsampledLinearArray=SubsampledLinearArray,
-            #            SubsampledQuadraticArray=SubsampledQuadraticArray,
-            #            SubsampledQuadraticLatitudeLongitudeArray=SubsampledQuadraticLatitudeLongitudeArray,
-            #            SubsampledGeneralArray=SubsampledGeneralArray,
             List=List,
             Count=Count,
             Index=Index,
@@ -2175,7 +2137,6 @@ class CFDMImplementation(Implementation):
             ndim=ndim,
             shape=shape,
             size=size,
-            compressed_dimension=compressed_dimension,
             compressed_dimensions=compressed_dimensions,
             list_variable=list_variable,
         )
@@ -2216,8 +2177,6 @@ class CFDMImplementation(Implementation):
 
             size: `int, optional
 
-            compressed_axes: sequence of `int`, optional
-
             computational_precision: `str`, optional
                 The floating-point arithmetic precision used during
                 the preparation and validation of the compressed
@@ -2239,7 +2198,7 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Subsampled Linear array
+            Subsampled array
 
         """
         return self.get_class("SubsampledArray")(
@@ -2256,345 +2215,6 @@ class CFDMImplementation(Implementation):
             dependent_tie_points=dependent_tie_points,
             dependent_tie_point_dimensions=dependent_tie_point_dimensions,
         )
-
-    #    def initialise_SubsampledLinearArray(
-    #        self,
-    #        compressed_array=None,
-    #        shape=None,
-    #        size=None,
-    #        ndim=None,
-    #        tie_point_indices={},
-    #        computational_precision=None,
-    #        **kwargs,
-    #    ):
-    #        """Return a gathered array instance.
-    #
-    #        .. versionadded:: (cfdm) 1.9.TODO.0
-    #
-    #        :Parameters:
-    #
-    #            compressed_array: optional
-    #
-    #            ndim: `int`, optional
-    #
-    #            shape: sequence of `int`, optional
-    #
-    #            size: `int, optional
-    #
-    #            compressed_axes: sequence of `int`, optional
-    #
-    #            computational_precision: `str`, optional
-    #                The floating-point arithmetic precision used during
-    #                the preparation and validation of the compressed
-    #                coordinates.
-    #
-    #            tie_point_indices: `dict`, optional
-    #
-    #            parameters: `dict`, optional
-    #
-    #            parameter_dimensions: `dict`, optional
-    #
-    #            dependent_tie_points: `dict`, optional
-    #
-    #            dependent_tie_points_dimensions: `dict`, optional
-    #
-    #        :Returns:
-    #
-    #            Subsampled Linear array
-    #
-    #        """
-    #        return self.get_class("SubsampledLinearArray")(
-    #            compressed_array=compressed_array,
-    #            shape=shape,
-    #            size=size,
-    #            ndim=ndim,
-    #            tie_point_indices=tie_point_indices,
-    #            computational_precision=computational_precision,
-    #        )
-    #
-    #    def initialise_SubsampledBiLinearArray(
-    #        self,
-    #        compressed_array=None,
-    #        shape=None,
-    #        size=None,
-    #        ndim=None,
-    #        tie_point_indices={},
-    #        computational_precision=None,
-    #        **kwargs,
-    #    ):
-    #        """Return a gathered array instance.
-    #
-    #        .. versionadded:: (cfdm) 1.9.TODO.0
-    #
-    #        :Parameters:
-    #
-    #            compressed_array: optional
-    #
-    #            ndim: `int`, optional
-    #
-    #            shape: sequence of `int`, optional
-    #
-    #            size: `int, optional
-    #
-    #            computational_precision: `str`, optional
-    #                The floating-point arithmetic precision used during
-    #                the preparation and validation of the compressed
-    #                coordinates.
-    #
-    #            tie_point_indices: `dict`, optional
-    #
-    #            kwargs: optional
-    #                Ignored.
-    #
-    #        :Returns:
-    #
-    #            Subsampled Bi-linear array
-    #
-    #        """
-    #        return self.get_class("SubsampledBiLinearArray")(
-    #            compressed_array=compressed_array,
-    #            shape=shape,
-    #            size=size,
-    #            ndim=ndim,
-    #            tie_point_indices=tie_point_indices,
-    #            computational_precision=computational_precision,
-    #        )
-    #
-    #    def initialise_SubsampledBiQuadraticLatitudeLongitudeArray(
-    #        self,
-    #        compressed_array=None,
-    #        shape=None,
-    #        size=None,
-    #        ndim=None,
-    #        tie_point_indices={},
-    #        computational_precision=None,
-    #        parameters={},
-    #        parameter_dimensions={},
-    #        **kwargs,
-    #    ):
-    #        """Return a gathered array instance.
-    #
-    #        .. versionadded:: (cfdm) 1.9.TODO.0
-    #
-    #        :Parameters:
-    #
-    #            compressed_array: optional
-    #
-    #            ndim: `int`, optional
-    #
-    #            shape: sequence of `int`, optional
-    #
-    #            size: `int, optional
-    #
-    #            compressed_axes: sequence of `int`, optional
-    #
-    #            computational_precision: `str`, optional
-    #                The floating-point arithmetic precision used during
-    #                the preparation and validation of the compressed
-    #                coordinates.
-    #
-    #            tie_point_indices: `dict`, optional
-    #
-    #            parameters: `dict`, optional
-    #
-    #            parameter_dimensions: `dict`, optional
-    #
-    #            kwargs: optional
-    #                Ignored.
-    #
-    #        :Returns:
-    #
-    #            Subsampled quadratic array
-    #
-    #        """
-    #        return self.get_class("SubsampledBiQuadraticLatitudeLongitudeArray")(
-    #            compressed_array=compressed_array,
-    #            shape=shape,
-    #            size=size,
-    #            ndim=ndim,
-    #            tie_point_indices=tie_point_indices,
-    #            computational_precision=computational_precision,
-    #            parameters=parameters,
-    #            parameter_dimensions=parameter_dimensions,
-    #        )
-    #
-    #    def initialise_SubsampledQuadraticArray(
-    #        self,
-    #        compressed_array=None,
-    #        shape=None,
-    #        size=None,
-    #        ndim=None,
-    #        tie_point_indices={},
-    #        computational_precision=None,
-    #        parameters={},
-    #        parameter_dimensions={},
-    #        **kwargs,
-    #    ):
-    #        """Return a gathered array instance.
-    #
-    #        .. versionadded:: (cfdm) 1.9.TODO.0
-    #
-    #        :Parameters:
-    #
-    #            compressed_array: optional
-    #
-    #            ndim: `int`, optional
-    #
-    #            shape: sequence of `int`, optional
-    #
-    #            size: `int, optional
-    #
-    #            compressed_axes: sequence of `int`, optional
-    #
-    #            computational_precision: `str`, optional
-    #                The floating-point arithmetic precision used during
-    #                the preparation and validation of the compressed
-    #                coordinates.
-    #
-    #            tie_point_indices: `dict`, optional
-    #
-    #            parameters: `dict`, optional
-    #
-    #            parameter_dimensions: `dict`, optional
-    #
-    #            kwargs: optional
-    #                Ignored.
-    #
-    #        :Returns:
-    #
-    #            Subsampled quadratic array
-    #
-    #        """
-    #        return self.get_class("SubsampledQuadraticArray")(
-    #            compressed_array=compressed_array,
-    #            shape=shape,
-    #            size=size,
-    #            ndim=ndim,
-    #            tie_point_indices=tie_point_indices,
-    #            computational_precision=computational_precision,
-    #            parameters=parameters,
-    #            parameter_dimensions=parameter_dimensions,
-    #        )
-    #
-    #    def initialise_SubsampledQuadraticLatitudeLongitudeArray(
-    #        self,
-    #        compressed_array=None,
-    #        shape=None,
-    #        size=None,
-    #        ndim=None,
-    #        tie_point_indices={},
-    #        computational_precision=None,
-    #        parameters={},
-    #        parameter_dimensions={},
-    #        **kwargs,
-    #    ):
-    #        """Return a gathered array instance.
-    #
-    #        .. versionadded:: (cfdm) 1.9.TODO.0
-    #
-    #        :Parameters:
-    #
-    #            compressed_array: optional
-    #
-    #            ndim: `int`, optional
-    #
-    #            shape: sequence of `int`, optional
-    #
-    #            size: `int, optional
-    #
-    #            compressed_axes: sequence of `int`, optional
-    #
-    #            computational_precision: `str`, optional
-    #                The floating-point arithmetic precision used during
-    #                the preparation and validation of the compressed
-    #                coordinates.
-    #
-    #            tie_point_indices: `dict`, optional
-    #
-    #            parameters: `dict`, optional
-    #
-    #            parameter_dimensions: `dict`, optional
-    #
-    #            kwargs: optional
-    #                Ignored.
-    #
-    #        :Returns:
-    #
-    #            Subsampled quadratic array
-    #
-    #        """
-    #        return self.get_class("SubsampledQuadraticLatitudeLongitudeArray")(
-    #            compressed_array=compressed_array,
-    #            shape=shape,
-    #            size=size,
-    #            ndim=ndim,
-    #            tie_point_indices=tie_point_indices,
-    #            computational_precision=computational_precision,
-    #            parameters=parameters,
-    #            parameter_dimensions=parameter_dimensions,
-    #        )
-    #
-    #    def initialise_SubsampledGeneralArray(
-    #        self,
-    #        compressed_array=None,
-    #        shape=None,
-    #        size=None,
-    #        ndim=None,
-    #        tie_point_indices={},
-    #        interpolation_description=None,
-    #        computational_precision=None,
-    #        parameters={},
-    #        parameter_dimensions={},
-    #        **kwargs,
-    #    ):
-    #        """A subsampled array with non-standardised interpolation.
-    #
-    #        .. versionadded:: (cfdm) 1.9.TODO.0
-    #
-    #        :Parameters:
-    #
-    #            compressed_array: optional
-    #
-    #            ndim: `int`, optional
-    #
-    #            shape: sequence of `int`, optional
-    #
-    #            size: `int, optional
-    #
-    #            compressed_axes: sequence of `int`, optional
-    #
-    #            computational_precision: `str`, optional
-    #                The floating-point arithmetic precision used during
-    #                the preparation and validation of the compressed
-    #                coordinates.
-    #
-    #            tie_point_indices: `dict`, optional
-    #
-    #            interpolation_description: `str`, optional
-    #
-    #            parameters: `dict`, optional
-    #
-    #            parameter_dimensions: `dict`, optional
-    #
-    #            kwargs: optional
-    #                Ignored.
-    #
-    #        :Returns:
-    #
-    #            Subsampled quadratic array
-    #
-    #        """
-    #        return self.get_class("SubsampledGeneralArray")(
-    #            compressed_array=compressed_array,
-    #            shape=shape,
-    #            size=size,
-    #            ndim=ndim,
-    #            tie_point_indices=tie_point_indices,
-    #            computational_precision=computational_precision,
-    #            interpolation_description=interpolation_description,
-    #            parameters=parameters,
-    #            parameter_dimensions=parameter_dimensions,
-    #        )
 
     def initialise_Index(self):
         """Return an index variable.
@@ -2743,8 +2363,6 @@ class CFDMImplementation(Implementation):
 
             size: `int, optional
 
-            compressed_dimension: `int`, optional
-
             count_variable: optional
 
         :Returns:
@@ -2780,8 +2398,6 @@ class CFDMImplementation(Implementation):
             shape: sequence of `int`, optional
 
             size: `int, optional
-
-            compressed_dimension: `int`, optional
 
             index_variable: optional
 
@@ -2819,8 +2435,6 @@ class CFDMImplementation(Implementation):
             shape: sequence of `int`, optional
 
             size: `int, optional
-
-            compressed_dimension: `int`, optional
 
             count_variable: optional
 
@@ -3787,12 +3401,6 @@ _implementation = CFDMImplementation(
     RaggedIndexedArray=RaggedIndexedArray,
     RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
     SubsampledArray=SubsampledArray,
-    #    SubsampledBiLinearArray=SubsampledBiLinearArray,
-    #    SubsampledBiQuadraticLatitudeLongitudeArray=SubsampledBiQuadraticLatitudeL#ongitudeArray,
-    #    SubsampledLinearArray=SubsampledLinearArray,
-    #    SubsampledQuadraticArray=SubsampledQuadraticArray,
-    #    SubsampledQuadraticLatitudeLongitudeArray=SubsampledQuadraticLatitudeLongi#tudeArray,
-    #    SubsampledGeneralArray=SubsampledGeneralArray,
     TiePointIndex=TiePointIndex,
 )
 
@@ -3834,6 +3442,7 @@ def implementation():
      'RaggedContiguousArray': <class 'cfdm.data.raggedcontiguousarray.RaggedContiguousArray'>,
      'RaggedIndexedArray': <class 'cfdm.data.raggedindexedarray.RaggedIndexedArray'>,
      'RaggedIndexedContiguousArray': <class 'cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray'>,
+     'SubsampledArray': <class 'cfdm.data.subsampledrray.SubsampledArray'>,
      'List': <class 'cfdm.list.List'>,
      'Count': <class 'cfdm.count.Count'>,
      'Index': <class 'cfdm.index.Index'>,

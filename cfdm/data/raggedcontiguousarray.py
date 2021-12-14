@@ -57,7 +57,7 @@ class RaggedContiguousArray(mixin.RaggedContiguous, abstract.CompressedArray):
             ndim=ndim,
             count_variable=count_variable,
             compression_type="ragged contiguous",
-            compressed_dimensions=(0,),
+            compressed_dimensions={0: (0, 1)},
         )
 
     def __getitem__(self, indices):
@@ -101,7 +101,6 @@ class RaggedContiguousArray(mixin.RaggedContiguous, abstract.CompressedArray):
         # dimension, element dimension).
         # --------------------------------------------------------
 
-       
         count_array = self.get_count().data.array
 
         start = 0
@@ -118,7 +117,7 @@ class RaggedContiguousArray(mixin.RaggedContiguous, abstract.CompressedArray):
             start += n
 
         return self.get_subspace(uarray, indices, copy=True)
-    
+
     def to_memory(self):
         """Bring an array on disk into memory and retain it there.
 

@@ -46,7 +46,7 @@ class BiQuadraticLatitudeLongitudeSubarray(
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        (d2, d1) = self.compressed_dimensions
+        (d2, d1) = sorted(self.compressed_dimensions)
 
         lat, lon = self._codependent_tie_points("latitude", "longitude")
 
@@ -75,8 +75,8 @@ class BiQuadraticLatitudeLongitudeSubarray(
 
         if indices is Ellipsis:
             return u
-        
-        return u[indices] #self.get_subspace(u, indices, copy=True)
+
+        return u[indices]  # self.get_subspace(u, indices, copy=True)
 
     def _bi_quadratic_latitude_longitude_interpolation(
         self,
@@ -145,8 +145,6 @@ class BiQuadraticLatitudeLongitudeSubarray(
             `numpy.ndarray`
 
         """
-        # TODO: optimise to remove unnecessary lat or lon calculations
-
         if location_use_3d_cartesian is None:
             raise ValueError(
                 "Can't uncompress tie points by "

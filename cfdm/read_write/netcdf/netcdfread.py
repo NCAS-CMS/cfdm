@@ -19,7 +19,7 @@ from ...functions import is_log_level_debug
 from .. import IORead
 
 
-from pprint import pprint  # TODO
+# from pprint import pprint  # TODO
 
 
 logger = logging.getLogger(__name__)
@@ -3343,10 +3343,8 @@ class NetCDFRead(IORead):
 
         coordinates = {}
         for ncvar in tie_point_ncvars:
-            print("NCVAR=", ncvar)
             ok = self._check_tie_point_coordinates(field_ncvar, ncvar, string)
             if not ok:
-                print(999)
                 continue
 
             # Find out if the coordinates are to be dimension or
@@ -3371,7 +3369,7 @@ class NetCDFRead(IORead):
                 )
 
             coordinates[ncvar] = (coord, axes, is_dimension_coordinate)
-        print("coordinates=", coordinates)
+
         # Add any dependent tie points required for multivariate
         # interpolations. This allows each cooridnate to be operated
         # on (e.g. subspaced, collapsed, etc.) independently
@@ -3423,7 +3421,6 @@ class NetCDFRead(IORead):
                     tp_dims[identity] = tuple([a.index(i) for i in axes])
 
                     c_tp[identity] = self.implementation.get_tie_points(c)
-                    print(identity, repr(c_tp[identity]))
                     if bounds is None:
                         continue
 
@@ -3434,7 +3431,6 @@ class NetCDFRead(IORead):
                     b_tp[identity] = self.implementation.get_tie_points(b)
                     break
 
-            print("c_tp=", c_tp)
             self.implementation.set_dependent_tie_points(coord, c_tp)
             self.implementation.set_dependent_tie_point_dimensions(
                 coord, tp_dims
@@ -5370,10 +5366,12 @@ class NetCDFRead(IORead):
         else:
             # The array might be compressed
 
-            # Get the shape of the uncompressed data
-            uncompressed_shape = self._dimension_sizes(
-                ncvar, parent_ncvar=parent_ncvar
+            # Get the shape and ndim of the uncompressed data
+            uncompressed_shape = tuple(
+                self._dimension_sizes(ncvar, parent_ncvar=parent_ncvar)
             )
+
+            ndim = array.ndim
 
             # Initializations needed for subsampled coordinates
             subsampled = False
@@ -5404,11 +5402,19 @@ class NetCDFRead(IORead):
                     # ------------------------------------------------
                     c = c["gathered"]
 
-                    #                    i = dimensions.index(ncdim)
+                    uncompressed_ndim = len(uncompressed_shape)
+                    ndim = array.ndim
+
+                    d = dimensions.index(ncdim)
+                    compressed_dimensions = {
+                        d: tuple(range(d, uncompressed_ndim - (ndim - d - 1)))
+                    }
+
                     array = self._create_gathered_array(
                         gathered_array=self._create_Data(array),
-                        uncompressed_shape=tuple(uncompressed_shape),
-                        compressed_dimensions=(dimensions.index(ncdim),),
+                        uncompressed_shape=uncompressed_shape,
+                        #                        compressed_dimensions=(dimensions.index(ncdim),),
+                        compressed_dimensions=compressed_dimensions,
                         list_variable=c["list_variable"],
                     )
                 elif "ragged_indexed_contiguous" in c:
@@ -5432,7 +5438,7 @@ class NetCDFRead(IORead):
                         ragged_indexed_contiguous_array=self._create_Data(
                             array
                         ),
-                        uncompressed_shape=tuple(uncompressed_shape),
+                        uncompressed_shape=uncompressed_shape,
                         count_variable=c["count_variable"],
                         index_variable=c["index_variable"],
                     )
@@ -5453,7 +5459,7 @@ class NetCDFRead(IORead):
 
                     array = self._create_ragged_contiguous_array(
                         ragged_contiguous_array=self._create_Data(array),
-                        uncompressed_shape=tuple(uncompressed_shape),
+                        uncompressed_shape=uncompressed_shape,
                         count_variable=c["count_variable"],
                     )
 
@@ -5473,7 +5479,7 @@ class NetCDFRead(IORead):
 
                     array = self._create_ragged_indexed_array(
                         ragged_indexed_array=self._create_Data(array),
-                        uncompressed_shape=tuple(uncompressed_shape),
+                        uncompressed_shape=uncompressed_shape,
                         index_variable=c["index_variable"],
                     )
 
@@ -5534,27 +5540,6 @@ class NetCDFRead(IORead):
 
                                         positions.append(dimensions.index(d))
                                         break
-                            #                                try:
-                            #                                    # Either this dimension of the
-                            #                                    # interpolation parameter is an
-                            #                                    # interpolated dimension or a
-                            #                                    # subsampled dimension ...
-                            #                                    positions.append(dimensions.index(dim))
-                            #                                    continue
-                            #                                except ValueError:
-                            #                                    # ... or else the dimension is an
-                            #                                    # interpolation subarea dimension.
-                            #                                    pass
-                            #
-                            #                                # Still here? Then this dimension of
-                            #                                # the interpolation parameter is an
-                            #                                # interpolation subarea dimension.
-                            #                                for d, v in rec["subsampled_ncdim"].items():
-                            #                                    if dim != v["subarea_ncdim"]:
-                            #                                        continue
-                            #
-                            #                                    positions.append(dimensions.index(d))
-                            #                                    break
 
                             parameter_dimensions[term] = tuple(positions)
                 else:
@@ -5972,14 +5957,11 @@ class NetCDFRead(IORead):
         # Record which tie point coordinate variables span this
         # subsampled dimension, and note the corresponding
         # interpolation variable and interpolated dimension.
-        print(1111)
         for interpolation_ncvar, coords in coordinate_interpolation.items():
-            print(interpolation_ncvar)
             record = g["interpolation"][interpolation_ncvar]
             subsampled_ncdims = record["subsampled_ncdim"]
 
             for tp_ncvar in coords:
-                print(tp_ncvar)
                 coord_ncdims = g["variable_dimensions"][tp_ncvar]
 
                 # Bounds tie points: Need to also record an implied
@@ -5998,12 +5980,10 @@ class NetCDFRead(IORead):
 
                 for ncdim in coord_ncdims:
                     if ncdim not in subsampled_ncdims:
-                        print("ncdim", ncdim, subsampled_ncdims)
                         continue
 
                     # Still here? Then `ncdim` is a subsampled
                     # dimension.
-                    print(888888)
                     interpolated_ncdim = subsampled_ncdims[ncdim][
                         "interpolated_ncdim"
                     ]
@@ -6045,8 +6025,6 @@ class NetCDFRead(IORead):
                         # Do not create field/domain constructs from
                         # bounds tie point variables
                         g["do_not_create_field"].add(bounds_ncvar)
-        pprint(g["compression"])
-        pprint(g["tie_point_index"])
 
     def _create_formula_terms_ref(self, f, key, coord, formula_terms):
         """Create a formula terms coordinate reference.
@@ -7168,7 +7146,7 @@ class NetCDFRead(IORead):
                 conformance="8.3.requirement.1",
             )
             return False
-        print(self._ncdimensions(tie_point_ncvar, parent_ncvar=parent_ncvar))
+
         # Check that the variable's dimensions span a subset of the
         # parent variable's dimensions (allowing for char variables
         # with a trailing dimension)

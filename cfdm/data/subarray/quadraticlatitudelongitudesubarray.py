@@ -39,7 +39,7 @@ class QuadraticLatitudeLongitudeSubarray(
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        (d1,) = self.compressed_dimensions
+        (d1,) = tuple(self.compressed_dimensions)
 
         lat, lon = self._codependent_tie_points("latitude", "longitude")
 
@@ -109,8 +109,6 @@ class QuadraticLatitudeLongitudeSubarray(
             `numpy.ndarray`
 
         """
-        # TODO: optimise to remove unnecessary lat or lon calculations
-
         if location_use_3d_cartesian is None:
             raise ValueError(
                 "Can't uncompress tie points by "
@@ -121,17 +119,14 @@ class QuadraticLatitudeLongitudeSubarray(
                 "attribute"
             )
 
-        any_cartesian = location_use_3d_cartesian.any()
-        all_cartesian = location_use_3d_cartesian.all()
+        any_cartesian = bool(location_use_3d_cartesian.any())
+        all_cartesian = bool(location_use_3d_cartesian.all())
 
         latitude = "longitude" in self.dependent_tie_points
         longitude = not latitude
 
-        lla = lat_a, lon_a
-        llb = lat_b, lon_b
-
-        va = self._fll2v(*lla)
-        vb = self._fll2v(*llb)
+        va = self._fll2v(lat_a, lon_a)
+        vb = self._fll2v(lat_b, lon_b)
 
         cv = self._fcea2cv(va, vb, ce, ca)
 
