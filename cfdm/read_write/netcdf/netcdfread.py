@@ -18,7 +18,6 @@ from ...decorators import _manage_log_level_via_verbosity
 from ...functions import is_log_level_debug
 from .. import IORead
 
-
 # from pprint import pprint  # TODO
 
 
@@ -4098,7 +4097,7 @@ class NetCDFRead(IORead):
         return datatype != str and datatype.kind in "SU"
 
     def _has_identity(self, construct, identity):
-        """TODO
+        """TODO.
 
         .. versionadded:: 1.9.TODO.0
 
@@ -5543,11 +5542,12 @@ class NetCDFRead(IORead):
 
                             parameter_dimensions[term] = tuple(positions)
                 else:
-                    raise ValueError(
-                        "Bad compression type: "
-                        f"parent_ncvar={parent_ncvar}, ncvar={ncvar}, "
-                        f"c.keys()={list(c.keys())}"
-                    )
+                    break
+            #                    raise ValueError(
+            #                        "Bad compression type: "
+            #                        f"parent_ncvar={parent_ncvar}, ncvar={ncvar}, "
+            ##                        f"c.keys()={list(c.keys())}"
+            #                    )
 
             if subsampled:
                 array = self._create_subsampled_array(

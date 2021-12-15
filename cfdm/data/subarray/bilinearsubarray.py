@@ -3,7 +3,7 @@ from .mixin import BiLinearInterpolation
 
 
 class BiLinearSubarray(BiLinearInterpolation, SubsampledSubarray):
-    """TODO
+    """TODO.
 
     .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -23,7 +23,7 @@ class BiLinearSubarray(BiLinearInterpolation, SubsampledSubarray):
         (d2, d1) = sorted(self.compressed_dimensions)
 
         u_abcd = self._select_data()
-        
+
         u = self._bilinear_interpolation(
             ua=self._select_location(u_abcd, {d2: 0, d1: 0}),
             ub=self._select_location(u_abcd, {d2: 0, d1: 1}),

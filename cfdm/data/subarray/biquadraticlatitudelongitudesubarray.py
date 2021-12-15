@@ -52,7 +52,7 @@ class BiQuadraticLatitudeLongitudeSubarray(
 
         lat = self._select_data(lat)
         lon = self._select_data(lon)
-          
+
         u = self._bi_quadratic_latitude_longitude_interpolation(
             lat_a=self._select_location(lat, {d2: 0, d1: 0}),
             lon_a=self._select_location(lon, {d2: 0, d1: 0}),
@@ -222,15 +222,15 @@ class BiQuadraticLatitudeLongitudeSubarray(
             vac = self._fqv(va, vc, cv_ac, d2)
             if all_cartesian:
                 del va, vc, cv_ac
-                
+
             vbd = self._fqv(vb, vd, cv_bd, d2)
             if all_cartesian:
                 del vb, vd, cv_bd
-                
+
             vz = self._fqv(vab, vcd, cv_z, d2)
             if all_cartesian:
                 del vab, vcd, cv_z
-                
+
             cv_zz = self._fcv(vac, vbd, vz, d1, s_i=0.5)
             del vz
 
@@ -265,7 +265,7 @@ class BiQuadraticLatitudeLongitudeSubarray(
                 del lat_a, lat_c
             else:
                 del lon_a, lon_c
-                
+
             llc_bd = self._fw(
                 llb,
                 lld,
@@ -281,7 +281,7 @@ class BiQuadraticLatitudeLongitudeSubarray(
                 del lat_b, lat_d
             else:
                 del lon_b, lon_d
-                
+
             llab = fv2ll(vab)
             llcd = fv2ll(vcd)
             llc_z = self._fw(

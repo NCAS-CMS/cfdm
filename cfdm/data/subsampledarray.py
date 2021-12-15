@@ -11,7 +11,6 @@ from .subarray import (
     QuadraticSubarray,
 )
 
-
 _float64 = np.dtype(float)
 
 _flag_names = ("location_use_3d_cartesian",)
@@ -330,11 +329,11 @@ class SubsampledArray(CompressedArray):
             first,
             subarea_indices,
         ) in zip(*self.subarrays()):
-#            print(u_indices,
-#            tp_indices,
-#            subarea_shape,
-#            first,
-#            subarea_indices)
+            #            print(u_indices,
+            #            tp_indices,
+            #            subarea_shape,
+            #            first,
+            #            subarea_indices)
             subarray = Subarray(
                 data=tie_points,
                 indices=tp_indices,
@@ -350,8 +349,8 @@ class SubsampledArray(CompressedArray):
         return self.get_subspace(uarray, indices, copy=True)
 
     def _conformed_dependent_tie_points(self):
-        """The dependent tie points in the form required by the interpolation
-        method.
+        """The dependent tie points in the form required by the
+        interpolation method.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -392,8 +391,8 @@ class SubsampledArray(CompressedArray):
         return dependent_tie_points
 
     def _conformed_interpolation_subarea_flags(self):
-        """The interpolation_subarea_flag interpolation parameter in the form
-        required by the interpolation method.
+        """The interpolation_subarea_flag interpolation parameter in the
+        form required by the interpolation method.
 
         See CF section 3.5 "Flags" and Appendix J "Coordinate
         Interpolation Methods".
@@ -538,8 +537,8 @@ class SubsampledArray(CompressedArray):
         return _float64
 
     def conformed_data(self):
-        """The tie points and ancillary data in the forms required by the
-        interpolation algorthm.
+        """The tie points and ancillary data in the forms required by
+        the interpolation algorthm.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 

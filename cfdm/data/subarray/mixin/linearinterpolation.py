@@ -41,7 +41,7 @@ class LinearInterpolation:
                 TODO
 
         """
-        s = self._s(d1, s=s)    
+        s = self._s(d1, s=s)
         u = ua + s * (ub - ua)
 
         if returns:

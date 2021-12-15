@@ -8,7 +8,8 @@ class QuadraticLatitudeLongitudeSubarray(
     QuadraticGeographicInterpolation,
     SubsampledSubarray,
 ):
-    """A subsampled array with quadratic latitude-longitude interpolation.
+    """A subsampled array with quadratic latitude-longitude
+    interpolation.
 
     The information needed to uncompress the data is stored in a tie
     point index variable that defines the relationship between the
@@ -45,7 +46,7 @@ class QuadraticLatitudeLongitudeSubarray(
 
         lat = self._select_data(lat)
         lon = self._select_data(lon)
-          
+
         u = self._quadratic_latitude_longitude_interpolation(
             lat_a=self._select_location(lat, {d1: 0}),
             lon_a=self._select_location(lon, {d1: 0}),
@@ -143,7 +144,7 @@ class QuadraticLatitudeLongitudeSubarray(
             vp = self._fqv(va, vb, cv, d1)
             if all_cartesian:
                 del va, vb, cv
-                
+
             u_c = fv2ll(vp)
             del vp
 
@@ -159,10 +160,10 @@ class QuadraticLatitudeLongitudeSubarray(
 
             llab = fv2ll(self._fqv(va, vb, cv, 0.5))
             del va, vb, cv
-            
+
             cll = self._fw(lla, llab, llab, s_i=0.5)
             del llab
-                             
+
             u_l = self._fq(lla, llb, cll, d1)
             del lla, llb, cll
             if latitude:

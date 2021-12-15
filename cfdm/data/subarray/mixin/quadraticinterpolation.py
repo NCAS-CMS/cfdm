@@ -17,7 +17,7 @@ class QuadraticInterpolation:
 
     def _fw(self, ua, ub, u_i, d, s_i):
         """Calculate the quadratic interpolation parameter ``w`` for a
-                subsampled dimension.
+        subsampled dimension.
 
                 w = fw(ua, ub, u(i), s(i))
                   = (u(i) - (1-s(i))*ua - s(i)*ub) / (4*(1-s(i))*s(i))
@@ -55,10 +55,10 @@ class QuadraticInterpolation:
                     `numpy.ndarray`
 
         """
-#        s, one_minus_s = self._s(d, s=s_i)
+        #        s, one_minus_s = self._s(d, s=s_i)
         s = self._s(d, s=s_i)
-        one_minus_s  = 1 - s
-        
+        one_minus_s = 1 - s
+
         return (u_i - one_minus_s * ua - s * ub) / (4 * one_minus_s * s)
 
     def _quadratic_interpolation(self, ua, ub, w, d1, s=None):
@@ -110,5 +110,5 @@ class QuadraticInterpolation:
             u = ua + s * (ub - ua + 4 * w * (1 - s))
         else:
             u = ua + s * (ub - ua)
-            
+
         return u

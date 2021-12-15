@@ -130,7 +130,7 @@ class SubsampledSubarray(Subarray):
         self.dependent_tie_points = dependent_tie_points.copy()
 
     def _broadcast_bounds(self, u):
-        """TODO
+        """TODO.
 
         When the compressed data are bounds tie points, then the
         interpolated values are broadcast to each location of the
@@ -281,7 +281,8 @@ class SubsampledSubarray(Subarray):
         return u
 
     def _s(self, d, s=None):
-        """The interpolation coefficient ``s`` for the interpolation subarea.
+        """The interpolation coefficient ``s`` for the interpolation
+        subarea.
 
         Returns the interpolation coefficient ``s`` for the specified
         subsampled dimension of the interpolation subarea.
@@ -349,7 +350,7 @@ class SubsampledSubarray(Subarray):
 
         """
         ndim = self.tie_points.ndim
-        
+
         if s is not None:
             return np.full((1,) * ndim, s, dtype=_float64)
 
@@ -365,11 +366,12 @@ class SubsampledSubarray(Subarray):
             new_shape = [1] * ndim
             new_shape[d] = s.size
             s.resize(new_shape, refcheck=False)
-                
+
         return s
 
     def _select_data(self, data=None):
-        """Select tie points that correspond to this interpolation subarea.
+        """Select tie points that correspond to this interpolation
+        subarea.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
