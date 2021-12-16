@@ -1,30 +1,22 @@
 import numpy as np
 
+from ...utils import cached_property
+
 from .subarray import Subarray
 
 _float64 = np.dtype(float)
 
 
 class SubsampledSubarray(Subarray):
-    """A subsampled subarray of an array compressed by subsampling.
+    """A subarray of an array compressed by subsampling.
 
-    Each subarray of the compressed array describes a unique part of
-    the uncompressed array defined by the *indices* parameter.
-
-    A subarray corresponds to a single interpolation subarea (defined
-    by the *indices* and *subarea_indices* parameters), omitting any
+    A subarray describes a unique part of the uncompressed array, and
+    corresponds to a single interpolation subarea, omitting any
     elements that are defined by previous (in index-space)
     interpolation subareas.
 
-    When an instance is indexed, the subarray is first uncompressed
-    into a `numpy.ndarray` whose shape is given by the *shape*
-    parameter, which is the indexed as requested.
-
-    The decompression method must be defined in subclasses by
-    overriding the `__getitem__` method.
-
     See CF section 8.3 "Lossy Compression by Coordinate Subsampling"
-    and Appendix J "Coordinate Interpolation Methods".
+    and appendix J "Coordinate Interpolation Methods".
 
     .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -48,8 +40,8 @@ class SubsampledSubarray(Subarray):
             data: array_like
                 The full tie points array for all interpolation
                 subarareas. May be a bounds tie point array. The array
-                must provide values for all interpolation subareas,
-                from which the applicable elements are defined by the
+                provide values for all interpolation subareas, from
+                which the applicable elements are defined by the
                 *indices* indices.
 
             indices: `tuple` of `slice`
@@ -58,7 +50,7 @@ class SubsampledSubarray(Subarray):
                 this interpolation subarea.
 
             shape: `tuple` of `int`
-                The shape of the uncompressed array.
+                The shape of the uncompressed subarray.
 
             compressed_dimensions: `dict`
                 Mapping of compressed to uncompressed dimensions.
@@ -142,6 +134,8 @@ class SubsampledSubarray(Subarray):
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
+        .. seealso:: `_post_process`, `_trim`
+
         :Parameters:
 
             u: `numpy.ndarray`
@@ -158,7 +152,7 @@ class SubsampledSubarray(Subarray):
             return u
 
         if np.ma.isMA(u):
-            bounds = np.ma.masked_all(self.shape, dtype=u.dtype)
+            bounds = np.ma.empty(self.shape, dtype=u.dtype)
         else:
             bounds = np.empty(self.shape, dtype=u.dtype)
 
@@ -175,7 +169,6 @@ class SubsampledSubarray(Subarray):
 
             indices[d1] = slice(1, None)
             bounds[..., 1] = u[tuple(indices)]
-
         elif n == 2:
             (d1, d2) = subsampled_dimensions
 
@@ -200,7 +193,7 @@ class SubsampledSubarray(Subarray):
     def _codependent_tie_points(self, *identities):
         """Get all codependent tie points.
 
-        Returns the tie points from `data` as well as those returned
+        Returns the tie points from `data` as well as those provided
         by `get_dependent_tie_points`.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
@@ -250,7 +243,7 @@ class SubsampledSubarray(Subarray):
         return out
 
     def _post_process(self, u):
-        """Trim uncompressed data defined on an interpolation subarea.
+        """TODO Trim uncompressed data defined on an interpolation subarea.
 
         For each subsampled dimension, removes the first point of the
         interpolation subarea when it is not the first (in index
@@ -286,6 +279,8 @@ class SubsampledSubarray(Subarray):
 
         Returns the interpolation coefficient ``s`` for the specified
         subsampled dimension of the interpolation subarea.
+
+        See CF appendix J "Coordinate Interpolation Methods".
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -349,10 +344,12 @@ class SubsampledSubarray(Subarray):
         [[0.5]]
 
         """
-        ndim = self.tie_points.ndim
+        ndim = self.data.ndim
 
         if s is not None:
-            return np.full((1,) * ndim, s, dtype=_float64)
+            s = np.array(s, dtype=_float64)
+            s.resize((1,) * ndim)
+            return s
 
         size = self.shape[d]
         if self.bounds or not self.first[d]:
@@ -364,38 +361,10 @@ class SubsampledSubarray(Subarray):
         # to be broadcastable to the tie points.
         if ndim > 1:
             new_shape = [1] * ndim
-            new_shape[d] = s.size
-            s.resize(new_shape, refcheck=False)
+            new_shape[d] = size
+            s.resize(new_shape)
 
         return s
-
-    def _select_data(self, data=None):
-        """Select tie points that correspond to this interpolation
-        subarea.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        .. seealso:: `_select_location`, `_select_parameter`
-
-        :Parameters:
-
-            data: array_like or `None`
-                A full tie points array spanning all interpolation
-                subareas, from which elements for this interpolation
-                subarea will be returned. By default, or if `None`
-                then the `data` array is used.
-
-        :Returns:
-
-            `numpy.ndarray`
-                The values of the tie points array that correspond to
-                this interpolation subarea.
-
-        """
-        if data is None:
-            data = self.data
-
-        return np.asanyarray(data[self.indices])
 
     def _select_location(self, array, location={}):
         """Select interpolation parameter points that correspond to this
@@ -407,10 +376,10 @@ class SubsampledSubarray(Subarray):
 
         :Parameters:
 
-            array: `numpy.ndaray` or `None`
-                All interpolation parameters that apply to this
-                interpolation subarea array, as returned by a call of
-                `_select_parameter`.
+            array: `numpy.ndarray` or `None`
+                All tie point or interpolation parameter values that
+                apply to this interpolation subarea array, as returned
+                by a call of `_select_data` or `_select_parameter`.
 
             location: `dict`, optional
                 Identify the location within the interpolation
@@ -485,29 +454,38 @@ class SubsampledSubarray(Subarray):
         else:
             indices = self.subarea_indices
 
-        return np.asanyarray(parameter[indices])
+        parameter = np.asanyarray(parameter[indices])
+        if not np.ma.is_masked(parameter):
+            parameter = np.array(parameter)
+
+        return parameter
 
     def _trim(self, u):
-        """Trim uncompressed data defined on an interpolation subarea.
+        """Trim the raw uncompressed data defined on an interpolation subarea.
+
+        The raw uncompressed data is the basic interpolation of the
+        tie points, including the tie point locations.
 
         For each subsampled dimension, removes the first point of the
-        interpolation subarea when it is not the first (in index
-        space) of a continuous area. This is beacuse this value in the
-        uncompressed data has already been calculated from the
+        interpolation subarea when it is not the first (in
+        index-space) of a continuous area. This is beacuse this value
+        in the uncompressed data has already been calculated from the
         previous (in index space) interpolation subarea.
 
-        If *u* has been calculated from bounds tie points then no
-        elements are removed. This is because all elements are need
-        for broadcasting to each CF bounds location. See CF section
-        8.3.9 "Interpolation of Cell Boundaries".
+        However, if *u* has been calculated from bounds tie points
+        then no elements are removed. This is because all elements are
+        used for broadcasting to each CF bounds location. See CF
+        section 8.3.9 "Interpolation of Cell Boundaries".
 
         .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `_broadcast_bounds`, `_post_process`
 
         :Parameters:
 
             u: `numpy.ndarray`
-               The raw interpolated array data for the interpolation
-               subarea that includes all tie point locations.
+                The raw uncompressed data is the basic interpolation
+                of the tie points, including the tie point locations.
 
         :Returns:
 
@@ -533,19 +511,14 @@ class SubsampledSubarray(Subarray):
 
         return u
 
-    @property
+    @cached_property
     def bounds(self):
         """True if the tie points array represents bounds tie points.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        is_bounds = self._get_component("bounds", None)
-        if is_bounds is None:
-            is_bounds = self.ndim > self.data.ndim
-            self._set_component("bounds", is_bounds, copy=False)
-
-        return is_bounds
+        return self.ndim > self.data.ndim
 
     @property
     def dtype(self):
@@ -555,12 +528,3 @@ class SubsampledSubarray(Subarray):
 
         """
         return _float64
-
-    @property
-    def tie_points(self):
-        """The tie points array. An alias for `data`.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        """
-        return self.data

@@ -1,4 +1,12 @@
+# TODO: Remove once only python +3.8 is supported:
+import sys
+
+from functools import reduce
+from operator import mul
+
 import numpy as np
+
+from ..utils import cached_property
 
 from .array import Array
 
@@ -51,9 +59,15 @@ class CompressedArray(Array):
                 The uncompressed array dimension sizes.
 
             size: `int`
+                Deprecated at version 1.9.TODO.0. If set will be
+                ignored.
+
                 Number of elements in the uncompressed array.
 
             ndim: `int`
+                Deprecated at version 1.9.TODO.0. If set will be
+                ignored.
+
                 The number of uncompressed array dimensions
 
             compressed_dimensions: `dict`
@@ -86,7 +100,7 @@ class CompressedArray(Array):
                 Further named parameters and their values needed to define
                 the compressed array.
 
-            compressed_dimension: deprecated at version 1.9.TODO.0
+            compressed_dimension: Deprecated at version 1.9.TODO.0
                 Use the *compressed_dimensions* parameter instead.
 
         """
@@ -135,11 +149,15 @@ class CompressedArray(Array):
                      array. If this is not the case then an incorrect
                      value will be returned.
 
-        Currently, first and last elements are only recognised by
-        exact *indices* matches to ``(slice(0, 1, 1),) * self.ndim``
-        or ``(slice(-1, None, 1),) * self.ndim``
+        First and last elements are only recognised by exact *indices*
+        matches to:
+
+        * ``(slice(0, 1, 1),) * self.ndim``
+        * ``(slice(-1, None, 1),) * self.ndim``
 
         .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `__getitem__`
 
         :Parameters:
 
@@ -150,8 +168,8 @@ class CompressedArray(Array):
 
             `numpy.ndarray`
                 The first or last element. If the *indices* do not
-                select a first or last element then an `IndexError` is
-                raised.
+                acceptably select a first or last element then an
+                `IndexError` is raised.
 
         """
         ndim = self.ndim
@@ -160,7 +178,7 @@ class CompressedArray(Array):
                 data = self.source()
                 return np.asanyarray(data[(index,) * data.ndim])
 
-        # Indices do not (acceptably) select the first nor last element
+        # Indices do not acceptably select the first nor last element
         raise IndexError()
 
     def _get_compressed_Array(self, default=ValueError()):
@@ -231,37 +249,15 @@ class CompressedArray(Array):
         """Data-type of the uncompressed data."""
         # TODOCOMP: Make this NotImplemented when compression is refactored.
         return self.source().dtype
-        # raise NotImplementedError("Must implement dtype in subclasses")  # pragma: no cover
 
-    @property
+    #        raise NotImplementedError(
+    #            "Must implement dtype in subclasses"
+    #        )  # pragma: no cover
+
+    @cached_property
     def ndim(self):
-        """The number of dimensions of the uncompressed data.
-
-        **Examples:**
-
-        >>> d.shape
-        (73, 96)
-        >>> d.ndim
-        2
-        >>> d.size
-        7008
-
-        >>> d.shape
-        (1, 1, 1)
-        >>> d.ndim
-        3
-        >>> d.size
-        1
-
-        >>> d.shape
-        ()
-        >>> d.ndim
-        0
-        >>> d.size
-        1
-
-        """
-        return self._get_component("ndim")
+        """The number of dimensions of the uncompressed data."""
+        return len(self.shape)
 
     @property
     def shape(self):
@@ -293,35 +289,10 @@ class CompressedArray(Array):
         """
         return self._get_component("shape")
 
-    @property
+    @cached_property
     def size(self):
-        """Number of elements in the uncompressed data.
-
-        **Examples:**
-
-        >>> d.shape
-        (73, 96)
-        >>> d.size
-        7008
-        >>> d.ndim
-        2
-
-        >>> d.shape
-        (1, 1, 1)
-        >>> d.ndim
-        3
-        >>> d.size
-        1
-
-        >>> d.shape
-        ()
-        >>> d.ndim
-        0
-        >>> d.size
-        1
-
-        """
-        return self._get_component("size")
+        """Number of elements in the uncompressed data."""
+        return reduce(mul, self.shape, 1)
 
     @property
     def compressed_array(self):
@@ -481,24 +452,14 @@ class CompressedArray(Array):
                 Each iterable iterates over a particular descriptor
                 from each subarray.
 
-                There must be at least three sequences. The leading
-                three of which describe:
-
-                1. The indices of the uncompressed array that
-                   correspond to each subarray.
-
-                2. The indices of the compressed array that correspond
-                   to each subarray.
-
-                3. The shape of each uncompressed subarray.
-
-                Further sequences may be returned added by subclasses.
-
         """
         # TODOCOMP: This is a placeholder for when this is used for all
         # types of compressed array (not just subsampled)
         pass
-        # raise NotImplementedError("Must implement subarrays in subclasses")  # pragma: no cover
+
+    #        raise NotImplementedError(
+    #            "Must implement subarrays in subclasses"
+    #        )  # pragma: no cover
 
     def to_memory(self):
         """Bring an array on disk into memory and retain it there.
@@ -512,8 +473,7 @@ class CompressedArray(Array):
 
         **Examples:**
 
-        >>> b = a.to_memory()
+        >>> a.to_memory()
 
         """
-        self._get_compressed_Array(self._get_compressed_Array().to_memory())
-        return self
+        self.source().data.to_memory()

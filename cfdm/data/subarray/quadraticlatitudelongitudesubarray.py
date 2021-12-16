@@ -127,7 +127,6 @@ class QuadraticLatitudeLongitudeSubarray(
         all_cartesian = bool(location_use_3d_cartesian.all())
 
         latitude = "longitude" in self.dependent_tie_points
-        longitude = not latitude
 
         if latitude:
             fv2ll = self._fv2lat

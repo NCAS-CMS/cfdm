@@ -23,12 +23,12 @@ class LinearInterpolation:
 
             ua: `numpy.ndarray`
                 The first tie point in index space of subsampled
-                dimension 1 (in the sense of CF Appendix J Figure
+                dimension 1 (in the sense of CF appendix J Figure
                 J.1).
 
             ub: `numpy.ndarray`
                 The second tie point in index space of subsampled
-                dimension 1 (in the sense of CF Appendix J Figure
+                dimension 1 (in the sense of CF appendix J Figure
                 J.1).
 
             {{d1: `int`}}

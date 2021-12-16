@@ -1,3 +1,5 @@
+from functools import cached_property
+
 from itertools import product
 
 import numpy as np
@@ -12,8 +14,6 @@ from .subarray import (
 )
 
 _float64 = np.dtype(float)
-
-_flag_names = ("location_use_3d_cartesian",)
 
 
 class SubsampledArray(CompressedArray):
@@ -86,6 +86,8 @@ class SubsampledArray(CompressedArray):
 
     """
 
+    _flag_names = ("location_use_3d_cartesian",)
+
     def __new__(cls, *args, **kwargs):
         """Store subarray classes.
 
@@ -131,7 +133,7 @@ class SubsampledArray(CompressedArray):
                 The name of the interpolation method.
 
                 Standardised interpolation method are defined in CF
-                Appendix J "Coordinate Interpolation Methods".
+                appendix J "Coordinate Interpolation Methods".
 
                 If not set then the non-standardised interpolation
                 method is assumed to be defined by the
@@ -329,11 +331,6 @@ class SubsampledArray(CompressedArray):
             first,
             subarea_indices,
         ) in zip(*self.subarrays()):
-            #            print(u_indices,
-            #            tp_indices,
-            #            subarea_shape,
-            #            first,
-            #            subarea_indices)
             subarray = Subarray(
                 data=tie_points,
                 indices=tp_indices,
@@ -433,7 +430,7 @@ class SubsampledArray(CompressedArray):
 
         parameter = parameter.data
 
-        for name in _flag_names:
+        for name in self._flag_names:
             if name not in flag_meanings:
                 # The interpolation_subarea_flags interpolation
                 # parameter does not have this flag name in its
@@ -513,19 +510,14 @@ class SubsampledArray(CompressedArray):
 
         return parameters
 
-    @property
+    @cached_property
     def bounds(self):
         """True if the compressed array represents bounds tie points.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        is_bounds = self._get_component("bounds", None)
-        if is_bounds is None:
-            is_bounds = self.ndim > self.source().ndim
-            self._set_component("bounds", is_bounds, copy=False)
-
-        return is_bounds
+        return self.ndim > self.source().ndim
 
     @property
     def dtype(self):
@@ -916,7 +908,7 @@ class SubsampledArray(CompressedArray):
             subarea_shape = []
             interpolation_subarea_index = []
 
-            indices = np.asanyarray(tie_point_index).tolist()
+            indices = np.array(tie_point_index).tolist()
 
             first = True
 
@@ -989,8 +981,7 @@ class SubsampledArray(CompressedArray):
                 The array that is stored in memory.
 
         """
-        for v in self.source():
-            v.data.to_memory()
+        super().to_memory()
 
         for v in self.get_tie_point_indices().values():
             v.data.to_memory()

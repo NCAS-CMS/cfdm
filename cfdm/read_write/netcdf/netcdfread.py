@@ -5546,7 +5546,7 @@ class NetCDFRead(IORead):
             #                    raise ValueError(
             #                        "Bad compression type: "
             #                        f"parent_ncvar={parent_ncvar}, ncvar={ncvar}, "
-            ##                        f"c.keys()={list(c.keys())}"
+            #                        f"c.keys()={list(c.keys())}"
             #                    )
 
             if subsampled:

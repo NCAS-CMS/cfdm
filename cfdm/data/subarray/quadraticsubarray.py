@@ -12,7 +12,7 @@ class QuadraticSubarray(QuadraticInterpolation, SubsampledSubarray):
     indexed as requested.
 
     See CF section 8.3 "Lossy Compression by Coordinate Subsampling"
-    and Appendix J "Coordinate Interpolation Methods".
+    and appendix J "Coordinate Interpolation Methods".
 
     >>> import numpy as np
     >>> tie_points = np.array([15, 135, 225, 255, 345])

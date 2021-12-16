@@ -5,19 +5,13 @@ import numpy as np
 
 from ....abstract import Container
 
+from ...utils import cached_property
+
 
 class Subarray(Container):
     """Abstract base class for a subarray of compressed array.
 
-    Each subarray of the compressed array describes a unique part of
-    the uncompressed array defined by the *indices* parameter.
-
-    When an instance is indexed, the subarray is first uncompressed
-    into a `numpy.ndarray` whose shape is given by the *shape*
-    parameter, which is the indexed as requested.
-
-    The decompression method must be defined in subclasses by
-    overriding the `__getitem__` method.
+    A subarray describes a unique part of the uncompressed array.
 
     .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -45,7 +39,7 @@ class Subarray(Container):
                 subarray
 
             shape: `tuple` of `int`
-                The shape of the uncompressed array.
+                The shape of the uncompressed subarray.
 
             compressed_dimensions: `dict`
                 Mapping of compressed to uncompressed dimensions.
@@ -80,7 +74,7 @@ class Subarray(Container):
         self.compressed_dimensions = compressed_dimensions.copy()
 
     def __getitem__(self, indices):
-        """Return a subspace of the uncompressed data.
+        """Return a subspace of the uncompressed subarray.
 
         x.__getitem__(indices) <==> x[indices]
 
@@ -117,7 +111,11 @@ class Subarray(Container):
         if data is None:
             data = self.data
 
-        return np.asanyarray(data[self.indices])
+        data = np.asanyarray(data[self.indices])
+        if not np.ma.is_masked(data):
+            data = np.array(data)
+
+        return data
 
     @property
     def dtype(self):
@@ -130,7 +128,7 @@ class Subarray(Container):
             "Must implement dtype in subclasses"
         )  # pragma: no cover
 
-    @property
+    @cached_property
     def ndim(self):
         """The number of dimensions of the uncompressed data.
 
@@ -139,7 +137,7 @@ class Subarray(Container):
         """
         return len(self.shape)
 
-    @property
+    @cached_property
     def size(self):
         """The size of the uncompressed data.
 
