@@ -1,5 +1,3 @@
-from functools import cached_property
-
 from itertools import product
 
 import numpy as np
@@ -12,8 +10,7 @@ from .subarray import (
     QuadraticLatitudeLongitudeSubarray,
     QuadraticSubarray,
 )
-
-_float64 = np.dtype(float)
+from .utils import cached_property
 
 
 class SubsampledArray(CompressedArray):
@@ -314,7 +311,7 @@ class SubsampledArray(CompressedArray):
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
         # Initialise the un-sliced uncompressed array
-        uarray = np.ma.masked_all(self.shape, dtype=_float64)
+        uarray = np.ma.masked_all(self.shape, dtype=self.dtype)
 
         subsampled_dimensions = self.compressed_dimensions()
 
@@ -346,8 +343,7 @@ class SubsampledArray(CompressedArray):
         return self.get_subspace(uarray, indices, copy=True)
 
     def _conformed_dependent_tie_points(self):
-        """The dependent tie points in the form required by the
-        interpolation method.
+        """Return the dependent tie points.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -388,8 +384,7 @@ class SubsampledArray(CompressedArray):
         return dependent_tie_points
 
     def _conformed_interpolation_subarea_flags(self):
-        """The interpolation_subarea_flag interpolation parameter in the
-        form required by the interpolation method.
+        """Return interpolation_subarea_flag interpolation parameters.
 
         See CF section 3.5 "Flags" and Appendix J "Coordinate
         Interpolation Methods".
@@ -460,8 +455,7 @@ class SubsampledArray(CompressedArray):
         return out
 
     def _conformed_parameters(self):
-        """The interpolation parameters in the form required by the
-        interpolation method.
+        """Return interpolation parameters.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -519,18 +513,20 @@ class SubsampledArray(CompressedArray):
         """
         return self.ndim > self.source().ndim
 
-    @property
+    @cached_property
     def dtype(self):
         """Data-type of the uncompressed data.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        return _float64
+        return np.dtype(float)
 
     def conformed_data(self):
-        """The tie points and ancillary data in the forms required by
-        the interpolation algorthm.
+        """Return the conformed tie points and any ancillary data.
+
+        Returns the tie points and any ancillary data in the forms
+        required by the interpolation algorthm.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 

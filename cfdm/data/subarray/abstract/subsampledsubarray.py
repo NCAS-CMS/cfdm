@@ -1,10 +1,7 @@
 import numpy as np
 
 from ...utils import cached_property
-
 from .subarray import Subarray
-
-_float64 = np.dtype(float)
 
 
 class SubsampledSubarray(Subarray):
@@ -243,7 +240,7 @@ class SubsampledSubarray(Subarray):
         return out
 
     def _post_process(self, u):
-        """TODO Trim uncompressed data defined on an interpolation subarea.
+        """TODO.
 
         For each subsampled dimension, removes the first point of the
         interpolation subarea when it is not the first (in index
@@ -274,8 +271,7 @@ class SubsampledSubarray(Subarray):
         return u
 
     def _s(self, d, s=None):
-        """The interpolation coefficient ``s`` for the interpolation
-        subarea.
+        """Return the interpolation coefficient ``s``.
 
         Returns the interpolation coefficient ``s`` for the specified
         subsampled dimension of the interpolation subarea.
@@ -347,7 +343,7 @@ class SubsampledSubarray(Subarray):
         ndim = self.data.ndim
 
         if s is not None:
-            s = np.array(s, dtype=_float64)
+            s = np.array(s, dtype=self.dtype)
             s.resize((1,) * ndim)
             return s
 
@@ -355,7 +351,7 @@ class SubsampledSubarray(Subarray):
         if self.bounds or not self.first[d]:
             size = size + 1
 
-        s = np.linspace(0, 1, size, dtype=_float64)
+        s = np.linspace(0, 1, size, dtype=self.dtype)
 
         # Add extra size 1 dimensions so that s and 1-s are guaranteed
         # to be broadcastable to the tie points.
@@ -367,7 +363,9 @@ class SubsampledSubarray(Subarray):
         return s
 
     def _select_location(self, array, location={}):
-        """Select interpolation parameter points that correspond to this
+        """Select interpolation parameter points interpolation subarea.
+
+        Selects interpolation parameter points that correspond to this
         interpolation subarea.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
@@ -409,7 +407,9 @@ class SubsampledSubarray(Subarray):
         return array
 
     def _select_parameter(self, term):
-        """Select interpolation parameter values for this interpolation
+        """Select interpolation parameter values.
+
+        Selects interpolation parameter values for this interpolation
         subarea.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
@@ -461,7 +461,7 @@ class SubsampledSubarray(Subarray):
         return parameter
 
     def _trim(self, u):
-        """Trim the raw uncompressed data defined on an interpolation subarea.
+        """Trim the raw uncompressed data.
 
         The raw uncompressed data is the basic interpolation of the
         tie points, including the tie point locations.
@@ -527,4 +527,4 @@ class SubsampledSubarray(Subarray):
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        return _float64
+        return np.dtype(float)
