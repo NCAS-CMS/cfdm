@@ -323,8 +323,8 @@ class SubsampledArray(CompressedArray):
         # Interpolate the tie points for each interpolation subarea
         for (
             u_indices,
-            tp_indices,
             subarea_shape,
+            tp_indices,
             first,
             subarea_indices,
         ) in zip(*self.subarrays()):
@@ -787,16 +787,16 @@ class SubsampledArray(CompressedArray):
                             is excluded from the index, thereby
                             avoiding any overlaps between indices.
 
-               2. The indices of the tie point array that correspond
+               2. The shape of each uncompressed interpolation
+                  subarea, excluding the tie point locations defined
+                  in previous interpolation subareas.
+
+               3. The indices of the tie point array that correspond
                   to each interpolation subarea. Each index for the
                   tie point interpolated dimensions is expressed as a
                   list of two integers, rather than a `slice` object,
                   to facilitate retrieval of each tie point
                   individually.
-
-               3. The shape of each uncompressed interpolation
-                  subarea, excluding the tie point locations defined
-                  in previous interpolation subareas.
 
                4. Flags which state, for each interpolated dimension,
                   whether each interplation subarea is at the start of
@@ -816,8 +816,8 @@ class SubsampledArray(CompressedArray):
         interpolation subareas of szes 5, 6, and 6.
 
         >>> (u_indices,
-        ...  tp_indices,
         ...  interpolation_subarea_shapes,
+        ...  tp_indices,
         ...  new_continuous_area,
         ...  interpolation_subarea_indices) = x.subarrays()
         >>> for i in u_indices:
@@ -829,15 +829,6 @@ class SubsampledArray(CompressedArray):
         (slice(10, 20, None), slice(None, None, None), slice(0, 5, None))
         (slice(10, 20, None), slice(None, None, None), slice(5, 10, None))
         (slice(10, 20, None), slice(None, None, None), slice(10, 15, None))
-        >>> for i in tp_indices,
-        ...    print(i)
-        ...
-        (slice(0, 2, None), slice(None, None, None), slice(0, 2, None))
-        (slice(0, 2, None), slice(None, None, None), slice(1, 3, None))
-        (slice(0, 2, None), slice(None, None, None), slice(2, 4, None))
-        (slice(2, 4, None), slice(None, None, None), slice(0, 2, None))
-        (slice(2, 4, None), slice(None, None, None), slice(1, 3, None))
-        (slice(2, 4, None), slice(None, None, None), slice(2, 4, None))
         >>> for i in interpolation_subarea_shapes:
         ...    print(i)
         ...
@@ -847,6 +838,15 @@ class SubsampledArray(CompressedArray):
         (10, 12, 5)
         (10, 12, 5)
         (10, 12, 5)
+        >>> for i in tp_indices,
+        ...    print(i)
+        ...
+        (slice(0, 2, None), slice(None, None, None), slice(0, 2, None))
+        (slice(0, 2, None), slice(None, None, None), slice(1, 3, None))
+        (slice(0, 2, None), slice(None, None, None), slice(2, 4, None))
+        (slice(2, 4, None), slice(None, None, None), slice(0, 2, None))
+        (slice(2, 4, None), slice(None, None, None), slice(1, 3, None))
+        (slice(2, 4, None), slice(None, None, None), slice(2, 4, None))
         >>> for i in new_continuous_area:
         ...    print(i)
         ...
@@ -958,8 +958,8 @@ class SubsampledArray(CompressedArray):
 
         return (
             product(*u_indices),
-            product(*tp_indices),
             product(*interpolation_subarea_shapes),
+            product(*tp_indices),
             product(*new_continuous_area),
             product(*interpolation_subarea_indices),
         )

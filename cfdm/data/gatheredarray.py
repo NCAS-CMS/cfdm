@@ -1,8 +1,8 @@
-from functools import reduce
-from operator import mul
+from itertools import product
 
 import numpy as np
 
+from .subarray import GatheredSubarray
 from .abstract import CompressedArray
 
 
@@ -16,9 +16,25 @@ class GatheredArray(CompressedArray):
     The information needed to uncompress the data is stored in a "list
     variable" that gives the indices of the required points.
 
+    See CF section 8.2. "Lossless Compression by Gathering".
+
     .. versionadded:: (cfdm) 1.7.0
 
     """
+
+    def __new__(cls, *args, **kwargs):
+        """Store subarray classes.
+
+        If a child class requires different subarray classes than the
+        ones defined here, then they must be defined in the __new__
+        method of the child class.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        instance = super().__new__(cls)
+        instance._Subarray = {"gathered": GatheredSubarray}
+        return instance
 
     def __init__(
         self,
@@ -38,12 +54,16 @@ class GatheredArray(CompressedArray):
                 The compressed array.
 
             shape: `tuple`
-                The uncompressed array dimension sizes.
+                The shape of the uncompressed array.
 
             size: `int`
+                Deprecated at version 1.9.TODO.0. Ignored if set.
+
                 Number of elements in the uncompressed array.
 
             ndim: `int`
+                Deprecated at version 1.9.TODO.0. Ignored if set.
+
                 The number of uncompressed array dimensions
 
             compressed_dimensions: `dict`
@@ -68,8 +88,6 @@ class GatheredArray(CompressedArray):
         super().__init__(
             compressed_array=compressed_array,
             shape=shape,
-            ndim=ndim,
-            size=size,
             compressed_dimension=compressed_dimension,
             compressed_dimensions=compressed_dimensions.copy(),
             list_variable=list_variable,
@@ -77,77 +95,71 @@ class GatheredArray(CompressedArray):
         )
 
     def __getitem__(self, indices):
-        """Returns a subspace of the uncompressed data as a numpy array.
+        """Return a subspace of the uncompressed data.
 
         x.__getitem__(indices) <==> x[indices]
 
-        The indices that define the subspace are relative to the
-        uncompressed data and must be either `Ellipsis` or a sequence that
-        contains an index for each dimension. In the latter case, each
-        dimension's index must either be a `slice` object or a sequence of
-        two or more integers.
-
-        Indexing is similar to numpy indexing. The only difference to
-        numpy indexing (given the restrictions on the type of indices
-        allowed) is:
-
-          * When two or more dimension's indices are sequences of integers
-            then these indices work independently along each dimension
-            (similar to the way vector subscripts work in Fortran).
+        Returns a subspace of the uncompressed array as an independent
+        numpy array.
 
         """
         # ------------------------------------------------------------
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
-
-        compressed_array = self._get_compressed_Array().array
+        Subarray = self._Subarray[self.get_compression_type()]
 
         # Initialise the un-sliced uncompressed array
-        uarray = np.ma.masked_all(self.shape, dtype=self.dtype)
+        u = np.ma.masked_all(self.shape, dtype=self.dtype)
 
-        # Initialise the uncomprssed array
-        (
-            compressed_dimension,
-            compressed_axes,
-        ) = self.compressed_dimensions().popitem()
+        compressed_dimensions = self.compressed_dimensions()
 
-        n_compressed_axes = len(compressed_axes)
+        conformed_data = self.conformed_data()
+        compressed_data = conformed_data["data"]
+        unravelled_indices = conformed_data["unravelled_indices"]
 
-        uncompressed_shape = self.shape
-        partial_uncompressed_shapes = [
-            reduce(
-                mul, [uncompressed_shape[i] for i in compressed_axes[j:]], 1
+        for u_indices, u_shape, c_indices in zip(*self.subarrays()):
+            subarray = Subarray(
+                data=compressed_data,
+                indices=c_indices,
+                shape=u_shape,
+                compressed_dimensions=compressed_dimensions,
+                unravelled_indices=unravelled_indices,
             )
-            for j in range(1, n_compressed_axes)
-        ]
+            u[u_indices] = subarray[...]
 
-        sample_indices = [slice(None)] * compressed_array.ndim
-        u_indices = [slice(None)] * self.ndim
+        if indices is Ellipsis:
+            return u
 
-        list_array = self.get_list().data.array
+        return self.get_subspace(u, indices, copy=True)
 
-        zeros = [0] * n_compressed_axes
-        for j, b in enumerate(list_array):
-            sample_indices[compressed_dimension] = slice(j, j + 1)
+    def conformed_data(self):
+        """The compressed data and list variable.
 
-            # Note that it is important for indices a and b to be
-            # integers (rather than the slices a:a+1 and b:b+1) so
-            # that these dimensions are dropped from uarray[u_indices]
-            u_indices[compressed_axes[0] : compressed_axes[-1] + 1] = zeros
-            for i, z in zip(compressed_axes[:-1], partial_uncompressed_shapes):
-                if b >= z:
-                    (a, b) = divmod(b, z)
-                    u_indices[i] = a
+        .. versionadded:: (cfdm) 1.9.TODO.0
 
-            u_indices[compressed_axes[-1]] = b
+        :Returns:
 
-            compressed = compressed_array[tuple(sample_indices)]
-            sample_indices[compressed_dimension] = 0
-            compressed = compressed[tuple(sample_indices)]
+            `dict`
 
-            uarray[tuple(u_indices)] = compressed
+                The conformed gathered data, with the key ``'data'``;
+                and the `tuple` of unravelled list indices with the
+                key ``'unravelled_indices'``.
 
-        return self.get_subspace(uarray, indices, copy=True)
+        """
+        out = super().conformed_data()
+
+        _, u_dims = self.compressed_dimensions().popitem()
+        list_variable = np.array(self.get_list())
+
+        unravelled_indices = [slice(None)] * self.ndim
+
+        unravelled_indices[u_dims[0] : u_dims[-1] + 1] = np.unravel_index(
+            list_variable, self.shape[u_dims[0] : u_dims[-1] + 1]
+        )
+
+        out["unravelled_indices"] = tuple(unravelled_indices)
+
+        return out
 
     def get_list(self, default=ValueError()):
         """Return the list variable for a compressed array.
@@ -167,14 +179,89 @@ class GatheredArray(CompressedArray):
             `List`
                 The list variable.
 
-        **Examples**
-
-        >>> l = g.get_list()
-
-        >>> l = g.get_list(default=None)
-
         """
         return self._get_component("list_variable", default=default)
+
+    def subarrays(self):
+        """Return descriptors for every subarray.
+
+        These descriptors are used during subarray decompression.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Returns:
+
+            sequence of iterators
+                Each iterable iterates over a particular descriptor
+                from each subarray.
+
+                1. The indices of the uncompressed array that
+                   correspond to each subarray.
+
+                2. The shape of each uncompressed subarray.
+
+                3. The indices of the compressed array that correspond
+                   to each subarray.
+
+        **Examples**
+
+        An original 3-d array with shape (4, 73, 96) has been
+        compressed by gathering the dimensions with sizes 73 and 96
+        respectively.
+
+        >>> u_indices, u_shapes, c_indices = x.subarrays()
+        >>> for i in u_indices:
+        ...    print(i)
+        ...
+        (slice(0, 1, None), slice(None, None, None), slice(None, None, None))
+        (slice(1, 2, None), slice(None, None, None), slice(None, None, None))
+        (slice(2, 3, None), slice(None, None, None), slice(None, None, None))
+        (slice(3, 4, None), slice(None, None, None), slice(None, None, None))
+        >>> for i in u_shapes
+        ...    print(i)
+        ...
+        (1, 73, 96)
+        (1, 73, 96)
+        (1, 73, 96)
+        (1, 73, 96)
+        >>> for i in c_indices:
+        ...    print(i)
+        ...
+        (slice(0, 1, None), slice(None, None, None))
+        (slice(1, 2, None), slice(None, None, None))
+        (slice(2, 3, None), slice(None, None, None))
+        (slice(3, 4, None), slice(None, None, None))
+
+        """
+        d1, u_dims = self.compressed_dimensions().popitem()
+        uncompressed_shape = self.shape
+
+        # The indices of the uncompressed array that correspond to
+        # each subarray, and the shape of each uncompressed subarray.
+        u_indices = []
+        u_shapes = []
+        for d, size in enumerate(uncompressed_shape):
+            if d in u_dims:
+                u_indices.append((slice(None),))
+                u_shapes.append((size,))
+            else:
+                u_indices.append([slice(i, i + 1) for i in range(size)])
+                u_shapes.append((1,) * size)
+
+        # The indices of the compressed array that correspond to each
+        # subarray
+        c_indices = []
+        for d, size in enumerate(self.source().shape):
+            if d == d1:
+                c_indices.append((slice(None),))
+            else:
+                c_indices.append([slice(i, i + 1) for i in range(size)])
+
+        return (
+            product(*u_indices),
+            product(*u_shapes),
+            product(*c_indices),
+        )
 
     def to_memory(self):
         """Bring an array on disk into memory and retain it there.
@@ -184,13 +271,15 @@ class GatheredArray(CompressedArray):
         :Returns:
 
             `{{class}}`
-                The array that is stored in memory.
+                TODO
 
         **Examples**
 
-        >>> b = a.to_memory()
+        >>> a.to_memory()
 
         """
         super().to_memory()
-        self.get_list().data.to_memory()
-        return self
+
+        list_variable = self.get_list(None)
+        if list_variable is not None:
+            list_variable.data.to_memory()

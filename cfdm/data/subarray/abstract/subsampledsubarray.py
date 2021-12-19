@@ -111,12 +111,16 @@ class SubsampledSubarray(Subarray):
             indices=indices,
             shape=shape,
             compressed_dimensions=compressed_dimensions,
+            subarea_indices=subarea_indices,
+            first=first,
+            parameters=parameters.copy(),
+            dependent_tie_points=dependent_tie_points.copy(),
         )
 
-        self.subarea_indices = subarea_indices
-        self.first = first
-        self.parameters = parameters.copy()
-        self.dependent_tie_points = dependent_tie_points.copy()
+#        self.subarea_indices = subarea_indices
+#        self.first = first
+#        self.parameters = parameters.copy()
+#        self.dependent_tie_points = dependent_tie_points.copy()
 
     def _broadcast_bounds(self, u):
         """TODO.
@@ -153,7 +157,7 @@ class SubsampledSubarray(Subarray):
         else:
             bounds = np.empty(self.shape, dtype=u.dtype)
 
-        subsampled_dimensions = sorted(self.compressed_dimensions)
+        subsampled_dimensions = sorted(self.compressed_dimensions())
         n = len(subsampled_dimensions)
 
         indices = [slice(None)] * u.ndim
@@ -499,7 +503,7 @@ class SubsampledSubarray(Subarray):
 
         take_slice = False
         indices = [slice(None)] * u.ndim
-        for dim in self.compressed_dimensions:
+        for dim in self.compressed_dimensions():
             if first[dim]:
                 continue
 
@@ -520,7 +524,7 @@ class SubsampledSubarray(Subarray):
         """
         return self.ndim > self.data.ndim
 
-    @property
+    @cached_property
     def dtype(self):
         """The data-type of the uncompressed data.
 

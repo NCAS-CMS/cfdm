@@ -124,15 +124,23 @@ from .data import (
     GatheredArray,
     NetCDFArray,
     NumpyArray,
+    RaggedArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
     SubsampledArray,
+)
+
+from .data import (
     BiLinearSubarray,
     BiQuadraticLatitudeLongitudeSubarray,
+    GatheredSubarray,
     LinearSubarray,
     QuadraticLatitudeLongitudeSubarray,
     QuadraticSubarray,
+    RaggedSubarray,
+    Subarray,
+    SubsampledSubarray,
 )
 
 from .count import Count

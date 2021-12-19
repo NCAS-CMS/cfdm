@@ -23,6 +23,7 @@ class Subarray(Container):
         indices=None,
         shape=None,
         compressed_dimensions={},
+            **kwargs,
     ):
         """**Initialisation**
 
@@ -65,13 +66,16 @@ class Subarray(Container):
                 *Parameter example:*
                   ``{0: (0,), 2: (2,)}``
 
-        """
-        super().__init__()
+            kwargs: optional
+                TODO
 
-        self.data = data
-        self.indices = indices
-        self.shape = shape
-        self.compressed_dimensions = compressed_dimensions.copy()
+        """
+        super().__init__(data=data,indices=indices, shape=shape, compressed_dimensions=compressed_dimensions.copy(), **kwargs)
+
+#        self.data = data
+#        self.indices = indices
+#        self.shape = shape
+#        self.compressed_dimensions = compressed_dimensions.copy()
 
     def __getitem__(self, indices):
         """Return a subspace of the uncompressed subarray.
@@ -137,6 +141,15 @@ class Subarray(Container):
         """
         return len(self.shape)
 
+    @property
+    def shape(self):
+        """The number of dimensions of the uncompressed data.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        return self._get_component("shape")
+
     @cached_property
     def size(self):
         """The size of the uncompressed data.
@@ -145,3 +158,25 @@ class Subarray(Container):
 
         """
         return reduce(mul, self.shape, 1)
+
+    def compressed_dimensions(self):
+        """Mapping of compressed to uncompressed dimensions.
+
+        A dictionary key is a position of a dimension in the
+        compressed data, with a value of the positions of the
+        corresponding dimensions in the uncompressed data. Compressed
+        array dimensions that are not compressed are omitted from the
+        mapping.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Returns:
+
+            `dict`
+                The mapping of dimensions of the compressed array to
+                their corresponding dimensions in the uncompressed
+                array. Compressed array dimensions that are not
+                compressed are omitted from the mapping.
+
+        """
+        return self._get_component("compressed_dimensions").copy()

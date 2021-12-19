@@ -1,11 +1,11 @@
-import numpy
+from itertools import product
 
-from . import abstract, mixin
+import numpy as np
+
+from .abstract import RaggedArray
 
 
-class RaggedIndexedContiguousArray(
-    mixin.RaggedContiguous, mixin.RaggedIndexed, abstract.CompressedArray
-):
+class RaggedIndexedContiguousArray(RaggedArray):
     """An underlying indexed contiguous ragged array.
 
     A collection of features, each of which is sequence of (vertical)
@@ -41,13 +41,17 @@ class RaggedIndexedContiguousArray(
                 The compressed array.
 
             shape: `tuple`
-                The uncompressed array dimension sizes.
+                The shape of the uncompressed array.
 
             size: `int`
+                Deprecated at version 1.9.TODO.0. Ignored if set.
+
                 Number of elements in the uncompressed array.
 
             ndim: `int`
-                The number of uncompressed array dimensions
+                Deprecated at version 1.9.TODO.0. Ignored if set.
+
+                The number of uncompressed array dimensions.
 
             count_variable: `Count`
                 The count variable required to uncompress the data,
@@ -61,106 +65,90 @@ class RaggedIndexedContiguousArray(
         super().__init__(
             compressed_array=compressed_array,
             shape=shape,
-            size=size,
-            ndim=ndim,
-            count_variable=count_variable,
-            index_variable=index_variable,
-            compression_type="ragged indexed contiguous",
+            count=count_variable,
+            index=index_variable,
             compressed_dimensions={0: (0, 1, 2)},
         )
 
-    def __getitem__(self, indices):
-        """Returns a subspace of the uncompressed data a numpy array.
+    def subarrays(self):
+        """Return descriptors for every subarray.
 
-        x.__getitem__(indices) <==> x[indices]
+        Theses descriptors are used during subarray decompression.
 
-        The indices that define the subspace are relative to the
-        uncompressed data and must be either `Ellipsis` or a sequence that
-        contains an index for each dimension. In the latter case, each
-        dimension's index must either be a `slice` object or a sequence of
-        two or more integers.
-
-        Indexing is similar to numpy indexing. The only difference to
-        numpy indexing (given the restrictions on the type of indices
-        allowed) is:
-
-          * When two or more dimension's indices are sequences of integers
-            then these indices work independently along each dimension
-            (similar to the way vector subscripts work in Fortran).
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        """
-        # ------------------------------------------------------------
-        # Method: Uncompress the entire array and then subspace it
-        # ------------------------------------------------------------
-
-        compressed_array = self._get_compressed_Array()
-
-        # Initialise the un-sliced uncompressed array
-        uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
-
-        count_array = self.get_count().data.array
-        index_array = self.get_index().data.array
-
-        # Loop over instances
-        for i in range(uarray.shape[0]):
-
-            # For all of the profiles in ths instance, find the
-            # locations in the count array of the number of elements
-            # in the profile
-            xprofile_indices = numpy.where(index_array == i)[0]
-
-            # Find the number of profiles in this instance
-            n_profiles = xprofile_indices.size
-
-            # Loop over profiles in this instance
-            for j in range(uarray.shape[1]):
-                if j >= n_profiles:
-                    continue
-
-                # Find the location in the count array of the number
-                # of elements in this profile
-                profile_index = xprofile_indices[j]
-
-                if profile_index == 0:
-                    start = 0
-                else:
-                    start = int(count_array[:profile_index].sum())
-
-                stop = start + int(count_array[profile_index])
-
-                sample_indices = slice(start, stop)
-
-                u_indices = (
-                    i,  # slice(i, i+1),
-                    j,  # slice(j, j+1),
-                    slice(0, stop - start),
-                )
-                # slice(0, sample_indices.stop - sample_indices.start))
-
-                uarray[u_indices] = compressed_array[(sample_indices,)]
-
-        return self.get_subspace(uarray, indices, copy=True)
-
-    def to_memory(self):
-        """Bring an array on disk into memory and retain it there.
-
-        There is no change to an array that is already in memory.
-
-        .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Returns:
 
-            `{{class}}`
-                The array that is stored in memory.
+            sequence of iterators
+                Each iterable iterates over a particular descriptor
+                from each subarray.
+
+                There must be at least three sequences. The leading
+                three of which describe:
+
+                1. The indices of the uncompressed array that
+                   correspond to each subarray.
+
+                2. The shape of each uncompressed subarray.
+
+                3. The indices of the compressed array that correspond
+                   to each subarray.
 
         **Examples**
 
-        >>> b = a.to_memory()
+        TODO
 
         """
-        super().to_memory()
-        self.get_count().data.to_memory()
-        self.get_index().data.to_memory()
-        return self
+        d1, (u_dim1, u_dim2, u_dim3) = self.compressed_dimensions().popitem()
+        uncompressed_shape = self.shape
+
+        n_features = uncompressed_shape[u_dim1]
+        max_n_profiles = uncompressed_shape[u_dim2]
+
+        # The indices of the uncompressed array that correspond to
+        # each subarray
+        u_indices = [(slice(None),)] * self.ndim
+        u_indices[u_dim1] = [slice(i, i + 1) for i in range(n_features)]
+        u_indices[u_dim2] = [slice(j, j + 1) for j in range(max_n_profiles)]
+
+        # The shape of each uncompressed subarray
+        u_shapes = [(n,) for n in uncompressed_shape]
+        u_shapes[u_dim1] = (1,) * n_features
+        u_shapes[u_dim2] = (1,) * max_n_profiles
+
+        # The indices of the compressed array that correspond to each
+        # subarray
+        c_indices = [(slice(None),)] * self.source().ndim
+
+        index = np.array(self.get_index())
+        unique = np.unique(index).tolist()
+        count_partial_sums = np.cumsum(np.array(self.get_count())).tolist()
+
+        # Loop over features
+        ind = []
+        for i in unique:
+            # find the locations in the count array for the profiles
+            # in this feature.
+            profile_locations = np.where(index == i)[0]
+
+            for j in profile_locations:
+                if not j:
+                    start = 0
+                else:
+                    start = count_partial_sums[j - 1]
+
+                ind.append(slice(start, count_partial_sums[j]))
+
+            # Add zero-sized slices for this feature's "missing"
+            # profiles
+            ind.extend(
+                (slice(0, 0),) * (max_n_profiles - profile_locations.size)
+            )
+
+        c_indices[d1] = ind
+
+        return (
+            product(*u_indices),
+            product(*u_shapes),
+            product(*c_indices),
+        )

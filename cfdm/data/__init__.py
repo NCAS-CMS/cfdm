@@ -1,12 +1,16 @@
-from .abstract import Array, CompressedArray
+from .abstract import Array, CompressedArray, RaggedArray
 
 from .subarray import (
     BiLinearSubarray,
     BiQuadraticLatitudeLongitudeSubarray,
+    GatheredSubarray,
     LinearSubarray,
     QuadraticLatitudeLongitudeSubarray,
     QuadraticSubarray,
+    RaggedSubarray,
 )
+
+from .subarray.abstract import Subarray, SubsampledSubarray
 
 from .gatheredarray import GatheredArray
 from .netcdfarray import NetCDFArray

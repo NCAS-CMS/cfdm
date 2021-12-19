@@ -1,9 +1,11 @@
-import numpy
+from itertools import product
 
-from . import abstract, mixin
+import numpy as np
+
+from .abstract import RaggedArray
 
 
-class RaggedContiguousArray(mixin.RaggedContiguous, abstract.CompressedArray):
+class RaggedContiguousArray(RaggedArray):
     """An underlying contiguous ragged array.
 
     A collection of features stored using a contiguous ragged array
@@ -37,13 +39,17 @@ class RaggedContiguousArray(mixin.RaggedContiguous, abstract.CompressedArray):
                 The compressed data.
 
             shape: `tuple`
-                The uncompressed array dimension sizes.
+                The shape of the uncompressed array.
 
             size: `int`
+                Deprecated at version 1.9.TODO.0. Ignored if set.
+
                 Number of elements in the uncompressed array.
 
             ndim: `int`
-                The number of uncompressed array dimensions
+                Deprecated at version 1.9.TODO.0. Ignored if set.
+
+                The number of uncompressed array dimensions.
 
             count_variable: `Count`
                 The count variable required to uncompress the data,
@@ -53,88 +59,67 @@ class RaggedContiguousArray(mixin.RaggedContiguous, abstract.CompressedArray):
         super().__init__(
             compressed_array=compressed_array,
             shape=shape,
-            size=size,
-            ndim=ndim,
-            count_variable=count_variable,
-            compression_type="ragged contiguous",
+            count=count_variable,
             compressed_dimensions={0: (0, 1)},
         )
 
-    def __getitem__(self, indices):
-        """Returns a subspace of the array defined by the given indices.
+    def subarrays(self):
+        """Return descriptors for every subarray.
 
-        That is, returns a subspace of the uncompressed data in an
-        independent numpy array. Note that:
+        Theses descriptors are used during subarray decompression.
 
-        x.__getitem__(indices) <==> x[indices]
-
-        The indices that define the subspace are relative to the
-        uncompressed data and must be either `Ellipsis` or a sequence that
-        contains an index for each dimension. In the latter case, each
-        dimension's index must either be a `slice` object or a sequence of
-        two or more integers.
-
-        Indexing is similar to numpy indexing. The only difference to
-        numpy indexing (given the restrictions on the type of indices
-        allowed) is:
-
-        * When two or more dimension's indices are sequences of integers
-          then these indices work independently along each dimension
-          (similar to the way vector subscripts work in Fortran).
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        """
-        # ------------------------------------------------------------
-        # Method: Uncompress the entire array and then subspace it
-        # ------------------------------------------------------------
-
-        compressed_array = self._get_compressed_Array()
-
-        # Initialise the un-sliced uncompressed array
-        uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
-
-        # --------------------------------------------------------
-        # Compression by contiguous ragged array
-        #
-        # The uncompressed array has dimensions (instance
-        # dimension, element dimension).
-        # --------------------------------------------------------
-
-        count_array = self.get_count().data.array
-
-        start = 0
-        for i, n in enumerate(count_array):
-            n = int(n)
-            sample_indices = slice(start, start + n)
-
-            u_indices = (
-                i,
-                slice(0, sample_indices.stop - sample_indices.start),
-            )
-
-            uarray[u_indices] = compressed_array[(sample_indices,)]
-            start += n
-
-        return self.get_subspace(uarray, indices, copy=True)
-
-    def to_memory(self):
-        """Bring an array on disk into memory and retain it there.
-
-        There is no change to an array that is already in memory.
-
-        .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Returns:
 
-            `{{class}}`
-                The array that is stored in memory.
+            sequence of iterators
+                Each iterable iterates over a particular descriptor
+                from each subarray.
+
+                There must be at least three sequences. The leading
+                three of which describe:
+
+                1. The indices of the uncompressed array that
+                   correspond to each subarray.
+
+                2. The shape of each uncompressed subarray.
+
+                3. The indices of the compressed array that correspond
+                   to each subarray.
 
         **Examples**
 
-        >>> b = a.to_memory()
+        TODO
 
         """
-        super().to_memory()
-        self.get_count().data.to_memory()
-        return self
+        d1, (u_dim1, u_dim2) = self.compressed_dimensions().popitem()
+        uncompressed_shape = self.shape
+
+        n_features = uncompressed_shape[u_dim1]
+
+        # The indices of the uncompressed array that correspond to
+        # each subarray
+        u_indices = [(slice(None),)] * self.ndim
+        u_indices[u_dim1] = [slice(i, i + 1) for i in range(n_features)]
+
+        # The shape of each uncompressed subarray
+        u_shapes = [(n,) for n in uncompressed_shape]
+        u_shapes[u_dim1] = (1,) * n_features
+
+        # The indices of the compressed array that correspond to each
+        # subarray
+        c_indices = [(slice(None),)] * self.source().ndim
+        count = np.array(self.get_count()).tolist()
+        index = []
+        start = 0
+        for i, n in enumerate(count):
+            index.append(slice(start, start + n))
+            start += n
+
+        c_indices[d1] = index
+
+        return (
+            product(*u_indices),
+            product(*u_shapes),
+            product(*c_indices),
+        )

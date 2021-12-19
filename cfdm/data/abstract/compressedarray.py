@@ -27,7 +27,7 @@ class CompressedArray(Array):
     def __new__(cls, *args, **kwargs):
         """Store subarray classes.
 
-        A child class must define its subarray class(es) in the
+        A child class must define its subarray classes in the
         `_Subarray` dictionary.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
@@ -122,20 +122,20 @@ class CompressedArray(Array):
 
         self._set_compressed_Array(compressed_array, copy=False)
 
-    def __getitem__(self, indices):
-        """Return a subspace of the uncompressed data.
-
-        x.__getitem__(indices) <==> x[indices]
-
-        Returns a subspace of the uncompressed array as an independent
-        numpy array.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        """
-        raise NotImplementedError(
-            "Must implement __getitem__ in subclasses"
-        )  # pragma: no cover
+#    def __getitem__(self, indices):
+#        """Return a subspace of the uncompressed data.
+#
+#        x.__getitem__(indices) <==> x[indices]
+#
+#        Returns a subspace of the uncompressed array as an independent
+#        numpy array.
+#
+#        .. versionadded:: (cfdm) 1.9.TODO.0
+#
+#        """
+#        raise NotImplementedError(
+#            "Must implement __getitem__ in subclasses"
+#        )  # pragma: no cover
 
     def _first_or_last_index(self, indices):
         """Return the first or last element of the uncompressed array.
@@ -247,13 +247,10 @@ class CompressedArray(Array):
     @property
     def dtype(self):
         """Data-type of the uncompressed data."""
-        # TODOCOMP: Make this NotImplemented when compression is refactored.
-        return self.source().dtype
-
-    #        raise NotImplementedError(
-    #            "Must implement dtype in subclasses"
-    #        )  # pragma: no cover
-
+        raise NotImplementedError(
+            "Must implement dtype in subclasses"
+        )  # pragma: no cover
+    
     @cached_property
     def ndim(self):
         """The number of dimensions of the uncompressed data."""
@@ -262,29 +259,6 @@ class CompressedArray(Array):
     @property
     def shape(self):
         """Shape of the uncompressed data.
-
-        **Examples:**
-
-        >>> d.shape
-        (73, 96)
-        >>> d.ndim
-        2
-        >>> d.size
-        7008
-
-        >>> d.shape
-        (1, 1, 1)
-        >>> d.ndim
-        3
-        >>> d.size
-        1
-
-        >>> d.shape
-        ()
-        >>> d.ndim
-        0
-        >>> d.size
-        1
 
         """
         return self._get_component("shape")
@@ -408,8 +382,7 @@ class CompressedArray(Array):
         :Returns:
 
             `dict`
-                The conformed compressed data, with the key
-                ``'data'``.
+                The compressed data, with the key ``'data'``.
 
         """
         return {"data": self.source().copy()}
@@ -453,14 +426,10 @@ class CompressedArray(Array):
                 from each subarray.
 
         """
-        # TODOCOMP: This is a placeholder for when this is used for all
-        # types of compressed array (not just subsampled)
-        pass
-
-    #        raise NotImplementedError(
-    #            "Must implement subarrays in subclasses"
-    #        )  # pragma: no cover
-
+        raise NotImplementedError(
+            "Must implement subarrays in subclasses"
+        )  # pragma: no cover
+    
     def to_memory(self):
         """Bring an array on disk into memory and retain it there.
 
@@ -469,7 +438,7 @@ class CompressedArray(Array):
         :Returns:
 
             `{{class}}`
-                The array that is stored in memory.
+                TODO
 
         **Examples:**
 
