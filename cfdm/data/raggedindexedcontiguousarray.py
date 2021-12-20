@@ -32,6 +32,8 @@ class RaggedIndexedContiguousArray(RaggedArray):
         ndim=None,
         count_variable=None,
         index_variable=None,
+        source=None,
+        copy=True,
     ):
         """**Initialisation**
 
@@ -43,6 +45,14 @@ class RaggedIndexedContiguousArray(RaggedArray):
             shape: `tuple`
                 The shape of the uncompressed array.
 
+            count_variable: `Count`
+                The count variable required to uncompress the data,
+                corresponding to a CF-netCDF count variable.
+
+            index_variable: `Index`
+                The index variable required to uncompress the data,
+                corresponding to a CF-netCDF CF-netCDF index variable.
+
             size: `int`
                 Deprecated at version 1.9.TODO.0. Ignored if set.
 
@@ -53,21 +63,15 @@ class RaggedIndexedContiguousArray(RaggedArray):
 
                 The number of uncompressed array dimensions.
 
-            count_variable: `Count`
-                The count variable required to uncompress the data,
-                corresponding to a CF-netCDF count variable.
-
-            index_variable: `Index`
-                The index variable required to uncompress the data,
-                corresponding to a CF-netCDF CF-netCDF index variable.
-
         """
         super().__init__(
             compressed_array=compressed_array,
             shape=shape,
-            count=count_variable,
-            index=index_variable,
+            count_variable=count_variable,
+            index_variable=index_variable,
             compressed_dimensions={0: (0, 1, 2)},
+            source=source,
+            copy=copy,
         )
 
     def subarrays(self):
@@ -96,7 +100,42 @@ class RaggedIndexedContiguousArray(RaggedArray):
 
         **Examples**
 
-        TODO
+        An original 3-d array with shape (2, 3, 4) comprising 2
+        timeSeriesProfile features has been compressed as an indexed
+        contiguous ragged array. The first feature has 3 profiles with
+        counts of 2, 4, and 3 elements, at compressed locations (4,
+        5), (0, 1, 2, 3), and (9, 10, 11) respectively. The second
+        feature has 1 profile with a count of 3 elements, at
+        compressed locations (6, 7, 8).
+
+        >>> u_indices, u_shapes, c_indices = x.subarrays()
+        >>> for i in u_indices:
+        ...    print(i)
+        ...
+        (slice(0, 1, None), slice(0, 1, None), slice(None, None, None))
+        (slice(0, 1, None), slice(1, 2, None), slice(None, None, None))
+        (slice(0, 1, None), slice(2, 3, None), slice(None, None, None))
+        (slice(1, 2, None), slice(0, 1, None), slice(None, None, None))
+        (slice(1, 2, None), slice(1, 2, None), slice(None, None, None))
+        (slice(1, 2, None), slice(2, 3, None), slice(None, None, None))
+        >>> for i in u_shapes
+        ...    print(i)
+        ...
+        (1, 1, 4)
+        (1, 1, 4)
+        (1, 1, 4)
+        (1, 1, 4)
+        (1, 1, 4)
+        (1, 1, 4)
+        >>> for i in c_indices:
+        ...    print(i)
+        ...
+        (slice(4, 6, None),)
+        (slice(0, 4, None),)
+        (slice(9, 12, None),)
+        (slice(6, 9, None),)
+        (slice(0, 0, None),)
+        (slice(0, 0, None),)
 
         """
         d1, (u_dim1, u_dim2, u_dim3) = self.compressed_dimensions().popitem()

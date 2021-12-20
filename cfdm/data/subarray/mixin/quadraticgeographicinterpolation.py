@@ -6,7 +6,7 @@ x, y, z = (0, 1, 2)
 
 
 class QuadraticGeographicInterpolation(QuadraticInterpolation):
-    """Mixin class for quadratic geographic interpolation of tie points.
+    """Mixin class for quadratic geographic interpolation.
 
     See CF appendix J "Coordinate Interpolation Methods".
 
@@ -15,7 +15,9 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
     """
 
     def _fcea2cv(self, va, vb, ce, ca):
-        """The three-dimensional cartesian representation of the
+        """The three-dimensional cartesian interpolation coefficients.
+
+        The three-dimensional cartesian representation of the
         interpolation coefficients calculated from the parametric
         representation.
 
@@ -113,7 +115,8 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
                 longitude).
 
             vp_i: `tuple` of `numpy.ndarray`
-                The vector representation of ... TODO
+                The vector representation of the uncompressed value at
+                the same location as *s_i*.
 
             {{d: `int`}}
 
@@ -316,44 +319,8 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
 
         return tuple(out)
 
-    #    def _fqll(
-    #        self,
-    #        lat_a,
-    #        lon_a,
-    #        lat_b,
-    #        lon_b,
-    #        lat_c,
-    #        lon_c,
-    #        d,
-    #        s=None,
-    #    ):
-    #        """Quadratic interpolation in latitude-longitude coordinates.
-    #
-    #        llp.lat, llp.lon = fqll(lla, llb, cll, s)
-    #                         = (fq(lla.lat, llb.lat, cll.lat, s),
-    #                            fq(lla.lon, llb.lon, cll.lon, s))
-    #
-    #        .. versionadded:: (cfdm) 1.9.TODO.0
-    #
-    #        :Parameters:
-    #
-    #            {{d: `int`}}
-    #
-    #            {{s: array_like, optional}}
-    #
-    #        :Returns:
-    #
-    #            `tuple` of `numpy.ndarray`
-    #
-    #        """
-    #        return (
-    #            self._fq(lat_a, lat_b, lat_c, d, s=s),
-    #            self._fq(lon_a, lon_b, lon_c, d, s=s),
-    #        )
-
     def _fqv(self, va, vb, wv, d, s=None):
-        """Quadratically interpolate points in 3-d cartesian
-        coordinates.
+        """Quadratically interpolate 3-d cartesian coordinates.
 
         (x, y, z) = fqv(va, vb, wv, s)
                   = (fq(va.x, vb.x, wv.x, s),

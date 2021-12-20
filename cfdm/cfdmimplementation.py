@@ -1819,7 +1819,7 @@ class CFDMImplementation(Implementation):
         return data.source(default)
 
     def get_tie_points(self, construct, default=None):
-        """TODO
+        """TODO.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -2146,8 +2146,6 @@ class CFDMImplementation(Implementation):
         interpolation_name=None,
         compressed_array=None,
         shape=None,
-        size=None,
-        ndim=None,
         tie_point_indices={},
         computational_precision=None,
         interpolation_description=None,
@@ -2171,11 +2169,7 @@ class CFDMImplementation(Implementation):
 
             compressed_array: optional
 
-            ndim: `int`, optional
-
             shape: sequence of `int`, optional
-
-            size: `int, optional
 
             computational_precision: `str`, optional
                 The floating-point arithmetic precision used during
@@ -2205,8 +2199,6 @@ class CFDMImplementation(Implementation):
             interpolation_name=interpolation_name,
             compressed_array=compressed_array,
             shape=shape,
-            size=size,
-            ndim=ndim,
             tie_point_indices=tie_point_indices,
             computational_precision=computational_precision,
             interpolation_description=interpolation_description,
@@ -2358,10 +2350,12 @@ class CFDMImplementation(Implementation):
             compressed_array: optional
 
             ndim: `int`, optional
+                Deprecated at version 1.9.TODO.0. Ignored if set.
 
             shape: sequence of `int`, optional
 
             size: `int, optional
+                Deprecated at version 1.9.TODO.0. Ignored if set.
 
             count_variable: optional
 
@@ -2373,9 +2367,9 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("RaggedContiguousArray")
         return cls(
             compressed_array=compressed_array,
-            ndim=ndim,
+            #            ndim=ndim,
             shape=shape,
-            size=size,
+            #            size=size,
             count_variable=count_variable,
         )
 
@@ -2394,10 +2388,12 @@ class CFDMImplementation(Implementation):
             compressed_array: optional
 
             ndim: `int`, optional
+                Deprecated at version 1.9.TODO.0. Ignored if set.
 
             shape: sequence of `int`, optional
 
             size: `int, optional
+                Deprecated at version 1.9.TODO.0. Ignored if set.
 
             index_variable: optional
 
@@ -2409,9 +2405,9 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("RaggedIndexedArray")
         return cls(
             compressed_array=compressed_array,
-            ndim=ndim,
+            #            ndim=ndim,
             shape=shape,
-            size=size,
+            #            size=size,
             index_variable=index_variable,
         )
 
@@ -2431,10 +2427,12 @@ class CFDMImplementation(Implementation):
             compressed_array: optional
 
             ndim: `int`, optional
+                Deprecated at version 1.9.TODO.0. Ignored if set.
 
             shape: sequence of `int`, optional
 
             size: `int, optional
+                Deprecated at version 1.9.TODO.0. Ignored if set.
 
             count_variable: optional
 
@@ -2448,9 +2446,9 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("RaggedIndexedContiguousArray")
         return cls(
             compressed_array=compressed_array,
-            ndim=ndim,
+            #            ndim=ndim,
             shape=shape,
-            size=size,
+            #            size=size,
             count_variable=count_variable,
             index_variable=index_variable,
         )
@@ -2946,7 +2944,7 @@ class CFDMImplementation(Implementation):
         return field.set_construct(construct, copy=copy)
 
     def set_dependent_tie_points(self, construct, tie_points):
-        """TODO
+        """TODO.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -2955,7 +2953,7 @@ class CFDMImplementation(Implementation):
         data.set_dependent_tie_points(tie_points)
 
     def set_dependent_tie_point_dimensions(self, construct, dimensions):
-        """TODO
+        """TODO.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 

@@ -20,8 +20,6 @@ class SubsampledArrayTest(unittest.TestCase):
         interpolation_name="quadratic",
         compressed_array=cfdm.Data([15, 135, 225, 255, 345]),
         shape=(12,),
-        ndim=1,
-        size=12,
         tie_point_indices={0: tie_point_indices},
         parameters={"w": w},
         parameter_dimensions={"w": (0,)},
@@ -48,8 +46,6 @@ class SubsampledArrayTest(unittest.TestCase):
         interpolation_name="quadratic",
         compressed_array=cfdm.Data([0, 150, 240, 240, 360]),
         shape=(12, 2),
-        ndim=2,
-        size=24,
         tie_point_indices={0: tie_point_indices},
         parameters={"w": w},
         parameter_dimensions={"w": (0,)},
@@ -75,21 +71,26 @@ class SubsampledArrayTest(unittest.TestCase):
         """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
         cfdm.log_level("DISABLE")
-        # Note: to enable all messages for given methods, lines or calls (those
-        # without a 'verbose' option to do the same) e.g. to debug them, wrap
-        # them (for methods, start-to-end internally) as follows:
+        # Note: to enable all messages for given methods, lines or
+        # calls (those without a 'verbose' option to do the same)
+        # e.g. to debug them, wrap them (for methods, start-to-end
+        # internally) as follows:
         # cfdm.log_level('DEBUG')
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
 
     def test_SubsampledArray__getitem__(self):
-        """TODO."""
+        """Test `SubsampledArray.__getitem__`"""
         coords = self.coords[...]
         bounds = self.bounds[...]
         self.assertEqual(coords.shape, self.u_coords.shape)
         self.assertEqual(bounds.shape, self.u_bounds.shape)
         self.assertTrue(np.allclose(coords, self.u_coords))
         self.assertTrue(np.allclose(bounds, self.u_bounds))
+
+    def test_SubsampledArray_to_memory(self):
+        """Test `SubsampledArray.to_memory."""
+        self.assertIsInstance(self.coords.to_memory(), cfdm.SubsampledArray)
 
 
 if __name__ == "__main__":

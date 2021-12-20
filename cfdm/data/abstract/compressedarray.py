@@ -1,12 +1,4 @@
-# TODO: Remove once only python +3.8 is supported:
-import sys
-
-from functools import reduce
-from operator import mul
-
 import numpy as np
-
-from ..utils import cached_property
 
 from .array import Array
 
@@ -46,29 +38,18 @@ class CompressedArray(Array):
         compressed_dimension=None,
         compressed_dimensions={},
         compression_type=None,
-        **kwargs,
+        source=None,
+        copy=True,
     ):
         """**Initialisation**
 
         :Parameters:
 
-            compressed_array: subclass of `Array`
+            compressed_array: TODO subclass of `Array`
                 The compressed array.
 
             shape: `tuple`
                 The uncompressed array dimension sizes.
-
-            size: `int`
-                Deprecated at version 1.9.TODO.0. If set will be
-                ignored.
-
-                Number of elements in the uncompressed array.
-
-            ndim: `int`
-                Deprecated at version 1.9.TODO.0. If set will be
-                ignored.
-
-                The number of uncompressed array dimensions
 
             compressed_dimensions: `dict`
                 Mapping of dimensions of the compressed array to their
@@ -103,6 +84,18 @@ class CompressedArray(Array):
             compressed_dimension: Deprecated at version 1.9.TODO.0
                 Use the *compressed_dimensions* parameter instead.
 
+            size: `int`
+                Deprecated at version 1.9.TODO.0. If set will be
+                ignored.
+
+                Number of elements in the uncompressed array.
+
+            ndim: `int`
+                Deprecated at version 1.9.TODO.0. If set will be
+                ignored.
+
+                The number of uncompressed array dimensions
+
         """
         if compressed_dimension is not None:
             raise DeprecationError(
@@ -111,31 +104,45 @@ class CompressedArray(Array):
                 "Use the 'compressed_dimensions' keyword instead."
             )  # pragma: no cover
 
-        super().__init__(
-            shape=shape,
-            size=size,
-            ndim=ndim,
-            compressed_dimensions=compressed_dimensions.copy(),
-            compression_type=compression_type,
-            **kwargs,
+        super().__init__(source=source, copy=copy)
+
+        if source is not None:
+            try:
+                compressed_array = source._get_compressed_Array(None)
+            except AttributeError:
+                compressed_array = None
+
+            try:
+                compression_type = source.get_compression_type()
+            except AttributeError:
+                compression_type = None
+
+            try:
+                compressed_dimensions = source.compressed_dimensions()
+            except AttributeError:
+                compressed_dimensions = {}
+
+            try:
+                shape = source.shape
+            except AttributeError:
+                shape = None
+        else:
+            compressed_dimensions = compressed_dimensions.copy()
+
+        if compressed_array is not None:
+            self._set_compressed_Array(compressed_array, copy=copy)
+
+        if shape is not None:
+            self._set_component("shape", shape, copy=False)
+
+        if compression_type:
+            self._set_component(
+                "compression_type", compression_type, copy=False
+            )
+
+        self._set_component(
+            "compressed_dimensions", compressed_dimensions, copy=False
         )
-
-        self._set_compressed_Array(compressed_array, copy=False)
-
-#    def __getitem__(self, indices):
-#        """Return a subspace of the uncompressed data.
-#
-#        x.__getitem__(indices) <==> x[indices]
-#
-#        Returns a subspace of the uncompressed array as an independent
-#        numpy array.
-#
-#        .. versionadded:: (cfdm) 1.9.TODO.0
-#
-#        """
-#        raise NotImplementedError(
-#            "Must implement __getitem__ in subclasses"
-#        )  # pragma: no cover
 
     def _first_or_last_index(self, indices):
         """Return the first or last element of the uncompressed array.
@@ -248,25 +255,13 @@ class CompressedArray(Array):
     def dtype(self):
         """Data-type of the uncompressed data."""
         raise NotImplementedError(
-            "Must implement dtype in subclasses"
+            f"Must implement {self.__class__.__name__}.dtype"
         )  # pragma: no cover
-    
-    @cached_property
-    def ndim(self):
-        """The number of dimensions of the uncompressed data."""
-        return len(self.shape)
 
     @property
     def shape(self):
-        """Shape of the uncompressed data.
-
-        """
+        """Shape of the uncompressed data."""
         return self._get_component("shape")
-
-    @cached_property
-    def size(self):
-        """Number of elements in the uncompressed data."""
-        return reduce(mul, self.shape, 1)
 
     @property
     def compressed_array(self):
@@ -374,8 +369,7 @@ class CompressedArray(Array):
         return self._get_component("compressed_dimensions").copy()
 
     def conformed_data(self):
-        """The compressed data in the form required by the decompression
-        algorthm.
+        """The data as required by the decompression algorthm.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -427,22 +421,26 @@ class CompressedArray(Array):
 
         """
         raise NotImplementedError(
-            "Must implement subarrays in subclasses"
+            f"Must implement {self.__class__.__name__}.subarrays"
         )  # pragma: no cover
-    
-    def to_memory(self):
-        """Bring an array on disk into memory and retain it there.
 
-        There is no change to an array that is already in memory.
+    def to_memory(self):
+        """Bring data on disk into memory.
+
+        There is no change to data that is already in memory.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Returns:
 
             `{{class}}`
-                TODO
-
-        **Examples:**
-
-        >>> a.to_memory()
+                A copy of the array with all of its data in memory.
 
         """
-        self.source().data.to_memory()
+        a = self.copy()
+        try:
+            a._set_compressed_Array(a.source().to_memory(), copy=False)
+        except AttributeError:
+            pass
+
+        return a

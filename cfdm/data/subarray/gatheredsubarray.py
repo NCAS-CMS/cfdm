@@ -4,7 +4,9 @@ from .abstract import Subarray
 
 
 class GatheredSubarray(Subarray):
-    """TODO.
+    """A subarray of an array compressed by gathering.
+
+    A subarray describes a unique part of the uncompressed array.
 
     See CF section 8.2. "Lossless Compression by Gathering".
 
@@ -19,6 +21,8 @@ class GatheredSubarray(Subarray):
         shape=None,
         compressed_dimensions={},
         unravelled_indices=None,
+        source=None,
+        copy=True,
     ):
         """**Initialisation**
 
@@ -65,11 +69,22 @@ class GatheredSubarray(Subarray):
             indices=indices,
             shape=shape,
             compressed_dimensions=compressed_dimensions,
-            unravelled_indices=unravelled_indices,
-
+            source=source,
+            copy=copy,
         )
 
-#        self.unravelled_indices = unravelled_indices
+        if source is not None:
+            try:
+                unravelled_indices = source._get_component(
+                    "unravelled_indices", None
+                )
+            except AttributeError:
+                unravelled_indices = None
+
+        if unravelled_indices is not None:
+            self._set_component(
+                "unravelled_indices", unravelled_indices, copy=False
+            )
 
     def __getitem__(self, indices):
         """Return a subspace of the uncompressed data.
@@ -99,3 +114,12 @@ class GatheredSubarray(Subarray):
 
         """
         return self.data.dtype
+
+    @property
+    def unravelled_indices(self):
+        """TODO.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        return self._get_component("unravelled_indices")

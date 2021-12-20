@@ -8,6 +8,8 @@ class RaggedSubarray(Subarray):
 
     A subarray describes a unique part of the uncompressed array.
 
+    See CF section 9 "Discrete Sampling Geometries".
+
     .. versionadded:: (cfdm) 1.9.TODO.0
 
     """
@@ -28,60 +30,31 @@ class RaggedSubarray(Subarray):
 
         data = self._select_data()
 
-        shape = list(data.shape)
-        indices = [slice(None,)] * data.ndim
-        
-        indices[d1] = slice(0, shape[d1])
-        shape[d1] = uncompressed_shape[u_dims[-1]]
+        if data.size:
+            shape = list(data.shape)
+            u_indices0 = [
+                slice(
+                    None,
+                )
+            ] * data.ndim
 
-        u = np.ma.masked_all(shape, dtype=self.dtype)
+            u_indices0[d1] = slice(0, shape[d1])
+            shape[d1] = uncompressed_shape[u_dims[-1]]
 
-        u[tuple(indices)] = data
+            u = np.ma.masked_all(shape, dtype=self.dtype)
 
-        u = u.reshape(uncompressed_shape)
+            u[tuple(u_indices0)] = data
+
+            u = u.reshape(uncompressed_shape)
+        else:
+            # This subarray contains no elements of the compressed
+            # data
+            u = np.ma.masked_all(uncompressed_shape, dtype=self.dtype)
 
         if indices is Ellipsis:
             return u
 
         return u[indices]
-
-#    def _post_process(self, a):
-#        """TODO.
-#
-#        .. versionadded:: (cfdm) 1.9.TODO.0
-#
-#        :Parameters:
-#
-#            a: `numpy.ndarray`
-#               TODO
-#
-#        :Returns:
-#
-#            `numpy.ndarray`
-#
-#        """
-#
-#        d1, u_dims = self.compressed_dimensions().popitem()
-#
-#        # Get shape from self.compressed_shape (from self.subareas)
-#        uncompressed_shape = self.shape
-#        shape = list(a.shape)
-#
-#        indices = [
-#            slice(
-#                None,
-#            )
-#        ] * a.ndim
-#        indices[d1] = slice(0, shape[d1])
-#
-#        shape[d1] = uncompressed_shape[u_dims[-1]]
-#
-#        u = np.ma.masked_all(shape, dtype=a.dtype)
-#        u[tuple(indices)] = a
-#
-#        u = u.reshape(uncompressed_shape)
-#
-#        return u
 
     @property
     def dtype(self):

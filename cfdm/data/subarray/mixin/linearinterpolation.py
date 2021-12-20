@@ -1,5 +1,5 @@
 class LinearInterpolation:
-    """Mixin class for linear interpolation of tie points.
+    """Mixin class for linear interpolation.
 
     See CF appendix J "Coordinate Interpolation Methods".
 
@@ -8,9 +8,7 @@ class LinearInterpolation:
     """
 
     def _linear_interpolation(self, ua, ub, d1, s=None, returns=False):
-        """Interpolate linearly between pairs of tie points.
-
-        General purpose one-dimensional linear interpolation method.
+        """Interpolate linearly between two points.
 
         u = fl(ua, ub, s) = ua + s*(ub-ua)
                           = ua*(1-s) + ub*s
@@ -22,12 +20,11 @@ class LinearInterpolation:
         :Parameters:
 
             ua: `numpy.ndarray`
-                The first tie point in index space of subsampled
-                dimension 1 (in the sense of CF appendix J Figure
-                J.1).
+                The first point in index space of subsampled dimension
+                1 (in the sense of CF appendix J Figure J.1).
 
             ub: `numpy.ndarray`
-                The second tie point in index space of subsampled
+                The second point in index space of subsampled
                 dimension 1 (in the sense of CF appendix J Figure
                 J.1).
 
@@ -38,7 +35,6 @@ class LinearInterpolation:
         :Returns:
 
             `numpy.ndarray`
-                TODO
 
         """
         s = self._s(d1, s=s)

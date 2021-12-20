@@ -3,7 +3,13 @@ from .mixin import BiLinearInterpolation
 
 
 class BiLinearSubarray(BiLinearInterpolation, SubsampledSubarray):
-    """TODO.
+    """A subarray of an array compressed by subsamplng.
+
+    A subarray describes a unique part of the uncompressed array.
+
+    The compressed data is reconstituted by bi-linear interpolation.
+
+    See CF appendix J "Coordinate Interpolation Methods".
 
     .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -37,4 +43,4 @@ class BiLinearSubarray(BiLinearInterpolation, SubsampledSubarray):
         if indices is Ellipsis:
             return u
 
-        return self.get_subspace(u, indices, copy=True)
+        return u[indices]

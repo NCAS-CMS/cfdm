@@ -23,6 +23,8 @@ class NetCDFArray(abstract.Array):
         shape=None,
         size=None,
         mask=True,
+        source=None,
+        copy=True,
     ):
         """**Initialisation**
 
@@ -98,25 +100,64 @@ class NetCDFArray(abstract.Array):
         ...                     ndim=v.ndim, shape=v.shape, size=v.size)
 
         """
-        super().__init__(filename=filename, ncvar=ncvar, varid=varid)
+        super().__init__(source=source, copy=copy)
 
-        self._set_component("netcdf", None, copy=False)
-        self._set_component("group", group, copy=False)
+        if source is not None:
+            try:
+                shape = source._get_component("shape", None)
+            except AttributeError:
+                shape = None
 
-        # By default, close the netCDF file after data array access
-        self._set_component("close", True, copy=False)
+            try:
+                filename = source._get_component("filename", None)
+            except AttributeError:
+                filename = None
 
-        if ndim is not None:
-            self._set_component("ndim", ndim, copy=False)
+            try:
+                ncvar = source._get_component("ncvar", None)
+            except AttributeError:
+                ncvar = None
 
-        if size is not None:
-            self._set_component("size", size, copy=False)
+            try:
+                varid = source._get_component("varid", None)
+            except AttributeError:
+                varid = None
+
+            try:
+                group = source._get_component("group", None)
+            except AttributeError:
+                group = None
+
+            try:
+                dtype = source._get_component("dtype", None)
+            except AttributeError:
+                dtype = None
+
+            try:
+                mask = source._get_component("mask", True)
+            except AttributeError:
+                mask = True
 
         if shape is not None:
             self._set_component("shape", shape, copy=False)
 
+        if filename is not None:
+            self._set_component("filename", filename, copy=False)
+
+        if ncvar is not None:
+            self._set_component("ncvar", ncvar, copy=False)
+
+        if varid is not None:
+            self._set_component("varid", varid, copy=False)
+
+        self._set_component("group", group, copy=False)
         self._set_component("dtype", dtype, copy=False)
         self._set_component("mask", mask, copy=False)
+
+        self._set_component("netcdf", None, copy=False)
+
+        # By default, close the netCDF file after data array access
+        self._set_component("close", True, copy=False)
 
     def __getitem__(self, indices):
         """Returns a subspace of the array as a numpy array.
@@ -238,9 +279,26 @@ class NetCDFArray(abstract.Array):
 
         return f"file={self.get_filename()} {name}"
 
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
+    @property
+    def array(self):
+        """Return an independent numpy array containing the data.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        :Returns:
+
+            `numpy.ndarray`
+                An independent numpy array of the data.
+
+        **Examples**
+
+        >>> n = numpy.asanyarray(a)
+        >>> isinstance(n, numpy.ndarray)
+        True
+
+        """
+        return self[...]
+
     @property
     def dtype(self):
         """Data-type of the data elements.
@@ -258,100 +316,13 @@ class NetCDFArray(abstract.Array):
         return self._get_component("dtype")
 
     @property
-    def ndim(self):
-        """Number of array dimensions.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        **Examples**
-
-        >>> a.shape
-        (73, 96)
-        >>> a.ndim
-        2
-        >>> a.size
-        7008
-
-        >>> a.shape
-        (1, 1, 1)
-        >>> a.ndim
-        3
-        >>> a.size
-        1
-
-        >>> a.shape
-        ()
-        >>> a.ndim
-        0
-        >>> a.size
-        1
-
-        """
-        return self._get_component("ndim")
-
-    @property
     def shape(self):
         """Tuple of array dimension sizes.
 
         .. versionadded:: (cfdm) 1.7.0
 
-        **Examples**
-
-        >>> a.shape
-        (73, 96)
-        >>> a.ndim
-        2
-        >>> a.size
-        7008
-
-        >>> a.shape
-        (1, 1, 1)
-        >>> a.ndim
-        3
-        >>> a.size
-        1
-
-        >>> a.shape
-        ()
-        >>> a.ndim
-        0
-        >>> a.size
-        1
-
         """
         return self._get_component("shape")
-
-    @property
-    def size(self):
-        """Number of elements in the array.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        **Examples**
-
-        >>> a.shape
-        (73, 96)
-        >>> a.size
-        7008
-        >>> a.ndim
-        2
-
-        >>> a.shape
-        (1, 1, 1)
-        >>> a.ndim
-        3
-        >>> a.size
-        1
-
-        >>> a.shape
-        ()
-        >>> a.ndim
-        0
-        >>> a.size
-        1
-
-        """
-        return self._get_component("size")
 
     def get_filename(self):
         """The name of the netCDF file containing the array.
@@ -430,9 +401,6 @@ class NetCDFArray(abstract.Array):
         """
         return self._get_component("varid")
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def close(self):
         """Close the `netCDF4.Dataset` for the file containing the data.
 
@@ -453,26 +421,6 @@ class NetCDFArray(abstract.Array):
 
         netcdf.close()
         self._set_component("netcdf", None, copy=False)
-
-    @property
-    def array(self):
-        """Return an independent numpy array containing the data.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        :Returns:
-
-            `numpy.ndarray`
-                An independent numpy array of the data.
-
-        **Examples**
-
-        >>> n = numpy.asanyarray(a)
-        >>> isinstance(n, numpy.ndarray)
-        True
-
-        """
-        return self[...]
 
     def open(self):
         """Returns an open `netCDF4.Dataset` for the array's file.
@@ -502,20 +450,14 @@ class NetCDFArray(abstract.Array):
         return netcdf
 
     def to_memory(self):
-        """Bring an array on disk into memory and retain it there.
-
-        There is no change to an array that is already in memory.
+        """Bring data on disk into memory.
 
         .. versionadded:: (cfdm) 1.7.0
 
         :Returns:
 
             `NumpyArray`
-                The array that is stored in memory.
-
-        **Examples**
-
-        >>> b = a.to_memory()
+                The new with all of its data in memory.
 
         """
         return NumpyArray(self[...])

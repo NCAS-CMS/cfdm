@@ -3,13 +3,11 @@ from .mixin import QuadraticInterpolation
 
 
 class QuadraticSubarray(QuadraticInterpolation, SubsampledSubarray):
-    """Uncompress an interpolation subarea of a subsampled array.
+    """A subarray of an array compressed by subsamplng.
 
-    When an instance is indexed, quadratic interpolation is carried
-    out to uncompress the single interpolation subarea (defined by the
-    *tp_indices* and *subarea_indices* parameters) into an array whose
-    shape is given by the *shape* parameter. This array is then
-    indexed as requested.
+    A subarray describes a unique part of the uncompressed array.
+
+    The compressed data is reconstituted by quadratic interpolation.
 
     See CF section 8.3 "Lossy Compression by Coordinate Subsampling"
     and appendix J "Coordinate Interpolation Methods".
@@ -131,4 +129,4 @@ class QuadraticSubarray(QuadraticInterpolation, SubsampledSubarray):
         if indices is Ellipsis:
             return u
 
-        return self.get_subspace(u, indices, copy=True)
+        return u[indices]

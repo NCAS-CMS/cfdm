@@ -1688,6 +1688,40 @@ class PropertiesDataBounds(PropertiesData):
         return c
 
     @_inplace_enabled(default=False)
+    def to_memory(self, inplace=False):
+        """Bring data on disk into memory.
+
+        There is no change to data that is already in memory.
+
+        :Parameters:
+
+            inplace: `bool`, optional
+                If True then do the operation in-place and return `None`.
+
+        :Returns:
+
+            `{{class}}` or `None`
+                A copy with the data in memory, or `None` if the
+                operation was in-place.
+
+        """
+        c = _inplace_enabled_define_and_cleanup(self)
+
+        data = c.get_data(None)
+        if data is not None:
+            data.to_memory(inplace=True)
+
+        bounds = c.get_bounds(None)
+        if bounds is not None:
+            bounds.to_memory(inplace=True)
+
+        interior_ring = c.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.to_memory(inplace=True)
+
+        return c
+
+    @_inplace_enabled(default=False)
     def transpose(self, axes=None, inplace=False):
         """Permute the axes of the data array.
 

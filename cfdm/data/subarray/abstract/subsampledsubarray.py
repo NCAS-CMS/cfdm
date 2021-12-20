@@ -1,6 +1,6 @@
 import numpy as np
 
-from ...utils import cached_property
+from ....core.utils import cached_property
 from .subarray import Subarray
 
 
@@ -29,6 +29,8 @@ class SubsampledSubarray(Subarray):
         first=None,
         parameters={},
         dependent_tie_points={},
+        source=None,
+        copy=True,
     ):
         """**Initialisation**
 
@@ -111,16 +113,48 @@ class SubsampledSubarray(Subarray):
             indices=indices,
             shape=shape,
             compressed_dimensions=compressed_dimensions,
-            subarea_indices=subarea_indices,
-            first=first,
-            parameters=parameters.copy(),
-            dependent_tie_points=dependent_tie_points.copy(),
+            source=source,
+            copy=copy,
         )
 
-#        self.subarea_indices = subarea_indices
-#        self.first = first
-#        self.parameters = parameters.copy()
-#        self.dependent_tie_points = dependent_tie_points.copy()
+        if source is not None:
+            try:
+                subarea_indices = source._get_component(
+                    "subarea_indices", None
+                )
+            except AttributeError:
+                subarea_indices = None
+
+            try:
+                first = source._get_component("first", None)
+            except AttributeError:
+                first = None
+
+            try:
+                parameters = source._get_component("parameters", {})
+            except AttributeError:
+                parameters = {}
+
+            try:
+                dependent_tie_points = source._get_component(
+                    "dependent_tie_points", {}
+                )
+            except AttributeError:
+                dependent_tie_points = {}
+
+        if subarea_indices is not None:
+            self._set_component("subarea_indices", subarea_indices, copy=copy)
+
+        if first is not None:
+            self._set_component("first", first, copy=False)
+
+        if parameters is not None:
+            self._set_component("parameters", parameters.copy(), copy=False)
+
+        if dependent_tie_points is not None:
+            self._set_component(
+                "dependent_tie_points", dependent_tie_points.copy(), copy=False
+            )
 
     def _broadcast_bounds(self, u):
         """TODO.
@@ -524,6 +558,15 @@ class SubsampledSubarray(Subarray):
         """
         return self.ndim > self.data.ndim
 
+    @property
+    def dependent_tie_points(self):
+        """TODO.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        return self._get_component("dependent_tie_points")
+
     @cached_property
     def dtype(self):
         """The data-type of the uncompressed data.
@@ -532,3 +575,30 @@ class SubsampledSubarray(Subarray):
 
         """
         return np.dtype(float)
+
+    @property
+    def first(self):
+        """TODO.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        return self._get_component("first")
+
+    @property
+    def parameters(self):
+        """TODO.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        return self._get_component("parameters")
+
+    @property
+    def subarea_indices(self):
+        """TODO.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        return self._get_component("subarea_indices")

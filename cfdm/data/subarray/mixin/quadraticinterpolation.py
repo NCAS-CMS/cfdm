@@ -1,5 +1,5 @@
 class QuadraticInterpolation:
-    """Mixin class for quadratic interpolation of tie points.
+    """Mixin class for quadratic interpolation.
 
     See CF appendix J "Coordinate Interpolation Methods".
 
@@ -16,53 +16,46 @@ class QuadraticInterpolation:
         return self._quadratic_interpolation(*args, **kwargs)
 
     def _fw(self, ua, ub, u_i, d, s_i):
-        """Calculate the quadratic interpolation parameter ``w`` for a
+        """Calculate the quadratic interpolation parameter ``w``.
+
+        Calculates the quadratic interpolation parameter ``w`` for a
         subsampled dimension.
 
-                w = fw(ua, ub, u(i), s(i))
-                  = (u(i) - (1-s(i))*ua - s(i)*ub) / (4*(1-s(i))*s(i))
+        w = fw(ua, ub, u(i), s(i))
+          = (u(i) - (1-s(i))*ua - s(i)*ub) / (4*(1-s(i))*s(i))
 
-                .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.9.TODO.0
 
-                .. seealso:: `_quadratic_interpolation`
+        .. seealso:: `_quadratic_interpolation`
 
-                :Parameters:
+        :Parameters:
 
-                    ua: `numpy.ndarray`
-                        The values of the first tie point in index space.
+            ua: `numpy.ndarray`
+                The values of the first point in index space.
 
-                    ub: `numpy.ndarray`
-                        The values of the second tie point in index space.
+            ub: `numpy.ndarray`
+                The values of the second point in index space.
 
-                    u_i: `numpy.ndarray`
-                        The value of the uncompressed value at the midpoint of
-                        the subsampled dimension of the interpolation subarea. TODO
+            u_i: `numpy.ndarray`
+                The value of the uncompressed value at the same
+                location as *s_i*.
 
-                        A value for the interpolation coeficient ``s`` for the
-                        subsampled dimension, at some the location between the
-                        two tie points.
+            {{d: `int`}}
 
-                    d: `int`
-                        The position in the tie points array of the subsampled
-                        dimension.
+            {{s_i: array_like}}
 
-                    {{s_i: array_like}}
-        A value for the interpolation coeficient ``s`` for the
-                        subsampled dimension, at some the location between the
-                        two tie points.
-                :Returns:
+        :Returns:
 
-                    `numpy.ndarray`
+            `numpy.ndarray`
 
         """
-        #        s, one_minus_s = self._s(d, s=s_i)
         s = self._s(d, s=s_i)
         one_minus_s = 1 - s
 
         return (u_i - one_minus_s * ua - s * ub) / (4 * one_minus_s * s)
 
     def _quadratic_interpolation(self, ua, ub, w, d1, s=None):
-        """Interpolate quadratically between pairs of tie points.
+        """Interpolate quadratically between two of tie points.
 
         Computes the quadratic interpolation operator ``fq``, where
         ``fl`` is the linear interpolation operator and ``w`` is the

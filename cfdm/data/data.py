@@ -579,8 +579,10 @@ class Data(Container, NetCDFHDF5, core.Data):
         return out
 
     def _binary_operation(self, other, method):
-        """Implement binary arithmetic and comparison operations with the
-        numpy broadcasting rules.
+        """Implement binary arithmetic and comparison operations.
+
+        Implements binary arithmetic and comparison operations with
+        the numpy broadcasting rules.
 
         It is called by the binary arithmetic and comparison methods,
         such as `__sub__`, `__imul__`, `__rdiv__`, `__lt__`, etc.
@@ -2662,16 +2664,24 @@ class Data(Container, NetCDFHDF5, core.Data):
             (slice(0, 1, 1),) * (self.ndim - 1) + (slice(1, 2, 1),)
         )
 
-    def to_memory(self):
-        """Bring data on disk into memory and retain it there.
+    @_inplace_enabled(default=False)
+    def to_memory(self, inplace=False):
+        """Bring data on disk into memory.
 
         There is no change to data that is already in memory.
 
+        :Parameters:
+
+            inplace: `bool`, optional
+                If True then do the operation in-place and return `None`.
+
         :Returns:
 
-            `None`
+            `{{class}}` or `None`
+                A copy of the data in memory, or `None` if the
+                operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(4)
         >>> f.data
@@ -2679,7 +2689,9 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> f.data.to_memory()
 
         """
-        self._set_Array(self.source().to_memory())
+        d = _inplace_enabled_define_and_cleanup(self)
+        d._set_Array(self.source().to_memory())
+        return d
 
     @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
@@ -2700,7 +2712,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                 The uncompressed data, or `None` if the operation was
                 in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> d.get_compression_type()
         'ragged contiguous'

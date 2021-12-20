@@ -28,6 +28,8 @@ class RaggedIndexedArray(RaggedArray):
         size=None,
         ndim=None,
         index_variable=None,
+        source=None,
+        copy=True,
     ):
         """**Initialisation**
 
@@ -39,6 +41,10 @@ class RaggedIndexedArray(RaggedArray):
             shape: `tuple`
                 The shape of the uncompressed array.
 
+            index_variable: `Index`
+                The index variable required to uncompress the data,
+                corresponding to a CF-netCDF index variable.
+
             size: `int`
                 Deprecated at version 1.9.TODO.0. Ignored if set.
 
@@ -49,16 +55,14 @@ class RaggedIndexedArray(RaggedArray):
 
                 The number of uncompressed array dimensions.
 
-            index_variable: `Index`
-                The index variable required to uncompress the data,
-                corresponding to a CF-netCDF index variable.
-
         """
         super().__init__(
             compressed_array=compressed_array,
             shape=shape,
-            index=index_variable,
+            index_variable=index_variable,
             compressed_dimensions={0: (0, 1)},
+            source=source,
+            copy=copy,
         )
 
     def subarrays(self):
@@ -87,7 +91,31 @@ class RaggedIndexedArray(RaggedArray):
 
         **Examples**
 
-        TODO
+        An original 2-d array with shape (3, 5) comprising 3
+        timeSeries features has been compressed as an indexed ragged
+        array. The features have counts of have counts of 2, 5, and 4
+        elements, at compressed locations (5, 8), (1, 3, 4, 7, 10),
+        and (0, 2, 6, 9) respectively.
+
+        >>> u_indices, u_shapes, c_indices = x.subarrays()
+        >>> for i in u_indices:
+        ...    print(i)
+        ...
+        (slice(0, 1, None), slice(None, None, None))
+        (slice(1, 2, None), slice(None, None, None))
+        (slice(2, 3, None), slice(None, None, None))
+        >>> for i in u_shapes
+        ...    print(i)
+        ...
+        (1, 12)
+        (1, 12)
+        (1, 12)
+        >>> for i in c_indices:
+        ...    print(i)
+        ...
+        (array([5, 8]),)
+        (array([1, 3, 4, 7, 10]),)
+        (array([0, 2, 6, 9]),)
 
         """
         d1, (u_dim1, u_dim2) = self.compressed_dimensions().popitem()

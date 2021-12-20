@@ -1,14 +1,9 @@
-from functools import reduce
-from operator import mul
-
 import numpy as np
 
-from ....abstract import Container
-
-from ...utils import cached_property
+from ...abstract import Array
 
 
-class Subarray(Container):
+class Subarray(Array):
     """Abstract base class for a subarray of compressed array.
 
     A subarray describes a unique part of the uncompressed array.
@@ -23,7 +18,8 @@ class Subarray(Container):
         indices=None,
         shape=None,
         compressed_dimensions={},
-            **kwargs,
+        source=None,
+        copy=True,
     ):
         """**Initialisation**
 
@@ -70,12 +66,43 @@ class Subarray(Container):
                 TODO
 
         """
-        super().__init__(data=data,indices=indices, shape=shape, compressed_dimensions=compressed_dimensions.copy(), **kwargs)
+        super().__init__(source=source, copy=copy)
 
-#        self.data = data
-#        self.indices = indices
-#        self.shape = shape
-#        self.compressed_dimensions = compressed_dimensions.copy()
+        if source is not None:
+            try:
+                data = source._get_component("data", None)
+            except AttributeError:
+                data = None
+
+            try:
+                indices = source._get_component("indices", None)
+            except AttributeError:
+                indices = None
+
+            try:
+                shape = source._get_component("shape", None)
+            except AttributeError:
+                shape = None
+
+            try:
+                compressed_dimensions = source.compressed_dimensions()
+            except AttributeError:
+                compressed_dimensions = {}
+        else:
+            compressed_dimensions = compressed_dimensions.copy()
+
+        if data is not None:
+            self._set_component("data", data, copy=copy)
+
+        if indices is not None:
+            self._set_component("indices", indices, copy=False)
+
+        if shape is not None:
+            self._set_component("shape", shape, copy=False)
+
+        self._set_component(
+            "compressed_dimensions", compressed_dimensions, copy=False
+        )
 
     def __getitem__(self, indices):
         """Return a subspace of the uncompressed subarray.
@@ -89,11 +116,11 @@ class Subarray(Container):
 
         """
         raise NotImplementedError(
-            "Must implement __getitem__ in subclasses"
+            f"Must implement {self.__class__.__name__}.__getitem__"
         )  # pragma: no cover
 
     def _select_data(self, data=None):
-        """Select compressed array elements that correspond to this subarray.
+        """Select compressed elements that correspond to this subarray.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -122,6 +149,15 @@ class Subarray(Container):
         return data
 
     @property
+    def data(self):
+        """TODO.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        return self._get_component("data")
+
+    @property
     def dtype(self):
         """The data-type of the uncompressed data.
 
@@ -129,17 +165,26 @@ class Subarray(Container):
 
         """
         raise NotImplementedError(
-            "Must implement dtype in subclasses"
+            f"Must implement {self.__class__.__name__}.dtype"
         )  # pragma: no cover
 
-    @cached_property
-    def ndim(self):
-        """The number of dimensions of the uncompressed data.
+    @property
+    def indices(self):
+        """TODO.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        return len(self.shape)
+        return self._get_component("indices")
+
+    #    @cached_property
+    #    def ndim(self):
+    #        """The number of dimensions of the uncompressed data.#
+    #
+    #        .. versionadded:: (cfdm) 1.9.TODO.0
+    #
+    #        """
+    #        return len(self.shape)
 
     @property
     def shape(self):
@@ -150,14 +195,14 @@ class Subarray(Container):
         """
         return self._get_component("shape")
 
-    @cached_property
-    def size(self):
-        """The size of the uncompressed data.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        """
-        return reduce(mul, self.shape, 1)
+    #    @cached_property
+    #    def size(self):
+    #        """The size of the uncompressed data.
+    #
+    #        .. versionadded:: (cfdm) 1.9.TODO.0
+    #
+    #        """
+    #        return reduce(mul, self.shape, 1)
 
     def compressed_dimensions(self):
         """Mapping of compressed to uncompressed dimensions.

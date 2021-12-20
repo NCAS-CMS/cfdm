@@ -6432,14 +6432,14 @@ class NetCDFRead(IORead):
             `RaggedContiguousArray`
 
         """
-        uncompressed_ndim = len(uncompressed_shape)
-        uncompressed_size = int(reduce(operator.mul, uncompressed_shape, 1))
+        #        uncompressed_ndim = len(uncompressed_shape)
+        #        uncompressed_size = int(reduce(operator.mul, uncompressed_shape, 1))
 
         return self.implementation.initialise_RaggedContiguousArray(
             compressed_array=ragged_contiguous_array,
-            ndim=uncompressed_ndim,
+            #            ndim=uncompressed_ndim,
             shape=uncompressed_shape,
-            size=uncompressed_size,
+            #            size=uncompressed_size,
             count_variable=count_variable,
         )
 
@@ -6458,14 +6458,14 @@ class NetCDFRead(IORead):
             `RaggedIndexedArray`
 
         """
-        uncompressed_ndim = len(uncompressed_shape)
-        uncompressed_size = int(reduce(operator.mul, uncompressed_shape, 1))
+        #        uncompressed_ndim = len(uncompressed_shape)
+        #        uncompressed_size = int(reduce(operator.mul, uncompressed_shape, 1))
 
         return self.implementation.initialise_RaggedIndexedArray(
             compressed_array=ragged_indexed_array,
-            ndim=uncompressed_ndim,
+            #            ndim=uncompressed_ndim,
             shape=uncompressed_shape,
-            size=uncompressed_size,
+            #            size=uncompressed_size,
             index_variable=index_variable,
         )
 
@@ -6485,14 +6485,14 @@ class NetCDFRead(IORead):
             `RaggedIndexedContiguousArray`
 
         """
-        uncompressed_ndim = len(uncompressed_shape)
-        uncompressed_size = int(reduce(operator.mul, uncompressed_shape, 1))
+        #        uncompressed_ndim = len(uncompressed_shape)
+        #        uncompressed_size = int(reduce(operator.mul, uncompressed_shape, 1))
 
         return self.implementation.initialise_RaggedIndexedContiguousArray(
             compressed_array=ragged_indexed_contiguous_array,
-            ndim=uncompressed_ndim,
+            #            ndim=uncompressed_ndim,
             shape=uncompressed_shape,
-            size=uncompressed_size,
+            #            size=uncompressed_size,
             count_variable=count_variable,
             index_variable=index_variable,
         )
@@ -6541,53 +6541,19 @@ class NetCDFRead(IORead):
             A subsampled array.
 
         """
-        uncompressed_ndim = len(uncompressed_shape)
-        uncompressed_size = int(reduce(operator.mul, uncompressed_shape, 1))
+        #        uncompressed_ndim = len(uncompressed_shape)
+        #        uncompressed_size = int(reduce(operator.mul, uncompressed_shape, 1))
 
         return self.implementation.initialise_SubsampledArray(
             interpolation_name=interpolation_name,
             compressed_array=subsampled_array,
             shape=uncompressed_shape,
-            size=uncompressed_size,
-            ndim=uncompressed_ndim,
             tie_point_indices=tie_point_indices,
             interpolation_description=interpolation_description,
             computational_precision=computational_precision,
             parameters=parameters,
             parameter_dimensions=parameter_dimensions,
         )
-
-    #        if interpolation_name == "linear":
-    #            init_func = self.implementation.initialise_SubsampledLinearArray
-    #        elif interpolation_name == "bi_linear":
-    #            init_func = self.implementation.initialise_SubsampledBiLinearArray
-    #        elif interpolation_name == "quadratic":
-    #            init_func = self.implementation.initialise_SubsampledQuadraticArray
-    #        elif interpolation_name == "quadratic_latitude_longitude":
-    #            init_func = (
-    #                self.implementation.initialise_SubsampledQuadraticLatitudeLongitudeArray
-    #            )
-    #        elif interpolation_name == "bi_quadratic_latitude_longitude":
-    #            init_func = (
-    #                self.implementation.initialise_SubsampledBiQuadraticLatitudeLongitudeArray
-    #            )
-    #        else:
-    #            init_func = self.implementation.initialise_SubsampledGeneralArray
-    #
-    #        uncompressed_ndim = len(uncompressed_shape)
-    #        uncompressed_size = int(reduce(operator.mul, uncompressed_shape, 1))
-    #
-    #        return init_func(
-    #            compressed_array=subsampled_array,
-    #            shape=uncompressed_shape,
-    #            size=uncompressed_size,
-    #            ndim=uncompressed_ndim,
-    #            tie_point_indices=tie_point_indices,
-    #            interpolation_description=interpolation_description,
-    #            computational_precision=computational_precision,
-    #            parameter_dimensions=parameter_dimensions,
-    #            parameters=parameters,
-    #        )
 
     def _create_Data(
         self, array=None, units=None, calendar=None, ncvar=None, **kwargs

@@ -30,6 +30,8 @@ class RaggedContiguousArray(RaggedArray):
         size=None,
         ndim=None,
         count_variable=None,
+        source=None,
+        copy=True,
     ):
         """**Initialisation**
 
@@ -41,6 +43,10 @@ class RaggedContiguousArray(RaggedArray):
             shape: `tuple`
                 The shape of the uncompressed array.
 
+            count_variable: `Count`
+                The count variable required to uncompress the data,
+                corresponding to a CF-netCDF count variable.
+
             size: `int`
                 Deprecated at version 1.9.TODO.0. Ignored if set.
 
@@ -51,16 +57,14 @@ class RaggedContiguousArray(RaggedArray):
 
                 The number of uncompressed array dimensions.
 
-            count_variable: `Count`
-                The count variable required to uncompress the data,
-                corresponding to a CF-netCDF count variable.
-
         """
         super().__init__(
             compressed_array=compressed_array,
             shape=shape,
-            count=count_variable,
+            count_variable=count_variable,
             compressed_dimensions={0: (0, 1)},
+            source=source,
+            copy=copy,
         )
 
     def subarrays(self):
@@ -89,7 +93,29 @@ class RaggedContiguousArray(RaggedArray):
 
         **Examples**
 
-        TODO
+        An original 2-d array with shape (3, 5) comprising 3
+        timeSeries features has been compressed as a contiguous ragged
+        array. The features have counts of 2, 5, and 4 elements.
+
+        >>> u_indices, u_shapes, c_indices = x.subarrays()
+        >>> for i in u_indices:
+        ...    print(i)
+        ...
+        (slice(0, 1, None), slice(None, None, None))
+        (slice(1, 2, None), slice(None, None, None))
+        (slice(2, 3, None), slice(None, None, None))
+        >>> for i in u_shapes
+        ...    print(i)
+        ...
+        (1, 5)
+        (1, 5)
+        (1, 5)
+        >>> for i in c_indices:
+        ...    print(i)
+        ...
+        (slice(0, 2, None),)
+        (slice(2, 7, None),)
+        (slice(7, 11, None),)
 
         """
         d1, (u_dim1, u_dim2) = self.compressed_dimensions().popitem()

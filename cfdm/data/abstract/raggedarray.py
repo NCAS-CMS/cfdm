@@ -5,18 +5,9 @@ from .compressedarray import CompressedArray
 
 
 class RaggedArray(CompressedArray):
-    """An underlying TODO contiguous ragged array.
+    """An underlying ragged array.
 
-    A collection of features stored using a contiguous ragged array
-    combines all features along a single dimension (the "sample
-    dimension") such that each feature in the collection occupies a
-    contiguous block.
-
-    The information needed to uncompress the data is stored in a
-    "count variable" that gives the size of each block.
-
-    It is assumed that the compressed dimension is the left-most
-    dimension in the compressed array.
+    See CF section 9 "Discrete Sampling Geometries"
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -49,6 +40,8 @@ class RaggedArray(CompressedArray):
         compressed_dimensions={},
         count_variable=None,
         index_variable=None,
+        source=None,
+        copy=True,
     ):
         """**Initialisation**
 
@@ -96,11 +89,28 @@ class RaggedArray(CompressedArray):
         super().__init__(
             compressed_array=compressed_array,
             shape=shape,
-            count_variable=count_variable,
-            index_variable=index_variable,
+            compressed_dimensions=compressed_dimensions,
             compression_type=compression_type,
-            compressed_dimensions=compressed_dimensions.copy(),
+            source=source,
+            copy=copy,
         )
+
+        if source is not None:
+            try:
+                index_variable = source.get_index(None)
+            except AttributeError:
+                index_variable = None
+
+            try:
+                count_variable = source.get_count(None)
+            except AttributeError:
+                count_variable = None
+
+        if index_variable is not None:
+            self._set_component("index_variable", index_variable, copy=copy)
+
+        if count_variable is not None:
+            self._set_component("count_variable", count_variable, copy=copy)
 
     def __getitem__(self, indices):
         """Return a subspace of the uncompressed data.
@@ -133,7 +143,7 @@ class RaggedArray(CompressedArray):
             )
 
         # Initialise the un-sliced uncompressed array
-        uarray = np.ma.masked_all(self.shape, dtype=self.dtype)
+        u = np.ma.masked_all(self.shape, dtype=self.dtype)
 
         compressed_dimensions = self.compressed_dimensions()
         compressed_data = self.conformed_data()["data"]
@@ -145,12 +155,17 @@ class RaggedArray(CompressedArray):
                 shape=u_shape,
                 compressed_dimensions=compressed_dimensions,
             )
-            uarray[u_indices] = subarray[...]
+            u[u_indices] = subarray[...]
 
         if indices is Ellipsis:
             return u
 
-        return self.get_subspace(uarray, indices, copy=True)
+        return self.get_subspace(u, indices, copy=True)
+
+    @property
+    def dtype(self):
+        """Data-type of the uncompressed data."""
+        return self.source().dtype
 
     def get_count(self, default=ValueError()):
         """Return the count variable for the compressed array.
@@ -195,28 +210,36 @@ class RaggedArray(CompressedArray):
         return out
 
     def to_memory(self):
-        """Bring an array on disk into memory and retain it there.
+        """Bring data disk on disk into memory.
 
-        There is no change to an array that is already in memory.
+        There is no change to data that is already in memory.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Returns:
 
             `{{class}}`
-                TODO
-
-        **Examples**
-
-        >>> a.to_memory()
+                A copy of the array with all of its data in memory.
 
         """
-        super().to_memory()
+        a = super().to_memory()
 
-        count = self.get_count(None)
+        count = a.get_count(None)
         if count is not None:
-            count.data.to_memory()
+            try:
+                a._set_component(
+                    "count_variable", count.to_memory(), copy=False
+                )
+            except AttributeError:
+                pass
 
-        index = self.get_index(None)
+        index = a.get_index(None)
         if index is not None:
-            index.data.to_memory()
+            try:
+                a._set_component(
+                    "index_variable", index.to_memory(), copy=False
+                )
+            except AttributeError:
+                pass
+
+        return a

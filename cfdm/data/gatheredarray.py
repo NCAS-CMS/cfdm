@@ -2,8 +2,14 @@ from itertools import product
 
 import numpy as np
 
-from .subarray import GatheredSubarray
 from .abstract import CompressedArray
+from .subarray import GatheredSubarray
+
+
+class DeprecationError(Exception):
+    """Deprecation error."""
+
+    pass
 
 
 class GatheredArray(CompressedArray):
@@ -45,6 +51,8 @@ class GatheredArray(CompressedArray):
         compressed_dimension=None,
         compressed_dimensions={},
         list_variable=None,
+        source=None,
+        copy=True,
     ):
         """**Initialisation**
 
@@ -55,16 +63,6 @@ class GatheredArray(CompressedArray):
 
             shape: `tuple`
                 The shape of the uncompressed array.
-
-            size: `int`
-                Deprecated at version 1.9.TODO.0. Ignored if set.
-
-                Number of elements in the uncompressed array.
-
-            ndim: `int`
-                Deprecated at version 1.9.TODO.0. Ignored if set.
-
-                The number of uncompressed array dimensions
 
             compressed_dimensions: `dict`
                 Mapping of dimensions of the compressed array to their
@@ -84,15 +82,41 @@ class GatheredArray(CompressedArray):
             compressed_dimension: deprecated at version 1.9.TODO.0
                 Use the *compressed_dimensions* parameter instead.
 
+            size: `int`
+                Deprecated at version 1.9.TODO.0. Ignored if set.
+
+                Number of elements in the uncompressed array.
+
+            ndim: `int`
+                Deprecated at version 1.9.TODO.0. Ignored if set.
+
+                The number of uncompressed array dimensions
+
         """
+        if compressed_dimension is not None:
+            raise DeprecationError(
+                "The 'compressed_dimension' keyword was deprecated at "
+                "version 1.9.TODO.0. "
+                "Use the 'compressed_dimensions' keyword instead."
+            )  # pragma: no cover
+
         super().__init__(
             compressed_array=compressed_array,
             shape=shape,
-            compressed_dimension=compressed_dimension,
-            compressed_dimensions=compressed_dimensions.copy(),
-            list_variable=list_variable,
+            compressed_dimensions=compressed_dimensions,
             compression_type="gathered",
+            source=source,
+            copy=copy,
         )
+
+        if source is not None:
+            try:
+                list_variable = source.get_list(None)
+            except AttributeError:
+                list_variable = None
+
+        if list_variable is not None:
+            self._set_component("list_variable", list_variable, copy=copy)
 
     def __getitem__(self, indices):
         """Return a subspace of the uncompressed data.
@@ -132,6 +156,15 @@ class GatheredArray(CompressedArray):
 
         return self.get_subspace(u, indices, copy=True)
 
+    @property
+    def dtype(self):
+        """The data-type of the uncompressed data.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        return self.source().dtype
+
     def conformed_data(self):
         """The compressed data and list variable.
 
@@ -140,7 +173,6 @@ class GatheredArray(CompressedArray):
         :Returns:
 
             `dict`
-
                 The conformed gathered data, with the key ``'data'``;
                 and the `tuple` of unravelled list indices with the
                 key ``'unravelled_indices'``.
@@ -264,22 +296,27 @@ class GatheredArray(CompressedArray):
         )
 
     def to_memory(self):
-        """Bring an array on disk into memory and retain it there.
+        """Bring data on disk into memory.
 
-        There is no change to an array that is already in memory.
+        There is no change to data that is already in memory.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Returns:
 
             `{{class}}`
-                TODO
-
-        **Examples**
-
-        >>> a.to_memory()
+                A copy of the array with all of its data in memory.
 
         """
-        super().to_memory()
+        a = super().to_memory()
 
         list_variable = self.get_list(None)
         if list_variable is not None:
-            list_variable.data.to_memory()
+            try:
+                a._set_component(
+                    "list_variable", list_variable.to_memory(), copy=False
+                )
+            except AttributeError:
+                pass
+
+        return a

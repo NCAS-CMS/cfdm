@@ -2,7 +2,7 @@ from .linearinterpolation import LinearInterpolation
 
 
 class BiLinearInterpolation(LinearInterpolation):
-    """Mixin class for bi-linear interpolation of tie points.
+    """Mixin class for bi-linear interpolation.
 
     See CF appendix J "Coordinate Interpolation Methods".
 
@@ -11,10 +11,7 @@ class BiLinearInterpolation(LinearInterpolation):
     """
 
     def _bilinear_interpolation(self, ua, ub, uc, ud, d2, d1):
-        """Interpolate bilinearly between TODO pairs of tie points.
-
-        General purpose two-dimensional linear interpolation
-        method.
+        """Interpolate bi-linearly between four points.
 
         uac = fl(ua, uc, s(ia2, ic2, i2))
         ubd = fl(ub, ud, s(ia2, ic2, i2))
@@ -27,22 +24,20 @@ class BiLinearInterpolation(LinearInterpolation):
         :Parameters:
 
             ua: `numpy.ndarray`
-                The first tie point in index space of subsampled
-                dimension 1 (in the sense of CF appendix J Figure
-                J.2).
+                The first point in index space of subsampled dimension
+                1 (in the sense of CF appendix J Figure J.2).
 
             ub: `numpy.ndarray`
-                The second tie point in index space of subsampled
+                The second point in index space of subsampled
                 dimension 1 (in the sense of CF appendix J Figure
                 J.2).
 
             uc: `numpy.ndarray`
-                The first tie point in index space of subsampled
-                dimension 2 (in the sense of CF appendix J Figure
-                J.2).
+                The first point in index space of subsampled dimension
+                2 (in the sense of CF appendix J Figure J.2).
 
             ud: `numpy.ndarray`
-                The second tie point in index space of subsampled
+                The second point in index space of subsampled
                 dimension 2 (in the sense of CF appendix J Figure
                 J.2).
 

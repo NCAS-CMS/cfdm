@@ -2,6 +2,7 @@ from itertools import product
 
 import numpy as np
 
+from ..core.utils import cached_property
 from .abstract import CompressedArray
 from .subarray import (
     BiLinearSubarray,
@@ -10,7 +11,6 @@ from .subarray import (
     QuadraticLatitudeLongitudeSubarray,
     QuadraticSubarray,
 )
-from .utils import cached_property
 
 
 class SubsampledArray(CompressedArray):
@@ -38,8 +38,6 @@ class SubsampledArray(CompressedArray):
     ...     interpolation_name='quadratic',
     ...     compressed_array={{package}}.Data([15, 135, 225, 255, 345]),
     ...     shape=(12,),
-    ...     ndim=1,
-    ...     size=12,
     ...     tie_point_indices={0: tie_point_indices},
     ...     parameters={"w": w},
     ...     parameter_dimensions={"w": (0,)},
@@ -59,8 +57,6 @@ class SubsampledArray(CompressedArray):
     ...     interpolation_name='quadratic',
     ...     compressed_array={{package}}.Data([0, 150, 240, 240, 360]),
     ...     shape=(12, 2),
-    ...     ndim=2,
-    ...     size=24,
     ...     tie_point_indices={0: tie_point_indices},
     ...     parameters={"w": w},
     ...     parameter_dimensions={"w": (0,)},
@@ -112,8 +108,6 @@ class SubsampledArray(CompressedArray):
         interpolation_name=None,
         compressed_array=None,
         shape=None,
-        size=None,
-        ndim=None,
         computational_precision=None,
         interpolation_description=None,
         tie_point_indices={},
@@ -121,6 +115,8 @@ class SubsampledArray(CompressedArray):
         parameter_dimensions={},
         dependent_tie_points={},
         dependent_tie_point_dimensions={},
+        source=None,
+        copy=True,
     ):
         """**Initialisation**
 
@@ -144,14 +140,6 @@ class SubsampledArray(CompressedArray):
 
             shape: `tuple`
                 The uncompressed array shape.
-
-            size: `int`
-                Number of elements in the uncompressed array, must be
-                equal to the product of *shape*.
-
-            ndim: `int`
-                The number of uncompressed array dimensions, equal to
-                the length of *shape*.
 
             tie_point_indices: `dict`
                 The tie point index variable for each subsampled
@@ -261,17 +249,82 @@ class SubsampledArray(CompressedArray):
         super().__init__(
             compressed_array=compressed_array,
             shape=shape,
-            size=size,
-            ndim=ndim,
             compression_type="subsampled",
-            interpolation_name=interpolation_name,
-            computational_precision=computational_precision,
             compressed_dimensions=compressed_dimensions,
-            tie_point_indices=tie_point_indices.copy(),
-            parameters=parameters.copy(),
-            parameter_dimensions=parameter_dimensions.copy(),
-            dependent_tie_points=dependent_tie_points.copy(),
-            dependent_tie_point_dimensions=dependent_tie_point_dimensions.copy(),
+            source=source,
+            copy=copy,
+        )
+
+        if source is not None:
+            try:
+                interpolation_name = source.get_interpolation_name(None)
+            except AttributeError:
+                interpolation_name = None
+
+            try:
+                computational_precision = source.get_computational_precision(
+                    None
+                )
+            except AttributeError:
+                computational_precision = None
+
+            try:
+                interpolation_description = (
+                    source.get_interpolation_description(None)
+                )
+            except AttributeError:
+                interpolation_description = None
+
+            try:
+                tie_point_indices = source.get_tie_point_indices()
+            except AttributeError:
+                tie_point_indices = {}
+
+            try:
+                parameters = source.get_parameters()
+            except AttributeError:
+                parameters = {}
+
+            try:
+                parameter_dimensions = source.get_parameter_dimensions()
+            except AttributeError:
+                parameter_dimensions = {}
+
+            try:
+                dependent_tie_points = source.get_dependent_tie_points()
+            except AttributeError:
+                dependent_tie_points = {}
+
+            try:
+                dependent_tie_point_dimensions = (
+                    source.get_dependent_tie_point_dimensions()
+                )
+            except AttributeError:
+                dependent_tie_point_dimensions = {}
+
+        if interpolation_name is not None:
+            self._set_component(
+                "interpolation_name", interpolation_name, copy=False
+            )
+
+        if interpolation_description is not None:
+            self._set_component(
+                "interpolation_description",
+                interpolation_description,
+                copy=False,
+            )
+
+        if computational_precision is not None:
+            self._set_component(
+                "computational_precision", computational_precision, copy=False
+            )
+
+        self.set_tie_point_indices(tie_point_indices, copy=copy)
+        self.set_parameters(parameters, copy=copy)
+        self.set_parameter_dimensions(parameter_dimensions, copy=copy)
+        self.set_dependent_tie_points(dependent_tie_points, copy=copy)
+        self.set_dependent_tie_point_dimensions(
+            dependent_tie_point_dimensions, copy=copy
         )
 
     def __getitem__(self, indices):
@@ -311,9 +364,9 @@ class SubsampledArray(CompressedArray):
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
         # Initialise the un-sliced uncompressed array
-        uarray = np.ma.masked_all(self.shape, dtype=self.dtype)
+        u = np.ma.masked_all(self.shape, dtype=self.dtype)
 
-        subsampled_dimensions = self.compressed_dimensions()
+        compressed_dimensions = self.compressed_dimensions()
 
         conformed_data = self.conformed_data()
         tie_points = conformed_data["data"]
@@ -323,24 +376,27 @@ class SubsampledArray(CompressedArray):
         # Interpolate the tie points for each interpolation subarea
         for (
             u_indices,
-            subarea_shape,
-            tp_indices,
+            u_shape,
+            c_indices,
             first,
             subarea_indices,
         ) in zip(*self.subarrays()):
             subarray = Subarray(
                 data=tie_points,
-                indices=tp_indices,
-                shape=subarea_shape,
-                compressed_dimensions=subsampled_dimensions,
+                indices=c_indices,
+                shape=u_shape,
+                compressed_dimensions=compressed_dimensions,
                 first=first,
                 subarea_indices=subarea_indices,
                 parameters=parameters,
                 dependent_tie_points=dependent_tie_points,
             )
-            uarray[u_indices] = subarray[...]
+            u[u_indices] = subarray[...]
 
-        return self.get_subspace(uarray, indices, copy=True)
+        if indices is Ellipsis:
+            return u
+
+        return self.get_subspace(u, indices, copy=True)
 
     def _conformed_dependent_tie_points(self):
         """Return the dependent tie points.
@@ -703,6 +759,8 @@ class SubsampledArray(CompressedArray):
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
+        .. seealso:: `set_tie_point_indices`
+
         :Returns:
 
             `dict`
@@ -714,7 +772,7 @@ class SubsampledArray(CompressedArray):
         """
         return self._get_component("tie_point_indices").copy()
 
-    def set_dependent_tie_point_dimensions(self, value):
+    def set_dependent_tie_point_dimensions(self, value, copy=True):
         """Set the dimension order of dependent tie points.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
@@ -766,6 +824,77 @@ class SubsampledArray(CompressedArray):
 
         self._set_component("dependent_tie_points", value, copy=False)
 
+    def set_parameter_dimensions(self, value, copy=True):
+        """Set the dimension order interpolation parameters.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `get_parameter_dimensions`
+
+        :Parameters:
+
+            value: `dict`
+                The interpolation parameter dimension orders relative
+                to the tie points array, each keyed the interpolation
+                parameter term name.
+
+        :Returns:
+
+            `None`
+
+        """
+        self._set_component("parameter_dimensions", value.copy(), copy=False)
+
+    def set_parameters(self, value, copy=True):
+        """Set the interpolation parameter variables.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `get_parameters`
+
+        :Parameters:
+
+            value: `dict`
+                The interpolation parameters, each keyed the
+                interpolation parameter term name.
+
+        :Returns:
+
+            `None`
+
+        """
+        if copy:
+            value = {term: p.copy() for term, p in value.items()}
+        else:
+            value = value.copy()
+
+        self._set_component("parameters", value, copy=False)
+
+    def set_tie_point_indices(self, value, copy=True):
+        """Set the tie point index variables for subsampled dimensions.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `get_tie_point_indices`
+
+        :Parameters:
+
+            value: `dict`
+                The tie point index variables, each keyed by its
+                corresponding subsampled dimension position.
+
+        :Returns:
+
+            `None`
+
+        """
+        if copy:
+            value = {key: i.copy() for key, i in value.items()}
+        else:
+            value = value.copy()
+
+        self._set_component("tie_point_indices", value, copy=False)
+
     def subarrays(self):
         """Return descriptors for every subarray.
 
@@ -816,8 +945,8 @@ class SubsampledArray(CompressedArray):
         interpolation subareas of szes 5, 6, and 6.
 
         >>> (u_indices,
-        ...  interpolation_subarea_shapes,
-        ...  tp_indices,
+        ...  u_shapes,
+        ...  c_indices,
         ...  new_continuous_area,
         ...  interpolation_subarea_indices) = x.subarrays()
         >>> for i in u_indices:
@@ -829,7 +958,7 @@ class SubsampledArray(CompressedArray):
         (slice(10, 20, None), slice(None, None, None), slice(0, 5, None))
         (slice(10, 20, None), slice(None, None, None), slice(5, 10, None))
         (slice(10, 20, None), slice(None, None, None), slice(10, 15, None))
-        >>> for i in interpolation_subarea_shapes:
+        >>> for i in u_shapes:
         ...    print(i)
         ...
         (10, 12, 5)
@@ -838,7 +967,7 @@ class SubsampledArray(CompressedArray):
         (10, 12, 5)
         (10, 12, 5)
         (10, 12, 5)
-        >>> for i in tp_indices,
+        >>> for i in c_indices,
         ...    print(i)
         ...
         (slice(0, 2, None), slice(None, None, None), slice(0, 2, None))
@@ -878,14 +1007,14 @@ class SubsampledArray(CompressedArray):
         #           overlaps.
         u_indices = [(slice(None),)] * tp_ndim
 
-        # The indices of the tie point array that correspond to each
-        # interpolation subarea.
-        tp_indices = [(slice(None),)] * tp_ndim
-
         # The shape of each uncompressed interpolated subarea along
         # the interpolated dimensions, excluding the tie point
         # locations defined in previous interpolation subareas.
-        interpolation_subarea_shapes = [[n] for n in self.shape]
+        u_shapes = [(n,) for n in self.shape]
+
+        # The indices of the tie point array that correspond to each
+        # interpolation subarea.
+        c_indices = [(slice(None),)] * tp_ndim
 
         # The flags which state, for each dimension, whether (`True`)
         # or not (`False`) an interplation subarea is at the start of
@@ -898,10 +1027,10 @@ class SubsampledArray(CompressedArray):
         interpolation_subarea_indices = [(slice(None),)] * tp_ndim
 
         for d, tie_point_index in self.get_tie_point_indices().items():
-            tp_index = []
             u_index = []
+            u_shape = []
+            c_index = []
             continuous_area = []
-            subarea_shape = []
             interpolation_subarea_index = []
 
             indices = np.array(tie_point_index).tolist()
@@ -929,7 +1058,7 @@ class SubsampledArray(CompressedArray):
                 # The subspace for the axis of the tie points that
                 # corresponds to this axis of the interpolation
                 # subarea
-                tp_index.append(slice(i, i + 2))
+                c_index.append(slice(i, i + 2))
 
                 # The size of the interpolation subarea along this
                 # interpolated dimension
@@ -937,7 +1066,7 @@ class SubsampledArray(CompressedArray):
                 if not first:
                     size -= 1
 
-                subarea_shape.append(size)
+                u_shape.append(size)
 
                 # The subspace for this axis of the uncompressed array
                 # that corresponds to the interpolation suabrea, only
@@ -950,40 +1079,66 @@ class SubsampledArray(CompressedArray):
 
                 first = False
 
-            tp_indices[d] = tp_index
             u_indices[d] = u_index
-            interpolation_subarea_shapes[d] = subarea_shape
+            u_shapes[d] = u_shape
+            c_indices[d] = c_index
             new_continuous_area[d] = continuous_area
             interpolation_subarea_indices[d] = interpolation_subarea_index
 
         return (
             product(*u_indices),
-            product(*interpolation_subarea_shapes),
-            product(*tp_indices),
+            product(*u_shapes),
+            product(*c_indices),
             product(*new_continuous_area),
             product(*interpolation_subarea_indices),
         )
 
     def to_memory(self):
-        """Bring an array on disk into memory.
+        """Bring data on disk into memory.
 
-        There is no change to an array that is already in memory.
+        There is no change to data that is already in memory.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Returns:
 
             `{{class}}`
-                The array that is stored in memory.
+                A copy of the array with all of its data in memory.
 
         """
-        super().to_memory()
+        a = super().to_memory()
 
-        for v in self.get_tie_point_indices().values():
-            v.data.to_memory()
+        d = {}
+        for key, v in a.get_tie_point_indices().items():
+            try:
+                v = v.to_memory()
+            except AttributeError:
+                pass
 
-        for v in self.get_parameters().values():
-            v.data.to_memory()
+            d[key] = v
 
-        for v in self.get_dependent_tie_points().values():
-            v.data.to_memory()
+        a.set_tie_point_indices(d, copy=False)
+
+        d = {}
+        for key, v in a.get_parameters().items():
+            try:
+                v = v.to_memory()
+            except AttributeError:
+                pass
+
+            d[key] = v
+
+        a.set_parameters(d, copy=False)
+
+        d = {}
+        for key, v in a.get_dependent_tie_points().items():
+            try:
+                v = v.to_memory()
+            except AttributeError:
+                pass
+
+            d[key] = v
+
+        a.set_dependent_tie_points(d, copy=False)
+
+        return a

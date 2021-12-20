@@ -907,8 +907,8 @@ class Field(
             return self._RaggedContiguousArray(
                 compressed_data,
                 shape=data.shape,
-                size=data.size,
-                ndim=data.ndim,
+                #                size=data.size,
+                #                ndim=data.ndim,
                 count_variable=count_variable,
             )
 
@@ -916,8 +916,8 @@ class Field(
             return self._RaggedIndexedArray(
                 compressed_data,
                 shape=data.shape,
-                size=data.size,
-                ndim=data.ndim,
+                #                size=data.size,
+                #                ndim=data.ndim,
                 index_variable=index_variable,
             )
 
@@ -927,8 +927,8 @@ class Field(
             return self._RaggedIndexedContiguousArray(
                 compressed_data,
                 shape=data.shape,
-                size=data.size,
-                ndim=data.ndim,
+                #                size=data.size,
+                #                ndim=data.ndim,
                 count_variable=count_variable,
                 index_variable=index_variable,
             )
