@@ -28,12 +28,11 @@ class Subarray(Array):
             data: array_like
                 The full compressed array spanning all subarrays, from
                 which the elements for this subarray are defined by
-                the *indices* indices.
+                the *indices*.
 
             indices: `tuple`
-                For each dimension of the *data* array, the index that
-                defines the elements needed to uncompress this
-                subarray
+                The inidces of *data* that are needed to uncompress
+                this subarray.
 
             shape: `tuple` of `int`
                 The shape of the uncompressed subarray.
@@ -62,8 +61,15 @@ class Subarray(Array):
                 *Parameter example:*
                   ``{0: (0,), 2: (2,)}``
 
-            kwargs: optional
-                TODO
+            source: optional
+                Initialise the subarray from the given object.
+
+                {{init source}}
+
+            copy: `bool`, optional
+                If False then do not deep copy input parameters prior
+                to initialisation. By default arguments are deep
+                copied.
 
         """
         super().__init__(source=source, copy=copy)

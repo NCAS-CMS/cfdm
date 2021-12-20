@@ -45,7 +45,7 @@ class CompressedArray(Array):
 
         :Parameters:
 
-            compressed_array: TODO subclass of `Array`
+            compressed_array: array_like
                 The compressed array.
 
             shape: `tuple`
@@ -83,6 +83,20 @@ class CompressedArray(Array):
 
             compressed_dimension: Deprecated at version 1.9.TODO.0
                 Use the *compressed_dimensions* parameter instead.
+
+            source: optional
+                Initialise the array from the given object.
+
+                {{init source}}
+
+                .. versionadded:: (cfdm) 1.9.TODO.0
+
+            copy: `bool`, optional
+                If False then do not deep copy input parameters prior
+                to initialisation. By default arguments are deep
+                copied.
+
+                .. versionadded:: (cfdm) 1.9.TODO.0
 
             size: `int`
                 Deprecated at version 1.9.TODO.0. If set will be

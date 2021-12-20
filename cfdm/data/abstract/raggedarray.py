@@ -9,7 +9,7 @@ class RaggedArray(CompressedArray):
 
     See CF section 9 "Discrete Sampling Geometries"
 
-    .. versionadded:: (cfdm) 1.7.0
+    .. versionadded:: (cfdm) 1.9.TODO.0
 
     """
 
@@ -47,7 +47,7 @@ class RaggedArray(CompressedArray):
 
         :Parameters:
 
-            compressed_array: `Data`
+            compressed_array: array_like
                 The compressed data.
 
             shape: `tuple`
@@ -74,6 +74,16 @@ class RaggedArray(CompressedArray):
                 An index variable for uncompressing the data,
                 corresponding to a CF-netCDF count variable, if
                 required by the decompression method.
+
+            source: optional
+                Initialise the array from the given object.
+
+                {{init source}}
+
+            copy: `bool`, optional
+                If False then do not deep copy input parameters prior
+                to initialisation. By default arguments are deep
+                copied.
 
         """
         if count_variable is not None:

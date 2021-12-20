@@ -37,7 +37,7 @@ class RaggedContiguousArray(RaggedArray):
 
         :Parameters:
 
-            compressed_array: `Data`
+            compressed_array: araray_like
                 The compressed data.
 
             shape: `tuple`
@@ -46,6 +46,20 @@ class RaggedContiguousArray(RaggedArray):
             count_variable: `Count`
                 The count variable required to uncompress the data,
                 corresponding to a CF-netCDF count variable.
+
+            source: optional
+                Initialise the array from the given object.
+
+                {{init source}}
+
+                .. versionadded:: (cfdm) 1.9.TODO.0
+
+            copy: `bool`, optional
+                If False then do not deep copy input parameters prior
+                to initialisation. By default arguments are deep
+                copied.
+
+                .. versionadded:: (cfdm) 1.9.TODO.0
 
             size: `int`
                 Deprecated at version 1.9.TODO.0. Ignored if set.

@@ -39,7 +39,7 @@ class RaggedIndexedContiguousArray(RaggedArray):
 
         :Parameters:
 
-            compressed_array: `Data`
+            compressed_array: array_like
                 The compressed array.
 
             shape: `tuple`
@@ -52,6 +52,20 @@ class RaggedIndexedContiguousArray(RaggedArray):
             index_variable: `Index`
                 The index variable required to uncompress the data,
                 corresponding to a CF-netCDF CF-netCDF index variable.
+
+            source: optional
+                Initialise the array from the given object.
+
+                {{init source}}
+
+                .. versionadded:: (cfdm) 1.9.TODO.0
+
+            copy: `bool`, optional
+                If False then do not deep copy input parameters prior
+                to initialisation. By default arguments are deep
+                copied.
+
+                .. versionadded:: (cfdm) 1.9.TODO.0
 
             size: `int`
                 Deprecated at version 1.9.TODO.0. Ignored if set.

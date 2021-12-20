@@ -135,7 +135,7 @@ class SubsampledArray(CompressedArray):
                 *Parameter example:*
                   ``'bi_linear'``
 
-            compressed_array: `Data`
+            compressed_array: array_like
                 The (bounds) tie points array.
 
             shape: `tuple`
@@ -242,6 +242,16 @@ class SubsampledArray(CompressedArray):
 
                 *Parameter example:*
                   ``{'latitude': (2, 0, 1)}``
+
+            source: optional
+                Initialise the array from the given object.
+
+                {{init source}}
+
+            copy: `bool`, optional
+                If False then do not deep copy input parameters prior
+                to initialisation. By default arguments are deep
+                copied.
 
         """
         compressed_dimensions = {d: (d,) for d in sorted(tie_point_indices)}

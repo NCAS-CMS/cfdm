@@ -90,6 +90,20 @@ class NetCDFArray(abstract.Array):
 
                 .. versionadded:: (cfdm) 1.8.2
 
+            source: optional
+                Initialise the array from the given object.
+
+                {{init source}}
+
+                .. versionadded:: (cfdm) 1.9.TODO.
+
+            copy: `bool`, optional
+                If False then do not deep copy input parameters prior
+                to initialisation. By default arguments are deep
+                copied.
+
+                .. versionadded:: (cfdm) 1.9.TODO.
+
         **Examples**
 
         >>> import netCDF4

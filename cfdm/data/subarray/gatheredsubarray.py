@@ -29,16 +29,13 @@ class GatheredSubarray(Subarray):
         :Parameters:
 
             data: array_like
-                The full TODO tie points array for all interpolation
-                subarareas. May be a bounds tie point array. The array
-                provide values for all interpolation subareas, from
-                which the applicable elements are defined by the
-                *indices* indices.
+                The full compressed array spanning all subarrays, from
+                which the elements for this subarray are defined by
+                the *indices*.
 
             indices: `tuple` of `slice`
-                For each dimension of the *data* array, the index that
-                defines the TODO tie points elements that correspond to
-                this interpolation subarea.
+                The inidces of *data* that are needed to uncompress
+                this subarray.
 
             shape: `tuple` of `int`
                 The shape of the uncompressed subarray.
@@ -62,6 +59,17 @@ class GatheredSubarray(Subarray):
                   ``{0: (0, 1, 2)}``
 
             unravelled_indices: `tuple`
+                TODO
+
+            source: optional
+                Initialise the subarray from the given object.
+
+                {{init source}}
+
+            copy: `bool`, optional
+                If False then do not deep copy input parameters prior
+                to initialisation. By default arguments are deep
+                copied.
 
         """
         super().__init__(
