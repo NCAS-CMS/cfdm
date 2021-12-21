@@ -20,7 +20,7 @@ class GatheredSubarray(Subarray):
         indices=None,
         shape=None,
         compressed_dimensions={},
-        unravelled_indices=None,
+        uncompressed_indices=None,
         source=None,
         copy=True,
     ):
@@ -58,8 +58,9 @@ class GatheredSubarray(Subarray):
                 *Parameter example:*
                   ``{0: (0, 1, 2)}``
 
-            unravelled_indices: `tuple`
-                TODO
+            uncompressed_indices: `tuple`
+                Indices of the uncompressed subarray for the
+                compressed data.
 
             source: optional
                 Initialise the subarray from the given object.
@@ -83,15 +84,15 @@ class GatheredSubarray(Subarray):
 
         if source is not None:
             try:
-                unravelled_indices = source._get_component(
-                    "unravelled_indices", None
+                uncompressed_indices = source._get_component(
+                    "uncompressed_indices", None
                 )
             except AttributeError:
-                unravelled_indices = None
+                uncompressed_indices = None
 
-        if unravelled_indices is not None:
+        if uncompressed_indices is not None:
             self._set_component(
-                "unravelled_indices", unravelled_indices, copy=False
+                "uncompressed_indices", uncompressed_indices, copy=False
             )
 
     def __getitem__(self, indices):
@@ -107,7 +108,7 @@ class GatheredSubarray(Subarray):
         """
         u = np.ma.masked_all(self.shape, dtype=self.dtype)
 
-        u[self.unravelled_indices] = self._select_data()
+        u[self.uncompressed_indices] = self._select_data()
 
         if indices is Ellipsis:
             return u
@@ -124,10 +125,10 @@ class GatheredSubarray(Subarray):
         return self.data.dtype
 
     @property
-    def unravelled_indices(self):
-        """TODO.
+    def uncompressed_indices(self):
+        """Indices of the uncompressed subarray for the compressed data.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
-        return self._get_component("unravelled_indices")
+        return self._get_component("uncompressed_indices")

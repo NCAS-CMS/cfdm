@@ -164,15 +164,16 @@ class SubsampledSubarray(Subarray):
             )
 
     def _broadcast_bounds(self, u):
-        """TODO.
+        """Broadcast the raw uncompressed data to bounds locations.
 
-        When the compressed data are bounds tie points, then the
-        interpolated values are broadcast to each location of the
-        trailing bounds dimension. See CF 8.3.9 "Interpolation of Cell
-        Boundaries".
+        The raw uncompressed data is the basic interpolation of the
+        bounds tie points, including the tie point locations.
 
-        If the data compressed data are instead tie points, then the
-        interpolated values are returned unchanged.
+        If *u* has not been calculated from bounds tie points then no
+        broadcasting is done and the interpolated values are returned
+        unchanged.
+
+        See CF section 8.3.9 "Interpolation of Cell Boundaries".
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -181,13 +182,12 @@ class SubsampledSubarray(Subarray):
         :Parameters:
 
             u: `numpy.ndarray`
-               The uncompressed data for the interpolation subarea
-               that includes all tie point locations. TODO
+                The raw uncompressed data is the basic interpolation
+                of the tie points, including the tie point locations.
 
         :Returns:
 
             `numpy.ndarray`
-               TODO
 
         """
         if not self.bounds:
@@ -285,26 +285,15 @@ class SubsampledSubarray(Subarray):
         return out
 
     def _post_process(self, u):
-        """TODO.
-
-        For each subsampled dimension, removes the first point of the
-        interpolation subarea when it is not the first (in index
-        space) of a continuous area. This is beacuse this value in the
-        uncompressed data has already been calculated from the
-        previous (in index space) interpolation subarea.
-
-        Only does this when interpolating tie point coordinates. If
-        interpolating bounds tie points then the first point is always
-        kept so that it may be used during the broadcast to the bounds
-        locations.
+        """Map the raw interpolated data to the uncompressed subarray.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Parameters:
 
             u: `numpy.ndarray`
-               The uncompressed data for the interpolation subarea
-               that includes all tie point locations.
+               The uncompressed data for the whole interpolation
+               subarea.
 
         :Returns:
 
@@ -565,7 +554,7 @@ class SubsampledSubarray(Subarray):
 
     @property
     def dependent_tie_points(self):
-        """TODO.
+        """The dependent tie points dictionary.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -583,7 +572,7 @@ class SubsampledSubarray(Subarray):
 
     @property
     def first(self):
-        """TODO.
+        """Relative interpolation subarea positions.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -592,7 +581,7 @@ class SubsampledSubarray(Subarray):
 
     @property
     def parameters(self):
-        """TODO.
+        """The interpolation parameters dictionary.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -601,7 +590,7 @@ class SubsampledSubarray(Subarray):
 
     @property
     def subarea_indices(self):
-        """TODO.
+        """Location of interpolation subarea.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 

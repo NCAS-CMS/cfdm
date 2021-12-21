@@ -5412,7 +5412,6 @@ class NetCDFRead(IORead):
                     array = self._create_gathered_array(
                         gathered_array=self._create_Data(array),
                         uncompressed_shape=uncompressed_shape,
-                        #                        compressed_dimensions=(dimensions.index(ncdim),),
                         compressed_dimensions=compressed_dimensions,
                         list_variable=c["list_variable"],
                     )
@@ -5542,12 +5541,10 @@ class NetCDFRead(IORead):
 
                             parameter_dimensions[term] = tuple(positions)
                 else:
+                    # This compression type was no recognised, which
+                    # could be a result of a non-compressed data
+                    # variable spanning compressed dimensions.
                     break
-            #                    raise ValueError(
-            #                        "Bad compression type: "
-            #                        f"parent_ncvar={parent_ncvar}, ncvar={ncvar}, "
-            #                        f"c.keys()={list(c.keys())}"
-            #                    )
 
             if subsampled:
                 array = self._create_subsampled_array(
@@ -5994,19 +5991,6 @@ class NetCDFRead(IORead):
                         "interpolation_ncvar": interpolation_ncvar,
                         "implied_ncdimensions": [interpolated_ncdim],
                     }
-                    #        yyy = {
-                    #            "quadratic_latitude_longitude": set(("latitude", "longitude")),
-                    #            "bi_quadratic_latitude_longitude": set(("latitude", "longitude")),
-                    #        }
-                    #                    if interpolation_name in yyy:
-                    #                        xx = {}
-                    #                        for c in coords:
-                    #                            if c == tp_ncvar:
-                    #                                continue
-                    #
-                    #                            for kkk in yyy[interpolation_name]:
-                    #                                if self._ncvar_is(c, kkk):
-                    #                                    xx[kkk] = {lll
 
                     # Do not attempt to create field/domain constructs
                     # from tie point coordinate variables

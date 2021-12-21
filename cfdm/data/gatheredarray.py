@@ -153,7 +153,7 @@ class GatheredArray(CompressedArray):
 
         conformed_data = self.conformed_data()
         compressed_data = conformed_data["data"]
-        unravelled_indices = conformed_data["unravelled_indices"]
+        uncompressed_indices = conformed_data["uncompressed_indices"]
 
         for u_indices, u_shape, c_indices in zip(*self.subarrays()):
             subarray = Subarray(
@@ -161,7 +161,7 @@ class GatheredArray(CompressedArray):
                 indices=c_indices,
                 shape=u_shape,
                 compressed_dimensions=compressed_dimensions,
-                unravelled_indices=unravelled_indices,
+                uncompressed_indices=uncompressed_indices,
             )
             u[u_indices] = subarray[...]
 
@@ -169,6 +169,43 @@ class GatheredArray(CompressedArray):
             return u
 
         return self.get_subspace(u, indices, copy=True)
+
+    def _uncompressed_indices(self):
+        """Indices of the uncompressed subarray for the compressed data.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Returns:
+
+            `tuple`
+                The indices of the uncompressed subarray for the
+                compressed data. Dimensions not compressed by
+                gathering will have an index of ``slice(None)``.
+
+        **Examples**
+
+        For an original 3-d array with shape (12, 4, 6) for which the
+        last two dimensions have been compressed by gathering with
+        list variable indices (1, 2, 5, 6, 13, 15, 16, 22) then:
+
+        >>> for i in x._uncompressed_indices():
+        ...     print(i)
+        ...
+        slice(None, None, None)
+        array([0, 0, 0, 1, 2, 2, 2, 3])
+        array([1, 2, 5, 0, 1, 3, 4, 4])
+
+        """
+        _, u_dims = self.compressed_dimensions().popitem()
+        list_variable = np.array(self.get_list())
+
+        u_indices = [slice(None)] * self.ndim
+
+        u_indices[u_dims[0] : u_dims[-1] + 1] = np.unravel_index(
+            list_variable, self.shape[u_dims[0] : u_dims[-1] + 1]
+        )
+
+        return tuple(u_indices)
 
     @property
     def dtype(self):
@@ -188,23 +225,12 @@ class GatheredArray(CompressedArray):
 
             `dict`
                 The conformed gathered data, with the key ``'data'``;
-                and the `tuple` of unravelled list indices with the
-                key ``'unravelled_indices'``.
+                and the `tuple` of uncompressed indices with the key
+                ``'uncompressed_indices'``.
 
         """
         out = super().conformed_data()
-
-        _, u_dims = self.compressed_dimensions().popitem()
-        list_variable = np.array(self.get_list())
-
-        unravelled_indices = [slice(None)] * self.ndim
-
-        unravelled_indices[u_dims[0] : u_dims[-1] + 1] = np.unravel_index(
-            list_variable, self.shape[u_dims[0] : u_dims[-1] + 1]
-        )
-
-        out["unravelled_indices"] = tuple(unravelled_indices)
-
+        out["uncompressed_indices"] = self._uncompressed_indices()
         return out
 
     def get_list(self, default=ValueError()):
