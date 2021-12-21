@@ -4798,19 +4798,25 @@ class NetCDFRead(IORead):
 
         return cell_measure
 
-    def _create_interpolation_parameter(self, ncvar):
+    def _create_interpolation_parameter(self, term, ncvar):
         """Create an interpolation parameter variable.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         :Parameters:
 
+            term: `str`
+                The interpolation parameter term name.
+
+                *Parameter example:*
+                  ``'ce'``
+
             ncvar: `str`
                 The netCDF name of the interpolation parameter
                 variable.
 
                 *Parameter example:*
-                  ``ncvar='ce'``
+                  ``'ce'``
 
         :Returns:
 
@@ -4819,6 +4825,13 @@ class NetCDFRead(IORead):
 
         """
         g = self.read_vars
+
+        if ncvar not in g["variable_attributes"]:
+            raise ValueError(
+                "Can't initialise a subsampled coordinate with specified "
+                f"interpolation parameter ({term}: {ncvar}) that is missing "
+                "from the dataset"
+            )
 
         # Initialise the interpolation parameter variable
         param = self.implementation.initialise_InterpolationParameter()
@@ -5942,7 +5955,9 @@ class NetCDFRead(IORead):
                             continue
 
                         # Create the interpolation parameter variable
-                        p = self._create_interpolation_parameter(param_ncvar)
+                        p = self._create_interpolation_parameter(
+                            term, param_ncvar
+                        )
                         g["interpolation_parameter"][param_ncvar] = p
 
                         # Do not create field/domain constructs from
