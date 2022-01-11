@@ -23,6 +23,7 @@ class GatheredSubarray(Subarray):
         uncompressed_indices=None,
         source=None,
         copy=True,
+        _context_manager=None,
     ):
         """**Initialisation**
 
@@ -34,8 +35,7 @@ class GatheredSubarray(Subarray):
                 the *indices*.
 
             indices: `tuple` of `slice`
-                The inidces of *data* that are needed to uncompress
-                this subarray.
+                The indices of *data* that define this subarray.
 
             shape: `tuple` of `int`
                 The shape of the uncompressed subarray.
@@ -72,6 +72,12 @@ class GatheredSubarray(Subarray):
                 to initialisation. By default arguments are deep
                 copied.
 
+            _context_manager: function, optional
+                A context manager that provides a runtime context for
+                the conversion of data defined by *data*,
+                *dependent_tie_points*, and *parameters* to a `numpy`
+                arrays.
+
         """
         super().__init__(
             data=data,
@@ -80,6 +86,7 @@ class GatheredSubarray(Subarray):
             compressed_dimensions=compressed_dimensions,
             source=source,
             copy=copy,
+            _context_manager=_context_manager,
         )
 
         if source is not None:
@@ -108,7 +115,7 @@ class GatheredSubarray(Subarray):
         """
         u = np.ma.masked_all(self.shape, dtype=self.dtype)
 
-        u[self.uncompressed_indices] = self._select_data()
+        u[self.uncompressed_indices] = self._select_data(check_mask=False)
 
         if indices is Ellipsis:
             return u

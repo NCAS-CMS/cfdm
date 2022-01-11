@@ -216,12 +216,61 @@ class CompressedArray(Array):
 
                 The compressed Array instance.
 
-        **Examples:**
+        **Examples**
 
         >>> c = d._get_compressed_Array()
 
         """
         return self._get_component("compressed_Array", default)
+
+    def _normalise_chunks(self, chunks):
+        """TODO.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `subarray`
+
+        :Parameters:
+
+            chunks: `None`, `str`, or sequence
+                TODO
+
+        :Returns:
+
+            `list`
+                TODO
+
+        **Examples**
+
+        >>> TODO
+
+        """
+        shape = self.shape
+
+        if chunks in (None, "most"):
+            ndim = self.ndim
+            chunks = [(n,) for n in shape]
+            for c_dims in self.compressed_dimensions().values():
+                for i in range(ndim):
+                    if i not in c_dims:
+                        chunks[i] = (1,) * shape[i]
+
+        elif chunks == "fewest":
+            chunks = [(n,) for n in shape]
+
+        elif len(chunks) == self.ndim:
+            chunks = list(chunks)
+            for c_dims in self.compressed_dimensions().values():
+                for i in c_dims:
+                    chunks[i] = (shape[i],)
+
+        else:
+            raise ValueError(
+                "Wrong number of chunks elements: "
+                f"Got {len(chunks)}, expected {self.ndim}"
+            )
+
+        return chunks
 
     def _set_compressed_Array(self, array, copy=True):
         """Set the compressed array.
@@ -237,7 +286,7 @@ class CompressedArray(Array):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d._set_compressed_Array(a)
 
@@ -256,7 +305,7 @@ class CompressedArray(Array):
             `numpy.ndarray`
                 The uncompressed array.
 
-        **Examples:**
+        **Examples**
 
         >>> n = a.array
         >>> isinstance(n, numpy.ndarray)
@@ -286,7 +335,7 @@ class CompressedArray(Array):
             `numpy.ndarray`
                 The compressed array.
 
-        **Examples:**
+        **Examples**
 
         >>> n = a.compressed_array
 
@@ -309,7 +358,7 @@ class CompressedArray(Array):
                 The compressed axes described by their integer
                 positions in the uncompressed array.
 
-        **Examples:**
+        **Examples**
 
         >>> c.ndim
         4
@@ -344,7 +393,7 @@ class CompressedArray(Array):
                 array. If the underlying is not compressed then *default*
                 is returned, if provided.
 
-        **Examples:**
+        **Examples**
 
         >>> i = d.get_compressed_dimension()
 
@@ -410,7 +459,7 @@ class CompressedArray(Array):
             subclass of `Array`
                 The underlying array object.
 
-        **Examples:**
+        **Examples**
 
         >>> array
         <RaggedContiguousArray(2, 4): >

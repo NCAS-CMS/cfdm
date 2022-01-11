@@ -1,4 +1,4 @@
-from itertools import product
+from itertools import accumulate, product
 
 import numpy as np
 
@@ -155,7 +155,7 @@ class GatheredArray(CompressedArray):
         compressed_data = conformed_data["data"]
         uncompressed_indices = conformed_data["uncompressed_indices"]
 
-        for u_indices, u_shape, c_indices in zip(*self.subarrays()):
+        for u_indices, u_shape, c_indices, _ in zip(*self.subarrays()):
             subarray = Subarray(
                 data=compressed_data,
                 indices=c_indices,
@@ -254,16 +254,21 @@ class GatheredArray(CompressedArray):
         """
         return self._get_component("list_variable", default=default)
 
-    def subarrays(self):
+    def subarrays(self, chunks=None):
         """Return descriptors for every subarray.
 
         These descriptors are used during subarray decompression.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
+        :Parameters:
+
+            chunks: optional
+               TODO (should this be settable elswhere?)
+
         :Returns:
 
-            sequence of iterators
+             4-`tuple` of iterators
                 Each iterable iterates over a particular descriptor
                 from each subarray.
 
@@ -275,13 +280,16 @@ class GatheredArray(CompressedArray):
                 3. The indices of the compressed array that correspond
                    to each subarray.
 
+                4. The location of each subarray on the uncompressed
+                   dimensions.
+
         **Examples**
 
         An original 3-d array with shape (4, 73, 96) has been
         compressed by gathering the dimensions with sizes 73 and 96
         respectively.
 
-        >>> u_indices, u_shapes, c_indices = x.subarrays()
+        >>> u_indices, u_shapes, c_indices, locations = x.subarrays()
         >>> for i in u_indices:
         ...    print(i)
         ...
@@ -303,22 +311,91 @@ class GatheredArray(CompressedArray):
         (slice(1, 2, None), slice(None, None, None))
         (slice(2, 3, None), slice(None, None, None))
         (slice(3, 4, None), slice(None, None, None))
+        >>> for i in locations:
+        ...    print(i)
+        ...
+        (0, 0, 0)
+        (1, 0, 0)
+        (2, 0, 0)
+        (3, 0, 0)
+
+        >>> (
+        ...  u_indices,
+        ...  u_shapes,
+        ...  c_indices,
+        ...  locations
+        ... ) = x.subarrays(chunks="fewest")
+        >>> for i in u_indices:
+        ...    print(i)
+        ...
+        (slice(0, 4, None), slice(None, None, None), slice(None, None, None))
+        >>> for i in u_shapes
+        ...    print(i)
+        ...
+        (4, 73, 96)
+        >>> for i in c_indices:
+        ...    print(i)
+        ...
+        (slice(0, 4, None), slice(None, None, None))
+        >>> for i in locations:
+        ...    print(i)
+        ...
+        (0, 0, 0)
+
+        >>> (
+        ...  u_indices,
+        ...  u_shapes,
+        ...  c_indices,
+        ...  locations
+        ... ) = x.subarrays(chunks=((3, 1), None, None))
+        >>> for i in u_indices:
+        ...    print(i)
+        ...
+        (slice(0, 3, None), slice(None, None, None), slice(None, None, None))
+        (slice(3, 4, None), slice(None, None, None), slice(None, None, None))
+        >>> for i in u_shapes
+        ...    print(i)
+        ...
+        (3, 73, 96)
+        (1, 73, 96)
+        >>> for i in c_indices:
+        ...    print(i)
+        ...
+        (slice(0, 3, None), slice(None, None, None))
+        (slice(3, 4, None), slice(None, None, None))
+        >>> for i in locations:
+        ...    print(i)
+        ...
+        (0, 0, 0)
+        (1, 0, 0)
 
         """
         d1, u_dims = self.compressed_dimensions().popitem()
         uncompressed_shape = self.shape
 
+        chunks = self._normalise_chunks(chunks)
+
         # The indices of the uncompressed array that correspond to
         # each subarray, and the shape of each uncompressed subarray.
-        u_indices = []
+        locations = []
         u_shapes = []
+        u_indices = []
         for d, size in enumerate(uncompressed_shape):
             if d in u_dims:
-                u_indices.append((slice(None),))
+                locations.append((0,))
                 u_shapes.append((size,))
+                u_indices.append((slice(None),))
             else:
-                u_indices.append([slice(i, i + 1) for i in range(size)])
-                u_shapes.append((1,) * size)
+                c = chunks[d]
+                locations.append([i for i in range(len(c))])
+                u_shapes.append(c)
+
+                c = tuple(accumulate((0,) + c))
+                u_indices.append([slice(i, j) for i, j in zip(c[:-1], c[1:])])
+        #            else:
+        #                locations.append([i for i in range(size)])
+        #                u_shapes.append((1,) * size)
+        #                u_indices.append([slice(i, i + 1) for i in range(size)])
 
         # The indices of the compressed array that correspond to each
         # subarray
@@ -327,12 +404,21 @@ class GatheredArray(CompressedArray):
             if d == d1:
                 c_indices.append((slice(None),))
             else:
-                c_indices.append([slice(i, i + 1) for i in range(size)])
+                if d < d1:
+                    c = chunks[d]
+                else:
+                    c = chunks[d + len(u_dims) - 1]
+
+                c = tuple(accumulate((0,) + c))
+                c_indices.append([slice(i, j) for i, j in zip(c[:-1], c[1:])])
+        #            else:
+        #                c_indices.append([slice(i, i + 1) for i in range(size)])
 
         return (
             product(*u_indices),
             product(*u_shapes),
             product(*c_indices),
+            product(*locations),
         )
 
     def to_memory(self):

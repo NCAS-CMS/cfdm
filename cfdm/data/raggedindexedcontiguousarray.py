@@ -97,12 +97,9 @@ class RaggedIndexedContiguousArray(RaggedArray):
 
         :Returns:
 
-            sequence of iterators
+             4-`tuple` of iterators
                 Each iterable iterates over a particular descriptor
                 from each subarray.
-
-                There must be at least three sequences. The leading
-                three of which describe:
 
                 1. The indices of the uncompressed array that
                    correspond to each subarray.
@@ -111,6 +108,9 @@ class RaggedIndexedContiguousArray(RaggedArray):
 
                 3. The indices of the compressed array that correspond
                    to each subarray.
+
+                4. The location of each subarray on the uncompressed
+                   dimensions.
 
         **Examples**
 
@@ -122,7 +122,7 @@ class RaggedIndexedContiguousArray(RaggedArray):
         feature has 1 profile with a count of 3 elements, at
         compressed locations (6, 7, 8).
 
-        >>> u_indices, u_shapes, c_indices = x.subarrays()
+        >>> u_indices, u_shapes, c_indices, locations = x.subarrays()
         >>> for i in u_indices:
         ...    print(i)
         ...
@@ -150,6 +150,15 @@ class RaggedIndexedContiguousArray(RaggedArray):
         (slice(6, 9, None),)
         (slice(0, 0, None),)
         (slice(0, 0, None),)
+        >>> for i in locations:
+        ...    print(i)
+        ...
+        (0, 0, 0)
+        (0, 1, 0)
+        (0, 2, 0)
+        (1, 0, 0)
+        (1, 1, 0)
+        (1, 2, 0)
 
         """
         d1, (u_dim1, u_dim2, u_dim3) = self.compressed_dimensions().popitem()
@@ -160,9 +169,15 @@ class RaggedIndexedContiguousArray(RaggedArray):
 
         # The indices of the uncompressed array that correspond to
         # each subarray
-        u_indices = [(slice(None),)] * self.ndim
+        ndim = self.ndim
+        u_indices = [(slice(None),)] * ndim
         u_indices[u_dim1] = [slice(i, i + 1) for i in range(n_features)]
         u_indices[u_dim2] = [slice(j, j + 1) for j in range(max_n_profiles)]
+
+        # The location of each subarray
+        locations = [(0,)] * ndim
+        locations[u_dim1] = [i for i in range(n_features)]
+        locations[u_dim2] = [j for j in range(max_n_profiles)]
 
         # The shape of each uncompressed subarray
         u_shapes = [(n,) for n in uncompressed_shape]
@@ -204,4 +219,5 @@ class RaggedIndexedContiguousArray(RaggedArray):
             product(*u_indices),
             product(*u_shapes),
             product(*c_indices),
+            product(*locations),
         )

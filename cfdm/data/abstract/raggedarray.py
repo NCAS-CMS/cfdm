@@ -158,7 +158,7 @@ class RaggedArray(CompressedArray):
         compressed_dimensions = self.compressed_dimensions()
         compressed_data = self.conformed_data()["data"]
 
-        for u_indices, u_shape, c_indices in zip(*self.subarrays()):
+        for u_indices, u_shape, c_indices, _ in zip(*self.subarrays()):
             subarray = Subarray(
                 data=compressed_data,
                 indices=c_indices,

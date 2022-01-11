@@ -20,6 +20,7 @@ class Subarray(Array):
         compressed_dimensions={},
         source=None,
         copy=True,
+        _context_manager=None,
     ):
         """**Initialisation**
 
@@ -31,8 +32,7 @@ class Subarray(Array):
                 the *indices*.
 
             indices: `tuple`
-                The inidces of *data* that are needed to uncompress
-                this subarray.
+                The indices of *data* that define this subarray.
 
             shape: `tuple` of `int`
                 The shape of the uncompressed subarray.
@@ -70,6 +70,11 @@ class Subarray(Array):
                 If False then do not deep copy input parameters prior
                 to initialisation. By default arguments are deep
                 copied.
+
+            _context_manager: function, optional
+                A context manager that provides a runtime context for
+                the conversion of data defined by *data* to a `numpy`
+                array.
 
         """
         super().__init__(source=source, copy=copy)
@@ -110,6 +115,8 @@ class Subarray(Array):
             "compressed_dimensions", compressed_dimensions, copy=False
         )
 
+        self._set_component("_context_manager", _context_manager, copy=False)
+
     def __getitem__(self, indices):
         """Return a subspace of the uncompressed subarray.
 
@@ -125,7 +132,42 @@ class Subarray(Array):
             f"Must implement {self.__class__.__name__}.__getitem__"
         )  # pragma: no cover
 
-    def _select_data(self, data=None):
+    def _asanyarray(self, data, check_mask=True):
+        """Convert data to a numpy array.
+
+        The conversion takes place with a runtime context, if one has
+        been provided.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            data: array_like
+                The data to be converted.
+
+            check_mask: `bool`, optional
+                Check for masked elements, and if there are none
+                convert the output to a non-masked `numpy` array.
+
+        :Returns:
+
+            `numpy.ndarray`
+                The converted data.
+
+        """
+        context_manager = self._get_component("_context_manager")
+        if context_manager:
+            with context_manager():
+                data = np.asanyarray(data)
+        else:
+            data = np.asanyarray(data)
+
+        if check_mask and not np.ma.is_masked(data):
+            data = np.array(data)
+
+        return data
+
+    def _select_data(self, data=None, check_mask=True):
         """Select compressed elements that correspond to this subarray.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
@@ -138,6 +180,11 @@ class Subarray(Array):
                 returned. By default, or if `None` then the `data`
                 array is used.
 
+            check_mask: `bool`, optional
+                Check for masked elements in the selected data, and if
+                there are none convert the output to a non-masked
+                `numpy` array.
+
         :Returns:
 
             `numpy.ndarray`
@@ -148,15 +195,11 @@ class Subarray(Array):
         if data is None:
             data = self.data
 
-        data = np.asanyarray(data[self.indices])
-        if not np.ma.is_masked(data):
-            data = np.array(data)
-
-        return data
+        return self._asanyarray(data[self.indices])
 
     @property
     def data(self):
-        """TODO.
+        """The full compressed array spanning all subarrays.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -176,39 +219,21 @@ class Subarray(Array):
 
     @property
     def indices(self):
-        """TODO.
+        """The indices of the data that define this subarray.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
         return self._get_component("indices")
 
-    #    @cached_property
-    #    def ndim(self):
-    #        """The number of dimensions of the uncompressed data.#
-    #
-    #        .. versionadded:: (cfdm) 1.9.TODO.0
-    #
-    #        """
-    #        return len(self.shape)
-
     @property
     def shape(self):
-        """The number of dimensions of the uncompressed data.
+        """The shape of the uncompressed data.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         """
         return self._get_component("shape")
-
-    #    @cached_property
-    #    def size(self):
-    #        """The size of the uncompressed data.
-    #
-    #        .. versionadded:: (cfdm) 1.9.TODO.0
-    #
-    #        """
-    #        return reduce(mul, self.shape, 1)
 
     def compressed_dimensions(self):
         """Mapping of compressed to uncompressed dimensions.

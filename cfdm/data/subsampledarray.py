@@ -349,7 +349,7 @@ class SubsampledArray(CompressedArray):
 
         """
         # If the first or last element is requested then we don't need
-        # to interpolate
+        # to uncompress
         try:
             return self._first_or_last_index(indices)
         except IndexError:
@@ -388,8 +388,9 @@ class SubsampledArray(CompressedArray):
             u_indices,
             u_shape,
             c_indices,
-            first,
             subarea_indices,
+            first,
+            _,
         ) in zip(*self.subarrays()):
             subarray = Subarray(
                 data=tie_points,
@@ -914,7 +915,7 @@ class SubsampledArray(CompressedArray):
 
         :Returns:
 
-            5-`tuple` of iterators
+            6-`tuple` of iterators
                Each iterator iterates over a particular descriptor
                from each subarray.
 
@@ -937,12 +938,17 @@ class SubsampledArray(CompressedArray):
                   to facilitate retrieval of each tie point
                   individually.
 
-               4. Flags which state, for each interpolated dimension,
+               4. The index of each interpolation subarea along the
+                  interpolation subarea dimensions.
+
+               5. Flags which state, for each interpolated dimension,
                   whether each interplation subarea is at the start of
                   a continuous area.
 
-               5. The index of each interpolation subarea along the
-                  interpolation subarea dimensions.
+               6. The location of each subarray on the uncompressed
+                  dimensions. Note that if the tie points are bounds
+                  tie points then the uncompressed dimensions include
+                  the trailing bounds dimension.
 
         **Examples**
 
@@ -954,11 +960,14 @@ class SubsampledArray(CompressedArray):
         (size 15) has a single continuous area divided into has three
         interpolation subareas of szes 5, 6, and 6.
 
-        >>> (u_indices,
+        >>> (
+        ...  u_indices,
         ...  u_shapes,
         ...  c_indices,
-        ...  new_continuous_area,
-        ...  interpolation_subarea_indices) = x.subarrays()
+        ...  subarray_locations,
+        ...  interpolation_subarea_indices,
+        ...  new_continuous_area
+        ... ) = x.subarrays()
         >>> for i in u_indices:
         ...    print(i)
         ...
@@ -986,15 +995,6 @@ class SubsampledArray(CompressedArray):
         (slice(2, 4, None), slice(None, None, None), slice(0, 2, None))
         (slice(2, 4, None), slice(None, None, None), slice(1, 3, None))
         (slice(2, 4, None), slice(None, None, None), slice(2, 4, None))
-        >>> for i in new_continuous_area:
-        ...    print(i)
-        ...
-        (True, None, True)
-        (True, None, False)
-        (True, None, False)
-        (True, None, True)
-        (True, None, False)
-        (True, None, False)
         >>> for i in interpolation_subarea_indices:
         ...    print(i)
         ...
@@ -1004,6 +1004,24 @@ class SubsampledArray(CompressedArray):
         (slice(1, 2, None), slice(None, None, None), slice(0, 1, None)
         (slice(1, 2, None), slice(None, None, None), slice(1, 2, None)
         (slice(1, 2, None), slice(None, None, None), slice(2, 3, None)
+        >>> for i in new_continuous_area:
+        ...    print(i)
+        ...
+        (True, None, True)
+        (True, None, False)
+        (True, None, False)
+        (True, None, True)
+        (True, None, False)
+        (True, None, False)
+        >>> for i in subarray_locations:
+        ...    print(i)
+        ...
+        (0, 0, 0)
+        (0, 0, 1)
+        (0, 0, 2)
+        (1, 0, 0)
+        (1, 0, 1)
+        (1, 0, 2)
 
         """
         tp_ndim = self.source().ndim
@@ -1026,15 +1044,18 @@ class SubsampledArray(CompressedArray):
         # interpolation subarea.
         c_indices = [(slice(None),)] * tp_ndim
 
+        # The location of each subarray
+        subarray_locations = [(0,)] * self.ndim
+
+        # The index of each interpolation subarea along the
+        # interpolation subarea dimensions
+        interpolation_subarea_indices = [(slice(None),)] * tp_ndim
+
         # The flags which state, for each dimension, whether (`True`)
         # or not (`False`) an interplation subarea is at the start of
         # a continuous area. Non-interpolated dimensions are given the
         # falsey flag `None`.
         new_continuous_area = [(None,)] * tp_ndim
-
-        # The index of each interpolation subarea along the
-        # interpolation subarea dimensions
-        interpolation_subarea_indices = [(slice(None),)] * tp_ndim
 
         for d, tie_point_index in self.get_tie_point_indices().items():
             u_index = []
@@ -1042,6 +1063,7 @@ class SubsampledArray(CompressedArray):
             c_index = []
             continuous_area = []
             interpolation_subarea_index = []
+            location = []
 
             indices = np.array(tie_point_index).tolist()
 
@@ -1062,6 +1084,7 @@ class SubsampledArray(CompressedArray):
 
                 # The index of the interpolation subarea along the
                 # corresponding interpolated subarea dimension
+                location.append(j)
                 interpolation_subarea_index.append(slice(j, j + 1))
                 j += 1
 
@@ -1092,15 +1115,17 @@ class SubsampledArray(CompressedArray):
             u_indices[d] = u_index
             u_shapes[d] = u_shape
             c_indices[d] = c_index
-            new_continuous_area[d] = continuous_area
             interpolation_subarea_indices[d] = interpolation_subarea_index
+            new_continuous_area[d] = continuous_area
+            subarray_locations[d] = location
 
         return (
             product(*u_indices),
             product(*u_shapes),
             product(*c_indices),
-            product(*new_continuous_area),
             product(*interpolation_subarea_indices),
+            product(*new_continuous_area),
+            product(*subarray_locations),
         )
 
     def to_memory(self):

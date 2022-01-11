@@ -28,7 +28,7 @@ class RaggedSubarray(Subarray):
         d1, u_dims = self.compressed_dimensions().popitem()
         uncompressed_shape = self.shape
 
-        data = self._select_data()
+        data = self._select_data(check_mask=False)
 
         if data.size:
             shape = list(data.shape)

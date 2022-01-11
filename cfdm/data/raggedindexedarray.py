@@ -88,12 +88,9 @@ class RaggedIndexedArray(RaggedArray):
 
         :Returns:
 
-            sequence of iterators
+             4-`tuple` of iterators
                 Each iterable iterates over a particular descriptor
                 from each subarray.
-
-                There must be at least three sequences. The leading
-                three of which describe:
 
                 1. The indices of the uncompressed array that
                    correspond to each subarray.
@@ -103,6 +100,9 @@ class RaggedIndexedArray(RaggedArray):
                 3. The indices of the compressed array that correspond
                    to each subarray.
 
+                4. The location of each subarray on the uncompressed
+                   dimensions.
+
         **Examples**
 
         An original 2-d array with shape (3, 5) comprising 3
@@ -111,7 +111,7 @@ class RaggedIndexedArray(RaggedArray):
         elements, at compressed locations (5, 8), (1, 3, 4, 7, 10),
         and (0, 2, 6, 9) respectively.
 
-        >>> u_indices, u_shapes, c_indices = x.subarrays()
+        >>> u_indices, u_shapes, c_indices, locations = x.subarrays()
         >>> for i in u_indices:
         ...    print(i)
         ...
@@ -130,6 +130,12 @@ class RaggedIndexedArray(RaggedArray):
         (array([5, 8]),)
         (array([1, 3, 4, 7, 10]),)
         (array([0, 2, 6, 9]),)
+        >>> for i in locations:
+        ...    print(i)
+        ...
+        (0, 0)
+        (1, 0)
+        (2, 0)
 
         """
         d1, (u_dim1, u_dim2) = self.compressed_dimensions().popitem()
@@ -139,8 +145,13 @@ class RaggedIndexedArray(RaggedArray):
 
         # The indices of the uncompressed array that correspond to
         # each subarray
-        u_indices = [(slice(None),)] * self.ndim
+        ndim = self.ndim
+        u_indices = [(slice(None),)] * ndim
         u_indices[u_dim1] = [slice(i, i + 1) for i in range(n_features)]
+
+        # The location of each subarray
+        locations = [(0,)] * ndim
+        locations[u_dim1] = [i for i in range(n_features)]
 
         # The shape of each uncompressed subarray
         u_shapes = [(n,) for n in uncompressed_shape]
@@ -157,4 +168,5 @@ class RaggedIndexedArray(RaggedArray):
             product(*u_indices),
             product(*u_shapes),
             product(*c_indices),
+            product(*locations),
         )

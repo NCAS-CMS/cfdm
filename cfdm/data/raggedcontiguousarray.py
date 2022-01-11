@@ -90,12 +90,9 @@ class RaggedContiguousArray(RaggedArray):
 
         :Returns:
 
-            sequence of iterators
+             4-`tuple` of iterators
                 Each iterable iterates over a particular descriptor
                 from each subarray.
-
-                There must be at least three sequences. The leading
-                three of which describe:
 
                 1. The indices of the uncompressed array that
                    correspond to each subarray.
@@ -105,13 +102,16 @@ class RaggedContiguousArray(RaggedArray):
                 3. The indices of the compressed array that correspond
                    to each subarray.
 
+                4. The location of each subarray on the uncompressed
+                   dimensions.
+
         **Examples**
 
         An original 2-d array with shape (3, 5) comprising 3
         timeSeries features has been compressed as a contiguous ragged
         array. The features have counts of 2, 5, and 4 elements.
 
-        >>> u_indices, u_shapes, c_indices = x.subarrays()
+        >>> u_indices, u_shapes, c_indices, locations = x.subarrays()
         >>> for i in u_indices:
         ...    print(i)
         ...
@@ -130,6 +130,12 @@ class RaggedContiguousArray(RaggedArray):
         (slice(0, 2, None),)
         (slice(2, 7, None),)
         (slice(7, 11, None),)
+        >>> for i in locations:
+        ...    print(i)
+        ...
+        (0, 0)
+        (1, 0)
+        (2, 0)
 
         """
         d1, (u_dim1, u_dim2) = self.compressed_dimensions().popitem()
@@ -139,8 +145,13 @@ class RaggedContiguousArray(RaggedArray):
 
         # The indices of the uncompressed array that correspond to
         # each subarray
-        u_indices = [(slice(None),)] * self.ndim
+        ndim = self.ndim
+        u_indices = [(slice(None),)] * ndim
         u_indices[u_dim1] = [slice(i, i + 1) for i in range(n_features)]
+
+        # The location of each subarray
+        locations = [(0,)] * ndim
+        locations[u_dim1] = [i for i in range(n_features)]
 
         # The shape of each uncompressed subarray
         u_shapes = [(n,) for n in uncompressed_shape]
@@ -162,4 +173,5 @@ class RaggedContiguousArray(RaggedArray):
             product(*u_indices),
             product(*u_shapes),
             product(*c_indices),
+            product(*locations),
         )
