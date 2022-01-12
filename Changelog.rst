@@ -6,6 +6,9 @@ Version 1.9.?.?
 * Fixed bug that caused a `cfdm.write` failure when a vertical
   coordinate reference construct has no coordinates
   (https://github.com/NCAS-CMS/cfdm/issues/164)
+* Fixed bug that caused a failure when downstream `identities` methods
+  return an `itertools.chain` object
+  (https://github.com/NCAS-CMS/cfdm/issues/170)
 
 ----
   
