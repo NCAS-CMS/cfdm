@@ -23,7 +23,7 @@ class GatheredSubarray(Subarray):
         uncompressed_indices=None,
         source=None,
         copy=True,
-        _context_manager=None,
+        context_manager=None,
     ):
         """**Initialisation**
 
@@ -72,7 +72,7 @@ class GatheredSubarray(Subarray):
                 to initialisation. By default arguments are deep
                 copied.
 
-            _context_manager: function, optional
+            context_manager: function, optional
                 A context manager that provides a runtime context for
                 the conversion of data defined by *data*,
                 *dependent_tie_points*, and *parameters* to a `numpy`
@@ -86,7 +86,7 @@ class GatheredSubarray(Subarray):
             compressed_dimensions=compressed_dimensions,
             source=source,
             copy=copy,
-            _context_manager=_context_manager,
+            context_manager=context_manager,
         )
 
         if source is not None:

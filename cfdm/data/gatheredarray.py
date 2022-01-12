@@ -144,10 +144,10 @@ class GatheredArray(CompressedArray):
         # ------------------------------------------------------------
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
-        Subarray = self._Subarray[self.get_compression_type()]
-
         # Initialise the un-sliced uncompressed array
         u = np.ma.masked_all(self.shape, dtype=self.dtype)
+
+        Subarray = self.get_Subarray()
 
         compressed_dimensions = self.compressed_dimensions()
 
@@ -254,7 +254,73 @@ class GatheredArray(CompressedArray):
         """
         return self._get_component("list_variable", default=default)
 
-    def subarrays(self, chunks=None):
+    def subarray_shapes(self, shapes):
+        """Create the subarray shapes along each uncompressed dimension.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `subarray`
+
+        :Parameters:
+
+            {{shapes: `None`, `str`, or sequence}}
+
+                {{shapes auto}}
+
+        :Returns:
+
+            `list`
+                The subarray shapes along each uncompressed dimension.
+
+        **Examples**
+
+        >>> a.shape
+        (2, 3, 4)
+        >>> a.subarray_shapes((0, 1), None)
+        [(2,), (3,), (4,)]
+        >>> a.subarray_shapes((0, 1), "auto")
+        [(2,), (3,), "auto"]
+        >>> a.subarray_shapes((0, 1), "most")
+        [(2,), (3,), (1, 1, 1, 1)]
+        >>> a.subarray_shapes((0, 1), (None, None, (4,)))
+        [(2,), (3,), (4,)]
+        >>> a.subarray_shapes((0, 1), (None, None, (1, 3)))
+        [(2,), (3,), (1, 3)]
+        >>> a.subarray_shapes((0, 1), (None, None, "auto"))
+        [(2,), (3,), "auto"]
+
+        """
+        u_dims = self.get_compressed_axes()
+
+        if shapes in (None, "fewest"):
+            shapes = [(n,) for n in self.shape]
+
+        elif shapes == "auto":
+            shapes = [
+                (n,) if i in u_dims else "auto"
+                for i, n in enumerate(self.shape)
+            ]
+
+        elif shapes == "most":
+            shapes = [
+                (n,) if i in u_dims else (1,) * n
+                for i, n in enumerate(self.shape)
+            ]
+
+        elif len(shapes) == self.ndim:
+            shapes = list(shapes)
+            for i in u_dims:
+                shapes[i] = (self.shape[i],)
+
+        else:
+            raise ValueError(
+                "Wrong number of shapes elements: "
+                f"Got {len(shapes)}, expected {self.ndim}"
+            )
+
+        return shapes
+
+    def subarrays(self, shapes=None):
         """Return descriptors for every subarray.
 
         These descriptors are used during subarray decompression.
@@ -263,8 +329,7 @@ class GatheredArray(CompressedArray):
 
         :Parameters:
 
-            chunks: optional
-               TODO (should this be settable elswhere?)
+            {{shapes: `None`, `str`, or sequence}}
 
         :Returns:
 
@@ -287,16 +352,36 @@ class GatheredArray(CompressedArray):
 
         An original 3-d array with shape (4, 73, 96) has been
         compressed by gathering the dimensions with sizes 73 and 96
-        respectively.
+        respectively into a single dimension of size 3028.
 
         >>> u_indices, u_shapes, c_indices, locations = x.subarrays()
         >>> for i in u_indices:
         ...    print(i)
         ...
-        (slice(0, 1, None), slice(None, None, None), slice(None, None, None))
-        (slice(1, 2, None), slice(None, None, None), slice(None, None, None))
-        (slice(2, 3, None), slice(None, None, None), slice(None, None, None))
-        (slice(3, 4, None), slice(None, None, None), slice(None, None, None))
+        (slice(0, 4, None), slice(0, 73, None), slice(0, 96, None))
+        >>> for i in u_shapes
+        ...    print(i)
+        ...
+        (4, 73, 96)
+        >>> for i in c_indices:
+        ...    print(i)
+        ...
+        (slice(0, 4, None), slice(0, 3028, None))
+        >>> for i in locations:
+        ...    print(i)
+        ...
+        (0, 0, 0)
+
+        >>> (
+        ...  u_indices, u_shapes, c_indices, locations
+        ... )= x.subarrays(shapes="most")
+        >>> for i in u_indices:
+        ...    print(i)
+        ...
+        (slice(0, 1, None), slice(0, 73, None), slice(0, 96, None))
+        (slice(1, 2, None), slice(0, 73, None), slice(0, 96, None))
+        (slice(2, 3, None), slice(0, 73, None), slice(0, 96, None))
+        (slice(3, 4, None), slice(0, 73, None), slice(0, 96, None))
         >>> for i in u_shapes
         ...    print(i)
         ...
@@ -307,10 +392,10 @@ class GatheredArray(CompressedArray):
         >>> for i in c_indices:
         ...    print(i)
         ...
-        (slice(0, 1, None), slice(None, None, None))
-        (slice(1, 2, None), slice(None, None, None))
-        (slice(2, 3, None), slice(None, None, None))
-        (slice(3, 4, None), slice(None, None, None))
+        (slice(0, 1, None), slice(0, 3028, None))
+        (slice(1, 2, None), slice(0, 3028, None))
+        (slice(2, 3, None), slice(0, 3028, None))
+        (slice(3, 4, None), slice(0, 3028, None))
         >>> for i in locations:
         ...    print(i)
         ...
@@ -320,39 +405,13 @@ class GatheredArray(CompressedArray):
         (3, 0, 0)
 
         >>> (
-        ...  u_indices,
-        ...  u_shapes,
-        ...  c_indices,
-        ...  locations
-        ... ) = x.subarrays(chunks="fewest")
+        ...  u_indices, u_shapes, c_indices, locations
+        ... ) = x.subarrays(shapes=((3, 1), None, None))
         >>> for i in u_indices:
         ...    print(i)
         ...
-        (slice(0, 4, None), slice(None, None, None), slice(None, None, None))
-        >>> for i in u_shapes
-        ...    print(i)
-        ...
-        (4, 73, 96)
-        >>> for i in c_indices:
-        ...    print(i)
-        ...
-        (slice(0, 4, None), slice(None, None, None))
-        >>> for i in locations:
-        ...    print(i)
-        ...
-        (0, 0, 0)
-
-        >>> (
-        ...  u_indices,
-        ...  u_shapes,
-        ...  c_indices,
-        ...  locations
-        ... ) = x.subarrays(chunks=((3, 1), None, None))
-        >>> for i in u_indices:
-        ...    print(i)
-        ...
-        (slice(0, 3, None), slice(None, None, None), slice(None, None, None))
-        (slice(3, 4, None), slice(None, None, None), slice(None, None, None))
+        (slice(0, 3, None), slice(0, 73, None), slice(0, 96, None))
+        (slice(3, 4, None), slice(0, 73, None), slice(0, 96, None))
         >>> for i in u_shapes
         ...    print(i)
         ...
@@ -361,8 +420,8 @@ class GatheredArray(CompressedArray):
         >>> for i in c_indices:
         ...    print(i)
         ...
-        (slice(0, 3, None), slice(None, None, None))
-        (slice(3, 4, None), slice(None, None, None))
+        (slice(0, 3, None), slice(0, 3028, None))
+        (slice(3, 4, None), slice(0, 3028, None))
         >>> for i in locations:
         ...    print(i)
         ...
@@ -371,48 +430,41 @@ class GatheredArray(CompressedArray):
 
         """
         d1, u_dims = self.compressed_dimensions().popitem()
-        uncompressed_shape = self.shape
 
-        chunks = self._normalise_chunks(chunks)
+        shapes = self.subarray_shapes(shapes)
 
         # The indices of the uncompressed array that correspond to
-        # each subarray, and the shape of each uncompressed subarray.
+        # each subarray, the shape of each uncompressed subarray, and
+        # the location of each subarray
         locations = []
         u_shapes = []
         u_indices = []
-        for d, size in enumerate(uncompressed_shape):
+        for d, (size, c) in enumerate(zip(self.shape, shapes)):
             if d in u_dims:
                 locations.append((0,))
                 u_shapes.append((size,))
-                u_indices.append((slice(None),))
+                u_indices.append((slice(0, size),))
             else:
-                c = chunks[d]
                 locations.append([i for i in range(len(c))])
                 u_shapes.append(c)
 
                 c = tuple(accumulate((0,) + c))
                 u_indices.append([slice(i, j) for i, j in zip(c[:-1], c[1:])])
-        #            else:
-        #                locations.append([i for i in range(size)])
-        #                u_shapes.append((1,) * size)
-        #                u_indices.append([slice(i, i + 1) for i in range(size)])
 
         # The indices of the compressed array that correspond to each
         # subarray
         c_indices = []
         for d, size in enumerate(self.source().shape):
             if d == d1:
-                c_indices.append((slice(None),))
+                c_indices.append((slice(0, size),))
             else:
                 if d < d1:
-                    c = chunks[d]
+                    c = shapes[d]
                 else:
-                    c = chunks[d + len(u_dims) - 1]
+                    c = shapes[d + len(u_dims) - 1]
 
                 c = tuple(accumulate((0,) + c))
                 c_indices.append([slice(i, j) for i, j in zip(c[:-1], c[1:])])
-        #            else:
-        #                c_indices.append([slice(i, i + 1) for i in range(size)])
 
         return (
             product(*u_indices),

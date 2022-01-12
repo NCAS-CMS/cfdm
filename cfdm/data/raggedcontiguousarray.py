@@ -1,4 +1,4 @@
-from itertools import product
+from itertools import accumulate, product
 
 import numpy as np
 
@@ -37,7 +37,7 @@ class RaggedContiguousArray(RaggedArray):
 
         :Parameters:
 
-            compressed_array: araray_like
+            compressed_array: array_like
                 The compressed data.
 
             shape: `tuple`
@@ -81,12 +81,16 @@ class RaggedContiguousArray(RaggedArray):
             copy=copy,
         )
 
-    def subarrays(self):
+    def subarrays(self, shapes=None):
         """Return descriptors for every subarray.
 
         Theses descriptors are used during subarray decompression.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            {{shapes: `None`, `str`, or sequence}}
 
         :Returns:
 
@@ -115,9 +119,9 @@ class RaggedContiguousArray(RaggedArray):
         >>> for i in u_indices:
         ...    print(i)
         ...
-        (slice(0, 1, None), slice(None, None, None))
-        (slice(1, 2, None), slice(None, None, None))
-        (slice(2, 3, None), slice(None, None, None))
+        (slice(0, 1, None), slice(0, 5, None))
+        (slice(1, 2, None), slice(0, 5, None))
+        (slice(2, 3, None), slice(0, 5, None))
         >>> for i in u_shapes
         ...    print(i)
         ...
@@ -138,36 +142,33 @@ class RaggedContiguousArray(RaggedArray):
         (2, 0)
 
         """
-        d1, (u_dim1, u_dim2) = self.compressed_dimensions().popitem()
-        uncompressed_shape = self.shape
+        d1, u_dims = self.compressed_dimensions().popitem()
 
-        n_features = uncompressed_shape[u_dim1]
+        shapes = self.subarray_shapes(shapes)
 
         # The indices of the uncompressed array that correspond to
-        # each subarray
-        ndim = self.ndim
-        u_indices = [(slice(None),)] * ndim
-        u_indices[u_dim1] = [slice(i, i + 1) for i in range(n_features)]
-
-        # The location of each subarray
-        locations = [(0,)] * ndim
-        locations[u_dim1] = [i for i in range(n_features)]
-
-        # The shape of each uncompressed subarray
-        u_shapes = [(n,) for n in uncompressed_shape]
-        u_shapes[u_dim1] = (1,) * n_features
+        # each subarray, the shape of each uncompressed subarray, and
+        # the location of each subarray
+        locations, u_shapes, u_indices = self._uncompressed_descriptors(
+            u_dims, shapes
+        )
 
         # The indices of the compressed array that correspond to each
         # subarray
-        c_indices = [(slice(None),)] * self.source().ndim
-        count = np.array(self.get_count()).tolist()
-        index = []
-        start = 0
-        for i, n in enumerate(count):
-            index.append(slice(start, start + n))
-            start += n
+        c_indices = []
+        for d, size in enumerate(self.source().shape):
+            if d == d1:
+                count = np.array(self.get_count()).tolist()
+                c = tuple(accumulate([0] + count))
+            else:
+                if d < d1:
+                    c = shapes[d]
+                else:
+                    c = shapes[d + 1]
 
-        c_indices[d1] = index
+                c = tuple(accumulate((0,) + c))
+
+            c_indices.append([slice(i, j) for i, j in zip(c[:-1], c[1:])])
 
         return (
             product(*u_indices),

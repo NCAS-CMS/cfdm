@@ -1,3 +1,5 @@
+from itertools import accumulate
+
 import numpy as np
 
 from ..subarray import RaggedSubarray
@@ -136,24 +138,10 @@ class RaggedArray(CompressedArray):
         # ------------------------------------------------------------
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
-        Subarray = self._Subarray[self.get_compression_type()]
-
-        compression_type = self.get_compression_type()
-        Subarray = self._Subarray.get(compression_type)
-        if Subarray is None:
-            if not compression_type:
-                raise IndexError(
-                    "Can't subspace ragged data without a "
-                    "standardised ragged compression type"
-                )
-
-            raise ValueError(
-                "Can't subspace ragged data with unknown "
-                f"ragged compression type {compression_type!r}"
-            )
-
         # Initialise the un-sliced uncompressed array
         u = np.ma.masked_all(self.shape, dtype=self.dtype)
+
+        Subarray = self.get_Subarray()
 
         compressed_dimensions = self.compressed_dimensions()
         compressed_data = self.conformed_data()["data"]
@@ -171,6 +159,55 @@ class RaggedArray(CompressedArray):
             return u
 
         return self.get_subspace(u, indices, copy=True)
+
+    def _uncompressed_descriptors(self, u_dims, shapes):
+        """Create uncompressed subarray descriptors.
+
+        Returns the location of each subarray, the indices of the
+        uncompressed array that correspond to each subarray, and the
+        shape of each uncompressed subarray.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `subarray`
+
+        :Parameters:
+
+            u_dims: sequence of `int`
+                The positions of the uncompressed dimensions that have
+                been compressed.
+
+            shapes: sequence of `tuple`
+                The subarray shapes along each uncompressed
+                dimension. It is assumed that they have been output by
+                `subarray_shapes`.
+
+        :Returns:
+
+            3-`tuple` of `list`
+                The location, shape, and index descriptors.
+
+        """
+        locations = []
+        u_shapes = []
+        u_indices = []
+        for d, (size, c) in enumerate(zip(self.shape, shapes)):
+            if d in u_dims[:-1]:
+                locations.append([i for i in range(len(c))])
+                u_shapes.append(c)
+                u_indices.append([slice(i, i + 1) for i in range(len(c))])
+            elif d == u_dims[-1]:
+                locations.append((0,))
+                u_shapes.append((size,))
+                u_indices.append((slice(0, size),))
+            else:
+                locations.append([i for i in range(len(c))])
+                u_shapes.append(c)
+
+                c = tuple(accumulate((0,) + c))
+                u_indices.append([slice(i, j) for i, j in zip(c[:-1], c[1:])])
+
+        return locations, u_shapes, u_indices
 
     @property
     def dtype(self):
@@ -218,6 +255,95 @@ class RaggedArray(CompressedArray):
             )
 
         return out
+
+    def subarray_shapes(self, shapes):
+        """Create the subarray shapes along each uncompressed dimension.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `subarray`
+
+        :Parameters:
+
+            {{shapes: `None`, `str`, or sequence}}
+
+                {{shapes auto}}
+
+        :Returns:
+
+            `list`
+                The subarray shapes along each uncompressed dimension.
+
+        **Examples**
+
+        >>> a.shape
+        (2, 3, 4)
+        >>> a.subarray_shapes((0, 1), None)
+        [(1, 1), (3,), (4,)]
+        >>> a.subarray_shapes((0, 1), "auto")
+        [(1, 1), (3,), "auto"]
+        >>> a.subarray_shapes((0, 1), "most")
+        [(1, 1), (3,), (1, 1, 1, 1)]
+        >>> a.subarray_shapes((0, 1), (None, None, (4,)))
+        [(1, 1), (3,), (4,)]
+        >>> a.subarray_shapes((0, 1), (None, None, (1, 3)))
+        [(1, 1), (3,), (1, 3)]
+        >>> a.subarray_shapes((0, 1, 2), (None, None, "auto"))
+        [(1, 1), (3,), "auto"]
+
+        >>> a.shape
+        (2, 3, 3, 4)
+        >>> a.subarray_shapes((0, 1, 2), None)
+        [(1, 1), (1, 1, 1), (3,), (4,)]
+        >>> a.subarray_shapes((0, 1, 2), "auto")
+        [(1, 1), (1, 1, 1), (3,), "auto"]
+        >>> a.subarray_shapes((0, 1, 2), "most")
+        [(1, 1), (1, 1, 1), (3,), (1, 1, 1, 1)]
+        >>> a.subarray_shapes((0, 1, 2), (None, None, None, (4,)))
+        [(1, 1), (1, 1, 1), (3,), (4,)]
+        >>> a.subarray_shapes((0, 1, 2), (None, None, None, (1, 3)))
+        [(1, 1), (1, 1, 1), (3,), (1, 3)]
+        >>> a.subarray_shapes((0, 1, 2), (None, None, None, "auto"))
+        [(1, 1), (1, 1, 1), (3,), "auto"]
+
+        """
+        u_dims = self.get_compressed_axes()
+
+        uncompressed_shape = self.shape
+
+        if shapes in (None, "fewest"):
+            shapes = [
+                (1,) * n if i in u_dims[:-1] else (n,)
+                for i, n in enumerate(uncompressed_shape)
+            ]
+
+        elif shapes == "auto":
+            shapes = [
+                (1,) * n if i in u_dims[:-1] else "auto"
+                for i, n in enumerate(uncompressed_shape)
+            ]
+            shapes[u_dims[-1]] = (uncompressed_shape[u_dims[-1]],)
+
+        elif shapes == "most":
+            shapes = [
+                (n,) if i == u_dims[-1] else (1,) * n
+                for i, n in enumerate(uncompressed_shape)
+            ]
+
+        elif len(shapes) == self.ndim:
+            shapes = list(shapes)
+            shapes[u_dims[0] : u_dims[-1]] = [
+                (1,) * n for n in uncompressed_shape[u_dims[0] : u_dims[-1]]
+            ]
+            shapes[u_dims[-1]] = (uncompressed_shape[u_dims[-1]],)
+
+        else:
+            raise ValueError(
+                "Wrong number of shapes elements: "
+                f"Got {len(shapes)}, expected {self.ndim}"
+            )
+
+        return shapes
 
     def to_memory(self):
         """Bring data disk on disk into memory.

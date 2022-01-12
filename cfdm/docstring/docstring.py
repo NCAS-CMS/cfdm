@@ -304,6 +304,25 @@ _docstring_substitution_definitions = {
     "{{Returns constructs}}": """
                 The selected constructs in a new `Constructs` object,
                 unless modified by any *filter_kwargs* parameters.""",
+    # shapes
+    "{{shapes: `None`, `str`, or sequence}}": """shapes: `None`, `str`, or sequence
+                Specify how the subarray shapes are to be created.
+
+                If a sequence then it must have the same number of
+                elements as there are uncompressed dimensions. In
+                general, each element must be a `tuple` of `int` that
+                specifies size of each subarray for that dimension (so
+                the sum of its values must equal the size of the
+                uncompressed dimension). However, the elements that
+                correspond to compressed dimensions are ignored and so
+                may take arbitrary values.
+
+                If ``'fewest'`` or ``'most'`` then these define
+                respectively the minumum and maximum number of
+                subarrays possible.
+
+                The default value of `None` is equalivalent to
+                ``'fewest'``.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------
@@ -315,4 +334,8 @@ _docstring_substitution_definitions = {
     "{{displayed identity}}": """Note that in the output of a `dump` method or `print`
                 call, a construct is always described by an identity
                 that will select it.""",
+    # auto:
+    "{{shapes auto}}": """If ``'auto'`` then the shapes along non-compressed
+                dimensions are not created, those dimensions' elements
+                being replaced with ``'auto'`` instead.""",
 }

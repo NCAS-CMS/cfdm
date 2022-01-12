@@ -20,7 +20,7 @@ class Subarray(Array):
         compressed_dimensions={},
         source=None,
         copy=True,
-        _context_manager=None,
+        context_manager=None,
     ):
         """**Initialisation**
 
@@ -71,7 +71,7 @@ class Subarray(Array):
                 to initialisation. By default arguments are deep
                 copied.
 
-            _context_manager: function, optional
+            context_manager: function, optional
                 A context manager that provides a runtime context for
                 the conversion of data defined by *data* to a `numpy`
                 array.
@@ -115,7 +115,7 @@ class Subarray(Array):
             "compressed_dimensions", compressed_dimensions, copy=False
         )
 
-        self._set_component("_context_manager", _context_manager, copy=False)
+        self._set_component("context_manager", context_manager, copy=False)
 
     def __getitem__(self, indices):
         """Return a subspace of the uncompressed subarray.
@@ -155,7 +155,7 @@ class Subarray(Array):
                 The converted data.
 
         """
-        context_manager = self._get_component("_context_manager")
+        context_manager = self._get_component("context_manager")
         if context_manager:
             with context_manager():
                 data = np.asanyarray(data)

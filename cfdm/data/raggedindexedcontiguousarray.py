@@ -1,4 +1,4 @@
-from itertools import product
+from itertools import accumulate, product
 
 import numpy as np
 
@@ -88,12 +88,16 @@ class RaggedIndexedContiguousArray(RaggedArray):
             copy=copy,
         )
 
-    def subarrays(self):
+    def subarrays(self, shapes=None):
         """Return descriptors for every subarray.
 
         Theses descriptors are used during subarray decompression.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            {{shapes: `None`, `str`, or sequence}}
 
         :Returns:
 
@@ -126,12 +130,12 @@ class RaggedIndexedContiguousArray(RaggedArray):
         >>> for i in u_indices:
         ...    print(i)
         ...
-        (slice(0, 1, None), slice(0, 1, None), slice(None, None, None))
-        (slice(0, 1, None), slice(1, 2, None), slice(None, None, None))
-        (slice(0, 1, None), slice(2, 3, None), slice(None, None, None))
-        (slice(1, 2, None), slice(0, 1, None), slice(None, None, None))
-        (slice(1, 2, None), slice(1, 2, None), slice(None, None, None))
-        (slice(1, 2, None), slice(2, 3, None), slice(None, None, None))
+        (slice(0, 1, None), slice(0, 1, None), slice(0, 4, None))
+        (slice(0, 1, None), slice(1, 2, None), slice(0, 4, None))
+        (slice(0, 1, None), slice(2, 3, None), slice(0, 4, None))
+        (slice(1, 2, None), slice(0, 1, None), slice(0, 4, None))
+        (slice(1, 2, None), slice(1, 2, None), slice(0, 4, None))
+        (slice(1, 2, None), slice(2, 3, None), slice(0, 4, None))
         >>> for i in u_shapes
         ...    print(i)
         ...
@@ -161,59 +165,60 @@ class RaggedIndexedContiguousArray(RaggedArray):
         (1, 2, 0)
 
         """
-        d1, (u_dim1, u_dim2, u_dim3) = self.compressed_dimensions().popitem()
-        uncompressed_shape = self.shape
+        d1, u_dims = self.compressed_dimensions().popitem()
 
-        n_features = uncompressed_shape[u_dim1]
-        max_n_profiles = uncompressed_shape[u_dim2]
+        shapes = self.subarray_shapes(shapes)
 
         # The indices of the uncompressed array that correspond to
-        # each subarray
-        ndim = self.ndim
-        u_indices = [(slice(None),)] * ndim
-        u_indices[u_dim1] = [slice(i, i + 1) for i in range(n_features)]
-        u_indices[u_dim2] = [slice(j, j + 1) for j in range(max_n_profiles)]
-
-        # The location of each subarray
-        locations = [(0,)] * ndim
-        locations[u_dim1] = [i for i in range(n_features)]
-        locations[u_dim2] = [j for j in range(max_n_profiles)]
-
-        # The shape of each uncompressed subarray
-        u_shapes = [(n,) for n in uncompressed_shape]
-        u_shapes[u_dim1] = (1,) * n_features
-        u_shapes[u_dim2] = (1,) * max_n_profiles
+        # each subarray, the shape of each uncompressed subarray, and
+        # the location of each subarray
+        locations, u_shapes, u_indices = self._uncompressed_descriptors(
+            u_dims, shapes
+        )
 
         # The indices of the compressed array that correspond to each
         # subarray
-        c_indices = [(slice(None),)] * self.source().ndim
+        c_indices = []
+        for d, size in enumerate(self.source().shape):
+            if d == d1:
+                index = np.array(self.get_index())
+                unique = np.unique(index).tolist()
+                count_partial_sums = np.cumsum(
+                    np.array(self.get_count())
+                ).tolist()
 
-        index = np.array(self.get_index())
-        unique = np.unique(index).tolist()
-        count_partial_sums = np.cumsum(np.array(self.get_count())).tolist()
+                max_n_profiles = self.shape[u_dims[1]]
 
-        # Loop over features
-        ind = []
-        for i in unique:
-            # find the locations in the count array for the profiles
-            # in this feature.
-            profile_locations = np.where(index == i)[0]
+                ind = []
+                for i in unique:
+                    # find the locations in the count array for the profiles
+                    # in this feature.
+                    profile_locations = np.where(index == i)[0]
 
-            for j in profile_locations:
-                if not j:
-                    start = 0
+                    for j in profile_locations:
+                        if not j:
+                            start = 0
+                        else:
+                            start = count_partial_sums[j - 1]
+
+                        ind.append(slice(start, count_partial_sums[j]))
+
+                    # Add zero-sized slices for this feature's "missing"
+                    # profiles
+                    ind.extend(
+                        (slice(0, 0),)
+                        * (max_n_profiles - profile_locations.size)
+                    )
+
+                c_indices.append(ind)
+            else:
+                if d < d1:
+                    c = shapes[d]
                 else:
-                    start = count_partial_sums[j - 1]
+                    c = shapes[d + 1]
 
-                ind.append(slice(start, count_partial_sums[j]))
-
-            # Add zero-sized slices for this feature's "missing"
-            # profiles
-            ind.extend(
-                (slice(0, 0),) * (max_n_profiles - profile_locations.size)
-            )
-
-        c_indices[d1] = ind
+                c = tuple(accumulate((0,) + c))
+                c_indices.append([slice(i, j) for i, j in zip(c[:-1], c[1:])])
 
         return (
             product(*u_indices),

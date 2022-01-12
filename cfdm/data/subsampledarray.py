@@ -1,4 +1,4 @@
-from itertools import product
+from itertools import accumulate, product
 
 import numpy as np
 
@@ -355,26 +355,13 @@ class SubsampledArray(CompressedArray):
         except IndexError:
             pass
 
-        interpolation_name = self.get_interpolation_name(None)
-        Subarray = self._Subarray.get(interpolation_name)
-        if Subarray is None:
-            if interpolation_name is None:
-                raise IndexError(
-                    "Can't subspace subsampled data according to the "
-                    "non-standardised interpolation_description "
-                    f"{self.get_interpolation_description('')!r}"
-                )
-
-            raise ValueError(
-                "Can't subspace subsampled data with unknown "
-                f"interpolation_name {interpolation_name!r}"
-            )
-
         # ------------------------------------------------------------
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
         # Initialise the un-sliced uncompressed array
         u = np.ma.masked_all(self.shape, dtype=self.dtype)
+
+        Subarray = self.get_Subarray()
 
         compressed_dimensions = self.compressed_dimensions()
 
@@ -765,6 +752,33 @@ class SubsampledArray(CompressedArray):
         """
         return self._get_component("parameters").copy()
 
+    def get_Subarray(self):
+        """Return the Subarray class.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Returns:
+
+            `Subarray`
+                The class for representing subarrays.
+
+        """
+        interpolation_name = self.get_interpolation_name(None)
+        Subarray = self._Subarray.get(interpolation_name)
+        if Subarray is None:
+            if interpolation_name is None:
+                raise IndexError(
+                    "Can't get Subarray class when no interpolation_name "
+                    "has been set"
+                )
+
+            raise ValueError(
+                "Can't get Subarray class when with unknown "
+                f"interpolation_name {interpolation_name!r}"
+            )
+
+        return Subarray
+
     def get_tie_point_indices(self):
         """Get the tie point index variables for subsampled dimensions.
 
@@ -906,12 +920,85 @@ class SubsampledArray(CompressedArray):
 
         self._set_component("tie_point_indices", value, copy=False)
 
-    def subarrays(self):
+    def subarray_shapes(self, shapes):
+        """Create the subarray shapes along each uncompressed dimension.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `subarray`
+
+        :Parameters:
+
+            {{shapes: `None`, `str`, or sequence}}
+
+                {{shapes auto}}
+
+        :Returns:
+
+            `list`
+                The subarray shapes along each uncompressed dimension.
+
+        >>> a.shape
+        (4, 20, 30)
+        >>> a.source().shape
+        (4, 2, 2)
+        >>> a.subarray_shapes((1, 2), None)
+        [(4,), (20,), (30,)]
+        >>> a.subarray_shapes((1, 2), "auto")
+        ["auto", (20,), (30,)]
+        >>> a.subarray_shapes((1, 2), "most")
+        [(1, 1, 1), (20,), (30,)]
+        >>> a.subarray_shapes((1, 2), ((4,), None, None))
+        [(4,), (20,), (30,)]
+        >>> a.subarray_shapes((1, 2), ((1, 3), None, None))
+        [(1, 3), (20,), (30,)]
+        >>> a.subarray_shapes((1, 2), ("auto", None, None))
+        ["auto", (20,), (30,)]
+
+        """
+        u_dims = self.get_compressed_axes()
+
+        if shapes in (None, "fewest"):
+            shapes = [
+                None if d in u_dims else (size,)
+                for d, size in enumerate(self.shape)
+            ]
+
+        elif shapes == "auto":
+            shapes = [
+                None if d in u_dims else "auto"
+                for d, size in enumerate(self.shape)
+            ]
+
+        elif shapes == "most":
+            shapes = [
+                None if d in u_dims else (1,) * size
+                for d, size in enumerate(self.shape)
+            ]
+
+        elif len(shapes) == self.ndim:
+            shapes = list(shapes)
+            for i in u_dims:
+                shapes[i] = None
+
+        else:
+            raise ValueError(
+                "Wrong number of chunks elements: "
+                f"Got {len(shapes)}, expected {self.ndim}"
+            )
+
+        return shapes
+
+    def subarrays(self, shapes=None):
         """Return descriptors for every subarray.
 
         Theses descriptors are used during subarray decompression.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            {{shapes: `None`, `str`, or sequence}}
 
         :Returns:
 
@@ -964,19 +1051,19 @@ class SubsampledArray(CompressedArray):
         ...  u_indices,
         ...  u_shapes,
         ...  c_indices,
-        ...  subarray_locations,
         ...  interpolation_subarea_indices,
-        ...  new_continuous_area
+        ...  new_continuous_area,
+        ...  subarray_locations,
         ... ) = x.subarrays()
         >>> for i in u_indices:
         ...    print(i)
         ...
-        (slice(0, 10, None), slice(None, None, None), slice(0, 5, None))
-        (slice(0, 10, None), slice(None, None, None), slice(5, 10, None))
-        (slice(0, 10, None), slice(None, None, None), slice(10, 15, None))
-        (slice(10, 20, None), slice(None, None, None), slice(0, 5, None))
-        (slice(10, 20, None), slice(None, None, None), slice(5, 10, None))
-        (slice(10, 20, None), slice(None, None, None), slice(10, 15, None))
+        (slice(0, 10, None), slice(0, 12, None), slice(0, 5, None))
+        (slice(0, 10, None), slice(0, 12, None), slice(5, 10, None))
+        (slice(0, 10, None), slice(0, 12, None), slice(10, 15, None))
+        (slice(10, 20, None), slice(0, 12, None), slice(0, 5, None))
+        (slice(10, 20, None), slice(0, 12, None), slice(5, 10, None))
+        (slice(10, 20, None), slice(0, 12, None), slice(10, 15, None))
         >>> for i in u_shapes:
         ...    print(i)
         ...
@@ -989,21 +1076,21 @@ class SubsampledArray(CompressedArray):
         >>> for i in c_indices,
         ...    print(i)
         ...
-        (slice(0, 2, None), slice(None, None, None), slice(0, 2, None))
-        (slice(0, 2, None), slice(None, None, None), slice(1, 3, None))
-        (slice(0, 2, None), slice(None, None, None), slice(2, 4, None))
-        (slice(2, 4, None), slice(None, None, None), slice(0, 2, None))
-        (slice(2, 4, None), slice(None, None, None), slice(1, 3, None))
-        (slice(2, 4, None), slice(None, None, None), slice(2, 4, None))
+        (slice(0, 2, None), slice(0, 12, None), slice(0, 2, None))
+        (slice(0, 2, None), slice(0, 12, None), slice(1, 3, None))
+        (slice(0, 2, None), slice(0, 12, None), slice(2, 4, None))
+        (slice(2, 4, None), slice(0, 12, None), slice(0, 2, None))
+        (slice(2, 4, None), slice(0, 12, None), slice(1, 3, None))
+        (slice(2, 4, None), slice(0, 12, None), slice(2, 4, None))
         >>> for i in interpolation_subarea_indices:
         ...    print(i)
         ...
-        (slice(0, 1, None), slice(None, None, None), slice(0, 1, None)
-        (slice(0, 1, None), slice(None, None, None), slice(1, 2, None)
-        (slice(0, 1, None), slice(None, None, None), slice(2, 3, None)
-        (slice(1, 2, None), slice(None, None, None), slice(0, 1, None)
-        (slice(1, 2, None), slice(None, None, None), slice(1, 2, None)
-        (slice(1, 2, None), slice(None, None, None), slice(2, 3, None)
+        (slice(0, 1, None), slice(0, 12, None), slice(0, 1, None)
+        (slice(0, 1, None), slice(0, 12, None), slice(1, 2, None)
+        (slice(0, 1, None), slice(0, 12, None), slice(2, 3, None)
+        (slice(1, 2, None), slice(0, 12, None), slice(0, 1, None)
+        (slice(1, 2, None), slice(0, 12, None), slice(1, 2, None)
+        (slice(1, 2, None), slice(0, 12, None), slice(2, 3, None)
         >>> for i in new_continuous_area:
         ...    print(i)
         ...
@@ -1024,7 +1111,14 @@ class SubsampledArray(CompressedArray):
         (1, 0, 2)
 
         """
-        tp_ndim = self.source().ndim
+        tie_points = self.source()
+        tie_point_indices = self.get_tie_point_indices()
+        u_dims = tuple(tie_point_indices)
+
+        shapes = self.subarray_shapes(shapes)
+
+        # ndim = self.ndim
+        # tp_ndim = self.source().ndim
 
         # The indices of the uncompressed array that correspond to
         # each interpolation subarea.
@@ -1033,31 +1127,44 @@ class SubsampledArray(CompressedArray):
         #           interpolation subarea, then that location is
         #           excluded from the index, thereby avoiding any
         #           overlaps.
-        u_indices = [(slice(None),)] * tp_ndim
+        # u_indices = [(slice(None),)] * self.ndim # tp_ndim
+        u_indices = [None] * self.ndim
+        u_shapes = u_indices[:]
+        subarray_locations = u_indices[:]
+        for d, c in enumerate(shapes):
+            if d in u_dims:
+                continue
+
+            subarray_locations[d] = [i for i in range(len(c))]
+            u_shapes[d] = c
+
+            c = tuple(accumulate((0,) + c))
+            u_indices[d] = [slice(i, j) for i, j in zip(c[:-1], c[1:])]
 
         # The shape of each uncompressed interpolated subarea along
         # the interpolated dimensions, excluding the tie point
         # locations defined in previous interpolation subareas.
-        u_shapes = [(n,) for n in self.shape]
+        # u_shapes = [(n,) for n in self.shape]
 
         # The indices of the tie point array that correspond to each
         # interpolation subarea.
-        c_indices = [(slice(None),)] * tp_ndim
+        #        c_indices = [(slice(None),)] * tp_ndim
+        c_indices = [(slice(0, size),) for size in tie_points.shape]
 
         # The location of each subarray
-        subarray_locations = [(0,)] * self.ndim
+        # subarray_locations = [(0,)] * self.ndim
 
         # The index of each interpolation subarea along the
         # interpolation subarea dimensions
-        interpolation_subarea_indices = [(slice(None),)] * tp_ndim
+        interpolation_subarea_indices = c_indices[:]
 
         # The flags which state, for each dimension, whether (`True`)
         # or not (`False`) an interplation subarea is at the start of
         # a continuous area. Non-interpolated dimensions are given the
         # falsey flag `None`.
-        new_continuous_area = [(None,)] * tp_ndim
+        new_continuous_area = [(None,)] * tie_points.ndim
 
-        for d, tie_point_index in self.get_tie_point_indices().items():
+        for d, tie_point_index in tie_point_indices.items():
             u_index = []
             u_shape = []
             c_index = []

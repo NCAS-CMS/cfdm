@@ -223,55 +223,6 @@ class CompressedArray(Array):
         """
         return self._get_component("compressed_Array", default)
 
-    def _normalise_chunks(self, chunks):
-        """TODO.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        .. seealso:: `subarray`
-
-        :Parameters:
-
-            chunks: `None`, `str`, or sequence
-                TODO
-
-        :Returns:
-
-            `list`
-                TODO
-
-        **Examples**
-
-        >>> TODO
-
-        """
-        shape = self.shape
-
-        if chunks in (None, "most"):
-            ndim = self.ndim
-            chunks = [(n,) for n in shape]
-            for c_dims in self.compressed_dimensions().values():
-                for i in range(ndim):
-                    if i not in c_dims:
-                        chunks[i] = (1,) * shape[i]
-
-        elif chunks == "fewest":
-            chunks = [(n,) for n in shape]
-
-        elif len(chunks) == self.ndim:
-            chunks = list(chunks)
-            for c_dims in self.compressed_dimensions().values():
-                for i in c_dims:
-                    chunks[i] = (shape[i],)
-
-        else:
-            raise ValueError(
-                "Wrong number of chunks elements: "
-                f"Got {len(chunks)}, expected {self.ndim}"
-            )
-
-        return chunks
-
     def _set_compressed_Array(self, array, copy=True):
         """Set the compressed array.
 
@@ -444,6 +395,20 @@ class CompressedArray(Array):
         """
         return {"data": self.source().copy()}
 
+    def get_Subarray(self):
+        """Return the Subarray class.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Returns:
+
+            `Subarray`
+                The class for representing subarrays.
+
+        """
+        Subarray = self._Subarray[self.get_compression_type()]
+        return Subarray
+
     def source(self, default=ValueError()):
         """Return the underlying array object.
 
@@ -469,12 +434,16 @@ class CompressedArray(Array):
         """
         return self._get_compressed_Array(default=default)
 
-    def subarrays(self):
+    def subarrays(self, shapes=None):
         """Return descriptors for every subarray.
 
         Theses descriptors are used during subarray decompression.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            {{shapes: `None`, `str`, or sequence}}
 
         :Returns:
 
@@ -485,6 +454,28 @@ class CompressedArray(Array):
         """
         raise NotImplementedError(
             f"Must implement {self.__class__.__name__}.subarrays"
+        )  # pragma: no cover
+
+    def subarray_shapes(self, shapes):
+        """Create the subarray shapes along each uncompressed dimension.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `subarray`
+
+        :Parameters:
+
+            {{shapes: `None`, `str`, or sequence}}
+
+        :Returns:
+
+            `list`
+                 The subarray shapes along each uncompressed
+                 dimension.
+
+        """
+        raise NotImplementedError(
+            f"Must implement {self.__class__.__name__}.subarray_shapes"
         )  # pragma: no cover
 
     def to_memory(self):
