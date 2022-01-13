@@ -20,6 +20,11 @@ class RaggedIndexedContiguousArray(RaggedArray):
     "index variable" that specifies the feature that each profile
     belongs to.
 
+    It is assumed that the compressed dimensions are the two left-most
+    dimensions in the compressed array.
+
+    See CF section 9 "Discrete Sampling Geometries".
+
     .. versionadded:: (cfdm) 1.7.0
 
     """

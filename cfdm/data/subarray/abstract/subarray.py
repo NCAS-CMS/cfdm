@@ -132,7 +132,7 @@ class Subarray(Array):
             f"Must implement {self.__class__.__name__}.__getitem__"
         )  # pragma: no cover
 
-    def _asanyarray(self, data, check_mask=True):
+    def _asanyarray(self, data, indices=None, check_mask=True):
         """Convert data to a numpy array.
 
         The conversion takes place with a runtime context, if one has
@@ -158,8 +158,14 @@ class Subarray(Array):
         context_manager = self._get_component("context_manager")
         if context_manager:
             with context_manager():
+                if indices:
+                    data = data[indices]
+
                 data = np.asanyarray(data)
         else:
+            if indices:
+                data = data[indices]
+
             data = np.asanyarray(data)
 
         if check_mask and not np.ma.is_masked(data):

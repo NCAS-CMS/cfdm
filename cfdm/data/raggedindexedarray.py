@@ -17,6 +17,11 @@ class RaggedIndexedArray(RaggedArray):
     "index variable" that specifies the feature that each element of
     the sample dimension belongs to.
 
+    It is assumed that the compressed dimension is the left-most
+    dimension in the compressed array.
+
+    See CF section 9 "Discrete Sampling Geometries".
+
     .. versionadded:: (cfdm) 1.7.0
 
     """

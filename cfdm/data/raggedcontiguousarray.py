@@ -19,6 +19,8 @@ class RaggedContiguousArray(RaggedArray):
     It is assumed that the compressed dimension is the left-most
     dimension in the compressed array.
 
+    See CF section 9 "Discrete Sampling Geometries".
+
     .. versionadded:: (cfdm) 1.7.0
 
     """

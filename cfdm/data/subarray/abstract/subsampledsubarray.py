@@ -493,7 +493,9 @@ class SubsampledSubarray(Subarray):
         else:
             indices = self.subarea_indices
 
-        return self._asanyarray(parameter[indices])
+        return self._asanyarray(parameter, indices)
+
+    #        return self._asanyarray(parameter[indices])
 
     def _trim(self, u):
         """Trim the raw uncompressed data.

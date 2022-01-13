@@ -168,7 +168,7 @@ class NetCDFArray(abstract.Array):
         self._set_component("dtype", dtype, copy=False)
         self._set_component("mask", mask, copy=False)
 
-        self._set_component("netcdf", None, copy=False)
+        #        self._set_component("netcdf", None, copy=False)
 
         # By default, close the netCDF file after data array access
         self._set_component("close", True, copy=False)
@@ -222,9 +222,10 @@ class NetCDFArray(abstract.Array):
                     array = variable[indices]
                     break
 
-        if self._get_component("close"):
-            # Close the netCDF file
-            self.close()
+        #        if self._get_component("close"):
+        # Close the netCDF file
+        #        netcdf.close()
+        self.close(netcdf)
 
         string_type = isinstance(array, str)
         if string_type:
@@ -415,26 +416,29 @@ class NetCDFArray(abstract.Array):
         """
         return self._get_component("varid")
 
-    def close(self):
+    def close(self, netcdf):
         """Close the `netCDF4.Dataset` for the file containing the data.
 
         .. versionadded:: (cfdm) 1.7.0
 
+        :Parameters:
+
+            netcdf: `netCDF4.Dataset`
+                The netCDF dataset to be be closed.
         :Returns:
 
             `None`
 
-        **Examples**
-
-        >>> a.close()
-
         """
-        netcdf = self._get_component("netcdf")
-        if netcdf is None:
-            return
+        if self._get_component("close"):
+            netcdf.close()
 
-        netcdf.close()
-        self._set_component("netcdf", None, copy=False)
+    #        netcdf = self._get_component("netcdf")
+    #        if netcdf is None:
+    #            return
+    #
+    #        netcdf.close()
+    #        self._set_component("netcdf", None, copy=False)
 
     def open(self):
         """Returns an open `netCDF4.Dataset` for the array's file.
@@ -453,15 +457,17 @@ class NetCDFArray(abstract.Array):
         'eastward_wind'
 
         """
-        if self._get_component("netcdf") is None:
-            try:
-                netcdf = netCDF4.Dataset(self.get_filename(), "r")
-            except RuntimeError as error:
-                raise RuntimeError(f"{error}: {self.get_filename()}")
+        #        netcdf = self._get_component("netcdf")
+        #        if netcdf is None: #self._get_component("netcdf") is None:
+        try:
+            #            netcdf = netCDF4.Dataset(self.get_filename(), "r")
+            return netCDF4.Dataset(self.get_filename(), "r")
+        except RuntimeError as error:
+            raise RuntimeError(f"{error}: {self.get_filename()}")
 
-            self._set_component("netcdf", netcdf, copy=False)
+    #        self._set_component("netcdf", netcdf, copy=False)
 
-        return netcdf
+    #        return netcdf
 
     def to_memory(self):
         """Bring data on disk into memory.

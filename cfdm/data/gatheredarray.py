@@ -22,7 +22,7 @@ class GatheredArray(CompressedArray):
     The information needed to uncompress the data is stored in a "list
     variable" that gives the indices of the required points.
 
-    See CF section 8.2. "Lossless Compression by Gathering".
+    See CF section 8.2 "Lossless Compression by Gathering".
 
     .. versionadded:: (cfdm) 1.7.0
 
