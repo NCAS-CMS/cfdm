@@ -1977,7 +1977,6 @@ class Constructs(mixin.Container, core.Constructs):
                         if self._matching_values(
                             value0, None, value1, basic=True
                         ):
-                            generator.close()
                             hits.append(value0)
                             matched.add(cid)
                             break
