@@ -2384,7 +2384,13 @@ class Data(Container, NetCDFHDF5, core.Data):
         # ------------------------------------------------------------
         # Check for equal (uncompressed) array values
         # ------------------------------------------------------------
-        if not self._equals(self.array, other.array, rtol=rtol, atol=atol):
+        if not self._equals(
+            self.array,
+            other.array,
+            ignore_data_type=ignore_data_type,
+            rtol=rtol,
+            atol=atol,
+        ):
             logger.info(
                 f"{self.__class__.__name__}: Different array values "
                 f"(atol={atol}, rtol={rtol})"

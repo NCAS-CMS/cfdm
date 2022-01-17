@@ -1478,6 +1478,9 @@ def _make_subsampled_1(filename):
     n.createDimension("subarea_lat", 2)
     n.createDimension("subarea_lon", 3)
 
+    n.createDimension("bounds2", 2)
+    n.createDimension("bounds4", 4)
+
     # Tie point index variables
     lat_indices = n.createVariable("lat_indices", "i4", ("tp_lat",))
     lat_indices[...] = [0, 8, 9, 17]
@@ -1531,10 +1534,10 @@ def _make_subsampled_1(filename):
     b_2d[...] = -c
 
     # Tie point bounds variables
-    lat_bounds = n.createVariable("lat_bounds", "f8", ("tp_lat",))
+    lat_bounds = n.createVariable("lat_bounds", "f4", ("tp_lat",))
     lat_bounds[...] = [-90, 0, 0, 90]
 
-    lon_bounds = n.createVariable("lon_bounds", "f8", ("tp_lon",))
+    lon_bounds = n.createVariable("lon_bounds", "f4", ("tp_lon",))
     lon_bounds[...] = [0, 150, 240, 240, 360]
 
     bounds_2d = np.array(
@@ -1596,11 +1599,11 @@ def _make_subsampled_1(filename):
     # Interpolation parameters
     w_lat = n.createVariable("w_lat", "f8", ("subarea_lat",))
     w_lat.long_name = "quadratic interpolation coefficient (lat)"
-    w_lat[...] = [1, 1]
+    w_lat[...] = [1, 2]
 
     w_lon = n.createVariable("w_lon", "f8", ("subarea_lon",))
     w_lon.long_name = "quadratic interpolation coefficient (lon)"
-    w_lon[...] = [5, 10, 5]
+    w_lon[...] = [10, 5, 15]
 
     cp = n.createVariable("cp", "f8", ("subarea_lon", "tp_lat"))
     cp.long_name = "interpolation coefficient (lon & lat)"
@@ -1639,6 +1642,154 @@ def _make_subsampled_1(filename):
     t3.coordinates = "reftime"
     t3.coordinate_interpolation = "a_2d: b_2d: general"
     t3[...] = np.arange(2 * 18 * 12).reshape(2, 18, 12).round(0)
+
+    # Original coordinates
+    rlon = n.createVariable("rlon", "f4", ("lon",))
+    rlon.units = "degrees_east"
+    rlon.bounds_tie_points = "rlon_bounds"
+    rlon[...] = np.linspace(15, 345, 12)
+
+    rlat = n.createVariable("rlat", "f4", ("lat",))
+    rlat.units = "degrees_north"
+    rlat.bounds_tie_points = "rlat_bounds"
+    rlat[...] = np.linspace(-85, 85, 18)
+
+    x = np.linspace(-90, 90, 19)
+
+    rlat_bounds = n.createVariable("rlat_bounds", "f4", ("lat", "bounds2"))
+    rlat_bounds.units = "degrees_north"
+    rlat_bounds[...] = np.column_stack((x[:-1], x[1:]))
+
+    x = np.linspace(0, 360, 13)
+
+    rlon_bounds = n.createVariable("rlon_bounds", "f4", ("lon", "bounds2"))
+    rlon_bounds.units = "degrees_east"
+    rlon_bounds[...] = np.column_stack((x[:-1], x[1:]))
+
+    ra_2d = n.createVariable("ra_2d", "f4", ("lat", "lon"))
+    ra_2d.units = "m"
+    ra_2d.bounds_tie_points = "ra_2d_bounds"
+    ra_2d[...] = np.arange(18 * 12).reshape(18, 12)
+
+    rb_2d = n.createVariable("rb_2d", "f4", ("lat", "lon"))
+    rb_2d.units = "m"
+    rb_2d.bounds_tie_points = "rb_2d_bounds"
+    rb_2d[...] = -np.arange(18 * 12).reshape(18, 12)
+
+    x = np.arange(19 * 13).reshape(19, 13)
+    x = np.stack([x[:-1, :-1], x[:-1, 1:], x[1:, 1:], x[1:, :-1]], axis=2)
+
+    ra_2d_bounds = n.createVariable(
+        "ra_2d_bounds", "f4", ("lat", "lon", "bounds4")
+    )
+    ra_2d_bounds.units = "m"
+    ra_2d_bounds[...] = x
+
+    rb_2d_bounds = n.createVariable(
+        "rb_2d_bounds", "f4", ("lat", "lon", "bounds4")
+    )
+    rb_2d_bounds.units = "m"
+    rb_2d_bounds[...] = -x
+
+    rlon_quadratic = n.createVariable("rlon_quadratic", "f4", ("lon",))
+    rlon_quadratic.units = "degrees_east"
+    rlon_quadratic.bounds_tie_points = "rlon_quadratic_bounds"
+    rlon_quadratic[...] = np.array(
+        [
+            15.0,
+            52.5,
+            85.0,
+            112.5,
+            135.0,
+            169.44444444,
+            199.44444444,
+            225.0,
+            255.0,
+            298.33333333,
+            328.33333333,
+            345.0,
+        ]
+    )
+
+    rlat_quadratic = n.createVariable("rlat_quadratic", "f4", ("lat",))
+    rlat_quadratic.units = "degrees_north"
+    rlat_quadratic.bounds_tie_points = "rlat_quadratic_bounds"
+    rlat_quadratic[...] = np.array(
+        [
+            -85.0,
+            -74.5625,
+            -64.25,
+            -54.0625,
+            -44.0,
+            -34.0625,
+            -24.25,
+            -14.5625,
+            -5.0,
+            5.0,
+            15.875,
+            26.5,
+            36.875,
+            47.0,
+            56.875,
+            66.5,
+            75.875,
+            85.0,
+        ]
+    )
+
+    x = np.array(
+        [
+            -90.0,
+            -79.60493827,
+            -69.30864198,
+            -59.11111111,
+            -49.01234568,
+            -39.01234568,
+            -29.11111111,
+            -19.30864198,
+            -9.60493827,
+            0.0,
+            10.79012346,
+            21.38271605,
+            31.77777778,
+            41.97530864,
+            51.97530864,
+            61.77777778,
+            71.38271605,
+            80.79012346,
+            90.0,
+        ]
+    )
+
+    rlat_quadratic_bounds = n.createVariable(
+        "rlat_quadratic_bounds", "f4", ("lat", "bounds2")
+    )
+    rlat_quadratic_bounds.units = "degrees_north"
+    rlat_quadratic_bounds[...] = np.column_stack((x[:-1], x[1:]))
+
+    x = np.array(
+        [
+            0.0,
+            36.4,
+            69.6,
+            99.6,
+            126.4,
+            150.0,
+            184.44444444,
+            214.44444444,
+            240.0,
+            281.25,
+            315.0,
+            341.25,
+            360.0,
+        ]
+    )
+
+    rlon_quadratic_bounds = n.createVariable(
+        "rlon_quadratic_bounds", "f4", ("lon", "bounds2")
+    )
+    rlon_quadratic_bounds.units = "degrees_east"
+    rlon_quadratic_bounds[...] = np.column_stack((x[:-1], x[1:]))
 
     n.close()
 
