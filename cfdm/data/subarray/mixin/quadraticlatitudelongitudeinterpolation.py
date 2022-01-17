@@ -15,15 +15,7 @@ class QuadraticLatitudeLongitudeInterpolation(
     """
 
     def _quadratic_latitude_longitude_interpolation(
-        self,
-        lat_a,
-        lon_a,
-        lat_b,
-        lon_b,
-        ce,
-        ca,
-        location_use_3d_cartesian,
-        d1,
+        self, lat_a, lon_a, lat_b, lon_b, ce, ca, location_use_3d_cartesian, d1
     ):
         """Quadratic interpolation of geographic coordinates.
 
@@ -39,12 +31,14 @@ class QuadraticLatitudeLongitudeInterpolation(
         :Parameters:
 
             lat_a, lon_a: `numpy.ndarray`
-                The latitudes and longitudes of the first (in index
-                space) tie points of the subsampled dimension.
+                The latitude and longitudes of the first tie point in
+                index space of subsampled dimension 1 (in the sense of
+                CF appendix J Figure J.1).
 
             lat_b, lon_b: `numpy.ndarray`
-                The latitudes and longitudes of the second (in index
-                space) tie points of the subsampled dimension.
+                The latitude and longitude of the second tie point in
+                index space of subsampled dimension 2 (in the sense of
+                CF appendix J Figure J.1).
 
             ce, ca: `numpy.ndarray` or `None`
                 The interpolation parameters ``ce`` and ``ca``, with
@@ -59,6 +53,8 @@ class QuadraticLatitudeLongitudeInterpolation(
         :Returns:
 
             `numpy.ndarray`
+                The result of interpolating the tie points to interior
+                locations implied by *s*.
 
         """
         if location_use_3d_cartesian is None:

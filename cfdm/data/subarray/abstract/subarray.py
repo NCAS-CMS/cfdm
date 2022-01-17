@@ -133,10 +133,13 @@ class Subarray(Array):
         )  # pragma: no cover
 
     def _asanyarray(self, data, indices=None, check_mask=True):
-        """Convert data to a numpy array.
+        """Convert data to a `numpy` array.
 
         The conversion takes place with a runtime context, if one has
         been provided.
+
+        By default, the returned array will only a masked array if the
+        data contains missing values.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -157,6 +160,8 @@ class Subarray(Array):
         """
         context_manager = self._get_component("context_manager")
         if context_manager:
+            # Convert the data to a numpy array within the given
+            # runtime context
             with context_manager():
                 if indices:
                     data = data[indices]

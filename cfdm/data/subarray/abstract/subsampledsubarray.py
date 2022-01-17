@@ -38,9 +38,9 @@ class SubsampledSubarray(Subarray):
         :Parameters:
 
             data: array_like
-                The full compressed array spanning all subarrays, from
-                which the elements for this subarray are defined by
-                the *indices*.
+                The full compressed tie points array spanning all
+                subarrays, from which the elements for this subarray
+                are defined by the *indices*.
 
             indices: `tuple`
                 The indices of *data* that define this subarray.
@@ -117,7 +117,7 @@ class SubsampledSubarray(Subarray):
             context_manager: function, optional
                 A context manager that provides a runtime context for
                 the conversion of data defined by *data*,
-                *dependent_tie_points*, and *parameters* to a `numpy`
+                *dependent_tie_points*, and *parameters* to `numpy`
                 arrays.
 
         """
@@ -315,7 +315,9 @@ class SubsampledSubarray(Subarray):
         """Return the interpolation coefficient ``s``.
 
         Returns the interpolation coefficient ``s`` for the specified
-        subsampled dimension of the interpolation subarea.
+        subsampled dimension of the interpolation subarea. Note that
+        the interpolation area may have fewer dimensions, and fewer
+        elements, than the uncompresed subarray.
 
         See CF appendix J "Coordinate Interpolation Methods".
 
@@ -338,43 +340,37 @@ class SubsampledSubarray(Subarray):
         **Examples**
 
         >>> x.shape
-        (12, 5)
+        (5, 5)
+        >>> x.first
+        (True, False)
         >>> x.bounds
         False
-         >>> x.first
-        (False, True)
-        >>> print(x._s(1))
-        [[0.   0.25 0.5  0.75 1.  ]]
-
-        >>> x.shape
-        (12, 5)
-        >>> x.bounds
-        False
-        >>> x.first
-        (False, False)
+        >>> print(x._s(0))
+        [[0.  ]
+         [0.25]
+         [0.5 ]
+         [0.75]
+         [1.  ]]
         >>> print(x._s(1))
         [[0.  0.2 0.4 0.6 0.8 1. ]]
+        >>> print(x._s(1, s=0.5))
+        [[0.5]]
 
         >>> x.shape
-        (12, 5)
+        (5, 5, 2)
+        >>> x.first
+        (True, False)
         >>> x.bounds
         True
-         >>> x.first
-        (False, True)
+        >>> print(x._s(0))
+        [[0. ]
+         [0.2]
+         [0.4]
+         [0.6]
+         [0.8]
+         [1. ]]
         >>> print(x._s(1))
         [[0.  0.2 0.4 0.6 0.8 1. ]]
-
-        >>> x.shape
-        (12, 5)
-        >>> x.bounds
-        True
-        >>> x.first
-        (False, False)
-        >>> print(x._s(1))
-        [[0.  0.2 0.4 0.6 0.8 1. ]]
-
-        >>> x.shape
-        (12, 5)
         >>> print(x._s(1, s=0.5))
         [[0.5]]
 
@@ -494,8 +490,6 @@ class SubsampledSubarray(Subarray):
             indices = self.subarea_indices
 
         return self._asanyarray(parameter, indices)
-
-    #        return self._asanyarray(parameter[indices])
 
     def _trim(self, u):
         """Trim the raw uncompressed data.

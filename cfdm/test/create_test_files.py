@@ -811,14 +811,7 @@ def _make_gathered_file(filename):
     aux7 = n.createVariable("aux7", "f8", ("lat",))
     aux7[...] = np.arange(lat.size)
 
-    aux8 = n.createVariable(
-        "aux8",
-        "f8",
-        (
-            "lon",
-            "lat",
-        ),
-    )
+    aux8 = n.createVariable("aux8", "f8", ("lon", "lat"))
     aux8[...] = np.arange(lon.size * lat.size).reshape(lon.size, lat.size)
 
     aux9 = n.createVariable("aux9", "f8", ("time", "height"))
@@ -1685,14 +1678,7 @@ def _make_subsampled_2(filename):
     scan_indices[...] = [0, 15, 31]
 
     # Tie point coordinate variables
-    lon = n.createVariable(
-        "lon",
-        "f4",
-        (
-            "tie_point_track",
-            "tie_point_scan",
-        ),
-    )
+    lon = n.createVariable("lon", "f4", ("tie_point_track", "tie_point_scan"))
     lon.standard_name = "longitude"
     lon.units = "degrees_east"
     lon[...] = [
@@ -1719,14 +1705,7 @@ def _make_subsampled_2(filename):
     # Tie point bounds variables
 
     # Reconstituded coordinates
-    rec_lon = n.createVariable(
-        "rec_lon",
-        "f4",
-        (
-            "track",
-            "scan",
-        ),
-    )
+    rec_lon = n.createVariable("rec_lon", "f4", ("track", "scan"))
     rec_lon.standard_name = "longitude"
     rec_lon.units = "degrees_east"
     rec_lon[...] = np.array(

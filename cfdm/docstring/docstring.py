@@ -220,10 +220,9 @@ _docstring_substitution_definitions = {
                 ``3``/``'DETAIL'``) for increasing verbosity, the more
                 description that is printed to convey information
                 about the operation.""",
-    # d
     "{{d: `int`}}": """d: `int`
-                The position in the full tie points array of the
-                subsampled dimension being interpolated.""",
+                The position in the tie points array of the subsampled
+                dimension being interpolated.""",
     # d1
     "{{d1: `int`}}": """d1: `int`
                 The position of subsampled dimension 1 (in the sense
@@ -238,8 +237,8 @@ _docstring_substitution_definitions = {
     "{{s: array_like, optional}}": """s: array_like, optional
                 If set to a single number in the range [0, 1] then
                 this value is return for the interpolation coeficient
-                ``s``. By default ``s`` is calculated for each
-                uncompressed location.""",
+                ``s``. By default ``s`` is calculated for each of the
+                interpolation subararea's uncompressed location.""",
     # s_i
     "{{s_i: array_like}}": """s_i: array_like
                 A value for the interpolation coeficient ``s`` for the
@@ -249,9 +248,9 @@ _docstring_substitution_definitions = {
     "{{location_use_3d_cartesian: `numpy.ndarray` or `None`}}": """location_use_3d_cartesian: `numpy.ndarray` or `None`
                 The boolean interpolation parameter
                 ``location_use_3d_cartesian``, with the same number of
-                dimensions in the same relative order as the full tie
-                points array. True values indicate that interpolation
-                is carried out in three-dimensional cartesian
+                dimensions in the same order as the full tie points
+                array. True values indicate that interpolation is
+                carried out in three-dimensional cartesian
                 coordinates, as opposed to latitude-longitude
                 coordinates. If `None` then an exception is raised.""",
     # construct selection identity
@@ -304,25 +303,37 @@ _docstring_substitution_definitions = {
     "{{Returns constructs}}": """
                 The selected constructs in a new `Constructs` object,
                 unless modified by any *filter_kwargs* parameters.""",
-    # shapes
-    "{{shapes: `None`, `str`, or sequence}}": """shapes: `None`, `str`, or sequence
-                Specify how the subarray shapes are to be created.
+    # chunks subarrays
+    "{{subarrays chunks: ``-1`` or sequence, optional}}": """chunks: ``-1`` or sequence, optional
+                Define the subarray shapes.
 
-                If a sequence then it must have the same number of
-                elements as there are uncompressed dimensions. In
-                general, each element must be a `tuple` of `int` that
-                specifies size of each subarray for that dimension (so
-                the sum of its values must equal the size of the
-                uncompressed dimension). However, the elements that
-                correspond to compressed dimensions are ignored and so
-                may take arbitrary values.
+                Must be either ``-1``, the default, meaning that all
+                non-compressed dimensions in each subarray have the
+                maximum possible size; or a sequence of `tuple`. In
+                the latter case *chunks* must be allowed as an input
+                to `subarray_shapes`.
 
-                If ``'fewest'`` or ``'most'`` then these define
-                respectively the minumum and maximum number of
-                subarrays possible.
+                A valid *chunks* specification may always be found by
+                normalising an output of `subarray_shapes` with
+                `dask.array.core.normalize_chunks` as follows:
+                ``chunks =
+                dask.array.core.normalize_chunks(a.subarray_shapes(...),
+                shape=a.shape, dtype=a.dtype)``.""",
+    # chunks subarray_shapes
+    "{{subarray_shapes chunks: `int`, sequence, `dict`, or `str`, optional}}": """chunks: `int`, sequence, `dict` or `str`, optional
+                Define the subarray shapes.
 
-                The default value of `None` is equalivalent to
-                ``'fewest'``.""",
+                Any value accepted by the *chunks* parameter of the
+                `dask.array.from_array` function is allowed.
+
+                The subarray sizes implied by *chunks* for a dimension
+                that has been compressed are ignored and replaced with
+                values that implied by the decompression algorithm, so
+                their specification is arbitrary.
+
+                By default, *chunks* is ``-1``, meaning that all
+                non-compressed dimensions in each subarray have the
+                maximum possible size.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------

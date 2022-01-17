@@ -13,20 +13,18 @@ class LinearInterpolation:
         u = fl(ua, ub, s) = ua + s*(ub-ua)
                           = ua*(1-s) + ub*s
 
+        See CF appendix J "Coordinate Interpolation Methods".
+
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         .. seealso:: `_s`
 
         :Parameters:
 
-            ua: `numpy.ndarray`
-                The first point in index space of subsampled dimension
-                1 (in the sense of CF appendix J Figure J.1).
-
-            ub: `numpy.ndarray`
-                The second point in index space of subsampled
-                dimension 1 (in the sense of CF appendix J Figure
-                J.1).
+            ua, ub: `numpy.ndarray`
+                The first and second tie points in index space of
+                subsampled dimension 1 (in the sense of CF appendix J
+                Figure J.1).
 
             {{d1: `int`}}
 
@@ -35,6 +33,8 @@ class LinearInterpolation:
         :Returns:
 
             `numpy.ndarray`
+                The result of interpolating the tie points to interior
+                locations implied by *s*.
 
         """
         s = self._s(d1, s=s)

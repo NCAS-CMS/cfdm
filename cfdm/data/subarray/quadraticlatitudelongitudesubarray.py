@@ -3,8 +3,7 @@ from .mixin import QuadraticLatitudeLongitudeInterpolation
 
 
 class QuadraticLatitudeLongitudeSubarray(
-    QuadraticLatitudeLongitudeInterpolation,
-    SubsampledSubarray,
+    QuadraticLatitudeLongitudeInterpolation, SubsampledSubarray
 ):
     """A subarray of an array compressed by subsamplng.
 

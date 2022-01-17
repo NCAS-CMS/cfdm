@@ -2,9 +2,7 @@ from . import core, mixin
 
 
 class InterpolationParameter(
-    mixin.NetCDFVariable,
-    mixin.PropertiesData,
-    core.abstract.PropertiesData,
+    mixin.NetCDFVariable, mixin.PropertiesData, core.abstract.PropertiesData
 ):
     """An interpolation parameter variable.
 

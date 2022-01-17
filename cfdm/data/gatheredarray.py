@@ -1,4 +1,5 @@
 from itertools import accumulate, product
+from numbers import Number
 
 import numpy as np
 
@@ -263,9 +264,7 @@ class GatheredArray(CompressedArray):
 
         :Parameters:
 
-            {{shapes: `None`, `str`, or sequence}}
-
-                {{shapes auto}}
+            {{subarray_shapes chunks: `int`, sequence, `dict`, or `str`, optional}}
 
         :Returns:
 
@@ -276,51 +275,56 @@ class GatheredArray(CompressedArray):
 
         >>> a.shape
         (2, 3, 4)
-        >>> a.subarray_shapes((0, 1), None)
+        >>> a.subarray_shapes(-1)
         [(2,), (3,), (4,)]
-        >>> a.subarray_shapes((0, 1), "auto")
-        [(2,), (3,), "auto"]
-        >>> a.subarray_shapes((0, 1), "most")
-        [(2,), (3,), (1, 1, 1, 1)]
-        >>> a.subarray_shapes((0, 1), (None, None, (4,)))
-        [(2,), (3,), (4,)]
-        >>> a.subarray_shapes((0, 1), (None, None, (1, 3)))
+        >>> a.subarray_shapes((None, None, 2))
+        [(2,), (3,), 2]
+        >>> a.subarray_shapes((None, None, (1, 3)))
         [(2,), (3,), (1, 3)]
-        >>> a.subarray_shapes((0, 1), (None, None, "auto"))
+        >>> a.subarray_shapes((None, None, "auto"))
         [(2,), (3,), "auto"]
+        >>> a.subarray_shapes((None, None, "60B"))
+        [(2,), (3,), "60B"]
+        >>> a.subarray_shapes({2: (1, 3)})
+        [(2,), (3,), (1, 3)]
+
+        >>> a.subarray_shapes("auto")
+        [(2,), (3,), "auto"]
+        >>> import dask
+        >>> dask.array.core.normalize_chunks(
+        ...   a.subarray_shapes("auto"), shape=a.shape, dtype=a.dtype
+        ... )
+        [(2,), (3,), (4,)]
 
         """
         u_dims = self.get_compressed_axes()
 
-        if shapes in (None, "fewest"):
-            shapes = [(n,) for n in self.shape]
+        if shapes == -1:
+            return [(size,) for size in self.shape]
 
-        elif shapes == "auto":
-            shapes = [
-                (n,) if i in u_dims else "auto"
-                for i, n in enumerate(self.shape)
+        if isinstance(shapes, (str, Number)):
+            return [
+                (size,) if i in u_dims else shapes
+                for i, size in enumerate(self.shape)
             ]
 
-        elif shapes == "most":
+        if isinstance(shapes, dict):
             shapes = [
-                (n,) if i in u_dims else (1,) * n
-                for i, n in enumerate(self.shape)
+                shapes[i] if i in shapes else None for i in range(self.ndim)
             ]
-
-        elif len(shapes) == self.ndim:
-            shapes = list(shapes)
-            for i in u_dims:
-                shapes[i] = (self.shape[i],)
-
-        else:
+        elif len(shapes) != self.ndim:
             raise ValueError(
-                "Wrong number of shapes elements: "
+                f"Wrong number of 'shapes' elements in {shapes}: "
                 f"Got {len(shapes)}, expected {self.ndim}"
             )
 
-        return shapes
+        # chunks is a sequence
+        return [
+            (size,) if i in u_dims else c
+            for i, (size, c) in enumerate(zip(self.shape, shapes))
+        ]
 
-    def subarrays(self, shapes=None):
+    def subarrays(self, shapes=-1):
         """Return descriptors for every subarray.
 
         These descriptors are used during subarray decompression.
@@ -329,7 +333,7 @@ class GatheredArray(CompressedArray):
 
         :Parameters:
 
-            {{shapes: `None`, `str`, or sequence}}
+            {{subarrays chunks: ``-1`` or sequence, optional}}
 
         :Returns:
 

@@ -50,12 +50,12 @@ class BiQuadraticLatitudeLongitudeInterpolation(
             lat_a, lon_a: `numpy.ndarray`
                 The latitude and longitude of the first tie point in
                 index space of subsampled dimension 1 (in the sense of
-                CF appendix J Figure J.2).
+                CF appendix J Figure J.1).
 
             lat_b, lon_b: `numpy.ndarray`
                 The latitude and longitude of the second tie point in
-                index space of subsampled dimension 1 (in the sense of
-                CF appendix J Figure J.2).
+                index space of subsampled dimension 2 (in the sense of
+                CF appendix J Figure J.1).
 
             lat_c, lon_c: `numpy.ndarray`
                 The latitude and longitude of the first tie point in
@@ -142,10 +142,7 @@ class BiQuadraticLatitudeLongitudeInterpolation(
 
         # ce3, ca3: Span interpolation subarea dimension 2 and
         #           interpolation subarea dimension 1
-        cea3 = (
-            self._select_location(ce3, {}),
-            self._select_location(ca3, {}),
-        )
+        cea3 = (self._select_location(ce3, {}), self._select_location(ca3, {}))
         cv_z = self._fcea2cv(vab, vcd, *cea3)
         del cea3
 

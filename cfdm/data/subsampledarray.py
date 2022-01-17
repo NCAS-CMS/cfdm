@@ -1,4 +1,5 @@
 from itertools import accumulate, product
+from numbers import Number
 
 import numpy as np
 
@@ -84,9 +85,9 @@ class SubsampledArray(CompressedArray):
     def __new__(cls, *args, **kwargs):
         """Store subarray classes.
 
-        The subarray classes are stored as values of a dictionary
-        whose keys are the corresponding "interpolation_name" property
-        values.
+        If a child class requires different subarray classes than the
+        ones defined here, then they must be defined in the __new__
+        method of the child class.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -351,7 +352,7 @@ class SubsampledArray(CompressedArray):
         # If the first or last element is requested then we don't need
         # to uncompress
         try:
-            return self._first_or_last_index(indices)
+            return self._first_or_last_element(indices)
         except IndexError:
             pass
 
@@ -371,14 +372,9 @@ class SubsampledArray(CompressedArray):
         dependent_tie_points = conformed_data["dependent_tie_points"]
 
         # Interpolate the tie points for each interpolation subarea
-        for (
-            u_indices,
-            u_shape,
-            c_indices,
-            subarea_indices,
-            first,
-            _,
-        ) in zip(*self.subarrays()):
+        for (u_indices, u_shape, c_indices, subarea_indices, first, _) in zip(
+            *self.subarrays()
+        ):
             subarray = Subarray(
                 data=tie_points,
                 indices=c_indices,
@@ -555,6 +551,7 @@ class SubsampledArray(CompressedArray):
                 parameters[term] = parameter
 
             parameters.update(self._conformed_interpolation_subarea_flags())
+            parameters.pop("interpolation_subarea_flags", None)
 
         return parameters
 
@@ -929,9 +926,7 @@ class SubsampledArray(CompressedArray):
 
         :Parameters:
 
-            {{shapes: `None`, `str`, or sequence}}
-
-                {{shapes auto}}
+            {{subarray_shapes chunks: `int`, sequence, `dict`, or `str`, optional}}
 
         :Returns:
 
@@ -942,54 +937,54 @@ class SubsampledArray(CompressedArray):
         (4, 20, 30)
         >>> a.source().shape
         (4, 2, 2)
-        >>> a.subarray_shapes((1, 2), None)
+        >>> a.subarray_shapes(-1)
+        [(4,), None, None]
+        >>> a.subarray_shapes("auto")
+        ["auto", None, None]
+        >>> a.subarray_shapes((2, None, None))
+        [2, None, None]
+        >>> a.subarray_shapes(((1, 3), None, None))
+        [(1, 3), None, None]
+        >>> a.subarray_shapes(("auto", None, None))
+        ["auto", None, None]
+        >>> a.subarray_shapes(("60B", None, None))
+        ["60B", None, None]
+
+        >>> a.subarray_shapes("auto")
+        ["auto", None, None]
+        >>> import dask
+        >>> dask.array.core.normalize_chunks(
+        ...   a.subarray_shapes("auto"), shape=a.shape, dtype=a.dtype
+        ... )
         [(4,), (20,), (30,)]
-        >>> a.subarray_shapes((1, 2), "auto")
-        ["auto", (20,), (30,)]
-        >>> a.subarray_shapes((1, 2), "most")
-        [(1, 1, 1), (20,), (30,)]
-        >>> a.subarray_shapes((1, 2), ((4,), None, None))
-        [(4,), (20,), (30,)]
-        >>> a.subarray_shapes((1, 2), ((1, 3), None, None))
-        [(1, 3), (20,), (30,)]
-        >>> a.subarray_shapes((1, 2), ("auto", None, None))
-        ["auto", (20,), (30,)]
 
         """
         u_dims = self.get_compressed_axes()
 
-        if shapes in (None, "fewest"):
-            shapes = [
-                None if d in u_dims else (size,)
-                for d, size in enumerate(self.shape)
+        if shapes == -1:
+            return [
+                None if i in u_dims else (size,)
+                for i, size in enumerate(self.shape)
             ]
 
-        elif shapes == "auto":
+        if isinstance(shapes, (str, Number)):
+            return [None if i in u_dims else shapes for i in range(self.ndim)]
+
+        if isinstance(shapes, dict):
             shapes = [
-                None if d in u_dims else "auto"
-                for d, size in enumerate(self.shape)
+                shapes[i] if i in shapes else None for i in range(self.ndim)
             ]
-
-        elif shapes == "most":
-            shapes = [
-                None if d in u_dims else (1,) * size
-                for d, size in enumerate(self.shape)
-            ]
-
-        elif len(shapes) == self.ndim:
-            shapes = list(shapes)
-            for i in u_dims:
-                shapes[i] = None
-
-        else:
+        elif len(shapes) != self.ndim:
+            # chunks is a sequence
             raise ValueError(
-                "Wrong number of chunks elements: "
+                f"Wrong number of 'shapes' elements in {shapes}: "
                 f"Got {len(shapes)}, expected {self.ndim}"
             )
 
-        return shapes
+        # chunks is a sequence
+        return [None if i in u_dims else c for i, c in enumerate(shapes)]
 
-    def subarrays(self, shapes=None):
+    def subarrays(self, shapes=-1):
         """Return descriptors for every subarray.
 
         Theses descriptors are used during subarray decompression.
@@ -998,7 +993,7 @@ class SubsampledArray(CompressedArray):
 
         :Parameters:
 
-            {{shapes: `None`, `str`, or sequence}}
+            {{subarrays chunks: ``-1`` or sequence, optional}}
 
         :Returns:
 
@@ -1116,9 +1111,6 @@ class SubsampledArray(CompressedArray):
         u_dims = tuple(tie_point_indices)
 
         shapes = self.subarray_shapes(shapes)
-
-        # ndim = self.ndim
-        # tp_ndim = self.source().ndim
 
         # The indices of the uncompressed array that correspond to
         # each interpolation subarea.

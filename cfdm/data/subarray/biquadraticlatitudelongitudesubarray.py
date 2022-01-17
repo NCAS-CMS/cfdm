@@ -3,8 +3,7 @@ from .mixin import BiQuadraticLatitudeLongitudeInterpolation
 
 
 class BiQuadraticLatitudeLongitudeSubarray(
-    BiQuadraticLatitudeLongitudeInterpolation,
-    SubsampledSubarray,
+    BiQuadraticLatitudeLongitudeInterpolation, SubsampledSubarray
 ):
     """A subarray of an array compressed by subsamplng.
 

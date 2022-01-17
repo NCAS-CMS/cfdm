@@ -37,25 +37,11 @@ class NetCDFWrite(IOWrite):
         .. versionadded:: (cfdm) 1.8.0
 
         """
-        return set(
-            (
-                "point",
-                "line",
-                "polygon",
-            )
-        )
+        return set(("point", "line", "polygon"))
 
     def cf_cell_method_qualifiers(self):
         """Cell method qualifiers."""
-        return set(
-            (
-                "within",
-                "where",
-                "over",
-                "interval",
-                "comment",
-            )
-        )
+        return set(("within", "where", "over", "interval", "comment"))
 
     def _create_netcdf_group(self, nc, group_name):
         """Creates a new netCDF4 group object.
@@ -3418,13 +3404,13 @@ class NetCDFWrite(IOWrite):
 
                             matched_construct = False
 
-                            for key0, (
-                                construct0,
-                                index0,
+                            for (
+                                key0,
+                                (construct0, index0),
                             ) in spanning_constructs.items():
-                                for key1, (
-                                    construct1,
-                                    index1,
+                                for (
+                                    key1,
+                                    (construct1, index1),
                                 ) in constructs1.items():
                                     if (
                                         index0 == index1
@@ -4919,10 +4905,7 @@ class NetCDFWrite(IOWrite):
             "NETCDF3_64BIT_OFFSET",
             "NETCDF3_64BIT_DATA",
         )
-        netcdf4_fmts = (
-            "NETCDF4",
-            "NETCDF4_CLASSIC",
-        )
+        netcdf4_fmts = ("NETCDF4", "NETCDF4_CLASSIC")
         if fmt not in netcdf3_fmts + netcdf4_fmts:
             raise ValueError(f"Unknown output file format: {fmt}")
         elif fmt in netcdf3_fmts:

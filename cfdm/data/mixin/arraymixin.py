@@ -45,7 +45,7 @@ class ArrayMixin:
 
         """
         raise NotImplementedError(
-            "Must implement __getitem__ in subclasses"
+            f"Must implement {self.__class__.__name__}.__getitem__"
         )  # pragma: no cover
 
     def __repr__(self):

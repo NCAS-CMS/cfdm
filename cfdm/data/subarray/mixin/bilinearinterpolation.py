@@ -17,29 +17,23 @@ class BiLinearInterpolation(LinearInterpolation):
         ubd = fl(ub, ud, s(ia2, ic2, i2))
         u(i2, i1) = fl(uac, ubd, s(ia1, ib1, i1))
 
+        See CF appendix J "Coordinate Interpolation Methods".
+
         .. versionadded:: (cfdm) 1.9.TODO.0
 
-        .. seealso:: `_linear_interpolation`
+        .. seealso:: `_linear_interpolation`, `_s`
 
         :Parameters:
 
-            ua: `numpy.ndarray`
-                The first point in index space of subsampled dimension
-                1 (in the sense of CF appendix J Figure J.2).
+            ua, ub: `numpy.ndarray`
+                The first and second tie points in index space of
+                subsampled dimension 1 (in the sense of CF appendix J
+                Figure J.2).
 
-            ub: `numpy.ndarray`
-                The second point in index space of subsampled
-                dimension 1 (in the sense of CF appendix J Figure
-                J.2).
-
-            uc: `numpy.ndarray`
-                The first point in index space of subsampled dimension
-                2 (in the sense of CF appendix J Figure J.2).
-
-            ud: `numpy.ndarray`
-                The second point in index space of subsampled
-                dimension 2 (in the sense of CF appendix J Figure
-                J.2).
+            uc, ud: `numpy.ndarray`
+                The first and second tie points in index space of
+                subsampled dimension 2 (in the sense of CF appendix J
+                Figure J.2).
 
             {{d2: `int`}}
 
@@ -48,6 +42,8 @@ class BiLinearInterpolation(LinearInterpolation):
         :Returns:
 
             `numpy.ndarray`
+                The result of interpolating the tie points to interior
+                locations implied by *s*.
 
         """
         uac = self._linear_interpolation(ua, uc, d2)

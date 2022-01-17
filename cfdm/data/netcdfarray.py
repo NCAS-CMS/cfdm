@@ -95,14 +95,14 @@ class NetCDFArray(abstract.Array):
 
                 {{init source}}
 
-                .. versionadded:: (cfdm) 1.9.TODO.
+                .. versionadded:: (cfdm) 1.9.TODO.0
 
             copy: `bool`, optional
                 If False then do not deep copy input parameters prior
                 to initialisation. By default arguments are deep
                 copied.
 
-                .. versionadded:: (cfdm) 1.9.TODO.
+                .. versionadded:: (cfdm) 1.9.TODO.0
 
         **Examples**
 
@@ -195,6 +195,7 @@ class NetCDFArray(abstract.Array):
 
         """
         netcdf = self.open()
+        dataset = netcdf
 
         # Traverse the group structure, if there is one (CF>=1.8).
         group = self.get_group()
@@ -222,10 +223,7 @@ class NetCDFArray(abstract.Array):
                     array = variable[indices]
                     break
 
-        #        if self._get_component("close"):
-        # Close the netCDF file
-        #        netcdf.close()
-        self.close(netcdf)
+        self.close(dataset)
 
         string_type = isinstance(array, str)
         if string_type:
@@ -320,15 +318,31 @@ class NetCDFArray(abstract.Array):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        **Examples**
-
-        >>> a.dtype
-        dtype('float64')
-        >>> print(type(a.dtype))
-        <type 'numpy.dtype'>
-
         """
         return self._get_component("dtype")
+
+    @property
+    def file_address(self):
+        """The file name and address.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Returns:
+
+            `tuple`
+                The file name and file address.
+
+        **Examples**
+
+        >>> a.file_address()
+        ('file.nc', 'latitude')
+
+        """
+        pointer = self._get_component("ncvar", None)
+        if pointer is None:
+            pointer = self.get_varid()
+
+        return (self.get_filename(), pointer)
 
     @property
     def shape(self):
@@ -417,7 +431,7 @@ class NetCDFArray(abstract.Array):
         return self._get_component("varid")
 
     def close(self, netcdf):
-        """Close the `netCDF4.Dataset` for the file containing the data.
+        """Close the dataset containing the data.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -425,6 +439,7 @@ class NetCDFArray(abstract.Array):
 
             netcdf: `netCDF4.Dataset`
                 The netCDF dataset to be be closed.
+
         :Returns:
 
             `None`
@@ -433,15 +448,8 @@ class NetCDFArray(abstract.Array):
         if self._get_component("close"):
             netcdf.close()
 
-    #        netcdf = self._get_component("netcdf")
-    #        if netcdf is None:
-    #            return
-    #
-    #        netcdf.close()
-    #        self._set_component("netcdf", None, copy=False)
-
     def open(self):
-        """Returns an open `netCDF4.Dataset` for the array's file.
+        """Returns an open dataset containing the data array.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -457,17 +465,10 @@ class NetCDFArray(abstract.Array):
         'eastward_wind'
 
         """
-        #        netcdf = self._get_component("netcdf")
-        #        if netcdf is None: #self._get_component("netcdf") is None:
         try:
-            #            netcdf = netCDF4.Dataset(self.get_filename(), "r")
             return netCDF4.Dataset(self.get_filename(), "r")
         except RuntimeError as error:
             raise RuntimeError(f"{error}: {self.get_filename()}")
-
-    #        self._set_component("netcdf", netcdf, copy=False)
-
-    #        return netcdf
 
     def to_memory(self):
         """Bring data on disk into memory.

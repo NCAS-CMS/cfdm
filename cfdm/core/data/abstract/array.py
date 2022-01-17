@@ -153,11 +153,4 @@ class Array(Container):
         >>> b = a.copy()
 
         """
-        #        print ( type(self))
         return type(self)(source=self, copy=True)
-
-
-#        klass = self.__class__
-#        new = klass.__new__(klass)
-#        new.__dict__ = self.__dict__.copy()
-#        return new

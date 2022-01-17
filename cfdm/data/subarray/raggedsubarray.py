@@ -32,11 +32,7 @@ class RaggedSubarray(Subarray):
 
         if data.size:
             shape = list(data.shape)
-            u_indices0 = [
-                slice(
-                    None,
-                )
-            ] * data.ndim
+            u_indices0 = [slice(None)] * data.ndim
 
             u_indices0[d1] = slice(0, shape[d1])
             shape[d1] = uncompressed_shape[u_dims[-1]]

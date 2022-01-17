@@ -158,23 +158,21 @@ class CompressedArray(Array):
             "compressed_dimensions", compressed_dimensions, copy=False
         )
 
-    def _first_or_last_index(self, indices):
-        """Return the first or last element of the uncompressed array.
+    def _first_or_last_element(self, indices):
+        """Return the first or last element of the compressed array.
 
-        This method will return the first or last element without
-        having to perform any decompression.
-
-        .. warning:: It is assumed that the first (last) element of
-                     the compressed array has the same value as the
-                     first (last) element of the uncompressed
-                     array. If this is not the case then an incorrect
-                     value will be returned.
+        This method will return the first or last element of the
+        compressed array without performing any decompression.
 
         First and last elements are only recognised by exact *indices*
         matches to:
 
         * ``(slice(0, 1, 1),) * self.ndim``
         * ``(slice(-1, None, 1),) * self.ndim``
+
+        Any other value of indices will raise an `IndexError`.For
+        instance, note that ``slice(0, 1, 1)`` is not an exact match
+        to ``slice(0, 1)``.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -189,7 +187,7 @@ class CompressedArray(Array):
 
             `numpy.ndarray`
                 The first or last element. If the *indices* do not
-                acceptably select a first or last element then an
+                acceptably select the first or last element then an
                 `IndexError` is raised.
 
         """
@@ -406,8 +404,7 @@ class CompressedArray(Array):
                 The class for representing subarrays.
 
         """
-        Subarray = self._Subarray[self.get_compression_type()]
-        return Subarray
+        return self._Subarray[self.get_compression_type()]
 
     def source(self, default=ValueError()):
         """Return the underlying array object.
@@ -434,28 +431,6 @@ class CompressedArray(Array):
         """
         return self._get_compressed_Array(default=default)
 
-    def subarrays(self, shapes=None):
-        """Return descriptors for every subarray.
-
-        Theses descriptors are used during subarray decompression.
-
-        .. versionadded:: (cfdm) 1.9.TODO.0
-
-        :Parameters:
-
-            {{shapes: `None`, `str`, or sequence}}
-
-        :Returns:
-
-            sequence of iterables
-                Each iterable iterates over a particular descriptor
-                from each subarray.
-
-        """
-        raise NotImplementedError(
-            f"Must implement {self.__class__.__name__}.subarrays"
-        )  # pragma: no cover
-
     def subarray_shapes(self, shapes):
         """Create the subarray shapes along each uncompressed dimension.
 
@@ -465,7 +440,7 @@ class CompressedArray(Array):
 
         :Parameters:
 
-            {{shapes: `None`, `str`, or sequence}}
+            {{subarray_shapes chunks: `int`, sequence, `dict`, or `str`, optional}}
 
         :Returns:
 
@@ -476,6 +451,28 @@ class CompressedArray(Array):
         """
         raise NotImplementedError(
             f"Must implement {self.__class__.__name__}.subarray_shapes"
+        )  # pragma: no cover
+
+    def subarrays(self, shapes=-1):
+        """Return descriptors for every subarray.
+
+        Theses descriptors are used during subarray decompression.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            {{subarrays chunks: ``-1`` or sequence, optional}}
+
+        :Returns:
+
+            sequence of iterables
+                Each iterable iterates over a particular descriptor
+                from each subarray.
+
+        """
+        raise NotImplementedError(
+            f"Must implement {self.__class__.__name__}.subarrays"
         )  # pragma: no cover
 
     def to_memory(self):

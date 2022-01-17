@@ -1,4 +1,5 @@
 from itertools import accumulate
+from numbers import Number
 
 import numpy as np
 
@@ -161,7 +162,7 @@ class RaggedArray(CompressedArray):
         return self.get_subspace(u, indices, copy=True)
 
     def _uncompressed_descriptors(self, u_dims, shapes):
-        """Create uncompressed subarray descriptors.
+        """Create descriptors of uncompressed subarrays.
 
         Returns the location of each subarray, the indices of the
         uncompressed array that correspond to each subarray, and the
@@ -265,9 +266,7 @@ class RaggedArray(CompressedArray):
 
         :Parameters:
 
-            {{shapes: `None`, `str`, or sequence}}
-
-                {{shapes auto}}
+            {{subarray_shapes chunks: `int`, sequence, `dict`, or `str`, optional}}
 
         :Returns:
 
@@ -278,75 +277,83 @@ class RaggedArray(CompressedArray):
 
         >>> a.shape
         (2, 3, 4)
-        >>> a.subarray_shapes((0, 1), None)
+        >>> a.subarray_shapes(-1)
         [(1, 1), (3,), (4,)]
-        >>> a.subarray_shapes((0, 1), "auto")
-        [(1, 1), (3,), "auto"]
-        >>> a.subarray_shapes((0, 1), "most")
-        [(1, 1), (3,), (1, 1, 1, 1)]
-        >>> a.subarray_shapes((0, 1), (None, None, (4,)))
-        [(1, 1), (3,), (4,)]
-        >>> a.subarray_shapes((0, 1), (None, None, (1, 3)))
+        >>> a.subarray_shapes((None, None, 2))
+        [(1, 1), (3,), 2]
+        >>> a.subarray_shapes((None, None, (1, 3)))
         [(1, 1), (3,), (1, 3)]
-        >>> a.subarray_shapes((0, 1, 2), (None, None, "auto"))
+        >>> a.subarray_shapes((None, None, "auto"))
         [(1, 1), (3,), "auto"]
+        >>> a.subarray_shapes((None, None, "60B"))
+        [(1, 1), (3,), "60B"]
+        >>> a.subarray_shapes({2: (1, 3)})
+        [(1, 1), (3,), (1, 3)]
+
+        >>> a.subarray_shapes("auto")
+        [(1, 1), (3,), "auto"]
+        >>> import dask
+        >>> dask.array.core.normalize_chunks(
+        ...   a.subarray_shapes("auto"), shape=a.shape, dtype=a.dtype
+        ... )
+        [(1, 1), (3,), (4,)]
 
         >>> a.shape
         (2, 3, 3, 4)
-        >>> a.subarray_shapes((0, 1, 2), None)
+        >>> a.subarray_shapes(-1)
         [(1, 1), (1, 1, 1), (3,), (4,)]
-        >>> a.subarray_shapes((0, 1, 2), "auto")
+        >>> a.subarray_shapes("auto")
         [(1, 1), (1, 1, 1), (3,), "auto"]
-        >>> a.subarray_shapes((0, 1, 2), "most")
-        [(1, 1), (1, 1, 1), (3,), (1, 1, 1, 1)]
-        >>> a.subarray_shapes((0, 1, 2), (None, None, None, (4,)))
-        [(1, 1), (1, 1, 1), (3,), (4,)]
-        >>> a.subarray_shapes((0, 1, 2), (None, None, None, (1, 3)))
+        >>> a.subarray_shapes((None, None, None, 2))
+        [(1, 1), (1, 1, 1), (3,), 2]
+        >>> a.subarray_shapes((None, None, None, (1, 3)))
         [(1, 1), (1, 1, 1), (3,), (1, 3)]
-        >>> a.subarray_shapes((0, 1, 2), (None, None, None, "auto"))
+        >>> a.subarray_shapes((None, None, None, "auto"))
         [(1, 1), (1, 1, 1), (3,), "auto"]
+        >>> a.subarray_shapes((None, None, None, "60B"))
+        [(1, 1), (1, 1, 1), (3,), "60B"]
+        >>> a.subarray_shapes({3: (1, 3)})
+        [(1, 1), (1, 1, 1), (3,), (1, 3)]
 
         """
         u_dims = self.get_compressed_axes()
 
         uncompressed_shape = self.shape
 
-        if shapes in (None, "fewest"):
-            shapes = [
-                (1,) * n if i in u_dims[:-1] else (n,)
-                for i, n in enumerate(uncompressed_shape)
+        if shapes == -1:
+            return [
+                (1,) * size if i in u_dims[:-1] else (size,)
+                for i, size in enumerate(uncompressed_shape)
             ]
 
-        elif shapes == "auto":
+        if isinstance(shapes, (str, Number)):
             shapes = [
-                (1,) * n if i in u_dims[:-1] else "auto"
-                for i, n in enumerate(uncompressed_shape)
+                (1,) * size if i in u_dims[:-1] else shapes
+                for i, size in enumerate(uncompressed_shape)
             ]
             shapes[u_dims[-1]] = (uncompressed_shape[u_dims[-1]],)
+            return shapes
 
-        elif shapes == "most":
+        if isinstance(shapes, dict):
             shapes = [
-                (n,) if i == u_dims[-1] else (1,) * n
-                for i, n in enumerate(uncompressed_shape)
+                shapes[i] if i in shapes else None for i in range(self.ndim)
             ]
-
-        elif len(shapes) == self.ndim:
-            shapes = list(shapes)
-            shapes[u_dims[0] : u_dims[-1]] = [
-                (1,) * n for n in uncompressed_shape[u_dims[0] : u_dims[-1]]
-            ]
-            shapes[u_dims[-1]] = (uncompressed_shape[u_dims[-1]],)
-
-        else:
+        elif len(shapes) != self.ndim:
             raise ValueError(
-                "Wrong number of shapes elements: "
+                f"Wrong number of 'shapes' elements in {shapes}: "
                 f"Got {len(shapes)}, expected {self.ndim}"
             )
 
+        # chunks is a sequence
+        shapes = list(shapes)
+        shapes[u_dims[0] : u_dims[-1]] = [
+            (1,) * size for size in uncompressed_shape[u_dims[0] : u_dims[-1]]
+        ]
+        shapes[u_dims[-1]] = (uncompressed_shape[u_dims[-1]],)
         return shapes
 
     def to_memory(self):
-        """Bring data disk on disk into memory.
+        """Bring data on disk into memory.
 
         There is no change to data that is already in memory.
 

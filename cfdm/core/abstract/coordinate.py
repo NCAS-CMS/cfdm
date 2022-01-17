@@ -58,8 +58,7 @@ class Coordinate(PropertiesDataBounds):
             return
 
         return self._default(
-            default,
-            f"{self.__class__.__name__!r} has no climatology set",
+            default, f"{self.__class__.__name__!r} has no climatology set"
         )
 
     def get_climatology(self, default=ValueError()):
@@ -111,8 +110,7 @@ class Coordinate(PropertiesDataBounds):
             return
 
         return self._default(
-            default,
-            f"{self.__class__.__name__!r} has no climatology set",
+            default, f"{self.__class__.__name__!r} has no climatology set"
         )
 
     def is_climatology(self):

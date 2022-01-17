@@ -402,10 +402,7 @@ class FunctionsTest(unittest.TestCase):
     def test_context_managers(self):
         """Test the context manager support of the functions."""
         # rtol and atol
-        for func in (
-            cfdm.atol,
-            cfdm.rtol,
-        ):
+        for func in (cfdm.atol, cfdm.rtol):
             old = func()
             new = old * 2
             with func(new):

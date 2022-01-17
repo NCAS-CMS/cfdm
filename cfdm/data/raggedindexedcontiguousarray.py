@@ -93,7 +93,7 @@ class RaggedIndexedContiguousArray(RaggedArray):
             copy=copy,
         )
 
-    def subarrays(self, shapes=None):
+    def subarrays(self, shapes=-1):
         """Return descriptors for every subarray.
 
         Theses descriptors are used during subarray decompression.
@@ -102,7 +102,7 @@ class RaggedIndexedContiguousArray(RaggedArray):
 
         :Parameters:
 
-            {{shapes: `None`, `str`, or sequence}}
+            {{subarrays chunks: ``-1`` or sequence, optional}}
 
         :Returns:
 

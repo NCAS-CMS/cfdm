@@ -227,11 +227,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
 
         cos_lat = np.cos(lat)
 
-        return (
-            cos_lat * np.cos(lon),
-            cos_lat * np.sin(lon),
-            np.sin(lat),
-        )
+        return (cos_lat * np.cos(lon), cos_lat * np.sin(lon), np.sin(lat))
 
     def _fminus(self, va, vb):
         """Vector difference.

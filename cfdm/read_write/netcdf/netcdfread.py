@@ -157,10 +157,7 @@ class NetCDFRead(IORead):
                 "latitude",
                 "longitude",
             ),
-            "latitude_longitude": (
-                "latitude",
-                "longitude",
-            ),
+            "latitude_longitude": ("latitude", "longitude"),
             "mercator": (
                 "projection_x_coordinate",
                 "projection_y_coordinate",
@@ -3382,10 +3379,9 @@ class NetCDFRead(IORead):
         # construct, then longitude tie points need to be stored
         # within the latitude coordinate construct.
         multivariate_interpolations = self.cf_multivariate_interpolations()
-        for ncvar, (
-            coord,
-            axes,
-            is_dimension_coordinate,
+        for (
+            ncvar,
+            (coord, axes, is_dimension_coordinate),
         ) in coordinates.items():
             compression_type = self.implementation.get_compression_type(coord)
             if compression_type != "subsampled":
@@ -3442,10 +3438,9 @@ class NetCDFRead(IORead):
                 )
 
         # Set the coordinate constructs on the parent field/domain
-        for ncvar, (
-            coord,
-            axes,
-            is_dimension_coordinate,
+        for (
+            ncvar,
+            (coord, axes, is_dimension_coordinate),
         ) in coordinates.items():
             logger.detail(
                 f"        [k] Inserting {coord.__class__.__name__}"
@@ -3463,8 +3458,7 @@ class NetCDFRead(IORead):
             if self.implementation.has_bounds(coord):
                 bounds = self.implementation.get_bounds(coord)
                 self._reference(
-                    self.implementation.nc_get_variable(bounds),
-                    field_ncvar,
+                    self.implementation.nc_get_variable(bounds), field_ncvar
                 )
 
             ncvar_to_key[ncvar] = key
@@ -4281,11 +4275,7 @@ class NetCDFRead(IORead):
         else:
             code = None
 
-        d = {
-            "code": code,
-            "attribute": attribute,
-            "reason": message,
-        }
+        d = {"code": code, "attribute": attribute, "reason": message}
 
         if dimensions is not None:
             d["dimensions"] = dimensions
@@ -7313,8 +7303,7 @@ class NetCDFRead(IORead):
             # file
             if ncvar not in g["internal_variables"]:
                 ncvar, message = self._missing_variable(
-                    ncvar,
-                    "Node coordinate variable",
+                    ncvar, "Node coordinate variable"
                 )
                 self._add_message(
                     field_ncvar, ncvar, message=message, attribute=attribute
@@ -7354,8 +7343,7 @@ class NetCDFRead(IORead):
             # Check that the node count variable exists in the file
             if ncvar not in g["internal_variables"]:
                 ncvar, message = self._missing_variable(
-                    ncvar,
-                    "Node count variable",
+                    ncvar, "Node count variable"
                 )
                 self._add_message(
                     field_ncvar, ncvar, message=message, attribute=attribute
@@ -7399,8 +7387,7 @@ class NetCDFRead(IORead):
             # Check that the variable exists in the file
             if ncvar not in g["internal_variables"]:
                 ncvar, message = self._missing_variable(
-                    ncvar,
-                    "Part node count variable",
+                    ncvar, "Part node count variable"
                 )
                 self._add_message(
                     field_ncvar, ncvar, message=message, attribute=attribute

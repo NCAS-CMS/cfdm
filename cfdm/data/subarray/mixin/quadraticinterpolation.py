@@ -24,6 +24,8 @@ class QuadraticInterpolation:
         w = fw(ua, ub, u(i), s(i))
           = (u(i) - (1-s(i))*ua - s(i)*ub) / (4*(1-s(i))*s(i))
 
+        See CF appendix J "Coordinate Interpolation Methods".
+
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         .. seealso:: `_quadratic_interpolation`
@@ -31,14 +33,18 @@ class QuadraticInterpolation:
         :Parameters:
 
             ua: `numpy.ndarray`
-                The values of the first point in index space.
+                The first tie point in index space of subsampled
+                dimension 1 (in the sense of CF appendix J Figure
+                J.1).
 
             ub: `numpy.ndarray`
-                The values of the second point in index space.
+                The second tie point in index space of subsampled
+                dimension 1 (in the sense of CF appendix J Figure
+                J.1).
 
             u_i: `numpy.ndarray`
-                The value of the uncompressed value at the same
-                location as *s_i*.
+                The uncompressed value at the interior location
+                implied by *s_i*.
 
             {{d: `int`}}
 
@@ -66,21 +72,18 @@ class QuadraticInterpolation:
           = ua*(1-s) + ub*s + 4*w*s*(1-s)
           = fl(ua, ub, s) + 4*w*s*(1-s)
 
+        See CF appendix J "Coordinate Interpolation Methods".
+
         .. versionadded:: (cfdm) 1.9.TODO.0
 
         .. seealso:: `_linear_interpolation`
 
         :Parameters:
 
-            ua: `numpy.ndarray`
-                The first tie point in index space of subsampled
-                dimension 1 (in the sense of CF appendix J Figure
-                J.1).
-
-            ub: `numpy.ndarray`
-                The second tie point in index space of subsampled
-                dimension 1 (in the sense of CF appendix J Figure
-                J.1).
+            ua, ub: `numpy.ndarray`
+                The first and second tie points in index space of
+                subsampled dimension 1 (in the sense of CF appendix J
+                Figure J.1).
 
             w: `numpy.ndarray` or `None`
                 The quadratic interpolation coefficient, with the same
@@ -95,6 +98,8 @@ class QuadraticInterpolation:
         :Returns:
 
             `numpy.ndarray`
+                The result of interpolating the tie points to interior
+                locations implied by *s*.
 
         """
         s = self._s(d1, s=s)

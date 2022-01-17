@@ -74,10 +74,7 @@ class read_writeTest(unittest.TestCase):
             "NETCDF3_64BIT_OFFSET",
             "NETCDF3_64BIT_DATA",
         ]
-        self.netcdf4_fmts = [
-            "NETCDF4",
-            "NETCDF4_CLASSIC",
-        ]
+        self.netcdf4_fmts = ["NETCDF4", "NETCDF4_CLASSIC"]
         self.netcdf_fmts = self.netcdf3_fmts + self.netcdf4_fmts
 
     def test_write_filename(self):
@@ -671,12 +668,10 @@ class read_writeTest(unittest.TestCase):
         for i in range(0, n):
             j = i + n
             self.assertTrue(
-                f[i].data.equals(f[j].data, verbose=3),
-                f"{f[i]!r} {f[j]!r}",
+                f[i].data.equals(f[j].data, verbose=3), f"{f[i]!r} {f[j]!r}"
             )
             self.assertTrue(
-                f[j].data.equals(f[i].data, verbose=3),
-                f"{f[j]!r} {f[i]!r}",
+                f[j].data.equals(f[i].data, verbose=3), f"{f[j]!r} {f[i]!r}"
             )
 
         # Note: Don't loop round all netCDF formats for better
@@ -713,13 +708,7 @@ class read_writeTest(unittest.TestCase):
                 f"{g.get_property('Conventions')!r}, {Conventions!r}",
             )
 
-        for Conventions in (
-            version,
-            "",
-            " ",
-            ",",
-            ", ",
-        ):
+        for Conventions in (version, "", " ", ",", ", "):
             Conventions = version
             cfdm.write(f, tmpfile0, Conventions=Conventions)
             g = cfdm.read(tmpfile0)[0]
@@ -729,10 +718,7 @@ class read_writeTest(unittest.TestCase):
                 f"{g.get_property('Conventions')!r}, {Conventions!r}",
             )
 
-        for Conventions in (
-            [version],
-            [version, other],
-        ):
+        for Conventions in ([version], [version, other]):
             cfdm.write(f, tmpfile0, Conventions=Conventions)
             g = cfdm.read(tmpfile0)[0]
             self.assertEqual(
