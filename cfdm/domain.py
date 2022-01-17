@@ -40,8 +40,6 @@ class Domain(
 
     {{netCDF global attributes}}
 
-    {{netCDF variable group}}
-
     {{netCDF group attributes}}
 
     {{netCDF geometry group}}
