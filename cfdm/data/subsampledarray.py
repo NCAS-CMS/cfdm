@@ -931,16 +931,20 @@ class SubsampledArray(CompressedArray):
         :Returns:
 
             `list`
-                The subarray shapes along each uncompressed dimension.
+                The subarray sizes along each uncompressed dimension.
 
         >>> a.shape
         (4, 20, 30)
-        >>> a.source().shape
-        (4, 2, 2)
+        >>> a.compressed_dimensions()
+        {1: (1,), 2: (2,)}
         >>> a.subarray_shapes(-1)
         [(4,), None, None]
         >>> a.subarray_shapes("auto")
         ["auto", None, None]
+        >>> a.subarray_shapes(2)
+        [2, None, None]
+        >>> a.subarray_shapes("60B")
+        ["60B", None, None]
         >>> a.subarray_shapes((2, None, None))
         [2, None, None]
         >>> a.subarray_shapes(((1, 3), None, None))
@@ -949,14 +953,6 @@ class SubsampledArray(CompressedArray):
         ["auto", None, None]
         >>> a.subarray_shapes(("60B", None, None))
         ["60B", None, None]
-
-        >>> a.subarray_shapes("auto")
-        ["auto", None, None]
-        >>> import dask
-        >>> dask.array.core.normalize_chunks(
-        ...   a.subarray_shapes("auto"), shape=a.shape, dtype=a.dtype
-        ... )
-        [(4,), (20,), (30,)]
 
         """
         u_dims = self.get_compressed_axes()

@@ -271,14 +271,22 @@ class RaggedArray(CompressedArray):
         :Returns:
 
             `list`
-                The subarray shapes along each uncompressed dimension.
+                The subarray sizes along each uncompressed dimension.
 
         **Examples**
 
         >>> a.shape
         (2, 3, 4)
+        >>> a.compressed_dimensions()
+        {0: (0, 1)}
         >>> a.subarray_shapes(-1)
         [(1, 1), (3,), (4,)]
+        >>> a.subarray_shapes("auto")
+        [(1, 1), (3,), "auto"]
+        >>> a.subarray_shapes(2)
+        [(1, 1), (3,), 2]
+        >>> a.subarray_shapes("60B")
+        [(1, 1), (3,), "60B"]
         >>> a.subarray_shapes((None, None, 2))
         [(1, 1), (3,), 2]
         >>> a.subarray_shapes((None, None, (1, 3)))
@@ -290,20 +298,28 @@ class RaggedArray(CompressedArray):
         >>> a.subarray_shapes({2: (1, 3)})
         [(1, 1), (3,), (1, 3)]
 
-        >>> a.subarray_shapes("auto")
-        [(1, 1), (3,), "auto"]
-        >>> import dask
-        >>> dask.array.core.normalize_chunks(
+        >>> import dask.array as da
+        >>> da.core.normalize_chunks(
         ...   a.subarray_shapes("auto"), shape=a.shape, dtype=a.dtype
         ... )
         [(1, 1), (3,), (4,)]
+        >>> da.core.normalize_chunks(
+        ...   a.subarray_shapes(2, shape=a.shape, dtype=a.dtype
+        ... )
+        [(1, 1), (3,), (2, 2)]
 
         >>> a.shape
         (2, 3, 3, 4)
+        >>> a.compressed_dimensions()
+        {0: (0, 1, 2)}
         >>> a.subarray_shapes(-1)
         [(1, 1), (1, 1, 1), (3,), (4,)]
         >>> a.subarray_shapes("auto")
         [(1, 1), (1, 1, 1), (3,), "auto"]
+         >>> a.subarray_shapes(2)
+        [(1, 1), (1, 1, 1), (3,), 2]
+         >>> a.subarray_shapes("60B")
+        [(1, 1), (1, 1, 1), (3,), "60B"]
         >>> a.subarray_shapes((None, None, None, 2))
         [(1, 1), (1, 1, 1), (3,), 2]
         >>> a.subarray_shapes((None, None, None, (1, 3)))
