@@ -1,0 +1,624 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Change log &#8212; Documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript" src="_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Releases" href="releases.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="index.html">cfdm 1.9.0.2</a></h1>
+
+
+
+<p class="blurb">A Python reference implementation of the CF data model</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cfdm&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html"><strong>Extensions</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="releases.html" title="previous chapter"><strong>Releases</strong></a></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cfdm development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/786427">Couplet</a>;
+by the <a href="https://ec.europa.eu/programmes/horizon2020/">EC
+Horizon 2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="_templates/logo_EC.png" height="40">
+<img src="_templates/logo_ERC.png" height="40">
+<img src="_templates/logo_NERC.png" height="40">
+<br>
+<img src="_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+
+
+  <section id="change-log">
+<h1><strong>Change log</strong><a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#version-1-9-0-2" id="id1">Version 1.9.0.2</a></p></li>
+<li><p><a class="reference internal" href="#version-1-9-0-1" id="id2">Version 1.9.0.1</a></p></li>
+<li><p><a class="reference internal" href="#version-1-9-0-0" id="id3">Version 1.9.0.0</a></p></li>
+<li><p><a class="reference internal" href="#version-1-8-9-0" id="id4">Version 1.8.9.0</a></p></li>
+<li><p><a class="reference internal" href="#version-1-8-8-0" id="id5">Version 1.8.8.0</a></p></li>
+<li><p><a class="reference internal" href="#version-1-8-7-0" id="id6">Version 1.8.7.0</a></p></li>
+<li><p><a class="reference internal" href="#version-1-8-6-0" id="id7">Version 1.8.6.0</a></p></li>
+<li><p><a class="reference internal" href="#version-1-8-5" id="id8">Version 1.8.5</a></p></li>
+<li><p><a class="reference internal" href="#version-1-8-4" id="id9">Version 1.8.4</a></p></li>
+<li><p><a class="reference internal" href="#version-1-8-3" id="id10">Version 1.8.3</a></p></li>
+<li><p><a class="reference internal" href="#version-1-8-2" id="id11">Version 1.8.2</a></p></li>
+<li><p><a class="reference internal" href="#version-1-8-1" id="id12">Version 1.8.1</a></p></li>
+<li><p><a class="reference internal" href="#version-1-8-0" id="id13">Version 1.8.0</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-11" id="id14">Version 1.7.11</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-10" id="id15">Version 1.7.10</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-9" id="id16">Version 1.7.9</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-8" id="id17">Version 1.7.8</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-7" id="id18">Version 1.7.7</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-6" id="id19">Version 1.7.6</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-5" id="id20">Version 1.7.5</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-4" id="id21">Version 1.7.4</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-3" id="id22">Version 1.7.3</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-2" id="id23">Version 1.7.2</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-1" id="id24">Version 1.7.1</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-0" id="id25">Version 1.7.0</a></p></li>
+</ul>
+</div>
+<section id="version-1-9-0-2">
+<h2><a class="toc-backref" href="#id1">Version 1.9.0.2</a><a class="headerlink" href="#version-1-9-0-2" title="Permalink to this headline">¶</a></h2>
+<p><strong>2022-01-31</strong></p>
+<ul class="simple">
+<li><p>Fixed bug that caused a <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a> failure when a vertical
+coordinate reference construct has no coordinates
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/164">https://github.com/NCAS-CMS/cfdm/issues/164</a>)</p></li>
+<li><p>Fixed bug that caused a failure when downstream <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code> methods
+return an <a class="reference external" href="https://docs.python.org/3/library/itertools.html#itertools.chain" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">itertools.chain</span></code></a> object
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/170">https://github.com/NCAS-CMS/cfdm/issues/170</a>)</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-9-0-1">
+<h2><a class="toc-backref" href="#id2">Version 1.9.0.1</a><a class="headerlink" href="#version-1-9-0-1" title="Permalink to this headline">¶</a></h2>
+<p><strong>2021-10-12</strong></p>
+<ul class="simple">
+<li><p>Fixed bug that prevented some geometry coordinates being written to
+netCDF CLASSIC files (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/140">https://github.com/NCAS-CMS/cfdm/issues/140</a>)</p></li>
+<li><p>Fixed bug that a caused segmentation fault when appending a string
+data type to netCDF files
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/155">https://github.com/NCAS-CMS/cfdm/issues/155</a>)</p></li>
+<li><p>Fixed bug in <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.get_domain</span></code> when there are climatological
+time axes (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/159">https://github.com/NCAS-CMS/cfdm/issues/159</a>)</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-9-0-0">
+<h2><a class="toc-backref" href="#id3">Version 1.9.0.0</a><a class="headerlink" href="#version-1-9-0-0" title="Permalink to this headline">¶</a></h2>
+<p><strong>2021-09-21</strong></p>
+<ul class="simple">
+<li><p>Python 3.6 support removed
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/139">https://github.com/NCAS-CMS/cfdm/issues/139</a>)</p></li>
+<li><p>Conversion of <a class="reference internal" href="class/cfdm.Domain.html#cfdm.Domain" title="cfdm.Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Domain</span></code></a> to a non-abstract that may be read from
+and written to a netCDF dataset
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/111">https://github.com/NCAS-CMS/cfdm/issues/111</a>)</p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Domain.creation_commands.html#cfdm.Domain.creation_commands" title="cfdm.Domain.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Domain.creation_commands</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Domain.climatological_time_axes.html#cfdm.Domain.climatological_time_axes" title="cfdm.Domain.climatological_time_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Domain.climatological_time_axes</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.AuxiliaryCoordinate.del_climatology.html#cfdm.AuxiliaryCoordinate.del_climatology" title="cfdm.AuxiliaryCoordinate.del_climatology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.AuxiliaryCoordinate.del_climatology</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.AuxiliaryCoordinate.get_climatology.html#cfdm.AuxiliaryCoordinate.get_climatology" title="cfdm.AuxiliaryCoordinate.get_climatology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.AuxiliaryCoordinate.get_climatology</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.AuxiliaryCoordinate.is_climatology.html#cfdm.AuxiliaryCoordinate.is_climatology" title="cfdm.AuxiliaryCoordinate.is_climatology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.AuxiliaryCoordinate.is_climatology</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.AuxiliaryCoordinate.set_climatology.html#cfdm.AuxiliaryCoordinate.set_climatology" title="cfdm.AuxiliaryCoordinate.set_climatology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.AuxiliaryCoordinate.set_climatology</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.DimensionCoordinate.del_climatology.html#cfdm.DimensionCoordinate.del_climatology" title="cfdm.DimensionCoordinate.del_climatology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.DimensionCoordinate.del_climatology</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.DimensionCoordinate.get_climatology.html#cfdm.DimensionCoordinate.get_climatology" title="cfdm.DimensionCoordinate.get_climatology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.DimensionCoordinate.get_climatology</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.DimensionCoordinate.is_climatology.html#cfdm.DimensionCoordinate.is_climatology" title="cfdm.DimensionCoordinate.is_climatology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.DimensionCoordinate.is_climatology</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.DimensionCoordinate.set_climatology.html#cfdm.DimensionCoordinate.set_climatology" title="cfdm.DimensionCoordinate.set_climatology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.DimensionCoordinate.set_climatology</span></code></a></p></li>
+<li><p>New function: <a class="reference internal" href="function/cfdm.unique_constructs.html#cfdm.unique_constructs" title="cfdm.unique_constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.unique_constructs</span></code></a></p></li>
+<li><p>New function: <a class="reference internal" href="function/cfdm.example_fields.html#cfdm.example_fields" title="cfdm.example_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.example_fields</span></code></a></p></li>
+<li><p>Construct access API changes from 1.8.9.0 applied to <a class="reference internal" href="method/cfdm.Field.convert.html#cfdm.Field.convert" title="cfdm.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field.convert</span></code></a></p></li>
+<li><p>Improved error message for invalid inputs to <a class="reference internal" href="method/cfdm.Field.convert.html#cfdm.Field.convert" title="cfdm.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field.convert</span></code></a></p></li>
+<li><p>Raise exception when attempting to write multiply defined coordinate
+reference parameters (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/148">https://github.com/NCAS-CMS/cfdm/issues/148</a>)</p></li>
+<li><p>Interpret format specifiers for size 1 <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data</span></code></a> arrays
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/152">https://github.com/NCAS-CMS/cfdm/issues/152</a>)</p></li>
+<li><p>Fix file name expansions in <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a>
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/157">https://github.com/NCAS-CMS/cfdm/issues/157</a>)</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-8-9-0">
+<h2><a class="toc-backref" href="#id4">Version 1.8.9.0</a><a class="headerlink" href="#version-1-8-9-0" title="Permalink to this headline">¶</a></h2>
+<p><strong>2021-05-25</strong></p>
+<ul class="simple">
+<li><p>Construct access API changes
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/124">https://github.com/NCAS-CMS/cfdm/issues/124</a>,
+<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/130">https://github.com/NCAS-CMS/cfdm/issues/130</a>,
+<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/132">https://github.com/NCAS-CMS/cfdm/issues/132</a>,
+<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/137">https://github.com/NCAS-CMS/cfdm/issues/137</a>)</p></li>
+<li><p>Performance enhancements
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/124">https://github.com/NCAS-CMS/cfdm/issues/124</a>,
+<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/130">https://github.com/NCAS-CMS/cfdm/issues/130</a>)</p></li>
+<li><p>New write mode <code class="docutils literal notranslate"><span class="pre">mode='a'</span></code> for appending to, rather than over-writing,
+a netCDF file on disk (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/143">https://github.com/NCAS-CMS/cfdm/issues/143</a>)</p></li>
+<li><p>Better error message in the case of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.core.MaskError</span></code> occurring
+upon reading of CDL files with only header or coordinate information
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/128">https://github.com/NCAS-CMS/cfdm/issues/128</a>)</p></li>
+<li><p>Fix for zero-sized unlimited dimensions when read from a grouped
+netCDF file (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/113">https://github.com/NCAS-CMS/cfdm/issues/113</a>)</p></li>
+<li><p>Fix bug causing occasional non-symmetric <code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code> operations
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/133">https://github.com/NCAS-CMS/cfdm/issues/133</a>)</p></li>
+<li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">cftime&gt;=1.5.0</span></code></p></li>
+<li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">netCDF4&gt;=1.5.4</span></code></p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-8-8-0">
+<h2><a class="toc-backref" href="#id5">Version 1.8.8.0</a><a class="headerlink" href="#version-1-8-8-0" title="Permalink to this headline">¶</a></h2>
+<p><strong>2020-12-18</strong></p>
+<ul class="simple">
+<li><p>The setting of global constants can now be controlled by a context
+manager (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/100">https://github.com/NCAS-CMS/cfdm/issues/100</a>)</p></li>
+<li><p>Fixed bug that caused a failure when writing a dataset that contains
+a scalar domain ancillary construct
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/98">https://github.com/NCAS-CMS/cfdm/issues/98</a>)</p></li>
+<li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">cftime&gt;=1.3.0</span></code></p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-8-7-0">
+<h2><a class="toc-backref" href="#id6">Version 1.8.7.0</a><a class="headerlink" href="#version-1-8-7-0" title="Permalink to this headline">¶</a></h2>
+<p><strong>2020-10-09</strong></p>
+<ul class="simple">
+<li><p>Python 3.5 support deprecated (3.5 was retired on 2020-09-13)</p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.creation_commands.html#cfdm.Field.creation_commands" title="cfdm.Field.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.creation_commands</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Data.creation_commands.html#cfdm.Data.creation_commands" title="cfdm.Data.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.creation_commands</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field._docstring_special_substitutions.html#cfdm.Field._docstring_special_substitutions" title="cfdm.Field._docstring_special_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field._docstring_special_substitutions</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field._docstring_substitutions.html#cfdm.Field._docstring_substitutions" title="cfdm.Field._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field._docstring_substitutions</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field._docstring_package_depth.html#cfdm.Field._docstring_package_depth" title="cfdm.Field._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field._docstring_package_depth</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field._docstring_method_exclusions.html#cfdm.Field._docstring_method_exclusions" title="cfdm.Field._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field._docstring_method_exclusions</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Data.filled.html#cfdm.Data.filled" title="cfdm.Data.filled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.filled</span></code></a></p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="method/cfdm.Field.set_data.html#cfdm.Field.set_data" title="cfdm.Field.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.set_data</span></code></a>: <code class="docutils literal notranslate"><span class="pre">inplace</span></code></p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a>: <code class="docutils literal notranslate"><span class="pre">coordinates</span></code>
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/81">https://github.com/NCAS-CMS/cfdm/issues/81</a>)</p></li>
+<li><p>New class: <a class="reference internal" href="class/cfdm.core.DocstringRewriteMeta.html#cfdm.core.DocstringRewriteMeta" title="cfdm.core.DocstringRewriteMeta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.DocstringRewriteMeta</span></code></a></p></li>
+<li><p>Comprehensive documentation coverage of class methods.</p></li>
+<li><p>Improved documentation following JOSS review.</p></li>
+<li><p>Enabled “creation commands” methods
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/53">https://github.com/NCAS-CMS/cfdm/issues/53</a>)</p></li>
+<li><p>Fixed bug that caused failures when reading or writing a dataset
+that contains multiple geometry containers
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/65">https://github.com/NCAS-CMS/cfdm/issues/65</a>)</p></li>
+<li><p>Fixed bug that prevented the writing of multiple fields to netCDF when
+at least one dimension was shared between some of the fields.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-8-6-0">
+<h2><a class="toc-backref" href="#id7">Version 1.8.6.0</a><a class="headerlink" href="#version-1-8-6-0" title="Permalink to this headline">¶</a></h2>
+<p><strong>2020-07-24</strong></p>
+<ul class="simple">
+<li><p>Removed Python 2.7 support
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/55">https://github.com/NCAS-CMS/cfdm/issues/55</a>)</p></li>
+<li><p>Implemented the reading and writing of netCDF4 group hierarchies for
+CF-1.8 (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/13">https://github.com/NCAS-CMS/cfdm/issues/13</a>)</p></li>
+<li><p>Renamed to lower-case (but otherwise identical) names all functions
+which get and set global constants: <a class="reference internal" href="function/cfdm.atol.html#cfdm.atol" title="cfdm.atol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.atol</span></code></a>, <a class="reference internal" href="function/cfdm.rtol.html#cfdm.rtol" title="cfdm.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.rtol</span></code></a>,
+<a class="reference internal" href="function/cfdm.log_level.html#cfdm.log_level" title="cfdm.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.log_level</span></code></a>. The old names e.g. <a class="reference internal" href="function/cfdm.ATOL.html#cfdm.ATOL" title="cfdm.ATOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.ATOL</span></code></a> remain functional
+as aliases.</p></li>
+<li><p>New function: <a class="reference internal" href="function/cfdm.configuration.html#cfdm.configuration" title="cfdm.configuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.configuration</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_variable_groups.html#cfdm.Field.nc_variable_groups" title="cfdm.Field.nc_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_variable_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_set_variable_groups.html#cfdm.Field.nc_set_variable_groups" title="cfdm.Field.nc_set_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_set_variable_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_clear_variable_groups.html#cfdm.Field.nc_clear_variable_groups" title="cfdm.Field.nc_clear_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_clear_variable_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_group_attributes.html#cfdm.Field.nc_group_attributes" title="cfdm.Field.nc_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_group_attributes</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_set_group_attribute.html#cfdm.Field.nc_set_group_attribute" title="cfdm.Field.nc_set_group_attribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_set_group_attribute</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_set_group_attributes.html#cfdm.Field.nc_set_group_attributes" title="cfdm.Field.nc_set_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_set_group_attributes</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_clear_group_attributes.html#cfdm.Field.nc_clear_group_attributes" title="cfdm.Field.nc_clear_group_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_clear_group_attributes</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_geometry_variable_groups.html#cfdm.Field.nc_geometry_variable_groups" title="cfdm.Field.nc_geometry_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_geometry_variable_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_set_geometry_variable_groups.html#cfdm.Field.nc_set_geometry_variable_groups" title="cfdm.Field.nc_set_geometry_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_set_geometry_variable_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_clear_geometry_variable_groups.html#cfdm.Field.nc_clear_geometry_variable_groups" title="cfdm.Field.nc_clear_geometry_variable_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_clear_geometry_variable_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.DomainAxis.nc_dimension_groups.html#cfdm.DomainAxis.nc_dimension_groups" title="cfdm.DomainAxis.nc_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.DomainAxis.nc_dimension_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.DomainAxis.nc_set_dimension_groups.html#cfdm.DomainAxis.nc_set_dimension_groups" title="cfdm.DomainAxis.nc_set_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.DomainAxis.nc_set_dimension_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.DomainAxis.nc_clear_dimension_groups.html#cfdm.DomainAxis.nc_clear_dimension_groups" title="cfdm.DomainAxis.nc_clear_dimension_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.DomainAxis.nc_clear_dimension_groups</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.AuxiliaryCoordinate.del_interior_ring.html#cfdm.AuxiliaryCoordinate.del_interior_ring" title="cfdm.AuxiliaryCoordinate.del_interior_ring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.AuxiliaryCoordinate.del_interior_ring</span></code></a></p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a>: <code class="docutils literal notranslate"><span class="pre">group</span></code></p></li>
+<li><p>Keyword parameter <code class="docutils literal notranslate"><span class="pre">verbose</span></code> to multiple methods now accepts named
+strings, not just the equivalent integer levels, to set verbosity.</p></li>
+<li><p>Added test to check that cell bounds have more dimensions than the
+data.</p></li>
+<li><p>Added test to check that dimension coordinate construct data is
+1-dimensional.</p></li>
+<li><p>Fixed bug in <a class="reference internal" href="method/cfdm.CompressedArray.to_memory.html#cfdm.CompressedArray.to_memory" title="cfdm.CompressedArray.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CompressedArray.to_memory</span></code></a>.</p></li>
+<li><p>Fixed bug that caused an error when a coordinate bounds variable is
+missing from a dataset (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/63">https://github.com/NCAS-CMS/cfdm/issues/63</a>)</p></li>
+<li><p>New dependency: <code class="docutils literal notranslate"><span class="pre">netcdf_flattener&gt;=1.2.0</span></code></p></li>
+<li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">cftime&gt;=1.2.1</span></code></p></li>
+<li><p>Removed dependency: <code class="docutils literal notranslate"><span class="pre">future</span></code></p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-8-5">
+<h2><a class="toc-backref" href="#id8">Version 1.8.5</a><a class="headerlink" href="#version-1-8-5" title="Permalink to this headline">¶</a></h2>
+<p><strong>2020-06-10</strong></p>
+<ul class="simple">
+<li><p>Fixed bug that prevented the reading of certain netCDF files, such
+as those with at least one external variable.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-8-4">
+<h2><a class="toc-backref" href="#id9">Version 1.8.4</a><a class="headerlink" href="#version-1-8-4" title="Permalink to this headline">¶</a></h2>
+<p><strong>2020-06-08</strong></p>
+<ul class="simple">
+<li><p>Added new example field <code class="docutils literal notranslate"><span class="pre">7</span></code> to <a class="reference internal" href="function/cfdm.example_field.html#cfdm.example_field" title="cfdm.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.example_field</span></code></a>.</p></li>
+<li><p>Enabled configuration of the extent and nature of informational and
+warning messages output by <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm</span></code> using a logging framework (see
+points below) (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/31">https://github.com/NCAS-CMS/cfdm/issues/31</a>)</p></li>
+<li><p>New function <a class="reference internal" href="function/cfdm.LOG_LEVEL.html#cfdm.LOG_LEVEL" title="cfdm.LOG_LEVEL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.LOG_LEVEL</span></code></a> to set the minimum log level for which
+messages are displayed globally, i.e. to change the project-wide
+verbosity (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/35">https://github.com/NCAS-CMS/cfdm/issues/35</a>).</p></li>
+<li><p>Changed behaviour and default of <code class="xref py py-obj docutils literal notranslate"><span class="pre">verbose</span></code> keyword argument when
+available to a function/method so it interfaces with the new logging
+functionality (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/35">https://github.com/NCAS-CMS/cfdm/issues/35</a>).</p></li>
+<li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">cftime&gt;=1.1.3</span></code></p></li>
+<li><p>Fixed bug the wouldn’t allow the reading of a netCDF file which
+specifies Conventions other than CF
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/36">https://github.com/NCAS-CMS/cfdm/issues/36</a>).</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-8-3">
+<h2><a class="toc-backref" href="#id10">Version 1.8.3</a><a class="headerlink" href="#version-1-8-3" title="Permalink to this headline">¶</a></h2>
+<p><strong>2020-04-30</strong></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="method/cfdm.Field.apply_masking.html#cfdm.Field.apply_masking" title="cfdm.Field.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.apply_masking</span></code></a> now masks metadata constructs.</p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.get_filenames.html#cfdm.Field.get_filenames" title="cfdm.Field.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.get_filenames</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Data.get_filenames.html#cfdm.Data.get_filenames" title="cfdm.Data.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.get_filenames</span></code></a></p></li>
+<li><p>New function: <a class="reference internal" href="function/cfdm.abspath.html#cfdm.abspath" title="cfdm.abspath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.abspath</span></code></a></p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a>: <code class="docutils literal notranslate"><span class="pre">warn_valid</span></code>
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/30">https://github.com/NCAS-CMS/cfdm/issues/30</a>)</p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a>: <code class="docutils literal notranslate"><span class="pre">warn_valid</span></code>
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/30">https://github.com/NCAS-CMS/cfdm/issues/30</a>)</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-8-2">
+<h2><a class="toc-backref" href="#id11">Version 1.8.2</a><a class="headerlink" href="#version-1-8-2" title="Permalink to this headline">¶</a></h2>
+<p><strong>2020-04-24</strong></p>
+<ul class="simple">
+<li><p>Added time coordinate bounds to the polygon geometry example field
+<code class="docutils literal notranslate"><span class="pre">6</span></code> returned by <a class="reference internal" href="function/cfdm.example_field.html#cfdm.example_field" title="cfdm.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.example_field</span></code></a>.</p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.apply_masking.html#cfdm.Field.apply_masking" title="cfdm.Field.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.apply_masking</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Data.apply_masking.html#cfdm.Data.apply_masking" title="cfdm.Data.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.apply_masking</span></code></a></p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a>: <code class="docutils literal notranslate"><span class="pre">mask</span></code></p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="method/cfdm.Field.nc_global_attributes.html#cfdm.Field.nc_global_attributes" title="cfdm.Field.nc_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_global_attributes</span></code></a>:
+<code class="docutils literal notranslate"><span class="pre">values</span></code></p></li>
+<li><p>Fixed bug in <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a> that caused (what are effectively)
+string-valued scalar auxiliary coordinates to not be written to disk
+as such, or even an exception to be raised.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-8-1">
+<h2><a class="toc-backref" href="#id12">Version 1.8.1</a><a class="headerlink" href="#version-1-8-1" title="Permalink to this headline">¶</a></h2>
+<p><strong>2020-04-16</strong></p>
+<ul class="simple">
+<li><p>Improved source code highlighting in links from the documentation
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/21">https://github.com/NCAS-CMS/cfdm/issues/21</a>).</p></li>
+<li><p>Fixed bug that erroneously required netCDF geometry container
+variables to have a <code class="docutils literal notranslate"><span class="pre">geometry_dimension</span></code> netCDF attribute.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-8-0">
+<h2><a class="toc-backref" href="#id13">Version 1.8.0</a><a class="headerlink" href="#version-1-8-0" title="Permalink to this headline">¶</a></h2>
+<p><strong>2020-03-23</strong></p>
+<ul class="simple">
+<li><p>First release for CF-1.8 (does not include netCDF hierarchical
+groups functionality).</p></li>
+<li><p>Implementation of simple geometries for CF-1.8
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/11">https://github.com/NCAS-CMS/cfdm/issues/11</a>).</p></li>
+<li><p>Implementing of string data-types for CF-1.8
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/12">https://github.com/NCAS-CMS/cfdm/issues/12</a>).</p></li>
+<li><p>New function: <a class="reference internal" href="function/cfdm.example_field.html#cfdm.example_field" title="cfdm.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.example_field</span></code></a>
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/18">https://github.com/NCAS-CMS/cfdm/issues/18</a>)</p></li>
+<li><p>New attributes: <a class="reference internal" href="attribute/cfdm.Field.dtype.html#cfdm.Field.dtype" title="cfdm.Field.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.dtype</span></code></a>, <a class="reference internal" href="attribute/cfdm.Field.ndim.html#cfdm.Field.ndim" title="cfdm.Field.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.ndim</span></code></a>,
+<a class="reference internal" href="attribute/cfdm.Field.shape.html#cfdm.Field.shape" title="cfdm.Field.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.shape</span></code></a>, <a class="reference internal" href="attribute/cfdm.Field.size.html#cfdm.Field.size" title="cfdm.Field.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.size</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Data.any.html#cfdm.Data.any" title="cfdm.Data.any"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.any</span></code></a></p></li>
+<li><p>New <code class="docutils literal notranslate"><span class="pre">paths</span></code> keyword parameter to <a class="reference internal" href="function/cfdm.environment.html#cfdm.environment" title="cfdm.environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.environment</span></code></a></p></li>
+<li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">netCDF4&gt;=1.5.3</span></code></p></li>
+<li><p>Changed dependency: <code class="docutils literal notranslate"><span class="pre">cftime&gt;=1.1.1</span></code></p></li>
+<li><p>Fixed bug that prevented the writing of <code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_OFFSET'</span></code>
+and <code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_DATA'</span></code> format files
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/9">https://github.com/NCAS-CMS/cfdm/issues/9</a>).</p></li>
+<li><p>Fixed bug that caused a failure when a “_FillValue” or
+“missing_value” property is set and data type conversions are
+specified with the <code class="docutils literal notranslate"><span class="pre">datatype</span></code> keyword to <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a>
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/16">https://github.com/NCAS-CMS/cfdm/issues/16</a>).</p></li>
+<li><p>Fixed bug whereby <a class="reference internal" href="method/cfdm.Field.has_construct.html#cfdm.Field.has_construct" title="cfdm.Field.has_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.has_construct</span></code></a> would try to delete the
+construct rather than check whether it existed.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-7-11">
+<h2><a class="toc-backref" href="#id14">Version 1.7.11</a><a class="headerlink" href="#version-1-7-11" title="Permalink to this headline">¶</a></h2>
+<p><strong>2019-11-27</strong></p>
+<ul class="simple">
+<li><p>New methods: <a class="reference internal" href="method/cfdm.Field.compress.html#cfdm.Field.compress" title="cfdm.Field.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.compress</span></code></a>, <a class="reference internal" href="method/cfdm.Field.uncompress.html#cfdm.Field.uncompress" title="cfdm.Field.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.uncompress</span></code></a></p></li>
+<li><p>New methods: <a class="reference internal" href="method/cfdm.Data.flatten.html#cfdm.Data.flatten" title="cfdm.Data.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.flatten</span></code></a>, <a class="reference internal" href="method/cfdm.Data.uncompress.html#cfdm.Data.uncompress" title="cfdm.Data.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.uncompress</span></code></a></p></li>
+<li><p>New  <code class="docutils literal notranslate"><span class="pre">dtype</span></code> and <code class="docutils literal notranslate"><span class="pre">mask</span></code> keyword parameters to <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data</span></code></a></p></li>
+<li><p>Changed the default value of the <code class="docutils literal notranslate"><span class="pre">ignore_compression</span></code> parameter to
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-7-10">
+<h2><a class="toc-backref" href="#id15">Version 1.7.10</a><a class="headerlink" href="#version-1-7-10" title="Permalink to this headline">¶</a></h2>
+<p><strong>2019-11-14</strong></p>
+<ul class="simple">
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_set_global_attributes.html#cfdm.Field.nc_set_global_attributes" title="cfdm.Field.nc_set_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_set_global_attributes</span></code></a>.</p></li>
+<li><p>Fixed bug relating to the reading of some CDL files
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/5">https://github.com/NCAS-CMS/cfdm/issues/5</a>).</p></li>
+<li><p>Fixed bug relating numpy warning when printing a field with masked
+reference time values (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/8">https://github.com/NCAS-CMS/cfdm/issues/8</a>).</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-7-9">
+<h2><a class="toc-backref" href="#id16">Version 1.7.9</a><a class="headerlink" href="#version-1-7-9" title="Permalink to this headline">¶</a></h2>
+<p><strong>2019-11-07</strong></p>
+<ul class="simple">
+<li><p>Fixed bug relating to setting of parameters on datum and coordinate
+conversion objects of coordinate conversion constructs
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/6">https://github.com/NCAS-CMS/cfdm/issues/6</a>).</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-7-8">
+<h2><a class="toc-backref" href="#id17">Version 1.7.8</a><a class="headerlink" href="#version-1-7-8" title="Permalink to this headline">¶</a></h2>
+<p><strong>2019-10-04</strong></p>
+<ul class="simple">
+<li><p>During writing to netCDF files, ensured that _FillValue and
+missing_value have the same data type as the data.</p></li>
+<li><p>Fixed bug during construct equality testing that didn’t recognise
+equal cell method constructs in transposed, but otherwise equal
+field constructs.</p></li>
+<li><p>Bounds netCDF dimension name is now saved, and can be set. The
+saved/set value is written out to disk.</p></li>
+<li><p>Now reads CDL files (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/5">https://github.com/NCAS-CMS/cfdm/issues/5</a>)</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-7-7">
+<h2><a class="toc-backref" href="#id18">Version 1.7.7</a><a class="headerlink" href="#version-1-7-7" title="Permalink to this headline">¶</a></h2>
+<p><strong>2019-06-13</strong></p>
+<ul class="simple">
+<li><p>Don’t set the fill mode for a <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code> open for writing to
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">off</span></code>, to prevent incorrect reading of some netCDF4 files
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/4">https://github.com/NCAS-CMS/cfdm/issues/4</a>).</p></li>
+<li><p>Updated documentation</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-7-6">
+<h2><a class="toc-backref" href="#id19">Version 1.7.6</a><a class="headerlink" href="#version-1-7-6" title="Permalink to this headline">¶</a></h2>
+<p><strong>2019-06-05</strong></p>
+<ul class="simple">
+<li><p>Added attributes <code class="xref py py-obj docutils literal notranslate"><span class="pre">_ATOL</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">_RTOL</span></code> to facilitate subclassing.</p></li>
+<li><p>Fixed bug in <a class="reference internal" href="method/cfdm.Field.convert.html#cfdm.Field.convert" title="cfdm.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.convert</span></code></a>.</p></li>
+<li><p>Fixed bug in <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.constructs.new_identifier</span></code>.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-7-5">
+<h2><a class="toc-backref" href="#id20">Version 1.7.5</a><a class="headerlink" href="#version-1-7-5" title="Permalink to this headline">¶</a></h2>
+<p><strong>2019-05-15</strong></p>
+<ul class="simple">
+<li><p>New methods: <a class="reference internal" href="method/cfdm.Datum.nc_has_variable.html#cfdm.Datum.nc_has_variable" title="cfdm.Datum.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum.nc_has_variable</span></code></a>, <a class="reference internal" href="method/cfdm.Datum.nc_get_variable.html#cfdm.Datum.nc_get_variable" title="cfdm.Datum.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum.nc_get_variable</span></code></a>,
+<a class="reference internal" href="method/cfdm.Datum.nc_has_variable.html#cfdm.Datum.nc_has_variable" title="cfdm.Datum.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum.nc_has_variable</span></code></a>, <a class="reference internal" href="method/cfdm.Datum.nc_set_variable.html#cfdm.Datum.nc_set_variable" title="cfdm.Datum.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum.nc_set_variable</span></code></a>
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/3">https://github.com/NCAS-CMS/cfdm/issues/3</a>).</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-7-4">
+<h2><a class="toc-backref" href="#id21">Version 1.7.4</a><a class="headerlink" href="#version-1-7-4" title="Permalink to this headline">¶</a></h2>
+<p><strong>2019-05-14</strong></p>
+<ul class="simple">
+<li><p>Changed behaviour of <a class="reference internal" href="method/cfdm.Constructs.filter_by_axis.html#cfdm.Constructs.filter_by_axis" title="cfdm.Constructs.filter_by_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Constructs.filter_by_axis</span></code></a>.</p></li>
+<li><p>New methods: <a class="reference internal" href="method/cfdm.Data.has_units.html#cfdm.Data.has_units" title="cfdm.Data.has_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.has_units</span></code></a>, <a class="reference internal" href="method/cfdm.Data.has_calendar.html#cfdm.Data.has_calendar" title="cfdm.Data.has_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.has_calendar</span></code></a>,
+<a class="reference internal" href="method/cfdm.Data.has_fill_value.html#cfdm.Data.has_fill_value" title="cfdm.Data.has_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.has_fill_value</span></code></a>.</p></li>
+<li><p>New <code class="docutils literal notranslate"><span class="pre">constructs</span></code> keyword parameter to <a class="reference internal" href="method/cfdm.Field.transpose.html#cfdm.Field.transpose" title="cfdm.Field.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field.transpose</span></code></a>.</p></li>
+<li><p>Keyword parameter <code class="docutils literal notranslate"><span class="pre">axes</span></code> to <a class="reference internal" href="method/cfdm.Field.set_data.html#cfdm.Field.set_data" title="cfdm.Field.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.set_data</span></code></a> is now optional.</p></li>
+<li><p>Added the ‘has_bounds’ method to constructs that have data but can’t
+have bounds.</p></li>
+<li><p>New methods: <a class="reference internal" href="method/cfdm.DomainAxis.nc_is_unlimited.html#cfdm.DomainAxis.nc_is_unlimited" title="cfdm.DomainAxis.nc_is_unlimited"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.DomainAxis.nc_is_unlimited</span></code></a>,
+<a class="reference internal" href="method/cfdm.DomainAxis.nc_set_unlimited.html#cfdm.DomainAxis.nc_set_unlimited" title="cfdm.DomainAxis.nc_set_unlimited"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.DomainAxis.nc_set_unlimited</span></code></a>.</p></li>
+<li><p>Made Data a virtual subclass of Array.</p></li>
+<li><p>Deprecated methods: <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_unlimited</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_clear_unlimited</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_clear_unlimited</span></code>.</p></li>
+<li><p>Fixed bug when writing new horizontal coordinate reference for the
+vertical datum.</p></li>
+<li><p>Fixed bug in <code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code> methods.</p></li>
+<li><p>Fixed bug with in-place operations.</p></li>
+<li><p>Fixed bug with position in some <code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code> methods.</p></li>
+<li><p>Fixed bug that sometimes made duplicate netCDF dimensions when
+writing to a file.</p></li>
+<li><p>Added _shape keyword to <a class="reference internal" href="method/cfdm.Field.set_data_axes.html#cfdm.Field.set_data_axes" title="cfdm.Field.set_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.set_data_axes</span></code></a> to allow the data
+shape to be checked prior to insertion.</p></li>
+<li><p>Added the ‘_custom’ attribute to facilitate subclassing.</p></li>
+<li><p>New class <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.mixin.NetCDFUnlimitedDimension</span></code> replaces
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.mixin.NetCDFUnlimitedDimensions</span></code>, which is deprecated.</p></li>
+<li><p>New method <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CFDMImplementation.nc_is_unlimited_axis</span></code> replaces
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CFDMImplementation.nc_get_unlimited_axes</span></code>, which is
+deprecated.</p></li>
+<li><p>New method <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CFDMImplementation.nc_set_unlimited_axis</span></code> replaces
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CFDMImplementation.nc_set_unlimited_dimensions</span></code>, which is
+deprecated.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-7-3">
+<h2><a class="toc-backref" href="#id22">Version 1.7.3</a><a class="headerlink" href="#version-1-7-3" title="Permalink to this headline">¶</a></h2>
+<p><strong>2019-04-24</strong></p>
+<ul class="simple">
+<li><p>New method: <a class="reference internal" href="method/cfdm.Constructs.filter_by_size.html#cfdm.Constructs.filter_by_size" title="cfdm.Constructs.filter_by_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Constructs.filter_by_size</span></code></a>.</p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Data.uncompress.html#cfdm.Data.uncompress" title="cfdm.Data.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.uncompress</span></code></a>.</p></li>
+<li><p>Changed the default behaviours of the
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Construct.filter_by_axis</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Construct.filter_by_size</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Construct.filter_by_naxes</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Construct.filter_by_property</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Construct.filter_by_ncvar</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Construct.filter_by_ncdim</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Construct.filter_by_method</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Construct.filter_by_measure</span></code> methods in the case when no
+arguments are provided: Now returns all possible constructs that
+<em>could</em> have the feature, with any values.</p></li>
+<li><p>Renamed the “underlying_array” methods to “source”</p></li>
+<li><p>Added _field_data_axes attribute to <a class="reference internal" href="class/cfdm.Constructs.html#cfdm.Constructs" title="cfdm.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instances.</p></li>
+<li><p>Added _units and _fill_value arguments to get_data method.</p></li>
+<li><p>Moved contents of cfdm/read_write/constants.py to <code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDFRead</span></code> and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDFWrite</span></code>.</p></li>
+<li><p>Fixed bug in <a class="reference internal" href="method/cfdm.CoordinateReference.clear_coordinates.html#cfdm.CoordinateReference.clear_coordinates" title="cfdm.CoordinateReference.clear_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CoordinateReference.clear_coordinates</span></code></a>.</p></li>
+<li><p>Fixed bug in <a class="reference internal" href="method/cfdm.Field.convert.html#cfdm.Field.convert" title="cfdm.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.convert</span></code></a> (which omitted domain ancillaries
+in the result).</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> parameter to
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CFDMImplementation.initialise_Data</span></code>, to facilitate
+subclassing.</p></li>
+<li><p>Added <code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDFRead._customize_read_vars</span></code> to facilitate subclassing.</p></li>
+<li><p>Added <code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDFWrite._transform_strings</span></code> to facilitate subclassing.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-7-2">
+<h2><a class="toc-backref" href="#id23">Version 1.7.2</a><a class="headerlink" href="#version-1-7-2" title="Permalink to this headline">¶</a></h2>
+<p><strong>2019-04-05</strong></p>
+<ul class="simple">
+<li><p>New <code class="docutils literal notranslate"><span class="pre">mode</span></code> parameter options to <a class="reference internal" href="method/cfdm.Constructs.filter_by_axis.html#cfdm.Constructs.filter_by_axis" title="cfdm.Constructs.filter_by_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Constructs.filter_by_axis</span></code></a>:
+<code class="docutils literal notranslate"><span class="pre">'exact'</span></code>, <code class="docutils literal notranslate"><span class="pre">'subset'</span></code>, <code class="docutils literal notranslate"><span class="pre">'superset'</span></code>.</p></li>
+<li><p>Enabled setting of HDF5 chunksizes.</p></li>
+<li><p>Fixed bug that caused coordinate bounds to be not sliced during
+subspacing (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/1">https://github.com/NCAS-CMS/cfdm/issues/1</a>).</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-7-1">
+<h2><a class="toc-backref" href="#id24">Version 1.7.1</a><a class="headerlink" href="#version-1-7-1" title="Permalink to this headline">¶</a></h2>
+<p><strong>2019-04-02</strong></p>
+<ul class="simple">
+<li><p>New methods <a class="reference internal" href="method/cfdm.Constructs.clear_filters_applied.html#cfdm.Constructs.clear_filters_applied" title="cfdm.Constructs.clear_filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Constructs.clear_filters_applied</span></code></a>,
+<a class="reference internal" href="method/cfdm.Constructs.filter_by_naxes.html#cfdm.Constructs.filter_by_naxes" title="cfdm.Constructs.filter_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Constructs.filter_by_naxes</span></code></a>.</p></li>
+<li><p>Changed behaviour of <a class="reference internal" href="method/cfdm.Constructs.unfilter.html#cfdm.Constructs.unfilter" title="cfdm.Constructs.unfilter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Constructs.unfilter</span></code></a> and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Constructs.inverse_filters</span></code>: added depth keyword and changed
+default.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="version-1-7-0">
+<h2><a class="toc-backref" href="#id25">Version 1.7.0</a><a class="headerlink" href="#version-1-7-0" title="Permalink to this headline">¶</a></h2>
+<p><strong>2019-04-02</strong></p>
+<ul class="simple">
+<li><p>First release for CF-1.7</p></li>
+</ul>
+<hr class="docutils" />
+</section>
+</section>
+
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2022, NCAS | Page built on 2022-01-31.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
