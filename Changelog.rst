@@ -1,7 +1,7 @@
-Version 1.9.?.?
+Version 1.9.0.2
 ---------------
 
-**2021-??-??**
+**2022-01-31**
 
 * Fixed bug that caused a `cfdm.write` failure when a vertical
   coordinate reference construct has no coordinates
