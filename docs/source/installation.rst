@@ -149,6 +149,8 @@ The cfdm package requires:
 * `netcdf_flattener <https://pypi.org/project/netcdf-flattener/>`_,
   version 1.2.0 or newer.
 
+* `packaging <https://pypi.org/project/packaging/>`_, version 20.0 or newer.
+
 ----
 
 .. _Code-repository:
