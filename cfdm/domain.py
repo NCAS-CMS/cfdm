@@ -187,15 +187,18 @@ class Domain(
 
         x = []
         dimension_coordinates = self.dimension_coordinates(todict=True)
-        for axis_cid in sorted(self.domain_axes(todict=True)):
+        for axis_cid, axis in sorted(self.domain_axes(todict=True).items()):
             for cid, dim in dimension_coordinates.items():
                 if construct_data_axes[cid] == (axis_cid,):
                     name = dim.identity(default=f"key%{0}")
-                    y = f"{name}({dim.get_data().size})"
+                    y = f"{name}({axis.get_size()})"
                     if y != axis_names[axis_cid]:
                         y = f"{name}({axis_names[axis_cid]})"
+
                     if dim.has_data():
                         y += f" = {dim.get_data()}"
+                    else:
+                        y += " = "
 
                     x.append(y)
 
