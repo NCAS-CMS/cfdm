@@ -1,11 +1,13 @@
-"""
-Copied from dask https://github.com/dask/dask/blob/dfdde1c9e666d5830f7a8df53160aca6ff1b881f/dask/utils.py
+"""Read only version of functools.cached_property.
+
+Copied from dask https://github.com/dask/dask/blob/dfdde1c9e666d5830f
+7a8df53160aca6ff1b881f/dask/utils.py.
+
+When Python 3.7 is deprecated, we can remove the _cached_property class.
 
 """
 import functools
-
 from _thread import RLock
-
 
 try:
     _cached_property = functools.cached_property  # Only from Python 3.8
