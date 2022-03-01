@@ -905,7 +905,7 @@ class SubsampledArray(CompressedArray):
         :Parameters:
 
             value: `dict`
-                The interpolation parameters, each keyed the
+                The interpolation parameters, each keyed by the
                 interpolation parameter term name.
 
         :Returns:
