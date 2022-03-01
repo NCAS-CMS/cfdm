@@ -204,7 +204,7 @@ class SubsampledArray(CompressedArray):
 
             dependent_tie_points: `dict`, optional
                 The dependent tie point arrays needed by the
-                interpolation method, keyed the dependent tie point
+                interpolation method, keyed by the dependent tie point
                 identities. Each key is a dependent tie point
                 identity, whose value is a `Data` variable.
 
