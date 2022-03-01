@@ -271,8 +271,9 @@ class SubsampledSubarray(Subarray):
 
         if len(identities) != len(dependent_tie_points) + 1:
             raise ValueError(
-                f"There must be exactly {len(dependent_tie_points)} "
-                "dependent tie point array(s), got {len(identities)}"
+                f"Must provide an identity for each of the "
+                f"{len(dependent_tie_points) + 1} codependent tie point "
+                f"arrays. Got {identities}"
             )
 
         if not set(dependent_tie_points).issubset(identities):
