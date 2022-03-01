@@ -183,7 +183,7 @@ class SubsampledArray(CompressedArray):
 
             parameter_dimensions: `dict`, optional
                 The tie point array dimensions that correspond to the
-                dimensions of the interpolation parameters, keyed the
+                dimensions of the interpolation parameters, keyed by the
                 interpolation parameter term names.
 
                 Interpolation parameter term names for the
