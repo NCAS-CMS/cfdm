@@ -238,7 +238,7 @@ _docstring_substitution_definitions = {
                 If set to a single number in the range [0, 1] then
                 this value is returned for the interpolation coeficient
                 ``s``. By default ``s`` is calculated for each of the
-                interpolation subararea's uncompressed location.""",
+                interpolation subararea's uncompressed locations.""",
     # s_i
     "{{s_i: array_like}}": """s_i: array_like
                 A value for the interpolation coeficient ``s`` for the
