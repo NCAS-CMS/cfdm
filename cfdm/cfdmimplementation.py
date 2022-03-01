@@ -3045,7 +3045,7 @@ class CFDMImplementation(Implementation):
 
             parent:
 
-            interpolation: Interplation properties variable
+            interpolation: Interpolation properties variable
 
             copy: `bool`, optional
 
