@@ -42,6 +42,13 @@ class DomainTest(unittest.TestCase):
         for title in (None, "title"):
             d.dump(display=False, _title=title)
 
+        # Test when dimension coordinate has no data
+        d = d.copy()
+        t = d.construct("time")
+        t.del_data()
+        self.assertFalse(t.has_data())
+        str(d)
+
     def test_Domain__init__(self):
         """Test the Domain constructor and source keyword."""
         cfdm.Domain(source="qwerty")
