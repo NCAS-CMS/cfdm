@@ -2685,8 +2685,8 @@ class NetCDFWrite(IOWrite):
             )  # pragma: no cover
 
         # ------------------------------------------------------------
-        # Check that each dimension of the netCDF variable name is in
-        # the same group or else in a sub-group (CF>=1.8)
+        # Check that each dimension of the netCDF variable is in the
+        # same group or a parent group (CF>=1.8)
         # ------------------------------------------------------------
         if g["group"]:
             groups = self._groups(ncvar)
@@ -2695,8 +2695,8 @@ class NetCDFWrite(IOWrite):
                 if not groups.startswith(ncdim_groups):
                     raise ValueError(
                         f"Can't create netCDF variable {ncvar!r} from "
-                        f"{cfvar!r} with dimension {ncdim!r} that is not in "
-                        "the same group or a sub-group as the variable."
+                        f"{cfvar!r} with netCDF dimension {ncdim!r} that is "
+                        "not in the same group nor in a parent group."
                     )
 
         # ------------------------------------------------------------
