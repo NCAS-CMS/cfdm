@@ -409,9 +409,68 @@ class Field(
         """
         print("_test_docstring_substitution_Field")
 
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
+    def field_ancillary(
+        self,
+        *identity,
+        default=ValueError(),
+        key=False,
+        item=False,
+        **filter_kwargs,
+    ):
+        """Select a field ancillary construct.
+
+        {{unique construct}}
+
+        .. versionadded:: (cfdm) 1.9.1.0
+
+        .. seealso:: `construct`, `field_ancillaries`
+
+        :Parameters:
+
+            identity: optional
+                Select field ancillary constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                If no values are provided then all field ancillary
+                constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{key: `bool`, optional}}
+
+            {{item: `bool`, optional}}
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no unique construct.
+
+                {{default Exception}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns construct}}
+
+        **Examples**
+
+        """
+        return self._construct(
+            "field_ancillary",
+            "field_ancillaries",
+            identity,
+            key=key,
+            item=item,
+            default=default,
+            **filter_kwargs,
+        )
+
     def field_ancillaries(self, *identities, **filter_kwargs):
         """Return field ancillary constructs.
 
@@ -463,6 +522,74 @@ class Field(
             ("field_ancillary",),
             "field_ancillaries",
             identities,
+            **filter_kwargs,
+        )
+
+    def cell_method(
+        self,
+        *identity,
+        default=ValueError(),
+        key=False,
+        item=False,
+        **filter_kwargs,
+    ):
+        """Select a cell method construct.
+
+        {{unique construct}}
+
+        .. versionadded:: (cfdm) 1.9.1.0
+
+        .. seealso:: `construct`, `cell_methods`
+
+        :Parameters:
+
+            identity: optional
+                Select cell method constructs that have an identity,
+                defined by their `!identities` methods, that matches
+                any of the given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                Additionally, if for a given value
+                ``f.domain_axes(value)`` returns a unique domain axis
+                construct then any cell method constructs that span
+                exactly that axis are selected. See `domain_axes` for
+                details.
+
+                If no values are provided then all cell method
+                constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{key: `bool`, optional}}
+
+            {{item: `bool`, optional}}
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no unique construct.
+
+                {{default Exception}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns construct}}
+
+        **Examples**
+
+        """
+        return self._construct(
+            "cell_method",
+            "cell_methods",
+            identity,
+            key=key,
+            item=item,
+            default=default,
             **filter_kwargs,
         )
 
