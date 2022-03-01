@@ -328,7 +328,7 @@ _docstring_substitution_definitions = {
 
                 The subarray sizes implied by *chunks* for a dimension
                 that has been compressed are ignored and replaced with
-                values that implied by the decompression algorithm, so
+                values that are implied by the decompression algorithm, so
                 their specification is arbitrary.
 
                 By default, *chunks* is ``-1``, meaning that all
