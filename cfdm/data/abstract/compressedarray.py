@@ -351,7 +351,7 @@ class CompressedArray(Array):
         if len(compressed_dimensions) > 1:
             raise ValueError(
                 "Can't get unique compressed dimension when there "
-                f"more than one: {self.compressed_dimensions()}"
+                f"is more than one: {self.compressed_dimensions()}"
             )
 
         return tuple(compressed_dimensions)[0]
