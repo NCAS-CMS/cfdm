@@ -170,7 +170,7 @@ class CompressedArray(Array):
         * ``(slice(0, 1, 1),) * self.ndim``
         * ``(slice(-1, None, 1),) * self.ndim``
 
-        Any other value of indices will raise an `IndexError`.For
+        Any other value of indices will raise an `IndexError`. For
         instance, note that ``slice(0, 1, 1)`` is not an exact match
         to ``slice(0, 1)``.
 
