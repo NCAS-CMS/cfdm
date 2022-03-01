@@ -17,7 +17,7 @@ class Subarray(Array):
         data=None,
         indices=None,
         shape=None,
-        compressed_dimensions={},
+        compressed_dimensions=None,
         source=None,
         copy=True,
         context_manager=None,
@@ -99,6 +99,9 @@ class Subarray(Array):
                 compressed_dimensions = source.compressed_dimensions()
             except AttributeError:
                 compressed_dimensions = {}
+
+        elif compressed_dimensions is None:
+            compressed_dimensions = {}
         else:
             compressed_dimensions = compressed_dimensions.copy()
 

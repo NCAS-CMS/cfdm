@@ -2146,13 +2146,13 @@ class CFDMImplementation(Implementation):
         interpolation_name=None,
         compressed_array=None,
         shape=None,
-        tie_point_indices={},
+        tie_point_indices=None,
         computational_precision=None,
         interpolation_description=None,
-        parameters={},
-        parameter_dimensions={},
-        dependent_tie_points={},
-        dependent_tie_point_dimensions={},
+        parameters=None,
+        parameter_dimensions=None,
+        dependent_tie_points=None,
+        dependent_tie_point_dimensions=None,
     ):
         """Return a subsampled array instance.
 

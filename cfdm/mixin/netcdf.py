@@ -3991,8 +3991,7 @@ class NetCDFSubsampledDimension(NetCDF, _NetCDFMixin, _NetCDFGroupsMixin):
 class NetCDFInterpolationSubareaDimension(
     NetCDF, _NetCDFMixin, _NetCDFGroupsMixin
 ):
-    """Mixin class for accessing the netCDF interpolation subarea
-    dimension name.
+    """Mixin class for the netCDF interpolation subarea dimension name.
 
     .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -4081,8 +4080,7 @@ class NetCDFInterpolationSubareaDimension(
         return self._nc_get("interpolation_subarea_dimension", default=default)
 
     def nc_has_interpolation_subarea_dimension(self):
-        """Whether the netCDF interpolation subarea dimension name has been
-        set.
+        """Whether the netCDF interpolation subarea dimension is set.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -4161,7 +4159,8 @@ class NetCDFInterpolationSubareaDimension(
         self._nc_set("interpolation_subarea_dimension", value)
 
     def nc_interpolation_subarea_dimension_groups(self):
-        """Return the netCDF interpolation subarea dimension group hierarchy.
+        """Return the netCDF interpolation subarea dimension group
+        hierarchy.
 
         The group hierarchy is defined by the netCDF name. Groups are
         delimited by ``/`` (slash) characters in the netCDF name. The
@@ -4209,7 +4208,8 @@ class NetCDFInterpolationSubareaDimension(
         )
 
     def nc_set_interpolation_subarea_dimension_groups(self, groups):
-        """Set the netCDF interpolation subarea dimension group hierarchy.
+        """Set the netCDF interpolation subarea dimension group
+        hierarchy.
 
         The group hierarchy is defined by the netCDF name. Groups are
         delimited by ``/`` (slash) characters in the netCDF name. The
@@ -4270,7 +4270,8 @@ class NetCDFInterpolationSubareaDimension(
         )
 
     def nc_clear_interpolation_subarea_dimension_groups(self):
-        """Remove the netCDF interpolation subarea dimension group hierarchy.
+        """Remove the netCDF interpolation subarea dimension group
+        hierarchy.
 
         The group hierarchy is defined by the netCDF name. Groups are
         delimited by ``/`` (slash) characters in the netCDF name. The

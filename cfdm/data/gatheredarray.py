@@ -50,7 +50,7 @@ class GatheredArray(CompressedArray):
         size=None,
         ndim=None,
         compressed_dimension=None,
-        compressed_dimensions={},
+        compressed_dimensions=None,
         list_variable=None,
         source=None,
         copy=True,

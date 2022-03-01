@@ -6491,9 +6491,9 @@ class NetCDFRead(IORead):
         interpolation_name=None,
         subsampled_array=None,
         uncompressed_shape=(),
-        tie_point_indices={},
-        parameters={},
-        parameter_dimensions={},
+        tie_point_indices=None,
+        parameters=None,
+        parameter_dimensions=None,
         interpolation_description=None,
         computational_precision=None,
     ):

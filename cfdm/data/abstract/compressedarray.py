@@ -36,7 +36,7 @@ class CompressedArray(Array):
         size=None,
         ndim=None,
         compressed_dimension=None,
-        compressed_dimensions={},
+        compressed_dimensions=None,
         compression_type=None,
         source=None,
         copy=True,
@@ -140,8 +140,15 @@ class CompressedArray(Array):
                 shape = source.shape
             except AttributeError:
                 shape = None
+
+        elif compressed_dimensions is None:
+            compressed_dimensions = {}
         else:
             compressed_dimensions = compressed_dimensions.copy()
+
+        self._set_component(
+            "compressed_dimensions", compressed_dimensions, copy=False
+        )
 
         if compressed_array is not None:
             self._set_compressed_Array(compressed_array, copy=copy)
@@ -153,10 +160,6 @@ class CompressedArray(Array):
             self._set_component(
                 "compression_type", compression_type, copy=False
             )
-
-        self._set_component(
-            "compressed_dimensions", compressed_dimensions, copy=False
-        )
 
     def _first_or_last_element(self, indices):
         """Return the first or last element of the compressed array.

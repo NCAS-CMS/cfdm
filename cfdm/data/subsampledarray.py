@@ -111,11 +111,11 @@ class SubsampledArray(CompressedArray):
         shape=None,
         computational_precision=None,
         interpolation_description=None,
-        tie_point_indices={},
-        parameters={},
-        parameter_dimensions={},
-        dependent_tie_points={},
-        dependent_tie_point_dimensions={},
+        tie_point_indices=None,
+        parameters=None,
+        parameter_dimensions=None,
+        dependent_tie_points=None,
+        dependent_tie_point_dimensions=None,
         source=None,
         copy=True,
     ):
@@ -255,16 +255,15 @@ class SubsampledArray(CompressedArray):
                 copied.
 
         """
-        compressed_dimensions = {d: (d,) for d in sorted(tie_point_indices)}
-
         super().__init__(
             compressed_array=compressed_array,
             shape=shape,
             compression_type="subsampled",
-            compressed_dimensions=compressed_dimensions,
             source=source,
             copy=copy,
         )
+
+        compressed_dimensions = None
 
         if source is not None:
             try:
@@ -312,6 +311,35 @@ class SubsampledArray(CompressedArray):
                 )
             except AttributeError:
                 dependent_tie_point_dimensions = {}
+
+            try:
+                compressed_dimensions = source.compressed_dimensions()
+            except AttributeError:
+                compressed_dimensions = {}
+        else:
+            if tie_point_indices is None:
+                tie_point_indices = {}
+
+            if parameters is None:
+                parameters = {}
+
+            if parameter_dimensions is None:
+                parameter_dimensions = {}
+
+            if dependent_tie_points is None:
+                dependent_tie_points = {}
+
+            if dependent_tie_point_dimensions is None:
+                dependent_tie_point_dimensions = {}
+
+        if compressed_dimensions is None:
+            compressed_dimensions = {
+                d: (d,) for d in sorted(tie_point_indices)
+            }
+
+        self._set_component(
+            "compressed_dimensions", compressed_dimensions, copy=False
+        )
 
         if interpolation_name is not None:
             self._set_component(

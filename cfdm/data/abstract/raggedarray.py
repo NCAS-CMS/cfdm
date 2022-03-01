@@ -40,7 +40,7 @@ class RaggedArray(CompressedArray):
         self,
         compressed_array=None,
         shape=None,
-        compressed_dimensions={},
+        compressed_dimensions=None,
         count_variable=None,
         index_variable=None,
         source=None,

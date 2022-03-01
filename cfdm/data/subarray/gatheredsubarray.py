@@ -19,7 +19,7 @@ class GatheredSubarray(Subarray):
         data=None,
         indices=None,
         shape=None,
-        compressed_dimensions={},
+        compressed_dimensions=None,
         uncompressed_indices=None,
         source=None,
         copy=True,

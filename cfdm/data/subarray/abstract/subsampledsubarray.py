@@ -24,11 +24,11 @@ class SubsampledSubarray(Subarray):
         data=None,
         indices=None,
         shape=None,
-        compressed_dimensions={},
+        compressed_dimensions=None,
         subarea_indices=None,
         first=None,
-        parameters={},
-        dependent_tie_points={},
+        parameters=None,
+        dependent_tie_points=None,
         source=None,
         copy=True,
         context_manager=None,
@@ -397,7 +397,7 @@ class SubsampledSubarray(Subarray):
 
         return s
 
-    def _select_location(self, array, location={}):
+    def _select_location(self, array, location=None):
         """Select interpolation parameter points interpolation subarea.
 
         Selects interpolation parameter points that correspond to this
