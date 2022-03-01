@@ -885,7 +885,7 @@ class SubsampledArray(CompressedArray):
 
             value: `dict`
                 The interpolation parameter dimension orders relative
-                to the tie points array, each keyed the interpolation
+                to the tie points array, each keyed by the interpolation
                 parameter term name.
 
         :Returns:
