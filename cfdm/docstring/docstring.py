@@ -241,9 +241,13 @@ _docstring_substitution_definitions = {
                 interpolation subararea's uncompressed locations.""",
     # s_i
     "{{s_i: array_like}}": """s_i: array_like
-                A value for the interpolation coeficient ``s`` for the
-                subsampled dimension, at some the location between the
-                two tie points.""",
+                A value for the interpolation coefficient ``s`` for
+                the subsampled dimension that corresponds to a
+                particular uncompressed location between the two tie
+                points.
+
+                *Parameter example:*
+                  ``0.5``""",
     # location_use_3d_cartesian
     "{{location_use_3d_cartesian: `numpy.ndarray` or `None`}}": """location_use_3d_cartesian: `numpy.ndarray` or `None`
                 The boolean interpolation parameter
