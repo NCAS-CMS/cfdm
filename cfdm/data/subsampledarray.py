@@ -1011,7 +1011,7 @@ class SubsampledArray(CompressedArray):
     def subarrays(self, shapes=-1):
         """Return descriptors for every subarray.
 
-        Theses descriptors are used during subarray decompression.
+        These descriptors are used during subarray decompression.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
