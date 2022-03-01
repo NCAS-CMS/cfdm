@@ -4159,8 +4159,7 @@ class NetCDFInterpolationSubareaDimension(
         self._nc_set("interpolation_subarea_dimension", value)
 
     def nc_interpolation_subarea_dimension_groups(self):
-        """Return the netCDF interpolation subarea dimension group
-        hierarchy.
+        """Return the interpolation subarea dimension group hierarchy.
 
         The group hierarchy is defined by the netCDF name. Groups are
         delimited by ``/`` (slash) characters in the netCDF name. The
@@ -4208,8 +4207,7 @@ class NetCDFInterpolationSubareaDimension(
         )
 
     def nc_set_interpolation_subarea_dimension_groups(self, groups):
-        """Set the netCDF interpolation subarea dimension group
-        hierarchy.
+        """Set the interpolation subarea dimension group hierarchy.
 
         The group hierarchy is defined by the netCDF name. Groups are
         delimited by ``/`` (slash) characters in the netCDF name. The
@@ -4270,8 +4268,7 @@ class NetCDFInterpolationSubareaDimension(
         )
 
     def nc_clear_interpolation_subarea_dimension_groups(self):
-        """Remove the netCDF interpolation subarea dimension group
-        hierarchy.
+        """Remove the interpolation subarea dimension group hierarchy.
 
         The group hierarchy is defined by the netCDF name. Groups are
         delimited by ``/`` (slash) characters in the netCDF name. The
