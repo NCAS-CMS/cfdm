@@ -29,6 +29,9 @@ class DomainTest(unittest.TestCase):
     def test_Domain__repr__str__dump(self):
         """Test all means of Domain inspection."""
         d = self.d
+        f = self.f
+
+        t = f.construct("air_temperature standard_error")
 
         repr(d)
         str(d)
@@ -42,9 +45,25 @@ class DomainTest(unittest.TestCase):
         for title in (None, "title"):
             d.dump(display=False, _title=title)
 
-        # Test when dimension coordinate has no data
         d = d.copy()
-        t = d.construct("time")
+
+        # Test when all constructs which can have data in fact have no data.
+        t = d.construct("time")  # a dimension coordinate
+        t.del_data()
+        self.assertFalse(t.has_data())
+        str(d)
+
+        t = d.construct("latitude")  # an auxiliary coordinate
+        t.del_data()
+        self.assertFalse(t.has_data())
+        str(d)
+
+        t = d.construct("measure:area")  # a cell measure
+        t.del_data()
+        self.assertFalse(t.has_data())
+        str(d)
+
+        t = d.construct("surface_altitude")  # a domain ancillary
         t.del_data()
         self.assertFalse(t.has_data())
         str(d)
