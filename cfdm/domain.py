@@ -391,9 +391,9 @@ class Domain(
                 The keys of the domain axis constructs that are
                 climatological time axes.
 
-        **Examples:**
+        **Examples**
 
-        >>> d = cfdm.example_field(0)
+        >>> d = cfdm.example_field(0).domain
         >>> d.climatological_time_axes()
         set()
 

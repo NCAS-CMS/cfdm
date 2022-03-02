@@ -791,7 +791,7 @@ class Field(
                 The axes on the field which are climatological time
                 axes. If there are none, this will be an empty set.
 
-        **Examples:**
+        **Examples**
 
         >>> f
         <{{repr}}Field: air_temperature(time(12), latitude(145), longitude(192)) K>
@@ -828,34 +828,9 @@ class Field(
                 continue
 
             # Still here? Then this axis is a climatological time axis
-            #            out.append((axis,))
             out.add(axis)
 
         return out
-
-    #        out = []
-    #
-    #        domain_axes = None
-    #
-    #        for key, cm in self.cell_methods(todict=True).items():
-    #            qualifiers = cm.qualifiers()
-    #            if not ("within" in qualifiers or "over" in qualifiers):
-    #                continue
-    #
-    #            axes = cm.get_axes(default=())
-    #            if len(axes) != 1:
-    #                continue
-    #
-    #            domain_axes = self.domain_axes(cached=domain_axes, todict=True)
-    #
-    #            axis = axes[0]
-    #            if axis not in domain_axes:
-    #                continue
-    #
-    #            # Still here? Then this axis is a climatological time axis
-    #            out.append((axis,))
-    #
-    #        return out
 
     @_inplace_enabled(default=False)
     def compress(
@@ -1746,7 +1721,7 @@ class Field(
 
         return "\n".join(string)
 
-    def get_data_axes(self, key=None, default=ValueError()):
+    def get_data_axes(self, *identity, default=ValueError(), **filter_kwargs):
         """Gets the keys of the axes spanned by the construct data.
 
         Specifically, returns the keys of the domain axis constructs
@@ -1758,12 +1733,16 @@ class Field(
 
         :Parameters:
 
-            key: `str`, optional
-                Specify a metadata construct, instead of the field
-                construct.
+            identity, filter_kwargs: optional
+                Select the unique construct returned by
+                ``f.construct(*identity, **filter_kwargs)``. See
+                `construct` for details.
 
-                *Parameter example:*
-                  ``key='auxiliarycoordinate0'``
+                If neither *identity* nor *filter_kwargs* are set then
+                the domain of the field constructs's data are
+                returned.
+
+                .. versionadded:: (cfdm) 1.9.1.0
 
             default: optional
                 Return the value of the *default* parameter if the data
@@ -1771,18 +1750,24 @@ class Field(
 
                 {{default Exception}}
 
+            {{filter_kwargs: optional}}
+
+                .. versionadded:: (cfdm) 1.9.1.0
+
         :Returns:
 
             `tuple`
                 The keys of the domain axis constructs spanned by the
                 data.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> f.get_data_axes()
         ('domainaxis0', 'domainaxis1')
-        >>> f.get_data_axes(key='dimensioncoordinate2')
+        >>> f.get_data_axes('latitude')
+        ('domainaxis0',)
+        >>> f.get_data_axes('time')
         ('domainaxis2',)
         >>> f.has_data_axes()
         True
@@ -1794,16 +1779,31 @@ class Field(
         'no axes'
 
         """
-        if key is not None:
-            return super().get_data_axes(key, default=default)
+        if not identity and not filter_kwargs:
+            # Get axes of the Field data array
+            return super().get_data_axes(default=default)
 
-        try:
-            return self._get_component("data_axes")
-        except ValueError:
+        key = self.construct(
+            *identity, key=True, default=None, **filter_kwargs
+        )
+        if key is None:
+            if default is None:
+                return default
+
             return self._default(
-                default,
-                "{!r} has no data axes".format(self.__class__.__name__),
+                default, "Can't get axes for non-existent construct"
             )
+
+        axes = super().get_data_axes(key, default=None)
+        if axes is None:
+            if default is None:
+                return default
+
+            return self._default(
+                default, "Can't get axes for non-existent construct"
+            )
+
+        return axes
 
     def get_domain(self):
         """Return the domain.
@@ -2062,7 +2062,7 @@ class Field(
 
         """
         filter_kwargs.pop("item", None)
-        key, c = self.construct_item(*identity, **filter_kwargs)
+        key, c = self.construct(*identity, item=True, **filter_kwargs)
         if c is None:
             raise ValueError("Can't return zero constructs")
 

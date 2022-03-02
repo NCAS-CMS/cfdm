@@ -266,10 +266,17 @@ _docstring_substitution_definitions = {
                 Keyword arguments as accepted by `Constructs.filter`
                 that define additional construct selection
                 criteria.""",
-    # Returns constructs
-    "{{Returns constructs}}": """
-                The selected constructs in a new `Constructs` object,
-                unless modified by any *filter_kwargs* parameters.""",
+    # key: `bool`, optional
+    "{{key: `bool`, optional}}": """key: `bool`, optional
+                If True then return the selected construct
+                identifier. By default the construct itself is
+                returned.""",
+    # item: `bool`, optional
+    "{{item: `bool`, optional}}": """item: `bool`, optional
+                If True then return the selected construct identifier
+                and the construct itself. By default the construct
+                itself is returned. If *key* is True then *item* is
+                ignored.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------
@@ -281,4 +288,10 @@ _docstring_substitution_definitions = {
     "{{displayed identity}}": """Note that in the output of a `dump` method or `print`
                 call, a construct is always described by an identity
                 that will select it.""",
+    # Returns construct
+    "{{Returns construct}}": """The selected construct, or its identifier if *key* is
+                True, or a `tuple` of both if *item* is True.""",
+    # Returns constructs
+    "{{Returns constructs}}": """The selected constructs in a new `Constructs` object,
+                unless modified by any *filter_kwargs* parameters.""",
 }

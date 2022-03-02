@@ -525,6 +525,68 @@ class FieldDomain:
             **filter_kwargs,
         )
 
+    def coordinate(
+        self,
+        *identity,
+        default=ValueError(),
+        key=False,
+        item=False,
+        **filter_kwargs,
+    ):
+        """Select a dimension or auxiliary coordinate construct.
+
+        {{unique construct}}
+
+        .. versionadded:: (cfdm) 1.9.1.0
+
+        .. seealso:: `construct`, `coordinates`
+
+        :Parameters:
+
+            identity: optional
+                Select dimension or auxiliary coordinate constructs
+                that have an identity, defined by their `!identities`
+                methods, that matches any of the given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                If no values are provided then all dimension or
+                auxiliary coordinate constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{key: `bool`, optional}}
+
+            {{item: `bool`, optional}}
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no unique construct.
+
+                {{default Exception}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns construct}}
+
+        **Examples**
+
+        """
+        return self._construct(
+            "coordinate",
+            "coordinates",
+            identity,
+            key=key,
+            item=item,
+            default=default,
+            **filter_kwargs,
+        )
+
     def coordinates(self, *identities, **filter_kwargs):
         """Return dimension and auxiliary coordinate constructs.
 
@@ -585,6 +647,66 @@ class FieldDomain:
             ),
             "coordinates",
             identities,
+            **filter_kwargs,
+        )
+
+    def coordinate_reference(
+        self,
+        *identity,
+        default=ValueError(),
+        key=False,
+        item=False,
+        **filter_kwargs,
+    ):
+        """Return a coordinate reference construct, or its key.
+
+        .. versionadded:: (cfdm) 1.9.1.0
+
+        .. seealso:: `construct`, `coordinate_references`
+
+        :Parameters:
+
+            identity: optional
+                Select coordinate reference constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                If no identities are provided then all coordinate
+                reference constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{key: `bool`, optional}}
+
+            {{item: `bool`, optional}}
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no unique construct.
+
+                {{default Exception}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns construct}}
+
+        **Examples**
+
+        """
+        return self._construct(
+            "coordinate_reference",
+            "coordinate_references",
+            identity,
+            key=key,
+            item=item,
+            default=default,
             **filter_kwargs,
         )
 
@@ -1198,7 +1320,6 @@ class FieldDomain:
 
         .. seealso:: `constructs`, `del_construct`, `get_construct`,
                      `has_construct`, `set_construct`
-                     `construct_item`, `construct_key`
 
         :Parameters:
 
@@ -1282,9 +1403,13 @@ class FieldDomain:
 
         {{unique construct}}
 
+        ``f.construct_item(*args, **kwargs)`` is an alias for
+        ``f.construct(*args, item=True, **kwargs)``. See `construct`
+        for details.
+
         .. versionadded:: (cfdm) 1.8.9.0
 
-        .. seealso:: `constructs`, `construct`, `construct_key`
+        .. seealso:: `construct`, `construct_key`
 
         :Parameters:
 
@@ -1361,9 +1486,13 @@ class FieldDomain:
 
         {{unique construct}}
 
+        ``f.construct_key(*args, **kwargs)`` is an alias for
+        ``f.construct(*args, itekey=True, **kwargs)``. See `construct`
+        for details.
+
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `constructs`, `construct`, `construct_item`
+        .. seealso:: `construct`, `construct_item`
 
         :Parameters:
 

@@ -635,6 +635,146 @@ class FieldTest(unittest.TestCase):
         f = cfdm.example_field(0)
         self.assertFalse(f.has_bounds())
 
+    def test_Field_auxiliary_coordinate(self):
+        """Test that Field.auxiliary_coordinate."""
+        f = self.f1
+
+        for identity in ("auxiliarycoordinate1", "latitude"):
+            key, c = f.construct(identity, item=True)
+            self.assertTrue(f.auxiliary_coordinate(identity).equals(c))
+            self.assertEqual(f.auxiliary_coordinate(identity, key=True), key)
+
+        with self.assertRaises(ValueError):
+            f.auxiliary_coordinate("long_name:qwerty")
+
+    def test_Field_coordinate(self):
+        """Test that Field.coordinate."""
+        f = self.f1
+
+        for identity in (
+            "latitude",
+            "grid_longitude",
+            "auxiliarycoordinate1",
+            "dimensioncoordinate1",
+        ):
+            key, c = f.construct(identity, item=True)
+
+        with self.assertRaises(ValueError):
+            f.coordinate("long_name:qweRty")
+
+    def test_Field_coordinate_reference(self):
+        """Test that Field.coordinate_reference."""
+        f = self.f1
+
+        for identity in (
+            "coordinatereference1",
+            "key%coordinatereference0",
+            "standard_name:atmosphere_hybrid_height_coordinate",
+            "grid_mapping_name:rotated_latitude_longitude",
+        ):
+            key, c = f.construct(identity, item=True)
+            self.assertTrue(f.coordinate_reference(identity).equals(c))
+            self.assertEqual(f.coordinate_reference(identity, key=True), key)
+
+        with self.assertRaises(ValueError):
+            f.coordinate_reference("qwerty")
+
+    def test_Field_dimension_coordinate(self):
+        """Test that Field.dimension_coordinate."""
+        f = self.f1
+
+        for identity in ("grid_latitude", "dimensioncoordinate1"):
+            if identity == "X":
+                key, c = f.construct("grid_longitude", item=True)
+            else:
+                key, c = f.construct(identity, item=True)
+
+            self.assertTrue(f.dimension_coordinate(identity).equals(c))
+            self.assertEqual(f.dimension_coordinate(identity, key=True), key)
+
+            k, v = f.dimension_coordinate(identity, item=True)
+            self.assertEqual(k, key)
+            self.assertTrue(v.equals(c))
+
+        self.assertIsNone(
+            f.dimension_coordinate("long_name=qwerty:asd", default=None)
+        )
+        self.assertEqual(
+            len(f.dimension_coordinates("long_name=qwerty:asd")), 0
+        )
+
+        with self.assertRaises(ValueError):
+            f.dimension_coordinate("long_name:qwerty")
+
+    def test_Field_cell_measure(self):
+        """Test that Field.cell_measure."""
+        f = self.f1
+
+        for identity in ("measure:area", "cellmeasure0"):
+            key, c = f.construct(identity, item=True)
+
+            self.assertTrue(f.cell_measure(identity).equals(c))
+            self.assertEqual(f.cell_measure(identity, key=True), key)
+
+            self.assertTrue(f.cell_measure(identity).equals(c))
+            self.assertEqual(f.cell_measure(identity, key=True), key)
+
+        self.assertEqual(len(f.cell_measures()), 1)
+        self.assertEqual(len(f.cell_measures("measure:area")), 1)
+        self.assertEqual(len(f.cell_measures(*["measure:area"])), 1)
+
+        self.assertIsNone(f.cell_measure("long_name=qwerty:asd", default=None))
+        self.assertEqual(len(f.cell_measures("long_name=qwerty:asd")), 0)
+
+        with self.assertRaises(ValueError):
+            f.cell_measure("long_name:qwerty")
+
+    def test_Field_cell_method(self):
+        """Test that Field.cell_method."""
+        f = self.f1
+
+        for identity in ("method:mean", "cellmethod0"):
+            key, c = f.construct(identity, item=True)
+            self.assertTrue(f.cell_method(identity).equals(c))
+            self.assertEqual(f.cell_method(identity, key=True), key)
+
+    def test_Field_domain_ancillary(self):
+        """Test that Field.domain_ancillary."""
+        f = self.f1
+
+        for identity in ("surface_altitude", "domainancillary0"):
+            key, c = f.construct(identity, item=True)
+            self.assertTrue(f.domain_ancillary(identity).equals(c))
+            self.assertEqual(f.domain_ancillary(identity, key=True), key)
+
+        with self.assertRaises(ValueError):
+            f.domain_ancillary("long_name:qwerty")
+
+    def test_Field_field_ancillary(self):
+        """Test that Field.field_ancillary."""
+        f = self.f1
+
+        for identity in ("air_temperature standard_error", "fieldancillary0"):
+            key, c = f.construct_item(identity)
+            self.assertTrue(f.field_ancillary(identity).equals(c))
+            self.assertEqual(f.field_ancillary(identity, key=True), key)
+
+        with self.assertRaises(ValueError):
+            f.field_ancillary("long_name:qwerty")
+
+    def test_Field_domain_axis(self):
+        """Test that Field.domain_axis."""
+        f = self.f1
+
+        f.domain_axis(1)
+        f.domain_axis("domainaxis2")
+
+        with self.assertRaises(ValueError):
+            f.domain_axis(99)
+
+        with self.assertRaises(ValueError):
+            f.domain_axis("qwerty")
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
