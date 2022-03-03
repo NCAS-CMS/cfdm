@@ -697,12 +697,12 @@ class NetCDFWrite(IOWrite):
                 # coordinate.
                 create = True
 
-        # If the dimension coordinate is already in the file, but not
-        # in an approriate group, then make a new new netCDF variable.
-        #
-        # This is to prevent a downstream error ocurring when the
-        # parrent data variable tries to reference one of its netCDF
-        # dimensions that is not in the same group nor a parent group.
+        # If the dimension coordinate is already in the file but not
+        # in an approriate group then we have to create a new netCDF
+        # variable. This is to prevent a downstream error ocurring
+        # when the parent data variable tries to reference one of its
+        # netCDF dimensions that is not in the same group nor a parent
+        # group.
         if already_in_file and not create:
             ncvar = coord.nc_get_variable("")
             groups = self._groups(seen[id(coord)]["ncvar"])
