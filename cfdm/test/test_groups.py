@@ -8,10 +8,11 @@ import unittest
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import netCDF4
+import numpy as np
 
 import cfdm
 
-n_tmpfiles = 9
+n_tmpfiles = 10
 tmpfiles = [
     tempfile.mkstemp("_test_groups.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
@@ -26,6 +27,7 @@ tmpfiles = [
     grouped_file3,
     grouped_file4,
     grouped_file5,
+    grouped_file6,
 ) = tmpfiles
 
 
@@ -452,6 +454,64 @@ class GroupsTest(unittest.TestCase):
         self.assertEqual(len(h), 1)
         h = h[0]
         self.assertTrue(f.equals(h, verbose=3))
+
+    def test_groups_dimension_coordinates(self):
+        """TODO."""
+        time_data = list(range(5))
+        station_data = ["station1", "station2"]
+
+        file_content = list()
+        for mt in ("Dew Point", "Wind Speed"):
+            grp_name = mt.replace(" ", "_")
+            var_name = mt.replace(" ", "_")
+
+            stations = cfdm.DomainAxis(2)
+            stations.nc_set_dimension("stations")
+            stations.nc_set_dimension_groups([grp_name])
+
+            time = cfdm.DomainAxis(len(time_data))
+            time.nc_set_dimension("time")
+            time.nc_set_dimension_groups([grp_name])
+
+            station_name = cfdm.AuxiliaryCoordinate()
+            station_name.set_data(station_data)
+            station_name.set_properties(
+                {"long_name": "sensor id", "cf_role": "timeseries_id"}
+            )
+            station_name.nc_set_variable("station_name")
+            station_name.nc_set_variable_groups([grp_name])
+
+            times = cfdm.DimensionCoordinate()
+            times.set_data(time_data)
+            times.set_properties(
+                {"standard_name": "time", "units": "days since 1967-04-01"}
+            )
+            times.nc_set_variable("time")
+            times.nc_set_variable_groups([grp_name])
+
+            # Random data...
+            obs = np.random.uniform(
+                -10, 25, size=(time.get_size(), stations.get_size())
+            )
+
+            f = cfdm.Field()
+
+            station_axis = f.set_construct(stations)
+            time_axis = f.set_construct(time)
+
+            f.set_construct(times, axes=time_axis)
+            f.set_construct(station_name, axes=station_axis)
+
+            f.set_data(obs, axes=[time_axis, station_axis])
+
+            f.nc_set_variable(var_name)
+            f.nc_set_variable_groups([grp_name])
+
+            file_content.append(f)
+
+        # This should not raise an exception
+        grouped_file6 = "delme.nc"
+        cfdm.write(file_content, grouped_file6)
 
 
 if __name__ == "__main__":

@@ -143,12 +143,6 @@ class NetCDFWrite(IOWrite):
             if not role:
                 raise ValueError("Must supply role when providing dimsize")
 
-            #            if base in g['dimensions_with_role'].get(role, ()):
-            #                if base in ncdim_names and dimsize == g['ncdim_to_size'][base]:
-            #                    # Return the name of an existing netCDF dimension
-            #                    # with this name, this size, and matching the
-            #                    # given role.
-            #                    return base
             for ncdim in g["dimensions_with_role"].get(role, ()):
                 if g["ncdim_to_size"][ncdim] == dimsize:
                     # Return the name of an existing netCDF dimension
@@ -480,6 +474,10 @@ class NetCDFWrite(IOWrite):
             field: Field construct
 
             key: `str`
+                The construct identifier of the metadata construct.
+
+                *Parameter example:*
+                  ``'auxiliarycoordinate1'``
 
         :Returns:
 
@@ -680,14 +678,14 @@ class NetCDFWrite(IOWrite):
 
         """
         g = self.write_vars
-
         seen = g["seen"]
 
         data_axes = self.implementation.get_construct_data_axes(f, key)
         axis = data_axes[0]
 
-        create = False
         already_in_file = self._already_in_file(coord)
+
+        create = False
         if not already_in_file:
             create = True
         elif seen[id(coord)]["ncdims"] != ():
@@ -1102,7 +1100,6 @@ class NetCDFWrite(IOWrite):
 
         return geometry_container
 
-    # 888 2
     def _already_in_file(self, variable, ncdims=None, ignore_type=False):
         """True if a variable already exists in g['seen'].
 
@@ -1127,6 +1124,13 @@ class NetCDFWrite(IOWrite):
             variable:
 
             ncdims: `tuple`, optional
+
+                *Parameter example:*
+                  ``('x', 'y')``
+
+                *Parameter example:*
+                  Dimensions can be in a group other than the root
+                  group: ``('/Dew_Point/stations',)``
 
             ignore_type: `bool`, optional
 
@@ -2135,7 +2139,11 @@ class NetCDFWrite(IOWrite):
         # The netCDF dimensions for the auxiliary coordinate variable
         ncdimensions = self._netcdf_dimensions(f, key, coord)
 
-        if self._already_in_file(coord, ncdimensions):
+        already_in_file = self._already_in_file(coord, ncdimensions)
+
+        create = False
+
+        if already_in_file:
             ncvar = g["seen"][id(coord)]["ncvar"]
 
             # Register that bounds as being the file, too. This is so
@@ -2151,6 +2159,9 @@ class NetCDFWrite(IOWrite):
                         "ncdims": None,
                     }
         else:
+            create = True
+
+        if create:
             if (
                 not self.implementation.get_properties(coord)
                 and self.implementation.get_data(coord, default=None) is None
@@ -2177,9 +2188,6 @@ class NetCDFWrite(IOWrite):
                     self._write_netcdf_variable(
                         ncvar, ncdimensions, coord, extra=extra
                     )
-
-        #                g['key_to_ncvar'][key] = ncvar
-        #                g['key_to_ncdims'][key] = ncdimensions
 
         g["key_to_ncvar"][key] = ncvar
         g["key_to_ncdims"][key] = ncdimensions
@@ -3408,7 +3416,10 @@ class NetCDFWrite(IOWrite):
                                 if matched_construct:
                                     break
 
-                            if matched_construct:
+                            if (
+                                matched_construct
+                                and self._dimension_in_subgroup(f, ncdim1)
+                            ):
                                 use_existing_dimension = True
                                 break
 
@@ -3883,8 +3894,8 @@ class NetCDFWrite(IOWrite):
                         self.implementation.get_cell_method_qualifiers(cm)
                     ):
                         raise ValueError(
-                            "Can't write {!r}: Unknown cell method "
-                            "property: {!r}".format(org_f, cm.properties())
+                            f"Can't write {org_f!r}: Unknown cell method "
+                            f"property: {cm.properties()!r}"
                         )
 
                     axes = [
@@ -3901,7 +3912,7 @@ class NetCDFWrite(IOWrite):
                 cell_methods = " ".join(cell_methods_strings)
                 logger.info(
                     "    Writing cell_methods attribute to "
-                    "netCDF variable {}: {}".format(ncvar, cell_methods)
+                    f"netCDF variable {ncvar}: {cell_methods}"
                 )  # pragma: no cover
 
                 extra["cell_methods"] = cell_methods
@@ -3937,7 +3948,7 @@ class NetCDFWrite(IOWrite):
 
         # Note that for domain variables the ncdimensions parameter is
         # automatically changed to () within the
-        # _write_netcdf_variable method.  CF-1.9
+        # _write_netcdf_variable method. CF-1.9
         self._write_netcdf_variable(
             ncvar,
             ncdimensions,
@@ -5116,3 +5127,39 @@ class NetCDFWrite(IOWrite):
             array = array.astype("int32", casting="same_kind")
 
         return array
+
+    def _dimension_in_subgroup(self, v, ncdim):
+        """Return True if the netCDF dimension is in a valid group.
+
+        Returns True if the dimension is in the same group, or a
+        parent group, as that defined by the construct. Otherwise
+        return False.
+
+        .. versionadded:: (cfdm) 1.9.0.3
+
+        :Parameters:
+
+            v: Construct
+
+            ncdim: `str`
+                The netCDF dimension name.
+
+                *Parameter example:*
+                  ``'lat'``
+
+                *Parameter example:*
+                  ``'/group1/lat'``
+
+        :Returns:
+
+            `bool`
+                Whether or not the netCDF dimension is in a valid
+                group.
+
+        """
+        v_groups = self.implementation.nc_get_variable_groups(v)
+        v_groups = "/" + "/".join(v_groups)
+
+        ncdim_groups = self._groups(ncdim)
+
+        return v_groups.startswith(ncdim_groups)
