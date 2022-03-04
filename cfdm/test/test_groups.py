@@ -512,7 +512,6 @@ class GroupsTest(unittest.TestCase):
             file_content.append(f)
 
         # This should not raise an exception
-        grouped_file6 = "~/tmp/delme.nc"
         cfdm.write(file_content, grouped_file6)
 
 
