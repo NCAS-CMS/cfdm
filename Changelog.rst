@@ -1,8 +1,11 @@
-Version 1.9.?.?
+Version 1.9.0.3
 ---------------
 
-**2022-0?-??**
+**2022-03-??**
 
+* Fixed bug that caused a failure from `cfdm.write` when writing
+  identical (auxiliary) coordinates to different data variables in
+  different groups (https://github.com/NCAS-CMS/cfdm/issues/175)
 * Fixed bug that caused `cf.Domain.__str__` to fail when a dimension
   coordinate construct does not have data
   (https://github.com/NCAS-CMS/cfdm/issues/174)
