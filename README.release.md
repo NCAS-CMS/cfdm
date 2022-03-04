@@ -149,4 +149,7 @@
   ./upload_to_pypi <vn> # E.g. ./upload_to_pypi 1.8.7.0
   ```
 
+* Update the GitHub releases page for the new version:
+  https://github.com/NCAS-CMS/cfdm/releases
+
 * Upload the new release to Zenodo: https://zenodo.org/record/5521505

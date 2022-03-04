@@ -42,6 +42,20 @@ class DomainTest(unittest.TestCase):
         for title in (None, "title"):
             d.dump(display=False, _title=title)
 
+        # Test when any construct which can have data in fact has no data.
+        d = d.copy()
+        for identity in [
+            "time",  # a dimension coordinate
+            "latitude",  # an auxiliary coordinate
+            "measure:area",  # a cell measure
+            "surface_altitude",  # a domain ancillary
+        ]:
+            c = d.construct(identity)  # get relevant construct, type as above
+            c.del_data()
+            self.assertFalse(c.has_data())
+            str(d)
+            repr(d)
+
     def test_Domain__init__(self):
         """Test the Domain constructor and source keyword."""
         cfdm.Domain(source="qwerty")
@@ -89,7 +103,7 @@ class DomainTest(unittest.TestCase):
         )
 
     def test_Domain_climatological_time_axes(self):
-        """TODO DOCS."""
+        """Test the `climatological_time_axes` method of Domain."""
         f = cfdm.example_field(7)
         d = f.domain
 
@@ -115,7 +129,7 @@ class DomainTest(unittest.TestCase):
         d = d.creation_commands(namespace="my_cfdm", header=True)
 
     def test_Domain_identity(self):
-        """TODO DOCS."""
+        """Test the `identity` Domain method."""
         d = self.d
 
         d.nc_set_variable("qwerty")
@@ -125,7 +139,7 @@ class DomainTest(unittest.TestCase):
         self.assertEqual(d.identity(), "long_name=qwerty")
 
     def test_Domain_identites(self):
-        """TODO DOCS."""
+        """Test the `identities` Domain method."""
         d = self.d.copy()
 
         d.nc_set_variable("qwerty")
@@ -146,11 +160,11 @@ class DomainTest(unittest.TestCase):
         self.assertTrue(d.equals(d.apply_masking()))
 
     def test_Domain_data(self):
-        """TODO DOCS."""
+        """Test that Domain instances do not have data."""
         self.assertFalse(self.d.has_data())
 
     def test_Domain_has_bounds(self):
-        """TODO DOCS."""
+        """Test that Domain instances do not have cell bounds."""
         self.assertFalse(self.d.has_bounds())
 
 

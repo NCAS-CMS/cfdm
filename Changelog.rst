@@ -1,3 +1,29 @@
+Version 1.9.?.?
+---------------
+
+**2022-0?-??**
+
+* Fixed bug that caused `cf.Domain.__str__` to fail when a dimension
+  coordinate construct does not have data
+  (https://github.com/NCAS-CMS/cfdm/issues/174)
+* New dependency: ``packaging>=20.0``
+
+----
+  
+Version 1.9.0.2
+---------------
+
+**2022-01-31**
+
+* Fixed bug that caused a `cfdm.write` failure when a vertical
+  coordinate reference construct has no coordinates
+  (https://github.com/NCAS-CMS/cfdm/issues/164)
+* Fixed bug that caused a failure when downstream `identities` methods
+  return an `itertools.chain` object
+  (https://github.com/NCAS-CMS/cfdm/issues/170)
+
+----
+  
 Version 1.9.0.1
 ---------------
 

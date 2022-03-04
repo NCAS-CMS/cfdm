@@ -39,7 +39,7 @@ up to the user to use them in a CF-compliant way.
 import logging
 import sys
 
-from distutils.version import LooseVersion
+from packaging.version import Version
 
 from . import core
 
@@ -58,7 +58,7 @@ except ImportError as error1:
 
 # Check the version of cftime
 _minimum_vn = "1.5.0"
-if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
+if Version(cftime.__version__) < Version(_minimum_vn):
     raise ValueError(
         f"Bad cftime version: cfdm requires cftime>={_minimum_vn}. "
         f"Got {cftime.__version__} at {cftime.__file__}"
@@ -71,7 +71,7 @@ except ImportError as error1:
 
 # Check the version of netcdf_flattener
 _minimum_vn = "1.2.0"
-if LooseVersion(netcdf_flattener.__version__) < LooseVersion(_minimum_vn):
+if Version(netcdf_flattener.__version__) < Version(_minimum_vn):
     raise ValueError(
         f"Bad netcdf_flattener version: cfdm requires "
         f"netcdf_flattener>={_minimum_vn}. Got {netcdf_flattener.__version__} "

@@ -40,7 +40,7 @@ class CellMeasure(abstract.PropertiesData):
         :Parameters:
 
             measure: `str`, optional
-                Set the measure that indicates which metric given by
+                Set the measure that indicates the metric given by
                 the data array. Ignored if the *source* parameter is
                 set.
 
