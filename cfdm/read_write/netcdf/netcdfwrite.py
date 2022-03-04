@@ -2,11 +2,11 @@ import copy
 import logging
 import os
 import re
-from distutils.version import LooseVersion
 
 import netCDF4
 import numpy
 import numpy as np
+from packaging.version import Version
 
 from ...decorators import _manage_log_level_via_verbosity
 from .. import IOWrite
@@ -4706,9 +4706,7 @@ class NetCDFWrite(IOWrite):
             "geometry_dimensions": set(),
             "dimensions_with_role": {},
             "dimensions": set(),
-            "latest_version": LooseVersion(
-                self.implementation.get_cf_version()
-            ),
+            "latest_version": Version(self.implementation.get_cf_version()),
             "version": {},
             # Warn for the presence of out-of-range data with of
             # valid_[min|max|range] attributes?
@@ -4903,7 +4901,7 @@ class NetCDFWrite(IOWrite):
         # Set possible versions
         # ------------------------------------------------------------
         for version in ("1.6", "1.7", "1.8", "1.9"):
-            g["CF-" + version] = LooseVersion(version)
+            g["CF-" + version] = Version(version)
 
         if extra_write_vars:
             g.update(copy.deepcopy(extra_write_vars))

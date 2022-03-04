@@ -8,12 +8,12 @@ import tempfile
 from ast import literal_eval
 from collections import OrderedDict
 from copy import deepcopy
-from distutils.version import LooseVersion
 from functools import reduce
 
 import netCDF4
 import netcdf_flattener
 import numpy
+from packaging.version import Version
 
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import is_log_level_debug
@@ -701,7 +701,7 @@ class NetCDFRead(IORead):
 
         # Set versions
         for version in ("1.6", "1.7", "1.8", "1.9"):
-            g["version"][version] = LooseVersion(version)
+            g["version"][version] = Version(version)
 
         # ------------------------------------------------------------
         # Add custom read vars
@@ -811,7 +811,7 @@ class NetCDFRead(IORead):
                 # implementation
                 file_version = self.implementation.get_cf_version()
 
-        g["file_version"] = LooseVersion(file_version)
+        g["file_version"] = Version(file_version)
 
         # Set minimum/maximum versions
         for vn in ("1.6", "1.7", "1.8", "1.9"):
