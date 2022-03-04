@@ -455,45 +455,45 @@ class GroupsTest(unittest.TestCase):
         h = h[0]
         self.assertTrue(f.equals(h, verbose=3))
 
-    def test_groups_dimension_coordinates(self):
-        """TODO."""
-        time_data = list(range(5))
-        station_data = ["station1", "station2"]
+    def test_groups_identical_coordinates(self):
+        """Test for identical coordinates in different groups."""
+        # Define dimension and auxiliary coordinates
+        station_name = cfdm.AuxiliaryCoordinate()
+        station_name.set_data(["station1", "station2"])
+        station_name.set_properties(
+            {"long_name": "sensor id", "cf_role": "timeseries_id"}
+        )
+        station_name.nc_set_variable("station_name")
+
+        times = cfdm.DimensionCoordinate()
+        times.set_data(range(5))
+        times.set_properties(
+            {"standard_name": "time", "units": "days since 1967-04-01"}
+        )
+        times.nc_set_variable("time")
 
         file_content = list()
         for mt in ("Dew Point", "Wind Speed"):
             grp_name = mt.replace(" ", "_")
             var_name = mt.replace(" ", "_")
 
+            # Define domain axes
             stations = cfdm.DomainAxis(2)
             stations.nc_set_dimension("stations")
             stations.nc_set_dimension_groups([grp_name])
 
-            time = cfdm.DomainAxis(len(time_data))
+            time = cfdm.DomainAxis(5)
             time.nc_set_dimension("time")
             time.nc_set_dimension_groups([grp_name])
 
-            station_name = cfdm.AuxiliaryCoordinate()
-            station_name.set_data(station_data)
-            station_name.set_properties(
-                {"long_name": "sensor id", "cf_role": "timeseries_id"}
-            )
-            station_name.nc_set_variable("station_name")
+            # Assign new groups to dimension and auxiliary coordinates
+            station_name = station_name.copy()
             station_name.nc_set_variable_groups([grp_name])
 
-            times = cfdm.DimensionCoordinate()
-            times.set_data(time_data)
-            times.set_properties(
-                {"standard_name": "time", "units": "days since 1967-04-01"}
-            )
-            times.nc_set_variable("time")
+            times = times.copy()
             times.nc_set_variable_groups([grp_name])
 
-            # Random data...
-            obs = np.random.uniform(
-                -10, 25, size=(time.get_size(), stations.get_size())
-            )
-
+            # Define the field in the same group as the coordinates
             f = cfdm.Field()
 
             station_axis = f.set_construct(stations)
@@ -502,7 +502,9 @@ class GroupsTest(unittest.TestCase):
             f.set_construct(times, axes=time_axis)
             f.set_construct(station_name, axes=station_axis)
 
-            f.set_data(obs, axes=[time_axis, station_axis])
+            f.set_data(
+                np.arange(10).reshape(5, 2), axes=[time_axis, station_axis]
+            )
 
             f.nc_set_variable(var_name)
             f.nc_set_variable_groups([grp_name])
@@ -510,7 +512,7 @@ class GroupsTest(unittest.TestCase):
             file_content.append(f)
 
         # This should not raise an exception
-        grouped_file6 = "delme.nc"
+        grouped_file6 = "~/tmp/delme.nc"
         cfdm.write(file_content, grouped_file6)
 
 
