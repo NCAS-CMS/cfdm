@@ -758,7 +758,7 @@ class NetCDFRead(IORead):
 
         # Set versions
         for version in ("1.6", "1.7", "1.8", "1.9", "1.10"):
-            g["version"][version] = LooseVersion(version)
+            g["version"][version] = Version(version)
 
         # ------------------------------------------------------------
         # Add custom read vars
