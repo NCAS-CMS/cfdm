@@ -543,7 +543,7 @@ class SubsampledArray(CompressedArray):
         :Returns:
 
             `dict`
-                The conformed parameters, keyed by their parmaeter
+                The conformed parameters, keyed by their parameter
                 term names.
 
         """
