@@ -7,7 +7,7 @@ class LinearInterpolation:
 
     """
 
-    def _linear_interpolation(self, ua, ub, d1, s=None, returns=False):
+    def _linear_interpolation(self, ua, ub, d1, s=None):
         """Interpolate linearly between two points.
 
         u = fl(ua, ub, s) = ua + s*(ub-ua)
@@ -39,8 +39,4 @@ class LinearInterpolation:
         """
         s = self._s(d1, s=s)
         u = ua + s * (ub - ua)
-
-        if returns:
-            return (u, s)
-
         return u
