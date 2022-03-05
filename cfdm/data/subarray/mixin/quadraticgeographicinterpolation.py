@@ -158,7 +158,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
 
             cv: `tuple` of `numpy.ndarray`
                 The three-dimensional cartesian interpolation
-                parmaeters.
+                parameters.
 
         :Returns:
 
