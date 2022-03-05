@@ -22,9 +22,8 @@ class LinearInterpolation:
         :Parameters:
 
             ua, ub: `numpy.ndarray`
-                The first and second tie points in index space of
-                subsampled dimension 1 (in the sense of CF appendix J
-                Figure J.1).
+                The tie points at locations A and B, in the sense of
+                CF appendix J Figure J.1).
 
             {{d1: `int`}}
 

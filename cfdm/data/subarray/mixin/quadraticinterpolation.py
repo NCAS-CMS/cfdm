@@ -32,15 +32,9 @@ class QuadraticInterpolation:
 
         :Parameters:
 
-            ua: `numpy.ndarray`
-                The first tie point in index space of subsampled
-                dimension 1 (in the sense of CF appendix J Figure
-                J.1).
-
-            ub: `numpy.ndarray`
-                The second tie point in index space of subsampled
-                dimension 1 (in the sense of CF appendix J Figure
-                J.1).
+            ua, ub: `numpy.ndarray`
+                The tie points at locations A and B, in the sense of
+                CF appendix J Figure J.1).
 
             u_i: `numpy.ndarray`
                 The uncompressed value at the interior location

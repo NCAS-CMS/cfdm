@@ -31,14 +31,12 @@ class QuadraticLatitudeLongitudeInterpolation(
         :Parameters:
 
             lat_a, lon_a: `numpy.ndarray`
-                The latitude and longitudes of the first tie point in
-                index space of subsampled dimension 1 (in the sense of
-                CF appendix J Figure J.1).
+                The latitude and longitude of the tie point at
+                location A, in the sense of CF appendix J Figure J.1).
 
             lat_b, lon_b: `numpy.ndarray`
-                The latitude and longitude of the second tie point in
-                index space of subsampled dimension 2 (in the sense of
-                CF appendix J Figure J.1).
+                The latitude and longitude of the tie point at
+                location B, in the sense of CF appendix J Figure J.1).
 
             ce, ca: `numpy.ndarray` or `None`
                 The interpolation parameters ``ce`` and ``ca``, with
