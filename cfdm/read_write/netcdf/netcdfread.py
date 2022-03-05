@@ -18,7 +18,6 @@ from ...decorators import _manage_log_level_via_verbosity
 from ...functions import is_log_level_debug
 from .. import IORead
 
-# from pprint import pprint  # TODO
 
 
 logger = logging.getLogger(__name__)
