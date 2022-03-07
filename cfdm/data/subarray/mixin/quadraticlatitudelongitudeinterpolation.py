@@ -32,11 +32,11 @@ class QuadraticLatitudeLongitudeInterpolation(
 
             lat_a, lon_a: `numpy.ndarray`
                 The latitude and longitude of the tie point at
-                location A, in the sense of CF appendix J Figure J.1).
+                location A, in the sense of CF appendix J Figure J.1.
 
             lat_b, lon_b: `numpy.ndarray`
                 The latitude and longitude of the tie point at
-                location B, in the sense of CF appendix J Figure J.1).
+                location B, in the sense of CF appendix J Figure J.1.
 
             ce, ca: `numpy.ndarray` or `None`
                 The interpolation parameters ``ce`` and ``ca``, with

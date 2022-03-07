@@ -49,19 +49,19 @@ class BiQuadraticLatitudeLongitudeInterpolation(
 
             lat_a, lon_a: `numpy.ndarray`
                 The latitude and longitude of the tie point at
-                location A, in the sense of CF appendix J Figure J.2).
+                location A, in the sense of CF appendix J Figure J.2.
 
             lat_b, lon_b: `numpy.ndarray`
                 The latitude and longitude of the tie point at
-                location B, in the sense of CF appendix J Figure J.2).
+                location B, in the sense of CF appendix J Figure J.2.
 
             lat_c, lon_c: `numpy.ndarray`
                 The latitude and longitude of the tie point at
-                location C, in the sense of CF appendix J Figure J.2).
+                location C, in the sense of CF appendix J Figure J.2.
 
             lat_d, lon_d: `numpy.ndarray`
                 The latitude and longitude of the tie point at
-                location D, in the sense of CF appendix J Figure J.2).
+                location D, in the sense of CF appendix J Figure J.2.
 
             ce1, ca1, ce2, ca2, ce3, ca3: `numpy.ndarray` or `None`
                 The interpolation parameters ``ce1``, ``ca1``,

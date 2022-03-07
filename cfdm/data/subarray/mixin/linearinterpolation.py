@@ -23,7 +23,7 @@ class LinearInterpolation:
 
             ua, ub: `numpy.ndarray`
                 The tie points at locations A and B, in the sense of
-                CF appendix J Figure J.1).
+                CF appendix J Figure J.1.
 
             {{d1: `int`}}
 

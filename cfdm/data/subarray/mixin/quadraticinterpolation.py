@@ -34,7 +34,7 @@ class QuadraticInterpolation:
 
             ua, ub: `numpy.ndarray`
                 The tie points at locations A and B, in the sense of
-                CF appendix J Figure J.1).
+                CF appendix J Figure J.1.
 
             u_i: `numpy.ndarray`
                 The uncompressed value at the interior location
@@ -75,9 +75,8 @@ class QuadraticInterpolation:
         :Parameters:
 
             ua, ub: `numpy.ndarray`
-                The first and second tie points in index space of
-                subsampled dimension 1 (in the sense of CF appendix J
-                Figure J.1).
+                The tie points at locations A and B, in the sense of
+                CF appendix J Figure J.1.
 
             w: `numpy.ndarray` or `None`
                 The quadratic interpolation coefficient, with the same
