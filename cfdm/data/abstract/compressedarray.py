@@ -351,10 +351,10 @@ class CompressedArray(Array):
 
         """
         compressed_dimensions = self.compressed_dimensions()
-        if len(compressed_dimensions) > 1:
+        if len(compressed_dimensions) != 1:
             raise ValueError(
                 "Can't get unique compressed dimension when there "
-                f"is more than one: {self.compressed_dimensions()}"
+                f"is not exactly one of them: {self.compressed_dimensions()}"
             )
 
         return tuple(compressed_dimensions)[0]
