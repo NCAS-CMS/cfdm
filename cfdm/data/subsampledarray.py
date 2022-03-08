@@ -216,7 +216,7 @@ class SubsampledArray(CompressedArray):
                 one of the keys ``'latitude'`` or ``'longitude``.
 
                 Set to an empty dictionary for interpolation methods
-                that do require require dependent tie points.
+                that do not require dependent tie points.
 
                 *Parameter example:*
                   ``{}``
