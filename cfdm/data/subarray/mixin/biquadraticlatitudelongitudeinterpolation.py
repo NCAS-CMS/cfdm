@@ -94,6 +94,9 @@ class BiQuadraticLatitudeLongitudeInterpolation(
         any_cartesian = bool(location_use_3d_cartesian.any())
         all_cartesian = bool(location_use_3d_cartesian.all())
 
+        # Find out if these tie points are latitudes or longitudes. If
+        # they are latitudes then the dependent tie points will be
+        # longitudes.
         latitude = "longitude" in self.dependent_tie_points
 
         if latitude:
