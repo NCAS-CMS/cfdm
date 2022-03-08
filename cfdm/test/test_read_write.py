@@ -861,7 +861,7 @@ class read_writeTest(unittest.TestCase):
                 olon = i
                 continue
 
-        # Check that reconstituted coordinate equal the original
+        # Check that reconstituted coordinates equal the original
         # coordinates
         rlat = r.construct("latitude").data.array
         rlon = r.construct("longitude").data.array
