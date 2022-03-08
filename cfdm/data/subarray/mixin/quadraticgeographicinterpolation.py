@@ -391,7 +391,9 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
                 Geocentric latitudes in degrees (not radians).
 
         """
-        return np.rad2deg(np.arctan2(v[z], (v[x] * v[x] + v[y] * v[y]) ** 0.5))
+        return np.rad2deg(
+            np.arctan2(v[z], self._fsqrt(v[x] * v[x] + v[y] * v[y]))
+        )
 
     def _fv2lon(self, v):
         """Convert cartesian to geocentric longitude coordinates.
