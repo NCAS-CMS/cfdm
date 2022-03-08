@@ -269,4 +269,8 @@ class Subarray(Array):
                 compressed are omitted from the mapping.
 
         """
-        return self._get_component("compressed_dimensions").copy()
+        c = self._get_component("compressed_dimensions")
+        if not c:
+            raise ValueError("No compressed dimensions have been defined")
+
+        return c.copy()
