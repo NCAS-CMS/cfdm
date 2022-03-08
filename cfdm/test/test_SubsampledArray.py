@@ -92,6 +92,14 @@ class SubsampledArrayTest(unittest.TestCase):
         """Test `SubsampledArray.to_memory."""
         self.assertIsInstance(self.coords.to_memory(), cfdm.SubsampledArray)
 
+    def test_SubsampledArray_compressed_dimensions(self):
+        """Test `SubsampledArray.compressed_dimensions."""
+        self.assertEqual(self.coords.compressed_dimensions(), {0: (0,)})
+
+        c = cfdm.SubsampledArray()
+        with self.assertRaises(ValueError):
+            c.compressed_dimensions()
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

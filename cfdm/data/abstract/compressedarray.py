@@ -381,6 +381,10 @@ class CompressedArray(Array):
                 compressed are omitted from the mapping.
 
         """
+        c = self._get_component("compressed_dimensions")
+        if not c:
+            raise ValueError("No compressed dimensions have been defined")
+
         return self._get_component("compressed_dimensions").copy()
 
     def conformed_data(self):
