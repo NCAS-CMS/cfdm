@@ -1,0 +1,304 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Introduction &#8212; Documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript" src="_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="CF data model" href="cf_data_model.html" />
+    <link rel="prev" title="cfdm package" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="index.html">cfdm 1.9.0.3</a></h1>
+
+
+
+<p class="blurb">A Python reference implementation of the CF data model</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cfdm&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html"><strong>Contributing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html"><strong>Extensions</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter"><strong>cfdm package</strong></a></li>
+      <li>Next: <a href="cf_data_model.html" title="next chapter"><strong>CF data model</strong></a></li>
+  </ul></li>
+</ul>
+</div>
+
+<br>
+cfdm development has been supported by
+the <a href="https://erc.europa.eu/">ERC</a>
+through <a href="https://cordis.europa.eu/project/id/786427">Couplet</a>;
+by the <a href="https://ec.europa.eu/programmes/horizon2020/">EC
+Horizon 2020 programme</a> through
+<a href="https://cordis.europa.eu/project/id/824084">IS-ENES3</a>;
+by <a href="https://nerc.ukri.org/">NERC</a> through
+<a href="https://gtr.ukri.org/project/0D95A6DB-0B95-48F7-8A8B-7B9A47DEA117">UKFAFMIP</a>;
+and by <a href="https://ncas.ac.uk/">NCAS</a>.
+<br>
+<br>
+<img src="_templates/logo_EC.png" height="40">
+<img src="_templates/logo_ERC.png" height="40">
+<img src="_templates/logo_NERC.png" height="40">
+<br>
+<img src="_templates/logo_NCAS.png" height="40">
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+
+
+  <style> .small {font-size:small} </style><section id="introduction">
+<h1><strong>Introduction</strong><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<p>Version 1.9.0.3 for version 1.9 of the CF conventions.</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#functionality" id="id3"><strong>Functionality</strong></a></p></li>
+<li><p><a class="reference internal" href="#related-packages" id="id4"><strong>Related packages</strong></a></p></li>
+<li><p><a class="reference internal" href="#citation" id="id5"><strong>Citation</strong></a></p></li>
+<li><p><a class="reference internal" href="#references" id="id6"><strong>References</strong></a></p></li>
+</ul>
+</div>
+<p>The cfdm library implements the data model of the CF (Climate and
+Forecast) metadata conventions (<a class="reference external" href="http://cfconventions.org">http://cfconventions.org</a>) and so
+should be able to represent and manipulate all existing and
+conceivable CF-compliant datasets.</p>
+<p>The CF conventions are designed to promote the creation, processing,
+and sharing of climate and forecasting data using Network Common Data
+Form (netCDF) files and libraries
+(<a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf">https://www.unidata.ucar.edu/software/netcdf</a>). They cater for data
+from model simulations as well as from observations, made in situ or
+by remote sensing platforms, of the planetary surface, ocean, and
+atmosphere. For a netCDF data variable, they provide a description of
+the physical meaning of data and of its spatial, temporal, and other
+dimensional properties. The CF data model is an abstract
+interpretation of the CF conventions that is independent of the netCDF
+encoding.</p>
+<p>For more details see <em>cfdm: A Python reference implementation of the
+CF data model</em> in the Journal of Open Source Software:
+<a class="reference external" href="https://doi.org/10.21105/joss.02717">https://doi.org/10.21105/joss.02717</a></p>
+<hr class="docutils" />
+<section id="functionality">
+<h2><a class="toc-backref" href="#id3"><strong>Functionality</strong></a><a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<p>The cfdm library can create field constructs ab initio, or read them
+from netCDF files, inspect, subspace and modify in memory, and write
+them to CF-netCDF dataset files. As long as it can interpret the data,
+cfdm does not enforce CF-compliance, allowing non-compliant datasets
+to be read, processed, corrected and rewritten.</p>
+<p>It does not contain higher-level analysis functions (such as
+regridding) because the expectation is that other libraries will build
+on cfdm, inheriting its comprehensive knowledge of the CF conventions,
+to add more sophisticated methods.</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text"><em>A simple example of reading a field construct from a
+file and inspecting it.</em></span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cfdm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
+<span class="go">[&lt;Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">Field: air_temperature (ncvar%tas)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Data            : air_temperature(time(12), latitude(64), longitude(128)) K</span>
+<span class="go">Cell methods    : time(12): mean (interval: 1.0 month)</span>
+<span class="go">Dimension coords: time(12) = [0450-11-16 00:00:00, ..., 0451-10-16 12:00:00] noleap</span>
+<span class="go">                : latitude(64) = [-87.8638, ..., 87.8638] degrees_north</span>
+<span class="go">                : longitude(128) = [0.0, ..., 357.1875] degrees_east</span>
+<span class="go">                : height(1) = [2.0] m</span>
+</pre></div>
+</div>
+</div>
+<p>The cfdm package can</p>
+<ul class="simple">
+<li><p>read <a class="reference internal" href="cf_data_model.html#term-field-construct"><span class="xref std std-term">field constructs</span></a> and <a class="reference internal" href="cf_data_model.html#term-domain-construct"><span class="xref std std-term">domain
+constructs</span></a> from netCDF and CDL datasets,</p></li>
+<li><p>create new field and domain constructs in memory,</p></li>
+<li><p>write field and domain constructs to netCDF datasets on disk,</p></li>
+<li><p>read, write, and create coordinates defined by geometry cells,</p></li>
+<li><p>read and write netCDF4 string data-type variables,</p></li>
+<li><p>read, write, and create netCDF and CDL datasets containing
+hierarchical groups,</p></li>
+<li><p>inspect field and domain constructs,</p></li>
+<li><p>test whether two constructs are the same,</p></li>
+<li><p>modify field and domain construct metadata and data,</p></li>
+<li><p>create subspaces of field and domain constructs,</p></li>
+<li><p>incorporate, and create, metadata stored in external files, and</p></li>
+<li><p>read, write, and create data that have been compressed by convention
+(i.e. ragged or gathered arrays), whilst presenting a view of the
+data in its uncompressed form.</p></li>
+</ul>
+<p>Note that the cfdm package enables the representation and creation of
+CF field constructs, but it is largely <a class="reference internal" href="philosophy.html#cf-conventions"><span class="std std-ref">up to the user to use
+them in a CF-compliant way</span></a>.</p>
+<p>A command line tool is provided that allows inspection of datasets
+outside of a Python environment:</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text"><em>Inspect a dataset from the command line.</em></span><a class="headerlink" href="#id2" title="Permalink to this code">¶</a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> cfdump file.nc
+<span class="go">Field: air_temperature (ncvar%tas)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Data            : air_temperature(time(12), latitude(64), longitude(128)) K</span>
+<span class="go">Cell methods    : time(12): mean (interval: 1.0 month)</span>
+<span class="go">Dimension coords: time(12) = [0450-11-16 00:00:00, ..., 0451-10-16 12:00:00] noleap</span>
+<span class="go">                : latitude(64) = [-87.8638, ..., 87.8638] degrees_north</span>
+<span class="go">                : longitude(128) = [0.0, ..., 357.1875] degrees_east</span>
+<span class="go">                : height(1) = [2.0] m</span>
+</pre></div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="related-packages">
+<h2><a class="toc-backref" href="#id4"><strong>Related packages</strong></a><a class="headerlink" href="#related-packages" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference external" href="https://ncas-cms.github.io/cf-python">cf-python</a> package, which
+is built as an extension to cfdm, includes higher-level functionality,
+such as regridding, and statistical operations. In turn, the <a class="reference external" href="http://ajheaps.github.io/cf-plot/">cf-plot</a> package provides comprehensive
+visualisation of field constructs created by cf-python.</p>
+</section>
+<hr class="docutils" />
+<section id="citation">
+<h2><a class="toc-backref" href="#id5"><strong>Citation</strong></a><a class="headerlink" href="#citation" title="Permalink to this headline">¶</a></h2>
+<p>If you use cfdm, either as a stand-alone application or to provide a
+CF data model implementation to another software library, please
+consider including the reference:</p>
+<dl class="simple">
+<dt>Hassell, D., and Bartholomew, S. L. (2020). cfdm: A Python reference</dt><dd><p>implementation of the CF data model. Journal of Open Source
+Software, 5(54), 2717, <a class="reference external" href="https://doi.org/10.21105/joss.02717">https://doi.org/10.21105/joss.02717</a></p>
+</dd>
+</dl>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@article</span><span class="p">{</span><span class="nl">Hassell2020</span><span class="p">,</span>
+  <span class="na">doi</span> <span class="p">=</span> <span class="s">{10.21105/joss.02717}</span><span class="p">,</span>
+  <span class="na">url</span> <span class="p">=</span> <span class="s">{https://doi.org/10.21105/joss.02717}</span><span class="p">,</span>
+  <span class="na">year</span> <span class="p">=</span> <span class="s">{2020}</span><span class="p">,</span>
+  <span class="na">publisher</span> <span class="p">=</span> <span class="s">{The Open Journal}</span><span class="p">,</span>
+  <span class="na">volume</span> <span class="p">=</span> <span class="s">{5}</span><span class="p">,</span>
+  <span class="na">number</span> <span class="p">=</span> <span class="s">{54}</span><span class="p">,</span>
+  <span class="na">pages</span> <span class="p">=</span> <span class="s">{2717}</span><span class="p">,</span>
+  <span class="na">author</span> <span class="p">=</span> <span class="s">{David Hassell and Sadie L. Bartholomew}</span><span class="p">,</span>
+  <span class="na">title</span> <span class="p">=</span> <span class="s">{cfdm: A Python reference implementation of the CF data model}</span><span class="p">,</span>
+  <span class="na">journal</span> <span class="p">=</span> <span class="s">{Journal of Open Source Software}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="references">
+<h2><a class="toc-backref" href="#id6"><strong>References</strong></a><a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt>Eaton, B., Gregory, J., Drach, B., Taylor, K., Hankin, S., Caron, J.,</dt><dd><p>Signell, R., et al. (2020). NetCDF Climate and Forecast (CF)
+Metadata Conventions. CF Conventions Committee. Retrieved from
+<a class="reference external" href="https://cfconventions.org/cf-conventions/cf-conventions.html">https://cfconventions.org/cf-conventions/cf-conventions.html</a></p>
+</dd>
+<dt>Hassell, D., and Bartholomew, S. L. (2020). cfdm: A Python reference</dt><dd><p>implementation of the CF data model. Journal of Open Source
+Software, 5(54), 2717, <a class="reference external" href="https://doi.org/10.21105/joss.02717">https://doi.org/10.21105/joss.02717</a></p>
+</dd>
+<dt>Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and</dt><dd><p>Taylor, K. E. (2017). A data model of the Climate and Forecast
+metadata conventions (CF-1.6) with a software implementation
+(cf-python v2.1), Geosci. Model Dev., 10, 4619-4646,
+<a class="reference external" href="https://doi.org/10.5194/gmd-10-4619-2017">https://doi.org/10.5194/gmd-10-4619-2017</a></p>
+</dd>
+<dt>Rew, R., and Davis, G. (1990). NetCDF: An Interface for Scientific</dt><dd><p>Data Access. IEEE Computer Graphics and Applications, 10(4),
+76–82. <a class="reference external" href="https://doi.org/10.1109/38.56302">https://doi.org/10.1109/38.56302</a></p>
+</dd>
+<dt>Rew, R., Hartnett, E., and Caron, J. (2006). NetCDF-4: Software</dt><dd><p>Implementing an Enhanced Data Model for the Geosciences. In 22nd
+International Conference on Interactive Information Processing
+Systems for Meteorology, Oceanography, and Hydrology. AMS. Retrieved
+from
+<a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf/papers/2006-ams.pdf">https://www.unidata.ucar.edu/software/netcdf/papers/2006-ams.pdf</a></p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2022, NCAS | Page built on 2022-03-10.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
