@@ -10,6 +10,7 @@ Version 1.9.0.3
   coordinate construct does not have data
   (https://github.com/NCAS-CMS/cfdm/issues/174)
 * New dependency: ``packaging>=20.0``
+* Changed dependency: ``cftime>=1.6.0``
 
 ----
   
