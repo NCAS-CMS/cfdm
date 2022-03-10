@@ -1,7 +1,7 @@
 Version 1.9.0.3
 ---------------
 
-**2022-03-??**
+**2022-03-10**
 
 * Fixed bug that caused a failure from `cfdm.write` when writing
   identical (auxiliary) coordinates to different data variables in
