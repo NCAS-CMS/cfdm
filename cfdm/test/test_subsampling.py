@@ -177,7 +177,7 @@ class GatheredTest(unittest.TestCase):
             )
         )
 
-    @unittest.skipIf(True, "awaiting test file")
+    @unittest.skipIf(True, "TODO: awaiting test file")
     def test_quadratic_latitude_longitude(self):
         """Test quadratic latitude longitude interpolation."""
         f = cfdm.read(self.quadratic)
