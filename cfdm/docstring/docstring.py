@@ -32,27 +32,27 @@ _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # netCDF variable
     "{{netCDF variable}}": """The netCDF variable name may be accessed with the
-    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
+    `nc_set_variable`, `nc_get_variable`, `nc_del_variable`, and
     `nc_has_variable` methods.
 
     The netCDF variable group structure may be accessed with the
     `nc_set_variable`, `nc_get_variable`, `nc_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_variable_groups`
+    `nc_clear_variable_groups`, and `nc_set_variable_groups`
     methods.""",
     # netCDF global attributes
     "{{netCDF global attributes}}": """The selection of properties to be written as netCDF global
     attributes may be accessed with the `nc_global_attributes`,
-    `nc_clear_global_attributes` and `nc_set_global_attribute`
+    `nc_clear_global_attributes`, and `nc_set_global_attribute`
     methods.""",
     # netCDF group attributes
     "{{netCDF group attributes}}": """The netCDF group attributes may be accessed with the
     `nc_group_attributes`, `nc_clear_group_attributes`,
-    `nc_set_group_attribute` and `nc_set_group_attributes` methods.""",
+    `nc_set_group_attribute`, and `nc_set_group_attributes` methods.""",
     # netCDF geometry group
     "{{netCDF geometry group}}": """The netCDF geometry variable name and group structure may be
     accessed with the `nc_set_geometry_variable`,
     `nc_get_geometry_variable`, `nc_geometry_variable_groups`,
-    `nc_clear_variable_groups` and `nc_set_geometry_variable_groups`
+    `nc_clear_variable_groups`, and `nc_set_geometry_variable_groups`
     methods.""",
     # ----------------------------------------------------------------
     # Method description substitutions (2 levels of indentation)
@@ -220,6 +220,43 @@ _docstring_substitution_definitions = {
                 ``3``/``'DETAIL'``) for increasing verbosity, the more
                 description that is printed to convey information
                 about the operation.""",
+    "{{d: `int`}}": """d: `int`
+                The position in the tie points array of the subsampled
+                dimension being interpolated.""",
+    # d1
+    "{{d1: `int`}}": """d1: `int`
+                The position of subsampled dimension 1 (in the sense
+                of CF Appendix J Figure J.2) in the full tie points
+                array.""",
+    # d2
+    "{{d2: `int`}}": """d2: `int`
+                The position of subsampled dimension 2 (in the sense
+                of CF Appendix J Figure J.2) in the full tie points
+                array.""",
+    # s
+    "{{s: array_like, optional}}": """s: array_like, optional
+                If set to a single number in the range [0, 1] then
+                this value is returned for the interpolation coeficient
+                ``s``. By default ``s`` is calculated for each of the
+                interpolation subararea's uncompressed locations.""",
+    # s_i
+    "{{s_i: array_like}}": """s_i: array_like
+                A value for the interpolation coefficient ``s`` for
+                the subsampled dimension that corresponds to a
+                particular uncompressed location between the two tie
+                points.
+
+                *Parameter example:*
+                  ``0.5``""",
+    # location_use_3d_cartesian
+    "{{location_use_3d_cartesian: `numpy.ndarray` or `None`}}": """location_use_3d_cartesian: `numpy.ndarray` or `None`
+                The boolean interpolation parameter
+                ``location_use_3d_cartesian``, with the same number of
+                dimensions in the same order as the full tie points
+                array. True values indicate that interpolation is
+                carried out in three-dimensional cartesian
+                coordinates, as opposed to latitude-longitude
+                coordinates. If `None` then an exception is raised.""",
     # construct selection identity
     "{{construct selection identity}}": """A construct has a number of string-valued identities
                 defined by its `!identities` method, and is selected
@@ -270,6 +307,37 @@ _docstring_substitution_definitions = {
     "{{Returns constructs}}": """
                 The selected constructs in a new `Constructs` object,
                 unless modified by any *filter_kwargs* parameters.""",
+    # chunks subarrays
+    "{{subarrays chunks: ``-1`` or sequence, optional}}": """chunks: ``-1`` or sequence, optional
+                Define the subarray shapes.
+
+                Must be either ``-1``, the default, meaning that all
+                non-compressed dimensions in each subarray have the
+                maximum possible size; or a sequence of `tuple`. In
+                the latter case *chunks* must be allowed as an input
+                to `subarray_shapes`.
+
+                A valid *chunks* specification may always be found by
+                normalising an output of `subarray_shapes` with
+                `dask.array.core.normalize_chunks` as follows:
+                ``chunks =
+                dask.array.core.normalize_chunks(a.subarray_shapes(...),
+                shape=a.shape, dtype=a.dtype)``.""",
+    # chunks subarray_shapes
+    "{{subarray_shapes chunks: `int`, sequence, `dict`, or `str`, optional}}": """chunks: `int`, sequence, `dict` or `str`, optional
+                Define the subarray shapes.
+
+                Any value accepted by the *chunks* parameter of the
+                `dask.array.from_array` function is allowed.
+
+                The subarray sizes implied by *chunks* for a dimension
+                that has been compressed are ignored and replaced with
+                values that are implied by the decompression algorithm, so
+                their specification is arbitrary.
+
+                By default, *chunks* is ``-1``, meaning that all
+                non-compressed dimensions in each subarray have the
+                maximum possible size.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------
@@ -281,4 +349,8 @@ _docstring_substitution_definitions = {
     "{{displayed identity}}": """Note that in the output of a `dump` method or `print`
                 call, a construct is always described by an identity
                 that will select it.""",
+    # auto:
+    "{{shapes auto}}": """If ``'auto'`` then the shapes along non-compressed
+                dimensions are not created, those dimensions' elements
+                being replaced with ``'auto'`` instead.""",
 }

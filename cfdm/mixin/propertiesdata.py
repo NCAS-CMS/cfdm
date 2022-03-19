@@ -106,9 +106,6 @@ class PropertiesData(Properties):
 
         return f"{self.identity('')}{dims} {units}"
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
     def _parse_axes(self, axes):
         """Conform axes.
 
@@ -874,6 +871,32 @@ class PropertiesData(Properties):
         return v
 
     @_inplace_enabled(default=False)
+    def to_memory(self, inplace=False):
+        """Bring data on disk into memory.
+
+        There is no change to data that is already in memory.
+
+        :Parameters:
+
+            inplace: `bool`, optional
+                If True then do the operation in-place and return `None`.
+
+        :Returns:
+
+            `{{class}}` or `None`
+                A copy with the data in memory, or `None` if the
+                operation was in-place.
+
+        """
+        v = _inplace_enabled_define_and_cleanup(self)
+
+        data = v.get_data(None)
+        if data is not None:
+            data.to_memory(inplace=True)
+
+        return v
+
+    @_inplace_enabled(default=False)
     def transpose(self, axes=None, inplace=False):
         """Permute the axes of the data array.
 
@@ -918,10 +941,6 @@ class PropertiesData(Properties):
     def uncompress(self, inplace=False):
         """Uncompress the construct.
 
-        Compression saves space by identifying and removing unwanted
-        missing data. Such compression techniques store the data more
-        efficiently and result in no precision loss.
-
         Whether or not the construct is compressed does not alter its
         functionality nor external appearance.
 
@@ -937,6 +956,10 @@ class PropertiesData(Properties):
             ..
 
             * Compression by gathering.
+
+            ..
+
+            * Compression by coordinate subsampling
 
         .. versionadded:: (cfdm) 1.7.11
 

@@ -57,7 +57,7 @@ class Domain(
     `nc_clear_component_dimension_groups`,
     `nc_del_component_sample_dimension`,
     `nc_set_component_sample_dimension`,
-    `nc_set_component_sample_dimension_groups`,
+    `nc_set_component_sample_dimension_groups`, and
     `nc_clear_component_sample_dimension_groups` methods.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -351,7 +351,7 @@ class Domain(
                 A new domain construct with masked values, or `None`
                 if the operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cfdm.example_field(0).domain
         >>> x = d.construct('longitude')
@@ -391,7 +391,7 @@ class Domain(
                 The keys of the domain axis constructs that are
                 climatological time axes.
 
-        **Examples:**
+        **Examples**
 
         >>> d = cfdm.example_field(0)
         >>> d.climatological_time_axes()
@@ -455,7 +455,7 @@ class Domain(
 
             {{returns creation_commands}}
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> d = f.domain
@@ -814,7 +814,7 @@ class Domain(
                 the data are in memory then an empty `set` is
                 returned.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.example_field(0).domain
         >>> {{package}}.write(d, 'temp_file.nc')
@@ -854,7 +854,7 @@ class Domain(
 
                 The identity.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.Domain()
         >>> d.set_properties({'foo': 'bar',
@@ -907,7 +907,7 @@ class Domain(
             `list`
                 The identities.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.Domain()
         >>> d.set_properties({'foo': 'bar',
@@ -938,3 +938,44 @@ class Domain(
             out.append(f"ncvar%{n}")
 
         return out
+
+    @_inplace_enabled(default=False)
+    def uncompress(self, inplace=False):
+        """Uncompress the domain construct.
+
+        Compression saves space by identifying and removing unwanted
+        missing data. Such compression techniques store the data more
+        efficiently and result in no precision loss.  Whether or not
+        the metadata constructs are compressed does not alter its
+        functionality nor external appearance.
+
+        Any compressed metadata constructs are uncompressed, and all
+        other metadata constructs are unchanged.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `compress` TODO
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Domain` or `None`
+                The uncompressed domain construct, or `None` if the
+                operation was in-place.
+
+        **Examples**
+
+        >>> e = d.uncompress()
+        >>> e.equals(d)
+        True
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        for c in d.constructs.filter_by_data(todict=True).values():
+            c.uncompress(inplace=True)
+
+        return d

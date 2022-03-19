@@ -907,8 +907,8 @@ class Field(
             return self._RaggedContiguousArray(
                 compressed_data,
                 shape=data.shape,
-                size=data.size,
-                ndim=data.ndim,
+                #                size=data.size,
+                #                ndim=data.ndim,
                 count_variable=count_variable,
             )
 
@@ -916,8 +916,8 @@ class Field(
             return self._RaggedIndexedArray(
                 compressed_data,
                 shape=data.shape,
-                size=data.size,
-                ndim=data.ndim,
+                #                size=data.size,
+                #                ndim=data.ndim,
                 index_variable=index_variable,
             )
 
@@ -927,8 +927,8 @@ class Field(
             return self._RaggedIndexedContiguousArray(
                 compressed_data,
                 shape=data.shape,
-                size=data.size,
-                ndim=data.ndim,
+                #                size=data.size,
+                #                ndim=data.ndim,
                 count_variable=count_variable,
                 index_variable=index_variable,
             )
@@ -2196,13 +2196,12 @@ class Field(
 
         Compression saves space by identifying and removing unwanted
         missing data. Such compression techniques store the data more
-        efficiently and result in no precision loss.
+        efficiently and result in no precision loss. Whether or not
+        the construct is compressed does not alter its functionality
+        nor external appearance.
 
         The field construct data is uncompressed, along with any
         applicable metadata constructs.
-
-        Whether or not the construct is compressed does not alter its
-        functionality nor external appearance.
 
         A field construct that is already uncompressed will be returned
         uncompressed.
@@ -2255,7 +2254,13 @@ class Field(
         f = _inplace_enabled_define_and_cleanup(self)
         super(Field, f).uncompress(inplace=True)
 
-        for c in f.constructs.filter_by_data(todict=True).values():
+        # Uncompress the domain
+        f.domain.uncompress(inplace=True)
+
+        # Uncompress any field ancillaries
+        for c in f.constructs.filter_by_type(
+            "field_ancillary", todict=True
+        ).values():
             c.uncompress(inplace=True)
 
         return f

@@ -2,15 +2,12 @@
 
 __date__ = "2022-03-10"
 __cf_version__ = "1.9"
-__version__ = "1.9.0.3"
+__version__ = "1.9.1.0b0"
 
 from packaging.version import Version
 import platform
 
-_requires = (
-    "numpy",
-    "netCDF4",
-)
+_requires = ("numpy", "netCDF4")
 
 _error0 = f"cfdm.core requires the modules {', '.join(_requires)}. "
 

@@ -118,22 +118,38 @@ from .decorators import (
 from .constructs import Constructs
 
 from .data import (
-    Data,
     Array,
     CompressedArray,
-    NumpyArray,
-    NetCDFArray,
+    Data,
     GatheredArray,
+    NetCDFArray,
+    NumpyArray,
+    RaggedArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
+    SubsampledArray,
+)
+
+from .data import (
+    BiLinearSubarray,
+    BiQuadraticLatitudeLongitudeSubarray,
+    GatheredSubarray,
+    LinearSubarray,
+    QuadraticLatitudeLongitudeSubarray,
+    QuadraticSubarray,
+    RaggedSubarray,
+    Subarray,
+    SubsampledSubarray,
 )
 
 from .count import Count
 from .index import Index
+from .interpolationparameter import InterpolationParameter
 from .list import List
 from .nodecountproperties import NodeCountProperties
 from .partnodecountproperties import PartNodeCountProperties
+from .tiepointindex import TiePointIndex
 
 from .bounds import Bounds
 from .coordinateconversion import CoordinateConversion

@@ -7,7 +7,7 @@ import subprocess
 import tempfile
 import unittest
 
-import numpy
+import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -74,10 +74,7 @@ class read_writeTest(unittest.TestCase):
             "NETCDF3_64BIT_OFFSET",
             "NETCDF3_64BIT_DATA",
         ]
-        self.netcdf4_fmts = [
-            "NETCDF4",
-            "NETCDF4_CLASSIC",
-        ]
+        self.netcdf4_fmts = ["NETCDF4", "NETCDF4_CLASSIC"]
         self.netcdf_fmts = self.netcdf3_fmts + self.netcdf4_fmts
 
     def test_write_filename(self):
@@ -477,45 +474,45 @@ class read_writeTest(unittest.TestCase):
         cfdm.write(f, tmpfile)
 
         g = cfdm.read(tmpfile)[0]
-        self.assertEqual(numpy.ma.count(g.data.array), N - 2)
+        self.assertEqual(np.ma.count(g.data.array), N - 2)
 
         g = cfdm.read(tmpfile, mask=False)[0]
-        self.assertEqual(numpy.ma.count(g.data.array), N)
+        self.assertEqual(np.ma.count(g.data.array), N)
 
         g.apply_masking(inplace=True)
-        self.assertEqual(numpy.ma.count(g.data.array), N - 2)
+        self.assertEqual(np.ma.count(g.data.array), N - 2)
 
         f.set_property("_FillValue", 999)
         f.set_property("missing_value", -111)
         cfdm.write(f, tmpfile)
 
         g = cfdm.read(tmpfile)[0]
-        self.assertEqual(numpy.ma.count(g.data.array), N - 2)
+        self.assertEqual(np.ma.count(g.data.array), N - 2)
 
         g = cfdm.read(tmpfile, mask=False)[0]
-        self.assertEqual(numpy.ma.count(g.data.array), N)
+        self.assertEqual(np.ma.count(g.data.array), N)
 
         g.apply_masking(inplace=True)
-        self.assertEqual(numpy.ma.count(g.data.array), N - 2)
+        self.assertEqual(np.ma.count(g.data.array), N - 2)
 
     def test_write_datatype(self):
         """Test the `datatype` keyword argument to `write`."""
         f = cfdm.read(self.filename)[0]
-        self.assertEqual(f.data.dtype, numpy.dtype(float))
+        self.assertEqual(f.data.dtype, np.dtype(float))
 
-        f.set_property("_FillValue", numpy.float64(-999.0))
-        f.set_property("missing_value", numpy.float64(-999.0))
+        f.set_property("_FillValue", np.float64(-999.0))
+        f.set_property("missing_value", np.float64(-999.0))
 
         cfdm.write(
             f,
             tmpfile,
             fmt="NETCDF4",
-            datatype={numpy.dtype(float): numpy.dtype("float32")},
+            datatype={np.dtype(float): np.dtype("float32")},
         )
         g = cfdm.read(tmpfile)[0]
         self.assertEqual(
             g.data.dtype,
-            numpy.dtype("float32"),
+            np.dtype("float32"),
             "datatype read in is " + str(g.data.dtype),
         )
 
@@ -671,12 +668,10 @@ class read_writeTest(unittest.TestCase):
         for i in range(0, n):
             j = i + n
             self.assertTrue(
-                f[i].data.equals(f[j].data, verbose=3),
-                f"{f[i]!r} {f[j]!r}",
+                f[i].data.equals(f[j].data, verbose=3), f"{f[i]!r} {f[j]!r}"
             )
             self.assertTrue(
-                f[j].data.equals(f[i].data, verbose=3),
-                f"{f[j]!r} {f[i]!r}",
+                f[j].data.equals(f[i].data, verbose=3), f"{f[j]!r} {f[i]!r}"
             )
 
         # Note: Don't loop round all netCDF formats for better
@@ -713,13 +708,7 @@ class read_writeTest(unittest.TestCase):
                 f"{g.get_property('Conventions')!r}, {Conventions!r}",
             )
 
-        for Conventions in (
-            version,
-            "",
-            " ",
-            ",",
-            ", ",
-        ):
+        for Conventions in (version, "", " ", ",", ", "):
             Conventions = version
             cfdm.write(f, tmpfile0, Conventions=Conventions)
             g = cfdm.read(tmpfile0)[0]
@@ -729,10 +718,7 @@ class read_writeTest(unittest.TestCase):
                 f"{g.get_property('Conventions')!r}, {Conventions!r}",
             )
 
-        for Conventions in (
-            [version],
-            [version, other],
-        ):
+        for Conventions in ([version], [version, other]):
             cfdm.write(f, tmpfile0, Conventions=Conventions)
             g = cfdm.read(tmpfile0)[0]
             self.assertEqual(
@@ -855,6 +841,40 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.example_field(0)
         filename = os.path.join("$PWD", os.path.basename(tmpfile))
         cfdm.write(f, filename)
+
+    def test_read_subsampled_coordinates(self):
+        """Test the reading subsampled coordinates."""
+        for i in cfdm.read("subsampled_2.nc"):
+            identity = i.identity()
+            if identity == "long_name=radiance":
+                # Field with subsampled coordinates
+                r = i
+                continue
+
+            if identity == "latitude":
+                # Original latitudes
+                olat = i
+                continue
+
+            if identity == "longitude":
+                # Original longitudes
+                olon = i
+                continue
+
+        # Check that reconstituted coordinates equal the original
+        # coordinates
+        rlat = r.construct("latitude").data.array
+        rlon = r.construct("longitude").data.array
+
+        self.assertTrue(rlat.shape, olat.shape)
+        self.assertTrue(rlon.shape, olon.shape)
+
+        self.assertTrue(
+            np.allclose(rlat, olat.data.array, atol=5.4e-06, rtol=0)
+        )
+        self.assertTrue(
+            np.allclose(rlon, olon.data.array, atol=2.2e-05, rtol=0)
+        )
 
 
 if __name__ == "__main__":

@@ -13,9 +13,6 @@ class FieldDomain:
 
     """
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
     def _apply_masking_constructs(self):
         """Apply masking to metadata constructs in-place.
 
@@ -273,10 +270,7 @@ class FieldDomain:
         if construct:
             kwargs["todict"] = True
 
-        c = self.constructs.filter(
-            _identity_config=_identity_config,
-            **kwargs,
-        )
+        c = self.constructs.filter(_identity_config=_identity_config, **kwargs)
 
         if not construct:
             # Return Constructs or dict
@@ -487,10 +481,7 @@ class FieldDomain:
 
         """
         return self._filter_interface(
-            (
-                "dimension_coordinate",
-                "auxiliary_coordinate",
-            ),
+            ("dimension_coordinate", "auxiliary_coordinate"),
             "coordinates",
             identities,
             **filter_kwargs,
@@ -1133,8 +1124,7 @@ class FieldDomain:
                 return default
 
             return self._default(
-                default,
-                "There are no 1-d coordinate constructs",
+                default, "There are no 1-d coordinate constructs"
             )
 
         data_axes = self.constructs.data_axes()
@@ -1394,3 +1384,15 @@ class FieldDomain:
                 return True
 
         return False
+
+    # def set_construct(self, construct, key=None, axes=None, copy=True):
+    #    """TODO
+    #
+    #    .. versionadded:: (cfdm) 1.7.0
+    #
+    #    .. seealso:: `constructs`, `del_construct`, `get_construct`,
+    #                 `set_data_axes`
+    #
+    #    """
+    #    key = super().set_construct(construct, key=key, axes=axes, copy=copy)
+    #    construct = self.constructs[key]
