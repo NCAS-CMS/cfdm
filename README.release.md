@@ -1,3 +1,5 @@
+* **Temporary requirement** (as of 2022-03-19): Make sure that the correct branch is being released - either `1.9.0.x` or `master`.
+
 * Change the version and date in `cfdm/core/__init__.py`
   (`__version__` and `__date__` variables); and in the `codemeta.json`
   file.
