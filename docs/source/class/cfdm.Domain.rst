@@ -117,6 +117,7 @@ Miscellaneous
    ~cfdm.Domain.has_geometry
    ~cfdm.Domain.apply_masking   
    ~cfdm.Domain.get_filenames
+   ~cfdm.Domain.uncompress
 
 NetCDF
 ------

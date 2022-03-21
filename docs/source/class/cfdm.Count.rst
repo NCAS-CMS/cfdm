@@ -90,6 +90,7 @@ Miscellaneous
    ~cfdm.Count.get_filenames
    ~cfdm.Count.has_bounds
    ~cfdm.Count.uncompress
+   ~cfdm.Count.to_memory
 
 NetCDF
 ------

@@ -20,6 +20,7 @@ Inspection
    :toctree: ../method/
    :template: method.rst
       
+   ~cfdm.GatheredArray.compressed_dimensions
    ~cfdm.GatheredArray.get_compressed_axes
    ~cfdm.GatheredArray.get_compressed_dimension
    ~cfdm.GatheredArray.get_compression_type
@@ -53,6 +54,10 @@ Miscellaneous
    ~cfdm.GatheredArray.get_subspace
    ~cfdm.GatheredArray.source
    ~cfdm.GatheredArray.to_memory
+   ~cfdm.GatheredArray.subarray_shapes
+   ~cfdm.GatheredArray.subarrays
+   ~cfdm.GatheredArray.get_Subarray
+   ~cfdm.GatheredArray.conformed_data
 
 Special
 -------
