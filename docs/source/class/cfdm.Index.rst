@@ -90,6 +90,7 @@ Miscellaneous
    ~cfdm.Index.get_filenames
    ~cfdm.Index.has_bounds
    ~cfdm.Index.uncompress
+   ~cfdm.Index.to_memory
 
 NetCDF
 ------

@@ -727,7 +727,7 @@ count_variable.set_property('long_name', 'number of obs for this timeseries')
 # uncompressed shape
 array = cfdm.RaggedContiguousArray(
 compressed_array=ragged_array,
-shape=(2, 4), size=8, ndim=2,
+shape=(2, 4),
 count_variable=count_variable)
 
 # Create the field construct with the domain axes and the ragged
@@ -776,8 +776,8 @@ list_variable = cfdm.List(data=cfdm.Data(list_array))
 # shape
 array = cfdm.GatheredArray(
 compressed_array=gathered_array,
-compressed_dimension=1,
-shape=(2, 3, 2), size=12, ndim=3,
+compressed_dimensions={1: (1, 2)},
+shape=(2, 3, 2),
 list_variable=list_variable)
 
 # Create the field construct with the domain axes and the gathered
@@ -802,3 +802,19 @@ list_variable = P.data.get_list()
 list_variable
 print(list_variable.data.array)
 cfdm.write(P, 'P_gathered.nc')
+f = cfdm.read('subsampled.nc')[0]
+print(f)
+lon = f.construct('longitude')
+lon
+lon.data.source()
+print(lon.data.array)
+lon.data.source().source()
+print(lon.data.source().source().array)
+print(lon.data.array)
+g = f[0, 6, :]
+print(g)
+print(g.construct('longitude').data.array)
+lon = f.construct('longitude')
+d = lon.data.source()
+d.get_tie_point_indices()
+d.get_computational_precision()

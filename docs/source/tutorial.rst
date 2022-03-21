@@ -4432,7 +4432,7 @@ array that is stored in one of three special array objects:
    # uncompressed shape
    array = cfdm.RaggedContiguousArray(
                     compressed_array=ragged_array,
-                    shape=(2, 4), size=8, ndim=2,
+                    shape=(2, 4),
                     count_variable=count_variable)
 
    # Create the field construct with the domain axes and the ragged
@@ -4593,8 +4593,8 @@ simple field construct with an underlying gathered array:
    # shape
    array = cfdm.GatheredArray(
                     compressed_array=gathered_array,
-		    compressed_dimension=1,
-                    shape=(2, 3, 2), size=12, ndim=3,
+		    compressed_dimensions={1: (1, 2)},
+                    shape=(2, 3, 2),
                     list_variable=list_variable)
 
    # Create the field construct with the domain axes and the gathered
@@ -4615,7 +4615,7 @@ simple field construct with an underlying gathered array:
 Note that, because compression by gathering acts on a subset of the
 array dimensions, it is necessary to state the position of the
 compressed dimension in the compressed array (with the
-``compressed_dimension`` parameter of the `GatheredArray`
+``compressed_dimensions`` parameter of the `GatheredArray`
 initialisation).
 
 The new field construct can now be inspected and written a netCDF file:
@@ -4666,7 +4666,7 @@ The content of the new file is:
    		precipitation_flux:standard_name = "precipitation_flux" ;
    
    // global attributes:
-   		:Conventions = "CF-1.7" ;
+   		:Conventions = "CF-1.9" ;
    data:
    
     list = 1, 4, 5 ;
@@ -4683,9 +4683,150 @@ Coordinate subsampling
 ^^^^^^^^^^^^^^^^^^^^^^
 
 `Lossy compression by coordinate subsampling`_ was introduced into the
-CF conventions at CF-1.9, but is not yet available in cfdm. It will be
-ready in a future 1.9.x.0 release.
+CF conventions at CF-1.9 for applications for which the coordinates
+can require considerably more storage than the data itself. Space may
+be saved in the netCDF file by storing a subsample of the coordinates
+that describe the data, and the uncompressed coordinate and auxiliary
+coordinate variables are reconstituted by interpolation, from the
+subsampled coordinate values to the domain of the data
 
+This is illustrated with the file ``subsampled.nc`` (found in the
+:ref:`sample datasets <Sample-datasets>`):
+
+
+.. code-block:: console
+   :caption: *Inspect the compressed dataset with the ncdump command
+             line tool.*
+      
+   $ ncdump -h subsampled.nc 
+   netcdf subsampled {
+   dimensions:
+   	time = 2 ;
+   	lat = 18 ;
+   	lon = 12 ;
+   	tp_lat = 4 ;
+   	tp_lon = 5 ;
+   variables:
+   	float time(time) ;
+   		time:standard_name = "time" ;
+   		time:units = "days since 2000-01-01" ;
+   	float lat(tp_lat, tp_lon) ;
+   		lat:standard_name = "latitude" ;
+   		lat:units = "degrees_north" ;
+   		lat:bounds_tie_points = "lat_bounds" ;
+   	float lon(tp_lat, tp_lon) ;
+   		lon:standard_name = "longitude" ;
+   		lon:units = "degrees_east" ;
+   		lon:bounds_tie_points = "lon_bounds" ;
+   	float lat_bounds(tp_lat, tp_lon) ;
+   	float lon_bounds(tp_lat, tp_lon) ;
+   	int lat_indices(tp_lat) ;
+   		lat_indices:long_name = "Tie point indices for latitude dimension" ;
+   	int lon_indices(tp_lon) ;
+   		lon_indices:long_name = "Tie point indices for longitude dimension" ;
+   	int bilinear ;
+   		bilinear:interpolation_name = "bi_linear" ;
+   		bilinear:computational_precision = "64" ;
+   		bilinear:tie_point_mapping =
+		    "lat: lat_indices tp_lat lon: lon_indices tp_lon" ;
+   	float q(time, lat, lon) ;
+   		q:standard_name = "specific_humidity" ;
+   		q:units = "1" ;
+   		q:coordinate_interpolation = "lat: lon: bilinear" ;
+   
+   // global attributes:
+   		:Conventions = "CF-1.9" ;
+   }
+
+
+Reading and inspecting this file shows the latitude and longitude
+coordinates in uncompressed form, whilst their underlying arrays are
+still in subsampled representation described in the file:
+   
+.. code-block:: python
+   :caption: *Read a field construct from a dataset that has been
+             compressed by corodinate subsampling, and inspect
+             coordinates.*
+
+   >>> f = cfdm.read('subsampled.nc')[0]
+   >>> print(f)
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(time(2), ncdim%lat(18), ncdim%lon(12)) 1
+   Dimension coords: time(2) = [2000-01-01 00:00:00, 2000-02-01 00:00:00]
+   Auxiliary coords: latitude(ncdim%lat(18), ncdim%lon(12)) = [[-85.0, ..., 85.0]] degrees_north
+                : longitude(ncdim%lat(18), ncdim%lon(12)) = [[15.0, ..., 345.0]] degrees_east
+   >>> lon = f.construct('longitude')
+   >>> lon
+   <AuxiliaryCoordinate: longitude(18, 12) degrees_east>
+   >>> lon.data.source()
+   <SubsampledArray(18, 12): >
+   >>> print(lon.data.array)
+   [[15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]]
+   >>> lon.data.source().source()
+   <Data(4, 5): [[15.0, ..., 345.0]]>
+   >>> print(lon.data.source().source().array)
+   [[ 15. 135. 225. 255. 345.]
+    [ 15. 135. 225. 255. 345.]
+    [ 15. 135. 225. 255. 345.]
+    [ 15. 135. 225. 255. 345.]]
+
+   >>> print(lon.data.array)
+As with all other forms of compression, the field may be treated as if
+were not compressed:
+
+.. code-block:: python
+   :caption: *Get subspaces based on indices of the uncompressed
+             data.*
+
+   >>> g = f[0, 6, :]
+   >>> print(g)
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(time(1), ncdim%lat(1), ncdim%lon(12)) 1
+   Dimension coords: time(1) = [2000-01-01 00:00:00]
+   Auxiliary coords: latitude(ncdim%lat(1), ncdim%lon(12)) = [[-25.0, ..., -25.0]] degrees_north
+                   : longitude(ncdim%lat(1), ncdim%lon(12)) = [[15.0, ..., 345.0]] degrees_east
+   >>> print(g.construct('longitude').data.array)
+   [[15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]]
+
+
+The metadata that define the subsampling are contained within the
+coordinate's `Data` object:
+
+.. code-block:: python
+   :caption: *Get subspaces based on indices of the uncompressed
+             data.*
+
+
+   >>> lon = f.construct('longitude')
+   >>> d = lon.data.source()
+   >>> d.get_tie_point_indices()
+   {0: <TiePointIndex: long_name=Tie point indices for latitude dimension(4) >,
+    1: <TiePointIndex: long_name=Tie point indices for longitude dimension(5) >}
+   >>> d.get_computational_precision()
+   '64'
+
+It is not yet, as of version 1.9.1.0, possible to write to disk a
+field construct with compression by coordinate subsampling.
+   
 ----
 
 .. _Controlling-output-messages:

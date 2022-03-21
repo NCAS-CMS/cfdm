@@ -176,6 +176,7 @@ Miscellaneous
    ~cfdm.DimensionCoordinate.equals
    ~cfdm.DimensionCoordinate.uncompress
    ~cfdm.DimensionCoordinate.get_filenames
+   ~cfdm.DimensionCoordinate.to_memory
 
 NetCDF
 ------

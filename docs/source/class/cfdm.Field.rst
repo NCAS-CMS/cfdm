@@ -194,6 +194,7 @@ Miscellaneous
    ~cfdm.Field.has_geometry
    ~cfdm.Field.uncompress
    ~cfdm.Field.get_filenames
+   ~cfdm.Field.to_memory
 
 .. _Field-NetCDF:
    

@@ -14,9 +14,11 @@ Version 1.9.1.0
 * New method: `cfdm.Field.field_ancillary`
 * New construct retrieval API methods
   (https://github.com/NCAS-CMS/cfdm/issues/179)
+* Implement (bar writing to netCDF files) lossy compression by
+  coordinate subsampling (https://github.com/NCAS-CMS/cfdm/issues/167)
 
 ----
-  
+
 Version 1.9.0.3
 ---------------
 
