@@ -353,12 +353,12 @@ class Domain(
 
         **Examples**
 
-        >>> d = cfdm.example_field(0).domain
+        >>> d = {{package}}.example_field(0).domain
         >>> x = d.construct('longitude')
-        >>> x.data[[0, -1]] = cfdm.masked
+        >>> x.data[[0, -1]] = {{package}}.masked
         >>> print(x.data.array)
         [-- 67.5 112.5 157.5 202.5 247.5 292.5 --]
-        >>> cfdm.write(d, 'masked.nc')
+        >>> {{package}}.write(d, 'masked.nc')
         >>> no_mask = {{package}}.read('masked.nc', domain=True, mask=False)[0]
         >>> no_mask_x = no_mask.construct('longitude')
         >>> print(no_mask_x.data.array)
@@ -393,7 +393,7 @@ class Domain(
 
         **Examples**
 
-        >>> d = cfdm.example_field(0).domain
+        >>> d = {{package}}.example_field(0).domain
         >>> d.climatological_time_axes()
         set()
 
