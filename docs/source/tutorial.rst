@@ -4711,7 +4711,7 @@ This is illustrated with the file ``subsampled.nc`` (found in the
 
 
 Reading and inspecting this file shows the latitude and longitude
-corodinates in uncompressed form, whilst their underlying arrays are
+coordinates in uncompressed form, whilst their underlying arrays are
 still in subsampled representation described in the file:
    
 .. code-block:: python
