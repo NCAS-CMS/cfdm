@@ -101,6 +101,7 @@ Miscellaneous
    ~cfdm.FieldAncillary.has_bounds
    ~cfdm.FieldAncillary.uncompress
    ~cfdm.FieldAncillary.get_filenames
+   ~cfdm.FieldAncillary.to_memory
 
 NetCDF
 ------

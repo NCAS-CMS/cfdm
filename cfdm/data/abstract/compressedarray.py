@@ -388,7 +388,7 @@ class CompressedArray(Array):
         return self._get_component("compressed_dimensions").copy()
 
     def conformed_data(self):
-        """The data as required by the decompression algorthm.
+        """The data as required by the decompression algorithm.
 
         .. versionadded:: (cfdm) 1.9.TODO.0
 
@@ -473,7 +473,7 @@ class CompressedArray(Array):
 
         :Returns:
 
-            sequence of iterables
+            sequence of iterable
                 Each iterable iterates over a particular descriptor
                 from each subarray.
 

@@ -282,6 +282,15 @@ Miscellaneous
    ~cfdm.Data.get_filenames
    ~cfdm.Data.source
 
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+    ~cfdm.Data.data
+
 Performance
 -----------
 
