@@ -314,10 +314,6 @@ _docstring_substitution_definitions = {
                 and the construct itself. By default the construct
                 itself is returned. If *key* is True then *item* is
                 ignored.""",
-    # Returns constructs
-    "{{Returns constructs}}": """
-                The selected constructs in a new `Constructs` object,
-                unless modified by any *filter_kwargs* parameters.""",
     # chunks subarrays
     "{{subarrays chunks: ``-1`` or sequence, optional}}": """chunks: ``-1`` or sequence, optional
                 Define the subarray shapes.
@@ -352,6 +348,13 @@ _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------
+    # Returns constructs
+    "{{Returns constructs}}": """
+                The selected constructs in a new `Constructs` object,
+                unless modified by any *filter_kwargs* parameters.""",
+    # Returns construct
+    "{{Returns construct}}": """The selected construct, or its identifier if *key* is
+                True, or a tuple of both if *item* is True.""",
     # string value match
     "{{value match}}": """A value may be any object that can match via the
                 ``==`` operator, or a `re.Pattern` object that matches

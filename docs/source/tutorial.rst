@@ -1564,38 +1564,36 @@ of the chosen type.
    >>> t.auxiliary_coordinate('latitude', item=True)
    ('auxiliarycoordinate0', <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>)
 
-The `~Field.construct` method of the field construct and the
-`~Constructs.value` method of the `Constructs` instance will raise an
-exception of there is not a unique metadata construct to return, but
-this may be replaced with returning a default value or raising a
-customised exception:
+All of these techniques will raise an exception of there is not a
+unique metadata construct to return, but this may be replaced with
+returning a default value or raising a customised exception:
    
 .. code-block:: python
    :caption: *By default an exception is raised if there is not a
              unique construct that meets the criteria. Alternatively,
              the value of the "default" parameter is returned.*
 
-   >>> t.construct('measure:volume')                # Raises Exception
+   >>> t.cell_measure('measure:volume')                # Raises Exception
    Traceback (most recent call last):
       ...
    ValueError: Can't return zero constructs
-   >>> t.construct('measure:volume', default=False)
+   >>> t.cell_measure('measure:volume', default=False)
    False
-   >>> t.construct('measure:volume', default=Exception("my error"))  # Raises Exception
+   >>> t.cell_measure('measure:volume', default=Exception("my error"))  # Raises Exception
    Traceback (most recent call last):
       ...
    Exception: my error
-   >>> c = t.constructs.filter_by_measure("volume")
+   >>> c = t.cell_measures.filter_by_measure("volume")
    >>> len(c)
    0
    >>> d = t.constructs("units=degrees")
    >>> len(d)
    2
-   >>> t.construct("units=degrees")  # Raises Exception
+   >>> t.coordinate("units=degrees")  # Raises Exception
    Traceback (most recent call last):
       ...
    ValueError: Field.construct() can't return 2 constructs
-   >>> print(t.construct("units=degrees", default=None))
+   >>> print(t.coordinate("units=degrees", default=None))
    None
 
 .. _Metadata-construct-properties:
@@ -1778,8 +1776,8 @@ constructs contained in the field construct.
              and show that this change appears in the same metadata
              data construct of the parent field, and vice versa.*
 
-   >>> domain_latitude = t.domain.construct('latitude')
-   >>> field_latitude = t.construct('latitude')
+   >>> domain_latitude = t.domain.coordinate('latitude')
+   >>> field_latitude = t.coordinate('latitude')
    >>> domain_latitude.set_property('test', 'set by domain')
    >>> print(field_latitude.get_property('test'))
    set by domain
@@ -1864,7 +1862,7 @@ construct <Data>` for accessing its data.
    :caption: *Get the Bounds instance of a coordinate construct and
              inspect its data.*
       
-   >>> lon = t.construct('grid_longitude')
+   >>> lon = t.coordinate('grid_longitude')
    >>> bounds = lon.bounds
    >>> bounds
    <Bounds: grid_longitude(9, 2) >
@@ -1930,7 +1928,7 @@ This is illustrated with the file ``geometry.nc`` (found in the
                    : altitude(cf_role=timeseries_id(2)) = [5000.0, 20.0] m
                    : cf_role=timeseries_id(cf_role=timeseries_id(2)) = [b'x1', b'y2']
    Coord references: grid_mapping_name:latitude_longitude
-   >>> lon = f.construct('longitude')
+   >>> lon = f.coordinate('longitude')
    >>> lon.dump()                     
    Auxiliary coordinate: longitude
       standard_name = 'longitude'
@@ -2064,7 +2062,7 @@ A coordinate reference construct contains
    :caption: *Select the vertical coordinate system construct and
              inspect its coordinate constructs.*
      
-   >>> crs = t.construct('standard_name:atmosphere_hybrid_height_coordinate')
+   >>> crs = t.coordinate_reference('standard_name:atmosphere_hybrid_height_coordinate')
    >>> crs
    <CoordinateReference: atmosphere_hybrid_height_coordinate>
    >>> crs.dump()
@@ -2141,7 +2139,7 @@ methods of the cell method construct.
    :caption: *Get the domain axes constructs to which the cell method
              construct applies, and the method and other properties.*
      
-   >>> cm = t.construct('method:mean')
+   >>> cm = t.cell_method('method:mean')
    >>> cm
    <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>)
    >>> cm.get_axes()
@@ -2938,7 +2936,7 @@ Metadata constructs may be copied individually in the same manner:
 .. code-block:: python
    :caption: *Copy a metadata construct.*
 
-   >>> orog = t.construct('surface_altitude').copy()
+   >>> orog = t.domain_ancillary('surface_altitude').copy()
 
 Arrays within `Data` instances are copied with a `copy-on-write
 <https://en.wikipedia.org/wiki/Copy-on-write>`_ technique. This means
@@ -3055,7 +3053,7 @@ Metadata constructs may also be tested for equality:
    :caption: *Metadata constructs also have an equals method, that
              behaves in a similar manner.*
 	  
-   >>> orog = t.construct('surface_altitude')
+   >>> orog = t.domain_ancillary('surface_altitude')
    >>> orog.equals(orog.copy())
    True
 
@@ -3999,7 +3997,7 @@ is still created, but one without any metadata or data:
                    : longitude(9) = [0.0, ..., 8.0] degrees
    Cell measures   : measure:area (external variable: ncvar%areacella)
 
-   >>> area = u.construct('measure:area')
+   >>> area = u.cell_measure('measure:area')
    >>> area
    <CellMeasure: measure:area >
    >>> area.nc_get_external()
@@ -4034,7 +4032,7 @@ variable had been present in the parent dataset:
    Dimension coords: latitude(10) = [0.0, ..., 9.0] degrees
                    : longitude(9) = [0.0, ..., 8.0] degrees
    Cell measures   : cell_area(longitude(9), latitude(10)) = [[100000.5, ..., 100089.5]] m2
-   >>> area = g.construct('measure:area')
+   >>> area = g.cell_measure('measure:area')
    >>> area
    <CellMeasure: cell_area(9, 10) m2>
    >>> area.nc_get_external()

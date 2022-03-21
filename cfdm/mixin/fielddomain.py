@@ -457,6 +457,14 @@ class FieldDomain:
 
         **Examples**
 
+        >>> f = {{package}}.example_{{class_lower}}(1)
+        >>> f.auxiliary_coordinate('latitude')
+        <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
+        >>> f.auxiliary_coordinate('latitude', key=True)
+        'auxiliarycoordinate0'
+        >>> f.auxiliary_coordinate('latitude', item=True)
+        ('auxiliarycoordinate0', <AuxiliaryCoordinate: latitude(10, 9) degrees_N>)
+
         """
         return self._construct(
             "auxiliary_coordinate",
@@ -572,6 +580,16 @@ class FieldDomain:
                 {{Returns construct}}
 
         **Examples**
+
+        >>> f = {{package}}.example_{{class_lower}}(1)
+        >>> f.coordinate('latitude')
+        <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
+        >>> f.coordinate('grid_latitude')
+        <DimensionCoordinate: grid_latitude(10) degrees>
+        >>> f.coordinate('grid_latitude', key=True)
+        'dimensioncoordinate1'
+        >>> f.coordinate('grid_latitude', item=True)
+        ('dimensioncoordinate1', <DimensionCoordinate: grid_latitude(10) degrees>)
 
         """
         return self._construct(
@@ -692,6 +710,15 @@ class FieldDomain:
                 {{Returns construct}}
 
         **Examples**
+
+        >>> f = {{package}}.example_{{class_lower}}(1)
+        >>> f.coordinate_reference('grid_mapping_name:rotated_latitude_longitude')
+        <CoordinateReference: grid_mapping_name:rotated_latitude_longitude>
+        >>> f.coordinate_reference('grid_mapping_name:rotated_latitude_longitude', key=True)
+        'coordinatereference1'
+        >>> f.coordinate_reference('grid_mapping_name:rotated_latitude_longitude', item=True)
+        ('coordinatereference1',
+         <CoordinateReference: grid_mapping_name:rotated_latitude_longitude>)
 
         """
         return self._construct(
@@ -887,6 +914,14 @@ class FieldDomain:
 
         **Examples**
 
+        >>> f = {{package}}.example_{{class_lower}}(1)
+        >>> f.dimension_coordinate('grid_latitude')
+        <DimensionCoordinate: grid_latitude(10) degrees>
+        >>> f.coordinate('grid_latitude', key=True)
+        'dimensioncoordinate1'
+        >>> f.coordinate('grid_latitude', item=True)
+        ('dimensioncoordinate1', <DimensionCoordinate: grid_latitude(10) degrees>)
+
         """
         return self._construct(
             "dimension_coordinate",
@@ -1015,6 +1050,14 @@ class FieldDomain:
 
         **Examples**
 
+        >>> f = {{package}}.example_{{class_lower}}(1)
+        >>> f.domain_axis('domainaxis0')
+        <DomainAxis: size(1)>
+        >>> f.domain_axis('domainaxis0', key=True)
+        'domainaxis0'
+        >>> f.domain_axis('domainaxis0', item=True)
+        ('domainaxis0', <DomainAxis: size(1)>)
+
         """
         return self._construct(
             "domain_axis",
@@ -1125,6 +1168,14 @@ class FieldDomain:
 
         **Examples**
 
+        >>> f = {{package}}.example_{{class_lower}}(1)
+        >>> f.domain_ancillary('surface_altitude')
+        <DomainAncillary: surface_altitude(10, 9) m>
+        >>> f.domain_ancillary('surface_altitude', key=True)
+        'domainancillary2'
+        >>> f.domain_ancillary('surface_altitude', item=True)
+        ('domainancillary2', <DomainAncillary: surface_altitude(10, 9) m>)
+
         """
         return self._construct(
             "domain_ancillary",
@@ -1206,9 +1257,9 @@ class FieldDomain:
         :Parameters:
 
             identity: optional
-                Select dimension coordinate constructs that have an
-                identity, defined by their `!identities` methods, that
-                matches any of the given values.
+                Select cell measure constructs that have an identity,
+                defined by their `!identities` methods, that matches
+                any of the given values.
 
                 Additionally, the values are matched against construct
                 identifiers, with or without the ``'key%'`` prefix.
@@ -1237,6 +1288,14 @@ class FieldDomain:
                 {{Returns construct}}
 
         **Examples**
+
+        >>> f = {{package}}.example_{{class_lower}}(1)
+        >>> f.cell_measure()
+        <CellMeasure: measure:area(9, 10) km2>
+        >>> f.cell_measure('measure:area', key=True)
+        'cellmeasure0'
+        >>> f.cell_measure('measure:area', item=True)
+        ('cellmeasure0', <CellMeasure: measure:area(9, 10) km2>)
 
         """
         return self._construct(
@@ -1869,15 +1928,3 @@ class FieldDomain:
                 return True
 
         return False
-
-    # def set_construct(self, construct, key=None, axes=None, copy=True):
-    #    """TODO
-    #
-    #    .. versionadded:: (cfdm) 1.7.0
-    #
-    #    .. seealso:: `constructs`, `del_construct`, `get_construct`,
-    #                 `set_data_axes`
-    #
-    #    """
-    #    key = super().set_construct(construct, key=key, axes=axes, copy=copy)
-    #    construct = self.constructs[key]
