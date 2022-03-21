@@ -36,20 +36,16 @@ class NumpyArray(ArrayMixin, core.NumpyArray):
         )
 
     def to_memory(self):
-        """Bring an array on disk into memory and retain it there.
+        """Bring data on disk into memory.
 
-        There is no change to an array that is already in memory.
+        There is no change to data that is already in memory.
 
         .. versionadded:: (cfdm) 1.7.0
 
         :Returns:
 
             `{{class}}`
-                The array that is stored in memory.
-
-        **Examples:**
-
-        >>> b = a.to_memory()
+                A copy of the array with all of its data in memory.
 
         """
         return self

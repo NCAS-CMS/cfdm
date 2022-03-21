@@ -1,4 +1,12 @@
+import numpy as np
+
 from .array import Array
+
+
+class DeprecationError(Exception):
+    """Deprecation error."""
+
+    pass
 
 
 class CompressedArray(Array):
@@ -8,6 +16,19 @@ class CompressedArray(Array):
 
     """
 
+    def __new__(cls, *args, **kwargs):
+        """Store subarray classes.
+
+        A child class must define its subarray classes in the
+        `_Subarray` dictionary.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        instance = super().__new__(cls)
+        instance._Subarray = {}
+        return instance
+
     def __init__(
         self,
         compressed_array=None,
@@ -15,28 +36,43 @@ class CompressedArray(Array):
         size=None,
         ndim=None,
         compressed_dimension=None,
+        compressed_dimensions=None,
         compression_type=None,
-        **kwargs
+        source=None,
+        copy=True,
     ):
         """**Initialisation**
 
         :Parameters:
 
-            compressed_array: subclass of `Array`
+            compressed_array: array_like
                 The compressed array.
 
             shape: `tuple`
                 The uncompressed array dimension sizes.
 
-            size: `int`
-                Number of elements in the uncompressed array.
+            compressed_dimensions: `dict`
+                Mapping of dimensions of the compressed array to their
+                corresponding dimensions in the uncompressed
+                array. Compressed array dimensions that are not
+                compressed must be omitted from the mapping.
 
-            ndim: `int`
-                The number of uncompressed array dimensions
+                *Parameter example:*
+                  ``{0: (0, 1)}``
 
-            compressed_dimension: `int`
-                The position of the compressed dimension in the compressed
-                array.
+                *Parameter example:*
+                  ``{0: (0, 1, 2)}``
+
+                *Parameter example:*
+                  ``{2: (2, 3)}``
+
+                *Parameter example:*
+                  ``{1: (1,)}``
+
+                *Parameter example:*
+                  ``{0: (0,), 2: (2,)}``
+
+                .. versionadded:: (cfdm) 1.9.TODO.0
 
             compression_type: `str`
                 The type of compression.
@@ -45,17 +81,127 @@ class CompressedArray(Array):
                 Further named parameters and their values needed to define
                 the compressed array.
 
+            compressed_dimension: Deprecated at version 1.9.TODO.0
+                Use the *compressed_dimensions* parameter instead.
+
+            source: optional
+                Initialise the array from the given object.
+
+                {{init source}}
+
+                .. versionadded:: (cfdm) 1.9.TODO.0
+
+            copy: `bool`, optional
+                If True (the default) then deep copy input parameters
+                prior to initialisation. If False then arguments are
+                not deep copied.
+
+                .. versionadded:: (cfdm) 1.9.TODO.0
+
+            size: `int`
+                Deprecated at version 1.9.TODO.0. If set will be
+                ignored.
+
+                Number of elements in the uncompressed array.
+
+            ndim: `int`
+                Deprecated at version 1.9.TODO.0. If set will be
+                ignored.
+
+                The number of uncompressed array dimensions
+
         """
-        super().__init__(
-            shape=shape,
-            size=size,
-            ndim=ndim,
-            compressed_dimension=compressed_dimension,
-            compression_type=compression_type,
-            **kwargs
+        if compressed_dimension is not None:
+            raise DeprecationError(
+                "The 'compressed_dimension' keyword was deprecated at "
+                "version 1.9.TODO.0. "
+                "Use the 'compressed_dimensions' keyword instead."
+            )  # pragma: no cover
+
+        super().__init__(source=source, copy=copy)
+
+        if source is not None:
+            try:
+                compressed_array = source._get_compressed_Array(None)
+            except AttributeError:
+                compressed_array = None
+
+            try:
+                compression_type = source.get_compression_type()
+            except AttributeError:
+                compression_type = None
+
+            try:
+                compressed_dimensions = source.compressed_dimensions()
+            except AttributeError:
+                compressed_dimensions = {}
+
+            try:
+                shape = source.shape
+            except AttributeError:
+                shape = None
+
+        elif compressed_dimensions is None:
+            compressed_dimensions = {}
+        else:
+            compressed_dimensions = compressed_dimensions.copy()
+
+        self._set_component(
+            "compressed_dimensions", compressed_dimensions, copy=False
         )
 
-        self._set_compressed_Array(compressed_array, copy=False)
+        if compressed_array is not None:
+            self._set_compressed_Array(compressed_array, copy=copy)
+
+        if shape is not None:
+            self._set_component("shape", shape, copy=False)
+
+        if compression_type:
+            self._set_component(
+                "compression_type", compression_type, copy=False
+            )
+
+    def _first_or_last_element(self, indices):
+        """Return the first or last element of the compressed array.
+
+        This method will return the first or last element of the
+        compressed array without performing any decompression.
+
+        First and last elements are only recognised by exact *indices*
+        matches to:
+
+        * ``(slice(0, 1, 1),) * self.ndim``
+        * ``(slice(-1, None, 1),) * self.ndim``
+
+        Any other value of indices will raise an `IndexError`. For
+        instance, note that ``slice(0, 1, 1)`` is not an exact match
+        to ``slice(0, 1)``.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `__getitem__`
+
+        :Parameters:
+
+            indices:
+                Indices to the uncompressed array.
+
+        :Returns:
+
+            `numpy.ndarray`
+                The first or last element. If the *indices* do not
+                acceptably select the first or last element then an
+                `IndexError` is raised.
+
+        """
+        ndim = self.ndim
+        for index in (slice(0, 1, 1), slice(-1, None, 1)):
+            if indices == (index,) * ndim:
+                data = self.source()
+                return np.asanyarray(data[(index,) * data.ndim])
+
+        # Indices do not acceptably select the first nor last element
+        raise IndexError()
 
     def _get_compressed_Array(self, default=ValueError()):
         """Return the compressed array.
@@ -71,7 +217,7 @@ class CompressedArray(Array):
 
                 The compressed Array instance.
 
-        **Examples:**
+        **Examples**
 
         >>> c = d._get_compressed_Array()
 
@@ -92,7 +238,7 @@ class CompressedArray(Array):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d._set_compressed_Array(a)
 
@@ -102,9 +248,6 @@ class CompressedArray(Array):
 
         self._set_component("compressed_Array", array, copy=False)
 
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
     @property
     def array(self):
         """Returns a numpy array containing the uncompressed data.
@@ -114,7 +257,7 @@ class CompressedArray(Array):
             `numpy.ndarray`
                 The uncompressed array.
 
-        **Examples:**
+        **Examples**
 
         >>> n = a.array
         >>> isinstance(n, numpy.ndarray)
@@ -125,107 +268,15 @@ class CompressedArray(Array):
 
     @property
     def dtype(self):
-        """Data-type of the data elements.
-
-        **Examples:**
-
-        >>> a.dtype
-        dtype('float64')
-        >>> print(type(a.dtype))
-        <type 'numpy.dtype'>
-
-        """
-        return self._get_compressed_Array().dtype
-
-    @property
-    def ndim(self):
-        """The number of dimensions of the uncompressed data.
-
-        **Examples:**
-
-        >>> d.shape
-        (73, 96)
-        >>> d.ndim
-        2
-        >>> d.size
-        7008
-
-        >>> d.shape
-        (1, 1, 1)
-        >>> d.ndim
-        3
-        >>> d.size
-        1
-
-        >>> d.shape
-        ()
-        >>> d.ndim
-        0
-        >>> d.size
-        1
-
-        """
-        return self._get_component("ndim")
+        """Data-type of the uncompressed data."""
+        raise NotImplementedError(
+            f"Must implement {self.__class__.__name__}.dtype"
+        )  # pragma: no cover
 
     @property
     def shape(self):
-        """Shape of the uncompressed data.
-
-        **Examples:**
-
-        >>> d.shape
-        (73, 96)
-        >>> d.ndim
-        2
-        >>> d.size
-        7008
-
-        >>> d.shape
-        (1, 1, 1)
-        >>> d.ndim
-        3
-        >>> d.size
-        1
-
-        >>> d.shape
-        ()
-        >>> d.ndim
-        0
-        >>> d.size
-        1
-
-        """
+        """Shape of the uncompressed data."""
         return self._get_component("shape")
-
-    @property
-    def size(self):
-        """Number of elements in the uncompressed data.
-
-        **Examples:**
-
-        >>> d.shape
-        (73, 96)
-        >>> d.size
-        7008
-        >>> d.ndim
-        2
-
-        >>> d.shape
-        (1, 1, 1)
-        >>> d.ndim
-        3
-        >>> d.size
-        1
-
-        >>> d.shape
-        ()
-        >>> d.ndim
-        0
-        >>> d.size
-        1
-
-        """
-        return self._get_component("size")
 
     @property
     def compressed_array(self):
@@ -236,7 +287,7 @@ class CompressedArray(Array):
             `numpy.ndarray`
                 The compressed array.
 
-        **Examples:**
+        **Examples**
 
         >>> n = a.compressed_array
 
@@ -250,18 +301,16 @@ class CompressedArray(Array):
 
         return ca.array
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def get_compressed_axes(self):
         """Return axes that are compressed in the underlying array.
 
         :Returns:
 
             `list`
-                The compressed axes described by their integer positions.
+                The compressed axes described by their integer
+                positions in the uncompressed array.
 
-        **Examples:**
+        **Examples**
 
         >>> c.ndim
         4
@@ -271,29 +320,23 @@ class CompressedArray(Array):
         [1, 2]
 
         """
-        compressed_dimension = self.get_compressed_dimension()
-        compressed_ndim = self._get_compressed_Array().ndim
-
-        return list(
-            range(
-                compressed_dimension,
-                self.ndim - (compressed_ndim - compressed_dimension - 1),
-            )
+        return sorted(
+            {x for y in self.compressed_dimensions().values() for x in y}
         )
 
-    def get_compressed_dimension(self, *default):
+    def get_compressed_dimension(self, default=ValueError()):
         """Returns the compressed dimension's position in the array.
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `get_compressed_axearray`, `get_compressed_axes`,
-                     `get_compressed_type`
+        .. seealso:: `get_compressed_axes`, `get_compression_type`
 
         :Parameters:
 
             default: optional
-                Return *default* if the underlying array is not
-                compressed.
+                Return the value of the *default* parameter if the
+                underlying array is not compressed. If set to an
+                `Exception` instance then it will be raised instead.
 
         :Returns:
 
@@ -302,31 +345,73 @@ class CompressedArray(Array):
                 array. If the underlying is not compressed then *default*
                 is returned, if provided.
 
-        **Examples:**
+        **Examples**
 
         >>> i = d.get_compressed_dimension()
 
         """
-        return self._get_component("compressed_dimension", *default)
+        compressed_dimensions = self.compressed_dimensions()
+        if len(compressed_dimensions) != 1:
+            raise ValueError(
+                "Can't get unique compressed dimension when there "
+                f"is not exactly one of them: {self.compressed_dimensions()}"
+            )
 
-    #    @abc.abstractmethod
-    def to_memory(self):
-        """Bring an array on disk into memory and retain it there.
+        return tuple(compressed_dimensions)[0]
 
-        There is no change to an array that is already in memory.
+    def compressed_dimensions(self):
+        """Mapping of compressed to uncompressed dimensions.
+
+        A dictionary key is a position of a dimension in the
+        compressed data, with a value of the positions of the
+        corresponding dimensions in the uncompressed data. Compressed
+        array dimensions that are not compressed are omitted from the
+        mapping.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `get_compressed_axes`, `get_compression_type`
 
         :Returns:
 
-            `{{class}}`
-                The array that is stored in memory.
-
-        **Examples:**
-
-        >>> b = a.to_memory()
+            `dict`
+                The mapping of dimensions of the compressed array to
+                their corresponding dimensions in the uncompressed
+                array. Compressed array dimensions that are not
+                compressed are omitted from the mapping.
 
         """
-        self._get_compressed_Array(self._get_compressed_Array().to_memory())
-        return self
+        c = self._get_component("compressed_dimensions")
+        if not c:
+            raise ValueError("No compressed dimensions have been defined")
+
+        return self._get_component("compressed_dimensions").copy()
+
+    def conformed_data(self):
+        """The data as required by the decompression algorthm.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Returns:
+
+            `dict`
+                The compressed data, with the key ``'data'``.
+
+        """
+        return {"data": self.source().copy()}
+
+    def get_Subarray(self):
+        """Return the Subarray class.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Returns:
+
+            `Subarray`
+                The class for representing subarrays.
+
+        """
+        return self._Subarray[self.get_compression_type()]
 
     def source(self, default=ValueError()):
         """Return the underlying array object.
@@ -343,7 +428,7 @@ class CompressedArray(Array):
             subclass of `Array`
                 The underlying array object.
 
-        **Examples:**
+        **Examples**
 
         >>> array
         <RaggedContiguousArray(2, 4): >
@@ -352,3 +437,68 @@ class CompressedArray(Array):
 
         """
         return self._get_compressed_Array(default=default)
+
+    def subarray_shapes(self, shapes):
+        """Create the subarray shapes along each uncompressed dimension.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `subarray`
+
+        :Parameters:
+
+            {{subarray_shapes chunks: `int`, sequence, `dict`, or `str`, optional}}
+
+        :Returns:
+
+            `list`
+                 The subarray shapes along each uncompressed
+                 dimension.
+
+        """
+        raise NotImplementedError(
+            f"Must implement {self.__class__.__name__}.subarray_shapes"
+        )  # pragma: no cover
+
+    def subarrays(self, shapes=-1):
+        """Return descriptors for every subarray.
+
+        Theses descriptors are used during subarray decompression.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            {{subarrays chunks: ``-1`` or sequence, optional}}
+
+        :Returns:
+
+            sequence of iterables
+                Each iterable iterates over a particular descriptor
+                from each subarray.
+
+        """
+        raise NotImplementedError(
+            f"Must implement {self.__class__.__name__}.subarrays"
+        )  # pragma: no cover
+
+    def to_memory(self):
+        """Bring data on disk into memory.
+
+        There is no change to data that is already in memory.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Returns:
+
+            `{{class}}`
+                A copy of the array with all of its data in memory.
+
+        """
+        a = self.copy()
+        try:
+            a._set_compressed_Array(a.source().to_memory(), copy=False)
+        except AttributeError:
+            pass
+
+        return a

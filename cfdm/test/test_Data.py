@@ -500,44 +500,13 @@ class DataTest(unittest.TestCase):
 
         d[0, 0] = cfdm.masked
         self.assertTrue(
-            (
-                d.filled().array
-                == [
-                    [
-                        -9223372036854775806,
-                        2,
-                        3,
-                    ]
-                ]
-            ).all()
+            (d.filled().array == [[-9223372036854775806, 2, 3]]).all()
         )
 
         d.set_fill_value(-99)
-        self.assertTrue(
-            (
-                d.filled().array
-                == [
-                    [
-                        -99,
-                        2,
-                        3,
-                    ]
-                ]
-            ).all()
-        )
+        self.assertTrue((d.filled().array == [[-99, 2, 3]]).all())
 
-        self.assertTrue(
-            (
-                d.filled(1e10).array
-                == [
-                    [
-                        1e10,
-                        2,
-                        3,
-                    ]
-                ]
-            ).all()
-        )
+        self.assertTrue((d.filled(1e10).array == [[1e10, 2, 3]]).all())
 
         d = cfdm.Data(["a", "b", "c"], mask=[1, 0, 0])
         self.assertTrue((d.filled().array == ["", "b", "c"]).all())
@@ -565,13 +534,7 @@ class DataTest(unittest.TestCase):
         e = d.squeeze()
         self.assertEqual(e.shape, (12,))
         e = d.squeeze(-1)
-        self.assertEqual(
-            e.shape,
-            (
-                1,
-                12,
-            ),
-        )
+        self.assertEqual(e.shape, (1, 12))
         self.assertIsNone(e.squeeze(0, inplace=True))
         self.assertEqual(e.shape, (12,))
 

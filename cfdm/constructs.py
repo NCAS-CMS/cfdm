@@ -1615,13 +1615,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         return out
 
-    def _filter_by_axis(
-        self,
-        arg,
-        axes,
-        todict,
-        axis_mode,
-    ):
+    def _filter_by_axis(self, arg, axes, todict, axis_mode):
         """Worker function for `filter_by_axis` and `filter`.
 
         See `filter_by_axis` for details.
@@ -1658,9 +1652,7 @@ class Constructs(mixin.Container, core.Constructs):
             )
 
         out, pop = self._filter_preprocess(
-            arg,
-            filter_applied=filter_applied,
-            todict=todict,
+            arg, filter_applied=filter_applied, todict=todict
         )
 
         # Convert values to domain axis construct identifiers, if any
@@ -1710,11 +1702,7 @@ class Constructs(mixin.Container, core.Constructs):
         return out
 
     def filter_by_axis(
-        self,
-        *axes,
-        axis_mode="and",
-        todict=False,
-        cached=None,
+        self, *axes, axis_mode="and", todict=False, cached=None
     ):
         """Select metadata constructs by axes spanned by their data.
 
@@ -1888,13 +1876,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         return self._filter_by_data(self, None, todict, filter_applied=None)
 
-    def _filter_by_identity(
-        self,
-        arg,
-        identities,
-        todict,
-        _config,
-    ):
+    def _filter_by_identity(self, arg, identities, todict, _config):
         """Worker function for `filter_by_identity` and `filter`.
 
         See `filter_by_identity` for details.
@@ -2007,11 +1989,7 @@ class Constructs(mixin.Container, core.Constructs):
         return out
 
     def filter_by_identity(
-        self,
-        *identities,
-        todict=False,
-        cached=None,
-        _config={},
+        self, *identities, todict=False, cached=None, _config={}
     ):
         """Select metadata constructs by identity.
 
@@ -2098,9 +2076,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         """
         out, pop = self._filter_preprocess(
-            arg,
-            filter_applied={"filter_by_key": keys},
-            todict=todict,
+            arg, filter_applied={"filter_by_key": keys}, todict=todict
         )
 
         if not keys:
@@ -2180,9 +2156,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         """
         out, pop = self._filter_preprocess(
-            arg,
-            filter_applied={"filter_by_measure": measures},
-            todict=todict,
+            arg, filter_applied={"filter_by_measure": measures}, todict=todict
         )
 
         construct_type = self._construct_type
@@ -2303,9 +2277,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         """
         out, pop = self._filter_preprocess(
-            arg,
-            filter_applied={"filter_by_measure": methods},
-            todict=todict,
+            arg, filter_applied={"filter_by_measure": methods}, todict=todict
         )
 
         construct_type = self._construct_type
@@ -2428,9 +2400,7 @@ class Constructs(mixin.Container, core.Constructs):
             )
 
         out, pop = self._filter_preprocess(
-            arg,
-            filter_applied={"filter_by_naxes": naxes},
-            todict=todict,
+            arg, filter_applied={"filter_by_naxes": naxes}, todict=todict
         )
 
         data_axes = self._construct_axes
@@ -2511,9 +2481,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         """
         out, pop = self._filter_preprocess(
-            arg,
-            filter_applied={"filter_by_ncdim": ncdims},
-            todict=todict,
+            arg, filter_applied={"filter_by_ncdim": ncdims}, todict=todict
         )
 
         if not ncdims:
@@ -2611,9 +2579,7 @@ class Constructs(mixin.Container, core.Constructs):
 
         """
         out, pop = self._filter_preprocess(
-            arg,
-            filter_applied={"filter_by_ncvar": ncvars},
-            todict=todict,
+            arg, filter_applied={"filter_by_ncvar": ncvars}, todict=todict
         )
 
         if not ncvars:
@@ -2886,9 +2852,7 @@ class Constructs(mixin.Container, core.Constructs):
             )
 
         out, pop = self._filter_preprocess(
-            arg,
-            filter_applied={"filter_by_size": sizes},
-            todict=todict,
+            arg, filter_applied={"filter_by_size": sizes}, todict=todict
         )
 
         construct_type = self._construct_type

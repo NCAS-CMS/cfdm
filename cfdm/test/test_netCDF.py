@@ -14,11 +14,7 @@ tmpfiles = [
     tempfile.mkstemp("_test_netCDF.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
 ]
-(
-    tempfile1,
-    tempfile2,
-    tempfile3,
-) = tmpfiles
+(tempfile1, tempfile2, tempfile3) = tmpfiles
 
 
 def _remove_tmpfiles():

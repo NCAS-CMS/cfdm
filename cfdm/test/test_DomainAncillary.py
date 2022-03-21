@@ -41,8 +41,7 @@ class DomainAncillaryTest(unittest.TestCase):
         self.assertIsInstance(x.dump(display=False), str)
 
         self.assertIsInstance(
-            x.dump(display=False, _key=domain_ancillaries.key()),
-            str,
+            x.dump(display=False, _key=domain_ancillaries.key()), str
         )
 
         x.nc_del_variable()

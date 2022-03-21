@@ -26,15 +26,15 @@ class DomainAxis(
     **NetCDF interface**
 
     The netCDF dimension name of the construct may be accessed with
-    the `nc_set_dimension`, `nc_get_dimension`, `nc_del_dimension` and
+    the `nc_set_dimension`, `nc_get_dimension`, `nc_del_dimension`,
+    and `nc_has_dimension` methods.
 
     Whether or not the netCDF is unlimited may be accessed with the
     `nc_is_unlimited` and `nc_set_unlimited` methods.
-    `nc_has_dimension` methods.
 
     The netCDF dimension group structure may be accessed with the
     `nc_set_dimension`, `nc_get_dimension`, `nc_dimension_groups`,
-    `nc_clear_dimension_groups` and `nc_set_dimension_groups` methods.
+    `nc_clear_dimension_groups`, and `nc_set_dimension_groups` methods.
 
     .. versionadded:: (cfdm) 1.7.0
 

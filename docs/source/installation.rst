@@ -136,18 +136,21 @@ Tests are run from within the ``cfdm/test`` directory:
 
 The cfdm package requires:
 
-* `Python <https://www.python.org/>`_, version 3.7 or newer,
+* `Python <https://www.python.org/>`_, version 3.7 or newer.
 
-* `numpy <http://www.numpy.org/>`_, version 1.15 or newer,
+* `numpy <http://www.numpy.org/>`_, version 1.15 or newer.
 
 * `netCDF4 <https://pypi.org/project/netCDF4/>`_, version 1.5.4 or
-  newer,
+  newer.
 
-* `cftime <https://pypi.org/project/cftime/>`_, version 1.5.0 or
-  newer,
+* `cftime <https://pypi.org/project/cftime/>`_, version 1.6.0 or
+  newer.
 
 * `netcdf_flattener <https://pypi.org/project/netcdf-flattener/>`_,
   version 1.2.0 or newer.
+
+* `packaging <https://pypi.org/project/packaging/>`_, version 20.0 or
+  newer.
 
 ----
 

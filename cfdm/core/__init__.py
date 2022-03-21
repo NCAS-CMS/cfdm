@@ -1,16 +1,13 @@
 """"""
 
-__date__ = "2022-01-31"
+__date__ = "2022-03-10"
 __cf_version__ = "1.9"
-__version__ = "1.9.0.2"
+__version__ = "1.9.1.0b0"
 
-from distutils.version import LooseVersion
+from packaging.version import Version
 import platform
 
-_requires = (
-    "numpy",
-    "netCDF4",
-)
+_requires = ("numpy", "netCDF4")
 
 _error0 = f"cfdm.core requires the modules {', '.join(_requires)}. "
 
@@ -26,7 +23,7 @@ except ImportError as error1:
 
 # Check the version of python
 _minimum_vn = "3.7.0"
-if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
+if Version(platform.python_version()) < Version(_minimum_vn):
     raise ValueError(
         f"Bad python version: cfdm.core requires python>={_minimum_vn}. "
         f"Got {platform.python_version()}"
@@ -34,7 +31,7 @@ if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
 
 # Check the version of netCDF4
 _minimum_vn = "1.5.4"
-if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
+if Version(netCDF4.__version__) < Version(_minimum_vn):
     raise ValueError(
         f"Bad netCDF4 version: cfdm.core requires netCDF4>={_minimum_vn}. "
         f"Got {netCDF4.__version__} at {netCDF4.__file__}"
@@ -42,7 +39,7 @@ if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
 
 # Check the version of numpy
 _minimum_vn = "1.15"
-if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
+if Version(numpy.__version__) < Version(_minimum_vn):
     raise ValueError(
         f"Bad numpy version: cfdm.core requires numpy>={_minimum_vn}. "
         f"Got {numpy.__version__} at {numpy.__file__}"

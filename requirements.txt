@@ -1,4 +1,5 @@
 netCDF4>=1.5.4
-cftime>=1.5.0
+cftime>=1.6.0
 numpy>=1.15
 netcdf-flattener>=1.2.0
+packaging>=20.0

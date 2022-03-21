@@ -34,30 +34,18 @@ class ArrayMixin:
             return array.astype(dtype[0], copy=False)
 
     def __getitem__(self, indices):
-        """Return a subspace as an independent numpy array.
+        """Return a subspace of the uncompressed subarray.
 
         x.__getitem__(indices) <==> x[indices]
 
-        Indexing follows rules that are very similar to the numpy
-        indexing rules, the only differences being:
-
-        * An integer index i takes the i-th element but does not
-          reduce the rank by one.
-
-        ..
-
-        * When two or more dimensions' indices are sequences of
-          integers then these indices work independently along each
-          dimension (similar to the way vector subscripts work in
-          Fortran). This is the same behaviour as indexing on a
-          Variable object of the netCDF4 package.
+        Returns a subspace of the uncompressed subarray as an
+        independent numpy array.
 
         .. versionadded:: (cfdm) 1.8.7.0
 
         """
         raise NotImplementedError(
-            "Subclasses of cfdm.data.abstract.Array "
-            "must implement '__getitem__'"
+            f"Must implement {self.__class__.__name__}.__getitem__"
         )  # pragma: no cover
 
     def __repr__(self):
@@ -172,6 +160,9 @@ class ArrayMixin:
 
         """
         if indices is not Ellipsis:
+            if not isinstance(indices, tuple):
+                indices = (indices,)
+
             axes_with_list_indices = [
                 i for i, x in enumerate(indices) if not isinstance(x, slice)
             ]

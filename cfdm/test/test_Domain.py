@@ -42,12 +42,19 @@ class DomainTest(unittest.TestCase):
         for title in (None, "title"):
             d.dump(display=False, _title=title)
 
-        # Test when dimension coordinate has no data
+        # Test when any construct which can have data in fact has no data.
         d = d.copy()
-        t = d.construct("time")
-        t.del_data()
-        self.assertFalse(t.has_data())
-        str(d)
+        for identity in [
+            "time",  # a dimension coordinate
+            "latitude",  # an auxiliary coordinate
+            "measure:area",  # a cell measure
+            "surface_altitude",  # a domain ancillary
+        ]:
+            c = d.construct(identity)  # get relevant construct, type as above
+            c.del_data()
+            self.assertFalse(c.has_data())
+            str(d)
+            repr(d)
 
     def test_Domain__init__(self):
         """Test the Domain constructor and source keyword."""

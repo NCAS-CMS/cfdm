@@ -1,9 +1,11 @@
-import numpy
+from itertools import accumulate, product
 
-from . import abstract, mixin
+import numpy as np
+
+from .abstract import RaggedArray
 
 
-class RaggedIndexedArray(mixin.RaggedIndexed, abstract.CompressedArray):
+class RaggedIndexedArray(RaggedArray):
     """An underlying indexed ragged array.
 
     A collection of features stored using an indexed ragged array
@@ -14,6 +16,11 @@ class RaggedIndexedArray(mixin.RaggedIndexed, abstract.CompressedArray):
     The information needed to uncompress the data is stored in an
     "index variable" that specifies the feature that each element of
     the sample dimension belongs to.
+
+    It is assumed that the compressed dimension is the left-most
+    dimension in the compressed array.
+
+    See CF section 9 "Discrete Sampling Geometries".
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -26,106 +33,151 @@ class RaggedIndexedArray(mixin.RaggedIndexed, abstract.CompressedArray):
         size=None,
         ndim=None,
         index_variable=None,
+        source=None,
+        copy=True,
     ):
         """**Initialisation**
 
         :Parameters:
 
-            compressed_array: `Data`
+            compressed_array: array_like
                 The compressed array.
 
             shape: `tuple`
-                The uncompressed array dimension sizes.
-
-            size: `int`
-                Number of elements in the uncompressed array.
-
-            ndim: `int`
-                The number of uncompressed array dimensions
+                The shape of the uncompressed array.
 
             index_variable: `Index`
                 The index variable required to uncompress the data,
                 corresponding to a CF-netCDF index variable.
 
+            source: optional
+                Initialise the array from the given object.
+
+                {{init source}}
+
+                .. versionadded:: (cfdm) 1.9.TODO.0
+
+            copy: `bool`, optional
+                If False then do not deep copy input parameters prior
+                to initialisation. By default arguments are deep
+                copied.
+
+                .. versionadded:: (cfdm) 1.9.TODO.0
+
+            size: `int`
+                Deprecated at version 1.9.TODO.0. Ignored if set.
+
+                Number of elements in the uncompressed array.
+
+            ndim: `int`
+                Deprecated at version 1.9.TODO.0. Ignored if set.
+
+                The number of uncompressed array dimensions.
+
         """
         super().__init__(
             compressed_array=compressed_array,
             shape=shape,
-            size=size,
-            ndim=ndim,
             index_variable=index_variable,
-            compressed_dimension=0,
-            compression_type="ragged indexed",
+            compressed_dimensions={0: (0, 1)},
+            source=source,
+            copy=copy,
         )
 
-    def __getitem__(self, indices):
-        """Returns a subspace of the uncompressed data in a numpy array.
+    def subarrays(self, shapes=-1):
+        """Return descriptors for every subarray.
 
-        x.__getitem__(indices) <==> x[indices]
+        Theses descriptors are used during subarray decompression.
 
-        The indices that define the subspace are relative to the
-        uncompressed data and must be either `Ellipsis` or a sequence that
-        contains an index for each dimension. In the latter case, each
-        dimension's index must either be a `slice` object or a sequence of
-        two or more integers.
+        .. versionadded:: (cfdm) 1.9.TODO.0
 
-        Indexing is similar to numpy indexing. The only difference to
-        numpy indexing (given the restrictions on the type of indices
-        allowed) is:
+        :Parameters:
 
-          * When two or more dimension's indices are sequences of integers
-            then these indices work independently along each dimension
-            (similar to the way vector subscripts work in Fortran).
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        """
-        # ------------------------------------------------------------
-        # Method: Uncompress the entire array and then subspace it
-        # ------------------------------------------------------------
-
-        compressed_array = self._get_compressed_Array()
-
-        # Initialise the un-sliced uncompressed array
-        uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
-
-        # --------------------------------------------------------
-        # Compression by indexed ragged array.
-        #
-        # The uncompressed array has dimensions (instance
-        # dimension, element dimension).
-        # --------------------------------------------------------
-        index_array = self.get_index().data.array
-
-        for i in range(uarray.shape[0]):
-            sample_dimension_indices = numpy.where(index_array == i)[0]
-
-            u_indices = (
-                i,  # slice(i, i+1),
-                slice(0, len(sample_dimension_indices)),
-            )
-
-            uarray[u_indices] = compressed_array[(sample_dimension_indices,)]
-
-        return self.get_subspace(uarray, indices, copy=True)
-
-    def to_memory(self):
-        """Bring an array on disk into memory and retain it there.
-
-        There is no change to an array that is already in memory.
-
-        .. versionadded:: (cfdm) 1.7.0
+            {{subarrays chunks: ``-1`` or sequence, optional}}
 
         :Returns:
 
-            `{{class}}`
-                The array that is stored in memory.
+             4-`tuple` of iterators
+                Each iterable iterates over a particular descriptor
+                from each subarray.
 
-        **Examples:**
+                1. The indices of the uncompressed array that
+                   correspond to each subarray.
 
-        >>> b = a.to_memory()
+                2. The shape of each uncompressed subarray.
+
+                3. The indices of the compressed array that correspond
+                   to each subarray.
+
+                4. The location of each subarray on the uncompressed
+                   dimensions.
+
+        **Examples**
+
+        An original 2-d array with shape (3, 5) comprising 3
+        timeSeries features has been compressed as an indexed ragged
+        array. The features have counts of have counts of 2, 5, and 4
+        elements, at compressed locations (5, 8), (1, 3, 4, 7, 10),
+        and (0, 2, 6, 9) respectively.
+
+        >>> u_indices, u_shapes, c_indices, locations = x.subarrays()
+        >>> for i in u_indices:
+        ...    print(i)
+        ...
+        (slice(0, 1, None), slice(0, 5, None))
+        (slice(1, 2, None), slice(0, 5, None))
+        (slice(2, 3, None), slice(0, 5, None))
+        >>> for i in u_shapes
+        ...    print(i)
+        ...
+        (1, 12)
+        (1, 12)
+        (1, 12)
+        >>> for i in c_indices:
+        ...    print(i)
+        ...
+        (array([5, 8]),)
+        (array([1, 3, 4, 7, 10]),)
+        (array([0, 2, 6, 9]),)
+        >>> for i in locations:
+        ...    print(i)
+        ...
+        (0, 0)
+        (1, 0)
+        (2, 0)
 
         """
-        super().to_memory()
-        self.get_index().data.to_memory()
-        return self
+        d1, u_dims = self.compressed_dimensions().popitem()
+
+        shapes = self.subarray_shapes(shapes)
+
+        # The indices of the uncompressed array that correspond to
+        # each subarray, the shape of each uncompressed subarray, and
+        # the location of each subarray
+        locations, u_shapes, u_indices = self._uncompressed_descriptors(
+            u_dims, shapes
+        )
+
+        # The indices of the compressed array that correspond to each
+        # subarray
+        c_indices = []
+        for d, size in enumerate(self.source().shape):
+            if d == d1:
+                index = np.array(self.get_index())
+                unique = np.unique(index).tolist()
+                c_indices.append([np.where(index == i)[0] for i in unique])
+            else:
+                if d < d1:
+                    c = shapes[d]
+                else:
+                    c = shapes[d + 1]
+
+                c = tuple(accumulate((0,) + c))
+                c_indices.append([slice(i, j) for i, j in zip(c[:-1], c[1:])])
+
+        return (
+            product(*u_indices),
+            product(*u_shapes),
+            product(*c_indices),
+            product(*locations),
+        )

@@ -60,6 +60,21 @@ class FieldTest(unittest.TestCase):
         self.assertIsInstance(f.dump(display=False), str)
         self.assertEqual(f.construct_type, "field")
 
+        # Test when any construct which can have data in fact has no data.
+        f = f.copy()
+        for identity in [
+            "time",  # a dimension coordinate
+            "latitude",  # an auxiliary coordinate
+            "measure:area",  # a cell measure
+            "surface_altitude",  # a domain ancillary,
+            "air_temperature standard_error",  # a field ancillary
+        ]:
+            c = f.construct(identity)  # get relevant construct, type as above
+            c.del_data()
+            self.assertFalse(c.has_data())
+            str(f)
+            repr(f)
+
     def test_Field__init__(self):
         """Test the Field constructor and source keyword."""
         cfdm.Field(source="qwerty")
