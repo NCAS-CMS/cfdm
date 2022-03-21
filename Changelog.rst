@@ -1,3 +1,22 @@
+Version 1.9.1.0
+---------------
+
+**2022-??-??**
+
+* New method: `cfdm.Field.auxiliary_coordinate`
+* New method: `cfdm.Field.cell_measure`
+* New method: `cfdm.Field.cell_method`
+* New method: `cfdm.Field.coordinate`
+* New method: `cfdm.Field.coordinate_reference`
+* New method: `cfdm.Field.dimension_coordinate`
+* New method: `cfdm.Field.domain_ancillary`
+* New method: `cfdm.Field.domain_axis`
+* New method: `cfdm.Field.field_ancillary`
+* New construct retrieval API methods
+  (https://github.com/NCAS-CMS/cfdm/issues/179)
+
+----
+  
 Version 1.9.0.3
 ---------------
 
