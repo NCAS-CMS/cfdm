@@ -100,8 +100,9 @@ The cfdm package can
 * incorporate, and create, metadata stored in external files, and
 
 * read, write, and create data that have been compressed by convention
-  (i.e. ragged or gathered arrays), whilst presenting a view of the
-  data in its uncompressed form.
+  (i.e. ragged or gathered arrays, or coordinate arrays compressed by
+  subsampling), whilst presenting a view of the data in its
+  uncompressed form.
 
 Note that the cfdm package enables the representation and creation of
 CF field constructs, but it is largely :ref:`up to the user to use
