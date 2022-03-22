@@ -84,7 +84,7 @@ class ParametersDomainAncillaries(Parameters):
             `bool`
                 Whether the two instances are equal.
 
-        **Examples:**
+        **Examples**
 
         >>> c.equals(c)
         True

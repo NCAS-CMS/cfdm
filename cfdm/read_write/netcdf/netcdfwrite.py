@@ -170,7 +170,7 @@ class NetCDFWrite(IOWrite):
             `numpy.ndarray`
                 The compressed numpy array.
 
-        **Examples:**
+        **Examples**
 
         >>> x = numpy.ma.array(numpy.arange(5), mask=[0]*2 + [1]*3)
         >>> c = n._numpy_compressed(x)
@@ -282,7 +282,7 @@ class NetCDFWrite(IOWrite):
 
             `numpy.ndarray`
 
-        **Examples:**
+        **Examples**
 
         >>> print(a, a.shape, a.dtype.itemsize)
         ['fu' 'bar'] (2,) 3
@@ -1199,7 +1199,7 @@ class NetCDFWrite(IOWrite):
 
             `dict`
 
-        **Examples:**
+        **Examples**
 
         >>> _write_bounds(c, ('dim2',))
         {'bounds': 'lat_bounds'}
@@ -1699,7 +1699,7 @@ class NetCDFWrite(IOWrite):
 
             `str`
 
-        **Examples:**
+        **Examples**
 
         w._remove_group_structure('lat')
         'lat'
@@ -1740,7 +1740,7 @@ class NetCDFWrite(IOWrite):
 
             `str`
 
-        **Examples:**
+        **Examples**
 
         w._groups('lat')
         ''
@@ -1804,7 +1804,7 @@ class NetCDFWrite(IOWrite):
 
             `dict`
 
-        **Examples:**
+        **Examples**
 
         >>> _write_part_node_count(c, b)
         {'part_node_count': 'pnc'}
@@ -2234,7 +2234,7 @@ class NetCDFWrite(IOWrite):
             `str`
                 The netCDF variable name of the field ancillary object.
 
-        **Examples:**
+        **Examples**
 
         >>> ncvar = _write_field_ancillary(f, 'fieldancillary2', anc)
 
@@ -4551,7 +4551,7 @@ class NetCDFWrite(IOWrite):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         See `cfdm.write` for examples.
 

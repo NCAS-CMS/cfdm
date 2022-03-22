@@ -18,7 +18,7 @@ class ArrayMixin:
             `numpy.ndarray`
                 An independent numpy array of the data.
 
-        **Examples:**
+        **Examples**
 
         >>> isinstance(a, Array)
         True
@@ -90,7 +90,7 @@ class ArrayMixin:
                 The compression type. An empty string means that no
                 compression has been applied.
 
-        **Examples:**
+        **Examples**
 
         >>> a.compression_type
         ''

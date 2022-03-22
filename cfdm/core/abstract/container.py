@@ -56,7 +56,7 @@ class Container(metaclass=DocstringRewriteMeta):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        **Examples:**
+        **Examples**
 
         >>> import copy
         >>> f = {{package}}.{{class}}()
@@ -114,7 +114,7 @@ class Container(metaclass=DocstringRewriteMeta):
                 The value of *default* if it is not an `Exception`
                 instance.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f._default(AttributeError())  # Raises Exception
@@ -167,7 +167,7 @@ class Container(metaclass=DocstringRewriteMeta):
                 The removed component. If unset then *default* is
                 returned, if provided.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f._set_component('foo', 'bar')
@@ -201,7 +201,7 @@ class Container(metaclass=DocstringRewriteMeta):
 
         .. versionadded:: (cfdm) 1.7.4
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f._custom
@@ -244,7 +244,7 @@ class Container(metaclass=DocstringRewriteMeta):
                 The component. If unset then *default* is returned, if
                 provided.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f._set_component('foo', 'bar')
@@ -286,7 +286,7 @@ class Container(metaclass=DocstringRewriteMeta):
             `bool`
                 True if the component has been set, otherwise False.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f._set_component('foo', 'bar')
@@ -321,7 +321,7 @@ class Container(metaclass=DocstringRewriteMeta):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f._set_component('foo', 'bar')
@@ -355,7 +355,7 @@ class Container(metaclass=DocstringRewriteMeta):
             `{{class}}`
                 The deep copy.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> g = f.copy()

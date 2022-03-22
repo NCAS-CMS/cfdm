@@ -30,7 +30,7 @@ def environment(display=True, paths=True):
             environment is printed and `None` is returned. Otherwise
             the description is returned as in a `list`.
 
-    **Examples:**
+    **Examples**
 
     >>> environment()
     Platform: Linux-4.15.0-72-generic-x86_64-with-debian-stretch-sid
@@ -89,7 +89,7 @@ def CF():
             The version of the CF conventions represented by this
             release of the cfdm.core package.
 
-    **Examples:**
+    **Examples**
 
     >>> cfdm.core.CF()
     '1.9'

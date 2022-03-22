@@ -193,7 +193,7 @@ class CoordinateReference(
 
             {{returns creation_commands}}
 
-        **Examples:**
+        **Examples**
 
         >>> x = {{package}}.{{class}}(
         ...     coordinates=['dimensioncoordinate0']
@@ -423,7 +423,7 @@ class CoordinateReference(
             `bool`
                 Whether the two coordinate reference constructs are equal.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}(
         ...     coordinates=['dimensioncoordinate0']
@@ -509,7 +509,7 @@ class CoordinateReference(
 
                 The identity.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(1)
         >>> c = f.get_construct('coordinatereference0')
@@ -573,7 +573,7 @@ class CoordinateReference(
             `list` or generator
                 The identities.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(1)
         >>> c = f.get_construct('coordinatereference0')

@@ -502,7 +502,7 @@ def write(
 
         `None`
 
-    **Examples:**
+    **Examples**
 
     >>> cfdm.write(f, 'file.nc')
 
