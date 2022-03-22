@@ -274,7 +274,7 @@ class NetCDFRead(IORead):
             `bool`
                 Whether or this variable is referenced by any other.
 
-        **Examples:**
+        **Examples**
 
         >>> r._is_unreferenced('tas')
         False
@@ -309,7 +309,7 @@ class NetCDFRead(IORead):
             `int`
                 The new reference count.
 
-        **Examples:**
+        **Examples**
 
         >>> r._reference('longitude', 'tas')
         1
@@ -341,7 +341,7 @@ class NetCDFRead(IORead):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> r.file_close()
 
@@ -382,7 +382,7 @@ class NetCDFRead(IORead):
             `netCDF4.Dataset`
                 A `netCDF4.Dataset` object for the file.
 
-        **Examples:**
+        **Examples**
 
         >>> r.file_open('file.nc')
 
@@ -493,7 +493,7 @@ class NetCDFRead(IORead):
             `bool`
                 `True` if the file is netCDF, otherwise `False`
 
-        **Examples:**
+        **Examples**
 
         >>> {{package}}.{{class}}.is_netcdf_file('file.nc')
         True
@@ -549,7 +549,7 @@ class NetCDFRead(IORead):
             `bool`
                 `True` if the file is CDL, otherwise `False`
 
-        **Examples:**
+        **Examples**
 
         >>> {{package}}.{{class}}.is_cdl_file('file.nc')
         False
@@ -595,7 +595,7 @@ class NetCDFRead(IORead):
 
                 The default fill value for the netCDF variable.
 
-        **Examples:**
+        **Examples**
 
         >>> n.default_netCDF_fill_value('ua')
         9.969209968386869e+36
@@ -1645,7 +1645,7 @@ class NetCDFRead(IORead):
             `str`
                 The word in its singular or plural form.
 
-        **Examples:**
+        **Examples**
 
         >>> n._plural([1, 2], 'property')
         'properties'
@@ -4055,7 +4055,7 @@ class NetCDFRead(IORead):
 
             `bool`
 
-        **Examples:**
+        **Examples**
 
             >>> n._is_char_or_string('regions')
             True
@@ -4078,7 +4078,7 @@ class NetCDFRead(IORead):
 
             `bool`
 
-        **Examples:**
+        **Examples**
 
             >>> n._is_char('regions')
             True
@@ -4330,7 +4330,7 @@ class NetCDFRead(IORead):
 
             `list`
 
-        **Examples:**
+        **Examples**
 
         >>> r._get_domain_axes('areacello')
         ['domainaxis0', 'domainaxis1']
@@ -5634,7 +5634,7 @@ class NetCDFRead(IORead):
 
             `list` of `dict`
 
-        **Examples:**
+        **Examples**
 
         >>> c = parse_cell_methods('t: minimum within years '
         ...                        't: mean over ENSO years)')
@@ -6226,7 +6226,7 @@ class NetCDFRead(IORead):
                 The list of netCDF dimension names spanned by the
                 netCDF variable.
 
-        **Examples:**
+        **Examples**
 
         >>> n._ncdimensions('humidity')
         ['time', 'lat', 'lon']
@@ -7805,7 +7805,7 @@ class NetCDFRead(IORead):
 
             `netCDF4._netCDF4.Dataset` or `netCDF4._netCDF4.Group`, `str`
 
-        **Examples:**
+        **Examples**
 
         >>> group, name = n._netCDF4_group(nc, 'time')
         >>> group.name, name

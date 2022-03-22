@@ -61,7 +61,7 @@ class Parameters(Container):
             `dict`
                 The parameters that have been removed.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.parameters()
@@ -110,7 +110,7 @@ class Parameters(Container):
 
                 The removed parameter value.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.set_parameter('earth_radius', 6371007)
@@ -159,7 +159,7 @@ class Parameters(Container):
 
                 The value of the parameter.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.set_parameter('earth_radius', 6371007)
@@ -209,7 +209,7 @@ class Parameters(Container):
              `bool`
                 True if the parameter has been set, otherwise False.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.set_parameter('earth_radius', 6371007)
@@ -242,7 +242,7 @@ class Parameters(Container):
             `dict`
                 The parameters.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.parameters()
@@ -290,7 +290,7 @@ class Parameters(Container):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.parameters()
@@ -328,7 +328,7 @@ class Parameters(Container):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.set_parameter('earth_radius', 6371007)

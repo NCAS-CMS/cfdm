@@ -55,7 +55,7 @@ class Properties(Container):
             `dict`
                 The properties that have been removed.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.properties()
@@ -108,7 +108,7 @@ class Properties(Container):
 
                 The removed property value.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.set_property('project', 'CMIP7')
@@ -163,7 +163,7 @@ class Properties(Container):
 
                 The value of the property.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.set_property('project', 'CMIP7')
@@ -205,7 +205,7 @@ class Properties(Container):
 
             `False`
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.has_bounds()
@@ -225,7 +225,7 @@ class Properties(Container):
 
             `False`
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.has_data()
@@ -255,7 +255,7 @@ class Properties(Container):
             `bool`
                 True if the property has been set, otherwise False.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.set_property('project', 'CMIP7')
@@ -288,7 +288,7 @@ class Properties(Container):
             `dict`
                 The properties.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.properties()
@@ -337,7 +337,7 @@ class Properties(Container):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.properties()
@@ -390,7 +390,7 @@ class Properties(Container):
 
              `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.set_property('project', 'CMIP7')

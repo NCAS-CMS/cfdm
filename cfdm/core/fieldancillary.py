@@ -38,7 +38,7 @@ class FieldAncillary(abstract.PropertiesData):
             `str`
                 The construct type.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.construct_type

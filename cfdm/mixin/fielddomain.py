@@ -303,7 +303,7 @@ class FieldDomain:
 
         .. versionadded:: (cfdm) 1.7.0
 
-        **Examples:**
+        **Examples**
 
         >>> f._unique_construct_names()
         {'cellmethod0': 'method:mean',
@@ -344,7 +344,7 @@ class FieldDomain:
 
         .. versionadded:: (cfdm) 1.7.0
 
-        **Examples:**
+        **Examples**
 
         >>> f._unique_domain_axis_identities()
         {'domainaxis0': 'latitude(5)',
@@ -407,7 +407,7 @@ class FieldDomain:
 
                 {{Returns constructs}}
 
-        **Examples:**
+        **Examples**
 
         >>> f.auxiliary_coordinates()
         Constructs:
@@ -463,7 +463,7 @@ class FieldDomain:
 
                 {{Returns constructs}}
 
-        *Examples:**
+        *Examples**
 
         >> f.coordinates()
         Constructs:
@@ -519,7 +519,7 @@ class FieldDomain:
 
                 {{Returns constructs}}
 
-        **Examples:**
+        **Examples**
 
         >>> f.coordinate_references()
         Constructs:
@@ -581,7 +581,7 @@ class FieldDomain:
 
                 The removed metadata construct.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> print(f)
@@ -653,7 +653,7 @@ class FieldDomain:
 
                 {{Returns constructs}}
 
-        **Examples:**
+        **Examples**
 
         >>> f.dimension_coordinates()
         Constructs:
@@ -717,7 +717,7 @@ class FieldDomain:
 
                 {{Returns constructs}}
 
-        **Examples:**
+        **Examples**
 
         """
         return self.constructs.domain_axes(*identities, **filter_kwargs)
@@ -753,7 +753,7 @@ class FieldDomain:
 
                 {{Returns constructs}}
 
-        **Examples:**
+        **Examples**
 
         >>> f.domain_ancillaries()
         Constructs:
@@ -807,7 +807,7 @@ class FieldDomain:
 
                 {{Returns constructs}}
 
-        **Examples:**
+        **Examples**
 
         >>> f.cell_measures()
         Constructs:
@@ -862,7 +862,7 @@ class FieldDomain:
 
                 The selected construct.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_{{class_lower}}(0)
 
@@ -941,7 +941,7 @@ class FieldDomain:
             `tuple`
                 The selected construct and its construct identifier.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_{{class_lower}}(0)
 
@@ -1020,7 +1020,7 @@ class FieldDomain:
             `str`
                 The identifier of the selected construct.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_{{class_lower}}(0)
 
@@ -1096,7 +1096,7 @@ class FieldDomain:
                 The key of the domain axis construct that is spanned by
                 the data of the selected 1-d coordinate constructs.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.constructs())
         Constructs:
@@ -1233,7 +1233,7 @@ class FieldDomain:
             `bool`
                 Whether the two constructs are equal.
 
-        **Examples:**
+        **Examples**
 
         >>> f.equals(f)
         True
@@ -1335,7 +1335,7 @@ class FieldDomain:
 
                 Whether or not a unique construct can be identified.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> print(f)
@@ -1367,7 +1367,7 @@ class FieldDomain:
             `bool`
                 True if there are geometries, otherwise False.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.has_geometry()

@@ -80,7 +80,7 @@ class Parameters(Container):
             `bool`
                Whether the two instances are equal.
 
-        **Examples:**
+        **Examples**
 
         >>> d.equals(d)
         True

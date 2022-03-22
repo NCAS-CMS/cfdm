@@ -80,7 +80,7 @@ class Constructs(mixin.Container, core.Constructs):
             `Constructs`
                 The selected constructs and their construct keys.
 
-        **Examples:**
+        **Examples**
 
         See `filter_by_identity` and `filter` for examples.
 
@@ -161,7 +161,7 @@ class Constructs(mixin.Container, core.Constructs):
 
             `dict`
 
-        **Examples:**
+        **Examples**
 
         >>> f.constructs._axes_to_constructs()
         {('domainaxis0',): {'auxiliary_coordinate': {},
@@ -256,7 +256,7 @@ class Constructs(mixin.Container, core.Constructs):
 
                 The removed construct.
 
-        **Examples:**
+        **Examples**
 
         >>> x = c._del_construct('auxiliarycoordinate2')
 
@@ -646,7 +646,7 @@ class Constructs(mixin.Container, core.Constructs):
              `str`
                 The construct identifier for the construct.
 
-        **Examples:**
+        **Examples**
 
         >>> key = f._set_construct(c)
         >>> key = f._set_construct(c, copy=False)
@@ -967,7 +967,7 @@ class Constructs(mixin.Container, core.Constructs):
             `Constructs`
                 The deep copy.
 
-        **Examples:**
+        **Examples**
 
         >>> g = f.copy()
         >>> g = f.copy(data=False)
@@ -1010,7 +1010,7 @@ class Constructs(mixin.Container, core.Constructs):
             `str`
                 The identity.
 
-        **Examples:**
+        **Examples**
 
         >>> c.domain_axis_identity('domainaxis1')
         'longitude'
@@ -1123,7 +1123,7 @@ class Constructs(mixin.Container, core.Constructs):
 
                 {{Returns constructs}}
 
-        **Examples:**
+        **Examples**
 
         """
         cached = filter_kwargs.get("cached")
@@ -1230,7 +1230,7 @@ class Constructs(mixin.Container, core.Constructs):
             `bool`
                 Whether the two instances are equal.
 
-        **Examples:**
+        **Examples**
 
         >>> x.equals(x)
         True
@@ -1787,7 +1787,7 @@ class Constructs(mixin.Container, core.Constructs):
             `Constructs` or `dict` or *cached*
                 The selected constructs, or a cached valued.
 
-        **Examples:**
+        **Examples**
 
         Select constructs whose data spans the "domainaxis1" domain
         axis construct:
@@ -1864,7 +1864,7 @@ class Constructs(mixin.Container, core.Constructs):
             `Constructs` or `dict` or *cached*
                 The selected constructs, or a cached valued.
 
-        **Examples:**
+        **Examples**
 
         Select constructs that could contain data:
 
@@ -2040,7 +2040,7 @@ class Constructs(mixin.Container, core.Constructs):
             `Constructs` or `dict` or *cached*
                 The selected constructs, or a cached valued.
 
-        **Examples:**
+        **Examples**
 
         Select constructs that have a ``standard_name`` property of
         'latitude':
@@ -2130,7 +2130,7 @@ class Constructs(mixin.Container, core.Constructs):
             `Constructs` or `dict` or *cached*
                 The selected constructs, or a cached valued.
 
-        **Examples:**
+        **Examples**
 
         Select the construct with key 'domainancillary0':
 
@@ -2225,7 +2225,7 @@ class Constructs(mixin.Container, core.Constructs):
                 The selected cell measure constructs and their
                 construct keys.
 
-        **Examples:**
+        **Examples**
 
         >>> print(t.constructs.filter_by_type('measure'))
         Constructs:
@@ -2342,7 +2342,7 @@ class Constructs(mixin.Container, core.Constructs):
             `Constructs` or `dict` or *cached*
                 The selected constructs, or a cached valued.
 
-        **Examples:**
+        **Examples**
 
         >>> print(c.constructs.filter_by_type('cell_method'))
         Constructs:
@@ -2454,7 +2454,7 @@ class Constructs(mixin.Container, core.Constructs):
             `Constructs` or `dict` or *cached*
                 The selected constructs, or a cached valued.
 
-        **Examples:**
+        **Examples**
 
         Select constructs that contain data that spans two domain axis
         constructs:
@@ -2552,7 +2552,7 @@ class Constructs(mixin.Container, core.Constructs):
             `Constructs` or `dict` or *cached*
                 The selected constructs, or a cached valued.
 
-        **Examples:**
+        **Examples**
 
         Select the domain axis constructs with netCDF dimension name
         'time':
@@ -2650,7 +2650,7 @@ class Constructs(mixin.Container, core.Constructs):
             `Constructs` or `dict` or *cached*
                 The selected constructs, or a cached valued.
 
-        **Examples:**
+        **Examples**
 
         Select the constructs with netCDF variable name 'time':
 
@@ -2808,7 +2808,7 @@ class Constructs(mixin.Container, core.Constructs):
             `Constructs`
                 The selected constructs.
 
-        **Examples:**
+        **Examples**
 
         Select constructs that have a ``standard_name`` of 'latitude':
 
@@ -2903,7 +2903,7 @@ class Constructs(mixin.Container, core.Constructs):
             `Constructs` or `dict` or *cached*
                 The selected constructs, or a cached valued.
 
-        **Examples:**
+        **Examples**
 
         Select domain axis constructs that have a size of 1:
 
@@ -2992,7 +2992,7 @@ class Constructs(mixin.Container, core.Constructs):
             `Constructs` or `dict` or *cached*
                 The selected constructs, or a cached valued.
 
-        **Examples:**
+        **Examples**
 
         Select dimension coordinate constructs:
 
@@ -3030,7 +3030,7 @@ class Constructs(mixin.Container, core.Constructs):
                 from first to last. If no filters have been applied
                 then the tuple is empty.
 
-        **Examples:**
+        **Examples**
 
         >>> print(c)
         {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
@@ -3093,7 +3093,7 @@ class Constructs(mixin.Container, core.Constructs):
                 applied then the tuple is empty.
 
 
-        **Examples:**
+        **Examples**
 
         >>> c.filters_applied()
         ({'filter_by_naxes': (3, 1)},
@@ -3152,7 +3152,7 @@ class Constructs(mixin.Container, core.Constructs):
                 inverse filter, then an empty `Constructs` instance is
                 returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(c)
         Constructs:
@@ -3247,7 +3247,7 @@ class Constructs(mixin.Container, core.Constructs):
             `Constructs`
                 The shallow copy.
 
-        **Examples:**
+        **Examples**
 
         >>> g = f.shallow_copy()
 
@@ -3298,7 +3298,7 @@ class Constructs(mixin.Container, core.Constructs):
                 before the last filter was applied. If no filters have
                 been applied then all of the constructs are returned.
 
-        **Examples:**
+        **Examples**
 
         >>> print(c)
         Constructs:

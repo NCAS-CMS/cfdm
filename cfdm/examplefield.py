@@ -58,7 +58,7 @@ def example_field(n, _implementation=_implementation):
             The example field construct, or if *n_field* is True, the
             number of field constructs that are available.
 
-    **Examples:**
+    **Examples**
 
     >>> f = cfdm.example_field(0)
     >>> print(f)
@@ -5253,7 +5253,7 @@ def example_domain(n, _func=example_field):
         `Domain`
             The example domain construct.
 
-    **Examples:**
+    **Examples**
 
     >>> f = cfdm.example_domain(0)
     >>> print(f)

@@ -887,7 +887,7 @@ class CFDMImplementation(Implementation):
             `int`
                 The number of dimensions spanned by the data array.
 
-        **Examples:**
+        **Examples**
 
         >>> w = cfdm.implementation()
         >>> d = cfdm.DimensionCoordinate(
@@ -929,7 +929,7 @@ class CFDMImplementation(Implementation):
             `tuple`
                 The shape of the data array.
 
-        **Examples:**
+        **Examples**
 
         >>> w = cfdm.implementation()
         >>> d = cfdm.DimensionCoordinate(
@@ -971,7 +971,7 @@ class CFDMImplementation(Implementation):
             `int`
                 The number of elements in the data array.
 
-        **Examples:**
+        **Examples**
 
         >>> w = cfdm.implementation()
         >>> d = cfdm.DimensionCoordinate(
@@ -1413,7 +1413,7 @@ class CFDMImplementation(Implementation):
                 A dictionary whose values are field ancillary objects, keyed
                 by unique identifiers.
 
-        **Examples:**
+        **Examples**
 
         >>> w = cfdm.implementation()
         >>> f = cfdm.example_field(1)
@@ -1610,7 +1610,7 @@ class CFDMImplementation(Implementation):
             `str` or `None`
                 The measure property, or `None` if it has not been set.
 
-        **Examples:**
+        **Examples**
 
         >>> w = cfdm.implementation()
         >>> c = cfdm.CellMeasure(
@@ -1705,7 +1705,7 @@ class CFDMImplementation(Implementation):
             `dict`
                 The property names and their values
 
-        **Examples:**
+        **Examples**
 
         >>> w = cfdm.implementation()
         >>> d = cfdm.DimensionCoordinate(
@@ -1771,7 +1771,7 @@ class CFDMImplementation(Implementation):
 
                 The data.
 
-        **Examples:**
+        **Examples**
 
         >>> w = cfdm.implementation()
         >>> d = cfdm.DimensionCoordinate(
@@ -3277,7 +3277,7 @@ class CFDMImplementation(Implementation):
 
             `bool`
 
-        **Examples:**
+        **Examples**
 
         >>> w = cfdm.implementation()
 
@@ -3327,7 +3327,7 @@ class CFDMImplementation(Implementation):
             `bool`
                 `True` if the property exists, otherwise `False`.
 
-        **Examples:**
+        **Examples**
 
         >>> w = cfdm.implementation()
         >>> d = cfdm.DimensionCoordinate(
@@ -3415,7 +3415,7 @@ def implementation():
         `CFDMImplementation`
             A container for the CF data model implementation.
 
-    **Examples:**
+    **Examples**
 
     >>> i = cfdm.implementation()
     >>> i

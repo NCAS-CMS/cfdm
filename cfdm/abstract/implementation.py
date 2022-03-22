@@ -27,7 +27,7 @@ class Implementation(metaclass=abc.ABCMeta):
             `dict`
                 The class objects, keyed by their class name.
 
-        **Examples:**
+        **Examples**
 
         >>> i = cfdm.Implementation()  # an abstract implementation
         >>> i.classes()
@@ -83,7 +83,7 @@ class Implementation(metaclass=abc.ABCMeta):
 
                 The class object.
 
-        **Examples:**
+        **Examples**
 
         >>> i = cfdm.implementation()  # child CF data model implementation
         >>> Field = i.get_class('Field')
@@ -103,7 +103,7 @@ class Implementation(metaclass=abc.ABCMeta):
             `str`
                 The version.
 
-        **Examples:**
+        **Examples**
 
         >>> i = cfdm.implementation()  # child CF data model implementation
         >>> i.get_cf_version()
@@ -130,7 +130,7 @@ class Implementation(metaclass=abc.ABCMeta):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> i = cfdm.Implementation()  # child CF data model implementation
         >>> i.classes()

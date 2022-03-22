@@ -61,7 +61,7 @@ class DomainAxis(abstract.Container):
             `str`
                 The construct type.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}()
         >>> d.construct_type
@@ -89,7 +89,7 @@ class DomainAxis(abstract.Container):
 
                 The removed size.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}(size=50)
         >>> d.has_size()
@@ -122,7 +122,7 @@ class DomainAxis(abstract.Container):
              `bool`
                 True if the size has been set, otherwise False.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}(size=50)
         >>> d.has_size()
@@ -162,7 +162,7 @@ class DomainAxis(abstract.Container):
 
                 The size.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}(size=50)
         >>> d.has_size()
@@ -199,7 +199,7 @@ class DomainAxis(abstract.Container):
 
              `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}(size=50)
         >>> d.has_size()

@@ -35,7 +35,7 @@ class NumpyArray(abstract.Array):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        **Examples:**
+        **Examples**
 
         >>> a.dtype
         dtype('float64')
@@ -51,7 +51,7 @@ class NumpyArray(abstract.Array):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        **Examples:**
+        **Examples**
 
         >>> a.shape
         (73, 96)
@@ -88,7 +88,7 @@ class NumpyArray(abstract.Array):
             `numpy.ndarray`
                 An independent numpy array of the data.
 
-        **Examples:**
+        **Examples**
 
         >>> n = a.array
         >>> isinstance(n, numpy.ndarray)
@@ -124,7 +124,7 @@ class NumpyArray(abstract.Array):
             `{{class}}`
                 The deep copy.
 
-        **Examples:**
+        **Examples**
 
         >>> b = a.copy()
 

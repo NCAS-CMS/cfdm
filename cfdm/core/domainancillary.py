@@ -34,7 +34,7 @@ class DomainAncillary(abstract.PropertiesDataBounds):
             `str`
                 The construct type.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}()
         >>> d.construct_type
