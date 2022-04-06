@@ -167,6 +167,17 @@ class DomainTest(unittest.TestCase):
         """Test that Domain instances do not have cell bounds."""
         self.assertFalse(self.d.has_bounds())
 
+    def test_Domain_get_data_axes(self):
+        """Test Domain.get_data_axes."""
+        d = cfdm.example_domain(0)
+        self.assertEqual(d.get_data_axes("latitude"), ("domainaxis0",))
+
+        with self.assertRaises(ValueError):
+            d.get_data_axes(None)
+
+        with self.assertRaises(ValueError):
+            d.get_data_axes("domainaxis0")
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

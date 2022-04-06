@@ -165,23 +165,23 @@ t.auxiliary_coordinate('latitude')
 t.auxiliary_coordinate('latitude', key=True)
 t.auxiliary_coordinate('latitude', item=True)
 try:
-    t.construct('measure:volume')                # Raises Exception
+    t.cell_measure('measure:volume')                # Raises Exception
 except:
     pass
-t.construct('measure:volume', default=False)
+t.cell_measure('measure:volume', default=False)
 try:
-    t.construct('measure:volume', default=Exception("my error"))  # Raises Exception
+    t.cell_measure('measure:volume', default=Exception("my error"))  # Raises Exception
 except:
     pass
-c = t.constructs.filter_by_measure("volume")
+c = t.cell_measures().filter_by_measure("volume")
 len(c)
 d = t.constructs("units=degrees")
 len(d)
 try:
-    t.construct("units=degrees")  # Raises Exception
+    t.coordinate("units=degrees")  # Raises Exception
 except:
     pass
-print(t.construct("units=degrees", default=None))
+print(t.coordinate("units=degrees", default=None))
 lon = q.construct('longitude')
 lon
 lon.set_property('long_name', 'Longitude')
@@ -209,8 +209,8 @@ domain = t.domain
 domain
 print(domain)
 description = domain.dump(display=False)
-domain_latitude = t.domain.construct('latitude')
-field_latitude = t.construct('latitude')
+domain_latitude = t.domain.coordinate('latitude')
+field_latitude = t.coordinate('latitude')
 domain_latitude.set_property('test', 'set by domain')
 print(field_latitude.get_property('test'))
 field_latitude.set_property('test', 'set by field')
@@ -222,7 +222,7 @@ d = q.domain_axes().get('domainaxis1')
 d
 d.get_size()
 print(t.coordinates())
-lon = t.construct('grid_longitude')
+lon = t.coordinate('grid_longitude')
 bounds = lon.bounds
 bounds
 bounds.data
@@ -231,7 +231,7 @@ bounds.inherited_properties()
 bounds.properties()
 f = cfdm.read('geometry.nc')[0]
 print(f)
-lon = f.construct('longitude')
+lon = f.coordinate('longitude')
 lon.dump()
 lon.get_geometry()
 print(lon.bounds.data.array)
@@ -241,7 +241,7 @@ print(a.data.array)
 bounds = a.bounds
 bounds
 print(bounds.data.array)
-crs = t.construct('standard_name:atmosphere_hybrid_height_coordinate')
+crs = t.coordinate_reference('standard_name:atmosphere_hybrid_height_coordinate')
 crs
 crs.dump()
 crs.coordinates()
@@ -251,7 +251,7 @@ crs.coordinate_conversion
 crs.coordinate_conversion.parameters()
 crs.coordinate_conversion.domain_ancillaries()
 print(t.cell_methods())
-cm = t.construct('method:mean')
+cm = t.cell_method('method:mean')
 cm
 cm.get_axes()
 cm.get_method()
@@ -557,7 +557,7 @@ u.constructs('grid_latitude')
 t.constructs('grid_latitude')
 import copy
 u = copy.deepcopy(t)
-orog = t.construct('surface_altitude').copy()
+orog = t.domain_ancillary('surface_altitude').copy()
 t.equals(t)
 t.equals(t.copy())
 t.equals(t[...])
@@ -573,7 +573,7 @@ print(cfdm.atol())
 with cfdm.atol(1e-5):
     print(cfdm.atol())
 print(cfdm.atol())
-orog = t.construct('surface_altitude')
+orog = t.domain_ancillary('surface_altitude')
 orog.equals(orog.copy())
 print(t.constructs.filter_by_ncvar('b'))
 t.construct('ncvar%x')
@@ -638,7 +638,7 @@ f = cfdm.read('flat.nc')[0]
 f.equals(g)
 u = cfdm.read('parent.nc')[0]
 print(u)
-area = u.construct('measure:area')
+area = u.cell_measure('measure:area')
 area
 area.nc_get_external()
 area.nc_get_variable()
@@ -646,7 +646,7 @@ area.properties()
 area.has_data()
 g = cfdm.read('parent.nc', external='external.nc')[0]
 print(g)
-area = g.construct('measure:area')
+area = g.cell_measure('measure:area')
 area
 area.nc_get_external()
 area.nc_get_variable()

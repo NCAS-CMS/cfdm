@@ -1583,7 +1583,7 @@ returning a default value or raising a customised exception:
    Traceback (most recent call last):
       ...
    Exception: my error
-   >>> c = t.cell_measures.filter_by_measure("volume")
+   >>> c = t.cell_measures().filter_by_measure("volume")
    >>> len(c)
    0
    >>> d = t.constructs("units=degrees")

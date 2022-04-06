@@ -1800,7 +1800,7 @@ class Field(
                 return default
 
             return self._default(
-                default, "Can't get axes for non-existent construct"
+                default, f"Construct {key!r} has not had axes set"
             )
 
         return axes
