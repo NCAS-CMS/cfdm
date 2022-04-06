@@ -116,7 +116,7 @@ class DomainAxis(
 
             {{returns creation_commands}}
 
-        **Examples:**
+        **Examples**
 
         >>> x = {{package}}.DomainAxis(size=12)
         >>> x.nc_set_dimension('time')
@@ -192,7 +192,7 @@ class DomainAxis(
             `bool`
                 Whether the two domain axis constructs are equal.
 
-        **Examples:**
+        **Examples**
 
         >>> d.equals(d)
         True
@@ -250,7 +250,7 @@ class DomainAxis(
 
                 The identity.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.DomainAxis(size=9)
         >>> d.nc_set_dimension('time')
@@ -302,7 +302,7 @@ class DomainAxis(
             `list` or generator
                 The identities.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.DomainAxis(size=9)
         >>> d.nc_set_dimension('time')

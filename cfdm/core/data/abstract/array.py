@@ -62,7 +62,7 @@ class Array(Container):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        **Examples:**
+        **Examples**
 
         >>> import copy
         >>> y = copy.deepcopy(x)
@@ -81,7 +81,7 @@ class Array(Container):
             `numpy.ndarray`
                 An independent numpy array of the data.
 
-        **Examples:**
+        **Examples**
 
         >>> n = a.array
         >>> isinstance(n, numpy.ndarray)
@@ -148,7 +148,7 @@ class Array(Container):
             `{{class}}`
                 The deep copy.
 
-        **Examples:**
+        **Examples**
 
         >>> b = a.copy()
 

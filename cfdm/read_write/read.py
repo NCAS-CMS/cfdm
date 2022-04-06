@@ -274,7 +274,7 @@ def read(
             The field constructs found in the dataset, or the domain
             constructs if *domain* is True. The list may be empty.
 
-    **Examples:**
+    **Examples**
 
     >>> x = cfdm.read('file.nc')
     >>> print(type(x))

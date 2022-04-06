@@ -130,7 +130,7 @@ class CellMethod(abstract.Container):
             `str`
                 The construct type.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.construct_type
@@ -163,7 +163,7 @@ class CellMethod(abstract.Container):
                 The removed axes, identified by domain axis construct key
                 or standard name.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_axes('domainaxis1')
@@ -202,7 +202,7 @@ class CellMethod(abstract.Container):
             `str`
                 The removed method.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_method('minimum')
@@ -247,7 +247,7 @@ class CellMethod(abstract.Container):
 
                 The removed qualifier.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_qualifier('where', 'land')
@@ -292,7 +292,7 @@ class CellMethod(abstract.Container):
             `tuple`
                 The axes.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_axes('domainaxis1')
@@ -332,7 +332,7 @@ class CellMethod(abstract.Container):
             `str`
                 The method.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_method('minimum')
@@ -378,7 +378,7 @@ class CellMethod(abstract.Container):
 
                 The value of the qualifier.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_qualifier('where', 'land')
@@ -415,7 +415,7 @@ class CellMethod(abstract.Container):
             `bool`
                 `True` if the axes have been set, otherwise `False`.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_axes('domainaxis1')
@@ -447,7 +447,7 @@ class CellMethod(abstract.Container):
             `bool`
                 `True` if the method has been set, otherwise `False`.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_method('minimum')
@@ -485,7 +485,7 @@ class CellMethod(abstract.Container):
             `bool`
                 `True` if the qualifier has been set, otherwise `False`.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_qualifier('where', 'land')
@@ -512,7 +512,7 @@ class CellMethod(abstract.Container):
             `dict`
                 The qualifiers.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_qualifier('where', 'land')
@@ -562,7 +562,7 @@ class CellMethod(abstract.Container):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_axes('domainaxis1')
@@ -609,7 +609,7 @@ class CellMethod(abstract.Container):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_method('minimum')
@@ -649,7 +649,7 @@ class CellMethod(abstract.Container):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_qualifier('where', 'land')

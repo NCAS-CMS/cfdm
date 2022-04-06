@@ -55,7 +55,7 @@ class PropertiesData(Properties):
 
                 The subspace.
 
-        **Examples:**
+        **Examples**
 
         >>> f.shape
         (1, 10, 9)
@@ -193,7 +193,7 @@ class PropertiesData(Properties):
     def dtype(self):
         """Data-type of the data elements.
 
-        **Examples:**
+        **Examples**
 
         >>> d.dtype
         dtype('float64')
@@ -215,7 +215,7 @@ class PropertiesData(Properties):
 
         .. seealso:: `data`, `has_data`, `isscalar`, `shape`, `size`
 
-        **Examples:**
+        **Examples**
 
         >>> f.shape
         (73, 96)
@@ -260,7 +260,7 @@ class PropertiesData(Properties):
 
         .. seealso:: `data`, `has_data`, `ndim`, `size`
 
-        **Examples:**
+        **Examples**
 
         >>> f.shape
         (73, 96)
@@ -305,7 +305,7 @@ class PropertiesData(Properties):
 
         .. seealso:: `data`, `has_data`, `ndim`, `shape`
 
-        **Examples:**
+        **Examples**
 
         >>> f.shape
         (73, 96)
@@ -395,7 +395,7 @@ class PropertiesData(Properties):
                 A new instance with masked values, or `None` if the
                 operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> print(v.data.array)
         [9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,
@@ -480,7 +480,7 @@ class PropertiesData(Properties):
 
             {{returns creation_commands}}
 
-        **Examples:**
+        **Examples**
 
         >>> x = {{package}}.{{class}}(
         ...     properties={'units': 'Kelvin',
@@ -671,7 +671,7 @@ class PropertiesData(Properties):
             `bool`
                 Whether the two instances are equal.
 
-        **Examples:**
+        **Examples**
 
         >>> x.equals(x)
         True
@@ -801,7 +801,7 @@ class PropertiesData(Properties):
                 A new instance with expanded data axes. If the
                 operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.shape
         (19, 73, 96)
@@ -846,7 +846,7 @@ class PropertiesData(Properties):
                 A new instance with removed size 1 one data axes. If
                 the operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
 
         >>> f = {{package}}.{{class}}()
@@ -919,7 +919,7 @@ class PropertiesData(Properties):
                 A new instance with permuted data axes. If the operation
                 was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.shape
         (19, 73, 96)
@@ -973,7 +973,7 @@ class PropertiesData(Properties):
                 The uncompressed construct, or `None` if the operation
                 was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data.get_compression_type()
         'ragged contiguous'

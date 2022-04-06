@@ -51,7 +51,7 @@ class FieldDomain(metaclass=DocstringRewriteMeta):
 
                 The removed metadata construct.
 
-        **Examples:**
+        **Examples**
 
         >>> f.del_construct('dimensioncoordinate1')
         <{{repr}}DimensionCoordinate: grid_latitude(111) degrees>
@@ -85,7 +85,7 @@ class FieldDomain(metaclass=DocstringRewriteMeta):
 
                 The metadata construct.
 
-        **Examples:**
+        **Examples**
 
         >>> f.constructs()
         {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degree_N>,
@@ -130,7 +130,7 @@ class FieldDomain(metaclass=DocstringRewriteMeta):
             `bool`
                 True if the construct exists, otherwise False.
 
-        **Examples:**
+        **Examples**
 
         >>> f.has_construct('dimensioncoordinate1')
         True
@@ -188,7 +188,7 @@ class FieldDomain(metaclass=DocstringRewriteMeta):
              `str`
                 The construct identifier for the construct.
 
-        **Examples:**
+        **Examples**
 
         >>> key = f.set_construct(c)
         >>> key = f.set_construct(c, copy=False)
@@ -230,7 +230,7 @@ class FieldDomain(metaclass=DocstringRewriteMeta):
                 The keys of the domain axis constructs spanned by the
                 data.
 
-        **Examples:**
+        **Examples**
 
         >>> f.set_data_axes(['domainaxis0', 'domainaxis1'])
         >>> f.get_data_axes()
@@ -289,7 +289,7 @@ class FieldDomain(metaclass=DocstringRewriteMeta):
                 The removed keys of the domain axis constructs spanned
                 by the data.
 
-        **Examples:**
+        **Examples**
 
         >>> f.del_data_axes(key='dimensioncoordinate2')
         ('domainaxis1',)
@@ -340,7 +340,7 @@ class FieldDomain(metaclass=DocstringRewriteMeta):
                 True if domain axis constructs that span the data been
                 set, otherwise False.
 
-        **Examples:**
+        **Examples**
 
         >>> f.set_data_axes(['domainaxis0', 'domainaxis1'])
         >>> f.get_data_axes()
@@ -388,7 +388,7 @@ class FieldDomain(metaclass=DocstringRewriteMeta):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.set_data_axes(['domainaxis0', 'domainaxis1'])
         >>> f.get_data_axes()

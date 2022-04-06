@@ -29,7 +29,7 @@ class Coordinate(PropertiesDataBounds):
             `str`
                 The removed climatology value.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_climatology(True)
@@ -81,7 +81,7 @@ class Coordinate(PropertiesDataBounds):
 
             `str`
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_climatology(True)
@@ -126,7 +126,7 @@ class Coordinate(PropertiesDataBounds):
             `bool`
                 Whether or not the coordinates are climatological.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_climatology(True)
@@ -169,7 +169,7 @@ class Coordinate(PropertiesDataBounds):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_climatology(True)

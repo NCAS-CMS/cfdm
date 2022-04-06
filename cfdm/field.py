@@ -271,7 +271,7 @@ class Field(
             `Field`
                 The subspace of the field construct.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data.shape
         (1, 10, 9)
@@ -502,7 +502,7 @@ class Field(
 
                 {{Returns constructs}}
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.field_ancillaries())
         Constructs:
@@ -632,7 +632,7 @@ class Field(
 
                  {{Returns constructs}}
 
-        **Examples:**
+        **Examples**
 
         """
         cached = filter_kwargs.get("cached")
@@ -738,7 +738,7 @@ class Field(
                 A new field construct with masked values, or `None` if
                 the operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> f.data[[0, -1]] = numpy.ma.masked
@@ -962,7 +962,7 @@ class Field(
                 The compressed field construct, or `None` if the
                 operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data.get_compression_type()
         ''
@@ -1397,7 +1397,7 @@ class Field(
 
             {{returns creation_commands}}
 
-        **Examples:**
+        **Examples**
 
         >>> q = {{package}}.example_field(0)
         >>> print(q)
@@ -1817,7 +1817,7 @@ class Field(
             `Domain`
                  The domain.
 
-        **Examples:**
+        **Examples**
 
         >>> d = f.get_domain()
 
@@ -1848,7 +1848,7 @@ class Field(
                 the data are in memory then an empty `set` is
                 returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> {{package}}.write(f, 'temp_file.nc')
@@ -1875,7 +1875,7 @@ class Field(
     #                Whether or not there is a geometry type on any coordinate
     #                construct.
     #
-    #        **Examples:**
+    #        **Examples**
     #
     #        >>> f = {{package}}.Field()
     #        >>> f.has_geometry()
@@ -1928,7 +1928,7 @@ class Field(
                 The new field construct with expanded data axes. If
                 the operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data.shape
         (19, 73, 96)
@@ -2020,7 +2020,7 @@ class Field(
             `Field`
                 The new field construct.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.read('file.nc')[0]
         >>> print(f)
@@ -2184,7 +2184,7 @@ class Field(
                 The field construct with removed data axes. If the
                 operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data.shape
         (1, 73, 1, 96)
@@ -2250,7 +2250,7 @@ class Field(
                 The field construct with permuted data axes. If the
                 operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data.shape
         (19, 73, 96)
@@ -2367,7 +2367,7 @@ class Field(
                 The uncompressed field construct, or `None` if the
                 operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data.get_compression_type()
         'ragged contiguous'

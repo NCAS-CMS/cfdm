@@ -450,7 +450,7 @@ class Constructs(abstract.Container):
 
                 The removed construct.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(3)
         >>> c = f.constructs
@@ -572,7 +572,7 @@ class Constructs(abstract.Container):
              `str`
                 The construct identifier for the construct.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(3)
         >>> c = f.constructs
@@ -672,7 +672,7 @@ class Constructs(abstract.Container):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(3)
         >>> c = f.constructs
@@ -822,7 +822,7 @@ class Constructs(abstract.Container):
                 The construct key and constructs respectively as
                 key-value pairs in a Python `dict_items` iterator.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> c = f.constructs
@@ -861,7 +861,7 @@ class Constructs(abstract.Container):
             `dict_keys`
                 The construct keys as a Python `dict_keys` iterator.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> c = f.constructs
@@ -900,7 +900,7 @@ class Constructs(abstract.Container):
             `dict_values`
                 The constructs as a Python `dict_values` iterator.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> c = f.constructs
@@ -988,7 +988,7 @@ class Constructs(abstract.Container):
             `{{class}}`
                 The deep copy.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> c = f.constructs
@@ -1018,7 +1018,7 @@ class Constructs(abstract.Container):
                 The keys of the domain axes constructs spanned by
                 metadata construct data.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> c = f.constructs
@@ -1094,7 +1094,7 @@ class Constructs(abstract.Container):
             `{{class}}` or `dict`
                 The selected constructs and their construct keys.
 
-        **Examples:**
+        **Examples**
 
         Select dimension coordinate constructs:
 
@@ -1202,7 +1202,7 @@ class Constructs(abstract.Container):
             `str`
                 The construct key.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.Field()
         >>> c = f.constructs
@@ -1257,7 +1257,7 @@ class Constructs(abstract.Container):
             `str`
                 The new construct identifier.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> c = f.constructs
@@ -1308,7 +1308,7 @@ class Constructs(abstract.Container):
                  The constructs and their construct keys, in their
                  predetermined order.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.Field()
         >>> c = f.constructs
@@ -1371,7 +1371,7 @@ class Constructs(abstract.Container):
             `{{class}}`
                 The shallow copy.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> c = f.constructs
@@ -1433,7 +1433,7 @@ class Constructs(abstract.Container):
 
                 The metadata construct.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.Field()
         >>> c = f.constructs

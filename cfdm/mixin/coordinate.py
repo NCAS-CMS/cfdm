@@ -61,7 +61,7 @@ class Coordinate(PropertiesDataBounds):
 
             {{returns creation_commands}}
 
-        **Examples:**
+        **Examples**
 
         >>> x = {{package}}.{{class}}(
         ...     properties={'units': 'degrees_east',
