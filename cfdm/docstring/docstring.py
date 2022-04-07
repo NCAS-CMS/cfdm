@@ -303,10 +303,17 @@ _docstring_substitution_definitions = {
                 Keyword arguments as accepted by `Constructs.filter`
                 that define additional construct selection
                 criteria.""",
-    # Returns constructs
-    "{{Returns constructs}}": """
-                The selected constructs in a new `Constructs` object,
-                unless modified by any *filter_kwargs* parameters.""",
+    # key: `bool`, optional
+    "{{key: `bool`, optional}}": """key: `bool`, optional
+                If True then return the selected construct
+                identifier. By default the construct itself is
+                returned.""",
+    # item: `bool`, optional
+    "{{item: `bool`, optional}}": """item: `bool`, optional
+                If True then return as a tuple the selected construct identifier
+                and the construct itself. By default only the construct
+                itself is returned. If *key* is True then *item* is
+                ignored.""",
     # chunks subarrays
     "{{subarrays chunks: ``-1`` or sequence, optional}}": """chunks: ``-1`` or sequence, optional
                 Define the subarray shapes.
@@ -341,6 +348,13 @@ _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------
+    # Returns constructs
+    "{{Returns constructs}}": """
+                The selected constructs in a new `Constructs` object,
+                unless modified by any *filter_kwargs* parameters.""",
+    # Returns construct
+    "{{Returns construct}}": """The selected construct, or its identifier if *key* is
+                True, or a tuple of both if *item* is True.""",
     # string value match
     "{{value match}}": """A value may be any object that can match via the
                 ``==`` operator, or a `re.Pattern` object that matches
