@@ -663,7 +663,7 @@ class PropertiesDataBounds(PropertiesData):
                     header=False,
                 )
             )
-            out.append("{name}.set_bounds({bounds_name})")
+            out.append(f"{name}.set_bounds({bounds_name})")
 
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
