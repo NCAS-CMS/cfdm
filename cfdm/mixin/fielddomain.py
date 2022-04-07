@@ -247,8 +247,8 @@ class FieldDomain:
                 .. versionadded:: (cfdm) 1.9.1.0
 
             default: optional
-                If *construct* is True then return the value of the
-                *default* parameter if there is no unique construct.
+                If *construct* is True and there is no unique construct
+                then return the value of the *default* parameter.
 
                 {{default Exception}}
 
@@ -1014,7 +1014,7 @@ class FieldDomain:
                 Additionally, the values are matched against construct
                 identifiers, with or without the ``'key%'`` prefix.
 
-                Additionally, if for a given `value``,
+                Additionally, if for a given ``value``,
                 ``f.coordinates(value, filter_by_naxes=(1,))`` returns
                 1-d coordinate constructs that all span the same
                 domain axis construct then that domain axis construct
