@@ -310,8 +310,8 @@ _docstring_substitution_definitions = {
                 returned.""",
     # item: `bool`, optional
     "{{item: `bool`, optional}}": """item: `bool`, optional
-                If True then return the selected construct identifier
-                and the construct itself. By default the construct
+                If True then return as a tuple the selected construct identifier
+                and the construct itself. By default only the construct
                 itself is returned. If *key* is True then *item* is
                 ignored.""",
     # chunks subarrays

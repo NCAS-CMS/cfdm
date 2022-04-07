@@ -1739,7 +1739,7 @@ class Field(
                 `construct` for details.
 
                 If neither *identity* nor *filter_kwargs* are set then
-                the domain of the field constructs's data are
+                the domain of the field construct's data are
                 returned.
 
                 .. versionadded:: (cfdm) 1.9.1.0

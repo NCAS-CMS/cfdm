@@ -1525,7 +1525,7 @@ construct key, by any of the following techniques:
    >>> c = t.constructs.get(key)
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
 
-* with the `~Constructs.value` method of a `Constructs` instance, or
+* with the `~Constructs.value` method of a `Constructs` instance.
 
 .. code-block:: python
    :caption: *Get the "latitude" metadata construct via its 'value'
@@ -1564,7 +1564,7 @@ of the chosen type.
    >>> t.auxiliary_coordinate('latitude', item=True)
    ('auxiliarycoordinate0', <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>)
 
-All of these techniques will raise an exception of there is not a
+All of these techniques will raise an exception if there is not a
 unique metadata construct to return, but this may be replaced with
 returning a default value or raising a customised exception:
    
