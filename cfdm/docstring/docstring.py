@@ -112,8 +112,8 @@ _docstring_substitution_definitions = {
                   ``name='data1'``""",
     # header: `bool`, optional
     "{{header: `bool`, optional}}": """header: `bool`, optional
-                If False then do not output a comment describing the
-                components.""",
+                If True (the default) output a comment describing the
+                components. If False no such comment is returned.""",
     # ignore_compression: `bool`, optional
     "{{ignore_compression: `bool`, optional}}": """ignore_compression: `bool`, optional
                 If False then the compression type and, if applicable,
