@@ -4519,13 +4519,22 @@ class NetCDFWrite(IOWrite):
                 .. versionadded:: (cfdm) 1.8.0
 
             warn_valid: `bool`, optional
-                If False then do not print a warning when writing
+                If True (the default) then print a warning when writing
                 "out-of-range" data, as indicated by the values, if
                 present, of any of the ``valid_min``, ``valid_max`` or
                 ``valid_range`` properties on field and metadata
-                constructs that have data.
+                constructs that have data. If False the warning
+                is not printed.
 
-                See `cfdm.write` for details.
+                The consequence of writing out-of-range data values is
+                that, by default, these values will be masked when the
+                file is subsequently read.
+
+                *Parameter example:*
+                  If a construct has ``valid_max`` property with value
+                  ``100`` and data with maximum value ``999``, then the
+                  resulting warning may be suppressed by setting
+                  ``warn_valid=False``.
 
                 .. versionadded:: (cfdm) 1.8.3
 
