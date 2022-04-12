@@ -17,11 +17,13 @@ def environment(display=True, paths=True):
     :Parameters:
 
         display: `bool`, optional
-            If False then return the description of the environment as
-            a string. By default the description is printed.
+            If True (the default) then display the description of the
+            environment as a string. If False the description is
+            instead returned as a list.
 
         paths: `bool`, optional
-            If False then do not output the locations of each package.
+            If True (the default) then output the locations of each
+            package. If False the locations are not included.
 
     :Returns:
 
