@@ -606,8 +606,8 @@ class PropertiesDataBounds(PropertiesData):
                 The bounds to be inserted.
 
             copy: `bool`, optional
-                If False then do not copy the bounds prior to
-                insertion. By default the bounds are copied.
+                If True (the default) then copy the bounds prior to
+                insertion, else the bounds are not copied.
 
         :Returns:
 
@@ -701,8 +701,8 @@ class PropertiesDataBounds(PropertiesData):
                 The interior_ring to be inserted.
 
             copy: `bool`, optional
-                If False then do not copy the interior_ring prior to
-                insertion. By default the interior_ring are copied.
+                If True (the default) then copy the interior_ring
+                prior to insertion, else it is not copied.
 
         :Returns:
 

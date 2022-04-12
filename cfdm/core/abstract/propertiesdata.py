@@ -167,8 +167,8 @@ class PropertiesData(Properties):
         :Parameters:
 
             data: `bool`, optional
-                If False then do not copy data. By default data are
-                copied.
+                If True (the default) then copy data, else the
+                data is not copied.
 
         :Returns:
 
@@ -397,8 +397,8 @@ class PropertiesData(Properties):
                 {{data_like}}
 
             copy: `bool`, optional
-                If False then do not copy the data prior to insertion. By
-                default the data are copied.
+                If True (the default) then copy the data prior to
+                insertion, else the data is not copied.
 
             {{inplace: `bool`, optional (default True)}}
 
