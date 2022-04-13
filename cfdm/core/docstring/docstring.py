@@ -116,4 +116,16 @@ _docstring_substitution_definitions = {
                 to a `Data` object, i.e. `numpy` array_like objects,
                 `Data` objects, and {{package}} instances that contain
                 `Data` objects.""",
+    # data: `bool`, optional
+    "{{data: `bool`, optional}}": """data: `bool`, optional
+                If True (the default) then copy data contained in the
+                metadata construct(s), else the data is not copied.""",
+    # (component-based) copy: `bool`, optional
+    "{{copy: `bool`, optional}}": """copy: `bool`, optional
+                If True (the default) then copy the component prior to
+                insertion, else it is not copied.""",
+    # data copy: `bool`, optional
+    "{{data copy: `bool`, optional}}": """copy: `bool`, optional
+                If True (the default) then copy the data prior to
+                insertion, else the data is not copied.""",
 }

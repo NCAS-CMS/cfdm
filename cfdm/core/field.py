@@ -488,9 +488,7 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
                 *Parameter example:*
                   ``axes=None``
 
-            copy: `bool`, optional
-                If False then do not copy the data prior to insertion. By
-                default the data are copied.
+            {{data copy: `bool`, optional}}
 
             {{inplace: `bool`, optional (default True)}}
 

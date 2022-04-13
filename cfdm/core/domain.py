@@ -145,9 +145,7 @@ class Domain(mixin.FieldDomain, abstract.Properties):
 
         :Parameters:
 
-            data: `bool`, optional
-                If False then do not copy data. By default data are
-                copied.
+            {{data: `bool`, optional}}
 
         :Returns:
 
