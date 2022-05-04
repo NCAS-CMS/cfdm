@@ -370,7 +370,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
                 The square root of the values.
 
         """
-        return t ** 0.5
+        return t**0.5
 
     def _fv2lat(self, v):
         """Convert cartesian to geocentric latitude coordinates.
