@@ -850,8 +850,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         """
         ca = self._get_Array(None)
-
-        if not ca.get_compression_type():
+        if ca is None or not ca.get_compression_type():
             raise ValueError("not compressed: can't get compressed array")
 
         return ca.compressed_array
