@@ -347,9 +347,9 @@ _docstring_substitution_definitions = {
                 maximum possible size.""",
     # deep copy
     "{{deep copy}}": """copy: `bool`, optional
-                If False then do not deep copy input parameters prior
-                to initialisation. By default arguments are deep
-                copied.""",
+                If True (the default) then deep copy input
+                parameters prior to initialisation, else they are
+                not (deep) copied.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------
