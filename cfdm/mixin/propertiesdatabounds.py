@@ -95,10 +95,7 @@ class PropertiesDataBounds(PropertiesData):
 
                 {{init source}}
 
-            copy: `bool`, optional
-                If False then do not deep copy input parameters prior
-                to initialisation. By default arguments are deep
-                copied.
+            {{deep copy}}
 
         """
         # Initialise properties, data, geometry and interior ring

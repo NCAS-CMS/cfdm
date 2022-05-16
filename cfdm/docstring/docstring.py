@@ -345,6 +345,11 @@ _docstring_substitution_definitions = {
                 By default, *chunks* is ``-1``, meaning that all
                 non-compressed dimensions in each subarray have the
                 maximum possible size.""",
+    # deep copy
+    "{{deep copy}}": """copy: `bool`, optional
+                If False then do not deep copy input parameters prior
+                to initialisation. By default arguments are deep
+                copied.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------

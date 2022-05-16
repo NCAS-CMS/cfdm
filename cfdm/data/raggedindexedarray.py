@@ -57,10 +57,7 @@ class RaggedIndexedArray(RaggedArray):
 
                 .. versionadded:: (cfdm) 1.9.TODO.0
 
-            copy: `bool`, optional
-                If False then do not deep copy input parameters prior
-                to initialisation. By default arguments are deep
-                copied.
+            {{deep copy}}
 
                 .. versionadded:: (cfdm) 1.9.TODO.0
 

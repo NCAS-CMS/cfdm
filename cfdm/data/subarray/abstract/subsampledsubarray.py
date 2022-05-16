@@ -109,10 +109,7 @@ class SubsampledSubarray(Subarray):
 
                 {{init source}}
 
-            copy: `bool`, optional
-                If False then do not deep copy input parameters prior
-                to initialisation. By default arguments are deep
-                copied.
+            {{deep copy}}
 
             context_manager: function, optional
                 A context manager that provides a runtime context for
