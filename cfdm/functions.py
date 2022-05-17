@@ -303,7 +303,8 @@ def environment(display=True, paths=True):
             a string. By default the description is printed.
 
         paths: `bool`, optional
-            If False then do not output the locations of each package.
+            If True (the default) then output the locations of each
+            package.
 
     :Returns:
 
@@ -440,8 +441,8 @@ def unique_constructs(constructs, copy=True):
             a mixture of types. The sequence can be empty.
 
         copy: `bool`, optional
-            If False then do not copy returned constructs. By default
-            they are deep copies.
+            If True (the default) then deep copy returned constructs,
+            else they are not (deep) copied.
 
     :Returns:
 
