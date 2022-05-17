@@ -1550,8 +1550,8 @@ class PropertiesDataBounds(PropertiesData):
                 The node count variable to be inserted.
 
             copy: `bool`, optional
-                If False then do not copy the node count variable
-                prior to insertion. By default it is copied.
+                If True (the default) then copy the node count
+                variable prior to insertion.
 
         :Returns:
 
@@ -1590,8 +1590,8 @@ class PropertiesDataBounds(PropertiesData):
                 The part node count variable to be inserted.
 
             copy: `bool`, optional
-                If False then do not copy the part node count variable
-                prior to insertion. By default it is copied.
+                If True (the default) then copy the part node count
+                variable prior to insertion.
 
         :Returns:
 
