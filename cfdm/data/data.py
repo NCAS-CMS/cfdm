@@ -1272,8 +1272,8 @@ class Data(Container, NetCDFHDF5, core.Data):
         :Parameters:
 
             array: `bool`, optional
-                If False then do not copy the array. By default the array
-                is copied.
+                If True (the default) then copy the array, else it
+                is not copied.
 
         :Returns:
 
