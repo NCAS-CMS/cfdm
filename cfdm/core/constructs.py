@@ -102,9 +102,9 @@ class Constructs(abstract.Container):
                 constructs from those of *source*.
 
             copy: `bool`, optional
-                If False then do not deep copy metadata constructs
-                from those of *source* prior to initialisation. By
-                default such metadata constructs are deep copied.
+                If True (the default) then deep copy metadata constructs
+                from those of *source* prior to initialisation, else they
+                are not deep copied.
 
             _ignore: sequence of `str`, optional
                 Ignores the given construct types.
@@ -979,9 +979,7 @@ class Constructs(abstract.Container):
 
         :Parameters:
 
-            data: `bool`, optional
-                If False then do not copy data contained in the
-                metadata constructs. By default such data are copied.
+            {{data: `bool`, optional}}
 
         :Returns:
 

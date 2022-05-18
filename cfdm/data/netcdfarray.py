@@ -80,8 +80,8 @@ class NetCDFArray(abstract.Array):
                 The number of array dimensions in the netCDF file.
 
             mask: `bool`
-                If False then do not mask by convention when reading data
-                from disk. By default data is masked by convention.
+                If True (the default) then mask by convention when
+                reading data from disk.
 
                 A netCDF array is masked depending on the values of any of
                 the netCDF variable attributes ``valid_min``,
@@ -97,10 +97,7 @@ class NetCDFArray(abstract.Array):
 
                 .. versionadded:: (cfdm) 1.9.TODO.0
 
-            copy: `bool`, optional
-                If False then do not deep copy input parameters prior
-                to initialisation. By default arguments are deep
-                copied.
+            {{deep copy}}
 
                 .. versionadded:: (cfdm) 1.9.TODO.0
 

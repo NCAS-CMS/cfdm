@@ -618,10 +618,7 @@ class CoordinateReference(abstract.Container):
             coordinate_conversion: `CoordinateConversion`
                 The coordinate conversion component to be inserted.
 
-            copy: `bool`, optional
-                If False then do not copy the coordinate conversion prior
-                to insertion. By default the coordinate conversion is
-                copied.
+            {{copy: `bool`, optional}}
 
         :Returns:
 
@@ -665,9 +662,7 @@ class CoordinateReference(abstract.Container):
             datum: `Datum`
                 The datum component to be inserted.
 
-            copy: `bool`, optional
-                If False then do not copy the datum prior to insertion. By
-                default the datum is copied.
+            {{copy: `bool`, optional}}
 
         :Returns:
 

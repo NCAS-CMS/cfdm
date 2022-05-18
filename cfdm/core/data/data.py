@@ -305,8 +305,8 @@ class Data(abstract.Container):
         :Parameters:
 
             array: `bool`, optional
-                If False then do not copy the array. By default the array
-                is copied.
+                If True (the default) then copy the array, else the
+                array is not copied.
 
         :Returns:
 

@@ -112,8 +112,8 @@ _docstring_substitution_definitions = {
                   ``name='data1'``""",
     # header: `bool`, optional
     "{{header: `bool`, optional}}": """header: `bool`, optional
-                If False then do not output a comment describing the
-                components.""",
+                If True (the default) output a comment describing the
+                components. If False no such comment is returned.""",
     # ignore_compression: `bool`, optional
     "{{ignore_compression: `bool`, optional}}": """ignore_compression: `bool`, optional
                 If False then the compression type and, if applicable,
@@ -345,6 +345,11 @@ _docstring_substitution_definitions = {
                 By default, *chunks* is ``-1``, meaning that all
                 non-compressed dimensions in each subarray have the
                 maximum possible size.""",
+    # deep copy
+    "{{deep copy}}": """copy: `bool`, optional
+                If True (the default) then deep copy input
+                parameters prior to initialisation, else they are
+                not (deep) copied.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------

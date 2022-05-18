@@ -959,8 +959,8 @@ class Constructs(mixin.Container, core.Constructs):
         :Parameters:
 
             data: `bool`, optional
-                If False then do not copy data contained in the metadata
-                constructs. By default such data are copied.
+                If True (the default) then copy data contained in the
+                metadata constructs.
 
         :Returns:
 

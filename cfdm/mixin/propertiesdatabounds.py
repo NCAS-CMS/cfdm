@@ -95,10 +95,7 @@ class PropertiesDataBounds(PropertiesData):
 
                 {{init source}}
 
-            copy: `bool`, optional
-                If False then do not deep copy input parameters prior
-                to initialisation. By default arguments are deep
-                copied.
+            {{deep copy}}
 
         """
         # Initialise properties, data, geometry and interior ring
@@ -1553,8 +1550,8 @@ class PropertiesDataBounds(PropertiesData):
                 The node count variable to be inserted.
 
             copy: `bool`, optional
-                If False then do not copy the node count variable
-                prior to insertion. By default it is copied.
+                If True (the default) then copy the node count
+                variable prior to insertion.
 
         :Returns:
 
@@ -1593,8 +1590,8 @@ class PropertiesDataBounds(PropertiesData):
                 The part node count variable to be inserted.
 
             copy: `bool`, optional
-                If False then do not copy the part node count variable
-                prior to insertion. By default it is copied.
+                If True (the default) then copy the part node count
+                variable prior to insertion.
 
         :Returns:
 

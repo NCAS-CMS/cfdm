@@ -130,10 +130,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
                 {{init source}}
 
-            copy: `bool`, optional
-                If False then do not deep copy input parameters prior
-                to initialisation. By default arguments are deep
-                copied.
+            {{deep copy}}
 
             kwargs: ignored
                 Not used. Present to facilitate subclassing.
@@ -1274,8 +1271,8 @@ class Data(Container, NetCDFHDF5, core.Data):
         :Parameters:
 
             array: `bool`, optional
-                If False then do not copy the array. By default the array
-                is copied.
+                If True (the default) then copy the array, else it
+                is not copied.
 
         :Returns:
 

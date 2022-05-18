@@ -83,10 +83,7 @@ class RaggedArray(CompressedArray):
 
                 {{init source}}
 
-            copy: `bool`, optional
-                If False then do not deep copy input parameters prior
-                to initialisation. By default arguments are deep
-                copied.
+            {{deep copy}}
 
         """
         if count_variable is not None:

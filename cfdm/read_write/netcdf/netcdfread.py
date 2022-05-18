@@ -372,8 +372,8 @@ class NetCDFRead(IORead):
                 `netCDF.Dataset` instance.
 
             flatten: `bool`, optional
-                If False then do not flatten a grouped file. Ignored if
-                the file has no groups.
+                If True (the default) then flatten a grouped file.
+                Ignored if the file has no groups.
 
                 .. versionadded:: (cfdm) 1.8.6
 
