@@ -347,7 +347,7 @@ class NetCDFRead(IORead):
         """
         try:
             nc = netCDF4.Dataset(filename, "r")
-        except (OSError, RuntimeError) as error:
+        except RuntimeError as error:
             raise RuntimeError(f"{error}: {filename}")
 
         # ------------------------------------------------------------
