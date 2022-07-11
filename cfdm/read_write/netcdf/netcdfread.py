@@ -347,7 +347,7 @@ class NetCDFRead(IORead):
         """
         try:
             nc = netCDF4.Dataset(filename, "r")
-        except RuntimeError as error:
+        except (OSError, RuntimeError) as error:
             raise RuntimeError(f"{error}: {filename}")
 
         # ------------------------------------------------------------
@@ -524,10 +524,11 @@ class NetCDFRead(IORead):
         else:
             try:
                 line = fh.readline()
-
                 # Match comment and blank lines at the top of the file
                 while re.match(r"^\s*//|^\s*$", line):
                     line = fh.readline()
+                    if not line:
+                        break
 
                 if line.startswith("netcdf "):
                     cdl = True

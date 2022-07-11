@@ -312,7 +312,6 @@ def read(
     # ----------------------------------------------------------------
     # Read the file into field/domain contructs
     # ----------------------------------------------------------------
-
     # Initialise a netCDF read object
     netcdf = NetCDFRead(_implementation)
 
