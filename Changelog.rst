@@ -1,4 +1,13 @@
-Version 1.9.0.3
+Version 1.9.0.4
+---------------
+
+**2022-??-??**
+
+* Fix bug that caused a hang when reading zero-length files
+  (https://github.com/NCAS-CMS/cfdm/issues/190)
+
+----
+  Version 1.9.0.3
 ---------------
 
 **2022-03-10**
