@@ -7,7 +7,8 @@ Version 1.9.0.4
   (https://github.com/NCAS-CMS/cfdm/issues/190)
 
 ----
-  Version 1.9.0.3
+
+Version 1.9.0.3
 ---------------
 
 **2022-03-10**
