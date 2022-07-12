@@ -566,10 +566,11 @@ class NetCDFRead(IORead):
         else:
             try:
                 line = fh.readline()
-
                 # Match comment and blank lines at the top of the file
                 while re.match(r"^\s*//|^\s*$", line):
                     line = fh.readline()
+                    if not line:
+                        break
 
                 if line.startswith("netcdf "):
                     cdl = True

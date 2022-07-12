@@ -26,7 +26,9 @@ Version 1.9.0.4
 
 * Upgrade to allow cfdm to work with Python 3.10
   (https://github.com/NCAS-CMS/cfdm/issues/187)
-
+* Fix bug that caused a hang when reading zero-length files
+  (https://github.com/NCAS-CMS/cfdm/issues/190)
+  
 Version 1.9.0.3
 ---------------
 
