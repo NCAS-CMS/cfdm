@@ -21,7 +21,7 @@ tmpfiles = [
     tempfile.mkstemp("_test_read_write.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
 ]
-(
+[
     tmpfile,
     tmpfileh,
     tmpfileh2,
@@ -31,7 +31,7 @@ tmpfiles = [
     tmpfilec3,
     tmpfile0,
     tmpfile1,
-) = tmpfiles
+] = tmpfiles
 
 
 def _remove_tmpfiles():
@@ -855,6 +855,16 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.example_field(0)
         filename = os.path.join("$PWD", os.path.basename(tmpfile))
         cfdm.write(f, filename)
+
+    def test_read_zero_length_file(self):
+        """Test reading a zero length file raises an exception."""
+        # Create zero-length file
+        tmpfile = tempfile.mkstemp("_test_read_write.nc", dir=os.getcwd())[1]
+        tmpfiles.append(tmpfile)
+        subprocess.run(f"touch {tmpfile}", shell=True, check=True)
+
+        with self.assertRaises(OSError):
+            cfdm.read(tmpfile)
 
 
 if __name__ == "__main__":
