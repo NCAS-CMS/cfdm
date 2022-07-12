@@ -197,10 +197,10 @@ class DocstringRewriteMeta(type):
             if is_classmethod:
                 attrs[attr_name] = classmethod(attr)
 
-            if is_staticmethod:
+            elif is_staticmethod:
                 attrs[attr_name] = staticmethod(attr)
 
-            if is_wrapped:
+            elif is_wrapped:
                 wrapper.__doc__ = attr.__doc__
                 wrapper.__wrapped__ = attr
                 attrs[attr_name] = wrapper
