@@ -28,12 +28,12 @@ class RaggedContiguousArrayTest(unittest.TestCase):
         )
 
     def test_RaggedContiguousArray_to_memory(self):
-        """Test the `to_memory` RaggedContiguousArray method."""
+        """Test `RaggedContiguousArray.to_memory`"""
         self.assertIsInstance(self.r.to_memory(), cfdm.RaggedContiguousArray)
 
     def test_RaggedContiguousArray_get_count(self):
-        """Test the `get_count` RaggedContiguousArray method."""
-        r = self.r
+        """Test `RaggedContiguousArray.get_count`"""
+        r = self.r.copy()
         self.assertIsInstance(r.get_count(), cfdm.Count)
         r._del_component("count_variable")
         self.assertIsNone(r.get_count(None))

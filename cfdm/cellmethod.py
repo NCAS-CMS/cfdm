@@ -126,7 +126,7 @@ class CellMethod(mixin.Container, core.CellMethod):
 
             {{returns creation_commands}}
 
-        **Examples:**
+        **Examples**
 
         >>> x = {{package}}.CellMethod(
         ...     axes=['area'],
@@ -271,7 +271,7 @@ class CellMethod(mixin.Container, core.CellMethod):
             `bool`
                 Whether the two cell method constructs are equal.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.CellMethod()
         >>> c.equals(c)
@@ -408,7 +408,7 @@ class CellMethod(mixin.Container, core.CellMethod):
 
                 The identity.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(1)
         >>> c = f.get_construct('cellmethod1')
@@ -460,7 +460,7 @@ class CellMethod(mixin.Container, core.CellMethod):
             `list` or generator
                 The identities.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(1)
         >>> c = f.get_construct('cellmethod1')
@@ -503,7 +503,7 @@ class CellMethod(mixin.Container, core.CellMethod):
             `CellMethod`
                 A new cell method construct with sorted axes.
 
-        **Examples:**
+        **Examples**
 
         >>> cm = {{package}}.CellMethod(axes=['domainaxis1', 'domainaxis0'],
         ...                      method='mean',

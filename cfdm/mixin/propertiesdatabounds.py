@@ -95,10 +95,7 @@ class PropertiesDataBounds(PropertiesData):
 
                 {{init source}}
 
-            copy: `bool`, optional
-                If False then do not deep copy input parameters prior
-                to initialisation. By default arguments are deep
-                copied.
+            {{deep copy}}
 
         """
         # Initialise properties, data, geometry and interior ring
@@ -159,7 +156,7 @@ class PropertiesDataBounds(PropertiesData):
             `{{class}}`
                 The subspace of the construct.
 
-        **Examples:**
+        **Examples**
 
         >>> f.shape
         (1, 10, 9)
@@ -268,7 +265,7 @@ class PropertiesDataBounds(PropertiesData):
     def dtype(self):
         """Data-type of the data elements.
 
-        **Examples:**
+        **Examples**
 
         >>> d.dtype
         dtype('float64')
@@ -294,7 +291,7 @@ class PropertiesDataBounds(PropertiesData):
 
         .. seealso:: `data`, `has_data`, `isscalar`, `shape`, `size`
 
-        **Examples:**
+        **Examples**
 
         >>> f.shape
         (73, 96)
@@ -349,7 +346,7 @@ class PropertiesDataBounds(PropertiesData):
 
         .. seealso:: `data`, `has_data`, `ndim`, `size`
 
-        **Examples:**
+        **Examples**
 
         >>> f.shape
         (73, 96)
@@ -404,7 +401,7 @@ class PropertiesDataBounds(PropertiesData):
 
         .. seealso:: `data`, `has_data`, `ndim`, `shape`
 
-        **Examples:**
+        **Examples**
 
         >>> f.shape
         (73, 96)
@@ -495,7 +492,7 @@ class PropertiesDataBounds(PropertiesData):
                 A new instance with masked values, or `None` if the
                 operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> print(c.data.array)
         [9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,
@@ -590,7 +587,7 @@ class PropertiesDataBounds(PropertiesData):
 
             {{returns creation_commands}}
 
-        **Examples:**
+        **Examples**
 
         >>> x = {{package}}.{{class}}(
         ...     properties={'units': 'degrees_east',
@@ -663,7 +660,7 @@ class PropertiesDataBounds(PropertiesData):
                     header=False,
                 )
             )
-            out.append("{name}.set_bounds({bounds_name})")
+            out.append(f"{name}.set_bounds({bounds_name})")
 
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
@@ -708,7 +705,7 @@ class PropertiesDataBounds(PropertiesData):
             `NodeCount`
                 The removed node count variable.
 
-        **Examples:**
+        **Examples**
 
         >>> n = {{package}}.NodeCount(properties={'long_name': 'node counts'})
         >>> c.set_node_count(n)
@@ -754,7 +751,7 @@ class PropertiesDataBounds(PropertiesData):
             `PartNodeCount`
                 The removed part node count variable.
 
-        **Examples:**
+        **Examples**
 
         >>> p = {{package}}.PartNodeCount(properties={'long_name': 'part node counts'})
         >>> c.set_part_node_count(p)
@@ -938,7 +935,7 @@ class PropertiesDataBounds(PropertiesData):
             `bool`
                 Whether the two instances are equal.
 
-        **Examples:**
+        **Examples**
 
         >>> p.equals(p)
         True
@@ -1073,7 +1070,7 @@ class PropertiesDataBounds(PropertiesData):
             `NodeCount`
                 The node count variable.
 
-        **Examples:**
+        **Examples**
 
         >>> n = {{package}}.NodeCount(properties={'long_name': 'node counts'})
         >>> c.set_node_count(n)
@@ -1120,7 +1117,7 @@ class PropertiesDataBounds(PropertiesData):
             `PartNodeCount`
                 The part node count variable.
 
-        **Examples:**
+        **Examples**
 
         >>> p = {{package}}.PartNodeCount(properties={'long_name': 'part node counts'})
         >>> c.set_part_node_count(p)
@@ -1158,7 +1155,7 @@ class PropertiesDataBounds(PropertiesData):
             `bool`
                 True if there is a node count variable, otherwise False.
 
-        **Examples:**
+        **Examples**
 
 
         >>> n = {{package}}.NodeCount(properties={'long_name': 'node counts'})
@@ -1189,7 +1186,7 @@ class PropertiesDataBounds(PropertiesData):
                 True if there is a part node count variable, otherwise
                 False.
 
-        **Examples:**
+        **Examples**
 
         >>> p = {{package}}.PartNodeCount(properties={'long_name': 'part node counts'})
         >>> c.set_part_node_count(p)
@@ -1239,7 +1236,7 @@ class PropertiesDataBounds(PropertiesData):
             `list` or generator
                 The identities.
 
-        **Examples:**
+        **Examples**
 
         >>> f.properties()
         {'foo': 'bar',
@@ -1307,7 +1304,7 @@ class PropertiesDataBounds(PropertiesData):
 
                 The identity.
 
-        **Examples:**
+        **Examples**
 
         >>> f.properties()
         {'foo': 'bar',
@@ -1375,7 +1372,7 @@ class PropertiesDataBounds(PropertiesData):
             `Bounds`
                 The bounds.
 
-        **Examples:**
+        **Examples**
 
         >>> b = {{package}}.Bounds(data={{package}}.Data(range(10).reshape(5, 2)))
         >>> c.set_bounds(b)
@@ -1432,7 +1429,7 @@ class PropertiesDataBounds(PropertiesData):
             `Data`
                 The bounds data.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> x = f.construct('latitude')
@@ -1495,7 +1492,7 @@ class PropertiesDataBounds(PropertiesData):
                 The new construct with expanded data axes. If the
                 operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.shape
         (19, 73, 96)
@@ -1553,14 +1550,14 @@ class PropertiesDataBounds(PropertiesData):
                 The node count variable to be inserted.
 
             copy: `bool`, optional
-                If False then do not copy the node count variable
-                prior to insertion. By default it is copied.
+                If True (the default) then copy the node count
+                variable prior to insertion.
 
         :Returns:
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> n = {{package}}.NodeCount(properties={'long_name': 'node counts'})
         >>> c.set_node_count(n)
@@ -1593,14 +1590,14 @@ class PropertiesDataBounds(PropertiesData):
                 The part node count variable to be inserted.
 
             copy: `bool`, optional
-                If False then do not copy the part node count variable
-                prior to insertion. By default it is copied.
+                If True (the default) then copy the part node count
+                variable prior to insertion.
 
         :Returns:
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> p = {{package}}.PartNodeCount(properties={'long_name':
         ...                                           'part node counts'})
@@ -1648,7 +1645,7 @@ class PropertiesDataBounds(PropertiesData):
                 The new construct with removed data axes. If the
                 operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.shape
         (1, 73, 1, 96)
@@ -1688,6 +1685,40 @@ class PropertiesDataBounds(PropertiesData):
         return c
 
     @_inplace_enabled(default=False)
+    def to_memory(self, inplace=False):
+        """Bring data on disk into memory.
+
+        There is no change to data that is already in memory.
+
+        :Parameters:
+
+            inplace: `bool`, optional
+                If True then do the operation in-place and return `None`.
+
+        :Returns:
+
+            `{{class}}` or `None`
+                A copy with the data in memory, or `None` if the
+                operation was in-place.
+
+        """
+        c = _inplace_enabled_define_and_cleanup(self)
+
+        data = c.get_data(None)
+        if data is not None:
+            data.to_memory(inplace=True)
+
+        bounds = c.get_bounds(None)
+        if bounds is not None:
+            bounds.to_memory(inplace=True)
+
+        interior_ring = c.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.to_memory(inplace=True)
+
+        return c
+
+    @_inplace_enabled(default=False)
     def transpose(self, axes=None, inplace=False):
         """Permute the axes of the data array.
 
@@ -1718,7 +1749,7 @@ class PropertiesDataBounds(PropertiesData):
                 The new construct with permuted data axes. If the
                 operation was in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f.shape
         (19, 73, 96)
@@ -1814,7 +1845,7 @@ class PropertiesDataBounds(PropertiesData):
                 The uncompressed construct, or `None` if the operation
                 was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> f.data.get_compression_type()
         'ragged contiguous'

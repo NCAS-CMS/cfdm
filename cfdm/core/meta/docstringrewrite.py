@@ -197,10 +197,10 @@ class DocstringRewriteMeta(type):
             if is_classmethod:
                 attrs[attr_name] = classmethod(attr)
 
-            if is_staticmethod:
+            elif is_staticmethod:
                 attrs[attr_name] = staticmethod(attr)
 
-            if is_wrapped:
+            elif is_wrapped:
                 wrapper.__doc__ = attr.__doc__
                 wrapper.__wrapped__ = attr
                 attrs[attr_name] = wrapper
@@ -415,12 +415,7 @@ class DocstringRewriteMeta(type):
                 The special docstring substitution identifiers.
 
         """
-        return (
-            "{{class}}",
-            "{{class_lower}}",
-            "{{package}}",
-            "{{VN}}",
-        )
+        return ("{{class}}", "{{class_lower}}", "{{package}}", "{{VN}}")
 
     @staticmethod
     def _docstring_substitutions(cls):
@@ -574,10 +569,7 @@ class DocstringRewriteMeta(type):
                 substitution process.
 
         """
-        out = [
-            "_docstring_special_substitutions",
-            "_docstring_package_depth",
-        ]
+        out = ["_docstring_special_substitutions", "_docstring_package_depth"]
 
         for klass in cls.__bases__[::-1]:
             d_s = getattr(klass, "_docstring_method_exclusions", None)

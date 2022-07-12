@@ -29,7 +29,7 @@ class Coordinate(PropertiesDataBounds):
             `str`
                 The removed climatology value.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_climatology(True)
@@ -58,8 +58,7 @@ class Coordinate(PropertiesDataBounds):
             return
 
         return self._default(
-            default,
-            f"{self.__class__.__name__!r} has no climatology set",
+            default, f"{self.__class__.__name__!r} has no climatology set"
         )
 
     def get_climatology(self, default=ValueError()):
@@ -82,7 +81,7 @@ class Coordinate(PropertiesDataBounds):
 
             `str`
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_climatology(True)
@@ -111,8 +110,7 @@ class Coordinate(PropertiesDataBounds):
             return
 
         return self._default(
-            default,
-            f"{self.__class__.__name__!r} has no climatology set",
+            default, f"{self.__class__.__name__!r} has no climatology set"
         )
 
     def is_climatology(self):
@@ -128,7 +126,7 @@ class Coordinate(PropertiesDataBounds):
             `bool`
                 Whether or not the coordinates are climatological.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_climatology(True)
@@ -171,7 +169,7 @@ class Coordinate(PropertiesDataBounds):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_climatology(True)

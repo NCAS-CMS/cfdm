@@ -137,7 +137,7 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
             `str`
                 The construct type.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.construct_type
@@ -157,7 +157,7 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
             `Constructs`
                 The constructs.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> print(f.constructs)
@@ -188,7 +188,7 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
             `Domain`
                 The domain.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(2)
         >>> f.domain
@@ -236,7 +236,7 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
                 The removed keys of the domain axis constructs spanned by
                 the data.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> f.get_data_axes()
@@ -271,7 +271,7 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
             `Domain`
                  The domain.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(2)
         >>> f.get_domain()
@@ -316,7 +316,7 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
                 The keys of the domain axis constructs spanned by the
                 data.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> f.get_data_axes()
@@ -364,7 +364,7 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
                 True if domain axis constructs that span the data been
                 set, otherwise False.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> f.get_data_axes()
@@ -426,7 +426,7 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
 
                 The removed metadata construct.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(4)
         >>> f.del_construct('auxiliarycoordinate2')
@@ -488,9 +488,7 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
                 *Parameter example:*
                   ``axes=None``
 
-            copy: `bool`, optional
-                If False then do not copy the data prior to insertion. By
-                default the data are copied.
+            {{data copy: `bool`, optional}}
 
             {{inplace: `bool`, optional (default True)}}
 
@@ -503,7 +501,7 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
                 otherwise return a new `{{class}}` instance containing the
                 new data.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.set_data([1, 2, 3])
@@ -583,7 +581,7 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         Set the domain axis constructs spanned by the data of the field
         construct:

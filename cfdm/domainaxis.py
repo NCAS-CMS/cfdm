@@ -26,15 +26,15 @@ class DomainAxis(
     **NetCDF interface**
 
     The netCDF dimension name of the construct may be accessed with
-    the `nc_set_dimension`, `nc_get_dimension`, `nc_del_dimension` and
+    the `nc_set_dimension`, `nc_get_dimension`, `nc_del_dimension`,
+    and `nc_has_dimension` methods.
 
     Whether or not the netCDF is unlimited may be accessed with the
     `nc_is_unlimited` and `nc_set_unlimited` methods.
-    `nc_has_dimension` methods.
 
     The netCDF dimension group structure may be accessed with the
     `nc_set_dimension`, `nc_get_dimension`, `nc_dimension_groups`,
-    `nc_clear_dimension_groups` and `nc_set_dimension_groups` methods.
+    `nc_clear_dimension_groups`, and `nc_set_dimension_groups` methods.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -116,7 +116,7 @@ class DomainAxis(
 
             {{returns creation_commands}}
 
-        **Examples:**
+        **Examples**
 
         >>> x = {{package}}.DomainAxis(size=12)
         >>> x.nc_set_dimension('time')
@@ -192,7 +192,7 @@ class DomainAxis(
             `bool`
                 Whether the two domain axis constructs are equal.
 
-        **Examples:**
+        **Examples**
 
         >>> d.equals(d)
         True
@@ -250,7 +250,7 @@ class DomainAxis(
 
                 The identity.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.DomainAxis(size=9)
         >>> d.nc_set_dimension('time')
@@ -302,7 +302,7 @@ class DomainAxis(
             `list` or generator
                 The identities.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.DomainAxis(size=9)
         >>> d.nc_set_dimension('time')

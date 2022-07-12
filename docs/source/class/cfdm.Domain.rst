@@ -59,12 +59,19 @@ Metadata constructs
    ~cfdm.Domain.has_data_axes
    ~cfdm.Domain.set_data_axes
    ~cfdm.Domain.domain_axis_key
+   ~cfdm.Domain.auxiliary_coordinate
    ~cfdm.Domain.auxiliary_coordinates
+   ~cfdm.Domain.cell_measure
    ~cfdm.Domain.cell_measures
+   ~cfdm.Domain.coordinate
    ~cfdm.Domain.coordinates
+   ~cfdm.Domain.coordinate_reference
    ~cfdm.Domain.coordinate_references
+   ~cfdm.Domain.dimension_coordinate
    ~cfdm.Domain.dimension_coordinates
+   ~cfdm.Domain.domain_ancillary
    ~cfdm.Domain.domain_ancillaries
+   ~cfdm.Domain.domain_axis
    ~cfdm.Domain.domain_axes
    ~cfdm.Domain.climatological_time_axes
 
@@ -117,6 +124,7 @@ Miscellaneous
    ~cfdm.Domain.has_geometry
    ~cfdm.Domain.apply_masking   
    ~cfdm.Domain.get_filenames
+   ~cfdm.Domain.uncompress
 
 NetCDF
 ------

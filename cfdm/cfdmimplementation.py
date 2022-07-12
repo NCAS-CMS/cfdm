@@ -16,9 +16,11 @@ from . import (
     FieldAncillary,
     Index,
     InteriorRing,
+    InterpolationParameter,
     List,
     NodeCountProperties,
     PartNodeCountProperties,
+    TiePointIndex,
 )
 from .abstract import Implementation
 from .data import (
@@ -28,6 +30,7 @@ from .data import (
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
+    SubsampledArray,
 )
 
 
@@ -61,11 +64,14 @@ class CFDMImplementation(Implementation):
         RaggedContiguousArray=None,
         RaggedIndexedArray=None,
         RaggedIndexedContiguousArray=None,
+        SubsampledArray=None,
         List=None,
         Count=None,
         Index=None,
         NodeCountProperties=None,
         PartNodeCountProperties=None,
+        TiePointIndex=None,
+        InterpolationParameter=None,
     ):
         """**Initialisation**
 
@@ -131,6 +137,9 @@ class CFDMImplementation(Implementation):
             RaggedIndexedContiguousArray:
                 A class for an underlying indexed contiguous ragged array.
 
+            SubsampledArray:
+                A class for an underlying subsampled array.
+
             List:
                 A list variable class.
 
@@ -145,6 +154,12 @@ class CFDMImplementation(Implementation):
 
             PartNodeCountProperties:
                 A class for properties of a netCDF part node count variable.
+
+            TiePointIndex:
+                A tie point index variable class.
+
+            InterpolationParameter:
+                An interpolation parameter variable class.
 
         """
         super().__init__(
@@ -169,11 +184,14 @@ class CFDMImplementation(Implementation):
             RaggedContiguousArray=RaggedContiguousArray,
             RaggedIndexedArray=RaggedIndexedArray,
             RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
+            SubsampledArray=SubsampledArray,
             List=List,
             Count=Count,
             Index=Index,
             NodeCountProperties=NodeCountProperties,
             PartNodeCountProperties=PartNodeCountProperties,
+            TiePointIndex=TiePointIndex,
+            InterpolationParameter=InterpolationParameter,
         )
 
     def __repr__(self):
@@ -187,7 +205,7 @@ class CFDMImplementation(Implementation):
     def _get_domain_compression_variable(self, variable_type, domain):
         """Get the compression variable of a type of compressed data.
 
-        ..versionadded:: 1.9.0.0
+        ..versionadded:: (cfdm) 1.9.0.0
 
         :Parameters:
 
@@ -245,7 +263,6 @@ class CFDMImplementation(Implementation):
                 )
 
             variable = variable1
-        # --- End: for
 
         return variable
 
@@ -583,7 +600,7 @@ class CFDMImplementation(Implementation):
         return data.compressed_array
 
     def get_compressed_axes(self, field_or_domain, key=None, construct=None):
-        """Return the indices of the compressed axes.
+        """Return the axes that have been compressed.
 
         :Parameters:
 
@@ -596,7 +613,9 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            `list` of `int`
+            `list` of `str`
+                The domain axis identifiers of dimensions that are
+                compressed.
 
         """
         if construct is not None:
@@ -619,6 +638,7 @@ class CFDMImplementation(Implementation):
             "ragged indexed contiguous",
             "ragged indexed",
             "ragged contiguous",
+            "subsampled",
         )
 
         compressed_axes = {
@@ -648,7 +668,6 @@ class CFDMImplementation(Implementation):
         for compression_type in compression_types:
             if compressed_axes[compression_type]:
                 return list(compressed_axes[compression_type])
-        # --- End: for
 
         return []
 
@@ -732,8 +751,8 @@ class CFDMImplementation(Implementation):
         :Returns:
 
             `tuple` or `None`
-                The axes (may be an empty tuple), or `None` if there
-                is no data.
+                The axis identifiers (may be an empty tuple), or
+                `None` if there is no data.
 
         """
         try:
@@ -813,17 +832,17 @@ class CFDMImplementation(Implementation):
         """
         return field.coordinate_references()
 
-    def get_coordinates(self, field):
-        """Return all of the coordinate constructs of a field.
+    def get_coordinates(self, f):
+        """Return all of the coordinate constructs of a field or domain.
 
         :Parameters:
 
-            field: field construct
+            f: field or domain construct
 
         :Returns:
 
         """
-        return field.coordinates()
+        return f.coordinates()
 
     def get_data_calendar(self, data, default=None):
         """Return the calendar of date-time data.
@@ -842,7 +861,7 @@ class CFDMImplementation(Implementation):
         return data.get_calendar(default=default)
 
     def get_data_compressed_axes(self, data):
-        """Return the indices of the compressed axes.
+        """Return the indices of the axes that have been compressed.
 
         :Parameters:
 
@@ -868,7 +887,7 @@ class CFDMImplementation(Implementation):
             `int`
                 The number of dimensions spanned by the data array.
 
-        **Examples:**
+        **Examples**
 
         >>> w = cfdm.implementation()
         >>> d = cfdm.DimensionCoordinate(
@@ -903,14 +922,14 @@ class CFDMImplementation(Implementation):
                 The object containing the data array.
 
             isdata: `bool`
-                If True then the prent is already a data object
+                If True then the parent is already a data object
 
         :Returns:
 
             `tuple`
                 The shape of the data array.
 
-        **Examples:**
+        **Examples**
 
         >>> w = cfdm.implementation()
         >>> d = cfdm.DimensionCoordinate(
@@ -952,7 +971,7 @@ class CFDMImplementation(Implementation):
             `int`
                 The number of elements in the data array.
 
-        **Examples:**
+        **Examples**
 
         >>> w = cfdm.implementation()
         >>> d = cfdm.DimensionCoordinate(
@@ -1292,7 +1311,7 @@ class CFDMImplementation(Implementation):
         A "component" is either a metadata construct or a metadata
         construct component (such as a bounds component).
 
-        .. versionadded::: 1.7.0
+        .. versionadded::: (cfdm) 1.7.0
 
         :Parameter:
 
@@ -1394,7 +1413,7 @@ class CFDMImplementation(Implementation):
                 A dictionary whose values are field ancillary objects, keyed
                 by unique identifiers.
 
-        **Examples:**
+        **Examples**
 
         >>> w = cfdm.implementation()
         >>> f = cfdm.example_field(1)
@@ -1536,6 +1555,29 @@ class CFDMImplementation(Implementation):
         """
         return construct.get_interior_ring(default=None)
 
+    def get_interpolation_name(self, construct, default=None):
+        """Return the interior ring variable of geometry coordinates.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            construct: construct
+
+            default:
+
+        :Returns:
+
+            `str`
+
+        """
+        try:
+            return self.get_data_source(construct).get_interpolation_name(
+                default
+            )
+        except AttributeError:
+            return default
+
     def get_list(self, construct):
         """Return the list variable of compressed data.
 
@@ -1568,7 +1610,7 @@ class CFDMImplementation(Implementation):
             `str` or `None`
                 The measure property, or `None` if it has not been set.
 
-        **Examples:**
+        **Examples**
 
         >>> w = cfdm.implementation()
         >>> c = cfdm.CellMeasure(
@@ -1663,7 +1705,7 @@ class CFDMImplementation(Implementation):
             `dict`
                 The property names and their values
 
-        **Examples:**
+        **Examples**
 
         >>> w = cfdm.implementation()
         >>> d = cfdm.DimensionCoordinate(
@@ -1729,7 +1771,7 @@ class CFDMImplementation(Implementation):
 
                 The data.
 
-        **Examples:**
+        **Examples**
 
         >>> w = cfdm.implementation()
         >>> d = cfdm.DimensionCoordinate(
@@ -1754,6 +1796,48 @@ class CFDMImplementation(Implementation):
 
         """
         return parent.get_data(default=default)
+
+    def get_data_source(self, parent, default=None):
+        """Return the data array.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            parent:
+                The object containing the data array.
+
+        :Returns:
+
+                The data.
+
+        """
+        data = self.get_data(parent, default=None)
+        if data is None:
+            return default
+
+        return data.source(default)
+
+    def get_tie_points(self, construct, default=None):
+        """TODO.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            parent:
+                The object containing the data array.
+
+        :Returns:
+
+                The data.
+
+        """
+        data = self.get_data_source(construct, None)
+        if data is None:
+            return default
+
+        return data.source(default)
 
     def initialise_AuxiliaryCoordinate(self):
         """Return an auxiliary coordinate construct.
@@ -2016,6 +2100,7 @@ class CFDMImplementation(Implementation):
         shape=None,
         size=None,
         compressed_dimension=None,
+        compressed_dimensions=None,
         list_variable=None,
     ):
         """Return a gathered array instance.
@@ -2030,9 +2115,16 @@ class CFDMImplementation(Implementation):
 
             size: `int, optional
 
-            compressed_dimension: `int`, optional
+            compressed_dimensions: sequence of `int`, optional
+                The position of the compressed dimension in the
+                compressed array.
+
+                 .. versionadded:: (cfdm) 1.9.TODO.0
 
             list_variable: optional
+
+            compressed_dimension: deprecated at version 1.9.TODO.0
+                Use the *compressed_dimensions* parameter instead.
 
         :Returns:
 
@@ -2045,8 +2137,75 @@ class CFDMImplementation(Implementation):
             ndim=ndim,
             shape=shape,
             size=size,
-            compressed_dimension=compressed_dimension,
+            compressed_dimensions=compressed_dimensions,
             list_variable=list_variable,
+        )
+
+    def initialise_SubsampledArray(
+        self,
+        interpolation_name=None,
+        compressed_array=None,
+        shape=None,
+        tie_point_indices=None,
+        computational_precision=None,
+        interpolation_description=None,
+        parameters=None,
+        parameter_dimensions=None,
+        dependent_tie_points=None,
+        dependent_tie_point_dimensions=None,
+    ):
+        """Return a subsampled array instance.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `set_dependent_tie_points`,
+                     `set_dependent_tie_point_dimensions`
+
+        :Parameters:
+
+            interpolation_name: `str`
+
+            interpolation_description: `str`, optional
+
+            compressed_array: optional
+
+            shape: sequence of `int`, optional
+
+            computational_precision: `str`, optional
+                The floating-point arithmetic precision used during
+                the preparation and validation of the compressed
+                coordinates.
+
+            tie_point_indices: `dict`, optional
+
+            parameters: `dict`, optional
+
+            parameter_dimensions: `dict`, optional
+
+            parameters: `dict`, optional
+
+            parameter_dimensions: `dict`, optional
+
+            dependent_tie_points: `dict`, optional
+
+            dependent_tie_point_dimensions: `dict`, optional
+
+        :Returns:
+
+            Subsampled array
+
+        """
+        return self.get_class("SubsampledArray")(
+            interpolation_name=interpolation_name,
+            compressed_array=compressed_array,
+            shape=shape,
+            tie_point_indices=tie_point_indices,
+            computational_precision=computational_precision,
+            interpolation_description=interpolation_description,
+            parameters=parameters,
+            parameter_dimensions=parameter_dimensions,
+            dependent_tie_points=dependent_tie_points,
+            dependent_tie_point_dimensions=dependent_tie_point_dimensions,
         )
 
     def initialise_Index(self):
@@ -2071,6 +2230,19 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("InteriorRing")
         return cls()
 
+    def initialise_InterpolationParameter(self):
+        """Return an interpolation parameter variable.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Returns:
+
+            Interpolation parameter variable
+
+        """
+        cls = self.get_class("InterpolationParameter")
+        return cls()
+
     def initialise_List(self):
         """Return a list variable.
 
@@ -2080,6 +2252,17 @@ class CFDMImplementation(Implementation):
 
         """
         cls = self.get_class("List")
+        return cls()
+
+    def initialise_TiePointIndex(self):
+        """Return an index variable.
+
+        :Returns:
+
+            Index variable
+
+        """
+        cls = self.get_class("TiePointIndex")
         return cls()
 
     def initialise_NetCDFArray(
@@ -2130,7 +2313,7 @@ class CFDMImplementation(Implementation):
             mask=mask,
         )
 
-    def initialise_NodeCount(self):
+    def initialise_NodeCountProperties(self):
         """Return a node count properties variable.
 
         :Returns:
@@ -2167,12 +2350,12 @@ class CFDMImplementation(Implementation):
             compressed_array: optional
 
             ndim: `int`, optional
+                Deprecated at version 1.9.TODO.0. Ignored if set.
 
             shape: sequence of `int`, optional
 
             size: `int, optional
-
-            compressed_dimension: `int`, optional
+                Deprecated at version 1.9.TODO.0. Ignored if set.
 
             count_variable: optional
 
@@ -2184,9 +2367,9 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("RaggedContiguousArray")
         return cls(
             compressed_array=compressed_array,
-            ndim=ndim,
+            #            ndim=ndim,
             shape=shape,
-            size=size,
+            #            size=size,
             count_variable=count_variable,
         )
 
@@ -2205,12 +2388,12 @@ class CFDMImplementation(Implementation):
             compressed_array: optional
 
             ndim: `int`, optional
+                Deprecated at version 1.9.TODO.0. Ignored if set.
 
             shape: sequence of `int`, optional
 
             size: `int, optional
-
-            compressed_dimension: `int`, optional
+                Deprecated at version 1.9.TODO.0. Ignored if set.
 
             index_variable: optional
 
@@ -2222,9 +2405,9 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("RaggedIndexedArray")
         return cls(
             compressed_array=compressed_array,
-            ndim=ndim,
+            #            ndim=ndim,
             shape=shape,
-            size=size,
+            #            size=size,
             index_variable=index_variable,
         )
 
@@ -2244,12 +2427,12 @@ class CFDMImplementation(Implementation):
             compressed_array: optional
 
             ndim: `int`, optional
+                Deprecated at version 1.9.TODO.0. Ignored if set.
 
             shape: sequence of `int`, optional
 
             size: `int, optional
-
-            compressed_dimension: `int`, optional
+                Deprecated at version 1.9.TODO.0. Ignored if set.
 
             count_variable: optional
 
@@ -2263,9 +2446,9 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("RaggedIndexedContiguousArray")
         return cls(
             compressed_array=compressed_array,
-            ndim=ndim,
+            #            ndim=ndim,
             shape=shape,
-            size=size,
+            #            size=size,
             count_variable=count_variable,
             index_variable=index_variable,
         )
@@ -2358,8 +2541,8 @@ class CFDMImplementation(Implementation):
             variable:
 
             ncdim: `str` or `None`
-                The netCDF dimension name. If `None` then the name is not
-                set.
+                The netCDF dimension name. If `None` then the name is
+                not set.
 
         :Returns:
 
@@ -2387,6 +2570,44 @@ class CFDMImplementation(Implementation):
         """
         if ncdim is not None:
             variable.nc_set_sample_dimension(ncdim)
+
+    def nc_set_interpolation_subarea_dimension(self, variable, ncdim):
+        """Set the netCDF sample dimension name.
+
+        :Parameters:
+
+            variable:
+
+            ncdim: `str` or `None`
+                The netCDF interpolation subarea dimension name. If
+                `None` then the name is not set.
+
+        :Returns:
+
+            `None`
+
+        """
+        if ncdim is not None:
+            variable.nc_set_interpolation_subarea_dimension(ncdim)
+
+    def nc_set_subsampled_dimension(self, variable, ncdim):
+        """Set the netCDF subsampled dimension name.
+
+        :Parameters:
+
+            variable:
+
+            ncdim: `str` or `None`
+                The netCDF dimension name. If `None` then the name is
+                not set.
+
+        :Returns:
+
+            `None`
+
+        """
+        if ncdim is not None:
+            variable.nc_set_subsampled_dimension(ncdim)
 
     def set_auxiliary_coordinate(
         self, field, construct, axes, copy=True, **kwargs
@@ -2722,6 +2943,24 @@ class CFDMImplementation(Implementation):
         """
         return field.set_construct(construct, copy=copy)
 
+    def set_dependent_tie_points(self, construct, tie_points):
+        """TODO.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        data = self.get_data_source(construct)
+        data.set_dependent_tie_points(tie_points)
+
+    def set_dependent_tie_point_dimensions(self, construct, dimensions):
+        """TODO.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        """
+        data = self.get_data_source(construct)
+        data.set_dependent_tie_point_dimensions(dimensions)
+
     def nc_set_external(self, construct):
         """Set the external status of a construct.
 
@@ -2797,7 +3036,27 @@ class CFDMImplementation(Implementation):
         """
         parent.set_properties(inherited_properties, copy=copy)
 
-    def set_node_count(self, parent, node_count, copy=True):
+    def set_interpolation(self, parent, interpolation, copy=True):
+        """Set an interpolation variable.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        :Parameters:
+
+            parent:
+
+            interpolation: Interpolation properties variable
+
+            copy: `bool`, optional
+
+        :Returns:
+
+            `None`
+
+        """
+        parent.set_interpolation(interpolation, copy=copy)
+
+    def set_node_count_properties(self, parent, node_count, copy=True):
         """Set a node count properties variable.
 
         .. versionadded:: (cfdm) 1.8.0
@@ -2817,7 +3076,9 @@ class CFDMImplementation(Implementation):
         """
         parent.set_node_count(node_count, copy=copy)
 
-    def set_part_node_count(self, parent, part_node_count, copy=True):
+    def set_part_node_count_properties(
+        self, parent, part_node_count, copy=True
+    ):
         """Set a part node count properties variable.
 
         .. versionadded:: (cfdm) 1.8.0
@@ -2887,8 +3148,8 @@ class CFDMImplementation(Implementation):
             construct: construct
 
             ncdim: `str` or `None`
-                The netCDF dimension name. If `None` then the name is not
-                set.
+                The netCDF dimension name. If `None` then the name is
+                not set.
 
         :Returns:
 
@@ -2906,8 +3167,8 @@ class CFDMImplementation(Implementation):
             field: field construct
 
             ncvar: `str` or `None`
-                The netCDF variable name. If `None` then the name is not
-                set.
+                The netCDF variable name. If `None` then the name is
+                not set.
 
         :Returns:
 
@@ -2925,8 +3186,8 @@ class CFDMImplementation(Implementation):
             parent:
 
             ncvar: `str` or `None`
-                The netCDF variable name. If `None` then the name is not
-                set.
+                The netCDF variable name. If `None` then the name is
+                not set.
 
         :Returns:
 
@@ -3016,7 +3277,7 @@ class CFDMImplementation(Implementation):
 
             `bool`
 
-        **Examples:**
+        **Examples**
 
         >>> w = cfdm.implementation()
 
@@ -3031,6 +3292,28 @@ class CFDMImplementation(Implementation):
         """
         return bool(coordinate_reference.datum)
 
+    #    def has_identity(self, construct, identity):
+    #        """Return True if a construct has the given identity.
+    #
+    #        .. versionadded:: (cfdm) 1.9.TODO.0
+    #
+    #        :Parameters:
+    #
+    #            construct:
+    #
+    #            identity: `str`
+    #                The identity
+    #
+    #                *Parameter example:*
+    #                   ``'latitude'``
+    #
+    #        :Returns:
+    #
+    #            `bool`
+    #
+    #        """
+    #        return bool(getattr(construct, identity, False))
+
     def has_property(self, parent, prop):
         """Return True if a property exists.
 
@@ -3044,7 +3327,7 @@ class CFDMImplementation(Implementation):
             `bool`
                 `True` if the property exists, otherwise `False`.
 
-        **Examples:**
+        **Examples**
 
         >>> w = cfdm.implementation()
         >>> d = cfdm.DimensionCoordinate(
@@ -3101,6 +3384,7 @@ _implementation = CFDMImplementation(
     FieldAncillary=FieldAncillary,
     Bounds=Bounds,
     InteriorRing=InteriorRing,
+    InterpolationParameter=InterpolationParameter,
     CoordinateConversion=CoordinateConversion,
     Datum=Datum,
     List=List,
@@ -3114,6 +3398,8 @@ _implementation = CFDMImplementation(
     RaggedContiguousArray=RaggedContiguousArray,
     RaggedIndexedArray=RaggedIndexedArray,
     RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
+    SubsampledArray=SubsampledArray,
+    TiePointIndex=TiePointIndex,
 )
 
 
@@ -3129,7 +3415,7 @@ def implementation():
         `CFDMImplementation`
             A container for the CF data model implementation.
 
-    **Examples:**
+    **Examples**
 
     >>> i = cfdm.implementation()
     >>> i
@@ -3154,6 +3440,7 @@ def implementation():
      'RaggedContiguousArray': <class 'cfdm.data.raggedcontiguousarray.RaggedContiguousArray'>,
      'RaggedIndexedArray': <class 'cfdm.data.raggedindexedarray.RaggedIndexedArray'>,
      'RaggedIndexedContiguousArray': <class 'cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray'>,
+     'SubsampledArray': <class 'cfdm.data.subsampledrray.SubsampledArray'>,
      'List': <class 'cfdm.list.List'>,
      'Count': <class 'cfdm.count.Count'>,
      'Index': <class 'cfdm.index.Index'>,

@@ -76,7 +76,7 @@ class ParametersDomainAncillaries(Parameters):
             `dict`
                 The domain ancillaries that have been removed.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.domain_ancillaries()
@@ -130,7 +130,7 @@ class ParametersDomainAncillaries(Parameters):
             `str`
                 The removed domain ancillary key.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_domain_ancillary('orog', 'domainancillary2')
@@ -174,7 +174,7 @@ class ParametersDomainAncillaries(Parameters):
             `dict`
                 The domain ancillaries.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.domain_ancillaries()
@@ -222,7 +222,7 @@ class ParametersDomainAncillaries(Parameters):
 
                 The domain ancillary construct key.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_domain_ancillary('orog', 'domainancillary2')
@@ -268,7 +268,7 @@ class ParametersDomainAncillaries(Parameters):
 
                 The domain ancillary construct key.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_domain_ancillary('orog', 'domainancillary2')
@@ -313,7 +313,7 @@ class ParametersDomainAncillaries(Parameters):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.domain_ancillaries()
@@ -361,7 +361,7 @@ class ParametersDomainAncillaries(Parameters):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_domain_ancillary('orog', 'domainancillary2')

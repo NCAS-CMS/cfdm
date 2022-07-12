@@ -57,7 +57,7 @@ class Domain(
     `nc_clear_component_dimension_groups`,
     `nc_del_component_sample_dimension`,
     `nc_set_component_sample_dimension`,
-    `nc_set_component_sample_dimension_groups`,
+    `nc_set_component_sample_dimension_groups`, and
     `nc_clear_component_sample_dimension_groups` methods.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -351,14 +351,14 @@ class Domain(
                 A new domain construct with masked values, or `None`
                 if the operation was in-place.
 
-        **Examples:**
+        **Examples**
 
-        >>> d = cfdm.example_field(0).domain
+        >>> d = {{package}}.example_domain(0)
         >>> x = d.construct('longitude')
-        >>> x.data[[0, -1]] = cfdm.masked
+        >>> x.data[[0, -1]] = {{package}}.masked
         >>> print(x.data.array)
         [-- 67.5 112.5 157.5 202.5 247.5 292.5 --]
-        >>> cfdm.write(d, 'masked.nc')
+        >>> {{package}}.write(d, 'masked.nc')
         >>> no_mask = {{package}}.read('masked.nc', domain=True, mask=False)[0]
         >>> no_mask_x = no_mask.construct('longitude')
         >>> print(no_mask_x.data.array)
@@ -391,9 +391,9 @@ class Domain(
                 The keys of the domain axis constructs that are
                 climatological time axes.
 
-        **Examples:**
+        **Examples**
 
-        >>> d = cfdm.example_field(0)
+        >>> d = {{package}}.example_domain(0)
         >>> d.climatological_time_axes()
         set()
 
@@ -437,7 +437,7 @@ class Domain(
 
         .. seealso:: `set_construct`,
                      `{{package}}.Data.creation_commands`,
-                     `{{package}}.example_field`
+                     `{{package}}.example_domain`
 
         :Parameters:
 
@@ -455,10 +455,9 @@ class Domain(
 
             {{returns creation_commands}}
 
-        **Examples:**
+        **Examples**
 
-        >>> f = {{package}}.example_field(0)
-        >>> d = f.domain
+        >>> f = {{package}}.example_domain(0)
         >>> print(d.creation_commands())
         #
         # domain:
@@ -804,6 +803,80 @@ class Domain(
 
         return "\n".join(string)
 
+    def get_data_axes(self, *identity, default=ValueError(), **filter_kwargs):
+        """Gets the keys of the axes spanned by the construct data.
+
+        Specifically, returns the keys of the domain axis constructs
+        spanned by the data of a metadata construct.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `del_data_axes`, `set_data_axes`
+
+        :Parameters:
+
+            identity, filter_kwargs: optional
+                Select the unique construct returned by
+                ``d.construct(*identity, **filter_kwargs)``. See
+                `construct` for details.
+
+                .. versionadded:: (cfdm) 1.9.1.0
+
+            default: optional
+                Return the value of the *default* parameter if the
+                data axes have not been set.
+
+                {{default Exception}}
+
+            {{filter_kwargs: optional}}
+
+                .. versionadded:: (cfdm) 1.9.1.0
+
+        :Returns:
+
+            `tuple`
+                The keys of the domain axis constructs spanned by the
+                data.
+
+        **Examples**
+
+        >>> d = {{package}}.example_domain(0)
+        >>> d.get_data_axes('latitude')
+        ('domainaxis0',)
+        >>> d.get_data_axes('time')
+        ('domainaxis2',)
+        >>> d.has_data_axes()
+        True
+        >>> d.del_data_axes()
+        ('domainaxis0', 'domainaxis1')
+        >>> d.has_data_axes()
+        False
+        >>> d.get_data_axes(default='no axes')
+        'no axes'
+
+        """
+        key = self.construct(
+            *identity, key=True, default=None, **filter_kwargs
+        )
+        if key is None:
+            if default is None:
+                return default
+
+            return self._default(
+                default, "Can't get axes for non-existent construct"
+            )
+
+        axes = super().get_data_axes(key, default=None)
+        if axes is None:
+            if default is None:
+                return default
+
+            return self._default(
+                default, f"Construct {key!r} has not had axes set"
+            )
+
+        return axes
+
     def get_filenames(self):
         """Return the file names containing the metadata construct data.
 
@@ -814,9 +887,9 @@ class Domain(
                 the data are in memory then an empty `set` is
                 returned.
 
-        **Examples:**
+        **Examples**
 
-        >>> d = {{package}}.example_field(0).domain
+        >>> d = {{package}}.example_domain(0)
         >>> {{package}}.write(d, 'temp_file.nc')
         >>> e = {{package}}.read('temp_file.nc', domain=True)[0]
         >>> e.get_filenames()
@@ -854,7 +927,7 @@ class Domain(
 
                 The identity.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.Domain()
         >>> d.set_properties({'foo': 'bar',
@@ -907,7 +980,7 @@ class Domain(
             `list`
                 The identities.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.Domain()
         >>> d.set_properties({'foo': 'bar',
@@ -938,3 +1011,44 @@ class Domain(
             out.append(f"ncvar%{n}")
 
         return out
+
+    @_inplace_enabled(default=False)
+    def uncompress(self, inplace=False):
+        """Uncompress the domain construct.
+
+        Compression saves space by identifying and removing unwanted
+        missing data. Such compression techniques store the data more
+        efficiently and result in no precision loss.  Whether or not
+        the metadata constructs are compressed does not alter its
+        functionality nor external appearance.
+
+        Any compressed metadata constructs are uncompressed, and all
+        other metadata constructs are unchanged.
+
+        .. versionadded:: (cfdm) 1.9.TODO.0
+
+        .. seealso:: `compress` TODO
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Domain` or `None`
+                The uncompressed domain construct, or `None` if the
+                operation was in-place.
+
+        **Examples**
+
+        >>> e = d.uncompress()
+        >>> e.equals(d)
+        True
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        for c in d.constructs.filter_by_data(todict=True).values():
+            c.uncompress(inplace=True)
+
+        return d

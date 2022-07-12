@@ -1490,23 +1490,19 @@ construct key, by any of the following techniques:
    >>> t.construct('latitude')
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
 
-* with the `~Field.construct_key` method of a field construct:
-
 .. code-block:: python
    :caption: *Get the "latitude" metadata construct key with its construct
              identity and use the key to get the construct itself*
 	     
-   >>> key = t.construct_key('latitude')
+   >>> key = t.construct('latitude', key=True)
    >>> t.construct(key)
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
-
-* with the `~Field.construct_item` method of a field construct:
 
 .. code-block:: python
    :caption: *Get the "latitude" metadata construct and its identifier
              via its construct identity.*
       
-   >>> key, lat = t.construct_item('latitude')
+   >>> key, lat = t.construct('latitude', item=True)
    ('auxiliarycoordinate0', <AuxiliaryCoordinate: latitude(10, 9) degrees_N>)
 
 * by indexing a `Constructs` instance with  a construct key.
@@ -1515,7 +1511,7 @@ construct key, by any of the following techniques:
    :caption: *Get the "latitude" metadata construct via its construct
              key and indexing*
 	     
-   >>> key = t.construct_key('latitude')
+   >>> key = t.construct('latitude', key=True)
    >>> t.constructs[key]
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
 
@@ -1525,42 +1521,79 @@ construct key, by any of the following techniques:
    :caption: *Get the "latitude" metadata construct via its construct
              key and the 'get' method.*
 	     
-   >>> key = t.construct_key('latitude')
+   >>> key = t.construct('latitude', key=True)
    >>> c = t.constructs.get(key)
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
 
-The `~Field.construct` method of the field construct and the
-`~Constructs.value` method of the `Constructs` instance will raise an
-exception of there is not a unique metadata construct to return, but
-this may be replaced with returning a default value or raising a
-customised exception:
+* with the `~Constructs.value` method of a `Constructs` instance.
+
+.. code-block:: python
+   :caption: *Get the "latitude" metadata construct via its 'value'
+             method.*
+	     
+   >>> c = t.constructs('latitude').value()
+   <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
+
+In addition, an individual metadata construct of a particular type can
+be retrieved with the following methods of the field construct:
+
+=============================  ====================  
+Method                         Metadata construct
+=============================  ====================  
+`~Field.domain_axis`           Domain axis   
+`~Field.dimension_coordinate`  Dimension coordinate
+`~Field.auxiliary_coordinate`  Auxiliary coordinate
+`~Field.coordinate_reference`  Coordinate reference
+`~Field.domain_ancillary`      Domain ancillary
+`~Field.cell_measure`          Cell measure        
+`~Field.field_ancillary`       Field ancillary
+`~Field.cell_method`           Cell method
+=============================  ====================  
+
+These methods will only look for the given identity amongst constructs
+of the chosen type.
+
+.. code-block:: python
+   :caption: *Get the "latitude" auxiliary coordinate construct via
+             its construct identity, and also its key.*
+	     
+   >>> t.auxiliary_coordinate('latitude')
+   <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>
+   >>> t.auxiliary_coordinate('latitude', key=True)
+   'auxiliarycoordinate0'
+   >>> t.auxiliary_coordinate('latitude', item=True)
+   ('auxiliarycoordinate0', <CF AuxiliaryCoordinate: latitude(10, 9) degrees_N>)
+
+All of these techniques will raise an exception if there is not a
+unique metadata construct to return, but this may be replaced with
+returning a default value or raising a customised exception:
    
 .. code-block:: python
    :caption: *By default an exception is raised if there is not a
              unique construct that meets the criteria. Alternatively,
              the value of the "default" parameter is returned.*
 
-   >>> t.construct('measure:volume')                # Raises Exception
+   >>> t.cell_measure('measure:volume')                # Raises Exception
    Traceback (most recent call last):
       ...
    ValueError: Can't return zero constructs
-   >>> t.construct('measure:volume', default=False)
+   >>> t.cell_measure('measure:volume', default=False)
    False
-   >>> t.construct('measure:volume', default=Exception("my error"))  # Raises Exception
+   >>> t.cell_measure('measure:volume', default=Exception("my error"))  # Raises Exception
    Traceback (most recent call last):
       ...
    Exception: my error
-   >>> c = t.constructs.filter_by_measure("volume")
+   >>> c = t.cell_measures().filter_by_measure("volume")
    >>> len(c)
    0
    >>> d = t.constructs("units=degrees")
    >>> len(d)
    2
-   >>> t.construct("units=degrees")  # Raises Exception
+   >>> t.coordinate("units=degrees")  # Raises Exception
    Traceback (most recent call last):
       ...
    ValueError: Field.construct() can't return 2 constructs
-   >>> print(t.construct("units=degrees", default=None))
+   >>> print(t.coordinate("units=degrees", default=None))
    None
 
 .. _Metadata-construct-properties:
@@ -1587,17 +1620,18 @@ Metadata constructs share the :ref:`same API as the field construct
 .. code-block:: python
    :caption: *Get the metadata construct with units of "km2", find its
              canonical identity, and all of its valid identities, that
-             may be used for selection by the "filter_by_identity"
-             method*
+             may be used for its selection.*
 
-   >>> area = t.constructs.filter_by_property(units='km2').value()
+   >>> area = t.construct('units=km2')
    >>> area
    <CellMeasure: measure:area(9, 10) km2>
    >>> area.identity()
    'measure:area'
    >>> area.identities()
    ['measure:area', 'units=km2', 'ncvar%cell_measure']
-
+   >>> t.construct('measure:area')
+   <CellMeasure: measure:area(9, 10) km2>
+  
 .. _Metadata-construct-data:
 
 Metadata construct data
@@ -1611,7 +1645,7 @@ construct <Data>` as the field construct for accessing their data:
              data, change the third element of the array, and get the
              data as a numpy array.*
 	     
-   >>> lon = q.constructs('longitude').value()
+   >>> lon = q.construct('longitude')
    >>> lon
    <DimensionCoordinate: longitude(8) degrees_east>
    >>> lon.data
@@ -1628,12 +1662,9 @@ of the field construct:
 
 .. code-block:: python
    :caption: *Find the construct keys of the domain axis constructs
-             spanned by the data of each metadata construct.*
+             spanned by the 'latitude' construct.
 
-   >>> key = t.construct_key('latitude')
-   >>> key
-   'auxiliarycoordinate0'
-   >>> t.get_data_axes(key=key)
+   >>> t.get_data_axes('latitude')
    ('domainaxis1', 'domainaxis2')
     
 The domain axis constructs spanned by all the data of all metadata
@@ -1745,8 +1776,8 @@ constructs contained in the field construct.
              and show that this change appears in the same metadata
              data construct of the parent field, and vice versa.*
 
-   >>> domain_latitude = t.domain.constructs('latitude').value()
-   >>> field_latitude = t.constructs('latitude').value()
+   >>> domain_latitude = t.domain.coordinate('latitude')
+   >>> field_latitude = t.coordinate('latitude')
    >>> domain_latitude.set_property('test', 'set by domain')
    >>> print(field_latitude.get_property('test'))
    set by domain
@@ -1831,7 +1862,7 @@ construct <Data>` for accessing its data.
    :caption: *Get the Bounds instance of a coordinate construct and
              inspect its data.*
       
-   >>> lon = t.constructs('grid_longitude').value()
+   >>> lon = t.coordinate('grid_longitude')
    >>> bounds = lon.bounds
    >>> bounds
    <Bounds: grid_longitude(9, 2) >
@@ -1897,7 +1928,7 @@ This is illustrated with the file ``geometry.nc`` (found in the
                    : altitude(cf_role=timeseries_id(2)) = [5000.0, 20.0] m
                    : cf_role=timeseries_id(cf_role=timeseries_id(2)) = [b'x1', b'y2']
    Coord references: grid_mapping_name:latitude_longitude
-   >>> lon = f.construct('longitude')
+   >>> lon = f.coordinate('longitude')
    >>> lon.dump()                     
    Auxiliary coordinate: longitude
       standard_name = 'longitude'
@@ -2031,7 +2062,7 @@ A coordinate reference construct contains
    :caption: *Select the vertical coordinate system construct and
              inspect its coordinate constructs.*
      
-   >>> crs = t.constructs('standard_name:atmosphere_hybrid_height_coordinate').value()
+   >>> crs = t.coordinate_reference('standard_name:atmosphere_hybrid_height_coordinate')
    >>> crs
    <CoordinateReference: atmosphere_hybrid_height_coordinate>
    >>> crs.dump()
@@ -2108,7 +2139,7 @@ methods of the cell method construct.
    :caption: *Get the domain axes constructs to which the cell method
              construct applies, and the method and other properties.*
      
-   >>> cm = t.constructs('method:mean').value()
+   >>> cm = t.cell_method('method:mean')
    >>> cm
    <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>)
    >>> cm.get_axes()
@@ -2772,8 +2803,7 @@ define its domain.
    :caption: *Create an independent field construct from the "surface
              altitude" metadata construct.*
 
-   >>> key = tas.construct_key('surface_altitude')
-   >>> orog = tas.convert(key)
+   >>> orog = tas.convert('surface_altitude')
    >>> print(orog)
    Field: surface_altitude
    -----------------------
@@ -2795,7 +2825,7 @@ constructs.
              altitude" metadata construct, but without a complete
              domain.*
 
-   >>> orog1 = tas.convert(key, full_domain=False) 
+   >>> orog1 = tas.convert('surface_altitude', full_domain=False) 
    >>> print(orog1)
    Field: surface_altitude
    -----------------------
@@ -2906,7 +2936,7 @@ Metadata constructs may be copied individually in the same manner:
 .. code-block:: python
    :caption: *Copy a metadata construct.*
 
-   >>> orog = t.constructs('surface_altitude').value().copy()
+   >>> orog = t.domain_ancillary('surface_altitude').copy()
 
 Arrays within `Data` instances are copied with a `copy-on-write
 <https://en.wikipedia.org/wiki/Copy-on-write>`_ technique. This means
@@ -3023,7 +3053,7 @@ Metadata constructs may also be tested for equality:
    :caption: *Metadata constructs also have an equals method, that
              behaves in a similar manner.*
 	  
-   >>> orog = t.constructs('surface_altitude').value()
+   >>> orog = t.domain_ancillary('surface_altitude')
    >>> orog.equals(orog.copy())
    True
 
@@ -3056,9 +3086,9 @@ filters to a `Constructs` instance:
    >>> print(t.constructs.filter_by_ncvar('b'))
    Constructs:
    {'domainancillary1': <DomainAncillary: ncvar%b(1) >}
-   >>> t.constructs('ncvar%x').value()
+   >>> t.construct('ncvar%x')
    <DimensionCoordinate: grid_longitude(9) degrees>
-   >>> t.constructs('ncdim%x')
+   >>> t.construct('ncdim%x')
    <Constructs: domain_axis(1)>
      
 Each construct has methods to access the netCDF elements which it
@@ -3169,7 +3199,7 @@ Method                                               Description
    >>> q.nc_set_variable('humidity')
    >>> q.nc_get_variable()
    'humidity'
-   >>> q.constructs('latitude').value().nc_get_variable()
+   >>> q.construct('latitude').nc_get_variable()
    'lat'
 
 The complete collection of netCDF interface methods is:
@@ -3618,8 +3648,7 @@ of the field construct.
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
                    : time(1) = [2019-01-01 00:00:00]
    <Field: specific_humidity(latitude(5), longitude(8)) 1>
-   >>> key = q.construct_key('time')
-   >>> axes = q.get_data_axes(key)
+   >>> axes = q.get_data_axes('time')
    >>> axes
    ('domainaxis2',)
    >>> q2 = q.insert_dimension(axis=axes[0])
@@ -3968,7 +3997,7 @@ is still created, but one without any metadata or data:
                    : longitude(9) = [0.0, ..., 8.0] degrees
    Cell measures   : measure:area (external variable: ncvar%areacella)
 
-   >>> area = u.constructs('measure:area').value()
+   >>> area = u.cell_measure('measure:area')
    >>> area
    <CellMeasure: measure:area >
    >>> area.nc_get_external()
@@ -4003,7 +4032,7 @@ variable had been present in the parent dataset:
    Dimension coords: latitude(10) = [0.0, ..., 9.0] degrees
                    : longitude(9) = [0.0, ..., 8.0] degrees
    Cell measures   : cell_area(longitude(9), latitude(10)) = [[100000.5, ..., 100089.5]] m2
-   >>> area = g.constructs('measure:area').value()
+   >>> area = g.cell_measure('measure:area')
    >>> area
    <CellMeasure: cell_area(9, 10) m2>
    >>> area.nc_get_external()
@@ -4403,7 +4432,7 @@ array that is stored in one of three special array objects:
    # uncompressed shape
    array = cfdm.RaggedContiguousArray(
                     compressed_array=ragged_array,
-                    shape=(2, 4), size=8, ndim=2,
+                    shape=(2, 4),
                     count_variable=count_variable)
 
    # Create the field construct with the domain axes and the ragged
@@ -4564,8 +4593,8 @@ simple field construct with an underlying gathered array:
    # shape
    array = cfdm.GatheredArray(
                     compressed_array=gathered_array,
-		    compressed_dimension=1,
-                    shape=(2, 3, 2), size=12, ndim=3,
+		    compressed_dimensions={1: (1, 2)},
+                    shape=(2, 3, 2),
                     list_variable=list_variable)
 
    # Create the field construct with the domain axes and the gathered
@@ -4586,7 +4615,7 @@ simple field construct with an underlying gathered array:
 Note that, because compression by gathering acts on a subset of the
 array dimensions, it is necessary to state the position of the
 compressed dimension in the compressed array (with the
-``compressed_dimension`` parameter of the `GatheredArray`
+``compressed_dimensions`` parameter of the `GatheredArray`
 initialisation).
 
 The new field construct can now be inspected and written a netCDF file:
@@ -4637,7 +4666,7 @@ The content of the new file is:
    		precipitation_flux:standard_name = "precipitation_flux" ;
    
    // global attributes:
-   		:Conventions = "CF-1.7" ;
+   		:Conventions = "CF-1.9" ;
    data:
    
     list = 1, 4, 5 ;
@@ -4654,9 +4683,150 @@ Coordinate subsampling
 ^^^^^^^^^^^^^^^^^^^^^^
 
 `Lossy compression by coordinate subsampling`_ was introduced into the
-CF conventions at CF-1.9, but is not yet available in cfdm. It will be
-ready in a future 1.9.x.0 release.
+CF conventions at CF-1.9 for applications for which the coordinates
+can require considerably more storage than the data itself. Space may
+be saved in the netCDF file by storing a subsample of the coordinates
+that describe the data, and the uncompressed coordinate and auxiliary
+coordinate variables are reconstituted by interpolation, from the
+subsampled coordinate values to the domain of the data
 
+This is illustrated with the file ``subsampled.nc`` (found in the
+:ref:`sample datasets <Sample-datasets>`):
+
+
+.. code-block:: console
+   :caption: *Inspect the compressed dataset with the ncdump command
+             line tool.*
+      
+   $ ncdump -h subsampled.nc 
+   netcdf subsampled {
+   dimensions:
+   	time = 2 ;
+   	lat = 18 ;
+   	lon = 12 ;
+   	tp_lat = 4 ;
+   	tp_lon = 5 ;
+   variables:
+   	float time(time) ;
+   		time:standard_name = "time" ;
+   		time:units = "days since 2000-01-01" ;
+   	float lat(tp_lat, tp_lon) ;
+   		lat:standard_name = "latitude" ;
+   		lat:units = "degrees_north" ;
+   		lat:bounds_tie_points = "lat_bounds" ;
+   	float lon(tp_lat, tp_lon) ;
+   		lon:standard_name = "longitude" ;
+   		lon:units = "degrees_east" ;
+   		lon:bounds_tie_points = "lon_bounds" ;
+   	float lat_bounds(tp_lat, tp_lon) ;
+   	float lon_bounds(tp_lat, tp_lon) ;
+   	int lat_indices(tp_lat) ;
+   		lat_indices:long_name = "Tie point indices for latitude dimension" ;
+   	int lon_indices(tp_lon) ;
+   		lon_indices:long_name = "Tie point indices for longitude dimension" ;
+   	int bilinear ;
+   		bilinear:interpolation_name = "bi_linear" ;
+   		bilinear:computational_precision = "64" ;
+   		bilinear:tie_point_mapping =
+		    "lat: lat_indices tp_lat lon: lon_indices tp_lon" ;
+   	float q(time, lat, lon) ;
+   		q:standard_name = "specific_humidity" ;
+   		q:units = "1" ;
+   		q:coordinate_interpolation = "lat: lon: bilinear" ;
+   
+   // global attributes:
+   		:Conventions = "CF-1.9" ;
+   }
+
+
+Reading and inspecting this file shows the latitude and longitude
+coordinates in uncompressed form, whilst their underlying arrays are
+still in subsampled representation described in the file:
+   
+.. code-block:: python
+   :caption: *Read a field construct from a dataset that has been
+             compressed by corodinate subsampling, and inspect
+             coordinates.*
+
+   >>> f = cfdm.read('subsampled.nc')[0]
+   >>> print(f)
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(time(2), ncdim%lat(18), ncdim%lon(12)) 1
+   Dimension coords: time(2) = [2000-01-01 00:00:00, 2000-02-01 00:00:00]
+   Auxiliary coords: latitude(ncdim%lat(18), ncdim%lon(12)) = [[-85.0, ..., 85.0]] degrees_north
+                : longitude(ncdim%lat(18), ncdim%lon(12)) = [[15.0, ..., 345.0]] degrees_east
+   >>> lon = f.construct('longitude')
+   >>> lon
+   <AuxiliaryCoordinate: longitude(18, 12) degrees_east>
+   >>> lon.data.source()
+   <SubsampledArray(18, 12): >
+   >>> print(lon.data.array)
+   [[15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
+    [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]]
+   >>> lon.data.source().source()
+   <Data(4, 5): [[15.0, ..., 345.0]]>
+   >>> print(lon.data.source().source().array)
+   [[ 15. 135. 225. 255. 345.]
+    [ 15. 135. 225. 255. 345.]
+    [ 15. 135. 225. 255. 345.]
+    [ 15. 135. 225. 255. 345.]]
+
+   >>> print(lon.data.array)
+As with all other forms of compression, the field may be treated as if
+were not compressed:
+
+.. code-block:: python
+   :caption: *Get subspaces based on indices of the uncompressed
+             data.*
+
+   >>> g = f[0, 6, :]
+   >>> print(g)
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(time(1), ncdim%lat(1), ncdim%lon(12)) 1
+   Dimension coords: time(1) = [2000-01-01 00:00:00]
+   Auxiliary coords: latitude(ncdim%lat(1), ncdim%lon(12)) = [[-25.0, ..., -25.0]] degrees_north
+                   : longitude(ncdim%lat(1), ncdim%lon(12)) = [[15.0, ..., 345.0]] degrees_east
+   >>> print(g.construct('longitude').data.array)
+   [[15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]]
+
+
+The metadata that define the subsampling are contained within the
+coordinate's `Data` object:
+
+.. code-block:: python
+   :caption: *Get subspaces based on indices of the uncompressed
+             data.*
+
+
+   >>> lon = f.construct('longitude')
+   >>> d = lon.data.source()
+   >>> d.get_tie_point_indices()
+   {0: <TiePointIndex: long_name=Tie point indices for latitude dimension(4) >,
+    1: <TiePointIndex: long_name=Tie point indices for longitude dimension(5) >}
+   >>> d.get_computational_precision()
+   '64'
+
+It is not yet, as of version 1.9.1.0, possible to write to disk a
+field construct with compression by coordinate subsampling.
+   
 ----
 
 .. _Controlling-output-messages:

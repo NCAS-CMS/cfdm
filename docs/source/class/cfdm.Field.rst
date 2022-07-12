@@ -119,15 +119,25 @@ Metadata constructs
    ~cfdm.Field.has_data_axes
    ~cfdm.Field.set_data_axes
    ~cfdm.Field.domain_axis_key
+   ~cfdm.Field.auxiliary_coordinate
    ~cfdm.Field.auxiliary_coordinates
+   ~cfdm.Field.cell_measure
    ~cfdm.Field.cell_measures
+   ~cfdm.Field.cell_method
    ~cfdm.Field.cell_methods
+   ~cfdm.Field.coordinate
    ~cfdm.Field.coordinates
+   ~cfdm.Field.coordinate_reference
    ~cfdm.Field.coordinate_references
+   ~cfdm.Field.dimension_coordinate
    ~cfdm.Field.dimension_coordinates
+   ~cfdm.Field.domain_ancillary
    ~cfdm.Field.domain_ancillaries
+   ~cfdm.Field.domain_axis
    ~cfdm.Field.domain_axes
+   ~cfdm.Field.field_ancillary
    ~cfdm.Field.field_ancillaries
+   ~cfdm.Field.climatological_time_axes
    
 .. rubric:: Attributes
    
@@ -184,6 +194,7 @@ Miscellaneous
    ~cfdm.Field.has_geometry
    ~cfdm.Field.uncompress
    ~cfdm.Field.get_filenames
+   ~cfdm.Field.to_memory
 
 .. _Field-NetCDF:
    

@@ -1,7 +1,11 @@
-from ... import abstract
+from functools import reduce
+from operator import mul
+
+from ...abstract import Container
+from ...utils import cached_property
 
 
-class Array(abstract.Container):
+class Array(Container):
     """Abstract base class for a container of an array.
 
     The form of the array is defined by the initialisation parameters
@@ -13,20 +17,17 @@ class Array(abstract.Container):
 
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, source=None, copy=True):
         """**Initialisation**
 
         :Parameters:
 
-            kwargs: *optional*
+            kwargs: optional
                 Named parameters and their values that define the
                 array.
 
         """
-        super().__init__()
-
-        for key, value in kwargs.items():
-            self._set_component(key, value, copy=False)
+        super().__init__(source=source, copy=copy)
 
     def __array__(self, *dtype):
         """The numpy array interface.
@@ -61,132 +62,13 @@ class Array(abstract.Container):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        **Examples:**
+        **Examples**
 
         >>> import copy
         >>> y = copy.deepcopy(x)
 
         """
         return self.copy()
-
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
-    @property
-    def dtype(self):
-        """Data-type of the data elements.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        **Examples:**
-
-        >>> a.dtype
-        dtype('float64')
-        >>> print(type(a.dtype))
-        <type 'numpy.dtype'>
-
-        """
-        raise NotImplementedError()  # pragma: no cover
-
-    @property
-    def ndim(self):
-        """Number of array dimensions.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        **Examples:**
-
-        >>> a.shape
-        (73, 96)
-        >>> a.ndim
-        2
-        >>> a.size
-        7008
-
-        >>> a.shape
-        (1, 1, 1)
-        >>> a.ndim
-        3
-        >>> a.size
-        1
-
-        >>> a.shape
-        ()
-        >>> a.ndim
-        0
-        >>> a.size
-        1
-
-        """
-        raise NotImplementedError(
-            "Subclasses of cfdm.core.AbstractArray must implement 'ndim'"
-        )  # pragma: no cover
-
-    @property
-    def shape(self):
-        """Tuple of array dimension sizes.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        **Examples:**
-
-        >>> a.shape
-        (73, 96)
-        >>> a.ndim
-        2
-        >>> a.size
-        7008
-
-        >>> a.shape
-        (1, 1, 1)
-        >>> a.ndim
-        3
-        >>> a.size
-        1
-
-        >>> a.shape
-        ()
-        >>> a.ndim
-        0
-        >>> a.size
-        1
-
-        """
-        raise NotImplementedError(
-            "Subclasses of cfdm.core.AbstractArray must implement 'shape'"
-        )  # pragma: no cover
-
-    @property
-    def size(self):
-        """Number of elements in the array.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        **Examples:**
-
-        >>> a.shape
-        (73, 96)
-        >>> a.size
-        7008
-        >>> a.ndim
-        2
-
-        >>> a.shape
-        (1, 1, 1)
-        >>> a.ndim
-        3
-        >>> a.size
-        1
-
-        >>> a.shape
-        ()
-        >>> a.ndim
-        0
-        >>> a.size
-        1
-
-        """
-        raise NotImplementedError()  # pragma: no cover
 
     @property
     def array(self):
@@ -199,18 +81,57 @@ class Array(abstract.Container):
             `numpy.ndarray`
                 An independent numpy array of the data.
 
-        **Examples:**
+        **Examples**
 
         >>> n = a.array
         >>> isinstance(n, numpy.ndarray)
         True
 
         """
-        raise NotImplementedError()  # pragma: no cover
+        raise NotImplementedError(
+            f"Must implement {self.__class__.__name__}.array"
+        )  # pragma: no cover
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
+    @property
+    def dtype(self):
+        """Data-type of the array.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        """
+        raise NotImplementedError(
+            f"Must implement {self.__class__.__name__}.dtype"
+        )  # pragma: no cover
+
+    @cached_property
+    def ndim(self):
+        """Number of array dimensions.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        """
+        return len(self.shape)
+
+    @property
+    def shape(self):
+        """Shape of the array.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        """
+        raise NotImplementedError(
+            f"Must implement {self.__class__.__name__}.shape"
+        )  # pragma: no cover
+
+    @property
+    def size(self):
+        """Number of elements in the array.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        """
+        return reduce(mul, self.shape, 1)
+
     def copy(self):
         """Return a deep copy of the array.
 
@@ -227,12 +148,9 @@ class Array(abstract.Container):
             `{{class}}`
                 The deep copy.
 
-        **Examples:**
+        **Examples**
 
         >>> b = a.copy()
 
         """
-        klass = self.__class__
-        new = klass.__new__(klass)
-        new.__dict__ = self.__dict__.copy()
-        return new
+        return type(self)(source=self, copy=True)

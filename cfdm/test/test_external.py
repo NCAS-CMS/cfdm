@@ -14,11 +14,7 @@ tmpfiles = [
     tempfile.mkstemp("_test_external.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
 ]
-(
-    tempfile,
-    tempfile_parent,
-    tempfile_external,
-) = tmpfiles
+(tempfile, tempfile_parent, tempfile_external) = tmpfiles
 
 
 def _remove_tmpfiles():

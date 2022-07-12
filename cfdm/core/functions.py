@@ -17,11 +17,13 @@ def environment(display=True, paths=True):
     :Parameters:
 
         display: `bool`, optional
-            If False then return the description of the environment as
-            a string. By default the description is printed.
+            If True (the default) then display the description of the
+            environment as a string. If False the description is
+            instead returned as a list.
 
         paths: `bool`, optional
-            If False then do not output the locations of each package.
+            If True (the default) then output the locations of each
+            package. If False the locations are not included.
 
     :Returns:
 
@@ -30,7 +32,7 @@ def environment(display=True, paths=True):
             environment is printed and `None` is returned. Otherwise
             the description is returned as in a `list`.
 
-    **Examples:**
+    **Examples**
 
     >>> environment()
     Platform: Linux-4.15.0-72-generic-x86_64-with-debian-stretch-sid
@@ -89,7 +91,7 @@ def CF():
             The version of the CF conventions represented by this
             release of the cfdm.core package.
 
-    **Examples:**
+    **Examples**
 
     >>> cfdm.core.CF()
     '1.9'

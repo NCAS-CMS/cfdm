@@ -154,7 +154,7 @@ class CoordinateReference(abstract.Container):
             `str`
                 The construct type.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.construct_type
@@ -176,7 +176,7 @@ class CoordinateReference(abstract.Container):
             `CoordinateConversion`
                 The coordinate conversion.
 
-        **Examples:**
+        **Examples**
 
         >>> orog = {{package}}.DomainAncillary()
         >>> c = {{package}}.CoordinateConversion(
@@ -205,7 +205,7 @@ class CoordinateReference(abstract.Container):
            `Datum`
                 The datum.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.Datum(parameters={'earth_radius': 7000000})
         >>> r = {{package}}.{{class}}(datum=d)
@@ -232,7 +232,7 @@ class CoordinateReference(abstract.Container):
             `set`
                 The removed coordinate construct keys.
 
-        **Examples:**
+        **Examples**
 
         >>> r = {{package}}.{{class}}()
         >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
@@ -260,7 +260,7 @@ class CoordinateReference(abstract.Container):
             `set`
                 The coordinate construct keys.
 
-        **Examples:**
+        **Examples**
 
         >>> r = {{package}}.{{class}}()
         >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
@@ -286,7 +286,7 @@ class CoordinateReference(abstract.Container):
             `{{class}}`
                 The deep copy.
 
-        **Examples:**
+        **Examples**
 
         >>> r = {{package}}.{{class}}()
         >>> s = r.copy()
@@ -321,7 +321,7 @@ class CoordinateReference(abstract.Container):
 
               The removed coordinate construct key.
 
-        **Examples:**
+        **Examples**
 
         >>> r = {{package}}.{{class}}()
         >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
@@ -360,7 +360,7 @@ class CoordinateReference(abstract.Container):
             `CoordinateConversion`
                 The removed coordinate conversion component.
 
-        **Examples:**
+        **Examples**
 
         >>> r = {{package}}.{{class}}()
         >>> orog = {{package}}.DomainAncillary()
@@ -396,7 +396,7 @@ class CoordinateReference(abstract.Container):
             `Datum`
                 The removed datum component.
 
-        **Examples:**
+        **Examples**
 
         >>> r = {{package}}.{{class}}()
         >>> d = {{package}}.Datum(parameters={'earth_radius': 7000000})
@@ -427,7 +427,7 @@ class CoordinateReference(abstract.Container):
             `CoordinateConversion`
                 The coordinate conversion component.
 
-        **Examples:**
+        **Examples**
 
         >>> r = {{package}}.{{class}}()
         >>> orog = {{package}}.DomainAncillary()
@@ -465,7 +465,7 @@ class CoordinateReference(abstract.Container):
            `Datum`
                 The datum component.
 
-        **Examples:**
+        **Examples**
 
         >>> r = {{package}}.{{class}}()
         >>> d = {{package}}.Datum(parameters={'earth_radius': 7000000})
@@ -509,7 +509,7 @@ class CoordinateReference(abstract.Container):
                   `True` if the coordinate construct key has been set,
                   otherwise `False`.
 
-        **Examples:**
+        **Examples**
 
         >>> r = {{package}}.{{class}}()
         >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
@@ -545,7 +545,7 @@ class CoordinateReference(abstract.Container):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> r = {{package}}.{{class}}()
         >>> r.set_coordinate('dimensioncoordinate0')
@@ -588,7 +588,7 @@ class CoordinateReference(abstract.Container):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> r = {{package}}.{{class}}()
         >>> r.set_coordinates(['dimensioncoordinate0', 'auxiliarycoordinate1'])
@@ -618,16 +618,13 @@ class CoordinateReference(abstract.Container):
             coordinate_conversion: `CoordinateConversion`
                 The coordinate conversion component to be inserted.
 
-            copy: `bool`, optional
-                If False then do not copy the coordinate conversion prior
-                to insertion. By default the coordinate conversion is
-                copied.
+            {{copy: `bool`, optional}}
 
         :Returns:
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> r = {{package}}.{{class}}()
         >>> orog = {{package}}.DomainAncillary()
@@ -665,15 +662,13 @@ class CoordinateReference(abstract.Container):
             datum: `Datum`
                 The datum component to be inserted.
 
-            copy: `bool`, optional
-                If False then do not copy the datum prior to insertion. By
-                default the datum is copied.
+            {{copy: `bool`, optional}}
 
         :Returns:
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> r = {{package}}.{{class}}()
         >>> d = {{package}}.Datum(parameters={'earth_radius': 7000000})

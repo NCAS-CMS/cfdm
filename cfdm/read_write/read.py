@@ -227,9 +227,8 @@ def read(
             .. versionadded:: (cfdm) 1.8.3
 
         mask: `bool`, optional
-            If False then do not mask by convention the data of field
-            and metadata constructs. By default all data is masked by
-            convention.
+            If True (the default) then mask by convention the data of
+            field and metadata constructs.
 
             The masking by convention of a netCDF array depends on the
             values of any of the netCDF variable attributes
@@ -274,7 +273,7 @@ def read(
             The field constructs found in the dataset, or the domain
             constructs if *domain* is True. The list may be empty.
 
-    **Examples:**
+    **Examples**
 
     >>> x = cfdm.read('file.nc')
     >>> print(type(x))

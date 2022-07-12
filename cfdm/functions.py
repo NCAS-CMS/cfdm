@@ -82,7 +82,7 @@ def configuration(atol=None, rtol=None, log_level=None):
             of the project-wide constants prior to the change, or the
             current names and values if no new values are specified.
 
-    **Examples:**
+    **Examples**
 
     View full global configuration of constants:
 
@@ -303,7 +303,8 @@ def environment(display=True, paths=True):
             a string. By default the description is printed.
 
         paths: `bool`, optional
-            If False then do not output the locations of each package.
+            If True (the default) then output the locations of each
+            package.
 
     :Returns:
 
@@ -312,7 +313,7 @@ def environment(display=True, paths=True):
             environment is printed and `None` is returned. Otherwise
             the description is returned as in a `list`.
 
-    **Examples:**
+    **Examples**
 
     >>> cfdm.environment()
     Platform: Linux-4.15.0-72-generic-x86_64-with-debian-stretch-sid
@@ -381,7 +382,7 @@ def CF():
             The version of the CF conventions represented by this
             release of the cfdm package.
 
-    **Examples:**
+    **Examples**
 
     >>> CF()
     '1.9'
@@ -408,7 +409,7 @@ def abspath(filename):
         `str`
             The normalised absolutised version of *filename*.
 
-    **Examples:**
+    **Examples**
 
     >>> import os
     >>> os.getcwd()
@@ -440,15 +441,15 @@ def unique_constructs(constructs, copy=True):
             a mixture of types. The sequence can be empty.
 
         copy: `bool`, optional
-            If False then do not copy returned constructs. By default
-            they are deep copies.
+            If True (the default) then deep copy returned constructs,
+            else they are not (deep) copied.
 
     :Returns:
 
         `list`
             The unique constructs. May be an empty list.
 
-    **Examples:**
+    **Examples**
 
     >>> f = cfdm.example_field(0)
     >>> g = cfdm.example_field(1)
@@ -1194,7 +1195,7 @@ class atol(ConstantAccess):
             The value prior to the change, or the current value if no
             new value was specified.
 
-    **Examples:**
+    **Examples**
 
     >>> {{package}}.{{class}}()
     <{{repr}}Constant: 2.220446049250313e-16>
@@ -1279,7 +1280,7 @@ class rtol(ConstantAccess):
             The value prior to the change, or the current value if no
             new value was specified.
 
-    **Examples:**
+    **Examples**
 
     >>> {{package}}.{{class}}()
     <{{repr}}Constant: 2.220446049250313e-16>
@@ -1379,7 +1380,7 @@ class log_level(ConstantAccess):
             not valid). Note the string name, rather than the
             equivalent integer, will always be returned.
 
-    **Examples:**
+    **Examples**
 
     >>> {{package}}.{{class}}()
     <{{repr}}Constant: 'WARNING'>

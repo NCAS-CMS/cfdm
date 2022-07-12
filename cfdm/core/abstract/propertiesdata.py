@@ -93,7 +93,7 @@ class PropertiesData(Properties):
 
             `Data`
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.set_data([1, 2, 3])
@@ -134,7 +134,7 @@ class PropertiesData(Properties):
             `Data`
                 The data.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.set_data({{package}}.Data(numpy.arange(10.)))
@@ -167,15 +167,15 @@ class PropertiesData(Properties):
         :Parameters:
 
             data: `bool`, optional
-                If False then do not copy data. By default data are
-                copied.
+                If True (the default) then copy data, else the
+                data is not copied.
 
         :Returns:
 
             `{{class}}`
                 The deep copy.
 
-        **Examples:**
+        **Examples**
 
         >>> g = f.copy()
         >>> g = f.copy(data=False)
@@ -205,7 +205,7 @@ class PropertiesData(Properties):
             `Data`
                 The removed data.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.set_data([1, 2, 3])
@@ -260,7 +260,7 @@ class PropertiesData(Properties):
             `Data`
                 The data.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.set_data([1, 2, 3])
@@ -333,7 +333,7 @@ class PropertiesData(Properties):
             `bool`
                 Always False.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.has_bounds()
@@ -354,7 +354,7 @@ class PropertiesData(Properties):
             `bool`
                 True if data have been set, otherwise False.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.set_data([1, 2, 3])
@@ -397,8 +397,8 @@ class PropertiesData(Properties):
                 {{data_like}}
 
             copy: `bool`, optional
-                If False then do not copy the data prior to insertion. By
-                default the data are copied.
+                If True (the default) then copy the data prior to
+                insertion, else the data is not copied.
 
             {{inplace: `bool`, optional (default True)}}
 
@@ -411,7 +411,7 @@ class PropertiesData(Properties):
                 otherwise return a new `{{class}}` instance containing the
                 new data.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.set_data([1, 2, 3])

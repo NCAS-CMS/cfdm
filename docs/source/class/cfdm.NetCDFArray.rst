@@ -54,6 +54,7 @@ File
    ~cfdm.NetCDFArray.get_filename
    ~cfdm.NetCDFArray.get_group
    ~cfdm.NetCDFArray.get_mask
+   ~cfdm.NetCDFArray.file_address
    
 Miscellaneous
 -------------

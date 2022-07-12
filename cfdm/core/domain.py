@@ -95,7 +95,7 @@ class Domain(mixin.FieldDomain, abstract.Properties):
             `str`
                 The construct type.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}()
         >>> d.construct_type
@@ -115,7 +115,7 @@ class Domain(mixin.FieldDomain, abstract.Properties):
             `Constructs`
                 The constructs.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.example_field(0)
         >>> print(d.constructs)
@@ -145,16 +145,14 @@ class Domain(mixin.FieldDomain, abstract.Properties):
 
         :Parameters:
 
-            data: `bool`, optional
-                If False then do not copy data. By default data are
-                copied.
+            {{data: `bool`, optional}}
 
         :Returns:
 
             `{{class}}`
                 The deep copy.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}()
         >>> e = d.copy()
@@ -195,7 +193,7 @@ class Domain(mixin.FieldDomain, abstract.Properties):
 
                 The removed metadata construct.
 
-        **Examples:**
+        **Examples**
 
         >>> f.del_construct('auxiliarycoordinate2')
         <{{repr}}AuxiliaryCoordinate: latitude(111, 106) degrees_north>
@@ -235,7 +233,7 @@ class Domain(mixin.FieldDomain, abstract.Properties):
             `{{class}}`
                 The domain created from a view of the constructs.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> d = {{package}}.{{class}}.fromconstructs(f.constructs)

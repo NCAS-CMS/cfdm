@@ -43,7 +43,7 @@ class AuxiliaryCoordinate(abstract.Coordinate):
             `str`
                 The construct type.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.construct_type

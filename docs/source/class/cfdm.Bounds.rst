@@ -91,6 +91,7 @@ Miscellaneous
    ~cfdm.Bounds.has_bounds
    ~cfdm.Bounds.uncompress
    ~cfdm.Bounds.get_filenames
+   ~cfdm.Bounds.to_memory
 
 NetCDF
 ------

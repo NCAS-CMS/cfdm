@@ -13,9 +13,6 @@ class FieldDomain:
 
     """
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
     def _apply_masking_constructs(self):
         """Apply masking to metadata constructs in-place.
 
@@ -33,6 +30,65 @@ class FieldDomain:
         # Apply masking to the metadata constructs
         for c in self.constructs.filter_by_data(todict=True).values():
             c.apply_masking(inplace=True)
+
+    def _construct(
+        self,
+        _method,
+        _constructs_method,
+        identities,
+        key=False,
+        item=False,
+        default=ValueError(),
+        cached=None,
+        **filter_kwargs,
+    ):
+        """An interface to `Constructs.filter`.
+
+        {{unique construct}}
+
+        .. versionadded:: (cfdm) 1.9.1.0
+
+        :Parameters:
+
+            _method: `str`
+                The name of the calling method.
+
+            _constructs_method: `str`
+                The name of the corresponding method that can return
+                any number of constructs.
+
+            identities: sequence
+                As for the *identities* parameter of the calling
+                method.
+
+            {{key: `bool`, optional}}
+
+            {{item: `bool`, optional}}
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no unique construct.
+
+                {{default Exception}}
+
+            {{cached: optional}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns construct}}
+
+        """
+        if cached is not None:
+            return cached
+
+        filter_kwargs["todict"] = True
+
+        c = getattr(self, _constructs_method)(*identities, **filter_kwargs)
+
+        # Return construct, or key, or both, or default
+        return self._filter_return_construct(c, key, item, default, _method)
 
     def _get_data_compression_variables(self, component):
         """TODO."""
@@ -157,7 +213,7 @@ class FieldDomain:
         construct=False,
         key=False,
         item=False,
-        default=None,
+        default=ValueError(),
         _identity_config={},
         **filter_kwargs,
     ):
@@ -180,9 +236,21 @@ class FieldDomain:
 
                 {{value match}}
 
-            {{todict: `bool`, optional}}
-
             {{cached: optional}}
+
+            {{key: `bool`, optional}}
+
+                .. versionadded:: (cfdm) 1.9.1.0
+
+            {{item: `bool`, optional}}
+
+                .. versionadded:: (cfdm) 1.9.1.0
+
+            default: optional
+                If *construct* is True and there is no unique construct
+                then return the value of the *default* parameter.
+
+                {{default Exception}}
 
             {{filter_kwargs: optional}}
 
@@ -200,8 +268,8 @@ class FieldDomain:
         if not _ctypes:
             kwargs = filter_kwargs
         else:
-            # Ensure that filter_by_types is the first filter
-            # applied, as it's the cheapest
+            # Ensure that filter_by_types is the first filter applied,
+            # as it's the cheapest.
             if not (identities or filter_kwargs):
                 # This a very common pattern for which calling
                 # filter_by_type directly is faster
@@ -220,25 +288,6 @@ class FieldDomain:
                 return self._filter_return_construct(
                     c, key, item, default, _method
                 )
-                # n = len(c)
-                # if n == 1:
-                #    k, construct = c.popitem()
-                #    if key:
-                #        return k
-                #
-                #    if item:
-                #        return k, construct
-                #
-                #    return construct
-                #
-                # if default is None:
-                #    return default
-                #
-                # return self._default(
-                #    default,
-                #    f"{self.__class__.__name__}.{_method}() can't return {n} "
-                #    "constructs",
-                # )
 
             kwargs = {"filter_by_type": _ctypes}
 
@@ -251,8 +300,8 @@ class FieldDomain:
 
                 kwargs.update(filter_kwargs)
 
-        # Ensure that filter_by_identity is the one of the last
-        # filters applied, as it's expensive.
+        # Ensure that filter_by_identity is the last filter applied,
+        # as it's expensive.
         if filter_kwargs:
             if identities:
                 if "filter_by_identity" in filter_kwargs:
@@ -273,10 +322,7 @@ class FieldDomain:
         if construct:
             kwargs["todict"] = True
 
-        c = self.constructs.filter(
-            _identity_config=_identity_config,
-            **kwargs,
-        )
+        c = self.constructs.filter(_identity_config=_identity_config, **kwargs)
 
         if not construct:
             # Return Constructs or dict
@@ -285,31 +331,12 @@ class FieldDomain:
         # Return construct, or key, or both, or default
         return self._filter_return_construct(c, key, item, default, _method)
 
-        # if len(c) == 1:
-        #    k, construct = c.popitem()
-        #    if key:
-        #        return k
-        #
-        #    if item:
-        #        return k, construct
-        #
-        #    return construct
-        #
-        # if default is None:
-        #    return default
-        #
-        # return self._default(
-        #    default,
-        #    f"{self.__class__.__name__}.{_method}() can't return {len(c)} "
-        #    "constructs",
-        # )
-
     def _unique_construct_names(self):
         """Return unique metadata construct names.
 
         .. versionadded:: (cfdm) 1.7.0
 
-        **Examples:**
+        **Examples**
 
         >>> f._unique_construct_names()
         {'cellmethod0': 'method:mean',
@@ -350,7 +377,7 @@ class FieldDomain:
 
         .. versionadded:: (cfdm) 1.7.0
 
-        **Examples:**
+        **Examples**
 
         >>> f._unique_domain_axis_identities()
         {'domainaxis0': 'latitude(5)',
@@ -378,6 +405,76 @@ class FieldDomain:
                     key_to_name[key] = f"{name}{{{found}}}({size})"
 
         return key_to_name
+
+    def auxiliary_coordinate(
+        self,
+        *identity,
+        default=ValueError(),
+        key=False,
+        item=False,
+        **filter_kwargs,
+    ):
+        """Select an auxiliary coordinate construct.
+
+        {{unique construct}}
+
+        .. versionadded:: (cfdm) 1.9.1.0
+
+        .. seealso:: `construct`, `auxiliary_coordinates`
+
+        :Parameters:
+
+            identity: optional
+                Select auxiliary coordinate constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                If no values are provided then all auxiliary
+                coordinate constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{key: `bool`, optional}}
+
+            {{item: `bool`, optional}}
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no unique construct.
+
+                {{default Exception}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns construct}}
+
+        **Examples**
+
+        >>> f = {{package}}.example_{{class_lower}}(1)
+        >>> f.auxiliary_coordinate('latitude')
+        <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
+        >>> f.auxiliary_coordinate('latitude', key=True)
+        'auxiliarycoordinate0'
+        >>> f.auxiliary_coordinate('latitude', item=True)
+        ('auxiliarycoordinate0', <AuxiliaryCoordinate: latitude(10, 9) degrees_N>)
+
+        """
+        return self._construct(
+            "auxiliary_coordinate",
+            "auxiliary_coordinates",
+            identity,
+            key=key,
+            item=item,
+            default=default,
+            **filter_kwargs,
+        )
 
     def auxiliary_coordinates(self, *identities, **filter_kwargs):
         """Return auxiliary coordinate constructs.
@@ -413,7 +510,7 @@ class FieldDomain:
 
                 {{Returns constructs}}
 
-        **Examples:**
+        **Examples**
 
         >>> f.auxiliary_coordinates()
         Constructs:
@@ -430,6 +527,78 @@ class FieldDomain:
             ("auxiliary_coordinate",),
             "auxiliary_coordinates",
             identities,
+            **filter_kwargs,
+        )
+
+    def coordinate(
+        self,
+        *identity,
+        default=ValueError(),
+        key=False,
+        item=False,
+        **filter_kwargs,
+    ):
+        """Select a dimension or auxiliary coordinate construct.
+
+        {{unique construct}}
+
+        .. versionadded:: (cfdm) 1.9.1.0
+
+        .. seealso:: `construct`, `coordinates`
+
+        :Parameters:
+
+            identity: optional
+                Select dimension or auxiliary coordinate constructs
+                that have an identity, defined by their `!identities`
+                methods, that matches any of the given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                If no values are provided then all dimension or
+                auxiliary coordinate constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{key: `bool`, optional}}
+
+            {{item: `bool`, optional}}
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no unique construct.
+
+                {{default Exception}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns construct}}
+
+        **Examples**
+
+        >>> f = {{package}}.example_{{class_lower}}(1)
+        >>> f.coordinate('latitude')
+        <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
+        >>> f.coordinate('grid_latitude')
+        <DimensionCoordinate: grid_latitude(10) degrees>
+        >>> f.coordinate('grid_latitude', key=True)
+        'dimensioncoordinate1'
+        >>> f.coordinate('grid_latitude', item=True)
+        ('dimensioncoordinate1', <DimensionCoordinate: grid_latitude(10) degrees>)
+
+        """
+        return self._construct(
+            "coordinate",
+            "coordinates",
+            identity,
+            key=key,
+            item=item,
+            default=default,
             **filter_kwargs,
         )
 
@@ -469,7 +638,7 @@ class FieldDomain:
 
                 {{Returns constructs}}
 
-        *Examples:**
+        *Examples**
 
         >> f.coordinates()
         Constructs:
@@ -487,12 +656,78 @@ class FieldDomain:
 
         """
         return self._filter_interface(
-            (
-                "dimension_coordinate",
-                "auxiliary_coordinate",
-            ),
+            ("dimension_coordinate", "auxiliary_coordinate"),
             "coordinates",
             identities,
+            **filter_kwargs,
+        )
+
+    def coordinate_reference(
+        self,
+        *identity,
+        default=ValueError(),
+        key=False,
+        item=False,
+        **filter_kwargs,
+    ):
+        """Return a coordinate reference construct, or its key.
+
+        .. versionadded:: (cfdm) 1.9.1.0
+
+        .. seealso:: `construct`, `coordinate_references`
+
+        :Parameters:
+
+            identity: optional
+                Select coordinate reference constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                If no identities are provided then all coordinate
+                reference constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{key: `bool`, optional}}
+
+            {{item: `bool`, optional}}
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no unique construct.
+
+                {{default Exception}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns construct}}
+
+        **Examples**
+
+        >>> f = {{package}}.example_{{class_lower}}(1)
+        >>> f.coordinate_reference('grid_mapping_name:rotated_latitude_longitude')
+        <CoordinateReference: grid_mapping_name:rotated_latitude_longitude>
+        >>> f.coordinate_reference('grid_mapping_name:rotated_latitude_longitude', key=True)
+        'coordinatereference1'
+        >>> f.coordinate_reference('grid_mapping_name:rotated_latitude_longitude', item=True)
+        ('coordinatereference1',
+         <CoordinateReference: grid_mapping_name:rotated_latitude_longitude>)
+
+        """
+        return self._construct(
+            "coordinate_reference",
+            "coordinate_references",
+            identity,
+            key=key,
+            item=item,
+            default=default,
             **filter_kwargs,
         )
 
@@ -528,7 +763,7 @@ class FieldDomain:
 
                 {{Returns constructs}}
 
-        **Examples:**
+        **Examples**
 
         >>> f.coordinate_references()
         Constructs:
@@ -590,7 +825,7 @@ class FieldDomain:
 
                 The removed metadata construct.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> print(f)
@@ -628,6 +863,76 @@ class FieldDomain:
 
         return self._default(default, "Can't find unique construct to remove")
 
+    def dimension_coordinate(
+        self,
+        *identity,
+        key=False,
+        default=ValueError(),
+        item=False,
+        **filter_kwargs,
+    ):
+        """Select a dimension coordinate construct.
+
+        {{unique construct}}
+
+        .. versionadded:: (cfdm) 1.9.1.0
+
+        .. seealso:: `construct`, `dimension_coordinates`
+
+        :Parameters:
+
+            identity: optional
+                Select dimension coordinate constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                If no values are provided then all dimension
+                coordinate constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{key: `bool`, optional}}
+
+            {{item: `bool`, optional}}
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no unique construct.
+
+                {{default Exception}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns construct}}
+
+        **Examples**
+
+        >>> f = {{package}}.example_{{class_lower}}(1)
+        >>> f.dimension_coordinate('grid_latitude')
+        <DimensionCoordinate: grid_latitude(10) degrees>
+        >>> f.coordinate('grid_latitude', key=True)
+        'dimensioncoordinate1'
+        >>> f.coordinate('grid_latitude', item=True)
+        ('dimensioncoordinate1', <DimensionCoordinate: grid_latitude(10) degrees>)
+
+        """
+        return self._construct(
+            "dimension_coordinate",
+            "dimension_coordinates",
+            identity,
+            key=key,
+            item=item,
+            default=default,
+            **filter_kwargs,
+        )
+
     def dimension_coordinates(self, *identities, **filter_kwargs):
         """Return dimension coordinate constructs.
 
@@ -662,7 +967,7 @@ class FieldDomain:
 
                 {{Returns constructs}}
 
-        **Examples:**
+        **Examples**
 
         >>> f.dimension_coordinates()
         Constructs:
@@ -680,6 +985,87 @@ class FieldDomain:
             ("dimension_coordinate",),
             "dimension_coordinates",
             identities,
+            **filter_kwargs,
+        )
+
+    def domain_axis(
+        self,
+        *identity,
+        key=False,
+        default=ValueError(),
+        item=False,
+        **filter_kwargs,
+    ):
+        """Select a domain axis construct.
+
+        {{unique construct}}
+
+        .. versionadded:: (cfdm) 1.9.1.0
+
+        .. seealso:: `construct`, `domain_axes`
+
+        :Parameters:
+
+            identities: `tuple`, optional
+                Select domain axis constructs that have an identity,
+                defined by their `!identities` methods, that matches
+                any of the given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                Additionally, if for a given ``value``,
+                ``f.coordinates(value, filter_by_naxes=(1,))`` returns
+                1-d coordinate constructs that all span the same
+                domain axis construct then that domain axis construct
+                is selected. See `coordinates` for details.
+
+                Additionally, if there is a `Field` data array and a
+                value matches the integer position of an array
+                dimension, then the corresponding domain axis
+                construct is selected.
+
+                If no values are provided then all domain axis
+                constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{key: `bool`, optional}}
+
+            {{item: `bool`, optional}}
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no unique construct.
+
+                {{default Exception}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns construct}}
+
+        **Examples**
+
+        >>> f = {{package}}.example_{{class_lower}}(1)
+        >>> f.domain_axis('domainaxis0')
+        <DomainAxis: size(1)>
+        >>> f.domain_axis('domainaxis0', key=True)
+        'domainaxis0'
+        >>> f.domain_axis('domainaxis0', item=True)
+        ('domainaxis0', <DomainAxis: size(1)>)
+
+        """
+        return self._construct(
+            "domain_axis",
+            "domain_axes",
+            identity,
+            key=key,
+            item=item,
+            default=default,
             **filter_kwargs,
         )
 
@@ -726,10 +1112,80 @@ class FieldDomain:
 
                 {{Returns constructs}}
 
-        **Examples:**
+        **Examples**
 
         """
         return self.constructs.domain_axes(*identities, **filter_kwargs)
+
+    def domain_ancillary(
+        self,
+        *identity,
+        default=ValueError(),
+        key=False,
+        item=False,
+        **filter_kwargs,
+    ):
+        """Select a domain ancillary construct.
+
+        {{unique construct}}
+
+        .. versionadded:: (cfdm) 1.9.1.0
+
+        .. seealso:: `construct`, `domain_ancillaries`
+
+        :Parameters:
+
+            identity: optional
+                Select domain ancillary constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                If no values are provided then all domain ancillary
+                constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{key: `bool`, optional}}
+
+            {{item: `bool`, optional}}
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no unique construct.
+
+                {{default Exception}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns construct}}
+
+        **Examples**
+
+        >>> f = {{package}}.example_{{class_lower}}(1)
+        >>> f.domain_ancillary('surface_altitude')
+        <DomainAncillary: surface_altitude(10, 9) m>
+        >>> f.domain_ancillary('surface_altitude', key=True)
+        'domainancillary2'
+        >>> f.domain_ancillary('surface_altitude', item=True)
+        ('domainancillary2', <DomainAncillary: surface_altitude(10, 9) m>)
+
+        """
+        return self._construct(
+            "domain_ancillary",
+            "domain_ancillaries",
+            identity,
+            key=key,
+            item=item,
+            default=default,
+            **filter_kwargs,
+        )
 
     def domain_ancillaries(self, *identities, **filter_kwargs):
         """Return domain ancillary constructs.
@@ -762,7 +1218,7 @@ class FieldDomain:
 
                 {{Returns constructs}}
 
-        **Examples:**
+        **Examples**
 
         >>> f.domain_ancillaries()
         Constructs:
@@ -779,6 +1235,76 @@ class FieldDomain:
             ("domain_ancillary",),
             "domain_ancillaries",
             identities,
+            **filter_kwargs,
+        )
+
+    def cell_measure(
+        self,
+        *identity,
+        default=ValueError(),
+        key=False,
+        item=False,
+        **filter_kwargs,
+    ):
+        """Select a cell measure construct.
+
+        {{unique construct}}
+
+        .. versionadded:: (cfdm) 1.9.1.0
+
+        .. seealso:: `construct`, `cell_measures`
+
+        :Parameters:
+
+            identity: optional
+                Select cell measure constructs that have an identity,
+                defined by their `!identities` methods, that matches
+                any of the given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                If no values are provided then all dimension
+                coordinate constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{key: `bool`, optional}}
+
+            {{item: `bool`, optional}}
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no unique construct.
+
+                {{default Exception}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns construct}}
+
+        **Examples**
+
+        >>> f = {{package}}.example_{{class_lower}}(1)
+        >>> f.cell_measure()
+        <CellMeasure: measure:area(9, 10) km2>
+        >>> f.cell_measure('measure:area', key=True)
+        'cellmeasure0'
+        >>> f.cell_measure('measure:area', item=True)
+        ('cellmeasure0', <CellMeasure: measure:area(9, 10) km2>)
+
+        """
+        return self._construct(
+            "cell_measure",
+            "cell_measures",
+            identity,
+            key=key,
+            item=item,
+            default=default,
             **filter_kwargs,
         )
 
@@ -816,7 +1342,7 @@ class FieldDomain:
 
                 {{Returns constructs}}
 
-        **Examples:**
+        **Examples**
 
         >>> f.cell_measures()
         Constructs:
@@ -831,14 +1357,22 @@ class FieldDomain:
             ("cell_measure",), "cell_measures", identities, **filter_kwargs
         )
 
-    def construct(self, *identity, default=ValueError(), **filter_kwargs):
+    def construct(
+        self,
+        *identity,
+        default=ValueError(),
+        key=False,
+        item=False,
+        **filter_kwargs,
+    ):
         """Return a metadata construct.
 
         {{unique construct}}
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `constructs`, `construct_item`, `construct_key`
+        .. seealso:: `constructs`, `del_construct`, `get_construct`,
+                     `has_construct`, `set_construct`
 
         :Parameters:
 
@@ -863,15 +1397,23 @@ class FieldDomain:
 
                 {{default Exception}}
 
+            {{key: `bool`, optional}}
+
+                .. versionadded:: (cfdm) 1.9.1.0
+
+            {{item: `bool`, optional}}
+
+                .. versionadded:: (cfdm) 1.9.1.0
+
             {{filter_kwargs: optional}}
 
                 .. versionadded:: (cfdm) 1.8.9.0
 
         :Returns:
 
-                The selected construct.
+                {{Returns construct}}
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_{{class_lower}}(0)
 
@@ -903,8 +1445,8 @@ class FieldDomain:
             "construct",
             identity,
             construct=True,
-            key=False,
-            item=False,
+            key=key,
+            item=item,
             default=default,
             **filter_kwargs,
         )
@@ -914,9 +1456,13 @@ class FieldDomain:
 
         {{unique construct}}
 
+        ``f.construct_item(*args, **kwargs)`` is an alias for
+        ``f.construct(*args, item=True, **kwargs)``. See `construct`
+        for details.
+
         .. versionadded:: (cfdm) 1.8.9.0
 
-        .. seealso:: `constructs`, `construct`, `construct_key`
+        .. seealso:: `construct`, `construct_key`
 
         :Parameters:
 
@@ -950,7 +1496,7 @@ class FieldDomain:
             `tuple`
                 The selected construct and its construct identifier.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_{{class_lower}}(0)
 
@@ -993,9 +1539,13 @@ class FieldDomain:
 
         {{unique construct}}
 
+        ``f.construct_key(*args, **kwargs)`` is an alias for
+        ``f.construct(*args, itekey=True, **kwargs)``. See `construct`
+        for details.
+
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `constructs`, `construct`, `construct_item`
+        .. seealso:: `construct`, `construct_item`
 
         :Parameters:
 
@@ -1029,7 +1579,7 @@ class FieldDomain:
             `str`
                 The identifier of the selected construct.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_{{class_lower}}(0)
 
@@ -1105,7 +1655,7 @@ class FieldDomain:
                 The key of the domain axis construct that is spanned by
                 the data of the selected 1-d coordinate constructs.
 
-        **Examples:**
+        **Examples**
 
         >>> print(f.constructs())
         Constructs:
@@ -1133,8 +1683,7 @@ class FieldDomain:
                 return default
 
             return self._default(
-                default,
-                "There are no 1-d coordinate constructs",
+                default, "There are no 1-d coordinate constructs"
             )
 
         data_axes = self.constructs.data_axes()
@@ -1243,7 +1792,7 @@ class FieldDomain:
             `bool`
                 Whether the two constructs are equal.
 
-        **Examples:**
+        **Examples**
 
         >>> f.equals(f)
         True
@@ -1295,21 +1844,6 @@ class FieldDomain:
                 f"{self.__class__.__name__}: Different metadata constructs"
             )
             return False
-        #        if not self._equals(
-        #            self.constructs,
-        #            other.constructs,
-        #            rtol=rtol,
-        #            atol=atol,
-        #            verbose=verbose,
-        #            ignore_data_type=ignore_data_type,
-        #            ignore_fill_value=ignore_fill_value,
-        #            ignore_compression=ignore_compression,
-        #            _ignore_type=False,
-        #        ):
-        #            logger.info(
-        #                f"{self.__class__.__name__}: Different metadata constructs"
-        #            )
-        #            return False
 
         return True
 
@@ -1345,7 +1879,7 @@ class FieldDomain:
 
                 Whether or not a unique construct can be identified.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> print(f)
@@ -1377,7 +1911,7 @@ class FieldDomain:
             `bool`
                 True if there are geometries, otherwise False.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.{{class}}()
         >>> f.has_geometry()

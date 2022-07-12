@@ -20,6 +20,7 @@ Inspection
    :toctree: ../method/
    :template: method.rst
       
+   ~cfdm.RaggedIndexedContiguousArray.compressed_dimensions
    ~cfdm.RaggedIndexedContiguousArray.get_compressed_axes
    ~cfdm.RaggedIndexedContiguousArray.get_compressed_dimension
    ~cfdm.RaggedIndexedContiguousArray.get_compression_type
@@ -54,6 +55,10 @@ Miscellaneous
    ~cfdm.RaggedIndexedContiguousArray.get_subspace
    ~cfdm.RaggedIndexedContiguousArray.source
    ~cfdm.RaggedIndexedContiguousArray.to_memory
+   ~cfdm.RaggedIndexedContiguousArray.subarray_shapes
+   ~cfdm.RaggedIndexedContiguousArray.subarrays
+   ~cfdm.RaggedIndexedContiguousArray.get_Subarray
+   ~cfdm.RaggedIndexedContiguousArray.conformed_data
 
 Special
 -------

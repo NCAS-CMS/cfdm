@@ -457,13 +457,12 @@ def write(
             and attributes.
 
        warn_valid: `bool`, optional
-            If False then do not print a warning when writing
+            If True (the default) then print a warning when writing
             "out-of-range" data, as indicated by the values, if
             present, of any of the ``valid_min``, ``valid_max`` or
             ``valid_range`` properties on field and metadata
-            constructs that have data. By default a warning is printed
-            if any such construct has any of these properties in
-            combination with out-of-range data.
+            constructs that have data. If False the warning
+            is not printed.
 
             The consequence of writing out-of-range data values is
             that, by default, these values will be masked when the
@@ -502,7 +501,7 @@ def write(
 
         `None`
 
-    **Examples:**
+    **Examples**
 
     >>> cfdm.write(f, 'file.nc')
 

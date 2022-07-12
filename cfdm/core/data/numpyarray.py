@@ -10,7 +10,7 @@ class NumpyArray(abstract.Array):
 
     """
 
-    def __init__(self, array=None):
+    def __init__(self, array=None, source=None, copy=True):
         """**Initialisation**
 
         :Parameters:
@@ -19,7 +19,13 @@ class NumpyArray(abstract.Array):
                 The numpy array.
 
         """
-        super().__init__()
+        super().__init__(source=source, copy=copy)
+
+        if source is not None:
+            try:
+                array = source._get_component("array", None)
+            except AttributeError:
+                array = None
 
         self._set_component("array", array, copy=False)
 
@@ -29,7 +35,7 @@ class NumpyArray(abstract.Array):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        **Examples:**
+        **Examples**
 
         >>> a.dtype
         dtype('float64')
@@ -40,44 +46,12 @@ class NumpyArray(abstract.Array):
         return self._get_component("array").dtype
 
     @property
-    def ndim(self):
-        """Number of array dimensions.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        **Examples:**
-
-        >>> a.shape
-        (73, 96)
-        >>> a.ndim
-        2
-        >>> a.size
-        7008
-
-        >>> a.shape
-        (1, 1, 1)
-        >>> a.ndim
-        3
-        >>> a.size
-        1
-
-        >>> a.shape
-        ()
-        >>> a.ndim
-        0
-        >>> a.size
-        1
-
-        """
-        return self._get_component("array").ndim
-
-    @property
     def shape(self):
         """Tuple of array dimension sizes.
 
         .. versionadded:: (cfdm) 1.7.0
 
-        **Examples:**
+        **Examples**
 
         >>> a.shape
         (73, 96)
@@ -104,38 +78,6 @@ class NumpyArray(abstract.Array):
         return self._get_component("array").shape
 
     @property
-    def size(self):
-        """Number of elements in the array.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        **Examples:**
-
-        >>> a.shape
-        (73, 96)
-        >>> a.size
-        7008
-        >>> a.ndim
-        2
-
-        >>> a.shape
-        (1, 1, 1)
-        >>> a.ndim
-        3
-        >>> a.size
-        1
-
-        >>> a.shape
-        ()
-        >>> a.ndim
-        0
-        >>> a.size
-        1
-
-        """
-        return self._get_component("array").size
-
-    @property
     def array(self):
         """Return an independent numpy array containing the data.
 
@@ -146,7 +88,7 @@ class NumpyArray(abstract.Array):
             `numpy.ndarray`
                 An independent numpy array of the data.
 
-        **Examples:**
+        **Examples**
 
         >>> n = a.array
         >>> isinstance(n, numpy.ndarray)
@@ -182,7 +124,7 @@ class NumpyArray(abstract.Array):
             `{{class}}`
                 The deep copy.
 
-        **Examples:**
+        **Examples**
 
         >>> b = a.copy()
 

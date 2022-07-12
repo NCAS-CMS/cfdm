@@ -46,7 +46,7 @@ class DimensionCoordinate(abstract.Coordinate):
             `str`
                 The construct type.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.construct_type
@@ -73,9 +73,7 @@ class DimensionCoordinate(abstract.Coordinate):
 
                 {{data_like}}
 
-            copy: `bool`, optional
-                If False then do not copy the data prior to insertion. By
-                default the data are copied.
+            {{data copy: `bool`, optional}}
 
             {{inplace: `bool`, optional (default True)}}
 
@@ -88,7 +86,7 @@ class DimensionCoordinate(abstract.Coordinate):
                 otherwise return a new `{{class}}` instance containing the
                 new data.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.Data(range(10))
         >>> f.set_data(d)

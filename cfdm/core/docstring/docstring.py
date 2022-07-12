@@ -58,10 +58,9 @@ _docstring_substitution_definitions = {
                 raised instead.""",
     # inplace: `bool`, optional (default True)
     "{{inplace: `bool`, optional (default True)}}": """inplace: `bool`, optional:
-                If False then do not do the operation in-place and
-                return a new, modified `{{class}}` instance. By
-                default the operation is in-place and `None` is
-                returned.""",
+                If True (the default) then do the operation in-place and
+                return `None`. If False a new, modified `{{class}}`
+                instance is returned.""",
     # init properties
     "{{init properties: `dict`, optional}}": """properties: `dict`, optional
                 Set descriptive properties. The dictionary keys are
@@ -105,8 +104,8 @@ _docstring_substitution_definitions = {
                 initialisation with the `set_interior_ring` method.""",
     # init copy
     "{{init copy: `bool`, optional}}": """copy: `bool`, optional
-                If False then do not deep copy input parameters prior
-                to initialisation. By default arguments are deep
+                If True (the default) deep copy input parameters prior
+                to initialisation. If False arguments are not deep
                 copied.""",
     # init source
     "{{init source}}": """Note that if *source* is a `{{class}}` instance then
@@ -117,4 +116,16 @@ _docstring_substitution_definitions = {
                 to a `Data` object, i.e. `numpy` array_like objects,
                 `Data` objects, and {{package}} instances that contain
                 `Data` objects.""",
+    # data: `bool`, optional
+    "{{data: `bool`, optional}}": """data: `bool`, optional
+                If True (the default) then copy data contained in the
+                metadata construct(s), else the data is not copied.""",
+    # (component-based) copy: `bool`, optional
+    "{{copy: `bool`, optional}}": """copy: `bool`, optional
+                If True (the default) then copy the component prior to
+                insertion, else it is not copied.""",
+    # data copy: `bool`, optional
+    "{{data copy: `bool`, optional}}": """copy: `bool`, optional
+                If True (the default) then copy the data prior to
+                insertion, else the data is not copied.""",
 }

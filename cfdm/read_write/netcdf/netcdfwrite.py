@@ -37,25 +37,11 @@ class NetCDFWrite(IOWrite):
         .. versionadded:: (cfdm) 1.8.0
 
         """
-        return set(
-            (
-                "point",
-                "line",
-                "polygon",
-            )
-        )
+        return set(("point", "line", "polygon"))
 
     def cf_cell_method_qualifiers(self):
         """Cell method qualifiers."""
-        return set(
-            (
-                "within",
-                "where",
-                "over",
-                "interval",
-                "comment",
-            )
-        )
+        return set(("within", "where", "over", "interval", "comment"))
 
     def _create_netcdf_group(self, nc, group_name):
         """Creates a new netCDF4 group object.
@@ -184,7 +170,7 @@ class NetCDFWrite(IOWrite):
             `numpy.ndarray`
                 The compressed numpy array.
 
-        **Examples:**
+        **Examples**
 
         >>> x = numpy.ma.array(numpy.arange(5), mask=[0]*2 + [1]*3)
         >>> c = n._numpy_compressed(x)
@@ -296,7 +282,7 @@ class NetCDFWrite(IOWrite):
 
             `numpy.ndarray`
 
-        **Examples:**
+        **Examples**
 
         >>> print(a, a.shape, a.dtype.itemsize)
         ['fu' 'bar'] (2,) 3
@@ -478,6 +464,7 @@ class NetCDFWrite(IOWrite):
             compressed_axes = tuple(
                 self.implementation.get_compressed_axes(field, key, construct)
             )
+
             compressed_ncdims = tuple(
                 [g["axis_to_ncdim"][axis] for axis in compressed_axes]
             )
@@ -1212,7 +1199,7 @@ class NetCDFWrite(IOWrite):
 
             `dict`
 
-        **Examples:**
+        **Examples**
 
         >>> _write_bounds(c, ('dim2',))
         {'bounds': 'lat_bounds'}
@@ -1712,7 +1699,7 @@ class NetCDFWrite(IOWrite):
 
             `str`
 
-        **Examples:**
+        **Examples**
 
         w._remove_group_structure('lat')
         'lat'
@@ -1753,7 +1740,7 @@ class NetCDFWrite(IOWrite):
 
             `str`
 
-        **Examples:**
+        **Examples**
 
         w._groups('lat')
         ''
@@ -1817,7 +1804,7 @@ class NetCDFWrite(IOWrite):
 
             `dict`
 
-        **Examples:**
+        **Examples**
 
         >>> _write_part_node_count(c, b)
         {'part_node_count': 'pnc'}
@@ -2247,7 +2234,7 @@ class NetCDFWrite(IOWrite):
             `str`
                 The netCDF variable name of the field ancillary object.
 
-        **Examples:**
+        **Examples**
 
         >>> ncvar = _write_field_ancillary(f, 'fieldancillary2', anc)
 
@@ -3338,13 +3325,13 @@ class NetCDFWrite(IOWrite):
 
                             matched_construct = False
 
-                            for key0, (
-                                construct0,
-                                index0,
+                            for (
+                                key0,
+                                (construct0, index0),
                             ) in spanning_constructs.items():
-                                for key1, (
-                                    construct1,
-                                    index1,
+                                for (
+                                    key1,
+                                    (construct1, index1),
                                 ) in constructs1.items():
                                     if (
                                         index0 == index1
@@ -4532,13 +4519,22 @@ class NetCDFWrite(IOWrite):
                 .. versionadded:: (cfdm) 1.8.0
 
             warn_valid: `bool`, optional
-                If False then do not print a warning when writing
+                If True (the default) then print a warning when writing
                 "out-of-range" data, as indicated by the values, if
                 present, of any of the ``valid_min``, ``valid_max`` or
                 ``valid_range`` properties on field and metadata
-                constructs that have data.
+                constructs that have data. If False the warning
+                is not printed.
 
-                See `cfdm.write` for details.
+                The consequence of writing out-of-range data values is
+                that, by default, these values will be masked when the
+                file is subsequently read.
+
+                *Parameter example:*
+                  If a construct has ``valid_max`` property with value
+                  ``100`` and data with maximum value ``999``, then the
+                  resulting warning may be suppressed by setting
+                  ``warn_valid=False``.
 
                 .. versionadded:: (cfdm) 1.8.3
 
@@ -4564,7 +4560,7 @@ class NetCDFWrite(IOWrite):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         See `cfdm.write` for examples.
 
@@ -4839,10 +4835,7 @@ class NetCDFWrite(IOWrite):
             "NETCDF3_64BIT_OFFSET",
             "NETCDF3_64BIT_DATA",
         )
-        netcdf4_fmts = (
-            "NETCDF4",
-            "NETCDF4_CLASSIC",
-        )
+        netcdf4_fmts = ("NETCDF4", "NETCDF4_CLASSIC")
         if fmt not in netcdf3_fmts + netcdf4_fmts:
             raise ValueError(f"Unknown output file format: {fmt}")
         elif fmt in netcdf3_fmts:

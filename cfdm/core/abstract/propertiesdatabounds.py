@@ -115,7 +115,7 @@ class PropertiesDataBounds(PropertiesData):
             `Bounds`
                 The bounds.
 
-        **Examples:**
+        **Examples**
 
 
         >>> c = {{package}}.{{class}}()
@@ -150,7 +150,7 @@ class PropertiesDataBounds(PropertiesData):
             `InteriorRing`
                 The interior ring variable.
 
-        **Examples:**
+        **Examples**
 
 
         >>> i = {{package}}.InteriorRing(data={{package}}.Data(numpy.arange(10).reshape(5, 2)))
@@ -191,7 +191,7 @@ class PropertiesDataBounds(PropertiesData):
             `Bounds`
                 The removed bounds.
 
-        **Examples:**
+        **Examples**
 
 
         >>> c = {{package}}.{{class}}()
@@ -241,7 +241,7 @@ class PropertiesDataBounds(PropertiesData):
             `str`
                 The removed geometry type.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.read('file.nc')[0]
         >>> c = f.construct('axis=X')
@@ -291,7 +291,7 @@ class PropertiesDataBounds(PropertiesData):
             `ÌnteriorRing`
                 The removed interior ring variable.
 
-        **Examples:**
+        **Examples**
 
 
         >>> c = {{package}}.{{class}}()
@@ -347,7 +347,7 @@ class PropertiesDataBounds(PropertiesData):
             `Bounds`
                 The bounds.
 
-        **Examples:**
+        **Examples**
 
 
         >>> c = {{package}}.{{class}}()
@@ -397,7 +397,7 @@ class PropertiesDataBounds(PropertiesData):
             `str`
                 The geometry type.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.read('file.nc')[0]
         >>> c = f.construct('axis=X')
@@ -449,7 +449,7 @@ class PropertiesDataBounds(PropertiesData):
             `InteriorRing`
                 The interior ring variable.
 
-        **Examples:**
+        **Examples**
 
 
         >>> c = {{package}}.{{class}}()
@@ -497,7 +497,7 @@ class PropertiesDataBounds(PropertiesData):
             `bool`
                 True if there are bounds, otherwise False.
 
-        **Examples:**
+        **Examples**
 
 
         >>> c = {{package}}.{{class}}()
@@ -532,7 +532,7 @@ class PropertiesDataBounds(PropertiesData):
             `bool`
                 Whether or not there is a geometry type.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.read('file.nc')[0]
         >>> c = f.construct('axis=X')
@@ -567,7 +567,7 @@ class PropertiesDataBounds(PropertiesData):
                 True if there is an interior ring variable, otherwise
                 False.
 
-        **Examples:**
+        **Examples**
 
 
         >>> c = {{package}}.{{class}}()
@@ -606,14 +606,14 @@ class PropertiesDataBounds(PropertiesData):
                 The bounds to be inserted.
 
             copy: `bool`, optional
-                If False then do not copy the bounds prior to
-                insertion. By default the bounds are copied.
+                If True (the default) then copy the bounds prior to
+                insertion, else the bounds are not copied.
 
         :Returns:
 
             `None`
 
-        **Examples:**
+        **Examples**
 
 
         >>> c = {{package}}.{{class}}()
@@ -666,7 +666,7 @@ class PropertiesDataBounds(PropertiesData):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.read('file.nc')[0]
         >>> c = f.construct('axis=X')
@@ -701,14 +701,14 @@ class PropertiesDataBounds(PropertiesData):
                 The interior_ring to be inserted.
 
             copy: `bool`, optional
-                If False then do not copy the interior_ring prior to
-                insertion. By default the interior_ring are copied.
+                If True (the default) then copy the interior_ring
+                prior to insertion, else it is not copied.
 
         :Returns:
 
             `None`
 
-        **Examples:**
+        **Examples**
 
 
         >>> c = {{package}}.{{class}}()

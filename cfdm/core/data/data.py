@@ -160,7 +160,7 @@ class Data(abstract.Container):
             `numpy.ndarray`
                 An independent numpy array of the data.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}([1, 2, 3.0], 'km')
         >>> n = d.array
@@ -185,7 +185,7 @@ class Data(abstract.Container):
     def dtype(self):
         """Data-type of the data elements.
 
-        **Examples:**
+        **Examples**
 
         >>> d.dtype
         dtype('float64')
@@ -205,7 +205,7 @@ class Data(abstract.Container):
     def ndim(self):
         """Number of data dimensions.
 
-        **Examples:**
+        **Examples**
 
         >>> d.shape
         (73, 96)
@@ -235,7 +235,7 @@ class Data(abstract.Container):
     def shape(self):
         """Tuple of data dimension sizes.
 
-        **Examples:**
+        **Examples**
 
         >>> d.shape
         (73, 96)
@@ -265,7 +265,7 @@ class Data(abstract.Container):
     def size(self):
         """Number of elements in the data.
 
-        **Examples:**
+        **Examples**
 
         >>> d.shape
         (73, 96)
@@ -305,15 +305,15 @@ class Data(abstract.Container):
         :Parameters:
 
             array: `bool`, optional
-                If False then do not copy the array. By default the array
-                is copied.
+                If True (the default) then copy the array, else the
+                array is not copied.
 
         :Returns:
 
             `{{class}}`
                 The deep copy.
 
-        **Examples:**
+        **Examples**
 
         >>> e = d.copy()
         >>> e = d.copy(array=False)
@@ -328,7 +328,7 @@ class Data(abstract.Container):
 
                 The array.
 
-        **Examples:**
+        **Examples**
 
         >>> old = d.del_data()
 
@@ -354,7 +354,7 @@ class Data(abstract.Container):
             `str`
                 The value of the deleted calendar.
 
-        **Examples:**
+        **Examples**
 
         >>> d.set_calendar('360_day')
         >>> d.has_calendar()
@@ -399,7 +399,7 @@ class Data(abstract.Container):
 
                 The value of the deleted fill value.
 
-        **Examples:**
+        **Examples**
 
         >>> f.set_fill_value(-9999)
         >>> f.has_fill_value()
@@ -449,7 +449,7 @@ class Data(abstract.Container):
             `str`
                 The value of the deleted units.
 
-        **Examples:**
+        **Examples**
 
         >>> d.set_units('metres')
         >>> d.has_units()
@@ -495,7 +495,7 @@ class Data(abstract.Container):
             `str`
                 The calendar.
 
-        **Examples:**
+        **Examples**
 
         >>> d.set_calendar('360_day')
         >>> d.has_calendar()
@@ -539,7 +539,7 @@ class Data(abstract.Container):
 
                 The array object.
 
-        **Examples:**
+        **Examples**
 
         >>> a = d._get_Array(None)
 
@@ -572,7 +572,7 @@ class Data(abstract.Container):
 
                 The fill value.
 
-        **Examples:**
+        **Examples**
 
         >>> f.set_fill_value(-9999)
         >>> f.has_fill_value()
@@ -622,7 +622,7 @@ class Data(abstract.Container):
             `str`
                 The units.
 
-        **Examples:**
+        **Examples**
 
         >>> d.set_units('metres')
         >>> d.has_units()
@@ -659,7 +659,7 @@ class Data(abstract.Container):
             `bool`
                 True if units have been set, otherwise False.
 
-        **Examples:**
+        **Examples**
 
         >>> d.set_units('metres')
         >>> d.has_units()
@@ -690,7 +690,7 @@ class Data(abstract.Container):
             `bool`
                 True if the calendar has been set, otherwise False.
 
-        **Examples:**
+        **Examples**
 
         >>> d.set_calendar('360_day')
         >>> d.has_calendar()
@@ -720,7 +720,7 @@ class Data(abstract.Container):
             `bool`
                 True if a fill value has been set, otherwise False.
 
-        **Examples:**
+        **Examples**
 
         >>> f.set_fill_value(-9999)
         >>> f.has_fill_value()
@@ -759,7 +759,7 @@ class Data(abstract.Container):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d.set_calendar('360_day')
         >>> d.has_calendar()
@@ -791,7 +791,7 @@ class Data(abstract.Container):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d._set_Array(a)
 
@@ -821,7 +821,7 @@ class Data(abstract.Container):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> f.set_fill_value(-9999)
         >>> f.has_fill_value()
@@ -862,7 +862,7 @@ class Data(abstract.Container):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d.set_units('metres')
         >>> d.has_units()
@@ -898,7 +898,7 @@ class Data(abstract.Container):
             subclass of `Array`
                 The underlying array object.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.read('file.nc')[0]
         >>> d = f.data

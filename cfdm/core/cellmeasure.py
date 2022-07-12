@@ -94,7 +94,7 @@ class CellMeasure(abstract.PropertiesData):
             `str`
                 The construct type.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.construct_type
@@ -122,7 +122,7 @@ class CellMeasure(abstract.PropertiesData):
 
                 The removed measure.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_measure('area')
@@ -154,7 +154,7 @@ class CellMeasure(abstract.PropertiesData):
              `bool`
                 True if the measure has been set, otherwise False.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_measure('area')
@@ -193,7 +193,7 @@ class CellMeasure(abstract.PropertiesData):
 
                 The value of the measure.
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_measure('area')
@@ -229,7 +229,7 @@ class CellMeasure(abstract.PropertiesData):
 
              `None`
 
-        **Examples:**
+        **Examples**
 
         >>> c = {{package}}.{{class}}()
         >>> c.set_measure('area')

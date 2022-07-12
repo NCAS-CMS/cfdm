@@ -33,7 +33,7 @@ class Bounds(
     The name of the trailing netCDF dimension spanned by bounds (which
     does not correspond to a domain axis construct) may be accessed
     with the `nc_set_dimension`, `nc_get_dimension`,
-    `nc_del_dimension` and `nc_has_dimension` methods.
+    `nc_del_dimension`, and `nc_has_dimension` methods.
 
     {{netCDF variable group}}
 
@@ -162,7 +162,7 @@ class Bounds(
             `Data`
                 The data.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.Field(
         ...     properties={'standard_name': 'surface_altitude'})
@@ -229,7 +229,7 @@ class Bounds(
             `dict`
                 The inherited properties.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(6)
         >>> d = f.constructs('longitude').value()
@@ -270,7 +270,7 @@ class Bounds(
 
                 The identity.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(6)
         >>> d = f.constructs('longitude').value()

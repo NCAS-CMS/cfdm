@@ -16,7 +16,9 @@ from .netcdf import (
     NetCDFExternal,
     NetCDFGeometry,
     NetCDFHDF5,
+    NetCDFInterpolationSubareaDimension,
     NetCDFSampleDimension,
+    NetCDFSubsampledDimension,
     NetCDFUnreferenced,
     NetCDFVariable,
 )

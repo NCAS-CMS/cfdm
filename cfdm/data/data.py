@@ -3,6 +3,7 @@ import logging
 
 import netCDF4
 import numpy
+import numpy as np
 
 from .. import core
 from ..constants import masked as cfdm_masked
@@ -129,10 +130,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
                 {{init source}}
 
-            copy: `bool`, optional
-                If False then do not deep copy input parameters prior
-                to initialisation. By default arguments are deep
-                copied.
+            {{deep copy}}
 
             kwargs: ignored
                 Not used. Present to facilitate subclassing.
@@ -183,7 +181,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             `numpy.ndarray`
                 An independent numpy array of the data.
 
-        **Examples:**
+        **Examples**
 
 
         >>> d = {{package}}.{{class}}([1, 2, 3])
@@ -223,7 +221,7 @@ class Data(Container, NetCDFHDF5, core.Data):
     def __format__(self, format_spec):
         """Interpret format specifiers for size 1 arrays.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}(9, 'metres')
         >>> f"{d}"
@@ -296,7 +294,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             `{{class}}`
                 The subspace of the data.
 
-        **Examples:**
+        **Examples**
 
 
         >>> d = {{package}}.{{class}}(numpy.arange(100, 190).reshape(1, 10, 9))
@@ -331,6 +329,22 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         return out
 
+    def __and__(self, other):
+        """The binary bitwise operation ``&``
+
+        x.__and__(y) <==> x&y
+
+        """
+        return self._binary_operation(other, "__and__")
+
+    def __eq__(self, other):
+        """The rich comparison operator ``==``
+
+        x.__eq__(y) <==> x==y
+
+        """
+        return self._binary_operation(other, "__eq__")
+
     def __int__(self):
         """Called by the `int` built-in function.
 
@@ -350,7 +364,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         x.__iter__() <==> iter(x)
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}([1, 2, 3], 'metres')
         >>> for e in d:
@@ -430,7 +444,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
 
         >>> d = {{package}}.{{class}}(numpy.arange(100, 190).reshape(1, 10, 9))
@@ -561,9 +575,59 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         return out
 
-    # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
+    def _binary_operation(self, other, method):
+        """Implement binary arithmetic and comparison operations.
+
+        Implements binary arithmetic and comparison operations with
+        the numpy broadcasting rules.
+
+        It is called by the binary arithmetic and comparison methods,
+        such as `__sub__`, `__imul__`, `__rdiv__`, `__lt__`, etc.
+
+        .. seealso:: `_unary_operation`
+
+        :Parameters:
+
+            other:
+                The object on the right hand side of the operator.
+
+            method: `str`
+                The binary arithmetic or comparison method name (such as
+                ``'__imul__'`` or ``'__ge__'``).
+
+        :Returns:
+
+            `Data`
+                A new data object, or if the operation was in place, the
+                same data object.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([0, 1, 2, 3])
+        >>> e = {{package}}.{{class}}([1, 1, 3, 4])
+        >>> f = d._binary_operation(e, '__add__')
+        >>> print(f.array)
+        [1 2 5 7]
+        >>> e = d._binary_operation(e, '__lt__')
+        >>> print(e.array)
+        [ True False  True  True]
+        >>> d._binary_operation(2, '__imul__')
+        >>> print(d.array)
+        [0 2 4 6]
+
+        """
+        inplace = method[2] == "i"
+        if inplace:
+            d = self
+        else:
+            d = self.copy(array=False)
+
+        array = np.asanyarray(getattr(self.array, method)(other))
+
+        d._set_Array(array, copy=False)
+
+        return d
+
     def _item(self, index):
         """Return an element of the data as a scalar.
 
@@ -578,7 +642,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
                 The selected element of the data.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}([[1, 2, 3]], 'km')
         >>> x = d._item((0, -1))
@@ -617,7 +681,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
             `tuple`
 
-        **Examples:**
+        **Examples**
 
         >>> d._parse_axes(1)
         (1,)
@@ -664,7 +728,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d._set_Array(a)
 
@@ -693,7 +757,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
             `None`
 
-        **Examples:**
+        **Examples**
 
         >>> d._set_CompressedArray(a)
 
@@ -763,9 +827,6 @@ class Data(Container, NetCDFHDF5, core.Data):
                 ):
                     array[i] = value[j]
 
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
     @property
     def compressed_array(self):
         """Returns an independent numpy array of the compressed data.
@@ -780,17 +841,28 @@ class Data(Container, NetCDFHDF5, core.Data):
             `numpy.ndarray`
                 An independent numpy array of the compressed data.
 
-        **Examples:**
+        **Examples**
 
         >>> a = d.compressed_array
 
         """
         ca = self._get_Array(None)
-
-        if not ca.get_compression_type():
+        if ca is None or not ca.get_compression_type():
             raise ValueError("not compressed: can't get compressed array")
 
         return ca.compressed_array
+
+    @property
+    def data(self):
+        """The data as an object identity.
+
+        **Examples**
+
+        >>> d.data is d
+        True
+
+        """
+        return self
 
     @property
     def datetime_array(self):
@@ -817,7 +889,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             `numpy.ndarray`
                 An independent numpy array of the date-time objects.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}([31, 62, 90], units='days since 2018-12-01')
         >>> a = d.datetime_array
@@ -896,7 +968,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             `numpy.ndarray`
                 An independent numpy array of the date-time strings.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}([31, 62, 90], units='days since 2018-12-01')
         >>> print(d.datetime_as_string)
@@ -922,7 +994,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             `{{class}}`
                 The Boolean mask as data.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}(numpy.ma.array(
         ...     [[280.0,   -99,   -99,   -99],
@@ -958,7 +1030,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                 `True` if any data array elements evaluate to True,
                 otherwise `False`.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}([[0, 0, 0]])
         >>> d.any()
@@ -1064,7 +1136,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                 The data with masked values. If the operation was in-place
                 then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
 
         >>> d = {{package}}.{{class}}(numpy.arange(12).reshape(3, 4), 'm')
@@ -1199,15 +1271,15 @@ class Data(Container, NetCDFHDF5, core.Data):
         :Parameters:
 
             array: `bool`, optional
-                If False then do not copy the array. By default the array
-                is copied.
+                If True (the default) then copy the array, else it
+                is not copied.
 
         :Returns:
 
             `{{class}}`
                 The deep copy.
 
-        **Examples:**
+        **Examples**
 
         >>> e = d.copy()
         >>> e = d.copy(array=False)
@@ -1238,7 +1310,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
             {{returns creation_commands}}
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}([[0.0, 45.0], [45.0, 90.0]],
         ...                           units='degrees_east')
@@ -1338,7 +1410,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             `Data` or `None`
                 The filled data, or `None` if the operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}([[1, 2, 3]])
         >>> print(d.filled().array)
@@ -1412,7 +1484,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                 The data with expanded axes. If the operation was in-place
                 then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> d.shape
         (19, 73, 96)
@@ -1463,7 +1535,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
                 The count variable.
 
-        **Examples:**
+        **Examples**
 
         >>> c = d.get_count()
 
@@ -1496,7 +1568,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
                 The index variable.
 
-        **Examples:**
+        **Examples**
 
         >>> i = d.get_index()
 
@@ -1526,7 +1598,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
                 The list variable.
 
-        **Examples:**
+        **Examples**
 
         >>> l = d.get_list()
 
@@ -1562,7 +1634,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                 The position of the compressed dimension in the compressed
                 array.
 
-        **Examples:**
+        **Examples**
 
         >>> d.get_compressed_dimension()
         2
@@ -1587,7 +1659,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
             `list`
 
-        **Examples:**
+        **Examples**
 
 
         >>> d = {{package}}.{{class}}(numpy.arange(100, 190).reshape(1, 10, 9))
@@ -1705,7 +1777,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             `{{class}}`
                 Maximum of the data along the specified axes.
 
-        **Examples:**
+        **Examples**
 
 
         >>> d = {{package}}.{{class}}(numpy.arange(24).reshape(1, 2, 3, 4))
@@ -1777,7 +1849,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             `{{class}}`
                 Minimum of the data along the specified axes.
 
-        **Examples:**
+        **Examples**
 
 
         >>> d = {{package}}.{{class}}(numpy.arange(24).reshape(1, 2, 3, 4))
@@ -1855,7 +1927,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                 The data with removed data axes. If the operation was
                 in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> d.shape
         (1, 73, 1, 96)
@@ -1923,7 +1995,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             `{{class}}`
                 The sum of the data along the specified axes.
 
-        **Examples:**
+        **Examples**
 
 
         >>> d = {{package}}.{{class}}(numpy.arange(24).reshape(1, 2, 3, 4))
@@ -1996,7 +2068,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                 The data with permuted data axes. If the operation was
                 in-place then `None` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> d.shape
         (19, 73, 96)
@@ -2055,7 +2127,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                 dimension in the underlying array. If the data are not
                 compressed then an empty list is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> d.shape
         (2, 3, 4, 5, 6)
@@ -2091,7 +2163,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                 The compression type. An empty string means that no
                 compression has been applied.
 
-        **Examples:**
+        **Examples**
 
         >>> d.get_compression_type()
         ''
@@ -2136,7 +2208,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
             `{{class}}`
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}.empty((96, 73))
 
@@ -2216,7 +2288,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             `bool`
                 Whether the two data arrays are equal.
 
-        **Examples:**
+        **Examples**
 
         >>> d.equals(d)
         True
@@ -2309,7 +2381,13 @@ class Data(Container, NetCDFHDF5, core.Data):
         # ------------------------------------------------------------
         # Check for equal (uncompressed) array values
         # ------------------------------------------------------------
-        if not self._equals(self.array, other.array, rtol=rtol, atol=atol):
+        if not self._equals(
+            self.array,
+            other.array,
+            ignore_data_type=ignore_data_type,
+            rtol=rtol,
+            atol=atol,
+        ):
             logger.info(
                 f"{self.__class__.__name__}: Different array values "
                 f"(atol={atol}, rtol={rtol})"
@@ -2331,7 +2409,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                 The file name in normalised, absolute form. If the
                 data is are memory then an empty `set` is returned.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(0)
         >>> {{package}}.write(f, 'temp_file.nc')
@@ -2366,7 +2444,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
                 The first element of the data.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}(9.0)
         >>> x = d.first_element()
@@ -2388,7 +2466,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         foo <class 'str'>
 
         """
-        return self._item((slice(0, 1),) * self.ndim)
+        return self._item((slice(0, 1, 1),) * self.ndim)
 
     @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
@@ -2533,7 +2611,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
                 The last element of the data.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}(9.0)
         >>> x = d.last_element()
@@ -2555,7 +2633,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         bar <class 'str'>
 
         """
-        return self._item((slice(-1, None),) * self.ndim)
+        return self._item((slice(-1, None, 1),) * self.ndim)
 
     def second_element(self):
         """Return the second element of the data as a scalar.
@@ -2568,7 +2646,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
                 The second element of the data.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
         >>> x = d.second_element()
@@ -2585,18 +2663,28 @@ class Data(Container, NetCDFHDF5, core.Data):
         bar <class 'str'>
 
         """
-        return self._item((slice(0, 1),) * (self.ndim - 1) + (slice(1, 2),))
+        return self._item(
+            (slice(0, 1, 1),) * (self.ndim - 1) + (slice(1, 2, 1),)
+        )
 
-    def to_memory(self):
-        """Bring data on disk into memory and retain it there.
+    @_inplace_enabled(default=False)
+    def to_memory(self, inplace=False):
+        """Bring data on disk into memory.
 
         There is no change to data that is already in memory.
 
+        :Parameters:
+
+            inplace: `bool`, optional
+                If True then do the operation in-place and return `None`.
+
         :Returns:
 
-            `None`
+            `{{class}}` or `None`
+                A copy of the data in memory, or `None` if the
+                operation was in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> f = {{package}}.example_field(4)
         >>> f.data
@@ -2604,7 +2692,9 @@ class Data(Container, NetCDFHDF5, core.Data):
         >>> f.data.to_memory()
 
         """
-        self._set_Array(self.source().to_memory())
+        d = _inplace_enabled_define_and_cleanup(self)
+        d._set_Array(self.source().to_memory())
+        return d
 
     @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
@@ -2625,7 +2715,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                 The uncompressed data, or `None` if the operation was
                 in-place.
 
-        **Examples:**
+        **Examples**
 
         >>> d.get_compression_type()
         'ragged contiguous'
@@ -2658,7 +2748,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             `{{class}}`
                 The unique elements.
 
-        **Examples:**
+        **Examples**
 
         >>> d = {{package}}.{{class}}([[4, 2, 1], [1, 2, 3]], 'metre')
         >>> d.unique()

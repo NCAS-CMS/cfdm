@@ -161,6 +161,7 @@ Miscellaneous
    ~cfdm.DomainAncillary.equals
    ~cfdm.DomainAncillary.uncompress
    ~cfdm.DomainAncillary.get_filenames
+   ~cfdm.DomainAncillary.to_memory
 
 NetCDF
 ------
