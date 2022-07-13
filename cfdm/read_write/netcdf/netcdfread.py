@@ -5410,7 +5410,7 @@ class NetCDFRead(IORead):
                     }
 
                     array = self._create_gathered_array(
-                        gathered_array=self._create_Data(array),
+                        gathered_array=self._create_Data(array, ncvar=ncvar),
                         uncompressed_shape=uncompressed_shape,
                         compressed_dimensions=compressed_dimensions,
                         list_variable=c["list_variable"],
@@ -5434,7 +5434,7 @@ class NetCDFRead(IORead):
 
                     array = self._create_ragged_indexed_contiguous_array(
                         ragged_indexed_contiguous_array=self._create_Data(
-                            array
+                            array, ncvar=ncvar
                         ),
                         uncompressed_shape=uncompressed_shape,
                         count_variable=c["count_variable"],
@@ -5456,7 +5456,9 @@ class NetCDFRead(IORead):
                         )
 
                     array = self._create_ragged_contiguous_array(
-                        ragged_contiguous_array=self._create_Data(array),
+                        ragged_contiguous_array=self._create_Data(
+                            array, ncvar=ncvar
+                        ),
                         uncompressed_shape=uncompressed_shape,
                         count_variable=c["count_variable"],
                     )
@@ -5476,7 +5478,9 @@ class NetCDFRead(IORead):
                         )
 
                     array = self._create_ragged_indexed_array(
-                        ragged_indexed_array=self._create_Data(array),
+                        ragged_indexed_array=self._create_Data(
+                            array, ncvar=ncvar
+                        ),
                         uncompressed_shape=uncompressed_shape,
                         index_variable=c["index_variable"],
                     )
@@ -5558,7 +5562,9 @@ class NetCDFRead(IORead):
                     computational_precision=rec["computational_precision"],
                 )
 
-        return self._create_Data(array, units=units, calendar=calendar)
+        return self._create_Data(
+            array, units=units, calendar=calendar, ncvar=ncvar
+        )
 
     def _create_domain_axis(self, size, ncdim=None):
         """Create a domain axis construct.

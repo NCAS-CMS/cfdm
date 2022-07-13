@@ -92,8 +92,8 @@ class Field(
         """Store component classes.
 
         .. note:: If a child class requires a different component
-        classes           than the ones defined here, then they must be
-        redefined           in the child class.
+        classes than the ones defined here, then they must           be
+        redefined in the child class.
 
         """
         instance = super().__new__(cls)
