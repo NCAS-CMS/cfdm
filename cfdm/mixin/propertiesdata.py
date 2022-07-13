@@ -21,13 +21,7 @@ class PropertiesData(Properties):
     """
 
     def __new__(cls, *args, **kwargs):
-        """Store component classes.
-
-        NOTE: If a child class requires a different component classes
-        than the ones defined here, then they must be redefined in the
-        child class.
-
-        """
+        """Store component classes."""
         instance = super().__new__(cls)
         instance._Data = Data
         return instance

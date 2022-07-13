@@ -30,7 +30,7 @@ class Domain(mixin.FieldDomain, abstract.Properties):
     }
 
     def __new__(cls, *args, **kwargs):
-        """This must be overridden in subclasses."""
+        """Store component classes."""
         instance = super().__new__(cls)
         instance._Constructs = Constructs
         return instance

@@ -18,6 +18,12 @@ logger = logging.getLogger(__name__)
 class NetCDFWrite(IOWrite):
     """A container for writing Fields to a netCDF dataset."""
 
+    def __new__(cls, *args, **kwargs):
+        """Store the NetCDFRead class."""
+        instance = super().__new__(cls)
+        instance._NetCDFRead = NetCDFRead
+        return instance
+
     def cf_description_of_file_contents_attributes(self):
         """Description of file contents properties."""
         return (
@@ -2875,7 +2881,7 @@ class NetCDFWrite(IOWrite):
         g["nc"][ncvar][...] = array
 
     def _check_valid(self, cfvar, array, attributes):
-        """Checks if an array is considered fully valid.
+        """Checks for array values outside of the valid range.
 
         Specifically, checks array for out-of-range values, as
         defined by the valid_[min|max|range] attributes.
@@ -4663,7 +4669,9 @@ class NetCDFWrite(IOWrite):
 
         if mode == "a":
             # First read in the fields from the existing file:
-            effective_fields = NetCDFRead(self.implementation).read(filename)
+            effective_fields = self._NetCDFRead(self.implementation).read(
+                filename
+            )
 
             # Read rather than append for the first iteration to ensure nothing
             # gets written; only want to update the 'seen' dictionary first.

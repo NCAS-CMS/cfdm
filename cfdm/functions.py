@@ -997,7 +997,7 @@ class Configuration(dict, metaclass=DocstringRewriteMeta):
     """
 
     def __new__(cls, *args, **kwargs):
-        """Must override this method in subclasses."""
+        """Store components."""
         instance = super().__new__(cls)
         instance._func = configuration
         return instance

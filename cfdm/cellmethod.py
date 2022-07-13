@@ -32,7 +32,7 @@ class CellMethod(mixin.Container, core.CellMethod):
     """
 
     def __new__(cls, *args, **kwargs):
-        """This must be overridden in subclasses.
+        """Store component classes.
 
         .. versionadded:: (cfdm) 1.8.7.0
 
