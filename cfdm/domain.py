@@ -65,7 +65,7 @@ class Domain(
     """
 
     def __new__(cls, *args, **kwargs):
-        """This must be overridden in subclasses.
+        """Store component classes.
 
         .. versionadded:: (cfdm) 1.7.0
 

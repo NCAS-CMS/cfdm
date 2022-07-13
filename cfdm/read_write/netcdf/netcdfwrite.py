@@ -19,13 +19,7 @@ class NetCDFWrite(IOWrite):
     """A container for writing Fields to a netCDF dataset."""
 
     def __new__(cls, *args, **kwargs):
-        """Store the NetCDFRead class.
-
-        .. note:: If a child class requires a different NetCDFRead class
-        than the one defined here, then it must be redefined in the
-        child class.
-
-        """
+        """Store the NetCDFRead class."""
         instance = super().__new__(cls)
         instance._NetCDFRead = NetCDFRead
         return instance
