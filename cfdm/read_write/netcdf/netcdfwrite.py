@@ -2649,7 +2649,9 @@ class NetCDFWrite(IOWrite):
         if fill_value is not None:
             kwargs["fill_value"] = fill_value
 
-        kwargs.update(g["netcdf_compression"])
+        # Add compression parameters (but not for vlen strings).
+        if kwargs["datatype"] != str:
+            kwargs.update(g["netcdf_compression"])
 
         # Note: this is a trivial assignment in standalone cfdm, but required
         # for non-trivial customisation applied by subclasses e.g. in cf-python
