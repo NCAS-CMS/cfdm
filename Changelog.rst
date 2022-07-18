@@ -1,7 +1,7 @@
 Version 1.9.0.4
 ---------------
 
-**2022-??-??**
+**2022-07-18**
 
 * Upgrade to allow cfdm to work with Python 3.10
   (https://github.com/NCAS-CMS/cfdm/issues/187)
