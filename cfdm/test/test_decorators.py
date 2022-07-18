@@ -198,7 +198,7 @@ class decoratorsTest(unittest.TestCase):
             # Highest verbosity case (note -1 == 'DEBUG', highest verbosity):
             # all messages should appear, regardless of global log_level:
             for argument in (-1, "DEBUG", "debug", "Debug", "DeBuG"):
-                with self.assertLogs(level=cfdm.log_level().value) as catch:
+                with self.assertLogs(level=-1) as catch:
                     function_to_call_to_test(verbose=argument)
                     for msg in log_message:
                         self.assertIn(msg, catch.output)
@@ -207,7 +207,7 @@ class decoratorsTest(unittest.TestCase):
             # 'DISABLE' (see note above): only warning messages should appear,
             # regardless of global log_level value set:
             for argument in (1, "WARNING", "warning", "Warning", "WaRning"):
-                with self.assertLogs(level=cfdm.log_level().value) as catch:
+                with self.assertLogs(level=1) as catch:
                     function_to_call_to_test(verbose=argument)
                     for msg in log_message:
                         if msg.split(":")[0] == "WARNING":
@@ -218,7 +218,7 @@ class decoratorsTest(unittest.TestCase):
             # Boolean cases for testing backwards compatibility...
 
             # ... verbose=True should be equivalent to verbose=3 now:
-            with self.assertLogs(level=cfdm.log_level().value) as catch:
+            with self.assertLogs(level=3) as catch:
                 function_to_call_to_test(verbose=True)
                 for msg in log_message:
                     if msg.split(":")[0] == "DEBUG":
