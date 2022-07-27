@@ -12,6 +12,8 @@ Version 1.9.1.0
 * New method: `cfdm.Field.domain_ancillary`
 * New method: `cfdm.Field.domain_axis`
 * New method: `cfdm.Field.field_ancillary`
+* New attribute: `cfdm.Field.array`
+* New attribute: `cfdm.Field.datetime_array`
 * New construct retrieval API methods
   (https://github.com/NCAS-CMS/cfdm/issues/179)
 * Implement (bar writing to netCDF files) lossy compression by
