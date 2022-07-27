@@ -3,7 +3,8 @@ import faulthandler
 import os
 import unittest
 
-import numpy
+import cftime
+import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -19,7 +20,7 @@ class DimensionCoordinateTest(unittest.TestCase):
 
     dim = cfdm.DimensionCoordinate()
     dim.set_property("standard_name", "latitude")
-    a = numpy.array(
+    a = np.array(
         [
             -30,
             -23.5,
@@ -38,7 +39,7 @@ class DimensionCoordinateTest(unittest.TestCase):
     )
     dim.set_data(cfdm.Data(a, "degrees_north"))
     bounds = cfdm.Bounds()
-    b = numpy.empty(a.shape + (2,))
+    b = np.empty(a.shape + (2,))
     b[:, 0] = a - 0.1
     b[:, 1] = a + 0.1
     bounds.set_data(cfdm.Data(b))
@@ -106,6 +107,21 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertTrue(x.is_climatology())
         self.assertTrue(x.del_climatology())
         self.assertIsNone(x.del_climatology(None))
+
+    def test_DimensiconCoordinate_array(self):
+        """Test the `DimensionCoordinate.datetime_array` method."""
+        f = cfdm.example_field(0)
+        t = f.construct("time")
+        self.assertEqual(t.array, 31)
+
+    def test_DimensiconCoordinate_datetime_array(self):
+        """Test the `DimensionCoordinate.datetime_array` method."""
+        f = cfdm.example_field(0)
+        t = f.construct("time")
+        self.assertEqual(
+            t.datetime_array,
+            np.array([cftime.DatetimeGregorian(2019, 1, 1, 0, 0, 0, 0)]),
+        )
 
 
 if __name__ == "__main__":

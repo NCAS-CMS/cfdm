@@ -69,7 +69,9 @@ Data
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.Bounds.array
    ~cfdm.Bounds.data
+   ~cfdm.Bounds.datetime_array
    ~cfdm.Bounds.dtype
    ~cfdm.Bounds.ndim
    ~cfdm.Bounds.shape
