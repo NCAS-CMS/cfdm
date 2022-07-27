@@ -1,5 +1,7 @@
 import logging
 
+import numpy as np
+
 from . import Constructs, Count, Domain, Index, List, core, mixin
 from .constants import masked as cfdm_masked
 from .data import (
@@ -1881,6 +1883,194 @@ class Field(
     #                return True
     #
     #        return False
+
+    def indices(self, **kwargs):
+        """Create indices that define a subspace of the field construct.
+
+        The subspace is defined by defining indices based on the
+        positions of the given data values of 1-d metadata constructs.
+
+        The returned tuple of indices may be used to created a subspace by
+        indexing the original field construct with them.
+
+        Metadata constructs and the conditions on their data are defined
+        by keyword parameters.
+
+        * Any domain axes that have not been identified remain unchanged.
+
+        * Multiple domain axes may be subspaced simultaneously, and it
+          doesn't matter which order they are specified in.
+
+        * Subspace criteria may be provided for size 1 domain axes that
+          are not spanned by the field construct's data.
+
+        .. versionadded:: 1.9.1.0
+
+        .. seealso:: `__getitem__`, `__setitem__`
+
+        :Parameters:
+
+            kwargs: *optional*
+                Each keyword parameter specifies a value or values
+                whose positions in the 1-d metadata construct's data,
+                identified by the parameter name, define the indices
+                for that dimension.
+
+        :Returns:
+
+            `tuple`
+                The indices meeting the conditions.
+
+        **Examples**
+
+        >>> f = cfdm.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+
+        >>> indices = f.indices(longitude=112.5)
+        >>> indices
+        (slice(None, None, None),
+         array([False, False,  True, False, False, False, False, False]))
+        >>> print(f[indices])
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(1)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(1) = [112.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+
+        >>> indices = f.indices(longitude=112.5, latitude=[-45, 75])
+        >>> indices
+        (array([False,  True, False, False,  True]),
+         array([False, False,  True, False, False, False, False, False]))
+        >>> print(f[indices])
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(2), longitude(1)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(2) = [-45.0, 75.0] degrees_north
+                        : longitude(1) = [112.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+
+        >>> indices = f.indices(time=31)
+        >>> indices
+        (slice(None, None, None), slice(None, None, None))
+        >>> print(f[indices])
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+
+        """
+        # Initialise indices dictionary
+        indices = {axis: slice(None) for axis in self.domain_axes(todict=True)}
+
+        parsed = {}
+        unique_axes = set()
+        n_axes = 0
+
+        for identity, value in kwargs.items():
+            key, construct = self.construct(
+                identity,
+                filter_by_data=True,
+                item=True,
+                default=(None, None),
+                filter_by_naxes=(1,),
+            )
+            if construct is not None:
+                axes = self.get_data_axes(key)
+            else:
+                da_key = self.domain_axis(identity, key=True, default=None)
+                if da_key is not None:
+                    axes = (da_key,)
+                    key = None
+                    construct = None
+                else:
+                    raise ValueError(
+                        f"Can't find indices. Ambiguous axis or axes "
+                        f"defined by {identity!r}"
+                    )
+
+            if axes in parsed:
+                # The axes are the same as an existing key
+                parsed[axes].append((axes, key, construct, value, identity))
+            else:
+                new_key = True
+                y = set(axes)
+                for x in parsed:
+                    if set(x) == set(y):
+                        # The axes are the same but in a different
+                        # order, so we don't need a new key.
+                        parsed[x].append(
+                            (axes, key, construct, value, identity)
+                        )
+                        new_key = False
+                        break
+
+                if new_key:
+                    # The axes, taken in any order, are not the same
+                    # as any keys, so create an new key.
+                    n_axes += len(axes)
+                    parsed[axes] = [(axes, key, construct, value, identity)]
+
+            unique_axes.update(axes)
+
+        if len(unique_axes) < n_axes:
+            raise ValueError(
+                "Can't find indices: Multiple constructs with incompatible "
+                "domain axes"
+            )
+
+        for canonical_axes, axes_key_construct_value in parsed.items():
+            axes, keys, constructs, points, identities = list(
+                zip(*axes_key_construct_value)
+            )
+
+            n_items = len(constructs)
+            n_axes = len(canonical_axes)
+
+            if n_axes != 1:
+                raise ValueError("TODO")
+
+            if n_items > n_axes:
+                raise ValueError(
+                    "Can't specify the same axis more than once. Got: "
+                    f"{identities}"
+                )
+
+            axis = axes[0][0]
+            item = constructs[0]
+            value = points[0]
+
+            if item is None:
+                raise ValueError(
+                    "Can only specify 1-d metadata constructs from which "
+                    f"to create indices. Got: {identities[0]!r}"
+                )
+
+            index = np.isin(item, np.asanyarray(value).astype(item.dtype))
+            if np.ma.is_masked(index):
+                index = index.filled(False)
+
+            if not index.any():
+                raise ValueError(
+                    f"{value!r} does not match any {item!r} data values"
+                )
+
+            indices[axis] = index
+
+        # Return indices tuple
+        return tuple([indices[axis] for axis in self.get_data_axes()])
 
     @_inplace_enabled(default=False)
     def insert_dimension(self, axis, position=0, inplace=False):

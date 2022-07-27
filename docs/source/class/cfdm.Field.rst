@@ -192,6 +192,7 @@ Miscellaneous
    ~cfdm.Field.convert
    ~cfdm.Field.has_bounds
    ~cfdm.Field.has_geometry
+   ~cfdm.Field.indices
    ~cfdm.Field.uncompress
    ~cfdm.Field.get_filenames
    ~cfdm.Field.to_memory

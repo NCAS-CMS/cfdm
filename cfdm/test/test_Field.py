@@ -6,7 +6,7 @@ import re
 import tempfile
 import unittest
 
-import numpy
+import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -130,7 +130,7 @@ class FieldTest(unittest.TestCase):
                 indices = list(indices)
                 for axis, i in enumerate(indices):
                     if isinstance(i, list):
-                        e = numpy.take(e, indices=i, axis=axis)
+                        e = np.take(e, indices=i, axis=axis)
                         indices[axis] = slice(None)
 
                 e = e[tuple(indices)]
@@ -177,7 +177,7 @@ class FieldTest(unittest.TestCase):
     #            array = f[indices].data.array
     #            self.assertTrue((array == -1).all())
     #
-    #            values, counts = numpy.unique(f.data.array, return_counts=True)
+    #            values, counts = np.unique(f.data.array, return_counts=True)
     #            self.assertEqual(counts[0], array.size)
 
     def test_Field_get_filenames(self):
@@ -789,6 +789,41 @@ class FieldTest(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             f.domain_axis("qwerty")
+
+    def test_Field_indices(self):
+        """Test that Field.indices."""
+        f = cfdm.example_field(0)
+
+        g = f[f.indices(longitude=112.5)]
+        self.assertEqual(g.shape, (5, 1))
+        x = g.dimension_coordinate("longitude").data.array
+        self.assertTrue((x == 112.5).all())
+
+        g = f[f.indices(longitude=112.5, latitude=[-45, 75])]
+        self.assertEqual(g.shape, (2, 1))
+        x = g.dimension_coordinate("longitude").data.array
+        y = g.dimension_coordinate("latitude").data.array
+        self.assertTrue((x == 112.5).all())
+        self.assertTrue((y == [-45, 75]).all())
+
+        g = f[f.indices(time=31)]
+        self.assertTrue(g.equals(f))
+
+        g = f[f.indices(time=np.array([31, 9999]))]
+        self.assertTrue(g.equals(f))
+
+        with self.assertRaises(ValueError):
+            f.indices(bad_name=23)
+
+        with self.assertRaises(ValueError):
+            f.indices(longitude=-999)
+
+        with self.assertRaises(ValueError):
+            f.indices(longitude="bad_value_type")
+
+        key = f.construct("longitude", key=True)
+        with self.assertRaises(ValueError):
+            f.indices(longitude=112.5, key=22.5)
 
 
 if __name__ == "__main__":
