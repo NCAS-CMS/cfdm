@@ -109,7 +109,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertIsNone(x.del_climatology(None))
 
     def test_DimensiconCoordinate_array(self):
-        """Test the `DimensionCoordinate.datetime_array` method."""
+        """Test the `DimensionCoordinate.array` method."""
         f = cfdm.example_field(0)
         t = f.construct("time")
         self.assertEqual(t.array, 31)
