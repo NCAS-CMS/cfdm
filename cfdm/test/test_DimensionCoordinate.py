@@ -113,6 +113,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         f = cfdm.example_field(0)
         t = f.construct("time")
         self.assertEqual(t.array, 31)
+        self.assertEqual(t.array, t.data.array)
 
     def test_DimensiconCoordinate_datetime_array(self):
         """Test the `DimensionCoordinate.datetime_array` method."""
