@@ -79,7 +79,9 @@ Data
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.AuxiliaryCoordinate.array
    ~cfdm.AuxiliaryCoordinate.data
+   ~cfdm.AuxiliaryCoordinate.datetime_array
    ~cfdm.AuxiliaryCoordinate.dtype
    ~cfdm.AuxiliaryCoordinate.ndim
    ~cfdm.AuxiliaryCoordinate.shape

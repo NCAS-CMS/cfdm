@@ -84,7 +84,9 @@ Data
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.CellMeasure.array
    ~cfdm.CellMeasure.data
+   ~cfdm.CellMeasure.datetime_array
    ~cfdm.CellMeasure.dtype
    ~cfdm.CellMeasure.ndim
    ~cfdm.CellMeasure.shape

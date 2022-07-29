@@ -79,7 +79,9 @@ Data
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.FieldAncillary.array
    ~cfdm.FieldAncillary.data
+   ~cfdm.FieldAncillary.datetime_array
    ~cfdm.FieldAncillary.dtype
    ~cfdm.FieldAncillary.ndim
    ~cfdm.FieldAncillary.shape

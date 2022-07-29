@@ -851,7 +851,7 @@ class read_writeTest(unittest.TestCase):
 
         with self.assertRaises(OSError):
             cfdm.read(tmpfile)
-            
+
     def test_read_subsampled_coordinates(self):
         """Test the reading subsampled coordinates."""
         for i in cfdm.read("subsampled_2.nc"):

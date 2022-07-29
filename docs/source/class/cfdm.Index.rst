@@ -68,7 +68,9 @@ Data
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.Index.array
    ~cfdm.Index.data
+   ~cfdm.Index.datetime_array
    ~cfdm.Index.dtype
    ~cfdm.Index.ndim 
    ~cfdm.Index.shape

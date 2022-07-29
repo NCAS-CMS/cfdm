@@ -180,9 +180,73 @@ class PropertiesData(Properties):
         """
         print("In _test_docstring_substitution")
 
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
+    @property
+    def array(self):
+        """A numpy array deep copy of the data.
+
+        Changing the returned numpy array does not change the data
+        array.
+
+        .. versionadded:: 1.9.1.0
+
+        .. seealso:: `data`, `datetime_array`
+
+        **Examples**
+
+        >>> f.data
+        <{{repr}}Data(5): [0, ... 4] kg m-1 s-2>
+        >>> a = f.array
+        >>> type(a)
+        <type 'numpy.ndarray'>
+        >>> print(a)
+        [0 1 2 3 4]
+        >>> a[0] = 999
+        >>> print(a)
+        [999 1 2 3 4]
+        >>> print(f.array)
+        [0 1 2 3 4]
+        >>> f.data
+        <{{repr}}Data(5): [0, ... 4] kg m-1 s-2>
+
+        """
+        data = self.get_data(None)
+        if data is None:
+            raise AttributeError(f"{self.__class__.__name__} has no data")
+
+        return data.array
+
+    @property
+    def datetime_array(self):
+        """An independent numpy array of date-time objects.
+
+        Only applicable for data with reference time units.
+
+        If the calendar has not been set then the CF default calendar
+        will be used and the units will be updated accordingly.
+
+        .. versionadded:: 1.9.1.0
+
+        .. seealso:: `array`, `data`
+
+        **Examples**
+
+        >>> f.units
+        'days since 2000-01-01'
+        >>> print(f.array)
+        [ 0 31 60 91]
+        >>> print(f.datetime_array)
+        [cftime.DatetimeGregorian(2000-01-01 00:00:00)
+         cftime.DatetimeGregorian(2000-02-01 00:00:00)
+         cftime.DatetimeGregorian(2000-03-01 00:00:00)
+         cftime.DatetimeGregorian(2000-04-01 00:00:00)]
+
+        """
+        data = self.get_data(None)
+        if data is None:
+            raise AttributeError(f"{self.__class__.__name__} has no data")
+
+        return data.datetime_array
+
     @property
     def dtype(self):
         """Data-type of the data elements.

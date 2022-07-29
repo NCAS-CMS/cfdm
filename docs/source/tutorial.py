@@ -39,7 +39,7 @@ print(q.constructs)
 t.constructs
 print(t.constructs)
 t.data
-print(t.data.array)
+print(t.array)
 t.dtype
 t.ndim
 t.shape
@@ -77,9 +77,9 @@ print(q.data.mask.array)
 q.data.mask.any()
 cfdm.write(q, 'masked_q.nc')
 no_mask_q = cfdm.read('masked_q.nc', mask=False)[0]
-print(no_mask_q.data.array)
+print(no_mask_q.array)
 masked_q = no_mask_q.apply_masking()
-print(masked_q.data.array)
+print(masked_q.array)
 data = t.data
 data.shape
 data[:, :, 1].shape
@@ -91,13 +91,13 @@ import numpy
 t.data[:, 0, 0] = -1
 t.data[:, :, 1] = -2
 t.data[..., 6:3:-1, 3:6] = -3
-print(t.data.array)
+print(t.array)
 t.data[..., 6:3:-1, 3:6] = numpy.arange(9).reshape(3, 3)
 t.data[0, [2, 9], [4, 8]] =  cfdm.Data([[-4, -5]])
-print(t.data.array)
+print(t.array)
 t.data[0, :, -2] = cfdm.masked
 t.data[0, 5, -2] = -6
-print(t.data.array)
+print(t.array)
 print(q)
 new = q[::-1, 0]
 print(new)
@@ -196,15 +196,15 @@ lon
 lon.data
 lon.data[2]
 lon.data[2] = 133.33
-print(lon.data.array)
+print(lon.array)
 t.get_data_axes('latitude')
 t.constructs.data_axes()
 time = q.construct('time')
 time
 time.get_property('units')
 time.get_property('calendar', default='standard')
-print(time.data.array)
-print(time.data.datetime_array)
+print(time.array)
+print(time.datetime_array)
 domain = t.domain
 domain
 print(domain)
@@ -226,7 +226,7 @@ lon = t.coordinate('grid_longitude')
 bounds = lon.bounds
 bounds
 bounds.data
-print(bounds.data.array)
+print(bounds.array)
 bounds.inherited_properties()
 bounds.properties()
 f = cfdm.read('geometry.nc')[0]
@@ -234,13 +234,13 @@ print(f)
 lon = f.coordinate('longitude')
 lon.dump()
 lon.get_geometry()
-print(lon.bounds.data.array)
-print(lon.get_interior_ring().data.array)
+print(lon.bounds.array)
+print(lon.get_interior_ring().array)
 a = t.constructs.get('domainancillary0')
-print(a.data.array)
+print(a.array)
 bounds = a.bounds
 bounds
-print(bounds.data.array)
+print(bounds.array)
 crs = t.coordinate_reference('standard_name:atmosphere_hybrid_height_coordinate')
 crs
 crs.dump()
@@ -657,18 +657,18 @@ cfdm.write(g, 'new_parent.nc')
 cfdm.write(g, 'new_parent.nc', external='new_external.nc')
 h = cfdm.read('contiguous.nc')[0]
 print(h)
-print(h.data.array)
+print(h.array)
 h.data.get_compression_type()
 print(h.data.compressed_array)
 count_variable = h.data.get_count()
 count_variable
-print(count_variable.data.array)
+print(count_variable.array)
 station2 = h[1]
 station2
-print(station2.data.array)
+print(station2.array)
 h.data.get_compression_type()
 h.data[1, 2] = -9
-print(h.data.array)
+print(h.array)
 h.data.get_compression_type()
 # Start of code block
 
@@ -701,12 +701,12 @@ inplace=True)
 
 # End of code block
 T
-print(T.data.array)
+print(T.array)
 T.data.get_compression_type()
 print(T.data.compressed_array)
 count_variable = T.data.get_count()
 count_variable
-print(count_variable.data.array)
+print(count_variable.array)
 cfdm.write(T, 'T_contiguous.nc')
 # Start of code block
 
@@ -747,12 +747,12 @@ T.set_data(cfdm.Data(array), axes=[Y, X])
 # End of code block
 p = cfdm.read('gathered.nc')[0]
 print(p)
-print(p.data.array)
+print(p.array)
 p.data.get_compression_type()
 print(p.data.compressed_array)
 list_variable = p.data.get_list()
 list_variable
-print(list_variable.data.array)
+print(list_variable.array)
 p[0]
 p[1, :, 3:5]
 p.data.get_compression_type()
@@ -795,25 +795,25 @@ P.set_data(cfdm.Data(array), axes=[T, Y, X])
 
 # End of code block
 P
-print(P.data.array)
+print(P.array)
 P.data.get_compression_type()
 print(P.data.compressed_array)
 list_variable = P.data.get_list()
 list_variable
-print(list_variable.data.array)
+print(list_variable.array)
 cfdm.write(P, 'P_gathered.nc')
 f = cfdm.read('subsampled.nc')[0]
 print(f)
 lon = f.construct('longitude')
 lon
 lon.data.source()
-print(lon.data.array)
+print(lon.array)
 lon.data.source().source()
 print(lon.data.source().source().array)
-print(lon.data.array)
+print(lon.array)
 g = f[0, 6, :]
 print(g)
-print(g.construct('longitude').data.array)
+print(g.construct('longitude').array)
 lon = f.construct('longitude')
 d = lon.data.source()
 d.get_tie_point_indices()

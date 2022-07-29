@@ -711,7 +711,7 @@ access.
 .. code-block:: python
    :caption: *Retrieve a numpy array of the data.*
       
-   >>> print(t.data.array)
+   >>> print(t.array)
    [[[262.8 270.5 279.8 269.5 260.9 265.0 263.5 278.9 269.2]
      [272.7 268.4 279.5 278.9 263.8 263.3 274.2 265.7 279.5]
      [269.7 279.1 273.4 274.2 279.6 270.2 280.0 272.5 263.7]
@@ -722,7 +722,7 @@ access.
      [267.9 273.5 279.8 260.3 261.2 275.3 271.2 260.8 268.9]
      [270.9 278.7 273.2 261.7 271.6 265.8 273.0 278.5 266.4]
      [276.4 264.2 276.3 266.1 276.1 268.1 277.0 273.4 269.7]]]
-
+     
 .. code-block:: python
    :caption: *Inspect the data type, number of dimensions, dimension
              sizes and number of elements of the data.*
@@ -977,7 +977,7 @@ in the dataset, may subsequently be applied manually with the
 
    >>> cfdm.write(q, 'masked_q.nc')
    >>> no_mask_q = cfdm.read('masked_q.nc', mask=False)[0]
-   >>> print(no_mask_q.data.array)
+   >>> print(no_mask_q.array)
    [9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,
     9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36],
     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
@@ -986,7 +986,7 @@ in the dataset, may subsequently be applied manually with the
    [9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,
     9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36]])
    >>> masked_q = no_mask_q.apply_masking()
-   >>> print(masked_q.data.array)
+   >>> print(masked_q.array)
    [[   --    --    --    --    --    --    --    --]
     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
@@ -1067,7 +1067,7 @@ A single value may be assigned to any number of elements.
    >>> t.data[:, 0, 0] = -1
    >>> t.data[:, :, 1] = -2
    >>> t.data[..., 6:3:-1, 3:6] = -3
-   >>> print(t.data.array)
+   >>> print(t.array)
    [[[ -1.0  -2.0 279.8 269.5 260.9 265.0 263.5 278.9 269.2]
      [272.7  -2.0 279.5 278.9 263.8 263.3 274.2 265.7 279.5]
      [269.7  -2.0 273.4 274.2 279.6 270.2 280.0 272.5 263.7]
@@ -1090,7 +1090,7 @@ the shape defined by the indices, using the `numpy broadcasting rules
 	     
    >>> t.data[..., 6:3:-1, 3:6] = numpy.arange(9).reshape(3, 3)
    >>> t.data[0, [2, 9], [4, 8]] =  cfdm.Data([[-4, -5]])
-   >>> print(t.data.array)
+   >>> print(t.array)
    [[[ -1.0  -2.0 279.8 269.5 260.9 265.0 263.5 278.9 269.2]
      [272.7  -2.0 279.5 278.9 263.8 263.3 274.2 265.7 279.5]
      [269.7  -2.0 273.4 274.2  -4.0 270.2 280.0 272.5  -5.0]
@@ -1112,7 +1112,7 @@ assigning them to any other value.
 	     
    >>> t.data[0, :, -2] = cfdm.masked
    >>> t.data[0, 5, -2] = -6
-   >>> print(t.data.array)
+   >>> print(t.array)
    [[[ -1.0  -2.0 279.8 269.5 260.9 265.0 263.5    -- 269.2]
      [272.7  -2.0 279.5 278.9 263.8 263.3 274.2    -- 279.5]
      [269.7  -2.0 273.4 274.2  -4.0 270.2 280.0    --  -5.0]
@@ -1653,7 +1653,7 @@ construct <Data>` as the field construct for accessing their data:
    >>> lon.data[2]
    <Data(1): [112.5] degrees_east>
    >>> lon.data[2] = 133.33
-   >>> print(lon.data.array)
+   >>> print(lon.array)
    [22.5 67.5 133.33 157.5 202.5 247.5 292.5 337.5]
 
 The :term:`domain axis constructs` spanned by a particular metadata
@@ -1711,8 +1711,9 @@ Constructs representing elapsed time (identified by the presence of
 "reference time" units) have data array values that represent elapsed
 time since a reference date. These values may be converted into the
 date-time objects of the `cftime package
-<https://unidata.github.io/cftime/>`_ with the `~Data.datetime_array`
-method of the `Data` instance.
+<https://unidata.github.io/cftime/>`_ with the `~datetime_array`
+methods of any construct that contains data, as well as `Data`
+instances.
 
 .. code-block:: python
    :caption: *Inspect the the values of a "time" construct as elapsed
@@ -1725,9 +1726,9 @@ method of the `Data` instance.
    'days since 2018-12-01'
    >>> time.get_property('calendar', default='standard')
    'standard'
-   >>> print(time.data.array)
+   >>> print(time.array)
    [ 31.]
-   >>> print(time.data.datetime_array)
+   >>> print(time.datetime_array)
    [cftime.DatetimeGregorian(2019, 1, 1, 0, 0, 0, 0, 1, 1)]
 
 ----
@@ -1868,7 +1869,7 @@ construct <Data>` for accessing its data.
    <Bounds: grid_longitude(9, 2) >
    >>> bounds.data
    <Data(9, 2): [[-4.92, ..., -0.96]]>
-   >>> print(bounds.data.array)
+   >>> print(bounds.array)
    [[-4.92 -4.48]
     [-4.48 -4.04]
     [-4.04 -3.6 ]
@@ -1954,7 +1955,7 @@ missing data.
 .. code-block:: python
    :caption: *Inspect the geometry nodes.*
  
-   >>> print(lon.bounds.data.array)
+   >>> print(lon.bounds.array)
    [[20.0 10.0  0.0   --]
     [ 5.0 10.0 15.0 10.0]
     [20.0 10.0  0.0   --]]
@@ -1975,7 +1976,7 @@ polygon is to be included or excluded from the cell, with values of
 .. code-block:: python
    :caption: *Inspect the interior ring information.*
  
-   >>> print(lon.get_interior_ring().data.array)
+   >>> print(lon.get_interior_ring().array)
    [[0  1  0]
     [0 -- --]]
 
@@ -2011,12 +2012,12 @@ data array.
              construct.*
       
    >>> a = t.constructs.get('domainancillary0')
-   >>> print(a.data.array)
+   >>> print(a.array)
    [10.]
    >>> bounds = a.bounds
    >>> bounds
    <Bounds: ncvar%a_bounds(1, 2) >
-   >>> print(bounds.data.array)
+   >>> print(bounds.array)
    [[  5.  15.]]
 
 ----
@@ -4263,7 +4264,7 @@ file:
                    : longitude(ncdim%station(4)) = [-23.0, ..., 178.0] degrees_east
                    : height(ncdim%station(4)) = [0.5, ..., 345.0] m
                    : cf_role:timeseries_id(ncdim%station(4)) = [station1, ..., station4]
-   >>> print(h.data.array)
+   >>> print(h.array)
    [[0.12 0.05 0.18   --   --   --   --   --   --]
     [0.05 0.11 0.2  0.15 0.08 0.04 0.06   --   --]
     [0.15 0.19 0.15 0.17 0.07   --   --   --   --]
@@ -4281,7 +4282,7 @@ file:
    >>> count_variable = h.data.get_count()
    >>> count_variable
    <Count: long_name=number of observations for this station(4) >
-   >>> print(count_variable.data.array)
+   >>> print(count_variable.array)
    [3 7 5 9]
 
 The timeseries for the second station is easily selected by indexing
@@ -4293,7 +4294,7 @@ the "station" axis of the field construct:
    >>> station2 = h[1]
    >>> station2
    <Field: specific_humidity(ncdim%station(1), ncdim%timeseries(9))>
-   >>> print(station2.data.array)
+   >>> print(station2.array)
    [[0.05 0.11 0.2 0.15 0.08 0.04 0.06 -- --]]
 
 The underlying array of original data remains in compressed form until
@@ -4306,7 +4307,7 @@ data array elements are modified:
    >>> h.data.get_compression_type()
    'ragged contiguous'
    >>> h.data[1, 2] = -9
-   >>> print(h.data.array)
+   >>> print(h.array)
    [[0.12 0.05 0.18   --   --   --   --   --   --]
     [0.05 0.11 -9.0 0.15 0.08 0.04 0.06   --   --]
     [0.15 0.19 0.15 0.17 0.07   --   --   --   --]
@@ -4360,7 +4361,7 @@ The new field construct can now be inspected and written to a netCDF file:
    
    >>> T
    <Field: air_temperature(key%domainaxis1(2), key%domainaxis0(4)) K>
-   >>> print(T.data.array)
+   >>> print(T.array)
    [[280.0    --    --    --]
     [281.0 279.0 278.0 279.5]]
    >>> T.data.get_compression_type()
@@ -4370,7 +4371,7 @@ The new field construct can now be inspected and written to a netCDF file:
    >>> count_variable = T.data.get_count()
    >>> count_variable
    <Count: long_name=number of obs for this timeseries(2) >
-   >>> print(count_variable.data.array)
+   >>> print(count_variable.array)
    [1 4]
    >>> cfdm.write(T, 'T_contiguous.nc')
 
@@ -4516,7 +4517,7 @@ file:
    Dimension coords: time(2) = [2000-02-01 00:00:00, 2000-03-01 00:00:00]
                    : latitude(4) = [-90.0, ..., -75.0] degrees_north
                    : longitude(5) = [0.0, ..., 40.0] degrees_east
-   >>> print(p.data.array)
+   >>> print(p.array)
    [[[--       0.000122 0.0008   --       --      ]
      [0.000177 --       0.000175 0.00058  --      ]
      [--       --       --       --       --      ]
@@ -4539,7 +4540,7 @@ file:
    >>> list_variable = p.data.get_list()
    >>> list_variable
    <List: ncvar%landpoint(7) >
-   >>> print(list_variable.data.array)
+   >>> print(list_variable.array)
    [1 2 5 7 8 16 18]
 
 Subspaces based on the uncompressed axes of the field construct are
@@ -4625,7 +4626,7 @@ The new field construct can now be inspected and written a netCDF file:
    
    >>> P
    <Field: precipitation_flux(key%domainaxis0(2), key%domainaxis1(3), key%domainaxis2(2)) kg m-2 s-1>
-   >>> print(P.data.array)
+   >>> print(P.array)
    [[[ -- 2.0]
      [ --  --]
      [1.0 3.0]]
@@ -4641,7 +4642,7 @@ The new field construct can now be inspected and written a netCDF file:
    >>> list_variable = P.data.get_list()
    >>> list_variable 
    <List: (3) >
-   >>> print(list_variable.data.array)
+   >>> print(list_variable.array)
    [1 4 5]
    >>> cfdm.write(P, 'P_gathered.nc')
 
@@ -4761,7 +4762,7 @@ still in subsampled representation described in the file:
    <AuxiliaryCoordinate: longitude(18, 12) degrees_east>
    >>> lon.data.source()
    <SubsampledArray(18, 12): >
-   >>> print(lon.data.array)
+   >>> print(lon.array)
    [[15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
     [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
     [15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]
@@ -4788,7 +4789,7 @@ still in subsampled representation described in the file:
     [ 15. 135. 225. 255. 345.]
     [ 15. 135. 225. 255. 345.]]
 
-   >>> print(lon.data.array)
+   >>> print(lon.array)
 As with all other forms of compression, the field may be treated as if
 were not compressed:
 
@@ -4804,7 +4805,7 @@ were not compressed:
    Dimension coords: time(1) = [2000-01-01 00:00:00]
    Auxiliary coords: latitude(ncdim%lat(1), ncdim%lon(12)) = [[-25.0, ..., -25.0]] degrees_north
                    : longitude(ncdim%lat(1), ncdim%lon(12)) = [[15.0, ..., 345.0]] degrees_east
-   >>> print(g.construct('longitude').data.array)
+   >>> print(g.construct('longitude').array)
    [[15.0 45.0 75.0 105.0 135.0 165.0 195.0 225.0 255.0 285.0 315.0 345.0]]
 
 
