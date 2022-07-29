@@ -123,6 +123,7 @@ class DimensionCoordinateTest(unittest.TestCase):
             t.datetime_array,
             np.array([cftime.DatetimeGregorian(2019, 1, 1, 0, 0, 0, 0)]),
         )
+        self.assertEqual(t.datetime_array, t.data.datetime_array)
 
 
 if __name__ == "__main__":
