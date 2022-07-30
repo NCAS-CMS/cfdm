@@ -821,9 +821,10 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f.indices(longitude="bad_value_type")
 
+        # Test for same axis specified twice
         key = f.construct("longitude", key=True)
         with self.assertRaises(ValueError):
-            f.indices(longitude=112.5, key=22.5)
+            f.indices(**{"longitude": 112.5, key: 22.5})
 
 
 if __name__ == "__main__":
