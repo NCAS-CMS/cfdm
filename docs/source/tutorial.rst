@@ -1164,6 +1164,63 @@ that apply to the `Data` class.
                    : latitude(5) = [75.0, ..., -75.0] degrees_north
                    : longitude(1) = [22.5] degrees_east
 
+.. _Subspacing-by-metadata:
+
+Subspacing by metadata
+^^^^^^^^^^^^^^^^^^^^^^
+
+Indices that correspond to the locations of particular metadata
+construct values are easily created with the `~Field.indices` method
+of the field construct.
+
+Metadata constructs and the conditions on their data are defined by
+keyword parameters to the `~Field.indices` method. A keyword name is
+:ref:`an identity <Metadata-construct-properties>` of a 1-d metadata
+construct, and its values are one or more construct array
+values. Indices are created that select every location for which the
+metadata construct's data equals any of the given values.
+
+	
+.. code-block:: python
+   :caption: *Create a new field constructs based on metadata-defined
+             subspaces.*
+	     
+   >>> print(q)
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(latitude(5), longitude(8)) 1
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01T00:00:00Z]
+   >>> print(q.construct('longitude').data.array)
+   [ 22.5  67.5 112.5 157.5 202.5 247.5 292.5 337.5]
+   >>> ind = q.indices(longitude=[112.5, 67.5])
+   >>> print(ind)
+   (slice(None, None, None),
+    array([False,  True,  True, False, False, False, False, False]))
+   >>> print(q[ind])
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(latitude(5), longitude(2)) 1
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(2) = [67.5, 112.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> print(q[q.indices(longitude=[112.5, 67.5], latitude=75)])
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(latitude(1), longitude(2)) 1
+   Cell methods    : area: mean
+   Dimension coords: latitude(1) = [75.0] degrees_north
+	           : longitude(2) = [67.5, 112.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+
+Any domain axes that have not been identified remain unchanged.
+
+Multiple domain axes may be subspaced simultaneously, and it doesn't
+matter which order they are specified in the `~Field.indices` call.
+				   
 ----
 
 .. _Selecting-metadata-constructs:
@@ -1599,7 +1656,7 @@ returning a default value or raising a customised exception:
 .. _Metadata-construct-properties:
 
 Metadata construct properties
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Metadata constructs share the :ref:`same API as the field construct
 <Properties>` for accessing their properties:

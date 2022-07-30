@@ -81,7 +81,8 @@ The ``cfdm`` package can:
 * inspect field and domain constructs,
 * test whether two constructs are the same,
 * modify field and domain construct metadata and data,
-* create subspaces of field and domain constructs,
+* create subspaces of field and domain constructs, from indices or
+  metadata values,
 * incorporate, and create, metadata stored in external files, and
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays, or coordinate arrays compressed by

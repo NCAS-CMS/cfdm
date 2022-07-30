@@ -12,6 +12,7 @@ Version 1.9.1.0
 * New method: `cfdm.Field.domain_ancillary`
 * New method: `cfdm.Field.domain_axis`
 * New method: `cfdm.Field.field_ancillary`
+* New method: `cfdm.Field.indices`
 * New attribute: `cfdm.Field.array`
 * New attribute: `cfdm.Field.datetime_array`
 * New construct retrieval API methods
