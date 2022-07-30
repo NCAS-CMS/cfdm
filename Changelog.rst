@@ -21,16 +21,19 @@ Version 1.9.1.0
   coordinate subsampling (https://github.com/NCAS-CMS/cfdm/issues/167)
 
 ----
-
+  
 Version 1.9.0.4
 ---------------
 
-**2022-07-??**
+**2022-07-18**
 
 * Upgrade to allow cfdm to work with Python 3.10
   (https://github.com/NCAS-CMS/cfdm/issues/187)
 * Fix bug that caused a hang when reading zero-length files
   (https://github.com/NCAS-CMS/cfdm/issues/190)
+* Fix bug to prevent error when writing vlen strings to a netCDF file
+  when compression has been set (for `netCDF4>=1.6.0`)
+  (https://github.com/NCAS-CMS/cfdm/issues/199)
   
 Version 1.9.0.3
 ---------------
