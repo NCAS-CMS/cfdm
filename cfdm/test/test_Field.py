@@ -651,7 +651,7 @@ class FieldTest(unittest.TestCase):
         self.assertFalse(f.has_bounds())
 
     def test_Field_auxiliary_coordinate(self):
-        """Test that Field.auxiliary_coordinate."""
+        """Test Field.auxiliary_coordinate."""
         f = self.f1
 
         for identity in ("auxiliarycoordinate1", "latitude"):
@@ -663,7 +663,7 @@ class FieldTest(unittest.TestCase):
             f.auxiliary_coordinate("long_name:qwerty")
 
     def test_Field_coordinate(self):
-        """Test that Field.coordinate."""
+        """Test Field.coordinate."""
         f = self.f1
 
         for identity in (
@@ -678,7 +678,7 @@ class FieldTest(unittest.TestCase):
             f.coordinate("long_name:qweRty")
 
     def test_Field_coordinate_reference(self):
-        """Test that Field.coordinate_reference."""
+        """Test Field.coordinate_reference."""
         f = self.f1
 
         for identity in (
@@ -695,7 +695,7 @@ class FieldTest(unittest.TestCase):
             f.coordinate_reference("qwerty")
 
     def test_Field_dimension_coordinate(self):
-        """Test that Field.dimension_coordinate."""
+        """Test Field.dimension_coordinate."""
         f = self.f1
 
         for identity in ("grid_latitude", "dimensioncoordinate1"):
@@ -722,7 +722,7 @@ class FieldTest(unittest.TestCase):
             f.dimension_coordinate("long_name:qwerty")
 
     def test_Field_cell_measure(self):
-        """Test that Field.cell_measure."""
+        """Test Field.cell_measure."""
         f = self.f1
 
         for identity in ("measure:area", "cellmeasure0"):
@@ -745,7 +745,7 @@ class FieldTest(unittest.TestCase):
             f.cell_measure("long_name:qwerty")
 
     def test_Field_cell_method(self):
-        """Test that Field.cell_method."""
+        """Test Field.cell_method."""
         f = self.f1
 
         for identity in ("method:mean", "cellmethod0"):
@@ -754,7 +754,7 @@ class FieldTest(unittest.TestCase):
             self.assertEqual(f.cell_method(identity, key=True), key)
 
     def test_Field_domain_ancillary(self):
-        """Test that Field.domain_ancillary."""
+        """Test Field.domain_ancillary."""
         f = self.f1
 
         for identity in ("surface_altitude", "domainancillary0"):
@@ -766,7 +766,7 @@ class FieldTest(unittest.TestCase):
             f.domain_ancillary("long_name:qwerty")
 
     def test_Field_field_ancillary(self):
-        """Test that Field.field_ancillary."""
+        """Test Field.field_ancillary."""
         f = self.f1
 
         for identity in ("air_temperature standard_error", "fieldancillary0"):
@@ -778,7 +778,7 @@ class FieldTest(unittest.TestCase):
             f.field_ancillary("long_name:qwerty")
 
     def test_Field_domain_axis(self):
-        """Test that Field.domain_axis."""
+        """Test Field.domain_axis."""
         f = self.f1
 
         f.domain_axis(1)
@@ -791,7 +791,7 @@ class FieldTest(unittest.TestCase):
             f.domain_axis("qwerty")
 
     def test_Field_indices(self):
-        """Test that Field.indices."""
+        """Test Field.indices."""
         f = cfdm.example_field(0)
 
         g = f[f.indices(longitude=112.5)]
