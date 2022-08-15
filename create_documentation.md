@@ -1,3 +1,5 @@
+Use the `release_docs` script, or ...
+
 To update the master (publicly viewable) documentation run, from
 within the `cfdm/docs` directory:
 
