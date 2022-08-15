@@ -2,28 +2,28 @@
 
 set -x
 
-if [[ ! $1 ]] ; then 
-  echo "No version \$1 (e.g. 1.8.0)"
+if [[ $2 ]] ; then 
+  echo "You no longer need to set the version. Hooray!"
   exit 1
 fi
 
-version=$1
+version=`python -c "import cfdm; print(cfdm.__version__)"`
 
-if [[ $2 = "latest" ]] ; then 
+if [[ $1 = "latest" ]] ; then 
   dir=$PWD/docs
-elif [[ $2 = "dev" ]] ; then
+elif [[ $1 = "dev" ]] ; then
   # For testing: creates separate dir and does not (git) commit
   dir=$PWD/docs/dev
-elif [[ $2 = "archive" ]] ; then
+elif [[ $1 = "archive" ]] ; then
   # For testing: creates separate dir and does not (git) commit
   dir=$PWD/docs/$version
-elif [[ $2 = "dev-clean" ]] ; then
+elif [[ $1 = "dev-clean" ]] ; then
   # For testing: creates separate dir and does not (git) commit and
   # also deletes an existing .doctrees subdirectory
     dir=$PWD/docs/dev
 else
   set +x
-  echo "\$2 must be one of 'latest', 'archive', 'dev' or 'dev-clean'"
+  echo "\$1 must be one of 'latest', 'archive', 'dev' or 'dev-clean'"
   exit 2
 fi
 
@@ -33,7 +33,7 @@ zip cfdm_tutorial_files.zip *.nc
 cd -
 
 # Regerenate tutorial.py
-if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
+if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
   ./test_tutorial_code
 fi
 
@@ -41,7 +41,7 @@ fi
 # Make the latest docs    
 # --------------------------------------------------------------------
 cd docs
-if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] || [[ $2 = "dev-clean" ]] ; then
+if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] || [[ $1 = "dev-clean" ]] ; then
   rm -fr $dir/.doctrees
 fi
 mkdir -p $dir/_downloads
@@ -66,13 +66,13 @@ done
 # the top-level one (hence copy works for 'dev' & 'archive' sub-dir builds).
 # Seemingly relates to the build warning:
 #   WARNING: html_static_path entry '_static' is placed inside outdir
-if [[ $2 = "latest" ]] ; then
+if [[ $1 = "latest" ]] ; then
   cp source/_static/customise-alabaster.css _static/customise-alabaster.css
 fi
 
 
 # Copy the templates to the target directory
-if [[ $2 != "latest" ]] ; then
+if [[ $1 != "latest" ]] ; then
   rm -fr $dir/_templates
   cp -pr _templates $dir
 fi
@@ -80,7 +80,7 @@ fi
 # --------------------------------------------------------------------
 # Add and commit
 # --------------------------------------------------------------------
-if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
+if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
   cd $dir
   git add \
 	  *.html \
@@ -96,7 +96,7 @@ if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
 	  _downloads/tutorial.py \
 	  _images/*.svg
 
-  git commit -a -m "v$version $2 documentation"
+  git commit -a -m "v$version $1 documentation"
 fi
 
 set +x
