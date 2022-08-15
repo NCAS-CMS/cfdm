@@ -19,6 +19,14 @@
 
 * Make sure that `Changelog.rst` is up to date.
 
+* Make sure that the package to be released is first in the PYTHONPATH
+  environment variable. This is necessary for the subsequent items to
+  work correctly.
+
+  ```bash
+  export PYTHONPATH=$PWD:$PYTHONPATH
+  ```
+  
 * Check that the documentation API coverage is complete:
 
   ```bash
@@ -37,7 +45,6 @@
 * Test tutorial code:
 
   ```bash
-  export PYTHONPATH=$PWD:$PYTHONPATH
   ./test_tutorial_code
   ```
 
@@ -48,7 +55,7 @@
   the dev build.)
 
   ```bash
-  ./release_docs <vn> dev-clean # E.g. ./release_docs 1.8.7.0 dev-clean
+  ./release_docs dev-clean
   ```
 
 * Check that no typos or spelling mistakes have been introduced to the
@@ -110,13 +117,13 @@
 * Create an archived copy of the documentation:
 
   ```bash
-  ./release_docs <vn> archive # E.g. ./release_docs 1.8.7.0 archive
+  ./release_docs archive
   ```
 
 * Update the latest documentation:
 
   ```bash
-  ./release_docs <vn> latest # E.g. ./release_docs 1.8.7.0 latest
+  ./release_docs latest
   ```
 
 * Create a source tarball:
@@ -128,7 +135,7 @@
 * Test the tarball release using
 
   ```bash
-  ./test_release <vn> # E.g. ./test_release 1.8.7.0
+  ./test_release <vn> # E.g. ./test_release 1.10.0.0
   ```
 
 * Push recent commits using
@@ -137,10 +144,11 @@
   git push origin master
   ```
   
-* Tag the release:
+* Tag the release (optional - if you don't do it here then you must do
+  it via https://github.com/NCAS-CMS/cfdm/releases):
 
   ```bash
-  ./tag <vn> # E.g. ./tag 1.8.7.0
+  ./tag <vn> # E.g. ./tag 1.10.0.0
   ```
   
 * Upload the source tarball to PyPi. Note this requires the `twine`
@@ -148,7 +156,7 @@
   privileges on PyPi.
 
   ```bash
-  ./upload_to_pypi <vn> # E.g. ./upload_to_pypi 1.8.7.0
+  ./upload_to_pypi <vn> # E.g. ./upload_to_pypi 1.10.0.0
   ```
 
 * Update the GitHub releases page for the new version:
