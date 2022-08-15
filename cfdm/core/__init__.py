@@ -1,8 +1,8 @@
 """"""
 
-__date__ = "2022-03-10"
-__cf_version__ = "1.9"
-__version__ = "1.9.1.0b0"
+__date__ = "2022-08-??"
+__cf_version__ = "1.10"
+__version__ = "1.10.0.0"
 
 from packaging.version import Version
 import platform
