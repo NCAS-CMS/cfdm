@@ -37,7 +37,7 @@ version = _get_version()
 packages = ["cfdm"]
 
 long_description = """The **cfdm** Python package is a reference implementation of the `CF
-data model <https://www.geosci-model-dev.net/10/4619/2017>`_, that
+data model <https://www.geosci-model-dev.net/10/4619/2017>`_ for CF-1.10, that
 identifies the fundamental elements of the `CF conventions
 <http://cfconventions.org/>`_ and shows how they relate to each other,
 independently of the `netCDF
@@ -71,16 +71,14 @@ The **cfdm** package can
 * write and append field and domain constructs to netCDF datasets on disk,
 * read, write, and create coordinates defined by geometry cells,
 * read and write netCDF4 string data-type variables,
-* read, write, and create netCDF and CDL datasets containing
-  hierarchical groups,
+* read, write, and create netCDF and CDL datasets containing hierarchical groups,
 * inspect field and domain constructs,
 * test whether two constructs are the same,
 * modify field and domain construct metadata and data,
 * create subspaces of field and domain constructs,
 * incorporate, and create, metadata stored in external files, and
 * read, write, and create data that have been compressed by convention
-  (i.e. ragged or gathered arrays), whilst presenting a view of the
-  data in its uncompressed form.
+  (i.e. ragged or gathered arrays, or coordinate arrays compressed by subsampling), whilst presenting a view of the data in its uncompressed form.
 
 Documentation
 =============
