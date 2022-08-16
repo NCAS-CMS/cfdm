@@ -36,9 +36,9 @@ def environment(display=True, paths=True):
 
     >>> environment()
 
-    Platform: Linux-5.14.0-1048-oem-x86_64-with-glibc2.31 
-    HDF5 library: 1.12.1 
-    netcdf library: 4.8.1 
+    Platform: Linux-5.14.0-1048-oem-x86_64-with-glibc2.31
+    HDF5 library: 1.12.1
+    netcdf library: 4.8.1
     Python: 3.9.12 /home/user/miniconda3/bin/python
     netCDF4: 1.6.0 /home/user/miniconda3/lib/python3.9/site-packages/netCDF4/__init__.py
     numpy: 1.22.3 /home/user/miniconda3/lib/python3.9/site-packages/numpy/__init__.py
