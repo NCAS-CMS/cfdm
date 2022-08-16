@@ -40,6 +40,17 @@
 * Check external links to the CF conventions are up to date in
   `docs/source/tutorial.rst`
 
+* If and only if the CF conventions version has changed:
+
+  * Update the Conventions attribute of the tutorial sample files:
+  
+     ```bash
+     cd docs/source
+     ./update_sample_file_Conventions CF-<vn>  # E.g. ./update_sample_file_Conventions CF-1.10
+     cd -
+     ```
+  * Change any printed Conventions values in `docs/source/tutorial.rst`
+  
 * Create a link to the new documentation in `docs/source/releases.rst`
 
 * Test tutorial code:

@@ -614,7 +614,7 @@ f.properties()
 f.nc_set_global_attribute('information', 'global information')
 f.nc_global_attributes()
 cfdm.write(f, 'f_file.nc')
-cfdm.write(f, 'f_file.nc', file_descriptors={'history': 'created in 2021'})
+cfdm.write(f, 'f_file.nc', file_descriptors={'history': 'created today'})
 f_file = cfdm.read('f_file.nc')[0]
 f_file.properties()
 f_file.nc_global_attributes()

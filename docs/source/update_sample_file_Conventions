@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# --------------------------------------------------------------------
+# Update the Conventions attribute of the tutorial sample files, e.g.
+#
+# $ update_sample_file_Conventions CF-1.10
+#
+# Uses `ncatted` to make the changes
+# --------------------------------------------------------------------
+set -x
+
+VN=$1
+
+if [[ -z $VN ]] ; then 
+  echo "You must set the new version as \$1 (e.g. CF-1.10)"
+  exit 1
+fi
+
+for filename in sample_files/*.nc
+do
+  echo "File: $filename"
+  ncatted -h -a Conventions,global,o,c,"$VN" $filename
+  echo "Check: `ncdump -h $filename | grep Conventions`"
+done
+
+git commit -m "Updated Conventions to $VN" sample_files/*.nc
+
+set +x
