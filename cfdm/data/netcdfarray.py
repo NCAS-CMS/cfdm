@@ -95,11 +95,11 @@ class NetCDFArray(abstract.Array):
 
                 {{init source}}
 
-                .. versionadded:: (cfdm) 1.9.TODO.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
             {{deep copy}}
 
-                .. versionadded:: (cfdm) 1.9.TODO.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
         **Examples**
 
@@ -322,7 +322,7 @@ class NetCDFArray(abstract.Array):
     def file_address(self):
         """The file name and address.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 

@@ -12,14 +12,14 @@ class RaggedArray(CompressedArray):
 
     See CF section 9 "Discrete Sampling Geometries"
 
-    .. versionadded:: (cfdm) 1.9.TODO.0
+    .. versionadded:: (cfdm) 1.10.0.0
 
     """
 
     def __new__(cls, *args, **kwargs):
         """Store subarray classes.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         instance = super().__new__(cls)
@@ -126,7 +126,7 @@ class RaggedArray(CompressedArray):
         Returns a subspace of the uncompressed array as an independent
         numpy array.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         # ------------------------------------------------------------
@@ -161,7 +161,7 @@ class RaggedArray(CompressedArray):
         uncompressed array that correspond to each subarray, and the
         shape of each uncompressed subarray.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `subarray`
 
@@ -211,7 +211,7 @@ class RaggedArray(CompressedArray):
     def get_count(self, default=ValueError()):
         """Return the count variable for the compressed array.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 
@@ -232,7 +232,7 @@ class RaggedArray(CompressedArray):
     def get_index(self, default=ValueError()):
         """Return the index variable for the compressed array.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 
@@ -253,7 +253,7 @@ class RaggedArray(CompressedArray):
     def subarray_shapes(self, shapes):
         """Create the subarray shapes along each uncompressed dimension.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `subarray`
 
@@ -366,7 +366,7 @@ class RaggedArray(CompressedArray):
 
         There is no change to data that is already in memory.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 

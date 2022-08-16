@@ -4830,7 +4830,7 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Set possible versions
         # ------------------------------------------------------------
-        for version in ("1.6", "1.7", "1.8", "1.9"):
+        for version in ("1.6", "1.7", "1.8", "1.9", "1.10"):
             g["CF-" + version] = Version(version)
 
         if extra_write_vars:

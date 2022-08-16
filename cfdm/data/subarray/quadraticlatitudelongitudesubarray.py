@@ -14,7 +14,7 @@ class QuadraticLatitudeLongitudeSubarray(
 
     See CF appendix J "Coordinate Interpolation Methods".
 
-    .. versionadded:: (cfdm) 1.9.TODO.0
+    .. versionadded:: (cfdm) 1.10.0.0
 
     """
 
@@ -26,7 +26,7 @@ class QuadraticLatitudeLongitudeSubarray(
         Returns a subspace of the uncompressed data as an independent
         numpy array.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         (d1,) = tuple(self.compressed_dimensions())

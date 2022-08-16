@@ -1558,7 +1558,7 @@ class CFDMImplementation(Implementation):
     def get_interpolation_name(self, construct, default=None):
         """Return the interior ring variable of geometry coordinates.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -1800,7 +1800,7 @@ class CFDMImplementation(Implementation):
     def get_data_source(self, parent, default=None):
         """Return the data array.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -1821,7 +1821,7 @@ class CFDMImplementation(Implementation):
     def get_tie_points(self, construct, default=None):
         """TODO.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -2119,11 +2119,11 @@ class CFDMImplementation(Implementation):
                 The position of the compressed dimension in the
                 compressed array.
 
-                 .. versionadded:: (cfdm) 1.9.TODO.0
+                 .. versionadded:: (cfdm) 1.10.0.0
 
             list_variable: optional
 
-            compressed_dimension: deprecated at version 1.9.TODO.0
+            compressed_dimension: deprecated at version 1.10.0.0
                 Use the *compressed_dimensions* parameter instead.
 
         :Returns:
@@ -2156,7 +2156,7 @@ class CFDMImplementation(Implementation):
     ):
         """Return a subsampled array instance.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `set_dependent_tie_points`,
                      `set_dependent_tie_point_dimensions`
@@ -2233,7 +2233,7 @@ class CFDMImplementation(Implementation):
     def initialise_InterpolationParameter(self):
         """Return an interpolation parameter variable.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 
@@ -2350,12 +2350,12 @@ class CFDMImplementation(Implementation):
             compressed_array: optional
 
             ndim: `int`, optional
-                Deprecated at version 1.9.TODO.0. Ignored if set.
+                Deprecated at version 1.10.0.0. Ignored if set.
 
             shape: sequence of `int`, optional
 
             size: `int, optional
-                Deprecated at version 1.9.TODO.0. Ignored if set.
+                Deprecated at version 1.10.0.0. Ignored if set.
 
             count_variable: optional
 
@@ -2388,12 +2388,12 @@ class CFDMImplementation(Implementation):
             compressed_array: optional
 
             ndim: `int`, optional
-                Deprecated at version 1.9.TODO.0. Ignored if set.
+                Deprecated at version 1.10.0.0. Ignored if set.
 
             shape: sequence of `int`, optional
 
             size: `int, optional
-                Deprecated at version 1.9.TODO.0. Ignored if set.
+                Deprecated at version 1.10.0.0. Ignored if set.
 
             index_variable: optional
 
@@ -2427,12 +2427,12 @@ class CFDMImplementation(Implementation):
             compressed_array: optional
 
             ndim: `int`, optional
-                Deprecated at version 1.9.TODO.0. Ignored if set.
+                Deprecated at version 1.10.0.0. Ignored if set.
 
             shape: sequence of `int`, optional
 
             size: `int, optional
-                Deprecated at version 1.9.TODO.0. Ignored if set.
+                Deprecated at version 1.10.0.0. Ignored if set.
 
             count_variable: optional
 
@@ -2946,7 +2946,7 @@ class CFDMImplementation(Implementation):
     def set_dependent_tie_points(self, construct, tie_points):
         """TODO.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         data = self.get_data_source(construct)
@@ -2955,7 +2955,7 @@ class CFDMImplementation(Implementation):
     def set_dependent_tie_point_dimensions(self, construct, dimensions):
         """TODO.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         data = self.get_data_source(construct)
@@ -3039,7 +3039,7 @@ class CFDMImplementation(Implementation):
     def set_interpolation(self, parent, interpolation, copy=True):
         """Set an interpolation variable.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -3295,7 +3295,7 @@ class CFDMImplementation(Implementation):
     #    def has_identity(self, construct, identity):
     #        """Return True if a construct has the given identity.
     #
-    #        .. versionadded:: (cfdm) 1.9.TODO.0
+    #        .. versionadded:: (cfdm) 1.10.0.0
     #
     #        :Parameters:
     #

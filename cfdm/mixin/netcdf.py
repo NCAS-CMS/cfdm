@@ -54,14 +54,14 @@ class NetCDF:
 class _NetCDFMixin:
     """Mixin class for accessing named netCDF entities.
 
-    .. versionadded:: (cfdm) 1.9.TODO.0
+    .. versionadded:: (cfdm) 1.10.0.0
 
     """
 
     def _nc_del(self, entity, default=ValueError()):
         """Remove the netCDF entity name.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `_nc_get`, `_nc_has`, `_nc_set`
 
@@ -115,7 +115,7 @@ class _NetCDFMixin:
     def _nc_get(self, entity, default=ValueError()):
         """Return the netCDF entity name.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `_nc_del`, `_nc_has`, `_nc_set`
 
@@ -169,7 +169,7 @@ class _NetCDFMixin:
     def _nc_has(self, entity):
         """Whether the netCDF entity name has been set.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `_nc_del`, `_nc_get`, `_nc_set`
 
@@ -215,7 +215,7 @@ class _NetCDFMixin:
         contains no others, the name is assumed to be in the root
         group.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `_nc_del`, `_nc_get`, `_nc_has`
 
@@ -3618,14 +3618,14 @@ class NetCDFUnreferenced:
 class NetCDFSubsampledDimension(NetCDF, _NetCDFMixin, _NetCDFGroupsMixin):
     """Mixin class for accessing the netCDF subsampled dimension name.
 
-    .. versionadded:: (cfdm) 1.9.TODO.0
+    .. versionadded:: (cfdm) 1.10.0.0
 
     """
 
     def nc_del_subsampled_dimension(self, default=ValueError()):
         """Remove the netCDF sample dimension name.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `nc_get_subsampled_dimension`,
                      `nc_has_subsampled_dimension`,
@@ -3678,7 +3678,7 @@ class NetCDFSubsampledDimension(NetCDF, _NetCDFMixin, _NetCDFGroupsMixin):
     def nc_get_subsampled_dimension(self, default=ValueError()):
         """Return the netCDF subsampled dimension name.
 
-        .. versionadded:: (cfdm)  1.9.TODO.0
+        .. versionadded:: (cfdm)  1.10.0.0
 
         .. seealso:: `nc_del_subsampled_dimension`,
                      `nc_has_subsampled_dimension`,
@@ -3732,7 +3732,7 @@ class NetCDFSubsampledDimension(NetCDF, _NetCDFMixin, _NetCDFGroupsMixin):
     def nc_has_subsampled_dimension(self):
         """Whether the netCDF subsampled dimension name has been set.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `nc_del_subsampled_dimension`,
                      `nc_get_subsampled_dimension`,
@@ -3773,7 +3773,7 @@ class NetCDFSubsampledDimension(NetCDF, _NetCDFMixin, _NetCDFGroupsMixin):
         contains no others, the name is assumed to be in the root
         group.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `nc_del_subsampled_dimension`,
                      `nc_get_subsampled_dimension`,
@@ -3839,7 +3839,7 @@ class NetCDFSubsampledDimension(NetCDF, _NetCDFMixin, _NetCDFGroupsMixin):
         characters then an empty sequence is returned, signifying the
         root group.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `nc_clear_subsampled_dimension_groups`,
                      `nc_set_subsampled_dimension_groups`
@@ -3888,7 +3888,7 @@ class NetCDFSubsampledDimension(NetCDF, _NetCDFMixin, _NetCDFGroupsMixin):
         the netCDF dimension name, with `nc_set_subsampled_dimension`, with
         the group structure delimited by ``/`` characters.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `nc_clear_subsampled_dimension_groups`,
                      `nc_subsampled_dimension_groups`
@@ -3947,7 +3947,7 @@ class NetCDFSubsampledDimension(NetCDF, _NetCDFMixin, _NetCDFGroupsMixin):
         set the netCDF dimension name, with `nc_set_subsampled_dimension`,
         with no ``/`` characters.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `nc_subsampled_dimension_groups`,
                      `nc_set_subsampled_dimension_groups`
@@ -3993,14 +3993,14 @@ class NetCDFInterpolationSubareaDimension(
 ):
     """Mixin class for the netCDF interpolation subarea dimension name.
 
-    .. versionadded:: (cfdm) 1.9.TODO.0
+    .. versionadded:: (cfdm) 1.10.0.0
 
     """
 
     def nc_del_interpolation_subarea_dimension(self, default=ValueError()):
         """Remove the netCDF interpolation subarea dimension name.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `nc_get_interpolation_subarea_dimension`,
                      `nc_has_interpolation_subarea_dimension`,
@@ -4041,7 +4041,7 @@ class NetCDFInterpolationSubareaDimension(
     def nc_get_interpolation_subarea_dimension(self, default=ValueError()):
         """Return the netCDF interpolation subarea dimension name.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `nc_del_interpolation_subarea_dimension`,
                      `nc_has_interpolation_subarea_dimension`,
@@ -4082,7 +4082,7 @@ class NetCDFInterpolationSubareaDimension(
     def nc_has_interpolation_subarea_dimension(self):
         """Whether the netCDF interpolation subarea dimension is set.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `nc_del_interpolation_subarea_dimension`,
                      `nc_get_interpolation_subarea_dimension`,
@@ -4124,7 +4124,7 @@ class NetCDFInterpolationSubareaDimension(
         contains no others, the name is assumed to be in the root
         group.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `nc_del_interpolation_subarea_dimension`,
                      `nc_get_interpolation_subarea_dimension`,
@@ -4168,7 +4168,7 @@ class NetCDFInterpolationSubareaDimension(
         characters then an empty sequence is returned, signifying the
         root group.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `nc_clear_interpolation_subarea_dimension_groups`,
                      `nc_set_interpolation_subarea_dimension_groups`
@@ -4221,7 +4221,7 @@ class NetCDFInterpolationSubareaDimension(
         `nc_set_interpolation_subarea_dimension`, with the group
         structure delimited by ``/`` characters.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `nc_clear_interpolation_subarea_dimension_groups`,
                      `nc_interpolation_subarea_dimension_groups`
@@ -4282,7 +4282,7 @@ class NetCDFInterpolationSubareaDimension(
         `nc_set_interpolation_subarea_dimension`, with no ``/``
         characters.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `nc_interpolation_subarea_dimension_groups`,
                      `nc_set_interpolation_subarea_dimension_groups`

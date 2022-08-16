@@ -10,7 +10,7 @@ class BiQuadraticLatitudeLongitudeInterpolation(
 
     See CF appendix J "Coordinate Interpolation Methods".
 
-    .. versionadded:: (cfdm) 1.9.TODO.0
+    .. versionadded:: (cfdm) 1.10.0.0
 
     """
 
@@ -43,7 +43,7 @@ class BiQuadraticLatitudeLongitudeInterpolation(
 
         See CF appendix J "Coordinate Interpolation Methods".
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 

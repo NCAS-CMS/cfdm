@@ -15,7 +15,7 @@ class SubsampledSubarray(Subarray):
     See CF section 8.3 "Lossy Compression by Coordinate Subsampling"
     and appendix J "Coordinate Interpolation Methods".
 
-    .. versionadded:: (cfdm) 1.9.TODO.0
+    .. versionadded:: (cfdm) 1.10.0.0
 
     """
 
@@ -179,7 +179,7 @@ class SubsampledSubarray(Subarray):
 
         See CF section 8.3.9 "Interpolation of Cell Boundaries".
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `_post_process`, `_trim`
 
@@ -242,7 +242,7 @@ class SubsampledSubarray(Subarray):
         Returns the tie points from `data` as well as those provided
         by `get_dependent_tie_points`.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -292,7 +292,7 @@ class SubsampledSubarray(Subarray):
     def _post_process(self, u):
         """Map the raw interpolated data to the uncompressed subarray.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -319,7 +319,7 @@ class SubsampledSubarray(Subarray):
 
         See CF appendix J "Coordinate Interpolation Methods".
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -401,7 +401,7 @@ class SubsampledSubarray(Subarray):
         Selects interpolation parameter points that correspond to this
         interpolation subarea.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `_select_data`, `_select_parameter`
 
@@ -445,7 +445,7 @@ class SubsampledSubarray(Subarray):
         Selects interpolation parameter values for this interpolation
         subarea.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `_select_data`, `_select_location`
 
@@ -506,7 +506,7 @@ class SubsampledSubarray(Subarray):
         used for broadcasting to each CF bounds location. See CF
         section 8.3.9 "Interpolation of Cell Boundaries".
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `_broadcast_bounds`, `_post_process`
 
@@ -544,7 +544,7 @@ class SubsampledSubarray(Subarray):
     def bounds(self):
         """True if the tie points array represents bounds tie points.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         return self.ndim > self.data.ndim
@@ -553,7 +553,7 @@ class SubsampledSubarray(Subarray):
     def dependent_tie_points(self):
         """The dependent tie points dictionary.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         return self._get_component("dependent_tie_points")
@@ -562,7 +562,7 @@ class SubsampledSubarray(Subarray):
     def dtype(self):
         """The data-type of the uncompressed data.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         return np.dtype(float)
@@ -571,7 +571,7 @@ class SubsampledSubarray(Subarray):
     def first(self):
         """Relative interpolation subarea positions.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         return self._get_component("first")
@@ -580,7 +580,7 @@ class SubsampledSubarray(Subarray):
     def parameters(self):
         """The interpolation parameters dictionary.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         return self._get_component("parameters")
@@ -589,7 +589,7 @@ class SubsampledSubarray(Subarray):
     def subarea_indices(self):
         """Location of interpolation subarea.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         return self._get_component("subarea_indices")

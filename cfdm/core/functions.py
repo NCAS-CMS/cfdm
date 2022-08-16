@@ -35,22 +35,23 @@ def environment(display=True, paths=True):
     **Examples**
 
     >>> environment()
-    Platform: Linux-4.15.0-72-generic-x86_64-with-debian-stretch-sid
-    HDF5 library: 1.10.2
-    netcdf library: 4.6.1
-    python: 3.7.3 /home/user/anaconda3/bin/python
-    netCDF4: 1.5.3 /home/user/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py
-    numpy: 1.16.2 /home/user/anaconda3/lib/python3.7/site-packages/numpy/__init__.py
-    cfdm.core: 1.9.0
+
+    Platform: Linux-5.14.0-1048-oem-x86_64-with-glibc2.31 
+    HDF5 library: 1.12.1 
+    netcdf library: 4.8.1 
+    Python: 3.9.12 /home/user/miniconda3/bin/python
+    netCDF4: 1.6.0 /home/user/miniconda3/lib/python3.9/site-packages/netCDF4/__init__.py
+    numpy: 1.22.3 /home/user/miniconda3/lib/python3.9/site-packages/numpy/__init__.py
+    cfdm.core: 1.10.0.0 /home/user/miniconda3/lib/python3.9/site-packages/cfdm/core/__init__.py
 
     >>> environment(paths=False)
-    Platform: Linux-4.15.0-72-generic-x86_64-with-debian-stretch-sid
-    HDF5 library: 1.10.2
-    netcdf library: 4.6.1
-    python: 3.7.3
-    netCDF4: 1.5.3
-    numpy: 1.16.2
-    cfdm.core: 1.9.0
+    Platform: Linux-5.14.0-1048-oem-x86_64-with-glibc2.31
+    HDF5 library: 1.12.1
+    netcdf library: 4.8.1
+    Python: 3.9.12
+    netCDF4: 1.6.0
+    numpy: 1.22.3
+    cfdm.core: 1.10.0.0
 
     """
     dependency_version_paths_mapping = {
@@ -94,7 +95,7 @@ def CF():
     **Examples**
 
     >>> cfdm.core.CF()
-    '1.9'
+    '1.10'
 
     """
     return __cf_version__

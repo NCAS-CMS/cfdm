@@ -208,7 +208,7 @@ def example_field(n, _implementation=_implementation):
 
         f.set_properties(
             {
-                "Conventions": "CF-" + CF(),
+                "Conventions": f"CF-{CF()}",
                 "project": "research",
                 "standard_name": "specific_humidity",
                 "units": "1",
@@ -324,7 +324,7 @@ def example_field(n, _implementation=_implementation):
 
         f.set_properties(
             {
-                "Conventions": "CF-" + CF(),
+                "Conventions": f"CF-{CF()}",
                 "project": "research",
                 "standard_name": "air_temperature",
                 "units": "K",
@@ -1136,7 +1136,7 @@ def example_field(n, _implementation=_implementation):
 
         f.set_properties(
             {
-                "Conventions": "CF-" + CF(),
+                "Conventions": f"CF-{CF()}",
                 "featureType": "timeSeries",
                 "_FillValue": -999.9,
                 "standard_name": "precipitation_flux",
@@ -1481,7 +1481,7 @@ def example_field(n, _implementation=_implementation):
 
         f.set_properties(
             {
-                "Conventions": "CF-" + CF(),
+                "Conventions": f"CF-{CF()}",
                 "featureType": "timeSeriesProfile",
                 "_FillValue": -999.9,
                 "standard_name": "air_temperature",
@@ -2801,7 +2801,7 @@ def example_field(n, _implementation=_implementation):
 
         f.set_properties(
             {
-                "Conventions": "CF-" + CF(),
+                "Conventions": f"CF-{CF()}",
                 "standard_name": "air_potential_temperature",
                 "units": "K",
             }
@@ -3272,7 +3272,7 @@ def example_field(n, _implementation=_implementation):
 
         f.set_properties(
             {
-                "Conventions": "CF-" + CF(),
+                "Conventions": f"CF-{CF()}",
                 "standard_name": "air_potential_temperature",
                 "units": "K",
             }
@@ -4481,7 +4481,7 @@ def example_field(n, _implementation=_implementation):
         f = Field()
         f.set_properties(
             {
-                "Conventions": "CF-1.9",
+                "Conventions": f"CF-{CF()}",
                 "featureType": "timeSeries",
                 "comment": "global comment",
                 "standard_name": "precipitation_amount",
@@ -4787,7 +4787,7 @@ def example_field(n, _implementation=_implementation):
         f = Field()
         f.set_properties(
             {
-                "Conventions": "CF-1.9",
+                "Conventions": f"CF-{CF()}",
                 "_FillValue": -1073741824.0,
                 "standard_name": "eastward_wind",
                 "units": "m s-1",

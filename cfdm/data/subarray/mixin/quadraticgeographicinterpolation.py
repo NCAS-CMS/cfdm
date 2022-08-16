@@ -10,7 +10,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
 
     See CF appendix J "Coordinate Interpolation Methods".
 
-    .. versionadded:: (cfdm) 1.9.TODO.0
+    .. versionadded:: (cfdm) 1.10.0.0
 
     """
 
@@ -32,7 +32,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
         rsqr = fdot(vr, vr)
         cr = fsqrt(1 - ce*ce - ca*ca) - fsqrt(rsqr)
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -79,7 +79,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
                      va.z*vb.x - va.x*vb.z,
                      va.x*vb.y - va.y*vb.x)
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -106,7 +106,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
               fw(va.y, vb.y, vp(i).y, s(i)),
               fw(va.z, vb.z, vp(i).z, s(i)))
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -148,7 +148,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
         vr = fmultiply(0.5, fplus(va, vb))
         vg = fminus(va, vb)
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -181,7 +181,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
          d = fdot(va, vb)
            = va.x*vb.x + va.y*vb.y + va.z*vb.z
 
-         .. versionadded:: (cfdm) 1.9.TODO.0
+         .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -207,7 +207,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
                      cos(lat)*sin(lon),
                      sin(lat))
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -237,7 +237,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
                      va.y - vb.y,
                      va.z - vb.z)
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -260,7 +260,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
                      r * v.y,
                      r * v.z)
 
-        .. versionaddedd:: (cfdm) 1.9.TODO.0
+        .. versionaddedd:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -292,7 +292,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
                      va.y + vb.y + vc.y,
                      va.z + vb.z + vc.z)
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -323,7 +323,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
                      fq(va.y, vb.y, wv.y, s),
                      fq(va.z, vb.z, wv.z, s))
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -358,7 +358,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
 
         s = fsqrt(t)
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -378,7 +378,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
         lat = fv2lat(v)
             = atan2(v.z, sqrt(v.x * v.x + v.y * v.y)
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -401,7 +401,7 @@ class QuadraticGeographicInterpolation(QuadraticInterpolation):
         lon = fv2lon(v)
             = atan2(v.y, v.x)
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 

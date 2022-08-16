@@ -10,7 +10,7 @@ class GatheredSubarray(Subarray):
 
     See CF section 8.2. "Lossless Compression by Gathering".
 
-    .. versionadded:: (cfdm) 1.9.TODO.0
+    .. versionadded:: (cfdm) 1.10.0.0
 
     """
 
@@ -106,7 +106,7 @@ class GatheredSubarray(Subarray):
         Returns a subspace of the uncompressed data as an independent
         numpy array.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         u = np.ma.masked_all(self.shape, dtype=self.dtype)
@@ -122,7 +122,7 @@ class GatheredSubarray(Subarray):
     def dtype(self):
         """The data-type of the uncompressed data.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         return self.data.dtype
@@ -131,7 +131,7 @@ class GatheredSubarray(Subarray):
     def uncompressed_indices(self):
         """Indices of the uncompressed subarray for the compressed data.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         return self._get_component("uncompressed_indices")

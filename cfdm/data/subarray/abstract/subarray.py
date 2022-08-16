@@ -8,7 +8,7 @@ class Subarray(Array):
 
     A subarray describes a unique part of the uncompressed array.
 
-    .. versionadded:: (cfdm) 1.9.TODO.0
+    .. versionadded:: (cfdm) 1.10.0.0
 
     """
 
@@ -125,7 +125,7 @@ class Subarray(Array):
         Returns a subspace of the uncompressed subarray as an
         independent numpy array.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         raise NotImplementedError(
@@ -141,7 +141,7 @@ class Subarray(Array):
         By default, the returned array will only a masked array if the
         data contains missing values.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -181,7 +181,7 @@ class Subarray(Array):
     def _select_data(self, data=None, check_mask=True):
         """Select compressed elements that correspond to this subarray.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -212,7 +212,7 @@ class Subarray(Array):
     def data(self):
         """The full compressed array spanning all subarrays.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         return self._get_component("data")
@@ -221,7 +221,7 @@ class Subarray(Array):
     def dtype(self):
         """The data-type of the uncompressed data.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         raise NotImplementedError(
@@ -232,7 +232,7 @@ class Subarray(Array):
     def indices(self):
         """The indices of the data that define this subarray.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         return self._get_component("indices")
@@ -241,7 +241,7 @@ class Subarray(Array):
     def shape(self):
         """The shape of the uncompressed data.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         return self._get_component("shape")
@@ -255,7 +255,7 @@ class Subarray(Array):
         array dimensions that are not compressed are omitted from the
         mapping.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 

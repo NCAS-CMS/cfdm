@@ -23,7 +23,7 @@ class InterpolationParameter(
     subarea dimension name, if required, are set on the on the
     corresponding tie point index variable.
 
-    .. versionadded:: (cfdm) 1.9.TODO.0
+    .. versionadded:: (cfdm) 1.10.0.0
 
     .. seealso:: `TiePointIndex`
 
@@ -84,7 +84,7 @@ class InterpolationParameter(
         Returns a description of all properties, including those of
         components, and provides selected values of all data arrays.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 

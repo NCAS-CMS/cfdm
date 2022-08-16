@@ -22,7 +22,7 @@ class CompressedArray(Array):
         A child class must define its subarray classes in the
         `_Subarray` dictionary.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         instance = super().__new__(cls)
@@ -72,7 +72,7 @@ class CompressedArray(Array):
                 *Parameter example:*
                   ``{0: (0,), 2: (2,)}``
 
-                .. versionadded:: (cfdm) 1.9.TODO.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
             compression_type: `str`
                 The type of compression.
@@ -81,7 +81,7 @@ class CompressedArray(Array):
                 Further named parameters and their values needed to define
                 the compressed array.
 
-            compressed_dimension: Deprecated at version 1.9.TODO.0
+            compressed_dimension: Deprecated at version 1.10.0.0
                 Use the *compressed_dimensions* parameter instead.
 
             source: optional
@@ -89,23 +89,23 @@ class CompressedArray(Array):
 
                 {{init source}}
 
-                .. versionadded:: (cfdm) 1.9.TODO.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
             copy: `bool`, optional
                 If True (the default) then deep copy input parameters
                 prior to initialisation. If False then arguments are
                 not deep copied.
 
-                .. versionadded:: (cfdm) 1.9.TODO.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
             size: `int`
-                Deprecated at version 1.9.TODO.0. If set will be
+                Deprecated at version 1.10.0.0. If set will be
                 ignored.
 
                 Number of elements in the uncompressed array.
 
             ndim: `int`
-                Deprecated at version 1.9.TODO.0. If set will be
+                Deprecated at version 1.10.0.0. If set will be
                 ignored.
 
                 The number of uncompressed array dimensions
@@ -114,7 +114,7 @@ class CompressedArray(Array):
         if compressed_dimension is not None:
             raise DeprecationError(
                 "The 'compressed_dimension' keyword was deprecated at "
-                "version 1.9.TODO.0. "
+                "version 1.10.0.0. "
                 "Use the 'compressed_dimensions' keyword instead."
             )  # pragma: no cover
 
@@ -177,7 +177,7 @@ class CompressedArray(Array):
         instance, note that ``slice(0, 1, 1)`` is not an exact match
         to ``slice(0, 1)``.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `__getitem__`
 
@@ -368,7 +368,7 @@ class CompressedArray(Array):
         array dimensions that are not compressed are omitted from the
         mapping.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `get_compressed_axes`, `get_compression_type`
 
@@ -390,7 +390,7 @@ class CompressedArray(Array):
     def conformed_data(self):
         """The data as required by the decompression algorithm.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 
@@ -403,7 +403,7 @@ class CompressedArray(Array):
     def get_Subarray(self):
         """Return the Subarray class.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 
@@ -441,7 +441,7 @@ class CompressedArray(Array):
     def subarray_shapes(self, shapes):
         """Create the subarray shapes along each uncompressed dimension.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `subarray`
 
@@ -465,7 +465,7 @@ class CompressedArray(Array):
 
         Theses descriptors are used during subarray decompression.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -487,7 +487,7 @@ class CompressedArray(Array):
 
         There is no change to data that is already in memory.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 

@@ -101,6 +101,12 @@ print(t.array)
 print(q)
 new = q[::-1, 0]
 print(new)
+print(q)
+print(q.construct('longitude').data.array)
+ind = q.indices(longitude=[112.5, 67.5])
+print(ind)
+print(q[ind])
+print(q[q.indices(longitude=[112.5, 67.5], latitude=75)])
 print(t.constructs.filter_by_type('dimension_coordinate'))
 print(t.constructs.filter_by_type('cell_method', 'field_ancillary'))
 print(t.constructs.filter_by_property(

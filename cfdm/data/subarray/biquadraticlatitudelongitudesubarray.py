@@ -14,7 +14,7 @@ class BiQuadraticLatitudeLongitudeSubarray(
 
     See CF appendix J "Coordinate Interpolation Methods".
 
-    .. versionadded:: (cfdm) 1.9.TODO.0
+    .. versionadded:: (cfdm) 1.10.0.0
 
     """
 
@@ -26,7 +26,7 @@ class BiQuadraticLatitudeLongitudeSubarray(
         Returns a subspace of the uncompressed subarray as an
         independent numpy array.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         (d2, d1) = sorted(self.compressed_dimensions())

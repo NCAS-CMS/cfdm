@@ -76,7 +76,7 @@ class SubsampledArray(CompressedArray):
      [305.0 333.75]
      [333.75 360.0]]
 
-    .. versionadded:: (cfdm) 1.9.TODO.0
+    .. versionadded:: (cfdm) 1.10.0.0
 
     """
 
@@ -85,7 +85,7 @@ class SubsampledArray(CompressedArray):
     def __new__(cls, *args, **kwargs):
         """Store subarray classes.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         instance = super().__new__(cls)
@@ -367,7 +367,7 @@ class SubsampledArray(CompressedArray):
         Returns a subspace of the uncompressed data as an independent
         numpy array.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         # If the first or last element is requested then we don't need
@@ -416,7 +416,7 @@ class SubsampledArray(CompressedArray):
     def _conformed_dependent_tie_points(self):
         """Return the dependent tie points.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `_conformed_parameters`, `conformed_data`
 
@@ -460,7 +460,7 @@ class SubsampledArray(CompressedArray):
         See CF section 3.5 "Flags" and Appendix J "Coordinate
         Interpolation Methods".
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `_conformed_parameters`
 
@@ -528,7 +528,7 @@ class SubsampledArray(CompressedArray):
     def _conformed_parameters(self):
         """Return interpolation parameters.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `_conformed_dependent_tie_points`,
                      `conformed_data`
@@ -580,7 +580,7 @@ class SubsampledArray(CompressedArray):
     def bounds(self):
         """True if the compressed array represents bounds tie points.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         return self.ndim > self.source().ndim
@@ -589,7 +589,7 @@ class SubsampledArray(CompressedArray):
     def dtype(self):
         """Data-type of the uncompressed data.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         return np.dtype(float)
@@ -600,7 +600,7 @@ class SubsampledArray(CompressedArray):
         Returns the tie points and any ancillary data in the forms
         required by the interpolation algorthm.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 
@@ -619,7 +619,7 @@ class SubsampledArray(CompressedArray):
     def get_computational_precision(self, default=ValueError()):
         """Get the validation computational precision.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -646,7 +646,7 @@ class SubsampledArray(CompressedArray):
     def get_dependent_tie_point_dimensions(self):
         """Get the dimension order of dependent tie points.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `get_dependent_tie_points`
 
@@ -663,7 +663,7 @@ class SubsampledArray(CompressedArray):
     def get_dependent_tie_points(self):
         """Get the dependent tie points.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `get_dependent_tie_point_dimensions`
 
@@ -679,7 +679,7 @@ class SubsampledArray(CompressedArray):
     def get_interpolation_description(self, default=ValueError()):
         """Get the non-standardised interpolation method description.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `get_interpolation_name`
 
@@ -708,7 +708,7 @@ class SubsampledArray(CompressedArray):
     def get_interpolation_name(self, default=ValueError()):
         """Get the name of a standardised interpolation method.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `get_interpolation_description`
 
@@ -720,7 +720,7 @@ class SubsampledArray(CompressedArray):
 
                 {{default Exception}}
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `get_interpolation_description`
 
@@ -740,7 +740,7 @@ class SubsampledArray(CompressedArray):
     def get_parameter_dimensions(self):
         """Get the dimension order interpolation parameters.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `get_parameters`, `set_parameter_dimensions`
 
@@ -757,7 +757,7 @@ class SubsampledArray(CompressedArray):
     def get_parameters(self):
         """Get the interpolation parameter variables.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `get_parameter_dimensions`, `set_parameters`
 
@@ -773,7 +773,7 @@ class SubsampledArray(CompressedArray):
     def get_Subarray(self):
         """Return the Subarray class.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 
@@ -800,7 +800,7 @@ class SubsampledArray(CompressedArray):
     def get_tie_point_indices(self):
         """Get the tie point index variables for subsampled dimensions.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `set_tie_point_indices`
 
@@ -818,7 +818,7 @@ class SubsampledArray(CompressedArray):
     def set_dependent_tie_point_dimensions(self, value, copy=True):
         """Set the dimension order of dependent tie points.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `set_dependent_tie_points`
 
@@ -841,7 +841,7 @@ class SubsampledArray(CompressedArray):
     def set_dependent_tie_points(self, value, copy=True):
         """Set the dependent tie points.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `set_dependent_tie_point_dimensions`
 
@@ -870,7 +870,7 @@ class SubsampledArray(CompressedArray):
     def set_parameter_dimensions(self, value, copy=True):
         """Set the dimension order interpolation parameters.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `get_parameter_dimensions`
 
@@ -891,7 +891,7 @@ class SubsampledArray(CompressedArray):
     def set_parameters(self, value, copy=True):
         """Set the interpolation parameter variables.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `get_parameters`
 
@@ -916,7 +916,7 @@ class SubsampledArray(CompressedArray):
     def set_tie_point_indices(self, value, copy=True):
         """Set the tie point index variables for subsampled dimensions.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `get_tie_point_indices`
 
@@ -941,7 +941,7 @@ class SubsampledArray(CompressedArray):
     def subarray_shapes(self, shapes):
         """Create the subarray shapes along each uncompressed dimension.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `subarray`
 
@@ -1006,7 +1006,7 @@ class SubsampledArray(CompressedArray):
 
         These descriptors are used during subarray decompression.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -1249,7 +1249,7 @@ class SubsampledArray(CompressedArray):
 
         There is no change to data that is already in memory.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 

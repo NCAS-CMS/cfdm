@@ -10,7 +10,7 @@ class RaggedSubarray(Subarray):
 
     See CF section 9 "Discrete Sampling Geometries".
 
-    .. versionadded:: (cfdm) 1.9.TODO.0
+    .. versionadded:: (cfdm) 1.10.0.0
 
     """
 
@@ -22,7 +22,7 @@ class RaggedSubarray(Subarray):
         Returns a subspace of the uncompressed subarray as an
         independent numpy array.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         d1, u_dims = self.compressed_dimensions().popitem()
@@ -56,7 +56,7 @@ class RaggedSubarray(Subarray):
     def dtype(self):
         """The data-type of the uncompressed data.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         return self.data.dtype

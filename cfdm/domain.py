@@ -1025,7 +1025,7 @@ class Domain(
         Any compressed metadata constructs are uncompressed, and all
         other metadata constructs are unchanged.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `compress` TODO
 

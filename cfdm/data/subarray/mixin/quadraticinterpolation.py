@@ -3,14 +3,14 @@ class QuadraticInterpolation:
 
     See CF appendix J "Coordinate Interpolation Methods".
 
-    .. versionadded:: (cfdm) 1.9.TODO.0
+    .. versionadded:: (cfdm) 1.10.0.0
 
     """
 
     def _fq(self, *args, **kwargs):
         """Alias for `_quadratic_interpolation`.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         return self._quadratic_interpolation(*args, **kwargs)
@@ -26,7 +26,7 @@ class QuadraticInterpolation:
 
         See CF appendix J "Coordinate Interpolation Methods".
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `_quadratic_interpolation`
 
@@ -68,7 +68,7 @@ class QuadraticInterpolation:
 
         See CF appendix J "Coordinate Interpolation Methods".
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `_linear_interpolation`
 

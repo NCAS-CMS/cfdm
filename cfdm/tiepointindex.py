@@ -47,7 +47,7 @@ class TiePointIndex(
     `nc_clear_interpolation_subarea_dimension_groups` and
     `nc_set_interpolation_subarea_dimension_groups` methods.
 
-    .. versionadded:: (cfdm) 1.9.TODO.0
+    .. versionadded:: (cfdm) 1.10.0.0
 
     .. seealso:: `InterpolationParameter`
 
@@ -108,7 +108,7 @@ class TiePointIndex(
         Returns a description of all properties, including those of
         components, and provides selected values of all data arrays.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 

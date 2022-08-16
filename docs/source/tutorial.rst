@@ -61,7 +61,7 @@ the `cfdm.CF` function:
    :caption: *Retrieve the version of the CF conventions.*
       
    >>> cfdm.CF()
-   '1.9'
+   '1.10'
 
 This indicates which version of the CF conventions are represented by
 this release of the cfdm package, and therefore the version can not be
@@ -120,7 +120,7 @@ constructs. This list contains a field construct to represent each of
 the CF-netCDF data variables in the file.
 
 Datasets of any version of CF up to and including CF-|version| can be
-read [#caveat]_.
+read.
 
 All formats of netCDF3 and netCDF4 files can be read.
 
@@ -4882,7 +4882,7 @@ coordinate's `Data` object:
    >>> d.get_computational_precision()
    '64'
 
-It is not yet, as of version 1.9.1.0, possible to write to disk a
+It is not yet, as of version 1.10.0.0, possible to write to disk a
 field construct with compression by coordinate subsampling.
    
 ----
@@ -5024,11 +5024,6 @@ if any, are filtered out.
 .. [#dap] Requires the netCDF4 python package to have been built with
           OPeNDAP support enabled. See
           http://unidata.github.io/netcdf4-python for details.
-
-.. [#caveat] `Lossy compression by coordinate subsampling`_ was
-             introduced into the CF conventions at CF-1.9, but is not
-             yet available in cfdm. It will be ready in a future
-             1.9.x.0 release.
 
 .. External links to the CF conventions (will need updating with new versions of CF)
    

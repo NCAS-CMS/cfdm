@@ -228,7 +228,7 @@ class NetCDFRead(IORead):
         These are the allowed values of the ``interpolation_name``
         attribute of an interpolation variable.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         return (
@@ -242,7 +242,7 @@ class NetCDFRead(IORead):
     def cf_multivariate_interpolations(self):
         """The multivariate interpolation methods.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 
@@ -869,7 +869,7 @@ class NetCDFRead(IORead):
         g["file_version"] = Version(file_version)
 
         # Set minimum/maximum versions
-        for vn in ("1.6", "1.7", "1.8", "1.9"):
+        for vn in ("1.6", "1.7", "1.8", "1.9", "1.10"):
             g["CF>=" + vn] = g["file_version"] >= g["version"][vn]
 
         # ------------------------------------------------------------
@@ -4091,7 +4091,7 @@ class NetCDFRead(IORead):
     def _has_identity(self, construct, identity):
         """TODO.
 
-        .. versionadded:: 1.9.TODO.0
+        .. versionadded:: 1.10.0.0
 
         """
         if identity == "latitude":
@@ -4105,7 +4105,7 @@ class NetCDFRead(IORead):
     def _is_latitude(self, construct):
         """True if and only if the data are (grid) latitudes.
 
-        .. versionadded:: 1.9.TODO.0
+        .. versionadded:: 1.10.0.0
 
         .. seealso:: `_is_longitude`
 
@@ -4144,7 +4144,7 @@ class NetCDFRead(IORead):
     def _is_longitude(self, construct):
         """True if and only if the data are (grid) longitudes.
 
-        .. versionadded:: 1.9.TODO.0
+        .. versionadded:: 1.10.0.0
 
         .. seealso:: `_is_longitude`
 
@@ -4325,7 +4325,7 @@ class NetCDFRead(IORead):
             parent_ncvar: `str`, optional
                 TODO
 
-                .. versionadded:: (cfdm) 1.9.TODO.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 
@@ -4789,7 +4789,7 @@ class NetCDFRead(IORead):
     def _create_interpolation_parameter(self, term, ncvar):
         """Create an interpolation parameter variable.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -4842,7 +4842,7 @@ class NetCDFRead(IORead):
     def _create_tie_point_index(self, ncvar, ncdim, subarea_ncdim=None):
         """Create a tie point index variable.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -5321,7 +5321,7 @@ class NetCDFRead(IORead):
 
             coord_ncvar: `str`, optional
 
-                .. versionadded:: 1.9.TODO.0
+                .. versionadded:: 1.10.0.0
 
         :Returns:
 
@@ -5805,7 +5805,7 @@ class NetCDFRead(IORead):
         needed to create `Data` objects that represent uncompressed
         subsampled coordinates, and their bounds.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -6105,7 +6105,7 @@ class NetCDFRead(IORead):
     def _new_ncdimension(self, ncdim, size=None, use_existing_new=False):
         """TODO.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -6170,7 +6170,7 @@ class NetCDFRead(IORead):
         If the variable has been compressed then it is the *implied
         uncompressed* dimension sizes that are returned.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -6225,7 +6225,7 @@ class NetCDFRead(IORead):
             parent_ncvar: `str`, optional
                 TODO
 
-                .. versionadded:: (cfdm) 1.9.TODO.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 
@@ -6506,7 +6506,7 @@ class NetCDFRead(IORead):
         Note that dependent tie points are set elsewhere, if
         applicable.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -7512,7 +7512,7 @@ class NetCDFRead(IORead):
     ):
         """Check a TODO.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -7622,7 +7622,7 @@ class NetCDFRead(IORead):
                 string components that are variable names. Ignored if
                 *variables* is False.
 
-                .. versionadded:: (cfdm) 1.9.TODO.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 

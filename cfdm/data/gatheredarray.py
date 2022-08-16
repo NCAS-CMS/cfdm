@@ -32,7 +32,7 @@ class GatheredArray(CompressedArray):
     def __new__(cls, *args, **kwargs):
         """Store subarray classes.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         instance = super().__new__(cls)
@@ -70,13 +70,13 @@ class GatheredArray(CompressedArray):
                 *Parameter example:*
                   ``{2: (2, 3)}``
 
-                .. versionadded:: (cfdm) 1.9.TODO.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
             list_variable: `List`
                 The "list variable" required to uncompress the data,
                 identical to the data of a CF-netCDF list variable.
 
-            compressed_dimension: deprecated at version 1.9.TODO.0
+            compressed_dimension: deprecated at version 1.10.0.0
                 Use the *compressed_dimensions* parameter instead.
 
             source: optional
@@ -84,19 +84,19 @@ class GatheredArray(CompressedArray):
 
                 {{init source}}
 
-                .. versionadded:: (cfdm) 1.9.TODO.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
             {{deep copy}}
 
-                .. versionadded:: (cfdm) 1.9.TODO.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
             size: `int`
-                Deprecated at version 1.9.TODO.0. Ignored if set.
+                Deprecated at version 1.10.0.0. Ignored if set.
 
                 Number of elements in the uncompressed array.
 
             ndim: `int`
-                Deprecated at version 1.9.TODO.0. Ignored if set.
+                Deprecated at version 1.10.0.0. Ignored if set.
 
                 The number of uncompressed array dimensions
 
@@ -104,7 +104,7 @@ class GatheredArray(CompressedArray):
         if compressed_dimension is not None:
             raise DeprecationError(
                 "The 'compressed_dimension' keyword was deprecated at "
-                "version 1.9.TODO.0. "
+                "version 1.10.0.0. "
                 "Use the 'compressed_dimensions' keyword instead."
             )  # pragma: no cover
 
@@ -167,7 +167,7 @@ class GatheredArray(CompressedArray):
     def _uncompressed_indices(self):
         """Indices of the uncompressed subarray for the compressed data.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 
@@ -205,7 +205,7 @@ class GatheredArray(CompressedArray):
     def dtype(self):
         """The data-type of the uncompressed data.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         return self.source().dtype
@@ -213,7 +213,7 @@ class GatheredArray(CompressedArray):
     def conformed_data(self):
         """The compressed data and list variable.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 
@@ -251,7 +251,7 @@ class GatheredArray(CompressedArray):
     def subarray_shapes(self, shapes):
         """Create the subarray shapes along each uncompressed dimension.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `subarray`
 
@@ -332,7 +332,7 @@ class GatheredArray(CompressedArray):
 
         These descriptors are used during subarray decompression.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -485,7 +485,7 @@ class GatheredArray(CompressedArray):
 
         There is no change to data that is already in memory.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 

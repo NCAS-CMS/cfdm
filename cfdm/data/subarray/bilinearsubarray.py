@@ -11,7 +11,7 @@ class BiLinearSubarray(BiLinearInterpolation, SubsampledSubarray):
 
     See CF appendix J "Coordinate Interpolation Methods".
 
-    .. versionadded:: (cfdm) 1.9.TODO.0
+    .. versionadded:: (cfdm) 1.10.0.0
 
     """
 
@@ -23,7 +23,7 @@ class BiLinearSubarray(BiLinearInterpolation, SubsampledSubarray):
         Returns a subspace of the uncompressed data as an independent
         numpy array.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         """
         (d2, d1) = sorted(self.compressed_dimensions())

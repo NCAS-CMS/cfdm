@@ -55,19 +55,19 @@ class RaggedIndexedArray(RaggedArray):
 
                 {{init source}}
 
-                .. versionadded:: (cfdm) 1.9.TODO.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
             {{deep copy}}
 
-                .. versionadded:: (cfdm) 1.9.TODO.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
             size: `int`
-                Deprecated at version 1.9.TODO.0. Ignored if set.
+                Deprecated at version 1.10.0.0. Ignored if set.
 
                 Number of elements in the uncompressed array.
 
             ndim: `int`
-                Deprecated at version 1.9.TODO.0. Ignored if set.
+                Deprecated at version 1.10.0.0. Ignored if set.
 
                 The number of uncompressed array dimensions.
 
@@ -86,7 +86,7 @@ class RaggedIndexedArray(RaggedArray):
 
         Theses descriptors are used during subarray decompression.
 
-        .. versionadded:: (cfdm) 1.9.TODO.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 

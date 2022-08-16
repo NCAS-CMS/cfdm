@@ -316,24 +316,27 @@ def environment(display=True, paths=True):
     **Examples**
 
     >>> cfdm.environment()
-    Platform: Linux-4.15.0-72-generic-x86_64-with-debian-stretch-sid
-    HDF5 library: 1.10.6
-    netcdf library: 4.7.4
-    python: 3.8.2 /home/user/anaconda3/bin/python
-    netCDF4: 1.5.6 /home/user/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py
-    cftime: 1.5.0 /home/user/anaconda3/lib/python3.7/site-packages/cftime/__init__.py
-    numpy: 1.18.1 /home/user/anaconda3/lib/python3.7/site-packages/numpy/__init__.py
-    cfdm: 1.9.0.0
+    Platform: Linux-5.14.0-1048-oem-x86_64-with-glibc2.31 
+    HDF5 library: 1.12.1 
+    netcdf library: 4.8.1 
+    Python: 3.9.12 /home/user/miniconda3/bin/python
+    netCDF4: 1.6.0 /home/user/miniconda3/lib/python3.9/site-packages/netCDF4/__init__.py
+    numpy: 1.22.3 /home/user/miniconda3/lib/python3.9/site-packages/numpy/__init__.py
+    cfdm.core: 1.10.0.0 /home/user/miniconda3/lib/python3.9/site-packages/cfdm/core/__init__.py
+    cftime: 1.6.1 /home/user/miniconda3/lib/python3.9/site-packages/cftime/__init__.py
+    netcdf_flattener: 1.2.0 /home/user/miniconda3/lib/python3.9/site-packages/netcdf_flattener/__init__.py
+    cfdm: 1.10.0.0 /home/user/miniconda3/lib/python3.9/site-packages/cfdm/__init__.py
 
     >>> cfdm.environment(paths=False)
-    Platform: Linux-4.15.0-72-generic-x86_64-with-debian-stretch-sid
-    HDF5 library: 1.10.6
-    netcdf library: 4.7.4
-    python: 3.8.2
-    netCDF4: 1.5.6
-    cftime: 1.5.0
-    numpy: 1.18.1
-    cfdm: 1.9.0.0
+    HDF5 library: 1.12.1
+    netcdf library: 4.8.1
+    Python: 3.9.12
+    netCDF4: 1.6.0
+    numpy: 1.22.3
+    cfdm.core: 1.10.0.0
+    cftime: 1.6.1
+    netcdf_flattener: 1.2.0
+    cfdm: 1.10.0.0
 
     """
     out = core.environment(display=False, paths=paths)  # get all core env
@@ -385,7 +388,7 @@ def CF():
     **Examples**
 
     >>> CF()
-    '1.9'
+    '1.10'
 
     """
     return __cf_version__
@@ -534,20 +537,20 @@ class Constant(metaclass=DocstringRewriteMeta):
 
     The constant value is accessed via the `value` attribute:
 
-       >>> c = {{package}}.{{class}}(1.9)
+       >>> c = {{package}}.{{class}}(1.2)
        >>> c.value
-       1.9
+       1.2
 
     Conversion to `int`, `float`, `str` and `bool` is with the usual
     built-in functions:
 
-       >>> c = {{package}}.{{class}}(1.9)
+       >>> c = {{package}}.{{class}}(1.2)
        >>> int(c)
        1
        >>> float(c)
-       1.9
+       1.2
        >>> str(c)
-       '1.9'
+       '1.2'
        >>> bool(c)
        True
 
