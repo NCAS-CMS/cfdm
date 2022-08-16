@@ -21,7 +21,7 @@ def _make_contiguous_file(filename):
     """Make a netCDF file with a contiguous ragged array DSG feature."""
     n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
-    n.Conventions = "CF-" + VN
+    n.Conventions = f"CF-{VN}"
     n.featureType = "timeSeries"
 
     n.createDimension("station", 4)
@@ -113,7 +113,7 @@ def _make_indexed_file(filename):
     """Make a netCDF file with an indexed ragged array DSG feature."""
     n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
-    n.Conventions = "CF-" + VN
+    n.Conventions = f"CF-{VN}"
     n.featureType = "timeSeries"
 
     n.createDimension("station", 4)
@@ -246,7 +246,7 @@ def _make_indexed_contiguous_file(filename):
     """Make a netCDF file with an indexed contiguous ragged array."""
     n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
-    n.Conventions = "CF-" + VN
+    n.Conventions = f"CF-{VN}"
     n.featureType = "timeSeriesProfile"
 
     # 3 stations
@@ -638,7 +638,7 @@ def _make_external_files():
         nc.createDimension("grid_latitude", 10)
         nc.createDimension("grid_longitude", 9)
 
-        nc.Conventions = "CF-" + VN
+        nc.Conventions = f"CF-{VN}"
         if parent:
             nc.external_variables = "areacella"
 
@@ -740,7 +740,7 @@ def _make_gathered_file(filename):
 
     n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
-    n.Conventions = "CF-" + VN
+    n.Conventions = f"CF-{VN}"
 
     time = n.createDimension("time", 2)
     height = n.createDimension("height", 3)
@@ -871,7 +871,7 @@ def _make_geometry_1_file(filename):
     """See n.comment for details."""
     n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
-    n.Conventions = "CF-" + VN
+    n.Conventions = f"CF-{VN}"
     n.featureType = "timeSeries"
     n.comment = (
         "Make a netCDF file with 2 node coordinates variables, "
@@ -948,7 +948,7 @@ def _make_geometry_2_file(filename):
     """See n.comment for details."""
     n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
-    n.Conventions = "CF-" + VN
+    n.Conventions = f"CF-{VN}"
     n.featureType = "timeSeries"
     n.comment = (
         "A netCDF file with 3 node coordinates variables, only "
@@ -1029,7 +1029,7 @@ def _make_geometry_3_file(filename):
     """See n.comment for details."""
     n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
-    n.Conventions = "CF-" + VN
+    n.Conventions = f"CF-{VN}"
     n.featureType = "timeSeries"
     n.comment = (
         "A netCDF file with 3 node coordinates variables, each of "
@@ -1107,7 +1107,7 @@ def _make_geometry_4_file(filename):
     """See n.comment for details."""
     n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
-    n.Conventions = "CF-" + VN
+    n.Conventions = f"CF-{VN}"
     n.featureType = "timeSeries"
     n.comment = (
         "A netCDF file with 2 node coordinates variables, none of "
@@ -1177,7 +1177,7 @@ def _make_interior_ring_file(filename):
     n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
     # Global attributes
-    n.Conventions = "CF-" + VN
+    n.Conventions = f"CF-{VN}"
     n.featureType = "timeSeries"
     n.comment = (
         "A netCDF file with an interior ring variable of geometry "
@@ -1281,7 +1281,7 @@ def _make_interior_ring_file_2(filename):
     n = netCDF4.Dataset(filename, "w", format="NETCDF3_CLASSIC")
 
     # Global attributes
-    n.Conventions = "CF-" + VN
+    n.Conventions = f"CF-{VN}"
     n.featureType = "timeSeries"
     n.comment = (
         "A netCDF file with an interior ring variable of geometry "
@@ -1382,7 +1382,7 @@ def _make_string_char_file(filename):
     """See n.comment for details."""
     n = netCDF4.Dataset(filename, "w", format="NETCDF4")
 
-    n.Conventions = "CF-" + VN
+    n.Conventions = f"CF-{VN}"
     n.comment = "A netCDF file with variables of string and char data types"
 
     n.createDimension("dim1", 1)
