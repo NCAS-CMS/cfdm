@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.9.0.3</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.0.0</a></h1>
 
 
 
@@ -127,7 +127,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.Field.get_data_axes<a class="headerlink" href="#cfdm-field-get-data-axes" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.get_data_axes">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">get_data_axes</code><span class="sig-paren">(</span><em class="sig-param">key=None</em>, <em class="sig-param">default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.3/cfdm/field.py#L1622-L1679"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.get_data_axes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">get_data_axes</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">default=ValueError()</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.0/cfdm/field.py#L1720-L1802"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.get_data_axes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the keys of the axes spanned by the construct data.</p>
 <p>Specifically, returns the keys of the domain axis constructs
 spanned by the data of the field or of a metadata construct.</p>
@@ -141,17 +141,27 @@ spanned by the data of the field or of a metadata construct.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>key: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Specify a metadata construct, instead of the field
-construct.</p>
-<dl class="simple">
-<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">key='auxiliarycoordinate0'</span></code></p>
-</dd>
-</dl>
+<dt>identity, filter_kwargs: optional</dt><dd><p>Select the unique construct returned by
+<code class="docutils literal notranslate"><span class="pre">f.construct(*identity,</span> <span class="pre">**filter_kwargs)</span></code>. See
+<a class="reference internal" href="cfdm.Field.construct.html#cfdm.Field.construct" title="cfdm.Field.construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct</span></code></a> for details.</p>
+<p>If neither <em>identity</em> nor <em>filter_kwargs</em> are set then
+the domain of the field construct’s data are
+returned.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.9.1.0</p>
+</div>
 </dd>
 <dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if the data
 axes have not been set.</p>
 <p>If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be
 raised instead.</p>
+</dd>
+<dt>filter_kwargs: optional</dt><dd><p>Keyword arguments as accepted by <a class="reference internal" href="cfdm.Constructs.filter.html#cfdm.Constructs.filter" title="cfdm.Constructs.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs.filter</span></code></a>
+that define additional construct selection
+criteria.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.9.1.0</p>
+</div>
 </dd>
 </dl>
 </dd>
@@ -163,11 +173,13 @@ data.</p>
 </dl>
 </dd>
 </dl>
-<p><strong>Examples:</strong></p>
+<p><strong>Examples</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_data_axes</span><span class="p">()</span>
 <span class="go">(&#39;domainaxis0&#39;, &#39;domainaxis1&#39;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_data_axes</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;dimensioncoordinate2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_data_axes</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span>
+<span class="go">(&#39;domainaxis0&#39;,)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_data_axes</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
 <span class="go">(&#39;domainaxis2&#39;,)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data_axes</span><span class="p">()</span>
 <span class="go">True</span>
@@ -192,7 +204,7 @@ data.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-03-10.
+      &copy;2022, NCAS | Page built on 2022-08-17.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

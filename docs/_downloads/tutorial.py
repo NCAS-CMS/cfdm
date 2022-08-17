@@ -39,7 +39,7 @@ print(q.constructs)
 t.constructs
 print(t.constructs)
 t.data
-print(t.data.array)
+print(t.array)
 t.dtype
 t.ndim
 t.shape
@@ -77,9 +77,9 @@ print(q.data.mask.array)
 q.data.mask.any()
 cfdm.write(q, 'masked_q.nc')
 no_mask_q = cfdm.read('masked_q.nc', mask=False)[0]
-print(no_mask_q.data.array)
+print(no_mask_q.array)
 masked_q = no_mask_q.apply_masking()
-print(masked_q.data.array)
+print(masked_q.array)
 data = t.data
 data.shape
 data[:, :, 1].shape
@@ -91,16 +91,22 @@ import numpy
 t.data[:, 0, 0] = -1
 t.data[:, :, 1] = -2
 t.data[..., 6:3:-1, 3:6] = -3
-print(t.data.array)
+print(t.array)
 t.data[..., 6:3:-1, 3:6] = numpy.arange(9).reshape(3, 3)
 t.data[0, [2, 9], [4, 8]] =  cfdm.Data([[-4, -5]])
-print(t.data.array)
+print(t.array)
 t.data[0, :, -2] = cfdm.masked
 t.data[0, 5, -2] = -6
-print(t.data.array)
+print(t.array)
 print(q)
 new = q[::-1, 0]
 print(new)
+print(q)
+print(q.construct('longitude').data.array)
+ind = q.indices(longitude=[112.5, 67.5])
+print(ind)
+print(q[ind])
+print(q[q.indices(longitude=[112.5, 67.5], latitude=75)])
 print(t.constructs.filter_by_type('dimension_coordinate'))
 print(t.constructs.filter_by_type('cell_method', 'field_ancillary'))
 print(t.constructs.filter_by_property(
@@ -153,61 +159,64 @@ c.inverse_filter()
 print(t.constructs.filter_by_type('cell_measure'))
 print(t.cell_measures())
 t.construct('latitude')
-key = t.construct_key('latitude')
+key = t.construct('latitude', key=True)
 t.construct(key)
-key, lat = t.construct_item('latitude')
-key = t.construct_key('latitude')
+key, lat = t.construct('latitude', item=True)
+key = t.construct('latitude', key=True)
 t.constructs[key]
-key = t.construct_key('latitude')
+key = t.construct('latitude', key=True)
 c = t.constructs.get(key)
+c = t.constructs('latitude').value()
+t.auxiliary_coordinate('latitude')
+t.auxiliary_coordinate('latitude', key=True)
+t.auxiliary_coordinate('latitude', item=True)
 try:
-    t.construct('measure:volume')                # Raises Exception
+    t.cell_measure('measure:volume')                # Raises Exception
 except:
     pass
-t.construct('measure:volume', default=False)
+t.cell_measure('measure:volume', default=False)
 try:
-    t.construct('measure:volume', default=Exception("my error"))  # Raises Exception
+    t.cell_measure('measure:volume', default=Exception("my error"))  # Raises Exception
 except:
     pass
-c = t.constructs.filter_by_measure("volume")
+c = t.cell_measures().filter_by_measure("volume")
 len(c)
 d = t.constructs("units=degrees")
 len(d)
 try:
-    t.construct("units=degrees")  # Raises Exception
+    t.coordinate("units=degrees")  # Raises Exception
 except:
     pass
-print(t.construct("units=degrees", default=None))
+print(t.coordinate("units=degrees", default=None))
 lon = q.construct('longitude')
 lon
 lon.set_property('long_name', 'Longitude')
 lon.properties()
-area = t.constructs.filter_by_property(units='km2').value()
+area = t.construct('units=km2')
 area
 area.identity()
 area.identities()
-lon = q.constructs('longitude').value()
+t.construct('measure:area')
+lon = q.construct('longitude')
 lon
 lon.data
 lon.data[2]
 lon.data[2] = 133.33
-print(lon.data.array)
-key = t.construct_key('latitude')
-key
-t.get_data_axes(key=key)
+print(lon.array)
+t.get_data_axes('latitude')
 t.constructs.data_axes()
 time = q.construct('time')
 time
 time.get_property('units')
 time.get_property('calendar', default='standard')
-print(time.data.array)
-print(time.data.datetime_array)
+print(time.array)
+print(time.datetime_array)
 domain = t.domain
 domain
 print(domain)
 description = domain.dump(display=False)
-domain_latitude = t.domain.constructs('latitude').value()
-field_latitude = t.constructs('latitude').value()
+domain_latitude = t.domain.coordinate('latitude')
+field_latitude = t.coordinate('latitude')
 domain_latitude.set_property('test', 'set by domain')
 print(field_latitude.get_property('test'))
 field_latitude.set_property('test', 'set by field')
@@ -219,26 +228,26 @@ d = q.domain_axes().get('domainaxis1')
 d
 d.get_size()
 print(t.coordinates())
-lon = t.constructs('grid_longitude').value()
+lon = t.coordinate('grid_longitude')
 bounds = lon.bounds
 bounds
 bounds.data
-print(bounds.data.array)
+print(bounds.array)
 bounds.inherited_properties()
 bounds.properties()
 f = cfdm.read('geometry.nc')[0]
 print(f)
-lon = f.construct('longitude')
+lon = f.coordinate('longitude')
 lon.dump()
 lon.get_geometry()
-print(lon.bounds.data.array)
-print(lon.get_interior_ring().data.array)
+print(lon.bounds.array)
+print(lon.get_interior_ring().array)
 a = t.constructs.get('domainancillary0')
-print(a.data.array)
+print(a.array)
 bounds = a.bounds
 bounds
-print(bounds.data.array)
-crs = t.constructs('standard_name:atmosphere_hybrid_height_coordinate').value()
+print(bounds.array)
+crs = t.coordinate_reference('standard_name:atmosphere_hybrid_height_coordinate')
 crs
 crs.dump()
 crs.coordinates()
@@ -248,7 +257,7 @@ crs.coordinate_conversion
 crs.coordinate_conversion.parameters()
 crs.coordinate_conversion.domain_ancillaries()
 print(t.cell_methods())
-cm = t.constructs('method:mean').value()
+cm = t.cell_method('method:mean')
 cm
 cm.get_axes()
 cm.get_method()
@@ -534,10 +543,9 @@ data_disk = cfdm.Data(netcdf_array)
 numpy_array = v[...]
 data_memory = cfdm.Data(numpy_array)
 data_disk.equals(data_memory)
-key = tas.construct_key('surface_altitude')
-orog = tas.convert(key)
+orog = tas.convert('surface_altitude')
 print(orog)
-orog1 = tas.convert(key, full_domain=False)
+orog1 = tas.convert('surface_altitude', full_domain=False)
 print(orog1)
 cfdm.write(tas, 'tas.nc')
 f = cfdm.read('tas.nc')
@@ -555,7 +563,7 @@ u.constructs('grid_latitude')
 t.constructs('grid_latitude')
 import copy
 u = copy.deepcopy(t)
-orog = t.constructs('surface_altitude').value().copy()
+orog = t.domain_ancillary('surface_altitude').copy()
 t.equals(t)
 t.equals(t.copy())
 t.equals(t[...])
@@ -571,16 +579,16 @@ print(cfdm.atol())
 with cfdm.atol(1e-5):
     print(cfdm.atol())
 print(cfdm.atol())
-orog = t.constructs('surface_altitude').value()
+orog = t.domain_ancillary('surface_altitude')
 orog.equals(orog.copy())
 print(t.constructs.filter_by_ncvar('b'))
-t.constructs('ncvar%x').value()
-t.constructs('ncdim%x')
+t.construct('ncvar%x')
+t.construct('ncdim%x')
 q.nc_get_variable()
 q.nc_global_attributes()
 q.nc_set_variable('humidity')
 q.nc_get_variable()
-q.constructs('latitude').value().nc_get_variable()
+q.construct('latitude').nc_get_variable()
 print(q)
 cfdm.write(q, 'q_file.nc')
 x
@@ -606,15 +614,14 @@ f.properties()
 f.nc_set_global_attribute('information', 'global information')
 f.nc_global_attributes()
 cfdm.write(f, 'f_file.nc')
-cfdm.write(f, 'f_file.nc', file_descriptors={'history': 'created in 2021'})
+cfdm.write(f, 'f_file.nc', file_descriptors={'history': 'created today'})
 f_file = cfdm.read('f_file.nc')[0]
 f_file.properties()
 f_file.nc_global_attributes()
 f_file.set_property('Conventions', 'UGRID1.0')
 cfdm.write(f, 'f_file.nc', Conventions='UGRID1.0')
 print(q)
-key = q.construct_key('time')
-axes = q.get_data_axes(key)
+axes = q.get_data_axes('time')
 axes
 q2 = q.insert_dimension(axis=axes[0])
 q2
@@ -637,7 +644,7 @@ f = cfdm.read('flat.nc')[0]
 f.equals(g)
 u = cfdm.read('parent.nc')[0]
 print(u)
-area = u.constructs('measure:area').value()
+area = u.cell_measure('measure:area')
 area
 area.nc_get_external()
 area.nc_get_variable()
@@ -645,7 +652,7 @@ area.properties()
 area.has_data()
 g = cfdm.read('parent.nc', external='external.nc')[0]
 print(g)
-area = g.constructs('measure:area').value()
+area = g.cell_measure('measure:area')
 area
 area.nc_get_external()
 area.nc_get_variable()
@@ -656,18 +663,18 @@ cfdm.write(g, 'new_parent.nc')
 cfdm.write(g, 'new_parent.nc', external='new_external.nc')
 h = cfdm.read('contiguous.nc')[0]
 print(h)
-print(h.data.array)
+print(h.array)
 h.data.get_compression_type()
 print(h.data.compressed_array)
 count_variable = h.data.get_count()
 count_variable
-print(count_variable.data.array)
+print(count_variable.array)
 station2 = h[1]
 station2
-print(station2.data.array)
+print(station2.array)
 h.data.get_compression_type()
 h.data[1, 2] = -9
-print(h.data.array)
+print(h.array)
 h.data.get_compression_type()
 # Start of code block
 
@@ -700,12 +707,12 @@ inplace=True)
 
 # End of code block
 T
-print(T.data.array)
+print(T.array)
 T.data.get_compression_type()
 print(T.data.compressed_array)
 count_variable = T.data.get_count()
 count_variable
-print(count_variable.data.array)
+print(count_variable.array)
 cfdm.write(T, 'T_contiguous.nc')
 # Start of code block
 
@@ -726,7 +733,7 @@ count_variable.set_property('long_name', 'number of obs for this timeseries')
 # uncompressed shape
 array = cfdm.RaggedContiguousArray(
 compressed_array=ragged_array,
-shape=(2, 4), size=8, ndim=2,
+shape=(2, 4),
 count_variable=count_variable)
 
 # Create the field construct with the domain axes and the ragged
@@ -746,12 +753,12 @@ T.set_data(cfdm.Data(array), axes=[Y, X])
 # End of code block
 p = cfdm.read('gathered.nc')[0]
 print(p)
-print(p.data.array)
+print(p.array)
 p.data.get_compression_type()
 print(p.data.compressed_array)
 list_variable = p.data.get_list()
 list_variable
-print(list_variable.data.array)
+print(list_variable.array)
 p[0]
 p[1, :, 3:5]
 p.data.get_compression_type()
@@ -775,8 +782,8 @@ list_variable = cfdm.List(data=cfdm.Data(list_array))
 # shape
 array = cfdm.GatheredArray(
 compressed_array=gathered_array,
-compressed_dimension=1,
-shape=(2, 3, 2), size=12, ndim=3,
+compressed_dimensions={1: (1, 2)},
+shape=(2, 3, 2),
 list_variable=list_variable)
 
 # Create the field construct with the domain axes and the gathered
@@ -794,10 +801,26 @@ P.set_data(cfdm.Data(array), axes=[T, Y, X])
 
 # End of code block
 P
-print(P.data.array)
+print(P.array)
 P.data.get_compression_type()
 print(P.data.compressed_array)
 list_variable = P.data.get_list()
 list_variable
-print(list_variable.data.array)
+print(list_variable.array)
 cfdm.write(P, 'P_gathered.nc')
+f = cfdm.read('subsampled.nc')[0]
+print(f)
+lon = f.construct('longitude')
+lon
+lon.data.source()
+print(lon.array)
+lon.data.source().source()
+print(lon.data.source().source().array)
+print(lon.array)
+g = f[0, 6, :]
+print(g)
+print(g.construct('longitude').array)
+lon = f.construct('longitude')
+d = lon.data.source()
+d.get_tie_point_indices()
+d.get_computational_precision()

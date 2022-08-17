@@ -23,7 +23,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Data.nc_hdf5_chunksizes" href="cfdm.Data.nc_hdf5_chunksizes.html" />
-    <link rel="prev" title="cfdm.Data.source" href="cfdm.Data.source.html" />
+    <link rel="prev" title="cfdm.Data.data" href="../attribute/cfdm.Data.data.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.9.0.3</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.0.0</a></h1>
 
 
 
@@ -87,7 +87,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Data.html">cfdm.Data</a><ul>
-      <li>Previous: <a href="cfdm.Data.source.html" title="previous chapter">cfdm.Data.source</a></li>
+      <li>Previous: <a href="../attribute/cfdm.Data.data.html" title="previous chapter">cfdm.Data.data</a></li>
       <li>Next: <a href="cfdm.Data.nc_hdf5_chunksizes.html" title="next chapter">cfdm.Data.nc_hdf5_chunksizes</a></li>
   </ul></li>
   </ul></li>
@@ -127,7 +127,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.Data.nc_clear_hdf5_chunksizes<a class="headerlink" href="#cfdm-data-nc-clear-hdf5-chunksizes" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Data.nc_clear_hdf5_chunksizes">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">nc_clear_hdf5_chunksizes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.3/cfdm/mixin/netcdf.py#L2361-L2392"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.nc_clear_hdf5_chunksizes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">nc_clear_hdf5_chunksizes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.0/cfdm/mixin/netcdf.py#L2598-L2629"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data.nc_clear_hdf5_chunksizes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clear the HDF5 chunksizes for the data.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -154,7 +154,7 @@ HDF5.</p>
 </dl>
 </dd>
 </dl>
-<p><strong>Examples:</strong></p>
+<p><strong>Examples</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(1, 96, 73)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">nc_set_hdf5_chunksizes</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">73</span><span class="p">])</span>
@@ -179,7 +179,7 @@ HDF5.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-03-10.
+      &copy;2022, NCAS | Page built on 2022-08-17.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

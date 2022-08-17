@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.9.0.3</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.0.0</a></h1>
 
 
 
@@ -127,7 +127,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.Domain.construct<a class="headerlink" href="#cfdm-domain-construct" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Domain.construct">
-<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">construct</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">default=ValueError()</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.3/cfdm/mixin/fielddomain.py#L834-L910"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.construct" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">construct</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">default=ValueError()</em>, <em class="sig-param">key=False</em>, <em class="sig-param">item=False</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.0/cfdm/mixin/fielddomain.py#L1360-L1452"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a metadata construct.</p>
 <p>If zero or two or more constructs are selected then an
 exception is raised, or the <em>default</em> parameter is returned.</p>
@@ -136,7 +136,8 @@ exception is raised, or the <em>default</em> parameter is returned.</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="../attribute/cfdm.Domain.constructs.html#cfdm.Domain.constructs" title="cfdm.Domain.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a>, <a class="reference internal" href="cfdm.Domain.construct_item.html#cfdm.Domain.construct_item" title="cfdm.Domain.construct_item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_item</span></code></a>, <a class="reference internal" href="cfdm.Domain.construct_key.html#cfdm.Domain.construct_key" title="cfdm.Domain.construct_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_key</span></code></a></p>
+<p><a class="reference internal" href="../attribute/cfdm.Domain.constructs.html#cfdm.Domain.constructs" title="cfdm.Domain.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a>, <a class="reference internal" href="cfdm.Domain.del_construct.html#cfdm.Domain.del_construct" title="cfdm.Domain.del_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_construct</span></code></a>, <a class="reference internal" href="cfdm.Domain.get_construct.html#cfdm.Domain.get_construct" title="cfdm.Domain.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a>,
+<a class="reference internal" href="cfdm.Domain.has_construct.html#cfdm.Domain.has_construct" title="cfdm.Domain.has_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_construct</span></code></a>, <a class="reference internal" href="cfdm.Domain.set_construct.html#cfdm.Domain.set_construct" title="cfdm.Domain.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -160,6 +161,21 @@ is no unique construct.</p>
 <p>If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be
 raised instead.</p>
 </dd>
+<dt>key: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return the selected construct
+identifier. By default the construct itself is
+returned.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.9.1.0</p>
+</div>
+</dd>
+<dt>item: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return as a tuple the selected construct identifier
+and the construct itself. By default only the construct
+itself is returned. If <em>key</em> is True then <em>item</em> is
+ignored.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version (cfdm): </span>1.9.1.0</p>
+</div>
+</dd>
 <dt>filter_kwargs: optional</dt><dd><p>Keyword arguments as accepted by <a class="reference internal" href="cfdm.Constructs.filter.html#cfdm.Constructs.filter" title="cfdm.Constructs.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs.filter</span></code></a>
 that define additional construct selection
 criteria.</p>
@@ -170,10 +186,11 @@ criteria.</p>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The selected construct.</p>
+<dd class="field-even"><p>The selected construct, or its identifier if <em>key</em> is
+True, or a tuple of both if <em>item</em> is True.</p>
 </dd>
 </dl>
-<p><strong>Examples:</strong></p>
+<p><strong>Examples</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">example_domain</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -212,7 +229,7 @@ start with the letter ‘l’:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-03-10.
+      &copy;2022, NCAS | Page built on 2022-08-17.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

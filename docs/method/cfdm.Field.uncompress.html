@@ -23,7 +23,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Field.get_filenames" href="cfdm.Field.get_filenames.html" />
-    <link rel="prev" title="cfdm.Field.has_geometry" href="cfdm.Field.has_geometry.html" />
+    <link rel="prev" title="cfdm.Field.indices" href="cfdm.Field.indices.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.9.0.3</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.0.0</a></h1>
 
 
 
@@ -87,7 +87,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Field.html">cfdm.Field</a><ul>
-      <li>Previous: <a href="cfdm.Field.has_geometry.html" title="previous chapter">cfdm.Field.has_geometry</a></li>
+      <li>Previous: <a href="cfdm.Field.indices.html" title="previous chapter">cfdm.Field.indices</a></li>
       <li>Next: <a href="cfdm.Field.get_filenames.html" title="next chapter">cfdm.Field.get_filenames</a></li>
   </ul></li>
   </ul></li>
@@ -127,15 +127,15 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.Field.uncompress<a class="headerlink" href="#cfdm-field-uncompress" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.uncompress">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">uncompress</code><span class="sig-paren">(</span><em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.3/cfdm/field.py#L2193-L2261"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.uncompress" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">uncompress</code><span class="sig-paren">(</span><em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.0/cfdm/field.py#L2504-L2577"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.uncompress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Uncompress the field construct.</p>
 <p>Compression saves space by identifying and removing unwanted
 missing data. Such compression techniques store the data more
-efficiently and result in no precision loss.</p>
+efficiently and result in no precision loss. Whether or not
+the construct is compressed does not alter its functionality
+nor external appearance.</p>
 <p>The field construct data is uncompressed, along with any
 applicable metadata constructs.</p>
-<p>Whether or not the construct is compressed does not alter its
-functionality nor external appearance.</p>
 <p>A field construct that is already uncompressed will be returned
 uncompressed.</p>
 <p>The compression type can be discovered by the
@@ -179,7 +179,7 @@ operation was in-place.</p>
 </dl>
 </dd>
 </dl>
-<p><strong>Examples:</strong></p>
+<p><strong>Examples</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_compression_type</span><span class="p">()</span>
 <span class="go">&#39;ragged contiguous&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">uncompress</span><span class="p">()</span>
@@ -202,7 +202,7 @@ operation was in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-03-10.
+      &copy;2022, NCAS | Page built on 2022-08-17.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.9.0.3</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.0.0</a></h1>
 
 
 
@@ -127,8 +127,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.Index.nc_clear_sample_dimension_groups<a class="headerlink" href="#cfdm-index-nc-clear-sample-dimension-groups" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Index.nc_clear_sample_dimension_groups">
-<code class="sig-prename descclassname">Index.</code><code class="sig-name descname">nc_clear_sample_dimension_groups</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.3/cfdm/mixin/netcdf.py#L1217-L1268"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Index.nc_clear_sample_dimension_groups" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove the netCDF dimension group hierarchy.</p>
+<code class="sig-prename descclassname">Index.</code><code class="sig-name descname">nc_clear_sample_dimension_groups</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.0/cfdm/mixin/netcdf.py#L1454-L1505"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Index.nc_clear_sample_dimension_groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the netCDF sample dimension group hierarchy.</p>
 <p>The group hierarchy is defined by the netCDF name. Groups are
 delimited by <code class="docutils literal notranslate"><span class="pre">/</span></code> (slash) characters in the netCDF name. The
 groups are returned, in hierarchical order, as a sequence of
@@ -153,7 +153,7 @@ with no <code class="docutils literal notranslate"><span class="pre">/</span></c
 </dl>
 </dd>
 </dl>
-<p><strong>Examples:</strong></p>
+<p><strong>Examples</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_set_sample_dimension</span><span class="p">(</span><span class="s1">&#39;element&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_sample_dimension_groups</span><span class="p">()</span>
 <span class="go">()</span>
@@ -190,7 +190,7 @@ with no <code class="docutils literal notranslate"><span class="pre">/</span></c
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-03-10.
+      &copy;2022, NCAS | Page built on 2022-08-17.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

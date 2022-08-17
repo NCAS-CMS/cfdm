@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="#">cfdm 1.9.0.3</a></h1>
+<h1 class="logo"><a href="#">cfdm 1.10.0.0</a></h1>
 
 
 
@@ -121,7 +121,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <style> .small {font-size:small} </style><section id="introduction">
 <h2><strong>Introduction</strong><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
-<p>Version 1.9.0.3 for version 1.9 of the CF conventions.</p>
+<p>Version 1.10.0.0 for version 1.10 of the CF conventions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#functionality" id="id4"><strong>Functionality</strong></a></p></li>
@@ -195,8 +195,9 @@ hierarchical groups,</p></li>
 <li><p>create subspaces of field and domain constructs,</p></li>
 <li><p>incorporate, and create, metadata stored in external files, and</p></li>
 <li><p>read, write, and create data that have been compressed by convention
-(i.e. ragged or gathered arrays), whilst presenting a view of the
-data in its uncompressed form.</p></li>
+(i.e. ragged or gathered arrays, or coordinate arrays compressed by
+subsampling), whilst presenting a view of the data in its
+uncompressed form.</p></li>
 </ul>
 <p>Note that the cfdm package enables the representation and creation of
 CF field constructs, but it is largely <a class="reference internal" href="philosophy.html#cf-conventions"><span class="std std-ref">up to the user to use
@@ -205,7 +206,7 @@ them in a CF-compliant way</span></a>.</p>
 outside of a Python environment:</p>
 <div class="literal-block-wrapper docutils container" id="id3">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect a dataset from the command line.</em></span><a class="headerlink" href="#id3" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> cfdump file.nc
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>cfdump file.nc
 <span class="go">Field: air_temperature (ncvar%tas)</span>
 <span class="go">----------------------------------</span>
 <span class="go">Data            : air_temperature(time(12), latitude(64), longitude(128)) K</span>
@@ -237,18 +238,18 @@ consider including the reference:</p>
 Software, 5(54), 2717, <a class="reference external" href="https://doi.org/10.21105/joss.02717">https://doi.org/10.21105/joss.02717</a></p>
 </dd>
 </dl>
-<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@article</span><span class="p">{</span><span class="nl">Hassell2020</span><span class="p">,</span>
-  <span class="na">doi</span> <span class="p">=</span> <span class="s">{10.21105/joss.02717}</span><span class="p">,</span>
-  <span class="na">url</span> <span class="p">=</span> <span class="s">{https://doi.org/10.21105/joss.02717}</span><span class="p">,</span>
-  <span class="na">year</span> <span class="p">=</span> <span class="s">{2020}</span><span class="p">,</span>
-  <span class="na">publisher</span> <span class="p">=</span> <span class="s">{The Open Journal}</span><span class="p">,</span>
-  <span class="na">volume</span> <span class="p">=</span> <span class="s">{5}</span><span class="p">,</span>
-  <span class="na">number</span> <span class="p">=</span> <span class="s">{54}</span><span class="p">,</span>
-  <span class="na">pages</span> <span class="p">=</span> <span class="s">{2717}</span><span class="p">,</span>
-  <span class="na">author</span> <span class="p">=</span> <span class="s">{David Hassell and Sadie L. Bartholomew}</span><span class="p">,</span>
-  <span class="na">title</span> <span class="p">=</span> <span class="s">{cfdm: A Python reference implementation of the CF data model}</span><span class="p">,</span>
-  <span class="na">journal</span> <span class="p">=</span> <span class="s">{Journal of Open Source Software}</span>
-<span class="p">}</span>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@article</span><span class="p">{</span><span class="nl">Hassell2020</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="na">doi</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{10.21105/joss.02717}</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="na">url</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{https://doi.org/10.21105/joss.02717}</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="na">year</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{2020}</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="na">publisher</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{The Open Journal}</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="na">volume</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{5}</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="na">number</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{54}</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="na">pages</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{2717}</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="na">author</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{David Hassell and Sadie L. Bartholomew}</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="na">title</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{cfdm: A Python reference implementation of the CF data model}</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="na">journal</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Journal of Open Source Software}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 </section>
@@ -318,7 +319,7 @@ from
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-03-10.
+      &copy;2022, NCAS | Page built on 2022-08-17.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

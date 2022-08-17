@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.9.0.3</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.0.0</a></h1>
 
 
 
@@ -127,7 +127,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.Domain.creation_commands<a class="headerlink" href="#cfdm-domain-creation-commands" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Domain.creation_commands">
-<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">creation_commands</code><span class="sig-paren">(</span><em class="sig-param">representative_data=False</em>, <em class="sig-param">namespace=None</em>, <em class="sig-param">indent=0</em>, <em class="sig-param">string=True</em>, <em class="sig-param">name='domain'</em>, <em class="sig-param">data_name='data'</em>, <em class="sig-param">header=True</em>, <em class="sig-param">_domain=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.3/cfdm/domain.py#L413-L654"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.creation_commands" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">creation_commands</code><span class="sig-paren">(</span><em class="sig-param">representative_data=False</em>, <em class="sig-param">namespace=None</em>, <em class="sig-param">indent=0</em>, <em class="sig-param">string=True</em>, <em class="sig-param">name='domain'</em>, <em class="sig-param">data_name='data'</em>, <em class="sig-param">header=True</em>, <em class="sig-param">_domain=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.0/cfdm/domain.py#L413-L653"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.creation_commands" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the commands that would create the domain construct.</p>
 <p><strong>Construct keys</strong></p>
 <p>The <em>key</em> parameter of the output <a class="reference internal" href="cfdm.Domain.set_construct.html#cfdm.Domain.set_construct" title="cfdm.Domain.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a> commands is
@@ -144,7 +144,7 @@ returns a unique construct key for the construct being set.</p>
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="cfdm.Domain.set_construct.html#cfdm.Domain.set_construct" title="cfdm.Domain.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a>,
 <a class="reference internal" href="cfdm.Data.creation_commands.html#cfdm.Data.creation_commands" title="cfdm.Data.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.creation_commands</span></code></a>,
-<a class="reference internal" href="../function/cfdm.example_field.html#cfdm.example_field" title="cfdm.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.example_field</span></code></a></p>
+<a class="reference internal" href="../function/cfdm.example_domain.html#cfdm.example_domain" title="cfdm.example_domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.example_domain</span></code></a></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -178,8 +178,8 @@ False.</p>
 a string, with a new line inserted between each
 command.</p>
 </dd>
-<dt>header: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not output a comment describing the
-components.</p>
+<dt>header: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) output a comment describing the
+components. If False no such comment is returned.</p>
 </dd>
 </dl>
 </dd>
@@ -193,9 +193,8 @@ separate commands are returned as each element of a
 </dl>
 </dd>
 </dl>
-<p><strong>Examples:</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">domain</span>
+<p><strong>Examples</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">example_domain</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">creation_commands</span><span class="p">())</span>
 <span class="go">#</span>
 <span class="go"># domain:</span>
@@ -308,7 +307,7 @@ separate commands are returned as each element of a
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-03-10.
+      &copy;2022, NCAS | Page built on 2022-08-17.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

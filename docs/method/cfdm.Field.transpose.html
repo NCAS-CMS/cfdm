@@ -22,7 +22,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Field.data" href="../attribute/cfdm.Field.data.html" />
+    <link rel="next" title="cfdm.Field.array" href="../attribute/cfdm.Field.array.html" />
     <link rel="prev" title="cfdm.Field.squeeze" href="cfdm.Field.squeeze.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.9.0.3</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.0.0</a></h1>
 
 
 
@@ -88,7 +88,7 @@
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Field.html">cfdm.Field</a><ul>
       <li>Previous: <a href="cfdm.Field.squeeze.html" title="previous chapter">cfdm.Field.squeeze</a></li>
-      <li>Next: <a href="../attribute/cfdm.Field.data.html" title="next chapter">cfdm.Field.data</a></li>
+      <li>Next: <a href="../attribute/cfdm.Field.array.html" title="next chapter">cfdm.Field.array</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -127,7 +127,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.Field.transpose<a class="headerlink" href="#cfdm-field-transpose" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.transpose">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">transpose</code><span class="sig-paren">(</span><em class="sig-param">axes=None</em>, <em class="sig-param">constructs=False</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.3/cfdm/field.py#L2097-L2191"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.transpose" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">transpose</code><span class="sig-paren">(</span><em class="sig-param">axes=None</em>, <em class="sig-param">constructs=False</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.0/cfdm/field.py#L2408-L2502"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.transpose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Permute the axes of the data array.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
@@ -170,7 +170,7 @@ operation was in-place then <a class="reference external" href="https://docs.pyt
 </dl>
 </dd>
 </dl>
-<p><strong>Examples:</strong></p>
+<p><strong>Examples</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(19, 73, 96)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
@@ -195,7 +195,7 @@ operation was in-place then <a class="reference external" href="https://docs.pyt
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-03-10.
+      &copy;2022, NCAS | Page built on 2022-08-17.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

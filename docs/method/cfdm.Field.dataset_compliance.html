@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.9.0.3</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.0.0</a></h1>
 
 
 
@@ -127,7 +127,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.Field.dataset_compliance<a class="headerlink" href="#cfdm-field-dataset-compliance" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.dataset_compliance">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">dataset_compliance</code><span class="sig-paren">(</span><em class="sig-param">display=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.9.0.3/cfdm/mixin/netcdf.py#L3299-L3378"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.dataset_compliance" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">dataset_compliance</code><span class="sig-paren">(</span><em class="sig-param">display=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.0/cfdm/mixin/netcdf.py#L3536-L3615"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.dataset_compliance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the dataset compliance report.</p>
 <p>A report of problems encountered whilst reading the construct
 from a dataset.</p>
@@ -169,7 +169,7 @@ returned as a dictionary.</p>
 </dl>
 </dd>
 </dl>
-<p><strong>Examples:</strong></p>
+<p><strong>Examples</strong></p>
 <p>If no problems were encountered, an empty dictionary is returned:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;example.nc&#39;</span><span class="p">)</span>
@@ -191,7 +191,7 @@ returned as a dictionary.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-03-10.
+      &copy;2022, NCAS | Page built on 2022-08-17.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
