@@ -1,7 +1,7 @@
 Version 1.10.0.0
 ----------------
 
-**2022-08-16**
+**2022-08-17**
 
 * New method: `cfdm.Field.auxiliary_coordinate`
 * New method: `cfdm.Field.cell_measure`
