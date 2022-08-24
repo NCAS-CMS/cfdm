@@ -300,7 +300,7 @@ class Field(
         if 0 in new_data.shape:
             raise IndexError(
                 f"Indices {indices!r} result in a subspaced shape of "
-                f"{new_data.shape}, but can't create a subspace of a "
+                f"{new_data.shape}, but can't create a subspace of "
                 f"{self.__class__.__name__} that has a size 0 axis"
             )
 

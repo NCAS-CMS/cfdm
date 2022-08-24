@@ -74,7 +74,7 @@ class PropertiesData(Properties):
         if 0 in new.shape:
             raise IndexError(
                 f"Indices {indices!r} result in a subspaced shape of "
-                f"{new.shape}, but can't create a subspace of a "
+                f"{new.shape}, but can't create a subspace of "
                 f"{self.__class__.__name__} that has a size 0 axis"
             )
 
