@@ -152,6 +152,10 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(c.data.shape, (4,))
         self.assertEqual(b.data.shape, (4, 2))
 
+        # Indices result in a subspaced shape that has a size 0 axis
+        with self.assertRaises(IndexError):
+            f[..., [False] * f.shape[-1]]
+
     #    def test_Field___setitem__(self):
     #        f = self.f.squeeze()
     #
