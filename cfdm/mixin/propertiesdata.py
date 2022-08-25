@@ -71,6 +71,13 @@ class PropertiesData(Properties):
         if data is not None:
             new.set_data(data[indices], copy=False)
 
+        if 0 in new.shape:
+            raise IndexError(
+                f"Indices {indices!r} result in a subspaced shape of "
+                f"{new.shape}, but can't create a subspace of "
+                f"{self.__class__.__name__} that has a size 0 axis"
+            )
+
         return new
 
     def __str__(self):

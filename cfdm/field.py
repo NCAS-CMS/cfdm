@@ -297,6 +297,13 @@ class Field(
         # ------------------------------------------------------------
         new_data = data[tuple(indices)]
 
+        if 0 in new_data.shape:
+            raise IndexError(
+                f"Indices {indices!r} result in a subspaced shape of "
+                f"{new_data.shape}, but can't create a subspace of "
+                f"{self.__class__.__name__} that has a size 0 axis"
+            )
+
         # Replace domain axes
         domain_axes = new.domain_axes(todict=True)
         for key, size in zip(data_axes, new_data.shape):

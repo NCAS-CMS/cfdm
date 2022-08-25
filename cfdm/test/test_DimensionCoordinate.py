@@ -125,6 +125,15 @@ class DimensionCoordinateTest(unittest.TestCase):
         )
         self.assertEqual(t.datetime_array, t.data.datetime_array)
 
+    def test_DimensiconCoordinate__getitem__(self):
+        """Test the `DimensionCoordinate.__getitem__` method."""
+        dim = self.dim
+        self.assertTrue((dim[1:3].array == dim.array[1:3]).all())
+
+        # Indices result in a subspaced shape that has a size 0 axis
+        with self.assertRaises(IndexError):
+            dim[[False] * dim.size]
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
