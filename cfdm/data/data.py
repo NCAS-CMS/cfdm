@@ -506,13 +506,13 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         mask = [False, False, False]
 
+        if isreftime and first is np.ma.masked:
+            first = 0
+            mask[0] = True
+
         if size == 1:
             if isreftime:
                 # Convert reference time to date-time
-                if first is numpy.ma.masked:
-                    first = 0
-                    mask[0] = True
-
                 try:
                     first = type(self)(
                         numpy.ma.array(first, mask=mask[0]), units, calendar
