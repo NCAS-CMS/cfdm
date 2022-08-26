@@ -68,12 +68,6 @@ class DataTest(unittest.TestCase):
             _ = repr(d)
             _ = str(d)
 
-        # Test when the data contains date-times with the first
-        # element masked
-        dt = numpy.ma.array([10, 20], mask=[True, False])
-        d = cfdm.Data(dt, units="days since 2000-01-01")
-        self.assertTrue(str(d) == "[--, 2000-01-21 00:00:00]")
-
     #    def test_Data__getitem__(self):
     def test_Data__setitem__(self):
         """Test the assignment of data items on Data."""
