@@ -1,3 +1,12 @@
+Version 1.10.0.1
+----------------
+
+**2022-??-??**
+
+* Fixed bug that caused a failure when printing date-time data with
+  the first element masked
+  (https://github.com/NCAS-CMS/cfdm/issues/211)
+
 Version 1.10.0.0
 ----------------
 
