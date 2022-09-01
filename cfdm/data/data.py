@@ -768,7 +768,9 @@ class Data(Container, NetCDFHDF5, core.Data):
     def _set_subspace(cls, array, indices, value):
         """Set a subspace of the data array defined by indices."""
         axes_with_list_indices = [
-            i for i, x in enumerate(indices) if not isinstance(x, slice)
+            i
+            for i, x in enumerate(indices)
+            if isinstance(x, list) or getattr(x, "shape", False)
         ]
 
         if len(axes_with_list_indices) < 2:
