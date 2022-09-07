@@ -1939,7 +1939,13 @@ class CFDMImplementation(Implementation):
         return cls()
 
     def initialise_Data(
-        self, array=None, units=None, calendar=None, copy=True, **kwargs
+        self,
+        array=None,
+        units=None,
+        calendar=None,
+        filenames=None,
+        copy=True,
+        **kwargs,
     ):
         """Return a data instance.
 
@@ -1950,6 +1956,13 @@ class CFDMImplementation(Implementation):
             units: optional
 
             calendar: optional
+
+            filenames: (sequence of) `str`, optional
+                Set the names of any files that contain (parts of)
+                *array*. If `None` (the default) then it is assumed
+                that there are no files involved.
+
+                .. versionadded:: (cfdm) 1.10.0.1
 
             copy: `bool`, optional
 
@@ -1962,7 +1975,12 @@ class CFDMImplementation(Implementation):
         """
         cls = self.get_class("Data")
         return cls(
-            array=array, units=units, calendar=calendar, copy=copy, **kwargs
+            array=array,
+            units=units,
+            calendar=calendar,
+            filenames=filenames,
+            copy=copy,
+            **kwargs,
         )
 
     def initialise_Datum(self, parameters=None):

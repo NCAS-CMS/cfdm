@@ -884,6 +884,30 @@ class PropertiesData(Properties):
 
         return v
 
+    def original_filenames(self):
+        """Return the names of files that contain the original data.
+
+        The original files are those that contain some or all of the
+        data when it was first instantiated.
+
+        {{original filenames}}
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        .. seealso:: `get_filenames`
+
+        :Returns:
+
+            `tuple`
+                {{Returns original filenames}}
+
+        """
+        data = self.get_data(None, _units=False, _fill_value=False)
+        if data is not None:
+            return data.original_filenames()
+
+        return ()
+
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
         """Remove size one axes from the data array.

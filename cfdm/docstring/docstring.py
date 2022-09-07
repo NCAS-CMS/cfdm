@@ -87,6 +87,22 @@ _docstring_substitution_definitions = {
     # unique construct
     "{{unique construct}}": """If zero or two or more constructs are selected then an
         exception is raised, or the *default* parameter is returned.""",
+    # original filenames
+    "{{original filenames}}": """If the `{{class}}` is the result of combining multiple
+        objects that also contain data, then the returned files will
+        be the collection of original files from all contributing
+        objects. Therefore, the returned original files are always
+        necessary (but perhaps not sufficient) to recreate the data.
+
+        The `{{package}}.read` function automatically records these
+        orginal file names on data all that it creates, but they may
+        also be set manually edited using the
+        `Data.original_filenames` method on contained individual
+        `Data` objects.
+
+        If there is any ancillary data information, such as a count
+        variable required for compressed data, then its original files
+        are also included in the returned values.""",
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentataion)
     # ----------------------------------------------------------------
@@ -372,4 +388,9 @@ _docstring_substitution_definitions = {
     "{{shapes auto}}": """If ``'auto'`` then the shapes along non-compressed
                 dimensions are not created, those dimensions' elements
                 being replaced with ``'auto'`` instead.""",
+    # Returns original filenames
+    "{{Returns original filenames}}": """The original file names in normalised absolute
+                form. If there are no original files (because the data
+                was initialised from memory) then an empty `tuple`
+                will be returned.""",
 }

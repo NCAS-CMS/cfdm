@@ -37,6 +37,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         copy=True,
         dtype=None,
         mask=None,
+        filenames=None,
         _use_array=True,
         **kwargs,
     ):
@@ -132,6 +133,12 @@ class Data(Container, NetCDFHDF5, core.Data):
 
             {{deep copy}}
 
+            filenames: (sequence of) `str`, optional
+                Record the file names that contain some or all of the
+                data at the time of `Data` instance creation.
+
+                 .. versionadded:: (cfdm) 1.10.0.1
+
             kwargs: ignored
                 Not used. Present to facilitate subclassing.
 
@@ -164,7 +171,18 @@ class Data(Container, NetCDFHDF5, core.Data):
             _use_array=_use_array,
         )
 
+        # Initialise the netCDF components
         self._initialise_netcdf(source)
+
+        # Initialise the original file names component
+        if source is not None:
+            try:
+                filenames = source._get_component("original_filenames", None)
+            except AttributeError:
+                filenames = None
+
+        if filenames:
+            self.original_filenames(define=filenames)
 
     def __array__(self, *dtype):
         """The numpy array interface.
@@ -1901,6 +1919,160 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         return out
 
+    def original_filenames(self, define=None, update=None, clear=False):
+        """Return the names of files that contain the original data.
+
+        The original files are those that contain some or all of the
+        data when it was first instantiated.
+
+        If the data is the result of combining multiple objects that
+        also contain data, then the returned files will be the
+        collection of original files from all contributing
+        objects. Therefore, the returned original files are always
+        necessary (but perhaps not sufficient) to recreate the data.
+
+        If there is any ancillary data information, such as a count
+        variable required for compressed data, then its original files
+        are also included in the returned values.
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        .. seealso:: `get_filenames`
+
+        :Parameters:
+
+            define: (sequence of) `str`, optional
+                Set these original file names, removing any already
+                stored.
+
+            update: (sequence of) `str`, optional
+                Add these original file names to the those already
+                stored.
+
+            clear: `bool` optional
+                If True then remove any stored original file
+                names. This will also clear original file names from
+                any ancillary data information, such as a count
+                variable.
+
+        :Returns:
+
+            `tuple` or `None`
+                {{Returns original filenames}}
+
+                If any of the *define*, *update* or *clear* parameters
+                are set then `None` is returned.
+
+        **Examples*
+
+        >>> d = {{package}}.{{class}}(9)
+        >>> d.original_filenames()
+        ()
+        >>> d.original_filenames(define="file1.nc")
+        >>> d.original_filenames()
+        ('/data/user/file1.nc',)
+        >>> d.original_filenames(update=["file1.nc"])
+        >>> d.original_filenames()
+        ('/data/user/file1.nc',)
+        >>> d.original_filenames(update="file2.nc")
+        >>> d.original_filenames()
+        ('/data/user/file1.nc', '/data/user/file2.nc')
+        >>> d.original_filenames(define="file3.nc")
+        >>> d.original_filenames()
+        ('/data/user/file3.nc',)
+        >>> d.original_filenames(clear=True)
+        >>> d.original_filenames()
+        ()
+
+        >>> d = {{package}}.{{class}}(9, filenames=["file1.nc", "file2.nc"])
+        >>> d.original_filenames()
+        ('/data/user/file1.nc', '/data/user/file2.nc',)
+
+        """
+        filenames = None
+
+        if define:
+            if isinstance(define, str):
+                define = (define,)
+
+            filenames = define
+
+        if update:
+            if define is not None:
+                raise ValueError(
+                    "Can't set the 'define' and 'update' parmaeters "
+                    "at the same time"
+                )
+
+            if define is not None:
+                raise ValueError("")
+
+            if filenames is None:
+                filenames = self._get_component("original_filenames", ())
+            else:
+                filenames = tuple(filenames)
+
+            if isinstance(update, str):
+                filenames += (update,)
+            else:
+                filenames += tuple(update)
+
+        if filenames:
+            if clear:
+                raise ValueError(
+                    "Can't set the 'clear' parameter with with of the "
+                    "'define' and 'update' parameters"
+                )
+
+            filenames = tuple(abspath(name) for name in filenames)
+            if len(filenames) > 1:
+                filenames = tuple(set(filenames))
+
+            self._set_component("original_filenames", filenames, copy=False)
+            return
+
+        # Still here? Then find compression ancillary data variables
+        ancils = []
+        compression = self.get_compression_type()
+        if compression:
+            if compression == "gathered":
+                a = self.get_list(None)
+                if a is not None:
+                    ancils.append(a)
+            elif compression == "subsampled":
+                ancils.extend(self.get_tie_point_indices().values())
+                ancils.extend(self.get_parameters().values())
+                ancils.extend(self.get_dependent_tie_points().values())
+            else:
+                if compression in (
+                    "ragged contiguous",
+                    "ragged indexed contiguous",
+                ):
+                    a = self.get_count(None)
+                    if a is not None:
+                        ancils.append(a)
+
+                if compression in (
+                    "ragged indexed",
+                    "ragged indexed contiguous",
+                ):
+                    a = self.get_index(None)
+                    if a is not None:
+                        ancils.append(a)
+
+        if clear:
+            self._del_component("original_filenames", None)
+            for a in ancils:
+                a.original_filenames(clear=True)
+
+            return
+
+        old = self._get_component("original_filenames", ())
+        for a in ancils:
+            old += a.original_filenames()
+
+        return tuple(set(old))
+
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
         """Remove size 1 axes from the data.
@@ -2404,6 +2576,8 @@ class Data(Container, NetCDFHDF5, core.Data):
 
     def get_filenames(self):
         """Return the name of the file containing the data array.
+
+        .. seealso:: `original_filenames`
 
         :Returns:
 

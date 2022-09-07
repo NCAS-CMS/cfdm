@@ -886,6 +886,14 @@ class read_writeTest(unittest.TestCase):
             np.allclose(rlon, olon.data.array, atol=2.2e-05, rtol=0)
         )
 
+    def test_read_original_filenames(self):
+        """Test the setting of original file names."""
+        f = cfdm.read(self.filename)[0]
+        self.assertTrue(len(f.data.original_filenames()), 1)
+
+        x = f.dimension_coordinate("grid_longitude")
+        self.assertTrue(len(x.data.original_filenames()), 1)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

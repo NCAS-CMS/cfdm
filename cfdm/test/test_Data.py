@@ -589,6 +589,57 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f"{d:.3f}"
 
+    def test_Data_orginal_filenames(self):
+        """Test the `original_filenames` Data method."""
+        d = cfdm.Data(9, "metres")
+        self.assertEqual(d.original_filenames(), ())
+
+        d.original_filenames(define="file1.nc")
+        self.assertEqual(len(d.original_filenames()), 1)
+
+        d.original_filenames(update=["file1.nc"])
+        self.assertEqual(len(d.original_filenames()), 1)
+
+        d.original_filenames(update="file2.nc")
+        self.assertEqual(len(d.original_filenames()), 2)
+
+        d.original_filenames(update=["file1.nc", "file2.nc"])
+        self.assertEqual(len(d.original_filenames()), 2)
+
+        d.original_filenames(define="file3.nc")
+        self.assertEqual(len(d.original_filenames()), 1)
+
+        d.original_filenames(clear=True)
+        self.assertEqual(d.original_filenames(), ())
+
+        d.original_filenames(update=["file1.nc", "file2.nc"])
+        self.assertEqual(len(d.original_filenames()), 2)
+
+        d = cfdm.Data(9, filenames=None)
+        self.assertEqual(d.original_filenames(), ())
+
+        d = cfdm.Data(9, filenames=[])
+        self.assertEqual(d.original_filenames(), ())
+
+        d = cfdm.Data(9, filenames="file1.nc")
+        self.assertEqual(len(d.original_filenames()), 1)
+
+        d = cfdm.Data(9, filenames=["file1.nc", "file2.nc"])
+        self.assertEqual(len(d.original_filenames()), 2)
+
+        d = cfdm.Data(9, filenames=["file1.nc", "file1.nc", "file2.nc"])
+        self.assertEqual(len(d.original_filenames()), 2)
+
+        # Check illegal parameter combinations
+        with self.assertRaises(ValueError):
+            d.original_filenames(define="file1.nc", update="file2.nc")
+
+        with self.assertRaises(ValueError):
+            d.original_filenames(define="file4.nc", clear=True)
+
+        with self.assertRaises(ValueError):
+            d.original_filenames(update="file1.nc", clear=True)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

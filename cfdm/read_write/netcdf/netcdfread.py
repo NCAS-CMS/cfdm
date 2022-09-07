@@ -110,11 +110,11 @@ class NetCDFRead(IORead):
         canonical name to the coordinates to which it applies. The
         coordinates are defined by their standard names.
 
-        A coordinate reference canonical name is either the value of the
-        grid_mapping_name attribute of a grid mapping variable (e.g.
-        'lambert_azimuthal_equal_area'), or the standard name of a
-        vertical coordinate variable with a formula_terms attribute
-        (e.g. ocean_sigma_coordinate').
+        A coordinate reference canonical name is either the value of
+        the grid_mapping_name attribute of a grid mapping variable
+        (e.g.  'lambert_azimuthal_equal_area'), or the standard name
+        of a vertical coordinate variable with a formula_terms
+        attribute (e.g. 'ocean_sigma_coordinate').
 
         """
         return {
@@ -5334,6 +5334,8 @@ class NetCDFRead(IORead):
         if array is None:
             return None
 
+        filename = array.get_filename()
+
         units = g["variable_attributes"][ncvar].get("units", None)
         calendar = g["variable_attributes"][ncvar].get("calendar", None)
 
@@ -5564,7 +5566,11 @@ class NetCDFRead(IORead):
                 )
 
         return self._create_Data(
-            array, units=units, calendar=calendar, ncvar=ncvar
+            array,
+            units=units,
+            calendar=calendar,
+            ncvar=ncvar,
+            filenames=filename,
         )
 
     def _create_domain_axis(self, size, ncdim=None):
@@ -6549,7 +6555,13 @@ class NetCDFRead(IORead):
         )
 
     def _create_Data(
-        self, array=None, units=None, calendar=None, ncvar=None, **kwargs
+        self,
+        array=None,
+        units=None,
+        calendar=None,
+        ncvar=None,
+        filenames=None,
+        **kwargs,
     ):
         """Create a Data object.
 
@@ -6557,12 +6569,33 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            ncvar: `str`
-                The netCDF variable from which to get units and calendar.
+            array:
+
+            units:
+
+            calendar:
+
+            ncvar: `str`, optional
+                Not used here, but frequently set in calls. Leaving
+                here for now as no harm appears to be going on ...
+
+            filenames: (sequence of) `str`, optional
+                Set the names of any files that contain (parts of)
+                *array*. If `None` (the default) then it is assumed
+                that there are no files involved.
+
+                .. versionadded:: (cfdm) 1.10.0.1
+
+            kwargs: optional
 
         """
         data = self.implementation.initialise_Data(
-            array=array, units=units, calendar=calendar, copy=False, **kwargs
+            array=array,
+            units=units,
+            calendar=calendar,
+            filenames=filenames,
+            copy=False,
+            **kwargs,
         )
 
         return data

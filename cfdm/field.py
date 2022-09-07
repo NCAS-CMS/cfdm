@@ -2348,6 +2348,34 @@ class Field(
 
         return f
 
+    def original_filenames(self):
+        """Return the names of files that contain the original data.
+
+        The original files are those that contain some or all of the
+        data when it was first instantiated.
+
+        The original file names of any metadata constructs are also
+        included.
+
+        {{original filenames}}
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        .. seealso:: `get_filenames`
+
+        :Returns:
+
+            `tuple`
+                {{Returns original filenames}}
+
+        """
+        out = super().original_filenames()
+
+        for c in self.constructs.filter_by_data(todict=True).values():
+            out += c.original_filenames()
+
+        return tuple(set(out))
+
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
         """Remove size one axes from the data.
