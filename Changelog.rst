@@ -3,6 +3,10 @@ Version 1.10.0.1
 
 **2022-??-??**
 
+* Record the names of files that contain the original data
+  (https://github.com/NCAS-CMS/cfdm/issues/???)
+* New method: `cfdm.Field.original_filenames`
+* New method: `cfdm.Data.original_filenames`
 * Fixed bug that caused a failure when printing date-time data with
   the first element masked
   (https://github.com/NCAS-CMS/cfdm/issues/211)
