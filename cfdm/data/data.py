@@ -176,12 +176,20 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         # Initialise the original file names component
         if source is not None:
+            # Note: Getting and setting the component directly (as
+            #       oposed to using `original_filnames` on 'source'
+            #       and 'self') to improve performance when
+            #       `self.copy` is called.
             try:
                 filenames = source._get_component("original_filenames", None)
             except AttributeError:
-                filenames = None
-
-        if filenames:
+                pass
+            else:
+                if filenames:
+                    self._set_component(
+                        "original_filenames", filenames, copy=False
+                    )
+        elif filenames is not None:
             self.original_filenames(define=filenames)
 
     def __array__(self, *dtype):
@@ -1925,15 +1933,17 @@ class Data(Container, NetCDFHDF5, core.Data):
         The original files are those that contain some or all of the
         data when it was first instantiated.
 
-        If the data is the result of combining multiple objects that
-        also contain data, then the returned files will be the
-        collection of original files from all contributing
-        objects. Therefore, the returned original files are always
-        necessary (but perhaps not sufficient) to recreate the data.
+        The original files are necessary (but perhaps not sufficient)
+        to recreate the data, should the need arise.
 
-        If there is any ancillary data information, such as a count
-        variable required for compressed data, then its original files
-        are also included in the returned values.
+        If the data was produced by combining other objects that also
+        store their original file names, then the returned files will
+        be the collection of original files from all contributing
+        sources.
+
+        If there are any ancillary data information, such as a count
+        variable required for compressed data, then their original
+        files are also included in the returned values.
 
         .. versionadded:: (cfdm) 1.10.0.1
 
@@ -1949,11 +1959,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                 Add these original file names to the those already
                 stored.
 
-            clear: `bool` optional
-                If True then remove any stored original file
-                names. This will also clear original file names from
-                any ancillary data information, such as a count
-                variable.
+            {{clear: `bool` optional}}
 
         :Returns:
 
@@ -1992,46 +1998,49 @@ class Data(Container, NetCDFHDF5, core.Data):
         filenames = None
 
         if define:
+            # Replace the existing collection of original file names
             if isinstance(define, str):
                 define = (define,)
 
-            filenames = define
+            filenames = tuple(abspath(name) for name in define)
 
         if update:
+            # Add new original file names to the existing collection
             if define is not None:
                 raise ValueError(
-                    "Can't set the 'define' and 'update' parmaeters "
+                    "Can't set the 'define' and 'update' parameters "
                     "at the same time"
                 )
 
-            if define is not None:
-                raise ValueError("")
-
-            if filenames is None:
-                filenames = self._get_component("original_filenames", ())
-            else:
-                filenames = tuple(filenames)
-
+            filenames = self._get_component("original_filenames", ())
             if isinstance(update, str):
-                filenames += (update,)
-            else:
-                filenames += tuple(update)
+                update = (update,)
+
+            filenames += tuple(abspath(name) for name in update)
 
         if filenames:
-            if clear:
-                raise ValueError(
-                    "Can't set the 'clear' parameter with with of the "
-                    "'define' and 'update' parameters"
-                )
-
-            filenames = tuple(abspath(name) for name in filenames)
             if len(filenames) > 1:
                 filenames = tuple(set(filenames))
 
             self._set_component("original_filenames", filenames, copy=False)
+
+        if define is not None or update is not None:
+            if clear:
+                raise ValueError(
+                    "Can't set the 'clear' parameter with either of the "
+                    "'define' and 'update' parameters"
+                )
+
+            # Return None, having potentially changed the file names
             return
 
-        # Still here? Then find compression ancillary data variables
+        # Still here? Then return the existing original file names
+        if clear:
+            old = self._del_component("original_filenames", ())
+        else:
+            old = self._get_component("original_filenames", ())
+
+        # Find any compression ancillary data variables
         ancils = []
         compression = self.get_compression_type()
         if compression:
@@ -2060,18 +2069,16 @@ class Data(Container, NetCDFHDF5, core.Data):
                     if a is not None:
                         ancils.append(a)
 
-        if clear:
-            self._del_component("original_filenames", None)
-            for a in ancils:
-                a.original_filenames(clear=True)
+            if ancils:
+                # Include original file names from ancillary variables
+                for a in ancils:
+                    old += a.original_filenames(clear=clear)
 
-            return
+                if len(old) > 1:
+                    old = tuple(set(old))
 
-        old = self._get_component("original_filenames", ())
-        for a in ancils:
-            old += a.original_filenames()
-
-        return tuple(set(old))
+        # Return the old file names
+        return old
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):

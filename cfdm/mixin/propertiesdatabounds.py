@@ -1536,20 +1536,27 @@ class PropertiesDataBounds(PropertiesData):
 
         return c
 
-    def original_filenames(self):
+    def original_filenames(self, clear=False):
         """Return the names of files that contain the original data.
 
         The original files are those that contain some or all of the
         data when it was first instantiated.
 
-        The original file names of any bounds and interior ring arrays
+        The original file names of any bounds and interior ring data
         are also included.
 
         {{original filenames}}
 
         .. versionadded:: (cfdm) 1.10.0.1
 
-        .. seealso:: `get_filenames`
+        .. seealso:: `get_filenames`, `{{package}}.Data.original_filenames`
+
+        :Parameters:
+
+            {{clear: `bool` optional}}
+
+                The original file names of any bounds and interior
+                ring data are also removed.
 
         :Returns:
 
@@ -1557,15 +1564,15 @@ class PropertiesDataBounds(PropertiesData):
                 {{Returns original filenames}}
 
         """
-        out = super().original_filenames()
+        out = super().original_filenames(clear=clear)
 
         bounds = self.get_bounds_data(None, _units=False, _fill_value=False)
         if bounds is not None:
-            out += bounds.original_filenames()
+            out += bounds.original_filenames(clear=clear)
 
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
-            out += interior_ring.original_filenames()
+            out += interior_ring.original_filenames(clear=clear)
 
         return tuple(set(out))
 

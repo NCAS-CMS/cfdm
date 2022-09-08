@@ -2348,7 +2348,7 @@ class Field(
 
         return f
 
-    def original_filenames(self):
+    def original_filenames(self, clear=False):
         """Return the names of files that contain the original data.
 
         The original files are those that contain some or all of the
@@ -2361,7 +2361,14 @@ class Field(
 
         .. versionadded:: (cfdm) 1.10.0.1
 
-        .. seealso:: `get_filenames`
+        .. seealso:: `get_filenames`, `{{package}}.Data.original_filenames`
+
+        :Parameters:
+
+            {{clear: `bool` optional}}
+
+                The original file names of any metadata constructs are
+                also removed.
 
         :Returns:
 
@@ -2369,10 +2376,10 @@ class Field(
                 {{Returns original filenames}}
 
         """
-        out = super().original_filenames()
+        out = super().original_filenames(clear=clear)
 
         for c in self.constructs.filter_by_data(todict=True).values():
-            out += c.original_filenames()
+            out += c.original_filenames(clear=clear)
 
         return tuple(set(out))
 

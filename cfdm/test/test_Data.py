@@ -630,15 +630,19 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data(9, filenames=["file1.nc", "file1.nc", "file2.nc"])
         self.assertEqual(len(d.original_filenames()), 2)
 
+        # Check source
+        e = cfdm.Data(source=d)
+        self.assertEqual(e.original_filenames(), d.original_filenames())
+
         # Check illegal parameter combinations
         with self.assertRaises(ValueError):
             d.original_filenames(define="file1.nc", update="file2.nc")
 
         with self.assertRaises(ValueError):
-            d.original_filenames(define="file4.nc", clear=True)
+            d.original_filenames(define="file3.nc", clear=True)
 
         with self.assertRaises(ValueError):
-            d.original_filenames(update="file1.nc", clear=True)
+            d.original_filenames(update="file4.nc", clear=True)
 
 
 if __name__ == "__main__":

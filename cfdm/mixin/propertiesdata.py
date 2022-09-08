@@ -884,7 +884,7 @@ class PropertiesData(Properties):
 
         return v
 
-    def original_filenames(self):
+    def original_filenames(self, clear=False):
         """Return the names of files that contain the original data.
 
         The original files are those that contain some or all of the
@@ -894,7 +894,11 @@ class PropertiesData(Properties):
 
         .. versionadded:: (cfdm) 1.10.0.1
 
-        .. seealso:: `get_filenames`
+        .. seealso:: `get_filenames`, `{{package}}.Data.original_filenames`
+
+        :Parameters:
+
+            {{clear: `bool` optional}}
 
         :Returns:
 
@@ -904,7 +908,7 @@ class PropertiesData(Properties):
         """
         data = self.get_data(None, _units=False, _fill_value=False)
         if data is not None:
-            return data.original_filenames()
+            return data.original_filenames(clear=clear)
 
         return ()
 

@@ -889,10 +889,25 @@ class read_writeTest(unittest.TestCase):
     def test_read_original_filenames(self):
         """Test the setting of original file names."""
         f = cfdm.read(self.filename)[0]
-        self.assertTrue(len(f.data.original_filenames()), 1)
-
         x = f.dimension_coordinate("grid_longitude")
-        self.assertTrue(len(x.data.original_filenames()), 1)
+
+        self.assertEqual(len(f.original_filenames()), 1)
+        self.assertEqual(len(x.original_filenames()), 1)
+
+        self.assertEqual(len(x.original_filenames(clear=True)), 1)
+        self.assertEqual(x.original_filenames(), ())
+
+        self.assertEqual(len(f.original_filenames(clear=True)), 1)
+        self.assertEqual(f.original_filenames(), ())
+
+        # Two original files
+        parent_file = "parent.nc"
+        external_file = "external.nc"
+        f = cfdm.read(parent_file, external=external_file)[0]
+        self.assertEqual(
+            set(f.original_filenames()),
+            set((cfdm.abspath(parent_file), cfdm.abspath(external_file))),
+        )
 
 
 if __name__ == "__main__":
