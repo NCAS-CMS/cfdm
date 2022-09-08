@@ -820,7 +820,7 @@ class Domain(
                 ``d.construct(*identity, **filter_kwargs)``. See
                 `construct` for details.
 
-                .. versionadded:: (cfdm) 1.9.1.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
             default: optional
                 Return the value of the *default* parameter if the
@@ -830,7 +830,7 @@ class Domain(
 
             {{filter_kwargs: optional}}
 
-                .. versionadded:: (cfdm) 1.9.1.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 
