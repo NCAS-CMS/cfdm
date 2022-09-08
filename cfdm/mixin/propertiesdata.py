@@ -194,7 +194,7 @@ class PropertiesData(Properties):
         Changing the returned numpy array does not change the data
         array.
 
-        .. versionadded:: 1.9.1.0
+        .. versionadded:: 1.10.0.0
 
         .. seealso:: `data`, `datetime_array`
 
@@ -231,7 +231,7 @@ class PropertiesData(Properties):
         If the calendar has not been set then the CF default calendar
         will be used and the units will be updated accordingly.
 
-        .. versionadded:: 1.9.1.0
+        .. versionadded:: 1.10.0.0
 
         .. seealso:: `array`, `data`
 

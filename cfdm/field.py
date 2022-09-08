@@ -424,7 +424,7 @@ class Field(
 
         {{unique construct}}
 
-        .. versionadded:: (cfdm) 1.9.1.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `construct`, `field_ancillaries`
 
@@ -540,7 +540,7 @@ class Field(
 
         {{unique construct}}
 
-        .. versionadded:: (cfdm) 1.9.1.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `construct`, `cell_methods`
 
@@ -1745,7 +1745,7 @@ class Field(
                 the domain of the field construct's data are
                 returned.
 
-                .. versionadded:: (cfdm) 1.9.1.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
             default: optional
                 Return the value of the *default* parameter if the data
@@ -1755,7 +1755,7 @@ class Field(
 
             {{filter_kwargs: optional}}
 
-                .. versionadded:: (cfdm) 1.9.1.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 
@@ -1911,7 +1911,7 @@ class Field(
         * Subspace criteria may be provided for size 1 domain axes that
           are not spanned by the field construct's data.
 
-        .. versionadded:: 1.9.1.0
+        .. versionadded:: 1.10.0.0
 
         .. seealso:: `__getitem__`, `__setitem__`
 

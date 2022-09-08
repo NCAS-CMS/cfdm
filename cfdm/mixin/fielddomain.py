@@ -46,7 +46,7 @@ class FieldDomain:
 
         {{unique construct}}
 
-        .. versionadded:: (cfdm) 1.9.1.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         :Parameters:
 
@@ -240,11 +240,11 @@ class FieldDomain:
 
             {{key: `bool`, optional}}
 
-                .. versionadded:: (cfdm) 1.9.1.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
             {{item: `bool`, optional}}
 
-                .. versionadded:: (cfdm) 1.9.1.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
             default: optional
                 If *construct* is True and there is no unique construct
@@ -418,7 +418,7 @@ class FieldDomain:
 
         {{unique construct}}
 
-        .. versionadded:: (cfdm) 1.9.1.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `construct`, `auxiliary_coordinates`
 
@@ -542,7 +542,7 @@ class FieldDomain:
 
         {{unique construct}}
 
-        .. versionadded:: (cfdm) 1.9.1.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `construct`, `coordinates`
 
@@ -672,7 +672,7 @@ class FieldDomain:
     ):
         """Return a coordinate reference construct, or its key.
 
-        .. versionadded:: (cfdm) 1.9.1.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `construct`, `coordinate_references`
 
@@ -875,7 +875,7 @@ class FieldDomain:
 
         {{unique construct}}
 
-        .. versionadded:: (cfdm) 1.9.1.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `construct`, `dimension_coordinates`
 
@@ -1000,7 +1000,7 @@ class FieldDomain:
 
         {{unique construct}}
 
-        .. versionadded:: (cfdm) 1.9.1.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `construct`, `domain_axes`
 
@@ -1129,7 +1129,7 @@ class FieldDomain:
 
         {{unique construct}}
 
-        .. versionadded:: (cfdm) 1.9.1.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `construct`, `domain_ancillaries`
 
@@ -1250,7 +1250,7 @@ class FieldDomain:
 
         {{unique construct}}
 
-        .. versionadded:: (cfdm) 1.9.1.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `construct`, `cell_measures`
 
@@ -1399,11 +1399,11 @@ class FieldDomain:
 
             {{key: `bool`, optional}}
 
-                .. versionadded:: (cfdm) 1.9.1.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
             {{item: `bool`, optional}}
 
-                .. versionadded:: (cfdm) 1.9.1.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
             {{filter_kwargs: optional}}
 
