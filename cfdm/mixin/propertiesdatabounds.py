@@ -1560,7 +1560,7 @@ class PropertiesDataBounds(PropertiesData):
 
         :Returns:
 
-            `tuple`
+            `set`
                 {{Returns original filenames}}
 
         """
@@ -1568,13 +1568,13 @@ class PropertiesDataBounds(PropertiesData):
 
         bounds = self.get_bounds_data(None, _units=False, _fill_value=False)
         if bounds is not None:
-            out += bounds.original_filenames(clear=clear)
+            out.update(bounds.original_filenames(clear=clear))
 
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
-            out += interior_ring.original_filenames(clear=clear)
+            out.update(interior_ring.original_filenames(clear=clear))
 
-        return tuple(set(out))
+        return out
 
     def set_node_count(self, node_count, copy=True):
         """Set the node count variable for geometry bounds.

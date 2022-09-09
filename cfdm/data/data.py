@@ -137,7 +137,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                 Record the file names that contain some or all of the
                 data at the time of `Data` instance creation.
 
-                 .. versionadded:: (cfdm) 1.10.0.1
+                .. versionadded:: (cfdm) 1.10.0.1
 
             kwargs: ignored
                 Not used. Present to facilitate subclassing.
@@ -177,9 +177,9 @@ class Data(Container, NetCDFHDF5, core.Data):
         # Initialise the original file names component
         if source is not None:
             # Note: Getting and setting the component directly (as
-            #       oposed to using `original_filnames` on 'source'
-            #       and 'self') to improve performance when
-            #       `self.copy` is called.
+            #       oposed to using `original_filenames` on 'source'
+            #       and 'self') should improve the performance of
+            #       `self.copy`.
             try:
                 filenames = source._get_component("original_filenames", None)
             except AttributeError:
@@ -1575,6 +1575,45 @@ class Data(Container, NetCDFHDF5, core.Data):
                 default, f"{self.__class__.__name__!r} has no count variable"
             )
 
+    def get_dependent_tie_points(self, default=ValueError()):
+        """Return the list variable for a compressed array.
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        .. seealso:: `get_tie_points_indices`,
+                     `get_interpolation_parameters`, `get_index`,
+                     `get_index`, `get_list`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if no
+                dependent tie point index variables have been set. If
+                set to an `Exception` instance then it will be raised
+                instead.
+
+        :Returns:
+
+            `dict`
+                The dependent tie point arrays needed by the
+                interpolation method, keyed by the dependent tie point
+                identities. Each key is a dependent tie point
+                identity, whose value is a `Data` variable.
+
+        **Examples**
+
+        >>> l = d.get_tie_point_indices()
+
+        """
+        try:
+            return self._get_Array().get_dependent_tie_points()
+        except (AttributeError, ValueError):
+            return self._default(
+                default,
+                f"{self.__class__.__name__!r} has no dependent "
+                "tie point index variables",
+            )
+
     def get_index(self, default=ValueError()):
         """Return the index variable for a compressed array.
 
@@ -1608,6 +1647,48 @@ class Data(Container, NetCDFHDF5, core.Data):
                 default, f"{self.__class__.__name__!r} has no index variable"
             )
 
+    def get_interpolation_parameters(self, default=ValueError()):
+        """Return the list variable for a compressed array.
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        .. seealso:: `get_dependent_tie_points`,
+                     `get_ti_point_indices`, `get_index`, `get_index`,
+                     `get_list`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if no
+                interpolation parameters have been set. If set to an
+                `Exception` instance then it will be raised instead.
+
+        :Returns:
+
+            `dict`
+                Interpolation parameters required by the subsampling
+                interpolation method. Each key is an interpolation
+                parameter term name, whose value is an
+                `InterpolationParameter` variable.
+
+                Interpolation parameter term names for the
+                standardised interpolation methods are defined in CF
+                Appendix J "Coordinate Interpolation Methods".
+
+        **Examples**
+
+        >>> l = d.get_interpolation_parameters()
+
+        """
+        try:
+            return self._get_Array().get_interpolation_parameters()
+        except (AttributeError, ValueError):
+            return self._default(
+                default,
+                f"{self.__class__.__name__!r} has no subsampling "
+                "interpolation parameters",
+            )
+
     def get_list(self, default=ValueError()):
         """Return the list variable for a compressed array.
 
@@ -1636,6 +1717,44 @@ class Data(Container, NetCDFHDF5, core.Data):
         except (AttributeError, ValueError):
             return self._default(
                 default, f"{self.__class__.__name__!r} has no list variable"
+            )
+
+    def get_tie_point_indices(self, default=ValueError()):
+        """Return the list variable for a compressed array.
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        .. seealso:: `get_dependent_tie_points`,
+                     `get_interpolation_parameters`, `get_index`,
+                     `get_index`, `get_list`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if no tie
+                point index variables have been set. If set to an
+                `Exception` instance then it will be raised instead.
+
+        :Returns:
+
+            `dict`
+                The tie point index variable for each subsampled
+                dimension. A key indentifies a subsampled dimension by
+                its integer position in the compressed array, and its
+                value is a `TiePointIndex` variable.
+
+        **Examples**
+
+        >>> l = d.get_tie_point_indices()
+
+        """
+        try:
+            return self._get_Array().get_tie_point_indices()
+        except (AttributeError, ValueError):
+            return self._default(
+                default,
+                f"{self.__class__.__name__!r} has no "
+                "tie point index variables",
             )
 
     def get_compressed_dimension(self, default=ValueError()):
@@ -1963,11 +2082,11 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         :Returns:
 
-            `tuple` or `None`
+            `set` or `None`
                 {{Returns original filenames}}
 
-                If any of the *define*, *update* or *clear* parameters
-                are set then `None` is returned.
+                If the *define* or *update* parameter is set then
+                `None` is returned.
 
         **Examples*
 
@@ -2002,7 +2121,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             if isinstance(define, str):
                 define = (define,)
 
-            filenames = tuple(abspath(name) for name in define)
+            filenames = tuple([abspath(name) for name in define])
 
         if update:
             # Add new original file names to the existing collection
@@ -2016,7 +2135,7 @@ class Data(Container, NetCDFHDF5, core.Data):
             if isinstance(update, str):
                 update = (update,)
 
-            filenames += tuple(abspath(name) for name in update)
+            filenames += tuple([abspath(name) for name in update])
 
         if filenames:
             if len(filenames) > 1:
@@ -2036,46 +2155,37 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         # Still here? Then return the existing original file names
         if clear:
-            old = self._del_component("original_filenames", ())
+            old = set(self._del_component("original_filenames", ()))
         else:
-            old = self._get_component("original_filenames", ())
+            old = set(self._get_component("original_filenames", ()))
 
         # Find any compression ancillary data variables
         ancils = []
         compression = self.get_compression_type()
         if compression:
             if compression == "gathered":
-                a = self.get_list(None)
-                if a is not None:
-                    ancils.append(a)
+                ancils.extend(self.get_list([]))
             elif compression == "subsampled":
-                ancils.extend(self.get_tie_point_indices().values())
-                ancils.extend(self.get_parameters().values())
-                ancils.extend(self.get_dependent_tie_points().values())
+                ancils.extend(self.get_tie_point_indices({}).values())
+                ancils.extend(self.get_interpolation_parameters({}).values())
+                ancils.extend(self.get_dependent_tie_points({}).values())
             else:
                 if compression in (
                     "ragged contiguous",
                     "ragged indexed contiguous",
                 ):
-                    a = self.get_count(None)
-                    if a is not None:
-                        ancils.append(a)
+                    ancils.extend(self.get_count([]))
 
                 if compression in (
                     "ragged indexed",
                     "ragged indexed contiguous",
                 ):
-                    a = self.get_index(None)
-                    if a is not None:
-                        ancils.append(a)
+                    ancils.extend(self.get_index([]))
 
             if ancils:
                 # Include original file names from ancillary variables
                 for a in ancils:
-                    old += a.original_filenames(clear=clear)
-
-                if len(old) > 1:
-                    old = tuple(set(old))
+                    old.update(a.original_filenames(clear=clear))
 
         # Return the old file names
         return old

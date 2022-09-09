@@ -2372,16 +2372,16 @@ class Field(
 
         :Returns:
 
-            `tuple`
+            `set`
                 {{Returns original filenames}}
 
         """
         out = super().original_filenames(clear=clear)
 
         for c in self.constructs.filter_by_data(todict=True).values():
-            out += c.original_filenames(clear=clear)
+            out.update(c.original_filenames(clear=clear))
 
-        return tuple(set(out))
+        return out
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):

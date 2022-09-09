@@ -220,6 +220,9 @@ class GatheredTest(unittest.TestCase):
             lon.equals(lon0, ignore_data_type=True, rtol=0, atol=3e-5)
         )
 
+        # Check original filenames
+        self.assertEqual(i.original_filenames(), set([self.biquadratic]))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

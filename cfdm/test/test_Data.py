@@ -592,12 +592,14 @@ class DataTest(unittest.TestCase):
     def test_Data_orginal_filenames(self):
         """Test the `original_filenames` Data method."""
         d = cfdm.Data(9, "metres")
-        self.assertEqual(d.original_filenames(), ())
+        self.assertEqual(d.original_filenames(), set())
 
-        d.original_filenames(define="file1.nc")
-        self.assertEqual(len(d.original_filenames()), 1)
+        self.assertIsNone(d.original_filenames(define="file1.nc"))
+        self.assertEqual(
+            d.original_filenames(), set([cfdm.abspath("file1.nc")])
+        )
 
-        d.original_filenames(update=["file1.nc"])
+        self.assertIsNone(d.original_filenames(update=["file1.nc"]))
         self.assertEqual(len(d.original_filenames()), 1)
 
         d.original_filenames(update="file2.nc")
@@ -609,17 +611,17 @@ class DataTest(unittest.TestCase):
         d.original_filenames(define="file3.nc")
         self.assertEqual(len(d.original_filenames()), 1)
 
-        d.original_filenames(clear=True)
-        self.assertEqual(d.original_filenames(), ())
+        self.assertEqual(len(d.original_filenames(clear=True)), 1)
+        self.assertEqual(d.original_filenames(), set())
 
         d.original_filenames(update=["file1.nc", "file2.nc"])
         self.assertEqual(len(d.original_filenames()), 2)
 
         d = cfdm.Data(9, filenames=None)
-        self.assertEqual(d.original_filenames(), ())
+        self.assertEqual(d.original_filenames(), set())
 
         d = cfdm.Data(9, filenames=[])
-        self.assertEqual(d.original_filenames(), ())
+        self.assertEqual(d.original_filenames(), set())
 
         d = cfdm.Data(9, filenames="file1.nc")
         self.assertEqual(len(d.original_filenames()), 1)

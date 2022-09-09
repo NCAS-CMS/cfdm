@@ -397,8 +397,7 @@ _docstring_substitution_definitions = {
                 being replaced with ``'auto'`` instead.""",
     # Returns original filenames
     "{{Returns original filenames}}": """The original file names in normalised absolute
-                form. If there are no original files (because the data
-                was initialised from memory) then an empty `tuple`
-                will be returned. If the *clear* parameter is True
-                then the removed file names are returned.""",
+                form. If there are no original files then an empty
+                `set` will be returned. If the *clear* parameter is
+                True then the removed file names are returned.""",
 }

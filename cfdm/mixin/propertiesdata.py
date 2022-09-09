@@ -902,7 +902,7 @@ class PropertiesData(Properties):
 
         :Returns:
 
-            `tuple`
+            `set`
                 {{Returns original filenames}}
 
         """
@@ -910,7 +910,7 @@ class PropertiesData(Properties):
         if data is not None:
             return data.original_filenames(clear=clear)
 
-        return ()
+        return set()
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):

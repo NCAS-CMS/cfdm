@@ -895,17 +895,17 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(len(x.original_filenames()), 1)
 
         self.assertEqual(len(x.original_filenames(clear=True)), 1)
-        self.assertEqual(x.original_filenames(), ())
+        self.assertEqual(x.original_filenames(), set())
 
         self.assertEqual(len(f.original_filenames(clear=True)), 1)
-        self.assertEqual(f.original_filenames(), ())
+        self.assertEqual(f.original_filenames(), set())
 
         # Two original files
         parent_file = "parent.nc"
         external_file = "external.nc"
         f = cfdm.read(parent_file, external=external_file)[0]
         self.assertEqual(
-            set(f.original_filenames()),
+            f.original_filenames(),
             set((cfdm.abspath(parent_file), cfdm.abspath(external_file))),
         )
 
