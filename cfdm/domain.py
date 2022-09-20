@@ -898,7 +898,7 @@ class Domain(
         """
         out = set()
 
-        for c in self.constructs.filter_by_data().values():
+        for c in self.constructs.filter_by_data(todict=True).values():
             out.update(c.get_filenames())
 
         return out
@@ -1009,6 +1009,40 @@ class Domain(
         n = self.nc_get_variable(None)
         if n is not None:
             out.append(f"ncvar%{n}")
+
+        return out
+
+    def original_filenames(self, clear=False):
+        """Return the names of files that contain the original data.
+
+        The original files are those that contain some or all of the
+        metadata construct data arrays when they first instantiated.
+
+        {{original filenames}}
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        .. seealso:: `get_filenames`, `{{package}}.Data.original_filenames`
+
+        :Parameters:
+
+            clear: `bool` optional
+                If True then remove any stored original file names
+                from the metadata constructs. This will also clear
+                original file names from any ancillary data
+                information, such as a count variable required for
+                compressed data.
+
+        :Returns:
+
+            `set`
+                {{Returns original filenames}}
+
+        """
+        out = set()
+
+        for c in self.constructs.filter_by_data(todict=True).values():
+            out.update(c.original_filenames(clear=clear))
 
         return out
 

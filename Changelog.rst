@@ -7,7 +7,7 @@ Version 1.10.0.1
 * New method: `cfdm.Data.get_interpolation_parameters`
 * New method: `cfdm.Data.get_dependent_tie_points`
 * Record the names of files that contain the original data
-  (https://github.com/NCAS-CMS/cfdm/issues/???)
+  (https://github.com/NCAS-CMS/cfdm/issues/215)
 * New method: `cfdm.Field.original_filenames`
 * New method: `cfdm.Data.original_filenames`
 * Fixed bug that caused a failure when printing date-time data with

@@ -178,6 +178,27 @@ class DomainTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.get_data_axes("domainaxis0")
 
+    def test_Domain_original_filenames(self):
+        """Test Domain.original_filenames."""
+        d = cfdm.example_field(0).domain
+        self.assertEqual(d.original_filenames(), set())
+
+        x = d.coordinate("longitude")
+        x.data.original_filenames(define=["file1.nc", "file3.nc"])
+        b = x.bounds
+        b.data.original_filenames(define=["file1.nc", "file4.nc"])
+
+        self.assertEqual(
+            d.original_filenames(),
+            set(
+                (
+                    cfdm.abspath("file1.nc"),
+                    cfdm.abspath("file3.nc"),
+                    cfdm.abspath("file4.nc"),
+                )
+            ),
+        )
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
