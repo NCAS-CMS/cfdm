@@ -197,6 +197,7 @@ Miscellaneous
    ~cfdm.Field.indices
    ~cfdm.Field.uncompress
    ~cfdm.Field.get_filenames
+   ~cfdm.Field.original_filenames
    ~cfdm.Field.to_memory
 
 .. _Field-NetCDF:

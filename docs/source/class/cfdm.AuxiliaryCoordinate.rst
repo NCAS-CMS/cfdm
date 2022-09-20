@@ -178,6 +178,7 @@ Miscellaneous
    ~cfdm.AuxiliaryCoordinate.equals
    ~cfdm.AuxiliaryCoordinate.uncompress
    ~cfdm.AuxiliaryCoordinate.get_filenames
+   ~cfdm.AuxiliaryCoordinate.original_filenames
    ~cfdm.AuxiliaryCoordinate.to_memory
 
 NetCDF
