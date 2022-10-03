@@ -1602,7 +1602,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         **Examples**
 
-        >>> l = d.get_tie_point_indices()
+        >>> l = d.get_dependent_tie_points()
 
         """
         try:
