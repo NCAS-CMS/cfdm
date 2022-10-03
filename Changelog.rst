@@ -3,7 +3,7 @@ Version 1.10.0.1
 
 **2022-??-??**
 
-* New method: `cfdm.Data.get_tie_points_indices`
+* New method: `cfdm.Data.get_tie_point_indices`
 * New method: `cfdm.Data.get_interpolation_parameters`
 * New method: `cfdm.Data.get_dependent_tie_points`
 * Record the names of files that contain the original data
