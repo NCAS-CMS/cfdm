@@ -1016,7 +1016,7 @@ class Domain(
         """Return the names of files that contain the original data.
 
         The original files are those that contain some or all of the
-        metadata construct data arrays when they first instantiated.
+        metadata construct data arrays when they are first instantiated.
 
         {{original filenames}}
 
