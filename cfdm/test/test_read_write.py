@@ -891,15 +891,11 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read(self.filename)[0]
         x = f.dimension_coordinate("grid_longitude")
 
-        self.assertEqual(len(f.original_filenames()), 1)
-        self.assertEqual(len(x.original_filenames()), 1)
-
-        self.assertEqual(len(x.original_filenames(clear=True)), 1)
-        self.assertEqual(x.original_filenames(), set())
-
-        self.assertEqual(len(f.original_filenames(clear=True)), 1)
-        self.assertEqual(f.original_filenames(), set())
-
+        for a in (x, f): # Note: x before f
+            self.assertEqual(len(a.original_filenames()), 1)      
+            self.assertEqual(len(a.original_filenames(clear=True)), 1)
+            self.assertEqual(a.original_filenames(), set())
+        
         # Two original files
         parent_file = "parent.nc"
         external_file = "external.nc"
