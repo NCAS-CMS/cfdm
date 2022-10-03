@@ -1582,7 +1582,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         .. seealso:: `get_tie_points_indices`,
                      `get_interpolation_parameters`, `get_index`,
-                     `get_index`, `get_list`
+                     `get_list`
 
         :Parameters:
 
