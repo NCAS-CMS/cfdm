@@ -97,7 +97,7 @@ _docstring_substitution_definitions = {
         all contributing sources.
 
         The `{{package}}.read` function automatically records the
-        orginal file names on data all that it creates, but they may
+        original file names on all data that it creates, but they may
         also be set manually and edited using the
         `{{package}}.Data.original_filenames` method directly.
 
