@@ -1725,7 +1725,7 @@ class Data(Container, NetCDFHDF5, core.Data):
         .. versionadded:: (cfdm) 1.10.0.1
 
         .. seealso:: `get_dependent_tie_points`,
-                     `get_interpolation_parameters`, `get_index`,
+                     `get_interpolation_parameters`,
                      `get_index`, `get_list`
 
         :Parameters:
