@@ -1580,7 +1580,7 @@ class Data(Container, NetCDFHDF5, core.Data):
 
         .. versionadded:: (cfdm) 1.10.0.1
 
-        .. seealso:: `get_tie_points_indices`,
+        .. seealso:: `get_tie_point_indices`,
                      `get_interpolation_parameters`, `get_index`,
                      `get_list`
 
