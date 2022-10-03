@@ -2075,7 +2075,7 @@ class Data(Container, NetCDFHDF5, core.Data):
                 stored.
 
             update: (sequence of) `str`, optional
-                Add these original file names to the those already
+                Add these original file names to those already
                 stored.
 
             {{clear: `bool` optional}}
