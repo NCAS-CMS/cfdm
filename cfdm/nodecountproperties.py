@@ -34,6 +34,7 @@ class NodeCountProperties(
         super().__init__(properties=properties, source=source, copy=copy)
 
         self._initialise_netcdf(source)
+        self._initialise_original_filenames(source)
 
     def dump(
         self,

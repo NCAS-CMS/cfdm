@@ -5565,14 +5565,16 @@ class NetCDFRead(IORead):
                     computational_precision=rec["computational_precision"],
                 )
 
-        return self._create_Data(
+        data = self._create_Data(
             array,
             units=units,
             calendar=calendar,
             ncvar=ncvar,
-            filenames=filename,
         )
-
+        data._original_filenames(define=filename)
+        
+        return data
+    
     def _create_domain_axis(self, size, ncdim=None):
         """Create a domain axis construct.
 
@@ -5613,8 +5615,8 @@ class NetCDFRead(IORead):
         """
         # Create a field ancillary object
         field_ancillary = self.implementation.initialise_FieldAncillary()
-
-        # Insert properties
+        
+        # Insert propertpppies
         self.implementation.set_properties(
             field_ancillary,
             self.read_vars["variable_attributes"][ncvar],
@@ -5630,6 +5632,12 @@ class NetCDFRead(IORead):
 
         # Store the netCDF variable name
         self.implementation.nc_set_variable(field_ancillary, ncvar)
+
+        # Store the original file names
+        self.implementation.set_original_filenames(
+            field_ancillary,
+            self.read_vars["variable_filename"][ncvar]
+        )
 
         return field_ancillary
 

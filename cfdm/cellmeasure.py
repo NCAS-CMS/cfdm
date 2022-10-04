@@ -92,6 +92,7 @@ class CellMeasure(
         )
 
         self._initialise_netcdf(source)
+        self._initialise_original_filenames(source)
 
     def creation_commands(
         self,

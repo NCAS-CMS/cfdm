@@ -106,6 +106,7 @@ class Domain(
         )
 
         self._initialise_netcdf(source)
+        self._initialise_original_filenames(source)
 
         self._set_dataset_compliance(self.dataset_compliance(), copy=True)
 
@@ -1012,35 +1013,83 @@ class Domain(
 
         return out
 
-    def original_filenames(self, clear=False):
-        """Return the names of files that contain the original data.
-
-        The original files are those that contain some or all of the
-        metadata construct data arrays when they are first instantiated.
+    def _original_filenames(self, define=None, update=None, clear=False):
+        """The names of files that contain the original data and metadata.
 
         {{original filenames}}
 
         .. versionadded:: (cfdm) 1.10.0.1
 
-        .. seealso:: `get_filenames`, `{{package}}.Data.original_filenames`
-
         :Parameters:
 
-            clear: `bool` optional
-                If True then remove any stored original file names
-                from the metadata constructs. This will also clear
-                original file names from any ancillary data
-                information, such as a count variable required for
-                compressed data.
+            {{define: (sequence of) `str`, optional}}
+
+            {{update: (sequence of) `str`, optional}}
+
+            {{clear: `bool` optional}}
 
         :Returns:
 
             `set`
                 {{Returns original filenames}}
 
-        """
-        out = set()
+                If the *define* or *update* parameter is set then
+                `None` is returned.
 
+        """
+        out = super().original_filenames(define=define, update=update, clear=clear)
+        if out is None:
+            return
+        
+        for c in self.constructs.filter_by_data(todict=True).values():
+            out.update(c.original_filenames(clear=clear))
+
+        return out
+        for c in self.constructs.filter_by_data(todict=True).values():
+            out.update(c.original_filenames(clear=clear))
+
+        return out
+    
+    def original_filenames(self, define=None, update=None, clear=False):
+        """Return the names of files that contain the original domain.
+
+        The original files are those that contain some or all of the
+        metadata construct data arrays when they are first
+        instantiated, including the file containing netCDF domain
+        variable (if applicable).
+
+        {{original filenames}}
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        .. seealso:: `get_filenames`
+
+        :Parameters:
+
+            define: (sequence of) `str`, optional
+                Set these original file names, removing any already
+                stored. Can't be used with the *update* parameter.
+
+            update: (sequence of) `str`, optional
+                Add these original file names to those already
+                stored. Can't be used with the *define* parameter.
+
+            {{clear: `bool` optional}}
+
+                The original file names of any metadata constructs are
+                also removed.
+
+        :Returns:
+
+            `set` or `None`
+                {{Returns original filenames}}
+
+        """
+        out = set()        
+
+        if define is not None:
+            
+        
         for c in self.constructs.filter_by_data(todict=True).values():
             out.update(c.original_filenames(clear=clear))
 

@@ -135,6 +135,7 @@ class Field(
         )
 
         self._initialise_netcdf(source)
+        self._initialise_original_filenames(source)
 
         self._set_dataset_compliance(self.dataset_compliance(), copy=True)
 
@@ -2347,42 +2348,7 @@ class Field(
                             )
 
         return f
-
-    def original_filenames(self, clear=False):
-        """Return the names of files that contain the original data.
-
-        The original files are those that contain some or all of the
-        data when it was first instantiated.
-
-        The original file names of any metadata constructs are also
-        included.
-
-        {{original filenames}}
-
-        .. versionadded:: (cfdm) 1.10.0.1
-
-        .. seealso:: `get_filenames`, `{{package}}.Data.original_filenames`
-
-        :Parameters:
-
-            {{clear: `bool` optional}}
-
-                The original file names of any metadata constructs are
-                also removed.
-
-        :Returns:
-
-            `set`
-                {{Returns original filenames}}
-
-        """
-        out = super().original_filenames(clear=clear)
-
-        for c in self.constructs.filter_by_data(todict=True).values():
-            out.update(c.original_filenames(clear=clear))
-
-        return out
-
+ 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
         """Remove size one axes from the data.
