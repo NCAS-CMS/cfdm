@@ -98,10 +98,11 @@ _docstring_substitution_definitions = {
         The original files of any constituent components are also
         included.
 
-        If the `{{class}}` was produced by combining other objects
-        that also store their original file names, then the returned
-        files will be the collection of original files from all
-        contributing sources.""",
+        In-place changes to the `{{class}}` will not generally change
+        the collection of original files. However if the `{{class}}`
+        was produced by combining other objects that also store their
+        original file names, then the returned files will be the
+        collection of original files from all contributing sources.""",
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentataion)
     # ----------------------------------------------------------------
