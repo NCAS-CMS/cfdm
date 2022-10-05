@@ -10,6 +10,7 @@ class CellMeasure(
     mixin.NetCDFVariable,
     mixin.NetCDFExternal,
     mixin.PropertiesData,
+    mixin.Files,
     core.CellMeasure,
 ):
     """A cell measure construct of the CF data model.

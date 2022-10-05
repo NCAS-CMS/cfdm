@@ -2,7 +2,10 @@ from . import core, mixin
 
 
 class DimensionCoordinate(
-    mixin.NetCDFVariable, mixin.Coordinate, core.DimensionCoordinate
+    mixin.NetCDFVariable,
+    mixin.Coordinate,
+    mixin.Files,
+    core.DimensionCoordinate,
 ):
     """A dimension coordinate construct of the CF data model.
 

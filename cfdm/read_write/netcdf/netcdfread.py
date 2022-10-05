@@ -2261,6 +2261,9 @@ class NetCDFRead(IORead):
             index = self.implementation.initialise_Index()
             self.implementation.set_data(index, data=parts_data)
 
+            # Store the original file names
+            self.implementation.set_original_filenames(index, g["filename"])
+
             instance_index = 0
             i = 0
             for cell_no in range(
@@ -3184,6 +3187,9 @@ class NetCDFRead(IORead):
             )  # pragma: no cover
 
             self.implementation.set_data(f, data, axes=data_axes, copy=False)
+
+        # Store the original file names
+        self.implementation.set_original_filenames(f, g["filename"])
 
         # ------------------------------------------------------------
         # Add scalar dimension coordinates and auxiliary coordinates
@@ -4590,6 +4596,11 @@ class NetCDFRead(IORead):
             data = self._create_data(ncvar, c, parent_ncvar=field_ncvar)
             self.implementation.set_data(c, data, copy=False)
 
+        # Store the original file names
+        self.implementation.set_original_filenames(
+            c, g["variable_filename"].get(ncvar, g["filename"])
+        )
+
         # ------------------------------------------------------------
         # Add any bounds
         # ------------------------------------------------------------
@@ -4634,6 +4645,10 @@ class NetCDFRead(IORead):
 
             self.implementation.set_data(bounds, bounds_data, copy=False)
 
+            # Store the original file names
+            self.implementation.set_original_filenames(
+                bounds, g["variable_filename"][bounds_ncvar]
+            )
             # Store the netCDF variable name
             self.implementation.nc_set_variable(bounds, bounds_ncvar)
 
@@ -4784,6 +4799,11 @@ class NetCDFRead(IORead):
             data = self._create_data(ncvar, cell_measure)
             self.implementation.set_data(cell_measure, data, copy=False)
 
+        # Store the original file names
+        self.implementation.set_original_filenames(
+            cell_measure, g["variable_filename"].get(ncvar)
+        )
+
         return cell_measure
 
     def _create_interpolation_parameter(self, term, ncvar):
@@ -4836,6 +4856,11 @@ class NetCDFRead(IORead):
 
         data = self._create_data(ncvar, uncompress_override=True)
         self.implementation.set_data(param, data, copy=False)
+
+        # Store the original file names
+        self.implementation.set_original_filenames(
+            param, g["variable_filename"][ncvar]
+        )
 
         return param
 
@@ -4904,6 +4929,11 @@ class NetCDFRead(IORead):
 
         self.implementation.set_data(variable, data, copy=False)
 
+        # Store the original file names
+        self.implementation.set_original_filenames(
+            variable, g["variable_filename"][ncvar]
+        )
+
         return variable
 
     def _create_Count(self, ncvar, ncdim):
@@ -4962,6 +4992,11 @@ class NetCDFRead(IORead):
         data = self._create_data(ncvar, variable, uncompress_override=True)
 
         self.implementation.set_data(variable, data, copy=False)
+
+        # Store the original file names
+        self.implementation.set_original_filenames(
+            variable, g["variable_filename"][ncvar]
+        )
 
         return variable
 
@@ -5022,6 +5057,11 @@ class NetCDFRead(IORead):
         data = self._create_data(ncvar, variable, uncompress_override=True)
         self.implementation.set_data(variable, data, copy=False)
 
+        # Store the original file names
+        self.implementation.set_original_filenames(
+            variable, g["variable_filename"][ncvar]
+        )
+
         return variable
 
     def _create_InteriorRing(self, ncvar, ncdim):
@@ -5068,6 +5108,11 @@ class NetCDFRead(IORead):
         data = self._create_data(ncvar, variable)
         self.implementation.set_data(variable, data, copy=False)
 
+        # Store the original file names
+        self.implementation.set_original_filenames(
+            variable, g["variable_filename"][ncvar]
+        )
+
         return variable
 
     def _create_List(self, ncvar):
@@ -5088,6 +5133,8 @@ class NetCDFRead(IORead):
             `List`
 
         """
+        g = self.read_vars
+
         # Initialise the list variable
         variable = self.implementation.initialise_List()
 
@@ -5098,11 +5145,16 @@ class NetCDFRead(IORead):
         properties.pop("compress", None)
         self.implementation.set_properties(variable, properties)
 
-        if not self.read_vars["mask"]:
+        if not g["mask"]:
             self._set_default_FillValue(variable, ncvar)
 
         data = self._create_data(ncvar, variable, uncompress_override=True)
         self.implementation.set_data(variable, data, copy=False)
+
+        # Store the original file names
+        self.implementation.set_original_filenames(
+            variable, g["variable_filename"][ncvar]
+        )
 
         return variable
 
@@ -5137,6 +5189,11 @@ class NetCDFRead(IORead):
 
         if not g["mask"]:
             self._set_default_FillValue(variable, ncvar)
+
+        # Store the original file names
+        self.implementation.set_original_filenames(
+            variable, g["variable_filename"][ncvar]
+        )
 
         return variable
 
@@ -5180,6 +5237,11 @@ class NetCDFRead(IORead):
 
         if not g["mask"]:
             self._set_default_FillValue(variable, ncvar)
+
+        # Store the original file names
+        self.implementation.set_original_filenames(
+            variable, g["variable_filename"][ncvar]
+        )
 
         return variable
 
@@ -5572,9 +5634,9 @@ class NetCDFRead(IORead):
             ncvar=ncvar,
         )
         data._original_filenames(define=filename)
-        
+
         return data
-    
+
     def _create_domain_axis(self, size, ncdim=None):
         """Create a domain axis construct.
 
@@ -5613,13 +5675,15 @@ class NetCDFRead(IORead):
             Field ancillary construct
 
         """
+        g = self.read_vars
+
         # Create a field ancillary object
         field_ancillary = self.implementation.initialise_FieldAncillary()
-        
+
         # Insert propertpppies
         self.implementation.set_properties(
             field_ancillary,
-            self.read_vars["variable_attributes"][ncvar],
+            g["variable_attributes"][ncvar],
             copy=True,
         )
 
@@ -5635,8 +5699,7 @@ class NetCDFRead(IORead):
 
         # Store the original file names
         self.implementation.set_original_filenames(
-            field_ancillary,
-            self.read_vars["variable_filename"][ncvar]
+            field_ancillary, g["variable_filename"][ncvar]
         )
 
         return field_ancillary
@@ -6601,7 +6664,6 @@ class NetCDFRead(IORead):
             array=array,
             units=units,
             calendar=calendar,
-            filenames=filenames,
             copy=False,
             **kwargs,
         )

@@ -592,59 +592,52 @@ class DataTest(unittest.TestCase):
     def test_Data_orginal_filenames(self):
         """Test the `original_filenames` Data method."""
         d = cfdm.Data(9, "metres")
-        self.assertEqual(d.original_filenames(), set())
+        self.assertEqual(d.get_original_filenames(), set())
 
-        self.assertIsNone(d.original_filenames(define="file1.nc"))
+        self.assertIsNone(d._original_filenames(define="file1.nc"))
         self.assertEqual(
-            d.original_filenames(), set([cfdm.abspath("file1.nc")])
+            d.get_original_filenames(), set([cfdm.abspath("file1.nc")])
         )
 
-        self.assertIsNone(d.original_filenames(update=["file1.nc"]))
-        self.assertEqual(len(d.original_filenames()), 1)
+        self.assertIsNone(d._original_filenames(update=["file1.nc"]))
+        self.assertEqual(len(d.get_original_filenames()), 1)
 
-        d.original_filenames(update="file2.nc")
-        self.assertEqual(len(d.original_filenames()), 2)
+        d._original_filenames(update="file2.nc")
+        self.assertEqual(len(d.get_original_filenames()), 2)
 
-        d.original_filenames(update=["file1.nc", "file2.nc"])
-        self.assertEqual(len(d.original_filenames()), 2)
+        d._original_filenames(update=["file1.nc", "file2.nc"])
+        self.assertEqual(len(d.get_original_filenames()), 2)
 
-        d.original_filenames(define="file3.nc")
-        self.assertEqual(len(d.original_filenames()), 1)
+        d._original_filenames(define="file3.nc")
+        self.assertEqual(len(d.get_original_filenames()), 1)
 
-        self.assertEqual(len(d.original_filenames(clear=True)), 1)
-        self.assertEqual(d.original_filenames(), set())
+        self.assertEqual(len(d._original_filenames(clear=True)), 1)
+        self.assertEqual(d.get_original_filenames(), set())
 
-        d.original_filenames(update=["file1.nc", "file2.nc"])
-        self.assertEqual(len(d.original_filenames()), 2)
+        d._original_filenames(update=["file1.nc", "file2.nc"])
+        self.assertEqual(len(d.get_original_filenames()), 2)
 
         d = cfdm.Data(9, filenames=None)
-        self.assertEqual(d.original_filenames(), set())
+        self.assertEqual(d.get_original_filenames(), set())
 
         d = cfdm.Data(9, filenames=[])
-        self.assertEqual(d.original_filenames(), set())
-
-        d = cfdm.Data(9, filenames="file1.nc")
-        self.assertEqual(len(d.original_filenames()), 1)
-
-        d = cfdm.Data(9, filenames=["file1.nc", "file2.nc"])
-        self.assertEqual(len(d.original_filenames()), 2)
-
-        d = cfdm.Data(9, filenames=["file1.nc", "file1.nc", "file2.nc"])
-        self.assertEqual(len(d.original_filenames()), 2)
+        self.assertEqual(d.get_original_filenames(), set())
 
         # Check source
         e = cfdm.Data(source=d)
-        self.assertEqual(e.original_filenames(), d.original_filenames())
+        self.assertEqual(
+            e.get_original_filenames(), d.get_original_filenames()
+        )
 
         # Check illegal parameter combinations
         with self.assertRaises(ValueError):
-            d.original_filenames(define="file1.nc", update="file2.nc")
+            d._original_filenames(define="file1.nc", update="file2.nc")
 
         with self.assertRaises(ValueError):
-            d.original_filenames(define="file3.nc", clear=True)
+            d._original_filenames(define="file3.nc", clear=True)
 
         with self.assertRaises(ValueError):
-            d.original_filenames(update="file4.nc", clear=True)
+            d._original_filenames(update="file4.nc", clear=True)
 
 
 if __name__ == "__main__":

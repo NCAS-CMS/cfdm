@@ -5,6 +5,7 @@ class Bounds(
     mixin.NetCDFVariable,
     mixin.NetCDFDimension,
     mixin.PropertiesData,
+    mixin.Files,
     core.Bounds,
 ):
     """A cell bounds component.
@@ -91,9 +92,6 @@ class Bounds(
         self._initialise_netcdf(source)
         self._initialise_original_filenames(source)
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def dump(
         self,
         display=True,

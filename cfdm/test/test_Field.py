@@ -184,29 +184,29 @@ class FieldTest(unittest.TestCase):
     #            values, counts = np.unique(f.data.array, return_counts=True)
     #            self.assertEqual(counts[0], array.size)
 
-    def test_Field_get_filenames(self):
-        """Test the `get_filenames` Field method."""
-        cfdm.write(self.f0, tmpfile)
-        g = cfdm.read(tmpfile)[0]
-
-        abspath_tmpfile = os.path.abspath(tmpfile)
-        self.assertEqual(g.get_filenames(), set([abspath_tmpfile]))
-
-        g.data[...] = -99
-        self.assertEqual(g.get_filenames(), set([abspath_tmpfile]))
-
-        for c in g.constructs.filter_by_data().values():
-            c.data[...] = -99
-
-        self.assertEqual(g.get_filenames(), set([abspath_tmpfile]))
-
-        for c in g.constructs.filter_by_data().values():
-            if c.has_bounds():
-                c.bounds.data[...] = -99
-
-        self.assertEqual(g.get_filenames(), set())
-
-        os.remove(tmpfile)
+    #    def test_Field_get_filenames(self):
+    #        """Test the `get_filenames` Field method."""
+    #        cfdm.write(self.f0, tmpfile)
+    #        g = cfdm.read(tmpfile)[0]
+    #
+    #        abspath_tmpfile = os.path.abspath(tmpfile)
+    #        self.assertEqual(g.get_filenames(), set([abspath_tmpfile]))
+    #
+    #        g.data[...] = -99
+    #        self.assertEqual(g.get_filenames(), set([abspath_tmpfile]))
+    #
+    #        for c in g.constructs.filter_by_data().values():
+    #            c.data[...] = -99
+    #
+    #        self.assertEqual(g.get_filenames(), set([abspath_tmpfile]))
+    #
+    #        for c in g.constructs.filter_by_data().values():
+    #            if c.has_bounds():
+    #                c.bounds.data[...] = -99
+    #
+    #        self.assertEqual(g.get_filenames(), set())
+    #
+    #        os.remove(tmpfile)
 
     def test_Field_apply_masking(self):
         """Test the `apply_masking` Field method."""
@@ -830,17 +830,17 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             f.indices(**{"longitude": 112.5, key: 22.5})
 
-    def test_Field_orignal_filenames(self):
+    def test_Field_get_original_filenames(self):
         """Test Field.orignal_filenames."""
         f = cfdm.example_field(0)
-        f.data.original_filenames(define=["file1.nc", "file2.nc"])
+        f._original_filenames(define=["file1.nc", "file2.nc"])
         x = f.coordinate("longitude")
-        x.data.original_filenames(define=["file1.nc", "file3.nc"])
+        x._original_filenames(define=["file1.nc", "file3.nc"])
         b = x.bounds
-        b.data.original_filenames(define=["file1.nc", "file4.nc"])
+        b._original_filenames(define=["file1.nc", "file4.nc"])
 
         self.assertEqual(
-            f.original_filenames(),
+            f.get_original_filenames(),
             set(
                 (
                     cfdm.abspath("file1.nc"),
@@ -849,6 +849,10 @@ class FieldTest(unittest.TestCase):
                     cfdm.abspath("file4.nc"),
                 )
             ),
+        )
+
+        self.assertEqual(
+            f.get_original_filenames(), f.copy().get_original_filenames()
         )
 
 

@@ -30,6 +30,7 @@ class Field(
     mixin.NetCDFUnreferenced,
     mixin.FieldDomain,
     mixin.PropertiesData,
+    mixin.Files,
     core.Field,
 ):
     """A field construct of the CF data model.
@@ -2348,7 +2349,7 @@ class Field(
                             )
 
         return f
- 
+
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
         """Remove size one axes from the data.

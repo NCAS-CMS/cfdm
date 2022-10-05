@@ -289,7 +289,7 @@ class DSGTest(unittest.TestCase):
 
         # Check original filenames
         self.assertEqual(
-            q.original_filenames(), set([self.indexed_contiguous])
+            q.get_original_filenames(), set([self.indexed_contiguous])
         )
 
     def test_DSG_create_contiguous(self):

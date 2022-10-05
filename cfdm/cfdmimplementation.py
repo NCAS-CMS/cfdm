@@ -3095,13 +3095,16 @@ class CFDMImplementation(Implementation):
         parent.set_node_count(node_count, copy=copy)
 
     def set_original_filenames(self, parent, filename):
-        """TODO
+        """Set the original files.
+
+        Set the original files to the *filename* parameter plus any
+        original files stored on the data (if present).
 
         .. versionadded:: (cfdm) 1.10.0.1
 
         :Parameters:
 
-            parent:
+            parent: Parent construct on which to set original files
 
             filename: `str`
                 The file that contains the corresponding variable.
@@ -3109,18 +3112,22 @@ class CFDMImplementation(Implementation):
         :Returns:
 
             `None`
+
         """
+        if filename is None:
+            filenames = ()
+        else:
+            filenames = (filename,)
         try:
             data = parent.get_data(None)
         except AttributeError:
-            data = None
+            pass
+        else:
+            if data is not None:
+                filenames += tuple(data._original_filenames())
 
-        filenames = (filename,)
-        if data is not None:
-            filenames += tuple(data._original_filenames())
-        
-        parent._original_filenames(define=filenames)
-        
+        parent._original_filenames(define=set(filenames))
+
     def set_part_node_count_properties(
         self, parent, part_node_count, copy=True
     ):

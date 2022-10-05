@@ -272,7 +272,7 @@ class GatheredTest(unittest.TestCase):
 
         # Check original filenames
         self.assertEqual(
-            f[0].original_filenames(), set([cfdm.abspath(self.gathered)])
+            f[0].get_original_filenames(), set([cfdm.abspath(self.gathered)])
         )
 
     def test_GATHERING_create(self):

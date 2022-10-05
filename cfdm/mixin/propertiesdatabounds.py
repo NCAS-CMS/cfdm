@@ -259,7 +259,7 @@ class PropertiesDataBounds(PropertiesData):
         return f"{self.identity('')}{dims} {units}"
 
     def _original_filenames(self, define=None, update=None, clear=False):
-        """The names of files that contain the original data and metadata.
+        """The names of files containing the original data and metadata.
 
         {{original filenames}}
 
@@ -282,17 +282,19 @@ class PropertiesDataBounds(PropertiesData):
                 `None` is returned.
 
         """
-        out = super().original_filenames(define=define, update=update, clear=clear)
+        out = super()._original_filenames(
+            define=define, update=update, clear=clear
+        )
         if out is None:
             return
-        
-        bounds = self.get_bounds_data(None, _units=False, _fill_value=False)
+
+        bounds = self.get_bounds(None)
         if bounds is not None:
-            out.update(bounds.original_filenames(clear=clear))
+            out.update(bounds._original_filenames(clear=clear))
 
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
-            out.update(interior_ring.original_filenames(clear=clear))
+            out.update(interior_ring._original_filenames(clear=clear))
 
         return out
 

@@ -2,7 +2,10 @@ from . import core, mixin
 
 
 class FieldAncillary(
-    mixin.NetCDFVariable, mixin.PropertiesData, core.FieldAncillary
+    mixin.NetCDFVariable,
+    mixin.PropertiesData,
+    mixin.Files,
+    core.FieldAncillary,
 ):
     """A field ancillary construct of the CF data model.
 

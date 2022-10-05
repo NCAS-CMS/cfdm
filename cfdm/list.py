@@ -2,7 +2,10 @@ from . import core, mixin
 
 
 class List(
-    mixin.NetCDFVariable, mixin.PropertiesData, core.abstract.PropertiesData
+    mixin.NetCDFVariable,
+    mixin.PropertiesData,
+    mixin.Files,
+    core.abstract.PropertiesData,
 ):
     """A list variable required to uncompress a gathered array.
 

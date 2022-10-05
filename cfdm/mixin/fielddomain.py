@@ -332,7 +332,7 @@ class FieldDomain:
         return self._filter_return_construct(c, key, item, default, _method)
 
     def _original_filenames(self, define=None, update=None, clear=False):
-        """The names of files that contain the original data and metadata.
+        """The names of files containing the original data and metadata.
 
         {{original filenames}}
 
@@ -355,18 +355,21 @@ class FieldDomain:
                 `None` is returned.
 
         """
-        out = super().original_filenames(define=define, update=update, clear=clear)
+        out = super()._original_filenames(
+            define=define, update=update, clear=clear
+        )
         if out is None:
             return
-        
+
         for c in self.constructs.values():
             try:
-                out.update(c.original_filenames(clear=clear))
-            except AttributeEror:
+                # Not all constructs have original filenames
+                out.update(c._original_filenames(clear=clear))
+            except AttributeError:
                 pass
 
         return out
-    
+
     def _unique_construct_names(self):
         """Return unique metadata construct names.
 

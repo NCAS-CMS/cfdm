@@ -221,7 +221,7 @@ class GatheredTest(unittest.TestCase):
         )
 
         # Check original filenames
-        self.assertEqual(i.original_filenames(), set([self.biquadratic]))
+        self.assertEqual(i.get_original_filenames(), set([self.biquadratic]))
 
 
 if __name__ == "__main__":

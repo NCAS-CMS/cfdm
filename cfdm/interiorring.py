@@ -5,6 +5,7 @@ class InteriorRing(
     mixin.NetCDFDimension,
     mixin.NetCDFVariable,
     mixin.PropertiesData,
+    mixin.Files,
     core.InteriorRing,
 ):
     """An interior ring array with properties.

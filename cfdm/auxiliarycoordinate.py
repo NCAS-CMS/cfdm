@@ -2,7 +2,10 @@ from . import core, mixin
 
 
 class AuxiliaryCoordinate(
-    mixin.NetCDFVariable, mixin.Coordinate, core.AuxiliaryCoordinate
+    mixin.NetCDFVariable,
+    mixin.Coordinate,
+    mixin.Files,
+    core.AuxiliaryCoordinate,
 ):
     """An auxiliary coordinate construct of the CF data model.
 

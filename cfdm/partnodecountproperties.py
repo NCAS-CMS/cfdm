@@ -5,6 +5,7 @@ class PartNodeCountProperties(
     mixin.NetCDFVariable,
     mixin.NetCDFDimension,
     mixin.Properties,
+    mixin.Files,
     core.abstract.Properties,
 ):
     """Properties for a netCDF part node count variable.

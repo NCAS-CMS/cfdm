@@ -6,6 +6,7 @@ class Count(
     mixin.NetCDFDimension,
     mixin.NetCDFSampleDimension,
     mixin.PropertiesData,
+    mixin.Files,
     core.abstract.PropertiesData,
 ):
     """A count variable required to uncompress a ragged array.

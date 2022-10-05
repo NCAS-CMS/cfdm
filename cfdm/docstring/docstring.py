@@ -382,7 +382,7 @@ _docstring_substitution_definitions = {
                 Add these original file names to those already
                 stored. The original file names of any constituent
                 parts are not updated. Can't be used with the *define*
-                parameter.""",    
+                parameter.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------

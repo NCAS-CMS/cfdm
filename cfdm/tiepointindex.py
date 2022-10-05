@@ -6,6 +6,7 @@ class TiePointIndex(
     mixin.NetCDFSubsampledDimension,
     mixin.NetCDFInterpolationSubareaDimension,
     mixin.PropertiesData,
+    mixin.Files,
     core.abstract.PropertiesData,
 ):
     """A tie point index variable with properties.

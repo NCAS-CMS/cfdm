@@ -14,13 +14,14 @@ from ..decorators import (
 )
 from ..functions import abspath
 from ..mixin.container import Container
+from ..mixin.files import Files
 from ..mixin.netcdf import NetCDFHDF5
 from . import NumpyArray, abstract
 
 logger = logging.getLogger(__name__)
 
 
-class Data(Container, NetCDFHDF5, core.Data):
+class Data(Container, NetCDFHDF5, Files, core.Data):
     """An orthogonal multidimensional array with masking and units.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -721,50 +722,12 @@ class Data(Container, NetCDFHDF5, core.Data):
         ('/data/user/file1.nc', '/data/user/file2.nc',)
 
         """
-        filenames = None
+        old = super()._original_filenames(
+            define=define, update=update, clear=clear
+        )
 
-        if define:
-            # Replace the existing collection of original file names
-            if isinstance(define, str):
-                define = (define,)
-
-            filenames = tuple([abspath(name) for name in define])
-
-        if update:
-            # Add new original file names to the existing collection
-            if define is not None:
-                raise ValueError(
-                    "Can't set the 'define' and 'update' parameters "
-                    "at the same time"
-                )
-
-            filenames = self._get_component("original_filenames", ())
-            if isinstance(update, str):
-                update = (update,)
-
-            filenames += tuple([abspath(name) for name in update])
-
-        if filenames:
-            if len(filenames) > 1:
-                filenames = tuple(set(filenames))
-
-            self._set_component("original_filenames", filenames, copy=False)
-
-        if define is not None or update is not None:
-            if clear:
-                raise ValueError(
-                    "Can't set the 'clear' parameter with either of the "
-                    "'define' and 'update' parameters"
-                )
-
-            # Return None, having potentially changed the file names
+        if old is None:
             return
-
-        # Still here? Then return the existing original file names
-        if clear:
-            old = set(self._del_component("original_filenames", ()))
-        else:
-            old = set(self._get_component("original_filenames", ()))
 
         # Find any compression ancillary data variables
         ancils = []
