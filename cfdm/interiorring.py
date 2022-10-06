@@ -5,6 +5,7 @@ class InteriorRing(
     mixin.NetCDFDimension,
     mixin.NetCDFVariable,
     mixin.PropertiesData,
+    mixin.Files,
     core.InteriorRing,
 ):
     """An interior ring array with properties.
@@ -74,6 +75,7 @@ class InteriorRing(
         )
 
         self._initialise_netcdf(source)
+        self._initialise_original_filenames(source)
 
     def dump(
         self,

@@ -6,6 +6,7 @@ class Index(
     mixin.NetCDFDimension,
     mixin.NetCDFSampleDimension,
     mixin.PropertiesData,
+    mixin.Files,
     core.abstract.PropertiesData,
 ):
     """An index variable required to uncompress a ragged array.
@@ -84,6 +85,7 @@ class Index(
         )
 
         self._initialise_netcdf(source)
+        self._initialise_original_filenames(source)
 
     def dump(
         self,

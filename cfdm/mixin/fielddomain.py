@@ -331,6 +331,45 @@ class FieldDomain:
         # Return construct, or key, or both, or default
         return self._filter_return_construct(c, key, item, default, _method)
 
+    def _original_filenames(self, define=None, update=None, clear=False):
+        """The names of files containing the original data and metadata.
+
+        {{original filenames}}
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        :Parameters:
+
+            {{define: (sequence of) `str`, optional}}
+
+            {{update: (sequence of) `str`, optional}}
+
+            {{clear: `bool` optional}}
+
+        :Returns:
+
+            `set` or `None`
+                {{Returns original filenames}}
+
+                If the *define* or *update* parameter is set then
+                `None` is returned.
+
+        """
+        out = super()._original_filenames(
+            define=define, update=update, clear=clear
+        )
+        if out is None:
+            return
+
+        for c in self.constructs.values():
+            try:
+                # Not all constructs have original filenames
+                out.update(c._original_filenames(clear=clear))
+            except AttributeError:
+                pass
+
+        return out
+
     def _unique_construct_names(self):
         """Return unique metadata construct names.
 

@@ -2,7 +2,10 @@ from . import core, mixin
 
 
 class NodeCountProperties(
-    mixin.NetCDFVariable, mixin.Properties, core.abstract.Properties
+    mixin.NetCDFVariable,
+    mixin.Properties,
+    mixin.Files,
+    core.abstract.Properties,
 ):
     """Properties for a netCDF node count variable.
 
@@ -34,6 +37,7 @@ class NodeCountProperties(
         super().__init__(properties=properties, source=source, copy=copy)
 
         self._initialise_netcdf(source)
+        self._initialise_original_filenames(source)
 
     def dump(
         self,

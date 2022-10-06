@@ -6,6 +6,7 @@ class Count(
     mixin.NetCDFDimension,
     mixin.NetCDFSampleDimension,
     mixin.PropertiesData,
+    mixin.Files,
     core.abstract.PropertiesData,
 ):
     """A count variable required to uncompress a ragged array.
@@ -77,6 +78,7 @@ class Count(
         )
 
         self._initialise_netcdf(source)
+        self._initialise_original_filenames(source)
 
     def dump(
         self,

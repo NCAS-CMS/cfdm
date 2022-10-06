@@ -2,7 +2,10 @@ from . import core, mixin
 
 
 class FieldAncillary(
-    mixin.NetCDFVariable, mixin.PropertiesData, core.FieldAncillary
+    mixin.NetCDFVariable,
+    mixin.PropertiesData,
+    mixin.Files,
+    core.FieldAncillary,
 ):
     """A field ancillary construct of the CF data model.
 
@@ -70,6 +73,7 @@ class FieldAncillary(
         )
 
         self._initialise_netcdf(source)
+        self._initialise_original_filenames(source)
 
     def dump(
         self,

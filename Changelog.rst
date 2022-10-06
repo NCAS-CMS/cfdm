@@ -3,6 +3,13 @@ Version 1.10.0.1
 
 **2022-??-??**
 
+* New method: `cfdm.Data.get_tie_point_indices`
+* New method: `cfdm.Data.get_interpolation_parameters`
+* New method: `cfdm.Data.get_dependent_tie_points`
+* Record the names of files that contain the original data
+  (https://github.com/NCAS-CMS/cfdm/issues/215)
+* New method: `cfdm.Field.get_original_filenames`
+* New method: `cfdm.Data.get_original_filenames`
 * Fixed bug that caused a failure when printing date-time data with
   the first element masked
   (https://github.com/NCAS-CMS/cfdm/issues/211)

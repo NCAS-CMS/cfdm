@@ -98,9 +98,6 @@ class Properties(Container):
         if ncvar is not None:
             yield f"ncvar%{ncvar}"
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def creation_commands(
         self, namespace=None, indent=0, string=True, name="c", header=True
     ):

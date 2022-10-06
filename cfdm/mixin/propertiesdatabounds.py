@@ -258,9 +258,46 @@ class PropertiesDataBounds(PropertiesData):
 
         return f"{self.identity('')}{dims} {units}"
 
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
+    def _original_filenames(self, define=None, update=None, clear=False):
+        """The names of files containing the original data and metadata.
+
+        {{original filenames}}
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        :Parameters:
+
+            {{define: (sequence of) `str`, optional}}
+
+            {{update: (sequence of) `str`, optional}}
+
+            {{clear: `bool` optional}}
+
+        :Returns:
+
+            `set`
+                {{Returns original filenames}}
+
+                If the *define* or *update* parameter is set then
+                `None` is returned.
+
+        """
+        out = super()._original_filenames(
+            define=define, update=update, clear=clear
+        )
+        if out is None:
+            return
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            out.update(bounds._original_filenames(clear=clear))
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            out.update(interior_ring._original_filenames(clear=clear))
+
+        return out
+
     @property
     def dtype(self):
         """Data-type of the data elements.
@@ -1027,28 +1064,6 @@ class PropertiesDataBounds(PropertiesData):
                 return False
 
         return True
-
-    def get_filenames(self):
-        """Return the name of the file or files containing the data.
-
-        The names of the file or files containing the bounds data are also
-        returned.
-
-        :Returns:
-
-            `set`
-                The file names in normalised, absolute form. If all of
-                the data are in memory then an empty `set` is
-                returned.
-
-        """
-        out = super().get_filenames()
-
-        data = self.get_bounds_data(None, _units=False, _fill_value=False)
-        if data is not None:
-            out.update(data.get_filenames())
-
-        return out
 
     def get_node_count(self, default=ValueError()):
         """Return the node count variable for geometry bounds.

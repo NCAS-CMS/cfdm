@@ -270,6 +270,11 @@ class GatheredTest(unittest.TestCase):
         for i in range(len(f)):
             self.assertTrue(g[i].equals(f[i], verbose=3))
 
+        # Check original filenames
+        self.assertEqual(
+            f[0].get_original_filenames(), set([cfdm.abspath(self.gathered)])
+        )
+
     def test_GATHERING_create(self):
         """Test the creation of a construct with a gathered array."""
         # Define the gathered values

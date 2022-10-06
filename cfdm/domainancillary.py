@@ -2,7 +2,10 @@ from . import core, mixin
 
 
 class DomainAncillary(
-    mixin.NetCDFVariable, mixin.PropertiesDataBounds, core.DomainAncillary
+    mixin.NetCDFVariable,
+    mixin.PropertiesDataBounds,
+    mixin.Files,
+    core.DomainAncillary,
 ):
     """A domain ancillary construct of the CF data model.
 
@@ -78,6 +81,7 @@ class DomainAncillary(
         )
 
         self._initialise_netcdf(source)
+        self._initialise_original_filenames(source)
 
     def dump(
         self,

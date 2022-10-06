@@ -8,7 +8,10 @@ logger = logging.getLogger(__name__)
 
 
 class CoordinateReference(
-    mixin.NetCDFVariable, mixin.Container, core.CoordinateReference
+    mixin.NetCDFVariable,
+    mixin.Container,
+    mixin.Files,
+    core.CoordinateReference,
 ):
     """A coordinate reference construct of the CF data model.
 
@@ -133,6 +136,7 @@ class CoordinateReference(
         )
 
         self._initialise_netcdf(source)
+        self._initialise_original_filenames(source)
 
     def __str__(self):
         """Called by the `str` built-in function.

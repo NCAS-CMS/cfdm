@@ -87,6 +87,22 @@ _docstring_substitution_definitions = {
     # unique construct
     "{{unique construct}}": """If zero or two or more constructs are selected then an
         exception is raised, or the *default* parameter is returned.""",
+    # original filenames
+    "{{original filenames}}": """The original files are those that contain some or all of the
+        data and metadata when it was first instantiated, and are
+        necessary (but perhaps not sufficient) to recreate the
+        `{{class}}` should the need arise. The `{{package}}.read`
+        function automatically records the original file names on all
+        data that it creates.
+
+        The original files of any constituent components are also
+        included.
+
+        In-place changes to the `{{class}}` will not generally change
+        the collection of original files. However if the `{{class}}`
+        was produced by combining other objects that also store their
+        original file names, then the returned files will be the
+        collection of original files from all contributing sources.""",
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentataion)
     # ----------------------------------------------------------------
@@ -350,6 +366,24 @@ _docstring_substitution_definitions = {
                 If True (the default) then deep copy input
                 parameters prior to initialisation, else they are
                 not (deep) copied.""",
+    # clear
+    "{{clear: `bool` optional}}": """clear: `bool` optional
+                If True then remove any stored original file
+                names. This will also clear original file names from
+                any ancillary data information, such as a count
+                variable required for compressed data.""",
+    # define
+    "{{define: (sequence of) `str`, optional}}": """define: (sequence of) `str`, optional
+                Set these original file names, removing any already
+                stored.  The original file names of any constituent
+                parts are not set. Can't be used with the *update*
+                parameter.""",
+    # update
+    "{{update: (sequence of) `str`, optional}": """update: (sequence of) `str`, optional
+                Add these original file names to those already
+                stored. The original file names of any constituent
+                parts are not updated. Can't be used with the *define*
+                parameter.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------
@@ -372,4 +406,8 @@ _docstring_substitution_definitions = {
     "{{shapes auto}}": """If ``'auto'`` then the shapes along non-compressed
                 dimensions are not created, those dimensions' elements
                 being replaced with ``'auto'`` instead.""",
+    # Returns original filenames
+    "{{Returns original filenames}}": """The original file names in normalised absolute
+                form. If there are no original files then an empty
+                `set` will be returned.""",
 }

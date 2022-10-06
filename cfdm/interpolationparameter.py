@@ -2,7 +2,10 @@ from . import core, mixin
 
 
 class InterpolationParameter(
-    mixin.NetCDFVariable, mixin.PropertiesData, core.abstract.PropertiesData
+    mixin.NetCDFVariable,
+    mixin.PropertiesData,
+    mixin.Files,
+    core.abstract.PropertiesData,
 ):
     """An interpolation parameter variable.
 
@@ -66,6 +69,7 @@ class InterpolationParameter(
         )
 
         self._initialise_netcdf(source)
+        self._initialise_original_filenames(source)
 
     def dump(
         self,

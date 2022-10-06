@@ -30,6 +30,7 @@ class Field(
     mixin.NetCDFUnreferenced,
     mixin.FieldDomain,
     mixin.PropertiesData,
+    mixin.Files,
     core.Field,
 ):
     """A field construct of the CF data model.
@@ -135,6 +136,7 @@ class Field(
         )
 
         self._initialise_netcdf(source)
+        self._initialise_original_filenames(source)
 
         self._set_dataset_compliance(self.dataset_compliance(), copy=True)
 

@@ -5,6 +5,7 @@ class PartNodeCountProperties(
     mixin.NetCDFVariable,
     mixin.NetCDFDimension,
     mixin.Properties,
+    mixin.Files,
     core.abstract.Properties,
 ):
     """Properties for a netCDF part node count variable.
@@ -42,6 +43,7 @@ class PartNodeCountProperties(
         super().__init__(properties=properties, source=source, copy=copy)
 
         self._initialise_netcdf(source)
+        self._initialise_original_filenames(source)
 
     def dump(
         self,

@@ -1,4 +1,5 @@
 from .container import Container
+from .files import Files
 from .properties import Properties
 from .propertiesdata import PropertiesData
 from .propertiesdatabounds import PropertiesDataBounds

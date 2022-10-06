@@ -6,6 +6,7 @@ class TiePointIndex(
     mixin.NetCDFSubsampledDimension,
     mixin.NetCDFInterpolationSubareaDimension,
     mixin.PropertiesData,
+    mixin.Files,
     core.abstract.PropertiesData,
 ):
     """A tie point index variable with properties.
@@ -90,6 +91,7 @@ class TiePointIndex(
         )
 
         self._initialise_netcdf(source)
+        self._initialise_original_filenames(source)
 
     def dump(
         self,

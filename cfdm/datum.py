@@ -1,7 +1,7 @@
 from . import core, mixin
 
 
-class Datum(mixin.Parameters, mixin.NetCDFVariable, core.Datum):
+class Datum(mixin.Parameters, mixin.NetCDFVariable, mixin.Files, core.Datum):
     """A datum component of a CF data model coordinate reference.
 
     A datum is a complete or partial definition of the zeroes of the
@@ -53,3 +53,4 @@ class Datum(mixin.Parameters, mixin.NetCDFVariable, core.Datum):
         super().__init__(parameters=parameters, source=source, copy=copy)
 
         self._initialise_netcdf(source)
+        self._initialise_original_filenames(source)

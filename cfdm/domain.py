@@ -19,6 +19,7 @@ class Domain(
     mixin.NetCDFComponents,
     mixin.NetCDFUnreferenced,
     mixin.Properties,
+    mixin.Files,
     core.Domain,
 ):
     """A domain construct of the CF data model.
@@ -106,6 +107,7 @@ class Domain(
         )
 
         self._initialise_netcdf(source)
+        self._initialise_original_filenames(source)
 
         self._set_dataset_compliance(self.dataset_compliance(), copy=True)
 
@@ -898,7 +900,7 @@ class Domain(
         """
         out = set()
 
-        for c in self.constructs.filter_by_data().values():
+        for c in self.constructs.filter_by_data(todict=True).values():
             out.update(c.get_filenames())
 
         return out
