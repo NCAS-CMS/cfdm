@@ -31,7 +31,7 @@ class Files:
         """
         if source is not None:
             # Note: Getting and setting the component directly (as
-            #       oposed to using the `_original_filenames` methods
+            #       opposed to using the `_original_filenames` methods
             #       of 'source' and 'self') should improve the
             #       performance of `self.copy`.
             try:
