@@ -888,8 +888,23 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                             y.append(slice(start, start + 1))
                         else:
                             step = stop - start
-                            stop += 1
-                            y.append(slice(start, stop, step))
+                            if step > 0:
+                                stop += 1
+                            elif step < 0:
+                                stop -= 1
+                            else:
+                                stop = start + 1
+                                step = 1
+
+                            if abs(stop - start) == 1:
+                                # Replace a repeated index with a
+                                # single element list. This provides a
+                                # signal that the
+                                # value-has-more-than-one-element case
+                                # can't be done.
+                                y.append([start])
+                            else:
+                                y.append(slice(start, stop, step))
 
                     indices1[i] = y
                 else:
@@ -920,7 +935,19 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 for i, j in zip(
                     itertools.product(*indices1), itertools.product(*indices2)
                 ):
-                    array[i] = value[j]
+                    try:
+                        array[i] = value[j]
+                    except ValueError as error:
+                        for ii in i:
+                            if isinstance(ii, list):
+                                raise ValueError(
+                                    "Can't assign to indices "
+                                    f"{tuple(indices)}: An integer in list "
+                                    "position 2N (N >= 0) can't be repeated "
+                                    "in position 2N + 1"
+                                )
+
+                        raise ValueError(error)
 
     @property
     def compressed_array(self):
