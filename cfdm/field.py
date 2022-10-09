@@ -3,7 +3,6 @@ import logging
 import numpy as np
 
 from . import Constructs, Count, Domain, Index, List, core, mixin
-from .constants import masked as cfdm_masked
 from .data import (
     GatheredArray,
     RaggedContiguousArray,
@@ -1208,13 +1207,15 @@ class Field(
             flattened_data = data.flatten(range(data.ndim - 1))
 
             count = []
+            masked = np.ma.masked
             for d in flattened_data:
+                d = d.array
                 last = d.size
                 for i in d[::-1]:
-                    if i is not cfdm_masked:
+                    if i is not masked:
                         break
-                    else:
-                        last -= 1
+
+                    last -= 1
 
                 count.append(last)
 
