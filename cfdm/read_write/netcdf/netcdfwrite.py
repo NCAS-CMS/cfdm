@@ -4288,8 +4288,8 @@ class NetCDFWrite(IOWrite):
                 As for the *format* parameter for initialising a
                 `netCDF.Dataset` instance.
 
-            fields: sequence of `Field`
-                The field constructs to be written.
+            fields: sequence of `Field` or `Domain`
+                The constructs to be written.
 
         :Returns:
 
@@ -4300,7 +4300,7 @@ class NetCDFWrite(IOWrite):
         if fields and mode != "r":
             filename = os.path.abspath(filename)
             for f in fields:
-                if filename in self.implementation.get_filenames(f):
+                if filename in self.implementation.get_original_filenames(f):
                     raise ValueError(
                         "Can't write to a file that contains data "
                         f"that needs to be read: {filename}"

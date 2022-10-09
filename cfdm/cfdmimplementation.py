@@ -1625,6 +1625,20 @@ class CFDMImplementation(Implementation):
         """
         return cell_measure.get_measure(default=None)
 
+    def get_original_filenames(self, parent):
+        """Get the original names of the files containing the construct.
+
+        :Parameters:
+
+            parent:
+
+        :Returns:
+
+            `set`
+
+        """
+        return parent.get_original_filenames()
+
     def nc_get_dimension(self, parent, default=None):
         """Return the netCDF variable name.
 
