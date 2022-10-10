@@ -139,6 +139,9 @@ class DataTest(unittest.TestCase):
             ([4, 3, 0], [7, 6, 1]),
             ([4, 3, 0], [1, 6, 7]),
             ([0, 3, 4], [7, 6, 1]),
+            ([0, 3, -1], [7, 6, 1]),
+            ([0, 3, 4], [-1, 6, 1]),
+            ([0, 3, -1], [-1, 6, 1]),
         ):
             d[indices] = value
             self.assertEqual((d.array == value).sum(), 9)
@@ -176,6 +179,9 @@ class DataTest(unittest.TestCase):
             (slice(None), [4, 3, 0], [7, 6, 1]),
             (slice(None), [4, 3, 0], [1, 6, 7]),
             (slice(None), [0, 3, 4], [7, 6, 1]),
+            (slice(None), [0, 3, -1], [7, 6, 1]),
+            (slice(None), [0, 3, 4], [-1, 6, 1]),
+            (slice(None), [0, 3, -1], [-1, 6, 1]),
         ):
             d = cfdm.Data(a.copy())
             d[indices] = value
@@ -198,8 +204,8 @@ class DataTest(unittest.TestCase):
             d[indices] = value
             self.assertEqual((d.array < 0).sum(), 4)
 
-        # Tricky cases not yet supported: when repeated integers
-        # occupy list positions n and n+1, for even n.
+        # Tricky cases not yet supported: when repeated integer
+        # occupies list positions 2n and 2n+1, n>=0
         for indices in (
             (slice(None), [3, 3, 4], [1, 6, 7]),
             (slice(None), [3, 3, 4], [6, 7, 7]),

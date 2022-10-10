@@ -760,6 +760,33 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         # Return the old file names
         return old
 
+    #    def _posify_index(shape, ind):
+    #        """Flip negative indices around to positive ones
+    #
+    #        >>> posify_index(10, 3)
+    #        3
+    #        >>> posify_index(10, -3)
+    #        7
+    #        >>> posify_index(10, [3, -3])
+    #        array([3, 7])
+    #
+    #        >>> posify_index((10, 20), (3, -3))
+    #        (3, 17)
+    #        >>> posify_index((10, 20), (3, [3, 4, -3]))  # doctest: +NORMALIZE_WHITESPACE
+    #        (3, array([ 3,  4, 17]))
+    #        """
+    #        if isinstance(ind, tuple):
+    #            return tuple(map(posify_index, shape, ind))
+    #        if isinstance(ind, Integral):
+    #            if ind < 0 and not math.isnan(shape):
+    #                return ind + shape
+    #            else:
+    #                return ind
+    #        if isinstance(ind, (np.ndarray, list)) and not math.isnan(shape):
+    #            ind = np.asanyarray(ind)
+    #            return np.where(ind < 0, ind + shape, ind)
+    #        return ind
+
     def _parse_axes(self, axes):
         """Parses the data axes and returns valid non-duplicate axes.
 
@@ -878,33 +905,41 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             # can't do a normal numpy assignment
             # --------------------------------------------------------
             indices1 = indices[:]
-            for i, x in enumerate(indices):
+            for i, (x, size) in enumerate(zip(indices, array.shape)):
                 if i in axes_with_list_indices:
-                    # This index is a list of integers
+                    # This index is a list (or similar) of integers
+                    if not isinstance(x, list):
+                        x = np.asanyarray(x).tolist()
+
                     y = []
                     args = [iter(x)] * 2
                     for start, stop in itertools.zip_longest(*args):
-                        if not stop:
+                        if start < 0:
+                            start += size
+
+                        if stop is None:
                             y.append(slice(start, start + 1))
+                            break
+
+                        if stop < 0:
+                            stop += size
+
+                        step = stop - start
+                        if not step:
+                            # (*) Replace a repeated index (such as 3,
+                            # 3) with a element list (i.e. [3]). This
+                            # provides a signal that the
+                            # value-has-more-than-one-element case
+                            # can't be done when values in positions
+                            # 2N and 2N + 1 are the same.
+                            y.append([start])
                         else:
-                            step = stop - start
                             if step > 0:
                                 stop += 1
-                            elif step < 0:
+                            else:
                                 stop -= 1
-                            else:
-                                stop = start + 1
-                                step = 1
 
-                            if abs(stop - start) == 1:
-                                # Replace a repeated index with a
-                                # single element list. This provides a
-                                # signal that the
-                                # value-has-more-than-one-element case
-                                # can't be done.
-                                y.append([start])
-                            else:
-                                y.append(slice(start, stop, step))
+                            y.append(slice(start, stop, step))
 
                     indices1[i] = y
                 else:
@@ -940,11 +975,13 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                     except ValueError as error:
                         for ii in i:
                             if isinstance(ii, list):
+                                # See starred (*) comment, above.
                                 raise ValueError(
-                                    "Can't assign to indices "
-                                    f"{tuple(indices)}: An integer in list "
-                                    "position 2N (N >= 0) can't be repeated "
-                                    "in position 2N + 1"
+                                    "Can't assign to indices: When there are "
+                                    "two or more list indices, an integer in "
+                                    "list position 2N can't be repeated in "
+                                    "position 2N + 1 (N >= 0): "
+                                    f"{tuple(indices)}"
                                 )
 
                         raise ValueError(error)
