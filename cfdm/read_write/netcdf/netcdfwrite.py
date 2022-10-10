@@ -4291,7 +4291,7 @@ class NetCDFWrite(IOWrite):
             fields: sequence of `Field` or `Domain`
                 The constructs to be written to the netCDF file. Note
                 that these constructs are only used to ascertain if
-                any data to written be is in *filename*. If this is
+                any data to be written is in *filename*. If this is
                 the case and mode is "w" then an exception is raised
                 to prevent *filename* from being deleted.
 
