@@ -1630,11 +1630,13 @@ class CFDMImplementation(Implementation):
 
         :Parameters:
 
-            parent:
+            parent: Construct
+                The construct to query of roriginal filenames.
 
         :Returns:
 
             `set`
+                The original filenames
 
         """
         return parent.get_original_filenames()
