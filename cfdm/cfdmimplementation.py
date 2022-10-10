@@ -1631,7 +1631,7 @@ class CFDMImplementation(Implementation):
         :Parameters:
 
             parent: Construct
-                The construct to query of roriginal filenames.
+                The construct to query of original filenames.
 
         :Returns:
 
