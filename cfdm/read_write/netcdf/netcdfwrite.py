@@ -4289,7 +4289,11 @@ class NetCDFWrite(IOWrite):
                 `netCDF.Dataset` instance.
 
             fields: sequence of `Field` or `Domain`
-                The constructs to be written.
+                The constructs to be written to the netCDF file. Note
+                that these constructs are only used to ascertain if
+                any data to written be is in *filename*. If this is
+                the case and mode is "w" then an exception is raised
+                to prevent *filename* from being deleted.
 
         :Returns:
 
@@ -4297,13 +4301,13 @@ class NetCDFWrite(IOWrite):
                 A `netCDF4.Dataset` object for the file.
 
         """
-        if fields and mode != "r":
+        if fields and mode == "w":
             filename = os.path.abspath(filename)
             for f in fields:
                 if filename in self.implementation.get_original_filenames(f):
                     raise ValueError(
-                        "Can't write to a file that contains data "
-                        f"that needs to be read: {filename}"
+                        "Can't write with mode 'w' to a file that contains "
+                        f"data that needs to be read: {f!r} uses {filename}"
                     )
 
         # mode == 'w' is safer than != 'a' in case of a typo (the letters
