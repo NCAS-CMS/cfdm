@@ -889,7 +889,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """Set a subspace of a data array.
 
         :Parameters:
-        
+
             array: array_like
                 The array to be assigned to. The array is changed
                 in-place.
@@ -898,8 +898,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 The indices to be applied.
 
             value: array_like
-                The value being assigned.
-        
+                The value being assigned. Must support fancy indexing.
+
             orthogonal_indexing: `bool`, optional
                 If True then apply 'orthogonal indexing', for which
                 indices that are 1-d arrays or lists subspace along
@@ -914,24 +914,28 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         **Examples**
 
         >>> a = np.arange(40).reshape(5, 8)
-        >>> Data._set_subspace(a, [[1, 4 ,3], [7, 6, 1]], -999,
+        >>> Data._set_subspace(a, [[1, 4 ,3], [7, 6, 1]],
+        ...                    np.array([[-1, -2, -3]]))
+        >>> print(a)
+        [[ 0  1  2  3  4  5  6  7]
+         [ 8 -3 10 11 12 13 -2 -1]
+         [16 17 18 19 20 21 22 23]
+         [24 -3 26 27 28 29 -2 -1]
+         [32 -3 34 35 36 37 -2 -1]]
+
+        >>> a = np.arange(40).reshape(5, 8)
+        >>> Data._set_subspace(a, [[1, 4 ,3], [7, 6, 1]],
+        ...                    np.array([[-1, -2, -3]])),
         ...                    orthogonal_indexing=False)
         >>> print(a)
-        [[   0    1    2    3    4    5    6    7]
-         [   8    9   10   11   12   13   14 -999]
-         [  16   17   18   19   20   21   22   23]
-         [  24 -999   26   27   28   29   30   31]
-         [  32   33   34   35   36   37 -999   39]]
-        >>> Data._set_subspace(a, [[1, 4 ,3], [7, 6, 1]], -999)
-        >>> print(a)
-        [[   0    1    2    3    4    5    6    7]
-         [   8 -999   10   11   12   13 -999 -999]
-         [  16   17   18   19   20   21   22   23]
-         [  24 -999   26   27   28   29 -999 -999]
-         [  32 -999   34   35   36   37 -999 -999]]
+        [[ 0  1  2  3  4  5  6  7]
+         [ 8  9 10 11 12 13 14 -1]
+         [16 17 18 19 20 21 22 23]
+         [24 -3 26 27 28 29 30 31]
+         [32 33 34 35 36 37 -2 39]]
 
-        """        
-        if not orthogonal_indexing:            
+        """
+        if not orthogonal_indexing:
             # --------------------------------------------------------
             # Apply non-orthogonal indexing
             # --------------------------------------------------------
@@ -958,6 +962,23 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             for i, (x, size) in enumerate(zip(indices, array.shape)):
                 if i in axes_with_list_indices:
                     # This index is a list (or similar) of integers
+                    #
+                    # Convert it to a sequence of size 2 slices, with
+                    # a size 1 slice at the end if there are an odd
+                    # number of integers. If there is a repeated
+                    # integer in positions 2N and 2N+1 (N>=0), then a
+                    # size 1 list rather than a size 2 slice is
+                    # included.
+                    #
+                    # For example: [1, 4, 4, 4, 6, 2, 7] becomes
+                    # [slice(1,5,3), [4], slice(6,1,-4), slice(7,8,1)]
+                    #
+                    # The idea here is to reduce the number of actual
+                    # assignments by a factor of ~2 per axis that has
+                    # list indices. E.g. if one axis has a list index
+                    # with 10 elements and another has a list index
+                    # with 31 elements then the actual number of
+                    # assignments will be 80=ceil(10/2)*ceil(31/2).
                     if not isinstance(x, list):
                         x = np.asanyarray(x).tolist()
 
@@ -976,13 +997,11 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
                         step = stop - start
                         if not step:
-                            # (*) Replace a repeated index (such as 3,
-                            # 3) with a element list (i.e. [3]). This
-                            # simplifies the assignment when 'value'
-                            # is size 1; and otherwise provides a
-                            # signal that the assignment can't be done
-                            # when indices in positions 2N and 2N + 1
-                            # are the same.
+                            # (*) Repeated index in positions 2N and
+                            # 2N+1 (N>=0). Store this as a
+                            # single-element list, mainly as an
+                            # indicator that a special index to
+                            # 'value' might need to be created.
                             y.append([start])
                         else:
                             if step > 0:
@@ -996,62 +1015,45 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 else:
                     indices1[i] = (x,)
 
-            if numpy.size(value) == 1:
+            if value.size == 1:
+                # 'value' is logically scalar => simply assign it to
+                # all index combinations.
                 for i in itertools.product(*indices1):
                     array[i] = value
-
             else:
+                # 'value' has two or more elements => for each index
+                # combination for 'array' assign the corresponding
+                # part of 'value'.
                 indices2 = []
-                ndim_difference = array.ndim - numpy.ndim(value)
-                for i, n in enumerate(numpy.shape(value)):
-                    if n == 1:
-                        if i + ndim_difference in axes_with_list_indices:
-                            indices2.append((slice(None),) * len(indices1[i + ndim_difference]))
-                        else:
-                            indices2.append((slice(None),))
-                    elif i + ndim_difference in axes_with_list_indices:
-                        index_size = len(indices[i + ndim_difference])
-                        if index_size != n:
-                            raise ValueError(
-                                "shape mismatch: value array axis of size "
-                                f"{n} could not be broadcast to index of "
-                                f"size {index_size}"
-                            )
+                ndim_difference = array.ndim - value.ndim
+                for i2, size in enumerate(value.shape):
+                    i1 = i2 + ndim_difference
+                    if i1 not in axes_with_list_indices:
+                        # The input 'indices[i1]' is a slice
+                        indices2.append((slice(None),))
+                        continue
 
+                    index1 = indices1[i1]
+                    if size == 1:
+                        indices2.append((slice(None),) * len(index1))
+                    else:
                         y = []
                         start = 0
-                        while start < n:
+                        for index in index1:
                             stop = start + 2
+                            if isinstance(index, list):
+                                # See (*) above
+                                start += 1
+
                             y.append(slice(start, stop))
                             start = stop
 
                         indices2.append(y)
-                    else:
-                        indices2.append((slice(None),))
 
-                print ('indices1=', indices1)
-                print(list(                        itertools.product(*indices1)))
-                print ('indices2=', indices2)
-                print(list(                        itertools.product(*indices2)))
                 for i, j in zip(
                     itertools.product(*indices1), itertools.product(*indices2)
                 ):
-                    print (i, j)
-                    try:
-                        array[i] = value[j]
-                    except ValueError as error:
-                        for ii in i:
-                            if isinstance(ii, list):
-                                # See starred (*) comment, above.
-                                raise ValueError(
-                                    "Can't assign to indices: When two or "
-                                    "more axes have list indices, an integer "
-                                    "value at list position 2N can't be "
-                                    "repeated at position 2N + 1 (N >= 0): "
-                                    f"{tuple(indices)}"
-                                )
-
-                        raise ValueError(error)
+                    array[i] = value[j]
 
     @property
     def compressed_array(self):

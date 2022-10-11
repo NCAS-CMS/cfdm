@@ -191,6 +191,8 @@ class DataTest(unittest.TestCase):
         for indices in (
             (slice(None), [0, 3, 3], [7, 6, 1]),
             (slice(None), [0, 4, 3], [7, 6, 7]),
+            (slice(None), [3, 3, 4], [1, 6, 7]),
+            (slice(None), [0, 4, 3], [7, 7, 6]),
         ):
             d = cfdm.Data(a.copy())
             d[indices] = value
@@ -199,22 +201,32 @@ class DataTest(unittest.TestCase):
         for indices in (
             (slice(None), [3, 4, 3], [7, 6, 7]),
             (slice(None), [4, 3, 3], [6, 7, 7]),
+            (slice(None), [3, 3, 4], [6, 7, 7]),
+            (slice(None), [3, 3, 4], [7, 7, 6]),
+            (slice(None), [4, 3, 3], [7, 7, 6]),
         ):
             d = cfdm.Data(a.copy())
             d[indices] = value
             self.assertEqual((d.array < 0).sum(), 4)
 
-        # Tricky cases not yet supported: when repeated integer
-        # occupies list positions 2n and 2n+1, n>=0
-        for indices in (
-            (slice(None), [3, 3, 4], [1, 6, 7]),
-            (slice(None), [3, 3, 4], [6, 7, 7]),
-            (slice(None), [3, 3, 4], [7, 7, 6]),
-            (slice(None), [0, 4, 3], [7, 7, 6]),
-            (slice(None), [4, 3, 3], [7, 7, 6]),
-        ):
-            with self.assertRaises(ValueError):
-                d[indices] = value
+        # Multiple list indices, array value + broadcasting
+        value = np.arange(3).reshape(1, 3) - 9
+
+        for indices in ((slice(None), [0, 3, 4], [1, 6, 7]),):
+            d = cfdm.Data(a.copy())
+            d[indices] = value
+            self.assertEqual((d.array < 0).sum(), 9)
+
+        # Repeated list elements
+        for indices in ((slice(None), [0, 3, 3], [7, 6, 1]),):
+            d = cfdm.Data(a.copy())
+            d[indices] = value
+            self.assertEqual((d.array < 0).sum(), 6)
+
+        for indices in ((slice(None), [4, 3, 3], [7, 7, 6]),):
+            d = cfdm.Data(a.copy())
+            d[indices] = value
+            self.assertEqual((d.array < 0).sum(), 4)
 
     def test_Data_apply_masking(self):
         """Test the `apply_masking` Data method."""
