@@ -885,8 +885,62 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         self._set_Array(array, copy=copy)
 
     @classmethod
-    def _set_subspace(cls, array, indices, value):
-        """Set a subspace of the data array defined by indices."""
+    def _set_subspace(cls, array, indices, value, orthogonal_indexing=True):
+        """Set a subspace of a data array.
+
+        :Parameters:
+        
+            array: array_like
+                The array to be assigned to. The array is changed
+                in-place.
+
+            indices: sequence
+                The indices to be applied.
+
+            value: array_like
+                The value being assigned.
+        
+            orthogonal_indexing: `bool`, optional
+                If True then apply 'orthogonal indexing', for which
+                indices that are 1-d arrays or lists subspace along
+                each dimension independently. This behaviour is
+                similar to Fortran but different to, for instance,
+                `numpy` or `dask`.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> a = np.arange(40).reshape(5, 8)
+        >>> Data._set_subspace(a, [[1, 4 ,3], [7, 6, 1]], -999,
+        ...                    orthogonal_indexing=False)
+        >>> print(a)
+        [[   0    1    2    3    4    5    6    7]
+         [   8    9   10   11   12   13   14 -999]
+         [  16   17   18   19   20   21   22   23]
+         [  24 -999   26   27   28   29   30   31]
+         [  32   33   34   35   36   37 -999   39]]
+        >>> Data._set_subspace(a, [[1, 4 ,3], [7, 6, 1]], -999)
+        >>> print(a)
+        [[   0    1    2    3    4    5    6    7]
+         [   8 -999   10   11   12   13 -999 -999]
+         [  16   17   18   19   20   21   22   23]
+         [  24 -999   26   27   28   29 -999 -999]
+         [  32 -999   34   35   36   37 -999 -999]]
+
+        """        
+        if not orthogonal_indexing:            
+            # --------------------------------------------------------
+            # Apply non-orthogonal indexing
+            # --------------------------------------------------------
+            array[tuple(indices)] = value
+            return
+
+        # ------------------------------------------------------------
+        # Still here? Then apply orthogonal indexing
+        # ------------------------------------------------------------
         axes_with_list_indices = [
             i
             for i, x in enumerate(indices)
@@ -894,16 +948,12 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         ]
 
         if len(axes_with_list_indices) < 2:
-            # --------------------------------------------------------
             # At most one axis has a list-of-integers index so we can
-            # do a normal numpy assignment
-            # --------------------------------------------------------
+            # do a normal assignment
             array[tuple(indices)] = value
         else:
-            # --------------------------------------------------------
             # At least two axes have list-of-integers indices so we
-            # can't do a normal numpy assignment
-            # --------------------------------------------------------
+            # can't do a normal assignment
             indices1 = indices[:]
             for i, (x, size) in enumerate(zip(indices, array.shape)):
                 if i in axes_with_list_indices:
@@ -928,10 +978,11 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                         if not step:
                             # (*) Replace a repeated index (such as 3,
                             # 3) with a element list (i.e. [3]). This
-                            # provides a signal that the
-                            # value-has-more-than-one-element case
-                            # can't be done when values in positions
-                            # 2N and 2N + 1 are the same.
+                            # simplifies the assignment when 'value'
+                            # is size 1; and otherwise provides a
+                            # signal that the assignment can't be done
+                            # when indices in positions 2N and 2N + 1
+                            # are the same.
                             y.append([start])
                         else:
                             if step > 0:
@@ -954,8 +1005,19 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 ndim_difference = array.ndim - numpy.ndim(value)
                 for i, n in enumerate(numpy.shape(value)):
                     if n == 1:
-                        indices2.append((slice(None),))
+                        if i + ndim_difference in axes_with_list_indices:
+                            indices2.append((slice(None),) * len(indices1[i + ndim_difference]))
+                        else:
+                            indices2.append((slice(None),))
                     elif i + ndim_difference in axes_with_list_indices:
+                        index_size = len(indices[i + ndim_difference])
+                        if index_size != n:
+                            raise ValueError(
+                                "shape mismatch: value array axis of size "
+                                f"{n} could not be broadcast to index of "
+                                f"size {index_size}"
+                            )
+
                         y = []
                         start = 0
                         while start < n:
@@ -967,9 +1029,14 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                     else:
                         indices2.append((slice(None),))
 
+                print ('indices1=', indices1)
+                print(list(                        itertools.product(*indices1)))
+                print ('indices2=', indices2)
+                print(list(                        itertools.product(*indices2)))
                 for i, j in zip(
                     itertools.product(*indices1), itertools.product(*indices2)
                 ):
+                    print (i, j)
                     try:
                         array[i] = value[j]
                     except ValueError as error:
@@ -977,10 +1044,10 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                             if isinstance(ii, list):
                                 # See starred (*) comment, above.
                                 raise ValueError(
-                                    "Can't assign to indices: When there are "
-                                    "two or more list indices, an integer in "
-                                    "list position 2N can't be repeated in "
-                                    "position 2N + 1 (N >= 0): "
+                                    "Can't assign to indices: When two or "
+                                    "more axes have list indices, an integer "
+                                    "value at list position 2N can't be "
+                                    "repeated at position 2N + 1 (N >= 0): "
                                     f"{tuple(indices)}"
                                 )
 
