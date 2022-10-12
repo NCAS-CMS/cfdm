@@ -760,33 +760,6 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         # Return the old file names
         return old
 
-    #    def _posify_index(shape, ind):
-    #        """Flip negative indices around to positive ones
-    #
-    #        >>> posify_index(10, 3)
-    #        3
-    #        >>> posify_index(10, -3)
-    #        7
-    #        >>> posify_index(10, [3, -3])
-    #        array([3, 7])
-    #
-    #        >>> posify_index((10, 20), (3, -3))
-    #        (3, 17)
-    #        >>> posify_index((10, 20), (3, [3, 4, -3]))  # doctest: +NORMALIZE_WHITESPACE
-    #        (3, array([ 3,  4, 17]))
-    #        """
-    #        if isinstance(ind, tuple):
-    #            return tuple(map(posify_index, shape, ind))
-    #        if isinstance(ind, Integral):
-    #            if ind < 0 and not math.isnan(shape):
-    #                return ind + shape
-    #            else:
-    #                return ind
-    #        if isinstance(ind, (np.ndarray, list)) and not math.isnan(shape):
-    #            ind = np.asanyarray(ind)
-    #            return np.where(ind < 0, ind + shape, ind)
-    #        return ind
-
     def _parse_axes(self, axes):
         """Parses the data axes and returns valid non-duplicate axes.
 
@@ -886,13 +859,13 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
     @classmethod
     def _set_subspace(cls, array, indices, value, orthogonal_indexing=True):
-        """Set a subspace of a data array.
+        """Assign to a subspace of an array.
 
         :Parameters:
 
             array: array_like
-                The array to be assigned to. The array is changed
-                in-place.
+                The array to be assigned to. Must support fancy
+                indexing. The array is changed in-place.
 
             indices: sequence
                 The indices to be applied.
@@ -934,6 +907,19 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
          [24 -3 26 27 28 29 30 31]
          [32 33 34 35 36 37 -2 39]]
 
+        >>> a = np.arange(40).reshape(5, 8)
+        >>> value = np.linspace(-1, -9, 9).reshape(3, 3)
+        >>> print(value)
+        [[-1. -2. -3.]
+         [-4. -5. -6.]
+         [-7. -8. -9.]]
+        >>> Data._set_subspace(a, [[4, 4 ,1], [7, 6, 1]], value)
+        [[ 0  1  2  3  4  5  6  7]
+         [ 8 -9 10 11 12 13 -8 -7]
+         [16 17 18 19 20 21 22 23]
+         [24 25 26 27 28 29 30 31]
+         [32 -6 34 35 36 37 -5 -4]]
+
         """
         if not orthogonal_indexing:
             # --------------------------------------------------------
@@ -957,28 +943,31 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             array[tuple(indices)] = value
         else:
             # At least two axes have list-of-integers indices so we
-            # can't do a normal assignment
+            # can't do a normal assignment.
+            #
+            # The brute-forace approach would be to do a seperate
+            # assignment to each set of elemants of 'array' that is
+            # defined by a every possible combination of the integers
+            # defined by the two of index lists.
+            #
+            # For example, if the input 'indices' are ([1, 2, 4, 5],
+            # slice(0:10), [8, 9]) then the brute-force approach would
+            # be to do 4*2=8 seperate assignments of 10 elements each.
+            #
+            # This can be reduced by a factor of ~2 per axis that has
+            # list indices if we convert it to a sequence of "size 2"
+            # slices (with a "size 1" slice at the end if there are an
+            # odd number of list elements).
+            #
+            # In the above example, the input list index [1, 2, 4, 5]
+            # can be mapped to two slices: slice(1,3,1), slice(4,6,1);
+            # the input list index [8, 9] is mapped to slice(8,10,1)
+            # and only 2 seperate assignments of 40 elements each are
+            # needed.
             indices1 = indices[:]
             for i, (x, size) in enumerate(zip(indices, array.shape)):
                 if i in axes_with_list_indices:
                     # This index is a list (or similar) of integers
-                    #
-                    # Convert it to a sequence of size 2 slices, with
-                    # a size 1 slice at the end if there are an odd
-                    # number of integers. If there is a repeated
-                    # integer in positions 2N and 2N+1 (N>=0), then a
-                    # size 1 list rather than a size 2 slice is
-                    # included.
-                    #
-                    # For example: [1, 4, 4, 4, 6, 2, 7] becomes
-                    # [slice(1,5,3), [4], slice(6,1,-4), slice(7,8,1)]
-                    #
-                    # The idea here is to reduce the number of actual
-                    # assignments by a factor of ~2 per axis that has
-                    # list indices. E.g. if one axis has a list index
-                    # with 10 elements and another has a list index
-                    # with 31 elements then the actual number of
-                    # assignments will be 80=ceil(10/2)*ceil(31/2).
                     if not isinstance(x, list):
                         x = np.asanyarray(x).tolist()
 
@@ -997,11 +986,19 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
                         step = stop - start
                         if not step:
-                            # (*) Repeated index in positions 2N and
-                            # 2N+1 (N>=0). Store this as a
-                            # single-element list, mainly as an
-                            # indicator that a special index to
-                            # 'value' might need to be created.
+                            # (*) There is a repeated index in
+                            #     positions 2N and 2N+1 (N>=0). Store
+                            #     this as a single-element list
+                            #     instead of a "size 2" slice, mainly
+                            #     as an indicator that a special index
+                            #     to 'value' might need to be
+                            #     created. See below, where this
+                            #     comment is referenced.
+                            #
+                            #     For example, the input list index
+                            #     [1, 4, 4, 4, 6, 2, 7] will be mapped
+                            #     to slice(1,5,3), [4], slice(6,1,-4),
+                            #     slice(7,8,1)
                             y.append([start])
                         else:
                             if step > 0:
@@ -1042,7 +1039,11 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                         for index in index1:
                             stop = start + 2
                             if isinstance(index, list):
-                                # See (*) above
+                                # Two consecutive elements of 'value'
+                                # are assigned to the same integer
+                                # index of 'array'.
+                                #
+                                # See the (*) comment above.
                                 start += 1
 
                             y.append(slice(start, stop))
