@@ -192,7 +192,6 @@ class NetCDFArray(abstract.Array):
 
         """
         netcdf = self.open()
-        dataset = netcdf
 
         # Traverse the group structure, if there is one (CF>=1.8).
         group = self.get_group()
@@ -220,7 +219,9 @@ class NetCDFArray(abstract.Array):
                     array = variable[indices]
                     break
 
-        self.close(dataset)
+        self._set_units(variable)
+        
+        self.close()
 
         string_type = isinstance(array, str)
         if string_type:
@@ -288,6 +289,43 @@ class NetCDFArray(abstract.Array):
             name = f"variable={name}"
 
         return f"file={self.get_filename()} {name}"
+
+    def _set_units(self, var):
+        """TODO
+
+        :Parameters:
+
+            var: `netCDF4.Variable`
+
+        :Returns:
+
+            `tuple`
+                The units and calendar attributes, either of which may
+                be `None`.
+
+        """
+        # Note: Can't use None as the default since it is a valid
+        #       `units` or 'calendar' value that indicates that the
+        #       attribute has not been set in the dataset.
+        units = self._get_component("units", False)
+        if units is False:
+            try:
+                units = var.getncattr("units")
+            except AttributeError:
+                units = None
+
+            self._set_component("units", units, copy=False)
+            
+        calendar= self._get_component("calendar", False)
+        if calendar is False:
+            try:
+                calendar = var.getncattr("calendar")
+            except AttributeError:
+                calendar = None
+
+            self._set_component("calendar", units, copy=False)
+
+        return units, calendar
 
     @property
     def array(self):
@@ -427,7 +465,7 @@ class NetCDFArray(abstract.Array):
         """
         return self._get_component("varid")
 
-    def close(self, netcdf):
+    def close(self):
         """Close the dataset containing the data.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -442,8 +480,11 @@ class NetCDFArray(abstract.Array):
             `None`
 
         """
-        if self._get_component("close"):
-            netcdf.close()
+        REVERT BACK TO ORG
+        if self._get_component("close", True)
+            nc = self._del_component("nc", None)
+            if nc is not None:
+                nc.close()
 
     def open(self):
         """Returns an open dataset containing the data array.
@@ -462,10 +503,18 @@ class NetCDFArray(abstract.Array):
         'eastward_wind'
 
         """
+        REVERT BACK TO ORG
+        nc = self._get_component("nc", None)
+        if nc is not None:
+            return nc
+        
         try:
-            return netCDF4.Dataset(self.get_filename(), "r")
+            nc = netCDF4.Dataset(self.get_filename(), "r")
         except RuntimeError as error:
             raise RuntimeError(f"{error}: {self.get_filename()}")
+
+        self._set_component("nc", nc, copy=False)
+        return nc
 
     def to_memory(self):
         """Bring data on disk into memory.
