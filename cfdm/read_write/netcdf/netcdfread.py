@@ -5267,7 +5267,13 @@ class NetCDFRead(IORead):
             axes=axes, method=method, qualifiers=qualifiers
         )
 
-    def _create_netcdfarray(self, ncvar, unpacked_dtype=False):
+    def _create_netcdfarray(
+        self,
+        ncvar,
+        unpacked_dtype=False,
+        coord_ncvar=None,
+        return_kwargs_only=False,
+    ):
         """Set the Data attribute of a variable.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -5278,9 +5284,24 @@ class NetCDFRead(IORead):
 
             unpacked_dtype: `False` or `numpy.dtype`, optional
 
+            coord_ncvar: `str`, optional
+
+                .. versionadded:: (cfdm) 1.10.0.1
+
+            return_kwargs_only: `bool`, optional
+                Only return the kwargs dictionary, without
+                instantiating a new `NetCDFArray`.
+
+                .. versionadded:: (cfdm) 1.10.0.1
+
         :Returns:
 
-            `NetCDFArray`
+            (`NetCDFArray`, `dict`) or  (`None`, `dict`) or `dict`
+                The new `NetCDFArray` instance and dictionary of the
+                kwargs used to create it. If the array could not be
+                created then `None` is returned in its place. If
+                *return_kwargs_only* then only the dictionary is
+                returned.
 
         """
         g = self.read_vars
@@ -5344,16 +5365,42 @@ class NetCDFRead(IORead):
             # TODO: think using e.g. '/forecasts/model1' has the value for
             # nc_set_variable. What about nc_set_dimension?
 
-        return self.implementation.initialise_NetCDFArray(
-            filename=filename,
-            ncvar=ncvar,
-            group=group,
-            dtype=dtype,
-            ndim=ndim,
-            shape=shape,
-            size=size,
-            mask=g["mask"],
+        # Get the units and calendar
+        units = g["variable_attributes"][ncvar].get("units")
+        calendar = g["variable_attributes"][ncvar].get("calendar")
+
+        if coord_ncvar is not None:
+            # Get the Units from the parent coordinate variable, if
+            # they've not already been set.
+            if units is None:
+                units = g["variable_attributes"][coord_ncvar].get("units")
+
+            if calendar is None:
+                calendar = g["variable_attributes"][coord_ncvar].get(
+                    "calendar"
+                )
+
+        kwargs = {
+            "filename": filename,
+            "shape": shape,
+            "dtype": dtype,
+            "mask": g["mask"],
+            "ncvar": ncvar,
+            "group": group,
+            "units": units,
+            "calendar": calendar,
+        }
+
+        if return_kwargs_only:
+            return kwargs
+
+        array = self.implementation.initialise_NetCDFArray(
+            ndim=ndim,  # TODO: Can we get rid of this?
+            size=size,  # TODO: Can we get rid of this?
+            **kwargs,
         )
+
+        return array, kwargs
 
     def _create_data(
         self,
@@ -5383,7 +5430,7 @@ class NetCDFRead(IORead):
 
             coord_ncvar: `str`, optional
 
-                .. versionadded:: 1.10.0.0
+                .. versionadded:: (cfdm) 1.10.0.0
 
         :Returns:
 
@@ -5392,27 +5439,35 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        array = self._create_netcdfarray(ncvar, unpacked_dtype=unpacked_dtype)
+        #        array, kwargs = self._ggg(ncvar, unpacked_dtype=unpacked_dtype)
+        #        if array is None:
+        #            return None
+
+        array, kwargs = self._create_netcdfarray(
+            ncvar, unpacked_dtype=unpacked_dtype, coord_ncvar=coord_ncvar
+        )
         if array is None:
             return None
 
-        filename = array.get_filename()
+        filename = kwargs["filename"]
+        units = kwargs["units"]
+        calendar = kwargs["calendar"]
 
-        units = g["variable_attributes"][ncvar].get("units", None)
-        calendar = g["variable_attributes"][ncvar].get("calendar", None)
-
-        if coord_ncvar:
-            # Get the Units from the parent coordinate variable, if
-            # they've not already been set.
-            if units is None:
-                units = g["variable_attributes"][coord_ncvar].get(
-                    "units", None
-                )
-
-            if calendar is None:
-                calendar = g["variable_attributes"][coord_ncvar].get(
-                    "calendar", None
-                )
+        #        units = g["variable_attributes"][ncvar].get("units", None)
+        #        calendar = g["variable_attributes"][ncvar].get("calendar", None)
+        #
+        #        if coord_ncvar:
+        #            # Get the Units from the parent coordinate variable, if
+        #            # they've not already been set.
+        #            if units is None:
+        #                units = g["variable_attributes"][coord_ncvar].get(
+        #                    "units", None
+        #                )
+        #
+        #            if calendar is None:
+        #                calendar = g["variable_attributes"][coord_ncvar].get(
+        #                    "calendar", None
+        #                )
 
         compression = g["compression"]
 
