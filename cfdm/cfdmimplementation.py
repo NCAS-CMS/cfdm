@@ -41,159 +41,6 @@ class CFDMImplementation(Implementation):
 
     """
 
-    def __init__(
-        self,
-        cf_version=None,
-        AuxiliaryCoordinate=None,
-        CellMeasure=None,
-        CellMethod=None,
-        CoordinateReference=None,
-        DimensionCoordinate=None,
-        Domain=None,
-        DomainAncillary=None,
-        DomainAxis=None,
-        Field=None,
-        FieldAncillary=None,
-        Bounds=None,
-        InteriorRing=None,
-        CoordinateConversion=None,
-        Datum=None,
-        Data=None,
-        GatheredArray=None,
-        NetCDFArray=None,
-        RaggedContiguousArray=None,
-        RaggedIndexedArray=None,
-        RaggedIndexedContiguousArray=None,
-        SubsampledArray=None,
-        List=None,
-        Count=None,
-        Index=None,
-        NodeCountProperties=None,
-        PartNodeCountProperties=None,
-        TiePointIndex=None,
-        InterpolationParameter=None,
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            AuxiliaryCoordinate:
-                An auxiliary coordinate construct class.
-
-            CellMeasure:
-                A cell measure construct class.
-
-            CellMethod:
-                A cell method construct class.
-
-            CoordinateReference:
-                A coordinate reference construct class.
-
-            DimensionCoordinate:
-                A dimension coordinate construct class.
-
-            Domain:
-                A domain construct class.
-
-            DomainAncillary:
-                A domain ancillary construct class.
-
-            DomainAxis:
-                A domain axis construct class.
-
-            Field:
-                A field construct class.
-
-            FieldAncillary:
-                A field ancillary construct class.
-
-            Bounds:
-                A cell bounds component class.
-
-            InteriorRing:
-                An interior ring array class.
-
-            CoordinateConversion:
-                A coordinate conversion component class.
-
-            Datum:
-                A datum component class.
-
-            Data:
-                A data array class.
-
-            GatheredArray:
-                A class for an underlying gathered array.
-
-            NetCDFArray:
-                A class for an underlying array stored in a netCDF file.
-
-            RaggedContiguousArray:
-                A class for an underlying contiguous ragged array.
-
-            RaggedIndexedArray:
-                A class for an underlying indexed ragged array.
-
-            RaggedIndexedContiguousArray:
-                A class for an underlying indexed contiguous ragged array.
-
-            SubsampledArray:
-                A class for an underlying subsampled array.
-
-            List:
-                A list variable class.
-
-            Count:
-                A count variable class.
-
-            Index:
-                An index variable class.
-
-            NodeCountProperties:
-                A class for properties of a netCDF node count variable.
-
-            PartNodeCountProperties:
-                A class for properties of a netCDF part node count variable.
-
-            TiePointIndex:
-                A tie point index variable class.
-
-            InterpolationParameter:
-                An interpolation parameter variable class.
-
-        """
-        super().__init__(
-            cf_version=cf_version,
-            AuxiliaryCoordinate=AuxiliaryCoordinate,
-            CellMeasure=CellMeasure,
-            CellMethod=CellMethod,
-            CoordinateReference=CoordinateReference,
-            DimensionCoordinate=DimensionCoordinate,
-            Domain=Domain,
-            DomainAncillary=DomainAncillary,
-            DomainAxis=DomainAxis,
-            Field=Field,
-            FieldAncillary=FieldAncillary,
-            Bounds=Bounds,
-            InteriorRing=InteriorRing,
-            CoordinateConversion=CoordinateConversion,
-            Datum=Datum,
-            Data=Data,
-            GatheredArray=GatheredArray,
-            NetCDFArray=NetCDFArray,
-            RaggedContiguousArray=RaggedContiguousArray,
-            RaggedIndexedArray=RaggedIndexedArray,
-            RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
-            SubsampledArray=SubsampledArray,
-            List=List,
-            Count=Count,
-            Index=Index,
-            NodeCountProperties=NodeCountProperties,
-            PartNodeCountProperties=PartNodeCountProperties,
-            TiePointIndex=TiePointIndex,
-            InterpolationParameter=InterpolationParameter,
-        )
-
     def __repr__(self):
         """Called by the `repr` built-in function.
 
@@ -2300,6 +2147,8 @@ class CFDMImplementation(Implementation):
         shape=None,
         size=None,
         mask=True,
+        units=False,
+            calendar=None,
     ):
         """Return a netCDF array instance.
 
@@ -2321,6 +2170,10 @@ class CFDMImplementation(Implementation):
 
             mask: `bool`, optional
 
+            units: `str` or `None`, optional
+
+            calendar: `str` or `None`, optional
+
         :Returns:
 
             NetCDF array instance
@@ -2336,6 +2189,8 @@ class CFDMImplementation(Implementation):
             shape=shape,
             size=size,
             mask=mask,
+            units=units,
+            calendar=calendar
         )
 
     def initialise_NodeCountProperties(self):

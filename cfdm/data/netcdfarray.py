@@ -24,7 +24,7 @@ class NetCDFArray(abstract.Array):
         size=None,
         mask=True,
         units=False,
-        calendar=False,
+        calendar=None,
         source=None,
         copy=True,
     ):
@@ -98,10 +98,10 @@ class NetCDFArray(abstract.Array):
 
                 .. versionadded:: (cfdm) 1.10.0.1
 
-            calendar: `str`, optional
-                The calendar of the netCDF variable.  Set to `None` to
-                indicate that there is no calendar, or the CF
-                default calendar if applicable.
+            calendar: `str` or `None`, optional
+                The calendar of the netCDF variable. By default, or if
+                set to `None`, then the CF default calendar is
+                assumed, if applicable.
 
                 .. versionadded:: (cfdm) 1.10.0.1
 
@@ -170,9 +170,9 @@ class NetCDFArray(abstract.Array):
                 units = False
 
             try:
-                calendar = source._get_component("calendar", False)
+                calendar = source._get_component("calendar", None)
             except AttributeError:
-                calendar = False
+                calendar = None
 
         if shape is not None:
             self._set_component("shape", shape, copy=False)
@@ -189,13 +189,9 @@ class NetCDFArray(abstract.Array):
         if units is not False:
             self._set_component("units", units, copy=False)
 
-        if calendar is not False:
-            self._set_component("calendar", calendar, copy=False)
-
         self._set_component("group", group, copy=False)
         self._set_component("dtype", dtype, copy=False)
         self._set_component("mask", mask, copy=False)
-        self._set_component("units", units, copy=False)
         self._set_component("calendar", calendar, copy=False)
 
         #        self._set_component("netcdf", None, copy=False)
@@ -424,15 +420,19 @@ class NetCDFArray(abstract.Array):
         return self._get_component("shape")
 
     def get_calendar(self):
-        """The calendar CF property.
+        """The calendar of the netCDF variable.
 
-        The calendar used for encoding time data. See
-        http://cfconventions.org/latest.html for details.
+        If the calendar is `None` then the CF default calendar is
+        assumed, if applicable.
 
         .. versionadded:: (cfdm) 1.10.0.1
 
+        :Returns:
+
+            `str` or `None`
+
         """
-        return self._get_component("calendar")
+        return self._get_component("calendar", None)
 
     def get_filename(self):
         """The name of the netCDF file containing the array.
@@ -492,13 +492,13 @@ class NetCDFArray(abstract.Array):
         return self._get_component("ncvar")
 
     def get_units(self):
-        """The units CF property.
-
-        The units of the data. The value of the `units` property is a
-        string that can be recognized by UNIDATA's Udunits
-        package. See http://cfconventions.org/latest.html for details.
+        """The units of the netCDF variable.
 
         .. versionadded:: (cfdm) 1.10.0.1
+
+        :Returns:
+
+            `str` or `None`
 
         """
         return self._get_component("units")
