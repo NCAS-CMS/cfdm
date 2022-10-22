@@ -417,7 +417,11 @@ class NetCDFArray(abstract.Array):
         return self._get_component("shape")
 
     def get_calendar(self):
-        """The calendar of the netCDF variable.
+        
+        return self._get_component("calendar", None)
+
+    def get_calendar(self, default=ValueError()):
+       """The calendar of the netCDF variable.
 
         If the calendar is `None` then the CF default calendar is
         assumed, if applicable.
@@ -428,13 +432,27 @@ class NetCDFArray(abstract.Array):
 
             `str` or `None`
 
-        """
-        return self._get_component("calendar", None)
+       """ 
+        try:
+            return self._get_component("calendar")
+        except AttributeError:
+            if default is None:
+                return
+
+            return self._default(
+                default,
+                f"{self.__class__.__name__} 'calendar' has not been set",
+            )
 
     def get_filename(self):
         """The name of the netCDF file containing the array.
 
         .. versionadded:: (cfdm) 1.7.0
+
+        :Returns:
+
+            `str` or `None`
+                The filename, or `None` if there isn't one.
 
         **Examples**
 
@@ -488,7 +506,7 @@ class NetCDFArray(abstract.Array):
         """
         return self._get_component("ncvar")
 
-    def get_units(self):
+    def get_units(self, default=ValueError()):
         """The units of the netCDF variable.
 
         .. versionadded:: (cfdm) 1.10.0.1
@@ -498,7 +516,16 @@ class NetCDFArray(abstract.Array):
             `str` or `None`
 
         """
-        return self._get_component("units")
+        try:
+            return self._get_component("units")
+        except AttributeError:
+            if default is None:
+                return
+
+            return self._default(
+                default,
+                f"{self.__class__.__name__} 'units' have not been set",
+            )
 
     def get_varid(self):
         """The UNIDATA netCDF interface ID of the array's variable.

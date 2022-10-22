@@ -76,6 +76,35 @@ class ArrayMixin:
         """
         return 0
 
+    def get_calendar(self, default=ValueError()):
+        """The calendar of the array.
+
+        If the calendar is `None` then the CF default calendar is
+        assumed, if applicable.
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        :Parameters:
+
+            TODO
+
+        :Returns:
+
+            `str` or `None`
+
+        """
+        calendar = self._get_component("calendar", False)
+        if calendar is False:
+            if default is None:
+                return
+
+            return self._default(
+                default,
+                f"{self.__class__.__name__} 'calendar' has not been set",
+            )
+
+        return calendar
+
     def get_compression_type(self):
         """Returns the array's compression type.
 
@@ -204,3 +233,31 @@ class ArrayMixin:
                 array = array.copy()
 
         return array
+
+    def get_units(self, default=ValueError()):
+        """The units of the array.
+
+        If the units are `None` then the array has no defined units.
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        :Parameters:
+
+            TODO
+
+        :Returns:
+
+            `str` or `None`
+
+        """
+        units = self._get_component("units", False)
+        if units is False:
+            if default is None:
+                return
+
+            return self._default(
+                default,
+                f"{self.__class__.__name__} 'units' have not been set",
+            )
+
+        return units
