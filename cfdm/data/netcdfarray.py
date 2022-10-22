@@ -24,7 +24,7 @@ class NetCDFArray(abstract.Array):
         size=None,
         mask=True,
         units=False,
-        calendar=None,
+        calendar=False,
         source=None,
         copy=True,
     ):
@@ -170,9 +170,9 @@ class NetCDFArray(abstract.Array):
                 units = False
 
             try:
-                calendar = source._get_component("calendar", None)
+                calendar = source._get_component("calendar", False)
             except AttributeError:
-                calendar = None
+                calendar = False
 
         if shape is not None:
             self._set_component("shape", shape, copy=False)
@@ -186,15 +186,11 @@ class NetCDFArray(abstract.Array):
         if varid is not None:
             self._set_component("varid", varid, copy=False)
 
-        if units is not False:
-            self._set_component("units", units, copy=False)
-
         self._set_component("group", group, copy=False)
         self._set_component("dtype", dtype, copy=False)
         self._set_component("mask", mask, copy=False)
+        self._set_component("units", units, copy=False)
         self._set_component("calendar", calendar, copy=False)
-
-        #        self._set_component("netcdf", None, copy=False)
 
         # By default, close the netCDF file after data array access
         self._set_component("close", True, copy=False)
@@ -248,9 +244,10 @@ class NetCDFArray(abstract.Array):
                     array = variable[indices]
                     break
 
-        #        self._set_units(variable)
+        self._set_units(variable)
 
         self.close(netcdf)
+        del netcdf
 
         string_type = isinstance(array, str)
         if string_type:
@@ -319,44 +316,44 @@ class NetCDFArray(abstract.Array):
 
         return f"file={self.get_filename()} {name}"
 
-    #    def _set_units(self, var):
-    #        """TODO.
-    #
-    #        .. versionadded:: (cfdm) 1.10.0.1
-    #
-    #        :Parameters:
-    #
-    #            var: `netCDF4.Variable`
-    #
-    #        :Returns:
-    #
-    #            `tuple`
-    #                The units and calendar attributes, either of which may
-    #                be `None`.
-    #
-    #        """
-    #        # Note: Can't use None as the default since it is a valid
-    #        #       `units` or 'calendar' value that indicates that the
-    #        #       attribute has not been set in the dataset.
-    #        units = self._get_component("units", False)
-    #        if units is False:
-    #            try:
-    #                units = var.getncattr("units")
-    #            except AttributeError:
-    #                units = None
-    #
-    #            self._set_component("units", units, copy=False)
-    #
-    #        calendar = self._get_component("calendar", False)
-    #        if calendar is False:
-    #            try:
-    #                calendar = var.getncattr("calendar")
-    #            except AttributeError:
-    #                calendar = None
-    #
-    #            self._set_component("calendar", units, copy=False)
-    #
-    #        return units, calendar
+    def _set_units(self, var):
+        """TODO.
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        :Parameters:
+
+            var: `netCDF4.Variable`
+
+        :Returns:
+
+            `tuple`
+                The units and calendar attributes, either of which may
+                be `None`.
+
+        """
+        # Note: Can't use None as the default since it is a valid
+        #       `units` or 'calendar' value that indicates that the
+        #       attribute has not been set in the dataset.
+        units = self._get_component("units", False)
+        if units is False:
+            try:
+                units = var.getncattr("units")
+            except AttributeError:
+                units = None
+
+            self._set_component("units", units, copy=False)
+
+        calendar = self._get_component("calendar", False)
+        if calendar is False:
+            try:
+                calendar = var.getncattr("calendar")
+            except AttributeError:
+                calendar = None
+
+            self._set_component("calendar", calendar, copy=False)
+
+        return units, calendar
 
     @property
     def array(self):
@@ -445,7 +442,7 @@ class NetCDFArray(abstract.Array):
         'file.nc'
 
         """
-        return self._get_component("filename")
+        return self._get_component("filename", None)
 
     def get_group(self):
         """The netCDF4 group structure of the netCDF variable.
