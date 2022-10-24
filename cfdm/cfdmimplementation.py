@@ -2148,7 +2148,7 @@ class CFDMImplementation(Implementation):
         size=None,
         mask=True,
         units=False,
-            calendar=None,
+        calendar=None,
     ):
         """Return a netCDF array instance.
 
@@ -2190,7 +2190,7 @@ class CFDMImplementation(Implementation):
             size=size,
             mask=mask,
             units=units,
-            calendar=calendar
+            calendar=calendar,
         )
 
     def initialise_NodeCountProperties(self):

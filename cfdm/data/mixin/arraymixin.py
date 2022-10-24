@@ -86,11 +86,15 @@ class ArrayMixin:
 
         :Parameters:
 
-            TODO
+            default: optional
+                Return the value of the *default* parameter if the
+                calendar has not been set. If set to an `Exception`
+                instance then it will be raised instead.
 
         :Returns:
 
             `str` or `None`
+                The calendar value.
 
         """
         calendar = self._get_component("calendar", False)
@@ -241,13 +245,19 @@ class ArrayMixin:
 
         .. versionadded:: (cfdm) 1.10.0.1
 
+        .. seealso:: `get_calendar`
+
         :Parameters:
 
-            TODO
+            default: optional
+                Return the value of the *default* parameter if the
+                units have not been set. If set to an `Exception`
+                instance then it will be raised instead.
 
         :Returns:
 
             `str` or `None`
+                The units value.
 
         """
         units = self._get_component("units", False)
