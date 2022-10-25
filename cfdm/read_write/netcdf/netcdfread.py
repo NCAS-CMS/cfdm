@@ -5686,7 +5686,7 @@ class NetCDFRead(IORead):
             array,
             units=units,
             calendar=calendar,
-            ncvar=ncvar,
+            ncvar=ncvar,            
         )
         data._original_filenames(define=filename)
 
