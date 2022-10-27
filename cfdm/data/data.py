@@ -864,8 +864,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         :Parameters:
 
             array: array_like
-                The array to be assigned to. Must support fancy
-                indexing. The array is changed in-place.
+                The array to be assigned to. Must support
+                `numpy`-style indexing. The array is changed in-place.
 
             indices: sequence
                 The indices to be applied.
