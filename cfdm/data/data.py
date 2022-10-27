@@ -962,7 +962,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             # In the above example, the input list index [1, 2, 4, 5]
             # can be mapped to two slices: slice(1,3,1), slice(4,6,1);
             # the input list index [8, 9] is mapped to slice(8,10,1)
-            # and only 2 seperate assignments of 40 elements each are
+            # and only 2 separate assignments of 40 elements each are
             # needed.
             indices1 = indices[:]
             for i, (x, size) in enumerate(zip(indices, array.shape)):
