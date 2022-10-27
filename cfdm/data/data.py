@@ -945,10 +945,10 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             # At least two axes have list-of-integers indices so we
             # can't do a normal assignment.
             #
-            # The brute-forace approach would be to do a seperate
-            # assignment to each set of elemants of 'array' that is
-            # defined by a every possible combination of the integers
-            # defined by the two of index lists.
+            # The brute-force approach would be to do a separate
+            # assignment to each set of elements of 'array' that are
+            # defined by every possible combination of the integers
+            # defined by the two index lists.
             #
             # For example, if the input 'indices' are ([1, 2, 4, 5],
             # slice(0:10), [8, 9]) then the brute-force approach would
