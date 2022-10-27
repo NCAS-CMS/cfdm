@@ -913,7 +913,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         [[-1. -2. -3.]
          [-4. -5. -6.]
          [-7. -8. -9.]]
-        >>> Data._set_subspace(a, [[4, 4 ,1], [7, 6, 1]], value)
+        >>> {{package}}.Data._set_subspace(a, [[4, 4 ,1], [7, 6, 1]], value)
+        >>> print(a)
         [[ 0  1  2  3  4  5  6  7]
          [ 8 -9 10 11 12 13 -8 -7]
          [16 17 18 19 20 21 22 23]
