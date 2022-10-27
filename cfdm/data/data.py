@@ -952,7 +952,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             #
             # For example, if the input 'indices' are ([1, 2, 4, 5],
             # slice(0:10), [8, 9]) then the brute-force approach would
-            # be to do 4*2=8 seperate assignments of 10 elements each.
+            # be to do 4*2=8 separate assignments of 10 elements each.
             #
             # This can be reduced by a factor of ~2 per axis that has
             # list indices if we convert it to a sequence of "size 2"
