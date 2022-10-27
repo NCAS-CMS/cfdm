@@ -26,6 +26,7 @@ def write(
     warn_valid=True,
     group=True,
     coordinates=False,
+        omit_data=(),
     _implementation=_implementation,
 ):
     """Write field and domain constructs to a netCDF file.
@@ -541,4 +542,5 @@ def write(
             group=group,
             coordinates=coordinates,
             extra_write_vars=None,
+            omit_data=omit_data,
         )
