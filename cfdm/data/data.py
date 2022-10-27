@@ -887,7 +887,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         **Examples**
 
         >>> a = np.arange(40).reshape(5, 8)
-        >>> Data._set_subspace(a, [[1, 4 ,3], [7, 6, 1]],
+        >>> {{package}}.Data._set_subspace(a, [[1, 4 ,3], [7, 6, 1]],
         ...                    np.array([[-1, -2, -3]]))
         >>> print(a)
         [[ 0  1  2  3  4  5  6  7]
