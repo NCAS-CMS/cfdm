@@ -1341,7 +1341,8 @@ class NetCDFWrite(IOWrite):
                 ncdimensions,
                 bounds,
                 omit=omit,
-                omit_data=coord.construct_type in g["omit_data"],
+                omit_data=self.implementation.get_construct_type(coord)
+                in g["omit_data"],
             )
 
         extra["bounds"] = ncvar
