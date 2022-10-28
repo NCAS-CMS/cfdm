@@ -271,7 +271,6 @@ class NetCDFWrite(IOWrite):
             if dtype is None:
                 netcdf_attrs["_FillValue"] = _FillValue
 
-
         if skip_set_fill_value:
             # Re-add as known attribute since this FV is already set
             netcdf_attrs["_FillValue"] = self.implementation.get_data(
@@ -712,8 +711,10 @@ class NetCDFWrite(IOWrite):
 
             # Create a new dimension coordinate variable
             self._write_netcdf_variable(
-                ncvar, ncdimensions, coord, extra=extra, 
-                omit_data=coord.construct_type in g['omit_data']
+                ncvar,
+                ncdimensions,
+                coord,
+                extra=extra,
             )
         else:
             ncvar = seen[id(coord)]["ncvar"]
@@ -1342,8 +1343,11 @@ class NetCDFWrite(IOWrite):
 
             # Create the bounds netCDF variable
             self._write_netcdf_variable(
-                ncvar, ncdimensions, bounds, omit=omit,
-                omit_data=coord.construct_type in g['omit_data']
+                ncvar,
+                ncdimensions,
+                bounds,
+                omit=omit,
+                omit_data=coord.construct_type in g["omit_data"],
             )
 
         extra["bounds"] = ncvar
@@ -1504,7 +1508,7 @@ class NetCDFWrite(IOWrite):
             ncvar = self._netcdf_name(ncvar)
 
             # Create the netCDF node coordinates variable
-            self._write_netcdf_variable(ncvar, (ncdim,), nodes) # TODO
+            self._write_netcdf_variable(ncvar, (ncdim,), nodes)  # TODO
 
             encodings = {}
 
@@ -2052,8 +2056,10 @@ class NetCDFWrite(IOWrite):
 
             # Create a new scalar coordinate variable
             self._write_netcdf_variable(
-                ncvar, (), scalar_coord, extra=bounds_extra,
-                omit_data=scalar_coord.construct_type in g['omit_data']
+                ncvar,
+                (),
+                scalar_coord,
+                extra=bounds_extra,
             )
 
         else:
@@ -2146,8 +2152,10 @@ class NetCDFWrite(IOWrite):
                 # Create a new auxiliary coordinate variable, if it has data
                 if self.implementation.get_data(coord, None) is not None:
                     self._write_netcdf_variable(
-                        ncvar, ncdimensions, coord, extra=extra,
-                omit_data=coord.construct_type in g['omit_data']
+                        ncvar,
+                        ncdimensions,
+                        coord,
+                        extra=extra,
                     )
 
         g["key_to_ncvar"][key] = ncvar
@@ -2227,8 +2235,7 @@ class NetCDFWrite(IOWrite):
             self._write_bounds(f, anc, key, ncdimensions, ncvar)
 
             # Create a new domain ancillary variable
-            self._write_netcdf_variable(ncvar, ncdimensions, anc,
-                omit_data=anc.construct_type in g['omit_data'])
+            self._write_netcdf_variable(ncvar, ncdimensions, anc)
 
         g["key_to_ncvar"][key] = ncvar
         g["key_to_ncdims"][key] = ncdimensions
@@ -2273,8 +2280,7 @@ class NetCDFWrite(IOWrite):
             )
 
             # Create a new field ancillary variable
-            self._write_netcdf_variable(ncvar, ncdimensions, anc,
-                omit_data=anc.construct_type in g['omit_data'])
+            self._write_netcdf_variable(ncvar, ncdimensions, anc)
 
         g["key_to_ncvar"][key] = ncvar
         g["key_to_ncdims"][key] = ncdimensions
@@ -2340,8 +2346,7 @@ class NetCDFWrite(IOWrite):
             )
 
             # Create a new cell measure variable
-            self._write_netcdf_variable(ncvar, ncdimensions, cell_measure,
-                omit_data= cell_measure.construct_type in g['omit_data'])
+            self._write_netcdf_variable(ncvar, ncdimensions, cell_measure)
 
         g["key_to_ncvar"][key] = ncvar
         g["key_to_ncdims"][key] = ncdimensions
@@ -2518,8 +2523,8 @@ class NetCDFWrite(IOWrite):
         extra=None,
         fill=False,
         data_variable=False,
-            domain_variable=False,
-            omit_data=False,
+        domain_variable=False,
+        omit_data=None,
     ):
         """Creates a new netCDF variable for a construct.
 
@@ -2602,17 +2607,26 @@ class NetCDFWrite(IOWrite):
 
         logger.info(f"    Writing {cfvar!r}")  # pragma: no cover
 
+        # Set 'omit_data'
+        if omit_data is None:
+            omit_data = (
+                self.implementation.get_construct_type(cfvar) in g["omit_data"]
+            )
+
         # ------------------------------------------------------------
         # Find the fill value - the value that the variable's data get
         # filled before any data is written. if the fill value is
         # False then the variable is not pre-filled.
         # ------------------------------------------------------------
-        if fill: # or g["post_dry_run"]:  # or append mode's appending iteration
+        if fill or g["post_dry_run"]:  # or append mode's appending iteration
             fill_value = self.implementation.get_property(
                 cfvar, "_FillValue", None
             )
         else:
-            fill_value = False
+            fill_value = None
+
+        if omit_data:
+            fill_value = None
 
         if data_variable:
             lsd = g["least_significant_digit"]
@@ -2664,8 +2678,6 @@ class NetCDFWrite(IOWrite):
             "least_significant_digit": lsd,
             "fill_value": fill_value,
         }
-#        if fill_value is not None:
-#            kwargs["fill_value"] = fill_value
 
         # Add compression parameters (but not for vlen strings).
         if kwargs["datatype"] != str:
@@ -2679,7 +2691,6 @@ class NetCDFWrite(IOWrite):
             f"        to netCDF variable: {ncvar}({', '.join(ncdimensions)})"
         )  # pragma: no cover
 
-        print ('fill_value=', fill_value, datatype, repr(cfvar))
         try:
             self._createVariable(**kwargs)
         except RuntimeError as error:
@@ -3914,7 +3925,6 @@ class NetCDFWrite(IOWrite):
             extra=extra,
             data_variable=field,
             domain_variable=domain,
-            omit_data=f.construct_type in g['omit_data'] # TODO: impl
         )
 
         # Update the 'seen' dictionary, if required
@@ -4341,9 +4351,6 @@ class NetCDFWrite(IOWrite):
         except RuntimeError as error:
             raise RuntimeError(f"{error}: {filename}")
 
-        # No need to pre-fill with fill values
-        nc.set_fill_off()
-        
         return nc
 
     @_manage_log_level_via_verbosity
@@ -4372,7 +4379,7 @@ class NetCDFWrite(IOWrite):
         warn_valid=True,
         group=True,
         coordinates=False,
-            omit_data=(),
+        omit_data=None,
     ):
         """Write field and domain constructs to a netCDF file.
 
@@ -4592,6 +4599,13 @@ class NetCDFWrite(IOWrite):
 
                 .. versionadded:: (cfdm) 1.8.7.0
 
+            omit_data: (sequence of) `str`, optional
+                Do not write the data of the named construct types.
+
+                See `cfdm.write` for details.
+
+                .. versionadded:: (cfdm) 1.10.0.1
+
         :Returns:
 
             `None`
@@ -4605,6 +4619,22 @@ class NetCDFWrite(IOWrite):
 
         # Expand file name
         filename = os.path.expanduser(os.path.expandvars(filename))
+
+        # Parse the omit_data parameter
+        if omit_data is None:
+            omit_data = ()
+        elif isinstance(omit_data, str):
+            omit_data = (omit_data,)
+
+        if "all" in omit_data:
+            omit_data = (
+                "field",
+                "field_ancillary",
+                "domain_ancillary",
+                "auxiliary_coordinate",
+                "cell_measure",
+                "dimension_coordinate",
+            )
 
         # ------------------------------------------------------------
         # Initialise netCDF write parameters
@@ -4685,7 +4715,7 @@ class NetCDFWrite(IOWrite):
             # mode does not need to be passed to various methods, where a
             # pair of such keys seem clearer than one "effective mode" key.
             "post_dry_run": False,
-            #
+            # TODO
             "omit_data": omit_data,
         }
 
@@ -4763,7 +4793,7 @@ class NetCDFWrite(IOWrite):
                     "Can't append fields with an incompatible 'featureType' "
                     "global attribute to the original file."
                 )
-            
+
         self._file_io_iteration(
             mode=effective_mode,
             overwrite=overwrite,

@@ -26,7 +26,7 @@ def write(
     warn_valid=True,
     group=True,
     coordinates=False,
-        omit_data=(),
+    omit_data=None,
     _implementation=_implementation,
 ):
     """Write field and domain constructs to a netCDF file.
@@ -493,6 +493,42 @@ def write(
             variables are included.
 
             .. versionadded:: (cfdm) 1.8.7.0
+
+        omit_data: (sequence of) `str`, optional
+            Do not write the data of the named construct types.
+
+            This does not affect the amount of netCDF variables and
+            dimensions that are written to the file, nor the netCDF
+            variables' attributes, but does not create data on disk
+            for the requested variables. The resulting file will be
+            smaller than it otherwise would have been, and when the
+            new file is read the data of these variables will be
+            represented by an array of all missing data.
+
+            The *omit_data* parameter may be one, or a sequence, of:
+
+            ==========================  ===============================
+            *omit_data*                 Constructs
+            ==========================  ===============================
+            ``'field'``                 Field constructs
+            ``'field_ancillary'``       Field ancillary constructs
+            ``'domain_ancillary'``      Domain ancillary constructs
+            ``'dimension_coordinate'``  Dimension coordinate constructs
+            ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+            ``'cell_measure'``          Cell measure constructs
+            ``'all'``                   All of the above constructs
+            ==========================  ===============================
+
+            *Parameter example:*
+              To omit the data from only field constructs:
+              ``omit_data='field'`` or ``omit_data=['field']``.
+
+            *Parameter example:*
+              To omit the data from domain ancillary and cell measure
+              constucts: ``omit_data=['domain_ancillary',
+              'cell_measure']``.
+
+            .. versionadded:: (cfdm) 1.10.0.1
 
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that defines field
