@@ -4677,7 +4677,6 @@ def example_field(n, _implementation=_implementation):
 
         # auxiliary_coordinate: Z
         c = AuxiliaryCoordinate()
-        c.nc_set_variable("z")
         c.set_geometry("polygon")
         b = Bounds()
         b.set_properties(
