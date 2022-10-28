@@ -920,7 +920,7 @@ class read_writeTest(unittest.TestCase):
         self.assertFalse(g.construct("grid_latitude").array.count())
 
         # Check that a dump works
-        f.dump(display=False)
+        g.dump(display=False)
 
         cfdm.write(f, tmpfile, omit_data=("field", "dimension_coordinate"))
         g = cfdm.read(tmpfile)[0]
