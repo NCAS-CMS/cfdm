@@ -229,7 +229,6 @@ class NetCDFWrite(IOWrite):
 
         # Make sure that _FillValue and missing data have the same
         # data type as the data
-        dtype = None
         for attr in ("_FillValue", "missing_value"):
             if attr not in netcdf_attrs:
                 continue
@@ -264,12 +263,7 @@ class NetCDFWrite(IOWrite):
                 del netcdf_attrs["_FillValue"]
 
         if not g["dry_run"]:
-            if dtype is None:
-                _FillValue = netcdf_attrs.pop("_FillValue ", None)
-
             g["nc"][ncvar].setncatts(netcdf_attrs)
-            if dtype is None:
-                netcdf_attrs["_FillValue"] = _FillValue
 
         if skip_set_fill_value:
             # Re-add as known attribute since this FV is already set
@@ -1508,7 +1502,7 @@ class NetCDFWrite(IOWrite):
             ncvar = self._netcdf_name(ncvar)
 
             # Create the netCDF node coordinates variable
-            self._write_netcdf_variable(ncvar, (ncdim,), nodes)  # TODO
+            self._write_netcdf_variable(ncvar, (ncdim,), nodes)
 
             encodings = {}
 
@@ -4715,7 +4709,7 @@ class NetCDFWrite(IOWrite):
             # mode does not need to be passed to various methods, where a
             # pair of such keys seem clearer than one "effective mode" key.
             "post_dry_run": False,
-            # TODO
+            # Do not write the data of the named construct types.
             "omit_data": omit_data,
         }
 
