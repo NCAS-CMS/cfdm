@@ -10,6 +10,8 @@ Version 1.10.0.1
   (https://github.com/NCAS-CMS/cfdm/issues/215)
 * New method: `cfdm.Field.get_original_filenames`
 * New method: `cfdm.Data.get_original_filenames`
+* Fixed bug that caused incorrect data assignment with some multiple
+  list indices (https://github.com/NCAS-CMS/cfdm/issues/217)
 * Fixed bug that caused a failure when printing date-time data with
   the first element masked
   (https://github.com/NCAS-CMS/cfdm/issues/211)

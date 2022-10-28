@@ -858,8 +858,83 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         self._set_Array(array, copy=copy)
 
     @classmethod
-    def _set_subspace(cls, array, indices, value):
-        """Set a subspace of the data array defined by indices."""
+    def _set_subspace(cls, array, indices, value, orthogonal_indexing=True):
+        """Assign to a subspace of an array.
+
+        :Parameters:
+
+            array: array_like
+                The array to be assigned to. Must support
+                `numpy`-style indexing. The array is changed in-place.
+
+            indices: sequence
+                The indices to be applied.
+
+            value: array_like
+                The value being assigned. Must support fancy indexing.
+
+            orthogonal_indexing: `bool`, optional
+                If True then apply 'orthogonal indexing', for which
+                indices that are 1-d arrays or lists subspace along
+                each dimension independently. This behaviour is
+                similar to Fortran but different to, for instance,
+                `numpy` or `dask`.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        Note that ``a`` is redefined for each example, as it is
+        changed in-place.
+
+        >>> a = np.arange(40).reshape(5, 8)
+        >>> {{package}}.Data._set_subspace(a, [[1, 4 ,3], [7, 6, 1]],
+        ...                    np.array([[-1, -2, -3]]))
+        >>> print(a)
+        [[ 0  1  2  3  4  5  6  7]
+         [ 8 -3 10 11 12 13 -2 -1]
+         [16 17 18 19 20 21 22 23]
+         [24 -3 26 27 28 29 -2 -1]
+         [32 -3 34 35 36 37 -2 -1]]
+
+        >>> a = np.arange(40).reshape(5, 8)
+        >>> {{package}}.Data._set_subspace(a, [[1, 4 ,3], [7, 6, 1]],
+        ...                    np.array([[-1, -2, -3]]),
+        ...                    orthogonal_indexing=False)
+        >>> print(a)
+        [[ 0  1  2  3  4  5  6  7]
+         [ 8  9 10 11 12 13 14 -1]
+         [16 17 18 19 20 21 22 23]
+         [24 -3 26 27 28 29 30 31]
+         [32 33 34 35 36 37 -2 39]]
+
+        >>> a = np.arange(40).reshape(5, 8)
+        >>> value = np.linspace(-1, -9, 9).reshape(3, 3)
+        >>> print(value)
+        [[-1. -2. -3.]
+         [-4. -5. -6.]
+         [-7. -8. -9.]]
+        >>> {{package}}.Data._set_subspace(a, [[4, 4 ,1], [7, 6, 1]], value)
+        >>> print(a)
+        [[ 0  1  2  3  4  5  6  7]
+         [ 8 -9 10 11 12 13 -8 -7]
+         [16 17 18 19 20 21 22 23]
+         [24 25 26 27 28 29 30 31]
+         [32 -6 34 35 36 37 -5 -4]]
+
+        """
+        if not orthogonal_indexing:
+            # --------------------------------------------------------
+            # Apply non-orthogonal indexing
+            # --------------------------------------------------------
+            array[tuple(indices)] = value
+            return
+
+        # ------------------------------------------------------------
+        # Still here? Then apply orthogonal indexing
+        # ------------------------------------------------------------
         axes_with_list_indices = [
             i
             for i, x in enumerate(indices)
@@ -867,55 +942,118 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         ]
 
         if len(axes_with_list_indices) < 2:
-            # --------------------------------------------------------
             # At most one axis has a list-of-integers index so we can
-            # do a normal numpy assignment
-            # --------------------------------------------------------
+            # do a normal assignment
             array[tuple(indices)] = value
         else:
-            # --------------------------------------------------------
             # At least two axes have list-of-integers indices so we
-            # can't do a normal numpy assignment
-            # --------------------------------------------------------
+            # can't do a normal assignment.
+            #
+            # The brute-force approach would be to do a separate
+            # assignment to each set of elements of 'array' that are
+            # defined by every possible combination of the integers
+            # defined by the two index lists.
+            #
+            # For example, if the input 'indices' are ([1, 2, 4, 5],
+            # slice(0:10), [8, 9]) then the brute-force approach would
+            # be to do 4*2=8 separate assignments of 10 elements each.
+            #
+            # This can be reduced by a factor of ~2 per axis that has
+            # list indices if we convert it to a sequence of "size 2"
+            # slices (with a "size 1" slice at the end if there are an
+            # odd number of list elements).
+            #
+            # In the above example, the input list index [1, 2, 4, 5]
+            # can be mapped to two slices: slice(1,3,1), slice(4,6,1);
+            # the input list index [8, 9] is mapped to slice(8,10,1)
+            # and only 2 separate assignments of 40 elements each are
+            # needed.
             indices1 = indices[:]
-            for i, x in enumerate(indices):
+            for i, (x, size) in enumerate(zip(indices, array.shape)):
                 if i in axes_with_list_indices:
-                    # This index is a list of integers
+                    # This index is a list (or similar) of integers
+                    if not isinstance(x, list):
+                        x = np.asanyarray(x).tolist()
+
                     y = []
                     args = [iter(x)] * 2
                     for start, stop in itertools.zip_longest(*args):
-                        if not stop:
+                        if start < 0:
+                            start += size
+
+                        if stop is None:
                             y.append(slice(start, start + 1))
+                            break
+
+                        if stop < 0:
+                            stop += size
+
+                        step = stop - start
+                        if not step:
+                            # (*) There is a repeated index in
+                            #     positions 2N and 2N+1 (N>=0). Store
+                            #     this as a single-element list
+                            #     instead of a "size 2" slice, mainly
+                            #     as an indicator that a special index
+                            #     to 'value' might need to be
+                            #     created. See below, where this
+                            #     comment is referenced.
+                            #
+                            #     For example, the input list index
+                            #     [1, 4, 4, 4, 6, 2, 7] will be mapped
+                            #     to slice(1,5,3), [4], slice(6,1,-4),
+                            #     slice(7,8,1)
+                            y.append([start])
                         else:
-                            step = stop - start
-                            stop += 1
+                            if step > 0:
+                                stop += 1
+                            else:
+                                stop -= 1
+
                             y.append(slice(start, stop, step))
 
                     indices1[i] = y
                 else:
                     indices1[i] = (x,)
 
-            if numpy.size(value) == 1:
+            if value.size == 1:
+                # 'value' is logically scalar => simply assign it to
+                # all index combinations.
                 for i in itertools.product(*indices1):
                     array[i] = value
-
             else:
+                # 'value' has two or more elements => for each index
+                # combination for 'array' assign the corresponding
+                # part of 'value'.
                 indices2 = []
-                ndim_difference = array.ndim - numpy.ndim(value)
-                for i, n in enumerate(numpy.shape(value)):
-                    if n == 1:
+                ndim_difference = array.ndim - value.ndim
+                for i2, size in enumerate(value.shape):
+                    i1 = i2 + ndim_difference
+                    if i1 not in axes_with_list_indices:
+                        # The input 'indices[i1]' is a slice
                         indices2.append((slice(None),))
-                    elif i + ndim_difference in axes_with_list_indices:
+                        continue
+
+                    index1 = indices1[i1]
+                    if size == 1:
+                        indices2.append((slice(None),) * len(index1))
+                    else:
                         y = []
                         start = 0
-                        while start < n:
+                        for index in index1:
                             stop = start + 2
+                            if isinstance(index, list):
+                                # Two consecutive elements of 'value'
+                                # are assigned to the same integer
+                                # index of 'array'.
+                                #
+                                # See the (*) comment above.
+                                start += 1
+
                             y.append(slice(start, stop))
                             start = stop
 
                         indices2.append(y)
-                    else:
-                        indices2.append((slice(None),))
 
                 for i, j in zip(
                     itertools.product(*indices1), itertools.product(*indices2)
