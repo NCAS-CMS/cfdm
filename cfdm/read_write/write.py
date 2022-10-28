@@ -508,7 +508,7 @@ def write(
             The *omit_data* parameter may be one, or a sequence, of:
 
             ==========================  ===============================
-            *omit_data*                 Constructs
+            *omit_data*                 Construct types
             ==========================  ===============================
             ``'field'``                 Field constructs
             ``'field_ancillary'``       Field ancillary constructs

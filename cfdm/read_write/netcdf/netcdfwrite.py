@@ -822,7 +822,7 @@ class NetCDFWrite(IOWrite):
                     size=self.implementation.get_data_size(index_variable),
                 )
 
-            # Create a new list variable
+            # Create a new index variable
             extra = {"instance_dimension": instance_dimension}
             self._write_netcdf_variable(
                 ncvar, (ncdim,), index_variable, extra=extra
@@ -1503,7 +1503,13 @@ class NetCDFWrite(IOWrite):
             ncvar = self._netcdf_name(ncvar)
 
             # Create the netCDF node coordinates variable
-            self._write_netcdf_variable(ncvar, (ncdim,), nodes)
+            self._write_netcdf_variable(
+                ncvar,
+                (ncdim,),
+                nodes,
+                omit_data=self.implementation.get_construct_type(coord)
+                in g["omit_data"],
+            )
 
             encodings = {}
 
@@ -1994,7 +2000,13 @@ class NetCDFWrite(IOWrite):
             ncvar = self._netcdf_name(ncvar)
 
             # Create the netCDF interior ring variable
-            self._write_netcdf_variable(ncvar, (ncdim,), interior_ring)
+            self._write_netcdf_variable(
+                ncvar,
+                (ncdim,),
+                interior_ring,
+                omit_data=self.implementation.get_construct_type(coord)
+                in g["omit_data"],
+            )
 
         g["part_ncdim"] = ncdim
 
