@@ -2625,14 +2625,13 @@ class NetCDFWrite(IOWrite):
         # filled before any data is written. if the fill value is
         # False then the variable is not pre-filled.
         # ------------------------------------------------------------
-        if fill or g["post_dry_run"]:  # or append mode's appending iteration
+        if (
+            omit_data or fill or g["post_dry_run"]
+        ):  # or append mode's appending iteration
             fill_value = self.implementation.get_property(
                 cfvar, "_FillValue", None
             )
         else:
-            fill_value = None
-
-        if omit_data:
             fill_value = None
 
         if data_variable:
