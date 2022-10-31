@@ -525,7 +525,7 @@ def write(
 
             *Parameter example:*
               To omit the data from domain ancillary and cell measure
-              constucts: ``omit_data=['domain_ancillary',
+              constructs: ``omit_data=['domain_ancillary',
               'cell_measure']``.
 
             .. versionadded:: (cfdm) 1.10.0.1
