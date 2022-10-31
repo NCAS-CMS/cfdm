@@ -760,6 +760,25 @@ class CFDMImplementation(Implementation):
         except KeyError:
             return None
 
+    def get_construct_type(self, variable):
+        """Return the construct type of a variable.
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        :Parameters:
+
+            variable: object
+                The object to get a construct type from.
+
+        :Returns:
+
+            `str` or `None`
+                The construct type, or `None` if the variable is not a
+                construct.
+
+        """
+        return getattr(variable, "construct_type", None)
+
     def get_constructs(self, field, axes=(), data=False):
         """Return constructs that span particular axes.
 

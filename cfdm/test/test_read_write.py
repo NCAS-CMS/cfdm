@@ -905,6 +905,39 @@ class read_writeTest(unittest.TestCase):
             set((cfdm.abspath(parent_file), cfdm.abspath(external_file))),
         )
 
+    def test_write_omit_data(self):
+        """Test the `omit_data` parameter to `write`."""
+        f = cfdm.example_field(1)
+        cfdm.write(f, tmpfile)
+
+        cfdm.write(f, tmpfile, omit_data="all")
+        g = cfdm.read(tmpfile)
+        self.assertEqual(len(g), 1)
+        g = g[0]
+
+        # Check that the data are missing
+        self.assertFalse(g.array.count())
+        self.assertFalse(g.construct("grid_latitude").array.count())
+
+        # Check that a dump works
+        g.dump(display=False)
+
+        cfdm.write(f, tmpfile, omit_data=("field", "dimension_coordinate"))
+        g = cfdm.read(tmpfile)[0]
+
+        # Check that only the field and dimension coordinate data are
+        # missing
+        self.assertFalse(g.array.count())
+        self.assertFalse(g.construct("grid_latitude").array.count())
+        self.assertTrue(g.construct("latitude").array.count())
+
+        cfdm.write(f, tmpfile, omit_data="field")
+        g = cfdm.read(tmpfile)[0]
+
+        # Check that only the field data are missing
+        self.assertFalse(g.array.count())
+        self.assertTrue(g.construct("grid_latitude").array.count())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
