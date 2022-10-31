@@ -1,7 +1,7 @@
 Version 1.10.0.1
 ----------------
 
-**2022-??-??**
+**2022-10-31**
 
 * New method: `cfdm.Data.get_tie_point_indices`
 * New method: `cfdm.Data.get_interpolation_parameters`
