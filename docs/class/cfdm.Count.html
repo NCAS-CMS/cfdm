@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.10.0.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.0.1</a></h1>
 
 
 
@@ -126,8 +126,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Count">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Count</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.0/cfdm/count.py#L4-L124"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Count" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFDimension</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFSampleDimension</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.propertiesdata.PropertiesData</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Count</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.1/cfdm/count.py#L4-L126"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFDimension</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFSampleDimension</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.files.Files</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.propertiesdata.PropertiesData</span></code></p>
 <p>A count variable required to uncompress a ragged array.</p>
 <p>A collection of features stored using a contiguous ragged array
 combines all features along a single dimension (the sample
@@ -160,7 +160,7 @@ accessed with the <a class="reference internal" href="../method/cfdm.Count.nc_se
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
 property names, with corresponding values. Ignored if
 the <em>source</em> parameter is set.</p>
 <p>Properties may also be set after initialisation with
@@ -189,7 +189,7 @@ to a <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.D
 <code class="docutils literal notranslate"><span class="pre">cfdm.Count(source=source)</span></code> is equivalent
 to <code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) deep copy input parameters prior
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) deep copy input parameters prior
 to initialisation. If False arguments are not deep
 copied.</p>
 </dd>
@@ -339,13 +339,16 @@ copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Count.get_filenames.html#cfdm.Count.get_filenames" title="cfdm.Count.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
 <td><p>Return the name of the file or files containing the data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Count.has_bounds.html#cfdm.Count.has_bounds" title="cfdm.Count.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Count.original_filenames</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Count.has_bounds.html#cfdm.Count.has_bounds" title="cfdm.Count.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></p></td>
 <td><p>Whether or not there are cell bounds.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Count.uncompress.html#cfdm.Count.uncompress" title="cfdm.Count.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Count.uncompress.html#cfdm.Count.uncompress" title="cfdm.Count.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p></td>
 <td><p>Uncompress the construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Count.to_memory.html#cfdm.Count.to_memory" title="cfdm.Count.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Count.to_memory.html#cfdm.Count.to_memory" title="cfdm.Count.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
 <td><p>Bring data on disk into memory.</p></td>
 </tr>
 </tbody>
@@ -460,16 +463,16 @@ copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Count.__deepcopy__.html#cfdm.Count.__deepcopy__" title="cfdm.Count.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Count.__getitem__.html#cfdm.Count.__getitem__" title="cfdm.Count.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
 <td><p>Return a subspace defined by indices.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Count.__repr__.html#cfdm.Count.__repr__" title="cfdm.Count.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Count.__str__.html#cfdm.Count.__str__" title="cfdm.Count.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 </tbody>
 </table>
@@ -509,7 +512,7 @@ copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-08-17.
+      &copy;2022, NCAS | Page built on 2022-10-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

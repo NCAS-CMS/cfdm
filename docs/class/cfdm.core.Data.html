@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.10.0.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.0.1</a></h1>
 
 
 
@@ -125,7 +125,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.core.Data<a class="headerlink" href="#cfdm-core-data" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.core.Data">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.core.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_array=True</em>, <em class="sig-param">_custom_deep_copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.0/cfdm/core/data/data.py#L8-L909"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.core.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_array=True</em>, <em class="sig-param">_custom_deep_copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.1/cfdm/core/data/data.py#L8-L909"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.container.Container</span></code></p>
 <p>An orthogonal multidimensional array with masking and units.</p>
 <div class="versionadded">
@@ -152,7 +152,7 @@ then <code class="docutils literal notranslate"><span class="pre">cfdm.core.Data
 <code class="docutils literal notranslate"><span class="pre">cfdm.core.Data(source=array)</span></code>.</p>
 <p>Ignored if the <em>source</em> parameter is set.</p>
 </dd>
-<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The physical units of the data. Ignored if the
+<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The physical units of the data. Ignored if the
 <em>source</em> parameter is set.</p>
 <p>The units may also be set after initialisation with
 the <a class="reference internal" href="../method/cfdm.core.Data.set_units.html#cfdm.core.Data.set_units" title="cfdm.core.Data.set_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_units</span></code></a> method.</p>
@@ -163,7 +163,7 @@ the <a class="reference internal" href="../method/cfdm.core.Data.set_units.html#
 </dd>
 </dl>
 </dd>
-<dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The calendar for reference time units. Ignored if the
+<dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The calendar for reference time units. Ignored if the
 <em>source</em> parameter is set.</p>
 <p>The calendar may also be set after initialisation with
 the <a class="reference internal" href="../method/cfdm.core.Data.set_calendar.html#cfdm.core.Data.set_calendar" title="cfdm.core.Data.set_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_calendar</span></code></a> method.</p>
@@ -173,7 +173,7 @@ the <a class="reference internal" href="../method/cfdm.core.Data.set_calendar.ht
 </dl>
 </dd>
 <dt>fill_value: optional</dt><dd><p>The fill value of the data. By default, or if set to
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> fill value appropriate to the
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> fill value appropriate to the
 array’s data type will be used (see
 <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ma.default_fill_value.html#numpy.ma.default_fill_value" title="(in NumPy v1.23)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.default_fill_value</span></code></a>). Ignored if the
 <em>source</em> parameter is set.</p>
@@ -187,7 +187,7 @@ with the <a class="reference internal" href="../method/cfdm.core.Data.set_fill_v
 <dt>source: <em>optional</em></dt><dd><p>Initialise the data, units, calendar and fill value
 from those of <em>source</em>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) deep copy input parameters prior
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) deep copy input parameters prior
 to initialisation. If False arguments are not deep
 copied.</p>
 </dd>
@@ -344,7 +344,7 @@ copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.core.Data.__deepcopy__.html#cfdm.core.Data.__deepcopy__" title="cfdm.core.Data.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.core.Data.__repr__.html#cfdm.core.Data.__repr__" title="cfdm.core.Data.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
 <td><p>Return repr(self).</p></td>
@@ -390,7 +390,7 @@ copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-08-17.
+      &copy;2022, NCAS | Page built on 2022-10-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

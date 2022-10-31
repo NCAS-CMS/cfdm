@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.10.0.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.0.1</a></h1>
 
 
 
@@ -125,7 +125,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.configuration<a class="headerlink" href="#cfdm-configuration" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cfdm.configuration">
-<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">configuration</code><span class="sig-paren">(</span><em class="sig-param">atol=None</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">log_level=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.0/cfdm/functions.py#L29-L150"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.configuration" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">configuration</code><span class="sig-paren">(</span><em class="sig-param">atol=None</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">log_level=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.1/cfdm/functions.py#L29-L150"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.configuration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Views and sets constants in the project-wide configuration.</p>
 <p>The full list of global constants that are provided in a
 dictionary to view, and can be set in any combination, are:</p>
@@ -137,7 +137,7 @@ dictionary to view, and can be set in any combination, are:</p>
 <p>These are all constants that apply throughout <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm</span></code>, except for
 in specific functions only if overridden by the corresponding
 keyword argument to that function.</p>
-<p>The value of <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, either taken by default or supplied as a
+<p>The value of <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, either taken by default or supplied as a
 value, will result in the constant in question not being changed
 from the current value. That is, it will have no effect.</p>
 <p>Note that setting a constant using this function is equivalent to
@@ -160,7 +160,7 @@ change the current value.</p>
 <dt>rtol: number or <a class="reference internal" href="../class/cfdm.Constant.html#cfdm.Constant" title="cfdm.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new value of relative tolerance. The default is to not
 change the current value.</p>
 </dd>
-<dt>log_level: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference internal" href="../class/cfdm.Constant.html#cfdm.Constant" title="cfdm.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new value of the minimal log severity level. This can
+<dt>log_level: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference internal" href="../class/cfdm.Constant.html#cfdm.Constant" title="cfdm.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>, optional</dt><dd><p>The new value of the minimal log severity level. This can
 be specified either as a string equal (ignoring case) to
 the named set of log levels or identifier <code class="docutils literal notranslate"><span class="pre">'DISABLE'</span></code>,
 or an integer code corresponding to each of these, namely:</p>
@@ -257,7 +257,7 @@ using its bespoke function:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-08-17.
+      &copy;2022, NCAS | Page built on 2022-10-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

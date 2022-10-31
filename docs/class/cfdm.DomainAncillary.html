@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.10.0.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.0.1</a></h1>
 
 
 
@@ -126,8 +126,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.DomainAncillary">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">DomainAncillary</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.0/cfdm/domainancillary.py#L4-L134"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdatabounds.PropertiesDataBounds</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.domainancillary.DomainAncillary</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">DomainAncillary</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.1/cfdm/domainancillary.py#L4-L138"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdatabounds.PropertiesDataBounds</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.files.Files</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.domainancillary.DomainAncillary</span></code></p>
 <p>A domain ancillary construct of the CF data model.</p>
 <p>A domain ancillary construct provides information which is needed
 for computing the location of cells in an alternative coordinate
@@ -156,7 +156,7 @@ methods.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><blockquote>
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><blockquote>
 <div><p>Set descriptive properties. The dictionary keys are
 property names, with corresponding values. Ignored if
 the <em>source</em> parameter is set.</p>
@@ -182,7 +182,7 @@ parameter is set.</p>
 <p>The bounds array may also be set after initialisation
 with the <a class="reference internal" href="../method/cfdm.DomainAncillary.set_bounds.html#cfdm.DomainAncillary.set_bounds" title="cfdm.DomainAncillary.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a> method.</p>
 </dd>
-<dt>geometry: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Set the geometry type. Ignored if the <em>source</em>
+<dt>geometry: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Set the geometry type. Ignored if the <em>source</em>
 parameter is set.</p>
 <p>The geometry type may also be set after initialisation
 with the <a class="reference internal" href="../method/cfdm.DomainAncillary.set_geometry.html#cfdm.DomainAncillary.set_geometry" title="cfdm.DomainAncillary.set_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_geometry</span></code></a> method.</p>
@@ -202,7 +202,7 @@ of <em>source</em>.</p>
 <code class="docutils literal notranslate"><span class="pre">cfdm.DomainAncillary(source=source)</span></code> is equivalent
 to <code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) deep copy input parameters prior
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) deep copy input parameters prior
 to initialisation. If False arguments are not deep
 copied.</p>
 </dd>
@@ -478,7 +478,10 @@ copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.DomainAncillary.get_filenames.html#cfdm.DomainAncillary.get_filenames" title="cfdm.DomainAncillary.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
 <td><p>Return the name of the file or files containing the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.DomainAncillary.to_memory.html#cfdm.DomainAncillary.to_memory" title="cfdm.DomainAncillary.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.DomainAncillary.original_filenames</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.DomainAncillary.to_memory.html#cfdm.DomainAncillary.to_memory" title="cfdm.DomainAncillary.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
 <td><p>Bring data on disk into memory.</p></td>
 </tr>
 </tbody>
@@ -539,16 +542,16 @@ copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.DomainAncillary.__deepcopy__.html#cfdm.DomainAncillary.__deepcopy__" title="cfdm.DomainAncillary.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.DomainAncillary.__getitem__.html#cfdm.DomainAncillary.__getitem__" title="cfdm.DomainAncillary.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
 <td><p>Return a subspace of the construct defined by indices.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.DomainAncillary.__repr__.html#cfdm.DomainAncillary.__repr__" title="cfdm.DomainAncillary.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.DomainAncillary.__str__.html#cfdm.DomainAncillary.__str__" title="cfdm.DomainAncillary.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 </tbody>
 </table>
@@ -588,7 +591,7 @@ copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-08-17.
+      &copy;2022, NCAS | Page built on 2022-10-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
