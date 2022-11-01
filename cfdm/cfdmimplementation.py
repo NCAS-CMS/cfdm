@@ -2654,13 +2654,14 @@ class CFDMImplementation(Implementation):
             variable.nc_set_subsampled_dimension(ncdim)
 
     def set_auxiliary_coordinate(
-        self, field, construct, axes, copy=True, **kwargs
+        self, parent, construct, axes, copy=True, **kwargs
     ):
         """Insert a auxiliary coordinate object into a field.
 
         :Parameters:
 
-            field: field construct
+            parent: `Field` or `Domain`
+               On what to set the construct
 
             construct: auxiliary coordinate construct
 
@@ -2679,7 +2680,9 @@ class CFDMImplementation(Implementation):
             `str`
 
         """
-        return field.set_construct(construct, axes=axes, copy=copy, **kwargs)
+        return self.set_construct(
+            parent, construct, axes=axes, copy=copy, **kwargs
+        )
 
     def set_bounds(self, construct, bounds, copy=True):
         """Set the bounds component of a construct.
@@ -2712,14 +2715,15 @@ class CFDMImplementation(Implementation):
 
         return ""
 
-    def set_cell_measure(self, field, construct, axes, copy=True):
+    def set_cell_measure(self, parent, construct, axes, copy=True, **kwargs):
         """Insert a cell_measure object into a field.
 
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
 
-            field: field construct
+            parent: `Field` or `Domain`
+               On what to set the construct
 
             construct: cell measure construct
 
@@ -2727,32 +2731,47 @@ class CFDMImplementation(Implementation):
 
             copy: `bool`, optional
 
+            kwargs: optional
+                Additional parameters to the `set_construct` of
+                *parent* that may be used by subclasses.
+
+                .. versionadded:: (cfdm) 1.10.0.2
+
         :Returns:
 
             `str`
 
         """
-        return field.set_construct(construct, axes=axes, copy=copy)
+        return self.set_construct(
+            parent, construct, axes=axes, copy=copy, **kwargs
+        )
 
-    def set_cell_method(self, field, construct, copy=True):
+    def set_cell_method(self, field, construct, copy=True, **kwargs):
         """Insert a cell_method object into a field.
 
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
 
-            field: field construct
+            field: `Field`
+               On what to set the construct
 
             construct: cell method construct
 
             copy: `bool`, optional
+
+            kwargs: optional
+                Additional parameters to the `set_construct` of
+                *field* that may be used by subclasses.
+
+                .. versionadded:: (cfdm) 1.10.0.2
 
         :Returns:
 
             `str`
 
         """
-        return field.set_construct(construct, copy=copy)
+        return self.set_construct(field, construct, copy=copy, **kwargs)
 
     def set_cell_method_axes(self, cell_method, axes):
         """Set the axes of a cell method construct.
@@ -2804,6 +2823,37 @@ class CFDMImplementation(Implementation):
         """
         construct.set_climatology(True)
 
+    def set_construct(self, parent, construct, axes=None, copy=True, **kwargs):
+        """Insert a construct into a field or domain.
+
+        .. versionadded:: (cfdm) 1.10.0.2
+
+        :Parameters:
+
+            parent: `Field` or `Domain`
+               On what to set the construct
+
+            construct:
+                The construct to set.
+
+            axes: `tuple` or `None`, optional
+                The construct domain axes, if applicable.
+
+            copy: `bool`, optional
+                Whether or not to set a copy of *construct*.
+
+            kwargs: optional
+                Additional parameters to the `set_construct` of
+                *parent* that may be used by subclasses.
+
+        :Returns:
+
+            `str`
+                The construct identifier.
+
+        """
+        return parent.set_construct(construct, axes=axes, copy=copy, **kwargs)
+
     def set_coordinate_conversion(
         self, coordinate_reference, coordinate_conversion
     ):
@@ -2824,25 +2874,32 @@ class CFDMImplementation(Implementation):
         """
         coordinate_reference.set_coordinate_conversion(coordinate_conversion)
 
-    def set_coordinate_reference(self, field, construct, copy=True):
+    def set_coordinate_reference(self, parent, construct, copy=True, **kwargs):
         """Insert a coordinate reference object into a field.
 
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
 
-            field: field construct
+            parent: `Field` or `Domain`
+               On what to set the construct
 
             construct: coordinate reference construct
 
             copy: `bool`, optional
+
+            kwargs: optional
+                Additional parameters to the `set_construct` of
+                *parent* that may be used by subclasses.
+
+                .. versionadded:: (cfdm) 1.10.0.2
 
         :Returns:
 
             `str`
 
         """
-        return field.set_construct(construct, copy=copy)
+        return self.set_construct(parent, construct, copy=copy, **kwargs)
 
     def set_coordinate_reference_coordinates(
         self, coordinate_reference, coordinates
@@ -2922,13 +2979,14 @@ class CFDMImplementation(Implementation):
         coordinate_reference.set_datum(datum)
 
     def set_dimension_coordinate(
-        self, field, construct, axes, copy=True, **kwargs
+        self, parent, construct, axes, copy=True, **kwargs
     ):
         """Insert a dimension coordinate object into a field.
 
         :Parameters:
 
-            field: field construct
+            parent: `Field` or `Domain`
+               On what to set the construct
 
             construct: dimension coordinate construct
 
@@ -2937,8 +2995,8 @@ class CFDMImplementation(Implementation):
             copy: `bool`, optional
 
             kwargs: optional
-                Additional parameters to `Field.set_construct` that
-                may be used by sublcasses.
+                Additional parameters to the `set_construct` of
+                *parent* that may be used by subclasses.
 
                 .. versionadded:: (cfdm) 1.8.9.0
 
@@ -2947,14 +3005,19 @@ class CFDMImplementation(Implementation):
             `str`
 
         """
-        return field.set_construct(construct, axes=axes, copy=copy, **kwargs)
+        return self.set_construct(
+            parent, construct, axes=axes, copy=copy, **kwargs
+        )
 
-    def set_domain_ancillary(self, field, construct, axes, copy=True):
+    def set_domain_ancillary(
+        self, parent, construct, axes, copy=True, **kwargs
+    ):
         """Insert a domain ancillary object into a field.
 
         :Parameters:
 
-            field: field construct
+            parent: `Field` or `Domain`
+               On what to set the construct
 
             construct: domain ancillary construct`
 
@@ -2962,30 +3025,45 @@ class CFDMImplementation(Implementation):
 
             copy: `bool`, optional
 
+            kwargs: optional
+                Additional parameters to the `set_construct` of
+                *parent* that may be used by subclasses.
+
+                .. versionadded:: (cfdm) 1.10.0.2
+
         :Returns:
 
             `str`
 
         """
-        return field.set_construct(construct, axes=axes, copy=copy)
+        return self.set_construct(
+            parent, construct, axes=axes, copy=copy, **kwargs
+        )
 
-    def set_domain_axis(self, field, construct, copy=True):
+    def set_domain_axis(self, parent, construct, copy=True, **kwargs):
         """Insert a domain_axis object into a field.
 
         :Parameters:
 
-            field: field construct
+            parent: `Field` or `Domain`
+               On what to set the construct
 
             construct: domain axis construct
 
             copy: `bool`, optional
 
+            kwargs: optional
+                Additional parameters to the `set_construct` of
+                *parent* that may be used by subclasses.
+
+                .. versionadded:: (cfdm) 1.10.0.2
+
         :Returns:
 
             `str`
 
         """
-        return field.set_construct(construct, copy=copy)
+        return self.set_construct(parent, construct, copy=copy, **kwargs)
 
     def set_dependent_tie_points(self, construct, tie_points):
         """TODO.
@@ -3019,12 +3097,13 @@ class CFDMImplementation(Implementation):
         """
         construct.nc_set_external(True)
 
-    def set_field_ancillary(self, field, construct, axes, copy=True):
+    def set_field_ancillary(self, field, construct, axes, copy=True, **kwargs):
         """Insert a field ancillary object into a field.
 
         :Parameters:
 
-            field: field construct`
+            field: `Field`
+               On what to set the construct
 
             construct: field ancillary construct
 
@@ -3032,12 +3111,20 @@ class CFDMImplementation(Implementation):
 
             copy: `bool`, optional
 
+            kwargs: optional
+                Additional parameters to the `set_construct` of
+                *field* that may be used by subclasses.
+
+                .. versionadded:: (cfdm) 1.10.0.2
+
         :Returns:
 
             `str`
 
         """
-        return field.set_construct(construct, axes=axes, copy=copy)
+        return self.set_construct(
+            field, construct, axes=axes, copy=copy, **kwargs
+        )
 
     def set_geometry(self, coordinate, value):
         """Set the geometry type of a coordinate construct.
