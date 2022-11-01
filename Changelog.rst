@@ -1,3 +1,12 @@
+Version 1.10.0.2
+----------------
+
+**202?-??-??**
+
+* New class: `cfdm.InterpolationSubarray`
+  (https://github.com/NCAS-CMS/cfdm/issues/???)
+* 
+
 Version 1.10.0.1
 ----------------
 

@@ -29,6 +29,7 @@ class SubsampledSubarray(Subarray):
         first=None,
         parameters=None,
         dependent_tie_points=None,
+        interpolation_description=None,
         source=None,
         copy=True,
         context_manager=None,
@@ -104,6 +105,10 @@ class SubsampledSubarray(Subarray):
                 the dimension in the same position of the tie points
                 array.
 
+            interpolation_description: `str`, optional
+                A complete non-standardised description of the
+                interpolation method.
+
             source: optional
                 Initialise the subarray from the given object.
 
@@ -153,6 +158,13 @@ class SubsampledSubarray(Subarray):
             except AttributeError:
                 dependent_tie_points = {}
 
+            try:
+                interpolation_description = source._get_component(
+                    "interpolation_description", None
+                )
+            except AttributeError:
+                interpolation_description = None
+
         if subarea_indices is not None:
             self._set_component("subarea_indices", subarea_indices, copy=copy)
 
@@ -165,6 +177,13 @@ class SubsampledSubarray(Subarray):
         if dependent_tie_points is not None:
             self._set_component(
                 "dependent_tie_points", dependent_tie_points.copy(), copy=False
+            )
+
+        if interpolation_description is not None:
+            self._set_component(
+                "interpolation_description",
+                interpolation_description,
+                copy=False,
             )
 
     def _broadcast_bounds(self, u):
@@ -593,3 +612,30 @@ class SubsampledSubarray(Subarray):
 
         """
         return self._get_component("subarea_indices")
+
+    def get_interpolation_description(self, default=ValueError()):
+        """Get a non-standardised interpolation method description.
+
+        .. versionadded:: (cfdm) 1.10.0.2
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                interpolation description has not been set.
+
+                {{default Exception}}
+
+        """
+        out = self._get_component("interpolation_description", None)
+        if out is None:
+            if default is None:
+                return
+
+            return self._default(
+                default,
+                f"{self.__class__.__name__!r} has no "
+                "'interpolation_description'",
+            )
+
+        return out

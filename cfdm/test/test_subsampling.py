@@ -223,6 +223,24 @@ class GatheredTest(unittest.TestCase):
         # Check original filenames
         self.assertEqual(i.get_original_filenames(), set([self.biquadratic]))
 
+    def test_non_standard(self):
+        """Test non-standardised interpolation."""
+        f = cfdm.read(self.linear)
+
+        # Get a field with non-standardised coordinate interpolation
+        t = f[15]
+        self.assertEqual(t.nc_get_variable(), 't3')
+
+        # Check that the we can inspect the compressed data as if it
+        # were uncompressed
+        a_2d = t.construct('ncvar%a_2d')
+        self.assertEqual(a_2d.shape, (18, 12))
+        self.assertEqual(a_2d.get_property('units'), 'm')
+
+        # Check that we can't uncompress the data
+        with self.assertRaises(ValueError):
+            a_2d.array
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

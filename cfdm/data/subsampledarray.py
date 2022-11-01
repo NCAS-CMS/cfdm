@@ -1,3 +1,4 @@
+from functools import partial
 from itertools import accumulate, product
 from numbers import Number
 
@@ -8,6 +9,7 @@ from .abstract import CompressedArray
 from .subarray import (
     BiLinearSubarray,
     BiQuadraticLatitudeLongitudeSubarray,
+    InterpolationSubarray,
     LinearSubarray,
     QuadraticLatitudeLongitudeSubarray,
     QuadraticSubarray,
@@ -96,6 +98,7 @@ class SubsampledArray(CompressedArray):
             "linear": LinearSubarray,
             "quadratic": QuadraticSubarray,
             "quadratic_latitude_longitude": QuadraticLatitudeLongitudeSubarray,
+            None: InterpolationSubarray,
         }
 
         return instance
@@ -793,6 +796,14 @@ class SubsampledArray(CompressedArray):
             raise ValueError(
                 "Can't get Subarray class when with unknown "
                 f"interpolation_name {interpolation_name!r}"
+            )
+
+        if interpolation_name is None:
+            Subarray = partial(
+                Subarray,
+                interpolation_description=self.get_interpolation_description(
+                    ""
+                ),
             )
 
         return Subarray

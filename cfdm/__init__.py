@@ -135,6 +135,7 @@ from .data import (
     BiLinearSubarray,
     BiQuadraticLatitudeLongitudeSubarray,
     GatheredSubarray,
+    InterpolationSubarray,
     LinearSubarray,
     QuadraticLatitudeLongitudeSubarray,
     QuadraticSubarray,
