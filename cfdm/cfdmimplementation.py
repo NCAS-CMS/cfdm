@@ -3020,7 +3020,11 @@ class CFDMImplementation(Implementation):
         source.set_dependent_tie_point_dimensions(dimensions)
 
         # Reset define the data with the new dependent tie point
-        # definitions
+        # definitions. Currently, cfdm doesn't need to do this, but it
+        # doesn't need to do this, but it doesn't hard do any harm and
+        # is generally a logical thing to do, as we shouldn't assume
+        # what the Data object instantitation does or doesn't do to
+        # its input arguments.
         data = construct._Data(
             source,
             units=data.get_units(None),
