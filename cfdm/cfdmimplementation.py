@@ -2987,23 +2987,46 @@ class CFDMImplementation(Implementation):
         """
         return field.set_construct(construct, copy=copy)
 
-    def set_dependent_tie_points(self, construct, tie_points):
-        """TODO.
+    def set_dependent_tie_points(self, construct, tie_points, dimensions):
+        """Set dependent tie points and their dimensions.
+
+        This applies to arrays compressed by subsampling.
 
         .. versionadded:: (cfdm) 1.10.0.0
 
+        :Parameters:
+
+            construct:
+                The construct containing the ccompressed data. Will be
+                changed in-place.
+
+            tie_points: `dict`
+                The dependent tie point ararys, keyed by their
+                identities.
+
+            dimensions: `dict`
+                The dimensions spanned by the tie point ararys, keyed
+                by their identities.
+
+        :Returns:
+
+            `None`
+
         """
-        data = self.get_data_source(construct)
-        data.set_dependent_tie_points(tie_points)
+        data = self.get_data(construct)
+        source = data.source()
 
-    def set_dependent_tie_point_dimensions(self, construct, dimensions):
-        """TODO.
+        source.set_dependent_tie_points(tie_points)
+        source.set_dependent_tie_point_dimensions(dimensions)
 
-        .. versionadded:: (cfdm) 1.10.0.0
-
-        """
-        data = self.get_data_source(construct)
-        data.set_dependent_tie_point_dimensions(dimensions)
+        # Reset define the data with the new dependent tie point
+        # definitions
+        data = construct._Data(
+            source,
+            units=data.get_units(None),
+            calendar=data.get_calendar(None),
+        )
+        construct.set_data(data)
 
     def nc_set_external(self, construct):
         """Set the external status of a construct.

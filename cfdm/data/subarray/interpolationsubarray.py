@@ -9,12 +9,12 @@ class InterpolationSubarray(SubsampledSubarray):
     The subarray has no standardised interpolation algorithm. An
     interpolation algorithm may have been provided via the
     *interpolation_description* parameter, but that algorithm can not
-    be implemented by the {{class}} object. Nonetheless, the subarray
+    be interpreted by the {{class}} object. Nonetheless, the subarray
     is still representable in its uncompressed form (e.g. its shape is
-    known,),even though the uncompressed data values can not be
+    known), even though the uncompressed data values can not be
     calculated.
 
-    See CF section 8.3.3. "Interpolation Variable".
+    See CF section 8.3.3 "Interpolation Variable".
 
     .. versionadded:: (cfdm) 1.10.0.2
 
@@ -27,7 +27,8 @@ class InterpolationSubarray(SubsampledSubarray):
 
         Always raises a `ValueError`, rather than returning a subspace
         of the uncompressed data as an independent numpy array, since
-        the interpolation algorithm is non-standardised.
+        the non-standardised interpolation algorithm can't be
+        interpreted.
 
         .. versionadded:: (cfdm) 1.10.0.2
 
@@ -36,4 +37,4 @@ class InterpolationSubarray(SubsampledSubarray):
             "Can't uncompress subsampled data using a non-standardised "
             "interpolation algorithm:\n\n"
             f"{self.get_interpolation_description('')}"
-        ) #from None
+        )

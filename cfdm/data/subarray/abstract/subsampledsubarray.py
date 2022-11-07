@@ -289,7 +289,8 @@ class SubsampledSubarray(Subarray):
             raise ValueError(
                 f"Must provide an identity for each of the "
                 f"{len(dependent_tie_points) + 1} codependent tie point "
-                f"arrays. Got {identities}"
+                f"arrays. Identites {identities} were provided, which "
+                f"should include the identities {tuple(dependent_tie_points)}"
             )
 
         if not set(dependent_tie_points).issubset(identities):

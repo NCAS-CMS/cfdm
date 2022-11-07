@@ -3430,15 +3430,11 @@ class NetCDFRead(IORead):
                     b_tp[identity] = self.implementation.get_tie_points(b)
                     break
 
-            self.implementation.set_dependent_tie_points(coord, c_tp)
-            self.implementation.set_dependent_tie_point_dimensions(
-                coord, tp_dims
-            )
+            self.implementation.set_dependent_tie_points(coord, c_tp, tp_dims)
 
             if bounds is not None:
-                self.implementation.set_dependent_tie_points(bounds, b_tp)
-                self.implementation.set_dependent_tie_point_dimensions(
-                    bounds, tp_dims
+                self.implementation.set_dependent_tie_points(
+                    bounds, b_tp, tp_dims
                 )
 
         # Set the coordinate constructs on the parent field/domain
