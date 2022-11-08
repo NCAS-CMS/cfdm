@@ -3019,12 +3019,11 @@ class CFDMImplementation(Implementation):
         source.set_dependent_tie_points(tie_points)
         source.set_dependent_tie_point_dimensions(dimensions)
 
-        # Reset define the data with the new dependent tie point
-        # definitions. Currently, cfdm doesn't need to do this, but it
-        # doesn't need to do this, but it doesn't hard do any harm and
-        # is generally a logical thing to do, as we shouldn't assume
-        # what the Data object instantitation does or doesn't do to
-        # its input arguments.
+        # Reset the construct's data with the new dependent tie point
+        # definitions. Currently cfdm doesn't need to do this, but it
+        # doesn't do any harm, and downstream applications (like
+        # cf-python) may not be able to correctly instantiate the data
+        # when all of its elements have not been set.
         data = construct._Data(
             source,
             units=data.get_units(None),
