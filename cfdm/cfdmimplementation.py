@@ -2671,7 +2671,7 @@ class CFDMImplementation(Implementation):
 
             kwargs: optional
                 Additional parameters to `Field.set_construct` that
-                may be used by sublcasses.
+                may be used by subclasses.
 
                 .. versionadded:: (cfdm) 1.8.9.0
 
