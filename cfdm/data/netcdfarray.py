@@ -90,7 +90,7 @@ class NetCDFArray(abstract.Array):
                 ``valid_max``, ``valid_range``, ``_FillValue`` and
                 ``missing_value``.
 
-                .. versionadded:: (cfdm) 1.8.
+                .. versionadded:: (cfdm) 1.8.2
 
             units: `str` or `None`, optional
                 The units of the netCDF variable. Set to `None` to
