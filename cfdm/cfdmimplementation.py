@@ -3001,7 +3001,7 @@ class CFDMImplementation(Implementation):
                 changed in-place.
 
             tie_points: `dict`
-                The dependent tie point ararys, keyed by their
+                The dependent tie point arrays, keyed by their
                 identities.
 
             dimensions: `dict`
