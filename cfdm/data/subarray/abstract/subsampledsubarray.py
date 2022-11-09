@@ -106,7 +106,7 @@ class SubsampledSubarray(Subarray):
                 array.
 
             interpolation_description: `str`, optional
-                A complete non-standardised description of the
+                A complete description of the non-standardised 
                 interpolation method.
 
             source: optional
