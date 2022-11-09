@@ -2170,9 +2170,19 @@ class CFDMImplementation(Implementation):
 
             mask: `bool`, optional
 
-            units: `str` or `None`, optional
+            units: `str` or `None` or False, optional
+                The units of the netCDF variable. Set to `None` to
+                indicate that there are no units. If False (the
+                default) then the units are considered unset.
+
+                .. versionadded:: (cfdm) 1.10.0.2
 
             calendar: `str` or `None`, optional
+                The calendar of the netCDF variable. By default, or if
+                set to `None`, then the CF default calendar is
+                assumed, if applicable.
+
+                .. versionadded:: (cfdm) 1.10.0.2
 
         :Returns:
 
