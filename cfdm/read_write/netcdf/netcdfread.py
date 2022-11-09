@@ -5439,10 +5439,6 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        #        array, kwargs = self._ggg(ncvar, unpacked_dtype=unpacked_dtype)
-        #        if array is None:
-        #            return None
-
         array, kwargs = self._create_netcdfarray(
             ncvar, unpacked_dtype=unpacked_dtype, coord_ncvar=coord_ncvar
         )
@@ -5452,22 +5448,6 @@ class NetCDFRead(IORead):
         filename = kwargs["filename"]
         units = kwargs["units"]
         calendar = kwargs["calendar"]
-
-        #        units = g["variable_attributes"][ncvar].get("units", None)
-        #        calendar = g["variable_attributes"][ncvar].get("calendar", None)
-        #
-        #        if coord_ncvar:
-        #            # Get the Units from the parent coordinate variable, if
-        #            # they've not already been set.
-        #            if units is None:
-        #                units = g["variable_attributes"][coord_ncvar].get(
-        #                    "units", None
-        #                )
-        #
-        #            if calendar is None:
-        #                calendar = g["variable_attributes"][coord_ncvar].get(
-        #                    "calendar", None
-        #                )
 
         compression = g["compression"]
 
