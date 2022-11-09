@@ -5296,7 +5296,7 @@ class NetCDFRead(IORead):
 
         :Returns:
 
-            (`NetCDFArray`, `dict`) or  (`None`, `dict`) or `dict`
+            (`NetCDFArray`, `dict`) or (`None`, `dict`) or `dict`
                 The new `NetCDFArray` instance and a dictionary of the
                 kwargs used to create it. If the array could not be
                 created then `None` is returned in its place. If
