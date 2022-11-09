@@ -883,7 +883,7 @@ class read_writeTest(unittest.TestCase):
             np.allclose(rlat, olat.data.array, atol=5.4e-06, rtol=0)
         )
         self.assertTrue(
-            np.allclose(rlon, olon.data.array, atol=2.2e-05, rtol=0)
+            np.allclose(rlon, olon.data.array, atol=2.5e-05, rtol=0)
         )
 
     def test_read_original_filenames(self):
