@@ -1,16 +1,16 @@
-# A GitHub Action to run the cfdm test suite after events on master.
+# A GitHub Action to run the cfdm test suite after events on main.
 name: Run test suite
 
-# Triggers the workflow on push or PR events for the master branch (only)
+# Triggers the workflow on push or PR events for the main branch (only)
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     # default (from docs) is just on [opened, synchronize, reopened]
     types: [opened, reopened, ready_for_review, edited]
     branches:
-      - master
+      - main
 
 # Note a workflow can have 1+ jobs that can run sequentially or in parallel.
 jobs:

@@ -150,7 +150,7 @@
 * Push recent commits using
 
   ```bash
-  git push origin master
+  git push origin main
   ```
   
 * Tag the release (optional - if you don't do it here then you must do
