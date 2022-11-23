@@ -43,6 +43,14 @@ class NumpyArrayTest(unittest.TestCase):
         b = numpy.array(x)
         self.assertTrue((b == a).all())
 
+    def test_NumpyArray_get_filename(self):
+        """Test NumpyArray.get_filename."""
+        x = cfdm.NumpyArray()
+        self.assertIsNone(x.get_filename(None))
+
+        with self.assertRaises(AttributeError):
+            x.get_filename()
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

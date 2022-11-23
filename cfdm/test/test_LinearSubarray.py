@@ -32,6 +32,23 @@ class LinearSubarrayTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             x.compressed_dimensions()
 
+    def test_LinearSubarray_get_filename(self):
+        """Test LinearSubarray.get_filename."""
+        x = cfdm.LinearSubarray(
+            data=123, parameters={}, dependent_tie_points={}
+        )
+        self.assertIsNone(x.get_filename(None))
+
+        with self.assertRaises(AttributeError):
+            x.get_filename()
+
+    def test_LinearSubarray_get_filenames(self):
+        """Test LinearSubarray.get_filenames."""
+        x = cfdm.LinearSubarray(
+            data=123, parameters={}, dependent_tie_points={}
+        )
+        self.assertEqual(x.get_filenames(), set())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

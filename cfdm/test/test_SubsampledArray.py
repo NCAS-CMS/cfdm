@@ -100,6 +100,18 @@ class SubsampledArrayTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             c.compressed_dimensions()
 
+    def test_SubsampledArray_get_filename(self):
+        """Test SubsampledArray.get_filename."""
+        x = self.coords
+        self.assertIsNone(x.get_filename(None))
+
+        with self.assertRaises(AttributeError):
+            x.get_filename()
+
+    def test_SubsampledArray_get_filenames(self):
+        """Test `SubsampledArray.get_filenames."""
+        self.assertEqual(self.coords.get_filenames(), set())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

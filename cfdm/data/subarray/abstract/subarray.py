@@ -271,3 +271,21 @@ class Subarray(Array):
             raise ValueError("No compressed dimensions have been defined")
 
         return c.copy()
+
+    def get_filenames(self):
+        """Return the names of any files containing the data.
+
+        .. versionadded:: (cfdm) 1.10.0.2
+
+        :Returns:
+
+            `set`
+                The file names in normalised, absolute form. If the
+                data are all in memory then an empty `set` is
+                returned.
+
+        """
+        try:
+            return self.data.get_filenames()
+        except AttributeError:
+            return set()

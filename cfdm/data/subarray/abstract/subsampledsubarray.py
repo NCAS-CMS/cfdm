@@ -614,6 +614,34 @@ class SubsampledSubarray(Subarray):
         """
         return self._get_component("subarea_indices")
 
+    def get_filenames(self):
+        """Return the names of any files containing the data.
+
+        Includes the names of files that contain any parameters and
+        dependent tie points.
+
+        .. versionadded:: (cfdm) 1.10.0.2
+
+        :Returns:
+
+            `set`
+                The file names in normalised, absolute form. If the
+                data are all in memory then an empty `set` is
+                returned.
+
+        """
+        filenames = super().get_filenames()
+
+        for x in tuple(self.parameters.values()) + tuple(
+            self.dependent_tie_points.values()
+        ):
+            try:
+                filenames.update(x.get_filenames())
+            except AttributeError:
+                pass
+
+        return filenames
+
     def get_interpolation_description(self, default=ValueError()):
         """Get a non-standardised interpolation method description.
 

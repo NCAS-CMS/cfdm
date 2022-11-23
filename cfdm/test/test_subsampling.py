@@ -29,8 +29,8 @@ def _remove_tmpfiles():
 atexit.register(_remove_tmpfiles)
 
 
-class GatheredTest(unittest.TestCase):
-    """Test management of constructs with underlying gathered arrays."""
+class SubsamplingTest(unittest.TestCase):
+    """Test constructs with underlying subsampled arrays."""
 
     biquadratic = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "subsampled_2.nc"
@@ -240,6 +240,13 @@ class GatheredTest(unittest.TestCase):
         # Check that we can't uncompress the data
         with self.assertRaises(ValueError):
             a_2d.array
+
+    def test_SubsampledArray_get_filenames(self):
+        """Test SubsampledArray.get_filenames."""
+        f = cfdm.read(self.linear)
+        q = f[0]
+        lat = q.construct("latitude").data
+        self.assertEqual(lat.get_filenames(), set((self.linear,)))
 
 
 if __name__ == "__main__":

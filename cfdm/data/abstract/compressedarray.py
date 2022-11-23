@@ -400,6 +400,28 @@ class CompressedArray(Array):
         """
         return {"data": self.source().copy()}
 
+    def get_filenames(self):
+        """Return the names of any files containing the compressed data.
+
+        .. versionadded:: (cfdm) 1.10.0.2
+
+        :Returns:
+
+            `set`
+                The file names in normalised, absolute form. If the
+                data are all in memory then an empty `set` is
+                returned.
+
+        """
+        data = self._get_compressed_Array(None)
+        if data is None:
+            return set()
+
+        try:
+            return data.get_filenames()
+        except AttributeError:
+            return set()
+
     def get_Subarray(self):
         """Return the Subarray class.
 
