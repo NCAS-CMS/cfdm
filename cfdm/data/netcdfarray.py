@@ -433,24 +433,6 @@ class NetCDFArray(abstract.Array):
 
         return address
 
-    #    def get_filename(self):
-    #        """The name of the netCDF file containing the array.
-    #
-    #        .. versionadded:: (cfdm) 1.7.0
-    #
-    #        :Returns:
-    #
-    #            `str` or `None`
-    #                The filename, or `None` if there isn't one.
-    #
-    #        **Examples**
-    #
-    #        >>> a.get_filename()
-    #        'file.nc'
-    #
-    #        """
-    #        return self._get_component("filename", None)
-
     def get_group(self):
         """The netCDF4 group structure of the netCDF variable.
 
