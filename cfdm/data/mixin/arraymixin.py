@@ -143,7 +143,7 @@ class ArrayMixin:
         """The name of the file containing the array.
 
         If there are multiple files then an `AttributeError` is
-        raised.
+        raised by default.
 
         .. versionadded:: (cfdm) 1.10.0.2
 
