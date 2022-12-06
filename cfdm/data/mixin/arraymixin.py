@@ -1,5 +1,7 @@
 import numpy
 
+from ...functions import abspath
+
 
 class ArrayMixin:
     """Mixin class for a container of an array.
@@ -136,6 +138,63 @@ class ArrayMixin:
 
         """
         return self._get_component("compression_type", "")
+
+    def get_filename(self, default=AttributeError()):
+        """The name of the file containing the array.
+
+        If there are multiple files then an `AttributeError` is
+        raised by default.
+
+        .. versionadded:: (cfdm) 1.10.0.2
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no file.
+
+                {{default Exception}}
+
+        :Returns:
+
+            `str`
+                The file name.
+
+        """
+        filenames = self.get_filenames()
+        if len(filenames) == 1:
+            return filenames.pop()
+        elif not filenames:
+            if default is None:
+                return
+
+            return self._default(
+                default, f"{self.__class__.__name__} has no file"
+            )
+        else:
+            return self._default(
+                default, f"{self.__class__.__name__} has multiple files"
+            )
+
+    def get_filenames(self):
+        """Return the names of any files containing the data array.
+
+        .. versionadded:: (cfdm) 1.10.0.2
+
+        :Returns:
+
+            `set`
+                The file names in normalised, absolute form. If the
+                data are all in memory then an empty `set` is
+                returned.
+
+        """
+        try:
+            filename = self._get_component("filename")
+        except ValueError:
+            return set()
+        else:
+            return set((abspath(filename),))
 
     @classmethod
     def get_subspace(cls, array, indices, copy=True):

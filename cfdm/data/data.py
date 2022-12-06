@@ -12,7 +12,6 @@ from ..decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
-from ..functions import abspath
 from ..mixin.container import Container
 from ..mixin.files import Files
 from ..mixin.netcdf import NetCDFHDF5
@@ -2753,15 +2752,16 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         return True
 
     def get_filenames(self):
-        """Return the name of the file containing the data array.
+        """Return the names of any files containing the data array.
 
         .. seealso:: `original_filenames`
 
         :Returns:
 
             `set`
-                The file name in normalised, absolute form. If the
-                data is are memory then an empty `set` is returned.
+                The file names in normalised, absolute form. If the
+                data are all in memory then an empty `set` is
+                returned.
 
         **Examples**
 
@@ -2781,11 +2781,9 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             return set()
 
         try:
-            filename = source.get_filename()
+            return source.get_filenames()
         except AttributeError:
             return set()
-        else:
-            return set((abspath(filename),))
 
     def first_element(self):
         """Return the first element of the data as a scalar.

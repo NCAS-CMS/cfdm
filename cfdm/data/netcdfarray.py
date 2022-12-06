@@ -303,7 +303,7 @@ class NetCDFArray(abstract.Array):
         x.__str__() <==> str(x)
 
         """
-        return f"{self.get_filename()}, {self.get_address()}"
+        return f"{self.get_filename(None)}, {self.get_address()}"
 
     def _set_units(self, var):
         """The units and calendar properties.
@@ -400,7 +400,7 @@ class NetCDFArray(abstract.Array):
         if pointer is None:
             pointer = self.get_varid()
 
-        return (self.get_filename(), pointer)
+        return (self.get_filename(None), pointer)
 
     @property
     def shape(self):
@@ -432,24 +432,6 @@ class NetCDFArray(abstract.Array):
             address = self.get_varid()
 
         return address
-
-    def get_filename(self):
-        """The name of the netCDF file containing the array.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        :Returns:
-
-            `str` or `None`
-                The filename, or `None` if there isn't one.
-
-        **Examples**
-
-        >>> a.get_filename()
-        'file.nc'
-
-        """
-        return self._get_component("filename", None)
 
     def get_group(self):
         """The netCDF4 group structure of the netCDF variable.
@@ -551,9 +533,9 @@ class NetCDFArray(abstract.Array):
 
         """
         try:
-            return netCDF4.Dataset(self.get_filename(), "r")
+            return netCDF4.Dataset(self.get_filename(None), "r")
         except RuntimeError as error:
-            raise RuntimeError(f"{error}: {self.get_filename()}")
+            raise RuntimeError(f"{error}: {self.get_filename(None)}")
 
     def to_memory(self):
         """Bring data on disk into memory.
