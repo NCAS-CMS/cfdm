@@ -5,7 +5,10 @@ Version 1.10.0.2
 
 * New class: `cfdm.InterpolationSubarray`
   (https://github.com/NCAS-CMS/cfdm/issues/228)
+* Relocate the call to `NetCDFRead._customize_read_vars` to earlier in
+  `NetCDFRead.read` (https://github.com/NCAS-CMS/cfdm/issues/233)
  
+----
 
 Version 1.10.0.1
 ----------------
@@ -26,6 +29,8 @@ Version 1.10.0.1
 * Fixed bug that caused a failure when printing date-time data with
   the first element masked
   (https://github.com/NCAS-CMS/cfdm/issues/211)
+
+----
 
 Version 1.10.0.0
 ----------------
