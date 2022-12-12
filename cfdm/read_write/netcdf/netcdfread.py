@@ -5648,7 +5648,7 @@ class NetCDFRead(IORead):
 
             if subsampled:
                 array = self._create_subsampled_array(
-                    subsampled_array=self._create_Data(array),
+                    subsampled_array=self._create_Data(array, ncvar=ncvar),
                     uncompressed_shape=tuple(uncompressed_shape),
                     tie_point_indices=tie_point_indices,
                     parameters=interpolation_parameters.copy(),
@@ -6658,37 +6658,43 @@ class NetCDFRead(IORead):
 
     def _create_Data(
         self,
-        array=None,
+        array,
+        ncvar,
         units=None,
         calendar=None,
-        ncvar=None,
-        filenames=None,
         **kwargs,
     ):
-        """Create a Data object.
+        """Create a Data object from a netCDF variable.
 
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
 
-            array:
+            array: `Array`
+                The file array.
 
-            units:
+            ncvar: `str`
+                The name of the netCDF variable that contains the
+                data.
 
-            calendar:
+                .. note:: Not currently used here, but must be
+                          available to subclasses.
 
-            ncvar: `str`, optional
-                Not used here, but frequently set in calls. Leaving
-                here for now as no harm appears to be going on ...
+            units: `str`, optional
+                The units of *array*. By default, or if `None`, it is
+                assumed that there are no units.
 
-            filenames: (sequence of) `str`, optional
-                Set the names of any files that contain (parts of)
-                *array*. If `None` (the default) then it is assumed
-                that there are no files involved.
-
-                .. versionadded:: (cfdm) 1.10.0.1
+            calendar: `str`, optional
+                The calendar of *array*. By default, or if `None`, it is
+                assumed that there is no calendar.
 
             kwargs: optional
+                Extra parameters to pass to the initialisation of the
+                returned `Data` object.
+
+        :Returns:
+
+            `Data`
 
         """
         data = self.implementation.initialise_Data(
