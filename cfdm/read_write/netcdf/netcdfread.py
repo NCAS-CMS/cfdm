@@ -6681,7 +6681,7 @@ class NetCDFRead(IORead):
                           available to subclasses.
 
             units: `str`, optional
-                The units of *array*. By default, or `None`, it is
+                The units of *array*. By default, or if `None`, it is
                 assumed that there are no units.
 
             calendar: `str`, optional
