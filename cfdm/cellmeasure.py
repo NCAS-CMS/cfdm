@@ -58,8 +58,7 @@ class CellMeasure(
 
             measure: `str`, optional
                 Set the measure that indicates the metric given by
-                the data array. Ignored if the *source* parameter is
-                set.
+                the data array.
 
                 The measure may also be set after initialisation with
                 the `set_measure` method.
@@ -74,11 +73,7 @@ class CellMeasure(
 
             {{init data: data_like, optional}}
 
-            source: optional
-                Initialise the measure, properties and data from those
-                of *source*.
-
-                {{init source}}
+            {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 

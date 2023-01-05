@@ -17,8 +17,7 @@ class ParametersDomainAncillaries(Parameters):
 
             parameters: `dict`, optional
                Set parameters. The dictionary keys are term names,
-               with corresponding parameter values. Ignored if the
-               *source* parameter is set.
+               with corresponding parameter values.
 
                Parameters may also be set after initialisation with
                the `set_parameters` and `set_parameter` methods.
@@ -29,8 +28,7 @@ class ParametersDomainAncillaries(Parameters):
             domain_ancillaries: `dict`, optional
                Set references to domain ancillary constructs. The
                dictionary keys are term names, with corresponding
-               domain ancillary construct keys. Ignored if the
-               *source* parameter is set.
+               domain ancillary construct keys.
 
                Domain ancillaries may also be set after initialisation
                with the `set_domain_ancillaries` and
@@ -39,11 +37,7 @@ class ParametersDomainAncillaries(Parameters):
                *Parameter example:*
                  ``domain_ancillaries={'orog': 'domainancillary2'}``
 
-            source: optional
-                Initialise the parameters and domain ancillary terms
-                from those of *source*.
-
-                {{init source}}
+            {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 

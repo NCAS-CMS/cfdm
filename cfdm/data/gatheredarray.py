@@ -79,10 +79,7 @@ class GatheredArray(CompressedArray):
             compressed_dimension: deprecated at version 1.10.0.0
                 Use the *compressed_dimensions* parameter instead.
 
-            source: optional
-                Initialise the array from the given object.
-
-                {{init source}}
+            {{init source: optional}}
 
                 .. versionadded:: (cfdm) 1.10.0.0
 

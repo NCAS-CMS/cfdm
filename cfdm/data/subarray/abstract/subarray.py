@@ -61,10 +61,7 @@ class Subarray(Array):
                 *Parameter example:*
                   ``{0: (0,), 2: (2,)}``
 
-            source: optional
-                Initialise the subarray from the given object.
-
-                {{init source}}
+            {{init source: optional}}
 
             {{deep copy}}
 

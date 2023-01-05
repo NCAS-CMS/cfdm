@@ -38,11 +38,7 @@ class Bounds(abstract.PropertiesData):
 
             {{init data: data_like, optional}}
 
-            source: optional
-                Initialise the properties and data from those of *source*.
-                respectively.
-
-                {{init source}}
+            {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 

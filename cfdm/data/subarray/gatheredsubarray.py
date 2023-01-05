@@ -62,10 +62,7 @@ class GatheredSubarray(Subarray):
                 Indices of the uncompressed subarray for the
                 compressed data.
 
-            source: optional
-                Initialise the subarray from the given object.
-
-                {{init source}}
+            {{init source: optional}}
 
             {{deep copy}}
 

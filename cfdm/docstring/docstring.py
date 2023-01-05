@@ -105,15 +105,7 @@ _docstring_substitution_definitions = {
         collection of original files from all contributing sources.""",
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentataion)
-    # ----------------------------------------------------------------
-    # init properties: `dict`, optional
-    "{{init properties: `dict`, optional}}": """properties: `dict`, optional
-                Set descriptive properties. The dictionary keys are
-                property names, with corresponding values. Ignored if
-                the *source* parameter is set.
-
-                Properties may also be set after initialisation with
-                the `set_properties` and `set_property` methods.""",
+    # ------------------------1----------------------------------------
     # atol: number, optional
     "{{atol: number, optional}}": """atol: number, optional
                 The tolerance on absolute differences between real

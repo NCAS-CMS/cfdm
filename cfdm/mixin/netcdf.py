@@ -22,9 +22,7 @@ class NetCDF:
 
         :Parameters:
 
-            source: optional
-                Initialise the netCDF components from those of
-                *source*.
+            {{init source: optional}}
 
         :Returns:
 

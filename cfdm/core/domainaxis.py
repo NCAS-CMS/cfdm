@@ -31,10 +31,7 @@ class DomainAxis(abstract.Container):
                 The size may also be set after initialisation with the
                 `set_size` method.
 
-            source:
-                Initialise the size from that of source.
-
-                {{init source}}
+            {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 

@@ -109,10 +109,7 @@ class SubsampledSubarray(Subarray):
                 A complete description of the non-standardised
                 interpolation method.
 
-            source: optional
-                Initialise the subarray from the given object.
-
-                {{init source}}
+            {{init source: optional}}
 
             {{deep copy}}
 

@@ -47,11 +47,7 @@ class Domain(mixin.FieldDomain, abstract.Properties):
             *Parameter example:*
                ``properties={'long_name': 'Domain for model'}``
 
-            source: optional
-                Initialise the metadata constructs from those of
-                *source*.
-
-                {{init source}}
+            {{init source: optional}}
 
                 A new domain may also be instantiated with the
                 `fromconstructs` class method.

@@ -73,12 +73,6 @@ class TiePointIndex(
 
             {{init data: data_like, optional}}
 
-            source: optional
-                Initialise the properties and data from those of
-                *source*.
-
-                {{init source}}
-
             {{init copy: `bool`, optional}}
 
         """

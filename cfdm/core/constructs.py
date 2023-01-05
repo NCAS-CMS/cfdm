@@ -97,9 +97,7 @@ class Constructs(abstract.Container):
                 *Parameter example:*
                   ``cell_method='cellmethod'``
 
-            source: optional
-                Initialise the construct keys and contained metadata
-                constructs from those of *source*.
+            {{init source: optional}}
 
             copy: `bool`, optional
                 If True (the default) then deep copy metadata constructs
