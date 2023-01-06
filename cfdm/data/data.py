@@ -121,7 +121,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
             {{init source: optional}}
 
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
             kwargs: ignored
                 Not used. Present to facilitate subclassing.

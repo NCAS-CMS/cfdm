@@ -245,7 +245,7 @@ class SubsampledArray(CompressedArray):
 
             {{init source: optional}}
 
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
         """
         super().__init__(

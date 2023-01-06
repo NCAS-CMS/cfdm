@@ -86,7 +86,7 @@ class PropertiesDataBounds(PropertiesData):
 
             {{init source: optional}}
 
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
         """
         # Initialise properties, data, geometry and interior ring

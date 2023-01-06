@@ -76,7 +76,7 @@ class RaggedArray(CompressedArray):
 
             {{init source: optional}}
 
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
         """
         if count_variable is not None:

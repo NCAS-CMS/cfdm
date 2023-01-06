@@ -99,9 +99,9 @@ _docstring_substitution_definitions = {
                 initialisation with the `set_interior_ring` method.""",
     # init copy
     "{{init copy: `bool`, optional}}": """copy: `bool`, optional
-                If True (the default) deep copy input parameters prior
-                to initialisation. If False arguments are not deep
-                copied.""",
+                If True (the default) then deep copy the input
+                parameters prior to initialisation. By default the
+                parameters are not deep copied.""",
     # init source
     "{{init source: optional}}": """source: optional
                 Initialise the `{{class}}` instance from the *source*

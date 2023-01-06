@@ -83,7 +83,7 @@ class GatheredArray(CompressedArray):
 
                 .. versionadded:: (cfdm) 1.10.0.0
 
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
                 .. versionadded:: (cfdm) 1.10.0.0
 

@@ -64,7 +64,7 @@ class GatheredSubarray(Subarray):
 
             {{init source: optional}}
 
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
             context_manager: function, optional
                 A context manager that provides a runtime context for
