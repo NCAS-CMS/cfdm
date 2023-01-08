@@ -104,16 +104,18 @@ _docstring_substitution_definitions = {
                 parameters are not deep copied.""",
     # init source
     "{{init source: optional}}": """source: optional
-                Initialise the `{{class}}` instance from the *source*
-                object. All other parameters, apart from *copy*, are
-                ignored and their values are instead inferred from
-                *source* using the `{{class}}` API. Any parameters
-                that can not be retrieved from *source* are assumed to
-                have their default value.
+                Convert *source*, which can be any type of object, to
+                a `{{class}}` instance.
 
-                Note that if *source* is a `{{class}}` instance then
-                ``{{package}}.{{class}}(source=source)`` is equivalent
-                to ``source.copy()``.""",
+                All other parameters, apart from *copy*, are ignored
+                and their values are instead inferred from *source* by
+                assuming that it has the `{{class}}` API. Any
+                parameters that can not be retrieved from *source* in
+                this way are assumed to have their default value.
+
+                Note that if ``x`` is aslo a `{{class}}` instance then
+                ``{{package}}.{{class}}(source=x)`` is equivalent to
+                ``x.copy()``.""",
     # data_like
     "{{data_like}}": """A data_like object is any object that can be converted
                 to a `Data` object, i.e. `numpy` array_like objects,
