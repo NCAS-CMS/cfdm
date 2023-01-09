@@ -113,7 +113,7 @@ _docstring_substitution_definitions = {
                 parameters that can not be retrieved from *source* in
                 this way are assumed to have their default value.
 
-                Note that if ``x`` is aslo a `{{class}}` instance then
+                Note that if ``x`` is also a `{{class}}` instance then
                 ``{{package}}.{{class}}(source=x)`` is equivalent to
                 ``x.copy()``.""",
     # data_like
