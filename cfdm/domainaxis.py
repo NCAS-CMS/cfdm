@@ -54,10 +54,7 @@ class DomainAxis(
                 *Parameter example:*
                   ``size=192``
 
-            source: optional
-                Initialise the size from that of *source*.
-
-                {{init source}}
+            {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 

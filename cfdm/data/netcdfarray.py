@@ -107,14 +107,11 @@ class NetCDFArray(abstract.Array):
 
                 .. versionadded:: (cfdm) 1.10.0.1
 
-            source: optional
-                Initialise the array from the given object.
-
-                {{init source}}
+            {{init source: optional}}
 
                 .. versionadded:: (cfdm) 1.10.0.0
 
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
                 .. versionadded:: (cfdm) 1.10.0.0
 

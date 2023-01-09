@@ -74,7 +74,7 @@ class CoordinateReference(abstract.Container):
             coordinates: sequence of `str`, optional
                 Identify the related dimension and auxiliary
                 coordinate constructs by their construct
-                identifiers. Ignored if the *source* parameter is set.
+                identifiers.
 
                 The coordinates may also be set after initialisation
                 with the `set_coordinates` and `set_coordinate`
@@ -88,25 +88,20 @@ class CoordinateReference(abstract.Container):
 
             datum: `Datum`, optional
                 Set the datum component of the coordinate reference
-                construct. Ignored if the *source* parameter is set.
+                construct.
 
                 The datum may also be set after initialisation with
                 the `set_datum` method.
 
             coordinate_conversion: `CoordinateConversion`, optional
                 Set the coordinate conversion component of the
-                coordinate reference construct. Ignored if the
-                *source* parameter is set.
+                coordinate reference construct.
 
                 The coordinate conversion may also be set after
                 initialisation with the `set_coordinate_conversion`
                 method.
 
-            source: optional
-                Initialise the coordinates, datum and coordinate
-                conversion from those of *source*.
-
-                {{init source}}
+            {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 

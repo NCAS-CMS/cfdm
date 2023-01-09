@@ -25,10 +25,7 @@ class Container(metaclass=DocstringRewriteMeta):
 
         :Parameters:
 
-            source: optional
-                Initialise the components from those of *source*.
-
-                {{init source}}
+            {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 

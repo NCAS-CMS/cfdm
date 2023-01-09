@@ -39,8 +39,7 @@ class PropertiesDataBounds(PropertiesData):
 
             properties: `dict`, optional
                 Set descriptive properties. The dictionary keys are
-                property names, with corresponding values. Ignored if
-                the *source* parameter is set.
+                property names, with corresponding values.
 
                 Properties may also be set after initialisation with
                 the `properties` and `set_property` methods.
@@ -51,15 +50,13 @@ class PropertiesDataBounds(PropertiesData):
             {{init data: data_like, optional}}
 
             bounds: `Bounds`, optional
-                Set the bounds array. Ignored if the *source*
-                parameter is set.
+                Set the bounds array.
 
                 The bounds array may also be set after initialisation
                 with the `set_bounds` method.
 
             geometry: `str`, optional
-                Set the geometry type. Ignored if the *source*
-                parameter is set.
+                Set the geometry type.
 
                 The geometry type may also be set after initialisation
                 with the `set_geometry` method.
@@ -68,34 +65,28 @@ class PropertiesDataBounds(PropertiesData):
                   ``geometry='polygon'``
 
             interior_ring: `InteriorRing`, optional
-                Set the interior ring variable. Ignored if the
-                *source* parameter is set.
+                Set the interior ring variable.
 
                 The interior ring variable may also be set after
                 initialisation with the `set_interior_ring` method.
 
             node_count: `NodeCount`, optional
                 Set the node count variable for geometry
-                bounds. Ignored if the *source* parameter is set.
+                bounds.
 
                 The node count variable may also be set after
                 initialisation with the `set_node_count` method.
 
             part_node_count: `PartNodeCount`, optional
                 Set the part node count variable for geometry
-                bounds. Ignored if the *source* parameter is set.
+                bounds.
 
                 The part node count variable may also be set after
                 initialisation with the `set_node_count` method.
 
-            source: optional
-                Initialise the properties, geometry type, data,
-                bounds, interior ring variable, node count variable
-                and part node count variable from those of *source*.
+            {{init source: optional}}
 
-                {{init source}}
-
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
         """
         # Initialise properties, data, geometry and interior ring

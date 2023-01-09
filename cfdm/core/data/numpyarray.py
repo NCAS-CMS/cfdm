@@ -18,6 +18,10 @@ class NumpyArray(abstract.Array):
             array: `numpy.ndarray`
                 The numpy array.
 
+            {{init source: optional}}
+
+            {{init copy: `bool`, optional}}
+
         """
         super().__init__(source=source, copy=copy)
 

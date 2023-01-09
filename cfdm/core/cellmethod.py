@@ -56,7 +56,7 @@ class CellMethod(abstract.Container):
             method: `str`, optional
                 Set the axes of the cell method construct. Either one or
                 more domain axis construct identifiers or standard
-                names. Ignored if the *source* parameter is set.
+                names.
 
                 The method may also be set after initialisation with the
                 `set_method` method.
@@ -66,8 +66,7 @@ class CellMethod(abstract.Container):
 
             qualifiers: `dict`, optional
                 Set descriptive qualifiers. The dictionary keys are
-                qualifier names, with corresponding values. Ignored if the
-                *source* parameter is set.
+                qualifier names, with corresponding values.
 
                 Qualifiers may also be set after initialisation with the
                 `qualifiers` and `set_qualifier` methods.
@@ -78,11 +77,7 @@ class CellMethod(abstract.Container):
                 *Parameter example:*
                   ``qualifiers={'where': 'sea', ''over': 'ice'}``
 
-            source: optional
-                Initialise the axes, method and qualifiers from those of
-                *source*.
-
-                {{init source}}
+            {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 

@@ -58,14 +58,11 @@ class RaggedIndexedContiguousArray(RaggedArray):
                 The index variable required to uncompress the data,
                 corresponding to a CF-netCDF CF-netCDF index variable.
 
-            source: optional
-                Initialise the array from the given object.
-
-                {{init source}}
+            {{init source: optional}}
 
                 .. versionadded:: (cfdm) 1.10.0.0
 
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
                 .. versionadded:: (cfdm) 1.10.0.0
 

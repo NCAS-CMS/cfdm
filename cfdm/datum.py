@@ -33,8 +33,7 @@ class Datum(mixin.Parameters, mixin.NetCDFVariable, mixin.Files, core.Datum):
 
             parameters: `dict`, optional
                Set parameters. The dictionary keys are parameter
-               names, with corresponding values. Ignored if the
-               *source* parameter is set.
+               names, with corresponding values.
 
                Parameters may also be set after initialisation with
                the `set_parameters` and `set_parameter` methods.
@@ -42,10 +41,7 @@ class Datum(mixin.Parameters, mixin.NetCDFVariable, mixin.Files, core.Datum):
                *Parameter example:*
                  ``parameters={'earth_radius': 6371007.}``
 
-            source: optional
-                Initialise the parameters from those of *source*.
-
-                {{init source}}
+            {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 

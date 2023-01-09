@@ -34,8 +34,7 @@ class PartNodeCountProperties(
                   ``properties={'long_name': 'number of obs for this
                   station'}``
 
-            source: optional
-                Initialise the properties from those of *source*.
+            {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 

@@ -49,14 +49,11 @@ class RaggedContiguousArray(RaggedArray):
                 The count variable required to uncompress the data,
                 corresponding to a CF-netCDF count variable.
 
-            source: optional
-                Initialise the array from the given object.
-
-                {{init source}}
+            {{init source: optional}}
 
                 .. versionadded:: (cfdm) 1.10.0.0
 
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
                 .. versionadded:: (cfdm) 1.10.0.0
 

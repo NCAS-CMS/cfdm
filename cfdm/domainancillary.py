@@ -60,11 +60,7 @@ class DomainAncillary(
 
             {{init interior_ring: `InteriorRing`, optional}}
 
-            source: optional
-                Initialise the properties, data and bounds from those
-                of *source*.
-
-                {{init source}}
+            {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 

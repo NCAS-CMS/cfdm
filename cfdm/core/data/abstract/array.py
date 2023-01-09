@@ -22,9 +22,9 @@ class Array(Container):
 
         :Parameters:
 
-            kwargs: optional
-                Named parameters and their values that define the
-                array.
+            {{init source: optional}}
+
+            {{init copy: `bool`, optional}}
 
         """
         super().__init__(source=source, copy=copy)

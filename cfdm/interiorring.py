@@ -58,10 +58,7 @@ class InteriorRing(
 
             {{init data: data_like, optional}}
 
-            source: optional
-                Initialise the properties and data from those of *source*.
-
-                {{init source}}
+            {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 

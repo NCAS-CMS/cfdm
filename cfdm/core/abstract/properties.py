@@ -19,10 +19,7 @@ class Properties(Container):
                 *Parameter example:*
                    ``properties={'standard_name': 'altitude'}``
 
-            source: optional
-                Initialise the properties from those of *source*.
-
-                {{init source}}
+            {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 

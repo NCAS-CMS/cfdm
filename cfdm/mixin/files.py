@@ -16,9 +16,7 @@ class Files:
 
         :Parameters:
 
-            source: optional
-                Initialise the original file names from those of
-                *source*.
+            {{init source: optional}}
 
         :Returns:
 

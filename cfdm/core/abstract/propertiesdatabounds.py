@@ -43,11 +43,7 @@ class PropertiesDataBounds(PropertiesData):
 
             {{init interior_ring: `InteriorRing`, optional}}
 
-            source: optional
-                Initialise the properties, geometry type, data, bounds
-                and interior ring from those of *source*.
-
-                {{init source}}
+            {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 

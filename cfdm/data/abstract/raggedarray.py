@@ -74,12 +74,9 @@ class RaggedArray(CompressedArray):
                 corresponding to a CF-netCDF count variable, if
                 required by the decompression method.
 
-            source: optional
-                Initialise the array from the given object.
+            {{init source: optional}}
 
-                {{init source}}
-
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
         """
         if count_variable is not None:

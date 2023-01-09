@@ -49,8 +49,6 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
                 {{data_like}}
 
-                Ignored if the *source* parameter is set.
-
                 *Parameter example:*
                   ``array=[34.6]``
 
@@ -61,8 +59,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                   ``array=numpy.ma.arange(10).reshape(2, 1, 5)``
 
             units: `str`, optional
-                The physical units of the data. Ignored if the *source*
-                parameter is set.
+                The physical units of the data.
 
                 The units may also be set after initialisation with the
                 `set_units` method.
@@ -74,8 +71,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                   ``units='days since 2018-12-01'``
 
             calendar: `str`, optional
-                The calendar for reference time units. Ignored if the
-                *source* parameter is set.
+                The calendar for reference time units.
 
                 The calendar may also be set after initialisation with the
                 `set_calendar` method.
@@ -85,10 +81,9 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
             fill_value: optional
                 The fill value of the data. By default, or if set to
-                `None`, the `numpy` fill value appropriate to the array's
-                data type will be used (see
-                `numpy.ma.default_fill_value`). Ignored if the *source*
-                parameter is set.
+                `None`, the `numpy` fill value appropriate to the
+                array's data type will be used (see
+                `numpy.ma.default_fill_value`).
 
                 The fill value may also be set after initialisation with
                 the `set_fill_value` method.
@@ -124,13 +119,9 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 This mask will applied in addition to any mask already
                 defined by the *array* parameter.
 
-            source: optional
-                Initialise the array, units, calendar and fill value
-                from those of *source*.
+            {{init source: optional}}
 
-                {{init source}}
-
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
             kwargs: ignored
                 Not used. Present to facilitate subclassing.

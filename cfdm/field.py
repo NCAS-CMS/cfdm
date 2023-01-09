@@ -116,11 +116,7 @@ class Field(
                 *Parameter example:*
                   ``properties={'standard_name': 'air_temperature'}``
 
-            source: optional
-                Initialise the properties, data and metadata constructs
-                from those of *source*.
-
-                {{init source}}
+            {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 

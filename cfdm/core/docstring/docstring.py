@@ -64,15 +64,13 @@ _docstring_substitution_definitions = {
     # init properties
     "{{init properties: `dict`, optional}}": """properties: `dict`, optional
                 Set descriptive properties. The dictionary keys are
-                property names, with corresponding values. Ignored if
-                the *source* parameter is set.
+                property names, with corresponding values.
 
                 Properties may also be set after initialisation with
                 the `set_properties` and `set_property` methods.""",
     # init data
     "{{init data: data_like, optional}}": """data: data_like, optional
-                Set the data. Ignored if the *source* parameter is
-                set.
+                Set the data.
 
                 {{data_like}}
 
@@ -80,15 +78,13 @@ _docstring_substitution_definitions = {
                 `set_data` method.""",
     # init bounds
     "{{init bounds: `Bounds`, optional}}": """bounds: `Bounds`, optional
-                Set the bounds array. Ignored if the *source*
-                parameter is set.
+                Set the bounds array.
 
                 The bounds array may also be set after initialisation
                 with the `set_bounds` method.""",
     # init geometry
     "{{init geometry: `str`, optional}}": """geometry: `str`, optional
-                Set the geometry type. Ignored if the *source*
-                parameter is set.
+                Set the geometry type.
 
                 The geometry type may also be set after initialisation
                 with the `set_geometry` method.
@@ -97,20 +93,29 @@ _docstring_substitution_definitions = {
                   ``geometry='polygon'``""",
     # init interior_ring
     "{{init interior_ring: `InteriorRing`, optional}}": """interior_ring: `InteriorRing`, optional
-                Set the interior ring variable. Ignored if the
-                *source* parameter is set.
+                Set the interior ring variable.
 
                 The interior ring variable may also be set after
                 initialisation with the `set_interior_ring` method.""",
     # init copy
     "{{init copy: `bool`, optional}}": """copy: `bool`, optional
-                If True (the default) deep copy input parameters prior
-                to initialisation. If False arguments are not deep
-                copied.""",
+                If True (the default) then deep copy the input
+                parameters prior to initialisation. By default the
+                parameters are not deep copied.""",
     # init source
-    "{{init source}}": """Note that if *source* is a `{{class}}` instance then
-                ``{{package}}.{{class}}(source=source)`` is equivalent
-                to ``source.copy()``.""",
+    "{{init source: optional}}": """source: optional
+                Convert *source*, which can be any type of object, to
+                a `{{class}}` instance.
+
+                All other parameters, apart from *copy*, are ignored
+                and their values are instead inferred from *source* by
+                assuming that it has the `{{class}}` API. Any
+                parameters that can not be retrieved from *source* in
+                this way are assumed to have their default value.
+
+                Note that if ``x`` is also a `{{class}}` instance then
+                ``{{package}}.{{class}}(source=x)`` is equivalent to
+                ``x.copy()``.""",
     # data_like
     "{{data_like}}": """A data_like object is any object that can be converted
                 to a `Data` object, i.e. `numpy` array_like objects,

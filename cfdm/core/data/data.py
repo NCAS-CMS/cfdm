@@ -37,8 +37,6 @@ class Data(abstract.Container):
                 ``{{package}}.{{class}}(array)`` is equivalent to
                 ``{{package}}.{{class}}(source=array.__data__())``.
 
-                Ignored if the *source* parameter is set.
-
             array: `numpy` array_like, optional
                 The array of values.
 
@@ -46,11 +44,8 @@ class Data(abstract.Container):
                 then ``{{package}}.{{class}}(array)`` is equivalent to
                 ``{{package}}.{{class}}(source=array)``.
 
-                Ignored if the *source* parameter is set.
-
             units: `str`, optional
-                The physical units of the data. Ignored if the
-                *source* parameter is set.
+                The physical units of the data.
 
                 The units may also be set after initialisation with
                 the `set_units` method.
@@ -62,8 +57,7 @@ class Data(abstract.Container):
                   ``units='days since 2018-12-01'``
 
             calendar: `str`, optional
-                The calendar for reference time units. Ignored if the
-                *source* parameter is set.
+                The calendar for reference time units.
 
                 The calendar may also be set after initialisation with
                 the `set_calendar` method.
@@ -75,8 +69,7 @@ class Data(abstract.Container):
                 The fill value of the data. By default, or if set to
                 `None`, the `numpy` fill value appropriate to the
                 array's data type will be used (see
-                `numpy.ma.default_fill_value`). Ignored if the
-                *source* parameter is set.
+                `numpy.ma.default_fill_value`).
 
                 The fill value may also be set after initialisation
                 with the `set_fill_value` method.
@@ -84,9 +77,7 @@ class Data(abstract.Container):
                 *Parameter example:*
                   ``fill_value=-999.``
 
-            source: *optional*
-                Initialise the data, units, calendar and fill value
-                from those of *source*.
+            {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 

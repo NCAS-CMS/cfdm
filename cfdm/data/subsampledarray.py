@@ -243,12 +243,9 @@ class SubsampledArray(CompressedArray):
                 *Parameter example:*
                   ``{'latitude': (2, 0, 1)}``
 
-            source: optional
-                Initialise the array from the given object.
+            {{init source: optional}}
 
-                {{init source}}
-
-            {{deep copy}}
+            {{init copy: `bool`, optional}}
 
         """
         super().__init__(

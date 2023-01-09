@@ -105,15 +105,7 @@ _docstring_substitution_definitions = {
         collection of original files from all contributing sources.""",
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentataion)
-    # ----------------------------------------------------------------
-    # init properties: `dict`, optional
-    "{{init properties: `dict`, optional}}": """properties: `dict`, optional
-                Set descriptive properties. The dictionary keys are
-                property names, with corresponding values. Ignored if
-                the *source* parameter is set.
-
-                Properties may also be set after initialisation with
-                the `set_properties` and `set_property` methods.""",
+    # ------------------------1----------------------------------------
     # atol: number, optional
     "{{atol: number, optional}}": """atol: number, optional
                 The tolerance on absolute differences between real
@@ -361,11 +353,6 @@ _docstring_substitution_definitions = {
                 By default, *chunks* is ``-1``, meaning that all
                 non-compressed dimensions in each subarray have the
                 maximum possible size.""",
-    # deep copy
-    "{{deep copy}}": """copy: `bool`, optional
-                If True (the default) then deep copy input
-                parameters prior to initialisation, else they are
-                not (deep) copied.""",
     # clear
     "{{clear: `bool` optional}}": """clear: `bool` optional
                 If True then remove any stored original file

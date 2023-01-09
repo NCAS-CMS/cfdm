@@ -28,8 +28,7 @@ class NodeCountProperties(
                   ``properties={'long_name': 'number of nodes for each
                   geometry'}``
 
-            source: optional
-                Initialise the properties from those of *source*.
+            {{init source: optional}}
 
             {{init copy: `bool`, optional}}
 
