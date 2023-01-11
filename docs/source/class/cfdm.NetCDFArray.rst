@@ -68,6 +68,7 @@ File
    ~cfdm.NetCDFArray.get_group
    ~cfdm.NetCDFArray.get_mask
    ~cfdm.NetCDFArray.file_address
+   ~cfdm.NetCDFArray.get_address
    
 Miscellaneous
 -------------
