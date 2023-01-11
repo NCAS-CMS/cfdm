@@ -20,7 +20,6 @@ Inspection
    :toctree: ../method/
    :template: method.rst
    
-
    ~cfdm.NetCDFArray.get_ncvar
    ~cfdm.NetCDFArray.get_varid
    ~cfdm.NetCDFArray.get_compression_type
@@ -39,6 +38,19 @@ Inspection
    ~cfdm.NetCDFArray.shape
    ~cfdm.NetCDFArray.size
 
+Units
+-----
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+   
+   ~cfdm.NetCDFArray.get_calendar
+   ~cfdm.NetCDFArray.get_units
+   
 File
 ----
    

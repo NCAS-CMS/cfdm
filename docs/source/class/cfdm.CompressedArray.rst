@@ -27,6 +27,19 @@ Inspection
    ~cfdm.CompressedArray.shape
    ~cfdm.CompressedArray.size
  
+Units
+-----
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+      
+   ~cfdm.CompressedArray.get_calendar
+   ~cfdm.CompressedArray.get_units
+   
 Compression
 -----------
 

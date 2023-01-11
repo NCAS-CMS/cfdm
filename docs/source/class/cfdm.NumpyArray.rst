@@ -36,6 +36,19 @@ Inspection
    ~cfdm.NumpyArray.shape
    ~cfdm.NumpyArray.size
 
+Units
+-----
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+   
+   ~cfdm.NumpyArray.get_calendar
+   ~cfdm.NumpyArray.get_units
+   
 Miscellaneous
 -------------
 
