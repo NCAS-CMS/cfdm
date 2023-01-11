@@ -65,6 +65,21 @@ options.
 
 ----
 
+.. _conda:
+
+**conda**
+---------
+
+The cfdm package is in the ``conda-forge`` conda channel. To install
+cfdm with all of its :ref:`dependencies <Dependencies>` run
+
+.. code-block:: console
+   :caption: *Install with conda.*
+
+   $ conda install -c conda-forge cfdm
+
+----
+
 .. _Source:
 
 **Source**
