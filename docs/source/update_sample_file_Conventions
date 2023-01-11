@@ -12,7 +12,7 @@ set -x
 VN=$1
 
 if [[ -z $VN ]] ; then 
-  echo "You must set the new version as \$1 (e.g. CF-1.10)"
+  echo "You must set the new CF conventions version as \$1 (e.g. CF-1.10)"
   exit 1
 fi
 
