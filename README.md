@@ -13,7 +13,7 @@ A Python reference implementation of the CF data model.
 
 [![Codecov](https://img.shields.io/codecov/c/github/NCAS-CMS/cfdm?color=006666)](https://codecov.io/gh/NCAS-CMS/cfdm)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/NCAS-CMS/cfdm/Run%20test%20suite?color=006666&label=test%20suite%20workflow)](https://github.com/NCAS-CMS/cfdm/actions)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/NCAS-CMS/cfdm/test.yml?branch=main)](https://github.com/NCAS-CMS/cfdm/actions)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/NCAS-CMS/cfdm/.yml?branch=main)](https://github.com/NCAS-CMS/cfdm/actions)
 
 [![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B-yellow)](https://fair-software.eu)
 
