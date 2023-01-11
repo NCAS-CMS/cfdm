@@ -59,6 +59,8 @@ Miscellaneous
    ~cfdm.RaggedContiguousArray.get_Subarray
    ~cfdm.RaggedContiguousArray.conformed_data
    ~cfdm.RaggedContiguousArray.get_index
+   ~cfdm.RaggedContiguousArray.get_filename
+   ~cfdm.RaggedContiguousArray.get_filenames
 
 Special
 -------

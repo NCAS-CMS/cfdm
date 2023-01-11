@@ -46,6 +46,8 @@ Miscellaneous
    
    ~cfdm.NumpyArray.copy
    ~cfdm.NumpyArray.to_memory
+   ~cfdm.NumpyArray.get_filename
+   ~cfdm.NumpyArray.get_filenames
    
 Special
 -------

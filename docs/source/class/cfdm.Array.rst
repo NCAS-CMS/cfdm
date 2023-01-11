@@ -50,6 +50,8 @@ Miscellaneous
 
    ~cfdm.Array.copy
    ~cfdm.Array.get_subspace
+   ~cfdm.Array.get_filename
+   ~cfdm.Array.get_filenames
 
 Special
 -------

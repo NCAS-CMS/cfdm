@@ -58,6 +58,8 @@ Miscellaneous
    ~cfdm.GatheredArray.subarrays
    ~cfdm.GatheredArray.get_Subarray
    ~cfdm.GatheredArray.conformed_data
+   ~cfdm.GatheredArray.get_filename
+   ~cfdm.GatheredArray.get_filenames
 
 Special
 -------

@@ -52,6 +52,7 @@ File
    ~cfdm.NetCDFArray.close
    ~cfdm.NetCDFArray.open
    ~cfdm.NetCDFArray.get_filename
+   ~cfdm.NetCDFArray.get_filenames
    ~cfdm.NetCDFArray.get_group
    ~cfdm.NetCDFArray.get_mask
    ~cfdm.NetCDFArray.file_address
