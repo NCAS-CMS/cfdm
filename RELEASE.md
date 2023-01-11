@@ -64,7 +64,7 @@
   the dev build.)
 
   ```bash
-  ./release_docs dev-clean
+  ./release_docs dev-scrub
   ```
 
 * Check that no typos or spelling mistakes have been introduced to the
