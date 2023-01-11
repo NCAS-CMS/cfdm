@@ -259,6 +259,9 @@ Compression by convention
    ~cfdm.Data.get_count
    ~cfdm.Data.get_index
    ~cfdm.Data.get_list
+   ~cfdm.Data.get_dependent_tie_points
+   ~cfdm.Data.get_interpolation_parameters
+   ~cfdm.Data.get_tie_point_indices
    ~cfdm.Data.uncompress
 
 .. rubric:: Attributes
