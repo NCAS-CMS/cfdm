@@ -70,7 +70,8 @@ options.
 **conda**
 ---------
 
-The cfdm package is in the ``conda-forge`` conda channel. To install
+The cfdm package is in the :ref:`conda-forge
+<https://anaconda.org/conda-forge/cfdm>` conda channel. To install
 cfdm with all of its :ref:`dependencies <Dependencies>` run
 
 .. code-block:: console
