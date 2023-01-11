@@ -90,7 +90,7 @@ Miscellaneous
    ~cfdm.List.creation_commands
    ~cfdm.List.equals
    ~cfdm.List.get_filenames
-   ~cfdm.List.original_filenames
+   ~cfdm.List.get_original_filenames
    ~cfdm.List.has_bounds
    ~cfdm.List.uncompress
    ~cfdm.List.to_memory

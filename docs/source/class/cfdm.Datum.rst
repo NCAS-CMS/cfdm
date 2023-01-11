@@ -40,6 +40,7 @@ Miscellaneous
 
    ~cfdm.Datum.copy
    ~cfdm.Datum.equals
+   ~cfdm.Datum.get_original_filenames
 
 NetCDF
 ------

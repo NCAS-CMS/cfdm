@@ -123,7 +123,7 @@ Miscellaneous
    ~cfdm.Domain.has_data
    ~cfdm.Domain.has_geometry
    ~cfdm.Domain.apply_masking   
-   ~cfdm.Domain.original_filenames
+   ~cfdm.Domain.get_original_filenames
    ~cfdm.Domain.uncompress
 
 NetCDF

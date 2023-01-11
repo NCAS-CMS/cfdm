@@ -90,7 +90,7 @@ Miscellaneous
    ~cfdm.Count.creation_commands
    ~cfdm.Count.equals
    ~cfdm.Count.get_filenames
-   ~cfdm.Count.original_filenames
+   ~cfdm.Count.get_original_filenames
    ~cfdm.Count.has_bounds
    ~cfdm.Count.uncompress
    ~cfdm.Count.to_memory

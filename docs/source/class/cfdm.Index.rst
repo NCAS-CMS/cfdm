@@ -90,7 +90,7 @@ Miscellaneous
    ~cfdm.Index.creation_commands
    ~cfdm.Index.equals
    ~cfdm.Index.get_filenames
-   ~cfdm.Index.original_filenames
+   ~cfdm.Index.get_original_filenames
    ~cfdm.Index.has_bounds
    ~cfdm.Index.uncompress
    ~cfdm.Index.to_memory

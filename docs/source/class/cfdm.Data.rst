@@ -280,7 +280,7 @@ Miscellaneous
 
    ~cfdm.Data.creation_commands
    ~cfdm.Data.get_filenames
-   ~cfdm.Data.original_filenames
+   ~cfdm.Data.get_original_filenames
    ~cfdm.Data.source
 
 .. rubric:: Attributes

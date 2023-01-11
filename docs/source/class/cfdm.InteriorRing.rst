@@ -92,7 +92,7 @@ Miscellaneous
    ~cfdm.InteriorRing.has_bounds
    ~cfdm.InteriorRing.uncompress
    ~cfdm.InteriorRing.get_filenames
-   ~cfdm.InteriorRing.original_filenames
+   ~cfdm.InteriorRing.get_original_filenames
    ~cfdm.InteriorRing.to_memory
 
 NetCDF

@@ -109,6 +109,7 @@ Miscellaneous
    ~cfdm.CoordinateReference.copy
    ~cfdm.CoordinateReference.creation_commands
    ~cfdm.CoordinateReference.equals
+   ~cfdm.CoordinateReference.get_original_filenames
 
 NetCDF
 ------

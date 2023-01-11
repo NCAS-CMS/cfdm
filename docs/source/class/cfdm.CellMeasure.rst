@@ -108,7 +108,7 @@ Miscellaneous
    ~cfdm.CellMeasure.has_bounds
    ~cfdm.CellMeasure.uncompress
    ~cfdm.CellMeasure.get_filenames
-   ~cfdm.CellMeasure.original_filenames
+   ~cfdm.CellMeasure.get_original_filenames
    ~cfdm.CellMeasure.to_memory
 
 NetCDF
