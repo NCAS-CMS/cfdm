@@ -881,7 +881,7 @@ class Domain(
         :Returns:
 
             `set`
-                The file names in normalized, absolute form. If all of
+                The file names in normalised, absolute form. If all of
                 the data are in memory then an empty `set` is
                 returned.
 

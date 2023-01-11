@@ -2533,7 +2533,7 @@ been generated with dummy values using `numpy.arange`):
    import numpy
    import cfdm
    
-   # Initialize the field construct
+   # Initialise the field construct
    tas = cfdm.Field(
        properties={'project': 'research',
                    'standard_name': 'air_temperature',
@@ -2810,12 +2810,12 @@ instances for the field and metadata constructs. It is, however,
 possible to create data from arrays that reside on disk. The
 `cfdm.read` function creates data in this manner. A pointer to an
 array in a netCDF file can be stored in a `~cfdm.NetCDFArray`
-instance, which is is used to initialize a `~cfdm.Data` instance.
+instance, which is is used to initialise a `~cfdm.Data` instance.
 
 .. code-block:: python
    :caption: *Define a variable from a dataset with the netCDF package
              and use it to create a NetCDFArray instance with which to
-             initialize a Data instance.*
+             initialise a Data instance.*
 		
    >>> import netCDF4
    >>> nc = netCDF4.Dataset('file.nc', 'r')
@@ -2837,7 +2837,7 @@ instance, which is is used to initialize a `~cfdm.Data` instance.
    True
 
 Note that data type, number of dimensions, dimension sizes and number
-of elements of the array on disk that are used to initialize the
+of elements of the array on disk that are used to initialise the
 `~cfdm.NetCDFArray` instance are those expected by the CF data model,
 which may be different to those of the netCDF variable in the file
 (although they are the same in the above example). For example, a
@@ -3504,7 +3504,7 @@ The `cfdm.write` function has optional parameters to
   
 * apply netCDF compression and packing;
 
-* set the endian-ness of the output data; and 
+* set the endianness of the output data; and 
 
 * specify whether or not :ref:`netCDF string arrays <Strings>` are to
   be used.
@@ -4626,7 +4626,7 @@ data array elements are modified:
    ''
    
 A construct with an underlying gathered array is created by
-initializing a `Data` instance with a gathered array that is stored in
+initialising a `Data` instance with a gathered array that is stored in
 the special `GatheredArray` array object. The following code creates a
 simple field construct with an underlying gathered array:
 

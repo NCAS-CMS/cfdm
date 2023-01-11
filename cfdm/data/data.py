@@ -1934,7 +1934,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
             `dict`
                 The tie point index variable for each subsampled
-                dimension. A key indentifies a subsampled dimension by
+                dimension. A key identifies a subsampled dimension by
                 its integer position in the compressed array, and its
                 value is a `TiePointIndex` variable.
 

@@ -220,7 +220,7 @@ class Domain(mixin.FieldDomain, abstract.Properties):
 
             copy: `bool`, optional
                 If True then deep copy the metadata constructs prior
-                to initialization. By default the metadata constructs
+                to initialisation. By default the metadata constructs
                 are not copied. Note that even when *copy* is True,
                 the input `Constructs` container is not copied.
 
