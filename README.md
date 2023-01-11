@@ -40,13 +40,13 @@ https://ncas-cms.github.io/cfdm/installation
 Functionality
 =============
 
-The ``cfdm`` package implements the CF data model
-(https://doi.org/10.5194/gmd-10-4619-2017) for its internal data
-structures and so is able to process any CF-compliant dataset. It is
-not strict about CF-compliance, however, so that partially conformant
-datasets may be ingested from existing datasets and written to new
-datasets. This is so that datasets which are partially conformant may
-nonetheless be modified in memory.
+The ``cfdm`` package fully implements the [CF data
+model](https://cfconventions.org/cf-conventions/cf-conventions.html#appendix-CF-data-model)
+for its internal data structures and so is able to process any
+CF-compliant dataset. It is not strict about CF-compliance, however,
+so that partially conformant datasets may be ingested from existing
+datasets and written to new datasets. This is so that datasets which
+are partially conformant may nonetheless be modified in memory.
 
 The central elements defined by the CF data model are the **field
 construct**, which corresponds to CF-netCDF data variable with all of
