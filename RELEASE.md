@@ -1,6 +1,7 @@
 * Change the version and date in `cfdm/core/__init__.py`
-  (`__version__` and `__date__` variables); and in the `codemeta.json`
-  file.
+  (`__version__` and `__date__` variables).
+  
+* Change the version and date in `codemeta.json`
 
 * Ensure that the requirements on dependencies and their versions are
   up-to-date and consistent in both the `requirements.txt` file and in
