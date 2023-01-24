@@ -376,7 +376,7 @@ Q.dump()
 import numpy
 import cfdm
 
-# Initialize the field construct
+# Initialise the field construct
 tas = cfdm.Field(
 properties={'project': 'research',
 'standard_name': 'air_temperature',

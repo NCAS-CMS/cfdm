@@ -3667,7 +3667,7 @@ either technique.
 .. code-block:: python
    :caption: *Two ways to add additional conventions to the
              "Conventions" netCDF global attribute.*
-	     f_file_
+
    >>> f_file.set_property('Conventions', 'UGRID1.0')
    >>> cfdm.write(f, 'f_file.nc', Conventions='UGRID1.0')   
 
