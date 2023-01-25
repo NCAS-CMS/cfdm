@@ -11,15 +11,15 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script type="text/javascript" src="_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript" src="_static/toggleprompt.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Releases" href="releases.html" />
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.10.0.1</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.10.0.2</a></h1>
 
 
 
@@ -65,7 +65,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -119,48 +119,60 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1><strong>Change log</strong><a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#version-1-10-0-1" id="id1">Version 1.10.0.1</a></p></li>
-<li><p><a class="reference internal" href="#version-1-10-0-0" id="id2">Version 1.10.0.0</a></p></li>
-<li><p><a class="reference internal" href="#version-1-9-0-4" id="id3">Version 1.9.0.4</a></p></li>
-<li><p><a class="reference internal" href="#version-1-9-0-3" id="id4">Version 1.9.0.3</a></p></li>
-<li><p><a class="reference internal" href="#version-1-9-0-2" id="id5">Version 1.9.0.2</a></p></li>
-<li><p><a class="reference internal" href="#version-1-9-0-1" id="id6">Version 1.9.0.1</a></p></li>
-<li><p><a class="reference internal" href="#version-1-9-0-0" id="id7">Version 1.9.0.0</a></p></li>
-<li><p><a class="reference internal" href="#version-1-8-9-0" id="id8">Version 1.8.9.0</a></p></li>
-<li><p><a class="reference internal" href="#version-1-8-8-0" id="id9">Version 1.8.8.0</a></p></li>
-<li><p><a class="reference internal" href="#version-1-8-7-0" id="id10">Version 1.8.7.0</a></p></li>
-<li><p><a class="reference internal" href="#version-1-8-6-0" id="id11">Version 1.8.6.0</a></p></li>
-<li><p><a class="reference internal" href="#version-1-8-5" id="id12">Version 1.8.5</a></p></li>
-<li><p><a class="reference internal" href="#version-1-8-4" id="id13">Version 1.8.4</a></p></li>
-<li><p><a class="reference internal" href="#version-1-8-3" id="id14">Version 1.8.3</a></p></li>
-<li><p><a class="reference internal" href="#version-1-8-2" id="id15">Version 1.8.2</a></p></li>
-<li><p><a class="reference internal" href="#version-1-8-1" id="id16">Version 1.8.1</a></p></li>
-<li><p><a class="reference internal" href="#version-1-8-0" id="id17">Version 1.8.0</a></p></li>
-<li><p><a class="reference internal" href="#version-1-7-11" id="id18">Version 1.7.11</a></p></li>
-<li><p><a class="reference internal" href="#version-1-7-10" id="id19">Version 1.7.10</a></p></li>
-<li><p><a class="reference internal" href="#version-1-7-9" id="id20">Version 1.7.9</a></p></li>
-<li><p><a class="reference internal" href="#version-1-7-8" id="id21">Version 1.7.8</a></p></li>
-<li><p><a class="reference internal" href="#version-1-7-7" id="id22">Version 1.7.7</a></p></li>
-<li><p><a class="reference internal" href="#version-1-7-6" id="id23">Version 1.7.6</a></p></li>
-<li><p><a class="reference internal" href="#version-1-7-5" id="id24">Version 1.7.5</a></p></li>
-<li><p><a class="reference internal" href="#version-1-7-4" id="id25">Version 1.7.4</a></p></li>
-<li><p><a class="reference internal" href="#version-1-7-3" id="id26">Version 1.7.3</a></p></li>
-<li><p><a class="reference internal" href="#version-1-7-2" id="id27">Version 1.7.2</a></p></li>
-<li><p><a class="reference internal" href="#version-1-7-1" id="id28">Version 1.7.1</a></p></li>
-<li><p><a class="reference internal" href="#version-1-7-0" id="id29">Version 1.7.0</a></p></li>
+<li><p><a class="reference internal" href="#version-1-10-0-2" id="id1">Version 1.10.0.2</a></p></li>
+<li><p><a class="reference internal" href="#version-1-10-0-1" id="id2">Version 1.10.0.1</a></p></li>
+<li><p><a class="reference internal" href="#version-1-10-0-0" id="id3">Version 1.10.0.0</a></p></li>
+<li><p><a class="reference internal" href="#version-1-9-0-4" id="id4">Version 1.9.0.4</a></p></li>
+<li><p><a class="reference internal" href="#version-1-9-0-3" id="id5">Version 1.9.0.3</a></p></li>
+<li><p><a class="reference internal" href="#version-1-9-0-2" id="id6">Version 1.9.0.2</a></p></li>
+<li><p><a class="reference internal" href="#version-1-9-0-1" id="id7">Version 1.9.0.1</a></p></li>
+<li><p><a class="reference internal" href="#version-1-9-0-0" id="id8">Version 1.9.0.0</a></p></li>
+<li><p><a class="reference internal" href="#version-1-8-9-0" id="id9">Version 1.8.9.0</a></p></li>
+<li><p><a class="reference internal" href="#version-1-8-8-0" id="id10">Version 1.8.8.0</a></p></li>
+<li><p><a class="reference internal" href="#version-1-8-7-0" id="id11">Version 1.8.7.0</a></p></li>
+<li><p><a class="reference internal" href="#version-1-8-6-0" id="id12">Version 1.8.6.0</a></p></li>
+<li><p><a class="reference internal" href="#version-1-8-5" id="id13">Version 1.8.5</a></p></li>
+<li><p><a class="reference internal" href="#version-1-8-4" id="id14">Version 1.8.4</a></p></li>
+<li><p><a class="reference internal" href="#version-1-8-3" id="id15">Version 1.8.3</a></p></li>
+<li><p><a class="reference internal" href="#version-1-8-2" id="id16">Version 1.8.2</a></p></li>
+<li><p><a class="reference internal" href="#version-1-8-1" id="id17">Version 1.8.1</a></p></li>
+<li><p><a class="reference internal" href="#version-1-8-0" id="id18">Version 1.8.0</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-11" id="id19">Version 1.7.11</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-10" id="id20">Version 1.7.10</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-9" id="id21">Version 1.7.9</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-8" id="id22">Version 1.7.8</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-7" id="id23">Version 1.7.7</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-6" id="id24">Version 1.7.6</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-5" id="id25">Version 1.7.5</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-4" id="id26">Version 1.7.4</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-3" id="id27">Version 1.7.3</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-2" id="id28">Version 1.7.2</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-1" id="id29">Version 1.7.1</a></p></li>
+<li><p><a class="reference internal" href="#version-1-7-0" id="id30">Version 1.7.0</a></p></li>
 </ul>
 </div>
+<section id="version-1-10-0-2">
+<h2><a class="toc-backref" href="#id1">Version 1.10.0.2</a><a class="headerlink" href="#version-1-10-0-2" title="Permalink to this headline">¶</a></h2>
+<p><strong>2023-01-26</strong></p>
+<ul class="simple">
+<li><p>New class: <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.InterpolationSubarray</span></code>
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/228">https://github.com/NCAS-CMS/cfdm/issues/228</a>)</p></li>
+<li><p>Relocate the call to <code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDFRead._customize_read_vars</span></code> to earlier in
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDFRead.read</span></code> (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/233">https://github.com/NCAS-CMS/cfdm/issues/233</a>)</p></li>
+</ul>
+</section>
+<hr class="docutils" />
 <section id="version-1-10-0-1">
-<h2><a class="toc-backref" href="#id1">Version 1.10.0.1</a><a class="headerlink" href="#version-1-10-0-1" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">Version 1.10.0.1</a><a class="headerlink" href="#version-1-10-0-1" title="Permalink to this headline">¶</a></h2>
 <p><strong>2022-10-31</strong></p>
 <ul class="simple">
-<li><p>New method: <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.get_tie_point_indices</span></code></p></li>
-<li><p>New method: <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.get_interpolation_parameters</span></code></p></li>
-<li><p>New method: <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.get_dependent_tie_points</span></code></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Data.get_tie_point_indices.html#cfdm.Data.get_tie_point_indices" title="cfdm.Data.get_tie_point_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.get_tie_point_indices</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Data.get_interpolation_parameters.html#cfdm.Data.get_interpolation_parameters" title="cfdm.Data.get_interpolation_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.get_interpolation_parameters</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Data.get_dependent_tie_points.html#cfdm.Data.get_dependent_tie_points" title="cfdm.Data.get_dependent_tie_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.get_dependent_tie_points</span></code></a></p></li>
 <li><p>Record the names of files that contain the original data
 (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/215">https://github.com/NCAS-CMS/cfdm/issues/215</a>)</p></li>
-<li><p>New method: <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.get_original_filenames</span></code></p></li>
-<li><p>New method: <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.get_original_filenames</span></code></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Field.get_original_filenames.html#cfdm.Field.get_original_filenames" title="cfdm.Field.get_original_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.get_original_filenames</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cfdm.Data.get_original_filenames.html#cfdm.Data.get_original_filenames" title="cfdm.Data.get_original_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Data.get_original_filenames</span></code></a></p></li>
 <li><p>New keyword parameter to <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a>: <code class="docutils literal notranslate"><span class="pre">omit_data</span></code>
 (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/221">https://github.com/NCAS-CMS/cfdm/issues/221</a>)</p></li>
 <li><p>Fixed bug that caused incorrect data assignment with some multiple
@@ -170,8 +182,9 @@ the first element masked
 (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/211">https://github.com/NCAS-CMS/cfdm/issues/211</a>)</p></li>
 </ul>
 </section>
+<hr class="docutils" />
 <section id="version-1-10-0-0">
-<h2><a class="toc-backref" href="#id2">Version 1.10.0.0</a><a class="headerlink" href="#version-1-10-0-0" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Version 1.10.0.0</a><a class="headerlink" href="#version-1-10-0-0" title="Permalink to this headline">¶</a></h2>
 <p><strong>2022-08-17</strong></p>
 <ul class="simple">
 <li><p>New method: <a class="reference internal" href="method/cfdm.Field.auxiliary_coordinate.html#cfdm.Field.auxiliary_coordinate" title="cfdm.Field.auxiliary_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.auxiliary_coordinate</span></code></a></p></li>
@@ -194,7 +207,7 @@ coordinate subsampling (<a class="reference external" href="https://github.com/N
 </section>
 <hr class="docutils" />
 <section id="version-1-9-0-4">
-<h2><a class="toc-backref" href="#id3">Version 1.9.0.4</a><a class="headerlink" href="#version-1-9-0-4" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">Version 1.9.0.4</a><a class="headerlink" href="#version-1-9-0-4" title="Permalink to this headline">¶</a></h2>
 <p><strong>2022-07-18</strong></p>
 <ul class="simple">
 <li><p>Upgrade to allow cfdm to work with Python 3.10
@@ -207,7 +220,7 @@ when compression has been set (for <code class="xref py py-obj docutils literal 
 </ul>
 </section>
 <section id="version-1-9-0-3">
-<h2><a class="toc-backref" href="#id4">Version 1.9.0.3</a><a class="headerlink" href="#version-1-9-0-3" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id5">Version 1.9.0.3</a><a class="headerlink" href="#version-1-9-0-3" title="Permalink to this headline">¶</a></h2>
 <p><strong>2022-03-10</strong></p>
 <ul class="simple">
 <li><p>Fixed bug that caused a failure from <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a> when writing
@@ -222,7 +235,7 @@ coordinate construct does not have data
 </section>
 <hr class="docutils" />
 <section id="version-1-9-0-2">
-<h2><a class="toc-backref" href="#id5">Version 1.9.0.2</a><a class="headerlink" href="#version-1-9-0-2" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id6">Version 1.9.0.2</a><a class="headerlink" href="#version-1-9-0-2" title="Permalink to this headline">¶</a></h2>
 <p><strong>2022-01-31</strong></p>
 <ul class="simple">
 <li><p>Fixed bug that caused a <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a> failure when a vertical
@@ -235,7 +248,7 @@ return an <a class="reference external" href="https://docs.python.org/3/library/
 </section>
 <hr class="docutils" />
 <section id="version-1-9-0-1">
-<h2><a class="toc-backref" href="#id6">Version 1.9.0.1</a><a class="headerlink" href="#version-1-9-0-1" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id7">Version 1.9.0.1</a><a class="headerlink" href="#version-1-9-0-1" title="Permalink to this headline">¶</a></h2>
 <p><strong>2021-10-12</strong></p>
 <ul class="simple">
 <li><p>Fixed bug that prevented some geometry coordinates being written to
@@ -249,7 +262,7 @@ time axes (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/
 </section>
 <hr class="docutils" />
 <section id="version-1-9-0-0">
-<h2><a class="toc-backref" href="#id7">Version 1.9.0.0</a><a class="headerlink" href="#version-1-9-0-0" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id8">Version 1.9.0.0</a><a class="headerlink" href="#version-1-9-0-0" title="Permalink to this headline">¶</a></h2>
 <p><strong>2021-09-21</strong></p>
 <ul class="simple">
 <li><p>Python 3.6 support removed
@@ -281,7 +294,7 @@ reference parameters (<a class="reference external" href="https://github.com/NCA
 </section>
 <hr class="docutils" />
 <section id="version-1-8-9-0">
-<h2><a class="toc-backref" href="#id8">Version 1.8.9.0</a><a class="headerlink" href="#version-1-8-9-0" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id9">Version 1.8.9.0</a><a class="headerlink" href="#version-1-8-9-0" title="Permalink to this headline">¶</a></h2>
 <p><strong>2021-05-25</strong></p>
 <ul class="simple">
 <li><p>Construct access API changes
@@ -307,7 +320,7 @@ netCDF file (<a class="reference external" href="https://github.com/NCAS-CMS/cfd
 </section>
 <hr class="docutils" />
 <section id="version-1-8-8-0">
-<h2><a class="toc-backref" href="#id9">Version 1.8.8.0</a><a class="headerlink" href="#version-1-8-8-0" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id10">Version 1.8.8.0</a><a class="headerlink" href="#version-1-8-8-0" title="Permalink to this headline">¶</a></h2>
 <p><strong>2020-12-18</strong></p>
 <ul class="simple">
 <li><p>The setting of global constants can now be controlled by a context
@@ -320,7 +333,7 @@ a scalar domain ancillary construct
 </section>
 <hr class="docutils" />
 <section id="version-1-8-7-0">
-<h2><a class="toc-backref" href="#id10">Version 1.8.7.0</a><a class="headerlink" href="#version-1-8-7-0" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id11">Version 1.8.7.0</a><a class="headerlink" href="#version-1-8-7-0" title="Permalink to this headline">¶</a></h2>
 <p><strong>2020-10-09</strong></p>
 <ul class="simple">
 <li><p>Python 3.5 support deprecated (3.5 was retired on 2020-09-13)</p></li>
@@ -348,7 +361,7 @@ at least one dimension was shared between some of the fields.</p></li>
 </section>
 <hr class="docutils" />
 <section id="version-1-8-6-0">
-<h2><a class="toc-backref" href="#id11">Version 1.8.6.0</a><a class="headerlink" href="#version-1-8-6-0" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id12">Version 1.8.6.0</a><a class="headerlink" href="#version-1-8-6-0" title="Permalink to this headline">¶</a></h2>
 <p><strong>2020-07-24</strong></p>
 <ul class="simple">
 <li><p>Removed Python 2.7 support
@@ -391,7 +404,7 @@ missing from a dataset (<a class="reference external" href="https://github.com/N
 </section>
 <hr class="docutils" />
 <section id="version-1-8-5">
-<h2><a class="toc-backref" href="#id12">Version 1.8.5</a><a class="headerlink" href="#version-1-8-5" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id13">Version 1.8.5</a><a class="headerlink" href="#version-1-8-5" title="Permalink to this headline">¶</a></h2>
 <p><strong>2020-06-10</strong></p>
 <ul class="simple">
 <li><p>Fixed bug that prevented the reading of certain netCDF files, such
@@ -400,7 +413,7 @@ as those with at least one external variable.</p></li>
 </section>
 <hr class="docutils" />
 <section id="version-1-8-4">
-<h2><a class="toc-backref" href="#id13">Version 1.8.4</a><a class="headerlink" href="#version-1-8-4" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id14">Version 1.8.4</a><a class="headerlink" href="#version-1-8-4" title="Permalink to this headline">¶</a></h2>
 <p><strong>2020-06-08</strong></p>
 <ul class="simple">
 <li><p>Added new example field <code class="docutils literal notranslate"><span class="pre">7</span></code> to <a class="reference internal" href="function/cfdm.example_field.html#cfdm.example_field" title="cfdm.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.example_field</span></code></a>.</p></li>
@@ -421,7 +434,7 @@ specifies Conventions other than CF
 </section>
 <hr class="docutils" />
 <section id="version-1-8-3">
-<h2><a class="toc-backref" href="#id14">Version 1.8.3</a><a class="headerlink" href="#version-1-8-3" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id15">Version 1.8.3</a><a class="headerlink" href="#version-1-8-3" title="Permalink to this headline">¶</a></h2>
 <p><strong>2020-04-30</strong></p>
 <ul class="simple">
 <li><p><a class="reference internal" href="method/cfdm.Field.apply_masking.html#cfdm.Field.apply_masking" title="cfdm.Field.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.apply_masking</span></code></a> now masks metadata constructs.</p></li>
@@ -436,7 +449,7 @@ specifies Conventions other than CF
 </section>
 <hr class="docutils" />
 <section id="version-1-8-2">
-<h2><a class="toc-backref" href="#id15">Version 1.8.2</a><a class="headerlink" href="#version-1-8-2" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id16">Version 1.8.2</a><a class="headerlink" href="#version-1-8-2" title="Permalink to this headline">¶</a></h2>
 <p><strong>2020-04-24</strong></p>
 <ul class="simple">
 <li><p>Added time coordinate bounds to the polygon geometry example field
@@ -453,7 +466,7 @@ as such, or even an exception to be raised.</p></li>
 </section>
 <hr class="docutils" />
 <section id="version-1-8-1">
-<h2><a class="toc-backref" href="#id16">Version 1.8.1</a><a class="headerlink" href="#version-1-8-1" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id17">Version 1.8.1</a><a class="headerlink" href="#version-1-8-1" title="Permalink to this headline">¶</a></h2>
 <p><strong>2020-04-16</strong></p>
 <ul class="simple">
 <li><p>Improved source code highlighting in links from the documentation
@@ -464,7 +477,7 @@ variables to have a <code class="docutils literal notranslate"><span class="pre"
 </section>
 <hr class="docutils" />
 <section id="version-1-8-0">
-<h2><a class="toc-backref" href="#id17">Version 1.8.0</a><a class="headerlink" href="#version-1-8-0" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id18">Version 1.8.0</a><a class="headerlink" href="#version-1-8-0" title="Permalink to this headline">¶</a></h2>
 <p><strong>2020-03-23</strong></p>
 <ul class="simple">
 <li><p>First release for CF-1.8 (does not include netCDF hierarchical
@@ -494,7 +507,7 @@ construct rather than check whether it existed.</p></li>
 </section>
 <hr class="docutils" />
 <section id="version-1-7-11">
-<h2><a class="toc-backref" href="#id18">Version 1.7.11</a><a class="headerlink" href="#version-1-7-11" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id19">Version 1.7.11</a><a class="headerlink" href="#version-1-7-11" title="Permalink to this headline">¶</a></h2>
 <p><strong>2019-11-27</strong></p>
 <ul class="simple">
 <li><p>New methods: <a class="reference internal" href="method/cfdm.Field.compress.html#cfdm.Field.compress" title="cfdm.Field.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.compress</span></code></a>, <a class="reference internal" href="method/cfdm.Field.uncompress.html#cfdm.Field.uncompress" title="cfdm.Field.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.uncompress</span></code></a></p></li>
@@ -506,7 +519,7 @@ construct rather than check whether it existed.</p></li>
 </section>
 <hr class="docutils" />
 <section id="version-1-7-10">
-<h2><a class="toc-backref" href="#id19">Version 1.7.10</a><a class="headerlink" href="#version-1-7-10" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id20">Version 1.7.10</a><a class="headerlink" href="#version-1-7-10" title="Permalink to this headline">¶</a></h2>
 <p><strong>2019-11-14</strong></p>
 <ul class="simple">
 <li><p>New method: <a class="reference internal" href="method/cfdm.Field.nc_set_global_attributes.html#cfdm.Field.nc_set_global_attributes" title="cfdm.Field.nc_set_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.nc_set_global_attributes</span></code></a>.</p></li>
@@ -518,7 +531,7 @@ reference time values (<a class="reference external" href="https://github.com/NC
 </section>
 <hr class="docutils" />
 <section id="version-1-7-9">
-<h2><a class="toc-backref" href="#id20">Version 1.7.9</a><a class="headerlink" href="#version-1-7-9" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id21">Version 1.7.9</a><a class="headerlink" href="#version-1-7-9" title="Permalink to this headline">¶</a></h2>
 <p><strong>2019-11-07</strong></p>
 <ul class="simple">
 <li><p>Fixed bug relating to setting of parameters on datum and coordinate
@@ -528,7 +541,7 @@ conversion objects of coordinate conversion constructs
 </section>
 <hr class="docutils" />
 <section id="version-1-7-8">
-<h2><a class="toc-backref" href="#id21">Version 1.7.8</a><a class="headerlink" href="#version-1-7-8" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id22">Version 1.7.8</a><a class="headerlink" href="#version-1-7-8" title="Permalink to this headline">¶</a></h2>
 <p><strong>2019-10-04</strong></p>
 <ul class="simple">
 <li><p>During writing to netCDF files, ensured that _FillValue and
@@ -543,7 +556,7 @@ saved/set value is written out to disk.</p></li>
 </section>
 <hr class="docutils" />
 <section id="version-1-7-7">
-<h2><a class="toc-backref" href="#id22">Version 1.7.7</a><a class="headerlink" href="#version-1-7-7" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id23">Version 1.7.7</a><a class="headerlink" href="#version-1-7-7" title="Permalink to this headline">¶</a></h2>
 <p><strong>2019-06-13</strong></p>
 <ul class="simple">
 <li><p>Don’t set the fill mode for a <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code> open for writing to
@@ -554,7 +567,7 @@ saved/set value is written out to disk.</p></li>
 </section>
 <hr class="docutils" />
 <section id="version-1-7-6">
-<h2><a class="toc-backref" href="#id23">Version 1.7.6</a><a class="headerlink" href="#version-1-7-6" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id24">Version 1.7.6</a><a class="headerlink" href="#version-1-7-6" title="Permalink to this headline">¶</a></h2>
 <p><strong>2019-06-05</strong></p>
 <ul class="simple">
 <li><p>Added attributes <code class="xref py py-obj docutils literal notranslate"><span class="pre">_ATOL</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">_RTOL</span></code> to facilitate subclassing.</p></li>
@@ -564,7 +577,7 @@ saved/set value is written out to disk.</p></li>
 </section>
 <hr class="docutils" />
 <section id="version-1-7-5">
-<h2><a class="toc-backref" href="#id24">Version 1.7.5</a><a class="headerlink" href="#version-1-7-5" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id25">Version 1.7.5</a><a class="headerlink" href="#version-1-7-5" title="Permalink to this headline">¶</a></h2>
 <p><strong>2019-05-15</strong></p>
 <ul class="simple">
 <li><p>New methods: <a class="reference internal" href="method/cfdm.Datum.nc_has_variable.html#cfdm.Datum.nc_has_variable" title="cfdm.Datum.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum.nc_has_variable</span></code></a>, <a class="reference internal" href="method/cfdm.Datum.nc_get_variable.html#cfdm.Datum.nc_get_variable" title="cfdm.Datum.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum.nc_get_variable</span></code></a>,
@@ -574,7 +587,7 @@ saved/set value is written out to disk.</p></li>
 </section>
 <hr class="docutils" />
 <section id="version-1-7-4">
-<h2><a class="toc-backref" href="#id25">Version 1.7.4</a><a class="headerlink" href="#version-1-7-4" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id26">Version 1.7.4</a><a class="headerlink" href="#version-1-7-4" title="Permalink to this headline">¶</a></h2>
 <p><strong>2019-05-14</strong></p>
 <ul class="simple">
 <li><p>Changed behaviour of <a class="reference internal" href="method/cfdm.Constructs.filter_by_axis.html#cfdm.Constructs.filter_by_axis" title="cfdm.Constructs.filter_by_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Constructs.filter_by_axis</span></code></a>.</p></li>
@@ -611,7 +624,7 @@ deprecated.</p></li>
 </section>
 <hr class="docutils" />
 <section id="version-1-7-3">
-<h2><a class="toc-backref" href="#id26">Version 1.7.3</a><a class="headerlink" href="#version-1-7-3" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id27">Version 1.7.3</a><a class="headerlink" href="#version-1-7-3" title="Permalink to this headline">¶</a></h2>
 <p><strong>2019-04-24</strong></p>
 <ul class="simple">
 <li><p>New method: <a class="reference internal" href="method/cfdm.Constructs.filter_by_size.html#cfdm.Constructs.filter_by_size" title="cfdm.Constructs.filter_by_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Constructs.filter_by_size</span></code></a>.</p></li>
@@ -642,7 +655,7 @@ subclassing.</p></li>
 </section>
 <hr class="docutils" />
 <section id="version-1-7-2">
-<h2><a class="toc-backref" href="#id27">Version 1.7.2</a><a class="headerlink" href="#version-1-7-2" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id28">Version 1.7.2</a><a class="headerlink" href="#version-1-7-2" title="Permalink to this headline">¶</a></h2>
 <p><strong>2019-04-05</strong></p>
 <ul class="simple">
 <li><p>New <code class="docutils literal notranslate"><span class="pre">mode</span></code> parameter options to <a class="reference internal" href="method/cfdm.Constructs.filter_by_axis.html#cfdm.Constructs.filter_by_axis" title="cfdm.Constructs.filter_by_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Constructs.filter_by_axis</span></code></a>:
@@ -654,7 +667,7 @@ subspacing (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm
 </section>
 <hr class="docutils" />
 <section id="version-1-7-1">
-<h2><a class="toc-backref" href="#id28">Version 1.7.1</a><a class="headerlink" href="#version-1-7-1" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id29">Version 1.7.1</a><a class="headerlink" href="#version-1-7-1" title="Permalink to this headline">¶</a></h2>
 <p><strong>2019-04-02</strong></p>
 <ul class="simple">
 <li><p>New methods <a class="reference internal" href="method/cfdm.Constructs.clear_filters_applied.html#cfdm.Constructs.clear_filters_applied" title="cfdm.Constructs.clear_filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Constructs.clear_filters_applied</span></code></a>,
@@ -666,7 +679,7 @@ default.</p></li>
 </section>
 <hr class="docutils" />
 <section id="version-1-7-0">
-<h2><a class="toc-backref" href="#id29">Version 1.7.0</a><a class="headerlink" href="#version-1-7-0" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id30">Version 1.7.0</a><a class="headerlink" href="#version-1-7-0" title="Permalink to this headline">¶</a></h2>
 <p><strong>2019-04-02</strong></p>
 <ul class="simple">
 <li><p>First release for CF-1.7</p></li>
@@ -684,10 +697,10 @@ default.</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-10-31.
+      &copy;2023, NCAS | Page built on 2023-01-25.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

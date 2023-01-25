@@ -11,15 +11,15 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script type="text/javascript" src="_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript" src="_static/toggleprompt.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Tutorial" href="tutorial.html" />
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.10.0.1</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.10.0.2</a></h1>
 
 
 
@@ -66,7 +66,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -120,7 +120,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="contributing">
 <span id="id1"></span><h1><strong>Contributing</strong><a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.10.0.1 for version 1.10 of the CF conventions.</p>
+<p>Version 1.10.0.2 for version 1.10 of the CF conventions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#reporting-bugs" id="id2"><strong>Reporting bugs</strong></a></p></li>
@@ -159,15 +159,22 @@ using the <strong>Question</strong> issue template.</p>
 <p>Pull requests should follow on from a discussion in the issue tracker
 (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues">https://github.com/NCAS-CMS/cfdm/issues</a>).</p>
 <p>Fork the cfdm GitHub repository (<a class="reference external" href="https://github.com/NCAS-CMS/cfdm">https://github.com/NCAS-CMS/cfdm</a>).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The cfdm GitHub repository uses <code class="docutils literal notranslate"><span class="pre">main</span></code> as the name of its
+default branch, so you must refer to <code class="docutils literal notranslate"><span class="pre">main</span></code> when you need to
+reference the default branch. It is useful to use this as the
+name of the default branch on your fork, if you use one, too.</p>
+</div>
 <p>Clone your fork locally and create a branch:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git clone git@github.com:&lt;YOUR GITHUB USERNAME&gt;/cfdm.git
-<span class="gp">$ </span><span class="nb">cd</span> cfdm
-<span class="gp">$ </span>git checkout -b &lt;your-bugfix-feature-branch-name master&gt;
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:&lt;YOUR<span class="w"> </span>GITHUB<span class="w"> </span>USERNAME&gt;/cfdm.git
+<span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>cfdm
+<span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>&lt;your-bugfix-feature-branch-name<span class="w"> </span>main&gt;
 </pre></div>
 </div>
 <p>Break your edits up into reasonably-sized commits, each representing
 a single logical change:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git commit -a -m <span class="s2">&quot;&lt;COMMIT MESSAGE&gt;&quot;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>commit<span class="w"> </span>-a<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;&lt;COMMIT MESSAGE&gt;&quot;</span>
 </pre></div>
 </div>
 <p>Create a new changelog entry in <code class="docutils literal notranslate"><span class="pre">Changelog.rst</span></code>. The entry should be
@@ -177,15 +184,15 @@ the change) as:</p>
 </pre></div>
 </div>
 <p>Run the test suite to make sure the tests all pass:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span> cfdm/test
-<span class="gp">$ </span>python run_tests.py
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>cfdm/test
+<span class="gp">$ </span>python<span class="w"> </span>run_tests.py
 </pre></div>
 </div>
 <p>Add your name to the list of contributors list at
 <code class="docutils literal notranslate"><span class="pre">docs/source/contributing.rst</span></code>.</p>
 <p>Finally, make sure all commits have been pushed to the remote copy of
 your fork and submit the pull request via the GitHub website, to the
-<code class="docutils literal notranslate"><span class="pre">master</span></code> branch of the <code class="docutils literal notranslate"><span class="pre">NCAS-CMS/cfdm</span></code> repository. Make sure to
+<code class="docutils literal notranslate"><span class="pre">main</span></code> branch of the <code class="docutils literal notranslate"><span class="pre">NCAS-CMS/cfdm</span></code> repository. Make sure to
 reference the original issue in the pull request’s description.</p>
 <p>Note that you can create the pull request while you’re working on
 this, as it will automatically update as you add more commits. If it is
@@ -218,10 +225,10 @@ ideas, code, and documentation to the cfdm library:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-10-31.
+      &copy;2023, NCAS | Page built on 2023-01-25.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

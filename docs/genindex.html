@@ -11,15 +11,15 @@
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script type="text/javascript" src="_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript" src="_static/toggleprompt.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.10.0.1</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.10.0.2</a></h1>
 
 
 
@@ -64,7 +64,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -2235,6 +2235,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cfdm.core.Constructs.get.html#cfdm.core.Constructs.get">(cfdm.core.Constructs method)</a>
 </li>
       </ul></li>
+      <li><a href="method/cfdm.NetCDFArray.get_address.html#cfdm.NetCDFArray.get_address">get_address() (cfdm.NetCDFArray method)</a>
+</li>
       <li><a href="method/cfdm.CellMethod.get_axes.html#cfdm.CellMethod.get_axes">get_axes() (cfdm.CellMethod method)</a>
 
       <ul>
@@ -2267,10 +2269,26 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cfdm.DomainAncillary.get_bounds_data.html#cfdm.DomainAncillary.get_bounds_data">(cfdm.DomainAncillary method)</a>
 </li>
       </ul></li>
-      <li><a href="method/cfdm.core.Data.get_calendar.html#cfdm.core.Data.get_calendar">get_calendar() (cfdm.core.Data method)</a>
+      <li><a href="method/cfdm.Array.get_calendar.html#cfdm.Array.get_calendar">get_calendar() (cfdm.Array method)</a>
 
       <ul>
+        <li><a href="method/cfdm.CompressedArray.get_calendar.html#cfdm.CompressedArray.get_calendar">(cfdm.CompressedArray method)</a>
+</li>
+        <li><a href="method/cfdm.core.Data.get_calendar.html#cfdm.core.Data.get_calendar">(cfdm.core.Data method)</a>
+</li>
         <li><a href="method/cfdm.Data.get_calendar.html#cfdm.Data.get_calendar">(cfdm.Data method)</a>
+</li>
+        <li><a href="method/cfdm.GatheredArray.get_calendar.html#cfdm.GatheredArray.get_calendar">(cfdm.GatheredArray method)</a>
+</li>
+        <li><a href="method/cfdm.NetCDFArray.get_calendar.html#cfdm.NetCDFArray.get_calendar">(cfdm.NetCDFArray method)</a>
+</li>
+        <li><a href="method/cfdm.NumpyArray.get_calendar.html#cfdm.NumpyArray.get_calendar">(cfdm.NumpyArray method)</a>
+</li>
+        <li><a href="method/cfdm.RaggedContiguousArray.get_calendar.html#cfdm.RaggedContiguousArray.get_calendar">(cfdm.RaggedContiguousArray method)</a>
+</li>
+        <li><a href="method/cfdm.RaggedIndexedArray.get_calendar.html#cfdm.RaggedIndexedArray.get_calendar">(cfdm.RaggedIndexedArray method)</a>
+</li>
+        <li><a href="method/cfdm.RaggedIndexedContiguousArray.get_calendar.html#cfdm.RaggedIndexedContiguousArray.get_calendar">(cfdm.RaggedIndexedContiguousArray method)</a>
 </li>
       </ul></li>
       <li><a href="method/cfdm.AuxiliaryCoordinate.get_climatology.html#cfdm.AuxiliaryCoordinate.get_climatology">get_climatology() (cfdm.AuxiliaryCoordinate method)</a>
@@ -2425,6 +2443,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cfdm.core.CoordinateReference.get_datum.html#cfdm.core.CoordinateReference.get_datum">(cfdm.core.CoordinateReference method)</a>
 </li>
       </ul></li>
+      <li><a href="method/cfdm.Data.get_dependent_tie_points.html#cfdm.Data.get_dependent_tie_points">get_dependent_tie_points() (cfdm.Data method)</a>
+</li>
       <li><a href="method/cfdm.core.Field.get_domain.html#cfdm.core.Field.get_domain">get_domain() (cfdm.core.Field method)</a>
 
       <ul>
@@ -2439,14 +2459,34 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cfdm.core.ParametersDomainAncillaries.get_domain_ancillary.html#cfdm.core.ParametersDomainAncillaries.get_domain_ancillary">(cfdm.core.ParametersDomainAncillaries method)</a>
 </li>
       </ul></li>
-      <li><a href="method/cfdm.NetCDFArray.get_filename.html#cfdm.NetCDFArray.get_filename">get_filename() (cfdm.NetCDFArray method)</a>
-</li>
-      <li><a href="method/cfdm.AuxiliaryCoordinate.get_filenames.html#cfdm.AuxiliaryCoordinate.get_filenames">get_filenames() (cfdm.AuxiliaryCoordinate method)</a>
+      <li><a href="method/cfdm.Array.get_filename.html#cfdm.Array.get_filename">get_filename() (cfdm.Array method)</a>
 
       <ul>
+        <li><a href="method/cfdm.CompressedArray.get_filename.html#cfdm.CompressedArray.get_filename">(cfdm.CompressedArray method)</a>
+</li>
+        <li><a href="method/cfdm.GatheredArray.get_filename.html#cfdm.GatheredArray.get_filename">(cfdm.GatheredArray method)</a>
+</li>
+        <li><a href="method/cfdm.NetCDFArray.get_filename.html#cfdm.NetCDFArray.get_filename">(cfdm.NetCDFArray method)</a>
+</li>
+        <li><a href="method/cfdm.NumpyArray.get_filename.html#cfdm.NumpyArray.get_filename">(cfdm.NumpyArray method)</a>
+</li>
+        <li><a href="method/cfdm.RaggedContiguousArray.get_filename.html#cfdm.RaggedContiguousArray.get_filename">(cfdm.RaggedContiguousArray method)</a>
+</li>
+        <li><a href="method/cfdm.RaggedIndexedArray.get_filename.html#cfdm.RaggedIndexedArray.get_filename">(cfdm.RaggedIndexedArray method)</a>
+</li>
+        <li><a href="method/cfdm.RaggedIndexedContiguousArray.get_filename.html#cfdm.RaggedIndexedContiguousArray.get_filename">(cfdm.RaggedIndexedContiguousArray method)</a>
+</li>
+      </ul></li>
+      <li><a href="method/cfdm.Array.get_filenames.html#cfdm.Array.get_filenames">get_filenames() (cfdm.Array method)</a>
+
+      <ul>
+        <li><a href="method/cfdm.AuxiliaryCoordinate.get_filenames.html#cfdm.AuxiliaryCoordinate.get_filenames">(cfdm.AuxiliaryCoordinate method)</a>
+</li>
         <li><a href="method/cfdm.Bounds.get_filenames.html#cfdm.Bounds.get_filenames">(cfdm.Bounds method)</a>
 </li>
         <li><a href="method/cfdm.CellMeasure.get_filenames.html#cfdm.CellMeasure.get_filenames">(cfdm.CellMeasure method)</a>
+</li>
+        <li><a href="method/cfdm.CompressedArray.get_filenames.html#cfdm.CompressedArray.get_filenames">(cfdm.CompressedArray method)</a>
 </li>
         <li><a href="method/cfdm.Count.get_filenames.html#cfdm.Count.get_filenames">(cfdm.Count method)</a>
 </li>
@@ -2462,11 +2502,23 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </li>
         <li><a href="method/cfdm.FieldAncillary.get_filenames.html#cfdm.FieldAncillary.get_filenames">(cfdm.FieldAncillary method)</a>
 </li>
+        <li><a href="method/cfdm.GatheredArray.get_filenames.html#cfdm.GatheredArray.get_filenames">(cfdm.GatheredArray method)</a>
+</li>
         <li><a href="method/cfdm.Index.get_filenames.html#cfdm.Index.get_filenames">(cfdm.Index method)</a>
 </li>
         <li><a href="method/cfdm.InteriorRing.get_filenames.html#cfdm.InteriorRing.get_filenames">(cfdm.InteriorRing method)</a>
 </li>
         <li><a href="method/cfdm.List.get_filenames.html#cfdm.List.get_filenames">(cfdm.List method)</a>
+</li>
+        <li><a href="method/cfdm.NetCDFArray.get_filenames.html#cfdm.NetCDFArray.get_filenames">(cfdm.NetCDFArray method)</a>
+</li>
+        <li><a href="method/cfdm.NumpyArray.get_filenames.html#cfdm.NumpyArray.get_filenames">(cfdm.NumpyArray method)</a>
+</li>
+        <li><a href="method/cfdm.RaggedContiguousArray.get_filenames.html#cfdm.RaggedContiguousArray.get_filenames">(cfdm.RaggedContiguousArray method)</a>
+</li>
+        <li><a href="method/cfdm.RaggedIndexedArray.get_filenames.html#cfdm.RaggedIndexedArray.get_filenames">(cfdm.RaggedIndexedArray method)</a>
+</li>
+        <li><a href="method/cfdm.RaggedIndexedContiguousArray.get_filenames.html#cfdm.RaggedIndexedContiguousArray.get_filenames">(cfdm.RaggedIndexedContiguousArray method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -2525,6 +2577,8 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cfdm.DomainAncillary.get_interior_ring.html#cfdm.DomainAncillary.get_interior_ring">(cfdm.DomainAncillary method)</a>
 </li>
       </ul></li>
+      <li><a href="method/cfdm.Data.get_interpolation_parameters.html#cfdm.Data.get_interpolation_parameters">get_interpolation_parameters() (cfdm.Data method)</a>
+</li>
       <li><a href="method/cfdm.Data.get_list.html#cfdm.Data.get_list">get_list() (cfdm.Data method)</a>
 
       <ul>
@@ -2553,6 +2607,38 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cfdm.DimensionCoordinate.get_node_count.html#cfdm.DimensionCoordinate.get_node_count">(cfdm.DimensionCoordinate method)</a>
 </li>
         <li><a href="method/cfdm.DomainAncillary.get_node_count.html#cfdm.DomainAncillary.get_node_count">(cfdm.DomainAncillary method)</a>
+</li>
+      </ul></li>
+      <li><a href="method/cfdm.AuxiliaryCoordinate.get_original_filenames.html#cfdm.AuxiliaryCoordinate.get_original_filenames">get_original_filenames() (cfdm.AuxiliaryCoordinate method)</a>
+
+      <ul>
+        <li><a href="method/cfdm.Bounds.get_original_filenames.html#cfdm.Bounds.get_original_filenames">(cfdm.Bounds method)</a>
+</li>
+        <li><a href="method/cfdm.CellMeasure.get_original_filenames.html#cfdm.CellMeasure.get_original_filenames">(cfdm.CellMeasure method)</a>
+</li>
+        <li><a href="method/cfdm.CoordinateReference.get_original_filenames.html#cfdm.CoordinateReference.get_original_filenames">(cfdm.CoordinateReference method)</a>
+</li>
+        <li><a href="method/cfdm.Count.get_original_filenames.html#cfdm.Count.get_original_filenames">(cfdm.Count method)</a>
+</li>
+        <li><a href="method/cfdm.Data.get_original_filenames.html#cfdm.Data.get_original_filenames">(cfdm.Data method)</a>
+</li>
+        <li><a href="method/cfdm.Datum.get_original_filenames.html#cfdm.Datum.get_original_filenames">(cfdm.Datum method)</a>
+</li>
+        <li><a href="method/cfdm.DimensionCoordinate.get_original_filenames.html#cfdm.DimensionCoordinate.get_original_filenames">(cfdm.DimensionCoordinate method)</a>
+</li>
+        <li><a href="method/cfdm.Domain.get_original_filenames.html#cfdm.Domain.get_original_filenames">(cfdm.Domain method)</a>
+</li>
+        <li><a href="method/cfdm.DomainAncillary.get_original_filenames.html#cfdm.DomainAncillary.get_original_filenames">(cfdm.DomainAncillary method)</a>
+</li>
+        <li><a href="method/cfdm.Field.get_original_filenames.html#cfdm.Field.get_original_filenames">(cfdm.Field method)</a>
+</li>
+        <li><a href="method/cfdm.FieldAncillary.get_original_filenames.html#cfdm.FieldAncillary.get_original_filenames">(cfdm.FieldAncillary method)</a>
+</li>
+        <li><a href="method/cfdm.Index.get_original_filenames.html#cfdm.Index.get_original_filenames">(cfdm.Index method)</a>
+</li>
+        <li><a href="method/cfdm.InteriorRing.get_original_filenames.html#cfdm.InteriorRing.get_original_filenames">(cfdm.InteriorRing method)</a>
+</li>
+        <li><a href="method/cfdm.List.get_original_filenames.html#cfdm.List.get_original_filenames">(cfdm.List method)</a>
 </li>
       </ul></li>
       <li><a href="method/cfdm.CoordinateConversion.get_parameter.html#cfdm.CoordinateConversion.get_parameter">get_parameter() (cfdm.CoordinateConversion method)</a>
@@ -2671,10 +2757,28 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
         <li><a href="method/cfdm.RaggedIndexedContiguousArray.get_subspace.html#cfdm.RaggedIndexedContiguousArray.get_subspace">(cfdm.RaggedIndexedContiguousArray class method)</a>
 </li>
       </ul></li>
-      <li><a href="method/cfdm.core.Data.get_units.html#cfdm.core.Data.get_units">get_units() (cfdm.core.Data method)</a>
+      <li><a href="method/cfdm.Data.get_tie_point_indices.html#cfdm.Data.get_tie_point_indices">get_tie_point_indices() (cfdm.Data method)</a>
+</li>
+      <li><a href="method/cfdm.Array.get_units.html#cfdm.Array.get_units">get_units() (cfdm.Array method)</a>
 
       <ul>
+        <li><a href="method/cfdm.CompressedArray.get_units.html#cfdm.CompressedArray.get_units">(cfdm.CompressedArray method)</a>
+</li>
+        <li><a href="method/cfdm.core.Data.get_units.html#cfdm.core.Data.get_units">(cfdm.core.Data method)</a>
+</li>
         <li><a href="method/cfdm.Data.get_units.html#cfdm.Data.get_units">(cfdm.Data method)</a>
+</li>
+        <li><a href="method/cfdm.GatheredArray.get_units.html#cfdm.GatheredArray.get_units">(cfdm.GatheredArray method)</a>
+</li>
+        <li><a href="method/cfdm.NetCDFArray.get_units.html#cfdm.NetCDFArray.get_units">(cfdm.NetCDFArray method)</a>
+</li>
+        <li><a href="method/cfdm.NumpyArray.get_units.html#cfdm.NumpyArray.get_units">(cfdm.NumpyArray method)</a>
+</li>
+        <li><a href="method/cfdm.RaggedContiguousArray.get_units.html#cfdm.RaggedContiguousArray.get_units">(cfdm.RaggedContiguousArray method)</a>
+</li>
+        <li><a href="method/cfdm.RaggedIndexedArray.get_units.html#cfdm.RaggedIndexedArray.get_units">(cfdm.RaggedIndexedArray method)</a>
+</li>
+        <li><a href="method/cfdm.RaggedIndexedContiguousArray.get_units.html#cfdm.RaggedIndexedContiguousArray.get_units">(cfdm.RaggedIndexedContiguousArray method)</a>
 </li>
       </ul></li>
       <li><a href="method/cfdm.NetCDFArray.get_varid.html#cfdm.NetCDFArray.get_varid">get_varid() (cfdm.NetCDFArray method)</a>
@@ -4649,10 +4753,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-10-31.
+      &copy;2023, NCAS | Page built on 2023-01-25.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

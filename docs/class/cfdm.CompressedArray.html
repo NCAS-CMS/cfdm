@@ -11,15 +11,15 @@
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.CompressedArray.array" href="../attribute/cfdm.CompressedArray.array.html" />
@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.10.0.1</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.0.2</a></h1>
 
 
 
@@ -66,7 +66,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -126,7 +126,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.CompressedArray">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">CompressedArray</code><span class="sig-paren">(</span><em class="sig-param">compressed_array=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">compressed_dimension=None</em>, <em class="sig-param">compressed_dimensions=None</em>, <em class="sig-param">compression_type=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.1/cfdm/data/abstract/compressedarray.py#L12-L504"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CompressedArray" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">CompressedArray</code><span class="sig-paren">(</span><em class="sig-param">compressed_array=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">compressed_dimension=None</em>, <em class="sig-param">compressed_dimensions=None</em>, <em class="sig-param">compression_type=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.2/cfdm/data/abstract/compressedarray.py#L12-L523"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CompressedArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.abstract.array.Array</span></code></p>
 <p>Mixin class for a container of an underlying compressed array.</p>
 <div class="versionadded">
@@ -167,10 +167,16 @@ the compressed array.</p>
 </dd>
 <dt>compressed_dimension: Deprecated at version 1.10.0.0</dt><dd><p>Use the <em>compressed_dimensions</em> parameter instead.</p>
 </dd>
-<dt>source: optional</dt><dd><p>Initialise the array from the given object.</p>
-<p>Note that if <em>source</em> is a <a class="reference internal" href="#cfdm.CompressedArray" title="cfdm.CompressedArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CompressedArray</span></code></a> instance then
-<code class="docutils literal notranslate"><span class="pre">cfdm.CompressedArray(source=source)</span></code> is equivalent
-to <code class="docutils literal notranslate"><span class="pre">source.copy()</span></code>.</p>
+<dt>source: optional</dt><dd><p>Convert <em>source</em>, which can be any type of object, to
+a <a class="reference internal" href="#cfdm.CompressedArray" title="cfdm.CompressedArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CompressedArray</span></code></a> instance.</p>
+<p>All other parameters, apart from <em>copy</em>, are ignored
+and their values are instead inferred from <em>source</em> by
+assuming that it has the <a class="reference internal" href="#cfdm.CompressedArray" title="cfdm.CompressedArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CompressedArray</span></code></a> API. Any
+parameters that can not be retrieved from <em>source</em> in
+this way are assumed to have their default value.</p>
+<p>Note that if <code class="docutils literal notranslate"><span class="pre">x</span></code> is also a <a class="reference internal" href="#cfdm.CompressedArray" title="cfdm.CompressedArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CompressedArray</span></code></a> instance then
+<code class="docutils literal notranslate"><span class="pre">cfdm.CompressedArray(source=x)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.10.0.0</p>
 </div>
@@ -221,6 +227,24 @@ ignored.</p>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cfdm.CompressedArray.size.html#cfdm.CompressedArray.size" title="cfdm.CompressedArray.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
 <td><p>Number of elements in the array.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="units">
+<h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CompressedArray.get_calendar.html#cfdm.CompressedArray.get_calendar" title="cfdm.CompressedArray.get_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_calendar</span></code></a></p></td>
+<td><p>The calendar of the array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CompressedArray.get_units.html#cfdm.CompressedArray.get_units" title="cfdm.CompressedArray.get_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_units</span></code></a></p></td>
+<td><p>The units of the array.</p></td>
 </tr>
 </tbody>
 </table>
@@ -281,6 +305,12 @@ ignored.</p>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CompressedArray.to_memory.html#cfdm.CompressedArray.to_memory" title="cfdm.CompressedArray.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
 <td><p>Bring data on disk into memory.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.CompressedArray.get_filename.html#cfdm.CompressedArray.get_filename" title="cfdm.CompressedArray.get_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filename</span></code></a></p></td>
+<td><p>The name of the file containing the array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.CompressedArray.get_filenames.html#cfdm.CompressedArray.get_filenames" title="cfdm.CompressedArray.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
+<td><p>Return the names of any files containing the compressed data.</p></td>
 </tr>
 </tbody>
 </table>
@@ -347,10 +377,10 @@ ignored.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2022, NCAS | Page built on 2022-10-31.
+      &copy;2023, NCAS | Page built on 2023-01-25.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
