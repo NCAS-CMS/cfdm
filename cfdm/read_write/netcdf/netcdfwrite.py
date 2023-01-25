@@ -3131,7 +3131,7 @@ class NetCDFWrite(IOWrite):
         #
         g["part_ncdim"] = None
 
-        # Initialize the list of the field/domain's auxiliary/scalar
+        # Initialise the list of the field/domain's auxiliary/scalar
         # coordinates
         coordinates = []
 
@@ -3604,7 +3604,7 @@ class NetCDFWrite(IOWrite):
         # might be completely specified elsewhere by a transformation.
         # ------------------------------------------------------------
 
-        # Initialize the list of 'coordinates' attribute variable
+        # Initialise the list of 'coordinates' attribute variable
         # values (each of the form 'name')
         for key, aux_coord in sorted(
             self.implementation.get_auxiliary_coordinates(f).items()
@@ -4146,7 +4146,7 @@ class NetCDFWrite(IOWrite):
         g = self.write_vars
 
         # ------------------------------------------------------------
-        # Initialize the global attributes with those requested to be
+        # Initialise the global attributes with those requested to be
         # such
         # ------------------------------------------------------------
         global_attributes = g["global_attributes"]

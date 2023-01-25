@@ -1231,7 +1231,7 @@ class NetCDFRead(IORead):
                 f"    netCDF dimensions: {internal_dimension_sizes}"
             )  # pragma: no cover
 
-        # Now that all of the variables have been scanned, customize
+        # Now that all of the variables have been scanned, customise
         # the read parameters.
         self._customize_read_vars()
 
@@ -1684,9 +1684,9 @@ class NetCDFRead(IORead):
             )
 
     def _customize_read_vars(self):
-        """Customize the read parameters.
+        """Customise the read parameters.
 
-        This method is primarily aimed at providing a customization
+        This method is primarily aimed at providing a customisation
         entry point for subclasses.
 
         .. versionadded:: (cfdm) 1.7.3
@@ -2958,7 +2958,7 @@ class NetCDFRead(IORead):
         g["node_coordinates_as_bounds"] = set()
 
         # ------------------------------------------------------------
-        # Initialize the field/domain
+        # Initialise the field/domain
         # ------------------------------------------------------------
         if field:
             # Create a field construct
@@ -5468,7 +5468,7 @@ class NetCDFRead(IORead):
 
             ndim = array.ndim
 
-            # Initializations needed for subsampled coordinates
+            # Initialisations needed for subsampled coordinates
             subsampled = False
             tie_point_indices = {}
             interpolation_parameters = {}

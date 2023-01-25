@@ -244,7 +244,7 @@ class Container:
 
             short: `bool`, optional
                 If True then stop after the first element of either
-                *pre*, *body* or *post* is realized.
+                *pre*, *body* or *post* is realised.
 
             kwargs: optional
                 Ignored.

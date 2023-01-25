@@ -1193,7 +1193,7 @@ class SubsampledArray(CompressedArray):
 
             first = True
 
-            # Initialize the count alng the interpolation subarea
+            # Initialise the count alng the interpolation subarea
             # dimension
             j = 0
             for i, (index0, index1) in enumerate(
