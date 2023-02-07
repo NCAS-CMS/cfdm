@@ -1683,6 +1683,33 @@ class NetCDFRead(IORead):
                 {"_FillValue": self.default_netCDF_fill_value(ncvar)},
             )
 
+    def _customize_auxiliary_coordinates(self, parent_ncvar, f):
+        """Create extra auxiliary coordinate constructs.
+
+        This method is primarily aimed at providing a customisation
+        entry point for subclasses.
+
+        When creating a new auxiliary coordinate construct it is
+        important that the `_reference` method is called, including
+        for the bounds, if applicable.
+ 
+        .. versionadded:: 1.10.?.?
+
+        :Parameters:
+
+            parent_ncvar: `str`
+                The netCDF variable name of the parent variable.
+
+            f: `Field` or `Domain`
+                The parent field or domain construct.
+
+        :Returns:
+
+            `dict`
+
+        """
+        return {}
+
     def _customize_read_vars(self):
         """Customise the read parameters.
 
@@ -3525,7 +3552,19 @@ class NetCDFRead(IORead):
 
                 self._reference(node_ncvar, field_ncvar)
                 ncvar_to_key[node_ncvar] = aux
-
+                        
+        # ------------------------------------------------------------
+        # Add extra auxiliary coordinate constructs defined by
+        # subclasses
+        # ------------------------------------------------------------
+        extra_aux = self._customize_auxiliary coordinates(field_ncvar, f)
+        if extra_aux:
+            ncvar_to_key.update(extra_aux)
+            g["auxiliary_coordinate"].extend(extra_aux)
+            g["coordinates"][field_ncvar].extend(extra_aux)
+            for aux_ncvar in extra_aux:
+                self._reference(aux_ncvar, field_ncvar)
+                
         # ------------------------------------------------------------
         # Add coordinate reference constructs from formula_terms
         # properties
@@ -4531,7 +4570,7 @@ class NetCDFRead(IORead):
         nc = g["nc"]
 
         g["bounds"][field_ncvar] = {}
-        g["coordinates"][field_ncvar] = []
+        g["coordinates"][field_ncvar] = []  # TODO: ALERT THIS COULD BE BAD
 
         if ncvar is not None:
             properties = g["variable_attributes"][ncvar].copy()
