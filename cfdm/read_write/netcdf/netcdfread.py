@@ -3557,7 +3557,7 @@ class NetCDFRead(IORead):
         # Add extra auxiliary coordinate constructs defined by
         # subclasses
         # ------------------------------------------------------------
-        extra_aux = self._customize_auxiliary coordinates(field_ncvar, f)
+        extra_aux = self._customize_auxiliary_coordinates(field_ncvar, f)
         if extra_aux:
             ncvar_to_key.update(extra_aux)
             g["auxiliary_coordinate"].extend(extra_aux)
