@@ -444,21 +444,23 @@ def unique_constructs(constructs, ignore_properties=None, copy=True):
             a mixture of types. The sequence can be empty.
 
         ignore_properties: (sequence of) `str`, optional
-            The names of construct properties to be removed prior to
-            testing for uniqueness. No properties are removed if
+            The names of any construct properties to be removed prior
+            to testing for uniqueness. No properties are removed if
             *ignore_properties* is an empty sequence.
 
-            .. note:: The ignored properties are removed from all
-                      returned constructs, which will always be deep
-                      copies of input constructs.
+            .. note:: Any ignored properties are removed from all
+                      returned constructs.
 
             .. versionadded:: (cfdm) 1.10.0.3
 
         copy: `bool`, optional
-            If True (the default) then deep copy returned constructs,
-            otherwise they are not copied. If *ignore_properties* has
-            been set then *copy* is taken as `True`, regardless of its
-            setting.
+            If True (the default) then each returned construct is a
+            deep copy of an input construct, otherwise they are not
+            copies.
+
+            If *ignore_properties* has been set then *copy* is ignored
+            and deep copies are always returned, even if
+            *ignore_properties* is an empty sequence.
 
     :Returns:
 
@@ -523,13 +525,13 @@ def unique_constructs(constructs, ignore_properties=None, copy=True):
     else:
         generator_out = False
 
-    if ignore_properties:
+    if ignore_properties is not None:
         copy = True
 
     if copy:
         construct0 = construct0.copy()
 
-    if ignore_properties:
+    if ignore_properties is not None:
         construct0.del_properties(ignore_properties)
 
     # Initialise the list of unique constructs
@@ -543,7 +545,7 @@ def unique_constructs(constructs, ignore_properties=None, copy=True):
         equal = False
         copied = False
 
-        if ignore_properties:
+        if ignore_properties is not None:
             construct = construct.copy()
             copied = True
             construct.del_properties(ignore_properties)

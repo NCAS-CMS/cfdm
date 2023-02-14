@@ -383,7 +383,16 @@ class FunctionsTest(unittest.TestCase):
         fields = [f, f, g]
         domains = [x.domain for x in (f, f, g)]
 
-        self.assertEqual(len(cfdm.unique_constructs(domains)), 2)
+        u = cfdm.unique_constructs(domains)
+        self.assertEqual(len(u), 2)
+        self.assertIsNot(u[0], domains[0])
+
+        u = cfdm.unique_constructs(domains, copy=False)
+        self.assertIs(u[0], domains[0])
+
+        u = cfdm.unique_constructs(domains, ignore_properties="z", copy=False)
+        self.assertIsNot(u[0], domains[0])
+
         self.assertEqual(len(cfdm.unique_constructs(domains + fields)), 4)
         self.assertEqual(
             len(cfdm.unique_constructs(domains + fields + [f.domain])), 4
