@@ -45,7 +45,7 @@ class Properties(Container):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `del_properties`, `del_property` `properties`,
+        .. seealso:: `del_properties`, `del_property`, `properties`,
                      `set_properties`
 
         :Returns:
