@@ -432,7 +432,7 @@ def abspath(filename):
     return os.path.abspath(filename)
 
 
-def unique_constructs(constructs, copy=True):
+def unique_constructs(constructs, ignore_properties=None, copy=True):
     """Return the unique constructs from a sequence.
 
     .. versionadded:: (cfdm) 1.9.0.0
@@ -443,14 +443,29 @@ def unique_constructs(constructs, copy=True):
             The constructs to be compared. The constructs may comprise
             a mixture of types. The sequence can be empty.
 
+        ignore_properties: (sequence of) `str`, optional
+            The names of construct properties to be removed prior to
+            testing for uniqueness. No properties are removed if
+            *ignore_properties* is an empty sequence.
+
+            .. note:: The ignored properties are removed from all
+                      returned constructs, which will always be deep
+                      copies of input constructs.
+
+            .. versionadded:: (cfdm) 1.10.0.3
+
         copy: `bool`, optional
             If True (the default) then deep copy returned constructs,
-            else they are not (deep) copied.
+            otherwise they are not copied. If *ignore_properties* has
+            been set then *copy* is taken as `True`, regardless of its
+            setting.
 
     :Returns:
 
-        `list`
-            The unique constructs. May be an empty list.
+        Sequence of constructs
+            The unique constructs in a sequence of the same type as
+            the input *constructs*. If *constructs* was a generator
+            then a generator is returned.
 
     **Examples**
 
@@ -482,53 +497,72 @@ def unique_constructs(constructs, copy=True):
      <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
 
     """
+    out_type = type(constructs)
+
     if not constructs:
-        # constructs is an empty sequence
-        return []
+        # 'constructs' is an empty sequence
+        return out_type([])
 
     # ----------------------------------------------------------------
     # Find the first construct in the sequence and create an iterator
     # for the rest
     # ----------------------------------------------------------------
     try:
-        # constructs is a sequence?
+        # 'constructs' is a sequence?
         construct0 = constructs[0]
         constructs = (c for c in constructs[1:])
     except TypeError:
         try:
-            # constructs is a generator?
+            # 'constructs' is a generator?
             construct0 = next(constructs)
         except StopIteration:
-            # constructs is an empty generator
-            return []
-    # --- End: try
+            # 'constructs' is an empty generator
+            return (c for c in ())
+        else:
+            generator_out = True
+    else:
+        generator_out = False
+
+    if ignore_properties:
+        copy = True
 
     if copy:
         construct0 = construct0.copy()
 
-    # Initialise the output list
+    if ignore_properties:
+        construct0.del_properties(ignore_properties)
+
+    # Initialise the list of unique constructs
     out = [construct0]
 
     # ----------------------------------------------------------------
-    # Loop round the iterator, adding any "new" constructs to the
-    # output list
+    # Loop round the iterator, adding any new unique constructs to the
+    # list
     # ----------------------------------------------------------------
     for construct in constructs:
-        is_equal = False
+        equal = False
+        copied = False
+
+        if ignore_properties:
+            construct = construct.copy()
+            copied = True
+            construct.del_properties(ignore_properties)
+
         for c in out:
             if construct.equals(c, verbose="DISABLE"):
-                is_equal = True
+                equal = True
                 break
-        # --- End: for
 
-        if not is_equal:
-            if copy:
+        if not equal:
+            if copy and not copied:
                 construct = construct.copy()
 
             out.append(construct)
-    # --- End: for
 
-    return out
+    if generator_out:
+        return (c for c in out)
+
+    return out_type(out)
 
 
 @total_ordering

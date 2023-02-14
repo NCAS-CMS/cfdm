@@ -391,13 +391,34 @@ class FunctionsTest(unittest.TestCase):
 
         # Test generator
         domains = (x.domain for x in ())
-        self.assertEqual(len(cfdm.unique_constructs(domains)), 0)
+        u = cfdm.unique_constructs(domains)
+        self.assertIsInstance(u, type(domains))
+        self.assertEqual(len(tuple(u)), 0)
 
         domains = (x.domain for x in (f,))
-        self.assertEqual(len(cfdm.unique_constructs(domains)), 1)
+        u = cfdm.unique_constructs(domains)
+        self.assertIsInstance(u, type(domains))
+        self.assertEqual(len(tuple(u)), 1)
 
         domains = (x.domain for x in (f, f, g))
-        self.assertEqual(len(cfdm.unique_constructs(domains)), 2)
+        u = cfdm.unique_constructs(domains)
+        self.assertIsInstance(u, type(domains))
+        self.assertEqual(len(tuple(u)), 2)
+
+        self.assertIsInstance(cfdm.unique_constructs(fields), type(fields))
+        self.assertIsInstance(cfdm.unique_constructs(tuple(fields)), tuple)
+
+        f.set_property("project", "model")
+        f2 = f.copy()
+        f2.set_property("project", "obs")
+        g.set_property("project", "test")
+        fields = [f, f2, g]
+
+        self.assertEqual(len(cfdm.unique_constructs(fields)), 3)
+        u = cfdm.unique_constructs(fields, ignore_properties="project")
+        self.assertEqual(len(u), 2)
+        self.assertIsNone(u[0].get_property("project", None))
+        self.assertIsNone(u[1].get_property("project", None))
 
     def test_context_managers(self):
         """Test the context manager support of the functions."""
