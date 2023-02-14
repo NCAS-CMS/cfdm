@@ -1687,13 +1687,11 @@ class NetCDFRead(IORead):
         """Create extra auxiliary coordinate constructs.
 
         This method is primarily aimed at providing a customisation
-        entry point for subclasses.
-
-        When creating a new auxiliary coordinate construct it is
-        important that the `_reference` method is called, including
-        for the bounds, if applicable.
+        entry point for subclasses. It is assumed that any new
+        constructs are set on the parent field or domain construct
+        inside this method.
  
-        .. versionadded:: 1.10.?.?
+        .. versionadded:: TODOCFAVER
 
         :Parameters:
 
@@ -1706,10 +1704,55 @@ class NetCDFRead(IORead):
         :Returns:
 
             `dict`
+                A mapping of netCDF variable names to newly-created
+                construct identifiers.
+
+        **Examples**
+
+        >>> n._customize_field_ancillaries('tas', f)
+        {}
+
+        >>> n._customize_field_ancillaries('pr', f)
+        {'tracking_id': 'fieldancillary1'}
 
         """
         return {}
+    
+    def _customize_field_ancillaries(self, parent_ncvar, f):
+        """Create extra field ancillary constructs.
 
+        This method is primarily aimed at providing a customisation
+        entry point for subclasses. It is assumed that any new
+        constructs are set on the parent field construct inside this
+        method.
+ 
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            parent_ncvar: `str`
+                The netCDF variable name of the parent variable.
+
+            f: `Field`
+                The parent field construct.
+
+        :Returns:
+
+            `dict`
+                A mapping of netCDF variable names to newly-created
+                construct identifiers.
+
+        **Examples**
+
+        >>> n._customize_field_ancillaries('tas', f)
+        {}
+
+        >>> n._customize_field_ancillaries('pr', f)
+        {'tracking_id': 'fieldancillary1'}
+
+        """
+        return {}
+    
     def _customize_read_vars(self):
         """Customise the read parameters.
 
@@ -3562,9 +3605,18 @@ class NetCDFRead(IORead):
             ncvar_to_key.update(extra_aux)
             g["auxiliary_coordinate"].extend(extra_aux)
             g["coordinates"][field_ncvar].extend(extra_aux)
-            for aux_ncvar in extra_aux:
+            
+            coords = self.implementation.get_auxiliary_coordinates(f)
+            for aux_ncvar, key in extra_aux.items():
                 self._reference(aux_ncvar, field_ncvar)
-                
+                coord = coords[key]
+                if self.implementation.has_bounds(coord):
+                    bounds = self.implementation.get_bounds(coord)        
+                    self._reference(
+                        self.implementation.nc_get_variable(bounds),
+                        field_ncvar,
+                    )
+
         # ------------------------------------------------------------
         # Add coordinate reference constructs from formula_terms
         # properties
@@ -3936,7 +3988,18 @@ class NetCDFRead(IORead):
                         self._reference(ncvar, field_ncvar)
 
                         ncvar_to_key[ncvar] = key
-
+           
+            # --------------------------------------------------------
+            # Add extra field ancillary constructs defined by
+            # subclasses
+            # --------------------------------------------------------
+            extra_anc = self._customize_field_ancillaries(field_ncvar, f)
+            if extra_anc:
+                ncvar_to_key.update(extra_anc)
+                g["field_ancillary"].extend(extra_anc)
+                for anc_ncvar in extra_anc:
+                    self._reference(anc_ncvar, field_ncvar)
+                
         # Add the structural read report to the field/domain
         dataset_compliance = g["dataset_compliance"][field_ncvar]
         components = dataset_compliance["non-compliance"]
