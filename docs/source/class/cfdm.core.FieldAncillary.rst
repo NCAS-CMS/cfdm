@@ -38,6 +38,7 @@ Properties
    ~cfdm.core.FieldAncillary.set_property
    ~cfdm.core.FieldAncillary.properties
    ~cfdm.core.FieldAncillary.clear_properties
+   ~cfdm.core.FieldAncillary.del_properties
    ~cfdm.core.FieldAncillary.set_properties
 
 Data
