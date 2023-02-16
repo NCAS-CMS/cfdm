@@ -444,12 +444,10 @@ def unique_constructs(constructs, ignore_properties=None, copy=True):
             a mixture of types. The sequence can be empty.
 
         ignore_properties: (sequence of) `str`, optional
-            The names of any construct properties to be removed prior
-            to testing for uniqueness. No properties are removed if
-            *ignore_properties* is an empty sequence.
-
-            .. note:: Any ignored properties are removed from all
-                      returned constructs.
+            The names of construct properties to be ignored when
+            testing for uniqueness. Any of these properties which have
+            unequal values on otherwise equal input constructs are
+            removed from the returned unique construct.
 
             .. versionadded:: (cfdm) 1.10.0.3
 
@@ -528,11 +526,11 @@ def unique_constructs(constructs, ignore_properties=None, copy=True):
     if ignore_properties is not None:
         copy = True
 
+    if isinstance(ignore_properties, str):
+        ignore_properties = (ignore_properties,)
+
     if copy:
         construct0 = construct0.copy()
-
-    if ignore_properties is not None:
-        construct0.del_properties(ignore_properties)
 
     # Initialise the list of unique constructs
     out = [construct0]
@@ -543,20 +541,23 @@ def unique_constructs(constructs, ignore_properties=None, copy=True):
     # ----------------------------------------------------------------
     for construct in constructs:
         equal = False
-        copied = False
-
-        if ignore_properties is not None:
-            construct = construct.copy()
-            copied = True
-            construct.del_properties(ignore_properties)
 
         for c in out:
-            if construct.equals(c, verbose="DISABLE"):
+            if construct.equals(
+                c, ignore_properties=ignore_properties, verbose="DISABLE"
+            ):
                 equal = True
+                if ignore_properties:
+                    for prop in ignore_properties:
+                        if construct.get_property(
+                            prop, None
+                        ) != c.get_property(prop, None):
+                            c.del_property(prop, None)
+
                 break
 
         if not equal:
-            if copy and not copied:
+            if copy:
                 construct = construct.copy()
 
             out.append(construct)

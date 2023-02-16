@@ -417,17 +417,22 @@ class FunctionsTest(unittest.TestCase):
         self.assertIsInstance(cfdm.unique_constructs(fields), type(fields))
         self.assertIsInstance(cfdm.unique_constructs(tuple(fields)), tuple)
 
+        f.set_properties({"project": "model", "foo": "bar"})
         f.set_property("project", "model")
         f2 = f.copy()
         f2.set_property("project", "obs")
-        g.set_property("project", "test")
+        g.set_properties({"project": "model", "foo": "bar"})
         fields = [f, f2, g]
 
         self.assertEqual(len(cfdm.unique_constructs(fields)), 3)
-        u = cfdm.unique_constructs(fields, ignore_properties="project")
+        u = cfdm.unique_constructs(
+            fields, ignore_properties=["project", "foo"]
+        )
         self.assertEqual(len(u), 2)
         self.assertIsNone(u[0].get_property("project", None))
-        self.assertIsNone(u[1].get_property("project", None))
+        self.assertEqual(u[0].get_property("foo"), "bar")
+        self.assertEqual(u[1].get_property("project"), "model")
+        self.assertEqual(u[1].get_property("foo"), "bar")
 
     def test_context_managers(self):
         """Test the context manager support of the functions."""
