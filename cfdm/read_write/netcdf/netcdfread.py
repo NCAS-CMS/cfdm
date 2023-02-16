@@ -858,7 +858,7 @@ class NetCDFRead(IORead):
                 file_version = c.replace("CF-", "", 1)
                 break
 
-        if not file_version is None:
+        if file_version is None:
             if default_version is not None:
                 # Assume the default version provided by the user
                 file_version = default_version
@@ -1691,7 +1691,7 @@ class NetCDFRead(IORead):
         entry point for subclasses. It is assumed that any new
         constructs are set on the parent field or domain construct
         inside this method.
- 
+
         .. versionadded:: TODOCFAVER
 
         :Parameters:
@@ -1718,7 +1718,7 @@ class NetCDFRead(IORead):
 
         """
         return {}
-    
+
     def _customize_field_ancillaries(self, parent_ncvar, f):
         """Create extra field ancillary constructs.
 
@@ -1726,7 +1726,7 @@ class NetCDFRead(IORead):
         entry point for subclasses. It is assumed that any new
         constructs are set on the parent field construct inside this
         method.
- 
+
         .. versionadded:: TODOCFAVER
 
         :Parameters:
@@ -1753,7 +1753,7 @@ class NetCDFRead(IORead):
 
         """
         return {}
-    
+
     def _customize_read_vars(self):
         """Customise the read parameters.
 
@@ -3596,7 +3596,7 @@ class NetCDFRead(IORead):
 
                 self._reference(node_ncvar, field_ncvar)
                 ncvar_to_key[node_ncvar] = aux
-                        
+
         # ------------------------------------------------------------
         # Add extra auxiliary coordinate constructs defined by
         # subclasses
@@ -3613,7 +3613,7 @@ class NetCDFRead(IORead):
                 self._reference(aux_ncvar, field_ncvar)
                 coord = coords[key]
                 if self.implementation.has_bounds(coord):
-                    bounds = self.implementation.get_bounds(coord)        
+                    bounds = self.implementation.get_bounds(coord)
                     self._reference(
                         self.implementation.nc_get_variable(bounds),
                         field_ncvar,
@@ -3990,7 +3990,7 @@ class NetCDFRead(IORead):
                         self._reference(ncvar, field_ncvar)
 
                         ncvar_to_key[ncvar] = key
-           
+
             # --------------------------------------------------------
             # Add extra field ancillary constructs defined by
             # subclasses
@@ -4003,7 +4003,7 @@ class NetCDFRead(IORead):
                 # Reference the netCDF variables
                 for anc_ncvar in extra_anc:
                     self._reference(anc_ncvar, field_ncvar)
-                
+
         # Add the structural read report to the field/domain
         dataset_compliance = g["dataset_compliance"][field_ncvar]
         components = dataset_compliance["non-compliance"]
