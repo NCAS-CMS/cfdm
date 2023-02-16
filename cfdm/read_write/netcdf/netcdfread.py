@@ -846,18 +846,19 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         Conventions = g["global_attributes"].get("Conventions", "")
 
-        all_conventions = re.split(",", Conventions)
+        # If the string contains any commas, it is assumed to be a
+        # comma-separated list.
+        all_conventions = re.split(",\s*", Conventions)
         if all_conventions[0] == Conventions:
-            all_conventions = re.split(r"\s+", Conventions)
+            all_conventions = Conventions.split()
 
         file_version = None
         for c in all_conventions:
-            if not re.match(r"^CF-\d", c):
-                continue
+            if c.startswith("CF-"):
+                file_version = c.replace("CF-", "", 1)
+                break
 
-            file_version = re.sub("^CF-", "", c)
-
-        if not file_version:
+        if not file_version is None:
             if default_version is not None:
                 # Assume the default version provided by the user
                 file_version = default_version
@@ -3605,7 +3606,8 @@ class NetCDFRead(IORead):
             ncvar_to_key.update(extra_aux)
             g["auxiliary_coordinate"].extend(extra_aux)
             g["coordinates"][field_ncvar].extend(extra_aux)
-            
+
+            # Reference the netCDF variables
             coords = self.implementation.get_auxiliary_coordinates(f)
             for aux_ncvar, key in extra_aux.items():
                 self._reference(aux_ncvar, field_ncvar)
@@ -3997,6 +3999,8 @@ class NetCDFRead(IORead):
             if extra_anc:
                 ncvar_to_key.update(extra_anc)
                 g["field_ancillary"].extend(extra_anc)
+
+                # Reference the netCDF variables
                 for anc_ncvar in extra_anc:
                     self._reference(anc_ncvar, field_ncvar)
                 
