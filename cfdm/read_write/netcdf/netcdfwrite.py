@@ -1341,8 +1341,7 @@ class NetCDFWrite(IOWrite):
                 ncdimensions,
                 bounds,
                 omit=omit,
-                omit_data=self.implementation.get_construct_type(coord)
-                in g["omit_data"],
+                construct_type=self.implementation.get_construct_type(coord),
             )
 
         extra["bounds"] = ncvar
@@ -1507,8 +1506,7 @@ class NetCDFWrite(IOWrite):
                 ncvar,
                 (ncdim,),
                 nodes,
-                omit_data=self.implementation.get_construct_type(coord)
-                in g["omit_data"],
+                construct_type=self.implementation.get_construct_type(coord),
             )
 
             encodings = {}
@@ -2004,8 +2002,7 @@ class NetCDFWrite(IOWrite):
                 ncvar,
                 (ncdim,),
                 interior_ring,
-                omit_data=self.implementation.get_construct_type(coord)
-                in g["omit_data"],
+                construct_type=self.implementation.get_construct_type(coord),
             )
 
         g["part_ncdim"] = ncdim
@@ -2531,7 +2528,7 @@ class NetCDFWrite(IOWrite):
         fill=False,
         data_variable=False,
         domain_variable=False,
-        omit_data=None,
+        construct_type=None,
     ):
         """Creates a new netCDF variable for a construct.
 
@@ -2544,34 +2541,38 @@ class NetCDFWrite(IOWrite):
         The ``seen`` dictionary is updated to account for the new
         variable.
 
-        *cfvar*.
+        :Parameters:
 
-            :Parameters:
+            ncvar: `str`
+                The netCDF name of the variable.
 
-                ncvar: `str`
-                    The netCDF name of the variable.
+            dimensions: `tuple`
+                The netCDF dimension names of the variable
 
-                dimensions: `tuple`
-                    The netCDF dimension names of the variable
+            cfvar: `Variable`
+                The construct to write to the netCDF file.
 
-                cfvar: `Variable`
-                    The construct to write to the netCDF file.
+            omit: sequence of `str`, optional
 
-                omit: sequence of `str`, optional
+            extra: `dict`, optional
 
-                extra: `dict`, optional
+            data_variable: `bool`, optional
+                True if the a data variable is being written.
 
-                data_variable: `bool`, optional
-                    True if the a data variable is being written.
+            domain_variable: `bool`, optional
+                True if the a domain variable is being written.
 
-                domain_variable: `bool`, optional
-                    True if the a domain variable is being written.
+                .. versionadded:: (cfdm) 1.9.0.0
 
-                    .. versionadded:: (cfdm) 1.9.0.0
+            construct_type: `str`, optional
+                The construct type, or its parent it is not a
+                construct.
 
-            :Returns:
+                .. versionadded:: (cfdm) TODOCFAVER
 
-                `None`
+        :Returns:
+
+            `None`
 
         """
         # To avoid mutable default argument (an anti-pattern) of extra={}
@@ -2614,11 +2615,12 @@ class NetCDFWrite(IOWrite):
 
         logger.info(f"    Writing {cfvar!r}")  # pragma: no cover
 
-        # Set 'omit_data'
-        if omit_data is None:
-            omit_data = (
-                self.implementation.get_construct_type(cfvar) in g["omit_data"]
-            )
+        # Set 'construct_type'
+        if not construct_type:
+            construct_type = self.implementation.get_construct_type(cfvar)
+
+        # Whether or not write the data
+        omit_data = construct_type in g["omit_data"]
 
         # ------------------------------------------------------------
         # Find the fill value - the value that the variable's data get
@@ -2691,7 +2693,7 @@ class NetCDFWrite(IOWrite):
 
         # Note: this is a trivial assignment in standalone cfdm, but required
         # for non-trivial customisation applied by subclasses e.g. in cf-python
-        kwargs = self._customize_createVariable(cfvar, kwargs)
+        kwargs = self._customize_createVariable(cfvar, construct_type, kwargs)
 
         logger.info(
             f"        to netCDF variable: {ncvar}({', '.join(ncdimensions)})"
@@ -2768,9 +2770,10 @@ class NetCDFWrite(IOWrite):
                 unset_values=unset_values,
                 compressed=compressed,
                 attributes=attributes,
+                construct_type=construct_type,
             )
 
-    def _customize_createVariable(self, cfvar, kwargs):
+    def _customize_createVariable(self, cfvar, construct_type, kwargs):
         """Customises `netCDF4.Dataset.createVariable` keywords.
 
         The keyword arguments may be changed in subclasses which
@@ -2781,6 +2784,12 @@ class NetCDFWrite(IOWrite):
         :Parameters:
 
             cfvar: cfdm instance that contains data
+
+            construct_type: `str`
+                The construct type of the *cfvar*, or its parent if
+                *cfvar* is not a construct.
+
+                .. versionadded:: TODOCFAVER
 
             kwargs: `dict`
 
@@ -2848,6 +2857,7 @@ class NetCDFWrite(IOWrite):
         unset_values=(),
         compressed=False,
         attributes=None,
+        construct_type=None,
     ):
         """Write a data array to the netCDF file.
 
@@ -2866,6 +2876,16 @@ class NetCDFWrite(IOWrite):
             attributes: `dict`, optional
                 The netCDF attributes for the constructs that have been
                 written to the file.
+
+            construct_type: `str`
+                The construct type of the *cfvar*, or its parent if
+                *cfvar* is not a construct.
+
+                .. versionadded:: (cfdm) TODOCFAVER
+
+        :Returns:
+
+            `None`
 
         """
         # To avoid mutable default argument (an anti-pattern) of attributes={}
