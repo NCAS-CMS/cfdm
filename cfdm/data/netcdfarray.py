@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 import netCDF4
 import numpy
 
@@ -529,10 +531,15 @@ class NetCDFArray(abstract.Array):
         'eastward_wind'
 
         """
+        filename = self.get_filename()
+        url = urlparse(filename)
+        if url.scheme == "file":
+            filename = url.path
+
         try:
-            return netCDF4.Dataset(self.get_filename(None), "r")
+            return netCDF4.Dataset(filename, "r")
         except RuntimeError as error:
-            raise RuntimeError(f"{error}: {self.get_filename(None)}")
+            raise RuntimeError(f"{error}: {filename}")
 
     def to_memory(self):
         """Bring data on disk into memory.

@@ -1770,6 +1770,27 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 default, f"{self.__class__.__name__!r} has no count variable"
             )
 
+    def get_data(self, default=ValueError(), _units=None, _fill_value=None):
+        """Returns the data.
+
+        .. versionadded:: (cfdm) TODOCFAVER
+
+        :Parameters:
+
+            default: optional
+                TODOCFADOCS
+                Return the value of the *default* parameter if no
+                dependent tie point index variables have been set. If
+                set to an `Exception` instance then it will be raised
+                instead.
+
+        :Returns:
+
+            `Data`
+
+        """
+        return self
+
     def get_dependent_tie_points(self, default=ValueError()):
         """Return the list variable for a compressed array.
 

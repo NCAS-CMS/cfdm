@@ -1,3 +1,12 @@
+Version 1.10.0.3
+----------------
+
+**2023-??-??**
+
+* New method: `cfdm.Data.get_data`
+ 
+----
+
 Version 1.10.0.2
 ----------------
 
@@ -9,6 +18,7 @@ Version 1.10.0.2
   `NetCDFRead.read` (https://github.com/NCAS-CMS/cfdm/issues/233)
  
 ----
+
 
 Version 1.10.0.1
 ----------------

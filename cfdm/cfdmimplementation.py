@@ -1622,7 +1622,10 @@ class CFDMImplementation(Implementation):
                 The property value.
 
         """
-        return construct.get_property(prop, default=default)
+        try:
+            return construct.get_property(prop, default=default)
+        except AttributeError:
+            return default
 
     def get_geometry(self, construct, default=None):
         """Return the geometry type of coordinates.

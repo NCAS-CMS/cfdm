@@ -212,6 +212,7 @@ class NetCDFWrite(IOWrite):
         # To avoid mutable default argument (an anti-pattern) of extra={}
         if extra is None:
             extra = {}
+
         g = self.write_vars
 
         if parent is None:
@@ -2246,7 +2247,12 @@ class NetCDFWrite(IOWrite):
 
         return ncvar
 
-    def _write_field_ancillary(self, f, key, anc):
+    def _write_field_ancillary(
+        self,
+        f,
+        key,
+        anc,
+    ):
         """Write a field ancillary to the netCDF file.
 
         If an equal field ancillary has already been written to the file
@@ -2254,16 +2260,18 @@ class NetCDFWrite(IOWrite):
 
         :Parameters:
 
-            f : Field construct
+            f : `Field`
 
-            key : str
+            key : `str`
 
-            anc : Field ancillary construct
+            anc : `FieldAncillary`
 
         :Returns:
 
             `str`
-                The netCDF variable name of the field ancillary object.
+                The netCDF variable name of the field ancillary
+                object. If no ancillary variable was written then an
+                empty string is returned.
 
         **Examples**
 
@@ -2549,7 +2557,7 @@ class NetCDFWrite(IOWrite):
             dimensions: `tuple`
                 The netCDF dimension names of the variable
 
-            cfvar: `Variable`
+            cfvar: `Variable` or `Data`
                 The construct to write to the netCDF file.
 
             omit: sequence of `str`, optional
@@ -2557,10 +2565,10 @@ class NetCDFWrite(IOWrite):
             extra: `dict`, optional
 
             data_variable: `bool`, optional
-                True if the a data variable is being written.
+                True if a CF-netCDF data variable is being written.
 
             domain_variable: `bool`, optional
-                True if the a domain variable is being written.
+                True if cf-netCDF domain variable is being written.
 
                 .. versionadded:: (cfdm) 1.9.0.0
 
@@ -2605,21 +2613,23 @@ class NetCDFWrite(IOWrite):
         if g["dry_run"]:
             return
 
-        # Do this after the dry_run return else may attempt to transform
-        # the arrays with string dtype on an append-mode read iteration (bad).
-        if not domain_variable:
-            datatype = self._datatype(cfvar)
-            data, ncdimensions = self._transform_strings(
-                cfvar, data, ncdimensions
-            )
-
         logger.info(f"    Writing {cfvar!r}")  # pragma: no cover
 
         # Set 'construct_type'
         if not construct_type:
             construct_type = self.implementation.get_construct_type(cfvar)
 
-        # Whether or not write the data
+        # Do this after the dry_run return else may attempt to transform
+        # the arrays with string dtype on an append-mode read iteration (bad).
+        if not domain_variable:
+            datatype = self._datatype(cfvar)
+            data, ncdimensions = self._transform_strings(
+                data,
+                ncdimensions
+                #                cfvar, data, ncdimensions
+            )
+
+        # Whether or not to write the data
         omit_data = construct_type in g["omit_data"]
 
         # ------------------------------------------------------------
@@ -2805,16 +2815,15 @@ class NetCDFWrite(IOWrite):
         # the equivalent method in cf-python which is non-trivial.
         return kwargs
 
-    def _transform_strings(self, construct, data, ncdimensions):
+    #    def _transform_strings(self, construct, data, ncdimensions):
+    def _transform_strings(self, data, ncdimensions):
         """Transform metadata construct arrays with string data type.
 
         .. versionadded:: (cfdm) 1.7.3
 
         :Parameters:
 
-            construct: metadata construct object
-
-            data: Data instance or `None`
+            data: `Data` or `None`
 
             ncdimensions: `tuple`
 
@@ -2823,7 +2832,7 @@ class NetCDFWrite(IOWrite):
             `Data`, `tuple`
 
         """
-        datatype = self._datatype(construct)
+        datatype = self._datatype(data)
 
         if data is not None and datatype == "S1":
             # --------------------------------------------------------
@@ -3867,6 +3876,7 @@ class NetCDFWrite(IOWrite):
         # Ancillary variables
         if field and ancillary_variables:
             ancillary_variables = " ".join(ancillary_variables)
+            ancillary_variables = re.sub("\s+", " ", ancillary_variables)
             logger.info(
                 "    Writing ancillary_variables attribute to "
                 f"netCDF variable {ncvar}: {ancillary_variables!r}"
@@ -3936,7 +3946,7 @@ class NetCDFWrite(IOWrite):
                 omit += tuple(groups)
 
         if domain:
-            # Include the dimanions attribute on doain
+            # Include the dimensions attribute on domain
             # variables. CF-1.9
             extra["dimensions"] = " ".join(sorted(ncdimensions))
 
