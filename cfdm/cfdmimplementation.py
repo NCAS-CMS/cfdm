@@ -1877,7 +1877,6 @@ class CFDMImplementation(Implementation):
         data=None,
         bounds=None,
         interior_ring=None,
-            source=None,
         copy=True,
     ):
         """Return a dimension coordinate construct.
@@ -1905,7 +1904,6 @@ class CFDMImplementation(Implementation):
             data=data,
             bounds=bounds,
             interior_ring=interior_ring,
-            source=source,
             copy=copy,
         )
 

@@ -3576,7 +3576,6 @@ class NetCDFRead(IORead):
                     if bounds == ncvar:
                         bounds = None
 
-                    print (99999, ncvar, bounds)
                     domain_anc = self._create_domain_ancillary(
                         field_ncvar, ncvar, f, bounds_ncvar=bounds
                     )
@@ -4782,7 +4781,6 @@ class NetCDFRead(IORead):
 
         # Store the netCDF variable name
         self.implementation.nc_set_variable(cell_measure, ncvar)
-
         if ncvar in g["external_variables"]:
             # The cell measure variable is in an unknown external file
             self.implementation.nc_set_external(construct=cell_measure)
