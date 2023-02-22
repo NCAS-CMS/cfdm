@@ -3576,6 +3576,7 @@ class NetCDFRead(IORead):
                     if bounds == ncvar:
                         bounds = None
 
+                    print (99999, ncvar, bounds)
                     domain_anc = self._create_domain_ancillary(
                         field_ncvar, ncvar, f, bounds_ncvar=bounds
                     )
@@ -4568,6 +4569,9 @@ class NetCDFRead(IORead):
 
         elif nodes:
             attribute = "nodes"
+
+        # Make sure that the bounds attribute is removed
+        properties.pop(attribute, None)
 
         if dimension:
             properties.pop("compress", None)

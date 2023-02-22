@@ -3675,7 +3675,7 @@ class NetCDFWrite(IOWrite):
                         c.append((key, coord))
 
                 if len(c) == 1:
-                    owning_coord_key, _ = c[0]
+                    owning_coord_key, owning_coord = c[0]
                     z_axis = self.implementation.get_construct_data_axes(
                         f, owning_coord_key
                     )[0]
@@ -3684,6 +3684,7 @@ class NetCDFWrite(IOWrite):
                 # This formula_terms coordinate reference matches up
                 # with an existing coordinate
 
+                print (" owning_coord_key =",owning_coord_key)
                 for (
                     term,
                     value,
@@ -3719,11 +3720,22 @@ class NetCDFWrite(IOWrite):
                     if id(domain_anc) not in seen:
                         continue
 
+                    domain_anc.del_property('bounds', None)
+                    if self.implementation.equal_components(
+                            domain_anc, owning_coord, ignore_type=True
+                    ):
+                        
+                        print (99999999999)
+                        print (dim_coord.dump())
+                        print (owning_coord.dump())
+                        domain_anc = owning_coord
+                        ncvar = g["key_to_ncvar"][owning_coord_key]
+                            
                     # Get the netCDF variable name for the domain
                     # ancillary and add it to the formula_terms attribute
                     ncvar = seen[id(domain_anc)]["ncvar"]
                     formula_terms.append(f"{term}: {ncvar}")
-
+                    print (formula_terms)
                     bounds = g["bounds"].get(ncvar, None)
                     if bounds is not None:
                         if z_axis not in (
