@@ -4755,6 +4755,9 @@ class NetCDFWrite(IOWrite):
             "omit_data": omit_data,
         }
 
+        # Customise the write parameters
+        self._customize_write_vars()
+        
         if mode not in ("w", "a", "r+"):
             raise ValueError(
                 "cfdm.write mode parameter must be one of 'w', 'a' or 'r+', "
@@ -5196,3 +5199,14 @@ class NetCDFWrite(IOWrite):
         ncdim_groups = self._groups(ncdim)
 
         return v_groups.startswith(ncdim_groups)
+
+    def _customize_write_vars(self):
+        """Customise the write parameters.
+
+        This method is primarily aimed at providing a customisation
+        entry point for subclasses.
+
+        .. versionadded:: (cfdm) TODOCFAVER
+
+        """
+        pass
