@@ -532,8 +532,10 @@ class NetCDFArray(abstract.Array):
 
         """
         filename = self.get_filename()
+
         url = urlparse(filename)
         if url.scheme == "file":
+            # Convert file URI into absolute path
             filename = url.path
 
         try:
