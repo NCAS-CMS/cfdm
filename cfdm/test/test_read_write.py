@@ -978,6 +978,12 @@ class read_writeTest(unittest.TestCase):
 
         nc.close()
 
+        # Test the full round trip
+        cfdm.write(g, tmpfile0)
+        h = cfdm.read(tmpfile0)
+        self.assertEqual(len(h), 1)
+        self.assertTrue(f.equals(h[0]))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
