@@ -163,18 +163,19 @@ class ArrayMixin:
         """
         filenames = self.get_filenames()
         if len(filenames) == 1:
-            return filenames.pop()
-        elif not filenames:
+            return filenames[0]
+
+        if not filenames:
             if default is None:
                 return
 
             return self._default(
                 default, f"{self.__class__.__name__} has no file"
             )
-        else:
-            return self._default(
-                default, f"{self.__class__.__name__} has multiple files"
-            )
+
+        return self._default(
+            default, f"{self.__class__.__name__} has multiple files"
+        )
 
     def get_filenames(self):
         """Return the names of any files containing the data array.
@@ -183,18 +184,17 @@ class ArrayMixin:
 
         :Returns:
 
-            `set`
-                The file names in normalised, absolute form. If the
+            `tuple`
+                TODOCFADOCS The file names in normalised, absolute form. If the
                 data are all in memory then an empty `set` is
                 returned.
 
         """
-        try:
-            filename = self._get_component("filename")
-        except ValueError:
-            return set()
-        else:
-            return set((abspath(filename),))
+        filenames = self._get_component("filename", None)
+        if filenames is None:
+            return ()
+        
+        return tuple([abspath(f) for f in filenames])
 
     @classmethod
     def get_subspace(cls, array, indices, copy=True):
