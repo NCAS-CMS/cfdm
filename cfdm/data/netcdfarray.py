@@ -431,6 +431,26 @@ class NetCDFArray(abstract.Array):
             address = self.get_varid()
 
         return address
+    
+    def get_format(self):
+        """TODOCFADOCS
+
+        .. versionadded:: (cfdm) TODOCFAVER
+
+        .. seealso:: `get_filename`, `get_address`
+
+        :Returns:
+
+            `str`
+                The file format. Always ``'nc'``, signifying netCDF.
+
+        **Examples**
+
+        >>> a.get_format()
+        'nc'
+
+        """
+        return 'nc'
 
     def get_group(self):
         """The netCDF4 group structure of the netCDF variable.
@@ -535,7 +555,7 @@ class NetCDFArray(abstract.Array):
 
         url = urlparse(filename)
         if url.scheme == "file":
-            # Convert file URI into absolute path
+            # Convert file URI into an absolute path
             filename = url.path
 
         try:
