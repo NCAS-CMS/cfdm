@@ -466,13 +466,19 @@ def example_field(n, _implementation=_implementation):
 
         # domain_ancillary
         c = DomainAncillary()
-        c.set_properties({"units": "m"})
+        c.set_properties(
+            {
+                "units": "m",
+                "computed_standard_name": "altitude",
+                "standard_name": "atmosphere_hybrid_height_coordinate",
+            }
+        )
         c.nc_set_variable("a")
-        data = Data([10.0], units="m", dtype="f8")
+        data = Data([20.0], units="m", dtype="f8")
         c.set_data(data)
         b = Bounds()
         b.nc_set_variable("a_bounds")
-        data = Data([[5.0, 15.0]], units="m", dtype="f8")
+        data = Data([[0, 36.6666717529297]], units="m", dtype="f8")
         b.set_data(data)
         c.set_bounds(b)
         f.set_construct(
@@ -482,11 +488,11 @@ def example_field(n, _implementation=_implementation):
         # domain_ancillary
         c = DomainAncillary()
         c.nc_set_variable("b")
-        data = Data([20.0], dtype="f8")
+        data = Data([0.997741281986237], dtype="f8")
         c.set_data(data)
         b = Bounds()
         b.nc_set_variable("b_bounds")
-        data = Data([[14.0, 26.0]], dtype="f8")
+        data = Data([[1, 0.995860934257507]], dtype="f8")
         b.set_data(data)
         c.set_bounds(b)
         f.set_construct(
@@ -946,16 +952,17 @@ def example_field(n, _implementation=_implementation):
         c = DimensionCoordinate()
         c.set_properties(
             {
+                "units": "m",
                 "computed_standard_name": "altitude",
                 "standard_name": "atmosphere_hybrid_height_coordinate",
             }
         )
         c.nc_set_variable("atmosphere_hybrid_height_coordinate")
-        data = Data([1.5], dtype="f8")
+        data = Data([20.0], dtype="f8")
         c.set_data(data)
         b = Bounds()
         b.nc_set_variable("atmosphere_hybrid_height_coordinate_bounds")
-        data = Data([[1.0, 2.0]], dtype="f8")
+        data = Data([[0, 36.6666717529297]], dtype="f8")
         b.set_data(data)
         c.set_bounds(b)
         f.set_construct(

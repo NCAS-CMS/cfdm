@@ -7,7 +7,9 @@ Version 1.10.0.2
   (https://github.com/NCAS-CMS/cfdm/issues/228)
 * Relocate the call to `NetCDFRead._customize_read_vars` to earlier in
   `NetCDFRead.read` (https://github.com/NCAS-CMS/cfdm/issues/233)
- 
+* Fixed bug that caused incorrect formula terms in output netCDF files
+  in some cases (https://github.com/NCAS-CMS/cfdm/issues/242)
+
 ----
 
 Version 1.10.0.1

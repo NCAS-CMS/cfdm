@@ -7,6 +7,7 @@ import subprocess
 import tempfile
 import unittest
 
+import netCDF4
 import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
@@ -937,6 +938,51 @@ class read_writeTest(unittest.TestCase):
         # Check that only the field data are missing
         self.assertFalse(g.array.count())
         self.assertTrue(g.construct("grid_latitude").array.count())
+
+    def test_read_write_domain_ancillary(self):
+        """Test when domain ancillary equals dimension coordinate."""
+        f = cfdm.example_field(1)
+
+        # Check the domain ancillary does indeed equal the dimension
+        # coordinate
+        self.assertTrue(
+            f.domain_ancillary("atmosphere_hybrid_height_coordinate").equals(
+                f.dimension_coordinate("atmosphere_hybrid_height_coordinate"),
+                ignore_type=True,
+            )
+        )
+
+        cfdm.write(f, tmpfile)
+        g = cfdm.read(tmpfile)
+        self.assertEqual(len(g), 1)
+        g = g[0]
+        self.assertTrue(f.equals(g))
+
+        nc = netCDF4.Dataset(tmpfile, "r")
+
+        z = nc.variables["atmosphere_hybrid_height_coordinate"]
+        # In the following test we are checking that it is not 'a: a
+        # b: b orog: surface_altitude'
+        self.assertEqual(
+            z.getncattr("formula_terms"),
+            "a: atmosphere_hybrid_height_coordinate b: b orog: surface_altitude",
+        )
+
+        zb = nc.variables["atmosphere_hybrid_height_coordinate_bounds"]
+        # In the following test we are checking that it is not 'a:
+        # a_bounds b: b orog: surface_altitude'
+        self.assertEqual(
+            zb.getncattr("formula_terms"),
+            "a: atmosphere_hybrid_height_coordinate_bounds b: b_bounds orog: surface_altitude",
+        )
+
+        nc.close()
+
+        # Test the full round trip
+        cfdm.write(g, tmpfile0)
+        h = cfdm.read(tmpfile0)
+        self.assertEqual(len(h), 1)
+        self.assertTrue(f.equals(h[0]))
 
 
 if __name__ == "__main__":
