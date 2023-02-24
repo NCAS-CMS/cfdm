@@ -163,8 +163,9 @@ class ArrayMixin:
         """
         filenames = self.get_filenames()
         if len(filenames) == 1:
-            return filenames.pop()
-        elif not filenames:
+            return filenames[0]
+
+        if not filenames:
             if default is None:
                 return
 
@@ -183,18 +184,18 @@ class ArrayMixin:
 
         :Returns:
 
-            `set`
+            `tuple`
                 The file names in normalised, absolute form. If the
-                data are all in memory then an empty `set` is
+                data are all in memory then an empty `tuple` is
                 returned.
 
         """
         try:
             filename = self._get_component("filename")
         except ValueError:
-            return set()
+            return ()
         else:
-            return set((abspath(filename),))
+            return (abspath(filename),)
 
     @classmethod
     def get_subspace(cls, array, indices, copy=True):
