@@ -1813,7 +1813,7 @@ class FieldDomain:
 
             {{ignore_fill_value: `bool`, optional}}
 
-            ignore_properties: (sequence of `str`), optional
+            ignore_properties: (sequence of) `str`, optional
                 The names of properties of the construct (not the
                 metadata constructs) to omit from the comparison. Note
                 that the ``Conventions`` property is always omitted.
