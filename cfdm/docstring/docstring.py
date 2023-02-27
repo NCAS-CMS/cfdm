@@ -140,7 +140,7 @@ _docstring_substitution_definitions = {
                 If True then all ``_FillValue`` and ``missing_value``
                 properties are omitted from the comparison.""",
     # ignore_properties
-    "{{ignore_properties: sequence of `str`, optional}}": """ignore_properties: sequence of `str`, optional
+    "{{ignore_properties: (sequence of) `str`, optional}}": """ignore_properties: (sequence of) `str`, optional
                 The names of properties to omit from the
                 comparison.""",
     # inplace

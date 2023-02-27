@@ -1,3 +1,15 @@
+Version 1.10.0.3
+----------------
+
+**2023-??-??**
+
+* New method: `cfdm.Field.del_properties`
+  (https://github.com/NCAS-CMS/cfdm/issues/241)
+* New keyword parameter to `cfdm.unique_constructs`:
+  ``ignore_properties`` (https://github.com/NCAS-CMS/cfdm/issues/240)
+  
+----
+
 Version 1.10.0.2
 ----------------
 
