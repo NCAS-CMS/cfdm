@@ -268,7 +268,7 @@ class Properties(Container):
             other:
                 The object to compare for equality.
 
-            {[atol: number, optional}}
+            {{atol: number, optional}}
 
             {{rtol: number, optional}}
 
@@ -276,7 +276,7 @@ class Properties(Container):
 
             {{verbose: `int` or `str` or `None`, optional}}
 
-            {{ignore_properties: (sequence of `str`), optional}}
+            {{ignore_properties: (sequence of) `str`, optional}}
 
             {{ignore_data_type: `bool`, optional}}
 
