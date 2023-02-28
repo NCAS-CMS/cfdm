@@ -1,13 +1,15 @@
 Version 1.10.0.3
 ----------------
 
-**2023-??-??**
+**2023-03-??**
 
 * New method: `cfdm.Field.del_properties`
   (https://github.com/NCAS-CMS/cfdm/issues/241)
 * New keyword parameter to `cfdm.unique_constructs`:
   ``ignore_properties`` (https://github.com/NCAS-CMS/cfdm/issues/240)
-  
+* Fixed bug that caused `cf.write` to erroneously change external
+  netCDF variable names (https://github.com/NCAS-CMS/cfdm/issues/244)
+
 ----
 
 Version 1.10.0.2
