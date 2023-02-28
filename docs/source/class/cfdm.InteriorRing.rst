@@ -40,6 +40,7 @@ Properties
    ~cfdm.InteriorRing.set_property
    ~cfdm.InteriorRing.properties
    ~cfdm.InteriorRing.clear_properties
+   ~cfdm.InteriorRing.del_properties
    ~cfdm.InteriorRing.set_properties
 
 Data

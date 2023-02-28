@@ -26,6 +26,7 @@ Properties
    ~cfdm.core.Coordinate.set_property
    ~cfdm.core.Coordinate.properties
    ~cfdm.core.Coordinate.clear_properties
+   ~cfdm.core.Coordinate.del_properties
    ~cfdm.core.Coordinate.set_properties
 
 Data

@@ -40,6 +40,7 @@ Properties
    ~cfdm.Bounds.set_property
    ~cfdm.Bounds.properties
    ~cfdm.Bounds.clear_properties
+   ~cfdm.Bounds.del_properties
    ~cfdm.Bounds.set_properties
    ~cfdm.Bounds.inherited_properties
 

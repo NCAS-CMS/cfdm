@@ -51,6 +51,7 @@ Properties
    ~cfdm.AuxiliaryCoordinate.set_property
    ~cfdm.AuxiliaryCoordinate.properties
    ~cfdm.AuxiliaryCoordinate.clear_properties
+   ~cfdm.AuxiliaryCoordinate.del_properties
    ~cfdm.AuxiliaryCoordinate.set_properties
 
 Data

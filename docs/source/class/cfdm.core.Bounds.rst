@@ -26,6 +26,7 @@ Properties
    ~cfdm.core.Bounds.set_property
    ~cfdm.core.Bounds.properties
    ~cfdm.core.Bounds.clear_properties
+   ~cfdm.core.Bounds.del_properties
    ~cfdm.core.Bounds.set_properties
 
 Data

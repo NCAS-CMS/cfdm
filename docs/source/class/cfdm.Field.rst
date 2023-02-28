@@ -55,6 +55,7 @@ Properties
    ~cfdm.Field.set_property
    ~cfdm.Field.properties
    ~cfdm.Field.clear_properties
+   ~cfdm.Field.del_properties
    ~cfdm.Field.set_properties
 
 .. _Field-Data:

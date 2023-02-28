@@ -42,6 +42,7 @@ Properties
    ~cfdm.core.CellMeasure.set_property
    ~cfdm.core.CellMeasure.properties
    ~cfdm.core.CellMeasure.clear_properties
+   ~cfdm.core.CellMeasure.del_properties
    ~cfdm.core.CellMeasure.set_properties
 
 Data

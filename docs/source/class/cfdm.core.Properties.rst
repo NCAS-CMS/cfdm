@@ -26,6 +26,7 @@ Properties
    ~cfdm.core.Properties.set_property
    ~cfdm.core.Properties.properties
    ~cfdm.core.Properties.clear_properties
+   ~cfdm.core.Properties.del_properties
    ~cfdm.core.Properties.set_properties
   
 Miscellaneous

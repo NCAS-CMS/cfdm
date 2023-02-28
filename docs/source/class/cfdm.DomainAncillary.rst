@@ -51,6 +51,7 @@ Properties
    ~cfdm.DomainAncillary.set_property
    ~cfdm.DomainAncillary.properties
    ~cfdm.DomainAncillary.clear_properties
+   ~cfdm.DomainAncillary.del_properties
    ~cfdm.DomainAncillary.set_properties
 
 Data

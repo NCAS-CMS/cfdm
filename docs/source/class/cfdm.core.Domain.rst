@@ -66,6 +66,7 @@ Properties
    ~cfdm.core.Domain.set_property
    ~cfdm.core.Domain.properties
    ~cfdm.core.Domain.clear_properties
+   ~cfdm.core.Domain.del_properties
    ~cfdm.core.Domain.set_properties
 
 Miscellaneous

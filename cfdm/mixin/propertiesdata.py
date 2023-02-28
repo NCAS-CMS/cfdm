@@ -678,7 +678,7 @@ class PropertiesData(Properties):
         verbose=None,
         ignore_data_type=False,
         ignore_fill_value=False,
-        ignore_properties=(),
+        ignore_properties=None,
         ignore_compression=True,
         ignore_type=False,
     ):
@@ -723,7 +723,7 @@ class PropertiesData(Properties):
 
             {{verbose: `int` or `str` or `None`, optional}}
 
-            {{ignore_properties: sequence of `str`, optional}}
+            {{ignore_properties: (sequence of) `str`, optional}}
 
             {{ignore_data_type: `bool`, optional}}
 

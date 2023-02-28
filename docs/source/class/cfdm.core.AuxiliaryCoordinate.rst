@@ -38,6 +38,7 @@ Properties
    ~cfdm.core.AuxiliaryCoordinate.set_property
    ~cfdm.core.AuxiliaryCoordinate.properties
    ~cfdm.core.AuxiliaryCoordinate.clear_properties
+   ~cfdm.core.AuxiliaryCoordinate.del_properties
    ~cfdm.core.AuxiliaryCoordinate.set_properties
 
 Data

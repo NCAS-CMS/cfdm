@@ -855,6 +855,24 @@ class FieldTest(unittest.TestCase):
             f.get_original_filenames(), f.copy().get_original_filenames()
         )
 
+    def test_Field_del_properties(self):
+        """Test the del_properties method of Field."""
+        f = cfdm.Field()
+        f.set_properties({"project": "CMIP7", "comment": "model"})
+        properties = f.properties()
+
+        removed_properties = f.del_properties("project")
+        self.assertEqual(removed_properties, {"project": "CMIP7"})
+        self.assertEqual(f.properties(), {"comment": "model"})
+        f.set_properties(removed_properties)
+        self.assertEqual(f.properties(), properties)
+        self.assertEqual(f.del_properties("foo"), {})
+        self.assertEqual(f.properties(), properties)
+
+        removed_properties = f.del_properties(["project", "comment"])
+        self.assertEqual(removed_properties, properties)
+        self.assertEqual(f.properties(), {})
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

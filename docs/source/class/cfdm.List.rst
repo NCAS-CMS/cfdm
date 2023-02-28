@@ -40,6 +40,7 @@ Properties
    ~cfdm.List.set_property
    ~cfdm.List.properties
    ~cfdm.List.clear_properties
+   ~cfdm.List.del_properties
    ~cfdm.List.set_properties
 
 Data
