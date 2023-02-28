@@ -1,3 +1,13 @@
+Version 1.10.0.3
+----------------
+
+**2023-03-??**
+
+* Fixed bug that caused `cf.write` to erroneously change external
+  netCDF variable names (https://github.com/NCAS-CMS/cfdm/issues/244)
+ 
+----
+
 Version 1.10.0.2
 ----------------
 
