@@ -49,7 +49,7 @@ class NetCDF:
         self._set_component("netcdf", netcdf, copy=False)
 
 
-class _NetCDFMixin:
+class NetCDFMixin:
     """Mixin class for accessing named netCDF entities.
 
     .. versionadded:: (cfdm) 1.10.0.0
@@ -274,7 +274,7 @@ class _NetCDFMixin:
         self._get_component("netcdf")[entity] = value
 
 
-class _NetCDFGroupsMixin:
+class NetCDFGroupsMixin:
     """Mixin class for accessing netCDF(4) hierarchical groups.
 
     .. versionadded:: (cfdm) 1.8.6
@@ -420,7 +420,7 @@ class _NetCDFGroupsMixin:
         return old
 
 
-class NetCDFDimension(NetCDF, _NetCDFMixin, _NetCDFGroupsMixin):
+class NetCDFDimension(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
     """Mixin class for accessing the netCDF dimension name.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -783,7 +783,7 @@ class NetCDFDimension(NetCDF, _NetCDFMixin, _NetCDFGroupsMixin):
         )
 
 
-class NetCDFVariable(NetCDF, _NetCDFMixin, _NetCDFGroupsMixin):
+class NetCDFVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
     """Mixin class for accessing the netCDF variable name.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -1143,7 +1143,7 @@ class NetCDFVariable(NetCDF, _NetCDFMixin, _NetCDFGroupsMixin):
         )
 
 
-class NetCDFSampleDimension(NetCDF, _NetCDFGroupsMixin):
+class NetCDFSampleDimension(NetCDF, NetCDFGroupsMixin):
     """Mixin class for accessing the netCDF sample dimension name.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -2192,7 +2192,7 @@ class NetCDFExternal(NetCDF):
         self._get_component("netcdf")["external"] = bool(external)
 
 
-class NetCDFGeometry(NetCDF, _NetCDFGroupsMixin):
+class NetCDFGeometry(NetCDF, NetCDFGroupsMixin):
     """Mixin to access the netCDF geometry container variable name.
 
     .. versionadded:: (cfdm) 1.8.0
@@ -3613,7 +3613,7 @@ class NetCDFUnreferenced:
             print("    },")
 
 
-class NetCDFSubsampledDimension(NetCDF, _NetCDFMixin, _NetCDFGroupsMixin):
+class NetCDFSubsampledDimension(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
     """Mixin class for accessing the netCDF subsampled dimension name.
 
     .. versionadded:: (cfdm) 1.10.0.0
@@ -3987,7 +3987,7 @@ class NetCDFSubsampledDimension(NetCDF, _NetCDFMixin, _NetCDFGroupsMixin):
 
 
 class NetCDFInterpolationSubareaDimension(
-    NetCDF, _NetCDFMixin, _NetCDFGroupsMixin
+    NetCDF, NetCDFMixin, NetCDFGroupsMixin
 ):
     """Mixin class for the netCDF interpolation subarea dimension name.
 

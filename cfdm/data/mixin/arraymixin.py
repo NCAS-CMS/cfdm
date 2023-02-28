@@ -161,11 +161,8 @@ class ArrayMixin:
                 The file name.
 
         """
-        filenames = self.get_filenames()
-        if len(filenames) == 1:
-            return filenames[0]
-
-        if not filenames:
+        filename = self._get_component("filename", None)
+        if filename is None:
             if default is None:
                 return
 
@@ -173,14 +170,20 @@ class ArrayMixin:
                 default, f"{self.__class__.__name__} has no file"
             )
 
-        return self._default(
-            default, f"{self.__class__.__name__} has multiple files"
-        )
+        return filename
 
-    def get_filenames(self):
+    def get_filenames(self, default=AttributeError()):
         """Return the names of any files containing the data array.
 
         .. versionadded:: (cfdm) 1.10.0.2
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if there
+                are no files.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -190,11 +193,19 @@ class ArrayMixin:
                 returned.
 
         """
-        filenames = self._get_component("filename", None)
-        if filenames is None:
-            return ()
         
-        return tuple([abspath(f) for f in filenames])
+        return tuple(abspath(self.get_filename()),)
+
+#        filename = self.get_filename(None)
+#        if filename is None:
+#            if default is None:
+#                return
+#
+#            return self._default(
+#                default, f"{self.__class__.__name__} has no files"
+#            )
+#
+#        return tuple(abspath(filename),)
 
     @classmethod
     def get_subspace(cls, array, indices, copy=True):

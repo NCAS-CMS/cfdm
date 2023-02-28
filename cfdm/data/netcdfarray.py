@@ -4,10 +4,11 @@ import netCDF4
 import numpy
 
 from . import abstract
+from .mixin import FileArrayMixin
 from .numpyarray import NumpyArray
 
 
-class NetCDFArray(abstract.Array):
+class NetCDFArray(FileArrayMixin, abstract.Array):
     """An underlying array stored in a netCDF file.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -170,7 +171,7 @@ class NetCDFArray(abstract.Array):
             self._set_component("shape", shape, copy=False)
 
         if filename is not None:
-            self._set_component("filename", (filename,), copy=False)
+            self._set_component("filename", filename, copy=False)
 
         if ncvar is not None:
             self._set_component("ncvar", ncvar, copy=False)
@@ -450,7 +451,7 @@ class NetCDFArray(abstract.Array):
         'nc'
 
         """
-        return 'nc'
+        return "nc"
 
     def get_group(self):
         """The netCDF4 group structure of the netCDF variable.
@@ -562,27 +563,6 @@ class NetCDFArray(abstract.Array):
             return netCDF4.Dataset(filename, "r")
         except RuntimeError as error:
             raise RuntimeError(f"{error}: {filename}")
-
-        #filenames = self.get_filenames()
-        #for filename, address in zip(filenames, self.get_addresses()):
-        #    url = urlparse(filename)
-        #    if url.scheme == "file":
-        #        # Convert file URI into an absolute path
-        #        filename = url.path
-        #
-        #    try:
-        #        nc = netCDF4.Dataset(filename, "r")
-        #    except FileNotFoundError:
-        #        continue
-        #    except RuntimeError as error:
-        #        raise RuntimeError(f"{error}: {filename}")
-        #
-        #    self._set_component("ncvar", address, copy=False)
-        #    return nc
-        #
-        #raise FileNotFoundError(
-        #    f"No such netCDF fragment files: {tuple(filenames)}"
-        #)
 
     def to_memory(self):
         """Bring data on disk into memory.

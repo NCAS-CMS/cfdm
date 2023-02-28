@@ -489,6 +489,7 @@ class NetCDFWrite(IOWrite):
                     sample_ncdim = self._write_list_variable(
                         field,
                         list_variable,
+#
                         compress=" ".join(compressed_ncdims),
                     )
                     g["sample_ncdim"][compressed_ncdims] = sample_ncdim
