@@ -224,7 +224,7 @@ class CellMeasure(
         verbose=None,
         ignore_data_type=False,
         ignore_fill_value=False,
-        ignore_properties=(),
+        ignore_properties=None,
         ignore_compression=True,
         ignore_type=False,
     ):
@@ -232,24 +232,25 @@ class CellMeasure(
 
         Equality is strict by default. This means that:
 
-        * the same descriptive properties must be present, with the same
-          values and data types, and vector-valued properties must also have
-          same the size and be element-wise equal (see the *ignore_properties*
-          and *ignore_data_type* parameters), and
+        * the same descriptive properties must be present, with the
+          same values and data types, and vector-valued properties
+          must also have same the size and be element-wise equal (see
+          the *ignore_properties* and *ignore_data_type* parameters),
+          and
 
         ..
 
-        * if there are data arrays then they must have same shape and data
-          type, the same missing data mask, and be element-wise equal (see the
-          *ignore_data_type* parameter).
+        * if there are data arrays then they must have same shape and
+          data type, the same missing data mask, and be element-wise
+          equal (see the *ignore_data_type* parameter).
 
         {{equals tolerance}}
 
         {{equals compression}}
 
-        Any type of object may be tested but, in general, equality is only
-        possible with another cell measure construct, or a subclass of
-        one. See the *ignore_type* parameter.
+        Any type of object may be tested but, in general, equality is
+        only possible with another cell measure construct, or a
+        subclass of one. See the *ignore_type* parameter.
 
         {{equals netCDF}}
 
@@ -268,8 +269,7 @@ class CellMeasure(
 
             {{verbose: `int` or `str` or `None`, optional}}
 
-            ignore_properties: sequence of `str`, optional
-                The names of properties to omit from the comparison.
+            {{ignore_properties: (sequence of) `str`, optional}}
 
             {{ignore_data_type: `bool`, optional}}
 

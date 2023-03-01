@@ -390,7 +390,7 @@ class ConstructsTest(unittest.TestCase):
                 e = d.inverse_filter()
                 self.assertEqual(len(e), len(c) - len(d))
 
-        self.assertEqual(len(c.filter_by_property(standard_name=None)), 8)
+        self.assertEqual(len(c.filter_by_property(standard_name=None)), 9)
 
         with self.assertRaises(ValueError):
             c.filter_by_property("too many", "modes")

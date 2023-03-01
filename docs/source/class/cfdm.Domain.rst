@@ -100,6 +100,7 @@ Properties
    ~cfdm.Domain.set_property
    ~cfdm.Domain.properties
    ~cfdm.Domain.clear_properties
+   ~cfdm.Domain.del_properties
    ~cfdm.Domain.set_properties
 
 Miscellaneous

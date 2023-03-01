@@ -45,7 +45,8 @@ class Properties(Container):
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `del_property` `properties`, `set_properties`
+        .. seealso:: `del_properties`, `del_property`, `properties`,
+                     `set_properties`
 
         :Returns:
 
@@ -133,6 +134,61 @@ class Properties(Container):
                 default,
                 f"{self.__class__.__name__!r} has no {prop!r} property",
             )
+
+    def del_properties(self, properties):
+        """Remove properties.
+
+        .. versionadded:: (cfdm) 1.10.0.3
+
+        .. seealso:: `clear_properties`, `del_property`, `properties`,
+                     `set_properties`
+
+        :Parameters:
+
+            properties: (sequence of) `str`
+                The names of the properties to be removed. If the
+                `{{class}}` does not have a particular property then
+                that property is ignored. No properties are removed if
+                *properties* is an empty sequence.
+
+                *Parameter example:*
+                  ``'long_name'``
+
+                *Parameter example:*
+                  ``['long_name', 'comment']``
+
+        :Returns:
+
+            `dict`
+                The removed property values, keyed by property name.
+
+        **Examples**
+
+        >>> f = {{package}}.{{class}}()
+        >>> f.set_properties({'project': 'CMIP7', 'comment': 'model'})
+        >>> removed_properties = f.del_properties('project')
+        >>> removed_properties
+        {'project': 'CMIP7'}
+        >>> f.properties()
+        {'comment': 'model'}
+        >>> f.set_properties(removed_properties)
+        >>> f.properties()
+        {'comment': 'model', 'project': 'CMIP7'}
+        >>> f.del_properties('foo')
+        {}
+
+        """
+        if isinstance(properties, str):
+            properties = (properties,)
+
+        out = {}
+        for prop in properties:
+            try:
+                out[prop] = self.del_property(prop)
+            except ValueError:
+                pass
+
+        return out
 
     def get_property(self, prop, default=ValueError()):
         """Return a property.

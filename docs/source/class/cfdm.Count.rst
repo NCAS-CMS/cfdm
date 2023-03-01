@@ -40,6 +40,7 @@ Properties
    ~cfdm.Count.set_property
    ~cfdm.Count.properties
    ~cfdm.Count.clear_properties
+   ~cfdm.Count.del_properties
    ~cfdm.Count.set_properties
 
 Data

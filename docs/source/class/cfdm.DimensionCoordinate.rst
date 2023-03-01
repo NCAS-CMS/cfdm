@@ -51,6 +51,7 @@ Properties
    ~cfdm.DimensionCoordinate.set_property
    ~cfdm.DimensionCoordinate.properties
    ~cfdm.DimensionCoordinate.clear_properties
+   ~cfdm.DimensionCoordinate.del_properties
    ~cfdm.DimensionCoordinate.set_properties
 
 Data

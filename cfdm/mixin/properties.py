@@ -240,7 +240,7 @@ class Properties(Container):
         verbose=None,
         ignore_data_type=False,
         ignore_fill_value=False,
-        ignore_properties=(),
+        ignore_properties=None,
         ignore_type=False,
         ignore_compression=True,
     ):
@@ -268,7 +268,7 @@ class Properties(Container):
             other:
                 The object to compare for equality.
 
-            {[atol: number, optional}}
+            {{atol: number, optional}}
 
             {{rtol: number, optional}}
 
@@ -276,7 +276,7 @@ class Properties(Container):
 
             {{verbose: `int` or `str` or `None`, optional}}
 
-            {{ignore_properties: sequence of `str`, optional}}
+            {{ignore_properties: (sequence of) `str`, optional}}
 
             {{ignore_data_type: `bool`, optional}}
 
@@ -327,6 +327,9 @@ class Properties(Container):
         other_properties = other.properties()
 
         if ignore_properties:
+            if isinstance(ignore_properties, str):
+                ignore_properties = (ignore_properties,)
+
             for prop in ignore_properties:
                 self_properties.pop(prop, None)
                 other_properties.pop(prop, None)

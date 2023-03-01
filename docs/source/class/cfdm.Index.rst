@@ -40,6 +40,7 @@ Properties
    ~cfdm.Index.set_property
    ~cfdm.Index.properties
    ~cfdm.Index.clear_properties
+   ~cfdm.Index.del_properties
    ~cfdm.Index.set_properties
 
 Data

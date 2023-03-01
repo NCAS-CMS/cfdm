@@ -4675,6 +4675,9 @@ class NetCDFRead(IORead):
         elif nodes:
             attribute = "nodes"
 
+        # Make sure that the bounds attribute is removed
+        properties.pop(attribute, None)
+
         if dimension:
             properties.pop("compress", None)
             c = self.implementation.initialise_DimensionCoordinate()
@@ -4884,7 +4887,6 @@ class NetCDFRead(IORead):
 
         # Store the netCDF variable name
         self.implementation.nc_set_variable(cell_measure, ncvar)
-
         if ncvar in g["external_variables"]:
             # The cell measure variable is in an unknown external file
             self.implementation.nc_set_external(construct=cell_measure)

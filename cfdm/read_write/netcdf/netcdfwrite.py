@@ -2308,13 +2308,14 @@ class NetCDFWrite(IOWrite):
 
         :Parameters:
 
-            field: Field construct
+            field: `Field` or `Domain`
                 The field containing the cell measure.
 
             key: `str`
-                The identifier of the cell measure (e.g. 'cellmeasure0').
+                The identifier of the cell measure
+                (e.g. ``'cellmeasure0'``).
 
-            cell_measure: Cell measure construct
+            cell_measure: `CellMeasure`
 
         :Returns:
 
@@ -2327,7 +2328,7 @@ class NetCDFWrite(IOWrite):
         measure = self.implementation.get_measure(cell_measure)
         if measure is None:
             raise ValueError(
-                "Can't create a netCDF cell measure variable "
+                "Can't create a CF-netCDF cell measure variable "
                 "without a 'measure' property"
             )
 
@@ -2338,15 +2339,24 @@ class NetCDFWrite(IOWrite):
             ncvar = g["seen"][id(cell_measure)]["ncvar"]
         elif self.implementation.nc_get_external(cell_measure):
             # The cell measure is external
-            ncvar = self._create_netcdf_variable_name(
-                cell_measure, default="cell_measure"
+            ncvar = self.implementation.nc_get_variable(
+                cell_measure, default=None
             )
+            if ncvar is None:
+                raise ValueError(
+                    "Can't create an external CF-netCDF cell measure "
+                    "variable without a netCDF variable name"
+                )
 
             # Add ncvar to the global external_variables attribute
             self._set_external_variables(ncvar)
 
-            # Create a new field to write out to the external file
-            if g["external_file"] is not None:
+            if (
+                g["external_file"] is not None
+                and self.implementation.get_data(cell_measure, None)
+                is not None
+            ):
+                # Create a new field to write out to the external file
                 self._create_external(
                     field=field,
                     construct_id=key,
@@ -2358,7 +2368,7 @@ class NetCDFWrite(IOWrite):
                 cell_measure, default="cell_measure"
             )
 
-            # Create a new cell measure variable
+            # Create a new (internal) cell measure variable
             self._write_netcdf_variable(ncvar, ncdimensions, cell_measure)
 
         g["key_to_ncvar"][key] = ncvar
@@ -2373,16 +2383,15 @@ class NetCDFWrite(IOWrite):
 
         external_variables = g["external_variables"]
 
-        if external_variables:
-            external_variables = f"{external_variables} {ncvar}"
-        else:
-            external_variables = ncvar
+        if not external_variables:
             g["global_attributes"].add("external_variables")
 
-        if not g["dry_run"] and not g["post_dry_run"]:
-            g["netcdf"].setncattr("external_variables", external_variables)
-
-        g["external_variables"] = external_variables
+        if ncvar not in external_variables:
+            external_variables.add(ncvar)
+            if not g["dry_run"] and not g["post_dry_run"]:
+                g["netcdf"].setncattr(
+                    "external_variables", " ".join(sorted(external_variables))
+                )
 
     def _create_external(
         self, field=None, construct_id=None, ncvar=None, ncdimensions=None
@@ -2412,7 +2421,16 @@ class NetCDFWrite(IOWrite):
             external_domain_axis = external_domain_axes[axis]
             self.implementation.nc_set_dimension(external_domain_axis, ncdim)
 
-        g["external_fields"].append(external)
+        # Don't write fields that are already in the list for being
+        # written
+        new = True
+        for f in g["external_fields"]:
+            if self.implementation.equal_components(external, f):
+                new = False
+                break
+
+        if new:
+            g["external_fields"].append(external)
 
         return external
 
@@ -4722,7 +4740,7 @@ class NetCDFWrite(IOWrite):
             "ncdim_size_to_spanning_constructs": [],
             "count_variable_sample_dimension": {},
             "index_variable_sample_dimension": {},
-            "external_variables": "",
+            "external_variables": set(),
             "external_fields": [],
             "geometry_containers": {},
             "geometry_encoding": {},
