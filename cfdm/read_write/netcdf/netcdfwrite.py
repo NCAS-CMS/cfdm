@@ -2574,7 +2574,7 @@ class NetCDFWrite(IOWrite):
                 .. versionadded:: (cfdm) 1.9.0.0
 
             construct_type: `str`, optional
-                The construct type, or its parent it is not a
+                The construct type, or its parent if it is not a
                 construct.
 
                 .. versionadded:: (cfdm) TODOCFAVER

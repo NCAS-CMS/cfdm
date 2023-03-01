@@ -1604,7 +1604,10 @@ class CFDMImplementation(Implementation):
         {'standard_name': 'latitude', 'units': 'degrees_north', 'foo': 'bar'}
 
         """
-        return parent.properties()
+        try:
+            return parent.properties()
+        except AttributeError:
+            return {}
 
     def get_property(self, construct, prop, default=None):
         """Return a property of a construct.
