@@ -489,7 +489,7 @@ class NetCDFWrite(IOWrite):
                     sample_ncdim = self._write_list_variable(
                         field,
                         list_variable,
-#
+                        #
                         compress=" ".join(compressed_ncdims),
                     )
                     g["sample_ncdim"][compressed_ncdims] = sample_ncdim
@@ -4776,7 +4776,7 @@ class NetCDFWrite(IOWrite):
 
         # Customise the write parameters
         self._customize_write_vars()
-        
+
         if mode not in ("w", "a", "r+"):
             raise ValueError(
                 "cfdm.write mode parameter must be one of 'w', 'a' or 'r+', "

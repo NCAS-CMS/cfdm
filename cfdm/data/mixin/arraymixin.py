@@ -193,19 +193,7 @@ class ArrayMixin:
                 returned.
 
         """
-        
-        return tuple(abspath(self.get_filename()),)
-
-#        filename = self.get_filename(None)
-#        if filename is None:
-#            if default is None:
-#                return
-#
-#            return self._default(
-#                default, f"{self.__class__.__name__} has no files"
-#            )
-#
-#        return tuple(abspath(filename),)
+        return (abspath(self.get_filename(default)),)
 
     @classmethod
     def get_subspace(cls, array, indices, copy=True):

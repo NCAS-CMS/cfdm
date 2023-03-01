@@ -432,9 +432,9 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
             address = self.get_varid()
 
         return address
-    
+
     def get_format(self):
-        """TODOCFADOCS
+        """TODOCFADOCS.
 
         .. versionadded:: (cfdm) TODOCFAVER
 

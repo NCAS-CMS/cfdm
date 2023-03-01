@@ -2793,7 +2793,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             return set()
 
         try:
-            return source.get_filenames()
+            return set(source.get_filenames())
         except AttributeError:
             return set()
 
