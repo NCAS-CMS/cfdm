@@ -58,7 +58,7 @@ repos:
   # Additionally validate againt flake8 for other Python style enforcement
   # (see https://flake8.pycqa.org/en/latest/ for documentation and see
   # the cfdm .flake8 file for our custom flake8 configuration)
-  - repo: https://gitlab.com/pycqa/flake8
+  - repo: https://github.com/pycqa/flake8
     rev: 3.9.1
     hooks:
       - id: flake8
