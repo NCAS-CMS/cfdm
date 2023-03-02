@@ -750,6 +750,10 @@ class NetCDFRead(IORead):
             "interpolation": {},
             # Interpolation parameter variables
             "interpolation_parameter": {},
+            # --------------------------------------------------------
+            # CFA
+            # --------------------------------------------------------
+            "cfa": False,
         }
 
         g = self.read_vars
@@ -842,7 +846,7 @@ class NetCDFRead(IORead):
             )  # pragma: no cover
 
         # ------------------------------------------------------------
-        # Find the CF version for the file
+        # Find the CF version for the file, and the CFA version.
         # ------------------------------------------------------------
         Conventions = g["global_attributes"].get("Conventions", "")
 
@@ -856,7 +860,12 @@ class NetCDFRead(IORead):
         for c in all_conventions:
             if c.startswith("CF-"):
                 file_version = c.replace("CF-", "", 1)
-                break
+            elif c.startswith("CFA-"):
+                g["cfa"] = True
+                g["CFA_version"] = Version(c.replace("CFA-", "", 1))
+            elif c == "CFA":
+                g["cfa"] = True
+                g["CFA_version"] = Version("0.4") 
 
         if file_version is None:
             if default_version is not None:
