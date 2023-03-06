@@ -55,7 +55,6 @@ class NetCDFTest(unittest.TestCase):
         cfdm.write(f, tmpfile)
 
         g = cfdm.read(tmpfile)[0]
-        print(g.data.source().get_missing_values())
         self.assertEqual(
             g.data.source().get_missing_values(),
             {
