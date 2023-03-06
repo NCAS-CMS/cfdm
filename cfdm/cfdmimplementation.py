@@ -2171,6 +2171,7 @@ class CFDMImplementation(Implementation):
         mask=True,
         units=False,
         calendar=None,
+        missing_values=None,
     ):
         """Return a netCDF array instance.
 
@@ -2200,9 +2201,15 @@ class CFDMImplementation(Implementation):
 
                 .. versionadded:: (cfdm) 1.10.0.2
 
+            missing_values: `dict`, optional
+                The missing value indicators defined by the netCDF
+                variable attributes.
+
+                .. versionadded:: (cfdm) 1.10.0.3
+
         :Returns:
 
-            `NetCDFArray` instance
+            `NetCDFArray`
 
         """
         cls = self.get_class("NetCDFArray")
@@ -2214,6 +2221,7 @@ class CFDMImplementation(Implementation):
             mask=mask,
             units=units,
             calendar=calendar,
+            missing_values=missing_values,
         )
 
     def initialise_NodeCountProperties(self):

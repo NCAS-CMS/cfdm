@@ -5490,6 +5490,26 @@ class NetCDFRead(IORead):
         # TODO: think using e.g. '/forecasts/model1' has the value for
         #       nc_set_variable. What about nc_set_dimension?
 
+        # Store the missing value indicators
+        missing_values = {}
+        for attr in (
+            "missing_value",
+            "_FillValue",
+            "valid_min",
+            "valid_max",
+            "valid_range",
+        ):
+            value = getattr(variable, attr, None)
+            if value is not None:
+                missing_values[attr] = value
+
+        valid_range = missing_values.get("valid_range")
+        if valid_range is not None:
+            try:
+                missing_values["valid_range"] = tuple(valid_range)
+            except TypeError:
+                pass
+
         kwargs = {
             "filename": filename,
             "address": ncvar,
@@ -5499,6 +5519,7 @@ class NetCDFRead(IORead):
             #            "group": group,
             "units": units,
             "calendar": calendar,
+            "missing_values": missing_values,
         }
 
         if return_kwargs_only:
