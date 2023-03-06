@@ -491,13 +491,13 @@ class NetCDFArray(abstract.Array):
         >>> a.get_missing_values()
         None
 
-        >>> a.get_missing_values()
+        >>> b.get_missing_values()
         {}
 
-        >>> a.get_missing_values()
+        >>> c.get_missing_values()
         {'missing_value': 1e20, 'valid_range': (-10, 20)}
 
-        >>> a.get_missing_values()
+        >>> d.get_missing_values()
         {'valid_min': -999}
 
         """
