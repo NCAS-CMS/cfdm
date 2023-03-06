@@ -25,6 +25,7 @@ class NetCDFArray(abstract.Array):
         mask=True,
         units=False,
         calendar=False,
+        missing_values=None,
         source=None,
         copy=True,
     ):
@@ -107,6 +108,13 @@ class NetCDFArray(abstract.Array):
 
                 .. versionadded:: (cfdm) 1.10.0.1
 
+            missing_values: `dict`, optional
+                The missing value indicators defined by the netCDF
+                variable attributes. See `get_missing_values` for
+                details.
+
+                .. versionadded:: (cfdm) 1.10.0.3
+
             {{init source: optional}}
 
                 .. versionadded:: (cfdm) 1.10.0.0
@@ -164,6 +172,11 @@ class NetCDFArray(abstract.Array):
             except AttributeError:
                 calendar = False
 
+            try:
+                missing_values = source._get_component("missing_values", None)
+            except AttributeError:
+                missing_values = None
+
         if shape is not None:
             self._set_component("shape", shape, copy=False)
 
@@ -175,6 +188,11 @@ class NetCDFArray(abstract.Array):
 
         if varid is not None:
             self._set_component("varid", varid, copy=False)
+
+        if missing_values is not None:
+            self._set_component(
+                "missing_values", missing_values.copy(), copy=False
+            )
 
         self._set_component("group", group, copy=False)
         self._set_component("dtype", dtype, copy=False)
@@ -453,6 +471,41 @@ class NetCDFArray(abstract.Array):
 
         """
         return self._get_component("mask")
+
+    def get_missing_values(self):
+        """The missing value indicators from the netCDF variable.
+
+        .. versionadded:: (cfdm) 1.10.0.3
+
+        :Returns:
+
+            `dict` or `None`
+                The missing value indicators from the netCDF variable,
+                keyed by their netCDF attribute names. An empty
+                dictionary signifies that no missing values are given
+                in the file. `None` signifies that the missing values
+                have not been set.
+
+        **Examples**
+
+        >>> a.get_missing_values()
+        None
+
+        >>> b.get_missing_values()
+        {}
+
+        >>> c.get_missing_values()
+        {'missing_value': 1e20, 'valid_range': (-10, 20)}
+
+        >>> d.get_missing_values()
+        {'valid_min': -999}
+
+        """
+        out = self._get_component("missing_values", None)
+        if out is None:
+            return
+
+        return out.copy()
 
     def get_ncvar(self):
         """The name of the netCDF variable containing the array.
