@@ -2165,12 +2165,9 @@ class CFDMImplementation(Implementation):
     def initialise_NetCDFArray(
         self,
         filename=None,
-        ncvar=None,
-        group=None,
+        address=None,
         dtype=None,
-        ndim=None,
         shape=None,
-        size=None,
         mask=True,
         units=False,
         calendar=None,
@@ -2181,17 +2178,11 @@ class CFDMImplementation(Implementation):
 
             filename: `str`
 
-            ncvar: `str`
-
-            group: `None` or sequence of str`
+            address: `str`
 
             dytpe: `numpy.dtype`
 
-            ndim: `int`, optional
-
             shape: sequence of `int`, optional
-
-            size: `int, optional
 
             mask: `bool`, optional
 
@@ -2211,18 +2202,15 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            NetCDF array instance
+            `NetCDFArray` instance
 
         """
         cls = self.get_class("NetCDFArray")
         return cls(
             filename=filename,
-            ncvar=ncvar,
-            group=group,
+            address=address,
             dtype=dtype,
-            ndim=ndim,
             shape=shape,
-            size=size,
             mask=mask,
             units=units,
             calendar=calendar,

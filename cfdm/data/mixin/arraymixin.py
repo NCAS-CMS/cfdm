@@ -1,6 +1,6 @@
 import numpy
 
-from ...functions import abspath
+# from ...functions import abspath
 
 
 class ArrayMixin:
@@ -139,61 +139,64 @@ class ArrayMixin:
         """
         return self._get_component("compression_type", "")
 
-    def get_filename(self, default=AttributeError()):
-        """The name of the file containing the array.
+    #    def get_filename(self, default=AttributeError()):
+    #        """The name of the file containing the array.
+    #
+    #        If there are multiple files then an `AttributeError` is
+    #        raised by default.
+    #
+    #        .. versionadded:: (cfdm) 1.10.0.2
+    #
+    #        :Parameters:
+    #
+    #            default: optional
+    #                Return the value of the *default* parameter if there
+    #                is no file.
+    #
+    #                {{default Exception}}
+    #
+    #        :Returns:
+    #
+    #            `str`
+    #                The file name.
+    #
+    #        """
+    #        return self._default(default, f"{self.__class__.__name__} has no files"))
+    #
+    #        filenames = self._get_component("filename", ())
+    #        if len(filenames) == 1:
+    #            return filenames[0]
+    #
+    #        if default is None:
+    #            return
+    #
+    #        return self._default(
+    #            default, f"{self.__class__.__name__} has no file"
+    #        )
 
-        If there are multiple files then an `AttributeError` is
-        raised by default.
-
-        .. versionadded:: (cfdm) 1.10.0.2
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if there
-                is no file.
-
-                {{default Exception}}
-
-        :Returns:
-
-            `str`
-                The file name.
-
-        """
-        filename = self._get_component("filename", None)
-        if filename is None:
-            if default is None:
-                return
-
-            return self._default(
-                default, f"{self.__class__.__name__} has no file"
-            )
-
-        return filename
-
-    def get_filenames(self, default=AttributeError()):
-        """Return the names of any files containing the data array.
-
-        .. versionadded:: (cfdm) 1.10.0.2
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if there
-                are no files.
-
-                {{default Exception}}
-
-        :Returns:
-
-            `tuple`
-                TODOCFADOCS The file names in normalised, absolute form. If the
-                data are all in memory then an empty `set` is
-                returned.
-
-        """
-        return (abspath(self.get_filename(default)),)
+    #    def get_filenames(self, default=AttributeError()):
+    #        """Return the names of any files containing the data array.
+    #
+    #        .. versionadded:: (cfdm) 1.10.0.2
+    #
+    #        :Parameters:
+    #
+    #            default: optional
+    #                Return the value of the *default* parameter if there
+    #                are no files.
+    #
+    #                {{default Exception}}
+    #
+    #        :Returns:
+    #
+    #            `tuple`
+    #                TODOCFADOCS The file names in normalised, absolute form. If the
+    #                data are all in memory then an empty `set` is
+    #                returned.
+    #
+    #        """
+    #        return self._default(default, f"{self.__class__.__name__} has no files")
+    #        return tuple([abspath(f) for f in self._get_component("filename", default)])
 
     @classmethod
     def get_subspace(cls, array, indices, copy=True):

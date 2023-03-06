@@ -283,6 +283,6 @@ class Subarray(Array):
 
         """
         try:
-            return self.data.get_filenames()
+            return tuple(self.data.get_filenames())
         except AttributeError:
-            return set()
+            return ()

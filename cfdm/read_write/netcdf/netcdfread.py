@@ -865,7 +865,7 @@ class NetCDFRead(IORead):
                 g["CFA_version"] = Version(c.replace("CFA-", "", 1))
             elif c == "CFA":
                 g["cfa"] = True
-                g["CFA_version"] = Version("0.4") 
+                g["CFA_version"] = Version("0.4")
 
         if file_version is None:
             if default_version is not None:
@@ -5426,9 +5426,6 @@ class NetCDFRead(IORead):
             group, name = self._netCDF4_group(
                 g["variable_grouped_dataset"][ncvar], ncvar
             )
-            #            path = ncvar.split('/')
-            #            for group_name in path[1:-1]:
-            #                group = group[group_name]
             variable = group.variables.get(name)
         else:
             variable = g["variables"].get(ncvar)
@@ -5477,29 +5474,29 @@ class NetCDFRead(IORead):
                 calendar = g["variable_attributes"][coord_ncvar].get(
                     "calendar"
                 )
-        # Find the group that this variable is in. The group will be
-        # None if the variable is in the root group.
+        #        # Find the group that this variable is in. The group will be
+        #        # None if the variable is in the root group.
+        #        if g["has_groups"]:
+        #            group = g["variable_groups"].get(ncvar, ())
+        #            if group:
+        #                # Make sure that we use the variable name without any
+        #                # group structure prepended to it
+        #                ncvar = g["variable_basename"][ncvar]
+        #        else:
+        #            # This variable is in the root group
+        #            group = None
+        #
 
-        if g["has_groups"]:
-            group = g["variable_groups"].get(ncvar, ())
-            if group:
-                # Make sure that we use the variable name without any
-                # group structure prepended to it
-                ncvar = g["variable_basename"][ncvar]
-        else:
-            # This variable is in the root group
-            group = None
-
-            # TODO: think using e.g. '/forecasts/model1' has the value for
-            # nc_set_variable. What about nc_set_dimension?
+        # TODO: think using e.g. '/forecasts/model1' has the value for
+        #       nc_set_variable. What about nc_set_dimension?
 
         kwargs = {
             "filename": filename,
+            "address": ncvar,
             "shape": shape,
             "dtype": dtype,
             "mask": g["mask"],
-            "ncvar": ncvar,
-            "group": group,
+            #            "group": group,
             "units": units,
             "calendar": calendar,
         }
@@ -5507,11 +5504,7 @@ class NetCDFRead(IORead):
         if return_kwargs_only:
             return kwargs
 
-        array = self.implementation.initialise_NetCDFArray(
-            ndim=ndim,  # TODO: Can we get rid of this?
-            size=size,  # TODO: Can we get rid of this?
-            **kwargs,
-        )
+        array = self.implementation.initialise_NetCDFArray(**kwargs)
 
         return array, kwargs
 

@@ -1,4 +1,4 @@
-from urllib.parse import urlparse
+# from urllib.parse import urlparse
 
 import netCDF4
 import numpy
@@ -18,13 +18,9 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
     def __init__(
         self,
         filename=None,
-        ncvar=None,
-        varid=None,
-        group=None,
+        address=None,
         dtype=None,
-        ndim=None,
         shape=None,
-        size=None,
         mask=True,
         units=False,
         calendar=False,
@@ -133,19 +129,9 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
                 filename = None
 
             try:
-                ncvar = source._get_component("ncvar", None)
+                address = source._get_component("address", None)
             except AttributeError:
-                ncvar = None
-
-            try:
-                varid = source._get_component("varid", None)
-            except AttributeError:
-                varid = None
-
-            try:
-                group = source._get_component("group", None)
-            except AttributeError:
-                group = None
+                address = None
 
             try:
                 dtype = source._get_component("dtype", None)
@@ -171,15 +157,17 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
             self._set_component("shape", shape, copy=False)
 
         if filename is not None:
+            if isinstance(filename, str):
+                filename = (filename,)
+
             self._set_component("filename", filename, copy=False)
 
-        if ncvar is not None:
-            self._set_component("ncvar", ncvar, copy=False)
+        if address is not None:
+            if isinstance(address, (str, int)):
+                address = (address,)
 
-        if varid is not None:
-            self._set_component("varid", varid, copy=False)
+            self._set_component("address", address, copy=False)
 
-        self._set_component("group", group, copy=False)
         self._set_component("dtype", dtype, copy=False)
         self._set_component("mask", mask, copy=False)
         self._set_component("units", units, copy=False)
@@ -209,31 +197,28 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        netcdf = self.open()
+        netcdf, address = self.open()
         dataset = netcdf
 
-        # Traverse the group structure, if there is one (CF>=1.8).
-        group = self.get_group()
-        if group:
-            for g in group[:-1]:
+        mask = self.get_mask()
+        groups, address = self.get_groups(address)
+
+        if groups:
+            # Traverse the group structure, if there is one (CF>=1.8).
+            for g in groups[:-1]:
                 netcdf = netcdf.groups[g]
 
-            netcdf = netcdf.groups[group[-1]]
+            netcdf = netcdf.groups[groups[-1]]
 
-        ncvar = self.get_ncvar()
-        mask = self.get_mask()
-
-        if ncvar is not None:
+        if isinstance(address, str):
             # Get the variable by netCDF name
-            variable = netcdf.variables[ncvar]
+            variable = netcdf.variables[address]
             variable.set_auto_mask(mask)
             array = variable[indices]
         else:
-            # Get the variable by netCDF ID
-            varid = self.get_varid()
-
+            # Get the variable by netCDF integer ID
             for variable in netcdf.variables.values():
-                if variable._varid == varid:
+                if variable._varid == address:
                     variable.set_auto_mask(mask)
                     array = variable[indices]
                     break
@@ -370,68 +355,68 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
         """
         return self[...]
 
-    @property
-    def dtype(self):
-        """Data-type of the data elements.
+    #    @property
+    #    def dtype(self):
+    #        """Data-type of the data elements.
+    #
+    #        .. versionadded:: (cfdm) 1.7.0
+    #
+    #        """
+    #        return self._get_component("dtype")
 
-        .. versionadded:: (cfdm) 1.7.0
+    #    @property
+    #    def file_address(self):
+    #        """The file name and address.
+    #
+    #        .. versionadded:: (cfdm) 1.10.0.0
+    #
+    #        :Returns:
+    #
+    #            `tuple`
+    #                The file name and file address.
+    #
+    #        **Examples**
+    #
+    #        >>> a.file_address()
+    #        ('file.nc', 'latitude')
+    #
+    #        """
+    #        pointer = self._get_component("ncvar", None)
+    #        if pointer is None:
+    #            pointer = self.get_varid()
+    #
+    #        return (self.get_filename(None), pointer)
 
-        """
-        return self._get_component("dtype")
+    #    @property
+    #    def shape(self):
+    #        """Tuple of array dimension sizes.
+    #
+    #        .. versionadded:: (cfdm) 1.7.0
+    #
+    #        """
+    #        return self._get_component("shape")
 
-    @property
-    def file_address(self):
-        """The file name and address.
-
-        .. versionadded:: (cfdm) 1.10.0.0
-
-        :Returns:
-
-            `tuple`
-                The file name and file address.
-
-        **Examples**
-
-        >>> a.file_address()
-        ('file.nc', 'latitude')
-
-        """
-        pointer = self._get_component("ncvar", None)
-        if pointer is None:
-            pointer = self.get_varid()
-
-        return (self.get_filename(None), pointer)
-
-    @property
-    def shape(self):
-        """Tuple of array dimension sizes.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        """
-        return self._get_component("shape")
-
-    def get_address(self):
-        """The address in the file of the variable.
-
-        Either the netCDF variable name, or else the UNIDATA netCDF
-        interface ID.
-
-        .. versionadded:: (cfdm) 1.10.0.1
-
-        .. seealso:: `get_filename`, `get_varid`
-
-        :Returns:
-
-            `str` or `None`
-                The address, or `None` if there isn't one.
-
-        """
-        address = self.get_ncvar()
-        if address is None:
-            address = self.get_varid()
-
-        return address
+    #    def get_address(self):
+    #        """The address in the file of the variable.
+    #
+    #        Either the netCDF variable name, or else the UNIDATA netCDF
+    #        interface ID.
+    #
+    #        .. versionadded:: (cfdm) 1.10.0.1
+    #
+    #        .. seealso:: `get_filename`, `get_varid`
+    #
+    #        :Returns:
+    #
+    #            `str` or `None`
+    #                The address, or `None` if there isn't one.
+    #
+    #        """
+    #        address = self.get_ncvar()
+    #        if address is None:
+    #            address = self.get_varid()
+    #
+    #        return address
 
     def get_format(self):
         """TODOCFADOCS.
@@ -453,17 +438,46 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
         """
         return "nc"
 
-    def get_group(self):
-        """The netCDF4 group structure of the netCDF variable.
+    def get_groups(self, address):
+        """The netCDF4 group structure of a netCDF variable.
 
         .. versionadded:: (cfdm) 1.8.6.0
 
+        :Parameters:
+
+            address: `str` or `int`
+                TODOCFADOCS
+
+                .. versionadded:: (cfdm) TODOCFAVER
+
+        :Returns:
+
+            (`list`, `str`) or (`list`, `int`)
+               TODOCFADOCS
+
         **Examples**
 
-        >>> b = a.get_group()
+        >>> n.get_groups('tas')
+        ([], 'tas')
+
+        >>> n.get_groups('/tas')
+        ([], 'tas')
+
+        >>> n.get_groups('/data/model/tas')
+        (['data', 'model'], 'tas')
+
+        >>> n.get_groups(9)
+        ([], 9)
 
         """
-        return self._get_component("group")
+        try:
+            if "/" not in address:
+                return [], address
+        except TypeError:
+            return [], address
+
+        out = address.split("/")[1:]
+        return out[:-1], out[-1]
 
     def get_mask(self):
         """Whether or not to automatically mask the data.
@@ -477,54 +491,54 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
         """
         return self._get_component("mask")
 
-    def get_ncvar(self):
-        """The name of the netCDF variable containing the array.
+    #    def get_ncvar(self):
+    #        """The name of the netCDF variable containing the array.
+    #
+    #        .. versionadded:: (cfdm) 1.7.0
+    #
+    #        **Examples**
+    #
+    #        >>> print(a.netcdf)
+    #        'tas'
+    #        >>> print(a.varid)
+    #        None
+    #
+    #        >>> print(a.netcdf)
+    #        None
+    #        >>> print(a.varid)
+    #        4
+    #
+    #        """
+    #        return self._get_component("ncvar")
+    #
+    #    def get_varid(self):
+    #        """The UNIDATA netCDF interface ID of the array's variable.
+    #
+    #        .. versionadded:: (cfdm) 1.7.0
+    #
+    #        **Examples**
+    #
+    #        >>> print(a.netcdf)
+    #        'tas'
+    #        >>> print(a.varid)
+    #        None
+    #
+    #        >>> print(a.netcdf)
+    #        None
+    #        >>> print(a.varid)
+    #        4
+    #
+    #        """
+    #        return self._get_component("varid", None)
 
-        .. versionadded:: (cfdm) 1.7.0
-
-        **Examples**
-
-        >>> print(a.netcdf)
-        'tas'
-        >>> print(a.varid)
-        None
-
-        >>> print(a.netcdf)
-        None
-        >>> print(a.varid)
-        4
-
-        """
-        return self._get_component("ncvar")
-
-    def get_varid(self):
-        """The UNIDATA netCDF interface ID of the array's variable.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        **Examples**
-
-        >>> print(a.netcdf)
-        'tas'
-        >>> print(a.varid)
-        None
-
-        >>> print(a.netcdf)
-        None
-        >>> print(a.varid)
-        4
-
-        """
-        return self._get_component("varid", None)
-
-    def close(self, netcdf):
+    def close(self, dataset):
         """Close the dataset containing the data.
 
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
 
-            netcdf: `netCDF4.Dataset`
+            dataset: `netCDF4.Dataset`
                 The netCDF dataset to be be closed.
 
         :Returns:
@@ -533,36 +547,11 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
 
         """
         if self._get_component("close"):
-            netcdf.close()
+            dataset.close()
 
     def open(self):
-        """Returns an open dataset containing the data array.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        :Returns:
-
-            `netCDF4.Dataset`
-
-        **Examples**
-
-        >>> netcdf = a.open()
-        >>> variable = netcdf.variables[a.get_ncvar()]
-        >>> variable.getncattr('standard_name')
-        'eastward_wind'
-
-        """
-        filename = self.get_filename()
-
-        url = urlparse(filename)
-        if url.scheme == "file":
-            # Convert file URI into an absolute path
-            filename = url.path
-
-        try:
-            return netCDF4.Dataset(filename, "r")
-        except RuntimeError as error:
-            raise RuntimeError(f"{error}: {filename}")
+        """TODOCFADOCS."""
+        return super().open(netCDF4.Dataset, mode="r")
 
     def to_memory(self):
         """Bring data on disk into memory.
