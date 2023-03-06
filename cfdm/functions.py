@@ -1,8 +1,8 @@
 import logging
 import os
-import urllib.parse
 from copy import deepcopy
 from functools import total_ordering
+from urllib.parse import urlparse
 
 import cftime
 import netcdf_flattener
@@ -425,11 +425,15 @@ def abspath(filename):
     'http://data/archive/file.nc'
 
     """
-    u = urllib.parse.urlparse(filename)
-    if u.scheme != "":
-        return filename
+    u = urlparse(filename)
+    scheme = u.scheme
+    if not scheme:
+        return os.path.abspath(filename)
 
-    return os.path.abspath(filename)
+    if scheme == "file":
+        return u.path
+
+    return filename
 
 
 def unique_constructs(constructs, ignore_properties=None, copy=True):
