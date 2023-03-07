@@ -10,6 +10,16 @@ class FileArrayMixin:
 
     """
 
+    def __str__(self):
+        """x.__str__() <==> str(x)"""
+        filenames = self.get_filenames()
+        addresses = self.get_addresses()
+        if len(filenames) == 1:
+            filenames = filenames[0]
+            addresses = addresses[0]
+    
+        return f"{filenames}, {addresses}"
+
     @property
     def dtype(self):
         """Data-type of the array."""
@@ -39,7 +49,7 @@ class FileArrayMixin:
                     default: optional
                         Return the value of the *default* parameter if there
                         is no file.
-        g
+        
                         {{default Exception}}
 
                 :Returns:
