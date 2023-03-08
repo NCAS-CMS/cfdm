@@ -393,7 +393,7 @@ class SubsampledArray(CompressedArray):
         dependent_tie_points = conformed_data["dependent_tie_points"]
 
         # Interpolate the tie points for each interpolation subarea
-        for (u_indices, u_shape, c_indices, subarea_indices, first, _) in zip(
+        for u_indices, u_shape, c_indices, subarea_indices, first, _ in zip(
             *self.subarrays()
         ):
             subarray = Subarray(

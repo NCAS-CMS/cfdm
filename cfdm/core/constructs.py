@@ -114,7 +114,6 @@ class Constructs(abstract.Container):
         _ignore = tuple(_ignore)
 
         if source is not None:
-
             if _view:
                 self.__dict__ = source.__dict__.copy()
                 self._ignore = _ignore

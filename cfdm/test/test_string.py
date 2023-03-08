@@ -56,7 +56,6 @@ class StringTest(unittest.TestCase):
                 dtype="S",
             ),
         ):
-
             # Initialize the field
             tas = cfdm.Field(
                 properties={

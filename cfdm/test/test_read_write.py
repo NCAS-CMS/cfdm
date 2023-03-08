@@ -520,7 +520,6 @@ class read_writeTest(unittest.TestCase):
     def test_read_write_unlimited(self):
         """Test reading and writing with an unlimited dimension."""
         for fmt in self.netcdf_fmts:
-
             f = cfdm.read(self.filename)[0]
             domain_axes = f.domain_axes()
 
