@@ -118,7 +118,6 @@ class DocstringRewriteMeta(type):
         method_exclusions = set(method_exclusions)
 
         for attr_name, attr in attrs.items():
-
             # Skip special methods that aren't functions
             if attr_name.startswith("__") and not inspect.isfunction(attr):
                 continue
@@ -210,9 +209,7 @@ class DocstringRewriteMeta(type):
         # they override and rewriting those docstrings.
         # ------------------------------------------------------------
         for parent in parents:
-
             for attr_name in dir(parent):
-
                 if attr_name in attrs:
                     # We already have this method from higher up in
                     # the method resolution order, so do not overwrite

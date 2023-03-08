@@ -1066,7 +1066,6 @@ class Field(
             for key, c in f.constructs.filter_by_axis(
                 *axes, axis_mode="or", todict=True
             ).items():
-
                 c_axes = f.get_data_axes(key)
                 if c_axes != axes:
                     # Skip metadata constructs which don't span

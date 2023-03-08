@@ -1138,7 +1138,6 @@ def example_field(n, _implementation=_implementation):
         f.set_construct(c)
 
     elif n == 3:
-
         f = Field()
 
         f.set_properties(
