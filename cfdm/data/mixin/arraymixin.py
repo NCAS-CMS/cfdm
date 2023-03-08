@@ -58,7 +58,7 @@ class ArrayMixin:
         .. versionadded:: (cfdm) 1.8.7.0
 
         """
-        return f"<{self.__class__.__name__}{self.shape}: >"
+        return f"<{self.__class__.__name__}{self.shape}: {self}>"
 
     def __str__(self):
         """Called by the `str` built-in function.

@@ -172,12 +172,16 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
         if filename is not None:
             if isinstance(filename, str):
                 filename = (filename,)
+            else:
+                filename = tuple(filename)
 
             self._set_component("filename", filename, copy=False)
 
         if address is not None:
             if isinstance(address, (str, int)):
                 address = (address,)
+            else:
+                address = tuple(address)
 
             self._set_component("address", address, copy=False)
 
