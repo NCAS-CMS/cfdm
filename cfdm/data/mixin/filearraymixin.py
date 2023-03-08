@@ -11,13 +11,17 @@ class FileArrayMixin:
     """
 
     def __str__(self):
-        """x.__str__() <==> str(x)"""
+        """Called by the `str` built-in function.
+
+        x.__str__() <==> str(x)
+
+        """
         filenames = self.get_filenames()
         addresses = self.get_addresses()
         if len(filenames) == 1:
             filenames = filenames[0]
             addresses = addresses[0]
-    
+
         return f"{filenames}, {addresses}"
 
     @property
@@ -39,23 +43,23 @@ class FileArrayMixin:
     def get_address(self, default=AttributeError()):
         """The name of the file containing the array.
 
-                If there are multiple files then an `AttributeError` is
-                raised by default.
+        If there are multiple files then an `AttributeError` is
+        raised by default.
 
-                .. versionadded:: (cfdm) 1.10.0.2
+        .. versionadded:: (cfdm) 1.10.0.2
 
-                :Parameters:
+        :Parameters:
 
-                    default: optional
-                        Return the value of the *default* parameter if there
-                        is no file.
-        
-                        {{default Exception}}
+            default: optional
+                Return the value of the *default* parameter if there
+                is no file.
 
-                :Returns:
+                {{default Exception}}
 
-                    `str`
-                        The file name.
+        :Returns:
+
+            `str`
+                The file name.
 
         """
         addresses = self.get_addresses()

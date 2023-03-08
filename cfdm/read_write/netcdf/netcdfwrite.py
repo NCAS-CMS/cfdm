@@ -4782,6 +4782,8 @@ class NetCDFWrite(IOWrite):
         elif mode == "r+":  # support alias used by netCDF4.Dataset mode
             mode = "a"
 
+        self.write_vars["mode"] = mode
+
         effective_mode = mode  # actual mode to use for the first IO iteration
         effective_fields = fields
 

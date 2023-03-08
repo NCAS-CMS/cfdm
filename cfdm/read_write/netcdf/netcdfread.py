@@ -3613,7 +3613,7 @@ class NetCDFRead(IORead):
         extra_aux = self._customize_auxiliary_coordinates(field_ncvar, f)
         if extra_aux:
             ncvar_to_key.update(extra_aux)
-            g["auxiliary_coordinate"].extend(extra_aux)
+            g["auxiliary_coordinate"].update(extra_aux)
             g["coordinates"][field_ncvar].extend(extra_aux)
 
             # Reference the netCDF variables
@@ -4007,7 +4007,7 @@ class NetCDFRead(IORead):
             extra_anc = self._customize_field_ancillaries(field_ncvar, f)
             if extra_anc:
                 ncvar_to_key.update(extra_anc)
-                g["field_ancillary"].extend(extra_anc)
+                g["field_ancillary"].update(extra_anc)
 
                 # Reference the netCDF variables
                 for anc_ncvar in extra_anc:

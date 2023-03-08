@@ -256,7 +256,7 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
             array = numpy.array(array, dtype=f"S{len(array)}")
 
         if not self.ndim:
-            # Hmm netCDF4 has a thing for making scalar size 1 , 1d
+            # Hmm netCDF4 has a thing for making scalar size 1, 1d
             array = array.squeeze()
 
         kind = array.dtype.kind
