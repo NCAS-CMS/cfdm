@@ -16,7 +16,7 @@ datasets and written to new datasets. This is so that datasets which
 are partially conformant may nonetheless be modified in memory and
 written to new datasets.
 
-The cfdm package can
+The cfdm package can:
 
     * read field constructs from netCDF and CDL datasets,
     * create new field constructs in memory,

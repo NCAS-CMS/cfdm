@@ -1235,7 +1235,6 @@ class NetCDFWrite(IOWrite):
         if g["output_version"] >= g[
             "CF-1.8"
         ] and self.implementation.is_geometry(coord):
-
             # --------------------------------------------------------
             # CF>=1.8 and we have geometry bounds, which are dealt
             # with separately

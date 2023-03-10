@@ -16,7 +16,8 @@
 
 * Make sure that the `long_description` in `setup.py` is up to date.
 
-* Make sure that `Changelog.rst` is up to date.
+* Make sure that `Changelog.rst` is up to date (version, date, and
+  changes).
 
 * Make sure that the package to be released is first in the PYTHONPATH
   environment variable. This is necessary for the subsequent items to

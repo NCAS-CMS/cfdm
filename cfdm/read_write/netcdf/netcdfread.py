@@ -1817,7 +1817,6 @@ class NetCDFRead(IORead):
         found = []
 
         for external_file in external_files:
-
             logger.info(
                 "\nScanning external file:\n-----------------------"
             )  # pragma: no cover

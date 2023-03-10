@@ -1,4 +1,15 @@
-""""""
+"""`cfdm.core`, the core reference implementation of the CF data model.
+
+It is a stand-alone core implementation that includes no functionality
+beyond that mandated by the CF data model (and therefore excludes any
+information about the netCDF encoding of constructs).
+
+The core implementation provides the basis (via inheritance) for the
+`cfdm` package that provides further practical functionality in
+addition, for example enabling the reading and writing of netCDF
+datasets and the inspection of CF data model constructs.
+
+"""
 
 __date__ = "2023-01-26"
 __cf_version__ = "1.10"
