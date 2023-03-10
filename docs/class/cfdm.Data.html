@@ -3,23 +3,22 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta charset="utf-8" />
     <title>cfdm.Data &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/toggleprompt.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Data.array" href="../attribute/cfdm.Data.array.html" />
@@ -38,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.10.0.2</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.0.3</a></h1>
 
 
 
@@ -66,7 +65,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -121,11 +120,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <section id="cfdm-data">
+  <div class="section" id="cfdm-data">
 <h1>cfdm.Data<a class="headerlink" href="#cfdm-data" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.Data">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">mask=None</em>, <em class="sig-param">_use_array=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.2/cfdm/data/data.py#L23-L3128"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">array=None</em>, <em class="sig-param">units=None</em>, <em class="sig-param">calendar=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">mask=None</em>, <em class="sig-param">_use_array=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.3/cfdm/data/data.py#L23-L3128"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFHDF5</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.files.Files</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.data.data.Data</span></code></p>
 <p>An orthogonal multidimensional array with masking and units.</p>
 <div class="versionadded">
@@ -225,7 +224,7 @@ parameters are not deep copied.</p>
 </dl>
 </dd></dl>
 
-<section id="inspection">
+<div class="section" id="inspection">
 <h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Attributes</p>
 <table class="longtable docutils align-default">
@@ -251,8 +250,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="units">
+</div>
+<div class="section" id="units">
 <h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -286,10 +285,10 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="data-creation-routines">
+</div>
+<div class="section" id="data-creation-routines">
 <h2>Data creation routines<a class="headerlink" href="#data-creation-routines" title="Permalink to this headline">¶</a></h2>
-<section id="ones-and-zeros">
+<div class="section" id="ones-and-zeros">
 <h3>Ones and zeros<a class="headerlink" href="#ones-and-zeros" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -302,8 +301,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="from-existing-data">
+</div>
+<div class="section" id="from-existing-data">
 <h3>From existing data<a class="headerlink" href="#from-existing-data" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -316,11 +315,11 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
-<section id="data-manipulation-routines">
+</div>
+</div>
+<div class="section" id="data-manipulation-routines">
 <h2>Data manipulation routines<a class="headerlink" href="#data-manipulation-routines" title="Permalink to this headline">¶</a></h2>
-<section id="changing-data-shape">
+<div class="section" id="changing-data-shape">
 <h3>Changing data shape<a class="headerlink" href="#changing-data-shape" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -333,8 +332,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="transpose-like-operations">
+</div>
+<div class="section" id="transpose-like-operations">
 <h3>Transpose-like operations<a class="headerlink" href="#transpose-like-operations" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -347,8 +346,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="changing-number-of-dimensions">
+</div>
+<div class="section" id="changing-number-of-dimensions">
 <h3>Changing number of dimensions<a class="headerlink" href="#changing-number-of-dimensions" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -364,8 +363,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="adding-and-removing-elements">
+</div>
+<div class="section" id="adding-and-removing-elements">
 <h3>Adding and removing elements<a class="headerlink" href="#adding-and-removing-elements" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -378,9 +377,9 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
-<section id="date-time-support">
+</div>
+</div>
+<div class="section" id="date-time-support">
 <h2>Date-time support<a class="headerlink" href="#date-time-support" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -417,10 +416,10 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="indexing-routines">
+</div>
+<div class="section" id="indexing-routines">
 <h2>Indexing routines<a class="headerlink" href="#indexing-routines" title="Permalink to this headline">¶</a></h2>
-<section id="single-value-selection">
+<div class="section" id="single-value-selection">
 <h3>Single value selection<a class="headerlink" href="#single-value-selection" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -439,11 +438,11 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
-<section id="logic-functions">
+</div>
+</div>
+<div class="section" id="logic-functions">
 <h2>Logic functions<a class="headerlink" href="#logic-functions" title="Permalink to this headline">¶</a></h2>
-<section id="truth-value-testing">
+<div class="section" id="truth-value-testing">
 <h3>Truth value testing<a class="headerlink" href="#truth-value-testing" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -456,8 +455,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="comparison">
+</div>
+<div class="section" id="comparison">
 <h3>Comparison<a class="headerlink" href="#comparison" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -470,9 +469,9 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
-<section id="mask-support">
+</div>
+</div>
+<div class="section" id="mask-support">
 <h2>Mask support<a class="headerlink" href="#mask-support" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -512,10 +511,10 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="mathematical-functions">
+</div>
+<div class="section" id="mathematical-functions">
 <h2>Mathematical functions<a class="headerlink" href="#mathematical-functions" title="Permalink to this headline">¶</a></h2>
-<section id="sums-products-differences">
+<div class="section" id="sums-products-differences">
 <h3>Sums, products, differences<a class="headerlink" href="#sums-products-differences" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -528,11 +527,11 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
-<section id="set-routines">
+</div>
+</div>
+<div class="section" id="set-routines">
 <h2>Set routines<a class="headerlink" href="#set-routines" title="Permalink to this headline">¶</a></h2>
-<section id="making-proper-sets">
+<div class="section" id="making-proper-sets">
 <h3>Making proper sets<a class="headerlink" href="#making-proper-sets" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -545,14 +544,14 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
-<section id="sorting-searching-and-counting">
+</div>
+</div>
+<div class="section" id="sorting-searching-and-counting">
 <h2>Sorting, searching, and counting<a class="headerlink" href="#sorting-searching-and-counting" title="Permalink to this headline">¶</a></h2>
-</section>
-<section id="statistics">
+</div>
+<div class="section" id="statistics">
 <h2>Statistics<a class="headerlink" href="#statistics" title="Permalink to this headline">¶</a></h2>
-<section id="order-statistics">
+<div class="section" id="order-statistics">
 <h3>Order statistics<a class="headerlink" href="#order-statistics" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -574,8 +573,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="sums">
+</div>
+<div class="section" id="sums">
 <h3>Sums<a class="headerlink" href="#sums" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -588,9 +587,9 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
-<section id="compression-by-convention">
+</div>
+</div>
+<div class="section" id="compression-by-convention">
 <h2>Compression by convention<a class="headerlink" href="#compression-by-convention" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -642,8 +641,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="miscellaneous">
+</div>
+<div class="section" id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -677,8 +676,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="performance">
+</div>
+<div class="section" id="performance">
 <h2>Performance<a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -700,8 +699,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="special">
+</div>
+<div class="section" id="special">
 <h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -735,8 +734,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="docstring-substitutions">
+</div>
+<div class="section" id="docstring-substitutions">
 <h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -759,8 +758,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
+</div>
+</div>
 
 
 
@@ -771,10 +770,10 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-01-26.
+      &copy;2023, NCAS | Page built on 2023-03-10.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
