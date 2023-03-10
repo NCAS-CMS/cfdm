@@ -78,7 +78,9 @@ The **cfdm** package can
 * create subspaces of field and domain constructs,
 * incorporate, and create, metadata stored in external files, and
 * read, write, and create data that have been compressed by convention
-  (i.e. ragged or gathered arrays, or coordinate arrays compressed by subsampling), whilst presenting a view of the data in its uncompressed form.
+  (i.e. ragged or gathered arrays, or coordinate arrays compressed
+  by subsampling), whilst presenting a view of the data in its
+  uncompressed form.
 
 Documentation
 =============

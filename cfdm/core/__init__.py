@@ -11,14 +11,17 @@ datasets and the inspection of CF data model constructs.
 
 """
 
-__date__ = "2023-01-26"
+__date__ = "2023-03-10"
 __cf_version__ = "1.10"
-__version__ = "1.10.0.2"
+__version__ = "1.10.0.3"
 
+from packaging import __version__ as _packaging_ver
+from packaging import __file__ as _packaging_file
 from packaging.version import Version
+
 import platform
 
-_requires = ("numpy", "netCDF4")
+_requires = ("numpy", "netCDF4", "packaging")
 
 _error0 = f"cfdm.core requires the modules {', '.join(_requires)}. "
 
@@ -38,6 +41,14 @@ if Version(platform.python_version()) < Version(_minimum_vn):
     raise ValueError(
         f"Bad python version: cfdm.core requires python>={_minimum_vn}. "
         f"Got {platform.python_version()}"
+    )
+
+# Check the version of packaging
+_minimum_vn = "20.0"
+if Version(_packaging_ver) < Version(_minimum_vn):
+    raise ValueError(
+        f"Bad packaging version: cfdm requires packaging>={_minimum_vn}. "
+        f"Got {_packaging_ver} at {_packaging_file}"
     )
 
 # Check the version of netCDF4

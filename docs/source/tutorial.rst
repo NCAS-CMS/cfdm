@@ -53,7 +53,7 @@ The cfdm package is imported as follows:
 CF version
 ^^^^^^^^^^
 
-The version of the `CF conventions <http://cfconventions.org>`_ and
+The version of the `CF conventions <https://cfconventions.org>`_ and
 the :ref:`CF data model <CF-data-model>` being used may be found with
 the `cfdm.CF` function:
 
@@ -1020,7 +1020,7 @@ the only differences being:
   these indices work independently along each dimension (similar to
   the way vector subscripts work in Fortran). This is the same
   indexing behaviour as on a ``Variable`` object of the `netCDF4
-  package <http://unidata.github.io/netcdf4-python>`_.
+  package <https://unidata.github.io/netcdf4-python>`_.
 
 .. code-block:: python
    :caption: *Create new data by indexing and show the shape
@@ -1055,7 +1055,7 @@ the only difference being:
   these indices work independently along each dimension (similar to
   the way vector subscripts work in Fortran). This is the same
   indexing behaviour as on a ``Variable`` object of the `netCDF4
-  package <http://unidata.github.io/netcdf4-python>`_.
+  package <https://unidata.github.io/netcdf4-python>`_.
 
 A single value may be assigned to any number of elements.
   
@@ -5023,17 +5023,17 @@ if any, are filtered out.
 
 .. [#dap] Requires the netCDF4 python package to have been built with
           OPeNDAP support enabled. See
-          http://unidata.github.io/netcdf4-python for details.
+          https://unidata.github.io/netcdf4-python for details.
 
 .. External links to the CF conventions (will need updating with new versions of CF)
    
-.. _External variables:                          http://cfconventions.org/cf-conventions/cf-conventions.html#external-variables
-.. _Discrete sampling geometry (DSG):            http://cfconventions.org/cf-conventions/cf-conventions.html#discrete-sampling-geometries
-.. _incomplete multidimensional form:            http://cfconventions.org/cf-conventions/cf-conventions.html#_incomplete_multidimensional_array_representation
-.. _Compression by gathering:                    http://cfconventions.org/cf-conventions/cf-conventions.html#compression-by-gathering
-.. _contiguous:                                  http://cfconventions.org/cf-conventions/cf-conventions.html#_contiguous_ragged_array_representation
-.. _indexed:                                     http://cfconventions.org/cf-conventions/cf-conventions.html#_indexed_ragged_array_representation
-.. _indexed contiguous:                          http://cfconventions.org/cf-conventions/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
-.. _geometries:                                  http://cfconventions.org/cf-conventions/cf-conventions.html#geometries
-.. _Hierarchical groups:                         http://cfconventions.org/cf-conventions/cf-conventions.html#groups
-.. _Lossy compression by coordinate subsampling: http://cfconventions.org/cf-conventions/cf-conventions.html#compression-by-coordinate-subsampling
+.. _External variables:                          https://cfconventions.org/cf-conventions/cf-conventions.html#external-variables
+.. _Discrete sampling geometry (DSG):            https://cfconventions.org/cf-conventions/cf-conventions.html#discrete-sampling-geometries
+.. _incomplete multidimensional form:            https://cfconventions.org/cf-conventions/cf-conventions.html#_incomplete_multidimensional_array_representation
+.. _Compression by gathering:                    https://cfconventions.org/cf-conventions/cf-conventions.html#compression-by-gathering
+.. _contiguous:                                  https://cfconventions.org/cf-conventions/cf-conventions.html#_contiguous_ragged_array_representation
+.. _indexed:                                     https://cfconventions.org/cf-conventions/cf-conventions.html#_indexed_ragged_array_representation
+.. _indexed contiguous:                          https://cfconventions.org/cf-conventions/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
+.. _geometries:                                  https://cfconventions.org/cf-conventions/cf-conventions.html#geometries
+.. _Hierarchical groups:                         https://cfconventions.org/cf-conventions/cf-conventions.html#groups
+.. _Lossy compression by coordinate subsampling: https://cfconventions.org/cf-conventions/cf-conventions.html#compression-by-coordinate-subsampling
