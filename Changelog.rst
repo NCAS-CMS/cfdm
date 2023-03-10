@@ -1,7 +1,7 @@
 Version 1.10.0.3
 ----------------
 
-**2023-03-??**
+**2023-03-10**
 
 * New method: `cfdm.Field.del_properties`
   (https://github.com/NCAS-CMS/cfdm/issues/241)
