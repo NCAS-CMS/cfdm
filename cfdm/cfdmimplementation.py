@@ -1685,6 +1685,13 @@ class CFDMImplementation(Implementation):
         """
         return parent.get_data(default=default)
 
+    def get_data_axes(self, parent, key, default=None):
+        """TODOCFADOCS."""
+        if key is None:
+            return parent.get_data_axes(default=default)
+
+        return parent.get_data_axes(key, default=default)
+
     def get_data_source(self, parent, default=None):
         """Return the data array.
 

@@ -8029,7 +8029,6 @@ class NetCDFRead(IORead):
         )
 
         m = re.match(pat_all, string)
-
         if m is None:
             return []
 

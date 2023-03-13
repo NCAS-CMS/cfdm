@@ -542,7 +542,7 @@ class NetCDFWrite(IOWrite):
             ncdim: `str`
                 The netCDF dimension name.
 
-            f: Field construct
+            f: `Field` or `Domain`
 
             axis: `str` or `None`
                 The field's domain axis identifier.
@@ -710,6 +710,7 @@ class NetCDFWrite(IOWrite):
                 ncvar,
                 ncdimensions,
                 coord,
+                self.implementation.get_data_axes(f, key),
                 extra=extra,
             )
         else:
@@ -765,7 +766,7 @@ class NetCDFWrite(IOWrite):
 
             # Create a new count variable
             self._write_netcdf_variable(
-                ncvar, (ncdim,), count_variable, extra=extra
+                ncvar, (ncdim,), count_variable, None, extra=extra
             )
 
             g["count_variable_sample_dimension"][ncvar] = sample_ncdim
@@ -827,7 +828,7 @@ class NetCDFWrite(IOWrite):
             # Create a new index variable
             extra = {"instance_dimension": instance_dimension}
             self._write_netcdf_variable(
-                ncvar, (ncdim,), index_variable, extra=extra
+                ncvar, (ncdim,), index_variable, None, extra=extra
             )
 
             g["index_variable_sample_dimension"][ncvar] = sample_dimension
@@ -856,7 +857,7 @@ class NetCDFWrite(IOWrite):
 
             # Create a new list variable
             self._write_netcdf_variable(
-                ncvar, (ncvar,), list_variable, extra=extra
+                ncvar, (ncvar,), list_variable, None, extra=extra
             )
 
             self.implementation.nc_set_variable(list_variable, ncvar)  # Why?
@@ -865,7 +866,7 @@ class NetCDFWrite(IOWrite):
 
         return ncvar
 
-    def _write_scalar_data(self, value, ncvar):
+    def _write_scalar_data(self, f, value, ncvar):
         """Write a dimension coordinate and bounds to the netCDF file.
 
         This also writes a new netCDF dimension to the file and, if
@@ -895,7 +896,7 @@ class NetCDFWrite(IOWrite):
             ncvar = self._netcdf_name(ncvar)  # DCH ?
 
             # Create a new dimension coordinate variable
-            self._write_netcdf_variable(ncvar, (), value)
+            self._write_netcdf_variable(ncvar, (), value, None)
         else:
             ncvar = seen[id(value)]["ncvar"]
 
@@ -1240,7 +1241,7 @@ class NetCDFWrite(IOWrite):
             # with separately
             # --------------------------------------------------------
             extra = self._write_node_coordinates(
-                coord, coord_ncvar, coord_ncdimensions
+                f, coord, coord_ncvar, coord_ncdimensions
             )
             return extra
 
@@ -1341,6 +1342,7 @@ class NetCDFWrite(IOWrite):
                 ncvar,
                 ncdimensions,
                 bounds,
+                self.implementation.get_data_axes(f, coord_key),
                 omit=omit,
                 construct_type=self.implementation.get_construct_type(coord),
             )
@@ -1360,7 +1362,9 @@ class NetCDFWrite(IOWrite):
 
         return extra
 
-    def _write_node_coordinates(self, coord, coord_ncvar, coord_ncdimensions):
+    def _write_node_coordinates(
+        self, f, coord, coord_ncvar, coord_ncdimensions
+    ):
         """Create a netCDF node coordinates variable.
 
         This will create:
@@ -1507,22 +1511,25 @@ class NetCDFWrite(IOWrite):
                 ncvar,
                 (ncdim,),
                 nodes,
+                None,
                 construct_type=self.implementation.get_construct_type(coord),
             )
 
             encodings = {}
 
             nc_encodings = self._write_node_count(
-                coord, bounds, coord_ncdimensions, encodings
+                f, coord, bounds, coord_ncdimensions, encodings
             )
             encodings.update(nc_encodings)
 
             pnc_encodings = self._write_part_node_count(
-                coord, bounds, encodings
+                f, coord, bounds, encodings
             )
             encodings.update(pnc_encodings)
 
-            ir_encodings = self._write_interior_ring(coord, bounds, encodings)
+            ir_encodings = self._write_interior_ring(
+                f, coord, bounds, encodings
+            )
             encodings.update(ir_encodings)
 
             g["geometry_encoding"][ncvar] = encodings
@@ -1541,7 +1548,9 @@ class NetCDFWrite(IOWrite):
 
         return {"nodes": ncvar}
 
-    def _write_node_count(self, coord, bounds, coord_ncdimensions, encodings):
+    def _write_node_count(
+        self, f, coord, bounds, coord_ncdimensions, encodings
+    ):
         """Create a netCDF node count variable.
 
         .. versionadded:: (cfdm) 1.8.0
@@ -1622,7 +1631,9 @@ class NetCDFWrite(IOWrite):
             ncvar = self._netcdf_name(ncvar)
 
             # Create the netCDF node count variable
-            self._write_netcdf_variable(ncvar, (geometry_dimension,), count)
+            self._write_netcdf_variable(
+                ncvar, (geometry_dimension,), count, None
+            )
 
         # Return encodings
         return {"geometry_dimension": geometry_dimension, "node_count": ncvar}
@@ -1805,7 +1816,7 @@ class NetCDFWrite(IOWrite):
         # Return the default
         return default
 
-    def _write_part_node_count(self, coord, bounds, encodings):
+    def _write_part_node_count(self, f, coord, bounds, encodings):
         """Creates a bounds netCDF variable and returns its name.
 
         Create a bounds netCDF variable, creating a new bounds netCDF
@@ -1912,14 +1923,14 @@ class NetCDFWrite(IOWrite):
             ncvar = self._netcdf_name(ncvar)
 
             # Create the netCDF part_node_count variable
-            self._write_netcdf_variable(ncvar, (ncdim,), count)
+            self._write_netcdf_variable(ncvar, (ncdim,), count, None)
 
         g["part_ncdim"] = ncdim
 
         # Return encodings
         return {"part_node_count": ncvar, "part_ncdim": ncdim}
 
-    def _write_interior_ring(self, coord, bounds, encodings):
+    def _write_interior_ring(self, f, coord, bounds, encodings):
         """Write an interior ring variable to the netCDF file.
 
         .. versionadded:: (cfdm) 1.8.0
@@ -2003,6 +2014,7 @@ class NetCDFWrite(IOWrite):
                 ncvar,
                 (ncdim,),
                 interior_ring,
+                None,
                 construct_type=self.implementation.get_construct_type(coord),
             )
 
@@ -2064,6 +2076,7 @@ class NetCDFWrite(IOWrite):
                 ncvar,
                 (),
                 scalar_coord,
+                self.implementation.get_data_axes(f, key),
                 extra=bounds_extra,
             )
 
@@ -2160,6 +2173,7 @@ class NetCDFWrite(IOWrite):
                         ncvar,
                         ncdimensions,
                         coord,
+                        self.implementation.get_data_axes(f, key),
                         extra=extra,
                     )
 
@@ -2240,7 +2254,12 @@ class NetCDFWrite(IOWrite):
             self._write_bounds(f, anc, key, ncdimensions, ncvar)
 
             # Create a new domain ancillary variable
-            self._write_netcdf_variable(ncvar, ncdimensions, anc)
+            self._write_netcdf_variable(
+                ncvar,
+                ncdimensions,
+                anc,
+                self.implementation.get_data_axes(f, key),
+            )
 
         g["key_to_ncvar"][key] = ncvar
         g["key_to_ncdims"][key] = ncdimensions
@@ -2292,14 +2311,19 @@ class NetCDFWrite(IOWrite):
             )
 
             # Create a new field ancillary variable
-            self._write_netcdf_variable(ncvar, ncdimensions, anc)
+            self._write_netcdf_variable(
+                ncvar,
+                ncdimensions,
+                anc,
+                self.implementation.get_data_axes(f, key),
+            )
 
         g["key_to_ncvar"][key] = ncvar
         g["key_to_ncdims"][key] = ncdimensions
 
         return ncvar
 
-    def _write_cell_measure(self, field, key, cell_measure):
+    def _write_cell_measure(self, f, key, cell_measure):
         """Write a cell measure construct to the netCDF file.
 
         If an identical construct has already in the file then the cell
@@ -2307,7 +2331,7 @@ class NetCDFWrite(IOWrite):
 
         :Parameters:
 
-            field: `Field` or `Domain`
+            f: `Field` or `Domain`
                 The field containing the cell measure.
 
             key: `str`
@@ -2331,7 +2355,7 @@ class NetCDFWrite(IOWrite):
                 "without a 'measure' property"
             )
 
-        ncdimensions = self._netcdf_dimensions(field, key, cell_measure)
+        ncdimensions = self._netcdf_dimensions(f, key, cell_measure)
 
         if self._already_in_file(cell_measure, ncdimensions):
             # Use existing cell measure variable
@@ -2357,7 +2381,7 @@ class NetCDFWrite(IOWrite):
             ):
                 # Create a new field to write out to the external file
                 self._create_external(
-                    field=field,
+                    field=f,
                     construct_id=key,
                     ncvar=ncvar,
                     ncdimensions=ncdimensions,
@@ -2368,7 +2392,12 @@ class NetCDFWrite(IOWrite):
             )
 
             # Create a new (internal) cell measure variable
-            self._write_netcdf_variable(ncvar, ncdimensions, cell_measure)
+            self._write_netcdf_variable(
+                ncvar,
+                ncdimensions,
+                cell_measure,
+                self.implementation.get_data_axes(f, key),
+            )
 
         g["key_to_ncvar"][key] = ncvar
         g["key_to_ncdims"][key] = ncdimensions
@@ -2549,6 +2578,7 @@ class NetCDFWrite(IOWrite):
         ncvar,
         ncdimensions,
         cfvar,
+        domain_axes,
         omit=(),
         extra=None,
         fill=False,
@@ -2721,7 +2751,9 @@ class NetCDFWrite(IOWrite):
 
         # Note: this is a trivial assignment in standalone cfdm, but required
         # for non-trivial customisation applied by subclasses e.g. in cf-python
-        kwargs = self._customize_createVariable(cfvar, construct_type, kwargs)
+        kwargs = self._customize_createVariable(
+            cfvar, construct_type, domain_axes, kwargs
+        )
 
         logger.info(
             f"        to netCDF variable: {ncvar}({', '.join(ncdimensions)})"
@@ -2795,13 +2827,16 @@ class NetCDFWrite(IOWrite):
                 cfvar,
                 ncvar,
                 ncdimensions,
+                domain_axes,
                 unset_values=unset_values,
                 compressed=compressed,
                 attributes=attributes,
                 construct_type=construct_type,
             )
 
-    def _customize_createVariable(self, cfvar, construct_type, kwargs):
+    def _customize_createVariable(
+        self, cfvar, construct_type, domain_axes, kwargs
+    ):
         """Customises `netCDF4.Dataset.createVariable` keywords.
 
         The keyword arguments may be changed in subclasses which
@@ -2881,6 +2916,7 @@ class NetCDFWrite(IOWrite):
         cfvar,
         ncvar,
         ncdimensions,
+        domain_axes=None,
         unset_values=(),
         compressed=False,
         attributes=None,
@@ -3743,7 +3779,7 @@ class NetCDFWrite(IOWrite):
                     if term in ("standard_name", "computed_standard_name"):
                         continue
 
-                    ncvar = self._write_scalar_data(value, ncvar=term)
+                    ncvar = self._write_scalar_data(f, value, ncvar=term)
 
                     formula_terms.append(f"{term}: {ncvar}")
                     bounds_formula_terms.append(f"{term}: {ncvar}")
@@ -3975,6 +4011,7 @@ class NetCDFWrite(IOWrite):
             ncvar,
             ncdimensions,
             f,
+            self.implementation.get_data_axes(f, None),
             omit=omit,
             extra=extra,
             data_variable=field,
