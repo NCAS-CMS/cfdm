@@ -78,6 +78,31 @@ class ArrayMixin:
         """
         return 0
 
+    def _set_units(self):
+        """The units and calendar properties.
+
+        These are the values set during initialisation, defaulting to
+        `None` if either was not set at that time.
+
+        .. versionadded:: TODOCFAVER
+
+        :Returns:
+
+            `tuple`
+                The units and calendar values, either of which may be
+                `None`.
+
+        """
+        units = self.get_units(False)
+        if units is False:
+            self._set_component("units", None, copy=False)
+
+        calendar = self.get_calendar(False)
+        if calendar is False:
+            self._set_component("calendar", None, copy=False)
+
+        return units, calendar
+
     def get_calendar(self, default=ValueError()):
         """The calendar of the array.
 
