@@ -3006,9 +3006,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         bar <class 'str'>
 
         """
-        return self._item(
-            (slice(0, 1, 1),) * (self.ndim - 1) + (slice(1, 2, 1),)
-        )
+        return self._item(np.unravel_index(1, self.shape))
 
     @_inplace_enabled(default=False)
     def to_memory(self, inplace=False):
