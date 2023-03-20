@@ -4,7 +4,7 @@ from ...functions import abspath
 
 
 class FileArrayMixin:
-    """Mixin class for a container of an array. TODOCFADOCS.
+    """Mixin class for a file container of an array.
 
     .. versionadded:: (cfdm) TODOCFAVER
 
@@ -74,14 +74,19 @@ class FileArrayMixin:
         )
 
     def get_addresses(self):
-        """TODOCFADOCS Return the.
+        """Return the names of the data addresses in the files.
 
-        .. versionadded:: TODOCFAVER
+        If there are multiple addresses then they correspond, in
+        order, to the files returned by `get_filenames`
+
+        .. versionadded:: (cfdm) 1.10.0.2
+
+        .. seealso:: `get_filenames`
 
         :Returns:
 
             `tuple`
-                TODOCFADOCS
+                The addresses.
 
         """
         return self._get_component("address", ())
@@ -120,27 +125,36 @@ class FileArrayMixin:
         )
 
     def get_filenames(self):
-        """TODOCFADOCS Return the names of files containing.
+        """Return the names of files containing the data.
 
-        .. versionadded:: TODOCFAVER
+        If multiple files are returned then it is assumed that anyone
+        one of them may contain the data, and when the data are
+        requested an attempt to open file is made, in order, and the
+        data is read from the first success.
+
+        .. versionadded:: (cfdm) 1.10.0.2
+
+        .. seealso:: `get_addresses`
 
         :Returns:
 
             `tuple`
-                TODOCFADOCS
+                The filenames, in absolute form.
 
         """
         return tuple([abspath(f) for f in self._get_component("filename", ())])
 
     def get_format(self):
-        """The TODOCFADOCS in the file of the variable.
+        """The format of the files.
 
         .. versionadded:: (cfdm) TODOCFAVER
+
+        .. seealso:: `get_address`, `get_filename`, `get_formats`
 
         :Returns:
 
             `str`
-                The address, or `None` if there isn't one.
+                 The file format.
 
         """
         raise NotImplementedError(
@@ -163,17 +177,27 @@ class FileArrayMixin:
         return (self.get_format(),) * len(self.get_filenames())
 
     def open(self, func, *args, **kwargs):
-        """Returns an open dataset containing the data array.
+        """Return an open file object containing the data array.
 
-        When multiple fragment files have been provided an attempt is
-        made to open each one, in arbitrary order, and the
-        `netCDF4.Dataset` is returned from the first success.
+        When multiple files have been provided an attempt is made to
+        open each one, in the order stored, and an open file object is
+        returned from the first file that exists.
 
         .. versionadded:: TODOCFAVER
 
+        :Parameters:
+
+            func: callable
+                Function that opens a file.
+
+            args, kwargs: optional
+                Optional arguments to *func*.
+
         :Returns:
 
-            (`netCDF4.Dataset`, address)
+            `tuple`
+                The open file object, and the address of the data
+                within the file.
 
         """
         # Loop round the files, returning as soon as we find one that

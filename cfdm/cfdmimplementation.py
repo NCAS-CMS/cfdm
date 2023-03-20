@@ -1686,7 +1686,22 @@ class CFDMImplementation(Implementation):
         return parent.get_data(default=default)
 
     def get_data_axes(self, parent, key, default=None):
-        """TODOCFADOCS."""
+        """Get domain axis identifiers.
+
+        :Parameters:
+
+            parent: `Field` or `Domain`
+
+            key: `str` or `None`
+                The identifier of the constuct, or `None` to get
+                `Field` axes.
+
+        :Returns:
+
+            `tuple` of `str`
+                The domain axis identifiers.
+
+        """
         if key is None:
             return parent.get_data_axes(default=default)
 

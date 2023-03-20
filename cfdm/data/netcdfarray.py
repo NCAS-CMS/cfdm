@@ -377,75 +377,12 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
         """
         return self[...]
 
-    #    @property
-    #    def dtype(self):
-    #        """Data-type of the data elements.
-    #
-    #        .. versionadded:: (cfdm) 1.7.0
-    #
-    #        """
-    #        return self._get_component("dtype")
-
-    #    @property
-    #    def file_address(self):
-    #        """The file name and address.
-    #
-    #        .. versionadded:: (cfdm) 1.10.0.0
-    #
-    #        :Returns:
-    #
-    #            `tuple`
-    #                The file name and file address.
-    #
-    #        **Examples**
-    #
-    #        >>> a.file_address()
-    #        ('file.nc', 'latitude')
-    #
-    #        """
-    #        pointer = self._get_component("ncvar", None)
-    #        if pointer is None:
-    #            pointer = self.get_varid()
-    #
-    #        return (self.get_filename(None), pointer)
-
-    #    @property
-    #    def shape(self):
-    #        """Tuple of array dimension sizes.
-    #
-    #        .. versionadded:: (cfdm) 1.7.0
-    #
-    #        """
-    #        return self._get_component("shape")
-
-    #    def get_address(self):
-    #        """The address in the file of the variable.
-    #
-    #        Either the netCDF variable name, or else the UNIDATA netCDF
-    #        interface ID.
-    #
-    #        .. versionadded:: (cfdm) 1.10.0.1
-    #
-    #        .. seealso:: `get_filename`, `get_varid`
-    #
-    #        :Returns:
-    #
-    #            `str` or `None`
-    #                The address, or `None` if there isn't one.
-    #
-    #        """
-    #        address = self.get_ncvar()
-    #        if address is None:
-    #            address = self.get_varid()
-    #
-    #        return address
-
     def get_format(self):
-        """TODOCFADOCS.
+        """The format of the files.
 
         .. versionadded:: (cfdm) TODOCFAVER
 
-        .. seealso:: `get_filename`, `get_address`
+        .. seealso:: `get_address`, `get_filename`, `get_formats`
 
         :Returns:
 
@@ -468,14 +405,17 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
         :Parameters:
 
             address: `str` or `int`
-                TODOCFADOCS
+                The netCDF variable name, or integer varid, from which
+                to get the groups.
 
                 .. versionadded:: (cfdm) TODOCFAVER
 
         :Returns:
 
             (`list`, `str`) or (`list`, `int`)
-               TODOCFADOCS
+                The group structure and the name within the group. If
+                *address* is a varid then an empty list and the varid
+                are returned.
 
         **Examples**
 
@@ -512,46 +452,6 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
 
         """
         return self._get_component("mask")
-
-    #    def get_ncvar(self):
-    #        """The name of the netCDF variable containing the array.
-    #
-    #        .. versionadded:: (cfdm) 1.7.0
-    #
-    #        **Examples**
-    #
-    #        >>> print(a.netcdf)
-    #        'tas'
-    #        >>> print(a.varid)
-    #        None
-    #
-    #        >>> print(a.netcdf)
-    #        None
-    #        >>> print(a.varid)
-    #        4
-    #
-    #        """
-    #        return self._get_component("ncvar")
-    #
-    #    def get_varid(self):
-    #        """The UNIDATA netCDF interface ID of the array's variable.
-    #
-    #        .. versionadded:: (cfdm) 1.7.0
-    #
-    #        **Examples**
-    #
-    #        >>> print(a.netcdf)
-    #        'tas'
-    #        >>> print(a.varid)
-    #        None
-    #
-    #        >>> print(a.netcdf)
-    #        None
-    #        >>> print(a.varid)
-    #        4
-    #
-    #        """
-    #        return self._get_component("varid", None)
 
     def get_missing_values(self):
         """The missing value indicators from the netCDF variable.
@@ -607,7 +507,19 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
             dataset.close()
 
     def open(self):
-        """TODOCFADOCS."""
+        """Return an open file object containing the data array.
+
+        When multiple files have been provided an attempt is made to
+        open each one, in the order stored, and an open file object is
+        returned from the first file that exists.
+
+        :Returns:
+
+            (`netCDF4.Dataset`, `str`)
+                The open file object, and the address of the data
+                within the file.
+
+        """
         return super().open(netCDF4.Dataset, mode="r")
 
     def to_memory(self):

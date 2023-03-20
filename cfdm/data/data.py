@@ -1778,11 +1778,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         :Parameters:
 
             default: optional
-                TODOCFADOCS
-                Return the value of the *default* parameter if no
-                dependent tie point index variables have been set. If
-                set to an `Exception` instance then it will be raised
-                instead.
+                Ignored.
 
         :Returns:
 
