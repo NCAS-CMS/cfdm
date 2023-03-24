@@ -272,7 +272,6 @@ class NetCDFArray(abstract.Array):
             array = array.squeeze()
 
         kind = array.dtype.kind
-
         if not string_type and kind in "SU":
             #     == 'S' and array.ndim > (self.ndim -
             #     getattr(self, 'gathered', 0) -

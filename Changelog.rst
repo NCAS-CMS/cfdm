@@ -1,3 +1,13 @@
+Version 1.10.1.0
+----------------
+
+**2023-04-??**
+
+* `cfdm.read` now always returns unicode data from netCDF string and
+  char arrays (https://github.com/NCAS-CMS/cfdm/issues/251)
+
+----
+
 Version 1.10.0.3
 ----------------
 
