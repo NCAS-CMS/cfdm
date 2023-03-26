@@ -4,7 +4,8 @@ Version 1.10.?.?
 **2023-??-??**
 
 * Fixed bug that caused `cf.Data.second_element` to fail for some data
-  shapes (https://github.com/NCAS-CMS/cfdm/issues/249)
+  shapes, namely for a final axis with size one.
+  (https://github.com/NCAS-CMS/cfdm/issues/249)
 
 ----
 
