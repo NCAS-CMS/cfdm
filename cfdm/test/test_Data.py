@@ -730,6 +730,21 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d._original_filenames(update="file4.nc", clear=True)
 
+    def test_Data_first_element(self):
+        """Test the `first_element` Data methods."""
+        d = cfdm.Data(np.arange(6).reshape(1, 6, 1))
+        self.assertEqual(d.first_element(), 0)
+
+    def test_Data_second_element(self):
+        """Test the `second_element` Data methods."""
+        d = cfdm.Data(np.arange(6).reshape(1, 6, 1))
+        self.assertEqual(d.second_element(), 1)
+
+    def test_Data_last_element(self):
+        """Test the `last_element` Data methods."""
+        d = cfdm.Data(np.arange(6).reshape(1, 6, 1))
+        self.assertEqual(d.last_element(), 5)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
