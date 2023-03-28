@@ -265,7 +265,7 @@ class NetCDFArray(abstract.Array):
             # A netCDF string type scalar variable comes out as Python
             # str object, so convert it to a numpy array.
             # --------------------------------------------------------
-            array = numpy.array(array, dtype=f"S{len(array)}")
+            array = numpy.array(array, dtype=f"U{len(array)}")
 
         if not self.ndim:
             # Hmm netCDF4 has a thing for making scalar size 1 , 1d
@@ -282,25 +282,24 @@ class NetCDFArray(abstract.Array):
             # memory. E.g. [['a','b','c']] becomes ['abc']
             # --------------------------------------------------------
             if kind == "U":
-                array = array.astype("S")
+                array = array.astype("S", copy=False)
 
             array = netCDF4.chartostring(array)
             shape = array.shape
-            array = numpy.array([x.rstrip() for x in array.flat], dtype="S")
+            array = numpy.array([x.rstrip() for x in array.flat], dtype="U")
             array = numpy.reshape(array, shape)
-            array = numpy.ma.masked_where(array == b"", array)
-
+            array = numpy.ma.masked_where(array == "", array)
         elif not string_type and kind == "O":
             # --------------------------------------------------------
             # A netCDF string type N-d (N>=1) variable comes out as a
             # numpy object array, so convert it to numpy string array.
             # --------------------------------------------------------
-            array = array.astype("S")  # , copy=False)
+            array = array.astype("U", copy=False)
 
             # --------------------------------------------------------
             # netCDF4 does not auto-mask VLEN variable, so do it here.
             # --------------------------------------------------------
-            array = numpy.ma.where(array == b"", numpy.ma.masked, array)
+            array = numpy.ma.where(array == "", numpy.ma.masked, array)
 
         return array
 

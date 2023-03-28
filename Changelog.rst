@@ -1,8 +1,10 @@
-Version 1.10.?.?
+Version 1.10.1.0
 ----------------
 
-**2023-??-??**
+**2023-04-??**
 
+* `cfdm.read` now always returns unicode data from netCDF string and
+  char arrays (https://github.com/NCAS-CMS/cfdm/issues/251)
 * Fixed bug that caused `cf.Data.second_element` to fail for some data
   shapes, namely for a final axis with size one.
   (https://github.com/NCAS-CMS/cfdm/issues/249)
