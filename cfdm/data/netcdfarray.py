@@ -1,5 +1,3 @@
-# from urllib.parse import urlparse
-
 import netCDF4
 import numpy
 
