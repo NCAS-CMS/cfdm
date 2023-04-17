@@ -5474,8 +5474,6 @@ class NetCDFRead(IORead):
                     "calendar"
                 )
 
-        # TODO: think using e.g. '/forecasts/model1' has the value for
-        #       nc_set_variable. What about nc_set_dimension?
 
         # Store the missing value indicators
         missing_values = {}
