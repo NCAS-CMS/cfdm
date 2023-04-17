@@ -127,7 +127,7 @@ class FileArrayMixin:
     def get_filenames(self):
         """Return the names of files containing the data.
 
-        If multiple files are returned then it is assumed that anyone
+        If multiple files are returned then it is assumed that any
         one of them may contain the data, and when the data are
         requested an attempt to open file is made, in order, and the
         data is read from the first success.
