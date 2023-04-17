@@ -1,7 +1,6 @@
 import numpy
 
 
-
 class ArrayMixin:
     """Mixin class for a container of an array.
 
