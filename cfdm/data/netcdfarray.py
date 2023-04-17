@@ -30,40 +30,15 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
 
         :Parameters:
 
-            filename: `str`
-                The name of the netCDF file containing the array.
+            filename: (sequence of) `str`, optional
+                The name of the netCDF file(s) containing the array.
 
-            ncvar: `str`, optional
-                The name of the netCDF variable containing the
-                array. Required unless *varid* is set.
+            address: (sequence of) `str` or `int`, optional
+                The identity of the netCDF variable in the each file
+                defined by *filename*. Either a netCDF variable name
+                or an integer netCDF variable ID.
 
-            varid: `int`, optional
-                The UNIDATA netCDF interface ID of the variable
-                containing the array. Required if *ncvar* is not set,
-                ignored if *ncvar* is set.
-
-            group: `None` or sequence of `str`, optional
-                Specify the netCDF4 group to which the netCDF variable
-                belongs. By default, or if *group* is `None` or an
-                empty sequence, it assumed to be in the root
-                group. The last element in the sequence is the name of
-                the group in which the variable lies, with other
-                elements naming any parent groups (excluding the root
-                group).
-
-                *Parameter example:*
-                  To specify that a variable is in the root group:
-                  ``group=()`` or ``group=None``
-
-                *Parameter example:*
-                  To specify that a variable is in the group '/forecasts':
-                  ``group=['forecasts']``
-
-                *Parameter example:*
-                  To specify that a variable is in the group
-                  '/forecasts/model2': ``group=['forecasts', 'model2']``
-
-                .. versionadded:: (cfdm) 1.8.6.0
+                .. versionadded:: TODOCFAVER
 
             dtype: `numpy.dtype`
                 The data type of the array in the netCDF file. May be
@@ -119,6 +94,15 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
             {{init copy: `bool`, optional}}
 
                 .. versionadded:: (cfdm) 1.10.0.0
+
+            ncvar:  Deprecated at version 1.10.1.0
+                Use the *addresss* parameter instead.
+
+            varid:  Deprecated at version 1.10.1.0
+                Use the *addresss* parameter instead.
+
+            group: Deprecated at version 1.10.1.0
+                Use the *addresss* parameter instead.
 
         """
         super().__init__(source=source, copy=copy)
