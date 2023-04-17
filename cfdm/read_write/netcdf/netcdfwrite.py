@@ -2608,12 +2608,14 @@ class NetCDFWrite(IOWrite):
             cfvar: `Variable` or `Data`
                 The construct to write to the netCDF file.
 
+            domain_axes: `None`, or `tuple` of `str`
+                The domain axis construct identidifiers for *cfvar*.
+
+                .. versionadded:: TODOCFAVER
+
             omit: sequence of `str`, optional
 
             extra: `dict`, optional
-
-            data_variable: `bool`, optional
-                True if a CF-netCDF data variable is being written.
 
             domain_variable: `bool`, optional
                 True if cf-netCDF domain variable is being written.
@@ -2852,6 +2854,11 @@ class NetCDFWrite(IOWrite):
             construct_type: `str`
                 The construct type of the *cfvar*, or its parent if
                 *cfvar* is not a construct.
+
+                .. versionadded:: TODOCFAVER
+
+            domain_axes: `None`, or `tuple` of `str`
+                The domain axis construct identidifiers for *cfvar*.
 
                 .. versionadded:: TODOCFAVER
 
