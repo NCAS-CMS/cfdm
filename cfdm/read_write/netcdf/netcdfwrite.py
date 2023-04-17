@@ -2749,9 +2749,10 @@ class NetCDFWrite(IOWrite):
         if kwargs["datatype"] != str:
             kwargs.update(g["netcdf_compression"])
 
-        # Note: this is a trivial assignment in standalone cfdm, but required
-        # for non-trivial customisation applied by subclasses e.g. in cf-python
-        kwargs = self._customize_createVariable(
+        # Note: this is a trivial assignment in standalone cfdm, but
+        # required for non-trivial customisation applied by subclasses
+        # e.g. in cf-python
+        kwargs = self._customise_createVariable(
             cfvar, construct_type, domain_axes, kwargs
         )
 
@@ -2834,7 +2835,7 @@ class NetCDFWrite(IOWrite):
                 construct_type=construct_type,
             )
 
-    def _customize_createVariable(
+    def _customise_createVariable(
         self, cfvar, construct_type, domain_axes, kwargs
     ):
         """Customises `netCDF4.Dataset.createVariable` keywords.
@@ -4990,7 +4991,7 @@ class NetCDFWrite(IOWrite):
             g.update(copy.deepcopy(extra_write_vars))
 
         # Customise the write parameters
-        self._customize_write_vars()
+        self._customise_write_vars()
 
         compress = int(compress)
         zlib = bool(compress)
@@ -5256,7 +5257,7 @@ class NetCDFWrite(IOWrite):
 
         return v_groups.startswith(ncdim_groups)
 
-    def _customize_write_vars(self):
+    def _customise_write_vars(self):
         """Customise the write parameters.
 
         This method is primarily aimed at providing a customisation

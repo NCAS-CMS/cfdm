@@ -1243,7 +1243,7 @@ class NetCDFRead(IORead):
 
         # Now that all of the variables have been scanned, customise
         # the read parameters.
-        self._customize_read_vars()
+        self._customise_read_vars()
 
         # ------------------------------------------------------------
         # List variables
@@ -1693,7 +1693,7 @@ class NetCDFRead(IORead):
                 {"_FillValue": self.default_netCDF_fill_value(ncvar)},
             )
 
-    def _customize_auxiliary_coordinates(self, parent_ncvar, f):
+    def _customise_auxiliary_coordinates(self, parent_ncvar, f):
         """Create extra auxiliary coordinate constructs.
 
         This method is primarily aimed at providing a customisation
@@ -1719,16 +1719,16 @@ class NetCDFRead(IORead):
 
         **Examples**
 
-        >>> n._customize_auxiliary_coordinates('tas', f)
+        >>> n._customise_auxiliary_coordinates('tas', f)
         {}
 
-        >>> n._customize_auxiliary_coordinates('pr', f)
+        >>> n._customise_auxiliary_coordinates('pr', f)
         {'tracking_id': 'auxiliarycoordinate0'}
 
         """
         return {}
 
-    def _customize_field_ancillaries(self, parent_ncvar, f):
+    def _customise_field_ancillaries(self, parent_ncvar, f):
         """Create extra field ancillary constructs.
 
         This method is primarily aimed at providing a customisation
@@ -1754,16 +1754,16 @@ class NetCDFRead(IORead):
 
         **Examples**
 
-        >>> n._customize_field_ancillaries('tas', f)
+        >>> n._customise_field_ancillaries('tas', f)
         {}
 
-        >>> n._customize_field_ancillaries('pr', f)
+        >>> n._customise_field_ancillaries('pr', f)
         {'tracking_id': 'fieldancillary1'}
 
         """
         return {}
 
-    def _customize_read_vars(self):
+    def _customise_read_vars(self):
         """Customise the read parameters.
 
         This method is primarily aimed at providing a customisation
@@ -3609,7 +3609,7 @@ class NetCDFRead(IORead):
         # Add extra auxiliary coordinate constructs defined by
         # subclasses
         # ------------------------------------------------------------
-        extra_aux = self._customize_auxiliary_coordinates(field_ncvar, f)
+        extra_aux = self._customise_auxiliary_coordinates(field_ncvar, f)
         if extra_aux:
             ncvar_to_key.update(extra_aux)
             g["auxiliary_coordinate"].update(extra_aux)
@@ -4003,7 +4003,7 @@ class NetCDFRead(IORead):
             # Add extra field ancillary constructs defined by
             # subclasses
             # --------------------------------------------------------
-            extra_anc = self._customize_field_ancillaries(field_ncvar, f)
+            extra_anc = self._customise_field_ancillaries(field_ncvar, f)
             if extra_anc:
                 ncvar_to_key.update(extra_anc)
                 g["field_ancillary"].update(extra_anc)
