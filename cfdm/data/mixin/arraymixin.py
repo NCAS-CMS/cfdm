@@ -1,6 +1,5 @@
 import numpy
 
-# from ...functions import abspath
 
 
 class ArrayMixin:
