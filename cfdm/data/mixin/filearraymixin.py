@@ -46,7 +46,7 @@ class FileArrayMixin:
         If there are multiple files then an `AttributeError` is
         raised by default.
 
-        .. versionadded:: (cfdm) 1.10.0.2
+        .. versionadded:: (cfdm) 1.10.1.0
 
         :Parameters:
 
