@@ -2868,7 +2868,6 @@ class NetCDFWrite(IOWrite):
         # the equivalent method in cf-python which is non-trivial.
         return kwargs
 
-    #    def _transform_strings(self, construct, data, ncdimensions):
     def _transform_strings(self, data, ncdimensions):
         """Transform metadata construct arrays with string data type.
 
