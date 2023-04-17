@@ -1719,11 +1719,11 @@ class NetCDFRead(IORead):
 
         **Examples**
 
-        >>> n._customize_field_ancillaries('tas', f)
+        >>> n._customize_auxiliary_coordinates('tas', f)
         {}
 
-        >>> n._customize_field_ancillaries('pr', f)
-        {'tracking_id': 'fieldancillary1'}
+        >>> n._customize_auxiliary_coordinates('pr', f)
+        {'tracking_id': 'auxiliarycoordinate0'}
 
         """
         return {}
