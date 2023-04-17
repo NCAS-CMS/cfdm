@@ -621,7 +621,7 @@ class SubsampledSubarray(Subarray):
 
         :Returns:
 
-            `set`
+            `tuple`
                 The file names in normalised, absolute form. If the
                 data are all in memory then an empty `set` is
                 returned.
