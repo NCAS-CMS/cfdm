@@ -2602,7 +2602,7 @@ class NetCDFWrite(IOWrite):
             ncvar: `str`
                 The netCDF name of the variable.
 
-            dimensions: `tuple`
+            ncdimensions: `tuple`
                 The netCDF dimension names of the variable
 
             cfvar: `Variable` or `Data`
