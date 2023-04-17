@@ -2941,6 +2941,11 @@ class NetCDFWrite(IOWrite):
 
             ncdimensions: `tuple` of `str`
 
+            domain_axes: `None`, or `tuple` of `str`
+                The domain axis construct identidifiers for *cfvar*.
+
+                .. versionadded:: TODOCFAVER
+
             unset_values: sequence of numbers
 
             attributes: `dict`, optional
