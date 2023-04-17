@@ -5503,7 +5503,6 @@ class NetCDFRead(IORead):
             "shape": shape,
             "dtype": dtype,
             "mask": g["mask"],
-            #            "group": group,
             "units": units,
             "calendar": calendar,
             "missing_values": missing_values,
