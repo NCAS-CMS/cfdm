@@ -103,7 +103,7 @@ class FileArrayMixin:
 
             default: optional
                 Return the value of the *default* parameter if there
-                is no file.
+                is no file or there is more than one file.
 
                 {{default Exception}}
 
