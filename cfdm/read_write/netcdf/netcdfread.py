@@ -5473,18 +5473,6 @@ class NetCDFRead(IORead):
                 calendar = g["variable_attributes"][coord_ncvar].get(
                     "calendar"
                 )
-        #        # Find the group that this variable is in. The group will be
-        #        # None if the variable is in the root group.
-        #        if g["has_groups"]:
-        #            group = g["variable_groups"].get(ncvar, ())
-        #            if group:
-        #                # Make sure that we use the variable name without any
-        #                # group structure prepended to it
-        #                ncvar = g["variable_basename"][ncvar]
-        #        else:
-        #            # This variable is in the root group
-        #            group = None
-        #
 
         # TODO: think using e.g. '/forecasts/model1' has the value for
         #       nc_set_variable. What about nc_set_dimension?
