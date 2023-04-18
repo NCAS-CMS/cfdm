@@ -102,7 +102,7 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
                 Use the *addresss* parameter instead.
 
             group: Deprecated at version 1.10.1.0
-                Use the *addresss* parameter instead.
+                Use the *address* parameter instead.
 
         """
         super().__init__(source=source, copy=copy)
