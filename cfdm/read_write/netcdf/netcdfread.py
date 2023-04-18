@@ -5455,7 +5455,7 @@ class NetCDFRead(IORead):
             shape = shape[:-1]
             size /= strlen
             ndim -= 1
-            dtype = numpy.dtype(f"S{strlen}")
+            dtype = numpy.dtype(f"U{strlen}")
 
         filename = g["variable_filename"][ncvar]
 

@@ -103,7 +103,6 @@ class create_fieldTest(unittest.TestCase):
                 "iota",
                 "kappa",
             ],
-            dtype="S",
         )
         array[0] = numpy.ma.masked
         aux4 = cfdm.AuxiliaryCoordinate(data=cfdm.Data(array))

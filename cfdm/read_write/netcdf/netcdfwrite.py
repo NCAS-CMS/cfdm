@@ -3317,7 +3317,9 @@ class NetCDFWrite(IOWrite):
             )
             if x is None:
                 self.implementation.set_property(
-                    field_coordinates[key], "computed_standard_name", csn
+                    field_coordinates[key],
+                    {"computed_standard_name": csn},
+                    copy=False,
                 )
             elif x != csn:
                 raise ValueError("Standard name could not be computed.")

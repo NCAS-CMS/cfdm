@@ -89,7 +89,7 @@ def example_field(n, _implementation=_implementation):
                     : time(1) = [2019-01-01 00:00:00]
     Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
                     : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                    : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+                    : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
     Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
     Coord references: grid_mapping_name:rotated_latitude_longitude
                     : standard_name:atmosphere_hybrid_height_coordinate
@@ -117,7 +117,7 @@ def example_field(n, _implementation=_implementation):
                     : latitude(cf_role=timeseries_id(4)) = [-9.0, ..., 78.0] degrees_north
                     : longitude(cf_role=timeseries_id(4)) = [-23.0, ..., 178.0] degrees_east
                     : height(cf_role=timeseries_id(4)) = [0.5, ..., 345.0] m
-                    : cf_role=timeseries_id(cf_role=timeseries_id(4)) = [b'station1', ..., b'station4']
+                    : cf_role=timeseries_id(cf_role=timeseries_id(4)) = [station1, ..., station4]
                     : long_name=station information(cf_role=timeseries_id(4)) = [-10, ..., -7]
 
     >>> f = cfdm.example_field(4)
@@ -130,7 +130,7 @@ def example_field(n, _implementation=_implementation):
                     : longitude(cf_role=timeseries_id(3)) = [-23.0, 0.0, 67.0] degrees_east
                     : height(cf_role=timeseries_id(3)) = [0.5, 12.6, 23.7] m
                     : altitude(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) = [[[2.07, ..., --]]] km
-                    : cf_role=timeseries_id(cf_role=timeseries_id(3)) = [b'station1', b'station2', b'station3']
+                    : cf_role=timeseries_id(cf_role=timeseries_id(3)) = [station1, station2, station3]
                     : long_name=station information(cf_role=timeseries_id(3)) = [-10, -9, -8]
                     : cf_role=profile_id(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[102, ..., --]]
 
@@ -153,7 +153,7 @@ def example_field(n, _implementation=_implementation):
     Dimension coords: time(4) = [2000-01-16 12:00:00, ..., 2000-04-15 00:00:00]
     Auxiliary coords: latitude(cf_role=timeseries_id(2)) = [25.0, 7.0] degrees_north
                     : longitude(cf_role=timeseries_id(2)) = [10.0, 40.0] degrees_east
-                    : cf_role=timeseries_id(cf_role=timeseries_id(2)) = [b'x1', b'y2']
+                    : cf_role=timeseries_id(cf_role=timeseries_id(2)) = [x1, y2]
                     : ncvar%z(cf_role=timeseries_id(2), 3, 4) = [[[1.0, ..., --]]] m
     Coord references: grid_mapping_name:latitude_longitude
 
@@ -929,18 +929,17 @@ def example_field(n, _implementation=_implementation):
         )
         data = Data(
             [
-                b"",
-                b"beta",
-                b"gamma",
-                b"delta",
-                b"epsilon",
-                b"zeta",
-                b"eta",
-                b"theta",
-                b"iota",
-                b"kappa",
+                "",
+                "beta",
+                "gamma",
+                "delta",
+                "epsilon",
+                "zeta",
+                "eta",
+                "theta",
+                "iota",
+                "kappa",
             ],
-            dtype="S7",
             mask=data_mask,
         )
         c.set_data(data)
@@ -1465,7 +1464,7 @@ def example_field(n, _implementation=_implementation):
         )
         c.nc_set_variable("station_name")
         data = Data(
-            [b"station1", b"station2", b"station3", b"station4"], dtype="S8"
+            ["station1", "station2", "station3", "station4"],
         )
         c.set_data(data)
         f.set_construct(
@@ -2595,7 +2594,7 @@ def example_field(n, _implementation=_implementation):
             {"long_name": "station name", "cf_role": "timeseries_id"}
         )
         c.nc_set_variable("station_name")
-        data = Data([b"station1", b"station2", b"station3"], dtype="S8")
+        data = Data(["station1", "station2", "station3"])
         c.set_data(data)
         f.set_construct(
             c, axes=("domainaxis0",), key="auxiliarycoordinate5", copy=False
@@ -4674,7 +4673,7 @@ def example_field(n, _implementation=_implementation):
         # auxiliary_coordinate: cf_role=timeseries_id
         c = AuxiliaryCoordinate()
         c.set_properties({"cf_role": "timeseries_id"})
-        d = Data([b"x1", b"y2"], dtype="S2")
+        d = Data(["x1", "y2"])
         c.set_data(d)
         c.nc_set_variable("instance_id")
         f.set_construct(
@@ -5274,7 +5273,7 @@ def example_domain(n, _func=example_field):
                     : time(1) = [2019-01-01 00:00:00]
     Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
                     : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                    : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+                    : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
     Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
     Coord references: grid_mapping_name:rotated_latitude_longitude
                     : standard_name:atmosphere_hybrid_height_coordinate
@@ -5295,7 +5294,7 @@ def example_domain(n, _func=example_field):
                     : latitude(cf_role=timeseries_id(4)) = [-9.0, ..., 78.0] degrees_north
                     : longitude(cf_role=timeseries_id(4)) = [-23.0, ..., 178.0] degrees_east
                     : height(cf_role=timeseries_id(4)) = [0.5, ..., 345.0] m
-                    : cf_role=timeseries_id(cf_role=timeseries_id(4)) = [b'station1', ..., b'station4']
+                    : cf_role=timeseries_id(cf_role=timeseries_id(4)) = [station1, ..., station4]
                     : long_name=station information(cf_role=timeseries_id(4)) = [-10, ..., -7]
 
     >>> f = cfdm.example_domain(4)
@@ -5305,7 +5304,7 @@ def example_domain(n, _func=example_field):
                     : longitude(cf_role=timeseries_id(3)) = [-23.0, 0.0, 67.0] degrees_east
                     : height(cf_role=timeseries_id(3)) = [0.5, 12.6, 23.7] m
                     : altitude(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) = [[[2.07, ..., --]]] km
-                    : cf_role=timeseries_id(cf_role=timeseries_id(3)) = [b'station1', b'station2', b'station3']
+                    : cf_role=timeseries_id(cf_role=timeseries_id(3)) = [station1, station2, station3]
                     : long_name=station information(cf_role=timeseries_id(3)) = [-10, -9, -8]
                     : cf_role=profile_id(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[102, ..., --]]
 
@@ -5321,7 +5320,7 @@ def example_domain(n, _func=example_field):
     Dimension coords: time(4) = [2000-01-16 12:00:00, ..., 2000-04-15 00:00:00]
     Auxiliary coords: latitude(cf_role=timeseries_id(2)) = [25.0, 7.0] degrees_north
                     : longitude(cf_role=timeseries_id(2)) = [10.0, 40.0] degrees_east
-                    : cf_role=timeseries_id(cf_role=timeseries_id(2)) = [b'x1', b'y2']
+                    : cf_role=timeseries_id(cf_role=timeseries_id(2)) = [x1, y2]
                     : ncvar%z(cf_role=timeseries_id(2), 3, 4) = [[[1.0, ..., --]]] m
     Coord references: grid_mapping_name:latitude_longitude
 

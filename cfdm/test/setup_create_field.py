@@ -101,7 +101,6 @@ class create_fieldTest(unittest.TestCase):
                 "iota",
                 "kappa",
             ],
-            dtype="S",
         )
         array[0] = numpy.ma.masked
         aux4 = cfdm.AuxiliaryCoordinate(data=cfdm.Data(array))
@@ -238,7 +237,7 @@ class create_fieldTest(unittest.TestCase):
             .value()
             .data.array
         )
-        self.assertEqual(array[1], b"beta")
+        self.assertEqual(array[1], "beta")
 
         self.assertEqual(len(g), 1)
 
