@@ -5474,7 +5474,6 @@ class NetCDFRead(IORead):
                     "calendar"
                 )
 
-
         # Store the missing value indicators
         missing_values = {}
         for attr in (
