@@ -34,7 +34,7 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
                 The name of the netCDF file(s) containing the array.
 
             address: (sequence of) `str` or `int`, optional
-                The identity of the netCDF variable in the each file
+                The identity of the netCDF variable in each file
                 defined by *filename*. Either a netCDF variable name
                 or an integer netCDF variable ID.
 
