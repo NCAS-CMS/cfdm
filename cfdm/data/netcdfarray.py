@@ -96,7 +96,7 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
                 .. versionadded:: (cfdm) 1.10.0.0
 
             ncvar:  Deprecated at version 1.10.1.0
-                Use the *addresss* parameter instead.
+                Use the *address* parameter instead.
 
             varid:  Deprecated at version 1.10.1.0
                 Use the *addresss* parameter instead.
