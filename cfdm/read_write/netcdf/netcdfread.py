@@ -750,6 +750,10 @@ class NetCDFRead(IORead):
             "interpolation": {},
             # Interpolation parameter variables
             "interpolation_parameter": {},
+            # --------------------------------------------------------
+            # CFA
+            # --------------------------------------------------------
+            "cfa": False,
         }
 
         g = self.read_vars
@@ -842,22 +846,28 @@ class NetCDFRead(IORead):
             )  # pragma: no cover
 
         # ------------------------------------------------------------
-        # Find the CF version for the file
+        # Find the CF version for the file, and the CFA version.
         # ------------------------------------------------------------
         Conventions = g["global_attributes"].get("Conventions", "")
 
-        all_conventions = re.split(",", Conventions)
+        # If the string contains any commas, it is assumed to be a
+        # comma-separated list.
+        all_conventions = re.split(",\s*", Conventions)
         if all_conventions[0] == Conventions:
-            all_conventions = re.split(r"\s+", Conventions)
+            all_conventions = Conventions.split()
 
         file_version = None
         for c in all_conventions:
-            if not re.match(r"^CF-\d", c):
-                continue
+            if c.startswith("CF-"):
+                file_version = c.replace("CF-", "", 1)
+            elif c.startswith("CFA-"):
+                g["cfa"] = True
+                g["CFA_version"] = Version(c.replace("CFA-", "", 1))
+            elif c == "CFA":
+                g["cfa"] = True
+                g["CFA_version"] = Version("0.4")
 
-            file_version = re.sub("^CF-", "", c)
-
-        if not file_version:
+        if file_version is None:
             if default_version is not None:
                 # Assume the default version provided by the user
                 file_version = default_version
@@ -1233,7 +1243,7 @@ class NetCDFRead(IORead):
 
         # Now that all of the variables have been scanned, customise
         # the read parameters.
-        self._customize_read_vars()
+        self._customise_read_vars()
 
         # ------------------------------------------------------------
         # List variables
@@ -1683,7 +1693,77 @@ class NetCDFRead(IORead):
                 {"_FillValue": self.default_netCDF_fill_value(ncvar)},
             )
 
-    def _customize_read_vars(self):
+    def _customise_auxiliary_coordinates(self, parent_ncvar, f):
+        """Create extra auxiliary coordinate constructs.
+
+        This method is primarily aimed at providing a customisation
+        entry point for subclasses. It is assumed that any new
+        constructs are set on the parent field or domain construct
+        inside this method.
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            parent_ncvar: `str`
+                The netCDF variable name of the parent variable.
+
+            f: `Field` or `Domain`
+                The parent field or domain construct.
+
+        :Returns:
+
+            `dict`
+                A mapping of netCDF variable names to newly-created
+                construct identifiers.
+
+        **Examples**
+
+        >>> n._customise_auxiliary_coordinates('tas', f)
+        {}
+
+        >>> n._customise_auxiliary_coordinates('pr', f)
+        {'tracking_id': 'auxiliarycoordinate0'}
+
+        """
+        return {}
+
+    def _customise_field_ancillaries(self, parent_ncvar, f):
+        """Create extra field ancillary constructs.
+
+        This method is primarily aimed at providing a customisation
+        entry point for subclasses. It is assumed that any new
+        constructs are set on the parent field construct inside this
+        method.
+
+        .. versionadded:: TODOCFAVER
+
+        :Parameters:
+
+            parent_ncvar: `str`
+                The netCDF variable name of the parent variable.
+
+            f: `Field`
+                The parent field construct.
+
+        :Returns:
+
+            `dict`
+                A mapping of netCDF variable names to newly-created
+                construct identifiers.
+
+        **Examples**
+
+        >>> n._customise_field_ancillaries('tas', f)
+        {}
+
+        >>> n._customise_field_ancillaries('pr', f)
+        {'tracking_id': 'fieldancillary1'}
+
+        """
+        return {}
+
+    def _customise_read_vars(self):
         """Customise the read parameters.
 
         This method is primarily aimed at providing a customisation
@@ -3526,6 +3606,28 @@ class NetCDFRead(IORead):
                 ncvar_to_key[node_ncvar] = aux
 
         # ------------------------------------------------------------
+        # Add extra auxiliary coordinate constructs defined by
+        # subclasses
+        # ------------------------------------------------------------
+        extra_aux = self._customise_auxiliary_coordinates(field_ncvar, f)
+        if extra_aux:
+            ncvar_to_key.update(extra_aux)
+            g["auxiliary_coordinate"].update(extra_aux)
+            g["coordinates"][field_ncvar].extend(extra_aux)
+
+            # Reference the netCDF variables
+            coords = self.implementation.get_auxiliary_coordinates(f)
+            for aux_ncvar, key in extra_aux.items():
+                self._reference(aux_ncvar, field_ncvar)
+                coord = coords[key]
+                if self.implementation.has_bounds(coord):
+                    bounds = self.implementation.get_bounds(coord)
+                    self._reference(
+                        self.implementation.nc_get_variable(bounds),
+                        field_ncvar,
+                    )
+
+        # ------------------------------------------------------------
         # Add coordinate reference constructs from formula_terms
         # properties
         # ------------------------------------------------------------
@@ -3896,6 +3998,19 @@ class NetCDFRead(IORead):
                         self._reference(ncvar, field_ncvar)
 
                         ncvar_to_key[ncvar] = key
+
+            # --------------------------------------------------------
+            # Add extra field ancillary constructs defined by
+            # subclasses
+            # --------------------------------------------------------
+            extra_anc = self._customise_field_ancillaries(field_ncvar, f)
+            if extra_anc:
+                ncvar_to_key.update(extra_anc)
+                g["field_ancillary"].update(extra_anc)
+
+                # Reference the netCDF variables
+                for anc_ncvar in extra_anc:
+                    self._reference(anc_ncvar, field_ncvar)
 
         # Add the structural read report to the field/domain
         dataset_compliance = g["dataset_compliance"][field_ncvar]
@@ -4530,7 +4645,7 @@ class NetCDFRead(IORead):
         nc = g["nc"]
 
         g["bounds"][field_ncvar] = {}
-        g["coordinates"][field_ncvar] = []
+        g["coordinates"][field_ncvar] = []  # TODO: ALERT THIS COULD BE BAD
 
         if ncvar is not None:
             properties = g["variable_attributes"][ncvar].copy()
@@ -5310,9 +5425,6 @@ class NetCDFRead(IORead):
             group, name = self._netCDF4_group(
                 g["variable_grouped_dataset"][ncvar], ncvar
             )
-            #            path = ncvar.split('/')
-            #            for group_name in path[1:-1]:
-            #                group = group[group_name]
             variable = group.variables.get(name)
         else:
             variable = g["variables"].get(ncvar)
@@ -5361,21 +5473,6 @@ class NetCDFRead(IORead):
                 calendar = g["variable_attributes"][coord_ncvar].get(
                     "calendar"
                 )
-        # Find the group that this variable is in. The group will be
-        # None if the variable is in the root group.
-
-        if g["has_groups"]:
-            group = g["variable_groups"].get(ncvar, ())
-            if group:
-                # Make sure that we use the variable name without any
-                # group structure prepended to it
-                ncvar = g["variable_basename"][ncvar]
-        else:
-            # This variable is in the root group
-            group = None
-
-            # TODO: think using e.g. '/forecasts/model1' has the value for
-            # nc_set_variable. What about nc_set_dimension?
 
         # Store the missing value indicators
         missing_values = {}
@@ -5399,11 +5496,10 @@ class NetCDFRead(IORead):
 
         kwargs = {
             "filename": filename,
+            "address": ncvar,
             "shape": shape,
             "dtype": dtype,
             "mask": g["mask"],
-            "ncvar": ncvar,
-            "group": group,
             "units": units,
             "calendar": calendar,
             "missing_values": missing_values,
@@ -7917,7 +8013,6 @@ class NetCDFRead(IORead):
         )
 
         m = re.match(pat_all, string)
-
         if m is None:
             return []
 

@@ -46,10 +46,14 @@ class NumpyArrayTest(unittest.TestCase):
     def test_NumpyArray_get_filename(self):
         """Test NumpyArray.get_filename."""
         x = cfdm.NumpyArray()
-        self.assertIsNone(x.get_filename(None))
-
         with self.assertRaises(AttributeError):
             x.get_filename()
+
+    def test_NumpyArray_get_filenames(self):
+        """Test NumpyArray.get_filenames."""
+        x = cfdm.NumpyArray()
+        with self.assertRaises(AttributeError):
+            x.get_filenames()
 
 
 if __name__ == "__main__":

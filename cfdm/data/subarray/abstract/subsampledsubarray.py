@@ -621,7 +621,7 @@ class SubsampledSubarray(Subarray):
 
         :Returns:
 
-            `set`
+            `tuple`
                 The file names in normalised, absolute form. If the
                 data are all in memory then an empty `set` is
                 returned.
@@ -633,11 +633,11 @@ class SubsampledSubarray(Subarray):
             self.dependent_tie_points.values()
         ):
             try:
-                filenames.update(x.get_filenames())
+                filenames += x.get_filenames()
             except AttributeError:
                 pass
 
-        return filenames
+        return tuple(set(filenames))
 
     def get_interpolation_description(self, default=ValueError()):
         """Get a non-standardised interpolation method description.

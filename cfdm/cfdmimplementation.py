@@ -1604,7 +1604,10 @@ class CFDMImplementation(Implementation):
         {'standard_name': 'latitude', 'units': 'degrees_north', 'foo': 'bar'}
 
         """
-        return parent.properties()
+        try:
+            return parent.properties()
+        except AttributeError:
+            return {}
 
     def get_property(self, construct, prop, default=None):
         """Return a property of a construct.
@@ -1622,7 +1625,10 @@ class CFDMImplementation(Implementation):
                 The property value.
 
         """
-        return construct.get_property(prop, default=default)
+        try:
+            return construct.get_property(prop, default=default)
+        except AttributeError:
+            return default
 
     def get_geometry(self, construct, default=None):
         """Return the geometry type of coordinates.
@@ -1678,6 +1684,28 @@ class CFDMImplementation(Implementation):
 
         """
         return parent.get_data(default=default)
+
+    def get_data_axes(self, parent, key, default=None):
+        """Get domain axis identifiers.
+
+        :Parameters:
+
+            parent: `Field` or `Domain`
+
+            key: `str` or `None`
+                The identifier of the constuct, or `None` to get
+                `Field` axes.
+
+        :Returns:
+
+            `tuple` of `str`
+                The domain axis identifiers.
+
+        """
+        if key is None:
+            return parent.get_data_axes(default=default)
+
+        return parent.get_data_axes(key, default=default)
 
     def get_data_source(self, parent, default=None):
         """Return the data array.
@@ -2159,12 +2187,9 @@ class CFDMImplementation(Implementation):
     def initialise_NetCDFArray(
         self,
         filename=None,
-        ncvar=None,
-        group=None,
+        address=None,
         dtype=None,
-        ndim=None,
         shape=None,
-        size=None,
         mask=True,
         units=False,
         calendar=None,
@@ -2176,17 +2201,11 @@ class CFDMImplementation(Implementation):
 
             filename: `str`
 
-            ncvar: `str`
-
-            group: `None` or sequence of str`
+            address: `str`
 
             dytpe: `numpy.dtype`
 
-            ndim: `int`, optional
-
             shape: sequence of `int`, optional
-
-            size: `int, optional
 
             mask: `bool`, optional
 
@@ -2218,12 +2237,9 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("NetCDFArray")
         return cls(
             filename=filename,
-            ncvar=ncvar,
-            group=group,
+            address=address,
             dtype=dtype,
-            ndim=ndim,
             shape=shape,
-            size=size,
             mask=mask,
             units=units,
             calendar=calendar,

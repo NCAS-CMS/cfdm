@@ -1770,6 +1770,23 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 default, f"{self.__class__.__name__!r} has no count variable"
             )
 
+    def get_data(self, default=ValueError(), _units=None, _fill_value=None):
+        """Returns the data.
+
+        .. versionadded:: (cfdm) TODOCFAVER
+
+        :Parameters:
+
+            default: optional
+                Ignored.
+
+        :Returns:
+
+            `Data`
+
+        """
+        return self
+
     def get_dependent_tie_points(self, default=ValueError()):
         """Return the list variable for a compressed array.
 
@@ -2772,7 +2789,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             return set()
 
         try:
-            return source.get_filenames()
+            return set(source.get_filenames())
         except AttributeError:
             return set()
 

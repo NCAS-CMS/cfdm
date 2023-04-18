@@ -37,8 +37,6 @@ class LinearSubarrayTest(unittest.TestCase):
         x = cfdm.LinearSubarray(
             data=123, parameters={}, dependent_tie_points={}
         )
-        self.assertIsNone(x.get_filename(None))
-
         with self.assertRaises(AttributeError):
             x.get_filename()
 
@@ -47,7 +45,7 @@ class LinearSubarrayTest(unittest.TestCase):
         x = cfdm.LinearSubarray(
             data=123, parameters={}, dependent_tie_points={}
         )
-        self.assertEqual(x.get_filenames(), set())
+        self.assertEqual(x.get_filenames(), ())
 
 
 if __name__ == "__main__":
