@@ -2858,7 +2858,7 @@ class NetCDFWrite(IOWrite):
                 .. versionadded:: TODOCFAVER
 
             domain_axes: `None`, or `tuple` of `str`
-                The domain axis construct identidifiers for *cfvar*.
+                The domain axis construct identifiers for *cfvar*.
 
                 .. versionadded:: TODOCFAVER
 
