@@ -99,7 +99,7 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
                 Use the *address* parameter instead.
 
             varid:  Deprecated at version 1.10.1.0
-                Use the *addresss* parameter instead.
+                Use the *address* parameter instead.
 
             group: Deprecated at version 1.10.1.0
                 Use the *address* parameter instead.
