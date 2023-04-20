@@ -12,6 +12,34 @@ logger = logging.getLogger(__name__)
 class Constructs(mixin.Container, core.Constructs):
     """A container for metadata constructs.
 
+    The container has similarities to a `dict` in that it presents the
+    metadata constructs as key/value pairs, where the key is the
+    unique identifier that corresponds to a metadata construct value;
+    is indexable by metadata construct identifier; and provides a
+    subset of the usual dictionary methods: `get`, `items`, `keys`,
+    and `values`. The number of constructs (which may be zero) can be
+    found via the Python `len` function. The container can be
+    converted to an actual `dict` with the `todict` method.
+
+    **Filtering**
+
+    A subset of the metadata constructs can be defined and returned in
+    a new `Constructs` instance by using the various filter
+    methods. See `filter` for more details.
+
+    **Calling**
+
+    Calling a `Constructs` instance also creates a new `Constructs`
+    instance that contains a subset of the metadata constructs,
+    primarily selecting by construct identity. For instance, selecting
+    constructs that have an identity of 'latitude' could be done by
+    either ``x = c('latitude')`` or ``x =
+    c.filter_by_identity('latitude')``. More generally,
+    ``c(*identities, **filter_kwargs)`` is equivalent to
+    ``c.filter(filter_by_identity=identities, **filter_kwargs)``.
+
+    **Metadata constructs**
+
     The following metadata constructs can be included:
 
     * auxiliary coordinate constructs
@@ -22,24 +50,6 @@ class Constructs(mixin.Container, core.Constructs):
     * domain axis constructs
     * cell method constructs
     * field ancillary constructs
-
-    The container is used by used by `Field` and `Domain` instances.
-
-    The container is like a dictionary in many ways, in that it stores
-    key/value pairs where the key is the unique construct key with
-    corresponding metadata construct value, and provides some of the
-    usual dictionary methods.
-
-
-    **Calling**
-
-    Calling a `Constructs` instance selects metadata constructs by
-    identity and is an alias for the `filter_by_identity` method. For
-    example, to select constructs that have an identity of
-    "air_temperature": ``d = c('air_temperature')``.
-
-    Note that ``c(*identities, **filter_kwargs)`` is equivalent to
-    ``c.filter(filter_by_identity=identities, **filter_kwargs)``.
 
     .. versionadded:: (cfdm) 1.7.0
 
