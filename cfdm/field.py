@@ -481,7 +481,7 @@ class Field(
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `constructs`
+        .. seealso:: `constructs`, `field_ancillary`
 
         :Parameters:
 
@@ -598,7 +598,7 @@ class Field(
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `constructs`
+        .. seealso:: `constructs`, `cell_method`
 
         :Parameters:
 

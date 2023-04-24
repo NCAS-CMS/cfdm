@@ -377,7 +377,9 @@ _docstring_substitution_definitions = {
     # Returns constructs
     "{{Returns constructs}}": """
                 The selected constructs in a new `Constructs` object,
-                unless modified by any *filter_kwargs* parameters.""",
+                unless modified by any *filter_kwargs* parameters. The
+                returned object will contain no constructs if none
+                were selected.""",
     # Returns construct
     "{{Returns construct}}": """The selected construct, or its identifier if *key* is
                 True, or a tuple of both if *item* is True.""",
