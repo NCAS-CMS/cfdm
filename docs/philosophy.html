@@ -3,22 +3,23 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Philosophy &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script type="text/javascript" src="_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript" src="_static/toggleprompt.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Performance" href="performance.html" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.10.0.3</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.10.1.0</a></h1>
 
 
 
@@ -65,7 +66,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -116,10 +117,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <div class="section" id="philosophy">
+  <section id="philosophy">
 <span id="id1"></span><h1><strong>Philosophy</strong><a class="headerlink" href="#philosophy" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.10.0.3 for version 1.10 of the CF conventions.</p>
+<p>Version 1.10.1.0 for version 1.10 of the CF conventions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#two-levels-of-implementation" id="id3"><strong>Two levels of implementation</strong></a></p></li>
@@ -128,7 +129,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <li><p><a class="reference internal" href="#api" id="id6"><strong>API</strong></a></p></li>
 </ul>
 </div>
-<div class="section" id="two-levels-of-implementation">
+<section id="two-levels-of-implementation">
 <h2><a class="toc-backref" href="#id3"><strong>Two levels of implementation</strong></a><a class="headerlink" href="#two-levels-of-implementation" title="Permalink to this headline">¶</a></h2>
 <p>The basic requirement of the reference implementation is to represent
 the logical <a class="reference internal" href="cf_data_model.html#cf-data-model"><span class="std std-ref">CF data model</span></a> in memory with a
@@ -146,8 +147,8 @@ in addition, the reading and writing of netCDF datasets, as well as
 comprehensive inspection capabilities and extra field and domain
 construct modification capabilities.</p>
 <hr class="docutils" />
-</div>
-<div class="section" id="cf-conventions">
+</section>
+<section id="cf-conventions">
 <span id="id2"></span><h2><a class="toc-backref" href="#id4"><strong>CF conventions</strong></a><a class="headerlink" href="#cf-conventions" title="Permalink to this headline">¶</a></h2>
 <p>The CF data model does not enforce the CF conventions. CF-compliance
 is the responsibility of the user. For example, a “units” property
@@ -159,9 +160,9 @@ netCDF file: it may not be possible to parse a non-CF-compliant netCDF
 variable or attribute to create an unambiguous CF data model
 construct; or create an unambiguous netCDF variable or attribute from
 a non-CF-compliant CF data model construct.</p>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="functionality">
+<section id="functionality">
 <h2><a class="toc-backref" href="#id5"><strong>Functionality</strong></a><a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
 <p>The cfdm package has, with few exceptions, only the functionality
 required to read and write datasets, and to create, modify and inspect
@@ -175,9 +176,9 @@ packages that build on this cfdm implementation whilst also adding
 extra, higher level functionality.</p>
 <p>The <a class="reference external" href="https://ncas-cms.github.io/cf-python">cf-python</a> and <a class="reference external" href="http://ajheaps.github.io/cf-plot/">cf-plot</a> packages, that are built on top
 of the cfdm package, include much more higher level functionality.</p>
-</div>
+</section>
 <hr class="docutils" />
-<div class="section" id="api">
+<section id="api">
 <h2><a class="toc-backref" href="#id6"><strong>API</strong></a><a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
 <p>The design of an application programming interface (API) needs to
 strike a balance between being verbose and terse. A verbose API is
@@ -187,8 +188,8 @@ user. The cfdm package has aimed for an API that is more at the
 verbose end of the spectrum: in general it does not use abbreviations
 for method and parameter names, and each method performs a sole
 function.</p>
-</div>
-</div>
+</section>
+</section>
 
 
 
@@ -199,11 +200,11 @@ function.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-04-26.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

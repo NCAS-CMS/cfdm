@@ -3,22 +3,23 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Extensions &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script type="text/javascript" src="_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript" src="_static/toggleprompt.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Releases" href="releases.html" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.10.0.3</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.10.1.0</a></h1>
 
 
 
@@ -65,7 +66,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -116,10 +117,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <div class="section" id="extensions">
+  <section id="extensions">
 <span id="id1"></span><h1><strong>Extensions</strong><a class="headerlink" href="#extensions" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.10.0.3 for version 1.10 of the CF conventions.</p>
+<p>Version 1.10.1.0 for version 1.10 of the CF conventions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#the-custom-dictionary" id="id14"><strong>The _custom dictionary</strong></a></p></li>
@@ -223,7 +224,7 @@ in overridden methods.</p>
 <div class="code-block-caption"><span class="caption-text"><em>Create an implementation with a different API.</em></span><a class="headerlink" href="#id8" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">my_Field_2</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">):</span>
    <span class="k">def</span> <span class="nf">my_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-       <span class="sd">&quot;&quot;&quot;Get coordinate constructs with a different API.&quot;&quot;&quot;</span>
+<span class="w">       </span><span class="sd">&quot;&quot;&quot;Get coordinate constructs with a different API.&quot;&quot;&quot;</span>
        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span>
        <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span><span class="p">:</span>
            <span class="k">return</span> <span class="p">{}</span>
@@ -231,7 +232,7 @@ in overridden methods.</p>
 
 <span class="k">class</span> <span class="nc">my_CFDMImplementation</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">CFDMImplementation</span><span class="p">):</span>
    <span class="k">def</span> <span class="nf">get_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
-       <span class="sd">&quot;&quot;&quot;Get coordinate constructs from a my_Field_2 instance,</span>
+<span class="w">       </span><span class="sd">&quot;&quot;&quot;Get coordinate constructs from a my_Field_2 instance,</span>
 <span class="sd">       using its different API.</span>
 <span class="sd">       &quot;&quot;&quot;</span>
        <span class="k">return</span> <span class="n">field</span><span class="o">.</span><span class="n">my_coordinates</span><span class="p">()</span>
@@ -292,7 +293,7 @@ other aspects it unchanged</p>
 instances.</em></span><a class="headerlink" href="#id10" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">my_NetCDFRead</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">read_write</span><span class="o">.</span><span class="n">netcdf</span><span class="o">.</span><span class="n">NetCDFRead</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Read my fields from a netCDF file on disk or from</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read my fields from a netCDF file on disk or from</span>
 <span class="sd">        an OPeNDAP server location, using my modified mapping</span>
 <span class="sd">        from netCDF to the CF data model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -306,7 +307,7 @@ instances.</em></span><a class="headerlink" href="#id10" title="Permalink to thi
 modified mapping.</em></span><a class="headerlink" href="#id11" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_netcdf</span> <span class="o">=</span> <span class="n">my_NetCDFRead</span><span class="p">(</span><span class="n">my_implementation_2</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">my_read_3</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Read my field constructs from a dataset.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read my field constructs from a dataset.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">my_netcdf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -325,7 +326,7 @@ demonstrating that the modified mapping is being used.</em></span><a class="head
 subclassed, and a new write-to-disk function defined, to override
 aspects of the mapping from CF data model constructs to netCDF
 elements in a dataset.</p>
-<div class="section" id="the-custom-dictionary">
+<section id="the-custom-dictionary">
 <h2><a class="toc-backref" href="#id14"><strong>The _custom dictionary</strong></a><a class="headerlink" href="#the-custom-dictionary" title="Permalink to this headline">¶</a></h2>
 <p>All cfdm classes have a <code class="xref py py-obj docutils literal notranslate"><span class="pre">_custom</span></code> attribute that contains a dictionary
 meant for use in external subclasses.</p>
@@ -372,8 +373,8 @@ requested.</em></span><a class="headerlink" href="#id13" title="Permalink to thi
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="documentation">
+</section>
+<section id="documentation">
 <h2><a class="toc-backref" href="#id15"><strong>Documentation</strong></a><a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
 <p>The cfdm package uses a “docstring rewriter” that allows commonly used
 parts of class and class method docstrings to be written once in a
@@ -385,8 +386,8 @@ subclasses.</p>
 <p>See <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.core.meta.DocstringRewriteMeta</span></code> for details on how to add to
 create new docstring substitutions for extensions, and how to modify
 the substitutions defined in the cfdm package.</p>
-</div>
-<div class="section" id="a-complete-example">
+</section>
+<section id="a-complete-example">
 <h2><a class="toc-backref" href="#id16"><strong>A complete example</strong></a><a class="headerlink" href="#a-complete-example" title="Permalink to this headline">¶</a></h2>
 <p>See <a class="reference external" href="https://github.com/NCAS-CMS/cf-python">cf-python</a> for a
 complete example of extending the cfdm package in the manner described
@@ -399,8 +400,8 @@ regridding and statistical calculations.</p>
 parallel processing.</p>
 <p>cf-python strictly extends the cfdm API, so that a cfdm command will
 always work on its cf-python counterpart.</p>
-</div>
-</div>
+</section>
+</section>
 
 
 
@@ -411,11 +412,11 @@ always work on its cf-python counterpart.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-04-26.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

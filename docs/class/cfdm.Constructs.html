@@ -3,22 +3,23 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cfdm.Constructs &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
-    <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="../_static/toggleprompt.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/toggleprompt.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Constructs.filter_by_identity" href="../method/cfdm.Constructs.filter_by_identity.html" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.10.0.3</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.1.0</a></h1>
 
 
 
@@ -65,7 +66,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -120,14 +121,36 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <div class="section" id="cfdm-constructs">
+  <section id="cfdm-constructs">
 <h1>cfdm.Constructs<a class="headerlink" href="#cfdm-constructs" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Constructs">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Constructs</code><span class="sig-paren">(</span><em class="sig-param">auxiliary_coordinate=None</em>, <em class="sig-param">dimension_coordinate=None</em>, <em class="sig-param">domain_ancillary=None</em>, <em class="sig-param">field_ancillary=None</em>, <em class="sig-param">cell_measure=None</em>, <em class="sig-param">coordinate_reference=None</em>, <em class="sig-param">domain_axis=None</em>, <em class="sig-param">cell_method=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em>, <em class="sig-param">_view=False</em>, <em class="sig-param">_ignore=()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.0.3/cfdm/constructs.py#L12-L3365"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Constructs</code><span class="sig-paren">(</span><em class="sig-param">auxiliary_coordinate=None</em>, <em class="sig-param">dimension_coordinate=None</em>, <em class="sig-param">domain_ancillary=None</em>, <em class="sig-param">field_ancillary=None</em>, <em class="sig-param">cell_measure=None</em>, <em class="sig-param">coordinate_reference=None</em>, <em class="sig-param">domain_axis=None</em>, <em class="sig-param">cell_method=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em>, <em class="sig-param">_view=False</em>, <em class="sig-param">_ignore=()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.1.0/cfdm/constructs.py#L12-L3375"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.constructs.Constructs</span></code></p>
 <p>A container for metadata constructs.</p>
+<p>The container has similarities to a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> in that it presents the
+metadata constructs as key/value pairs, where the key is the
+unique identifier that corresponds to a metadata construct value;
+is indexable by metadata construct identifier; and provides a
+subset of the usual dictionary methods: <a class="reference internal" href="../method/cfdm.Constructs.get.html#cfdm.Constructs.get" title="cfdm.Constructs.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>, <a class="reference internal" href="../method/cfdm.Constructs.items.html#cfdm.Constructs.items" title="cfdm.Constructs.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>, <a class="reference internal" href="../method/cfdm.Constructs.keys.html#cfdm.Constructs.keys" title="cfdm.Constructs.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>,
+and <a class="reference internal" href="../method/cfdm.Constructs.values.html#cfdm.Constructs.values" title="cfdm.Constructs.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>. The number of constructs (which may be zero) can be
+found via the Python <a class="reference external" href="https://docs.python.org/3/library/functions.html#len" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">len</span></code></a> function. The container can be
+converted to an actual <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> with the <a class="reference internal" href="../method/cfdm.Constructs.todict.html#cfdm.Constructs.todict" title="cfdm.Constructs.todict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">todict</span></code></a> method.</p>
+<p><strong>Filtering</strong></p>
+<p>A subset of the metadata constructs can be defined and returned in
+a new <a class="reference internal" href="#cfdm.Constructs" title="cfdm.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instance by using the various filter
+methods. See <a class="reference internal" href="../method/cfdm.Constructs.filter.html#cfdm.Constructs.filter" title="cfdm.Constructs.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a> for more details.</p>
+<p><strong>Calling</strong></p>
+<p>Calling a <a class="reference internal" href="#cfdm.Constructs" title="cfdm.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instance also creates a new <a class="reference internal" href="#cfdm.Constructs" title="cfdm.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a>
+instance that contains a subset of the metadata constructs,
+primarily selecting by construct identity. For instance, selecting
+constructs that have an identity of ‘latitude’ could be done by
+either <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">c('latitude')</span></code> or <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">=</span>
+<span class="pre">c.filter_by_identity('latitude')</span></code>. More generally,
+<code class="docutils literal notranslate"><span class="pre">c(*identities,</span> <span class="pre">**filter_kwargs)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">c.filter(filter_by_identity=identities,</span> <span class="pre">**filter_kwargs)</span></code>.</p>
+<p><strong>Metadata constructs</strong></p>
 <p>The following metadata constructs can be included:</p>
 <ul class="simple">
 <li><p>auxiliary coordinate constructs</p></li>
@@ -139,18 +162,6 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <li><p>cell method constructs</p></li>
 <li><p>field ancillary constructs</p></li>
 </ul>
-<p>The container is used by used by <a class="reference internal" href="cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> and <a class="reference internal" href="cfdm.Domain.html#cfdm.Domain" title="cfdm.Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code></a> instances.</p>
-<p>The container is like a dictionary in many ways, in that it stores
-key/value pairs where the key is the unique construct key with
-corresponding metadata construct value, and provides some of the
-usual dictionary methods.</p>
-<p><strong>Calling</strong></p>
-<p>Calling a <a class="reference internal" href="#cfdm.Constructs" title="cfdm.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instance selects metadata constructs by
-identity and is an alias for the <a class="reference internal" href="../method/cfdm.Constructs.filter_by_identity.html#cfdm.Constructs.filter_by_identity" title="cfdm.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a> method. For
-example, to select constructs that have an identity of
-“air_temperature”: <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">c('air_temperature')</span></code>.</p>
-<p>Note that <code class="docutils literal notranslate"><span class="pre">c(*identities,</span> <span class="pre">**filter_kwargs)</span></code> is equivalent to
-<code class="docutils literal notranslate"><span class="pre">c.filter(filter_by_identity=identities,</span> <span class="pre">**filter_kwargs)</span></code>.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
 </div>
@@ -235,7 +246,7 @@ are not deep copied.</p>
 </dl>
 </dd></dl>
 
-<div class="section" id="filtering">
+<section id="filtering">
 <h2>Filtering<a class="headerlink" href="#filtering" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -300,8 +311,8 @@ are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="constructs-and-identifiers">
+</section>
+<section id="constructs-and-identifiers">
 <h2>Constructs and identifiers<a class="headerlink" href="#constructs-and-identifiers" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -330,8 +341,8 @@ are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="data-axes">
+</section>
+<section id="data-axes">
 <h2>Data axes<a class="headerlink" href="#data-axes" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -348,8 +359,8 @@ are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="miscellaneous">
+</section>
+<section id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -378,8 +389,8 @@ are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="dictionary-access-methods">
+</section>
+<section id="dictionary-access-methods">
 <h2>Dictionary-access methods<a class="headerlink" href="#dictionary-access-methods" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -405,8 +416,8 @@ are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="special">
+</section>
+<section id="special">
 <h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -444,8 +455,8 @@ are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="docstring-substitutions">
+</section>
+<section id="docstring-substitutions">
 <h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -468,8 +479,8 @@ are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
 
@@ -480,11 +491,11 @@ are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-03-10.
+      &copy;2023, NCAS | Page built on 2023-04-26.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 
