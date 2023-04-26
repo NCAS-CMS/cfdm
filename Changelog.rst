@@ -1,7 +1,7 @@
 Version 1.10.1.0
 ----------------
 
-**2023-04-27**
+**2023-04-26**
 
 * New method: `cfdm.Data.get_data`
 * Changes to facilitate CFA-netCDF in cf-python
