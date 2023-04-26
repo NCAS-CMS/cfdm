@@ -20,8 +20,6 @@ Inspection
    :toctree: ../method/
    :template: method.rst
    
-   ~cfdm.NetCDFArray.get_ncvar
-   ~cfdm.NetCDFArray.get_varid
    ~cfdm.NetCDFArray.get_compression_type
    ~cfdm.NetCDFArray.get_subspace
    ~cfdm.NetCDFArray.get_missing_values
