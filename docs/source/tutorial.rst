@@ -2820,9 +2820,8 @@ instance, which is is used to initialise a `~cfdm.Data` instance.
    >>> import netCDF4
    >>> nc = netCDF4.Dataset('file.nc', 'r')
    >>> v = nc.variables['ta']
-   >>> netcdf_array = cfdm.NetCDFArray(filename='file.nc', ncvar='ta',
-   ...	                               dtype=v.dtype, ndim=v.ndim,
-   ...	     		  	       shape=v.shape, size=v.size)
+   >>> netcdf_array = cfdm.NetCDFArray(filename='file.nc', address='ta',
+   ...	                               dtype=v.dtype, shape=v.shape)
    >>> data_disk = cfdm.Data(netcdf_array)
 
   
