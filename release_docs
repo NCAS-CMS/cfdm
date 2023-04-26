@@ -12,6 +12,7 @@ version=`python -c "import cfdm; print(cfdm.__version__)"`
 if [[ $1 = "latest" ]] ; then 
   dir=$PWD/docs
 elif [[ $1 = "archive" ]] ; then
+  # Creates separate dir and does not (git) commit
   dir=$PWD/docs/$version
 elif [[ $1 = "dev" ]] ; then
   # For testing: creates separate dir and does not (git) commit
@@ -74,7 +75,6 @@ if [[ $1 = "latest" ]] ; then
   cp source/_static/customise-alabaster.css _static/customise-alabaster.css
 fi
 
-
 # Copy the templates to the target directory
 if [[ $1 != "latest" ]] ; then
   rm -fr $dir/_templates
@@ -84,7 +84,7 @@ fi
 # --------------------------------------------------------------------
 # Add and commit
 # --------------------------------------------------------------------
-if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
+if [[ $1 = "latest" ]] ; then
   cd $dir
   git add \
 	  *.html \
