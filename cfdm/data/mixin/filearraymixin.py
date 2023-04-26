@@ -6,7 +6,7 @@ from ...functions import abspath
 class FileArrayMixin:
     """Mixin class for a file container of an array.
 
-    .. versionadded:: (cfdm) TODOCFAVER
+    .. versionadded:: (cfdm) 1.10.1.0
 
     """
 
@@ -147,7 +147,7 @@ class FileArrayMixin:
     def get_format(self):
         """The format of the files.
 
-        .. versionadded:: (cfdm) TODOCFAVER
+        .. versionadded:: (cfdm) 1.10.1.0
 
         .. seealso:: `get_address`, `get_filename`, `get_formats`
 
@@ -164,7 +164,7 @@ class FileArrayMixin:
     def get_formats(self):
         """Return the format of the files.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 1.10.1.0
 
         .. seealso:: `get_format`, `get_filenames`, `get_addresses`
 
@@ -183,7 +183,7 @@ class FileArrayMixin:
         open each one, in the order stored, and an open file object is
         returned from the first file that exists.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 1.10.1.0
 
         :Parameters:
 

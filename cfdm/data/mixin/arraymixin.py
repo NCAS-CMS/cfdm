@@ -82,7 +82,7 @@ class ArrayMixin:
         These are the values set during initialisation, defaulting to
         `None` if either was not set at that time.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 1.10.1.0
 
         :Returns:
 

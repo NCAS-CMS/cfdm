@@ -1773,7 +1773,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
     def get_data(self, default=ValueError(), _units=None, _fill_value=None):
         """Returns the data.
 
-        .. versionadded:: (cfdm) TODOCFAVER
+        .. versionadded:: (cfdm) 1.10.1.0
 
         :Parameters:
 

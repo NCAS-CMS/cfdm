@@ -38,7 +38,7 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
                 defined by *filename*. Either a netCDF variable name
                 or an integer netCDF variable ID.
 
-                .. versionadded:: TODOCFAVER
+                .. versionadded:: 1.10.1.0
 
             dtype: `numpy.dtype`
                 The data type of the array in the netCDF file. May be
@@ -361,7 +361,7 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
     def get_format(self):
         """The format of the files.
 
-        .. versionadded:: (cfdm) TODOCFAVER
+        .. versionadded:: (cfdm) 1.10.1.0
 
         .. seealso:: `get_address`, `get_filename`, `get_formats`
 
@@ -389,7 +389,7 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
                 The netCDF variable name, or integer varid, from which
                 to get the groups.
 
-                .. versionadded:: (cfdm) TODOCFAVER
+                .. versionadded:: (cfdm) 1.10.1.0
 
         :Returns:
 

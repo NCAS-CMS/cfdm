@@ -1701,7 +1701,7 @@ class NetCDFRead(IORead):
         constructs are set on the parent field or domain construct
         inside this method.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 1.10.1.0
 
         :Parameters:
 
@@ -1736,7 +1736,7 @@ class NetCDFRead(IORead):
         constructs are set on the parent field construct inside this
         method.
 
-        .. versionadded:: TODOCFAVER
+        .. versionadded:: 1.10.1.0
 
         :Parameters:
 
