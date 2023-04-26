@@ -282,6 +282,7 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.Data.creation_commands
+   ~cfdm.Data.get_data
    ~cfdm.Data.get_filenames
    ~cfdm.Data.get_original_filenames
    ~cfdm.Data.source
