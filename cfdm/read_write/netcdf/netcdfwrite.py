@@ -323,7 +323,7 @@ class NetCDFWrite(IOWrite):
         array.resize(original_shape + (array.size // original_size,))
 
         if masked:
-            array = numpy.ma.masked_where(array == "", array)
+            array = numpy.ma.masked_where(array == b"", array)
             array.set_fill_value(fill_value)
 
         if array.dtype.kind != "S":
