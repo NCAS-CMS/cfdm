@@ -1254,7 +1254,7 @@ class atol(ConstantAccess):
 
     >>> old = {{package}}.{{class}}(1e-10)
     >>> {{package}}.{{class}}()
-    <{{repr}}Constant: 2.220446049250313e-16>
+    <{{repr}}Constant: 1e-10>
     >>> {{package}}.{{class}}(old)
     <{{repr}}Constant: 1e-10>
     >>> {{package}}.{{class}}()
@@ -1339,7 +1339,7 @@ class rtol(ConstantAccess):
 
     >>> old = {{package}}.{{class}}(1e-10)
     >>> {{package}}.{{class}}()
-    <{{repr}}Constant: 2.220446049250313e-16>
+    <{{repr}}Constant: 1e-10>
     >>> {{package}}.{{class}}(old)
     <{{repr}}Constant: 1e-10>
     >>> {{package}}.{{class}}()
