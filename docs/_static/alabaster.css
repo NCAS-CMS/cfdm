@@ -30,8 +30,6 @@ div.sphinxsidebar {
     width: 220px;
     font-size: 14px;
     line-height: 1.5;
-    max-height: 100%;
-    overflow-y: auto;
 }
 
 hr {
