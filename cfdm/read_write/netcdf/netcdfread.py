@@ -3260,7 +3260,6 @@ class NetCDFRead(IORead):
             data = self._create_data(
                 field_ncvar, f, unpacked_dtype=unpacked_dtype
             )
-
             logger.detail(
                 f"        [d] Inserting {data.__class__.__name__}{data.shape}"
             )  # pragma: no cover
@@ -5037,7 +5036,9 @@ class NetCDFRead(IORead):
                 variable, self._ncdim_abspath(subarea_ncdim)
             )
 
-        data = self._create_data(ncvar, uncompress_override=True)
+        data = self._create_data(
+            ncvar, uncompress_override=True, compression_index=True
+        )
 
         self.implementation.set_data(variable, data, copy=False)
 
@@ -5101,7 +5102,9 @@ class NetCDFRead(IORead):
             variable, self._ncdim_abspath(ncdim)
         )
 
-        data = self._create_data(ncvar, variable, uncompress_override=True)
+        data = self._create_data(
+            ncvar, variable, uncompress_override=True, compression_index=True
+        )
 
         self.implementation.set_data(variable, data, copy=False)
 
@@ -5166,7 +5169,9 @@ class NetCDFRead(IORead):
         )
 
         # Set the data
-        data = self._create_data(ncvar, variable, uncompress_override=True)
+        data = self._create_data(
+            ncvar, variable, uncompress_override=True, compression_index=True
+        )
         self.implementation.set_data(variable, data, copy=False)
 
         # Store the original file names
@@ -5260,7 +5265,9 @@ class NetCDFRead(IORead):
         if not g["mask"]:
             self._set_default_FillValue(variable, ncvar)
 
-        data = self._create_data(ncvar, variable, uncompress_override=True)
+        data = self._create_data(
+            ncvar, variable, uncompress_override=True, compression_index=True
+        )
         self.implementation.set_data(variable, data, copy=False)
 
         # Store the original file names
@@ -5520,6 +5527,7 @@ class NetCDFRead(IORead):
         uncompress_override=None,
         parent_ncvar=None,
         coord_ncvar=None,
+        compression_index=False,
     ):
         """Create a data object (Data).
 
@@ -5541,6 +5549,12 @@ class NetCDFRead(IORead):
             coord_ncvar: `str`, optional
 
                 .. versionadded:: (cfdm) 1.10.0.0
+
+           compression_index: `str`, optional
+                True if the data being created are compression
+                indices.
+
+                .. versionadded:: (cfdm) 1.10.1.1
 
         :Returns:
 

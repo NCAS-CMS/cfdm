@@ -724,7 +724,9 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         compression = self.get_compression_type()
         if compression:
             if compression == "gathered":
-                ancils.extend(self.get_list([]))
+                i = self.get_list(None)
+                if i is not None:
+                    ancils.append(i)
             elif compression == "subsampled":
                 ancils.extend(self.get_tie_point_indices({}).values())
                 ancils.extend(self.get_interpolation_parameters({}).values())
@@ -734,13 +736,17 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                     "ragged contiguous",
                     "ragged indexed contiguous",
                 ):
-                    ancils.extend(self.get_count([]))
+                    i = self.get_count(None)
+                    if i is not None:
+                        ancils.append(i)
 
                 if compression in (
                     "ragged indexed",
                     "ragged indexed contiguous",
                 ):
-                    ancils.extend(self.get_index([]))
+                    i = self.get_index(None)
+                    if i is not None:
+                        ancils.append(i)
 
             if ancils:
                 # Include original file names from ancillary variables
