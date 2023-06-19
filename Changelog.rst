@@ -1,3 +1,14 @@
+Version 1.10.2.0
+----------------
+
+**2023-??-??**
+
+* Fix bug that caused very slow reads of datasets with compession by
+  gathering or DSG ragged arrays
+  (https://github.com/NCAS-CMS/cfdm/issues/260)
+
+----
+
 Version 1.10.1.0
 ----------------
 
