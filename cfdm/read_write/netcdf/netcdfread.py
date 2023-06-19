@@ -5554,7 +5554,7 @@ class NetCDFRead(IORead):
                 True if the data being created are compression
                 indices.
 
-                .. versionadded:: (cfdm) 1.10.2.0
+                .. versionadded:: (cfdm) 1.10.1.1
 
         :Returns:
 
