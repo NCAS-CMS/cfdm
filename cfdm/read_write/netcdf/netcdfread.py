@@ -589,6 +589,9 @@ class NetCDFRead(IORead):
     def is_file(cls, filename):
         """Return `True` if *filename* is a file.
 
+        Note that a remote URL starting with ``http://`` or
+        ``https://`` is always considered as a file.
+
         .. versionadded:: (cfdm) 1.10.1.1
 
         :Parameters:
