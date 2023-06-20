@@ -3903,7 +3903,7 @@ groups struct (if any) intact. It is always possible, however, to
 create a "flat" dataset, i.e. one without any sub-groups. This does
 not require the removal of the group structure from the field
 construct and all of its components (although that is possible), as it
-can be done by simply by overriding the existing group structure by
+can be done by directly by overriding the existing group structure by
 setting the *group* keyword to `cfdm.write` to `False`.
    
 .. code-block:: python
@@ -3981,7 +3981,7 @@ read from the flat version of the file:
 but which are not present in it. Instead, such variables are stored in
 other netCDF files known as "external files". External variables may,
 however, be incorporated into the field constructs of the dataset, as
-if they had actually been stored in the same file, simply by providing
+if they had actually been stored in the same file, by providing
 the external file names to the `cfdm.read` function.
 
 An external variables file name may describe relative paths, and
@@ -4627,7 +4627,7 @@ data array elements are modified:
 A construct with an underlying gathered array is created by
 initialising a `Data` instance with a gathered array that is stored in
 the special `GatheredArray` array object. The following code creates a
-simple field construct with an underlying gathered array:
+basic field construct with an underlying gathered array:
 
 .. Code Block Start 5
 
