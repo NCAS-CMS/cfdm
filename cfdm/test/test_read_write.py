@@ -988,7 +988,7 @@ class read_writeTest(unittest.TestCase):
         remote = "http://psl.noaa.gov/thredds/dodsC/Datasets/cru/crutem5/Monthlies/air.mon.anom.nobs.nc"
         # Check that the file remote is indeed accesible
         _ = netCDF4.Dataset(remote, "r")
-        # Check that cfdm can cccess it
+        # Check that cfdm can access it
         f = cfdm.read(remote)
         self.assertEqual(len(f), 1)
 
