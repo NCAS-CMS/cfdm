@@ -235,7 +235,7 @@ which in-place changes will affect both the original and copied
 instances.
 
 To account for this, the external subclass can either commit to
-never updating such mutables in-place (which is can be acceptable for
+never updating such mutables in-place (which can be acceptable for
 private quantities which are tightly controlled); or else include
 extra code that does deep copy such mutables when any deep copy (or
 equivalent) operation is called. The latter approach should be
