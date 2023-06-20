@@ -983,6 +983,15 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(len(h), 1)
         self.assertTrue(f.equals(h[0]))
 
+    def test_read_url(self):
+        """Test reading urls."""
+        remote = "http://psl.noaa.gov/thredds/dodsC/Datasets/cru/crutem5/Monthlies/air.mon.anom.nobs.nc"
+        # Check that the file remote is indeed accesible
+        _ = netCDF4.Dataset(remote, "r")
+        # Check that cfdm can access it
+        f = cfdm.read(remote)
+        self.assertEqual(len(f), 1)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

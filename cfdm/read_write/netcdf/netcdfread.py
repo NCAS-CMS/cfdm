@@ -8,6 +8,7 @@ import tempfile
 from ast import literal_eval
 from copy import deepcopy
 from functools import reduce
+from urllib.parse import urlparse
 
 import netCDF4
 import netcdf_flattener
@@ -584,6 +585,66 @@ class NetCDFRead(IORead):
 
         return cdl
 
+    @classmethod
+    def is_file(cls, filename):
+        """Return `True` if *filename* is a file.
+
+        Note that a remote URL starting with ``http://`` or
+        ``https://`` is always considered as a file.
+
+        .. versionadded:: (cfdm) 1.10.1.1
+
+        :Parameters:
+
+            filename: `str`
+                The name of the file.
+
+        :Returns:
+
+            `bool`
+                Whether or not *filename* is a file.
+
+        **Examples**
+
+        >>> {{package}}.{{class}}.is_file('file.nc')
+        True
+        >>> {{package}}.{{class}}.is_file('http://file.nc')
+        True
+        >>> {{package}}.{{class}}.is_file('https://file.nc')
+        True
+
+        """
+        # Assume that URLs are files
+        u = urlparse(filename)
+        if u.scheme in ("http", "https"):
+            return True
+
+        return os.path.isfile(filename)
+
+    @classmethod
+    def is_dir(cls, filename):
+        """Return `True` if *filename* is a directory.
+
+        .. versionadded:: (cfdm) 1.10.1.1
+
+        :Parameters:
+
+            filename: `str`
+                The name of the file.
+
+        :Returns:
+
+            `bool`
+                Whether or not *filename* is a directory.
+
+        **Examples**
+
+        >>> {{package}}.{{class}}.is_dir('file.nc')
+        False
+
+        """
+        return os.path.isdir(filename)
+
     def default_netCDF_fill_value(self, ncvar):
         """The default netCDF fill value for a variable.
 
@@ -803,10 +864,10 @@ class NetCDFRead(IORead):
 
         filename = os.path.expanduser(os.path.expandvars(filename))
 
-        if os.path.isdir(filename):
+        if self.is_dir(filename):
             raise IOError(f"Can't read directory {filename}")
 
-        if not os.path.isfile(filename):
+        if not self.is_file(filename):
             raise IOError(f"Can't read non-existent file {filename}")
 
         g["filename"] = filename

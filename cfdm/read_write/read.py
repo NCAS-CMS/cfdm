@@ -294,6 +294,9 @@ def read(
     >>> j = cfdm.read('parent.nc', external=['external1.nc', 'external2.nc'])
 
     """
+    # Initialise a netCDF read object
+    netcdf = NetCDFRead(_implementation)
+
     # Parse the field parameter
     if extra is None:
         extra = ()
@@ -302,19 +305,15 @@ def read(
 
     filename = os.path.expanduser(os.path.expandvars(filename))
 
-    if os.path.isdir(filename):
+    if netcdf.is_dir(filename):
         raise IOError(f"Can't read directory {filename}")
 
-    if not os.path.isfile(filename):
+    if not netcdf.is_file(filename):
         raise IOError(f"Can't read non-existent file {filename}")
 
     # ----------------------------------------------------------------
     # Read the file into field/domain contructs
     # ----------------------------------------------------------------
-
-    # Initialise a netCDF read object
-    netcdf = NetCDFRead(_implementation)
-
     cdl = False
     if netcdf.is_cdl_file(filename):
         # Create a temporary netCDF file from input CDL
