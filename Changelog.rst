@@ -6,7 +6,7 @@ Version 1.10.1.1
 * Fix bug that caused very slow reads of datasets with compession by
   gathering or DSG ragged arrays
   (https://github.com/NCAS-CMS/cfdm/issues/260)
-* Fix bug the prevented `cfdm.read` form accessing remote files in URL
+* Fix bug that prevented `cfdm.read` form accessing remote files in URL
   locations (https://github.com/NCAS-CMS/cfdm/issues/262)
 
 ----
