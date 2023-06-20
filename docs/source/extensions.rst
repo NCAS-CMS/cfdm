@@ -224,7 +224,7 @@ the *source* parameter, or applying the `copy.deepcopy` function) so
 that subclasses of cfdm are not committed to potentially expensive
 deep copies of the dictionary values, of which cfdm has no
 knowledge. Note that calling `copy.deepcopy` on a cfdm (sub)class
-simply invokes its `!copy` method. The cfdm library itself does not
+only invokes its `!copy` method. The cfdm library itself does not
 use the `_custom` dictionary, other than to pass on a shallow copy of
 it to copied instances.
 
@@ -234,8 +234,8 @@ default, a deep copy will contain the identical mutable object, to
 which in-place changes will affect both the original and copied
 instances.
 
-To account for this, the external subclass can either simply commit to
-never updating such mutables in-place (which is can be acceptable for
+To account for this, the external subclass can either commit to
+never updating such mutables in-place (which can be acceptable for
 private quantities which are tightly controlled); or else include
 extra code that does deep copy such mutables when any deep copy (or
 equivalent) operation is called. The latter approach should be

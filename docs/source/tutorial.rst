@@ -996,7 +996,7 @@ in the dataset, may subsequently be applied manually with the
 The `~Field.apply_masking` method of the field construct utilises as
 many of the ``missing_value``, ``_FillValue``, ``valid_min``,
 ``valid_max``, and ``valid_range`` properties as are present and may
-be used on any construct, not just those that have been read from
+be used on any construct, not only those that have been read from
 datasets.
     
 .. _Indexing:
@@ -1011,7 +1011,7 @@ are very similar to the `numpy indexing rules
 the only differences being:
 
 * An integer index *i* specified for a dimension reduces the size of
-  this dimension to unity, taking just the *i*\ -th element, but keeps
+  this dimension to unity, taking only the *i*\ -th element, but keeps
   the dimension itself, so that the rank of the array is not reduced.
 
 ..
@@ -1170,7 +1170,7 @@ Subspacing by metadata
 ^^^^^^^^^^^^^^^^^^^^^^
 
 Indices that correspond to the locations of particular metadata
-construct values are easily created with the `~Field.indices` method
+construct values are created with the `~Field.indices` method
 of the field construct.
 
 Metadata constructs and the conditions on their data are defined by
@@ -1321,8 +1321,8 @@ that contains the selected constructs.
    {'cellmethod1': <CellMethod: domainaxis3: maximum>}
 
 As each of these methods returns a `Constructs` instance by default,
-it is easy to perform further filters on their results:
-   
+further filters can be performed directly on their results:
+
 .. code-block:: python
    :caption: *Make selections from previous selections.*
 	     
@@ -2503,8 +2503,8 @@ additional conventions.
 If this field were to be written to a netCDF dataset then, in the
 absence of predefined names, default netCDF variable and dimension
 names would be automatically generated (based on standard names where
-they exist). The setting of bespoke netCDF names is, however, easily
-done with the :ref:`netCDF interface <NetCDF-interface>`.
+they exist). The setting of bespoke netCDF names is, however,
+achievable with the :ref:`netCDF interface <NetCDF-interface>`.
 
 .. code-block:: python
    :caption: *Set netCDF variable and dimension names for the field
@@ -3903,7 +3903,7 @@ groups struct (if any) intact. It is always possible, however, to
 create a "flat" dataset, i.e. one without any sub-groups. This does
 not require the removal of the group structure from the field
 construct and all of its components (although that is possible), as it
-can be done by simply by overriding the existing group structure by
+can be done by directly by overriding the existing group structure by
 setting the *group* keyword to `cfdm.write` to `False`.
    
 .. code-block:: python
@@ -3981,7 +3981,7 @@ read from the flat version of the file:
 but which are not present in it. Instead, such variables are stored in
 other netCDF files known as "external files". External variables may,
 however, be incorporated into the field constructs of the dataset, as
-if they had actually been stored in the same file, simply by providing
+if they had actually been stored in the same file, by providing
 the external file names to the `cfdm.read` function.
 
 An external variables file name may describe relative paths, and
@@ -4341,7 +4341,7 @@ file:
    >>> print(count_variable.array)
    [3 7 5 9]
 
-The timeseries for the second station is easily selected by indexing
+The timeseries for the second station is selected by indexing
 the "station" axis of the field construct:
 
 .. code-block:: python
@@ -4371,7 +4371,7 @@ data array elements are modified:
    >>> h.data.get_compression_type()
    ''
 
-The easiest way to create a compressed field construct is to create
+The most direct way to create a compressed field construct is to create
 the equivalent uncompressed field construct and then compress it with
 its `~Field.compress` method, which also compresses the metadata
 constructs as required.
@@ -4600,7 +4600,7 @@ file:
    [1 2 5 7 8 16 18]
 
 Subspaces based on the uncompressed axes of the field construct are
-easily created:
+created:
 
 .. code-block:: python
    :caption: *Get subspaces based on indices of the uncompressed
@@ -4627,7 +4627,7 @@ data array elements are modified:
 A construct with an underlying gathered array is created by
 initialising a `Data` instance with a gathered array that is stored in
 the special `GatheredArray` array object. The following code creates a
-simple field construct with an underlying gathered array:
+basic field construct with an underlying gathered array:
 
 .. Code Block Start 5
 

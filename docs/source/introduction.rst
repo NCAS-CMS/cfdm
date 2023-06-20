@@ -56,7 +56,7 @@ on cfdm, inheriting its comprehensive knowledge of the CF conventions,
 to add more sophisticated methods.
 
 .. code-block:: python
-   :caption: *A simple example of reading a field construct from a
+   :caption: *A basic example of reading a field construct from a
              file and inspecting it.*
 
    >>> import cfdm
