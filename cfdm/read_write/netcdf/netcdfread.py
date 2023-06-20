@@ -623,7 +623,7 @@ class NetCDFRead(IORead):
 
     @classmethod
     def is_dir(cls, filename):
-        """Return `False` if *filename* is a directory.
+        """Return `True` if *filename* is a directory.
 
         .. versionadded:: (cfdm) 1.10.1.1
 
