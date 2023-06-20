@@ -1170,7 +1170,7 @@ Subspacing by metadata
 ^^^^^^^^^^^^^^^^^^^^^^
 
 Indices that correspond to the locations of particular metadata
-construct values are easily created with the `~Field.indices` method
+construct values are created with the `~Field.indices` method
 of the field construct.
 
 Metadata constructs and the conditions on their data are defined by
@@ -1321,8 +1321,8 @@ that contains the selected constructs.
    {'cellmethod1': <CellMethod: domainaxis3: maximum>}
 
 As each of these methods returns a `Constructs` instance by default,
-it is easy to perform further filters on their results:
-   
+further filters can be performed directly on their results:
+
 .. code-block:: python
    :caption: *Make selections from previous selections.*
 	     
@@ -2503,8 +2503,8 @@ additional conventions.
 If this field were to be written to a netCDF dataset then, in the
 absence of predefined names, default netCDF variable and dimension
 names would be automatically generated (based on standard names where
-they exist). The setting of bespoke netCDF names is, however, easily
-done with the :ref:`netCDF interface <NetCDF-interface>`.
+they exist). The setting of bespoke netCDF names is, however,
+achievable with the :ref:`netCDF interface <NetCDF-interface>`.
 
 .. code-block:: python
    :caption: *Set netCDF variable and dimension names for the field
@@ -4341,7 +4341,7 @@ file:
    >>> print(count_variable.array)
    [3 7 5 9]
 
-The timeseries for the second station is easily selected by indexing
+The timeseries for the second station is selected by indexing
 the "station" axis of the field construct:
 
 .. code-block:: python
@@ -4371,7 +4371,7 @@ data array elements are modified:
    >>> h.data.get_compression_type()
    ''
 
-The easiest way to create a compressed field construct is to create
+The most direct way to create a compressed field construct is to create
 the equivalent uncompressed field construct and then compress it with
 its `~Field.compress` method, which also compresses the metadata
 constructs as required.
@@ -4600,7 +4600,7 @@ file:
    [1 2 5 7 8 16 18]
 
 Subspaces based on the uncompressed axes of the field construct are
-easily created:
+created:
 
 .. code-block:: python
    :caption: *Get subspaces based on indices of the uncompressed
