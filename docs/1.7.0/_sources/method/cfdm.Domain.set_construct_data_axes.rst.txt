@@ -1,7 +1,0 @@
-cfdm.Domain.set_construct_data_axes
-===================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Domain.set_construct_data_axes

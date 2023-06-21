@@ -1,7 +1,0 @@
-cfdm.CompressedArray.__getitem__
-================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.CompressedArray.__getitem__

@@ -1,7 +1,0 @@
-cfdm.List.__str__
-=================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.List.__str__

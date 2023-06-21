@@ -1,7 +1,0 @@
-cfdm.List.open
-==============
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.List.open

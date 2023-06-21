@@ -1,7 +1,0 @@
-cfdm.Constructs.filter_by_data
-==============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Constructs.filter_by_data

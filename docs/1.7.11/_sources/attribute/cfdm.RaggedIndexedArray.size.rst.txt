@@ -1,7 +1,0 @@
-cfdm.RaggedIndexedArray.size
-============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.RaggedIndexedArray.size

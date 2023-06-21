@@ -1,7 +1,0 @@
-cfdm.implementation
-===================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autofunction:: cfdm.implementation

@@ -1,7 +1,0 @@
-cfdm.Count.get_filenames
-========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Count.get_filenames

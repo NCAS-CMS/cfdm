@@ -1,7 +1,0 @@
-cfdm.NetCDFArray.get_compression_type
-=====================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.NetCDFArray.get_compression_type

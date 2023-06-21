@@ -1,7 +1,0 @@
-cfdm.AuxiliaryCoordinate.identities
-===================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.AuxiliaryCoordinate.identities

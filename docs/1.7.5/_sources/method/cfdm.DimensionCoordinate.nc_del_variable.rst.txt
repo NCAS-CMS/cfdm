@@ -1,7 +1,0 @@
-cfdm.DimensionCoordinate.nc_del_variable
-========================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.DimensionCoordinate.nc_del_variable

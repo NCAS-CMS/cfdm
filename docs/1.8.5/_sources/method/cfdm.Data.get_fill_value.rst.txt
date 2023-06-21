@@ -1,7 +1,0 @@
-cfdm.Data.get_fill_value
-========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Data.get_fill_value

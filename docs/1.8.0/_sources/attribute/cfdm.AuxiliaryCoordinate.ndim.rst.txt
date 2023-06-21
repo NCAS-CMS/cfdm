@@ -1,7 +1,0 @@
-cfdm.AuxiliaryCoordinate.ndim
-=============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.AuxiliaryCoordinate.ndim

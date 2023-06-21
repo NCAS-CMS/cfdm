@@ -1,7 +1,0 @@
-cfdm.core.Domain.__str__
-========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.Domain.__str__

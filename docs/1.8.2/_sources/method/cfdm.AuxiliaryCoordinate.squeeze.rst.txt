@@ -1,7 +1,0 @@
-cfdm.AuxiliaryCoordinate.squeeze
-================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.AuxiliaryCoordinate.squeeze

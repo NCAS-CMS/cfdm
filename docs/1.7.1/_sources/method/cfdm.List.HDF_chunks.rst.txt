@@ -1,7 +1,0 @@
-cfdm.List.HDF_chunks
-====================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.List.HDF_chunks

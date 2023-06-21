@@ -1,7 +1,0 @@
-cfdm.DomainAncillary.__getitem__
-================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.DomainAncillary.__getitem__

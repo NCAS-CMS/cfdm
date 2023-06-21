@@ -1,7 +1,0 @@
-cfdm.mixin.ConstructAccess.dimension_coordinates
-================================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.mixin.ConstructAccess.dimension_coordinates

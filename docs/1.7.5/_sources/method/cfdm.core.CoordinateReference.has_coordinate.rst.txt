@@ -1,7 +1,0 @@
-cfdm.core.CoordinateReference.has_coordinate
-============================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.CoordinateReference.has_coordinate

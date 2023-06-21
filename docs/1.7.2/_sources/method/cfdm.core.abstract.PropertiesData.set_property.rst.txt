@@ -1,7 +1,0 @@
-cfdm.core.abstract.PropertiesData.set_property
-==============================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.abstract.PropertiesData.set_property

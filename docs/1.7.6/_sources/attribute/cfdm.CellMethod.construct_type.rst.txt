@@ -1,7 +1,0 @@
-cfdm.CellMethod.construct_type
-==============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.CellMethod.construct_type

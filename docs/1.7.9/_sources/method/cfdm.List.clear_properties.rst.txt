@@ -1,7 +1,0 @@
-cfdm.List.clear_properties
-==========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.List.clear_properties

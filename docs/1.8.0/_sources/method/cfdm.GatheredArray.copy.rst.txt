@@ -1,7 +1,0 @@
-cfdm.GatheredArray.copy
-=======================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.GatheredArray.copy

@@ -1,7 +1,0 @@
-cfdm.Domain.fromconstructs
-==========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Domain.fromconstructs

@@ -1,7 +1,0 @@
-cfdm.RaggedContiguousArray.shape
-================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.RaggedContiguousArray.shape

@@ -1,7 +1,0 @@
-cfdm.core.DomainAncillary.clear_properties
-==========================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.DomainAncillary.clear_properties

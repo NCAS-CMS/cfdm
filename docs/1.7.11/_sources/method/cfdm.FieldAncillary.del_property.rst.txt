@@ -1,7 +1,0 @@
-cfdm.FieldAncillary.del_property
-================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.FieldAncillary.del_property

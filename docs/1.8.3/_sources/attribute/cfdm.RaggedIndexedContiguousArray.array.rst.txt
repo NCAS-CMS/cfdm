@@ -1,7 +1,0 @@
-cfdm.RaggedIndexedContiguousArray.array
-=======================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.RaggedIndexedContiguousArray.array

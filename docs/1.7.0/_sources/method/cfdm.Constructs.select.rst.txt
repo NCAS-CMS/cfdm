@@ -1,7 +1,0 @@
-cfdm.Constructs.select
-======================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Constructs.select

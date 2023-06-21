@@ -1,7 +1,0 @@
-cfdm.Data.del_fill_value
-========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Data.del_fill_value

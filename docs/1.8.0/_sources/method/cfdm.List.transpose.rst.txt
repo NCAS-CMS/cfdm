@@ -1,7 +1,0 @@
-cfdm.List.transpose
-===================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.List.transpose

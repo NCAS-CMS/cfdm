@@ -1,7 +1,0 @@
-cfdm.read
-=========
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autofunction:: cfdm.read

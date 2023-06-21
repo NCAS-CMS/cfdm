@@ -1,7 +1,0 @@
-cfdm.CoordinateReference.__str__
-================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.CoordinateReference.__str__

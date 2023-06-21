@@ -1,7 +1,0 @@
-cfdm.ATOL
-=========
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autofunction:: cfdm.ATOL

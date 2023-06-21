@@ -1,7 +1,0 @@
-cfdm.Count.transpose
-====================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Count.transpose

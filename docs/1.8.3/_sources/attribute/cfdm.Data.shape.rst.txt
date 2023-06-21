@@ -1,7 +1,0 @@
-cfdm.Data.shape
-===============
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.Data.shape

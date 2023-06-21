@@ -1,7 +1,0 @@
-cfdm.core.DimensionCoordinate.__deepcopy__
-==========================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.DimensionCoordinate.__deepcopy__

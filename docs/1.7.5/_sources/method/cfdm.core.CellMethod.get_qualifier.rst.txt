@@ -1,7 +1,0 @@
-cfdm.core.CellMethod.get_qualifier
-==================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.CellMethod.get_qualifier

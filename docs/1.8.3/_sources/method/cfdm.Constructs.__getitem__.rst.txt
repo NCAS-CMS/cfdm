@@ -1,7 +1,0 @@
-cfdm.Constructs.__getitem__
-===========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Constructs.__getitem__

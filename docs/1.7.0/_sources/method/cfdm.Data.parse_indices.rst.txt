@@ -1,7 +1,0 @@
-cfdm.Data.parse_indices
-=======================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Data.parse_indices

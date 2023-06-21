@@ -1,7 +1,0 @@
-cfdm.Constructs.inverse_filter
-==============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Constructs.inverse_filter

@@ -1,7 +1,0 @@
-cfdm.core.CellMeasure.del_measure
-=================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.CellMeasure.del_measure

@@ -1,7 +1,0 @@
-cfdm.Bounds.transpose
-=====================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Bounds.transpose

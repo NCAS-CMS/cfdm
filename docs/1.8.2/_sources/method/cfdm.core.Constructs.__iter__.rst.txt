@@ -1,7 +1,0 @@
-cfdm.core.Constructs.__iter__
-=============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.Constructs.__iter__

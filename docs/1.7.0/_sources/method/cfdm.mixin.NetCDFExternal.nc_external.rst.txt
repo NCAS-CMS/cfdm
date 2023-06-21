@@ -1,7 +1,0 @@
-cfdm.mixin.NetCDFExternal.nc_external
-=====================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.mixin.NetCDFExternal.nc_external

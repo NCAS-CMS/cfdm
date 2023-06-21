@@ -1,7 +1,0 @@
-cfdm.Data.get_list
-==================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Data.get_list

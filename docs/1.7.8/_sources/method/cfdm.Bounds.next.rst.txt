@@ -1,7 +1,0 @@
-cfdm.Bounds.next
-================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Bounds.next

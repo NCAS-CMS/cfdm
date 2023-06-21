@@ -1,7 +1,0 @@
-cfdm.DomainAncillary.del_property
-=================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.DomainAncillary.del_property

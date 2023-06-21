@@ -1,7 +1,0 @@
-cfdm.Data.has_units
-===================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Data.has_units

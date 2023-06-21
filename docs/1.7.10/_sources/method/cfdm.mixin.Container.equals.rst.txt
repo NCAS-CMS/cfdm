@@ -1,7 +1,0 @@
-cfdm.mixin.Container.equals
-===========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.mixin.Container.equals

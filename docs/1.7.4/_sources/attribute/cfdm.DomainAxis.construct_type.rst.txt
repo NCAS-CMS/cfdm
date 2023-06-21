@@ -1,7 +1,0 @@
-cfdm.DomainAxis.construct_type
-==============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.DomainAxis.construct_type

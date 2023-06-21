@@ -1,7 +1,0 @@
-cfdm.mixin.PropertiesDataBounds.__getitem__
-===========================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.mixin.PropertiesDataBounds.__getitem__

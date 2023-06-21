@@ -1,7 +1,0 @@
-cfdm.core.abstract.Container.__deepcopy__
-=========================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.abstract.Container.__deepcopy__

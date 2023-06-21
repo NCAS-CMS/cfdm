@@ -1,7 +1,0 @@
-cfdm.List.nc_has_variable
-=========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.List.nc_has_variable

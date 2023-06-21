@@ -1,7 +1,0 @@
-cfdm.DomainAncillary.size
-=========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.DomainAncillary.size

@@ -1,7 +1,0 @@
-cfdm.CellMethod.has_property
-============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.CellMethod.has_property

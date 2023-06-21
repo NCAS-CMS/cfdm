@@ -1,7 +1,0 @@
-cfdm.Index.equals
-=================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Index.equals

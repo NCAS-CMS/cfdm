@@ -1,7 +1,0 @@
-cfdm.RaggedIndexedArray.get_compressed_axes
-===========================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.RaggedIndexedArray.get_compressed_axes

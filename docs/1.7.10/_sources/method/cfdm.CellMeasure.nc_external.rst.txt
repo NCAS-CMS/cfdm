@@ -1,7 +1,0 @@
-cfdm.CellMeasure.nc_external
-============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.CellMeasure.nc_external

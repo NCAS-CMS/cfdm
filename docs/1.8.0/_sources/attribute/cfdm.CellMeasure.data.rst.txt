@@ -1,7 +1,0 @@
-cfdm.CellMeasure.data
-=====================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.CellMeasure.data

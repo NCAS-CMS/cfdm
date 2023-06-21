@@ -1,7 +1,0 @@
-cfdm.core.Data.size
-===================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cfdm.core.Data.size

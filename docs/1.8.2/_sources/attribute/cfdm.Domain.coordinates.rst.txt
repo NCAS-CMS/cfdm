@@ -1,7 +1,0 @@
-cfdm.Domain.coordinates
-=======================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.Domain.coordinates

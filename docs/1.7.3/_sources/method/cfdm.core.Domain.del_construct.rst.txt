@@ -1,7 +1,0 @@
-cfdm.core.Domain.del_construct
-==============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.Domain.del_construct

@@ -1,7 +1,0 @@
-cfdm.NumpyArray.get_compressed_axes
-===================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.NumpyArray.get_compressed_axes

@@ -1,7 +1,0 @@
-cfdm.Datum.has_parameter
-========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Datum.has_parameter

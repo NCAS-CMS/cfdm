@@ -1,7 +1,0 @@
-cfdm.core.Bounds.copy
-=====================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.Bounds.copy

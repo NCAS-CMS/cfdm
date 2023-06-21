@@ -1,7 +1,0 @@
-cfdm.Field.data_constructs
-==========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Field.data_constructs

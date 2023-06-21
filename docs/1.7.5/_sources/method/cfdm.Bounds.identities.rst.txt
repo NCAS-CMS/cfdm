@@ -1,7 +1,0 @@
-cfdm.Bounds.identities
-======================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Bounds.identities

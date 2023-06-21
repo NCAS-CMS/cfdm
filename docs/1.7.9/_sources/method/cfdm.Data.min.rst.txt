@@ -1,7 +1,0 @@
-cfdm.Data.min
-=============
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Data.min

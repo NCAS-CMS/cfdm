@@ -1,7 +1,0 @@
-cfdm.Bounds.open
-================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Bounds.open

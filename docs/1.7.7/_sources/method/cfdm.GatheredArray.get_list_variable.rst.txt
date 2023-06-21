@@ -1,7 +1,0 @@
-cfdm.GatheredArray.get_list_variable
-====================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.GatheredArray.get_list_variable

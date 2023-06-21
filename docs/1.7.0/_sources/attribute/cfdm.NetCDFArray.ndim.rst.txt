@@ -1,7 +1,0 @@
-cfdm.NetCDFArray.ndim
-=====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cfdm.NetCDFArray.ndim

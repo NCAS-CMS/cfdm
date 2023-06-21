@@ -1,7 +1,0 @@
-cfdm.DomainAxis.has_size
-========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.DomainAxis.has_size

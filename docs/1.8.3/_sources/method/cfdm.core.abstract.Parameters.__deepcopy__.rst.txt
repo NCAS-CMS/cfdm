@@ -1,7 +1,0 @@
-cfdm.core.abstract.Parameters.__deepcopy__
-==========================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.abstract.Parameters.__deepcopy__
