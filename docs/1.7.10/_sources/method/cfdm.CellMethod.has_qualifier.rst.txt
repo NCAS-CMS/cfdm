@@ -1,7 +1,0 @@
-cfdm.CellMethod.has_qualifier
-=============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.CellMethod.has_qualifier

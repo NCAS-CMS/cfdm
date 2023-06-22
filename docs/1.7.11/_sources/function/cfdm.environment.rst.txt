@@ -1,7 +1,0 @@
-cfdm.environment
-================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autofunction:: cfdm.environment

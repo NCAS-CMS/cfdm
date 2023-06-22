@@ -1,7 +1,0 @@
-cfdm.Datum.nc_get_variable
-==========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Datum.nc_get_variable

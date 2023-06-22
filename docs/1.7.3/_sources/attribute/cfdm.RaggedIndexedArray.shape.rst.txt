@@ -1,7 +1,0 @@
-cfdm.RaggedIndexedArray.shape
-=============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cfdm.RaggedIndexedArray.shape

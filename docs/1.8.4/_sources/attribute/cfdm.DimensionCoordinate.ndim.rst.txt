@@ -1,7 +1,0 @@
-cfdm.DimensionCoordinate.ndim
-=============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.DimensionCoordinate.ndim

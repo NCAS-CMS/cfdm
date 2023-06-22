@@ -1,7 +1,0 @@
-cfdm.Field.get_construct_data_axes
-==================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Field.get_construct_data_axes

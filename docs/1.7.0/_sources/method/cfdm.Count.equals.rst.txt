@@ -1,7 +1,0 @@
-cfdm.Count.equals
-=================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Count.equals

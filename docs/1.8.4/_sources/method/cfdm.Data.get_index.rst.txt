@@ -1,7 +1,0 @@
-cfdm.Data.get_index
-===================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Data.get_index

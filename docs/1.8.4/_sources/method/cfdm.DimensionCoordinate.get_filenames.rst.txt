@@ -1,7 +1,0 @@
-cfdm.DimensionCoordinate.get_filenames
-======================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.DimensionCoordinate.get_filenames

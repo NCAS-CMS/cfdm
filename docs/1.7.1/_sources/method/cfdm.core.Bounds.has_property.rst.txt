@@ -1,7 +1,0 @@
-cfdm.core.Bounds.has_property
-=============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.Bounds.has_property

@@ -1,7 +1,0 @@
-cfdm.Datum.__repr__
-===================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Datum.__repr__

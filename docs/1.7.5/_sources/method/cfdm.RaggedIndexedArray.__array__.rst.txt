@@ -1,7 +1,0 @@
-cfdm.RaggedIndexedArray.__array__
-=================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.RaggedIndexedArray.__array__

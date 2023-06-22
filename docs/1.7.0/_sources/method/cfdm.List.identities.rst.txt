@@ -1,7 +1,0 @@
-cfdm.List.identities
-====================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.List.identities

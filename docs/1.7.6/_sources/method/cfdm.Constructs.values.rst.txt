@@ -1,7 +1,0 @@
-cfdm.Constructs.values
-======================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Constructs.values

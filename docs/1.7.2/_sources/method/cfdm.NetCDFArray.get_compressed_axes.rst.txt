@@ -1,7 +1,0 @@
-cfdm.NetCDFArray.get_compressed_axes
-====================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.NetCDFArray.get_compressed_axes

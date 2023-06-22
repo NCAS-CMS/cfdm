@@ -1,7 +1,0 @@
-cfdm.Field.domain_axis_key
-==========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Field.domain_axis_key

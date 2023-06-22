@@ -1,7 +1,0 @@
-cfdm.core.DimensionCoordinate.construct_type
-============================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cfdm.core.DimensionCoordinate.construct_type

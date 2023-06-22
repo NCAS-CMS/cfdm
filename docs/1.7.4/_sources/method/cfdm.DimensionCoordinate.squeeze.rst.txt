@@ -1,7 +1,0 @@
-cfdm.DimensionCoordinate.squeeze
-================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.DimensionCoordinate.squeeze

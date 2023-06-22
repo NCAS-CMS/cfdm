@@ -1,7 +1,0 @@
-cfdm.NetCDFArray.close
-======================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.NetCDFArray.close

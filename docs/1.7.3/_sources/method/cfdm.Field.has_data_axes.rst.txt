@@ -1,7 +1,0 @@
-cfdm.Field.has_data_axes
-========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Field.has_data_axes

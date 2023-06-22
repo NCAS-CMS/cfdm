@@ -1,7 +1,0 @@
-cfdm.DimensionCoordinate.uncompress
-===================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.DimensionCoordinate.uncompress

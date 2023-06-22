@@ -1,7 +1,0 @@
-cfdm.RaggedIndexedContiguousArray.get_index
-===========================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.RaggedIndexedContiguousArray.get_index

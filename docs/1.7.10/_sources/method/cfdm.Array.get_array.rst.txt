@@ -1,7 +1,0 @@
-cfdm.Array.get_array
-====================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Array.get_array

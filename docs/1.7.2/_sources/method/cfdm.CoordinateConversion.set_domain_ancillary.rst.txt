@@ -1,7 +1,0 @@
-cfdm.CoordinateConversion.set_domain_ancillary
-==============================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.CoordinateConversion.set_domain_ancillary

@@ -1,7 +1,0 @@
-cfdm.Field.dataset_compliance
-=============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Field.dataset_compliance

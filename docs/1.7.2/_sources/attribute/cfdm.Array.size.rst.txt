@@ -1,7 +1,0 @@
-cfdm.Array.size
-===============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cfdm.Array.size

@@ -1,7 +1,0 @@
-cfdm.CellMeasure.expand_dims
-============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.CellMeasure.expand_dims

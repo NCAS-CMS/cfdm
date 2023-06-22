@@ -1,7 +1,0 @@
-cfdm.mixin.PropertiesData.dump
-==============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.mixin.PropertiesData.dump

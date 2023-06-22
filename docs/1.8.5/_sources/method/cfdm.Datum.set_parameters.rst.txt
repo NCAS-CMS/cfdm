@@ -1,7 +1,0 @@
-cfdm.Datum.set_parameters
-=========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Datum.set_parameters

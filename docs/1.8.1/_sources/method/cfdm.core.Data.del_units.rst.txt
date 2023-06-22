@@ -1,7 +1,0 @@
-cfdm.core.Data.del_units
-========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.Data.del_units

@@ -1,7 +1,0 @@
-cfdm.DomainAncillary.nc_set_variable
-====================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.DomainAncillary.nc_set_variable

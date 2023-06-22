@@ -1,7 +1,0 @@
-cfdm.core.AuxiliaryCoordinate.data
-==================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.core.AuxiliaryCoordinate.data

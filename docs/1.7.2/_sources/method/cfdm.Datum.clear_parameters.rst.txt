@@ -1,7 +1,0 @@
-cfdm.Datum.clear_parameters
-===========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Datum.clear_parameters

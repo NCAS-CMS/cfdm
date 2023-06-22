@@ -1,7 +1,0 @@
-cfdm.Domain.get_construct_key
-=============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Domain.get_construct_key

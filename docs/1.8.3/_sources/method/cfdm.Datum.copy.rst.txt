@@ -1,7 +1,0 @@
-cfdm.Datum.copy
-===============
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Datum.copy

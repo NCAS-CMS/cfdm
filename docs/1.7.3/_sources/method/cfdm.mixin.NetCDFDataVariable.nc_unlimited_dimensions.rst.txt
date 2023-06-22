@@ -1,7 +1,0 @@
-cfdm.mixin.NetCDFDataVariable.nc_unlimited_dimensions
-=====================================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.mixin.NetCDFDataVariable.nc_unlimited_dimensions

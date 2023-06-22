@@ -1,7 +1,0 @@
-cfdm.mixin.NetCDFSampleDimension.nc_set_sample_dimension
-========================================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.mixin.NetCDFSampleDimension.nc_set_sample_dimension

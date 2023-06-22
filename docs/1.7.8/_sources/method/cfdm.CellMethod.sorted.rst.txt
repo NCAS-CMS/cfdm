@@ -1,7 +1,0 @@
-cfdm.CellMethod.sorted
-======================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.CellMethod.sorted

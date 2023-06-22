@@ -1,7 +1,0 @@
-cfdm.core.abstract.Parameters.get_parameter
-===========================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.abstract.Parameters.get_parameter

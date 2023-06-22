@@ -1,7 +1,0 @@
-cfdm.mixin.PropertiesDataBounds.set_part_ncdim
-==============================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.mixin.PropertiesDataBounds.set_part_ncdim

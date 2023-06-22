@@ -1,7 +1,0 @@
-cfdm.mixin.PropertiesDataBounds.get_node_ncdim
-==============================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.mixin.PropertiesDataBounds.get_node_ncdim

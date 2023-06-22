@@ -1,7 +1,0 @@
-cfdm.NetCDFArray.get_ncvar
-==========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.NetCDFArray.get_ncvar

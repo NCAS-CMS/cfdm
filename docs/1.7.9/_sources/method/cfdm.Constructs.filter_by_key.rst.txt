@@ -1,7 +1,0 @@
-cfdm.Constructs.filter_by_key
-=============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Constructs.filter_by_key

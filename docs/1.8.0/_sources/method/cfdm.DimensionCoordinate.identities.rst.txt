@@ -1,7 +1,0 @@
-cfdm.DimensionCoordinate.identities
-===================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.DimensionCoordinate.identities

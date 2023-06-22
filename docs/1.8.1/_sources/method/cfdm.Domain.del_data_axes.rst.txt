@@ -1,7 +1,0 @@
-cfdm.Domain.del_data_axes
-=========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Domain.del_data_axes

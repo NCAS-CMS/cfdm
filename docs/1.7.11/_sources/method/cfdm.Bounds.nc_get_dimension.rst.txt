@@ -1,7 +1,0 @@
-cfdm.Bounds.nc_get_dimension
-============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Bounds.nc_get_dimension

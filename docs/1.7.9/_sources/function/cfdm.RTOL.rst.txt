@@ -1,7 +1,0 @@
-cfdm.RTOL
-=========
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autofunction:: cfdm.RTOL

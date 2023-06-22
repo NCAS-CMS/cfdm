@@ -1,7 +1,0 @@
-cfdm.core.abstract.ParametersDomainAncillaries.get_domain_ancillary
-===================================================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.abstract.ParametersDomainAncillaries.get_domain_ancillary

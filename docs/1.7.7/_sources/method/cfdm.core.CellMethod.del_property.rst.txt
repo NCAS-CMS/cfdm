@@ -1,7 +1,0 @@
-cfdm.core.CellMethod.del_property
-=================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.CellMethod.del_property

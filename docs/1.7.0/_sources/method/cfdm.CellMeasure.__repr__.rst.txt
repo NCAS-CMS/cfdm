@@ -1,7 +1,0 @@
-cfdm.CellMeasure.__repr__
-=========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.CellMeasure.__repr__

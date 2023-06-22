@@ -1,7 +1,0 @@
-cfdm.core.abstract.Container._get_component
-===========================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.abstract.Container._get_component

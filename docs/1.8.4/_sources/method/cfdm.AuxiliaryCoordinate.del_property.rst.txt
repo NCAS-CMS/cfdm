@@ -1,7 +1,0 @@
-cfdm.AuxiliaryCoordinate.del_property
-=====================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.AuxiliaryCoordinate.del_property

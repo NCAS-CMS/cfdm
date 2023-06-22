@@ -1,7 +1,0 @@
-cfdm.AuxiliaryCoordinate.equals
-===============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.AuxiliaryCoordinate.equals

@@ -1,7 +1,0 @@
-cfdm.core.DomainAxis.del_size
-=============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.DomainAxis.del_size

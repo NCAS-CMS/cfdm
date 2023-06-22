@@ -16,56 +16,56 @@ Documentation for all versions of cfdm.
 **CF-1.10**
 -----------
 
-* `Version 1.10.1.0 <https://ncas-cms.github.io/cfdm/1.10.1.0>`_ (2023-04-26)
-* `Version 1.10.0.3 <https://ncas-cms.github.io/cfdm/1.10.0.3>`_ (2023-03-10)
-* `Version 1.10.0.2 <https://ncas-cms.github.io/cfdm/1.10.0.2>`_ (2023-01-26)
-* `Version 1.10.0.1 <https://ncas-cms.github.io/cfdm/1.10.0.1>`_ (2022-10-31)
-* `Version 1.10.0.0 <https://ncas-cms.github.io/cfdm/1.10.0.0>`_ (2022-08-17)
+* `Version 1.10.1.0 <https://ncas-cms.github.io/cfdm-docs/1.10.1.0>`_ (2023-04-26)
+* `Version 1.10.0.3 <https://ncas-cms.github.io/cfdm-docs/1.10.0.3>`_ (2023-03-10)
+* `Version 1.10.0.2 <https://ncas-cms.github.io/cfdm-docs/1.10.0.2>`_ (2023-01-26)
+* `Version 1.10.0.1 <https://ncas-cms.github.io/cfdm-docs/1.10.0.1>`_ (2022-10-31)
+* `Version 1.10.0.0 <https://ncas-cms.github.io/cfdm-docs/1.10.0.0>`_ (2022-08-17)
 
 ----
 
 **CF-1.9**
 ----------
 
-* `Version 1.9.0.4 <https://ncas-cms.github.io/cfdm/1.9.0.4>`_ (2022-07-18)
-* `Version 1.9.0.3 <https://ncas-cms.github.io/cfdm/1.9.0.3>`_ (2022-03-10)
-* `Version 1.9.0.2 <https://ncas-cms.github.io/cfdm/1.9.0.2>`_ (2022-01-31)
-* `Version 1.9.0.1 <https://ncas-cms.github.io/cfdm/1.9.0.1>`_ (2021-10-12)
-* `Version 1.9.0.0 <https://ncas-cms.github.io/cfdm/1.9.0.0>`_ (2021-09-21)
+* `Version 1.9.0.4 <https://ncas-cms.github.io/cfdm-docs/1.9.0.4>`_ (2022-07-18)
+* `Version 1.9.0.3 <https://ncas-cms.github.io/cfdm-docs/1.9.0.3>`_ (2022-03-10)
+* `Version 1.9.0.2 <https://ncas-cms.github.io/cfdm-docs/1.9.0.2>`_ (2022-01-31)
+* `Version 1.9.0.1 <https://ncas-cms.github.io/cfdm-docs/1.9.0.1>`_ (2021-10-12)
+* `Version 1.9.0.0 <https://ncas-cms.github.io/cfdm-docs/1.9.0.0>`_ (2021-09-21)
 
 ----
 
 **CF-1.8**
 ----------
 
-* `Version 1.8.9.0 <https://ncas-cms.github.io/cfdm/1.8.9.0>`_ (2021-05-25)
-* `Version 1.8.8.0 <https://ncas-cms.github.io/cfdm/1.8.8.0>`_ (2020-12-18)
-* `Version 1.8.7.0 <https://ncas-cms.github.io/cfdm/1.8.7.0>`_ (2020-10-09)
-* `Version 1.8.6.0 <https://ncas-cms.github.io/cfdm/1.8.6.0>`_ (2020-07-24)
-* `Version 1.8.5 <https://ncas-cms.github.io/cfdm/1.8.5>`_ (2020-06-10)
-* `Version 1.8.4 <https://ncas-cms.github.io/cfdm/1.8.4>`_ (2020-06-08)
-* `Version 1.8.3 <https://ncas-cms.github.io/cfdm/1.8.3>`_ (2020-04-30)
-* `Version 1.8.2 <https://ncas-cms.github.io/cfdm/1.8.2>`_ (2020-04-24)
-* `Version 1.8.1 <https://ncas-cms.github.io/cfdm/1.8.1>`_ (2020-04-14)
-* `Version 1.8.0 <https://ncas-cms.github.io/cfdm/1.8.0>`_ (2020-03-23)
+* `Version 1.8.9.0 <https://ncas-cms.github.io/cfdm-docs/1.8.9.0>`_ (2021-05-25)
+* `Version 1.8.8.0 <https://ncas-cms.github.io/cfdm-docs/1.8.8.0>`_ (2020-12-18)
+* `Version 1.8.7.0 <https://ncas-cms.github.io/cfdm-docs/1.8.7.0>`_ (2020-10-09)
+* `Version 1.8.6.0 <https://ncas-cms.github.io/cfdm-docs/1.8.6.0>`_ (2020-07-24)
+* `Version 1.8.5 <https://ncas-cms.github.io/cfdm-docs/1.8.5>`_ (2020-06-10)
+* `Version 1.8.4 <https://ncas-cms.github.io/cfdm-docs/1.8.4>`_ (2020-06-08)
+* `Version 1.8.3 <https://ncas-cms.github.io/cfdm-docs/1.8.3>`_ (2020-04-30)
+* `Version 1.8.2 <https://ncas-cms.github.io/cfdm-docs/1.8.2>`_ (2020-04-24)
+* `Version 1.8.1 <https://ncas-cms.github.io/cfdm-docs/1.8.1>`_ (2020-04-14)
+* `Version 1.8.0 <https://ncas-cms.github.io/cfdm-docs/1.8.0>`_ (2020-03-23)
 
 ----
 
 **CF-1.7**
 ----------
 
-* `Version 1.7.11 <https://ncas-cms.github.io/cfdm/1.7.11>`_ (2019-11-27)
-* `Version 1.7.10 <https://ncas-cms.github.io/cfdm/1.7.10>`_ (2019-11-14)
-* `Version 1.7.9 <https://ncas-cms.github.io/cfdm/1.7.9>`_ (2019-11-07)
-* `Version 1.7.8 <https://ncas-cms.github.io/cfdm/1.7.8>`_ (2019-10-04)
-* `Version 1.7.7 <https://ncas-cms.github.io/cfdm/1.7.7>`_ (2019-06-13)
-* `Version 1.7.6 <https://ncas-cms.github.io/cfdm/1.7.6>`_ (2019-06-05)
-* `Version 1.7.5 <https://ncas-cms.github.io/cfdm/1.7.5>`_ (2019-05-15)
-* `Version 1.7.4 <https://ncas-cms.github.io/cfdm/1.7.4>`_ (2019-05-14)
-* `Version 1.7.3 <https://ncas-cms.github.io/cfdm/1.7.3>`_ (2019-04-24)
-* `Version 1.7.2 <https://ncas-cms.github.io/cfdm/1.7.2>`_ (2019-04-05)
-* `Version 1.7.1 <https://ncas-cms.github.io/cfdm/1.7.1>`_ (2019-04-02)
-* `Version 1.7.0 <https://ncas-cms.github.io/cfdm/1.7.0>`_ (2019-04-02)
+* `Version 1.7.11 <https://ncas-cms.github.io/cfdm-docs/1.7.11>`_ (2019-11-27)
+* `Version 1.7.10 <https://ncas-cms.github.io/cfdm-docs/1.7.10>`_ (2019-11-14)
+* `Version 1.7.9 <https://ncas-cms.github.io/cfdm-docs/1.7.9>`_ (2019-11-07)
+* `Version 1.7.8 <https://ncas-cms.github.io/cfdm-docs/1.7.8>`_ (2019-10-04)
+* `Version 1.7.7 <https://ncas-cms.github.io/cfdm-docs/1.7.7>`_ (2019-06-13)
+* `Version 1.7.6 <https://ncas-cms.github.io/cfdm-docs/1.7.6>`_ (2019-06-05)
+* `Version 1.7.5 <https://ncas-cms.github.io/cfdm-docs/1.7.5>`_ (2019-05-15)
+* `Version 1.7.4 <https://ncas-cms.github.io/cfdm-docs/1.7.4>`_ (2019-05-14)
+* `Version 1.7.3 <https://ncas-cms.github.io/cfdm-docs/1.7.3>`_ (2019-04-24)
+* `Version 1.7.2 <https://ncas-cms.github.io/cfdm-docs/1.7.2>`_ (2019-04-05)
+* `Version 1.7.1 <https://ncas-cms.github.io/cfdm-docs/1.7.1>`_ (2019-04-02)
+* `Version 1.7.0 <https://ncas-cms.github.io/cfdm-docs/1.7.0>`_ (2019-04-02)
 
 ----
 

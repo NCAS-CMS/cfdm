@@ -1,7 +1,0 @@
-cfdm.CellMethod.equals
-======================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.CellMethod.equals

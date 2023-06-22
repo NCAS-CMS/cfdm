@@ -1,7 +1,0 @@
-cfdm.mixin.NetCDFDimension.nc_set_dimension
-===========================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.mixin.NetCDFDimension.nc_set_dimension

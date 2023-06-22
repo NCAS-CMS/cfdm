@@ -1,7 +1,0 @@
-cfdm.RaggedContiguousArray.__deepcopy__
-=======================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.RaggedContiguousArray.__deepcopy__

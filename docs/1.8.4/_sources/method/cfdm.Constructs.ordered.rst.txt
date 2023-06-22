@@ -1,7 +1,0 @@
-cfdm.Constructs.ordered
-=======================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Constructs.ordered

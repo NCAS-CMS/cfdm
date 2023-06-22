@@ -1,7 +1,0 @@
-cfdm.core.abstract.Properties.properties
-========================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.abstract.Properties.properties

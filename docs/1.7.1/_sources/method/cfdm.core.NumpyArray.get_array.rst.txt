@@ -1,7 +1,0 @@
-cfdm.core.NumpyArray.get_array
-==============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.NumpyArray.get_array

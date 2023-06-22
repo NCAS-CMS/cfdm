@@ -1,7 +1,0 @@
-cfdm.core.Array.array
-=====================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. autoattribute:: cfdm.core.Array.array

@@ -1,7 +1,0 @@
-cfdm.DimensionCoordinate.clear_properties
-=========================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.DimensionCoordinate.clear_properties

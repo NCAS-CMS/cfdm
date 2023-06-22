@@ -1,7 +1,0 @@
-cfdm.core.CoordinateReference.get_datum
-=======================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.CoordinateReference.get_datum

@@ -1,7 +1,0 @@
-cfdm.core.DimensionCoordinate.set_properties
-============================================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.core.DimensionCoordinate.set_properties

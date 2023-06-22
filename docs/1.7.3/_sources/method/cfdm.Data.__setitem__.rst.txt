@@ -1,7 +1,0 @@
-cfdm.Data.__setitem__
-=====================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Data.__setitem__

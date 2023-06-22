@@ -1,7 +1,0 @@
-cfdm.Data.insert_dimension
-==========================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Data.insert_dimension
