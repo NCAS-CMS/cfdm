@@ -677,7 +677,7 @@ class FieldDomain:
 
                 {{Returns constructs}}
 
-        *Examples**
+        **Examples**
 
         >> f.coordinates()
         Constructs:
