@@ -141,7 +141,7 @@ extras_require = {
 setup(
     name="cfdm",
     long_description=long_description,
-    long_description_content_type='text/x-rst'
+    long_description_content_type="text/x-rst",
     version=version,
     description="A Python reference implementation of the CF data model",
     author="David Hassell, Sadie Bartholomew",
