@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.10.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.1.1</a></h1>
 
 
 
@@ -127,7 +127,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.Domain.del_construct<a class="headerlink" href="#cfdm-domain-del-construct" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Domain.del_construct">
-<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">del_construct</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">default=ValueError()</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.1.0/cfdm/mixin/fielddomain.py#L824-L903"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.del_construct" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">del_construct</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">default=ValueError()</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.1.1/cfdm/mixin/fielddomain.py#L824-L903"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.del_construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a metadata construct.</p>
 <p>If a domain axis construct is selected for removal then it
 can’t be spanned by any data arrays of the field nor metadata
@@ -153,14 +153,14 @@ given values.</p>
 identifiers, with or without the <code class="docutils literal notranslate"><span class="pre">'key%'</span></code> prefix.</p>
 <p>A value may be any object that can match via the
 <code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code> object that matches
-via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
-<p>Note that in the output of a <a class="reference internal" href="cfdm.Domain.dump.html#cfdm.Domain.dump" title="cfdm.Domain.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
+via its <code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code> method.</p>
+<p>Note that in the output of a <a class="reference internal" href="cfdm.Domain.dump.html#cfdm.Domain.dump" title="cfdm.Domain.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code>
 call, a construct is always described by an identity
 that will select it.</p>
 </dd>
 <dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if the
 data axes have not been set.</p>
-<p>If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be
+<p>If set to an <code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code> instance then it will be
 raised instead.</p>
 </dd>
 <dt>filter_kwargs: optional</dt><dd><p>Keyword arguments as accepted by <a class="reference internal" href="cfdm.Constructs.filter.html#cfdm.Constructs.filter" title="cfdm.Constructs.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs.filter</span></code></a>
@@ -217,7 +217,7 @@ criteria.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-04-26.
+      &copy;2023, NCAS | Page built on 2023-07-21.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>

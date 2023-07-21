@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.10.1.0</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.10.1.1</a></h1>
 
 
 
@@ -120,7 +120,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
   <section id="extensions">
 <span id="id1"></span><h1><strong>Extensions</strong><a class="headerlink" href="#extensions" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.10.1.0 for version 1.10 of the CF conventions.</p>
+<p>Version 1.10.1.1 for version 1.10 of the CF conventions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#the-custom-dictionary" id="id14"><strong>The _custom dictionary</strong></a></p></li>
@@ -335,11 +335,11 @@ an external subclass, yet can be transferred to copied instances using
 the inherited cfdm infrastructure. The <code class="xref py py-obj docutils literal notranslate"><span class="pre">_custom</span></code> dictionary is shallow
 copied, rather than deep copied, when using the standard cfdm deep
 copy method techniques (i.e. the <code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code> method, initialisation with
-the <em>source</em> parameter, or applying the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function) so
+the <em>source</em> parameter, or applying the <code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code> function) so
 that subclasses of cfdm are not committed to potentially expensive
 deep copies of the dictionary values, of which cfdm has no
-knowledge. Note that calling <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> on a cfdm (sub)class
-simply invokes its <code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code> method. The cfdm library itself does not
+knowledge. Note that calling <code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code> on a cfdm (sub)class
+only invokes its <code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code> method. The cfdm library itself does not
 use the <code class="xref py py-obj docutils literal notranslate"><span class="pre">_custom</span></code> dictionary, other than to pass on a shallow copy of
 it to copied instances.</p>
 <p>The consequence of this shallow-copy behaviour is that if an external
@@ -347,8 +347,8 @@ subclass stores a mutable object within its custom dictionary then, by
 default, a deep copy will contain the identical mutable object, to
 which in-place changes will affect both the original and copied
 instances.</p>
-<p>To account for this, the external subclass can either simply commit to
-never updating such mutables in-place (which is can be acceptable for
+<p>To account for this, the external subclass can either commit to
+never updating such mutables in-place (which can be acceptable for
 private quantities which are tightly controlled); or else include
 extra code that does deep copy such mutables when any deep copy (or
 equivalent) operation is called. The latter approach should be
@@ -412,7 +412,7 @@ always work on its cf-python counterpart.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-04-26.
+      &copy;2023, NCAS | Page built on 2023-07-21.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
