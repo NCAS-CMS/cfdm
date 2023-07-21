@@ -3,7 +3,7 @@ Version 1.10.1.1
 
 **2023-07-21**
 
-* Fix bug that caused very slow reads of datasets with compession by
+* Fix bug that caused very slow reads of datasets with compression by
   gathering or DSG ragged arrays
   (https://github.com/NCAS-CMS/cfdm/issues/260)
 * Fix bug that prevented `cfdm.read` from accessing remote files in URL
