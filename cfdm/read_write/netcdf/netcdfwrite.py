@@ -693,9 +693,7 @@ class NetCDFWrite(IOWrite):
             ncdim = ncvar
 
             # Create a new dimension
-            unlimited = self._nc_is_unlimited_axis(f, axis)
-#            unlimited = self.implementation.nc_is_unlimited_axis(f, axis)
-
+            unlimited = self._unlimited(f, axis)
             self._write_dimension(ncdim, f, axis, unlimited=unlimited)
 
             ncdimensions = self._netcdf_dimensions(f, key, coord)
@@ -3548,7 +3546,7 @@ class NetCDFWrite(IOWrite):
 
                         ncdim = self._netcdf_name(ncdim)
 
-                        unlimited = self._nc_is_unlimited_axis(f, axis)
+                        unlimited = self._unlimited(f, axis)
                         self._write_dimension(
                             ncdim, f, axis, unlimited=unlimited
                         )
@@ -4115,7 +4113,7 @@ class NetCDFWrite(IOWrite):
 
             g["grid_mapping_refs"].append(new_grid_mapping)
 
-    def _nc_is_unlimited_axis(self, field, axis):
+    def _unlimited(self, field, axis):
         """Whether an axis is unlimited.
 
         .. versionadded:: (cfdm) 1.7.0
@@ -4125,6 +4123,8 @@ class NetCDFWrite(IOWrite):
             field: `Field` or `Domain`
 
             axis: `str`
+                Domain axis construct identifier,
+                e.g. ``'domainaxis1'``.
 
         :Returns:
 
