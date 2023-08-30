@@ -481,8 +481,10 @@ class NetCDFRead(IORead):
     def is_netcdf_file(cls, filename):
         """Return `True` if the file is a netCDF file.
 
-        Note that the file type is determined by inspecting the file's
-        contents and any file suffix is not not considered.
+        The file type is determined by inspecting the file's contents
+        and any file suffix is not not considered. However, file names
+        starting ``https://`` or ``http://`` are assumed, without
+        checking, to be netCDF files.
 
         :Parameters:
 
@@ -501,7 +503,7 @@ class NetCDFRead(IORead):
 
         """
         # Assume that URLs are in netCDF format
-        if filename.startswith("http://"):
+        if filename.startswith("https://") or filename.startswith("http://"):
             return True
 
         # Read the magic number
