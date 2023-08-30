@@ -985,12 +985,11 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_url(self):
         """Test reading urls."""
-        remote = "http://psl.noaa.gov/thredds/dodsC/Datasets/cru/crutem5/Monthlies/air.mon.anom.nobs.nc"
-        # Check that the file remote is indeed accesible
-        _ = netCDF4.Dataset(remote, "r")
-        # Check that cfdm can access it
-        f = cfdm.read(remote)
-        self.assertEqual(len(f), 1)
+        for scheme in ("http", "https"):
+            remote = f"{scheme}://psl.noaa.gov/thredds/dodsC/Datasets/cru/crutem5/Monthlies/air.mon.anom.nobs.nc"
+            # Check that cfdm can access it
+            f = cfdm.read(remote)
+            self.assertEqual(len(f), 1)
 
 
 if __name__ == "__main__":

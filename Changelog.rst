@@ -1,3 +1,13 @@
+Version 1.10.1.2
+----------------
+
+**2023-08-31**
+
+* Fix bug that prevented "https://" netCDF files from being read
+  (https://github.com/NCAS-CMS/cfdm/issues/268)
+
+----
+
 Version 1.10.1.1
 ----------------
 
