@@ -693,8 +693,7 @@ class NetCDFWrite(IOWrite):
             ncdim = ncvar
 
             # Create a new dimension
-            unlimited = self.implementation.nc_is_unlimited_axis(f, axis)
-
+            unlimited = self._unlimited(f, axis)
             self._write_dimension(ncdim, f, axis, unlimited=unlimited)
 
             ncdimensions = self._netcdf_dimensions(f, key, coord)
@@ -3547,9 +3546,7 @@ class NetCDFWrite(IOWrite):
 
                         ncdim = self._netcdf_name(ncdim)
 
-                        unlimited = self.implementation.nc_is_unlimited_axis(
-                            f, axis
-                        )
+                        unlimited = self._unlimited(f, axis)
                         self._write_dimension(
                             ncdim, f, axis, unlimited=unlimited
                         )
@@ -4123,9 +4120,11 @@ class NetCDFWrite(IOWrite):
 
         :Parameters:
 
-            field: Field construct
+            field: `Field` or `Domain`
 
             axis: `str`
+                Domain axis construct identifier,
+                e.g. ``'domainaxis1'``.
 
         :Returns:
 
