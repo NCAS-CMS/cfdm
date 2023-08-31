@@ -53,6 +53,20 @@
   
 * Create a link to the new documentation in `docs/source/releases.rst`
 
+* Ensure you have an environment with the right version of
+  Sphinx and some extensions for the build output we want.
+
+  The following version installation conditions should establish
+  this (note it will likely be useful to create a dedicated
+  environment and/or make use of `pip install --no-deps <lib>`
+  in order to handle the quite old Sphinx version):
+  ```bash
+  sphinx==2.4.5
+  sphinx-copybutton==0.5.1
+  sphinx-toggleprompt==0.2.0
+  sphinxcontrib-spelling==4.3.0
+  ```
+ 
 * Test tutorial code:
 
   ```bash
@@ -125,7 +139,7 @@
     6. Remove duplicate words and sort alphabetically via:
        `sort -u -o docs/source/spelling_false_positives.txt docs/source/spelling_false_positives.txt`
 
-* Create an archived copy of the documentation:
+* Create an archived copy of the documentation (note it will not get committed to this repo. here, but we will move and commit it to https://github.com/NCAS-CMS/cfdm-docs post-release, as a last step):
 
   ```bash
   ./release_docs archive
@@ -174,3 +188,12 @@
   https://github.com/NCAS-CMS/cfdm/releases
 
 * Upload the new release to Zenodo: https://zenodo.org/record/5521505
+
+* Finally, move and commit the previously-generated archived copy of the documentation to https://github.com/NCAS-CMS/cfdm-docs (fork or clone that repo first):
+
+  ```bash
+  mv docs/<vn>/ ~/cfdm-docs/
+  cd ~/cfdm-docs/
+  git add <vn>/
+  # Then commit and push to the NCAS-CMS repo (named origin or upstream as appropriate)
+  ```
