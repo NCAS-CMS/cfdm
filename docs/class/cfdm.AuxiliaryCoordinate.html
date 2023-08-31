@@ -3,8 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta charset="utf-8" />
     <title>cfdm.AuxiliaryCoordinate &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -38,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.10.1.1</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.1.2</a></h1>
 
 
 
@@ -121,12 +120,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <section id="cfdm-auxiliarycoordinate">
+  <div class="section" id="cfdm-auxiliarycoordinate">
 <span id="id1"></span><h1>cfdm.AuxiliaryCoordinate<a class="headerlink" href="#cfdm-auxiliarycoordinate" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.AuxiliaryCoordinate">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">AuxiliaryCoordinate</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.1.1/cfdm/auxiliarycoordinate.py#L4-L132"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.AuxiliaryCoordinate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">AuxiliaryCoordinate</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.1.2/cfdm/auxiliarycoordinate.py#L4-L132"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.AuxiliaryCoordinate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.coordinate.Coordinate</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.files.Files</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.auxiliarycoordinate.AuxiliaryCoordinate</span></code></p>
 <p>An auxiliary coordinate construct of the CF data model.</p>
 <p>An auxiliary coordinate construct provides information which
@@ -167,7 +166,7 @@ methods.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>properties: <code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>, optional</dt><dd><blockquote>
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><blockquote>
 <div><p>Set descriptive properties. The dictionary keys are
 property names, with corresponding values.</p>
 <p>Properties may also be set after initialisation with
@@ -180,7 +179,7 @@ the <a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.set_p
 </dd>
 <dt>data: data_like, optional</dt><dd><p>Set the data.</p>
 <p>A data_like object is any object that can be converted
-to a <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code> array_like objects,
+to a <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, i.e. <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.25)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array_like objects,
 <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects, and cfdm instances that contain
 <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects.</p>
 <p>The data also may be set after initialisation with the
@@ -190,7 +189,7 @@ to a <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.D
 <p>The bounds array may also be set after initialisation
 with the <a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.set_bounds.html#cfdm.AuxiliaryCoordinate.set_bounds" title="cfdm.AuxiliaryCoordinate.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a> method.</p>
 </dd>
-<dt>geometry: <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional</dt><dd><p>Set the geometry type.</p>
+<dt>geometry: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>Set the geometry type.</p>
 <p>The geometry type may also be set after initialisation
 with the <a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.set_geometry.html#cfdm.AuxiliaryCoordinate.set_geometry" title="cfdm.AuxiliaryCoordinate.set_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_geometry</span></code></a> method.</p>
 <dl class="simple">
@@ -213,7 +212,7 @@ this way are assumed to have their default value.</p>
 <code class="docutils literal notranslate"><span class="pre">cfdm.AuxiliaryCoordinate(source=x)</span></code> is equivalent to
 <code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
 </dd>
-<dt>copy: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional</dt><dd><p>If True (the default) then deep copy the input
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
 parameters prior to initialisation. By default the
 parameters are not deep copied.</p>
 </dd>
@@ -222,7 +221,7 @@ parameters are not deep copied.</p>
 </dl>
 </dd></dl>
 
-<section id="inspection">
+<div class="section" id="inspection">
 <h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -254,8 +253,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="properties">
+</div>
+<div class="section" id="properties">
 <h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -290,8 +289,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="data">
+</div>
+<div class="section" id="data">
 <h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -356,8 +355,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="bounds">
+</div>
+<div class="section" id="bounds">
 <h2>Bounds<a class="headerlink" href="#bounds" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -395,7 +394,7 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-<section id="geometries">
+<div class="section" id="geometries">
 <h3>Geometries<a class="headerlink" href="#geometries" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -466,8 +465,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="climatology">
+</div>
+<div class="section" id="climatology">
 <h3>Climatology<a class="headerlink" href="#climatology" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -490,9 +489,9 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
-<section id="miscellaneous">
+</div>
+</div>
+<div class="section" id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -524,8 +523,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="netcdf">
+</div>
+<div class="section" id="netcdf">
 <h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -548,7 +547,7 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-<section id="groups">
+<div class="section" id="groups">
 <h3>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -568,9 +567,9 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
-<section id="special">
+</div>
+</div>
+<div class="section" id="special">
 <h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -580,21 +579,21 @@ parameters are not deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.__deepcopy__.html#cfdm.AuxiliaryCoordinate.__deepcopy__" title="cfdm.AuxiliaryCoordinate.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.__getitem__.html#cfdm.AuxiliaryCoordinate.__getitem__" title="cfdm.AuxiliaryCoordinate.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
 <td><p>Return a subspace of the construct defined by indices.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.__repr__.html#cfdm.AuxiliaryCoordinate.__repr__" title="cfdm.AuxiliaryCoordinate.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.__str__.html#cfdm.AuxiliaryCoordinate.__str__" title="cfdm.AuxiliaryCoordinate.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>Called by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="docstring-substitutions">
+</div>
+<div class="section" id="docstring-substitutions">
 <h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -617,8 +616,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
+</div>
+</div>
 
 
 
@@ -629,11 +628,11 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-07-21.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

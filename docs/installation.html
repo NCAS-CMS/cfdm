@@ -3,8 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta charset="utf-8" />
     <title>Installation &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -38,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cfdm 1.10.1.1</a></h1>
+<h1 class="logo"><a href="index.html">cfdm 1.10.1.2</a></h1>
 
 
 
@@ -117,10 +116,10 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <section id="installation">
+  <div class="section" id="installation">
 <span id="id1"></span><h1><strong>Installation</strong><a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.10.1.1 for version 1.10 of the CF conventions.</p>
+<p>Version 1.10.1.2 for version 1.10 of the CF conventions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#operating-systems" id="id14"><strong>Operating systems</strong></a></p></li>
@@ -140,28 +139,28 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 available from the Python package index (PyPI) and conda are
 confirmed at <a class="reference external" href="https://github.com/NCAS-CMS/cfdm#cfdm">the top of the README document</a>.</p>
 </div>
-<section id="operating-systems">
+<div class="section" id="operating-systems">
 <span id="python-versions"></span><h2><a class="toc-backref" href="#id14"><strong>Operating systems</strong></a><a class="headerlink" href="#operating-systems" title="Permalink to this headline">¶</a></h2>
 <p>cfdm works for Linux, Mac and Windows operating systems.</p>
-</section>
-<section id="id2">
+</div>
+<div class="section" id="id2">
 <h2><a class="toc-backref" href="#id15"><strong>Python versions</strong></a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <p>cfdm works for Python versions 3.7 or newer.</p>
 <hr class="docutils" />
-</section>
-<section id="pip">
+</div>
+<div class="section" id="pip">
 <span id="id3"></span><h2><a class="toc-backref" href="#id16"><strong>pip</strong></a><a class="headerlink" href="#pip" title="Permalink to this headline">¶</a></h2>
 <p>To install cfdm and all of its <a class="reference internal" href="#dependencies"><span class="std std-ref">dependencies</span></a> run,
 for example:</p>
 <div class="literal-block-wrapper docutils container" id="id10">
 <div class="code-block-caption"><span class="caption-text"><em>Install as root, with any missing dependencies.</em></span><a class="headerlink" href="#id10" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>cfdm
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install cfdm
 </pre></div>
 </div>
 </div>
 <div class="literal-block-wrapper docutils container" id="id11">
 <div class="code-block-caption"><span class="caption-text"><em>Install as a user, with any missing dependencies.</em></span><a class="headerlink" href="#id11" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>cfdm<span class="w"> </span>--user
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install cfdm --user
 </pre></div>
 </div>
 </div>
@@ -169,35 +168,35 @@ for example:</p>
 <div class="literal-block-wrapper docutils container" id="id12">
 <div class="code-block-caption"><span class="caption-text"><em>Install as root without installing any of the
 dependencies.</em></span><a class="headerlink" href="#id12" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>cfdm<span class="w"> </span>--no-deps
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install cfdm --no-deps
 </pre></div>
 </div>
 </div>
 <p>See the <a class="reference external" href="https://pip.pypa.io/en/stable/reference/pip_install/">documentation for pip install</a> for further
 options.</p>
 <hr class="docutils" />
-</section>
-<section id="conda">
+</div>
+<div class="section" id="conda">
 <span id="id4"></span><h2><a class="toc-backref" href="#id17"><strong>conda</strong></a><a class="headerlink" href="#conda" title="Permalink to this headline">¶</a></h2>
 <p>The cfdm package is in the <span class="xref std std-ref">conda-forge</span> conda channel. To install
 cfdm with all of its <a class="reference internal" href="#dependencies"><span class="std std-ref">dependencies</span></a> run</p>
 <div class="literal-block-wrapper docutils container" id="id13">
 <div class="code-block-caption"><span class="caption-text"><em>Install with conda.</em></span><a class="headerlink" href="#id13" title="Permalink to this code">¶</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>cfdm
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> conda install -c conda-forge cfdm
 </pre></div>
 </div>
 </div>
 <hr class="docutils" />
-</section>
-<section id="source">
+</div>
+<div class="section" id="source">
 <span id="id5"></span><h2><a class="toc-backref" href="#id18"><strong>Source</strong></a><a class="headerlink" href="#source" title="Permalink to this headline">¶</a></h2>
 <p>To install from source:</p>
 <ol class="arabic">
 <li><p>Download the cfdm package from <a class="reference external" href="https://pypi.org/project/cfdm">https://pypi.org/project/cfdm</a></p></li>
 <li><p>Unpack the library (replacing <code class="docutils literal notranslate"><span class="pre">&lt;version&gt;</span></code> with the version that
 you want to install, e.g. <code class="docutils literal notranslate"><span class="pre">1.10.0.3</span></code>):</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>tar<span class="w"> </span>zxvf<span class="w"> </span>cfdm-&lt;version&gt;.tar.gz
-<span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>cfdm-&lt;version&gt;
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> tar zxvf cfdm-&lt;version&gt;.tar.gz
+<span class="gp">$</span> <span class="nb">cd</span> cfdm-&lt;version&gt;
 </pre></div>
 </div>
 </li>
@@ -206,41 +205,41 @@ you want to install, e.g. <code class="docutils literal notranslate"><span class
 <blockquote>
 <div><ul>
 <li><p>To install the cfdm package to a central location:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>setup.py<span class="w"> </span>install
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python setup.py install
 </pre></div>
 </div>
 </li>
 <li><p>To install the cfdm package locally to the user in the default
 location:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>setup.py<span class="w"> </span>install<span class="w"> </span>--user
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python setup.py install --user
 </pre></div>
 </div>
 </li>
 <li><p>To install the cfdm package in the <code class="docutils literal notranslate"><span class="pre">&lt;directory&gt;</span></code> of your choice:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>setup.py<span class="w"> </span>install<span class="w"> </span>--home<span class="o">=</span>&lt;directory&gt;
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python setup.py install --home<span class="o">=</span>&lt;directory&gt;
 </pre></div>
 </div>
 </li>
 </ul>
 </div></blockquote>
 <hr class="docutils" />
-</section>
-<section id="cfdump-utility">
+</div>
+<div class="section" id="cfdump-utility">
 <span id="id6"></span><h2><a class="toc-backref" href="#id19"><strong>cfdump utility</strong></a><a class="headerlink" href="#cfdump-utility" title="Permalink to this headline">¶</a></h2>
 <p>During installation the <a class="reference internal" href="tutorial.html#cfdump"><span class="std std-ref">cfdump command line utility</span></a> is
 also installed, which generates text descriptions of the <a class="reference internal" href="cf_data_model.html#term-field-construct"><span class="xref std std-term">field
 constructs</span></a> contained in a netCDF dataset.</p>
 <hr class="docutils" />
-</section>
-<section id="tests">
+</div>
+<div class="section" id="tests">
 <span id="id7"></span><h2><a class="toc-backref" href="#id20"><strong>Tests</strong></a><a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
 <p>Tests are run from within the <code class="docutils literal notranslate"><span class="pre">cfdm/test</span></code> directory:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>run_tests.py
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python run_tests.py
 </pre></div>
 </div>
 <hr class="docutils" />
-</section>
-<section id="dependencies">
+</div>
+<div class="section" id="dependencies">
 <span id="id8"></span><h2><a class="toc-backref" href="#id21"><strong>Dependencies</strong></a><a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
 <p>The cfdm package requires:</p>
 <ul class="simple">
@@ -256,12 +255,12 @@ version 1.2.0 or newer.</p></li>
 newer.</p></li>
 </ul>
 <hr class="docutils" />
-</section>
-<section id="code-repository">
+</div>
+<div class="section" id="code-repository">
 <span id="id9"></span><h2><a class="toc-backref" href="#id22"><strong>Code repository</strong></a><a class="headerlink" href="#code-repository" title="Permalink to this headline">¶</a></h2>
 <p>The source code is available at <a class="reference external" href="https://github.com/NCAS-CMS/cfdm">https://github.com/NCAS-CMS/cfdm</a></p>
-</section>
-</section>
+</div>
+</div>
 
 
 
@@ -272,11 +271,11 @@ newer.</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-07-21.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

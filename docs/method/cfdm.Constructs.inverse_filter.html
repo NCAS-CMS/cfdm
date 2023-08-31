@@ -3,8 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta charset="utf-8" />
     <title>cfdm.Constructs.inverse_filter &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -38,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.10.1.1</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.1.2</a></h1>
 
 
 
@@ -123,11 +122,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <section id="cfdm-constructs-inverse-filter">
+  <div class="section" id="cfdm-constructs-inverse-filter">
 <h1>cfdm.Constructs.inverse_filter<a class="headerlink" href="#cfdm-constructs-inverse-filter" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Constructs.inverse_filter">
-<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">inverse_filter</code><span class="sig-paren">(</span><em class="sig-param">depth=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.1.1/cfdm/constructs.py#L3123-L3242"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs.inverse_filter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">inverse_filter</code><span class="sig-paren">(</span><em class="sig-param">depth=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.1.2/cfdm/constructs.py#L3123-L3242"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Constructs.inverse_filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the inverse of previous filters.</p>
 <p>By default, the inverse comprises all of the constructs that
 were <em>not</em> selected by all previously applied filters. If no
@@ -137,7 +136,7 @@ filters have been applied, then this will result in empty
 relative to the constructs selected by the <em>N</em>-th most
 recently applied filter.</p>
 <p>A history of the filters that have been applied is returned in
-a <code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> by the <a class="reference internal" href="cfdm.Constructs.filters_applied.html#cfdm.Constructs.filters_applied" title="cfdm.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a> method. The last element of
+a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> by the <a class="reference internal" href="cfdm.Constructs.filters_applied.html#cfdm.Constructs.filters_applied" title="cfdm.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a> method. The last element of
 the tuple describes the last filter applied. If no filters
 have been applied then the tuple is empty.</p>
 <div class="versionadded">
@@ -151,7 +150,7 @@ have been applied then the tuple is empty.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>depth: <code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional</dt><dd><p>If set to <code class="docutils literal notranslate"><span class="pre">N</span></code> then the inverse is relative to the
+<dt>depth: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>If set to <code class="docutils literal notranslate"><span class="pre">N</span></code> then the inverse is relative to the
 constructs selected by the <code class="docutils literal notranslate"><span class="pre">N</span></code>-th most recently
 applied filter. By default the inverse is relative to
 the constructs selected by all previously applied
@@ -224,7 +223,7 @@ returned.</p>
 </div>
 </dd></dl>
 
-</section>
+</div>
 
 
 
@@ -235,11 +234,11 @@ returned.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-07-21.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

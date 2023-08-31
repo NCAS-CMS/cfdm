@@ -3,8 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta charset="utf-8" />
     <title>cfdm.Domain.nc_set_global_attribute &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -38,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.10.1.1</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.1.2</a></h1>
 
 
 
@@ -123,11 +122,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <section id="cfdm-domain-nc-set-global-attribute">
+  <div class="section" id="cfdm-domain-nc-set-global-attribute">
 <h1>cfdm.Domain.nc_set_global_attribute<a class="headerlink" href="#cfdm-domain-nc-set-global-attribute" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Domain.nc_set_global_attribute">
-<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">nc_set_global_attribute</code><span class="sig-paren">(</span><em class="sig-param">prop</em>, <em class="sig-param">value=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.1.1/cfdm/mixin/netcdf.py#L1637-L1700"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.nc_set_global_attribute" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">nc_set_global_attribute</code><span class="sig-paren">(</span><em class="sig-param">prop</em>, <em class="sig-param">value=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.1.2/cfdm/mixin/netcdf.py#L1637-L1700"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.nc_set_global_attribute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select a property to be written as a netCDF global attribute.</p>
 <p>When multiple field constructs are being written to the same file,
 it is only possible to create a netCDF global attribute from a
@@ -152,12 +151,12 @@ them is optional.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>prop: <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></dt><dd><p>Select the property to be written (if possible) as a
+<dt>prop: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Select the property to be written (if possible) as a
 netCDF global attribute.</p>
 </dd>
 <dt>value: optional</dt><dd><p>The value of the netCDF global attribute, which will be
 created (if possible) in addition to the property as
-written to a netCDF data variable. If unset (or <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>)
+written to a netCDF data variable. If unset (or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)
 then this acts as an instruction to write the property (if
 possible) to a netCDF global attribute instead of to a
 netCDF data variable.</p>
@@ -165,7 +164,7 @@ netCDF data variable.</p>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 <p><strong>Examples</strong></p>
@@ -185,7 +184,7 @@ netCDF data variable.</p>
 </div>
 </dd></dl>
 
-</section>
+</div>
 
 
 
@@ -196,11 +195,11 @@ netCDF data variable.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-07-21.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

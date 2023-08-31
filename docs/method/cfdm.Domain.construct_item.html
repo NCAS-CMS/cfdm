@@ -3,8 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta charset="utf-8" />
     <title>cfdm.Domain.construct_item &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -38,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.10.1.1</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.1.2</a></h1>
 
 
 
@@ -123,11 +122,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <section id="cfdm-domain-construct-item">
+  <div class="section" id="cfdm-domain-construct-item">
 <h1>cfdm.Domain.construct_item<a class="headerlink" href="#cfdm-domain-construct-item" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Domain.construct_item">
-<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">construct_item</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">default=ValueError()</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.1.1/cfdm/mixin/fielddomain.py#L1493-L1574"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.construct_item" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Domain.</code><code class="sig-name descname">construct_item</code><span class="sig-paren">(</span><em class="sig-param">*identity</em>, <em class="sig-param">default=ValueError()</em>, <em class="sig-param">**filter_kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.1.2/cfdm/mixin/fielddomain.py#L1493-L1574"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.construct_item" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a metadata construct and its identifier.</p>
 <p>If zero or two or more constructs are selected then an
 exception is raised, or the <em>default</em> parameter is returned.</p>
@@ -152,15 +151,15 @@ identifiers, with or without the <code class="docutils literal notranslate"><spa
 <p>If no values are provided then all constructs are
 selected.</p>
 <p>A value may be any object that can match via the
-<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code> object that matches
-via its <code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code> method.</p>
-<p>Note that in the output of a <a class="reference internal" href="cfdm.Domain.dump.html#cfdm.Domain.dump" title="cfdm.Domain.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code>
+<code class="docutils literal notranslate"><span class="pre">==</span></code> operator, or a <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.Pattern</span></code></a> object that matches
+via its <a class="reference external" href="https://docs.python.org/3/library/re.html#re.Pattern.search" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a> method.</p>
+<p>Note that in the output of a <a class="reference internal" href="cfdm.Domain.dump.html#cfdm.Domain.dump" title="cfdm.Domain.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method or <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>
 call, a construct is always described by an identity
 that will select it.</p>
 </dd>
 <dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if there
 is no unique construct.</p>
-<p>If set to an <code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code> instance then it will be
+<p>If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be
 raised instead.</p>
 </dd>
 <dt>filter_kwargs: optional</dt><dd><p>Keyword arguments as accepted by <a class="reference internal" href="cfdm.Constructs.filter.html#cfdm.Constructs.filter" title="cfdm.Constructs.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs.filter</span></code></a>
@@ -174,7 +173,7 @@ criteria.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></dt><dd><p>The selected construct and its construct identifier.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>The selected construct and its construct identifier.</p>
 </dd>
 </dl>
 </dd>
@@ -207,7 +206,7 @@ start with the letter ‘l’:</p>
 </div>
 </dd></dl>
 
-</section>
+</div>
 
 
 
@@ -218,11 +217,11 @@ start with the letter ‘l’:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-07-21.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

@@ -3,8 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta charset="utf-8" />
     <title>cfdm.Field.equals &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -38,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.10.1.1</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.10.1.2</a></h1>
 
 
 
@@ -123,11 +122,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <section id="cfdm-field-equals">
+  <div class="section" id="cfdm-field-equals">
 <h1>cfdm.Field.equals<a class="headerlink" href="#cfdm-field-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.equals">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.1.1/cfdm/decorators.py#L117-L190"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.equals" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.1.2/cfdm/decorators.py#L117-L190"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two constructs are the same.</p>
 <p>Equality is strict by default. This means that for two
 constructs to be considered equal they must have corresponding
@@ -174,32 +173,32 @@ numbers. The default value is set by the
 numbers. The default value is set by the
 <a class="reference internal" href="../function/cfdm.rtol.html#cfdm.rtol" title="cfdm.rtol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.rtol</span></code></a> function.</p>
 </dd>
-<dt>ignore_fill_value: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional</dt><dd><p>If True then all <code class="docutils literal notranslate"><span class="pre">_FillValue</span></code> and <code class="docutils literal notranslate"><span class="pre">missing_value</span></code>
+<dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then all <code class="docutils literal notranslate"><span class="pre">_FillValue</span></code> and <code class="docutils literal notranslate"><span class="pre">missing_value</span></code>
 properties are omitted from the comparison.</p>
 </dd>
-<dt>ignore_properties: (sequence of) <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional</dt><dd><p>The names of properties of the construct (not the
+<dt>ignore_properties: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The names of properties of the construct (not the
 metadata constructs) to omit from the comparison. Note
 that the <code class="docutils literal notranslate"><span class="pre">Conventions</span></code> property is always omitted.</p>
 </dd>
-<dt>ignore_data_type: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional</dt><dd><p>If True then ignore the data types in all numerical
+<dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then ignore the data types in all numerical
 comparisons. By default different numerical data types
 imply inequality, regardless of whether the elements
 are within the tolerance for equality.</p>
 </dd>
-<dt>ignore_compression: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional</dt><dd><p>If False then the compression type and, if applicable,
+<dt>ignore_compression: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then the compression type and, if applicable,
 the underlying compressed arrays must be the same, as
 well as the arrays in their uncompressed forms. By
 default only the the arrays in their uncompressed
 forms are compared.</p>
 </dd>
-<dt>ignore_type: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional</dt><dd><p>Any type of object may be tested but, in general,
+<dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Any type of object may be tested but, in general,
 equality is only possible with another <a class="reference internal" href="../class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>
 instance, or a subclass of one. If <em>ignore_type</em> is
 True then <code class="docutils literal notranslate"><span class="pre">cfdm.Field(source=other)</span></code> is
 tested, rather than the <code class="docutils literal notranslate"><span class="pre">other</span></code> defined by the
 <em>other</em> parameter.</p>
 </dd>
-<dt>verbose: <code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional</dt><dd><p>If an integer from <code class="docutils literal notranslate"><span class="pre">-1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code>, or an equivalent
 string equal ignoring case to one of:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">'DISABLE'</span></code> (<code class="docutils literal notranslate"><span class="pre">0</span></code>)</p></li>
@@ -215,7 +214,7 @@ globally-configured <a class="reference internal" href="../function/cfdm.log_lev
 increasing numerical value corresponds to increasing
 verbosity, with the exception of <code class="docutils literal notranslate"><span class="pre">-1</span></code> as a special
 case of maximal and extreme verbosity.</p>
-<p>Otherwise, if <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code> (the default value), output
+<p>Otherwise, if <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default value), output
 messages will be shown according to the value of the
 <a class="reference internal" href="../function/cfdm.log_level.html#cfdm.log_level" title="cfdm.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.log_level</span></code></a> setting.</p>
 <p>Overall, the higher a non-negative integer or
@@ -228,7 +227,7 @@ about the operation.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></dt><dd><p>Whether the two constructs are equal.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether the two constructs are equal.</p>
 </dd>
 </dl>
 </dd>
@@ -256,7 +255,7 @@ about the operation.</p>
 </div>
 </dd></dl>
 
-</section>
+</div>
 
 
 
@@ -267,11 +266,11 @@ about the operation.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-07-21.
+      &copy;2023, NCAS | Page built on 2023-08-31.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 
