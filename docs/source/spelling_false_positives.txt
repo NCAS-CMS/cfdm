@@ -17,6 +17,7 @@ CellMeasure
 CellMethod
 cf
 CF
+CFA
 cfdm
 cfdump
 changelog
@@ -161,6 +162,7 @@ Unary
 uncompress
 uncompresses
 uncompressing
+unicode
 unfilter
 varid
 verboseness
