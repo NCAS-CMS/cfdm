@@ -11,9 +11,9 @@ datasets and the inspection of CF data model constructs.
 
 """
 
-__date__ = "2023-07-21"
+__date__ = "2023-08-31"
 __cf_version__ = "1.10"
-__version__ = "1.10.1.1"
+__version__ = "1.10.1.2"
 
 from packaging import __version__ as _packaging_ver
 from packaging import __file__ as _packaging_file
