@@ -29,7 +29,7 @@ cfdm works for Linux, Mac and Windows operating systems.
 **Python versions**
 -------------------
 
-cfdm works for Python versions 3.7 or newer.
+cfdm works for Python versions 3.8 or newer.
 
 ----
 
@@ -152,7 +152,7 @@ Tests are run from within the ``cfdm/test`` directory:
 
 The cfdm package requires:
 
-* `Python <https://www.python.org/>`_, version 3.7 or newer.
+* `Python <https://www.python.org/>`_, version 3.8 or newer.
 
 * `numpy <http://www.numpy.org/>`_, version 1.15 or newer.
 
