@@ -376,7 +376,7 @@ class Constructs(mixin.Container, core.Constructs):
                         logger.info(
                             f"{cm0.__class__.__name__}: Different cell "
                             "methods (mismatched axes):\n  "
-                            f"{ cell_methods0}\n  {cell_methods1}"
+                            f"{cell_methods0}\n  {cell_methods1}"
                         )  # pragma: no cover
                         return False
                     elif axis0 == axis1:

@@ -107,7 +107,7 @@ class ParametersDomainAncillaries(Parameters):
         domain_ancillaries1 = other.domain_ancillaries()
         if set(domain_ancillaries0) != set(domain_ancillaries1):
             logger.info(
-                f"{ self.__class__.__name__}: Different domain ancillary "
+                f"{self.__class__.__name__}: Different domain ancillary "
                 "terms "
                 f"({set(domain_ancillaries0)} != {set(domain_ancillaries1)})"
             )  # pragma: no cover
