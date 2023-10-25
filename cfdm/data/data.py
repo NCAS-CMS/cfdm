@@ -209,7 +209,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             shape = str(shape)
             shape = shape.replace(",)", ")")
 
-        return f"<{ self.__class__.__name__}{shape}: {self}>"
+        return f"<{self.__class__.__name__}{shape}: {self}>"
 
     def __format__(self, format_spec):
         """Interpret format specifiers for size 1 arrays.
@@ -2010,7 +2010,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         except (AttributeError, ValueError):
             return self._default(
                 default,
-                f"{ self.__class__.__name__!r} has no compressed dimension",
+                f"{self.__class__.__name__!r} has no compressed dimension",
             )
 
     def _parse_indices(self, indices):
