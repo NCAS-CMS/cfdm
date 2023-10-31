@@ -77,7 +77,8 @@ Bounds
    :template: attribute.rst
 
    ~cfdm.core.PropertiesDataBounds.bounds
-   Geometries
+
+Geometries
 ^^^^^^^^^^
 
 .. rubric:: Methods
