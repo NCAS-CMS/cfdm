@@ -84,23 +84,18 @@ for core in ("", "_core"):
                     # due to the presence of this method:
                     #     [cfdm.List.]nc_set_variable_groups
                     # so we must account for that. Checking next character
-                    # of duplicate(s) is not an underscore, is easiest.
-                    locs = [
-                        (m.start(0), m.end(0))
-                        for m in re.finditer(method, rst_contents)
+                    # of duplicate(s) is something other than a newline or
+                    # whitespace, seems robust and simplest.
+                    end_loc = [
+                        m.end(0) for m in re.finditer(method, rst_contents)
                     ]
-                    chars_at_next_loc = [
-                        m[1] for m in [lcs for lcs in locs]  # == last char + 1
-                    ]
-                    chars = [rst_contents[c] for c in chars_at_next_loc]
+                    chars = [rst_contents[c] for c in [e for e in end_loc]]
 
-                    newline_count = chars.count("\n")
-                    ws_count = chars.count(" ")
                     # Any character that isn't a newline or whitespace
                     # indicates another method which the method is a substring
                     # of and can be excluded. If there are still duplicates,
                     # we have genuine duplicate listing entries to report.
-                    if newline_count + ws_count > 1:
+                    if chars.count("\n") + chars.count(" ") > 1:
                         duplicate_method_entries.append(method)
         except FileNotFoundError:
             n_missing_files += 1
