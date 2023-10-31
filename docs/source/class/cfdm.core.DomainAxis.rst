@@ -37,15 +37,6 @@ Size
    ~cfdm.core.DomainAxis.has_size
    ~cfdm.core.DomainAxis.set_size
 
-.. rubric:: Attributes
-   
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cfdm.core.DomainAxis.construct_type
-
 Miscellaneous
 -------------
 

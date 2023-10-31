@@ -70,7 +70,6 @@ File
    ~cfdm.NetCDFArray.get_formats
    ~cfdm.NetCDFArray.get_groups
    ~cfdm.NetCDFArray.get_mask
-   ~cfdm.NetCDFArray.get_address
    
 Miscellaneous
 -------------
