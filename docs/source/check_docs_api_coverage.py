@@ -16,6 +16,7 @@ Call as:
 
 """
 import os
+import re
 import sys
 
 import cfdm as package
@@ -77,7 +78,30 @@ for core in ("", "_core"):
                         f"{os.path.join(source, 'class', rst_file)}"
                     )
                 elif count > 1:
-                    duplicate_method_entries.append(method)
+                    # The method appears more than once, but may be a
+                    # sub-string of another method name, e.g. this gets caught:
+                    #     [cfdm.List.]nc_set_variable
+                    # due to the presence of this method:
+                    #     [cfdm.List.]nc_set_variable_groups
+                    # so we must account for that. Checking next character
+                    # of duplicate(s) is not an underscore, is easiest.
+                    locs = [
+                        (m.start(0), m.end(0))
+                        for m in re.finditer(method, rst_contents)
+                    ]
+                    chars_at_next_loc = [
+                        m[1] for m in [lcs for lcs in locs]  # == last char + 1
+                    ]
+                    chars = [rst_contents[c] for c in chars_at_next_loc]
+
+                    newline_count = chars.count("\n")
+                    ws_count = chars.count(" ")
+                    # Any character that isn't a newline or whitespace
+                    # indicates another method which the method is a substring
+                    # of and can be excluded. If there are still duplicates,
+                    # we have genuine duplicate listing entries to report.
+                    if newline_count + ws_count > 1:
+                        duplicate_method_entries.append(method)
         except FileNotFoundError:
             n_missing_files += 1
             print(f"File {rst_file} does not exist")
