@@ -118,9 +118,9 @@ if duplicate_method_entries:
     duplicate_method_entries.sort()
     entries = "\n".join(duplicate_method_entries)  # can't set \n in f-string!
     print(
-        "WARNING: there are methods which are listed multiple times "
-        "in one class file/page. Decide if the duplicates are useful. "
-        f"They are:\n{entries}\n\n"
+        "WARNING: some methods are listed multiple times inside one class "
+        "file/page. Decide if the duplicates are intended and if not remove "
+        f"them. They are:\n{entries}\n"
     )
 
 print("All non-private methods are documented")
