@@ -269,7 +269,7 @@ class CellConnectivity(
 
             generator: `bool`, optional
                 If True then return a generator for the identities,
-                rather than a list.
+                rather than the default, a list.
 
             kwargs: optional
                 Additional configuration parameters. Currently
