@@ -277,7 +277,7 @@ class CellConnectivity(
 
         :Returns:
 
-            `list` or generator
+            `list` or `generator`
                 The identities.
 
         """
