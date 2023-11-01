@@ -501,7 +501,8 @@ class CompressedArray(Array):
         :Returns:
 
             `dict`
-                The parameters, with key ``'compressed_dimensions'``.
+                The parameters as a dictionary value, with key
+                ``'compressed_dimensions'``.
 
         """
         return {"compressed_dimensions": self.compressed_dimensions()}
