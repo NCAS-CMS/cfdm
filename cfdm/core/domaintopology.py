@@ -255,7 +255,7 @@ class DomainTopology(abstract.Topology):
         return self._has_component("cell")
 
     def set_cell(self, cell):
-        """Set the cell type type.
+        """Set the cell type.
 
         {{cell type}}
 

@@ -30,7 +30,7 @@ _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # cell type
     "{{cell type}}": """The cell type indicates the common spatial dimensionality of
-        the cells, one of
+        the cells, one of:
 
         * ``'point'``: A point is zero-dimensional and has no boundary
                        vertices.
