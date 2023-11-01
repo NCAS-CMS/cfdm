@@ -47,7 +47,7 @@ class MeshArray(CompressedArray):
                 "face_node_connectivity", or
                 "face_face_connectivty" variable.
 
-            shape
+            shape: `tuple`
                 The shape of the CF data model view of the
                 connectivity array.
 
