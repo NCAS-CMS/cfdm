@@ -353,9 +353,9 @@ class DomainTopology(
         "face_node_connectivity" variable.
 
         Normalisation does not change the logical content of the
-        data. It converts the data so that the set of unique values
-        comprises all of the integers in the range ``[0, N-1]`` (if
-        the *start_index* parameter is ``0``), or ``[1, N]`` (if
+        data. It converts the data so that the set of values comprises
+        all of the integers in the range ``[0, N-1]`` (if the
+        *start_index* parameter is ``0``), or ``[1, N]`` (if
         *start_index* is ``1``), where ``N`` is the number of mesh
         nodes.
 
