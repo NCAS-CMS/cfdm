@@ -9,8 +9,8 @@ Version 1.11.0.0
   for CF-1.11 (https://github.com/NCAS-CMS/cfdm/issues/TODOUGRID)
 * New methods: `cfdm.Field.cell_connectivity`,
   `cfdm.Field.cell_connectivities`
-* New methods: `cfdm.Field.domain_topologyy`,
-  `cfdm.Field.domain_topologyies`
+* New methods: `cfdm.Field.domain_topology`,
+  `cfdm.Field.domain_topologies`
 * New methods: `cfdm.Field.del_mesh_id`, `cfdm.Field.get_mesh_id`,
   `cfdm.Field.has_mesh_id`, `cfdm.Field.set_mesh_id`,
 * New attribute: `cfdm.Data.sparse_array`

@@ -12,8 +12,8 @@ class Topology(PropertiesData):
     def ndim(self):
         """The number of data dimensions.
 
-        Only the data dimensions that corresponds to a domain axis
-        construct is included.
+        Only the data dimensions that correspond to a domain axis
+        construct are included.
 
         .. versionadded:: (cfdm) UGRIDVER
 

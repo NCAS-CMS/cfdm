@@ -206,7 +206,8 @@ class CellConnectivity(
     def identity(self, default=""):
         """Return the canonical identity.
 
-        By default the identity is the first found of the following:
+        By default the identity is the first found from the following,
+        in order:
 
         * The connectivity, preceded by ``'connectivity:'``.
         * The ``standard_name`` property.

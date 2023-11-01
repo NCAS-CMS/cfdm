@@ -51,7 +51,7 @@ class MeshArray(CompressedArray):
                 The shape of the CF data model view of the
                 connectivity array.
 
-            {{int start_index: `int`}}
+            {{init start_index: `int`}}
 
             {{init cell_dimension: `int`}}
 
@@ -288,7 +288,7 @@ class MeshArray(CompressedArray):
 
              4-`tuple` of iterators
                 Each iterable iterates over a particular descriptor
-                from each subarray.
+                from each subarray:
 
                 1. The indices of the uncompressed array that
                    correspond to each subarray.

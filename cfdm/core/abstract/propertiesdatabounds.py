@@ -237,7 +237,7 @@ class PropertiesDataBounds(PropertiesData):
 
     @property
     def size(self):
-        """The number elements in the data.
+        """The number of elements in the data.
 
         `size` is equal to the product of `shape`, that only includes
         the sizes of dimensions that correspond to domain axis
