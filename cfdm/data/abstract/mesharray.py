@@ -105,10 +105,13 @@ class MeshArray(CompressedArray):
         # ------------------------------------------------------------
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
-        # Initialise the un-sliced uncompressed array
         shape = self.shape
+        # Find out whether the shape of the uncompressed array is
+        # currently known, or not.
         known_shape = not any(map(isnan, shape))
+        
         if known_shape:
+            # Initialise the un-sliced uncompressed array
             u = np.ma.empty(self.shape, dtype=self.dtype)
 
         Subarray = self.get_Subarray()
@@ -124,15 +127,22 @@ class MeshArray(CompressedArray):
                 **subarray_kwargs,
             )
             if known_shape:
+                # The shape of the uncompressed array is known, so we
+                # have an uninitialised output array in which to copy
+                # this subarray.
                 u[u_indices] = subarray[...]
             else:
-                # When the shape is unknown, there must be (and so we
-                # are assuming that there is) only one pass through
-                # this loop.
+                # The shape of the uncompressed array is not known, so
+                # we don't have an uninitialised outpu array in which
+                # to copy this subarray. However, in this case there
+                # must be (and so we are assuming that there is) only
+                # one pass through this loop, so we can simply set the
+                # output array to be this subarray.
                 u = subarray[...]
 
         if not known_shape:
-            # Store the shape, now that is it known.
+            # Store the shape for future refernce, now that is it
+            # known.
             self._set_component("shape", u.shape, copy=False)
 
         if indices is Ellipsis:
