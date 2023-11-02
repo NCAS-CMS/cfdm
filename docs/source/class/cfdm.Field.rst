@@ -117,10 +117,6 @@ Metadata constructs
    ~cfdm.Field.get_construct
    ~cfdm.Field.has_construct
    ~cfdm.Field.set_construct
-   ~cfdm.Field.del_data_axes
-   ~cfdm.Field.get_data_axes
-   ~cfdm.Field.has_data_axes
-   ~cfdm.Field.set_data_axes
    ~cfdm.Field.domain_axis_key
    ~cfdm.Field.auxiliary_coordinate
    ~cfdm.Field.auxiliary_coordinates
