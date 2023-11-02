@@ -36,10 +36,6 @@ Units
    ~cfdm.core.Data.get_units
    ~cfdm.core.Data.has_units
    ~cfdm.core.Data.set_units
-   ~cfdm.core.Data.del_calendar
-   ~cfdm.core.Data.get_calendar
-   ~cfdm.core.Data.has_calendar
-   ~cfdm.core.Data.set_calendar
 
 Data creation routines
 ----------------------
