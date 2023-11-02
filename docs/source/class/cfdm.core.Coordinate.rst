@@ -119,21 +119,6 @@ Climatology
    ~cfdm.core.Coordinate.get_climatology
    ~cfdm.core.Coordinate.is_climatology
    ~cfdm.core.Coordinate.set_climatology
-
-Modification
-------------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.core.Coordinate.del_data
-   ~cfdm.core.Coordinate.set_data
-   ~cfdm.core.Coordinate.del_bounds
-   ~cfdm.core.Coordinate.set_bounds
       
 Miscellaneous
 -------------
