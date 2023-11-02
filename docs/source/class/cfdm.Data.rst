@@ -37,6 +37,29 @@ Units
    ~cfdm.Data.has_units
    ~cfdm.Data.set_units
 
+Date-time support
+-----------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Data.del_calendar
+   ~cfdm.Data.get_calendar
+   ~cfdm.Data.has_calendar
+   ~cfdm.Data.set_calendar
+
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.Data.datetime_array
+   ~cfdm.Data.datetime_as_string
+
 Data creation routines
 ----------------------
 
@@ -102,29 +125,6 @@ Adding and removing elements
    :template: method.rst
 
    ~cfdm.Data.unique
-
-Date-time support
------------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.Data.del_calendar
-   ~cfdm.Data.get_calendar
-   ~cfdm.Data.has_calendar
-   ~cfdm.Data.set_calendar
-
-.. rubric:: Attributes
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cfdm.Data.datetime_array
-   ~cfdm.Data.datetime_as_string
  
 Indexing routines
 -----------------
