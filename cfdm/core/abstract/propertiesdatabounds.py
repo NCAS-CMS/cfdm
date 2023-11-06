@@ -2,9 +2,6 @@ from math import prod
 
 from .propertiesdata import PropertiesData
 
-# import numpy as np
-
-
 # --------------------------------------------------------------------
 # See cfdm.core.mixin.container.__docstring_substitution__ for {{...}}
 # docstring substitutions
