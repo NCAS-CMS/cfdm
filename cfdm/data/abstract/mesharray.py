@@ -109,7 +109,7 @@ class MeshArray(CompressedArray):
         # Find out whether the shape of the uncompressed array is
         # currently known, or not.
         known_shape = not any(map(isnan, shape))
-        
+
         if known_shape:
             # Initialise the un-sliced uncompressed array
             u = np.ma.empty(self.shape, dtype=self.dtype)
