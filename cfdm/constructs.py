@@ -1660,7 +1660,7 @@ class Constructs(mixin.Container, core.Constructs):
         get_method,
         todict=False,
     ):
-        """Worker function for some "_filter_by_* methods.
+        """Worker function for some "_filter_by_*" methods.
 
         Used by `_filter_by_measure`, `_filter_by_method`,
         `_filter_by_cell`, and `_filter_by_connectivity` to filter by
