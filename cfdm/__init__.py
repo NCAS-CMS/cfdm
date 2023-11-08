@@ -84,7 +84,7 @@ except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
 # Check the version of scipy
-_minimum_vn = "1.11.3"
+_minimum_vn = "1.10.0"
 if Version(scipy.__version__) < Version(_minimum_vn):
     raise ValueError(
         f"Bad scipy version: cfdm requires "
