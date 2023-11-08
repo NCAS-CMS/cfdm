@@ -101,7 +101,7 @@ Docstring substitutions
    :toctree: ../method/                   
    :template: method.rst                  
                                           
-   ~cfdm.GatherArray._docstring_special_substitutions
-   ~cfdm.GatherArray._docstring_substitutions        
-   ~cfdm.GatherArray._docstring_package_depth        
-   ~cfdm.GatherArray._docstring_method_exclusions    
+   ~cfdm.GatheredArray._docstring_special_substitutions
+   ~cfdm.GatheredArray._docstring_substitutions        
+   ~cfdm.GatheredArray._docstring_package_depth        
+   ~cfdm.GatheredArray._docstring_method_exclusions    
