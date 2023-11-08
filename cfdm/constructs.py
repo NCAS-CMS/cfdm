@@ -1681,7 +1681,7 @@ class Constructs(mixin.Container, core.Constructs):
                 matches any of the given values.
 
                 If no components are provided then all
-                *construct_type* constructs of are selected.
+                *construct_type* constructs are selected.
 
                 {{value match}}
 
@@ -2065,7 +2065,7 @@ class Constructs(mixin.Container, core.Constructs):
 
             `Constructs` or `dict` or *cached*
                 The selected cell connectivity constructs, or a cached
-                valued.
+                value.
 
         **Examples**
 
