@@ -3362,12 +3362,10 @@ class NetCDFRead(IORead):
         # field/domain
         # ------------------------------------------------------------
         has_dimensions_attr = self.implementation.has_property(f, "dimensions")
-        ndim = g["variables"][field_ncvar].ndim
-
         if field:
             if g["CF>=1.9"] and has_dimensions_attr:
                 # ----------------------------------------------------
-                # This netCDF scalar variable has a 'dimensions'
+                # This netCDF variable has a 'dimensions'
                 # attribute. Therefore it is a domain variable and is
                 # to be ignored. CF>=1.9 (Introduced at v1.9.0.0)
                 # ----------------------------------------------------
@@ -3380,14 +3378,14 @@ class NetCDFRead(IORead):
             ncdimensions = None
         else:
             if not mesh_topology and (
-                not g["CF>=1.9"] or not has_dimensions_attr or ndim >= 1
+                not g["CF>=1.9"] or not has_dimensions_attr  # or ndim >= 1
             ):
                 # ----------------------------------------------------
                 # This netCDF variable (which is not a UGRID mesh
-                # topology nor a location index set variable) is not
-                # scalar, or does not have a 'dimensions'
-                # attribute. Therefore it is not a domain variable and
-                # is to be ignored. CF>=1.9 (Introduced at v1.9.0.0)
+                # topology nor a location index set variable) does not
+                # have a 'dimensions' attribute. Therefore it is not a
+                # domain variable and is to be ignored. CF>=1.9
+                # (Introduced at v1.9.0.0)
                 # ----------------------------------------------------
                 logger.info(
                     f"        {field_ncvar} is not a domain variable"
