@@ -1676,7 +1676,7 @@ class Constructs(mixin.Container, core.Constructs):
                 representation.
 
             components:
-                Select *construct_type* constructs that have an
+                Select *construct_type* constructs that have a
                 component defined by their *get_method* methods, that
                 matches any of the given values.
 
