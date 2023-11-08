@@ -3436,7 +3436,7 @@ class NetCDFRead(IORead):
 
                 logger.detail(
                     f"        [a] Inserting {domain_axis.__class__.__name__} "
-                    "with size {size}"
+                    f"with size {size}"
                 )  # pragma: no cover
                 axis = self.implementation.set_domain_axis(
                     f, construct=domain_axis, copy=False
@@ -9153,7 +9153,7 @@ class NetCDFRead(IORead):
     ):
         """Create a cell connectivity construct.
 
-        Only "face_face_connectivty" is supported.
+        Only "face_face_connectivity" is supported.
 
         .. versionadded:: (cfdm) UGRIDVER
 
