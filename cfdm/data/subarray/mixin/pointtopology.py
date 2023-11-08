@@ -49,7 +49,7 @@ class PointTopology:
         cols_extend = cols.extend
         u_extend = u.extend
 
-        # WARNING: This loop is a potential performance bottleneck
+        # WARNING (TODO): This loop is a potential performance bottleneck.
         for node in np.unique(node_connectivity).tolist():
             # Find the collection of all nodes that are joined to this
             # node via links in the mesh, including this node itself
