@@ -45,8 +45,8 @@ class BoundsFromNodesArray(MeshArray):
                 A 2-d integer array that contains indices which map
                 each cell boundary vertex to its corresponding
                 position in the 1-d *node_coordinates* array, as found
-                in a UGRID "edge _node_connectivty" or
-                "face_node_connectivty" variable.
+                in a UGRID "edge_node_connectivity" or
+                "face_node_connectivity" variable.
 
             shape: `tuple`
                 The shape of the bounds array.
@@ -114,7 +114,7 @@ class BoundsFromNodesArray(MeshArray):
         :Returns:
 
             `dict`
-                The node connectivty data, with the key ``'data'``,
+                The node connectivity data, with the key ``'data'``,
                 and the node coordinate data with the key
                 ``'node_coordinates'``.
 

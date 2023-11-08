@@ -2,7 +2,7 @@ from .subarray import Subarray
 
 
 class MeshSubarray(Subarray):
-    """A subarray of an arry defined by a UGRID connectivity variable.
+    """A subarray of an array defined by a UGRID connectivity variable.
 
     .. versionadded:: (cfdm) UGRIDVER
 
@@ -28,7 +28,7 @@ class MeshSubarray(Subarray):
             data: array_like
                 A 2-d integer array that contains zero-based indices
                 that identifies UGRID nodes for each cell, as found in
-                a UGRID connectivty variable. This array contains the
+                a UGRID connectivity variable. This array contains the
                 indices for all subarrays.
 
             indices: `tuple` of `slice`
@@ -89,7 +89,7 @@ class MeshSubarray(Subarray):
             data: array_like or `None`
                 A full compressed array spanning all subarrays, from
                 which the elements for this subarray will be
-                returned. By default, or if `None` then the `data`
+                returned. By default, or if `None`, then the `data`
                 array is used.
 
             check_mask: `bool`, optional
