@@ -92,7 +92,7 @@ Docstring substitutions
    :toctree: ../method/                        
    :template: method.rst                       
                                                
-   ~cfdm.core.Bounds_special_substitutions
-   ~cfdm.core.Bounds_substitutions        
-   ~cfdm.core.Bounds_package_depth        
-   ~cfdm.core.Bounds_method_exclusions    
+   ~cfdm.core.Bounds._special_substitutions
+   ~cfdm.core.Bounds._substitutions        
+   ~cfdm.core.Bounds._package_depth        
+   ~cfdm.core.Bounds._method_exclusions    
