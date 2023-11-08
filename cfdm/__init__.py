@@ -87,7 +87,7 @@ except ImportError as error1:
 _minimum_vn = "1.11.3"
 if Version(scipy.__version__) < Version(_minimum_vn):
     raise ValueError(
-        f"Bad netcdf_flattener version: cfdm requires "
+        f"Bad scipy version: cfdm requires "
         f"scipy>={_minimum_vn}. Got {scipy.__version__} "
         f"at {scipy.__file__}"
     )
