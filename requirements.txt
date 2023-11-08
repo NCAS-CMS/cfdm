@@ -3,3 +3,4 @@ cftime>=1.6.0
 numpy>=1.15
 netcdf-flattener>=1.2.0
 packaging>=20.0
+scipy>=1.11.3

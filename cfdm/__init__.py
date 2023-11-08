@@ -47,7 +47,7 @@ __date__ = core.__date__
 __cf_version__ = core.__cf_version__
 __version__ = core.__version__
 
-_requires = ("cftime", "netcdf_flattener")
+_requires = ("cftime", "netcdf_flattener", "scipy")
 
 _error0 = f"cfdm requires the modules {', '.join(_requires)}. "
 
@@ -76,6 +76,20 @@ if Version(netcdf_flattener.__version__) < Version(_minimum_vn):
         f"Bad netcdf_flattener version: cfdm requires "
         f"netcdf_flattener>={_minimum_vn}. Got {netcdf_flattener.__version__} "
         f"at {netcdf_flattener.__file__}"
+    )
+
+try:
+    import scipy
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+
+# Check the version of scipy
+_minimum_vn = "1.11.3"
+if Version(scipy.__version__) < Version(_minimum_vn):
+    raise ValueError(
+        f"Bad netcdf_flattener version: cfdm requires "
+        f"scipy>={_minimum_vn}. Got {scipy.__version__} "
+        f"at {scipy.__file__}"
     )
 
 from .constants import masked

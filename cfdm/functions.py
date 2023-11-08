@@ -7,6 +7,7 @@ from urllib.parse import urlparse
 import cftime
 import netcdf_flattener
 import numpy as np
+import scipy
 
 from . import __cf_version__, __file__, __version__, core
 from .constants import CONSTANTS, ValidLogLevels
@@ -348,6 +349,7 @@ def environment(display=True, paths=True):
         netcdf_flattener_version = "unknown version"
 
     dependency_version_paths_mapping = {
+        "scipy": (scipy.__version__, os.path.abspath(scipy.__file__)),
         "cftime": (cftime.__version__, os.path.abspath(cftime.__file__)),
         "netcdf_flattener": (
             netcdf_flattener_version,

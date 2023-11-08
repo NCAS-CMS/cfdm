@@ -14,7 +14,8 @@ Version 1.11.0.0
 * New methods: `cfdm.Field.del_mesh_id`, `cfdm.Field.get_mesh_id`,
   `cfdm.Field.has_mesh_id`, `cfdm.Field.set_mesh_id`,
 * New attribute: `cfdm.Data.sparse_array`
-  
+* New dependency: ``scipy>=1.11.3``
+
 ----
 
 Version 1.10.1.2
