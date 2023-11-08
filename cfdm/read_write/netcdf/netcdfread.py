@@ -1599,6 +1599,7 @@ class NetCDFRead(IORead):
                 if "topology_dimension" in attributes:
                     # This variable is a mesh topology
                     self._ugrid_parse_mesh_topology(ncvar, attributes)
+
                 if "location_index_set" in attributes:
                     # This data variable has a domain defined by a
                     # location_index_set
