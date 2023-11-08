@@ -45,7 +45,7 @@ class MeshArray(CompressedArray):
                 A 2-d integer array of indices that corresponds to a
                 UGRID "edge_node_connectivity",
                 "face_node_connectivity", or
-                "face_face_connectivty" variable.
+                "face_face_connectivity" variable.
 
             shape: `tuple`
                 The shape of the CF data model view of the

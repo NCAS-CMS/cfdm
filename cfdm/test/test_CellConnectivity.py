@@ -8,7 +8,7 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
 
-# Create testcell connectivity object
+# Create test cell connectivity object
 c = cfdm.CellConnectivity()
 c.set_properties({"long_name": "neighbour faces for faces"})
 c.nc_set_variable("Mesh2_face_links")

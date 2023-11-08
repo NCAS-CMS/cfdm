@@ -5,7 +5,7 @@ from .mixin import PointTopology
 
 
 class PointTopologyFromEdgesSubarray(PointTopology, MeshSubarray):
-    """A subarray of an point topology array compressed by UGRID edges.
+    """A subarray of a point topology array compressed by UGRID edges.
 
     A subarray describes a unique part of the uncompressed array.
 

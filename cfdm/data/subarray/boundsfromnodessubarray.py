@@ -41,8 +41,8 @@ class BoundsFromNodesSubarray(MeshSubarray):
                 A 2-d integer array that contains indices that map
                 each cell boundary vertex to its corresponding
                 position in the 1-d *node_coordinates* array, as found
-                in a UGRID "edge_node_connectivty" or
-                "face_node_connectivty" variable. This array contains
+                in a UGRID "edge_node_connectivity" or
+                "face_node_connectivity" variable. This array contains
                 the mapping for all subarrays.
 
             indices: `tuple` of `slice`
