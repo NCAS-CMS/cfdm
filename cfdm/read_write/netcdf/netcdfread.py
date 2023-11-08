@@ -3378,7 +3378,7 @@ class NetCDFRead(IORead):
             ncdimensions = None
         else:
             if not mesh_topology and (
-                not g["CF>=1.9"] or not has_dimensions_attr  # or ndim >= 1
+                not g["CF>=1.9"] or not has_dimensions_attr
             ):
                 # ----------------------------------------------------
                 # This netCDF variable (which is not a UGRID mesh
