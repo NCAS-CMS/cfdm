@@ -50,7 +50,7 @@ def example_field(n, _implementation=_implementation):
 
             ``9``   A UGRID mesh topology of edge cells.
 
-            ``10``  A UGRID mesh topology of point cells.f.dump()
+            ``10``  A UGRID mesh topology of point cells.
             ======  ==================================================
 
             See the examples for details.

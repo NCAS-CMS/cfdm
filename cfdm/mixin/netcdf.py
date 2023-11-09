@@ -4311,7 +4311,7 @@ class NetCDFNodeCoordinateVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
 
         .. versionadded:: (cfdm) UGRIDVER
 
-        .. seealso:: `nc_get_node_coordinate_variable`,
+        .. seealso:: `nc_del_node_coordinate_variable`,
                      `nc_has_node_coordinate_variable`,
                      `nc_set_node_coordinate_variable`
 
@@ -4354,7 +4354,7 @@ class NetCDFNodeCoordinateVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         .. versionadded:: (cfdm) UGRIDVER
 
         .. seealso:: `nc_get_node_coordinate_variable`,
-                     `nc_has_node_coordinate_variable`,
+                     `nc_del_node_coordinate_variable`,
                      `nc_set_node_coordinate_variable`
 
         :Returns:
@@ -4395,7 +4395,7 @@ class NetCDFNodeCoordinateVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
 
         .. seealso:: `nc_get_node_coordinate_variable`,
                      `nc_has_node_coordinate_variable`,
-                     `nc_set_node_coordinate_variable`
+                     `nc_del_node_coordinate_variable`
 
         :Parameters:
 

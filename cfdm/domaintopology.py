@@ -90,7 +90,7 @@ class DomainTopology(
     cells define each face cell). The CF data model has no mechanism
     for explicitly recording such relationships between multiple
     domain constructs, however whether or not two domains have the
-    same mesh may be reliably deternined by inspection, thereby
+    same mesh may be reliably determined by inspection, thereby
     allowing the creation of netCDF datasets containing UGRID mesh
     topology variables.
 
