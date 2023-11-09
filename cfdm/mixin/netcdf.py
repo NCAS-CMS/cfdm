@@ -898,26 +898,6 @@ class NetCDFVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         """
         return self._nc_set("variable", value)
 
-    #
-    #        if not value or value == "/":
-    #            raise ValueError(f"Invalid netCDF variable name: {value!r}")
-    #
-    #        if "/" in value:
-    #            if not value.startswith("/"):
-    #                raise ValueError(
-    #                    "A netCDF variable name with a group structure "
-    #                    f"must start with a '/'. Got {value!r}"
-    #                )
-    #
-    #            if value.count("/") == 1:
-    #                value = value[1:]
-    #            elif value.endswith("/"):
-    #                raise ValueError(
-    #                    "A netCDF variable name with a group structure "
-    #                    f"can't end with a '/'. Got {value!r}"
-    #                )
-    #
-    #        self._get_component("netcdf")["variable"] = value
 
     def nc_variable_groups(self):
         """Return the netCDF variable group hierarchy.
