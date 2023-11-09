@@ -295,7 +295,7 @@ class read_writeTest(unittest.TestCase):
             print(
                 "TODOUGRID: excluding example fields 8, 9, 10 until writing UGRID is enabled"
             )
-            append_ex_fields = cfdm.example_fields(0, 1, 2, 3, 4, 5, 6, 7)
+            append_ex_fields = cfdm.example_fields(*range(8))
             del append_ex_fields[1]  # note: can remove after Issue #141 closed
             # Note: can remove this del when Issue #140 is closed:
             if fmt in self.netcdf3_fmts:
