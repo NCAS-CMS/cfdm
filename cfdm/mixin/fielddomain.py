@@ -3,9 +3,6 @@ import re
 
 from ..decorators import _manage_log_level_via_verbosity
 
-# import numpy as np
-
-
 logger = logging.getLogger(__name__)
 
 

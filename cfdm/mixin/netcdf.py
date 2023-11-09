@@ -898,7 +898,6 @@ class NetCDFVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         """
         return self._nc_set("variable", value)
 
-
     def nc_variable_groups(self):
         """Return the netCDF variable group hierarchy.
 
