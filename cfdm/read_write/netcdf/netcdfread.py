@@ -9023,7 +9023,7 @@ class NetCDFRead(IORead):
 
         error = self.implementation.set_bounds(aux, bounds, copy=False)
         if error:
-            logger.warning(f"WARNING: {error}")
+            logger.warning(str(error))
 
         return aux
 
