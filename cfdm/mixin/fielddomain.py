@@ -582,7 +582,7 @@ class FieldDomain:
 
         .. versionadded:: (cfdm) UGRIDVER
 
-        .. seealso:: `del_mesh_id`, `has_mesh_id`, `set_mesh_id`
+        .. seealso:: `get_mesh_id`, `has_mesh_id`, `set_mesh_id`
 
         :Parameters:
 
@@ -690,7 +690,6 @@ class FieldDomain:
         """Return domain topology constructs.
 
         Note that ``f.domain_topologies(*identities,
-
         **filter_kwargs)`` is equivalent to
 
         ``f.constructs.filter(filter_by_type=["domain_topology"],
@@ -2307,7 +2306,7 @@ class FieldDomain:
 
         .. versionadded:: (cfdm) UGRIDVER
 
-        .. seealso:: `del_mesh_id`, `has_mesh_id`, `set_mesh_id`
+        .. seealso:: `del_mesh_id`, `get_mesh_id`, `set_mesh_id`
 
         :Returns:
 

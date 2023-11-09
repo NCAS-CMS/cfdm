@@ -131,7 +131,7 @@ The following file types can be read:
 
 * All formats of netCDF3 and netCDF4 files can be read, containing
   datasets for all versions of CF up to CF-|version|, including
-  :ref:`UGRID <UGRID-mesh-topolgies>` datasets.
+  :ref:`UGRID <UGRID-mesh-topologies>` datasets.
 
 ..
 

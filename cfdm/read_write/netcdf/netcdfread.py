@@ -4793,7 +4793,7 @@ class NetCDFRead(IORead):
         :Parameters:
 
             parent_ncvar: `str`
-                The netCDF variable name of the parent varable.
+                The netCDF variable name of the parent variable.
 
                 *Parameter example:*
                   ``'tas'``
@@ -4876,7 +4876,7 @@ class NetCDFRead(IORead):
         :Parameters:
 
             parent_ncvar: `str`
-                The netCDF variable name of the parent varable.
+                The netCDF variable name of the parent variable.
 
                 *Parameter example:*
                   ``'tas'``
@@ -5135,7 +5135,7 @@ class NetCDFRead(IORead):
                 If True then a domain ancillary construct is created.
 
             geometry_nodes: `bool`
-                Set to True only if and only if the coordinate
+                Set to True if and only if the coordinate
                 construct is to be created with only bounds from a
                 geometry node coordinates variable, whose netCDF name
                 is given by *bounds_ncvar*. In this case *ncvar* must
@@ -8610,7 +8610,7 @@ class NetCDFRead(IORead):
         """Parse a UGRID mesh topology or location index set variable.
 
         Adds a new entry to ``self.read_vars['mesh']``. Adds a
-        location_index_set variable to
+        *location_index_set variable* to
         ``self.read_vars["do_not_create_field"]``.
 
         .. versionadded:: (cfdm) UGRIDVER
@@ -8738,7 +8738,7 @@ class NetCDFRead(IORead):
         mesh.domain_topologies = domain_topologies
 
         # ------------------------------------------------------------
-        # Create cell connectivit constructs for each location
+        # Create cell connectivity constructs for each location
         # ------------------------------------------------------------
         cell_connectivites = {}
         for location in locations:
@@ -8756,7 +8756,7 @@ class NetCDFRead(IORead):
         """Parse a UGRID location index set variable.
 
         Adds a new entry to ``self.read_vars['mesh']``. Adds a
-        location_index_set variable to
+        *location_index_set* variable to
         ``self.read_vars["do_not_create_field"]``.
 
         .. versionadded:: (cfdm) UGRIDVER
@@ -9073,7 +9073,7 @@ class NetCDFRead(IORead):
         connectivity_ncvar = attributes.get(connectivity_attr)
         if connectivity_ncvar is None:
             # Can't create a domain topology construct without an
-            # approrpriate connectivity attribute
+            # appropriate connectivity attribute
             return
 
         if not self._ugrid_check_connectivity_variable(
