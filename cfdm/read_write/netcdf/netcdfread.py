@@ -9298,6 +9298,8 @@ class NetCDFRead(IORead):
         :Returns:
 
             `bool`
+                Whether or not the mesh topology variable adheres to
+                the CF conventions.
 
         """
         g = self.read_vars
@@ -9503,7 +9505,7 @@ class NetCDFRead(IORead):
     ):
         """Check a UGRID location index set variable.
 
-        These checks are independent of any parent data variable.
+        These checks are independent of any parent variable.
 
         .. versionadded:: (cfdm) UGRIDVER
 
@@ -9516,6 +9518,8 @@ class NetCDFRead(IORead):
         :Returns:
 
             `bool`
+                Whether or not the location index set variable adheres
+                to the CF conventions.
 
         """
         g = self.read_vars
@@ -9593,14 +9597,14 @@ class NetCDFRead(IORead):
     ):
         """Check a UGRID location index set variable.
 
-        These checks are in the context of a parent data variable.
+        These checks are in the context of a parent variable.
 
         .. versionadded:: (cfdm) UGRIDVER
 
         :Parameters:
 
             parent_ncvar: `str`
-                The netCDF variable name of the parent field
+                The netCDF variable name of the parent field or domain
                 construct.
 
             location_index_set_ncvar: `str`
@@ -9610,6 +9614,9 @@ class NetCDFRead(IORead):
         :Returns:
 
             `bool`
+                Whether or not the location index set variable of a
+                field or domain variable adheres to the CF
+                conventions.
 
         """
         g = self.read_vars
@@ -9714,19 +9721,21 @@ class NetCDFRead(IORead):
     ):
         """Check a UGRID mesh topology variable.
 
-        These checks are in the context of a parent data variable.
+        These checks are in the context of a parent variable.
 
         .. versionadded:: (cfdm) UGRIDVER
 
         :Parameters:
 
             parent_ncvar: `str`
-                The netCDF variable name of the parent field
+                The netCDF variable name of the parent field or domain
                 construct.
 
         :Returns:
 
             `bool`
+                Whether or not the mesh topology variable of a field
+                or domain variable adheres to the CF conventions.
 
         """
         g = self.read_vars
@@ -9813,6 +9822,8 @@ class NetCDFRead(IORead):
         :Returns:
 
             `bool`
+                Whether or not the connectivity variable adheres to
+                the CF conventions.
 
         """
         g = self.read_vars
