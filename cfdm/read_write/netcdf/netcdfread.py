@@ -8911,7 +8911,6 @@ class NetCDFRead(IORead):
         # Apply a location index set
         index_set = mesh.index_set
         if index_set is not None:
-            # Apply a location index set
             auxs = [aux[index_set] for aux in auxs]
 
         mesh.auxiliary_coordinates[location] = auxs
