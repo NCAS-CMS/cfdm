@@ -697,7 +697,7 @@ class FieldDomain:
 
         .. versionadded:: (cfdm) UGRIDVER
 
-        .. seealso:: `constructs`
+        .. seealso:: `constructs`, `domain_topology`
 
         :Parameters:
 
