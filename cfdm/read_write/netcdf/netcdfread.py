@@ -3595,6 +3595,11 @@ class NetCDFRead(IORead):
                     # encoding. Set 'ugrid' to False so that no
                     # further UGRID related stuff occurs.
                     ugrid = False
+                    logger.warning(
+                        "There was a problem parsing the UGRID mesh "
+                        f"topology variable {mesh.mesh_ncvar!r}: "
+                        f"Ignoring the UGRID mesh for {field_ncvar!r}."
+                    )
 
             if ugrid:
                 # The UGRID specification is OK, so get the auxiliary
@@ -3625,6 +3630,11 @@ class NetCDFRead(IORead):
                     # encoding. Set 'ugrid' to False so that no
                     # further UGRID related stuff occurs.
                     ugrid = False
+                    logger.warning(
+                        "Couldn't find the UGRID discrete axis for mesh "
+                        f"topology variable {mesh.mesh_ncvar!r}: "
+                        f"Ignoring the UGRID mesh for {field_ncvar!r}."
+                    )
                 else:
                     # There is a UGRID discrete axis, so create
                     # auxiliary coordinate constructs derived from the
