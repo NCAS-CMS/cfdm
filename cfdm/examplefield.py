@@ -5223,7 +5223,8 @@ def example_fields(*n, _func=example_field):
      <Field: precipitation_amount(cf_role=timeseries_id(2), time(4))>,
      <Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1>,
      <Field: air_temperature(time(2), ncdim%nMesh2_face(3)) K>,
-     <Field: northward_wind(time(2), ncdim%nMesh2_edge(9)) ms-1>]
+     <Field: northward_wind(time(2), ncdim%nMesh2_edge(9)) ms-1>,
+     <Field: air_pressure(time(2), ncdim%nMesh2_node(7)) hPa>]
 
     >>> cfdm.example_fields(7, 1)
     [<Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1>,
