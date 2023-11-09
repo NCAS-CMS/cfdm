@@ -1606,7 +1606,7 @@ class NetCDFRead(IORead):
                     self._ugrid_parse_location_index_set(attributes)
 
             if is_log_level_debug(logger):
-                logger.debug("    UGRID meshes:\n" f"       {g['mesh']}")
+                logger.debug(f"    UGRID meshes:\n       {g['mesh']}")
 
         if _scan_only:
             return self.read_vars
