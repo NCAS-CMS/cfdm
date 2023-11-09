@@ -76,7 +76,7 @@ class Topology:
         else:
             # Remove negative values
             #
-            # PERFORMANCE WARNING: A potentially slow loop
+            # PERFORMANCE WARNING (TODO): A potentially slow loop
             smallest_id = None
             dmin = data.min()
             if dmin < 0:
