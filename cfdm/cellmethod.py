@@ -450,8 +450,8 @@ class CellMethod(mixin.Container, core.CellMethod):
                 .. versionadded:: (cfdm) 1.8.9.0
 
             kwargs: optional
-                Additional configuration parameters. Currently
-                none. Unrecognised parameters are ignored.
+                Additional configuration parameters that may be used
+                by subclasses.
 
                 .. versionadded:: (cfdm) 1.8.9.0
 

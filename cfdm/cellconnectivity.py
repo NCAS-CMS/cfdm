@@ -272,8 +272,8 @@ class CellConnectivity(
                 rather than the default, a list.
 
             kwargs: optional
-                Additional configuration parameters. Currently
-                none. Unrecognised parameters are ignored.
+                Additional configuration parameters that may be used
+                by subclasses.
 
         :Returns:
 
