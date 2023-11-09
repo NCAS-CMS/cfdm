@@ -2063,7 +2063,7 @@ defined in the CF conventions.
 **UGRID mesh topologies**
 -------------------------
 
-A UGRID mesh topology defines the geospatial topology of cells
+A `UGRID`_ mesh topology defines the geospatial topology of cells
 arranged in two or three dimensions in real space but indexed by a
 single dimension. It explicitly describes the topological
 relationships between cells, i.e. spatial relationships which do not
@@ -5081,3 +5081,4 @@ if any, are filtered out.
 .. _Lossy compression by coordinate subsampling: https://cfconventions.org/cf-conventions/cf-conventions.html#compression-by-coordinate-subsampling
 .. _domain topology construct:                   https://cfconventions.org/cf-conventions/cf-conventions.html#data-model-domain-topology
 .. _cell connectivity construct:                 https://cfconventions.org/cf-conventions/cf-conventions.html#data-model-cell-connectivity
+.. _UGRID:                                       https://cfconventions.org/cf-conventions/cf-conventions.html#ugrid-conventions
