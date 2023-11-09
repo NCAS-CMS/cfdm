@@ -127,7 +127,7 @@ class Topology:
     def _remove_empty_columns(cls, data):
         """Remove any data columns that are entirely missing data.
 
-        It is assumed that any such columns will be a the end of the
+        It is assumed that any such columns will be at the end of the
         dimension.
 
         .. versionadded:: (cfdm) UGRIDVER
