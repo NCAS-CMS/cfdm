@@ -622,24 +622,6 @@ class DocstringRewriteMeta(type):
         # Do general substitutions first
         # ------------------------------------------------------------
         for key, value in config.items():
-            # Substitute non-special substitutions embedded within
-            # this value, updating the value if any are found. Note
-            # that any non-special substitutions embedded within the
-            # embedded substituion are *not* replaced.
-            # for k, v in config.items():
-            #    try:
-            #        if k not in value:
-            #            continue
-            #    except TypeError:
-            #        continue
-            #
-            #    try:
-            #        # Compiled regular expression substitution
-            #        value = key.sub(v, value)
-            #    except AttributeError:
-            #        # String substitution
-            #        value = value.replace(k, v)
-
             # Substitute the key for the value
             try:
                 # Compiled regular expression substitution

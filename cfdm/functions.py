@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 
 import cftime
 import netcdf_flattener
+import numpy as np
 
 from . import __cf_version__, __file__, __version__, core
 from .constants import CONSTANTS, ValidLogLevels
@@ -1589,3 +1590,48 @@ def is_log_level_info(logger):
 
     """
     return logger.parent.level <= logging.INFO
+
+
+def integer_dtype(n):
+    """Return the smallest data type that can store the given integer.
+
+    .. versionadded:: (cfdm) UGRIDVER
+
+    :Parameters:
+
+        n: integer
+           The integer for which a data type is required.
+
+    :Returns:
+
+        `numpy.dtype`
+          ``numpy.dtype('int32')`` if *n* is representable by a 32-bit
+           integer, otherwise ``numpy.dtype(int)``.
+
+    **Examples**
+
+    >>> np.iinfo('int32')
+    iinfo(min=-2147483648, max=2147483647, dtype=int32)
+
+    >>> cfdm.integer_dtype(123)
+    dtype('int32')
+    >>> cfdm.integer_dtype(-4294967296)
+    dtype('int64')
+
+    >>> cfdm.integer_dtype(np.iinfo('int32').max)
+    dtype('int32')
+    >>> cfdm.integer_dtype(np.iinfo('int32').min)
+    dtype('int32')
+
+    >>> cfdm.integer_dtype(np.iinfo('int32').max + 1)
+    dtype('int64')
+    >>> cfdm.integer_dtype(np.iinfo('int32').min - 1)
+    dtype('int64')
+
+    """
+    dtype = np.dtype("int32")
+    iinfo = np.iinfo(dtype)
+    if n > iinfo.max or n < iinfo.min:
+        dtype = np.dtype(int)
+
+    return dtype

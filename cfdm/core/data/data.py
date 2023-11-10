@@ -140,16 +140,16 @@ class Data(abstract.Container):
     # ----------------------------------------------------------------
     @property
     def array(self):
-        """Return an independent numpy array containing the data.
+        """Return an independent `numpy` array containing the data.
 
-        If a fill value has been set (see `set_fill_value`) then it will
-        be used, otherwise the default numpy fill value appropriate to the
-        data type will be used.
+        If a fill value has been set (see `set_fill_value`) then it
+        will be used, otherwise the default numpy fill value
+        appropriate to the data type will be used.
 
         :Returns:
 
             `numpy.ndarray`
-                An independent numpy array of the data.
+                An independent `numpy` array of the data.
 
         **Examples**
 

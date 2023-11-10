@@ -61,6 +61,8 @@ Metadata constructs
    ~cfdm.Domain.domain_axis_key
    ~cfdm.Domain.auxiliary_coordinate
    ~cfdm.Domain.auxiliary_coordinates
+   ~cfdm.Domain.cell_connectivity
+   ~cfdm.Domain.cell_connectivities
    ~cfdm.Domain.cell_measure
    ~cfdm.Domain.cell_measures
    ~cfdm.Domain.coordinate
@@ -73,6 +75,8 @@ Metadata constructs
    ~cfdm.Domain.domain_ancillaries
    ~cfdm.Domain.domain_axis
    ~cfdm.Domain.domain_axes
+   ~cfdm.Domain.domain_topology
+   ~cfdm.Domain.domain_topologies
    ~cfdm.Domain.climatological_time_axes
 
 .. rubric:: Attributes

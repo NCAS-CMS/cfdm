@@ -10,7 +10,8 @@
   `cfdm/__init__.py`.
 
 * If required, change the CF conventions version in
-  `cfdm/core/__init__.py` (`__cf_version__` variable)
+  `cfdm/core/__init__.py` (`__cf_version__` variable), `setup.py`, and
+  `README.md`.
 
 * Make sure that `README.md` is up to date.
 
@@ -90,6 +91,7 @@
 
      ```console
      $ cd docs
+     $ rm -fr build
      $ make spelling build
      ```
 

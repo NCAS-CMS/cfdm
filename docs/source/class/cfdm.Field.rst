@@ -124,6 +124,8 @@ Metadata constructs
    ~cfdm.Field.domain_axis_key
    ~cfdm.Field.auxiliary_coordinate
    ~cfdm.Field.auxiliary_coordinates
+   ~cfdm.Field.cell_connectivity
+   ~cfdm.Field.cell_connectivities
    ~cfdm.Field.cell_measure
    ~cfdm.Field.cell_measures
    ~cfdm.Field.cell_method
@@ -138,6 +140,8 @@ Metadata constructs
    ~cfdm.Field.domain_ancillaries
    ~cfdm.Field.domain_axis
    ~cfdm.Field.domain_axes
+   ~cfdm.Field.domain_topology
+   ~cfdm.Field.domain_topologies
    ~cfdm.Field.field_ancillary
    ~cfdm.Field.field_ancillaries
    ~cfdm.Field.climatological_time_axes
@@ -165,7 +169,7 @@ Domain
    :template: method.rst
 
    ~cfdm.Field.get_domain
-   
+
 .. rubric:: Attributes
    
 .. autosummary::

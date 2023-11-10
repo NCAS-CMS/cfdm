@@ -55,6 +55,7 @@ Compression
    ~cfdm.CompressedArray.get_compressed_dimension
    ~cfdm.CompressedArray.get_compression_type
    ~cfdm.CompressedArray.subarray_shapes
+   ~cfdm.CompressedArray.subarray_parameters
    ~cfdm.CompressedArray.subarrays
    ~cfdm.CompressedArray.get_Subarray
    ~cfdm.CompressedArray.conformed_data

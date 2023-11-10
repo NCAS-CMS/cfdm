@@ -1,7 +1,7 @@
 cfdm
 ====
 
-A Python reference implementation of the CF data model.
+A Python reference implementation of the CF data model at CF-1.11.
 
 [![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/NCAS-CMS/cfdm?color=000000&label=latest%20version)](https://ncas-cms.github.io/cfdm/Changelog.html)
 [![PyPI](https://img.shields.io/pypi/v/cfdm?color=000000)](https://pypi.org/project/cfdm/)
@@ -76,6 +76,7 @@ The ``cfdm`` package can:
 * read field and domain constructs from netCDF and CDL datasets,
 * create new field and domain constructs in memory,
 * write and append field and domain constructs to netCDF datasets on disk,
+* read, write, and manipulate UGRID mesh topologies
 * read, write, and create coordinates defined by geometry cells,
 * read and write netCDF4 string data-type variables,
 * read, write, and create netCDF and CDL datasets containing

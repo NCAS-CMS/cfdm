@@ -68,6 +68,7 @@ Miscellaneous
    ~cfdm.GatheredArray.source
    ~cfdm.GatheredArray.to_memory
    ~cfdm.GatheredArray.subarray_shapes
+   ~cfdm.GatheredArray.subarray_parameters
    ~cfdm.GatheredArray.subarrays
    ~cfdm.GatheredArray.get_Subarray
    ~cfdm.GatheredArray.conformed_data

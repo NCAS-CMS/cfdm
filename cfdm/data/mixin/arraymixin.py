@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 
 
 class ArrayMixin:
@@ -82,7 +82,7 @@ class ArrayMixin:
         These are the values set during initialisation, defaulting to
         `None` if either was not set at that time.
 
-        .. versionadded:: 1.10.1.0
+        .. versionadded:: (cfdm) 1.10.1.0
 
         :Returns:
 
@@ -237,25 +237,30 @@ class ArrayMixin:
                 # At least two axes have list-of-integers indices so
                 # we can't do a normal numpy subspace
                 # ----------------------------------------------------
-                if numpy.ma.isMA(array):
-                    take = numpy.ma.take
-                else:
-                    take = numpy.take
-
-                indices = list(indices)
-                for axis in axes_with_list_indices:
-                    array = take(array, indices[axis], axis=axis)
-                    indices[axis] = slice(None)
-
-                if n_axes_with_list_indices < len(indices):
+                n_indices = len(indices)
+                if n_axes_with_list_indices < n_indices:
                     # Apply subspace defined by slices
-                    array = array[tuple(indices)]
+                    slices = [
+                        i if isinstance(i, slice) else slice(None)
+                        for i in indices
+                    ]
+                    array = array[tuple(slices)]
+
+                if n_axes_with_list_indices:
+                    # Apply subspaces defined by lists (this
+                    # methodology works for both numpy arrays and
+                    # scipy sparse arrays).
+                    lists = [slice(None)] * n_indices
+                    for axis in axes_with_list_indices:
+                        lists[axis] = indices[axis]
+                        array = array[tuple(lists)]
+                        lists[axis] = slice(None)
 
         if copy:
-            if numpy.ma.isMA(array) and not array.ndim:
+            if np.ma.isMA(array) and not array.ndim:
                 # This is because numpy.ma.copy doesn't work for
                 # scalar arrays (at the moment, at least)
-                ma_array = numpy.ma.empty((), dtype=array.dtype)
+                ma_array = np.ma.empty((), dtype=array.dtype)
                 ma_array[...] = array
                 array = ma_array
             else:

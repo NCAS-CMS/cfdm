@@ -82,11 +82,11 @@ class Coordinate(PropertiesDataBounds):
         c.set_bounds(b)
 
         """
-        return super().creation_commands(
+        out = super().creation_commands(
             representative_data=representative_data,
             namespace=namespace,
             indent=0,
-            string=string,
+            string=False,
             name="c",
             data_name="data",
             bounds_name="b",
@@ -94,3 +94,18 @@ class Coordinate(PropertiesDataBounds):
             header=header,
             _coordinate=True,
         )
+
+        try:
+            nc = self.nc_get_node_coordinate_variable(None)
+        except AttributeError:
+            pass
+        else:
+            if nc is not None:
+                out.append(f"{name}.nc_set_node_coordinate_variable({nc!r})")
+
+        if string:
+            indent = " " * indent
+            out[0] = indent + out[0]
+            out = ("\n" + indent).join(out)
+
+        return out

@@ -1761,7 +1761,7 @@ class NetCDFWrite(IOWrite):
     def _groups(self, name):
         """Strip off any group structure from the name.
 
-        .. versionaddedd:: 1.8.7.0
+        .. versionaddedd:: (cfdm) 1.8.7.0
 
         :Parameters:
 
@@ -2103,6 +2103,8 @@ class NetCDFWrite(IOWrite):
             f: Field construct
 
             key: `str`
+                The identifier of the coordinate construct,
+                e.g. ``'auxiliarycoordinate1'``.
 
             coord: Coordinate construct
 
@@ -2610,7 +2612,7 @@ class NetCDFWrite(IOWrite):
             domain_axes: `None`, or `tuple` of `str`
                 The domain axis construct identifiers for *cfvar*.
 
-                .. versionadded:: 1.10.1.0
+                .. versionadded:: (cfdm) 1.10.1.0
 
             omit: sequence of `str`, optional
 
@@ -2854,12 +2856,12 @@ class NetCDFWrite(IOWrite):
                 The construct type of the *cfvar*, or its parent if
                 *cfvar* is not a construct.
 
-                .. versionadded:: 1.10.1.0
+                .. versionadded:: (cfdm) 1.10.1.0
 
             domain_axes: `None`, or `tuple` of `str`
                 The domain axis construct identifiers for *cfvar*.
 
-                .. versionadded:: 1.10.1.0
+                .. versionadded:: (cfdm) 1.10.1.0
 
             kwargs: `dict`
 
@@ -2943,7 +2945,7 @@ class NetCDFWrite(IOWrite):
             domain_axes: `None`, or `tuple` of `str`
                 The domain axis construct identidifiers for *cfvar*.
 
-                .. versionadded:: 1.10.1.0
+                .. versionadded:: (cfdm) 1.10.1.0
 
             unset_values: sequence of numbers
 
@@ -3257,6 +3259,15 @@ class NetCDFWrite(IOWrite):
                 ref
             ).get("grid_mapping_name", False)
         ]
+
+        # Check if the field or domain has a domain topology construct
+        # (CF>=1.11)
+        ugrid = self.implementation.has_domain_topology(f)
+        if ugrid:
+            raise NotImplementedError(
+                "Can't yet create UGRID cf-netCDF files. "
+                "This feature is coming soon ..."
+            )
 
         field_coordinates = self.implementation.get_coordinates(f)
 
@@ -4045,7 +4056,7 @@ class NetCDFWrite(IOWrite):
     def _create_vertical_datum(self, ref, coord_key):
         """Deal with a vertical datum.
 
-        .. versionaddedd:: 1.7.0
+        .. versionaddedd:: (cfdm) 1.7.0
 
         """
         g = self.write_vars
@@ -5135,17 +5146,18 @@ class NetCDFWrite(IOWrite):
         g["netcdf"] = self.file_open(filename, mode, fmt, fields)
 
         if not g["dry_run"]:
-            # ------------------------------------------------------------
-            # Write global properties to the file first. This is important
-            # as doing it later could slow things down enormously. This
-            # function also creates the g['global_attributes'] set, which
-            # is used in the _write_field function.
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
+            # Write global properties to the file first. This is
+            # important as doing it later could slow things down
+            # enormously. This function also creates the
+            # g['global_attributes'] set, which is used in the
+            # `_write_field_or_domain` method.
+            # --------------------------------------------------------
             self._write_global_attributes(fields)
 
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             # Write group-level properties to the file next
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             if (
                 g["group"] and not g["post_dry_run"]
             ):  # i.e. not for append mode

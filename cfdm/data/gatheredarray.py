@@ -61,11 +61,7 @@ class GatheredArray(CompressedArray):
             shape: `tuple`
                 The shape of the uncompressed array.
 
-            compressed_dimensions: `dict`
-                Mapping of dimensions of the compressed array to their
-                corresponding dimensions in the uncompressed
-                array. Compressed array dimensions that are not
-                compressed must be omitted from the mapping.
+            {{init compressed_dimensions: `dict`}}
 
                 *Parameter example:*
                   ``{2: (2, 3)}``
@@ -122,44 +118,6 @@ class GatheredArray(CompressedArray):
 
         if list_variable is not None:
             self._set_component("list_variable", list_variable, copy=copy)
-
-    def __getitem__(self, indices):
-        """Return a subspace of the uncompressed data.
-
-        x.__getitem__(indices) <==> x[indices]
-
-        Returns a subspace of the uncompressed array as an independent
-        numpy array.
-
-        """
-        # ------------------------------------------------------------
-        # Method: Uncompress the entire array and then subspace it
-        # ------------------------------------------------------------
-        # Initialise the un-sliced uncompressed array
-        u = np.ma.masked_all(self.shape, dtype=self.dtype)
-
-        Subarray = self.get_Subarray()
-
-        compressed_dimensions = self.compressed_dimensions()
-
-        conformed_data = self.conformed_data()
-        compressed_data = conformed_data["data"]
-        uncompressed_indices = conformed_data["uncompressed_indices"]
-
-        for u_indices, u_shape, c_indices, _ in zip(*self.subarrays()):
-            subarray = Subarray(
-                data=compressed_data,
-                indices=c_indices,
-                shape=u_shape,
-                compressed_dimensions=compressed_dimensions,
-                uncompressed_indices=uncompressed_indices,
-            )
-            u[u_indices] = subarray[...]
-
-        if indices is Ellipsis:
-            return u
-
-        return self.get_subspace(u, indices, copy=True)
 
     def _uncompressed_indices(self):
         """Indices of the uncompressed subarray for the compressed data.

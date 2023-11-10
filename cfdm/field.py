@@ -2,7 +2,16 @@ import logging
 
 import numpy as np
 
-from . import Constructs, Count, Domain, Index, List, core, mixin
+from . import (
+    AuxiliaryCoordinate,
+    Constructs,
+    Count,
+    Domain,
+    Index,
+    List,
+    core,
+    mixin,
+)
 from .data import (
     GatheredArray,
     RaggedContiguousArray,
@@ -93,6 +102,7 @@ class Field(
     def __new__(cls, *args, **kwargs):
         """Store component classes."""
         instance = super().__new__(cls)
+        instance._AuxiliaryCoordinate = AuxiliaryCoordinate
         instance._Constructs = Constructs
         instance._Domain = Domain
         instance._RaggedContiguousArray = RaggedContiguousArray
@@ -129,6 +139,15 @@ class Field(
             copy=copy,
             _use_data=_use_data,
         )
+
+        if source is not None:
+            try:
+                mesh_id = source.get_mesh_id(None)
+            except AttributeError:
+                pass
+            else:
+                if mesh_id is not None:
+                    self.set_mesh_id(mesh_id)
 
         self._initialise_netcdf(source)
         self._initialise_original_filenames(source)
@@ -173,9 +192,10 @@ class Field(
         axis_names = self._unique_domain_axis_identities()
 
         # Data
-        string.append(
-            f"Data            : {self._one_line_description(axis_names)}"
-        )
+        if self.has_data():
+            string.append(
+                f"Data            : {self._one_line_description(axis_names)}"
+            )
 
         # Cell methods
         cell_methods = self.cell_methods(todict=True)
@@ -280,12 +300,18 @@ class Field(
         (1, 10, 1)
 
         """
+        new = self.copy()
+        if indices is Ellipsis:
+            return new
+
+        # Remove a mesh id, on the assumption that the subspaced
+        # domain will be different to the original.
+        new.del_mesh_id(None)
+
         data = self.get_data(_fill_value=False)
 
         indices = data._parse_indices(indices)
         indices = tuple(indices)
-
-        new = self.copy()  # data=False)
 
         data_axes = self.get_data_axes()
 
@@ -683,9 +709,6 @@ class Field(
             ("cell_method",), "cell_method", identities, **filter_kwargs
         )
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     @_inplace_enabled(default=False)
     def apply_masking(self, inplace=False):
         """Apply masking as defined by the CF conventions.
@@ -1557,6 +1580,10 @@ class Field(
             header=header,
         )
 
+        mesh_id = self.get_mesh_id(None)
+        if mesh_id is not None:
+            out.append(f"{name}.set_mesh_id({mesh_id!r})")
+
         nc_global_attributes = self.nc_global_attributes()
         if nc_global_attributes:
             out.append("#")
@@ -1865,30 +1892,6 @@ class Field(
 
         return out
 
-    #    def has_geometry(self):
-    #        """Whether any coordinate constructs have cell geometries.
-    #
-    #        .. versionadded:: (cfdm) 1.8.7.0
-    #
-    #        :Returns:
-    #
-    #            `bool`
-    #                Whether or not there is a geometry type on any coordinate
-    #                construct.
-    #
-    #        **Examples**
-    #
-    #        >>> f = {{package}}.Field()
-    #        >>> f.has_geometry()
-    #        False
-    #
-    #        """
-    #        for c in self.coordinates(todict=True).values():
-    #            if c.has_geometry():
-    #                return True
-    #
-    #        return False
-
     def indices(self, **kwargs):
         """Create indices that define a subspace of the field construct.
 
@@ -1909,7 +1912,7 @@ class Field(
         * Subspace criteria may be provided for size 1 domain axes that
           are not spanned by the field construct's data.
 
-        .. versionadded:: 1.10.0.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `__getitem__`, `__setitem__`
 
@@ -2257,6 +2260,7 @@ class Field(
 
         if not hasattr(c, "has_data"):  # i.e. a construct that never has data
             raise ValueError("Can't convert a construct that cannot have data")
+
         # ------------------------------------------------------------
         # Create a new field with the properties and data from the
         # construct
@@ -2292,6 +2296,8 @@ class Field(
                 "dimension_coordinate",
                 "auxiliary_coordinate",
                 "cell_measure",
+                "domain_topology",
+                "cell_connectivity",
                 todict=True,
             ).items():
                 axes = constructs_data_axes.get(ccid)
