@@ -90,7 +90,14 @@ all of its metadata. It is defined as follows:
       cell measure constructs
         corresponding to CF-netCDF cell measure variables
 
+      domain topology constructs
+        corresponding to CF-netCDF UGRID mesh topology variables
+
+      cell connectivity constructs
+        corresponding to CF-netCDF UGRID connectivity variables
+
 ----
+
 
 |
 

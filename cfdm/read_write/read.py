@@ -141,7 +141,6 @@ def read(
               ``external=('cell_measure_A.nc', 'cell_measure_O.nc')``
 
         extra: (sequence of) `str`, optional
-
             Create extra, independent fields from netCDF variables
             that correspond to particular types metadata constructs.
             Ignored if *domain* is True.

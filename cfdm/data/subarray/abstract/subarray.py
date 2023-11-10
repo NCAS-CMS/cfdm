@@ -37,14 +37,7 @@ class Subarray(Array):
             shape: `tuple` of `int`
                 The shape of the uncompressed subarray.
 
-            compressed_dimensions: `dict`
-                Mapping of compressed to uncompressed dimensions.
-
-                A dictionary key is a position of a dimension in the
-                compressed data, with a value of the positions of the
-                corresponding dimensions in the uncompressed
-                data. Compressed array dimensions that are not
-                compressed must be omitted from the mapping.
+            {{init compressed_dimensions: `dict`}}
 
                 *Parameter example:*
                   ``{0: (0, 1)}``
@@ -67,8 +60,7 @@ class Subarray(Array):
 
             context_manager: function, optional
                 A context manager that provides a runtime context for
-                the conversion of data defined by *data* to a `numpy`
-                array.
+                the conversion of *data* to a `numpy` array.
 
         """
         super().__init__(source=source, copy=copy)
@@ -160,17 +152,17 @@ class Subarray(Array):
             # Convert the data to a numpy array within the given
             # runtime context
             with context_manager():
-                if indices:
+                if indices is not None:
                     data = data[indices]
 
                 data = np.asanyarray(data)
         else:
-            if indices:
+            if indices is not None:
                 data = data[indices]
 
             data = np.asanyarray(data)
 
-        if check_mask and not np.ma.is_masked(data):
+        if check_mask and np.ma.isMA(data) and not np.ma.is_masked(data):
             data = np.array(data)
 
         return data
@@ -203,7 +195,9 @@ class Subarray(Array):
         if data is None:
             data = self.data
 
-        return self._asanyarray(data[self.indices])
+        return self._asanyarray(
+            data, indices=self.indices, check_mask=check_mask
+        )
 
     @property
     def data(self):

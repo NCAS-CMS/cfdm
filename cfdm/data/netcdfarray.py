@@ -38,7 +38,7 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
                 defined by *filename*. Either a netCDF variable name
                 or an integer netCDF variable ID.
 
-                .. versionadded:: 1.10.1.0
+                .. versionadded:: (cfdm) 1.10.1.0
 
             dtype: `numpy.dtype`
                 The data type of the array in the netCDF file. May be

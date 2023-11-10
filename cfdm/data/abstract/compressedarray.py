@@ -158,6 +158,42 @@ class CompressedArray(Array):
                 "compression_type", compression_type, copy=False
             )
 
+    def __getitem__(self, indices):
+        """Return a subspace of the uncompressed data.
+
+        x.__getitem__(indices) <==> x[indices]
+
+        Returns a subspace of the uncompressed array as an independent
+        numpy array.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        """
+        # ------------------------------------------------------------
+        # Method: Uncompress the entire array and then subspace it
+        # ------------------------------------------------------------
+        # Initialise the un-sliced uncompressed array
+        u = np.ma.masked_all(self.shape, dtype=self.dtype)
+
+        Subarray = self.get_Subarray()
+        subarray_kwargs = {
+            **self.conformed_data(),
+            **self.subarray_parameters(),
+        }
+
+        for u_indices, u_shape, c_indices, _ in zip(*self.subarrays()):
+            subarray = Subarray(
+                indices=c_indices,
+                shape=u_shape,
+                **subarray_kwargs,
+            )
+            u[u_indices] = subarray[...]
+
+        if indices is Ellipsis:
+            return u
+
+        return self.get_subspace(u, indices, copy=True)
+
     def _first_or_last_element(self, indices):
         """Return the first or last element of the compressed array.
 
@@ -456,6 +492,19 @@ class CompressedArray(Array):
 
         """
         return self._get_compressed_Array(default=default)
+
+    def subarray_parameters(self):
+        """Non-data parameters required by the `Subarray` class.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        :Returns:
+
+            `dict`
+                The parameters, with key ``'compressed_dimensions'``.
+
+        """
+        return {"compressed_dimensions": self.compressed_dimensions()}
 
     def subarray_shapes(self, shapes):
         """Create the subarray shapes along each uncompressed dimension.

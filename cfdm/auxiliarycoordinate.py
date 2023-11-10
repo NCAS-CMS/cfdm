@@ -3,6 +3,7 @@ from . import core, mixin
 
 class AuxiliaryCoordinate(
     mixin.NetCDFVariable,
+    mixin.NetCDFNodeCoordinateVariable,
     mixin.Coordinate,
     mixin.Files,
     core.AuxiliaryCoordinate,
@@ -37,7 +38,7 @@ class AuxiliaryCoordinate(
 
     {{netCDF variable}}
 
-    {{netCDF variable group}}
+    {{netCDF UGRID node coordinate}}
 
     .. versionadded:: (cfdm) 1.7.0
 

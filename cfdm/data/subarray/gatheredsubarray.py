@@ -68,8 +68,7 @@ class GatheredSubarray(Subarray):
 
             context_manager: function, optional
                 A context manager that provides a runtime context for
-                the conversion of data defined by *data* to a `numpy`
-                array.
+                the conversion of *data* to a `numpy` array.
 
         """
         super().__init__(

@@ -3,14 +3,14 @@ from .mixin import ArrayMixin
 
 
 class NumpyArray(ArrayMixin, core.NumpyArray):
-    """An underlying numpy array.
+    """An underlying `numpy` array.
 
     .. versionadded:: (cfdm) 1.7.0
 
     """
 
     def __getitem__(self, indices):
-        """Returns a subspace of the array as a numpy array.
+        """Returns a subspace of the array as a `numpy` array.
 
         x.__getitem__(indices) <==> x[indices]
 

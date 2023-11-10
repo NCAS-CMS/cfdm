@@ -130,7 +130,8 @@ shell parameter expansions are applied to it.
 The following file types can be read:
 
 * All formats of netCDF3 and netCDF4 files can be read, containing
-  datasets for versions of CF up to and including CF-|version|.
+  datasets for all versions of CF up to CF-|version|, including
+  :ref:`UGRID <UGRID-mesh-topolgies>` datasets.
 
 ..
 
@@ -560,11 +561,14 @@ Class                  CF data model construct                                  
 `DomainAncillary`      :term:`Domain ancillary <domain ancillary constructs>`          Cell locations in alternative 
                                                                                        coordinate systems	       
 `CellMeasure`          :term:`Cell measure <cell measure constructs>`                  Domain cell size or shape     
+`DomainTopology`       :term:`Domain topology  <domain topology constructs>`           Geospatial topology of domain
+                                                                                       cells    
+`CellConnectivity`     :term:`Cell connectivity <cell measure constructs>`             Connectivity of domain cells     
 `FieldAncillary`       :term:`Field ancillary <field ancillary constructs>`            Ancillary metadata which vary 
                                                                                        within the domain	       
 `CellMethod`           :term:`Cell method <cell method constructs>`                    Describes how data represent  
                                                                                        variation within cells	       
-=====================  ==============================================================  ==============================
+=====================  ==============================================================  =============================
 
 Metadata constructs of a particular type can be retrieved with the
 following methods of the field construct:
@@ -578,9 +582,11 @@ Method                          Metadata constructs
 `~Field.coordinate_references`  Coordinate references  
 `~Field.domain_ancillaries`     Domain ancillaries     
 `~Field.cell_measures`          Cell measures          
+`~Field.domain_topologies`      Domain topologies
+`~Field.cell_connectivities`    Cell Connectivities
 `~Field.field_ancillaries`      Field ancillaries      
 `~Field.cell_methods`           Cell methods                               
-==============================  =====================  
+==============================  =====================
 
 Each of these attributes returns a `Constructs` class instance that
 maps metadata constructs to unique identifiers called "construct
@@ -2050,6 +2056,43 @@ CF-netCDF geometry container variable is automatically created, and
 the cells encoded with the :ref:`compression <Compression>` techniques
 defined in the CF conventions.
 
+----
+
+.. _UGRID-mesh-topologies:
+		
+**UGRID mesh topologies**
+-------------------------
+
+A UGRID mesh topology defines the geospatial topology of cells
+arranged in two or three dimensions in real space but indexed by a
+single dimension. It explicitly describes the topological
+relationships between cells, i.e. spatial relationships which do not
+depend on the cell locations, via a mesh of connected nodes. See the
+`domain topology construct`_ and `cell connectivity construct`_
+descriptions in the CF data model (from CF-1.11) for more details,
+including on how the mesh relates to the cells of the domain.
+
+.. code-block:: python
+   :caption: *Inspect a dataset containing a UGRID mesh topology.*
+
+   >>> f = cfdm.example_field(8)
+   >>> print(f)
+   Field: air_temperature (ncvar%ta)
+   ---------------------------------
+   Data            : air_temperature(time(2), ncdim%nMesh2_face(3)) K
+   Cell methods    : time(2): point (interval: 3600 s)
+   Dimension coords: time(2) = [2016-01-02 01:00:00, 2016-01-02 11:00:00] gregorian
+   Auxiliary coords: longitude(ncdim%nMesh2_face(3)) = [-44.0, -44.0, -42.0] degrees_east
+                   : latitude(ncdim%nMesh2_face(3)) = [34.0, 32.0, 34.0] degrees_north
+   Domain Topology : cell:face(ncdim%nMesh2_face(3), 4) = [[2, ..., --]]
+   Cell connects   : connectivity:edge(ncdim%nMesh2_face(3), 5) = [[0, ..., --]]
+
+..
+   COMMENTED OUT UNTIL THIS WORKS! When a field construct containing a
+   UGRID mesh topology is written to disk, a CF-netCDF UGRID mesh
+   topology variable is automatically created which will be shared by
+   any data variables that can make use of the same mesh.
+   
 ----
 
 .. _Domain-ancillaries:
@@ -3667,8 +3710,8 @@ either technique.
    :caption: *Two ways to add additional conventions to the
              "Conventions" netCDF global attribute.*
 
-   >>> f_file.set_property('Conventions', 'UGRID1.0')
-   >>> cfdm.write(f, 'f_file.nc', Conventions='UGRID1.0')   
+   >>> f_file.set_property('Conventions', 'UGRID-1.0')
+   >>> cfdm.write(f, 'f_file.nc', Conventions='UGRID-1.0')   
 
    
 .. _Scalar-coordinate-variables:
@@ -5036,3 +5079,5 @@ if any, are filtered out.
 .. _geometries:                                  https://cfconventions.org/cf-conventions/cf-conventions.html#geometries
 .. _Hierarchical groups:                         https://cfconventions.org/cf-conventions/cf-conventions.html#groups
 .. _Lossy compression by coordinate subsampling: https://cfconventions.org/cf-conventions/cf-conventions.html#compression-by-coordinate-subsampling
+.. _domain topology construct:                   https://cfconventions.org/cf-conventions/cf-conventions.html#data-model-domain-topology
+.. _cell connectivity construct:                 https://cfconventions.org/cf-conventions/cf-conventions.html#data-model-cell-connectivity

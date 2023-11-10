@@ -52,7 +52,11 @@ Data
    :template: attribute.rst
 
    ~cfdm.core.Bounds.data
-
+   ~cfdm.core.Bounds.dtype
+   ~cfdm.core.Bounds.ndim
+   ~cfdm.core.Bounds.shape
+   ~cfdm.core.Bounds.size
+   
 Miscellaneous
 -------------
 

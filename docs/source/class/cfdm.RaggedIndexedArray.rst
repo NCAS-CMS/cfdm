@@ -68,6 +68,7 @@ Miscellaneous
    ~cfdm.RaggedIndexedArray.source
    ~cfdm.RaggedIndexedArray.to_memory
    ~cfdm.RaggedIndexedArray.subarray_shapes
+   ~cfdm.RaggedIndexedArray.subarray_parameters
    ~cfdm.RaggedIndexedArray.subarrays
    ~cfdm.RaggedIndexedArray.get_Subarray
    ~cfdm.RaggedIndexedArray.conformed_data

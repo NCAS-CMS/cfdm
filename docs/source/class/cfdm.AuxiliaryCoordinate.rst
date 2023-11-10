@@ -196,6 +196,10 @@ NetCDF
    ~cfdm.AuxiliaryCoordinate.nc_get_variable
    ~cfdm.AuxiliaryCoordinate.nc_has_variable
    ~cfdm.AuxiliaryCoordinate.nc_set_variable
+   ~cfdm.AuxiliaryCoordinate.nc_del_node_coordinate_variable
+   ~cfdm.AuxiliaryCoordinate.nc_get_node_coordinate_variable
+   ~cfdm.AuxiliaryCoordinate.nc_has_node_coordinate_variable
+   ~cfdm.AuxiliaryCoordinate.nc_set_node_coordinate_variable
 
 Groups
 ^^^^^^
@@ -210,6 +214,9 @@ Groups
    ~cfdm.AuxiliaryCoordinate.nc_variable_groups
    ~cfdm.AuxiliaryCoordinate.nc_clear_variable_groups
    ~cfdm.AuxiliaryCoordinate.nc_set_variable_groups
+   ~cfdm.AuxiliaryCoordinate.nc_clear_node_coordinate_variable_groups
+   ~cfdm.AuxiliaryCoordinate.nc_node_coordinate_variable_groups
+   ~cfdm.AuxiliaryCoordinate.nc_set_node_coordinate_variable_groups
 
 Special
 -------

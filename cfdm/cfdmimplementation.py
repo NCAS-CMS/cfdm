@@ -2,6 +2,7 @@ from . import (
     CF,
     AuxiliaryCoordinate,
     Bounds,
+    CellConnectivity,
     CellMeasure,
     CellMethod,
     CoordinateConversion,
@@ -12,6 +13,7 @@ from . import (
     Domain,
     DomainAncillary,
     DomainAxis,
+    DomainTopology,
     Field,
     FieldAncillary,
     Index,
@@ -24,9 +26,12 @@ from . import (
 )
 from .abstract import Implementation
 from .data import (
+    BoundsFromNodesArray,
+    CellConnectivityArray,
     Data,
     GatheredArray,
     NetCDFArray,
+    PointTopologyArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
@@ -245,6 +250,27 @@ class CFDMImplementation(Implementation):
 
         """
         return data.insert_dimension(position=position)
+
+    def del_properties(self, construct, props):
+        """Remove a property from a construct.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        :Parameters:
+
+            construct: construct
+
+            props: (sequence of) `str`
+
+            default: optional
+
+        :Returns:
+
+            `dict`
+                The deleted properties, if any
+
+        """
+        return construct.del_properties(props)
 
     def del_property(self, construct, prop, default):
         """Remove a property from a construct.
@@ -1771,6 +1797,26 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("Bounds")
         return cls()
 
+    def initialise_CellConnectivityArray(self, **kwargs):
+        """Return a cell connectivity array.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        :Parameters:
+
+            kwargs: optional
+                Parameters for intialising the node connectivity
+                array, which are passed to
+                `CellConnectivityArray.__init__`.
+
+        :Returns:
+
+            `CellConnectivityArray`
+
+        """
+        cls = self.get_class("CellConnectivityArray")
+        return cls(**kwargs)
+
     def initialise_CellMeasure(self, measure=None):
         """Return a cell measure construct.
 
@@ -1990,6 +2036,48 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("DomainAxis")
         return cls(size=size)
 
+    def initialise_DomainTopology(self, **kwargs):
+        """Return a domain topology construct.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        :Parameters:
+
+            kwargs: optional
+                Parameters for intialising the domain topology
+                construct, which are passed to
+                `DomainTopology.__init__`.
+
+        :Returns:
+
+            `DomainTopology`
+                The domain topology construct.
+
+        """
+        cls = self.get_class("DomainTopology")
+        return cls(**kwargs)
+
+    def initialise_CellConnectivity(self, **kwargs):
+        """Return a cell connectivity construct.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        :Parameters:
+
+            kwargs: optional
+                Parameters for intialising the cell connectivity
+                construct, which are passed to
+                `CellConnectivity.__init__`.
+
+        :Returns:
+
+            `CellConnectivity`
+                The cell connectivity construct.
+
+        """
+        cls = self.get_class("CellConnectivity")
+        return cls(**kwargs)
+
     def initialise_Field(self):
         """Return a field qconstruct.
 
@@ -2173,6 +2261,25 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("List")
         return cls()
 
+    def initialise_PointTopologyArray(self, **kwargs):
+        """Return a point topology array.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        :Parameters:
+
+            kwargs: optional
+                Parameters for intialising the point topology array.
+                which are passed to `PointTopologyArray.__init__`.
+
+        :Returns:
+
+            `PointTopologyArray`
+
+        """
+        cls = self.get_class("PointTopologyArray")
+        return cls(**kwargs)
+
     def initialise_TiePointIndex(self):
         """Return an index variable.
 
@@ -2246,6 +2353,25 @@ class CFDMImplementation(Implementation):
             missing_values=missing_values,
         )
 
+    def initialise_BoundsFromNodesArray(self, **kwargs):
+        """Return a node bounds array.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        :Parameters:
+
+            kwargs: optional
+                Parameters for intialising the node bounds array.
+                which are passed to `BoundsFromNodesArray.__init__`.
+
+        :Returns:
+
+            `BoundsFromNodesArray`
+
+        """
+        cls = self.get_class("BoundsFromNodesArray")
+        return cls(**kwargs)
+
     def initialise_NodeCountProperties(self):
         """Return a node count properties variable.
 
@@ -2300,9 +2426,7 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("RaggedContiguousArray")
         return cls(
             compressed_array=compressed_array,
-            #            ndim=ndim,
             shape=shape,
-            #            size=size,
             count_variable=count_variable,
         )
 
@@ -2379,9 +2503,7 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("RaggedIndexedContiguousArray")
         return cls(
             compressed_array=compressed_array,
-            #            ndim=ndim,
             shape=shape,
-            #            size=size,
             count_variable=count_variable,
             index_variable=index_variable,
         )
@@ -2696,6 +2818,38 @@ class CFDMImplementation(Implementation):
         """
         cell_method.set_method(method)
 
+    def set_cell_connectivity(
+        self, parent, construct, axes, copy=True, **kwargs
+    ):
+        """Insert a cell connectivity object into a field.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        :Parameters:
+
+            parent: `Field` or `Domain`
+               On what to set the construct
+
+            construct: `CellConnectivity`
+
+            axes: `tuple`
+
+            copy: `bool`, optional
+
+            kwargs: optional
+                Additional parameters to the `set_construct` of
+                *parent* that may be used by subclasses.
+
+
+        :Returns:
+
+            `str`
+
+        """
+        return self.set_construct(
+            parent, construct, axes=axes, copy=copy, **kwargs
+        )
+
     def set_climatology(self, construct):
         """Set the construct as a climatology.
 
@@ -2954,6 +3108,38 @@ class CFDMImplementation(Implementation):
         """
         return self.set_construct(parent, construct, copy=copy, **kwargs)
 
+    def set_domain_topology(
+        self, parent, construct, axes, copy=True, **kwargs
+    ):
+        """Insert a domain topology object into a field.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        :Parameters:
+
+            parent: `Field` or `Domain`
+               On what to set the construct
+
+            construct: `DomainTopology`
+
+            axes: `tuple`
+
+            copy: `bool`, optional
+
+            kwargs: optional
+                Additional parameters to the `set_construct` of
+                *parent* that may be used by subclasses.
+
+
+        :Returns:
+
+            `str`
+
+        """
+        return self.set_construct(
+            parent, construct, axes=axes, copy=copy, **kwargs
+        )
+
     def set_dependent_tie_points(self, construct, tie_points, dimensions):
         """Set dependent tie points and their dimensions.
 
@@ -2997,6 +3183,26 @@ class CFDMImplementation(Implementation):
             calendar=data.get_calendar(None),
         )
         construct.set_data(data)
+
+    def set_mesh_id(self, parent, mesh_id):
+        """Set a mesh identifier.
+
+        .. versionadded:: (cfdm)  UGRIDVER
+
+        :Parameters:
+
+            parent: construct
+                The construct on which to set the mesh id
+
+            mesh_id:
+                The mesh identifier.
+
+        :Returns:
+
+            `None`
+
+        """
+        parent.set_mesh_id(mesh_id)
 
     def nc_set_external(self, construct):
         """Set the external status of a construct.
@@ -3259,6 +3465,29 @@ class CFDMImplementation(Implementation):
         if ncvar is not None:
             field.nc_set_geometry_variable(ncvar)
 
+    def nc_set_node_coordinate_variable(self, parent, ncvar):
+        """Set the netCDF node coordinate variable name.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        :Parameters:
+
+            parent: `AuxiliaryCoordinate`
+                The auxiliary coordinate construct on which to set the
+                netCDF node coordinate variable name.
+
+            ncvar: `str` or `None`
+                The netCDF node coordinate variable name. If `None`
+                then the name is not set.
+
+        :Returns:
+
+            `None`
+
+        """
+        if ncvar is not None:
+            parent.nc_set_node_coordinate_variable(ncvar)
+
     def nc_set_variable(self, parent, ncvar):
         """Set the netCDF variable name.
 
@@ -3373,27 +3602,26 @@ class CFDMImplementation(Implementation):
         """
         return bool(coordinate_reference.datum)
 
-    #    def has_identity(self, construct, identity):
-    #        """Return True if a construct has the given identity.
-    #
-    #        .. versionadded:: (cfdm) 1.10.0.0
-    #
-    #        :Parameters:
-    #
-    #            construct:
-    #
-    #            identity: `str`
-    #                The identity
-    #
-    #                *Parameter example:*
-    #                   ``'latitude'``
-    #
-    #        :Returns:
-    #
-    #            `bool`
-    #
-    #        """
-    #        return bool(getattr(construct, identity, False))
+    def has_domain_topology(self, parent):
+        """Whether or not a field or domain has a domain topology.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        :Parameters:
+
+            parent: `Field` or `Domain`
+                A field or domain construct
+
+        :Returns:
+
+            `bool`
+                Whether or not *parent* has a domain topology.
+
+        """
+        try:
+            return bool(parent.domain_topologies(todict=True))
+        except AttributeError:
+            return False
 
     def has_property(self, parent, prop):
         """Return True if a property exists.
@@ -3454,6 +3682,8 @@ class CFDMImplementation(Implementation):
 _implementation = CFDMImplementation(
     cf_version=CF(),
     AuxiliaryCoordinate=AuxiliaryCoordinate,
+    CellConnectivity=CellConnectivity,
+    CellConnectivityArray=CellConnectivityArray,
     CellMeasure=CellMeasure,
     CellMethod=CellMethod,
     CoordinateReference=CoordinateReference,
@@ -3461,6 +3691,7 @@ _implementation = CFDMImplementation(
     Domain=Domain,
     DomainAncillary=DomainAncillary,
     DomainAxis=DomainAxis,
+    DomainTopology=DomainTopology,
     Field=Field,
     FieldAncillary=FieldAncillary,
     Bounds=Bounds,
@@ -3474,8 +3705,10 @@ _implementation = CFDMImplementation(
     NodeCountProperties=NodeCountProperties,
     PartNodeCountProperties=PartNodeCountProperties,
     Data=Data,
+    BoundsFromNodesArray=BoundsFromNodesArray,
     GatheredArray=GatheredArray,
     NetCDFArray=NetCDFArray,
+    PointTopologyArray=PointTopologyArray,
     RaggedContiguousArray=RaggedContiguousArray,
     RaggedIndexedArray=RaggedIndexedArray,
     RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
@@ -3518,6 +3751,7 @@ def implementation():
      'Data': <class 'cfdm.data.data.Data'>,
      'GatheredArray': <class 'cfdm.data.gatheredarray.GatheredArray'>,
      'NetCDFArray': <class 'cfdm.data.netcdfarray.NetCDFArray'>,
+     'PointTopologyArray': <class 'cfdm.data.pointtopologyarray.PointTopologyArray'>,
      'RaggedContiguousArray': <class 'cfdm.data.raggedcontiguousarray.RaggedContiguousArray'>,
      'RaggedIndexedArray': <class 'cfdm.data.raggedindexedarray.RaggedIndexedArray'>,
      'RaggedIndexedContiguousArray': <class 'cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray'>,

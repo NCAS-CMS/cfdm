@@ -16,35 +16,42 @@ def example_field(n, _implementation=_implementation):
         n: `int`
             Select the example field construct to return, one of:
 
-            =====  ===================================================
-            *n*    Description
-            =====  ===================================================
-            ``0``  A field construct with properties as well as a
-                   cell method construct and dimension coordinate
-                   constructs with bounds.
+            ======  ==================================================
+            *n*     Field construct description
+            ======  ==================================================
+            ``0``   Cell method and dimension coordinate metadata
+                    constructs.
 
-            ``1``  A field construct with properties as well as at
-                   least one of every type of metadata construct.
+            ``1``   Cell method, dimension coordinate, auxiliary
+                    coordinate, cell measure, coordinate reference,
+                    domain ancillary and field ancillary metadata
+                    constructs.
 
-            ``2``  A field construct that contains a monthly time
-                   series at each latitude-longitude location.
+            ``2``   A monthly time series at each latitude-longitude
+                    location.
 
-            ``3``  A field construct that contains discrete sampling
-                   geometry (DSG) "timeSeries" features.
+            ``3``   Discrete sampling geometry (DSG) "timeSeries"
+                    features.
 
-            ``4``  A field construct that contains discrete sampling
-                   geometry (DSG) "timeSeriesProfile" features.
+            ``4``   Discrete sampling geometry (DSG)
+                    "timeSeriesProfile" features.
 
-            ``5``  A field construct that contains a 12 hourly time
-                   series at each latitude-longitude location.
+            ``5``   A 12 hourly time series at each latitude-longitude
+                    location.
 
-            ``6``  A field construct that has polygon geometry
-                   coordinate cells with interior ring variables.
+            ``6``   Polygon geometry coordinate cells with interior
+                    ring variables.
 
-            ``7``  A field construct that has rotated pole dimension
-                   coordinate constructs and 2-d latitude and
-                   longitude auxiliary coordinate constructs.
-            =====  ===================================================
+            ``7``   Rotated pole dimension coordinate constructs and
+                    2-d latitude and longitude auxiliary coordinate
+                    constructs.
+
+            ``8``   A UGRID mesh topology of face cells.
+
+            ``9``   A UGRID mesh topology of edge cells.
+
+            ``10``  A UGRID mesh topology of point cells.f.dump()
+            ======  ==================================================
 
             See the examples for details.
 
@@ -54,9 +61,8 @@ def example_field(n, _implementation=_implementation):
 
     :Returns:
 
-        `Field` or `int`
-            The example field construct, or if *n_field* is True, the
-            number of field constructs that are available.
+        `Field`
+            The example field construct.
 
     **Examples**
 
@@ -171,13 +177,31 @@ def example_field(n, _implementation=_implementation):
                     : longitude(grid_latitude(4), grid_longitude(5)) = [[8.0648, ..., 10.9238]] degrees_east
     Coord references: grid_mapping_name:rotated_latitude_longitude
 
-    """
-    if not 0 <= n <= 7:
-        raise ValueError(
-            "Must select an example construct with an integer "
-            f"argument between 0 and 7 inclusive. Got {n!r}"
-        )
+    >>> f = cfdm.example_field(8)
+    >>> print(f)
+    Field: air_temperature (ncvar%ta)
+    ---------------------------------
+    Data            : air_temperature(time(2), ncdim%nMesh2_face(3)) K
+    Cell methods    : time(2): point (interval: 3600 s)
+    Dimension coords: time(2) = [2016-01-02 01:00:00, 2016-01-02 11:00:00] gregorian
+    Auxiliary coords: longitude(ncdim%nMesh2_face(3)) = [-44.0, -44.0, -42.0] degrees_east
+                    : latitude(ncdim%nMesh2_face(3)) = [34.0, 34.0, 34.0] degrees_north
+    Domain Topology : cell:face(ncdim%nMesh2_face(3), 4) = [[2, ..., --]]
+    Cell connects   : connectivity:edge(ncdim%nMesh2_face(3), 5) = [[0, ..., --]]
 
+    >>> f = cfdm.example_field(9)
+    >>> print(f)
+    Field: northward_wind (ncvar%v)
+    -------------------------------
+    Data            : northward_wind(time(2), ncdim%nMesh2_face(3)) ms-1
+    Cell methods    : time(2): point (interval: 3600 s)
+    Dimension coords: time(2) = [2016-01-02 01:00:00, 2016-01-02 11:00:00] gregorian
+    Auxiliary coords: longitude(ncdim%nMesh2_face(3)) = [-44.0, -44.0, -42.0] degrees_east
+                    : latitude(ncdim%nMesh2_face(3)) = [34.0, 34.0, 34.0] degrees_north
+    Domain Topology : cell:face(ncdim%nMesh2_face(3), 4) = [[2, ..., --]]
+    Cell connects   : connectivity:edge(ncdim%nMesh2_face(3), 5) = [[0, ..., --]]
+
+    """
     # For safety given the private second argument which we might not
     # document, otherwise a user gets an obscure error if they tried, say:
     # >>> cfdm.example_field(2, 3)
@@ -185,16 +209,19 @@ def example_field(n, _implementation=_implementation):
     if isinstance(_implementation, int):
         raise ValueError(
             "Only one example construct can be returned at a time. "
-            "Provide a single integer argument only."
+            "Provide a single integer argument only. "
+            "Use the 'example_fields' function to return multiple fields."
         )
 
     AuxiliaryCoordinate = _implementation.get_class("AuxiliaryCoordinate")
+    CellConnectivity = _implementation.get_class("CellConnectivity")
     CellMeasure = _implementation.get_class("CellMeasure")
     CellMethod = _implementation.get_class("CellMethod")
     CoordinateReference = _implementation.get_class("CoordinateReference")
     DimensionCoordinate = _implementation.get_class("DimensionCoordinate")
     DomainAncillary = _implementation.get_class("DomainAncillary")
     DomainAxis = _implementation.get_class("DomainAxis")
+    DomainTopology = _implementation.get_class("DomainTopology")
     FieldAncillary = _implementation.get_class("FieldAncillary")
     Field = _implementation.get_class("Field")
 
@@ -202,6 +229,8 @@ def example_field(n, _implementation=_implementation):
     InteriorRing = _implementation.get_class("InteriorRing")
 
     Data = _implementation.get_class("Data")
+
+    mesh_id = "f51e5aa5e2b0439f9fae4f04e51556f7"
 
     if n == 0:
         f = Field()
@@ -1162,37 +1191,18 @@ def example_field(n, _implementation=_implementation):
         f.set_construct(c, key="domainaxis1")
 
         # field data
-        data_mask = Data(
-            [
-                [False, False, False, True, True, True, True, True, True],
-                [False, False, False, False, False, False, False, True, True],
-                [False, False, False, False, False, True, True, True, True],
-                [
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                ],
-            ],
-            dtype="b1",
-        )
         data = Data(
             [
                 [
                     3.98,
                     0.0,
                     0.0,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
                 ],
                 [
                     0.0,
@@ -1202,8 +1212,8 @@ def example_field(n, _implementation=_implementation):
                     0.0,
                     0.0,
                     4.61,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
+                    -99,
+                    -99,
                 ],
                 [
                     0.86,
@@ -1211,16 +1221,16 @@ def example_field(n, _implementation=_implementation):
                     0.75,
                     0.0,
                     4.56,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
                 ],
                 [0.0, 0.09, 0.0, 0.91, 2.96, 1.14, 3.86, 0.0, 0.0],
             ],
             units="kg m-2 day-1",
             dtype="f8",
-            mask=data_mask,
+            mask_value=-99,
         )
         f.set_data(data, axes=("domainaxis0", "domainaxis1"))
 
@@ -1234,37 +1244,18 @@ def example_field(n, _implementation=_implementation):
             }
         )
         c.nc_set_variable("time")
-        data_mask = Data(
-            [
-                [False, False, False, True, True, True, True, True, True],
-                [False, False, False, False, False, False, False, True, True],
-                [False, False, False, False, False, True, True, True, True],
-                [
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                ],
-            ],
-            dtype="b1",
-        )
         data = Data(
             [
                 [
                     -3.0,
                     -2.0,
                     -1.0,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
                 ],
                 [
                     1.0,
@@ -1274,8 +1265,8 @@ def example_field(n, _implementation=_implementation):
                     5.0,
                     6.0,
                     7.0,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
+                    -99,
+                    -99,
                 ],
                 [
                     0.5,
@@ -1283,80 +1274,31 @@ def example_field(n, _implementation=_implementation):
                     2.5,
                     3.5,
                     4.5,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
                 ],
                 [-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
             ],
             units="days since 1970-01-01 00:00:00",
             dtype="f8",
-            mask=data_mask,
+            mask_value=-99,
         )
         c.set_data(data)
         b = Bounds()
-        data_mask = Data(
-            [
-                [
-                    [False, False],
-                    [False, False],
-                    [False, False],
-                    [True, True],
-                    [True, True],
-                    [True, True],
-                    [True, True],
-                    [True, True],
-                    [True, True],
-                ],
-                [
-                    [False, False],
-                    [False, False],
-                    [False, False],
-                    [False, False],
-                    [False, False],
-                    [False, False],
-                    [False, False],
-                    [True, True],
-                    [True, True],
-                ],
-                [
-                    [False, False],
-                    [False, False],
-                    [False, False],
-                    [False, False],
-                    [False, False],
-                    [True, True],
-                    [True, True],
-                    [True, True],
-                    [True, True],
-                ],
-                [
-                    [False, False],
-                    [False, False],
-                    [False, False],
-                    [False, False],
-                    [False, False],
-                    [False, False],
-                    [False, False],
-                    [False, False],
-                    [False, False],
-                ],
-            ],
-            dtype="b1",
-        )
         data = Data(
             [
                 [
                     [-3.5, -2.5],
                     [-2.5, -1.5],
                     [-1.5, -0.5],
-                    [9.969209968386869e36, 9.969209968386869e36],
-                    [9.969209968386869e36, 9.969209968386869e36],
-                    [9.969209968386869e36, 9.969209968386869e36],
-                    [9.969209968386869e36, 9.969209968386869e36],
-                    [9.969209968386869e36, 9.969209968386869e36],
-                    [9.969209968386869e36, 9.969209968386869e36],
+                    [-99, -99],
+                    [-99, -99],
+                    [-99, -99],
+                    [-99, -99],
+                    [-99, -99],
+                    [-99, -99],
                 ],
                 [
                     [0.5, 1.5],
@@ -1366,8 +1308,8 @@ def example_field(n, _implementation=_implementation):
                     [4.5, 5.5],
                     [5.5, 6.5],
                     [6.5, 7.5],
-                    [9.969209968386869e36, 9.969209968386869e36],
-                    [9.969209968386869e36, 9.969209968386869e36],
+                    [-99, -99],
+                    [-99, -99],
                 ],
                 [
                     [0.0, 1.0],
@@ -1375,10 +1317,10 @@ def example_field(n, _implementation=_implementation):
                     [2.0, 3.0],
                     [3.0, 4.0],
                     [4.0, 5.0],
-                    [9.969209968386869e36, 9.969209968386869e36],
-                    [9.969209968386869e36, 9.969209968386869e36],
-                    [9.969209968386869e36, 9.969209968386869e36],
-                    [9.969209968386869e36, 9.969209968386869e36],
+                    [-99, -99],
+                    [-99, -99],
+                    [-99, -99],
+                    [-99, -99],
                 ],
                 [
                     [-2.5, -1.5],
@@ -1394,7 +1336,7 @@ def example_field(n, _implementation=_implementation):
             ],
             units="days since 1970-01-01 00:00:00",
             dtype="f8",
-            mask=data_mask,
+            mask_value=-99,
         )
         b.set_data(data)
         c.set_bounds(b)
@@ -1513,440 +1455,351 @@ def example_field(n, _implementation=_implementation):
         f.set_construct(c, key="domainaxis2")
 
         # field data
-        data_mask = Data(
-            [
-                [
-                    [False, True, True, True],
-                    [False, False, False, True],
-                    [False, False, True, True],
-                    [False, False, True, True],
-                    [False, False, True, True],
-                    [False, True, True, True],
-                    [False, False, True, True],
-                    [False, True, True, True],
-                    [False, True, True, True],
-                    [False, False, True, True],
-                    [False, False, False, True],
-                    [False, False, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                ],
-                [
-                    [False, False, False, False],
-                    [False, False, True, True],
-                    [False, False, True, True],
-                    [False, True, True, True],
-                    [False, False, True, True],
-                    [False, False, True, True],
-                    [False, False, True, True],
-                    [False, True, True, True],
-                    [False, False, False, True],
-                    [False, False, False, True],
-                    [False, False, False, True],
-                    [False, False, False, True],
-                    [False, True, True, True],
-                    [False, False, False, True],
-                    [False, False, True, True],
-                    [False, True, True, True],
-                    [False, True, True, True],
-                    [False, True, True, True],
-                    [False, False, True, True],
-                    [False, False, False, True],
-                    [False, False, False, True],
-                    [False, False, True, True],
-                    [False, True, True, True],
-                    [False, False, True, True],
-                    [False, False, False, True],
-                    [False, False, False, True],
-                ],
-                [
-                    [False, True, True, True],
-                    [False, False, False, True],
-                    [False, False, False, True],
-                    [False, False, False, True],
-                    [False, False, True, True],
-                    [False, False, True, True],
-                    [False, True, True, True],
-                    [False, True, True, True],
-                    [False, False, True, True],
-                    [False, False, False, True],
-                    [False, False, False, True],
-                    [False, False, True, True],
-                    [False, False, False, True],
-                    [False, True, True, True],
-                    [False, True, True, True],
-                    [False, False, True, True],
-                    [False, False, True, True],
-                    [False, False, False, True],
-                    [False, True, True, True],
-                    [False, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                ],
-            ],
-            dtype="b1",
-        )
         data = Data(
             [
                 [
                     [
                         290.0,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
-                    [293.15, 288.84, 280.0, 9.969209968386869e36],
+                    [293.15, 288.84, 280.0, -99],
                     [
                         291.65,
                         285.0,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
                     ],
                     [
                         290.45,
                         286.14,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
                     ],
-                    [290.0, 285.0, 9.969209968386869e36, 9.969209968386869e36],
+                    [290.0, 285.0, -99, -99],
                     [
                         290.0,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
                         291.65,
                         288.57,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
                     ],
                     [
                         290.0,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
                         293.27,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
-                    [290.0, 285.0, 9.969209968386869e36, 9.969209968386869e36],
-                    [293.36, 285.99, 285.46, 9.969209968386869e36],
+                    [290.0, 285.0, -99, -99],
+                    [293.36, 285.99, 285.46, -99],
                     [
                         291.2,
                         285.96,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                 ],
                 [
                     [291.74, 285.72, 283.21, 275.0],
-                    [290.0, 285.0, 9.969209968386869e36, 9.969209968386869e36],
-                    [290.0, 285.0, 9.969209968386869e36, 9.969209968386869e36],
+                    [290.0, 285.0, -99, -99],
+                    [290.0, 285.0, -99, -99],
                     [
                         290.15,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
                         291.08,
                         285.0,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
                     ],
                     [
                         291.32,
                         288.66,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
                     ],
                     [
                         290.0,
                         294.18,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
                     ],
                     [
                         290.0,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
-                    [290.0, 286.05, 280.0, 9.969209968386869e36],
-                    [291.23, 285.0, 281.11, 9.969209968386869e36],
-                    [295.88, 286.83, 285.01, 9.969209968386869e36],
-                    [292.37, 285.6, 280.0, 9.969209968386869e36],
+                    [290.0, 286.05, 280.0, -99],
+                    [291.23, 285.0, 281.11, -99],
+                    [295.88, 286.83, 285.01, -99],
+                    [292.37, 285.6, 280.0, -99],
                     [
                         290.0,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
-                    [300.11, 285.0, 280.0, 9.969209968386869e36],
-                    [290.0, 287.4, 9.969209968386869e36, 9.969209968386869e36],
+                    [300.11, 285.0, 280.0, -99],
+                    [290.0, 287.4, -99, -99],
                     [
                         290.0,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
                         291.5,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
                         290.0,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
                         294.98,
                         290.64,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
                     ],
-                    [290.66, 292.92, 280.0, 9.969209968386869e36],
-                    [290.24, 285.36, 280.36, 9.969209968386869e36],
-                    [290.0, 285.0, 9.969209968386869e36, 9.969209968386869e36],
+                    [290.66, 292.92, 280.0, -99],
+                    [290.24, 285.36, 280.36, -99],
+                    [290.0, 285.0, -99, -99],
                     [
                         290.0,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
                         292.79,
                         285.0,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
                     ],
-                    [290.0, 287.22, 280.0, 9.969209968386869e36],
-                    [290.0, 286.14, 280.0, 9.969209968386869e36],
+                    [290.0, 287.22, 280.0, -99],
+                    [290.0, 286.14, 280.0, -99],
                 ],
                 [
                     [
                         291.74,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
-                    [291.44, 287.25, 280.0, 9.969209968386869e36],
-                    [292.76, 285.0, 280.0, 9.969209968386869e36],
-                    [291.59, 286.71, 284.47, 9.969209968386869e36],
+                    [291.44, 287.25, 280.0, -99],
+                    [292.76, 285.0, 280.0, -99],
+                    [291.59, 286.71, 284.47, -99],
                     [
                         292.19,
                         286.35,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
                     ],
                     [
                         295.67,
                         285.0,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
                     ],
                     [
                         290.0,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
                         290.45,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
-                    [290.0, 285.0, 9.969209968386869e36, 9.969209968386869e36],
-                    [293.69, 285.9, 280.03, 9.969209968386869e36],
-                    [290.0, 285.27, 280.87, 9.969209968386869e36],
-                    [290.0, 285.0, 9.969209968386869e36, 9.969209968386869e36],
-                    [290.12, 286.44, 282.01, 9.969209968386869e36],
+                    [290.0, 285.0, -99, -99],
+                    [293.69, 285.9, 280.03, -99],
+                    [290.0, 285.27, 280.87, -99],
+                    [290.0, 285.0, -99, -99],
+                    [290.12, 286.44, 282.01, -99],
                     [
                         291.23,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
                         292.97,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
                         290.0,
                         286.71,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
                     ],
                     [
                         292.01,
                         285.0,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
                     ],
-                    [294.62, 285.33, 282.01, 9.969209968386869e36],
+                    [294.62, 285.33, 282.01, -99],
                     [
                         290.0,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
                         292.64,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                 ],
             ],
             units="K",
             dtype="f8",
-            mask=data_mask,
+            mask_value=-99,
         )
         f.set_data(data, axes=("domainaxis0", "domainaxis1", "domainaxis2"))
 
@@ -1960,95 +1813,6 @@ def example_field(n, _implementation=_implementation):
             }
         )
         c.nc_set_variable("time")
-        data_mask = Data(
-            [
-                [
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                ],
-                [
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                ],
-                [
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                ],
-            ],
-            dtype="b1",
-        )
         data = Data(
             [
                 [
@@ -2064,20 +1828,20 @@ def example_field(n, _implementation=_implementation):
                     12.0,
                     13.0,
                     14.0,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
                 ],
                 [
                     0.0,
@@ -2128,17 +1892,17 @@ def example_field(n, _implementation=_implementation):
                     14.0,
                     15.0,
                     16.0,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
-                    9.969209968386869e36,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
                 ],
             ],
             units="days since 1970-01-01 00:00:00",
             dtype="f8",
-            mask=data_mask,
+            mask_value=-99,
         )
         c.set_data(data)
         f.set_construct(
@@ -2210,375 +1974,286 @@ def example_field(n, _implementation=_implementation):
             }
         )
         c.nc_set_variable("z")
-        data_mask = Data(
-            [
-                [
-                    [False, True, True, True],
-                    [False, False, False, True],
-                    [False, False, True, True],
-                    [False, False, True, True],
-                    [False, False, True, True],
-                    [False, True, True, True],
-                    [False, False, True, True],
-                    [False, True, True, True],
-                    [False, True, True, True],
-                    [False, False, True, True],
-                    [False, False, False, True],
-                    [False, False, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                ],
-                [
-                    [False, False, False, False],
-                    [False, False, True, True],
-                    [False, False, True, True],
-                    [False, True, True, True],
-                    [False, False, True, True],
-                    [False, False, True, True],
-                    [False, False, True, True],
-                    [False, True, True, True],
-                    [False, False, False, True],
-                    [False, False, False, True],
-                    [False, False, False, True],
-                    [False, False, False, True],
-                    [False, True, True, True],
-                    [False, False, False, True],
-                    [False, False, True, True],
-                    [False, True, True, True],
-                    [False, True, True, True],
-                    [False, True, True, True],
-                    [False, False, True, True],
-                    [False, False, False, True],
-                    [False, False, False, True],
-                    [False, False, True, True],
-                    [False, True, True, True],
-                    [False, False, True, True],
-                    [False, False, False, True],
-                    [False, False, False, True],
-                ],
-                [
-                    [False, True, True, True],
-                    [False, False, False, True],
-                    [False, False, False, True],
-                    [False, False, False, True],
-                    [False, False, True, True],
-                    [False, False, True, True],
-                    [False, True, True, True],
-                    [False, True, True, True],
-                    [False, False, True, True],
-                    [False, False, False, True],
-                    [False, False, False, True],
-                    [False, False, True, True],
-                    [False, False, False, True],
-                    [False, True, True, True],
-                    [False, True, True, True],
-                    [False, False, True, True],
-                    [False, False, True, True],
-                    [False, False, False, True],
-                    [False, True, True, True],
-                    [False, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                    [True, True, True, True],
-                ],
-            ],
-            dtype="b1",
-        )
         data = Data(
             [
                 [
                     [
                         2.07,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
-                    [1.01, 1.18, 1.82, 9.969209968386869e36],
-                    [1.1, 1.18, 9.969209968386869e36, 9.969209968386869e36],
-                    [1.63, 2.0, 9.969209968386869e36, 9.969209968386869e36],
-                    [1.38, 1.83, 9.969209968386869e36, 9.969209968386869e36],
+                    [1.01, 1.18, 1.82, -99],
+                    [1.1, 1.18, -99, -99],
+                    [1.63, 2.0, -99, -99],
+                    [1.38, 1.83, -99, -99],
                     [
                         1.59,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
-                    [1.57, 2.12, 9.969209968386869e36, 9.969209968386869e36],
+                    [1.57, 2.12, -99, -99],
                     [
                         2.25,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
                         1.8,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
-                    [1.26, 2.17, 9.969209968386869e36, 9.969209968386869e36],
-                    [1.05, 1.29, 2.1, 9.969209968386869e36],
-                    [1.6, 1.97, 9.969209968386869e36, 9.969209968386869e36],
+                    [1.26, 2.17, -99, -99],
+                    [1.05, 1.29, 2.1, -99],
+                    [1.6, 1.97, -99, -99],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                    ],
-                    [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
+                    ],
+                    [
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                 ],
                 [
                     [0.52, 0.58, 1.08, 1.38],
-                    [0.26, 0.92, 9.969209968386869e36, 9.969209968386869e36],
-                    [0.07, 0.4, 9.969209968386869e36, 9.969209968386869e36],
+                    [0.26, 0.92, -99, -99],
+                    [0.07, 0.4, -99, -99],
                     [
                         1.57,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
-                    [0.25, 1.6, 9.969209968386869e36, 9.969209968386869e36],
-                    [0.46, 0.98, 9.969209968386869e36, 9.969209968386869e36],
-                    [0.06, 0.31, 9.969209968386869e36, 9.969209968386869e36],
+                    [0.25, 1.6, -99, -99],
+                    [0.46, 0.98, -99, -99],
+                    [0.06, 0.31, -99, -99],
                     [
                         0.38,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
-                    [0.57, 1.29, 1.81, 9.969209968386869e36],
-                    [0.39, 0.69, 1.69, 9.969209968386869e36],
-                    [0.73, 1.38, 1.6, 9.969209968386869e36],
-                    [0.45, 0.98, 1.13, 9.969209968386869e36],
+                    [0.57, 1.29, 1.81, -99],
+                    [0.39, 0.69, 1.69, -99],
+                    [0.73, 1.38, 1.6, -99],
+                    [0.45, 0.98, 1.13, -99],
                     [
                         0.15,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
-                    [0.09, 0.43, 0.62, 9.969209968386869e36],
-                    [0.17, 0.99, 9.969209968386869e36, 9.969209968386869e36],
+                    [0.09, 0.43, 0.62, -99],
+                    [0.17, 0.99, -99, -99],
                     [
                         0.93,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
                         0.07,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
                         1.57,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
-                    [0.07, 0.12, 9.969209968386869e36, 9.969209968386869e36],
-                    [0.45, 1.24, 1.3, 9.969209968386869e36],
-                    [0.35, 0.68, 0.79, 9.969209968386869e36],
-                    [0.81, 1.22, 9.969209968386869e36, 9.969209968386869e36],
+                    [0.07, 0.12, -99, -99],
+                    [0.45, 1.24, 1.3, -99],
+                    [0.35, 0.68, 0.79, -99],
+                    [0.81, 1.22, -99, -99],
                     [
                         0.59,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
-                    [0.1, 0.96, 9.969209968386869e36, 9.969209968386869e36],
-                    [0.56, 0.78, 0.91, 9.969209968386869e36],
-                    [0.71, 0.9, 1.04, 9.969209968386869e36],
+                    [0.1, 0.96, -99, -99],
+                    [0.56, 0.78, 0.91, -99],
+                    [0.71, 0.9, 1.04, -99],
                 ],
                 [
                     [
                         3.52,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
-                    [3.47, 3.89, 4.81, 9.969209968386869e36],
-                    [3.52, 3.93, 3.96, 9.969209968386869e36],
-                    [4.03, 4.04, 4.8, 9.969209968386869e36],
-                    [3.0, 3.65, 9.969209968386869e36, 9.969209968386869e36],
-                    [3.33, 4.33, 9.969209968386869e36, 9.969209968386869e36],
+                    [3.47, 3.89, 4.81, -99],
+                    [3.52, 3.93, 3.96, -99],
+                    [4.03, 4.04, 4.8, -99],
+                    [3.0, 3.65, -99, -99],
+                    [3.33, 4.33, -99, -99],
                     [
                         3.77,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
                         3.35,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
-                    [3.19, 3.37, 9.969209968386869e36, 9.969209968386869e36],
-                    [3.41, 3.54, 4.1, 9.969209968386869e36],
-                    [3.02, 3.37, 3.87, 9.969209968386869e36],
-                    [3.24, 4.24, 9.969209968386869e36, 9.969209968386869e36],
-                    [3.32, 3.49, 3.97, 9.969209968386869e36],
+                    [3.19, 3.37, -99, -99],
+                    [3.41, 3.54, 4.1, -99],
+                    [3.02, 3.37, 3.87, -99],
+                    [3.24, 4.24, -99, -99],
+                    [3.32, 3.49, 3.97, -99],
                     [
                         3.32,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
                         3.85,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
-                    [3.73, 3.99, 9.969209968386869e36, 9.969209968386869e36],
-                    [3.0, 3.91, 9.969209968386869e36, 9.969209968386869e36],
-                    [3.64, 3.91, 4.56, 9.969209968386869e36],
+                    [3.73, 3.99, -99, -99],
+                    [3.0, 3.91, -99, -99],
+                    [3.64, 3.91, 4.56, -99],
                     [
                         4.1,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
                         3.11,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                 ],
             ],
             units="km",
             dtype="f8",
-            mask=data_mask,
+            mask_value=-99,
         )
         c.set_data(data)
         f.set_construct(
@@ -2614,95 +2289,6 @@ def example_field(n, _implementation=_implementation):
         c = AuxiliaryCoordinate()
         c.set_properties({"cf_role": "profile_id"})
         c.nc_set_variable("profile")
-        data_mask = Data(
-            [
-                [
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                ],
-                [
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                ],
-                [
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    False,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                    True,
-                ],
-            ],
-            dtype="b1",
-        )
         data = Data(
             [
                 [
@@ -2718,20 +2304,20 @@ def example_field(n, _implementation=_implementation):
                     147,
                     151,
                     154,
-                    -2147483647,
-                    -2147483647,
-                    -2147483647,
-                    -2147483647,
-                    -2147483647,
-                    -2147483647,
-                    -2147483647,
-                    -2147483647,
-                    -2147483647,
-                    -2147483647,
-                    -2147483647,
-                    -2147483647,
-                    -2147483647,
-                    -2147483647,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
                 ],
                 [
                     101,
@@ -2782,16 +2368,16 @@ def example_field(n, _implementation=_implementation):
                     152,
                     156,
                     157,
-                    -2147483647,
-                    -2147483647,
-                    -2147483647,
-                    -2147483647,
-                    -2147483647,
-                    -2147483647,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
+                    -99,
                 ],
             ],
             dtype="i4",
-            mask=data_mask,
+            mask_value=-99,
         )
         c.set_data(data)
         f.set_construct(
@@ -4538,54 +4124,38 @@ def example_field(n, _implementation=_implementation):
         d = Data(
             [
                 [
-                    [0.0, 15.0, 0.0, 9.969209968386869e36],
+                    [0.0, 15.0, 0.0, -99],
                     [5.0, 10.0, 5.0, 5.0],
-                    [20.0, 35.0, 20.0, 9.969209968386869e36],
+                    [20.0, 35.0, 20.0, -99],
                 ],
                 [
-                    [0.0, 15.0, 0.0, 9.969209968386869e36],
+                    [0.0, 15.0, 0.0, -99],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                 ],
             ],
             units="degrees_north",
             dtype="f8",
-            mask=Data(
-                [
-                    [
-                        [False, False, False, True],
-                        [False, False, False, False],
-                        [False, False, False, True],
-                    ],
-                    [
-                        [False, False, False, True],
-                        [True, True, True, True],
-                        [True, True, True, True],
-                    ],
-                ],
-                dtype="b1",
-            ),
+            mask_value=-99,
         )
         b.set_data(d)
         b.nc_set_variable("y")
         c.set_bounds(b)
         i = InteriorRing()
         d = Data(
-            [[0, 1, 0], [0, -2147483647, -2147483647]],
+            [[0, 1, 0], [0, -99, -99]],
             dtype="i4",
-            mask=Data(
-                [[False, False, False], [False, True, True]], dtype="b1"
-            ),
+            mask_value=-99,
         )
         i.set_data(d)
         i.nc_set_variable("interior_ring")
@@ -4614,54 +4184,38 @@ def example_field(n, _implementation=_implementation):
         d = Data(
             [
                 [
-                    [20.0, 10.0, 0.0, 9.969209968386869e36],
+                    [20.0, 10.0, 0.0, -99],
                     [5.0, 10.0, 15.0, 10.0],
-                    [20.0, 10.0, 0.0, 9.969209968386869e36],
+                    [20.0, 10.0, 0.0, -99],
                 ],
                 [
-                    [50.0, 40.0, 30.0, 9.969209968386869e36],
+                    [50.0, 40.0, 30.0, -99],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                 ],
             ],
             units="degrees_east",
             dtype="f8",
-            mask=Data(
-                [
-                    [
-                        [False, False, False, True],
-                        [False, False, False, False],
-                        [False, False, False, True],
-                    ],
-                    [
-                        [False, False, False, True],
-                        [True, True, True, True],
-                        [True, True, True, True],
-                    ],
-                ],
-                dtype="b1",
-            ),
+            mask_value=-99,
         )
         b.set_data(d)
         b.nc_set_variable("x")
         c.set_bounds(b)
         i = InteriorRing()
         d = Data(
-            [[0, 1, 0], [0, -2147483647, -2147483647]],
+            [[0, 1, 0], [0, -99, -99]],
             dtype="i4",
-            mask=Data(
-                [[False, False, False], [False, True, True]], dtype="b1"
-            ),
+            mask_value=-99,
         )
         i.set_data(d)
         i.nc_set_variable("interior_ring")
@@ -4690,54 +4244,38 @@ def example_field(n, _implementation=_implementation):
         d = Data(
             [
                 [
-                    [1.0, 2.0, 4.0, 9.969209968386869e36],
+                    [1.0, 2.0, 4.0, -99],
                     [2.0, 3.0, 4.0, 5.0],
-                    [5.0, 1.0, 4.0, 9.969209968386869e36],
+                    [5.0, 1.0, 4.0, -99],
                 ],
                 [
-                    [3.0, 2.0, 1.0, 9.969209968386869e36],
+                    [3.0, 2.0, 1.0, -99],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                     [
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
-                        9.969209968386869e36,
+                        -99,
+                        -99,
+                        -99,
+                        -99,
                     ],
                 ],
             ],
             units="m",
             dtype="f8",
-            mask=Data(
-                [
-                    [
-                        [False, False, False, True],
-                        [False, False, False, False],
-                        [False, False, False, True],
-                    ],
-                    [
-                        [False, False, False, True],
-                        [True, True, True, True],
-                        [True, True, True, True],
-                    ],
-                ],
-                dtype="b1",
-            ),
+            mask_value=-99,
         )
         b.set_data(d)
         b.nc_set_variable("z")
         c.set_bounds(b)
         i = InteriorRing()
         d = Data(
-            [[0, 1, 0], [0, -2147483647, -2147483647]],
+            [[0, 1, 0], [0, -99, -99]],
             dtype="i4",
-            mask=Data(
-                [[False, False, False], [False, True, True]], dtype="b1"
-            ),
+            mask_value=-99,
         )
         i.set_data(d)
         i.nc_set_variable("interior_ring")
@@ -5099,6 +4637,511 @@ def example_field(n, _implementation=_implementation):
         )
         f.set_construct(c)
 
+    elif n == 8:
+        # field: air_temperature
+        f = Field()
+        f.set_properties(
+            {
+                "Conventions": f"CF-{CF()}",
+                "standard_name": "air_temperature",
+                "units": "K",
+            }
+        )
+        f.nc_set_variable("ta")
+        data = Data(
+            [[282.96, 282.69, 283.21], [281.53, 280.99, 281.23]],
+            units="K",
+            dtype="f8",
+        )
+        f.set_data(data)
+        f.set_mesh_id(mesh_id)
+        #
+        # domain_axis: ncdim%time
+        c = DomainAxis()
+        c.set_size(2)
+        c.nc_set_dimension("time")
+        c.nc_set_unlimited(True)
+        f.set_construct(c, key="domainaxis0", copy=False)
+        #
+        # domain_axis: ncdim%nMesh2_face
+        c = DomainAxis()
+        c.set_size(3)
+        c.nc_set_dimension("nMesh2_face")
+        f.set_construct(c, key="domainaxis2", copy=False)
+        #
+        # dimension_coordinate: time
+        c = DimensionCoordinate()
+        c.set_properties(
+            {
+                "axis": "T",
+                "standard_name": "time",
+                "calendar": "gregorian",
+                "units": "seconds since 2016-01-01 15:00:00",
+            }
+        )
+        c.nc_set_variable("time")
+        data = Data(
+            [36000, 72000],
+            units="seconds since 2016-01-01 15:00:00",
+            calendar="gregorian",
+            dtype="f8",
+        )
+        c.set_data(data)
+        b = Bounds()
+        b.nc_set_variable("time_bounds")
+        data = Data(
+            [[36000, 36000], [72000, 72000]],
+            units="seconds since 2016-01-01 15:00:00",
+            calendar="gregorian",
+            dtype="f8",
+        )
+        b.set_data(data)
+        c.set_bounds(b)
+        f.set_construct(
+            c, axes=("domainaxis0",), key="dimensioncoordinate0", copy=False
+        )
+        #
+        # auxiliary_coordinate: longitude
+        c = AuxiliaryCoordinate()
+        c.set_properties(
+            {"standard_name": "longitude", "units": "degrees_east"}
+        )
+        c.nc_set_variable("Mesh2_face_x")
+        data = Data([-44, -44, -42], units="degrees_east", dtype="f8")
+        c.set_data(data)
+        b = Bounds()
+        b.nc_set_variable("Mesh2_node_x_bounds")
+        data = Data(
+            [
+                [-45, -43, -43, -45],
+                [-45, -43, -43, -45],
+                [-40, -43, -43, -99],
+            ],
+            units="degrees_east",
+            dtype="f8",
+            mask_value=-99,
+        )
+        b.set_data(data)
+        c.set_bounds(b)
+        f.set_construct(
+            c, axes=("domainaxis2",), key="auxiliarycoordinate0", copy=False
+        )
+        #
+        # auxiliary_coordinate: latitude
+        c = AuxiliaryCoordinate()
+        c.set_properties(
+            {"standard_name": "latitude", "units": "degrees_north"}
+        )
+        c.nc_set_variable("Mesh2_face_y")
+        data = Data([34, 32, 34], units="degrees_north", dtype="f8")
+        c.set_data(data)
+        b = Bounds()
+        b.nc_set_variable("Mesh2_node_y_bounds")
+        data = Data(
+            [
+                [33, 33, 35, 35],
+                [31, 31, 33, 33],
+                [34, 35, 33, -99],
+            ],
+            units="degrees_north",
+            dtype="f8",
+            mask_value=-99,
+        )
+        b.set_data(data)
+        c.set_bounds(b)
+        f.set_construct(
+            c, axes=("domainaxis2",), key="auxiliarycoordinate1", copy=False
+        )
+        #
+        # domain_topology: cell:face
+        c = DomainTopology()
+        c.set_properties({"long_name": "Maps every face to its corner nodes"})
+        c.nc_set_variable("Mesh2_face_nodes")
+        data = Data(
+            [[2, 3, 1, 0], [4, 5, 3, 2], [1, 3, 6, -99]],
+            dtype="i4",
+            mask_value=-99,
+        )
+        c.set_data(data)
+        c.set_cell("face")
+        f.set_construct(
+            c, axes=("domainaxis2",), key="domaintopology0", copy=False
+        )
+        #
+        # cell_connectivity: connectivity:edge
+        c = CellConnectivity()
+        c.set_properties({"long_name": "neighbour faces for faces"})
+        c.nc_set_variable("Mesh2_face_links")
+        data = Data(
+            [
+                [0, 1, 2, -99, -99],
+                [1, 0, -99, -99, -99],
+                [2, 0, -99, -99, -99],
+            ],
+            dtype="i4",
+            mask_value=-99,
+        )
+        c.set_data(data)
+        c.set_connectivity("edge")
+        f.set_construct(
+            c, axes=("domainaxis2",), key="cellconnectivity0", copy=False
+        )
+        #
+        # cell_method: point
+        c = CellMethod()
+        c.set_method("point")
+        c.set_axes(("domainaxis0",))
+        c.set_qualifier("interval", [Data(3600, units="s", dtype="i8")])
+        f.set_construct(c)
+        #
+        # field data axes
+        f.set_data_axes(("domainaxis0", "domainaxis2"))
+
+    elif n == 9:
+        # field: northward_wind
+        f = Field()
+        f.set_properties(
+            {
+                "Conventions": f"CF-{CF()}",
+                "standard_name": "northward_wind",
+                "units": "ms-1",
+            }
+        )
+        f.nc_set_variable("v")
+        data = Data(
+            [
+                [10.2, 10.63, 8.74, 9.05, 8.15, 10.89, 8.44, 10.66, 8.93],
+                [9.66, 10.74, 9.24, 10.58, 9.79, 10.27, 10.58, 11.68, 11.22],
+            ],
+            units="ms-1",
+            dtype="f8",
+        )
+        f.set_data(data)
+        f.set_mesh_id(mesh_id)
+        #
+        # domain_axis: ncdim%time
+        c = DomainAxis()
+        c.set_size(2)
+        c.nc_set_dimension("time")
+        c.nc_set_unlimited(True)
+        f.set_construct(c, key="domainaxis0", copy=False)
+        #
+        # domain_axis: ncdim%nedge
+        c = DomainAxis()
+        c.set_size(9)
+        c.nc_set_dimension("nMesh2_edge")
+        f.set_construct(c, key="domainaxis2", copy=False)
+        #
+        # dimension_coordinate: time
+        c = DimensionCoordinate()
+        c.set_properties(
+            {
+                "axis": "T",
+                "standard_name": "time",
+                "calendar": "gregorian",
+                "units": "seconds since 2016-01-01 15:00:00",
+            }
+        )
+        c.nc_set_variable("time")
+        data = Data(
+            [36000, 72000],
+            units="seconds since 2016-01-01 15:00:00",
+            calendar="gregorian",
+            dtype="f8",
+        )
+        c.set_data(data)
+        b = Bounds()
+        b.nc_set_variable("time_bounds")
+        data = Data(
+            [[36000, 36000], [72000, 72000]],
+            units="seconds since 2016-01-01 15:00:00",
+            calendar="gregorian",
+            dtype="f8",
+        )
+        b.set_data(data)
+        c.set_bounds(b)
+        f.set_construct(
+            c, axes=("domainaxis0",), key="dimensioncoordinate0", copy=False
+        )
+        #
+        # auxiliary_coordinate: longitude
+        c = AuxiliaryCoordinate()
+        c.set_properties(
+            {"standard_name": "longitude", "units": "degrees_east"}
+        )
+        c.nc_set_variable("Mesh2_edge_x")
+        data = Data(
+            [-41.5, -41.5, -43, -44, -45, -44, -45, -44, -43],
+            units="degrees_east",
+            dtype="f8",
+        )
+        c.set_data(data)
+        b = Bounds()
+        b.nc_set_variable("Mesh2_node_x_bounds")
+        data = Data(
+            [
+                [-43, -40],
+                [-43, -40],
+                [-43, -43],
+                [-45, -43],
+                [-45, -45],
+                [-45, -43],
+                [-45, -45],
+                [-43, -45],
+                [-43, -43],
+            ],
+            units="degrees_east",
+            dtype="f8",
+        )
+        b.set_data(data)
+        c.set_bounds(b)
+        f.set_construct(
+            c, axes=("domainaxis2",), key="auxiliarycoordinate0", copy=False
+        )
+        #
+        # auxiliary_coordinate: latitude
+        c = AuxiliaryCoordinate()
+        c.set_properties(
+            {"standard_name": "latitude", "units": "degrees_north"}
+        )
+        c.nc_set_variable("Mesh2_edge_y")
+        data = Data(
+            [34.5, 33.5, 34, 35, 34, 33, 32, 31, 32],
+            units="degrees_north",
+            dtype="f8",
+        )
+        c.set_data(data)
+        b = Bounds()
+        b.nc_set_variable("Mesh2_node_y_bounds")
+        data = Data(
+            [
+                [35, 34],
+                [33, 34],
+                [33, 35],
+                [35, 35],
+                [33, 35],
+                [33, 33],
+                [33, 31],
+                [31, 31],
+                [33, 31],
+            ],
+            units="degrees_north",
+            dtype="f8",
+        )
+        b.set_data(data)
+        c.set_bounds(b)
+        f.set_construct(
+            c, axes=("domainaxis2",), key="auxiliarycoordinate1", copy=False
+        )
+        #
+        # domain_topology: cell:edge
+        c = DomainTopology()
+        c.set_properties(
+            {"long_name": "Maps every edge to the two nodes that it connects"}
+        )
+        c.nc_set_variable("Mesh2_edge_nodes")
+        data = Data(
+            [
+                [1, 6],
+                [3, 6],
+                [3, 1],
+                [0, 1],
+                [2, 0],
+                [2, 3],
+                [2, 4],
+                [5, 4],
+                [3, 5],
+            ],
+            dtype="i4",
+        )
+        c.set_data(data)
+        c.set_cell("edge")
+        f.set_construct(
+            c, axes=("domainaxis2",), key="domaintopology0", copy=False
+        )
+        #
+        # cell_connectivity: connectivity:edge
+        c = CellConnectivity()
+        c.set_properties({"long_name": "neighbour edges for edges"})
+        c.nc_set_variable("Mesh2_edge_links")
+        data = Data(
+            [
+                [0, 1, 2, 3, -99, -99],
+                [1, 0, 2, 5, 8, -99],
+                [2, 3, 0, 1, 5, 8],
+                [3, 4, 2, 0, -99, -99],
+                [4, 3, 5, 6, -99, -99],
+                [5, 4, 6, 2, 1, 8],
+                [6, 4, 5, 7, -99, -99],
+                [7, 6, 8, -99, -99, -99],
+                [8, 7, 5, 2, 1, -99],
+            ],
+            dtype="i4",
+            mask_value=-99,
+        )
+        c.set_data(data)
+        c.set_connectivity("node")
+        f.set_construct(
+            c, axes=("domainaxis2",), key="cellconnectivity0", copy=False
+        )
+        #
+        # cell_method: point
+        c = CellMethod()
+        c.set_method("point")
+        c.set_axes(("domainaxis0",))
+        c.set_qualifier("interval", [Data(3600, units="s", dtype="i8")])
+        f.set_construct(c)
+        #
+        # field data axes
+        f.set_data_axes(("domainaxis0", "domainaxis2"))
+
+    elif n == 10:
+        # field: air_pressure
+        f = Field()
+        f.set_properties(
+            {
+                "Conventions": f"CF-{CF()}",
+                "standard_name": "air_pressure",
+                "units": "hPa",
+            }
+        )
+        f.nc_set_variable("pa")
+        data = Data(
+            [
+                [999.67, 1006.45, 999.85, 1006.55, 1006.14, 1005.68, 999.48],
+                [
+                    1003.48,
+                    1006.42,
+                    1000.83,
+                    1002.98,
+                    1008.28,
+                    1002.97,
+                    1002.47,
+                ],
+            ],
+            units="hPa",
+            dtype="f8",
+        )
+        f.set_data(data)
+        f.set_mesh_id(mesh_id)
+        #
+        # domain_axis: ncdim%time
+        c = DomainAxis()
+        c.set_size(2)
+        c.nc_set_dimension("time")
+        c.nc_set_unlimited(True)
+        f.set_construct(c, key="domainaxis0", copy=False)
+        #
+        # domain_axis: ncdim%nedge
+        c = DomainAxis()
+        c.set_size(7)
+        c.nc_set_dimension("nMesh2_node")
+        f.set_construct(c, key="domainaxis2", copy=False)
+        #
+        # dimension_coordinate: time
+        c = DimensionCoordinate()
+        c.set_properties(
+            {
+                "axis": "T",
+                "standard_name": "time",
+                "calendar": "gregorian",
+                "units": "seconds since 2016-01-01 15:00:00",
+            }
+        )
+        c.nc_set_variable("time")
+        data = Data(
+            [36000, 72000],
+            units="seconds since 2016-01-01 15:00:00",
+            calendar="gregorian",
+            dtype="f8",
+        )
+        c.set_data(data)
+        b = Bounds()
+        b.nc_set_variable("time_bounds")
+        data = Data(
+            [[36000, 36000], [72000, 72000]],
+            units="seconds since 2016-01-01 15:00:00",
+            calendar="gregorian",
+            dtype="f8",
+        )
+        b.set_data(data)
+        c.set_bounds(b)
+        f.set_construct(
+            c, axes=("domainaxis0",), key="dimensioncoordinate0", copy=False
+        )
+        #
+        # auxiliary_coordinate: longitude
+        c = AuxiliaryCoordinate()
+        c.set_properties(
+            {"standard_name": "longitude", "units": "degrees_east"}
+        )
+        c.nc_set_variable("Mesh2_node_x")
+        data = Data(
+            [-45, -43, -45, -43, -45, -43, -40],
+            units="degrees_east",
+            dtype="f8",
+        )
+        c.set_data(data)
+        f.set_construct(
+            c, axes=("domainaxis2",), key="auxiliarycoordinate0", copy=False
+        )
+        #
+        # auxiliary_coordinate: latitude
+        c = AuxiliaryCoordinate()
+        c.set_properties(
+            {"standard_name": "latitude", "units": "degrees_north"}
+        )
+        c.nc_set_variable("Mesh2_node_y")
+        data = Data(
+            [35, 35, 33, 33, 31, 31, 34],
+            units="degrees_north",
+            dtype="f8",
+        )
+        c.set_data(data)
+        f.set_construct(
+            c, axes=("domainaxis2",), key="auxiliarycoordinate1", copy=False
+        )
+        #
+        # domain_topology: cell:node
+        c = DomainTopology()
+        c.set_properties(
+            {"long_name": "Maps every node to its connected nodes"}
+        )
+        c.nc_set_variable("Mesh2_edge_nodes")
+        data = Data(
+            [
+                [0, 1, 2, -99, -99],
+                [1, 0, 3, 6, -99],
+                [2, 0, 4, 3, -99],
+                [3, 2, 1, 5, 6],
+                [4, 5, 2, -99, -99],
+                [5, 4, 3, -99, -99],
+                [6, 3, 1, -99, -99],
+            ],
+            dtype="i4",
+            mask_value=-99,
+        )
+        c.set_data(data)
+        c.set_cell("point")
+        f.set_construct(
+            c, axes=("domainaxis2",), key="domaintopology0", copy=False
+        )
+        #
+        # cell_method: point
+        c = CellMethod()
+        c.set_method("point")
+        c.set_axes(("domainaxis0",))
+        c.set_qualifier("interval", [Data(3600, units="s", dtype="i8")])
+        f.set_construct(c)
+        #
+        # field data axes
+        f.set_data_axes(("domainaxis0", "domainaxis2"))
+    else:
+        raise ValueError(
+            "Must select an example construct with an integer "
+            f"argument between 0 and 8 inclusive. Got {n!r}"
+        )
+
     return f
 
 
@@ -5115,35 +5158,42 @@ def example_fields(*n, _func=example_field):
             Select the example field constructs to return, any
             combination of:
 
-            =====  ===================================================
-            *n*    Description
-            =====  ===================================================
-            ``0``  A field construct with properties as well as a
-                   cell method construct and dimension coordinate
-                   constructs with bounds.
+            ======  ==================================================
+            *n*     Field construct description
+            ======  ==================================================
+            ``0``   Cell method and dimension coordinate metadata
+                    constructs.
 
-            ``1``  A field construct with properties as well as at
-                   least one of every type of metadata construct.
+            ``1``   Cell method, dimension coordinate, auxiliary
+                    coordinate, cell measure, coordinate reference,
+                    domain ancillary and field ancillary metadata
+                    constructs.
 
-            ``2``  A field construct that contains a monthly time
-                   series at each latitude-longitude location.
+            ``2``   A monthly time series at each latitude-longitude
+                    location.
 
-            ``3``  A field construct that contains discrete sampling
-                   geometry (DSG) "timeSeries" features.
+            ``3``   Discrete sampling geometry (DSG) "timeSeries"
+                    features.
 
-            ``4``  A field construct that contains discrete sampling
-                   geometry (DSG) "timeSeriesProfile" features.
+            ``4``   Discrete sampling geometry (DSG)
+                    "timeSeriesProfile" features.
 
-            ``5``  A field construct that contains a 12 hourly time
-                   series at each latitude-longitude location.
+            ``5``   A 12 hourly time series at each latitude-longitude
+                    location.
 
-            ``6``  A field construct that has polygon geometry
-                   coordinate cells with interior ring variables.
+            ``6``   Polygon geometry coordinate cells with interior
+                    ring variables.
 
-            ``7``  A field construct that has rotated pole dimension
-                   coordinate constructs and 2-d latitude and
-                   longitude auxiliary coordinate constructs.
-            =====  ===================================================
+            ``7``   Rotated pole dimension coordinate constructs and
+                    2-d latitude and longitude auxiliary coordinate
+                    constructs.
+
+            ``8``   A UGRID mesh topology of face cells.
+
+            ``9``   A UGRID mesh topology of edge cells.
+
+            ``10``  A UGRID mesh topology of point cells.
+            ======  ==================================================
 
             If no individual field constructs are selected then all
             available field constructs will be returned.
@@ -5171,7 +5221,9 @@ def example_fields(*n, _func=example_field):
      <Field: air_temperature(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) K>,
      <Field: air_potential_temperature(time(118), latitude(5), longitude(8)) K>,
      <Field: precipitation_amount(cf_role=timeseries_id(2), time(4))>,
-     <Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1>]
+     <Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1>,
+     <Field: air_temperature(time(2), ncdim%nMesh2_face(3)) K>,
+     <Field: northward_wind(time(2), ncdim%nMesh2_edge(9)) ms-1>]
 
     >>> cfdm.example_fields(7, 1)
     [<Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1>,
@@ -5216,35 +5268,40 @@ def example_domain(n, _func=example_field):
         n: `int`
             Select the example domain construct to return, one of:
 
-            =====  ===================================================
-            *n*    Description
-            =====  ===================================================
-            ``0``  A domain construct dimension coordinate constructs
-                   with bounds.
+            ======  ==================================================
+            *n*     Domain construct description
+            ======  ==================================================
+            ``0``   Dimension coordinate metadata constructs.
 
-            ``1``  A domain construct with at least one of every
-                   possible type of metadata construct.
+            ``1``   Dimension coordinate, auxiliary coordinate, cell
+                    measure, coordinate reference, domain ancillary
+                    and field ancillary metadata constructs.
 
-            ``2``  A domain construct dimension coordinate constructs
-                   with bounds.
-                   series at each latitude-longitude location.
+            ``2``   A monthly time series at each latitude-longitude
+                    location.
 
-            ``3``  A domain construct for discrete sampling geometry
-                   (DSG) "timeSeries" features.
+            ``3``   Discrete sampling geometry (DSG) "timeSeries"
+                    features.
 
-            ``4``  A domain construct or discrete sampling geometry
-                   (DSG) "timeSeriesProfile" features.
+            ``4``   Discrete sampling geometry (DSG)
+                    "timeSeriesProfile" features.
 
-            ``5``  A domain construct dimension coordinate constructs
-                   with bounds.
+            ``5``   A 12 hourly time series at each latitude-longitude
+                    location.
 
-            ``6``  A domain construct that has polygon geometry
-                   coordinate cells with interior ring variables.
+            ``6``   Polygon geometry coordinate cells with interior
+                    ring variables.
 
-            ``7``  A domain construct that has rotated pole dimension
-                   coordinate constructs and 2-d latitude and
-                   longitude auxiliary coordinate constructs.
-            =====  ===================================================
+            ``7``   Rotated pole dimension coordinate constructs and
+                    2-d latitude and longitude auxiliary coordinate
+                    constructs.
+
+            ``8``   A UGRID mesh topology of face cells.
+
+            ``9``   A UGRID mesh topology of edge cells.
+
+            ``10``  A UGRID mesh topology of point cells.
+            ======  ==================================================
 
             See the examples for details.
 

@@ -148,7 +148,7 @@ class DomainAxis(
             out.append(f"{name}.nc_set_dimension({nc!r})")
 
         if self.nc_is_unlimited():
-            out.append("fc.nc_set_unlimited({True})")
+            out.append(f"{name}.nc_set_unlimited({True})")
 
         if string:
             indent = " " * indent

@@ -2,8 +2,8 @@ import itertools
 import logging
 
 import netCDF4
-import numpy
 import numpy as np
+from scipy.sparse import issparse
 
 from .. import core
 from ..constants import masked as cfdm_masked
@@ -15,7 +15,7 @@ from ..decorators import (
 from ..mixin.container import Container
 from ..mixin.files import Files
 from ..mixin.netcdf import NetCDFHDF5
-from . import NumpyArray, abstract
+from . import NumpyArray, SparseArray, abstract
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +37,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         copy=True,
         dtype=None,
         mask=None,
+        mask_value=None,
         _use_array=True,
         **kwargs,
     ):
@@ -119,6 +120,12 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 This mask will applied in addition to any mask already
                 defined by the *array* parameter.
 
+            mask_value: scalar array_like
+                Mask *array* where it is equal to *mask_value*, using
+                numerically tolerant floating point equality.
+
+                .. versionadded:: (cfdm) UGRIDVER
+
             {{init source: optional}}
 
             {{init copy: `bool`, optional}}
@@ -129,20 +136,32 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         if dtype is not None:
             if isinstance(array, abstract.Array):
-                array = array.array
-            elif not isinstance(array, numpy.ndarray):
-                array = numpy.asanyarray(array)
+                try:
+                    array = SparseArray(array.sparse_array.astype(dtype))
+                except AttributeError:
+                    array = NumpyArray(array.array.astype(dtype))
+            elif isinstance(array, np.ndarray):
+                array = array.astype(dtype)
+            elif issparse(array):
+                array = array.astype(dtype)
+            else:
+                array = np.asanyarray(array).astype(dtype)
 
-            array = array.astype(dtype)
-            array = NumpyArray(array)
-
-        if mask is not None:
+        if mask is not None or mask_value is not None:
             if isinstance(array, abstract.Array):
                 array = array.array
-            elif not isinstance(array, numpy.ndarray):
-                array = numpy.asanyarray(array)
+            elif not isinstance(array, np.ndarray):
+                if issparse(array):
+                    array = array.toarray()
+                else:
+                    array = np.asanyarray(array)
 
-            array = numpy.ma.array(array, mask=mask)
+            if mask is not None:
+                array = np.ma.array(array, mask=mask)
+
+            if mask_value is not None:
+                array = np.ma.masked_values(array, mask_value)
+
             array = NumpyArray(array)
 
         super().__init__(
@@ -194,6 +213,32 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             return array
         else:
             return array.astype(dtype[0], copy=False)
+
+    def __len__(self):
+        """The built-in function `len`
+
+        x.__len__() <==> len(x)
+
+        .. versionadded:: (cfdm) 1.10.0.0
+
+        **Examples**
+
+        >>>
+        >>> len({{package}}.{{class}}([1, 2, 3]))
+        3
+        >>> len({{package}}.{{class}}([[1, 2, 3]]))
+        1
+        >>> len({{package}}.{{class}}([[1, 2, 3], [4, 5, 6]]))
+        2
+        >>> len({{package}}.{{class}}(1))
+        TypeError: len() of scalar <{{repr}}Data(): 1>
+
+        """
+        shape = self.shape
+        if shape:
+            return shape[0]
+
+        raise TypeError(f"len() of scalar {self!r}")
 
     def __repr__(self):
         """Called by the `repr` built-in function.
@@ -454,13 +499,13 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         array = self.array
 
-        if value is cfdm_masked or numpy.ma.isMA(value):
+        if value is cfdm_masked or np.ma.isMA(value):
             # The data is not masked but the assignment is masking
             # elements, so turn the non-masked array into a masked
             # one.
-            array = array.view(numpy.ma.MaskedArray)
+            array = array.view(np.ma.MaskedArray)
 
-        self._set_subspace(array, indices, numpy.asanyarray(value))
+        self._set_subspace(array, indices, np.asanyarray(value))
 
         self._set_Array(array, copy=False)
 
@@ -508,7 +553,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 # Convert reference time to date-time
                 try:
                     first = type(self)(
-                        numpy.ma.array(first, mask=mask[0]), units, calendar
+                        np.ma.array(first, mask=mask[0]), units, calendar
                     ).datetime_array
                 except (ValueError, OverflowError):
                     first = "??"
@@ -517,16 +562,14 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         else:
             last = self.last_element()
             if isreftime:
-                if last is numpy.ma.masked:
+                if last is np.ma.masked:
                     last = 0
                     mask[-1] = True
 
                 # Convert reference times to date-times
                 try:
                     first, last = type(self)(
-                        numpy.ma.array(
-                            [first, last], mask=(mask[0], mask[-1])
-                        ),
+                        np.ma.array([first, last], mask=(mask[0], mask[-1])),
                         units,
                         calendar,
                     ).datetime_array
@@ -539,13 +582,13 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 middle = self.second_element()
                 if isreftime:
                     # Convert reference time to date-time
-                    if middle is numpy.ma.masked:
+                    if middle is np.ma.masked:
                         middle = 0
                         mask[1] = True
 
                     try:
                         middle = type(self)(
-                            numpy.ma.array(middle, mask=mask[1]),
+                            np.ma.array(middle, mask=mask[1]),
                             units,
                             calendar,
                         ).datetime_array
@@ -651,14 +694,14 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         array = self[index].array
 
-        if not numpy.ma.isMA(array):
+        if not np.ma.isMA(array):
             return array.item()
 
         mask = array.mask
-        if mask is numpy.ma.nomask or not mask.item():
+        if mask is np.ma.nomask or not mask.item():
             return array.item()
 
-        return numpy.ma.masked
+        return np.ma.masked
 
     def _original_filenames(self, define=None, update=None, clear=False):
         """Return the names of files that contain the original data.
@@ -823,10 +866,13 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         """
         if not isinstance(array, abstract.Array):
-            if not isinstance(array, numpy.ndarray):
-                array = numpy.asanyarray(array)
-
-            array = NumpyArray(array)
+            if not isinstance(array, np.ndarray):
+                if issparse(array):
+                    array = SparseArray(array)
+                else:
+                    array = NumpyArray(np.asanyarray(array))
+            else:
+                array = NumpyArray(array)
 
         super()._set_Array(array, copy=copy)
 
@@ -1143,12 +1189,12 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         array = self.array
 
         mask = None
-        if numpy.ma.isMA(array):
+        if np.ma.isMA(array):
             # num2date has issues if the mask is nomask
             mask = array.mask
-            if mask is numpy.ma.nomask or not numpy.ma.is_masked(array):
+            if mask is np.ma.nomask or not np.ma.is_masked(array):
                 mask = None
-                array = array.view(numpy.ndarray)
+                array = array.view(np.ndarray)
 
         if mask is not None and not array.ndim:
             # Fix until num2date copes with scalar aarrays containing
@@ -1164,12 +1210,12 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         if mask is None:
             # There is no missing data
-            array = numpy.array(array, dtype=object)
+            array = np.array(array, dtype=object)
         else:
             # There is missing data
-            array = numpy.ma.masked_where(mask, array)
-            if not numpy.ndim(array):
-                array = numpy.ma.masked_all((), dtype=object)
+            array = np.ma.masked_where(mask, array)
+            if not np.ndim(array):
+                array = np.ma.masked_all((), dtype=object)
 
         return array
 
@@ -1218,6 +1264,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         The Boolean mask has True where the data array has missing data
         and False otherwise.
 
+        .. seealso:: `masked_values`
+
         :Returns:
 
             `{{class}}`
@@ -1242,11 +1290,37 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
          [False False False False]]
 
         """
-        return type(self)(numpy.ma.getmaskarray(self.array))
+        return type(self)(np.ma.getmaskarray(self.array))
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
+    @property
+    def sparse_array(self):
+        """Return an independent `scipy` sparse array of the data.
+
+        An `AttributeError` is raised if a sparse array representation
+        is not available.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        .. seealso:: `array`
+
+        :Returns:
+
+                An independent `scipy` sparse array of the data.
+
+        **Examples**
+
+        >>> from scipy.sparse import issparse
+        >>> issparse(d.sparse_array)
+        True
+
+        """
+        try:
+            return self._get_Array().sparse_array
+        except AttributeError:
+            raise AttributeError(
+                "A sparse array representation of the data is not available"
+            )
+
     def any(self):
         """Test whether any data array elements evaluate to True.
 
@@ -1282,7 +1356,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         """
         masked = self.array.any()
-        if masked is numpy.ma.masked:
+        if masked is np.ma.masked:
             masked = False
 
         return masked
@@ -1487,7 +1561,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 mask |= array > valid_max
 
         if mask is not None:
-            array = numpy.ma.where(mask, cfdm_masked, array)
+            array = np.ma.where(mask, cfdm_masked, array)
             d._set_Array(array, copy=False)
 
         return d
@@ -1672,7 +1746,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         array = self.array
 
-        if numpy.ma.isMA(array):
+        if np.ma.isMA(array):
             array = array.filled(fill_value)
 
         d._set_Array(array, copy=False)
@@ -1737,7 +1811,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 f"Can't insert dimension: Invalid position: {position!r}"
             )
 
-        array = numpy.expand_dims(self.array, position)
+        array = np.expand_dims(self.array, position)
 
         d._set_Array(array, copy=False)
 
@@ -2096,9 +2170,9 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                             f"with shape {shape}: {parsed_indices}"
                         )
 
-                    index = numpy.where(index)[0]
+                    index = np.where(index)[0]
 
-                if not numpy.ndim(index):
+                if not np.ndim(index):
                     if index < 0:
                         index += size
 
@@ -2181,7 +2255,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             raise ValueError(f"Can't find maximum of data: {error}")
 
         array = self.array
-        array = numpy.amax(array, axis=axes, keepdims=True)
+        array = np.amax(array, axis=axes, keepdims=True)
 
         out = self.copy(array=False)
         out._set_Array(array, copy=False)
@@ -2253,7 +2327,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             raise ValueError(f"Can't find minimum of data: {error}")
 
         array = self.array
-        array = numpy.amin(array, axis=axes, keepdims=True)
+        array = np.amin(array, axis=axes, keepdims=True)
 
         out = self.copy(array=False)
         out._set_Array(array, copy=False)
@@ -2331,7 +2405,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             return d
 
         array = self.array
-        array = numpy.squeeze(array, axes)
+        array = np.squeeze(array, axes)
 
         d._set_Array(array, copy=False)
 
@@ -2398,7 +2472,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         except ValueError as error:
             raise ValueError(f"Can't sum data: {error}")
         array = self.array
-        array = numpy.sum(array, axis=axes, keepdims=True)
+        array = np.sum(array, axis=axes, keepdims=True)
 
         d = self.copy(array=False)
         d._set_Array(array, copy=False)
@@ -2471,7 +2545,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             return d
 
         array = self.array
-        array = numpy.transpose(array, axes=axes)
+        array = np.transpose(array, axes=axes)
 
         d._set_Array(array, copy=False)
 
@@ -2579,7 +2653,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         """
         return cls(
-            numpy.empty(shape=shape, dtype=dtype),
+            np.empty(shape=shape, dtype=dtype),
             units=units,
             calendar=calendar,
         )
@@ -2918,6 +2992,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
           [15 19 23]]]
 
         """
+        from math import prod
+
         d = _inplace_enabled_define_and_cleanup(self)
 
         try:
@@ -2950,7 +3026,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         d.transpose(order, inplace=True)
 
         new_shape = [n for i, n in enumerate(shape) if i not in axes]
-        new_shape.insert(axes[0], numpy.prod([shape[i] for i in axes]))
+        new_shape.insert(axes[0], prod([shape[i] for i in axes]))
 
         array = d.array.reshape(new_shape)
 
@@ -3000,6 +3076,61 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         """
         return self._item((slice(-1, None, 1),) * self.ndim)
+
+    @_inplace_enabled(default=False)
+    def masked_values(self, value, rtol=None, atol=None, inplace=False):
+        """Mask using floating point equality.
+
+        Masks the data where elements are approximately equal to the
+        given value. For integer types, exact equality is used.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        .. seealso:: `mask`
+
+        :Parameters:
+
+            value: number
+                Masking value.
+
+            {{rtol: number, optional}}
+
+            {{atol: number, optional}}
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The result of masking the data where approximately
+                equal to *value*, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([1, 1.1, 2, 1.1, 3])
+        >>> e = d.masked_values(1.1)
+        >>> print(e.array)
+        [1.0 -- 2.0 -- 3.0]
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        if rtol is None:
+            rtol = self._rtol
+        else:
+            rtol = float(rtol)
+
+        if atol is None:
+            atol = self._atol
+        else:
+            atol = float(atol)
+
+        array = np.ma.masked_values(
+            d.array, value, rtol=rtol, atol=atol, copy=False
+        )
+        d._set_Array(array, copy=False)
+        return d
 
     def second_element(self):
         """Return the second element of the data as a scalar.
@@ -3123,9 +3254,9 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         """
         array = self.array
-        array = numpy.unique(array)
+        array = np.unique(array)
 
-        if numpy.ma.is_masked(array):
+        if np.ma.is_masked(array):
             array = array.compressed()
 
         d = self.copy(array=False)

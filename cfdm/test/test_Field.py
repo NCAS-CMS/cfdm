@@ -379,6 +379,14 @@ class FieldTest(unittest.TestCase):
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.FieldAncillary)
 
+        constructs = f.domain_topologies()
+        n = 0
+        self.assertEqual(len(constructs), n)
+
+        constructs = f.cell_connectivities()
+        n = 0
+        self.assertEqual(len(constructs), n)
+
         # Domain axis key
         ckey = f.construct_key("grid_latitude")
         dakey = f.get_data_axes(ckey)[0]
@@ -387,6 +395,21 @@ class FieldTest(unittest.TestCase):
         self.assertIsNone(
             f.domain_axis_key(re.compile("^grid_"), default=None)
         )
+
+        # UGRID
+        f = cfdm.example_field(8)
+
+        constructs = f.domain_topologies()
+        n = 1
+        self.assertEqual(len(constructs), n)
+        for key, value in constructs.items():
+            self.assertIsInstance(value, cfdm.DomainTopology)
+
+        constructs = f.cell_connectivities()
+        n = 1
+        self.assertEqual(len(constructs), n)
+        for key, value in constructs.items():
+            self.assertIsInstance(value, cfdm.CellConnectivity)
 
     def test_Field_domain_axes(self):
         """Test the `domain_axes` Field method."""
