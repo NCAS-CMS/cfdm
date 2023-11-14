@@ -114,7 +114,6 @@ Miscellaneous
    :template: method.rst
 
    ~cfdm.Domain.apply_masking
-   ~cfdm.Domain.climatological_time_axes
    ~cfdm.Domain.copy
    ~cfdm.Domain.creation_commands
    ~cfdm.Domain.equals
@@ -123,7 +122,6 @@ Miscellaneous
    ~cfdm.Domain.has_bounds
    ~cfdm.Domain.has_data
    ~cfdm.Domain.has_geometry
-   ~cfdm.Domain.apply_masking   
    ~cfdm.Domain.get_original_filenames
    ~cfdm.Domain.uncompress
 

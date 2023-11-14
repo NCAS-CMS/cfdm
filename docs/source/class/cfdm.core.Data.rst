@@ -36,6 +36,15 @@ Units
    ~cfdm.core.Data.get_units
    ~cfdm.core.Data.has_units
    ~cfdm.core.Data.set_units
+
+Date-time support
+-----------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
    ~cfdm.core.Data.del_calendar
    ~cfdm.core.Data.get_calendar
    ~cfdm.core.Data.has_calendar
@@ -54,19 +63,6 @@ From existing data
 
    ~cfdm.core.Data.copy
 
-Date-time support
------------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.core.Data.del_calendar
-   ~cfdm.core.Data.get_calendar
-   ~cfdm.core.Data.has_calendar
-   ~cfdm.core.Data.set_calendar
- 
 Mask support
 ------------
 

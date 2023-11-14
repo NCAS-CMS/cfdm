@@ -77,7 +77,8 @@ Bounds
    :template: attribute.rst
 
    ~cfdm.core.PropertiesDataBounds.bounds
-   Geometries
+
+Geometries
 ^^^^^^^^^^
 
 .. rubric:: Methods
@@ -104,21 +105,6 @@ Bounds
    :template: attribute.rst
 
    ~cfdm.core.PropertiesDataBounds.interior_ring
-
-Modification
-------------
-
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.core.PropertiesDataBounds.del_data
-   ~cfdm.core.PropertiesDataBounds.set_data
-   ~cfdm.core.PropertiesDataBounds.del_bounds
-   ~cfdm.core.PropertiesDataBounds.set_bounds
       
 Miscellaneous
 -------------

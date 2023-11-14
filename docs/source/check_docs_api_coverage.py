@@ -16,6 +16,7 @@ Call as:
 
 """
 import os
+import re
 import sys
 
 import cfdm as package
@@ -34,6 +35,7 @@ if not source.endswith("source"):
 
 n_undocumented_methods = 0
 n_missing_files = 0
+duplicate_method_entries = []
 
 for core in ("", "_core"):
     if core:
@@ -68,12 +70,33 @@ for core in ("", "_core"):
 
             for method in methods:
                 method = ".".join([class_name, method])
-                if method not in rst_contents:
+                count = rst_contents.count(method)
+                if count == 0:
                     n_undocumented_methods += 1
                     print(
                         f"Method {method} not in "
                         f"{os.path.join(source, 'class', rst_file)}"
                     )
+                elif count > 1:
+                    # The method appears more than once, but may be a
+                    # sub-string of another method name, e.g. this gets caught:
+                    #     [cfdm.List.]nc_set_variable
+                    # due to the presence of this method:
+                    #     [cfdm.List.]nc_set_variable_groups
+                    # so we must account for that. Checking next character
+                    # of duplicate(s) is something other than a newline or
+                    # whitespace, seems robust and simplest.
+                    end_loc = [
+                        m.end(0) for m in re.finditer(method, rst_contents)
+                    ]
+                    chars = [rst_contents[c] for c in [e for e in end_loc]]
+
+                    # Any character that isn't a newline or whitespace
+                    # indicates another method which the method is a substring
+                    # of and can be excluded. If there are still duplicates,
+                    # we have genuine duplicate listing entries to report.
+                    if chars.count("\n") + chars.count(" ") > 1:
+                        duplicate_method_entries.append(method)
         except FileNotFoundError:
             n_missing_files += 1
             print(f"File {rst_file} does not exist")
@@ -89,6 +112,15 @@ if n_undocumented_methods or n_missing_files:
     raise ValueError(
         f"Found undocumented methods ({n_undocumented_methods}) "
         f"or missing .rst files ({n_missing_files})"
+    )
+
+if duplicate_method_entries:
+    duplicate_method_entries.sort()
+    entries = "\n".join(duplicate_method_entries)  # can't set \n in f-string!
+    print(
+        "WARNING: some methods are listed multiple times inside one class "
+        "file/page. Decide if the duplicates are intended and if not remove "
+        f"them. They are:\n{entries}\n"
     )
 
 print("All non-private methods are documented")
