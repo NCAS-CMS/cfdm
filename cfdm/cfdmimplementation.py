@@ -254,7 +254,7 @@ class CFDMImplementation(Implementation):
     def del_properties(self, construct, props):
         """Remove a property from a construct.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -1800,7 +1800,7 @@ class CFDMImplementation(Implementation):
     def initialise_CellConnectivityArray(self, **kwargs):
         """Return a cell connectivity array.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -2039,7 +2039,7 @@ class CFDMImplementation(Implementation):
     def initialise_DomainTopology(self, **kwargs):
         """Return a domain topology construct.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -2060,7 +2060,7 @@ class CFDMImplementation(Implementation):
     def initialise_CellConnectivity(self, **kwargs):
         """Return a cell connectivity construct.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -2264,7 +2264,7 @@ class CFDMImplementation(Implementation):
     def initialise_PointTopologyArray(self, **kwargs):
         """Return a point topology array.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -2356,7 +2356,7 @@ class CFDMImplementation(Implementation):
     def initialise_BoundsFromNodesArray(self, **kwargs):
         """Return a node bounds array.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -2823,7 +2823,7 @@ class CFDMImplementation(Implementation):
     ):
         """Insert a cell connectivity object into a field.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -3113,7 +3113,7 @@ class CFDMImplementation(Implementation):
     ):
         """Insert a domain topology object into a field.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -3187,7 +3187,7 @@ class CFDMImplementation(Implementation):
     def set_mesh_id(self, parent, mesh_id):
         """Set a mesh identifier.
 
-        .. versionadded:: (cfdm)  UGRIDVER
+        .. versionadded:: (cfdm)  1.11.0.0
 
         :Parameters:
 
@@ -3468,7 +3468,7 @@ class CFDMImplementation(Implementation):
     def nc_set_node_coordinate_variable(self, parent, ncvar):
         """Set the netCDF node coordinate variable name.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -3605,7 +3605,7 @@ class CFDMImplementation(Implementation):
     def has_domain_topology(self, parent):
         """Whether or not a field or domain has a domain topology.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 

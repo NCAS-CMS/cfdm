@@ -101,7 +101,7 @@ class Constructs(abstract.Container):
                 *Parameter example:*
                   ``'domaintopology'``
 
-                .. versionadded:: (cfdm) UGRIDVER
+                .. versionadded:: (cfdm) 1.11.0.0
 
             cell_connectivity: `str`, optional
                 The base name for keys of cell connectivity
@@ -110,7 +110,7 @@ class Constructs(abstract.Container):
                 *Parameter example:*
                   ``'cellconnectivity'``
 
-                .. versionadded:: (cfdm) UGRIDVER
+                .. versionadded:: (cfdm) 1.11.0.0
 
             cell_method: `str`, optional
                 The base name for keys of cell method constructs.

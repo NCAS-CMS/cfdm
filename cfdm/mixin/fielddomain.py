@@ -577,7 +577,7 @@ class FieldDomain:
         identifier may be assumed to have domains with a shared UGRID
         mesh topology.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `get_mesh_id`, `has_mesh_id`, `set_mesh_id`
 
@@ -625,7 +625,7 @@ class FieldDomain:
 
         {{unique construct}}
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `construct`, `domain_topologies`
 
@@ -692,7 +692,7 @@ class FieldDomain:
         ``f.constructs.filter(filter_by_type=["domain_topology"],
         filter_by_identity=identities, **filter_kwargs)``.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `constructs`, `domain_topology`
 
@@ -1567,7 +1567,7 @@ class FieldDomain:
 
         {{unique construct}}
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `construct`, `cell_connectivities`
 
@@ -1629,7 +1629,7 @@ class FieldDomain:
 
         {{unique construct}}
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `construct`, `cell_connectivity`
 
@@ -2176,7 +2176,7 @@ class FieldDomain:
         identifier may be assumed to have domains with a shared UGRID
         mesh topology.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `del_mesh_id`, `has_mesh_id`, `set_mesh_id`
 
@@ -2301,7 +2301,7 @@ class FieldDomain:
         identifier may be assumed to have domains with a shared UGRID
         mesh topology.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `del_mesh_id`, `get_mesh_id`, `set_mesh_id`
 
@@ -2338,7 +2338,7 @@ class FieldDomain:
         identifier may be assumed to have domains with a shared UGRID
         mesh topology.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `del_mesh_id`, `get_mesh_id`, `has_mesh_id`
 

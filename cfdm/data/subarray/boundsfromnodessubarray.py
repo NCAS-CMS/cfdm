@@ -14,7 +14,7 @@ class BoundsFromNodesSubarray(MeshSubarray):
     mapping from from each cell boundary vertex to its corresponding
     coordinate value.
 
-    .. versionadded:: (cfdm) UGRIDVER
+    .. versionadded:: (cfdm) 1.11.0.0
 
     .. seealso:: `BoundsFromNodesArray`
 
@@ -109,7 +109,7 @@ class BoundsFromNodesSubarray(MeshSubarray):
         Returns a subspace of the uncompressed data as an independent
         numpy array.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         """
         node_connectivity = self._select_data(check_mask=True)
@@ -133,7 +133,7 @@ class BoundsFromNodesSubarray(MeshSubarray):
     def _select_node_coordinates(self, node_indices):
         """Select node coordinates.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `_select_data`
 
@@ -164,7 +164,7 @@ class BoundsFromNodesSubarray(MeshSubarray):
     def dtype(self):
         """The data-type of the uncompressed data.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         """
         return self.node_coordinates.dtype
@@ -173,7 +173,7 @@ class BoundsFromNodesSubarray(MeshSubarray):
     def node_coordinates(self):
         """The coordinates representing the node locations.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         """
         return self._get_component("node_coordinates")

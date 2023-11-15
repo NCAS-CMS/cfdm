@@ -4,7 +4,7 @@ from .subarray import Subarray
 class MeshSubarray(Subarray):
     """A subarray of an array defined by a UGRID connectivity variable.
 
-    .. versionadded:: (cfdm) UGRIDVER
+    .. versionadded:: (cfdm) 1.11.0.0
 
     """
 
@@ -82,7 +82,7 @@ class MeshSubarray(Subarray):
     def _select_data(self, data=None, check_mask=True):
         """Select compressed elements that correspond to this subarray.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -126,7 +126,7 @@ class MeshSubarray(Subarray):
 
         Either ``0`` or ``1``.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         """
         return self._get_component("cell_dimension")
@@ -135,7 +135,7 @@ class MeshSubarray(Subarray):
     def dtype(self):
         """The data-type of the uncompressed data.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         """
         return self.data.dtype
@@ -146,7 +146,7 @@ class MeshSubarray(Subarray):
 
         Either ``0`` or ``1``.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         """
         return self._get_component("start_index")

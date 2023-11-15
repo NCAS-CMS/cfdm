@@ -60,7 +60,7 @@ class CellConnectivity(
 
     {{netCDF variable}}
 
-    .. versionadded:: (cfdm) UGRIDVER
+    .. versionadded:: (cfdm) 1.11.0.0
 
     """
 
@@ -115,7 +115,7 @@ class CellConnectivity(
     ):
         """Returns the commands to create the construct.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `{{package}}.Data.creation_commands`,
                      `{{package}}.Field.creation_commands`
@@ -177,7 +177,7 @@ class CellConnectivity(
         Returns a description of all properties, including those of
         components, and provides selected values of all data arrays.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -216,7 +216,7 @@ class CellConnectivity(
         * The netCDF variable name, preceded by 'ncvar%'.
         * The value of the default parameter.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `identities`
 
@@ -261,7 +261,7 @@ class CellConnectivity(
           e.g. ``'long_name:Air temperature'``.
         * The netCDF variable name, preceded by ``'ncvar%'``.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `identity`
 
@@ -307,7 +307,7 @@ class CellConnectivity(
         *start_index* parameter is ``0``), or ``[1, N]`` (if
         *start_index* is ``1``), where ``N`` is the number of cells.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 

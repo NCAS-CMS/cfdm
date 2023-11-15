@@ -9,7 +9,7 @@ class PointTopologyFromEdgesSubarray(PointTopology, MeshSubarray):
 
     A subarray describes a unique part of the uncompressed array.
 
-    .. versionadded:: (cfdm) UGRIDVER
+    .. versionadded:: (cfdm) 1.11.0.0
 
     """
 
@@ -19,7 +19,7 @@ class PointTopologyFromEdgesSubarray(PointTopology, MeshSubarray):
         The input *node* is included at the start of the returned
         list.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
