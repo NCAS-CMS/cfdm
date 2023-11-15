@@ -745,6 +745,48 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data(np.arange(6).reshape(1, 6, 1))
         self.assertEqual(d.last_element(), 5)
 
+    def test_Data_sparse_array(self):
+        """Test Data based on sparse arrays."""
+        from scipy.sparse import csr_array
+
+        indptr = np.array([0, 2, 3, 6])
+        indices = np.array([0, 2, 2, 0, 1, 2])
+        data = np.array([1, 2, 3, 4, 5, 6])
+        s = csr_array((data, indices, indptr), shape=(3, 3))
+
+        d = cfdm.Data(s)
+        self.assertFalse((d.sparse_array != s).toarray().any())
+        self.assertTrue((d.array == s.toarray()).all())
+
+        d = cfdm.Data(s, dtype=float)
+        self.assertEqual(d.sparse_array.dtype, float)
+
+        # Providing a mask in __init__ forces the sparse array to
+        # become dense
+        mask = [[0, 0, 1], [0, 0, 0], [0, 0, 0]]
+        d = cfdm.Data(s, mask=mask)
+        self.assertTrue((d.array == np.ma.array(s.toarray(), mask=mask)).all())
+        with self.assertRaises(AttributeError):
+            d.sparse_array
+
+    def test_Data_masked_values(self):
+        """Test Data.masked_values."""
+        array = np.array([[1, 1.1, 2, 1.1, 3]])
+        d = cfdm.Data(array)
+        e = d.masked_values(1.1)
+        ea = e.array
+        a = np.ma.masked_values(array, 1.1, rtol=cfdm.rtol(), atol=cfdm.atol())
+        self.assertTrue(np.isclose(ea, a).all())
+        self.assertTrue((ea.mask == a.mask).all())
+        self.assertIsNone(d.masked_values(1.1, inplace=True))
+        self.assertTrue(d.equals(e))
+
+        array = np.array([[1, 1.1, 2, 1.1, 3]])
+        d = cfdm.Data(array, mask_value=1.1)
+        da = e.array
+        self.assertTrue(np.isclose(da, a).all())
+        self.assertTrue((da.mask == a.mask).all())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

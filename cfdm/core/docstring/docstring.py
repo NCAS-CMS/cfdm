@@ -9,7 +9,7 @@ replacement text, and will be substituted as usual.
 
 Replacement text may not contain other non-special substitutions.
 
-Keys must be `str` or `re.Pattern` objects:
+Keys must be a `str` or `re.Pattern` object:
 
 * If a key is a `str` then the corresponding value must be a string.
 
@@ -26,7 +26,29 @@ _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     "{{repr}}": "",
     # ----------------------------------------------------------------
-    # # Method description susbstitutions (2 levels of indentation)
+    # Method description susbstitutions (1 level of indentation)
+    # ----------------------------------------------------------------
+    # cell type
+    "{{cell type}}": """The cell type indicates the common spatial dimensionality of
+        the cells, one of:
+
+        * ``'point'``: A point is zero-dimensional and has no boundary
+                       vertices.
+        * ``'edge'``: An edge is one-dimensional and corresponds to a
+                      line connecting two boundary vertices.
+        * ``'face'``: A face is two-dimensional and corresponds to a
+                      surface enclosed by a set of edges.""",
+    # cell connectivity type
+    "{{cell connectivity type}}": """The connectivity type describes a characteristic of inter-cell
+        connectivity defined by the domain topology construct. It may
+        take any value, but the following values are standardised:
+
+        * ``'node'``: Edge or face cells connected by one or more
+                      shared nodes.
+        * ``'edge'``: Face cells connected by one or more shared
+                      edges.""",
+    # ----------------------------------------------------------------
+    # Method description susbstitutions (2 levels of indentation)
     # ----------------------------------------------------------------
     # cached: optional
     "{{cached: optional}}": """cached: optional
@@ -38,7 +60,7 @@ _docstring_substitution_definitions = {
                 by their construct identifiers, instead of a
                 `Constructs` object. This is a faster option.""",
     # ----------------------------------------------------------------
-    # # Method description susbstitutions (3 levels of indentation)
+    # Method description susbstitutions (3 levels of indentation)
     # ----------------------------------------------------------------
     # axes int examples
     "{{axes int examples}}": """Each axis is identified by its integer position in the
@@ -116,6 +138,21 @@ _docstring_substitution_definitions = {
                 Note that if ``x`` is also a `{{class}}` instance then
                 ``{{package}}.{{class}}(source=x)`` is equivalent to
                 ``x.copy()``.""",
+    # init cell
+    "{{init cell: `str`, optional}}": """cell: `str`, optional
+               The cell type that indicates the spatial dimensionality
+               of the cells, one of ``'point'`` (a 0-d point with no
+               boundary vertices), ``'edge'`` (a 1-d line connecting
+               two boundary vertices), or ``'face'`` (a 2-d surface
+               enclosed by a set of edges).""",
+    # init connectivity
+    "{{init connectivity: `str`, optional}}": """connectivity: `str`, optional
+               The connectivity type describes a characteristic of
+               inter-cell connectivity defined by the domain topology
+               construct. It may take any value, but the following
+               values are standardised: ``'node'``(edge or face cells
+               connected by one or more shared nodes) and ``'edge'``
+               (face cells connected by one or more shared edges).""",
     # data_like
     "{{data_like}}": """A data_like object is any object that can be converted
                 to a `Data` object, i.e. `numpy` array_like objects,

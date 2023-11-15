@@ -250,9 +250,7 @@ class NetCDFMixin:
 
         """
         if not value or value == "/":
-            raise ValueError(
-                f"Invalid netCDF subsampled dimension name: {value!r}"
-            )
+            raise ValueError(f"Invalid netCDF {entity} name: {value!r}")
 
         if "/" in value:
             if not value.startswith("/"):
@@ -466,17 +464,6 @@ class NetCDFDimension(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         """
         return self._nc_del("dimension", default=default)
 
-    #        try:
-    #            return self._get_component("netcdf").pop("dimension")
-    #        except KeyError:
-    #            if default is None:
-    #                return default
-    #
-    #            return self._default(
-    #                default,
-    #                f"{self.__class__.__name__} has no netCDF dimension name",
-    #            )
-
     def nc_get_dimension(self, default=ValueError()):
         """Return the netCDF dimension name.
 
@@ -516,17 +503,6 @@ class NetCDFDimension(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         """
         return self._nc_get("dimension", default=default)
 
-    #        try:
-    #            return self._get_component("netcdf")["dimension"]
-    #        except KeyError:
-    #            if default is None:
-    #                return default
-    #
-    #            return self._default(
-    #                default,
-    #                f"{self.__class__.__name__} has no netCDF dimension name",
-    #            )
-
     def nc_has_dimension(self):
         """Whether the netCDF dimension name has been set.
 
@@ -558,7 +534,6 @@ class NetCDFDimension(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         None
 
         """
-        #        return "dimension" in self._get_component("netcdf")
         return self._nc_has("dimension")
 
     def nc_set_dimension(self, value):
@@ -602,27 +577,6 @@ class NetCDFDimension(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
 
         """
         return self._nc_set("dimension", value)
-
-    #
-    #        if not value or value == "/":
-    #            raise ValueError(f"Invalid netCDF dimension name: {value!r}")
-    #
-    #        if "/" in value:
-    #            if not value.startswith("/"):
-    #                raise ValueError(
-    #                    "A netCDF dimension name with a group structure "
-    #                    f"must start with a '/'. Got {value!r}"
-    #                )
-    #
-    #            if value.count("/") == 1:
-    #                value = value[1:]
-    #            elif value.endswith("/"):
-    #                raise ValueError(
-    #                    "A netCDF dimension name with a group structure "
-    #                    f"can't end with a '/'. Got {value!r}"
-    #                )
-    #
-    #        self._get_component("netcdf")["dimension"] = value
 
     def nc_dimension_groups(self):
         """Return the netCDF dimension group hierarchy.
@@ -829,17 +783,6 @@ class NetCDFVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         """
         return self._nc_del("variable", default=default)
 
-    #        try:
-    #            return self._get_component("netcdf").pop("variable")
-    #        except KeyError:
-    #            if default is None:
-    #                return default
-    #
-    #            return self._default(
-    #                default,
-    #                f"{self.__class__.__name__} has no netCDF variable name",
-    #            )
-
     def nc_get_variable(self, default=ValueError()):
         """Return the netCDF variable name.
 
@@ -879,17 +822,6 @@ class NetCDFVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
 
         """
         return self._nc_get("variable", default=default)
-
-    #        try:
-    #            return self._get_component("netcdf")["variable"]
-    #        except KeyError:
-    #            if default is None:
-    #                return default
-    #
-    #            return self._default(
-    #                default,
-    #                f"{self.__class__.__name__} has no netCDF variable name",
-    #            )
 
     def nc_has_variable(self):
         """Whether the netCDF variable name has been set.
@@ -964,25 +896,7 @@ class NetCDFVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         None
 
         """
-        if not value or value == "/":
-            raise ValueError(f"Invalid netCDF variable name: {value!r}")
-
-        if "/" in value:
-            if not value.startswith("/"):
-                raise ValueError(
-                    "A netCDF variable name with a group structure "
-                    f"must start with a '/'. Got {value!r}"
-                )
-
-            if value.count("/") == 1:
-                value = value[1:]
-            elif value.endswith("/"):
-                raise ValueError(
-                    "A netCDF variable name with a group structure "
-                    f"can't end with a '/'. Got {value!r}"
-                )
-
-        self._get_component("netcdf")["variable"] = value
+        return self._nc_set("variable", value)
 
     def nc_variable_groups(self):
         """Return the netCDF variable group hierarchy.
@@ -2245,7 +2159,8 @@ class NetCDFGeometry(NetCDF, NetCDFGroupsMixin):
 
             return self._default(
                 default,
-                f"{self.__class__.__name__} has no netCDF geometry variable name",
+                f"{self.__class__.__name__} has no netCDF "
+                "geometry variable name",
             )
 
     def nc_get_geometry_variable(self, default=ValueError()):
@@ -2294,7 +2209,8 @@ class NetCDFGeometry(NetCDF, NetCDFGroupsMixin):
 
             return self._default(
                 default,
-                f"{self.__class__.__name__} has no netCDF geometry variable name",
+                f"{self.__class__.__name__} has no netCDF "
+                "geometry variable name",
             )
 
     def nc_has_geometry_variable(self):
@@ -2759,7 +2675,7 @@ class NetCDFUnlimitedDimension(NetCDF):
 
 
 class NetCDFComponents(NetCDF):
-    """Mixin class for netCDF fetaure common to many constructs.
+    """Mixin class for a netCDF feature common to many constructs.
 
     Accesses netCDF names consistently across multiple metadata
     constructs.
@@ -4318,4 +4234,334 @@ class NetCDFInterpolationSubareaDimension(
             nc_get=self.nc_get_interpolation_subarea_dimension,
             nc_set=self.nc_set_interpolation_subarea_dimension,
             nc_groups=self.nc_interpolation_subarea_dimension_groups,
+        )
+
+
+class NetCDFNodeCoordinateVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
+    """Mixin for accessing the netCDF node coordinate variable name.
+
+    .. versionadded:: (cfdm) UGRIDVER
+
+    """
+
+    def nc_del_node_coordinate_variable(self, default=ValueError()):
+        """Remove the netCDF node coordinate variable name.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        .. seealso:: `nc_get_node_coordinate_variable`,
+                     `nc_has_node_coordinate_variable`,
+                     `nc_set_node_coordinate_variable`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                netCDF node coordinate variable name has not been
+                set. If set to an `Exception` instance then it will be
+                raised instead.
+
+        :Returns:
+
+            `str`
+                The removed netCDF node coordinate variable name.
+
+        **Examples**
+
+        >>> f.nc_set_node_coordinate_variable('node_x')
+        >>> f.nc_has_node_coordinate_variable()
+        True
+        >>> f.nc_get_node_coordinate_variable()
+        'node_x'
+        >>> f.nc_del_node_coordinate_variable()
+        'node_x'
+        >>> f.nc_has_node_coordinate_variable()
+        False
+        >>> print(f.nc_get_node_coordinate_variable(None))
+        None
+        >>> print(f.nc_del_node_coordinate_variable(None))
+        None
+
+        """
+        return self._nc_del("node_coordinate_variable", default=default)
+
+    def nc_get_node_coordinate_variable(self, default=ValueError()):
+        """Return the netCDF node coordinate variable name.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        .. seealso:: `nc_del_node_coordinate_variable`,
+                     `nc_has_node_coordinate_variable`,
+                     `nc_set_node_coordinate_variable`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                netCDF node coordinate variable name has not been
+                set. If set to an `Exception` instance then it will be
+                raised instead.
+
+        :Returns:
+
+            `str`
+                The netCDF node coordinate variable name. If unset
+                then *default* is returned, if provided.
+
+        **Examples**
+
+        >>> f.nc_set_node_coordinate_variable('node_x')
+        >>> f.nc_has_node_coordinate_variable()
+        True
+        >>> f.nc_get_node_coordinate_variable()
+        'node_x'
+        >>> f.nc_del_node_coordinate_variable()
+        'node_x'
+        >>> f.nc_has_node_coordinate_variable()
+        False
+        >>> print(f.nc_get_node_coordinate_variable(None))
+        None
+        >>> print(f.nc_del_node_coordinate_variable(None))
+        None
+
+        """
+        return self._nc_get("node_coordinate_variable", default=default)
+
+    def nc_has_node_coordinate_variable(self):
+        """Whether the netCDF node coordinate variable name is set.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        .. seealso:: `nc_get_node_coordinate_variable`,
+                     `nc_del_node_coordinate_variable`,
+                     `nc_set_node_coordinate_variable`
+
+        :Returns:
+
+            `bool`
+                `True` if the netCDF node coordinate variable name has
+                been set, otherwise `False`.
+
+        **Examples**
+
+        >>> f.nc_set_node_coordinate_variable('node_x')
+        >>> f.nc_has_node_coordinate_variable()
+        True
+        >>> f.nc_get_node_coordinate_variable()
+        'node_x'
+        >>> f.nc_del_node_coordinate_variable()
+        'node_x'
+        >>> f.nc_has_node_coordinate_variable()
+        False
+        >>> print(f.nc_get_node_coordinate_variable(None))
+        None
+        >>> print(f.nc_del_node_coordinate_variable(None))
+        None
+
+        """
+        return "node_coordinate_variable" in self._get_component("netcdf")
+
+    def nc_set_node_coordinate_variable(self, value):
+        """Set the netCDF node coordinate variable name.
+
+        If there are any ``/`` (slash) characters in the netCDF name
+        then these act as delimiters for a group hierarchy. By
+        default, or if the name starts with a ``/`` character and
+        contains no others, the name is assumed to be in the root
+        group.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        .. seealso:: `nc_get_node_coordinate_variable`,
+                     `nc_has_node_coordinate_variable`,
+                     `nc_del_node_coordinate_variable`
+
+        :Parameters:
+
+            value: `str`
+                The value for the netCDF node coordinate variable
+                name.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f.nc_set_node_coordinate_variable('node_x')
+        >>> f.nc_has_node_coordinate_variable()
+        True
+        >>> f.nc_get_node_coordinate_variable()
+        'node_x'
+        >>> f.nc_del_node_coordinate_variable()
+        'node_x'
+        >>> f.nc_has_node_coordinate_variable()
+        False
+        >>> print(f.nc_get_node_coordinate_variable(None))
+        None
+        >>> print(f.nc_del_node_coordinate_variable(None))
+        None
+
+        """
+        return self._nc_set("node_coordinate_variable", value)
+
+    def nc_node_coordinate_variable_groups(self):
+        """Return the netCDF node coordinate variable group hierarchy.
+
+        The group hierarchy is defined by the netCDF name. Groups are
+        delimited by ``/`` (slash) characters in the netCDF name. The
+        groups are returned, in hierarchical order, as a sequence of
+        strings. If the name is not set, or contains no ``/``
+        characters then an empty sequence is returned, signifying the
+        root group.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        .. seealso:: `nc_clear_node_coordinate_variable_groups`,
+                     `nc_set_node_coordinate_variable_groups`
+
+        :Returns:
+
+            `tuple` of `str`
+                The group structure.
+
+        **Examples**
+
+        >>> f.nc_set_node_coordinate_variable('time')
+        >>> f.nc_node_coordinate_variable_groups()
+        ()
+        >>> f.nc_set_node_coordinate_variable_groups(['forecast', 'model'])
+        >>> f.nc_node_coordinate_variable_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_node_coordinate_variable()
+        '/forecast/model/time'
+        >>> f.nc_clear_node_coordinate_variable_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_variable()
+        'time'
+
+        >>> f.nc_set_node_coordinate_variable('/forecast/model/time')
+        >>> f.nc_variable_groups()
+        ('forecast', 'model')
+        >>> f.nc_del_node_coordinate_variable('/forecast/model/time')
+        '/forecast/model/time'
+        >>> f.nc_node_coordinate_variable_groups()
+        ()
+
+        """
+        return self._nc_groups(nc_get=self.nc_get_node_coordinate_variable)
+
+    def nc_set_node_coordinate_variable_groups(self, groups):
+        """Set the netCDF node_coordinate_variable group hierarchy.
+
+        The group hierarchy is defined by the netCDF name. Groups are
+        delimited by ``/`` (slash) characters in the netCDF name. The
+        groups are returned, in hierarchical order, as a sequence of
+        strings. If the name is not set, or contains no ``/``
+        characters then an empty sequence is returned, signifying the
+        root group.
+
+        An alternative technique for setting the group structure is to
+        set the netCDF node coordinate variable name, with
+        `nc_set_node_coordinate_variable`, with the group structure
+        delimited by ``/`` characters.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        .. seealso:: `nc_clear_node_coordinate_variable_groups`,
+                     `nc_node_coordinate_variable_groups`
+
+        :Parameters:
+
+            groups: sequence of `str`
+                The new group structure.
+
+        :Returns:
+
+            `tuple` of `str`
+                The group structure prior to being reset.
+
+        **Examples**
+
+        >>> f.nc_set_node_coordinate_variable('time')
+        >>> f.nc_node_coordinate_variable_groups()
+        ()
+        >>> f.nc_set_node_coordinate_variable_groups(['forecast', 'model'])
+        >>> f.nc_node_coordinate_variable_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_node_coordinate_variable()
+        '/forecast/model/time'
+        >>> f.nc_clear_node_coordinate_variable_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_variable()
+        'time'
+
+        >>> f.nc_set_node_coordinate_variable('/forecast/model/time')
+        >>> f.nc_variable_groups()
+        ('forecast', 'model')
+        >>> f.nc_del_node_coordinate_variable('/forecast/model/time')
+        '/forecast/model/time'
+        >>> f.nc_node_coordinate_variable_groups()
+        ()
+
+        """
+        return self._nc_set_groups(
+            groups,
+            nc_get=self.nc_get_node_coordinate_variable,
+            nc_set=self.nc_set_node_coordinate_variable,
+            nc_groups=self.nc_node_coordinate_variable_groups,
+        )
+
+    def nc_clear_node_coordinate_variable_groups(self):
+        """Remove the netCDF node coordinate variable group hierarchy.
+
+        The group hierarchy is defined by the netCDF name. Groups are
+        delimited by ``/`` (slash) characters in the netCDF name. The
+        groups are returned, in hierarchical order, as a sequence of
+        strings. If the name is not set, or contains no ``/``
+        characters then an empty sequence is returned, signifying the
+        root group.
+
+        An alternative technique for removing the group structure is
+        to set the netCDF node coordinate variable name, with
+        `nc_set_node_coordinate_variable`, with no ``/`` characters.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        .. seealso:: `nc_node_coordinate_variable_groups`,
+                     `nc_set_node_coordinate_variable_groups`
+
+        :Returns:
+
+            `tuple` of `str`
+                The removed group structure.
+
+        **Examples**
+
+        >>> f.nc_set_node_coordinate_variable('time')
+        >>> f.nc_node_coordinate_variable_groups()
+        ()
+        >>> f.nc_set_node_coordinate_variable_groups(['forecast', 'model'])
+        >>> f.nc_node_coordinate_variable_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_node_coordinate_variable()
+        '/forecast/model/time'
+        >>> f.nc_clear_node_coordinate_variable_groups()
+        ('forecast', 'model')
+        >>> f.nc_get_variable()
+        'time'
+
+        >>> f.nc_set_node_coordinate_variable('/forecast/model/time')
+        >>> f.nc_variable_groups()
+        ('forecast', 'model')
+        >>> f.nc_del_node_coordinate_variable('/forecast/model/time')
+        '/forecast/model/time'
+        >>> f.nc_node_coordinate_variable_groups()
+        ()
+
+        """
+        return self._nc_clear_groups(
+            nc_get=self.nc_get_node_coordinate_variable,
+            nc_set=self.nc_set_node_coordinate_variable,
+            nc_groups=self.nc_node_coordinate_variable_groups,
         )

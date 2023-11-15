@@ -24,6 +24,8 @@ Filtering
    ~cfdm.Constructs.filter_by_property
    ~cfdm.Constructs.filter_by_measure
    ~cfdm.Constructs.filter_by_method
+   ~cfdm.Constructs.filter_by_cell
+   ~cfdm.Constructs.filter_by_connectivity
    ~cfdm.Constructs.filter_by_axis
    ~cfdm.Constructs.filter_by_naxes
    ~cfdm.Constructs.filter_by_size

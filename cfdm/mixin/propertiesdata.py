@@ -194,7 +194,7 @@ class PropertiesData(Properties):
         Changing the returned numpy array does not change the data
         array.
 
-        .. versionadded:: 1.10.0.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `data`, `datetime_array`
 
@@ -231,7 +231,7 @@ class PropertiesData(Properties):
         If the calendar has not been set then the CF default calendar
         will be used and the units will be updated accordingly.
 
-        .. versionadded:: 1.10.0.0
+        .. versionadded:: (cfdm) 1.10.0.0
 
         .. seealso:: `array`, `data`
 
@@ -254,164 +254,6 @@ class PropertiesData(Properties):
 
         return data.datetime_array
 
-    @property
-    def dtype(self):
-        """Data-type of the data elements.
-
-        **Examples**
-
-        >>> d.dtype
-        dtype('float64')
-        >>> type(d.dtype)
-        <type 'numpy.dtype'>
-
-        """
-        data = self.get_data(None, _units=False, _fill_value=False)
-        if data is not None:
-            return data.dtype
-
-        raise AttributeError(
-            f"{self.__class__.__name__} object has no attribute 'dtype'"
-        )
-
-    @property
-    def ndim(self):
-        """The number of dimensions in the data array.
-
-        .. seealso:: `data`, `has_data`, `isscalar`, `shape`, `size`
-
-        **Examples**
-
-        >>> f.shape
-        (73, 96)
-        >>> f.ndim
-        2
-        >>> f.size
-        7008
-
-        >>> f.shape
-        (73, 1, 96)
-        >>> f.ndim
-        3
-        >>> f.size
-        7008
-
-        >>> f.shape
-        (73,)
-        >>> f.ndim
-        1
-        >>> f.size
-        73
-
-        >>> f.shape
-        ()
-        >>> f.ndim
-        0
-        >>> f.size
-        1
-
-        """
-        data = self.get_data(None, _units=False, _fill_value=False)
-        if data is not None:
-            return data.ndim
-
-        raise AttributeError(
-            f"{self.__class__.__name__} object has no attribute 'ndim'"
-        )
-
-    @property
-    def shape(self):
-        """A tuple of the data array's dimension sizes.
-
-        .. seealso:: `data`, `has_data`, `ndim`, `size`
-
-        **Examples**
-
-        >>> f.shape
-        (73, 96)
-        >>> f.ndim
-        2
-        >>> f.size
-        7008
-
-        >>> f.shape
-        (73, 1, 96)
-        >>> f.ndim
-        3
-        >>> f.size
-        7008
-
-        >>> f.shape
-        (73,)
-        >>> f.ndim
-        1
-        >>> f.size
-        73
-
-        >>> f.shape
-        ()
-        >>> f.ndim
-        0
-        >>> f.size
-        1
-
-        """
-        data = self.get_data(None, _units=False, _fill_value=False)
-        if data is not None:
-            return data.shape
-
-        raise AttributeError(
-            f"{self.__class__.__name__} object has no attribute 'shape'"
-        )
-
-    @property
-    def size(self):
-        """The number of elements in the data array.
-
-        .. seealso:: `data`, `has_data`, `ndim`, `shape`
-
-        **Examples**
-
-        >>> f.shape
-        (73, 96)
-        >>> f.ndim
-        2
-        >>> f.size
-        7008
-
-        >>> f.shape
-        (73, 1, 96)
-        >>> f.ndim
-        3
-        >>> f.size
-        7008
-
-        >>> f.shape
-        (73,)
-        >>> f.ndim
-        1
-        >>> f.size
-        73
-
-        >>> f.shape
-        ()
-        >>> f.ndim
-        0
-        >>> f.size
-        1
-
-        """
-        data = self.get_data(None, _units=False, _fill_value=False)
-        if data is not None:
-            return data.size
-
-        raise AttributeError(
-            f"{self.__class__.__name__} object has no attribute 'size'"
-        )
-
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     @_inplace_enabled(default=False)
     def apply_masking(self, inplace=False):
         """Apply masking as defined by the CF conventions.
@@ -995,7 +837,6 @@ class PropertiesData(Properties):
 
         """
         v = _inplace_enabled_define_and_cleanup(self)
-
         data = v.get_data(None, _units=False, _fill_value=False)
         if data is not None:
             data.transpose(axes, inplace=True)

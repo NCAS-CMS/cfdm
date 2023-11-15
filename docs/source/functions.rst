@@ -52,4 +52,5 @@ Miscellaneous
    cfdm.example_fields
    cfdm.example_domain
    cfdm.implementation
+   cfdm.integer_dtype
    cfdm.unique_constructs

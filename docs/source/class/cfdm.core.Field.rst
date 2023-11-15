@@ -74,6 +74,10 @@ Data
    :template: attribute.rst
 
    ~cfdm.core.Field.data
+   ~cfdm.core.Field.dtype
+   ~cfdm.core.Field.ndim
+   ~cfdm.core.Field.shape
+   ~cfdm.core.Field.size
 
 .. _core-Field-Metadata-constructs:   
    

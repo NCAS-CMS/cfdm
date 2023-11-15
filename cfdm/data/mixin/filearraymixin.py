@@ -164,7 +164,7 @@ class FileArrayMixin:
     def get_formats(self):
         """Return the format of the files.
 
-        .. versionadded:: 1.10.1.0
+        .. versionadded:: (cfdm) 1.10.1.0
 
         .. seealso:: `get_format`, `get_filenames`, `get_addresses`
 
@@ -183,7 +183,7 @@ class FileArrayMixin:
         open each one, in the order stored, and an open file object is
         returned from the first file that exists.
 
-        .. versionadded:: 1.10.1.0
+        .. versionadded:: (cfdm) 1.10.1.0
 
         :Parameters:
 

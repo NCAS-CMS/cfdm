@@ -49,14 +49,7 @@ class SubsampledSubarray(Subarray):
             shape: `tuple` of `int`
                 The shape of the uncompressed subarray.
 
-            compressed_dimensions: `dict`
-                Mapping of compressed to uncompressed dimensions.
-
-                A dictionary key is a position of a dimension in the
-                compressed data, with a value of the positions of the
-                corresponding dimensions in the uncompressed
-                data. Compressed array dimensions that are not
-                compressed miust be omitted from the mapping.
+            {{init compressed_dimensions: `dict`}}
 
                 *Parameter example:*
                   ``{1: (1,)}``
@@ -115,9 +108,8 @@ class SubsampledSubarray(Subarray):
 
             context_manager: function, optional
                 A context manager that provides a runtime context for
-                the conversion of data defined by *data*,
-                *dependent_tie_points*, and *parameters* to `numpy`
-                arrays.
+                the conversion of *data*, *dependent_tie_points*, and
+                *parameters* to `numpy` arrays.
 
         """
         super().__init__(

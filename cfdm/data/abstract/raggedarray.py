@@ -1,8 +1,6 @@
 from itertools import accumulate
 from numbers import Number
 
-import numpy as np
-
 from ..subarray import RaggedSubarray
 from .compressedarray import CompressedArray
 
@@ -114,42 +112,6 @@ class RaggedArray(CompressedArray):
 
         if count_variable is not None:
             self._set_component("count_variable", count_variable, copy=copy)
-
-    def __getitem__(self, indices):
-        """Return a subspace of the uncompressed data.
-
-        x.__getitem__(indices) <==> x[indices]
-
-        Returns a subspace of the uncompressed array as an independent
-        numpy array.
-
-        .. versionadded:: (cfdm) 1.10.0.0
-
-        """
-        # ------------------------------------------------------------
-        # Method: Uncompress the entire array and then subspace it
-        # ------------------------------------------------------------
-        # Initialise the un-sliced uncompressed array
-        u = np.ma.masked_all(self.shape, dtype=self.dtype)
-
-        Subarray = self.get_Subarray()
-
-        compressed_dimensions = self.compressed_dimensions()
-        compressed_data = self.conformed_data()["data"]
-
-        for u_indices, u_shape, c_indices, _ in zip(*self.subarrays()):
-            subarray = Subarray(
-                data=compressed_data,
-                indices=c_indices,
-                shape=u_shape,
-                compressed_dimensions=compressed_dimensions,
-            )
-            u[u_indices] = subarray[...]
-
-        if indices is Ellipsis:
-            return u
-
-        return self.get_subspace(u, indices, copy=True)
 
     def _uncompressed_descriptors(self, u_dims, shapes):
         """Create descriptors of uncompressed subarrays.

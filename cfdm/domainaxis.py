@@ -148,7 +148,7 @@ class DomainAxis(
             out.append(f"{name}.nc_set_dimension({nc!r})")
 
         if self.nc_is_unlimited():
-            out.append("fc.nc_set_unlimited({True})")
+            out.append(f"{name}.nc_set_unlimited({True})")
 
         if string:
             indent = " " * indent
@@ -289,8 +289,8 @@ class DomainAxis(
                 .. versionadded:: (cfdm) 1.8.9.0
 
             kwargs: optional
-                Additional configuration parameters. Currently
-                none. Unrecognised parameters are ignored.
+                Additional configuration parameters that may be used
+                by subclasses.
 
                 .. versionadded:: (cfdm) 1.8.9.0
 

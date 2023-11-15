@@ -64,6 +64,11 @@ Data
    :template: attribute.rst
 
    ~cfdm.core.DimensionCoordinate.data
+   ~cfdm.core.DimensionCoordinate.dtype
+   ~cfdm.core.DimensionCoordinate.ndim
+   ~cfdm.core.DimensionCoordinate.shape
+   ~cfdm.core.DimensionCoordinate.size
+
 
 Bounds
 ------

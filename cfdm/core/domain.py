@@ -22,11 +22,13 @@ class Domain(mixin.FieldDomain, abstract.Properties):
     # Define the base of the identity keys for each construct type
     _construct_key_base = {
         "auxiliary_coordinate": "auxiliarycoordinate",
+        "cell_connectivity": "cellconnectivity",
         "cell_measure": "cellmeasure",
         "coordinate_reference": "coordinatereference",
         "dimension_coordinate": "dimensioncoordinate",
         "domain_ancillary": "domainancillary",
         "domain_axis": "domainaxis",
+        "domain_topology": "domaintopology",
     }
 
     def __new__(cls, *args, **kwargs):

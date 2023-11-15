@@ -382,6 +382,7 @@ class FieldDomain:
          'dimensioncoordinate0': 'latitude',
          'dimensioncoordinate1': 'longitude',
          'dimensioncoordinate2': 'time',
+         'auxiliarycoordinate0': 'long_name=station id',
          'domainaxis0': 'ncdim%lat',
          'domainaxis1': 'ncdim%lon',
          'domainaxis2': 'key%domainaxis2'}
@@ -565,6 +566,167 @@ class FieldDomain:
         return self._filter_interface(
             ("auxiliary_coordinate",),
             "auxiliary_coordinates",
+            identities,
+            **filter_kwargs,
+        )
+
+    def del_mesh_id(self, default=ValueError()):
+        """Remove the UGRID mesh topology identifier.
+
+        Different field constructs with the same mesh topology
+        identifier may be assumed to have domains with a shared UGRID
+        mesh topology.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        .. seealso:: `get_mesh_id`, `has_mesh_id`, `set_mesh_id`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                mesh topology identifier has not been set.
+
+                {{default Exception}}
+
+        :Returns:
+
+                The removed mesh topology identifier.
+
+        **Examples**
+
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_mesh_id('df71b85a99894af094411e7cd21c5d68')
+        >>> c.has_mesh_id()
+        True
+        >>> c.get_mesh_id()
+        'df71b85a99894af094411e7cd21c5d68'
+        >>> c.del_mesh_id()
+        'df71b85a99894af094411e7cd21c5d68'
+        >>> c.has_mesh_id()
+        False
+        >>> print(c.del_mesh_id(None))
+        None
+        >>> print(c.get_mesh_id(None))
+        None
+
+        """
+        return self._del_component("mesh_id", default=default)
+
+    def domain_topology(
+        self,
+        *identity,
+        default=ValueError(),
+        key=False,
+        item=False,
+        **filter_kwargs,
+    ):
+        """Select a domain topology construct.
+
+        {{unique construct}}
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        .. seealso:: `construct`, `domain_topologies`
+
+        :Parameters:
+
+            identity: optional
+                Select domain topology constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                If no values are provided then all domain topology
+                constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{key: `bool`, optional}}
+
+            {{item: `bool`, optional}}
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no unique construct.
+
+                {{default Exception}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns construct}}
+
+        **Examples**
+
+        >>> f = {{package}}.example_{{class_lower}}(8)
+        >>> f.domain_topology()
+        <{{repr}}DomainTopology: cell:face(3) >
+        >>> f.domain_topology('cell:face', key=True)
+        'domaintopology0'
+        >>> f.domain_topology('cell:face', item=True)
+        ('domaintopology0', <{{repr}}DomainTopology: cell:face(3) >)
+
+        """
+        return self._construct(
+            "domain_topology",
+            "domain_topologies",
+            identity,
+            key=key,
+            item=item,
+            default=default,
+            **filter_kwargs,
+        )
+
+    def domain_topologies(self, *identities, **filter_kwargs):
+        """Return domain topology constructs.
+
+        Note that ``f.domain_topologies(*identities,
+        **filter_kwargs)`` is equivalent to
+
+        ``f.constructs.filter(filter_by_type=["domain_topology"],
+        filter_by_identity=identities, **filter_kwargs)``.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        .. seealso:: `constructs`, `domain_topology`
+
+        :Parameters:
+
+            identities: optional
+                Select domain topology constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values.
+
+                If no identities are provided then all domain topology
+                constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns constructs}}
+
+        **Examples:**
+
+        >>> f = {{package}}.example_{{class_lower}}(8)
+        >>> print(f.domain_topologies())
+        Constructs:
+        {'domaintopology0': <{{repr}}DomainTopology: 'cell:face(3) >}
+
+        """
+        return self._filter_interface(
+            ("domain_topology",),
+            "domain_topologies",
             identities,
             **filter_kwargs,
         )
@@ -1303,8 +1465,8 @@ class FieldDomain:
                 Additionally, the values are matched against construct
                 identifiers, with or without the ``'key%'`` prefix.
 
-                If no values are provided then all dimension
-                coordinate constructs are selected.
+                If no values are provided then all cell measure
+                constructs are selected.
 
                 {{value match}}
 
@@ -1383,17 +1545,133 @@ class FieldDomain:
 
         **Examples**
 
-        >>> f.cell_measures()
-        Constructs:
-        {}
-
-        >>> f.cell_measures()
+        >>> f = {{package}}.example_{{class_lower}}(1)
+        >>> print(f.cell_measures())
         Constructs:
         {'cellmeasure0': <{{repr}}CellMeasure: measure%area(9, 10) km2>}
 
         """
         return self._filter_interface(
             ("cell_measure",), "cell_measures", identities, **filter_kwargs
+        )
+
+    def cell_connectivity(
+        self,
+        *identity,
+        default=ValueError(),
+        key=False,
+        item=False,
+        **filter_kwargs,
+    ):
+        """Select a cell connectivity construct.
+
+        {{unique construct}}
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        .. seealso:: `construct`, `cell_connectivities`
+
+        :Parameters:
+
+            identity: optional
+                Select cell connectivity constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values.
+
+                Additionally, the values are matched against construct
+                identifiers, with or without the ``'key%'`` prefix.
+
+                If no values are provided then all cell connectivity
+                constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{key: `bool`, optional}}
+
+            {{item: `bool`, optional}}
+
+            default: optional
+                Return the value of the *default* parameter if there
+                is no unique construct.
+                {{default Exception}}
+
+            {{filter_kwargs: optional}}
+
+        :Returns:
+
+                {{Returns construct}}
+
+        **Examples**
+
+        >>> f = {{package}}.example_{{class_lower}}(8)
+        >>> f.cell_connectivity()
+        <{{repr}}CellConnectivity: connectivity:edge(3) >
+        >>> f.cell_connectivity('connectivity:edge', key=True)
+        'cellconnectivity0'
+        >>> f.cell_connectivity('connectivity:edge', item=True)
+        ('cellconnectivity0', <{{repr}}CellConnectivity: connectivity:edge(3) >)
+
+        """
+        return self._construct(
+            "cell_connectivity",
+            "cell_connectivities",
+            identity,
+            key=key,
+            item=item,
+            default=default,
+            **filter_kwargs,
+        )
+
+    def cell_connectivities(self, *identities, **filter_kwargs):
+        """Select cell connectivity constructs.
+
+        {{unique construct}}
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        .. seealso:: `construct`, `cell_connectivity`
+
+        Note that ``f.cell_connectivities(*identities, **filter_kwargs)``
+        is equivalent to
+        ``f.constructs.filter(filter_by_type=["cell_connectivity"],
+        filter_by_identity=identities, **filter_kwargs)``.
+
+
+        :Parameters:
+
+            identities: optional
+                Select cell connectivity constructs that have an
+                identity, defined by their `!identities` methods, that
+                matches any of the given values.
+
+                If no identities are provided then all cell
+                connectivity constructs are selected.
+
+                {{value match}}
+
+                {{displayed identity}}
+
+            {{filter_kwargs: optional}} Also to configure the returned value.
+
+        :Returns:
+
+                {{Returns constructs}}
+
+        **Examples**
+
+        >>> f = {{package}}.example_{{class_lower}}(8)
+        >>> print(f.cell_connectivities())
+        Constructs:
+        {'cellconnectivity0': <{{repr}}CellConnectivity: connectivity:edge(3) >}
+
+        """
+        return self._filter_interface(
+            ("cell_connectivity",),
+            "cell_connectivities",
+            identities,
+            **filter_kwargs,
         )
 
     def construct(
@@ -1891,6 +2169,49 @@ class FieldDomain:
 
         return True
 
+    def get_mesh_id(self, default=ValueError()):
+        """Return the UGRID mesh topology identifier.
+
+        Different field constructs with the same mesh topology
+        identifier may be assumed to have domains with a shared UGRID
+        mesh topology.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        .. seealso:: `del_mesh_id`, `has_mesh_id`, `set_mesh_id`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                mesh topology identifier has not been set.
+
+                {{default Exception}}
+
+        :Returns:
+
+                The value of the mesh topology identifier.
+
+        **Examples**
+
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_mesh_id('df71b85a99894af094411e7cd21c5d68')
+        >>> c.has_mesh_id()
+        True
+        >>> c.get_mesh_id()
+        'df71b85a99894af094411e7cd21c5d68'
+        >>> c.del_mesh_id()
+        'df71b85a99894af094411e7cd21c5d68'
+        >>> c.has_mesh_id()
+        False
+        >>> print(c.del_mesh_id(None))
+        None
+        >>> print(c.get_mesh_id(None))
+        None
+
+        """
+        return self._get_component("mesh_id", default=default)
+
     def has_construct(self, *identity, **filter_kwargs):
         """Whether a unique metadata construct exists.
 
@@ -1972,3 +2293,80 @@ class FieldDomain:
                 return True
 
         return False
+
+    def has_mesh_id(self):
+        """Whether the UGRID mesh topology identifier has been set.
+
+        Different field constructs with the same mesh topology
+        identifier may be assumed to have domains with a shared UGRID
+        mesh topology.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        .. seealso:: `del_mesh_id`, `get_mesh_id`, `set_mesh_id`
+
+        :Returns:
+
+            `bool`
+                True if the mesh topology identifier has been set,
+                otherwise False.
+
+        **Examples**
+
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_mesh_id('df71b85a99894af094411e7cd21c5d68')
+        >>> c.has_mesh_id()
+        True
+        >>> c.get_mesh_id()
+        'df71b85a99894af094411e7cd21c5d68'
+        >>> c.del_mesh_id()
+        'df71b85a99894af094411e7cd21c5d68'
+        >>> c.has_mesh_id()
+        False
+        >>> print(c.del_mesh_id(None))
+        None
+        >>> print(c.get_mesh_id(None))
+        None
+
+        """
+        return self._has_component("mesh_id")
+
+    def set_mesh_id(self, mesh_id):
+        """Set a UGRID mesh topology identifier.
+
+        Different field constructs with the same mesh topology
+        identifier may be assumed to have domains with a shared UGRID
+        mesh topology.
+
+        .. versionadded:: (cfdm) UGRIDVER
+
+        .. seealso:: `del_mesh_id`, `get_mesh_id`, `has_mesh_id`
+
+        :Parameters:
+
+            mesh_id: `str`
+                The value for the mesh topology identifier.
+
+        :Returns:
+
+             `None`
+
+        **Examples**
+
+        >>> c = {{package}}.{{class}}()
+        >>> c.set_mesh_id('df71b85a99894af094411e7cd21c5d68')
+        >>> c.has_mesh_id()
+        True
+        >>> c.get_mesh_id()
+        'df71b85a99894af094411e7cd21c5d68'
+        >>> c.del_mesh_id()
+        'df71b85a99894af094411e7cd21c5d68'
+        >>> c.has_mesh_id()
+        False
+        >>> print(c.del_mesh_id(None))
+        None
+        >>> print(c.get_mesh_id(None))
+        None
+
+        """
+        return self._set_component("mesh_id", mesh_id, copy=False)

@@ -168,6 +168,8 @@ The cfdm package requires:
 * `packaging <https://pypi.org/project/packaging/>`_, version 20.0 or
   newer.
 
+* `scipy <https://scipy.org/>`_, version 1.10.0 or newer.
+
 ----
 
 .. _Code-repository:

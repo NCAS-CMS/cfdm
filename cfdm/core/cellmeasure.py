@@ -146,7 +146,7 @@ class CellMeasure(abstract.PropertiesData):
 
         :Returns:
 
-             `bool`
+            `bool`
                 True if the measure has been set, otherwise False.
 
         **Examples**

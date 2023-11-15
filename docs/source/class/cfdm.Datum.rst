@@ -83,7 +83,6 @@ Special
 
    ~cfdm.Datum.__bool__
    ~cfdm.Datum.__deepcopy__
-   ~cfdm.Datum.__nonzero__
    ~cfdm.Datum.__repr__
    ~cfdm.Datum.__str__
 

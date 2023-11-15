@@ -106,9 +106,6 @@ class PropertiesData(Properties):
 
         raise ValueError(f"{self.__class__.__name__} has no data")
 
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
     @property
     def data(self):
         """Return the data.
@@ -146,9 +143,171 @@ class PropertiesData(Properties):
         """
         return self.get_data()
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
+    @property
+    def dtype(self):
+        """Data-type of the data elements.
+
+        **Examples**
+
+        >>> d.dtype
+        dtype('float64')
+        >>> type(d.dtype)
+        <type 'numpy.dtype'>
+
+        """
+        data = self.get_data(None, _units=False, _fill_value=False)
+        if data is not None:
+            return data.dtype
+
+        raise AttributeError(
+            f"{self.__class__.__name__} object has no attribute 'dtype'"
+        )
+
+    @property
+    def ndim(self):
+        """The number of data dimensions.
+
+        Only dimensions that correspond to domain axis constructs are
+        included.
+
+        .. seealso:: `data`, `has_data`, `isscalar`, `shape`, `size`
+
+        **Examples**
+
+        >>> f.shape
+        (73, 96)
+        >>> f.ndim
+        2
+        >>> f.size
+        7008
+
+        >>> f.shape
+        (73, 1, 96)
+        >>> f.ndim
+        3
+        >>> f.size
+        7008
+
+        >>> f.shape
+        (73,)
+        >>> f.ndim
+        1
+        >>> f.size
+        73
+
+        >>> f.shape
+        ()
+        >>> f.ndim
+        0
+        >>> f.size
+        1
+
+        """
+        data = self.get_data(None, _units=False, _fill_value=False)
+        if data is not None:
+            return data.ndim
+
+        raise AttributeError(
+            f"{self.__class__.__name__} object has no attribute 'ndim'"
+        )
+
+    @property
+    def shape(self):
+        """A tuple of the data array's dimension sizes.
+
+        Only dimensions that correspond to domain axis constructs are
+        included.
+
+        .. seealso:: `data`, `has_data`, `ndim`, `size`
+
+        **Examples**
+
+        >>> f.shape
+        (73, 96)
+        >>> f.ndim
+        2
+        >>> f.size
+        7008
+
+        >>> f.shape
+        (73, 1, 96)
+        >>> f.ndim
+        3
+        >>> f.size
+        7008
+
+        >>> f.shape
+        (73,)
+        >>> f.ndim
+        1
+        >>> f.size
+        73
+
+        >>> f.shape
+        ()
+        >>> f.ndim
+        0
+        >>> f.size
+        1
+
+        """
+        data = self.get_data(None, _units=False, _fill_value=False)
+        if data is not None:
+            return data.shape
+
+        raise AttributeError(
+            f"{self.__class__.__name__} object has no attribute 'shape'"
+        )
+
+    @property
+    def size(self):
+        """The number elements in the data.
+
+        `size` is equal to the product of `shape`, that only includes
+        the sizes of dimensions that correspond to domain axis
+        constructs.
+
+        .. seealso:: `data`, `has_data`, `ndim`, `shape`
+
+        **Examples**
+
+        >>> f.shape
+        (73, 96)
+        >>> f.ndim
+        2
+        >>> f.size
+        7008
+
+        >>> f.shape
+        (73, 1, 96)
+        >>> f.ndim
+        3
+        >>> f.size
+        7008
+
+        >>> f.shape
+        (73,)
+        >>> f.ndim
+        1
+        >>> f.size
+        73
+
+        >>> f.shape
+        ()
+        >>> f.ndim
+        0
+        >>> f.size
+        1
+
+        """
+        data = self.get_data(None, _units=False, _fill_value=False)
+        if data is not None:
+            return data.size
+
+        raise AttributeError(
+            f"{self.__class__.__name__} object has no attribute 'size'"
+        )
+
     def copy(self, data=True):
         """Return a deep copy.
 
@@ -225,9 +384,6 @@ class PropertiesData(Properties):
         None
 
         """
-        # data = self.get_data(None)
-        # self._del_component("data", default=default)
-        # return data
         return self._del_component("data", default=default)
 
     def get_data(self, default=ValueError(), _units=True, _fill_value=True):
@@ -281,7 +437,6 @@ class PropertiesData(Properties):
 
         """
         data = self._get_component("data", None)
-
         if data is None:
             if default is None:
                 return

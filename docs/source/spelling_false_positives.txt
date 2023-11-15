@@ -29,6 +29,7 @@ CompressedArray
 conda
 config
 conformant
+connectivities
 CoordinateConversion
 CoordinateReference
 dataset
@@ -75,6 +76,7 @@ Hartnett
 hashable
 Hassell
 hdf
+indexable
 initio
 inplace
 instantiation
@@ -108,6 +110,7 @@ netCDF
 NetCDFArray
 Nino
 nonzero
+numpy
 NumpyArray
 orography
 ParametersDomainAncillaries
@@ -154,6 +157,7 @@ timeseries
 timeSeries
 timeSeriesProfile
 todict
+topologies
 trajectoryProfile
 Treshansky
 Typecode

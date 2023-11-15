@@ -47,7 +47,7 @@ __date__ = core.__date__
 __cf_version__ = core.__cf_version__
 __version__ = core.__version__
 
-_requires = ("cftime", "netcdf_flattener")
+_requires = ("cftime", "netcdf_flattener", "scipy")
 
 _error0 = f"cfdm requires the modules {', '.join(_requires)}. "
 
@@ -78,6 +78,20 @@ if Version(netcdf_flattener.__version__) < Version(_minimum_vn):
         f"at {netcdf_flattener.__file__}"
     )
 
+try:
+    import scipy
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+
+# Check the version of scipy
+_minimum_vn = "1.10.0"
+if Version(scipy.__version__) < Version(_minimum_vn):
+    raise ValueError(
+        f"Bad scipy version: cfdm requires "
+        f"scipy>={_minimum_vn}. Got {scipy.__version__} "
+        f"at {scipy.__file__}"
+    )
+
 from .constants import masked
 
 # Internal ones passed on so they can be used in cf-python (see
@@ -91,6 +105,7 @@ from .functions import (
     atol,
     configuration,
     environment,
+    integer_dtype,
     log_level,
     rtol,
     unique_constructs,
@@ -119,21 +134,27 @@ from .constructs import Constructs
 
 from .data import (
     Array,
+    BoundsFromNodesArray,
+    CellConnectivityArray,
     CompressedArray,
     Data,
     GatheredArray,
     NetCDFArray,
     NumpyArray,
+    PointTopologyArray,
     RaggedArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
     RaggedIndexedContiguousArray,
+    SparseArray,
     SubsampledArray,
 )
 
 from .data import (
     BiLinearSubarray,
     BiQuadraticLatitudeLongitudeSubarray,
+    BoundsFromNodesSubarray,
+    CellConnectivitySubarray,
     GatheredSubarray,
     InterpolationSubarray,
     LinearSubarray,
@@ -155,16 +176,18 @@ from .tiepointindex import TiePointIndex
 from .bounds import Bounds
 from .coordinateconversion import CoordinateConversion
 from .datum import Datum
-from .domain import Domain
 from .interiorring import InteriorRing
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
+from .cellconnectivity import CellConnectivity
 from .cellmeasure import CellMeasure
 from .cellmethod import CellMethod
 from .coordinatereference import CoordinateReference
 from .dimensioncoordinate import DimensionCoordinate
+from .domain import Domain
 from .domainancillary import DomainAncillary
 from .domainaxis import DomainAxis
+from .domaintopology import DomainTopology
 from .field import Field
 from .fieldancillary import FieldAncillary
 

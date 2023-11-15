@@ -1,6 +1,6 @@
 import logging
 
-from . import Constructs, core, mixin
+from . import AuxiliaryCoordinate, Constructs, core, mixin
 from .decorators import (
     _display_or_return,
     _inplace_enabled,
@@ -72,6 +72,7 @@ class Domain(
 
         """
         instance = super().__new__(cls)
+        instance._AuxiliaryCoordinate = AuxiliaryCoordinate
         instance._Constructs = Constructs
         return instance
 
@@ -101,6 +102,15 @@ class Domain(
             copy=copy,
             _use_data=_use_data,
         )
+
+        if source is not None:
+            try:
+                mesh_id = source.get_mesh_id(None)
+            except AttributeError:
+                pass
+            else:
+                if mesh_id is not None:
+                    self.set_mesh_id(mesh_id)
 
         self._initialise_netcdf(source)
         self._initialise_original_filenames(source)
@@ -137,6 +147,11 @@ class Domain(
 
             if variable.has_data():
                 shape = [axis_names[axis] for axis in axes]
+                data = variable.get_data()
+                ndim = data.ndim
+                shape = shape[:ndim]
+                if len(shape) < ndim:
+                    shape.extend([str(n) for n in data.shape[len(shape) :]])
                 shape = str(tuple(shape)).replace("'", "")
                 shape = shape.replace(",)", ")")
                 x.append(shape)
@@ -247,6 +262,24 @@ class Domain(
         if x:
             x = "\n                : ".join(x)
             string.append(f"Domain ancils   : {x}")
+
+        # Domain topologies
+        x = [
+            _print_item(self, cid, v, construct_data_axes[cid])
+            for cid, v in sorted(self.domain_topologies(todict=True).items())
+        ]
+        if x:
+            x = "\n                : ".join(x)
+            string.append(f"Topologies      : {x}")
+
+        # Cell connectivities
+        x = [
+            _print_item(self, cid, v, construct_data_axes[cid])
+            for cid, v in sorted(self.cell_connectivities(todict=True).items())
+        ]
+        if x:
+            x = "\n                : ".join(x)
+            string.append(f"Connectivities  : {x}")
 
         return "\n".join(string)
 
@@ -613,6 +646,8 @@ class Domain(
             "auxiliary_coordinate",
             "cell_measure",
             "domain_ancillary",
+            "domain_topology",
+            "cell_connectivity",
         ).items():
             out.extend(
                 c.creation_commands(
@@ -792,6 +827,36 @@ class Domain(
                     _key=cid,
                     _level=_level,
                     _title=f"Cell measure: {construct_name[cid]}",
+                    _axes=construct_data_axes[cid],
+                    _axis_names=axis_to_name,
+                )
+            )
+
+        # Domain topologies
+        for cid, value in sorted(self.domain_topologies(todict=True).items()):
+            string.append("")
+            string.append(
+                value.dump(
+                    display=False,
+                    _key=cid,
+                    _level=_level,
+                    _title=f"Domain topology: {construct_name[cid]}",
+                    _axes=construct_data_axes[cid],
+                    _axis_names=axis_to_name,
+                )
+            )
+
+        # Cell connectivities
+        for cid, value in sorted(
+            self.cell_connectivities(todict=True).items()
+        ):
+            string.append("")
+            string.append(
+                value.dump(
+                    display=False,
+                    _key=cid,
+                    _level=_level,
+                    _title=f"Cell connectivity: {construct_name[cid]}",
                     _axes=construct_data_axes[cid],
                     _axis_names=axis_to_name,
                 )

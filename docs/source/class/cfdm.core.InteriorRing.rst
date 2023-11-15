@@ -52,6 +52,10 @@ Data
    :template: attribute.rst
 
    ~cfdm.core.InteriorRing.data
+   ~cfdm.core.InteriorRing.dtype
+   ~cfdm.core.InteriorRing.ndim
+   ~cfdm.core.InteriorRing.shape
+   ~cfdm.core.InteriorRing.size
 
 Miscellaneous
 -------------

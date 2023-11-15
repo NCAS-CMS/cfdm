@@ -71,7 +71,6 @@ Special
 
    ~cfdm.CoordinateConversion.__bool__
    ~cfdm.CoordinateConversion.__deepcopy__
-   ~cfdm.CoordinateConversion.__nonzero__
    ~cfdm.CoordinateConversion.__repr__
    ~cfdm.CoordinateConversion.__str__
 

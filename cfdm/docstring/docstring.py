@@ -9,7 +9,7 @@ replacement text, and will be substituted as usual.
 
 Replacement text may not contain other non-special substitutions.
 
-Keys must be `str` or `re.Pattern` objects:
+Keys must be a `str` or `re.Pattern` object:
 
 * If a key is a `str` then the corresponding value must be a string.
 
@@ -54,6 +54,19 @@ _docstring_substitution_definitions = {
     `nc_get_geometry_variable`, `nc_geometry_variable_groups`,
     `nc_clear_variable_groups`, and `nc_set_geometry_variable_groups`
     methods.""",
+    # netCDF UGRID node coordinate
+    "{{netCDF UGRID node coordinate}}": """The netCDF UGRID node coordinate variable name may be accessed
+    with the `nc_set_node_coordinate_variable`,
+    `nc_get_node_coordinate_variable`,
+    `nc_del_node_coordinate_variable`, and
+    `nc_has_node_coordinate_variable` methods.
+
+    The netCDF UGRID node coordinate variable group structure may be
+    accessed with the `nc_set_node_coordinate_variable`,
+    `nc_get_node_coordinate_variable`,
+    `nc_variable_node_coordinate_groups`,
+    `nc_clear_node_coordinate_variable_groups`, and
+    `nc_set_node_coordinate_variable_groups` methods.""",
     # ----------------------------------------------------------------
     # Method description substitutions (2 levels of indentation)
     # ----------------------------------------------------------------
@@ -371,6 +384,24 @@ _docstring_substitution_definitions = {
                 stored. The original file names of any constituent
                 parts are not updated. Can't be used with the *define*
                 parameter.""",
+    # init source
+    "{{init compressed_dimensions: `dict`}}": """compressed_dimensions: `dict`
+                Mapping of compressed to uncompressed dimensions.
+
+                A dictionary key is a position of a dimension in the
+                compressed data, with a value of the positions of the
+                corresponding dimensions in the uncompressed
+                data. Compressed array dimensions that are not
+                compressed must be omitted from the mapping.""",
+    # init start_index
+    "{{init start_index: `int`}}": """start_index: `int`
+                The base of the indices provided by the integer index
+                array. Must be ``0`` or ``1`` for zero- or one-based
+                indices respectively.""",
+    # init cell_dimension
+    "{{init cell_dimension: `int`}}": """cell_dimension: `int`
+                The position of the *data* dimension that indexes the
+                cells, either ``0`` or ``1``.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------

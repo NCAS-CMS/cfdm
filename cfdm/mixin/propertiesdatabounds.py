@@ -1,6 +1,4 @@
 import logging
-from functools import reduce
-from operator import mul
 
 from ..decorators import (
     _display_or_return,
@@ -192,7 +190,7 @@ class PropertiesDataBounds(PropertiesData):
                             # reversed so reverse its bounds (as per
                             # 7.1 of the conventions)
                             bounds_indices[-1] = slice(None, None, -1)
-                    elif data.size > 1 and index[-1] < index[0]:
+                    elif data.size > 1 and int(index[-1]) < int(index[0]):
                         # This 1-d variable has been reversed so
                         # reverse its bounds (as per 7.1 of the
                         # conventions)
@@ -289,182 +287,6 @@ class PropertiesDataBounds(PropertiesData):
 
         return out
 
-    @property
-    def dtype(self):
-        """Data-type of the data elements.
-
-        **Examples**
-
-        >>> d.dtype
-        dtype('float64')
-        >>> type(d.dtype)
-        <type 'numpy.dtype'>
-
-        """
-        data = self.get_data(None, _units=False, _fill_value=False)
-        if data is not None:
-            return data.dtype
-
-        bounds = self.get_bounds_data(None, _units=False, _fill_value=False)
-        if bounds is not None:
-            return bounds.dtype
-
-        raise AttributeError(
-            f"{self.__class__.__name__} object has no attribute 'dtype'"
-        )
-
-    @property
-    def ndim(self):
-        """The number of dimensions in the data array.
-
-        .. seealso:: `data`, `has_data`, `isscalar`, `shape`, `size`
-
-        **Examples**
-
-        >>> f.shape
-        (73, 96)
-        >>> f.ndim
-        2
-        >>> f.size
-        7008
-
-        >>> f.shape
-        (73, 1, 96)
-        >>> f.ndim
-        3
-        >>> f.size
-        7008
-
-        >>> f.shape
-        (73,)
-        >>> f.ndim
-        1
-        >>> f.size
-        73
-
-        >>> f.shape
-        ()
-        >>> f.ndim
-        0
-        >>> f.size
-        1
-
-        """
-        data = self.get_data(None, _units=False, _fill_value=False)
-        if data is not None:
-            return data.ndim
-
-        bounds = self.get_bounds_data(None, _units=False, _fill_value=False)
-        if bounds is not None:
-            ndim = bounds.ndim
-            if self.has_geometry():
-                ndim -= 2
-            else:
-                ndim -= 1
-
-            return ndim
-
-        raise AttributeError(
-            f"{self.__class__.__name__} object has no attribute 'ndim'"
-        )
-
-    @property
-    def shape(self):
-        """A tuple of the data array's dimension sizes.
-
-        .. seealso:: `data`, `has_data`, `ndim`, `size`
-
-        **Examples**
-
-        >>> f.shape
-        (73, 96)
-        >>> f.ndim
-        2
-        >>> f.size
-        7008
-
-        >>> f.shape
-        (73, 1, 96)
-        >>> f.ndim
-        3
-        >>> f.size
-        7008
-
-        >>> f.shape
-        (73,)
-        >>> f.ndim
-        1
-        >>> f.size
-        73
-
-        >>> f.shape
-        ()
-        >>> f.ndim
-        0
-        >>> f.size
-        1
-
-        """
-        data = self.get_data(None, _units=False, _fill_value=False)
-        if data is not None:
-            return data.shape
-
-        bounds = self.get_bounds_data(None, _units=False, _fill_value=False)
-        if bounds is not None:
-            shape = bounds.shape
-            if self.has_geometry():
-                shape = shape[:-2]
-            else:
-                shape = shape[:-1]
-
-            return shape
-
-        raise AttributeError(
-            f"{self.__class__.__name__} object has no attribute 'shape'"
-        )
-
-    @property
-    def size(self):
-        """The number of elements in the data array.
-
-        .. seealso:: `data`, `has_data`, `ndim`, `shape`
-
-        **Examples**
-
-        >>> f.shape
-        (73, 96)
-        >>> f.ndim
-        2
-        >>> f.size
-        7008
-
-        >>> f.shape
-        (73, 1, 96)
-        >>> f.ndim
-        3
-        >>> f.size
-        7008
-
-        >>> f.shape
-        (73,)
-        >>> f.ndim
-        1
-        >>> f.size
-        73
-
-        >>> f.shape
-        ()
-        >>> f.ndim
-        0
-        >>> f.size
-        1
-
-        """
-        return reduce(mul, self.shape, 1)
-
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     @_inplace_enabled(default=False)
     def apply_masking(self, bounds=True, inplace=False):
         """Apply masking as defined by the CF conventions.
@@ -1232,8 +1054,8 @@ class PropertiesDataBounds(PropertiesData):
                 .. versionadded:: (cfdm) 1.8.9.0
 
             kwargs: optional
-                Additional configuration parameters. Currently
-                none. Unrecognised parameters are ignored.
+                Additional configuration parameters that may be used
+                by subclasses.
 
                 .. versionadded:: (cfdm) 1.8.9.0
 

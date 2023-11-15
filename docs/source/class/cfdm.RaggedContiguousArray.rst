@@ -68,6 +68,7 @@ Miscellaneous
    ~cfdm.RaggedContiguousArray.source
    ~cfdm.RaggedContiguousArray.to_memory
    ~cfdm.RaggedContiguousArray.subarray_shapes
+   ~cfdm.RaggedContiguousArray.subarray_parameters
    ~cfdm.RaggedContiguousArray.subarrays
    ~cfdm.RaggedContiguousArray.get_Subarray
    ~cfdm.RaggedContiguousArray.conformed_data

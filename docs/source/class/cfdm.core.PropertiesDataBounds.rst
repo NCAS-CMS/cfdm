@@ -53,6 +53,10 @@ Data
    :template: attribute.rst
 
    ~cfdm.core.PropertiesDataBounds.data
+   ~cfdm.core.PropertiesDataBounds.dtype
+   ~cfdm.core.PropertiesDataBounds.ndim
+   ~cfdm.core.PropertiesDataBounds.shape
+   ~cfdm.core.PropertiesDataBounds.size
 
 Bounds
 ------

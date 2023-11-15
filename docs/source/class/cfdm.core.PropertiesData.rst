@@ -53,6 +53,10 @@ Data
    :template: attribute.rst
 
    ~cfdm.core.PropertiesData.data
+   ~cfdm.core.PropertiesData.dtype
+   ~cfdm.core.PropertiesData.ndim
+   ~cfdm.core.PropertiesData.shape
+   ~cfdm.core.PropertiesData.size
 
 Miscellaneous
 -------------
