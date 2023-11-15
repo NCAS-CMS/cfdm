@@ -4240,14 +4240,14 @@ class NetCDFInterpolationSubareaDimension(
 class NetCDFNodeCoordinateVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
     """Mixin for accessing the netCDF node coordinate variable name.
 
-    .. versionadded:: (cfdm) UGRIDVER
+    .. versionadded:: (cfdm) 1.11.0.0
 
     """
 
     def nc_del_node_coordinate_variable(self, default=ValueError()):
         """Remove the netCDF node coordinate variable name.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `nc_get_node_coordinate_variable`,
                      `nc_has_node_coordinate_variable`,
@@ -4288,7 +4288,7 @@ class NetCDFNodeCoordinateVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
     def nc_get_node_coordinate_variable(self, default=ValueError()):
         """Return the netCDF node coordinate variable name.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `nc_del_node_coordinate_variable`,
                      `nc_has_node_coordinate_variable`,
@@ -4330,7 +4330,7 @@ class NetCDFNodeCoordinateVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
     def nc_has_node_coordinate_variable(self):
         """Whether the netCDF node coordinate variable name is set.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `nc_get_node_coordinate_variable`,
                      `nc_del_node_coordinate_variable`,
@@ -4370,7 +4370,7 @@ class NetCDFNodeCoordinateVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         contains no others, the name is assumed to be in the root
         group.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `nc_get_node_coordinate_variable`,
                      `nc_has_node_coordinate_variable`,
@@ -4415,7 +4415,7 @@ class NetCDFNodeCoordinateVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         characters then an empty sequence is returned, signifying the
         root group.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `nc_clear_node_coordinate_variable_groups`,
                      `nc_set_node_coordinate_variable_groups`
@@ -4466,7 +4466,7 @@ class NetCDFNodeCoordinateVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         `nc_set_node_coordinate_variable`, with the group structure
         delimited by ``/`` characters.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `nc_clear_node_coordinate_variable_groups`,
                      `nc_node_coordinate_variable_groups`
@@ -4526,7 +4526,7 @@ class NetCDFNodeCoordinateVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         to set the netCDF node coordinate variable name, with
         `nc_set_node_coordinate_variable`, with no ``/`` characters.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `nc_node_coordinate_variable_groups`,
                      `nc_set_node_coordinate_variable_groups`

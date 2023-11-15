@@ -9,7 +9,7 @@ from .compressedarray import CompressedArray
 class MeshArray(CompressedArray):
     """Abstract base class for data based on a UGRID connectivity array.
 
-    .. versionadded:: (cfdm) UGRIDVER
+    .. versionadded:: (cfdm) 1.11.0.0
 
     """
 
@@ -19,7 +19,7 @@ class MeshArray(CompressedArray):
         A child class must define its subarray classes in the
         `_Subarray` dictionary.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         """
         instance = super().__new__(cls)
@@ -97,7 +97,7 @@ class MeshArray(CompressedArray):
         Returns a subspace of the uncompressed array as an independent
         numpy array.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         """
         from math import isnan
@@ -157,7 +157,7 @@ class MeshArray(CompressedArray):
     def dtype(self):
         """The data-type of the uncompressed data.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         """
         return self._get_compressed_Array().dtype
@@ -168,7 +168,7 @@ class MeshArray(CompressedArray):
         In UGRID, this is provided by one of the the "edge_dimension",
         "face_dimension" or "volume_dimension" variables.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -189,7 +189,7 @@ class MeshArray(CompressedArray):
     def get_start_index(self, default=ValueError()):
         """Return the start index.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -210,7 +210,7 @@ class MeshArray(CompressedArray):
     def subarray_parameters(self):
         """Non-data parameters required by the `Subarray` class.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Returns:
 
@@ -232,7 +232,7 @@ class MeshArray(CompressedArray):
         because each dimension of the compressed data corresponds to a
         unique dimension of the uncompressed data.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `subarray`
 
@@ -291,7 +291,7 @@ class MeshArray(CompressedArray):
 
         These descriptors are used during subarray decompression.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 

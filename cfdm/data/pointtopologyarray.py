@@ -12,7 +12,7 @@ class PointTopologyArray(MeshArray):
     UGRID "edge_node_connectivity" or UGRID "face_node_connectivity"
     array.
 
-    .. versionadded:: (cfdm) UGRIDVER
+    .. versionadded:: (cfdm) 1.11.0.0
 
     """
 
@@ -23,7 +23,7 @@ class PointTopologyArray(MeshArray):
         ones defined here, then they must be defined in the __new__
         method of the child class.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         """
         instance = super().__new__(cls)

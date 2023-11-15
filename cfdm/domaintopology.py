@@ -111,7 +111,7 @@ class DomainTopology(
     be accessed with the `nc_set_variable`, `nc_get_variable`,
     `nc_del_variable`, and `nc_has_variable` methods.
 
-    .. versionadded:: (cfdm) UGRIDVER
+    .. versionadded:: (cfdm) 1.11.0.0
 
     """
 
@@ -166,7 +166,7 @@ class DomainTopology(
     ):
         """Returns the commands to create the domain topology construct.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `{{package}}.Data.creation_commands`,
                      `{{package}}.Field.creation_commands`
@@ -228,7 +228,7 @@ class DomainTopology(
         Returns a description of all properties, including those of
         components, and provides selected values of all data arrays.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -266,7 +266,7 @@ class DomainTopology(
         * The netCDF variable name, preceded by 'ncvar%'.
         * The value of the default parameter.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `identities`
 
@@ -311,7 +311,7 @@ class DomainTopology(
           e.g. ``'long_name:Air temperature'``.
         * The netCDF variable name, preceded by ``'ncvar%'``.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `identity`
 
@@ -359,7 +359,7 @@ class DomainTopology(
         *start_index* is ``1``), where ``N`` is the number of mesh
         nodes.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 

@@ -63,7 +63,7 @@ class DomainTopology(abstract.Topology):
 
     See CF Appendix I "The CF Data Model".
 
-    .. versionadded:: (cfdm) UGRIDVER
+    .. versionadded:: (cfdm) 1.11.0.0
 
     """
 
@@ -115,7 +115,7 @@ class DomainTopology(abstract.Topology):
     def construct_type(self):
         """Return a description of the construct type.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Returns:
 
@@ -136,7 +136,7 @@ class DomainTopology(abstract.Topology):
 
         {{cell type}}
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `get_cell`, `has_cell`, `set_cell`
 
@@ -179,7 +179,7 @@ class DomainTopology(abstract.Topology):
 
         {{cell type}}
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `del_cell`, `has_cell`, `set_cell`
 
@@ -222,7 +222,7 @@ class DomainTopology(abstract.Topology):
 
         {{cell type}}
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `del_cell`, `get_cell`, `set_cell`
 
@@ -259,7 +259,7 @@ class DomainTopology(abstract.Topology):
 
         {{cell type}}
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `del_cell`, `get_cell`, `has_cell`
 

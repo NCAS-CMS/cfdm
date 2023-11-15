@@ -124,7 +124,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 Mask *array* where it is equal to *mask_value*, using
                 numerically tolerant floating point equality.
 
-                .. versionadded:: (cfdm) UGRIDVER
+                .. versionadded:: (cfdm) 1.11.0.0
 
             {{init source: optional}}
 
@@ -1299,7 +1299,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         An `AttributeError` is raised if a sparse array representation
         is not available.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `array`
 
@@ -3084,7 +3084,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         Masks the data where elements are approximately equal to the
         given value. For integer types, exact equality is used.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `mask`
 

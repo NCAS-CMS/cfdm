@@ -8,7 +8,7 @@ class PointTopology:
 
     Subclasses must also inherit from `MeshSubarray`.
 
-    .. versionadded:: (cfdm) UGRIDVER
+    .. versionadded:: (cfdm) 1.11.0.0
 
     """
 
@@ -17,7 +17,7 @@ class PointTopology:
 
         x.__getitem__(indices) <==> x[indices]
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         """
         from math import isnan

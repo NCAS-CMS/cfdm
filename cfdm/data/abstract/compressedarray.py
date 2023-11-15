@@ -166,7 +166,7 @@ class CompressedArray(Array):
         Returns a subspace of the uncompressed array as an independent
         numpy array.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         """
         # ------------------------------------------------------------
@@ -496,7 +496,7 @@ class CompressedArray(Array):
     def subarray_parameters(self):
         """Non-data parameters required by the `Subarray` class.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Returns:
 

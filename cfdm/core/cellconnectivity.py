@@ -34,7 +34,7 @@ class CellConnectivity(abstract.Topology):
 
     See CF Appendix I "The CF Data Model".
 
-    .. versionadded:: (cfdm) UGRIDVER
+    .. versionadded:: (cfdm) 1.11.0.0
 
     """
 
@@ -86,7 +86,7 @@ class CellConnectivity(abstract.Topology):
     def construct_type(self):
         """Return a description of the construct type.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Returns:
 
@@ -107,7 +107,7 @@ class CellConnectivity(abstract.Topology):
 
         {{{cell connectivity type}}
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `get_connectivity`, `has_connectivity`,
                      `set_connectivity`
@@ -151,7 +151,7 @@ class CellConnectivity(abstract.Topology):
 
         {{{cell connectivity type}}
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `del_connectivity`, `get_connectivity`,
                      `set_connectivity`
@@ -191,7 +191,7 @@ class CellConnectivity(abstract.Topology):
 
         See `set_connectivity` for the connectivity type definitions.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `del_connectivity`, `has_connectivity`,
                      `set_connectivity`
@@ -235,7 +235,7 @@ class CellConnectivity(abstract.Topology):
 
         {{{cell connectivity type}}
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `del_connectivity`, `get_connectivity`,
                      `has_connectivity`

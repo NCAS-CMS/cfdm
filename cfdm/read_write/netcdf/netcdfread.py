@@ -35,7 +35,7 @@ _flattener_separator = netcdf_flattener._Flattener._Flattener__new_separator
 class Mesh:
     """A UGRID mesh defintion.
 
-    .. versionadded:: (cfdm) UGRIDVER
+    .. versionadded:: (cfdm) 1.11.0.0
 
     """
 
@@ -310,7 +310,7 @@ class NetCDFRead(IORead):
     def ugrid_cell_connectivity_types(self):
         """Cell connectivity types.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Returns:
 
@@ -327,7 +327,7 @@ class NetCDFRead(IORead):
     def ugrid_mesh_topology_attributes(self):
         """The names of the non-metadata UGRID mesh topology attributes.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Returns:
 
@@ -3188,7 +3188,7 @@ class NetCDFRead(IORead):
             The location of cells on a UGRID mesh topology. Ignored
             unless *domain* is True.
 
-            .. versionadded:: (cfdm) UGRIDVER
+            .. versionadded:: (cfdm) 1.11.0.0
 
         :Returns:
 
@@ -4881,7 +4881,7 @@ class NetCDFRead(IORead):
     def _include_component_report(self, parent_ncvar, ncvar):
         """Include a component in the dataset compliance report.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -8623,7 +8623,7 @@ class NetCDFRead(IORead):
         *location_index_set variable* to
         ``self.read_vars["do_not_create_field"]``.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -8769,7 +8769,7 @@ class NetCDFRead(IORead):
         *location_index_set* variable to
         ``self.read_vars["do_not_create_field"]``.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -8827,7 +8827,7 @@ class NetCDFRead(IORead):
     ):
         """Create auxiliary coordinate constructs from a UGRID mesh.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -8937,7 +8937,7 @@ class NetCDFRead(IORead):
     ):
         """Create coordinate bounds from UGRID nodes.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -9040,7 +9040,7 @@ class NetCDFRead(IORead):
     def _ugrid_create_domain_topology(self, parent_ncvar, f, mesh, location):
         """Create a domain topology construct.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -9164,7 +9164,7 @@ class NetCDFRead(IORead):
 
         Only "face_face_connectivity" is supported.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -9258,7 +9258,7 @@ class NetCDFRead(IORead):
     def _ugrid_cell_dimension(self, location, connectivity_ncvar, mesh):
         """The connectivity variable dimension that indexes the cells.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -9297,7 +9297,7 @@ class NetCDFRead(IORead):
 
         These checks are independent of any parent data variable.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -9516,7 +9516,7 @@ class NetCDFRead(IORead):
 
         These checks are independent of any parent variable.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -9608,7 +9608,7 @@ class NetCDFRead(IORead):
 
         These checks are in the context of a parent variable.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -9732,7 +9732,7 @@ class NetCDFRead(IORead):
 
         These checks are in the context of a parent variable.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -9808,7 +9808,7 @@ class NetCDFRead(IORead):
     ):
         """Check a UGRID connectivity variable.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 

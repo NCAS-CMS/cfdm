@@ -4,7 +4,7 @@ from ..decorators import _inplace_enabled, _inplace_enabled_define_and_cleanup
 class Topology:
     """Mixin class for topology-related constructs.
 
-    .. versionadded:: (cfdm) UGRIDVER
+    .. versionadded:: (cfdm) 1.11.0.0
 
     """
 
@@ -20,7 +20,7 @@ class Topology:
 
         See `normalise` for further details.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `normalise`
 
@@ -130,7 +130,7 @@ class Topology:
         It is assumed that any such columns will be at the end of the
         dimension.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `_normalise_cell_ids`, `normalise`
 
@@ -164,7 +164,7 @@ class Topology:
         specified. Therefore, the `transpose` method never changes the
         data.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         .. seealso:: `insert_dimension`, `squeeze`
 

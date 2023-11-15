@@ -11,7 +11,7 @@ class BoundsFromNodesArray(MeshArray):
     mapping from from each cell boundary vertex to its corresponding
     coordinate value.
 
-    .. versionadded:: (cfdm) UGRIDVER
+    .. versionadded:: (cfdm) 1.11.0.0
 
     .. seealso:: `BoundsFromNodesSubarray`
 
@@ -20,7 +20,7 @@ class BoundsFromNodesArray(MeshArray):
     def __new__(cls, *args, **kwargs):
         """Store subarray classes.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         """
         instance = super().__new__(cls)
@@ -98,7 +98,7 @@ class BoundsFromNodesArray(MeshArray):
     def dtype(self):
         """The data-type of the uncompressed data.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         """
         return self.get_node_coordinates().dtype
@@ -109,7 +109,7 @@ class BoundsFromNodesArray(MeshArray):
         The conformed data arrays are mutually consistent and are
         suitable fo use in `Subarray` classes.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Returns:
 
@@ -126,7 +126,7 @@ class BoundsFromNodesArray(MeshArray):
     def get_node_coordinates(self, default=ValueError()):
         """The coordinates representing the node locations.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Parameters:
 
@@ -148,7 +148,7 @@ class BoundsFromNodesArray(MeshArray):
 
         There is no change to data that is already in memory.
 
-        .. versionadded:: (cfdm) UGRIDVER
+        .. versionadded:: (cfdm) 1.11.0.0
 
         :Returns:
 
