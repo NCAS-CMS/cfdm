@@ -14,7 +14,10 @@ import cfdm
 VN = cfdm.CF()
 
 # Load large arrays
-arrays = np.load("create_test_files.npz")
+filename = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "create_test_files.npz"
+)
+arrays = np.load(filename)
 
 
 # --------------------------------------------------------------------
