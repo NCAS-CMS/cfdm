@@ -70,6 +70,7 @@ The **cfdm** package can
 * read field and domain constructs from netCDF and CDL datasets,
 * create new field and domain constructs in memory,
 * write and append field and domain constructs to netCDF datasets on disk,
+* read, write, and manipulate UGRID mesh topologies,
 * read, write, and create coordinates defined by geometry cells,
 * read and write netCDF4 string data-type variables,
 * read, write, and create netCDF and CDL datasets containing hierarchical groups,
