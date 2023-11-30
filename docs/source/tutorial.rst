@@ -568,7 +568,7 @@ Class                  CF data model construct                                  
                                                                                        within the domain	       
 `CellMethod`           :term:`Cell method <cell method constructs>`                    Describes how data represent  
                                                                                        variation within cells	       
-=====================  ==============================================================  =============================
+=====================  ==============================================================  ==============================
 
 Metadata constructs of a particular type can be retrieved with the
 following methods of the field construct:
@@ -591,8 +591,8 @@ Method                          Metadata constructs
 Each of these attributes returns a `Constructs` class instance that
 maps metadata constructs to unique identifiers called "construct
 keys". A `~Constructs` instance has methods for selecting constructs
-that meet particular criteria (see the section on :ref:`filtering
-metadata constructs <Filtering-metadata-constructs>`). It also behaves
+that meet particular criteria (see the section on :ref:`selecting
+metadata constructs <Selecting-metadata-constructs>`). It also behaves
 like a "read-only" Python dictionary, in that it has
 `~Constructs.items`, `~Constructs.keys` and `~Constructs.values`
 methods that work exactly like their corresponding `dict` methods. It
@@ -951,10 +951,10 @@ the original field construct.
 The ``_FillValue`` and ``missing_value`` attributes of the field
 construct are *not* stored as values of the field construct's
 data. They are only used when :ref:`writing the data to a netCDF
-dataset <Writing-to-a-netCDF-dataset>`. Therefore testing for missing
-data by testing for equality to one of these property values will
-produce incorrect results; the `~Data.any` method of the `Data`
-instance should be used instead.
+dataset <Writing-to-disk>`. Therefore testing for missing data by
+testing for equality to one of these property values will produce
+incorrect results; the `~Data.any` method of the `Data` instance
+should be used instead.
 
 .. code-block:: python
    :caption: *See if any data points are masked.*
@@ -1725,7 +1725,7 @@ of the field construct:
 
 .. code-block:: python
    :caption: *Find the construct keys of the domain axis constructs
-             spanned by the 'latitude' construct.
+             spanned by the 'latitude' construct.*
 
    >>> t.get_data_axes('latitude')
    ('domainaxis1', 'domainaxis2')
@@ -2291,6 +2291,7 @@ There are various methods for creating a field construct in memory:
 * :ref:`Ab initio creation <Ab-initio-creation>`: Instantiate
   instances of field and metadata construct classes and manually
   provide the connections between them.
+
 ..
 
 * :ref:`Command modification <Command-modification>`: Produce the
@@ -2989,9 +2990,6 @@ latter. This is because the surface altitude netCDF variable in
 ``grid_mapping`` netCDF attributes that would link it to auxiliary
 coordinate, cell measure and grid mapping netCDF variables.
 
-
-Creating compressed constructs
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ----
 
 .. _Copying:
@@ -4888,7 +4886,6 @@ still in subsampled representation described in the file:
     [ 15. 135. 225. 255. 345.]
     [ 15. 135. 225. 255. 345.]]
 
-   >>> print(lon.array)
 As with all other forms of compression, the field may be treated as if
 were not compressed:
 
