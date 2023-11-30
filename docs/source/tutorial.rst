@@ -61,7 +61,7 @@ the `cfdm.CF` function:
    :caption: *Retrieve the version of the CF conventions.*
       
    >>> cfdm.CF()
-   '1.10'
+   '1.11'
 
 This indicates which version of the CF conventions are represented by
 this release of the cfdm package, and therefore the version can not be
@@ -304,7 +304,7 @@ components, and shows the first and last values of all data arrays:
    ----------------------------------
    Field: specific_humidity (ncvar%q)
    ----------------------------------
-   Conventions = 'CF-1.10'
+   Conventions = 'CF-1.11'
    project = 'research'
    standard_name = 'specific_humidity'
    units = '1'
@@ -338,7 +338,7 @@ components, and shows the first and last values of all data arrays:
    ---------------------------------
    Field: air_temperature (ncvar%ta)
    ---------------------------------
-   Conventions = 'CF-1.10'
+   Conventions = 'CF-1.11'
    project = 'research'
    standard_name = 'air_temperature'
    units = 'K'
@@ -475,7 +475,7 @@ retrieved with the `~Field.properties` method:
    :caption: *Retrieve all of the descriptive properties*
 	     
    >>> t.properties()
-   {'Conventions': 'CF-1.10',
+   {'Conventions': 'CF-1.11',
     'project': 'research',
     'standard_name': 'air_temperature',
     'units': 'K'}
@@ -511,19 +511,19 @@ properties may be removed with the `~Field.clear_properties` and
 	     
    >>> original = t.properties()
    >>> original
-   {'Conventions': 'CF-1.10',
+   {'Conventions': 'CF-1.11',
     'project': 'research',
     'standard_name': 'air_temperature',
     'units': 'K'}
    >>> t.set_properties({'foo': 'bar', 'units': 'K'})
    >>> t.properties()
-   {'Conventions': 'CF-1.10',
+   {'Conventions': 'CF-1.11',
     'foo': 'bar',
     'project': 'research',
     'standard_name': 'air_temperature',
     'units': 'K'}
    >>> t.clear_properties()
-    {'Conventions': 'CF-1.10',
+    {'Conventions': 'CF-1.11',
     'foo': 'bar',
     'project': 'research',
     'standard_name': 'air_temperature',
@@ -532,7 +532,7 @@ properties may be removed with the `~Field.clear_properties` and
    {}
    >>> t.set_properties(original)
    >>> t.properties()
-   {'Conventions': 'CF-1.10',
+   {'Conventions': 'CF-1.11',
     'project': 'research',
     'standard_name': 'air_temperature',
     'units': 'K'}
@@ -2776,7 +2776,7 @@ the desired field construct. The commands are produced by the
    #
    # field: specific_humidity
    field = cfdm.Field()
-   field.set_properties({'Conventions': 'CF-1.10', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+   field.set_properties({'Conventions': 'CF-1.11', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
    field.nc_set_variable('q')
    data = cfdm.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
    field.set_data(data)
@@ -3503,7 +3503,7 @@ The new dataset is structured as follows:
    		humidity:coordinates = "time" ;
    
    // global attributes:
-   		:Conventions = "CF-1.10" ;
+   		:Conventions = "CF-1.11" ;
    		:project = "research" ;
    }
 
@@ -3629,7 +3629,7 @@ netCDF data variable.
    >>> f.nc_global_attributes()
    {'Conventions': None, 'project': None, 'model': None}
    >>> f.nc_global_attributes(values=True)
-   {'Conventions': 'CF-1.10', 'project': 'research', 'model': 'model_A'}
+   {'Conventions': 'CF-1.11', 'project': 'research', 'model': 'model_A'}
    >>> cfdm.write(f, 'f_file.nc')
 
 It is possible to create both a netCDF global attribute and a netCDF
@@ -3650,7 +3650,7 @@ attribute from the file.
 	     
    >>> f.set_property('information', 'variable information')
    >>> f.properties()
-   {'Conventions': 'CF-1.10',
+   {'Conventions': 'CF-1.11',
     'project': 'research',
     'standard_name': 'specific_humidity',
     'units': '1',
@@ -3678,7 +3678,7 @@ constructs.
    >>> cfdm.write(f, 'f_file.nc', file_descriptors={'history': 'created today'})
    >>> f_file = cfdm.read('f_file.nc')[0]
    >>> f_file.properties()
-   {'Conventions': 'CF-1.10',
+   {'Conventions': 'CF-1.11',
     'history': 'created today',
     'model': 'model_A',
     'project': 'research',
@@ -3790,7 +3790,7 @@ variable):
    		humidity:cell_methods = "area: mean" ;
    
    // global attributes:
-   		:Conventions = "CF-1.10" ;
+   		:Conventions = "CF-1.11" ;
    		:project = "research" ;
    }
 
@@ -4764,7 +4764,7 @@ The content of the new file is:
    		precipitation_flux:standard_name = "precipitation_flux" ;
    
    // global attributes:
-   		:Conventions = "CF-1.10" ;
+   		:Conventions = "CF-1.11" ;
    data:
    
     list = 1, 4, 5 ;
@@ -4833,7 +4833,7 @@ This is illustrated with the file ``subsampled.nc`` (found in the
    		q:coordinate_interpolation = "lat: lon: bilinear" ;
    
    // global attributes:
-   		:Conventions = "CF-1.10" ;
+   		:Conventions = "CF-1.11" ;
    }
 
 
