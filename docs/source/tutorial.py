@@ -817,7 +817,6 @@ lon.data.source()
 print(lon.array)
 lon.data.source().source()
 print(lon.data.source().source().array)
-print(lon.array)
 g = f[0, 6, :]
 print(g)
 print(g.construct('longitude').array)
