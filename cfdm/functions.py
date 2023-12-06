@@ -324,10 +324,11 @@ def environment(display=True, paths=True):
     Python: 3.9.12 /home/user/miniconda3/bin/python
     netCDF4: 1.6.0 /home/user/miniconda3/lib/python3.9/site-packages/netCDF4/__init__.py
     numpy: 1.22.3 /home/user/miniconda3/lib/python3.9/site-packages/numpy/__init__.py
-    cfdm.core: 1.10.0.0 /home/user/miniconda3/lib/python3.9/site-packages/cfdm/core/__init__.py
+    cfdm.core: 1.11.0.0 /home/user/miniconda3/lib/python3.9/site-packages/cfdm/core/__init__.py
+    scipy: 1.11.3 /home/user/miniconda3/lib/python3.11/site-packages/scipy/__init__.py
     cftime: 1.6.1 /home/user/miniconda3/lib/python3.9/site-packages/cftime/__init__.py
     netcdf_flattener: 1.2.0 /home/user/miniconda3/lib/python3.9/site-packages/netcdf_flattener/__init__.py
-    cfdm: 1.10.0.0 /home/user/miniconda3/lib/python3.9/site-packages/cfdm/__init__.py
+    cfdm: 1.11.0.0 /home/user/miniconda3/lib/python3.9/site-packages/cfdm/__init__.py
 
     >>> cfdm.environment(paths=False)
     HDF5 library: 1.12.1
@@ -335,10 +336,11 @@ def environment(display=True, paths=True):
     Python: 3.9.12
     netCDF4: 1.6.0
     numpy: 1.22.3
-    cfdm.core: 1.10.0.0
+    cfdm.core: 1.11.0.0  
+    scipy: 1.11.3  
     cftime: 1.6.1
     netcdf_flattener: 1.2.0
-    cfdm: 1.10.0.0
+    cfdm: 1.11.0.0
 
     """
     out = core.environment(display=False, paths=paths)  # get all core env
@@ -391,7 +393,7 @@ def CF():
     **Examples**
 
     >>> CF()
-    '1.10'
+    '1.11'
 
     """
     return __cf_version__
