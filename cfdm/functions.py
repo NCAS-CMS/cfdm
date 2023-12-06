@@ -336,8 +336,8 @@ def environment(display=True, paths=True):
     Python: 3.9.12
     netCDF4: 1.6.0
     numpy: 1.22.3
-    cfdm.core: 1.11.0.0  
-    scipy: 1.11.3  
+    cfdm.core: 1.11.0.0
+    scipy: 1.11.3
     cftime: 1.6.1
     netcdf_flattener: 1.2.0
     cfdm: 1.11.0.0
