@@ -38,7 +38,7 @@ zip cfdm_tutorial_files.zip *.nc
 cd -
 
 # Regerenate tutorial.py
-if [[ $1 = "latest" ]] || [[ $1 = "archive" ]] ; then
+if [[ $1 = "latest" ]] ; then
   ./test_tutorial_code
 fi
 
