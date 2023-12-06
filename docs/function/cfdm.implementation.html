@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cfdm.implementation &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -21,7 +22,7 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.unique_constructs" href="cfdm.unique_constructs.html" />
+    <link rel="next" title="cfdm.integer_dtype" href="cfdm.integer_dtype.html" />
     <link rel="prev" title="cfdm.example_domain" href="cfdm.example_domain.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.10.1.2</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.11.0.0</a></h1>
 
 
 
@@ -86,7 +87,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../functions.html"><strong>cfdm functions</strong></a><ul>
       <li>Previous: <a href="cfdm.example_domain.html" title="previous chapter">cfdm.example_domain</a></li>
-      <li>Next: <a href="cfdm.unique_constructs.html" title="next chapter">cfdm.unique_constructs</a></li>
+      <li>Next: <a href="cfdm.integer_dtype.html" title="next chapter">cfdm.integer_dtype</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -120,11 +121,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <div class="section" id="cfdm-implementation">
+  <section id="cfdm-implementation">
 <h1>cfdm.implementation<a class="headerlink" href="#cfdm-implementation" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cfdm.implementation">
-<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">implementation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.1.2/cfdm/cfdmimplementation.py#L3487-L3532"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.implementation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">implementation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.0.0/cfdm/cfdmimplementation.py#L3720-L3766"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.implementation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a container for the CF data model implementation.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.7.0</p>
@@ -162,6 +163,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <span class="go"> &#39;Data&#39;: &lt;class &#39;cfdm.data.data.Data&#39;&gt;,</span>
 <span class="go"> &#39;GatheredArray&#39;: &lt;class &#39;cfdm.data.gatheredarray.GatheredArray&#39;&gt;,</span>
 <span class="go"> &#39;NetCDFArray&#39;: &lt;class &#39;cfdm.data.netcdfarray.NetCDFArray&#39;&gt;,</span>
+<span class="go"> &#39;PointTopologyArray&#39;: &lt;class &#39;cfdm.data.pointtopologyarray.PointTopologyArray&#39;&gt;,</span>
 <span class="go"> &#39;RaggedContiguousArray&#39;: &lt;class &#39;cfdm.data.raggedcontiguousarray.RaggedContiguousArray&#39;&gt;,</span>
 <span class="go"> &#39;RaggedIndexedArray&#39;: &lt;class &#39;cfdm.data.raggedindexedarray.RaggedIndexedArray&#39;&gt;,</span>
 <span class="go"> &#39;RaggedIndexedContiguousArray&#39;: &lt;class &#39;cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray&#39;&gt;,</span>
@@ -175,7 +177,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
 
@@ -186,11 +188,11 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-08-31.
+      &copy;2023, NCAS | Page built on 2023-12-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cfdm.core.Field.data &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -21,7 +22,7 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.core.Field.del_construct" href="../method/cfdm.core.Field.del_construct.html" />
+    <link rel="next" title="cfdm.core.Field.dtype" href="cfdm.core.Field.dtype.html" />
     <link rel="prev" title="cfdm.core.Field.set_data_axes" href="../method/cfdm.core.Field.set_data_axes.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.10.1.2</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.11.0.0</a></h1>
 
 
 
@@ -87,7 +88,7 @@
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
   <li><a href="../class/cfdm.core.Field.html">cfdm.core.Field</a><ul>
       <li>Previous: <a href="../method/cfdm.core.Field.set_data_axes.html" title="previous chapter">cfdm.core.Field.set_data_axes</a></li>
-      <li>Next: <a href="../method/cfdm.core.Field.del_construct.html" title="next chapter">cfdm.core.Field.del_construct</a></li>
+      <li>Next: <a href="cfdm.core.Field.dtype.html" title="next chapter">cfdm.core.Field.dtype</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -122,15 +123,15 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <div class="section" id="cfdm-core-field-data">
+  <section id="cfdm-core-field-data">
 <h1>cfdm.core.Field.data<a class="headerlink" href="#cfdm-core-field-data" title="Permalink to this headline">¶</a></h1>
 <dl class="attribute">
 <dt id="cfdm.core.Field.data">
 <code class="sig-prename descclassname">Field.</code><code class="sig-name descname">data</code><a class="headerlink" href="#cfdm.core.Field.data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data.</p>
 <p><code class="docutils literal notranslate"><span class="pre">f.data</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">f.get_data()</span></code></p>
-<p>Note that a <a class="reference internal" href="../class/cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance is returned. Use its <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a>
-attribute to return the data as a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.25)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array.</p>
+<p>Note that a <a class="reference internal" href="../class/cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance is returned. Use its <a class="reference external" href="https://docs.python.org/3/library/array.html#module-array" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a>
+attribute to return the data as a <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array.</p>
 <p>The units, calendar and fill value properties are, if set,
 inserted into the data.</p>
 <div class="versionadded">
@@ -163,7 +164,7 @@ inserted into the data.</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
 
@@ -174,11 +175,11 @@ inserted into the data.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-08-31.
+      &copy;2023, NCAS | Page built on 2023-12-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cfdm.Field &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.10.1.2</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.11.0.0</a></h1>
 
 
 
@@ -120,12 +121,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <div class="section" id="cfdm-field">
+  <section id="cfdm-field">
 <span id="id1"></span><h1>cfdm.Field<a class="headerlink" href="#cfdm-field" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Field">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.1.2/cfdm/field.py#L23-L2582"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">Field</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.0.0/cfdm/field.py#L32-L2588"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGeometry</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGlobalAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFGroupAttributes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFComponents</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFUnreferenced</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.fielddomain.FieldDomain</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.files.Files</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.field.Field</span></code></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes
@@ -192,7 +193,7 @@ dataset may be accessed with the <a class="reference internal" href="../method/c
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt><dd><p>Set descriptive properties. The dictionary keys are
 property names, with corresponding values.</p>
 <p>Properties may also be set after initialisation with
 the <a class="reference internal" href="../method/cfdm.Field.set_properties.html#cfdm.Field.set_properties" title="cfdm.Field.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cfdm.Field.set_property.html#cfdm.Field.set_property" title="cfdm.Field.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
@@ -212,7 +213,7 @@ this way are assumed to have their default value.</p>
 <code class="docutils literal notranslate"><span class="pre">cfdm.Field(source=x)</span></code> is equivalent to
 <code class="docutils literal notranslate"><span class="pre">x.copy()</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
 parameters prior to initialisation. By default the
 parameters are not deep copied.</p>
 </dd>
@@ -221,7 +222,7 @@ parameters are not deep copied.</p>
 </dl>
 </dd></dl>
 
-<div class="section" id="inspection">
+<section id="inspection">
 <span id="field-inspection"></span><h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -253,8 +254,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="properties">
+</section>
+<section id="properties">
 <span id="field-properties"></span><h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -289,8 +290,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="data">
+</section>
+<section id="data">
 <span id="field-data"></span><h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -357,18 +358,18 @@ parameters are not deep copied.</p>
 <td><p>Data-type of the data elements.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.Field.ndim.html#cfdm.Field.ndim" title="cfdm.Field.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></p></td>
-<td><p>The number of dimensions in the data array.</p></td>
+<td><p>The number of data dimensions.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cfdm.Field.shape.html#cfdm.Field.shape" title="cfdm.Field.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
 <td><p>A tuple of the data array’s dimension sizes.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cfdm.Field.size.html#cfdm.Field.size" title="cfdm.Field.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
-<td><p>The number of elements in the data array.</p></td>
+<td><p>The number elements in the data.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="metadata-constructs">
+</section>
+<section id="metadata-constructs">
 <span id="field-metadata-constructs"></span><h2>Metadata constructs<a class="headerlink" href="#metadata-constructs" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -398,18 +399,6 @@ parameters are not deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.set_construct.html#cfdm.Field.set_construct" title="cfdm.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a></p></td>
 <td><p>Set a metadata construct.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.del_data_axes.html#cfdm.Field.del_data_axes" title="cfdm.Field.del_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data_axes</span></code></a></p></td>
-<td><p>Removes the keys of the axes spanned by the construct data.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.get_data_axes.html#cfdm.Field.get_data_axes" title="cfdm.Field.get_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_axes</span></code></a></p></td>
-<td><p>Gets the keys of the axes spanned by the construct data.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.has_data_axes.html#cfdm.Field.has_data_axes" title="cfdm.Field.has_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data_axes</span></code></a></p></td>
-<td><p>Whether the axes spanned by the construct data have been set.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.set_data_axes.html#cfdm.Field.set_data_axes" title="cfdm.Field.set_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data_axes</span></code></a></p></td>
-<td><p>Sets the axes spanned by the construct data.</p></td>
-</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.domain_axis_key.html#cfdm.Field.domain_axis_key" title="cfdm.Field.domain_axis_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis_key</span></code></a></p></td>
 <td><p>Returns the domain axis key spanned by 1-d coordinates.</p></td>
 </tr>
@@ -418,6 +407,12 @@ parameters are not deep copied.</p>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.auxiliary_coordinates.html#cfdm.Field.auxiliary_coordinates" title="cfdm.Field.auxiliary_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinates</span></code></a></p></td>
 <td><p>Return auxiliary coordinate constructs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.cell_connectivity.html#cfdm.Field.cell_connectivity" title="cfdm.Field.cell_connectivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_connectivity</span></code></a></p></td>
+<td><p>Select a cell connectivity construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.cell_connectivities.html#cfdm.Field.cell_connectivities" title="cfdm.Field.cell_connectivities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_connectivities</span></code></a></p></td>
+<td><p>Select cell connectivity constructs.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.cell_measure.html#cfdm.Field.cell_measure" title="cfdm.Field.cell_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_measure</span></code></a></p></td>
 <td><p>Select a cell measure construct.</p></td>
@@ -461,6 +456,12 @@ parameters are not deep copied.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.domain_axes.html#cfdm.Field.domain_axes" title="cfdm.Field.domain_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axes</span></code></a></p></td>
 <td><p>Return domain axis constructs.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.domain_topology.html#cfdm.Field.domain_topology" title="cfdm.Field.domain_topology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_topology</span></code></a></p></td>
+<td><p>Select a domain topology construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.domain_topologies.html#cfdm.Field.domain_topologies" title="cfdm.Field.domain_topologies"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_topologies</span></code></a></p></td>
+<td><p>Return domain topology constructs.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.field_ancillary.html#cfdm.Field.field_ancillary" title="cfdm.Field.field_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">field_ancillary</span></code></a></p></td>
 <td><p>Select a field ancillary construct.</p></td>
 </tr>
@@ -484,8 +485,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="domain">
+</section>
+<section id="domain">
 <span id="field-domain"></span><h2>Domain<a class="headerlink" href="#domain" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -511,8 +512,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="miscellaneous">
+</section>
+<section id="miscellaneous">
 <span id="field-miscellaneous"></span><h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -521,49 +522,46 @@ parameters are not deep copied.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.climatological_time_axes.html#cfdm.Field.climatological_time_axes" title="cfdm.Field.climatological_time_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">climatological_time_axes</span></code></a></p></td>
-<td><p>Return all axes which are climatological time axes.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.compress.html#cfdm.Field.compress" title="cfdm.Field.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.compress.html#cfdm.Field.compress" title="cfdm.Field.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress</span></code></a></p></td>
 <td><p>Compress the field construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.copy.html#cfdm.Field.copy" title="cfdm.Field.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.copy.html#cfdm.Field.copy" title="cfdm.Field.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
 <td><p>Return a deep copy.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.creation_commands.html#cfdm.Field.creation_commands" title="cfdm.Field.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.creation_commands.html#cfdm.Field.creation_commands" title="cfdm.Field.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
 <td><p>Return the commands that would create the field construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.equals.html#cfdm.Field.equals" title="cfdm.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.equals.html#cfdm.Field.equals" title="cfdm.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></p></td>
 <td><p>Whether two constructs are the same.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.convert.html#cfdm.Field.convert" title="cfdm.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.convert.html#cfdm.Field.convert" title="cfdm.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert</span></code></a></p></td>
 <td><p>Convert a metadata construct into a new field construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.has_bounds.html#cfdm.Field.has_bounds" title="cfdm.Field.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.has_bounds.html#cfdm.Field.has_bounds" title="cfdm.Field.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></p></td>
 <td><p>Whether or not there are cell bounds.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.has_geometry.html#cfdm.Field.has_geometry" title="cfdm.Field.has_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_geometry</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.has_geometry.html#cfdm.Field.has_geometry" title="cfdm.Field.has_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_geometry</span></code></a></p></td>
 <td><p>Return whether or not any coordinates have cell geometries.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.indices.html#cfdm.Field.indices" title="cfdm.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indices</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.indices.html#cfdm.Field.indices" title="cfdm.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indices</span></code></a></p></td>
 <td><p>Create indices that define a subspace of the field construct.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.uncompress.html#cfdm.Field.uncompress" title="cfdm.Field.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.uncompress.html#cfdm.Field.uncompress" title="cfdm.Field.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p></td>
 <td><p>Uncompress the field construct.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.get_filenames.html#cfdm.Field.get_filenames" title="cfdm.Field.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.get_filenames.html#cfdm.Field.get_filenames" title="cfdm.Field.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
 <td><p>Return the names of the files containing the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.get_original_filenames.html#cfdm.Field.get_original_filenames" title="cfdm.Field.get_original_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_original_filenames</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.get_original_filenames.html#cfdm.Field.get_original_filenames" title="cfdm.Field.get_original_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_original_filenames</span></code></a></p></td>
 <td><p>The names of files containing the original data and metadata.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.to_memory.html#cfdm.Field.to_memory" title="cfdm.Field.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.to_memory.html#cfdm.Field.to_memory" title="cfdm.Field.to_memory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_memory</span></code></a></p></td>
 <td><p>Bring data on disk into memory.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="netcdf">
+</section>
+<section id="netcdf">
 <span id="field-netcdf"></span><h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -598,7 +596,7 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-<div class="section" id="groups">
+<section id="groups">
 <h3>Groups<a class="headerlink" href="#groups" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -630,8 +628,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="geometries">
+</section>
+<section id="geometries">
 <h3>Geometries<a class="headerlink" href="#geometries" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -663,8 +661,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="components">
+</section>
+<section id="components">
 <h3>Components<a class="headerlink" href="#components" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -711,8 +709,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="dataset-compliance">
+</section>
+<section id="dataset-compliance">
 <h3>Dataset compliance<a class="headerlink" href="#dataset-compliance" title="Permalink to this headline">¶</a></h3>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -726,9 +724,9 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="special">
+</section>
+</section>
+<section id="special">
 <span id="field-special"></span><h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -738,21 +736,21 @@ parameters are not deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.__deepcopy__.html#cfdm.Field.__deepcopy__" title="cfdm.Field.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.__getitem__.html#cfdm.Field.__getitem__" title="cfdm.Field.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
 <td><p>Return a subspace of the field defined by indices.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.Field.__repr__.html#cfdm.Field.__repr__" title="cfdm.Field.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.Field.__str__.html#cfdm.Field.__str__" title="cfdm.Field.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="docstring-substitutions">
+</section>
+<section id="docstring-substitutions">
 <h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -775,8 +773,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
 
@@ -787,11 +785,11 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-08-31.
+      &copy;2023, NCAS | Page built on 2023-12-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

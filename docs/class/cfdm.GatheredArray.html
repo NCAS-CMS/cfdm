@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cfdm.GatheredArray &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.10.1.2</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.11.0.0</a></h1>
 
 
 
@@ -120,12 +121,12 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <div class="section" id="cfdm-gatheredarray">
+  <section id="cfdm-gatheredarray">
 <h1>cfdm.GatheredArray<a class="headerlink" href="#cfdm-gatheredarray" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.GatheredArray">
-<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">GatheredArray</code><span class="sig-paren">(</span><em class="sig-param">compressed_array=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">compressed_dimension=None</em>, <em class="sig-param">compressed_dimensions=None</em>, <em class="sig-param">list_variable=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.10.1.2/cfdm/data/gatheredarray.py#L16-L504"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.GatheredArray" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">GatheredArray</code><span class="sig-paren">(</span><em class="sig-param">compressed_array=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">size=None</em>, <em class="sig-param">ndim=None</em>, <em class="sig-param">compressed_dimension=None</em>, <em class="sig-param">compressed_dimensions=None</em>, <em class="sig-param">list_variable=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.0.0/cfdm/data/gatheredarray.py#L16-L462"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.GatheredArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.abstract.compressedarray.CompressedArray</span></code></p>
 <p>An underlying gathered array.</p>
 <p>Compression by gathering combines axes of a multidimensional array
@@ -143,11 +144,13 @@ variable” that gives the indices of the required points.</p>
 <dd class="field-odd"><dl>
 <dt>compressed_array: array_like</dt><dd><p>The compressed array.</p>
 </dd>
-<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>The shape of the uncompressed array.</p>
+<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>The shape of the uncompressed array.</p>
 </dd>
-<dt>compressed_dimensions: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Mapping of dimensions of the compressed array to their
+<dt>compressed_dimensions: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Mapping of compressed to uncompressed dimensions.</p>
+<p>A dictionary key is a position of a dimension in the
+compressed data, with a value of the positions of the
 corresponding dimensions in the uncompressed
-array. Compressed array dimensions that are not
+data. Compressed array dimensions that are not
 compressed must be omitted from the mapping.</p>
 <dl class="simple">
 <dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">{2:</span> <span class="pre">(2,</span> <span class="pre">3)}</span></code></p>
@@ -176,17 +179,17 @@ this way are assumed to have their default value.</p>
 <p><span class="versionmodified added">New in version (cfdm): </span>1.10.0.0</p>
 </div>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True (the default) then deep copy the input
 parameters prior to initialisation. By default the
 parameters are not deep copied.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.10.0.0</p>
 </div>
 </dd>
-<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Deprecated at version 1.10.0.0. Ignored if set.</p>
+<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Deprecated at version 1.10.0.0. Ignored if set.</p>
 <p>Number of elements in the uncompressed array.</p>
 </dd>
-<dt>ndim: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Deprecated at version 1.10.0.0. Ignored if set.</p>
+<dt>ndim: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Deprecated at version 1.10.0.0. Ignored if set.</p>
 <p>The number of uncompressed array dimensions</p>
 </dd>
 </dl>
@@ -194,7 +197,7 @@ parameters are not deep copied.</p>
 </dl>
 </dd></dl>
 
-<div class="section" id="inspection">
+<section id="inspection">
 <h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -247,8 +250,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="units">
+</section>
+<section id="units">
 <h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -265,8 +268,8 @@ parameters are not deep copied.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="miscellaneous">
+</section>
+<section id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -290,25 +293,28 @@ parameters are not deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray.subarray_shapes.html#cfdm.GatheredArray.subarray_shapes" title="cfdm.GatheredArray.subarray_shapes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subarray_shapes</span></code></a></p></td>
 <td><p>Create the subarray shapes along each uncompressed dimension.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray.subarrays.html#cfdm.GatheredArray.subarrays" title="cfdm.GatheredArray.subarrays"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subarrays</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray.subarray_parameters.html#cfdm.GatheredArray.subarray_parameters" title="cfdm.GatheredArray.subarray_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subarray_parameters</span></code></a></p></td>
+<td><p>Non-data parameters required by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Subarray</span></code> class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray.subarrays.html#cfdm.GatheredArray.subarrays" title="cfdm.GatheredArray.subarrays"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subarrays</span></code></a></p></td>
 <td><p>Return descriptors for every subarray.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray.get_Subarray.html#cfdm.GatheredArray.get_Subarray" title="cfdm.GatheredArray.get_Subarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_Subarray</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray.get_Subarray.html#cfdm.GatheredArray.get_Subarray" title="cfdm.GatheredArray.get_Subarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_Subarray</span></code></a></p></td>
 <td><p>Return the Subarray class.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray.conformed_data.html#cfdm.GatheredArray.conformed_data" title="cfdm.GatheredArray.conformed_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">conformed_data</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray.conformed_data.html#cfdm.GatheredArray.conformed_data" title="cfdm.GatheredArray.conformed_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">conformed_data</span></code></a></p></td>
 <td><p>The compressed data and list variable.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.GatheredArray.get_filename</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.GatheredArray.get_filename</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray.get_filenames.html#cfdm.GatheredArray.get_filenames" title="cfdm.GatheredArray.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray.get_filenames.html#cfdm.GatheredArray.get_filenames" title="cfdm.GatheredArray.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
 <td><p>Return the names of any files containing the compressed data.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="special">
+</section>
+<section id="special">
 <h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -321,21 +327,21 @@ parameters are not deep copied.</p>
 <td><p>The numpy array interface.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray.__deepcopy__.html#cfdm.GatheredArray.__deepcopy__" title="cfdm.GatheredArray.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray.__getitem__.html#cfdm.GatheredArray.__getitem__" title="cfdm.GatheredArray.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p></td>
 <td><p>Return a subspace of the uncompressed data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray.__repr__.html#cfdm.GatheredArray.__repr__" title="cfdm.GatheredArray.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray.__str__.html#cfdm.GatheredArray.__str__" title="cfdm.GatheredArray.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></p></td>
-<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
+<td><p>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="docstring-substitutions">
+</section>
+<section id="docstring-substitutions">
 <h2>Docstring substitutions<a class="headerlink" href="#docstring-substitutions" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -344,22 +350,22 @@ parameters are not deep copied.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.GatherArray._docstring_special_substitutions</span></code></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray._docstring_special_substitutions.html#cfdm.GatheredArray._docstring_special_substitutions" title="cfdm.GatheredArray._docstring_special_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_special_substitutions</span></code></a></p></td>
+<td><p>Return the special docstring substitutions.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.GatherArray._docstring_substitutions</span></code></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray._docstring_substitutions.html#cfdm.GatheredArray._docstring_substitutions" title="cfdm.GatheredArray._docstring_substitutions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_substitutions</span></code></a></p></td>
+<td><p>Returns the substitutions that apply to methods of the class.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.GatherArray._docstring_package_depth</span></code></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray._docstring_package_depth.html#cfdm.GatheredArray._docstring_package_depth" title="cfdm.GatheredArray._docstring_package_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_package_depth</span></code></a></p></td>
+<td><p>Returns the class {{package}} substitutions package depth.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.GatherArray._docstring_method_exclusions</span></code></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cfdm.GatheredArray._docstring_method_exclusions.html#cfdm.GatheredArray._docstring_method_exclusions" title="cfdm.GatheredArray._docstring_method_exclusions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_docstring_method_exclusions</span></code></a></p></td>
+<td><p>Returns method names excluded in the class substitutions.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
 
@@ -370,11 +376,11 @@ parameters are not deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-08-31.
+      &copy;2023, NCAS | Page built on 2023-12-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

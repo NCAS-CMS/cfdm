@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>cfdm.Data.array &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -21,7 +22,7 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Data.dtype" href="cfdm.Data.dtype.html" />
+    <link rel="next" title="cfdm.Data.sparse_array" href="cfdm.Data.sparse_array.html" />
     <link rel="prev" title="cfdm.Data" href="../class/cfdm.Data.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -37,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.10.1.2</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.11.0.0</a></h1>
 
 
 
@@ -87,7 +88,7 @@
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Data.html">cfdm.Data</a><ul>
       <li>Previous: <a href="../class/cfdm.Data.html" title="previous chapter">cfdm.Data</a></li>
-      <li>Next: <a href="cfdm.Data.dtype.html" title="next chapter">cfdm.Data.dtype</a></li>
+      <li>Next: <a href="cfdm.Data.sparse_array.html" title="next chapter">cfdm.Data.sparse_array</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -122,19 +123,19 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
             
 
 
-  <div class="section" id="cfdm-data-array">
+  <section id="cfdm-data-array">
 <h1>cfdm.Data.array<a class="headerlink" href="#cfdm-data-array" title="Permalink to this headline">¶</a></h1>
 <dl class="attribute">
 <dt id="cfdm.Data.array">
 <code class="sig-prename descclassname">Data.</code><code class="sig-name descname">array</code><a class="headerlink" href="#cfdm.Data.array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an independent numpy array containing the data.</p>
-<p>If a fill value has been set (see <a class="reference internal" href="../method/cfdm.Data.set_fill_value.html#cfdm.Data.set_fill_value" title="cfdm.Data.set_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fill_value</span></code></a>) then it will
-be used, otherwise the default numpy fill value appropriate to the
-data type will be used.</p>
+<dd><p>Return an independent <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array containing the data.</p>
+<p>If a fill value has been set (see <a class="reference internal" href="../method/cfdm.Data.set_fill_value.html#cfdm.Data.set_fill_value" title="cfdm.Data.set_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fill_value</span></code></a>) then it
+will be used, otherwise the default numpy fill value
+appropriate to the data type will be used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.25)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>An independent numpy array of the data.</p>
+<dt><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>An independent <a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v1.26)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array of the data.</p>
 </dd>
 </dl>
 </dd>
@@ -153,7 +154,7 @@ data type will be used.</p>
 </div>
 </dd></dl>
 
-</div>
+</section>
 
 
 
@@ -164,11 +165,11 @@ data type will be used.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-08-31.
+      &copy;2023, NCAS | Page built on 2023-12-06.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 
