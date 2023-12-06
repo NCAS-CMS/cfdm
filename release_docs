@@ -100,7 +100,7 @@ if [[ $1 = "latest" ]] ; then
 	  _downloads/tutorial.py \
 	  _images/*
 
-  git commit -a -m "v$version $1 documentation"
+  git commit -a -m "v$version documentation"
 fi
 
 set +x
