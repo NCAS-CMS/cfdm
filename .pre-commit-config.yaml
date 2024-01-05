@@ -59,7 +59,7 @@ repos:
   # (see https://flake8.pycqa.org/en/latest/ for documentation and see
   # the cfdm .flake8 file for our custom flake8 configuration)
   - repo: https://github.com/PyCQA/flake8
-    rev: 6.0.0
+    rev: 6.1.0
     hooks:
       - id: flake8
 
