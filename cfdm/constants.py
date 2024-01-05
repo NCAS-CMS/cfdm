@@ -2,7 +2,7 @@ import logging
 import sys
 from enum import Enum
 
-import numpy
+import numpy as np
 
 """A dictionary of useful constants.
 
@@ -57,4 +57,4 @@ could be done as follows:
 >>> f[...] = cfdm.masked
 
 """
-masked = numpy.ma.masked
+masked = np.ma.masked

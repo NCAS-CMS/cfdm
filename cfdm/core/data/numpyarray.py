@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 
 from . import abstract
 
@@ -101,10 +101,10 @@ class NumpyArray(abstract.Array):
         """
         array = self._get_component("array")
 
-        if not array.ndim and numpy.ma.isMA(array):
-            # This is because numpy.ma.copy doesn't work for
+        if not array.ndim and np.ma.isMA(array):
+            # This is because np.ma.copy doesn't work for
             # scalar arrays (at the moment, at least)
-            ma_array = numpy.ma.empty((), dtype=array.dtype)
+            ma_array = np.ma.empty((), dtype=array.dtype)
             ma_array[...] = array
             array = ma_array
         else:

@@ -1,7 +1,7 @@
 import logging
 from copy import deepcopy
 
-import numpy
+import numpy as np
 
 from . import core, mixin
 from .data import Data
@@ -529,7 +529,7 @@ class CellMethod(mixin.Container, core.CellMethod):
             return new
 
         if indices is None:
-            indices = numpy.argsort(axes)
+            indices = np.argsort(axes)
         elif len(indices) != len(axes):
             raise ValueError(
                 f"Can't sort cell method axes. The given indices ({indices}) "

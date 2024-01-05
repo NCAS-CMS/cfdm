@@ -16,7 +16,6 @@ from uuid import uuid4
 
 import netCDF4
 import netcdf_flattener
-import numpy
 import numpy as np
 from packaging.version import Version
 

@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 
 from . import Constructs, Domain, abstract, mixin
 
@@ -531,9 +531,9 @@ class Field(mixin.FieldDomain, abstract.PropertiesData):
         if axes is None:
             existing_axes = f.get_data_axes(default=None)
             if existing_axes is not None:
-                f.set_data_axes(axes=existing_axes, _shape=numpy.shape(data))
+                f.set_data_axes(axes=existing_axes, _shape=np.shape(data))
         else:
-            f.set_data_axes(axes=axes, _shape=numpy.shape(data))
+            f.set_data_axes(axes=axes, _shape=np.shape(data))
 
         super(Field, f).set_data(data, copy=copy, inplace=True)
 

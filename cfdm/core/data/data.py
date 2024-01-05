@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 
 from .. import abstract
 from .abstract import Array
@@ -167,7 +167,7 @@ class Data(abstract.Container):
         array = self._get_Array().array
 
         # Set the numpy array fill value
-        if numpy.ma.isMA(array):
+        if np.ma.isMA(array):
             array.set_fill_value(self.get_fill_value(None))
 
         return array
@@ -788,8 +788,8 @@ class Data(abstract.Container):
 
         """
         if not isinstance(array, Array):
-            if not isinstance(array, numpy.ndarray):
-                array = numpy.asanyarray(array)
+            if not isinstance(array, np.ndarray):
+                array = np.asanyarray(array)
 
             array = NumpyArray(array)
 

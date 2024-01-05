@@ -1,5 +1,5 @@
 import netCDF4
-import numpy
+import numpy as np
 
 from . import abstract
 from .mixin import FileArrayMixin
@@ -239,7 +239,7 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
             # A netCDF string type scalar variable comes out as Python
             # str object, so convert it to a numpy array.
             # --------------------------------------------------------
-            array = numpy.array(array, dtype=f"U{len(array)}")
+            array = np.array(array, dtype=f"U{len(array)}")
 
         if not self.ndim:
             # Hmm netCDF4 has a thing for making scalar size 1, 1d
@@ -260,9 +260,9 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
 
             array = netCDF4.chartostring(array)
             shape = array.shape
-            array = numpy.array([x.rstrip() for x in array.flat], dtype="U")
-            array = numpy.reshape(array, shape)
-            array = numpy.ma.masked_where(array == "", array)
+            array = np.array([x.rstrip() for x in array.flat], dtype="U")
+            array = np.reshape(array, shape)
+            array = np.ma.masked_where(array == "", array)
         elif not string_type and kind == "O":
             # --------------------------------------------------------
             # A netCDF string type N-d (N>=1) variable comes out as a
@@ -273,7 +273,7 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
             # --------------------------------------------------------
             # netCDF4 does not auto-mask VLEN variable, so do it here.
             # --------------------------------------------------------
-            array = numpy.ma.where(array == "", numpy.ma.masked, array)
+            array = np.ma.where(array == "", np.ma.masked, array)
 
         return array
 
