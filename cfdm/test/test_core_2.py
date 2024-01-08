@@ -2,7 +2,7 @@ import copy
 import datetime
 import unittest
 
-import numpy
+import numpy as np
 
 import cfdm
 
@@ -25,14 +25,14 @@ class Core2Test(unittest.TestCase):
 
     def test_core_NumpyArray(self):
         """Test cfdm.core.NumpyArray class."""
-        a = cfdm.core.NumpyArray(numpy.array([1, 2, 3]))
+        a = cfdm.core.NumpyArray(np.array([1, 2, 3]))
 
         # __deepcopy__
         copy.deepcopy(a)
 
         # __array__
-        numpy.array(a)
-        numpy.array(a, dtype="float")
+        np.array(a)
+        np.array(a, dtype="float")
 
     def test_core_Container(self):
         """Test cfdm.core.Container class."""

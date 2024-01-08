@@ -5,7 +5,7 @@ import os
 import tempfile
 import unittest
 
-import numpy
+import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -50,8 +50,8 @@ class StringTest(unittest.TestCase):
     def test_STRING(self):
         """Test constructs with underlying string type arrays."""
         for array in (
-            numpy.ma.array(list("abcdefghij"), dtype="S"),
-            numpy.ma.array(
+            np.ma.array(list("abcdefghij"), dtype="S"),
+            np.ma.array(
                 ["a", "b1", "c12", "d123", "e1234", "f", "g", "h", "i", "j"],
                 dtype="S",
             ),
@@ -73,7 +73,7 @@ class StringTest(unittest.TestCase):
 
             # Set the field data
             tas.set_data(
-                cfdm.Data(numpy.arange(90.0).reshape(10, 9)),
+                cfdm.Data(np.arange(90.0).reshape(10, 9)),
                 axes=[axis_Y, axis_X],
             )
 
@@ -83,9 +83,9 @@ class StringTest(unittest.TestCase):
                     "standard_name": "grid_latitude",
                     "units": "degrees",
                 },
-                data=cfdm.Data(numpy.arange(10.0)),
+                data=cfdm.Data(np.arange(10.0)),
                 bounds=cfdm.Bounds(
-                    data=cfdm.Data(numpy.arange(20).reshape(10, 2))
+                    data=cfdm.Data(np.arange(20).reshape(10, 2))
                 ),
             )
 
@@ -94,9 +94,9 @@ class StringTest(unittest.TestCase):
                     "standard_name": "grid_longitude",
                     "units": "degrees",
                 },
-                data=cfdm.Data(numpy.arange(9.0)),
+                data=cfdm.Data(np.arange(9.0)),
                 bounds=cfdm.Bounds(
-                    data=cfdm.Data(numpy.arange(18).reshape(9, 2))
+                    data=cfdm.Data(np.arange(18).reshape(9, 2))
                 ),
             )
 
@@ -104,7 +104,7 @@ class StringTest(unittest.TestCase):
             tas.set_construct(dimension_coordinate_X, axes=[axis_X])
 
             # Create and set the auxiliary coordinates
-            array[0] = numpy.ma.masked
+            array[0] = np.ma.masked
             aux0 = cfdm.AuxiliaryCoordinate(
                 properties={"long_name": "Grid latitude name"},
                 data=cfdm.Data(array),

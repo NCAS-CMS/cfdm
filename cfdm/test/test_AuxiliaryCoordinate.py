@@ -3,7 +3,7 @@ import faulthandler
 import os
 import unittest
 
-import numpy
+import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -19,7 +19,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
 
     aux1 = cfdm.AuxiliaryCoordinate()
     aux1.standard_name = "latitude"
-    a = numpy.array(
+    a = np.array(
         [
             -30,
             -23.5,
@@ -38,7 +38,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
     )
     aux1.set_data(cfdm.Data(a, "degrees_north"))
     bounds = cfdm.Bounds()
-    b = numpy.empty(a.shape + (2,))
+    b = np.empty(a.shape + (2,))
     b[:, 0] = a - 0.1
     b[:, 1] = a + 0.1
     bounds.set_data(cfdm.Data(b))
@@ -115,7 +115,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         x = f.auxiliary_coordinates("longitude").value()
 
         bounds = cfdm.Bounds(
-            data=cfdm.Data(numpy.arange(9 * 10 * 4).reshape(9, 10, 4))
+            data=cfdm.Data(np.arange(9 * 10 * 4).reshape(9, 10, 4))
         )
         x.set_bounds(bounds)
 
@@ -136,7 +136,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         x = f.auxiliary_coordinates("longitude").value()
 
         bounds = cfdm.Bounds(
-            data=cfdm.Data(numpy.arange(9 * 10 * 4).reshape(9, 10, 4))
+            data=cfdm.Data(np.arange(9 * 10 * 4).reshape(9, 10, 4))
         )
         x.set_bounds(bounds)
         x.insert_dimension(1, inplace=True)
@@ -157,7 +157,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         """Test the interior ring access AuxiliaryCoordinate methods."""
         c = cfdm.AuxiliaryCoordinate()
 
-        i = cfdm.InteriorRing(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+        i = cfdm.InteriorRing(data=cfdm.Data(np.arange(10).reshape(5, 2)))
 
         c.set_interior_ring(i)
         self.assertTrue(c.has_interior_ring())
