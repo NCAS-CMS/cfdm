@@ -9,7 +9,7 @@ import sys
 import tempfile
 import unittest
 
-import numpy
+import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -506,13 +506,13 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(20, c)
         self.assertEqual(c, c)
         self.assertEqual(c, copy.deepcopy(c))
-        self.assertEqual(c, numpy.array(20))
+        self.assertEqual(c, np.array(20))
 
         self.assertNotEqual(c, 999)
         self.assertNotEqual(999, c)
         self.assertNotEqual(c, d)
-        self.assertNotEqual(c, numpy.array(999))
-        self.assertNotEqual(numpy.array(999), c)
+        self.assertNotEqual(c, np.array(999))
+        self.assertNotEqual(np.array(999), c)
 
         self.assertLess(c, 999)
         self.assertLessEqual(c, 999)

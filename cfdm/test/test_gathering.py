@@ -5,7 +5,7 @@ import os
 import tempfile
 import unittest
 
-import numpy
+import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -49,7 +49,7 @@ class GatheredTest(unittest.TestCase):
 
         self.gathered = "gathered.nc"
 
-        a = numpy.ma.masked_all((4, 9), dtype=float)
+        a = np.ma.masked_all((4, 9), dtype=float)
         a[0, 0:3] = [0.0, 1.0, 2.0]
         a[1, 0:7] = [1.0, 11.0, 21.0, 31.0, 41.0, 51.0, 61.0]
         a[2, 0:5] = [2.0, 102.0, 202.0, 302.0, 402.0]
@@ -66,7 +66,7 @@ class GatheredTest(unittest.TestCase):
         ]
         self.a = a
 
-        b = numpy.ma.array(
+        b = np.ma.array(
             [
                 [
                     [207.12345561172262, -99, -99, -99],
@@ -250,7 +250,7 @@ class GatheredTest(unittest.TestCase):
             ]
         )
 
-        b = numpy.ma.where(b == -99, numpy.ma.masked, b)
+        b = np.ma.where(b == -99, np.ma.masked, b)
         self.b = b
 
     def test_GATHERING(self):
@@ -278,7 +278,7 @@ class GatheredTest(unittest.TestCase):
     def test_GATHERING_create(self):
         """Test the creation of a construct with a gathered array."""
         # Define the gathered values
-        gathered_array = numpy.array(
+        gathered_array = np.array(
             [[280, 282.5, 281], [279, 278, 277.5]], dtype="float32"
         )
         # Define the list array values
@@ -314,7 +314,7 @@ class GatheredTest(unittest.TestCase):
         self.assertTrue(
             (
                 tas.data.array
-                == numpy.ma.masked_array(
+                == np.ma.masked_array(
                     data=[
                         [[1, 280.0], [1, 1], [282.5, 281.0]],
                         [[1, 279.0], [1, 1], [278.0, 277.5]],
@@ -334,7 +334,7 @@ class GatheredTest(unittest.TestCase):
         self.assertTrue(
             (
                 tas.data.compressed_array
-                == numpy.array(
+                == np.array(
                     [[280.0, 282.5, 281.0], [279.0, 278.0, 277.5]],
                     dtype="float32",
                 )
@@ -342,7 +342,7 @@ class GatheredTest(unittest.TestCase):
         )
 
         self.assertTrue(
-            (tas.data.get_list().data.array == numpy.array([1, 4, 5])).all()
+            (tas.data.get_list().data.array == np.array([1, 4, 5])).all()
         )
 
 

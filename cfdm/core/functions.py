@@ -4,7 +4,7 @@ import sys
 from pickle import dumps, loads
 
 import netCDF4
-import numpy
+import numpy as np
 
 from . import __cf_version__, __file__, __version__
 
@@ -60,7 +60,7 @@ def environment(display=True, paths=True):
         "netcdf library": (netCDF4.__netcdf4libversion__, ""),
         "Python": (platform.python_version(), sys.executable),
         "netCDF4": (netCDF4.__version__, os.path.abspath(netCDF4.__file__)),
-        "numpy": (numpy.__version__, os.path.abspath(numpy.__file__)),
+        "numpy": (np.__version__, os.path.abspath(np.__file__)),
         "cfdm.core": (__version__, os.path.abspath(__file__)),
     }
     string = "{0}: {1!s}"

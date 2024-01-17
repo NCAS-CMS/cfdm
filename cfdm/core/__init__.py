@@ -31,7 +31,7 @@ except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
 try:
-    import numpy
+    import numpy as np
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
@@ -61,10 +61,10 @@ if Version(netCDF4.__version__) < Version(_minimum_vn):
 
 # Check the version of numpy
 _minimum_vn = "1.15"
-if Version(numpy.__version__) < Version(_minimum_vn):
+if Version(np.__version__) < Version(_minimum_vn):
     raise ValueError(
         f"Bad numpy version: cfdm.core requires numpy>={_minimum_vn}. "
-        f"Got {numpy.__version__} at {numpy.__file__}"
+        f"Got {np.__version__} at {np.__file__}"
     )
 
 from .constructs import Constructs

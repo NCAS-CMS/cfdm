@@ -1,6 +1,6 @@
 import logging
 
-import numpy
+import numpy as np
 
 from ..decorators import _manage_log_level_via_verbosity
 from ..docstring import _docstring_substitution_definitions
@@ -143,19 +143,19 @@ class Container:
             # --------------------------------------------------------
             return eq(x, **kwargs)
 
-        x = numpy.asanyarray(x)
-        y = numpy.asanyarray(y)
+        x = np.asanyarray(x)
+        y = np.asanyarray(y)
         if x.shape != y.shape:
             return False
 
         #        # ------------------------------------------------------------
         #        # Cast x and y as numpy arrays
         #        # ------------------------------------------------------------
-        #        if not isinstance(x, numpy.ndarray):
-        #            x = numpy.asanyarray(x)
+        #        if not isinstance(x, np.ndarray):
+        #            x = np.asanyarray(x)
         #
-        #        if not isinstance(y, numpy.ndarray):
-        #            y = numpy.asanyarray(y)
+        #        if not isinstance(y, np.ndarray):
+        #            y = np.asanyarray(y)
 
         # THIS IS WHERE SOME NUMPY FUTURE WARNINGS ARE COMING FROM
 
@@ -166,14 +166,14 @@ class Container:
             ):
                 return False
 
-        x_is_masked = numpy.ma.isMA(x)
-        y_is_masked = numpy.ma.isMA(y)
+        x_is_masked = np.ma.isMA(x)
+        y_is_masked = np.ma.isMA(y)
 
         if not (x_is_masked or y_is_masked):
             try:
-                return bool(numpy.allclose(x, y, rtol=rtol, atol=atol))
+                return bool(np.allclose(x, y, rtol=rtol, atol=atol))
             except (IndexError, NotImplementedError, TypeError):
-                return bool(numpy.all(x == y))
+                return bool(np.all(x == y))
         else:
             if x_is_masked and y_is_masked:
                 if (x.mask != y.mask).any():
@@ -184,10 +184,10 @@ class Container:
                 return False
 
             try:
-                return bool(numpy.ma.allclose(x, y, rtol=rtol, atol=atol))
+                return bool(np.ma.allclose(x, y, rtol=rtol, atol=atol))
             except (IndexError, NotImplementedError, TypeError):
-                out = numpy.ma.all(x == y)
-                if out is numpy.ma.masked:
+                out = np.ma.all(x == y)
+                if out is np.ma.masked:
                     return True
                 else:
                     return bool(out)

@@ -3,7 +3,7 @@ import faulthandler
 import os
 import unittest
 
-import numpy
+import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -39,11 +39,11 @@ class create_fieldTest(unittest.TestCase):
     def test_create_field(self):
         """Test ab initio creation of a first variation of field."""
         # Dimension coordinates
-        dim1 = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(10.0)))
+        dim1 = cfdm.DimensionCoordinate(data=cfdm.Data(np.arange(10.0)))
         dim1.set_property("standard_name", "grid_latitude")
         dim1.set_property("units", "degrees")
 
-        data = numpy.arange(9.0) + 20
+        data = np.arange(9.0) + 20
         data[-1] = 34
         dim0 = cfdm.DimensionCoordinate(data=cfdm.Data(data))
         dim0.set_property("standard_name", "grid_longitude")
@@ -52,7 +52,7 @@ class create_fieldTest(unittest.TestCase):
 
         array = dim0.data.array
 
-        array = numpy.array([array - 0.5, array + 0.5]).transpose((1, 0))
+        array = np.array([array - 0.5, array + 0.5]).transpose((1, 0))
         array[-2, 1] = 30
         array[-1, :] = [30, 36]
         dim0.set_bounds(cfdm.Bounds(data=cfdm.Data(array)))
@@ -77,18 +77,18 @@ class create_fieldTest(unittest.TestCase):
         bk.set_bounds(cfdm.Bounds(data=cfdm.Data([[14, 26.0]])))
 
         aux2 = cfdm.AuxiliaryCoordinate(
-            data=cfdm.Data(numpy.arange(-45, 45, dtype="int32").reshape(10, 9))
+            data=cfdm.Data(np.arange(-45, 45, dtype="int32").reshape(10, 9))
         )
         aux2.set_property("units", "degree_N")
         aux2.set_property("standard_name", "latitude")
 
         aux3 = cfdm.AuxiliaryCoordinate(
-            data=cfdm.Data(numpy.arange(60, 150, dtype="int32").reshape(9, 10))
+            data=cfdm.Data(np.arange(60, 150, dtype="int32").reshape(9, 10))
         )
         aux3.set_property("standard_name", "longitude")
         aux3.set_property("units", "degreeE")
 
-        array = numpy.ma.array(
+        array = np.ma.array(
             [
                 "alpha",
                 "beta",
@@ -102,20 +102,20 @@ class create_fieldTest(unittest.TestCase):
                 "kappa",
             ],
         )
-        array[0] = numpy.ma.masked
+        array[0] = np.ma.masked
         aux4 = cfdm.AuxiliaryCoordinate(data=cfdm.Data(array))
         aux4.set_property("long_name", "greek_letters")
 
         # Cell measures
         msr0 = cfdm.CellMeasure(
-            data=cfdm.Data(1 + numpy.arange(90.0).reshape(9, 10) * 1234)
+            data=cfdm.Data(1 + np.arange(90.0).reshape(9, 10) * 1234)
         )
         msr0.set_measure("area")
         msr0.set_property("units", "km2")
         msr0.nc_set_variable("areacella")
 
         # Data
-        data = cfdm.Data(numpy.arange(90.0).reshape(10, 9))
+        data = cfdm.Data(np.arange(90.0).reshape(10, 9))
 
         properties = {"units": "m s-1"}
 
@@ -201,7 +201,7 @@ class create_fieldTest(unittest.TestCase):
         anc.set_property("foo", "bar")
         f.set_construct(anc, axes=[axisY])
 
-        f.set_property("flag_values", numpy.array([1, 2, 4], "int32"))
+        f.set_property("flag_values", np.array([1, 2, 4], "int32"))
         f.set_property("flag_meanings", "a bb ccc")
         f.set_property("flag_masks", [2, 1, 0])
 

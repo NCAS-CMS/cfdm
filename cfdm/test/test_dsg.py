@@ -5,7 +5,7 @@ import os
 import tempfile
 import unittest
 
-import numpy
+import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -50,7 +50,7 @@ class DSGTest(unittest.TestCase):
     i = cfdm.read(indexed)
     ic = cfdm.read(indexed_contiguous)
 
-    a = numpy.ma.masked_all((4, 9), dtype=float)
+    a = np.ma.masked_all((4, 9), dtype=float)
     a[0, 0:3] = [0.0, 1.0, 2.0]
     a[1, 0:7] = [1.0, 11.0, 21.0, 31.0, 41.0, 51.0, 61.0]
     a[2, 0:5] = [2.0, 102.0, 202.0, 302.0, 402.0]
@@ -66,7 +66,7 @@ class DSGTest(unittest.TestCase):
         8003.0,
     ]
 
-    b = numpy.array(
+    b = np.array(
         [
             [
                 [20.7, -99, -99, -99],
@@ -155,7 +155,7 @@ class DSGTest(unittest.TestCase):
         ]
     )
 
-    b = numpy.ma.where(b == -99, numpy.ma.masked, b)
+    b = np.ma.where(b == -99, np.ma.masked, b)
 
     def setUp(self):
         """Preparations called immediately before each test method."""
@@ -197,7 +197,7 @@ class DSGTest(unittest.TestCase):
         # Test creation
         # ------------------------------------------------------------
         # Define the ragged array values
-        ragged_array = numpy.array(
+        ragged_array = np.array(
             [280, 282.5, 281, 279, 278, 279.5], dtype="float32"
         )
 
@@ -295,7 +295,7 @@ class DSGTest(unittest.TestCase):
     def test_DSG_create_contiguous(self):
         """Test the creation of a contiguous ragged array."""
         # Define the ragged array values
-        ragged_array = numpy.array([1, 3, 4, 3, 6], dtype="float32")
+        ragged_array = np.array([1, 3, 4, 3, 6], dtype="float32")
         # Define the count array values
         count_array = [2, 3]
 
@@ -328,7 +328,7 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(
             (
                 z.data.array
-                == numpy.ma.masked_array(
+                == np.ma.masked_array(
                     data=[[1.0, 3.0, 99], [4.0, 3.0, 6.0]],
                     mask=[[False, False, True], [False, False, False]],
                     fill_value=1e20,
@@ -342,12 +342,12 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(
             (
                 z.data.compressed_array
-                == numpy.array([1.0, 3.0, 4.0, 3.0, 6.0], dtype="float32")
+                == np.array([1.0, 3.0, 4.0, 3.0, 6.0], dtype="float32")
             ).all()
         )
 
         self.assertTrue(
-            (z.data.get_count().data.array == numpy.array([2, 3])).all()
+            (z.data.get_count().data.array == np.array([2, 3])).all()
         )
 
 

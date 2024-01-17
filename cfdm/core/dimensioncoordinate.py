@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 
 from . import abstract
 
@@ -104,7 +104,7 @@ class DimensionCoordinate(abstract.Coordinate):
         None
 
         """
-        if numpy.ndim(data) != 1:
+        if np.ndim(data) != 1:
             raise ValueError(
                 "Dimension coordinate construct must have 1-dimensional data. "
                 f"Got {data!r}"

@@ -4,7 +4,6 @@ import os
 import re
 
 import netCDF4
-import numpy
 import numpy as np
 from packaging.version import Version
 
@@ -186,7 +185,7 @@ class NetCDFWrite(IOWrite):
         <type 'numpy.ndarray'>
 
         """
-        if numpy.ma.isMA(array):
+        if np.ma.isMA(array):
             return array.compressed()
 
         return array.flatten()
@@ -237,9 +236,7 @@ class NetCDFWrite(IOWrite):
             data = self.implementation.get_data(parent, None)
             if data is not None:
                 dtype = g["datatype"].get(data.dtype, data.dtype)
-                netcdf_attrs[attr] = numpy.array(
-                    netcdf_attrs[attr], dtype=dtype
-                )
+                netcdf_attrs[attr] = np.array(netcdf_attrs[attr], dtype=dtype)
 
         skip_set_fill_value = False
         if g["post_dry_run"] and parent is not None:
@@ -310,20 +307,20 @@ class NetCDFWrite(IOWrite):
         original_shape = array.shape
         original_size = array.size
 
-        masked = numpy.ma.isMA(array)
+        masked = np.ma.isMA(array)
         if masked:
             fill_value = array.fill_value
-            array = numpy.ma.filled(array, fill_value="")
+            array = np.ma.filled(array, fill_value="")
 
         if array.dtype.kind == "U":
             array = array.astype("S")
 
-        array = numpy.array(tuple(array.tobytes().decode("ascii")), dtype="S1")
+        array = np.array(tuple(array.tobytes().decode("ascii")), dtype="S1")
 
         array.resize(original_shape + (array.size // original_size,))
 
         if masked:
-            array = numpy.ma.masked_where(array == b"", array)
+            array = np.ma.masked_where(array == b"", array)
             array.set_fill_value(fill_value)
 
         if array.dtype.kind != "S":
@@ -371,7 +368,7 @@ class NetCDFWrite(IOWrite):
         """
         g = self.write_vars
 
-        if not isinstance(variable, numpy.ndarray):
+        if not isinstance(variable, np.ndarray):
             data = self.implementation.get_data(variable, None)
             if data is None:
                 return "S1"
@@ -1854,7 +1851,7 @@ class NetCDFWrite(IOWrite):
         array = self.implementation.get_array(
             self.implementation.get_data(bounds)
         )
-        array = numpy.trim_zeros(numpy.ma.count(array, axis=2).flatten())
+        array = np.trim_zeros(np.ma.count(array, axis=2).flatten())
         array = self._int32(array)
 
         data = self.implementation.initialise_Data(array=array, copy=False)
@@ -2541,10 +2538,10 @@ class NetCDFWrite(IOWrite):
                     del parameters[term]
                     continue
 
-                if numpy.size(value) == 1:
-                    value = numpy.array(value, copy=False).item()
+                if np.size(value) == 1:
+                    value = np.array(value, copy=False).item()
                 else:
-                    value = numpy.array(value, copy=False).tolist()
+                    value = np.array(value, copy=False).tolist()
 
                 parameters[term] = value
 
@@ -2903,7 +2900,7 @@ class NetCDFWrite(IOWrite):
             # is str, so this conversion does not happen.
             # --------------------------------------------------------
             array = self.implementation.get_array(data)
-            #            if numpy.ma.is_masked(array):
+            #            if np.ma.is_masked(array):
             #                array = array.compressed()
             #            else:
             #                array = array.flatten()
@@ -2986,11 +2983,11 @@ class NetCDFWrite(IOWrite):
         # Check that the array doesn't contain any elements
         # which are equal to any of the missing data values
         if unset_values:
-            # if numpy.ma.is_masked(array):
+            # if np.ma.is_masked(array):
             #     temp_array = array.compressed()
             # else:
             #     temp_array = array
-            if numpy.intersect1d(
+            if np.intersect1d(
                 unset_values, self._numpy_compressed(array)
             ).size:
                 raise ValueError(
@@ -3001,7 +2998,7 @@ class NetCDFWrite(IOWrite):
         if (
             g["fmt"] == "NETCDF4"
             and array.dtype.kind in "SU"
-            and numpy.ma.isMA(array)
+            and np.ma.isMA(array)
         ):
             # VLEN variables can not be assigned to by masked arrays
             # https://github.com/Unidata/netcdf4-python/pull/465
@@ -3026,7 +3023,7 @@ class NetCDFWrite(IOWrite):
 
             cfvar: Construct
 
-            array: `numpy.ndarray`
+            array: `np.ndarray`
 
             attributes: `dict`
 
@@ -5076,8 +5073,8 @@ class NetCDFWrite(IOWrite):
         # converted to 64-bit floats.
         # ------------------------------------------------------------
         dtype_conversions = {
-            numpy.dtype(bool): numpy.dtype("int32"),
-            numpy.dtype(object): numpy.dtype(float),
+            np.dtype(bool): np.dtype("int32"),
+            np.dtype(object): np.dtype(float),
         }
         if datatype:
             dtype_conversions.update(datatype)

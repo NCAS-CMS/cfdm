@@ -3,7 +3,7 @@ import faulthandler
 import os
 import unittest
 
-import numpy
+import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -88,7 +88,7 @@ class DomainAncillaryTest(unittest.TestCase):
         f = cfdm.read(self.filename)[0]
         a = f.auxiliary_coordinates("longitude").value()
         bounds = cfdm.Bounds(
-            data=cfdm.Data(numpy.arange(9 * 10 * 4).reshape(9, 10, 4))
+            data=cfdm.Data(np.arange(9 * 10 * 4).reshape(9, 10, 4))
         )
         a.set_bounds(bounds)
         x = cfdm.DomainAncillary(source=a)
@@ -109,7 +109,7 @@ class DomainAncillaryTest(unittest.TestCase):
         f = cfdm.read(self.filename)[0]
         a = f.auxiliary_coordinates("longitude").value()
         bounds = cfdm.Bounds(
-            data=cfdm.Data(numpy.arange(9 * 10 * 4).reshape(9, 10, 4))
+            data=cfdm.Data(np.arange(9 * 10 * 4).reshape(9, 10, 4))
         )
         a.set_bounds(bounds)
         x = cfdm.DomainAncillary(source=a)
