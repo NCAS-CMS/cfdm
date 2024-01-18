@@ -490,10 +490,22 @@ class NetCDFRead(IORead):
         >>> r.file_open('file.nc')
 
         """
+        netCDF = False
+        HDF = False
         try:
-            nc = netCDF4.Dataset(filename, "r")
-        except RuntimeError as error:
-            raise RuntimeError(f"{error}: {filename}")
+            nc = h5netcdf.File(filename, "r")
+        except OSError:
+            # File is not HDF, so it's probably netCDF3.
+            try:
+                nc = netCDF4.Dataset(filename, "r")
+            except RuntimeError as error:
+                raise RuntimeError(f"{error}: {filename}")
+            else:
+                netCDF = True
+        except Exception as error:
+            raise Exception(f"{error}: {filename}")
+        else:
+            HDF = True
 
         # ------------------------------------------------------------
         # If the file has a group structure then flatten it (CF>=1.8)
@@ -501,6 +513,11 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         if flatten and nc.groups:
+            if HDF:
+                raise ValueError(
+                    "Can't yet access file with groups via h5netcdf"
+                )
+            
             # Create a diskless, non-persistent container for the
             # flattened file
             flat_file = tempfile.NamedTemporaryFile(
@@ -532,6 +549,8 @@ class NetCDFRead(IORead):
             g["has_groups"] = True
             g["flat_files"].append(flat_file)
 
+        g["netCDF"] = netCDF
+        g["HDF"] = HDF
         g["nc"] = nc
         return nc
 
@@ -999,9 +1018,9 @@ class NetCDFRead(IORead):
         # 'global_attributes' dictionary
         # ----------------------------------------------------------------
         global_attributes = {}
-        for attr in map(str, nc.ncattrs()):
+#        for attr in map(str,nc.ncattrs()):
+        for attr, value in self._file_global_attributes().items():
             try:
-                value = nc.getncattr(attr)
                 if isinstance(value, str):
                     try:
                         global_attributes[attr] = str(value)
@@ -1157,7 +1176,8 @@ class NetCDFRead(IORead):
                         group_attr = x[-1]
                         flattener_attributes.setdefault(tuple(groups), {})[
                             group_attr
-                        ] = nc.getncattr(flat_attr)
+                        ] = self._file_variable(flat_attr)
+#                        ] = nc.getncattr(flat_attr)
 
             # Remove flattener attributes from the global attributes
             for attr in (
@@ -1167,13 +1187,14 @@ class NetCDFRead(IORead):
             ):
                 g["global_attributes"].pop(attr, None)
 
-        for ncvar in nc.variables:
+        for ncvar in self._file_variables():
             ncvar_basename = ncvar
             groups = ()
             group_attributes = {}
 
-            variable = nc.variables[ncvar]
-
+#            variable = nc.variables[ncvar]
+            variable = self._file_variable(ncvar)
+            
             # --------------------------------------------------------
             # Specify the group structure for each variable (CF>=1.8)
             # TODO
@@ -1239,7 +1260,8 @@ class NetCDFRead(IORead):
                 except UnicodeDecodeError:
                     pass
 
-            variable_dimensions[ncvar] = tuple(variable.dimensions)
+#            variable_dimensions[ncvar] = tuple(variable.dimensions)
+            variable_dimensions[ncvar] = tuple(self._file_variable_dimensions())
             variable_dataset[ncvar] = nc
             variable_filename[ncvar] = g["filename"]
             variables[ncvar] = variable
@@ -1250,7 +1272,8 @@ class NetCDFRead(IORead):
 
         # Populate dimensions_groups abd dimension_basename
         # dictionaries
-        for ncdim in nc.dimensions:
+#        for ncdim in nc.dimensions:
+        for ncdim in self._file_dimensions():
             ncdim_org = ncdim
             ncdim_basename = ncdim
             groups = ()
@@ -1275,9 +1298,10 @@ class NetCDFRead(IORead):
             dimension_groups[ncdim] = groups
             dimension_basename[ncdim] = ncdim_basename
 
-            dimension_isunlimited[ncdim] = nc.dimensions[
-                ncdim_org
-            ].isunlimited()
+#            dimension_isunlimited[ncdim] = nc.dimensions[
+#                ncdim_org
+#            ].isunlimited()
+            dimension_isunlimited[ncdim] = self._file_dimension_isunlimited(ncdim_org)
 
         if has_groups:
             variable_dimensions = {
@@ -1325,7 +1349,8 @@ class NetCDFRead(IORead):
 
         # The netCDF dimensions of the parent file
         internal_dimension_sizes = {}
-        for name, dimension in nc.dimensions.items():
+#        for name, dimension in nc.dimensions.items():
+        for name, dimension in self._file_dimensions().items():
             if (
                 has_groups
                 and dimension_isunlimited[flattener_dimensions[name]]
@@ -1334,10 +1359,10 @@ class NetCDFRead(IORead):
                 # size from the original grouped dataset, because
                 # unlimited dimensions have size 0 in the flattened
                 # dataset (because it contains no data) (v1.8.8.1)
-                group, ncdim = self._netCDF4_group(
+                group, ncdim = self._netCDF4_group( # h5netcdf
                     g["nc_grouped"], flattener_dimensions[name]
                 )
-                internal_dimension_sizes[name] = group.dimensions[ncdim].size
+                internal_dimension_sizes[name] = group.dimensions[ncdim].size # h5netcdf
             else:
                 internal_dimension_sizes[name] = dimension.size
 
@@ -2479,7 +2504,8 @@ class NetCDFRead(IORead):
             # variable in this case.
             # --------------------------------------------------------
             nodes_per_geometry = self.implementation.initialise_Count()
-            size = g["nc"].dimensions[node_dimension].size
+#            size = g["nc"].dimensions[node_dimension].size
+            size = self._file_dimension_size(node_dimension)
             ones = self.implementation.initialise_Data(
                 array=np.ones((size,), dtype="int32"), copy=False
             )
@@ -9881,3 +9907,47 @@ class NetCDFRead(IORead):
             ok = False
 
         return ok
+
+    def _file_global_attributes(self):
+        g = self.read_vars
+        nc = g['nc']
+        if g['netCDF']:
+            # NetCDF
+            return {attr: nc.getncattr(attr) for attr in nc.ncattrs()}
+
+        # HDF
+        return nc.attrs
+
+    def _file_dimensions(self, var):
+        g = self.read_vars
+        return g['nc'].dimensions
+
+    def _file_dimension(self, dim_name):
+        return self._file_dimensions()[dim_name]
+
+    def _file_dimension_isunlimited(self, dim_name):
+        return self._file_dimensions()[dim_name].isunlimted()
+
+    def _file_dimension_size(self, dim_name):
+        return self._file_dimensions()[dim_name].size
+
+    def _file_variables(self):
+        g = self.read_vars
+        return g['nc'].variables
+
+    def _file_variable(self, var_name):
+        return self._file_variables()[var_name]
+
+    def _file_variable_attributes(self, var):
+        g = self.read_vars
+        if g['netCDF']:
+            # NetCDF
+            return {attr: var.getncattr(attr) for attr in var.ncattrs()}
+
+        # HDF
+        return var.attrs
+
+    def _file_variable_dimensions(self, var):
+        return var.dimensions
+
+        
