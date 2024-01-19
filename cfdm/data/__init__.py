@@ -18,6 +18,7 @@ from .subarray.abstract import MeshSubarray, Subarray, SubsampledSubarray
 from .boundsfromnodesarray import BoundsFromNodesArray
 from .cellconnectivityarray import CellConnectivityArray
 from .gatheredarray import GatheredArray
+from .hdfarray import HDFArray
 from .netcdfarray import NetCDFArray
 from .numpyarray import NumpyArray
 from .pointtopologyarray import PointTopologyArray

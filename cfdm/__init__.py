@@ -139,6 +139,7 @@ from .data import (
     CompressedArray,
     Data,
     GatheredArray,
+    HDFArray,
     NetCDFArray,
     NumpyArray,
     PointTopologyArray,

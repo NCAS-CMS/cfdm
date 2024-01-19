@@ -30,6 +30,7 @@ from .data import (
     CellConnectivityArray,
     Data,
     GatheredArray,
+    HDFArray,
     NetCDFArray,
     PointTopologyArray,
     RaggedContiguousArray,
@@ -2353,6 +2354,62 @@ class CFDMImplementation(Implementation):
             missing_values=missing_values,
         )
 
+    def initialise_HDFArray(
+        self,
+        filename=None,
+        address=None,
+        dtype=None,
+        shape=None,
+        mask=True,
+        units=False,
+        calendar=None,
+        missing_values=None,
+    ):
+        """Return a HDF array instance.
+
+        :Parameters:
+
+            filename: `str`
+
+            address: `str`
+
+            dytpe: `numpy.dtype`
+
+            shape: sequence of `int`, optional
+
+            mask: `bool`, optional
+
+            units: `str` or `None` or False, optional
+                The units of the variable. Set to `None` to indicate
+                that there are no units. If False (the default) then
+                the units are considered unset.
+
+            calendar: `str` or `None`, optional
+                The calendar of the variable. By default, or if set to
+                `None`, then the CF default calendar is assumed, if
+                applicable.
+
+            missing_values: `dict`, optional
+                The missing value indicators defined by the variable
+                attributes.
+
+        :Returns:
+
+            `HDFArray`
+
+        """
+        cls = self.get_class("HDFArray")
+        return cls(
+            filename=filename,
+            address=address,
+            dtype=dtype,
+            shape=shape,
+            mask=mask,
+            units=units,
+            calendar=calendar,
+            missing_values=missing_values,
+        )
+
     def initialise_BoundsFromNodesArray(self, **kwargs):
         """Return a node bounds array.
 
@@ -3707,6 +3764,7 @@ _implementation = CFDMImplementation(
     Data=Data,
     BoundsFromNodesArray=BoundsFromNodesArray,
     GatheredArray=GatheredArray,
+    HDFArray=HDFArray,
     NetCDFArray=NetCDFArray,
     PointTopologyArray=PointTopologyArray,
     RaggedContiguousArray=RaggedContiguousArray,
@@ -3750,6 +3808,7 @@ def implementation():
      'Datum': <class 'cfdm.datum.Datum'>,
      'Data': <class 'cfdm.data.data.Data'>,
      'GatheredArray': <class 'cfdm.data.gatheredarray.GatheredArray'>,
+     'HDFArray': <class 'cfdm.data.hdfarray.HDFArray'>,
      'NetCDFArray': <class 'cfdm.data.netcdfarray.NetCDFArray'>,
      'PointTopologyArray': <class 'cfdm.data.pointtopologyarray.PointTopologyArray'>,
      'RaggedContiguousArray': <class 'cfdm.data.raggedcontiguousarray.RaggedContiguousArray'>,

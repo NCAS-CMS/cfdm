@@ -9,12 +9,13 @@ from ast import literal_eval
 from copy import deepcopy
 from dataclasses import dataclass, field
 from functools import reduce
-from math import nan
+from math import nan, prod
 from typing import Any
 from urllib.parse import urlparse
 from uuid import uuid4
 
 import netCDF4
+import h5netcdf
 import netcdf_flattener
 import numpy as np
 from packaging.version import Version
@@ -494,18 +495,17 @@ class NetCDFRead(IORead):
         HDF = False
         try:
             nc = h5netcdf.File(filename, "r")
-        except OSError:
+            HDF = True
+        except OSError:            
             # File is not HDF, so it's probably netCDF3.
             try:
+                print (1/0)
                 nc = netCDF4.Dataset(filename, "r")
+                netCDF = True
             except RuntimeError as error:
                 raise RuntimeError(f"{error}: {filename}")
-            else:
-                netCDF = True
         except Exception as error:
             raise Exception(f"{error}: {filename}")
-        else:
-            HDF = True
 
         # ------------------------------------------------------------
         # If the file has a group structure then flatten it (CF>=1.8)
@@ -514,10 +514,19 @@ class NetCDFRead(IORead):
 
         if flatten and nc.groups:
             if HDF:
-                raise ValueError(
-                    "Can't yet access file with groups via h5netcdf"
-                )
-            
+                # TODOHDF: Can't yet use HDF access to process groups
+                logger.warning(
+                    "WARNING: Using netCDF4 (rather than h5netcdf) "
+                    f"to access file {filename} containing groups"
+                )  # pragma: no cover
+                nc.close()
+                HDF = False
+                try:
+                    nc = netCDF4.Dataset(filename, "r")
+                    netCDF = True
+                except RuntimeError as error:
+                    raise RuntimeError(f"{error}: {filename}")
+                
             # Create a diskless, non-persistent container for the
             # flattened file
             flat_file = tempfile.NamedTemporaryFile(
@@ -549,6 +558,12 @@ class NetCDFRead(IORead):
             g["has_groups"] = True
             g["flat_files"].append(flat_file)
 
+
+        if HDF:
+            print ("Opened with h5netcdf")
+        else:
+            print ("Opened with netCDF4")
+            
         g["netCDF"] = netCDF
         g["HDF"] = HDF
         g["nc"] = nc
@@ -1176,7 +1191,7 @@ class NetCDFRead(IORead):
                         group_attr = x[-1]
                         flattener_attributes.setdefault(tuple(groups), {})[
                             group_attr
-                        ] = self._file_variable(flat_attr)
+                        ] = self._file_global_attribute(flat_attr)
 #                        ] = nc.getncattr(flat_attr)
 
             # Remove flattener attributes from the global attributes
@@ -1243,25 +1258,21 @@ class NetCDFRead(IORead):
                 variable_grouped_dataset[ncvar] = g["nc_grouped"]
 
             variable_attributes[ncvar] = {}
-            for attr in map(str, variable.ncattrs()):
+#            for attr in map(str, variable.ncattrs()):
+            for attr, value in self._file_variable_attributes(variable).items():
                 try:
-                    variable_attributes[ncvar][attr] = variable.getncattr(attr)
-                    if isinstance(variable_attributes[ncvar][attr], str):
+                    if isinstance(value, str):
                         try:
-                            variable_attributes[ncvar][attr] = str(
-                                variable_attributes[ncvar][attr]
-                            )
+                            value = str(value)
                         except UnicodeEncodeError:
-                            variable_attributes[ncvar][
-                                attr
-                            ] = variable_attributes[ncvar][attr].encode(
-                                errors="ignore"
-                            )
+                            value = value.encode(errors="ignore")
                 except UnicodeDecodeError:
                     pass
 
+                variable_attributes[ncvar][attr] = value
+                    
 #            variable_dimensions[ncvar] = tuple(variable.dimensions)
-            variable_dimensions[ncvar] = tuple(self._file_variable_dimensions())
+            variable_dimensions[ncvar] = tuple(self._file_variable_dimensions(variable))
             variable_dataset[ncvar] = nc
             variable_filename[ncvar] = g["filename"]
             variables[ncvar] = variable
@@ -3484,7 +3495,6 @@ class NetCDFRead(IORead):
                     )
 
                 # Set unlimited status of axis
-                #                if nc.dimensions[ncdim].isunlimited():
                 if g["dimension_isunlimited"][ncdim]:
                     self.implementation.nc_set_unlimited_axis(f, axis)
 
@@ -3510,7 +3520,6 @@ class NetCDFRead(IORead):
 
                 # Set unlimited status of axis
                 try:
-                    # if nc.dimensions[ncdim].isunlimited():
                     if g["dimension_isunlimited"][ncdim]:
                         self.implementation.nc_set_unlimited_axis(f, axis)
                 except KeyError:
@@ -5975,7 +5984,7 @@ class NetCDFRead(IORead):
             group, name = self._netCDF4_group(
                 g["variable_grouped_dataset"][ncvar], ncvar
             )
-            variable = group.variables.get(name)
+            variable = group.variables.get(name) # h5netcdf
         else:
             variable = g["variables"].get(ncvar)
 
@@ -5994,7 +6003,8 @@ class NetCDFRead(IORead):
 
         ndim = variable.ndim
         shape = variable.shape
-        size = variable.size
+#        size = variable.size
+        size = self._file_variable_size(variable)
 
         if size < 2:
             size = int(size)
@@ -6058,7 +6068,11 @@ class NetCDFRead(IORead):
         if return_kwargs_only:
             return kwargs
 
-        array = self.implementation.initialise_NetCDFArray(**kwargs)
+        if g['netCDF']:
+            array = self.implementation.initialise_NetCDFArray(**kwargs)
+        else:
+            # HDF
+            array = self.implementation.initialise_HDFArray(**kwargs)
 
         return array, kwargs
 
@@ -9918,7 +9932,7 @@ class NetCDFRead(IORead):
         # HDF
         return nc.attrs
 
-    def _file_dimensions(self, var):
+    def _file_dimensions(self):
         g = self.read_vars
         return g['nc'].dimensions
 
@@ -9926,28 +9940,46 @@ class NetCDFRead(IORead):
         return self._file_dimensions()[dim_name]
 
     def _file_dimension_isunlimited(self, dim_name):
-        return self._file_dimensions()[dim_name].isunlimted()
+        return self._file_dimension(dim_name).isunlimited()
 
     def _file_dimension_size(self, dim_name):
-        return self._file_dimensions()[dim_name].size
+        return self._file_dimensions(dim_name).size
 
     def _file_variables(self):
+        """ """
         g = self.read_vars
         return g['nc'].variables
 
     def _file_variable(self, var_name):
         return self._file_variables()[var_name]
 
-    def _file_variable_attributes(self, var):
+    def _file_variable_attributes(self, var, names_only=False):
         g = self.read_vars
+        if not names_only:
+            if g['netCDF']:
+                # NetCDF
+                return {attr: var.getncattr(attr) for attr in var.ncattrs()}
+            
+            # HDF
+            return var.attrs
+    
         if g['netCDF']:
             # NetCDF
-            return {attr: var.getncattr(attr) for attr in var.ncattrs()}
-
+            return var.ncattrs()
+            
         # HDF
-        return var.attrs
+        return list(var.attrs)
 
     def _file_variable_dimensions(self, var):
         return var.dimensions
+
+    def _file_variable_size(self, var):
+        g = self.read_vars
+        if g['netCDF']:
+            # NetCDF
+            return var.size
+            
+        # HDF
+        return prod(var.shape)
 
         
