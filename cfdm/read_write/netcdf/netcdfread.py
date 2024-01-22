@@ -559,10 +559,10 @@ class NetCDFRead(IORead):
             g["flat_files"].append(flat_file)
 
 
-        if HDF:
-            print ("Opened with h5netcdf")
-        else:
-            print ("Opened with netCDF4")
+#        if HDF:
+#            print ("Opened with h5netcdf")
+#        else:
+#            print ("Opened with netCDF4")
             
         g["netCDF"] = netCDF
         g["HDF"] = HDF
@@ -1035,6 +1035,7 @@ class NetCDFRead(IORead):
         global_attributes = {}
 #        for attr in map(str,nc.ncattrs()):
         for attr, value in self._file_global_attributes().items():
+            attr = str(attr)
             try:
                 if isinstance(value, str):
                     try:
@@ -1260,17 +1261,13 @@ class NetCDFRead(IORead):
             variable_attributes[ncvar] = {}
 #            for attr in map(str, variable.ncattrs()):
             for attr, value in self._file_variable_attributes(variable).items():
-                try:
-                    if isinstance(value, str):
-                        try:
-                            value = str(value)
-                        except UnicodeEncodeError:
-                            value = value.encode(errors="ignore")
-                except UnicodeDecodeError:
-                    pass
-
+                attr = str(attr)
+                if isinstance(value, bytes):
+                    value = value.decode(errors="ignore")
+                
                 variable_attributes[ncvar][attr] = value
-                    
+#                print (attr, value, type(value))
+
 #            variable_dimensions[ncvar] = tuple(variable.dimensions)
             variable_dimensions[ncvar] = tuple(self._file_variable_dimensions(variable))
             variable_dataset[ncvar] = nc
