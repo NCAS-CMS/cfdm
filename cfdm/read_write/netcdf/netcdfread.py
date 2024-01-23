@@ -494,12 +494,12 @@ class NetCDFRead(IORead):
         netCDF = False
         HDF = False
         try:
-            nc = h5netcdf.File(filename, "r")
+            nc = h5netcdf.File(filename, "r", decode_vlen_strings=True)
             HDF = True
         except OSError:            
-            # File is not HDF, so it's probably netCDF3.
+            # File is not HDF. Assume instead that it's netCDF3 and
+            # open it with netCDF4.
             try:
-                print (1/0)
                 nc = netCDF4.Dataset(filename, "r")
                 netCDF = True
             except RuntimeError as error:
@@ -559,11 +559,11 @@ class NetCDFRead(IORead):
             g["flat_files"].append(flat_file)
 
 
-#        if HDF:
-#            print ("Opened with h5netcdf")
-#        else:
-#            print ("Opened with netCDF4")
-            
+        if HDF:
+            print ("Opened with h5netcdf")
+        else:
+            print ("Opened with netCDF4")
+           
         g["netCDF"] = netCDF
         g["HDF"] = HDF
         g["nc"] = nc

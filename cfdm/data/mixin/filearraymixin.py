@@ -177,10 +177,10 @@ class FileArrayMixin:
         return (self.get_format(),) * len(self.get_filenames())
 
     def open(self, func, *args, **kwargs):
-        """Return an open file object containing the data array.
+        """rn a file object for the dataset and the variable address.
 
         When multiple files have been provided an attempt is made to
-        open each one, in the order stored, and an open file object is
+        open each one, in the order stored, and a file object is
         returned from the first file that exists.
 
         .. versionadded:: (cfdm) 1.10.1.0
@@ -196,8 +196,8 @@ class FileArrayMixin:
         :Returns:
 
             `tuple`
-                The open file object, and the address of the data
-                within the file.
+                The file object for the dataset, and the address of
+                the data within the file.
 
         """
         # Loop round the files, returning as soon as we find one that
@@ -216,9 +216,10 @@ class FileArrayMixin:
             except RuntimeError as error:
                 raise RuntimeError(f"{error}: {filename}")
 
+            # Successfully opend a dataset, so return.
             return nc, address
 
         if len(filenames) == 1:
-            raise FileNotFoundError(f"No such netCDF file: {filenames[0]}")
+            raise FileNotFoundError(f"No such file: {filenames.pop()}")
 
-        raise FileNotFoundError(f"No such netCDF files: {filenames}")
+        raise FileNotFoundError(f"No such files: {filenames}")

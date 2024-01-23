@@ -2,11 +2,11 @@ import netCDF4
 import numpy as np
 
 from . import abstract
-from .mixin import FileArrayMixin
+from .mixin import FileArrayMixin, XXXMixin
 from .numpyarray import NumpyArray
 
 
-class NetCDFArray(FileArrayMixin, abstract.Array):
+class NetCDFArray(XXXMixin, FileArrayMixin, abstract.Array):
     """An underlying array stored in a netCDF file.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -245,35 +245,37 @@ class NetCDFArray(FileArrayMixin, abstract.Array):
             # Hmm netCDF4 has a thing for making scalar size 1, 1d
             array = array.squeeze()
 
-        kind = array.dtype.kind
-        if not string_type and kind in "SU":
-            #     == 'S' and array.ndim > (self.ndim -
-            #     getattr(self, 'gathered', 0) -
-            #     getattr(self, 'ragged', 0)):
-            # --------------------------------------------------------
-            # Collapse (by concatenation) the outermost (fastest
-            # varying) dimension of char array into
-            # memory. E.g. [['a','b','c']] becomes ['abc']
-            # --------------------------------------------------------
-            if kind == "U":
-                array = array.astype("S", copy=False)
-
-            array = netCDF4.chartostring(array)
-            shape = array.shape
-            array = np.array([x.rstrip() for x in array.flat], dtype="U")
-            array = np.reshape(array, shape)
-            array = np.ma.masked_where(array == "", array)
-        elif not string_type and kind == "O":
-            # --------------------------------------------------------
-            # A netCDF string type N-d (N>=1) variable comes out as a
-            # numpy object array, so convert it to numpy string array.
-            # --------------------------------------------------------
-            array = array.astype("U", copy=False)
-
-            # --------------------------------------------------------
-            # netCDF4 does not auto-mask VLEN variable, so do it here.
-            # --------------------------------------------------------
-            array = np.ma.where(array == "", np.ma.masked, array)
+        array = self._process_string_and_char(array)
+#            
+#        kind = array.dtype.kind
+#        if not string_type and kind in "SU":
+#            #     == 'S' and array.ndim > (self.ndim -
+#            #     getattr(self, 'gathered', 0) -
+#            #     getattr(self, 'ragged', 0)):
+#            # --------------------------------------------------------
+#            # Collapse (by concatenation) the outermost (fastest
+#            # varying) dimension of char array into
+#            # memory. E.g. [['a','b','c']] becomes ['abc']
+#            # --------------------------------------------------------
+#            if kind == "U":
+#                array = array.astype("S", copy=False)
+#
+#            array = netCDF4.chartostring(array)
+#            shape = array.shape
+#            array = np.array([x.rstrip() for x in array.flat], dtype="U")
+#            array = np.reshape(array, shape)
+#            array = np.ma.masked_where(array == "", array)
+#        elif not string_type and kind == "O":
+#            # --------------------------------------------------------
+#            # A netCDF string type N-d (N>=1) variable comes out as a
+#            # numpy object array, so convert it to numpy string array.
+#            # --------------------------------------------------------
+#            array = array.astype("U", copy=False)
+#
+#            # --------------------------------------------------------
+#            # netCDF4 does not auto-mask VLEN variable, so do it here.
+#            # --------------------------------------------------------
+#            array = np.ma.where(array == "", np.ma.masked, array)
 
         return array
 

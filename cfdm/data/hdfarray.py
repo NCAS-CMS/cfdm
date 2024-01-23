@@ -1,14 +1,16 @@
 import h5netcdf
 import netCDF4
+
 import numpy as np
 
 from . import abstract
-from .mixin import FileArrayMixin
+from .mixin import FileArrayMixin, XXXMixin
 from .numpyarray import NumpyArray
 
 _safecast = netCDF4.utils._safecast
+default_fillvals = netCDF4.default_fillvals
 
-class HDFArray(FileArrayMixin, abstract.Array):
+class HDFArray(XXXMixin, FileArrayMixin, abstract.Array):
     """An underlying array stored in an HDF file.
 
     .. versionadded:: (cfdm) TODOHDF
@@ -196,24 +198,30 @@ class HDFArray(FileArrayMixin, abstract.Array):
             # Get the variable by netCDF name
             variable = dataset.variables[address]
             self.variable = variable
-#            variable.set_auto_mask(mask) # h5netcdf           
             array = variable[indices]
-#            array = self.mask_unpack(variable, array)
         else:
             # Get the variable by netCDF integer ID
             for variable in dataset.variables.values():
                 if variable._varid == address:
-                    variable.set_auto_mask(mask)
                     array = variable[indices]
                     break
 
         # Set the units, if they haven't been set already.
         self._set_units(variable)
 
-        del self.variable
+        if mask:
+            self.scale = True
+            self.always_mask = False
+            self._isvlen = variable.dtype == np.dtype('O')
+            print('V', self._isvlen)
+            if not self._isvlen:
+                array = self._mask(array)
+                array = self._scale(array)
+        
         self.close(dataset0)
         del dataset, dataset0
-
+        del self.variable
+        
         string_type = isinstance(array, str)
         if string_type:
             # --------------------------------------------------------
@@ -226,36 +234,7 @@ class HDFArray(FileArrayMixin, abstract.Array):
             # Hmm netCDF4 has a thing for making scalar size 1, 1d
             array = array.squeeze()
 
-        kind = array.dtype.kind
-        if not string_type and kind in "SU":
-            #     == 'S' and array.ndim > (self.ndim -
-            #     getattr(self, 'gathered', 0) -
-            #     getattr(self, 'ragged', 0)):
-            # --------------------------------------------------------
-            # Collapse (by concatenation) the outermost (fastest
-            # varying) dimension of char array into
-            # memory. E.g. [['a','b','c']] becomes ['abc']
-            # --------------------------------------------------------
-            if kind == "U":
-                array = array.astype("S", copy=False)
-
-            array = netCDF4.chartostring(array)
-            shape = array.shape
-            array = np.array([x.rstrip() for x in array.flat], dtype="U")
-            array = np.reshape(array, shape)
-            array = np.ma.masked_where(array == "", array)
-        elif not string_type and kind == "O":
-            # --------------------------------------------------------
-            # A netCDF string type N-d (N>=1) variable comes out as a
-            # numpy object array, so convert it to numpy string array.
-            # --------------------------------------------------------
-            array = array.astype("U", copy=False)
-
-            # --------------------------------------------------------
-            # netCDF4 does not auto-mask VLEN variable, so do it here.
-            # --------------------------------------------------------
-            array = np.ma.where(array == "", np.ma.masked, array)
-
+        array = self._process_string_and_char(array)
         return array
 
     def __repr__(self):
@@ -274,221 +253,11 @@ class HDFArray(FileArrayMixin, abstract.Array):
         """
         return f"{self.get_filename(None)}, {self.get_address()}"
 
-    def _set_units(self, var):
-        """The units and calendar properties.
-
-        These are set from the netCDF variable attributes, but only if
-        they have already not been defined, either during {{class}}
-        instantiation or by a previous call to `_set_units`.
-
-        .. versionadded:: (cfdm) 1.10.0.1
-
-        :Parameters:
-
-            var: `netCDF4.Variable`
-                The variable containing the units and calendar
-                definitions.
-
-        :Returns:
-
-            `tuple`
-                The units and calendar values, either of which may be
-                `None`.
-
-        """
-        # Note: Can't use None as the default since it is a valid
-        #       `units` or 'calendar' value that indicates that the
-        #       attribute has not been set in the dataset.
-        units = self._get_component("units", False)
-        if units is False:
-            try:
-                units = var.getncattr("units")
-            except AttributeError:
-                units = None
-
-            self._set_component("units", units, copy=False)
-
-        calendar = self._get_component("calendar", False)
-        if calendar is False:
-            try:
-                calendar = var.getncattr("calendar")
-            except AttributeError:
-                calendar = None
-
-            self._set_component("calendar", calendar, copy=False)
-
-        return units, calendar
-
-    @property
-    def array(self):
-        """Return an independent numpy array containing the data.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        :Returns:
-
-            `numpy.ndarray`
-                An independent numpy array of the data.
-
-        **Examples**
-
-        >>> n = numpy.asanyarray(a)
-        >>> isinstance(n, numpy.ndarray)
-        True
-
-        """
-        return self[...]
-
-    def get_format(self):
-        """The format of the files.
-
-        .. versionadded:: (cfdm) 1.10.1.0
-
-        .. seealso:: `get_address`, `get_filename`, `get_formats`
-
-        :Returns:
-
-            `str`
-                The file format. Always ``'nc'``, signifying netCDF.
-
-        **Examples**
-
-        >>> a.get_format()
-        'nc'
-
-        """
-        return "nc"
-
-    def get_groups(self, address):
-        """The netCDF4 group structure of a netCDF variable.
-
-        .. versionadded:: (cfdm) 1.8.6.0
-
-        :Parameters:
-
-            address: `str` or `int`
-                The netCDF variable name, or integer varid, from which
-                to get the groups.
-
-                .. versionadded:: (cfdm) 1.10.1.0
-
-        :Returns:
-
-            (`list`, `str`) or (`list`, `int`)
-                The group structure and the name within the group. If
-                *address* is a varid then an empty list and the varid
-                are returned.
-
-        **Examples**
-
-        >>> n.get_groups('tas')
-        ([], 'tas')
-
-        >>> n.get_groups('/tas')
-        ([], 'tas')
-
-        >>> n.get_groups('/data/model/tas')
-        (['data', 'model'], 'tas')
-
-        >>> n.get_groups(9)
-        ([], 9)
-
-        """
-        try:
-            if "/" not in address:
-                return [], address
-        except TypeError:
-            return [], address
-
-        out = address.split("/")[1:]
-        return out[:-1], out[-1]
-
-    def get_mask(self):
-        """Whether or not to automatically mask the data.
-
-        .. versionadded:: (cfdm) 1.8.2
-
-        **Examples**
-
-        >>> b = a.get_mask()
-
-        """
-        return self._get_component("mask")
-
-    def get_missing_values(self):
-        """The missing value indicators from the netCDF variable.
-
-        .. versionadded:: (cfdm) 1.10.0.3
-
-        :Returns:
-
-            `dict` or `None`
-                The missing value indicators from the netCDF variable,
-                keyed by their netCDF attribute names. An empty
-                dictionary signifies that no missing values are given
-                in the file. `None` signifies that the missing values
-                have not been set.
-
-        **Examples**
-
-        >>> a.get_missing_values()
-        None
-
-        >>> b.get_missing_values()
-        {}
-
-        >>> c.get_missing_values()
-        {'missing_value': 1e20, 'valid_range': (-10, 20)}
-
-        >>> d.get_missing_values()
-        {'valid_min': -999}
-
-        """
-        out = self._get_component("missing_values", None)
-        if out is None:
-            return
-
-        return out.copy()
-
-    def close(self, dataset):
-        """Close the dataset containing the data.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        :Parameters:
-
-            dataset: `netCDF4.Dataset`
-                The netCDF dataset to be be closed.
-
-        :Returns:
-
-            `None`
-
-        """
-        if self._get_component("close"):
-            dataset.close()
-
-    def open(self, **kwargs):
-        """Return an open file object containing the data array.
-
-        When multiple files have been provided an attempt is made to
-        open each one, in the order stored, and an open file object is
-        returned from the first file that exists.
-
-        :Returns:
-
-            (`netCDF4.Dataset`, `str`)
-                The open file object, and the address of the data
-                within the file.
-
-        """
-        return super().open(h5netcdf.File, mode="r", **kwargs)
-
     def _check_safecast(self, attname):
         """Check to see that variable attribute exists can can be safely cast to variable data type."""
-        attrs = variable.attrs
+        attrs = self.variable.attrs
         if attname in attrs:
-            attvalue = self.variable.attrs[attname]
+            attvalue = attrs[attname]
             att = np.array(attvalue)
             setattr(self, attname, attvalue)
         else:
@@ -510,21 +279,16 @@ class HDFArray(FileArrayMixin, abstract.Array):
 
         return is_safe
 
-    def mask_and_scale(self, data):
+    def _mask(self, data):
         """TODOHDF"""
-        self.scale = True # h5netcdf
         attrs = self.variable.attrs
-        self._Unsigned = attrs.get('_Unsigned', 'false')
-        
-        # if attribute _Unsigned is "true", and variable has signed integer
-        # dtype, return view with corresponding unsigned dtype (issues #656,
-        # #794)
-        # _Unsigned attribute must be "true" or "True" (string). Issue #1232.
-        is_unsigned = getattr(self, '_Unsigned', False) in ["True","true"]
+        is_unsigned = attrs.get('_Unsigned', False) in ("true", "True")
         is_unsigned_int = is_unsigned and data.dtype.kind == 'i'
+
+        dtype = data.dtype
         if self.scale and is_unsigned_int:
             # only do this if autoscale option is on.
-            dtype_unsigned_int = f"{data.dtype.byteorder}u{data.dtype.itemsize}"
+            dtype_unsigned_int = f"{dtype.byteorder}u{dtype.itemsize}"
             data = data.view(dtype_unsigned_int)
             
         # private function for creating a masked array, masking missing_values
@@ -540,7 +304,7 @@ class HDFArray(FileArrayMixin, abstract.Array):
             # create mask from missing values.
             mvalmask = np.zeros(data.shape, np.bool_)
             if mval.shape == (): # mval a scalar.
-                mval = [mval] # make into iterable.
+                mval = (mval,) # make into iterable.
                 
             for m in mval:
                 # is scalar missing value a NaN?
@@ -551,9 +315,9 @@ class HDFArray(FileArrayMixin, abstract.Array):
                     mvalisnan = False
                     
                 if mvalisnan:
-                    mvalmask += numpy.isnan(data)
+                    mvalmask += np.isnan(data)
                 else:
-                    mvalmask += data==m
+                    mvalmask += data == m
                     
             if mvalmask.any():
                 # set fill_value for masked array to missing_value (or
@@ -590,16 +354,10 @@ class HDFArray(FileArrayMixin, abstract.Array):
         # issue 209: don't return masked array if variable filling
         # is disabled.
         else:
-            if __netcdf4libversion__ < '4.5.1' and\
-                self._grp.file_format.startswith('NETCDF3'):
-                # issue #908: no_fill not correct for NETCDF3 files before 4.5.1
-                # before 4.5.1 there was no way to turn off filling on a
-                # per-variable basis for classic files.
-                no_fill=0
-            else:
-                with nogil:
-                    ierr = nc_inq_var_fill(self._grpid,self._varid,&no_fill,NULL)
-                _ensure_nc_success(ierr)
+            no_fill = 0
+#                with nogil:
+#                    ierr = nc_inq_var_fill(self._grpid,self._varid,&no_fill,NULL)
+#                _ensure_nc_success(ierr)
             # if no_fill is not 1, and not a byte variable, then use
             # default fill value.  from
             # http://www.unidata.ucar.edu/software/netcdf/docs/netcdf-c/Fill-Values.html#Fill-Values
@@ -615,8 +373,8 @@ class HDFArray(FileArrayMixin, abstract.Array):
             # as a missing value unless a _FillValue attribute is set
             # explicitly."  (do this only for non-vlens, since vlens
             # don't have a default _FillValue)
-            if not self._isvlen and (no_fill != 1 or self.dtype.str[1:] not in ['u1','i1']):
-                fillval = np.array(default_fillvals[self.dtype.str[1:]],self.dtype)
+            if not self._isvlen and (no_fill != 1 or dtype.str[1:] not in ('u1','i1')):
+                fillval = np.array(default_fillvals[dtype.str[1:]], dtype)
                 has_fillval = data == fillval
                 # if data is an array scalar, has_fillval will be a boolean.
                 # in that case convert to an array.
@@ -663,13 +421,16 @@ class HDFArray(FileArrayMixin, abstract.Array):
         # _FillValue (whether defined explicitly or by default) as
         # follows. If the _FillValue is positive then it defines a
         # valid maximum, otherwise it defines a valid minimum."
-        byte_type = self.dtype.str[1:] in ['u1','i1']
         if safe_fillval:
-            fval = np.array(self._FillValue, self.dtype)
+            fval = np.array(self._FillValue, dtype)
         else:
-            fval = np.array(default_fillvals[self.dtype.str[1:]],self.dtype)
-            if byte_type:
+            k = dtype.str[1:]
+            print (k, default_fillvals, self._isvlen)
+            if k in ('u1','i1'):
                 fval = None
+            else:
+                fval = np.array(default_fillvals[k], dtype)
+            
                 
         if self.dtype.kind != 'S':
             # Don't set mask for character data
@@ -680,6 +441,7 @@ class HDFArray(FileArrayMixin, abstract.Array):
             # this).
             if validmin is not None:
                 totalmask += data < validmin
+
             if validmax is not None:
                 totalmask += data > validmax
 
@@ -689,12 +451,12 @@ class HDFArray(FileArrayMixin, abstract.Array):
         # If all else fails, use default _FillValue as fill_value for
         # masked array.
         if fill_value is None:
-            fill_value = default_fillvals[self.dtype.str[1:]]
+            fill_value = default_fillvals[dtype.str[1:]]
             
         # Create masked array with computed mask
         masked_values = bool(totalmask.any())
         if masked_values:
-            data = np.ma.masked_array(data, mask=totalmask,fill_value=fill_value)
+            data = np.ma.masked_array(data, mask=totalmask, fill_value=fill_value)
         else:
             # Always return masked array, if no values masked.
             data = np.ma.masked_array(data)
@@ -712,109 +474,142 @@ class HDFArray(FileArrayMixin, abstract.Array):
             # no missing values
             data = np.array(data, copy=False)
 
-        # ---------------------------
-        # Now scale
-        # ---------------------------
-        if (valid_scaleoffset
-            and self.scale
-            and (self._isprimitive or (self._isvlen and self.dtype != str))
-            ):
-            # If variable has scale_factor and add_offset attributes,
-            # apply them.
-            if hasattr(self, 'scale_factor') and hasattr(self, 'add_offset'):
-                if self.add_offset != 0.0 or self.scale_factor != 1.0:
-                    data = data * self.scale_factor + self.add_offset
-                else:
-                    data = data.astype(self.scale_factor.dtype)
-            elif hasattr(self, 'scale_factor') and self.scale_factor != 1.0:
-                # If variable has only scale_factor attribute,
-                # rescale.
-                data = data * self.scale_factor
-            elif hasattr(self, 'add_offset') and self.add_offset != 0.0:
-                # If variable has only add_offset attribute, add
-                # offset.
-                data = data
+        return data
+            
+    def _scale(self, data):
+        # If variable has scale_factor and add_offset attributes,
+        # apply them.
+        attrs = self.variable.attrs
+        scale_factor = attrs.get('scale_factor')
+        add_offset = attrs.get('add_offset')
+        try:
+            if scale_factor is not None:
+                float(scale_factor)
+                
+            if add_offset is not None:
+                float(add_offset)
+        except:
+            logging.warn(
+                "invalid scale_factor or add_offset attribute, "
+                "no unpacking done..."
+            )
+            return data
+            
+        if scale_factor is not None and add_offset is not None:
+            if add_offset != 0.0 or scale_factor != 1.0:
+                data = data * scale_factor + add_offset
+            else:
+                data = data.astype(scale_factor.dtype)
+        elif scale_factor is not None and scale_factor != 1.0:
+            # If variable has only scale_factor attribute, rescale.
+            data = data * scale_factor
+        elif add_offset is not None and add_offset != 0.0:
+            # If variable has only add_offset attribute, add offset.
+            data = data + add_offset
                 
         return data
-    
-    def mask_unpack(self, variable, array):
-        """TODOHDF"""
-        mu =  _Mask_Unpack(variable)
-        array = mu.mask(array)
-        array = mu.unpack(array)
-        return data
 
-    def to_memory(self):
-        """Bring data on disk into memory.
+    def _set_units(self, var):
+        """The units and calendar properties.
 
-        .. versionadded:: (cfdm) 1.7.0
+        These are set from the netCDF variable attributes, but only if
+        they have already not been defined, either during {{class}}
+        instantiation or by a previous call to `_set_units`.
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        :Parameters:
+
+            var: `netCDF4.Variable`
+                The variable containing the units and calendar
+                definitions.
 
         :Returns:
 
-            `NumpyArray`
-                The new with all of its data in memory.
+            `tuple`
+                The units and calendar values, either of which may be
+                `None`.
 
         """
-        return NumpyArray(self[...])
+        # Note: Can't use None as the default since it is a valid
+        #       `units` or 'calendar' value that indicates that the
+        #       attribute has not been set in the dataset.
+        units = self._get_component("units", False)
+        if units is False:
+            try:
+                units = var.getncattr("units")
+            except AttributeError:
+                units = None
 
+            self._set_component("units", units, copy=False)
 
-default_fillvals = netCDF4.default_fillvals 
-_private_atts = []
+        calendar = self._get_component("calendar", False)
+        if calendar is False:
+            try:
+                calendar = var.getncattr("calendar")
+            except AttributeError:
+                calendar = None
 
-class _Mask_Unpack(netCDF4.Variable):
-    """TODOHDF"""
-    def __init__(self, variable): 
-        self.__dict__['_isprimitive'] = True # h5netcdf
-        self.__dict__['_isvlen'] = False # h5netcdf
-        self.__dict__['_isenum'] = False # h5netcdf
-        self.__dict__['dtype'] = variable.dtype
+            self._set_component("calendar", calendar, copy=False)
 
-        attrs = variable.attrs
-        print (attrs)
-        self.__dict__['attrs'] = attrs
-        self.__dict__['_Unsigned'] = 'false'
-        for attr in ('_FillValue', 'add_offset', 'scale', '_Unsigned', 'valid_max', 'valid_min', 'valid_range', ):
-            if attr in attrs:
-                self.__dict__[attr] = attrs[attr]
-                
-    def getncattr(self, name, encoding='utf-8'):
-        """Retrieve a netCDF4 attribute."""
-        return self.attrs[name]
+        return units, calendar
 
-    def mask(self, data):
-        """TODOHDF"""
-        return self._toma(data)
-           
-    def unpack(self, data):
-        """Unpack non-masked values using scale_factor and add_offset.
+    def get_groups(self, address):
+        """The netCDF4 group structure of a netCDF variable.
+
+        .. versionadded:: (cfdm) 1.8.6.0
+
+        :Parameters:
+
+            address: `str` or `int`
+                The netCDF variable name, or integer varid, from which
+                to get the groups.
+
+                .. versionadded:: (cfdm) 1.10.1.0
+
+        :Returns:
+
+            (`list`, `str`) or (`list`, `int`)
+                The group structure and the name within the group. If
+                *address* is a varid then an empty list and the varid
+                are returned.
+
+        **Examples**
+
+        >>> n.get_groups('tas')
+        ([], 'tas')
+
+        >>> n.get_groups('/tas')
+        ([], 'tas')
+
+        >>> n.get_groups('/data/model/tas')
+        (['data', 'model'], 'tas')
+
+        >>> n.get_groups(9)
+        ([], 9)
 
         """
-        if not scale:
-            return data
-        
-        try: # check to see if scale_factor and add_offset is valid (issue 176).
-            if hasattr(self,'scale_factor'): float(self.scale_factor)
-            if hasattr(self,'add_offset'): float(self.add_offset)
-            valid_scaleoffset = True
-        except:
-            valid_scaleoffset = False
-            if self.scale:
-                msg = 'invalid scale_factor or add_offset attribute, no unpacking done...'
-                # warnings.warn(msg) # h5netcdf
+        try:
+            if "/" not in address:
+                return [], address
+        except TypeError:
+            return [], address
 
-        if self.scale and\
-           (self._isprimitive or (self._isvlen and self.dtype != str)) and\
-           valid_scaleoffset:
-            # if variable has scale_factor and add_offset attributes, apply
-            # them.
-            if hasattr(self, 'scale_factor') and hasattr(self, 'add_offset'):
-                if self.add_offset != 0.0 or self.scale_factor != 1.0:
-                    data = data*self.scale_factor + self.add_offset
-                else:
-                    data = data.astype(self.scale_factor.dtype) # issue 913
-            # else if variable has only scale_factor attribute, rescale.
-            elif hasattr(self, 'scale_factor') and self.scale_factor != 1.0:
-                data = data*self.scale_factor
-            # else if variable has only add_offset attribute, add offset.
-            elif hasattr(self, 'add_offset') and self.add_offset != 0.0:
-                data = data + self.add_offset
+        out = address.split("/")[1:]
+        return out[:-1], out[-1]
+
+    def open(self, **kwargs):
+        """Return a file object for the dataset and the variable address.
+
+        When multiple files have been provided an attempt is made to
+        open each one, in the order stored, and a file object is
+        returned from the first file that exists.
+
+        :Returns:
+
+            (file object, `str`)
+                The file object for the dataset, and the address of
+                the data within the file.
+
+        """
+        return super().open(h5netcdf.File, mode="r", **kwargs)

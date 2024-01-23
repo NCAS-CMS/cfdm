@@ -4459,7 +4459,7 @@ class NetCDFWrite(IOWrite):
             os.remove(filename)
 
         try:
-            nc.set_chunk_cache(16*1024*1024) # 16MiB chunkcache
+#            nc.set_chunk_cache(16*1024*1024) # 16MiB chunkcache
             nc = netCDF4.Dataset(filename, mode, format=fmt)
         except RuntimeError as error:
             raise RuntimeError(f"{error}: {filename}")
