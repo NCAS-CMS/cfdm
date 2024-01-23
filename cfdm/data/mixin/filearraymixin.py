@@ -177,7 +177,7 @@ class FileArrayMixin:
         return (self.get_format(),) * len(self.get_filenames())
 
     def open(self, func, *args, **kwargs):
-        """rn a file object for the dataset and the variable address.
+        """Return a file object for the dataset and the variable address.
 
         When multiple files have been provided an attempt is made to
         open each one, in the order stored, and a file object is

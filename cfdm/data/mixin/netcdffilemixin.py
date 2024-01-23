@@ -1,12 +1,40 @@
 import netCDF4
 import numpy as np
 
-class XXXMixin:
+class NetCDFFileMixin:
     """Mixin class TODOHDF
 
     .. versionadded:: (cfdm) HDFVER
 
     """
+
+    def __repr__(self):
+        """Called by the `repr` built-in function.
+
+        x.__repr__() <==> repr(x)
+
+        """
+        return f"<{self.__class__.__name__}{self.shape}: {self}>"
+
+    def __str__(self):
+        """Called by the `str` built-in function.
+
+        x.__str__() <==> str(x)
+
+        """
+        return f"{self.get_filename(None)}, {self.get_address()}"
+
+    def _get_attr(self, var, attr):
+        """TODOHDF
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameters:
+
+        """
+        raise NotImplementedError(
+            "Must implement {self.__class__.__name__}._get_attr"
+        )  # pragma: no cover
 
     def _process_string_and_char(self, array):
         """TODOHDF"""
@@ -34,6 +62,56 @@ class XXXMixin:
 
         return array
     
+    def _set_units(self, var):
+        """The units and calendar properties.
+
+        These are set from the netCDF variable attributes, but only if
+        they have already not been defined, either during {{class}}
+        instantiation or by a previous call to `_set_units`.
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        :Parameters:
+
+            var: `netCDF4.Variable`
+                The variable containing the units and calendar
+                definitions.
+
+        :Returns:
+
+            `tuple`
+                The units and calendar values, either of which may be
+                `None`.
+
+        """
+        # Note: Can't use None as the default since it is a valid
+        #       `units` or 'calendar' value that indicates that the
+        #       attribute has not been set in the dataset.
+        units = self._get_component("units", False)
+        if units is False:
+            try:
+                units = self._get_attr(var, "units")
+            except AttributeError:
+                units = None
+
+            self._set_component("units", units, copy=False)
+
+        calendar = self._get_component("calendar", False)
+        if calendar is False:
+            try:
+                calendar = self._get_attr(var, "calendar")
+            except AttributeError:
+                calendar = None
+
+            self._set_component("calendar", calendar, copy=False)
+
+        return units, calendar
+
+    def _uuu(self, dataset, groups):
+        for g in groups: #[:-1]:
+            dataset = dataset.groups[g]
+            
+        return dataset #dataset = dataset.groups[groups[-1]]
 
     @property
     def array(self):
@@ -139,3 +217,16 @@ class XXXMixin:
             return
 
         return out.copy()
+
+    def to_memory(self):
+        """Bring data on disk into memory.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        :Returns:
+
+            `NumpyArray`
+                The new with all of its data in memory.
+
+        """
+        return NumpyArray(self[...])

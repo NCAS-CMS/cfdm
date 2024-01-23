@@ -4,13 +4,13 @@ import netCDF4
 import numpy as np
 
 from . import abstract
-from .mixin import FileArrayMixin, XXXMixin
+from .mixin import FileArrayMixin, NetCDFFileMixin
 from .numpyarray import NumpyArray
 
 _safecast = netCDF4.utils._safecast
 default_fillvals = netCDF4.default_fillvals
 
-class HDFArray(XXXMixin, FileArrayMixin, abstract.Array):
+class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
     """An underlying array stored in an HDF file.
 
     .. versionadded:: (cfdm) TODOHDF
@@ -37,10 +37,9 @@ class HDFArray(XXXMixin, FileArrayMixin, abstract.Array):
             filename: (sequence of) `str`, optional
                 The name of the file(s) containing the array.
 
-            address: (sequence of) `str` or `int`, optional
+            address: (sequence of) `str`, optional
                 The identity of the variable in each file defined by
-                *filename*. Either a netCDF variable name or an
-                integer HDF variable ID.
+                *filename*. Must be a netCDF variable name.
 
             dtype: `numpy.dtype`
                 The data type of the array in the file. May be `None`
@@ -188,36 +187,24 @@ class HDFArray(XXXMixin, FileArrayMixin, abstract.Array):
         groups, address = self.get_groups(address)
 
         if groups:
-            # Traverse the group structure, if there is one (CF>=1.8).
-            for g in groups[:-1]:
-                dataset = dataset.groups[g] # h5netcdf
-
-            dataset = dataset.groups[groups[-1]]# h5netcdf
-
-        if isinstance(address, str):
-            # Get the variable by netCDF name
-            variable = dataset.variables[address]
-            self.variable = variable
-            array = variable[indices]
-        else:
-            # Get the variable by netCDF integer ID
-            for variable in dataset.variables.values():
-                if variable._varid == address:
-                    array = variable[indices]
-                    break
-
-        # Set the units, if they haven't been set already.
-        self._set_units(variable)
+            dataset = self._uuu(dataset, groups)
+            
+        # Get the variable by netCDF name
+        variable = dataset.variables[address]
+        self.variable = variable
+        array = variable[indices]
 
         if mask:
             self.scale = True
             self.always_mask = False
             self._isvlen = variable.dtype == np.dtype('O')
-            print('V', self._isvlen)
             if not self._isvlen:
                 array = self._mask(array)
                 array = self._scale(array)
         
+        # Set the units, if they haven't been set already.
+        self._set_units(variable)
+
         self.close(dataset0)
         del dataset, dataset0
         del self.variable
@@ -236,23 +223,7 @@ class HDFArray(XXXMixin, FileArrayMixin, abstract.Array):
 
         array = self._process_string_and_char(array)
         return array
-
-    def __repr__(self):
-        """Called by the `repr` built-in function.
-
-        x.__repr__() <==> repr(x)
-
-        """
-        return f"<{self.__class__.__name__}{self.shape}: {self}>"
-
-    def __str__(self):
-        """Called by the `str` built-in function.
-
-        x.__str__() <==> str(x)
-
-        """
-        return f"{self.get_filename(None)}, {self.get_address()}"
-
+    
     def _check_safecast(self, attname):
         """Check to see that variable attribute exists can can be safely cast to variable data type."""
         attrs = self.variable.attrs
@@ -281,18 +252,19 @@ class HDFArray(XXXMixin, FileArrayMixin, abstract.Array):
 
     def _mask(self, data):
         """TODOHDF"""
+        # Private function for creating a masked array, masking
+        # missing_values and/or _FillValues.
+        
         attrs = self.variable.attrs
         is_unsigned = attrs.get('_Unsigned', False) in ("true", "True")
         is_unsigned_int = is_unsigned and data.dtype.kind == 'i'
 
         dtype = data.dtype
         if self.scale and is_unsigned_int:
-            # only do this if autoscale option is on.
+            # Only do this if autoscale option is on.
             dtype_unsigned_int = f"{dtype.byteorder}u{dtype.itemsize}"
             data = data.view(dtype_unsigned_int)
             
-        # private function for creating a masked array, masking missing_values
-        # and/or _FillValues.
         totalmask = np.zeros(data.shape, np.bool_)
         fill_value = None
         safe_missval = self._check_safecast('missing_value')
@@ -320,7 +292,7 @@ class HDFArray(XXXMixin, FileArrayMixin, abstract.Array):
                     mvalmask += data == m
                     
             if mvalmask.any():
-                # set fill_value for masked array to missing_value (or
+                # Set fill_value for masked array to missing_value (or
                 # 1st element if missing_value is a vector).
                 fill_value = mval[0]
                 totalmask += mvalmask
@@ -351,13 +323,13 @@ class HDFArray(XXXMixin, FileArrayMixin, abstract.Array):
                     fill_value = fval
                     
                 totalmask += mask
-        # issue 209: don't return masked array if variable filling
-        # is disabled.
         else:
+            # Don't return masked array if variable filling is disabled.
             no_fill = 0
 #                with nogil:
 #                    ierr = nc_inq_var_fill(self._grpid,self._varid,&no_fill,NULL)
 #                _ensure_nc_success(ierr)
+
             # if no_fill is not 1, and not a byte variable, then use
             # default fill value.  from
             # http://www.unidata.ucar.edu/software/netcdf/docs/netcdf-c/Fill-Values.html#Fill-Values
@@ -376,8 +348,8 @@ class HDFArray(XXXMixin, FileArrayMixin, abstract.Array):
             if not self._isvlen and (no_fill != 1 or dtype.str[1:] not in ('u1','i1')):
                 fillval = np.array(default_fillvals[dtype.str[1:]], dtype)
                 has_fillval = data == fillval
-                # if data is an array scalar, has_fillval will be a boolean.
-                # in that case convert to an array.
+                # if data is an array scalar, has_fillval will be a
+                # boolean.  in that case convert to an array.
                 if type(has_fillval) == bool:
                     has_fillval = np.asarray(has_fillval)
                 
@@ -425,7 +397,6 @@ class HDFArray(XXXMixin, FileArrayMixin, abstract.Array):
             fval = np.array(self._FillValue, dtype)
         else:
             k = dtype.str[1:]
-            print (k, default_fillvals, self._isvlen)
             if k in ('u1','i1'):
                 fval = None
             else:
@@ -509,50 +480,34 @@ class HDFArray(XXXMixin, FileArrayMixin, abstract.Array):
                 
         return data
 
-    def _set_units(self, var):
-        """The units and calendar properties.
+    def _get_attr(self, var, attr):
+        """TODOHDF
 
-        These are set from the netCDF variable attributes, but only if
-        they have already not been defined, either during {{class}}
-        instantiation or by a previous call to `_set_units`.
-
-        .. versionadded:: (cfdm) 1.10.0.1
+        .. versionadded:: (cfdm) HDFVER
 
         :Parameters:
 
-            var: `netCDF4.Variable`
-                The variable containing the units and calendar
-                definitions.
+        """
+
+        return var.attrs[attr]
+
+    def close(self, dataset):
+        """Close the dataset containing the data.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameters:
+
+            dataset: `h5netcdf.File`
+                The netCDF dataset to be be closed.
 
         :Returns:
 
-            `tuple`
-                The units and calendar values, either of which may be
-                `None`.
+            `None`
 
         """
-        # Note: Can't use None as the default since it is a valid
-        #       `units` or 'calendar' value that indicates that the
-        #       attribute has not been set in the dataset.
-        units = self._get_component("units", False)
-        if units is False:
-            try:
-                units = var.getncattr("units")
-            except AttributeError:
-                units = None
-
-            self._set_component("units", units, copy=False)
-
-        calendar = self._get_component("calendar", False)
-        if calendar is False:
-            try:
-                calendar = var.getncattr("calendar")
-            except AttributeError:
-                calendar = None
-
-            self._set_component("calendar", calendar, copy=False)
-
-        return units, calendar
+        if self._get_component("close"):
+            dataset.close()
 
     def get_groups(self, address):
         """The netCDF4 group structure of a netCDF variable.
@@ -607,9 +562,9 @@ class HDFArray(XXXMixin, FileArrayMixin, abstract.Array):
 
         :Returns:
 
-            (file object, `str`)
-                The file object for the dataset, and the address of
-                the data within the file.
+            (`h5netcdf.File`, `str`)
+                The open file object, and the address of the data
+                within the file.
 
         """
         return super().open(h5netcdf.File, mode="r", **kwargs)

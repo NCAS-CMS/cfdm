@@ -23,6 +23,8 @@ from packaging.version import Version
 from ...decorators import _manage_log_level_via_verbosity
 from ...functions import is_log_level_debug
 from .. import IORead
+from ...flatten import flatten as flatten2 
+
 
 logger = logging.getLogger(__name__)
 
@@ -513,19 +515,19 @@ class NetCDFRead(IORead):
         g = self.read_vars
 
         if flatten and nc.groups:
-            if HDF:
-                # TODOHDF: Can't yet use HDF access to process groups
-                logger.warning(
-                    "WARNING: Using netCDF4 (rather than h5netcdf) "
-                    f"to access file {filename} containing groups"
-                )  # pragma: no cover
-                nc.close()
-                HDF = False
-                try:
-                    nc = netCDF4.Dataset(filename, "r")
-                    netCDF = True
-                except RuntimeError as error:
-                    raise RuntimeError(f"{error}: {filename}")
+           #if HDF:
+           #    # TODOHDF: Can't yet use HDF access to process groups
+           #    logger.warning(
+           #        "WARNING: Using netCDF4 (rather than h5netcdf) "
+           #        f"to access file {filename} containing groups"
+           #    )  # pragma: no cover
+           #    nc.close()
+           #    HDF = False
+           #    try:
+           #        nc = netCDF4.Dataset(filename, "r")
+           #        netCDF = True
+           #    except RuntimeError as error:
+           #        raise RuntimeError(f"{error}: {filename}")
                 
             # Create a diskless, non-persistent container for the
             # flattened file
@@ -543,7 +545,8 @@ class NetCDFRead(IORead):
             flat_nc.set_fill_off()
 
             # Flatten the file
-            netcdf_flattener.flatten(
+#            netcdf_flattener.flatten(
+            flatten2(
                 nc, flat_nc, lax_mode=True, _copy_data=False
             )
 

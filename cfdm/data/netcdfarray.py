@@ -2,11 +2,11 @@ import netCDF4
 import numpy as np
 
 from . import abstract
-from .mixin import FileArrayMixin, XXXMixin
+from .mixin import FileArrayMixin, NetCDFFileMixin
 from .numpyarray import NumpyArray
 
 
-class NetCDFArray(XXXMixin, FileArrayMixin, abstract.Array):
+class NetCDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
     """An underlying array stored in a netCDF file.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -209,10 +209,11 @@ class NetCDFArray(XXXMixin, FileArrayMixin, abstract.Array):
 
         if groups:
             # Traverse the group structure, if there is one (CF>=1.8).
-            for g in groups[:-1]:
-                netcdf = netcdf.groups[g]
-
-            netcdf = netcdf.groups[groups[-1]]
+            netcdf = self._uuu(netcdf, groups)
+#            for g in groups[:-1]:
+#                netcdf = netcdf.groups[g]
+#
+#            netcdf = netcdf.groups[groups[-1]]
 
         if isinstance(address, str):
             # Get the variable by netCDF name
@@ -246,37 +247,6 @@ class NetCDFArray(XXXMixin, FileArrayMixin, abstract.Array):
             array = array.squeeze()
 
         array = self._process_string_and_char(array)
-#            
-#        kind = array.dtype.kind
-#        if not string_type and kind in "SU":
-#            #     == 'S' and array.ndim > (self.ndim -
-#            #     getattr(self, 'gathered', 0) -
-#            #     getattr(self, 'ragged', 0)):
-#            # --------------------------------------------------------
-#            # Collapse (by concatenation) the outermost (fastest
-#            # varying) dimension of char array into
-#            # memory. E.g. [['a','b','c']] becomes ['abc']
-#            # --------------------------------------------------------
-#            if kind == "U":
-#                array = array.astype("S", copy=False)
-#
-#            array = netCDF4.chartostring(array)
-#            shape = array.shape
-#            array = np.array([x.rstrip() for x in array.flat], dtype="U")
-#            array = np.reshape(array, shape)
-#            array = np.ma.masked_where(array == "", array)
-#        elif not string_type and kind == "O":
-#            # --------------------------------------------------------
-#            # A netCDF string type N-d (N>=1) variable comes out as a
-#            # numpy object array, so convert it to numpy string array.
-#            # --------------------------------------------------------
-#            array = array.astype("U", copy=False)
-#
-#            # --------------------------------------------------------
-#            # netCDF4 does not auto-mask VLEN variable, so do it here.
-#            # --------------------------------------------------------
-#            array = np.ma.where(array == "", np.ma.masked, array)
-
         return array
 
     def __repr__(self):
@@ -295,90 +265,15 @@ class NetCDFArray(XXXMixin, FileArrayMixin, abstract.Array):
         """
         return f"{self.get_filename(None)}, {self.get_address()}"
 
-    def _set_units(self, var):
-        """The units and calendar properties.
+    def _get_attr(self, var, attr):
+        """TODOHDF
 
-        These are set from the netCDF variable attributes, but only if
-        they have already not been defined, either during {{class}}
-        instantiation or by a previous call to `_set_units`.
-
-        .. versionadded:: (cfdm) 1.10.0.1
+        .. versionadded:: (cfdm) HDFVER
 
         :Parameters:
 
-            var: `netCDF4.Variable`
-                The variable containing the units and calendar
-                definitions.
-
-        :Returns:
-
-            `tuple`
-                The units and calendar values, either of which may be
-                `None`.
-
         """
-        # Note: Can't use None as the default since it is a valid
-        #       `units` or 'calendar' value that indicates that the
-        #       attribute has not been set in the dataset.
-        units = self._get_component("units", False)
-        if units is False:
-            try:
-                units = var.getncattr("units")
-            except AttributeError:
-                units = None
-
-            self._set_component("units", units, copy=False)
-
-        calendar = self._get_component("calendar", False)
-        if calendar is False:
-            try:
-                calendar = var.getncattr("calendar")
-            except AttributeError:
-                calendar = None
-
-            self._set_component("calendar", calendar, copy=False)
-
-        return units, calendar
-
-    @property
-    def array(self):
-        """Return an independent numpy array containing the data.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        :Returns:
-
-            `numpy.ndarray`
-                An independent numpy array of the data.
-
-        **Examples**
-
-        >>> n = numpy.asanyarray(a)
-        >>> isinstance(n, numpy.ndarray)
-        True
-
-        """
-        return self[...]
-
-    def get_format(self):
-        """The format of the files.
-
-        .. versionadded:: (cfdm) 1.10.1.0
-
-        .. seealso:: `get_address`, `get_filename`, `get_formats`
-
-        :Returns:
-
-            `str`
-                The file format. Always ``'nc'``, signifying netCDF.
-
-        **Examples**
-
-        >>> a.get_format()
-        'nc'
-
-        """
-        return "nc"
+        return var.getncattr(attr)
 
     def get_groups(self, address):
         """The netCDF4 group structure of a netCDF variable.
@@ -424,53 +319,6 @@ class NetCDFArray(XXXMixin, FileArrayMixin, abstract.Array):
         out = address.split("/")[1:]
         return out[:-1], out[-1]
 
-    def get_mask(self):
-        """Whether or not to automatically mask the data.
-
-        .. versionadded:: (cfdm) 1.8.2
-
-        **Examples**
-
-        >>> b = a.get_mask()
-
-        """
-        return self._get_component("mask")
-
-    def get_missing_values(self):
-        """The missing value indicators from the netCDF variable.
-
-        .. versionadded:: (cfdm) 1.10.0.3
-
-        :Returns:
-
-            `dict` or `None`
-                The missing value indicators from the netCDF variable,
-                keyed by their netCDF attribute names. An empty
-                dictionary signifies that no missing values are given
-                in the file. `None` signifies that the missing values
-                have not been set.
-
-        **Examples**
-
-        >>> a.get_missing_values()
-        None
-
-        >>> b.get_missing_values()
-        {}
-
-        >>> c.get_missing_values()
-        {'missing_value': 1e20, 'valid_range': (-10, 20)}
-
-        >>> d.get_missing_values()
-        {'valid_min': -999}
-
-        """
-        out = self._get_component("missing_values", None)
-        if out is None:
-            return
-
-        return out.copy()
-
     def close(self, dataset):
         """Close the dataset containing the data.
 
@@ -490,10 +338,10 @@ class NetCDFArray(XXXMixin, FileArrayMixin, abstract.Array):
             dataset.close()
 
     def open(self):
-        """Return an open file object containing the data array.
+        """Return a file object for the dataset and the variable address.
 
         When multiple files have been provided an attempt is made to
-        open each one, in the order stored, and an open file object is
+        open each one, in the order stored, and a file object is
         returned from the first file that exists.
 
         :Returns:
@@ -504,16 +352,3 @@ class NetCDFArray(XXXMixin, FileArrayMixin, abstract.Array):
 
         """
         return super().open(netCDF4.Dataset, mode="r")
-
-    def to_memory(self):
-        """Bring data on disk into memory.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        :Returns:
-
-            `NumpyArray`
-                The new with all of its data in memory.
-
-        """
-        return NumpyArray(self[...])
