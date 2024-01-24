@@ -1,8 +1,11 @@
 import netCDF4
 import numpy as np
 
+from ..numpyarray import NumpyArray
+
+
 class NetCDFFileMixin:
-    """Mixin class TODOHDF
+    """Mixin class TODOHDF.
 
     .. versionadded:: (cfdm) HDFVER
 
@@ -25,7 +28,7 @@ class NetCDFFileMixin:
         return f"{self.get_filename(None)}, {self.get_address()}"
 
     def _get_attr(self, var, attr):
-        """TODOHDF
+        """TODOHDF.
 
         .. versionadded:: (cfdm) HDFVER
 
@@ -37,7 +40,7 @@ class NetCDFFileMixin:
         )  # pragma: no cover
 
     def _process_string_and_char(self, array):
-        """TODOHDF"""
+        """TODOHDF."""
         string_type = isinstance(array, str)
         kind = array.dtype.kind
         if not string_type and kind in "SU":
@@ -61,7 +64,7 @@ class NetCDFFileMixin:
             array = np.ma.where(array == "", np.ma.masked, array)
 
         return array
-    
+
     def _set_units(self, var):
         """The units and calendar properties.
 
@@ -108,10 +111,10 @@ class NetCDFFileMixin:
         return units, calendar
 
     def _uuu(self, dataset, groups):
-        for g in groups: #[:-1]:
+        for g in groups:  # [:-1]:
             dataset = dataset.groups[g]
-            
-        return dataset #dataset = dataset.groups[groups[-1]]
+
+        return dataset  # dataset = dataset.groups[groups[-1]]
 
     @property
     def array(self):
@@ -140,7 +143,7 @@ class NetCDFFileMixin:
 
         :Parameters:
 
-            dataset: 
+            dataset:
                 The dataset to be be closed.
 
         :Returns:

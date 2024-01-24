@@ -179,7 +179,7 @@ class FileArrayMixin:
         return (self.get_format(),) * len(self.get_filenames())
 
     def open(self, func, *args, **kwargs):
-        """Return a file object for the dataset and the variable address.
+        """Return a dataset file object and address.
 
         When multiple files have been provided an attempt is made to
         open each one, in the order stored, and a file object is
@@ -214,11 +214,13 @@ class FileArrayMixin:
                 # Create an openable s3 file object
                 endpoint_url = f"https://{url.netloc}"
                 uri = url.path[1:]
-                s3 = {"anon": True,
-                      "client_kwargs": {'endpoint_url': endpoint_url}}
+                s3 = {
+                    "anon": True,
+                    "client_kwargs": {"endpoint_url": endpoint_url},
+                }
                 fs = S3FileSystem(**s3)
-                filename = fs.open(uri, 'rb')        
-        
+                filename = fs.open(uri, "rb")
+
             try:
                 nc = func(filename, *args, **kwargs)
             except FileNotFoundError:

@@ -1,13 +1,17 @@
+import logging
+
 import h5netcdf
 import netCDF4
 import numpy as np
 
 from . import abstract
 from .mixin import FileArrayMixin, NetCDFFileMixin
-from .numpyarray import NumpyArray
 
 _safecast = netCDF4.utils._safecast
 default_fillvals = netCDF4.default_fillvals
+
+logger = logging.getLogger(__name__)
+
 
 class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
     """An underlying array stored in an HDF file.
@@ -187,7 +191,7 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
         if groups:
             dataset = self._uuu(dataset, groups)
-            
+
         # Get the variable by netCDF name
         variable = dataset.variables[address]
         self.variable = variable
@@ -196,18 +200,18 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         if mask:
             self.scale = True
             self.always_mask = False
-            self._isvlen = variable.dtype == np.dtype('O')
+            self._isvlen = variable.dtype == np.dtype("O")
             if not self._isvlen:
                 array = self._mask(array)
                 array = self._scale(array)
-        
+
         # Set the units, if they haven't been set already.
         self._set_units(variable)
 
         self.close(dataset0)
         del dataset, dataset0
         del self.variable
-        
+
         string_type = isinstance(array, str)
         if string_type:
             # --------------------------------------------------------
@@ -222,9 +226,14 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
         array = self._process_string_and_char(array)
         return array
-    
+
     def _check_safecast(self, attname):
-        """Check to see that variable attribute exists can can be safely cast to variable data type."""
+        """ToDOHDF.
+
+        Check to see that variable attribute exists can can be safely
+        cast to variable data type.
+
+        """
         attrs = self.variable.attrs
         if attname in attrs:
             attvalue = attrs[attname]
@@ -240,7 +249,7 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             is_safe = False
         else:
             is_safe = _safecast(att, atta)
-            
+
         if not is_safe:
             logger.warn(
                 f"WARNING: {attname} not used since it cannot "
@@ -250,33 +259,33 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         return is_safe
 
     def _mask(self, data):
-        """TODOHDF"""
+        """TODOHDF."""
         # Private function for creating a masked array, masking
         # missing_values and/or _FillValues.
-        
+
         attrs = self.variable.attrs
-        is_unsigned = attrs.get('_Unsigned', False) in ("true", "True")
-        is_unsigned_int = is_unsigned and data.dtype.kind == 'i'
+        is_unsigned = attrs.get("_Unsigned", False) in ("true", "True")
+        is_unsigned_int = is_unsigned and data.dtype.kind == "i"
 
         dtype = data.dtype
         if self.scale and is_unsigned_int:
             # Only do this if autoscale option is on.
             dtype_unsigned_int = f"{dtype.byteorder}u{dtype.itemsize}"
             data = data.view(dtype_unsigned_int)
-            
+
         totalmask = np.zeros(data.shape, np.bool_)
         fill_value = None
-        safe_missval = self._check_safecast('missing_value')
+        safe_missval = self._check_safecast("missing_value")
         if safe_missval:
             mval = np.array(self.missing_value, self.dtype)
             if self.scale and is_unsigned_int:
                 mval = mval.view(dtype_unsigned_int)
-                
+
             # create mask from missing values.
             mvalmask = np.zeros(data.shape, np.bool_)
-            if mval.shape == (): # mval a scalar.
-                mval = (mval,) # make into iterable.
-                
+            if mval.shape == ():  # mval a scalar.
+                mval = (mval,)  # make into iterable.
+
             for m in mval:
                 # is scalar missing value a NaN?
                 try:
@@ -284,50 +293,50 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 except TypeError:
                     # isnan fails on some dtypes
                     mvalisnan = False
-                    
+
                 if mvalisnan:
                     mvalmask += np.isnan(data)
                 else:
                     mvalmask += data == m
-                    
+
             if mvalmask.any():
                 # Set fill_value for masked array to missing_value (or
                 # 1st element if missing_value is a vector).
                 fill_value = mval[0]
                 totalmask += mvalmask
-                
+
         # set mask=True for data == fill value
-        safe_fillval = self._check_safecast('_FillValue')
+        safe_fillval = self._check_safecast("_FillValue")
         if safe_fillval:
             fval = np.array(self._FillValue, self.dtype)
             if self.scale and is_unsigned_int:
                 fval = fval.view(dtype_unsigned_int)
-                
+
             # is _FillValue a NaN?
             try:
                 fvalisnan = np.isnan(fval)
             except Exception:
                 # isnan fails on some dtypes
                 fvalisnan = False
-                
+
             if fvalisnan:
                 mask = np.isnan(data)
             elif (data == fval).any():
-                mask = data==fval
+                mask = data == fval
             else:
                 mask = None
 
             if mask is not None:
                 if fill_value is None:
                     fill_value = fval
-                    
+
                 totalmask += mask
         else:
             # Don't return masked array if variable filling is disabled.
             no_fill = 0
-#                with nogil:
-#                    ierr = nc_inq_var_fill(self._grpid,self._varid,&no_fill,NULL)
-#                _ensure_nc_success(ierr)
+            #                with nogil:
+            #                    ierr = nc_inq_var_fill(self._grpid,self._varid,&no_fill,NULL)
+            #                _ensure_nc_success(ierr)
 
             # if no_fill is not 1, and not a byte variable, then use
             # default fill value.  from
@@ -344,18 +353,21 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             # as a missing value unless a _FillValue attribute is set
             # explicitly."  (do this only for non-vlens, since vlens
             # don't have a default _FillValue)
-            if not self._isvlen and (no_fill != 1 or dtype.str[1:] not in ('u1','i1')):
+            if not self._isvlen and (
+                no_fill != 1 or dtype.str[1:] not in ("u1", "i1")
+            ):
                 fillval = np.array(default_fillvals[dtype.str[1:]], dtype)
                 has_fillval = data == fillval
                 # if data is an array scalar, has_fillval will be a
                 # boolean.  in that case convert to an array.
-                if type(has_fillval) == bool:
+                #                if type(has_fillval) == bool:
+                if isinstance(has_fillval, bool):
                     has_fillval = np.asarray(has_fillval)
-                
+
                 if has_fillval.any():
                     if fill_value is None:
                         fill_value = fillval
-                        
+
                     mask = data == fillval
                     totalmask += mask
 
@@ -366,9 +378,9 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         # valid_min, valid_max. No special treatment of byte data as
         # described at
         # http://www.unidata.ucar.edu/software/netcdf/docs/attribute_conventions.html).
-        safe_validrange = self._check_safecast('valid_range')
-        safe_validmin = self._check_safecast('valid_min')
-        safe_validmax = self._check_safecast('valid_max')
+        safe_validrange = self._check_safecast("valid_range")
+        safe_validmin = self._check_safecast("valid_min")
+        safe_validmax = self._check_safecast("valid_max")
         if safe_validrange and self.valid_range.size == 2:
             validmin = np.array(self.valid_range[0], self.dtype)
             validmax = np.array(self.valid_range[1], self.dtype)
@@ -377,8 +389,8 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 validmin = np.array(self.valid_min, self.dtype)
 
             if safe_validmax:
-                validmax = numpy.array(self.valid_max, self.dtype)
-                
+                validmax = np.array(self.valid_max, self.dtype)
+
         if validmin is not None and self.scale and is_unsigned_int:
             validmin = validmin.view(dtype_unsigned_int)
 
@@ -396,15 +408,14 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             fval = np.array(self._FillValue, dtype)
         else:
             k = dtype.str[1:]
-            if k in ('u1','i1'):
+            if k in ("u1", "i1"):
                 fval = None
             else:
                 fval = np.array(default_fillvals[k], dtype)
-            
-                
-        if self.dtype.kind != 'S':
+
+        if self.dtype.kind != "S":
             # Don't set mask for character data
-            
+
             # Setting valid_min/valid_max to the _FillVaue is too
             # surprising for many users (despite the netcdf docs
             # attribute best practices suggesting clients should do
@@ -422,49 +433,52 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         # masked array.
         if fill_value is None:
             fill_value = default_fillvals[dtype.str[1:]]
-            
+
         # Create masked array with computed mask
         masked_values = bool(totalmask.any())
         if masked_values:
-            data = np.ma.masked_array(data, mask=totalmask, fill_value=fill_value)
+            data = np.ma.masked_array(
+                data, mask=totalmask, fill_value=fill_value
+            )
         else:
             # Always return masked array, if no values masked.
             data = np.ma.masked_array(data)
-            
+
         # Scalar array with mask=True should be converted to
-        # numpy.ma.MaskedConstant to be consistent with slicing
+        # np.ma.MaskedConstant to be consistent with slicing
         # behavior of masked arrays.
         if data.shape == () and data.mask.all():
             # Return a scalar numpy masked constant not a 0-d masked
-            # array, so that data == numpy.ma.masked.
+            # array, so that data == np.ma.masked.
             data = data[()]
-            
+
         elif not self.always_mask and not masked_values:
             # Return a regular numpy array if requested and there are
             # no missing values
             data = np.array(data, copy=False)
 
         return data
-            
+
     def _scale(self, data):
+        """TODOHDF."""
         # If variable has scale_factor and add_offset attributes,
         # apply them.
         attrs = self.variable.attrs
-        scale_factor = attrs.get('scale_factor')
-        add_offset = attrs.get('add_offset')
+        scale_factor = attrs.get("scale_factor")
+        add_offset = attrs.get("add_offset")
         try:
             if scale_factor is not None:
                 float(scale_factor)
-                
+
             if add_offset is not None:
                 float(add_offset)
-        except:
+        except ValueError:
             logging.warn(
                 "invalid scale_factor or add_offset attribute, "
                 "no unpacking done..."
             )
             return data
-            
+
         if scale_factor is not None and add_offset is not None:
             if add_offset != 0.0 or scale_factor != 1.0:
                 data = data * scale_factor + add_offset
@@ -476,19 +490,18 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         elif add_offset is not None and add_offset != 0.0:
             # If variable has only add_offset attribute, add offset.
             data = data + add_offset
-                
+
         return data
 
-    def _get_attr(self, var, attr):
-        """TODOHDF
-
-        .. versionadded:: (cfdm) HDFVER
-
-        :Parameters:
-
-        """
-
-        return var.attrs[attr]
+    #    def _get_attr(self, var, attr):
+    #        """TODOHDF.
+    #
+    #        .. versionadded:: (cfdm) HDFVER
+    #
+    #        :Parameters:
+    #
+    #        """
+    #        return var.attrs[attr]
 
     def close(self, dataset):
         """Close the dataset containing the data.
@@ -552,27 +565,8 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         out = address.split("/")[1:]
         return out[:-1], out[-1]
 
-    def _fff(self, ):
-        u = urlparse(filename)
-        if u.scheme == "s3":
-            # Create an openable s3 file object
-            endpoint_url = f"https://{u.netloc}"
-            uri = u.path[1:]
-            s3 = g['s3']
-            if s3 is None:
-                s3 = {"anon": True,
-                      "client_kwargs": {'endpoint_url': endpoint_url}}
-            
-            fs = S3FileSystem(**s3)
-            filename = fs.open(uri, 'rb')
-            if is_log_level_detail(logger):
-                logger.debug(
-                    f"    s3: s3fs.S3FileSystem options: {s3}\n"
-                )  # pragma: no cover
-
-    
     def open(self, **kwargs):
-        """Return a file object for the dataset and the variable address.
+        """Return a dataset file object and address.
 
         When multiple files have been provided an attempt is made to
         open each one, in the order stored, and a file object is
@@ -585,5 +579,6 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 within the file.
 
         """
-        return super().open(h5netcdf.File, mode="r",
-                            decode_vlen_strings=True, **kwargs)
+        return super().open(
+            h5netcdf.File, mode="r", decode_vlen_strings=True, **kwargs
+        )

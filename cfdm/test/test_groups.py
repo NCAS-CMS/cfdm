@@ -65,8 +65,8 @@ class GroupsTest(unittest.TestCase):
 
         ungrouped_file = ungrouped_file1
         grouped_file = grouped_file1
-        grouped_file = 'delme_grouped.nc'
-        
+        grouped_file = "delme_grouped.nc"
+
         # Add a second grid mapping
         datum = cfdm.Datum(parameters={"earth_radius": 7000000})
         conversion = cfdm.CoordinateConversion(
@@ -105,7 +105,7 @@ class GroupsTest(unittest.TestCase):
         nc.close()
 
         grouped_file = grouped_file1
-        
+
         h = cfdm.read(grouped_file, verbose=1)
         self.assertEqual(len(h), 1, repr(h))
         self.assertTrue(f.equals(h[0], verbose=2))

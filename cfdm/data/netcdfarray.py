@@ -3,7 +3,6 @@ import numpy as np
 
 from . import abstract
 from .mixin import FileArrayMixin, NetCDFFileMixin
-from .numpyarray import NumpyArray
 
 
 class NetCDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
@@ -210,10 +209,10 @@ class NetCDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         if groups:
             # Traverse the group structure, if there is one (CF>=1.8).
             netcdf = self._uuu(netcdf, groups)
-#            for g in groups[:-1]:
-#                netcdf = netcdf.groups[g]
-#
-#            netcdf = netcdf.groups[groups[-1]]
+        #            for g in groups[:-1]:
+        #                netcdf = netcdf.groups[g]
+        #
+        #            netcdf = netcdf.groups[groups[-1]]
 
         if isinstance(address, str):
             # Get the variable by netCDF name
@@ -266,7 +265,7 @@ class NetCDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         return f"{self.get_filename(None)}, {self.get_address()}"
 
     def _get_attr(self, var, attr):
-        """TODOHDF
+        """TODOHDF.
 
         .. versionadded:: (cfdm) HDFVER
 
@@ -338,7 +337,7 @@ class NetCDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             dataset.close()
 
     def open(self):
-        """Return a file object for the dataset and the variable address.
+        """Return a dataset file object and address.
 
         When multiple files have been provided an attempt is made to
         open each one, in the order stored, and a file object is
