@@ -14,14 +14,15 @@ from typing import Any
 from urllib.parse import urlparse
 from uuid import uuid4
 
-import netCDF4
 import h5netcdf
+import netCDF4
 import netcdf_flattener
 import numpy as np
 from packaging.version import Version
+from s3fs import S3FileSystem
 
 from ...decorators import _manage_log_level_via_verbosity
-from ...functions import is_log_level_debug
+from ...functions import is_log_level_debug, is_log_level_detail
 from .. import IORead
 from ...flatten import flatten as flatten2 
 
@@ -493,9 +494,32 @@ class NetCDFRead(IORead):
         >>> r.file_open('file.nc')
 
         """
+        g = self.read_vars
+
         netCDF = False
         HDF = False
+
+        u = urlparse(filename)
+        if u.scheme == "s3":
+            # Create an openable s3 file object
+            endpoint_url = f"https://{u.netloc}"
+            uri = u.path[1:]
+            s3 = g['s3']
+            if s3 is None:
+                s3 = {"anon": True,
+                      "client_kwargs": {'endpoint_url': endpoint_url}}
+            
+            fs = S3FileSystem(**s3)
+            filename = fs.open(uri, 'rb')
+            print (filename, type(filename))
+            if is_log_level_detail(logger):
+                logger.debug(
+                    f"    s3: s3fs.S3FileSystem options: {s3}\n"
+                )  # pragma: no cover
+
+#        nc = h5netcdf.File(filename, "r", decode_vlen_strings=True)
         try:
+#            raise OSError()
             nc = h5netcdf.File(filename, "r", decode_vlen_strings=True)
             HDF = True
         except OSError:            
@@ -512,8 +536,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # If the file has a group structure then flatten it (CF>=1.8)
         # ------------------------------------------------------------
-        g = self.read_vars
-
+      
         if flatten and nc.groups:
            #if HDF:
            #    # TODOHDF: Can't yet use HDF access to process groups
@@ -642,7 +665,7 @@ class NetCDFRead(IORead):
 
         """
         # Assume that URLs are in netCDF format
-        if filename.startswith("https://") or filename.startswith("http://"):
+        if filename.startswith("https://") or filename.startswith("http://") or filename.startswith("s3://"):
             return True
 
         # Read the magic number
@@ -757,7 +780,7 @@ class NetCDFRead(IORead):
         """
         # Assume that URLs are files
         u = urlparse(filename)
-        if u.scheme in ("http", "https"):
+        if u.scheme in ("http", "https", "s3"):
             return True
 
         return os.path.isfile(filename)
@@ -821,6 +844,7 @@ class NetCDFRead(IORead):
         warnings=True,
         warn_valid=False,
         domain=False,
+        s3=None
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
 
@@ -964,6 +988,9 @@ class NetCDFRead(IORead):
             # CFA
             # --------------------------------------------------------
             "cfa": False,
+            # S3
+            #
+            "s3": s3,
         }
 
         g = self.read_vars

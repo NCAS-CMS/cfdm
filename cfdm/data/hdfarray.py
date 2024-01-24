@@ -1,6 +1,5 @@
 import h5netcdf
 import netCDF4
-
 import numpy as np
 
 from . import abstract
@@ -553,6 +552,25 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         out = address.split("/")[1:]
         return out[:-1], out[-1]
 
+    def _fff(self, ):
+        u = urlparse(filename)
+        if u.scheme == "s3":
+            # Create an openable s3 file object
+            endpoint_url = f"https://{u.netloc}"
+            uri = u.path[1:]
+            s3 = g['s3']
+            if s3 is None:
+                s3 = {"anon": True,
+                      "client_kwargs": {'endpoint_url': endpoint_url}}
+            
+            fs = S3FileSystem(**s3)
+            filename = fs.open(uri, 'rb')
+            if is_log_level_detail(logger):
+                logger.debug(
+                    f"    s3: s3fs.S3FileSystem options: {s3}\n"
+                )  # pragma: no cover
+
+    
     def open(self, **kwargs):
         """Return a file object for the dataset and the variable address.
 
@@ -567,4 +585,5 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 within the file.
 
         """
-        return super().open(h5netcdf.File, mode="r", **kwargs)
+        return super().open(h5netcdf.File, mode="r",
+                            decode_vlen_strings=True, **kwargs)

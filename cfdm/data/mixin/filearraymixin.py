@@ -1,5 +1,7 @@
 from urllib.parse import urlparse
 
+from s3fs import S3FileSystem
+
 from ...functions import abspath
 
 
@@ -208,7 +210,15 @@ class FileArrayMixin:
             if url.scheme == "file":
                 # Convert a file URI into an absolute path
                 filename = url.path
-
+            elif url.scheme == "s3":
+                # Create an openable s3 file object
+                endpoint_url = f"https://{url.netloc}"
+                uri = url.path[1:]
+                s3 = {"anon": True,
+                      "client_kwargs": {'endpoint_url': endpoint_url}}
+                fs = S3FileSystem(**s3)
+                filename = fs.open(uri, 'rb')        
+        
             try:
                 nc = func(filename, *args, **kwargs)
             except FileNotFoundError:
@@ -220,6 +230,6 @@ class FileArrayMixin:
             return nc, address
 
         if len(filenames) == 1:
-            raise FileNotFoundError(f"No such file: {filenames.pop()}")
+            raise FileNotFoundError(f"No such file: {filenames[0]}")
 
         raise FileNotFoundError(f"No such files: {filenames}")

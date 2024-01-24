@@ -234,6 +234,9 @@ class _Flattener:
         except AttributeError:
             # h5netcdf
             return dataset.filename
+
+    def contiguous(self, variable):
+        pass
         
     def data_model(self, ds):
         """Return the netCDF data model version.
@@ -250,6 +253,52 @@ class _Flattener:
             # h5netcdf
             return 'NETCDF4'
         
+    def get_dims(self, variable):
+        """Return
+
+        :Returns:
+
+            `str`
+
+        """
+        try:
+            return variable.get_dims()
+        except AttributeError:
+            out = []
+            dimension_names = list(variable.dimensions)
+            group = variable._parent
+            while dimension_names:
+                for name, dim in group.dims.items():
+                    if name in dimension_names[:]:
+                        out.append(dim)
+                        dimension_names.remove(name)
+
+                group = group.parent
+                if group is None:
+                    break
+                
+            return out
+                        
+    def group(self, x):
+        """Return a
+
+        :Returns:
+
+            `Group`
+
+        """
+        try:
+            # netCDF4
+            return x.group()
+        except AttributeError:
+            # h5netcdf
+            return x._parent
+#            g = self.__input_file.groups
+#            for group_name in x.name.split('/')[1:-1]:
+#                g = g[group_name]
+#
+#            return g
+        
     def name(self, x):
         """Return the netCDF name, without its groups.
 
@@ -265,6 +314,19 @@ class _Flattener:
             # h5netcdf
             name = x.name.split('/')[-1]
         
+    def parent(self, group):
+        """Return a simulated unix directory path to a group.
+
+        :Returns:
+
+            `str`
+
+        """
+        try:
+            return group.parent
+        except AttributeError:
+            return
+                    
     def path(self, group):
         """Return a simulated unix directory path to a group.
 
@@ -278,8 +340,12 @@ class _Flattener:
             return group.path
         except AttributeError:
             # h5netcdf
-            return group.name
-        
+            print(group, dir(group))
+            try:
+                return group.name
+            except AttributeError:
+                return "/"
+                   
     def ncattrs(self, x):
         """Return netCDF attribute names.
 
@@ -391,22 +457,22 @@ class _Flattener:
         :param dim: dimension to flatten
         """
 #        logging.info("   Copying dimension {} from group {} to root".format(dim.name, dim.group().path))
-        logging.info("   Copying dimension {} from group {} to root".format(self.name(dim), self.path(dim.group())))
+        logging.info("   Copying dimension {} from group {} to root".format(self.name(dim), self.path(self.group(dim))))
 
         # Create new name
 #        new_name = self.generate_flattened_name(dim.group(), dim.name)
-        new_name = self.generate_flattened_name(dim.group(), self.name(dim))
+        new_name = self.generate_flattened_name(self.group(dim), self.name(dim))
         
         # Write dimension
         self.__output_file.createDimension(new_name, (len(dim), None)[dim.isunlimited()])
 
         # Store new name in dict for resolving references later
 #        self.__dim_map[self.pathname(dim.group(), dim.name)] = new_name
-        self.__dim_map[self.pathname(dim.group(), self.name(dim))] = new_name
+        self.__dim_map[self.pathname(self.group(dim), self.name(dim))] = new_name
 
         # Add to name mapping attribute
 #        self.__dim_map_value.append(self.generate_mapping_str(dim.group(), dim.name, new_name))
-        self.__dim_map_value.append(self.generate_mapping_str(dim.group(), self.name(dim), new_name))
+        self.__dim_map_value.append(self.generate_mapping_str(self.group(dim), self.name(dim), new_name))
 
     def flatten_variable(self, var):
         """Flattens a given variable to the output file.
@@ -414,17 +480,20 @@ class _Flattener:
         :param var: variable to flatten
         """
 #        logging.info("   Copying variable {} from group {} to root".format(var.name, var.group().path))
-        logging.info("   Copying variable {} from group {} to root".format(self.name(var), self.path(var.group())))
+        logging.info("   Copying variable {} from group {} to root".format(self.name(var), self.path(self.group(var))))
+        print ("Copying variable {} from group {} to root".format(self.name(var), self.path(self.group(var))))
 
         # Create new name
-        new_name = self.generate_flattened_name(var.group(), self.name(var))
+#        new_name = self.generate_flattened_name(var.group(), self.name(var))
+        new_name = self.generate_flattened_name(self.group(var), self.name(var))
 
         # Replace old by new dimension names
 #        new_dims = list(map(lambda x: self.__dim_map[self.pathname(x.group(), x.name)], var.get_dims()))
-        new_dims = list(map(lambda x: self.__dim_map[self.pathname(x.group(), self.name(x))], var.get_dims()))
+        new_dims = list(map(lambda x: self.__dim_map[self.pathname(self.group(x), self.name(x))], self.get_dims(var)))
 
         # Write variable
-        fullname = self.pathname(var.group(), self.name(var))
+#        fullname = self.pathname(var.group(), self.name(var))
+        fullname = self.pathname(self.group(var), self.name(var))
         logging.info("create variable {} from {}".format(new_name, fullname))
 
         new_var = self.__output_file.createVariable(
@@ -460,11 +529,11 @@ class _Flattener:
 
         # Store new name in dict for resolving references later
 #        self.__var_map[self.pathname(var.group(), var.name)] = new_name
-        self.__var_map[self.pathname(var.group(), self.name(var))] = new_name
+        self.__var_map[self.pathname(self.group(var), self.name(var))] = new_name
 
         # Add to name mapping attribute
 #        self.__var_map_value.append(self.generate_mapping_str(var.group(), var.name, new_name))
-        self.__var_map_value.append(self.generate_mapping_str(var.group(), self.name(var), new_name))
+        self.__var_map_value.append(self.generate_mapping_str(self.group(var), self.name(var), new_name))
 
         # Resolve references in variable attributes and replace by absolute path:
         self.resolve_references(new_var, var)
@@ -552,12 +621,14 @@ class _Flattener:
 
             # First tentative as dim OR var
             ref_type = "dimension" if resolve_dim_or_var else "variable"
-            absolute_ref = self.search_by_relative_path(orig_ref, orig_var.group(), resolve_dim_or_var)
+#            absolute_ref = self.search_by_relative_path(orig_ref, orig_var.group(), resolve_dim_or_var)
+            absolute_ref = self.search_by_relative_path(orig_ref, self.group(orig_var), resolve_dim_or_var)
 
             # If failed and alternative possible, second tentative
             if absolute_ref is None and resolve_alt:
                 ref_type = "dimension" if not resolve_dim_or_var else "variable"
-                absolute_ref = self.search_by_relative_path(orig_ref, orig_var.group(), not resolve_dim_or_var)
+#                absolute_ref = self.search_by_relative_path(orig_ref, orig_var.group(), not resolve_dim_or_var)
+                absolute_ref = self.search_by_relative_path(orig_ref, self.groupp(orig_var), not resolve_dim_or_var)
 
         # Reference is to be searched by proximity
         else:
@@ -573,19 +644,23 @@ class _Flattener:
         """
         # First tentative as dim OR var
         ref_type = "dimension" if resolve_dim_or_var else "variable"
-        resolved_var = self.search_by_proximity(ref, orig_var.group(), resolve_dim_or_var, False,
+#        resolved_var = self.search_by_proximity(ref, orig_var.group(), resolve_dim_or_var, False,
+#                                                attr.stop_at_local_apex)
+        resolved_var = self.search_by_proximity(ref, self.group(orig_var), resolve_dim_or_var, False,
                                                 attr.stop_at_local_apex)
 
         # If failed and alternative possible, second tentative
         if resolved_var is None and resolve_alt:
             ref_type = "dimension" if not resolve_dim_or_var else "variable"
-            resolved_var = self.search_by_proximity(ref, orig_var.group(), not resolve_dim_or_var, False,
+#            resolved_var = self.search_by_proximity(ref, orig_var.group(), not resolve_dim_or_var, False,
+#                                                    attr.stop_at_local_apex)
+            resolved_var = self.search_by_proximity(ref, self.group(orig_var), not resolve_dim_or_var, False,
                                                     attr.stop_at_local_apex)
 
         # If found, create ref string
         if resolved_var is not None:
 #            return self.pathname(resolved_var.group(), resolved_var.name), ref_type
-            return self.pathname(resolved_var.group(), self.name(resolved_var)), ref_type
+            return self.pathname(self.group(resolved_var), self.name(resolved_var)), ref_type
         else:
             return None, ""
 
@@ -600,7 +675,7 @@ class _Flattener:
         # Else if not found, raise exception
         elif absolute_ref is None:
 #            absolute_ref = self.handle_reference_error(orig_ref, orig_var.group().path)
-            absolute_ref = self.handle_reference_error(orig_ref, self.path(orig_var.group()))
+            absolute_ref = self.handle_reference_error(orig_ref, self.path(self.group(orig_var)))
         # If found:
         else:
             logging.info("      {} coordinate reference to {} '{}' resolved as '{}'"
@@ -646,7 +721,7 @@ class _Flattener:
 
         # Get absolute reference
 #        return self.pathname(elt.group(), elt.name)
-        return self.pathname(elt.group(), self.name(elt))
+        return self.pathname(self.group(elt), self.name(elt))
 
     def search_by_proximity(self, ref, current_group, search_dim, local_apex_reached, is_coordinate_variable):
         """Resolve the absolute path to a reference within the group structure, using search by proximity.
@@ -811,7 +886,8 @@ class _Flattener:
         :param name: name of the element
         :return: pathname
         """
-        if group.parent is None:
+#        if group.parent is None:
+        if self.parent(group) is None:
             return self.__default_separator + name
         else:
 #            return self.__pathname_format.format(group.path, name)
@@ -849,7 +925,11 @@ class _Flattener:
         :return: new valid name of the element
         """
         # If element is at root: no change
-        if input_group.parent is None:
+        #        if input_group.parent is None:
+        print (999, orig_name) 
+        print (input_group)
+        print (dir(input_group))
+        if self.parent(input_group) is None:
             new_name = orig_name
 
         # If element in child group, concatenate group path and element name
