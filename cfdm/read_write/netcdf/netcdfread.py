@@ -519,7 +519,7 @@ class NetCDFRead(IORead):
 
 #        nc = h5netcdf.File(filename, "r", decode_vlen_strings=True)
         try:
-#            raise OSError()
+            #raise OSError()
             nc = h5netcdf.File(filename, "r", decode_vlen_strings=True)
             HDF = True
         except OSError:            
@@ -533,10 +533,17 @@ class NetCDFRead(IORead):
         except Exception as error:
             raise Exception(f"{error}: {filename}")
 
+        g["original_HDF"] = HDF
+        g["original_netCDF"] = netCDF
         # ------------------------------------------------------------
         # If the file has a group structure then flatten it (CF>=1.8)
         # ------------------------------------------------------------
       
+        if HDF:
+            print ("Opened with h5netcdf")
+        else:
+            print ("Opened with netCDF4")
+           
         if flatten and nc.groups:
            #if HDF:
            #    # TODOHDF: Can't yet use HDF access to process groups
@@ -581,15 +588,12 @@ class NetCDFRead(IORead):
 
             nc = flat_nc
 
+            netCDF = True
+            HDF = False
+            
             g["has_groups"] = True
             g["flat_files"].append(flat_file)
-
-
-        if HDF:
-            print ("Opened with h5netcdf")
-        else:
-            print ("Opened with netCDF4")
-           
+            
         g["netCDF"] = netCDF
         g["HDF"] = HDF
         g["nc"] = nc
@@ -602,7 +606,7 @@ class NetCDFRead(IORead):
         :Parameters:
 
             filename: `str`
-                The name of the CDL file.
+                The name sdef _netof the CDL file.
 
         :Returns:
 
@@ -1297,6 +1301,7 @@ class NetCDFRead(IORead):
                 
                 variable_attributes[ncvar][attr] = value
 #                print (attr, value, type(value))
+
 
 #            variable_dimensions[ncvar] = tuple(variable.dimensions)
             variable_dimensions[ncvar] = tuple(self._file_variable_dimensions(variable))
@@ -6095,10 +6100,10 @@ class NetCDFRead(IORead):
         if return_kwargs_only:
             return kwargs
 
-        if g['netCDF']:
+        if g['original_netCDF']:            
             array = self.implementation.initialise_NetCDFArray(**kwargs)
         else:
-            # HDF
+            # h5netcdf
             array = self.implementation.initialise_HDFArray(**kwargs)
 
         return array, kwargs
@@ -9953,10 +9958,10 @@ class NetCDFRead(IORead):
         g = self.read_vars
         nc = g['nc']
         if g['netCDF']:
-            # NetCDF
+            # netCDF4
             return {attr: nc.getncattr(attr) for attr in nc.ncattrs()}
 
-        # HDF
+        # h5netcdf
         return nc.attrs
 
     def _file_dimensions(self):
@@ -9984,17 +9989,17 @@ class NetCDFRead(IORead):
         g = self.read_vars
         if not names_only:
             if g['netCDF']:
-                # NetCDF
+                # netCDF4
                 return {attr: var.getncattr(attr) for attr in var.ncattrs()}
             
-            # HDF
+            # h5netcdf
             return var.attrs
     
         if g['netCDF']:
-            # NetCDF
+            # netCDF4
             return var.ncattrs()
             
-        # HDF
+        # h5netcdf
         return list(var.attrs)
 
     def _file_variable_dimensions(self, var):
@@ -10002,11 +10007,11 @@ class NetCDFRead(IORead):
 
     def _file_variable_size(self, var):
         g = self.read_vars
-        if g['netCDF']:
-            # NetCDF
+        try:
+            # netCDF4
             return var.size
-            
-        # HDF
-        return prod(var.shape)
+        except AttributeError:            
+            # h5netcdf
+            return prod(var.shape)
 
         

@@ -220,23 +220,33 @@ class _Flattener:
         self.__input_file = input_ds
         self.__output_file = None
 
-    def filepath(self, dataset):
-        """Return the file system path (or the opendap URL) for the Dataset.
-
-        :Returns:
-
-            `str`
-
-        """
+    def attrs(self, variable):
+        try:
+            # h5netcdf
+            return variable.attrs
+        except:
+            # netCDF4
+            return {
+                attr: variable.getncattr(attr) for attr in variable.ncattrs()
+            }
+        
+    def chunksizes(self, variable):
         try:
             # netCDF4
-            return dataset.filepath()
+            chunking = variable.chunking()
+            if chunking == "contiguous":
+                return None
         except AttributeError:
             # h5netcdf
-            return dataset.filename
-
+            return variable.chunks
+        
     def contiguous(self, variable):
-        pass
+        try:
+            # netCDF4
+            return variable.chunking() == "contiguous",
+        except AttributeError:
+            # h5netcdf
+            return variable.chunks is None
         
     def data_model(self, ds):
         """Return the netCDF data model version.
@@ -252,7 +262,37 @@ class _Flattener:
         except AttributeError:
             # h5netcdf
             return 'NETCDF4'
+
+    def dtype(self, variable):
+        out = variable.dtype
+        if out == "O":
+            out = str
+
+        return out
         
+    def endian(self, variable):
+        try:
+            # netCDF4
+            return variable.endian()
+        except AttributeError:
+            # h5netcdf
+            return "native"
+        
+    def filepath(self, dataset):
+        """Return the file system path (or the opendap URL) for the Dataset.
+
+        :Returns:
+
+            `str`
+
+        """
+        try:
+            # netCDF4
+            return dataset.filepath()
+        except AttributeError:
+            # h5netcdf
+            return dataset.filename
+
     def get_dims(self, variable):
         """Return
 
@@ -268,17 +308,36 @@ class _Flattener:
             dimension_names = list(variable.dimensions)
             group = variable._parent
             while dimension_names:
-                for name, dim in group.dims.items():
-                    if name in dimension_names[:]:
-                        out.append(dim)
+                for name in dimension_names[:]:
+                    if name in group.dims:
+                        out.append(group.dims[name])
                         dimension_names.remove(name)
 
                 group = group.parent
                 if group is None:
                     break
-                
+
             return out
-                        
+
+    def getncattr(self, x, attr):
+        """Retrieve a netCDF attribute.
+
+        :Parameters:
+
+            x: variable, group, or dataset
+
+            attr: `str`
+
+        :Returns:
+
+        """
+        try:
+            # netCDF4
+            return getattr(x, attr)
+        except AttributeError:
+            # h5netcdf
+            return x.attrs[attr]
+          
     def group(self, x):
         """Return a
 
@@ -293,11 +352,6 @@ class _Flattener:
         except AttributeError:
             # h5netcdf
             return x._parent
-#            g = self.__input_file.groups
-#            for group_name in x.name.split('/')[1:-1]:
-#                g = g[group_name]
-#
-#            return g
         
     def name(self, x):
         """Return the netCDF name, without its groups.
@@ -307,13 +361,33 @@ class _Flattener:
             `str`
 
         """
+        out = x.name
+        if "/" in out:
+            # h5netcdf
+            out = x.name.split('/')[-1]
+
+        return out
+                           
+    def ncattrs(self, x):
+        """Return netCDF attribute names.
+
+        :Parameters:
+
+            x: variable, group, or dataset
+
+        :Returns:
+
+            `list`
+
+        """
         try:
             # netCDF4
-            return x.name
+            return x.ncattrs()
         except AttributeError:
             # h5netcdf
-            name = x.name.split('/')[-1]
+            return list(x.attrs)
         
+
     def parent(self, group):
         """Return a simulated unix directory path to a group.
 
@@ -340,50 +414,11 @@ class _Flattener:
             return group.path
         except AttributeError:
             # h5netcdf
-            print(group, dir(group))
             try:
                 return group.name
             except AttributeError:
                 return "/"
-                   
-    def ncattrs(self, x):
-        """Return netCDF attribute names.
 
-        :Parameters:
-
-            x: variable, group, or dataset
-
-        :Returns:
-
-            `list`
-
-        """
-        try:
-            # netCDF4
-            return x.ncattrs()
-        except AttributeError:
-            # h5netcdf
-            return list(x.attrs)
-        
-    def getncattr(self, x, attr):
-        """Retrieve a netCDF attribute.
-
-        :Parameters:
-
-            x: variable, group, or dataset
-
-            attr: `str`
-
-        :Returns:
-
-        """
-        try:
-            # netCDF4
-            return getattr(x, attr)
-        except AttributeError:
-            # h5netcdf
-            return x.attrs[attr]
-        
     def flatten(self, output_ds):
         """Flattens and write to output file
 
@@ -481,7 +516,6 @@ class _Flattener:
         """
 #        logging.info("   Copying variable {} from group {} to root".format(var.name, var.group().path))
         logging.info("   Copying variable {} from group {} to root".format(self.name(var), self.path(self.group(var))))
-        print ("Copying variable {} from group {} to root".format(self.name(var), self.path(self.group(var))))
 
         # Create new name
 #        new_name = self.generate_flattened_name(var.group(), self.name(var))
@@ -489,6 +523,7 @@ class _Flattener:
 
         # Replace old by new dimension names
 #        new_dims = list(map(lambda x: self.__dim_map[self.pathname(x.group(), x.name)], var.get_dims()))
+
         new_dims = list(map(lambda x: self.__dim_map[self.pathname(self.group(x), self.name(x))], self.get_dims(var)))
 
         # Write variable
@@ -498,15 +533,15 @@ class _Flattener:
 
         new_var = self.__output_file.createVariable(
             new_name,
-            var.dtype,
+            self.dtype(var),
             new_dims,
             zlib=False,
             complevel=4,
             shuffle=True,
             fletcher32=False,
-            contiguous=var.chunking() == "contiguous",
-            chunksizes=var.chunking() if var.chunking() != "contiguous" else None,
-            endian=var.endian(),
+            contiguous=self.contiguous(var),
+            chunksizes=self.chunksizes(var),
+            endian=self.endian(var),
             least_significant_digit=None,
             fill_value=None)
 
@@ -525,7 +560,8 @@ class _Flattener:
                 self.copy_var_by_slices(new_var, var, copy_slice)
 
         # Copy attributes
-        new_var.setncatts(var.__dict__)
+#        new_var.setncatts(var.__dict__)
+        new_var.setncatts(self.attrs(var))
 
         # Store new name in dict for resolving references later
 #        self.__var_map[self.pathname(var.group(), var.name)] = new_name
@@ -684,7 +720,7 @@ class _Flattener:
         # If variables refs are limited to coordinate variable, additional check
 #                and (("coordinates" not in orig_var.ncattrs() or orig_ref not in orig_var.coordinates)
         if ref_type == "variable" and attr.limit_to_scalar_coordinates \
-           and (("coordinates" not in self.ncattrs(orig_var) or orig_ref not in self.attr(orig_var, coordinates))
+           and (("coordinates" not in self.ncattrs(orig_var) or orig_ref not in self.getncattr(orig_var, "coordinates"))
                 or self._Flattener__input_file[absolute_ref].ndim > 0):
             logging.info("      coordinate reference to '{}' is not a SCALAR COORDINATE variable. "
                   "Assumed to be a standard name.".format(orig_ref))
@@ -789,7 +825,6 @@ class _Flattener:
         :param var: flattened variable in which references should be renamed with absolute references
         :param old_var: original variable (in group structure)
         """
-        print(_AttributeProperties)
         for attr in _AttributeProperties:
             if attr.name in var.__dict__:
 #                attr_value = var.getncattr(attr.name)
@@ -926,15 +961,13 @@ class _Flattener:
         """
         # If element is at root: no change
         #        if input_group.parent is None:
-        print (999, orig_name) 
-        print (input_group)
-        print (dir(input_group))
         if self.parent(input_group) is None:
             new_name = orig_name
 
         # If element in child group, concatenate group path and element name
         else:
-            full_name = self.convert_path_to_valid_name(input_group.path) + self.__new_separator + orig_name
+#            full_name = self.convert_path_to_valid_name(input_group.path) + self.__new_separator + orig_name
+            full_name = self.convert_path_to_valid_name(self.path(input_group)) + self.__new_separator + orig_name
             new_name = full_name
 
             # If resulting name is too long, hash group path
