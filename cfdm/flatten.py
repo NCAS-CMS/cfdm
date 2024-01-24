@@ -28,8 +28,8 @@ import re
 import warnings
 from enum import Enum
 
-#from netCDF4 import Dataset
-from h5netcdf import File as Dataset
+from netCDF4 import Dataset
+#from h5netcdf import File as Dataset
 
 
 
@@ -220,15 +220,29 @@ class _Flattener:
         self.__input_file = input_ds
         self.__output_file = None
 
-    def filepath(self, ds):
+    def filepath(self, dataset):
+        """Return the file system path (or the opendap URL) for the Dataset.
+
+        :Returns:
+
+            `str`
+
+        """
         try:
             # netCDF4
-            return ds.filepath()
+            return dataset.filepath()
         except AttributeError:
             # h5netcdf
-            return ds.filename
+            return dataset.filename
         
     def data_model(self, ds):
+        """Return the netCDF data model version.
+
+        :Returns:
+
+            `str`
+
+        """
         try:
             # netCDF4
             return ds.data_model
@@ -236,7 +250,29 @@ class _Flattener:
             # h5netcdf
             return 'NETCDF4'
         
+    def name(self, x):
+        """Return the netCDF name, without its groups.
+
+        :Returns:
+
+            `str`
+
+        """
+        try:
+            # netCDF4
+            return x.name
+        except AttributeError:
+            # h5netcdf
+            name = x.name.split('/')[-1]
+        
     def path(self, group):
+        """Return a simulated unix directory path to a group.
+
+        :Returns:
+
+            `str`
+
+        """
         try:
             # netCDF4
             return group.path
@@ -244,21 +280,43 @@ class _Flattener:
             # h5netcdf
             return group.name
         
-    def ncattrs(self, yyy):
+    def ncattrs(self, x):
+        """Return netCDF attribute names.
+
+        :Parameters:
+
+            x: variable, group, or dataset
+
+        :Returns:
+
+            `list`
+
+        """
         try:
             # netCDF4
-            return yyy.ncattrs()
+            return x.ncattrs()
         except AttributeError:
             # h5netcdf
-            return tuple(yyy.attrs)
+            return list(x.attrs)
         
-    def getncattr(self, yyy, attr):
+    def getncattr(self, x, attr):
+        """Retrieve a netCDF attribute.
+
+        :Parameters:
+
+            x: variable, group, or dataset
+
+            attr: `str`
+
+        :Returns:
+
+        """
         try:
             # netCDF4
-            return getattr(yyy, attr)
+            return getattr(x, attr)
         except AttributeError:
             # h5netcdf
-            return yyy.attrs[attr]
+            return x.attrs[attr]
         
     def flatten(self, output_ds):
         """Flattens and write to output file
@@ -333,19 +391,22 @@ class _Flattener:
         :param dim: dimension to flatten
         """
 #        logging.info("   Copying dimension {} from group {} to root".format(dim.name, dim.group().path))
-        logging.info("   Copying dimension {} from group {} to root".format(dim.name, self.path(dim.group())))
+        logging.info("   Copying dimension {} from group {} to root".format(self.name(dim), self.path(dim.group())))
 
         # Create new name
-        new_name = self.generate_flattened_name(dim.group(), dim.name)
+#        new_name = self.generate_flattened_name(dim.group(), dim.name)
+        new_name = self.generate_flattened_name(dim.group(), self.name(dim))
         
         # Write dimension
         self.__output_file.createDimension(new_name, (len(dim), None)[dim.isunlimited()])
 
         # Store new name in dict for resolving references later
-        self.__dim_map[self.pathname(dim.group(), dim.name)] = new_name
+#        self.__dim_map[self.pathname(dim.group(), dim.name)] = new_name
+        self.__dim_map[self.pathname(dim.group(), self.name(dim))] = new_name
 
         # Add to name mapping attribute
-        self.__dim_map_value.append(self.generate_mapping_str(dim.group(), dim.name, new_name))
+#        self.__dim_map_value.append(self.generate_mapping_str(dim.group(), dim.name, new_name))
+        self.__dim_map_value.append(self.generate_mapping_str(dim.group(), self.name(dim), new_name))
 
     def flatten_variable(self, var):
         """Flattens a given variable to the output file.
@@ -353,16 +414,17 @@ class _Flattener:
         :param var: variable to flatten
         """
 #        logging.info("   Copying variable {} from group {} to root".format(var.name, var.group().path))
-        logging.info("   Copying variable {} from group {} to root".format(var.name, self.path(var.group())))
+        logging.info("   Copying variable {} from group {} to root".format(self.name(var), self.path(var.group())))
 
         # Create new name
-        new_name = self.generate_flattened_name(var.group(), var.name)
+        new_name = self.generate_flattened_name(var.group(), self.name(var))
 
         # Replace old by new dimension names
-        new_dims = list(map(lambda x: self.__dim_map[self.pathname(x.group(), x.name)], var.get_dims()))
+#        new_dims = list(map(lambda x: self.__dim_map[self.pathname(x.group(), x.name)], var.get_dims()))
+        new_dims = list(map(lambda x: self.__dim_map[self.pathname(x.group(), self.name(x))], var.get_dims()))
 
         # Write variable
-        fullname = self.pathname(var.group(), var.name)
+        fullname = self.pathname(var.group(), self.name(var))
         logging.info("create variable {} from {}".format(new_name, fullname))
 
         new_var = self.__output_file.createVariable(
@@ -397,10 +459,12 @@ class _Flattener:
         new_var.setncatts(var.__dict__)
 
         # Store new name in dict for resolving references later
-        self.__var_map[self.pathname(var.group(), var.name)] = new_name
+#        self.__var_map[self.pathname(var.group(), var.name)] = new_name
+        self.__var_map[self.pathname(var.group(), self.name(var))] = new_name
 
         # Add to name mapping attribute
-        self.__var_map_value.append(self.generate_mapping_str(var.group(), var.name, new_name))
+#        self.__var_map_value.append(self.generate_mapping_str(var.group(), var.name, new_name))
+        self.__var_map_value.append(self.generate_mapping_str(var.group(), self.name(var), new_name))
 
         # Resolve references in variable attributes and replace by absolute path:
         self.resolve_references(new_var, var)
@@ -440,7 +504,8 @@ class _Flattener:
         :param old_var: variable where data should be copied from
         :param copy_slice_shape: shape of the slice
         """
-        logging.info("   copying data of {} in {} slices".format(old_var.name, copy_slice_shape))
+#        logging.info("   copying data of {} in {} slices".format(old_var.name, copy_slice_shape))
+        logging.info("   copying data of {} in {} slices".format(self.name(old_var), copy_slice_shape))
 
         # Initial position vector
         pos = [0 for _ in range(len(copy_slice_shape))]
@@ -519,7 +584,8 @@ class _Flattener:
 
         # If found, create ref string
         if resolved_var is not None:
-            return self.pathname(resolved_var.group(), resolved_var.name), ref_type
+#            return self.pathname(resolved_var.group(), resolved_var.name), ref_type
+            return self.pathname(resolved_var.group(), self.name(resolved_var)), ref_type
         else:
             return None, ""
 
@@ -579,7 +645,8 @@ class _Flattener:
         elt = current_group.dimensions[ref_split[-1]] if search_dim else current_group.variables[ref_split[-1]]
 
         # Get absolute reference
-        return self.pathname(elt.group(), elt.name)
+#        return self.pathname(elt.group(), elt.name)
+        return self.pathname(elt.group(), self.name(elt))
 
     def search_by_proximity(self, ref, current_group, search_dim, local_apex_reached, is_coordinate_variable):
         """Resolve the absolute path to a reference within the group structure, using search by proximity.
@@ -696,7 +763,8 @@ class _Flattener:
                 var.setncattr(attr.name, new_attr_value)
 
                 logging.info("   attribute '{}'  in '{}': references '{}' renamed as '{}'"
-                      .format(attr.name, var.name, attr_value, new_attr_value))
+                      .format(attr.name, self.name(var), attr_value, new_attr_value))
+#                      .format(attr.name, var.name, attr_value, new_attr_value))
 
     def adapt_name(self, resolved_ref, attr):
         """Return name of flattened reference. If not found, raise exception or continue warning.
