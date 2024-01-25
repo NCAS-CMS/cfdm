@@ -1,4 +1,5 @@
 """Project: NetCDF Flattener
+
 Copyright (c) 2020 EUMETSAT
 License: Apache License 2.0
 
@@ -18,29 +19,27 @@ software distributed under the License is distributed on an
 KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
+
+This code has been modified from the original found in the
+netcdf_flattener package.
+
 """
 
-import collections
 import hashlib
 import logging
-
-# import os
 import re
 import warnings
 from enum import Enum
-
-# from netCDF4 import Dataset
-# from h5netcdf import File as Dataset
 
 
 def flatten(
     input_ds, output_ds, lax_mode=False, _copy_data=True, copy_slices=None
 ):
-    """Flatten an input NetCDF dataset and write the result in an output
-    NetCDF dataset.
+    """Create a flattened version of a netCDF dataset.
 
-    For variable that are too big to fit in memory, the optional "copy_slices" input allows to copy some or all of the
-    variables in slices.
+    For variable that are too big to fit in memory, the optional
+    "copy_slices" input allows to copy some or all of the variables in
+    slices.
 
     :param input_ds: input netcdf4 dataset
     :param output_ds: output netcdf4 dataset
@@ -74,8 +73,7 @@ def parse_var_attr(input_str):
     """
 
     def subst(s):
-        """substitute tokens for WORD and SEP (space or end of
-        string)"""
+        """Substitute tokens for WORD and SEP."""
         return s.replace("WORD", r"[A-Za-z0-9_#/.\(\)]+").replace(
             "SEP", r"(\s+|$)"
         )
@@ -102,7 +100,7 @@ def parse_var_attr(input_str):
     m = re.match(pat_all, input_str)
 
     # Output is always a dict. If input form is a list, dict values are set as empty lists
-    out = collections.OrderedDict()
+    out = {}  # collections.OrderedDict()
 
     if m is not None:
         list_match = m.group("list")
@@ -150,9 +148,12 @@ def generate_var_attr_str(d):
 
 
 class _AttributeProperties(Enum):
-    """"Utility class containing the properties for each type of
-    variable attribute, defining how contained references to dimensions
-    and variables should be parsed and processed."""
+    """Utility class containing the properties for each attribute.
+
+    For each variable attribute, defines how contained references to
+    dimensions and variables should be parsed and processed.
+
+    """
 
     ancillary_variables = (0, (False, True, True, False, False, False, False))
     bounds = (1, (False, True, True, False, False, False, False))
@@ -162,6 +163,7 @@ class _AttributeProperties(Enum):
     formula_terms = (5, (False, True, False, True, False, False, False))
     geometry = (6, (False, True, True, False, False, False, False))
     grid_mapping = (7, (False, True, True, True, False, False, False))
+    # Geometry variables
     interior_ring = (8, (False, True, True, False, False, False, False))
     node_coordinates = (9, (False, True, True, False, False, False, False))
     node_count = (10, (False, True, True, False, False, False, False))
@@ -171,22 +173,96 @@ class _AttributeProperties(Enum):
     instance_dimension = (14, (True, False, True, False, False, False, False))
     sample_dimension = (15, (True, False, True, False, False, False, False))
     cell_methods = (16, (2, 1, True, False, False, True, True))
+    # Domain variable dimensions
+    dimensions = (17, (True, False, True, False, False, False, False))
+    # CFA instructsions
+    aggregated_dimensions = (
+        18,
+        (True, False, True, False, False, False, False),
+    )
+    aggregated_data = (19, (False, True, False, True, False, False, False))
+    # UGRID variables
+    #
+    # * node_coordinates has already been assigned under Geometry
+    #   variables
+    # * IDs 20, 23, 29, 30, 31, 32, 35, 36, 37 are reserved for potential
+    #   further UGRID usage
+    edge_coordinates = (21, (False, True, True, False, False, False, False))
+    face_coordinates = (22, (False, True, True, False, False, False, False))
+    edge_node_connectivity = (
+        24,
+        (False, True, True, False, False, False, False),
+    )
+    face_node_connectivity = (
+        25,
+        (False, True, True, False, False, False, False),
+    )
+    face_face_connectivity = (
+        26,
+        (False, True, True, False, False, False, False),
+    )
+    edge_face_connectivity = (
+        27,
+        (False, True, True, False, False, False, False),
+    )
+    face_edge_connectivity = (
+        28,
+        (False, True, True, False, False, False, False),
+    )
+    edge_dimension = (33, (True, False, True, False, False, False, False))
+    face_dimension = (34, (True, False, True, False, False, False, False))
+    mesh = (38, (False, True, True, False, False, False, False))
 
     def __init__(self, n, props):
         """_AttributeProperties enum constructor.
 
-        :param n: enum id
-        :param props: a tuple containing the attribute's properties (ref_to_dim, ref_to_var, resolve_key, resolve_value,
-            stop_at_local_apex, accept_standard_names, limit_to_scalar_coordinates):
-                * ref_to_dim: True or integer if contains references to dimensions (highest int have priority)
-                * ref_to_var: True or integer if contains references to variables (highest int have priority)
-                * resolve_key: True if 'keys' have to be resolved in 'key1: value1 key2: value2 value3' or 'key1 key2'
-                * resolve_value:  True if 'values' have to be resolved in 'key1: value1 key2: value2 value3'
-                * stop_at_local_apex: True if upward research in the hierarchy has to stop at local apex
-                * accept_standard_names: True if any standard name is valid in place of references (in which case no
-                  exception is raised if a reference cannot be resolved, and the standard name is used in place)
-                * limit_to_scalar_coordinates: True if references to variables are only resolved if present as well in
-                  the 'coordinates' attributes of the variable, and they are scalar.
+        :Parameters:
+
+            n: `int`
+                Enum id.
+
+            props: `tuple`
+                A sequence containing the attribute's properties
+                (ref_to_dim, ref_to_var, resolve_key, resolve_value,
+                stop_at_local_apex, accept_standard_names,
+                limit_to_scalar_coordinates):
+
+                1. ref_to_dim: True or integer if contains references
+                               to dimensions (highest int have
+                               priority)
+
+                2. ref_to_var: True or integer if contains references
+                               to variables (highest int have
+                               priority)
+
+                3. resolve_key: True if 'keys' have to be resolved in
+                                'key1: value1 key2: value2 value3' or
+                                'key1 key2'
+
+                4. resolve_value: True if 'values' have to be resolved
+                                  in 'key1: value1 key2: value2
+                                  value3'
+
+                5. stop_at_local_apex: True if upward research in the
+                                       hierarchy has to stop at local
+                                       apex
+
+                6. accept_standard_names: True if any standard name is
+                                          valid in place of references
+                                          (in which case no exception
+                                          is raised if a reference
+                                          cannot be resolved, and the
+                                          standard name is used in
+                                          place)
+
+                7. limit_to_scalar_coordinates: True if references to
+                                                variables are only
+                                                resolved if present as
+                                                well in the
+                                                'coordinates'
+                                                attributes of the
+                                                variable, and they are
+                                                scalar.
 
         """
         self.id = n
@@ -200,8 +276,12 @@ class _AttributeProperties(Enum):
 
 
 class _Flattener:
-    """Utility class contained the input file, the output file being
-    flattened, and all the logic of the flattening process."""
+    """Information and methods needed to flatten a netCDF dataset.
+
+    Contains the input file, the output file being flattened, and all
+    the logic of the flattening process.
+
+    """
 
     __max_name_len = 256
     __default_separator = "/"
@@ -217,8 +297,7 @@ class _Flattener:
     __var_map_name = "__flattener_name_mapping_variables"
 
     def __init__(self, input_ds, lax_mode, _copy_data=True, copy_slices=None):
-        """Constructor. Initializes the Flattener class given the input
-        file.
+        """**Initialisation**
 
         :param input_ds: input netcdf dataset
         :param lax_mode: if false (default), not resolving a reference halts the execution. If true, continue with warning.
@@ -232,13 +311,12 @@ class _Flattener:
             not contained in the dict, it will not be sliced and copied normally.
 
         """
-
         self.__attr_map_value = []
         self.__dim_map_value = []
         self.__var_map_value = []
 
-        self.__dim_map = dict()
-        self.__var_map = dict()
+        self.__dim_map = {}  # dict()
+        self.__var_map = {}  # dict()
 
         self.__lax_mode = lax_mode
 
@@ -307,12 +385,13 @@ class _Flattener:
             return "native"
 
     def filepath(self, dataset):
-        """Return the file system path (or the opendap URL) for the
-        Dataset.
+        """Return the file path for the Dataset.
 
         :Returns:
 
             `str`
+                 The file system path, or the opendap URL, for the
+                 dataset.
 
         """
         try:
@@ -664,10 +743,12 @@ class _Flattener:
         self.resolve_references(new_var, var)
 
     def increment_pos(self, pos, dim, copy_slice_shape, var_shape):
-        """Increment position vector in a variable along a dimension by
+        """TODOHDF.
+
+        Increment position vector in a variable along a dimension by
         the matching slice length along than dimension. If end of the
-        dimension is reached, recursively increment the next dimensions
-        until a valid position is found.
+        dimension is reached, recursively increment the next
+        dimensions until a valid position is found.
 
         :param pos: current position
         :param dim: dimension to be incremented
@@ -734,7 +815,9 @@ class _Flattener:
             )
 
     def resolve_reference(self, orig_ref, orig_var, attr):
-        """Resolve the absolute path to a coordinate variable within the
+        """Resolve a refrence.
+
+        Resolves the absolute path to a coordinate variable within the
         group structure.
 
         :param orig_ref: reference to resolve
@@ -763,7 +846,11 @@ class _Flattener:
             method = " relative"
 
             # First tentative as dim OR var
-            ref_type = "dimension" if resolve_dim_or_var else "variable"
+            #            ref_type = "dimension" if resolve_dim_or_var else "variable"
+            if resolve_dim_or_var:
+                ref_type = "dimension"
+            else:
+                ref_type = "variable"
             #            absolute_ref = self.search_by_relative_path(orig_ref, orig_var.group(), resolve_dim_or_var)
             absolute_ref = self.search_by_relative_path(
                 orig_ref, self.group(orig_var), resolve_dim_or_var
@@ -771,9 +858,13 @@ class _Flattener:
 
             # If failed and alternative possible, second tentative
             if absolute_ref is None and resolve_alt:
-                ref_type = (
-                    "dimension" if not resolve_dim_or_var else "variable"
-                )
+                #                ref_type = (
+                #                    "dimension" if not resolve_dim_or_var else "variable"
+                #                )
+                if resolve_dim_or_var:
+                    ref_type = "variable"
+                else:
+                    ref_type = "dimension"
                 #                absolute_ref = self.search_by_relative_path(orig_ref, orig_var.group(), not resolve_dim_or_var)
                 absolute_ref = self.search_by_relative_path(
                     orig_ref, self.groupp(orig_var), not resolve_dim_or_var
@@ -796,7 +887,11 @@ class _Flattener:
     ):
         """Resolve reference: search by proximity."""
         # First tentative as dim OR var
-        ref_type = "dimension" if resolve_dim_or_var else "variable"
+        #        ref_type = "dimension" if resolve_dim_or_var else "variable"
+        if resolve_dim_or_var:
+            ref_type = "dimension"
+        else:
+            ref_type = "variable"
         #        resolved_var = self.search_by_proximity(ref, orig_var.group(), resolve_dim_or_var, False,
         #                                                attr.stop_at_local_apex)
         resolved_var = self.search_by_proximity(
@@ -809,7 +904,11 @@ class _Flattener:
 
         # If failed and alternative possible, second tentative
         if resolved_var is None and resolve_alt:
-            ref_type = "dimension" if not resolve_dim_or_var else "variable"
+            #            ref_type = "dimension" if not resolve_dim_or_var else "variable"
+            if resolve_dim_or_var:
+                ref_type = "variable"
+            else:
+                ref_type = "dimension"
             #            resolved_var = self.search_by_proximity(ref, orig_var.group(), not resolve_dim_or_var, False,
             #                                                    attr.stop_at_local_apex)
             resolved_var = self.search_by_proximity(
@@ -882,7 +981,9 @@ class _Flattener:
         return absolute_ref
 
     def search_by_relative_path(self, ref, current_group, search_dim):
-        """Resolve the absolute path to a reference within the group
+        """Search by relative path.
+
+        Resolves the absolute path to a reference within the group
         structure, using search by relative path.
 
         :param ref: reference to resolve
@@ -895,6 +996,7 @@ class _Flattener:
         while ref.startswith("../"):
             if current_group.parent is None:
                 return None
+
             ref = ref[3:]
             current_group = current_group.parent
 
@@ -907,11 +1009,15 @@ class _Flattener:
                 return None
 
         # Get variable or dimension
-        elt = (
-            current_group.dimensions[ref_split[-1]]
-            if search_dim
-            else current_group.variables[ref_split[-1]]
-        )
+        #        elt = (
+        #            current_group.dimensions[ref_split[-1]]
+        #            if search_dim
+        #            else current_group.variables[ref_split[-1]]
+        #        )
+        if search_dim:
+            elt = current_group.dimensions[ref_split[-1]]
+        else:
+            elt = current_group.variables[ref_split[-1]]
 
         # Get absolute reference
         #        return self.pathname(elt.group(), elt.name)
@@ -925,11 +1031,14 @@ class _Flattener:
         local_apex_reached,
         is_coordinate_variable,
     ):
-        """Resolve the absolute path to a reference within the group
+        """Search by proximity.
+
+        Resolves the absolute path to a reference within the group
         structure, using search by proximity.
 
-        First search up in the hierarchy for the reference, until root group is reached. If coordinate variable, search
-        until local apex is reached, Then search down in siblings.
+        First search up in the hierarchy for the reference, until root
+        group is reached. If coordinate variable, search until local
+        apex is reached, Then search down in siblings.
 
         :param ref: reference to resolve
         :param current_group: current group where searching
@@ -939,9 +1048,13 @@ class _Flattener:
         :return: absolute path to the coordinate
 
         """
-        dims_or_vars = (
-            current_group.dimensions if search_dim else current_group.variables
-        )
+        #        dims_or_vars = (
+        #            current_group.dimensions if search_dim else current_group.variables
+        #        )
+        if search_dim:
+            dims_or_vars = current_group.dimensions
+        else:
+            dims_or_vars = current_group.variables  # DCH
 
         # Found in current group
         if ref in dims_or_vars.keys():
@@ -969,8 +1082,9 @@ class _Flattener:
                 is_coordinate_variable,
             )
 
-        # If coordinate variable and local apex reached, search down in siblings
         elif is_coordinate_variable and local_apex_reached:
+            # Coordinate variable and local apex reached, so search
+            # down in siblings
             found_elt = None
             for child_group in current_group.groups.values():
                 found_elt = self.search_by_proximity(
@@ -982,6 +1096,7 @@ class _Flattener:
                 )
                 if found_elt is not None:
                     break
+
             return found_elt
 
         # If here, did not find
@@ -989,12 +1104,16 @@ class _Flattener:
             return None
 
     def __escape_index_error(self, match, group_name):
-        """Return the group in a match if it exists, an empty string
-        otherwise.
+        """TODOHDF.
 
         :param match: regex match
         :param group_name: group name
-        :return: match group
+
+        :Returns:
+
+            `str`
+                The group in a match if it exists, an empty string
+                otherwise.
 
         """
         try:
@@ -1003,40 +1122,49 @@ class _Flattener:
             return ""
 
     def resolve_references(self, var, old_var):
-        """In a given variable, replace all references to other
-        variables in its attributes by absolute references.
+        """Resolve references.
+
+        In a given variable, replace all references to other variables
+        in its attributes by absolute references.
 
         :param var: flattened variable in which references should be renamed with absolute references
         :param old_var: original variable (in group structure)
 
         """
         for attr in _AttributeProperties:
-            if attr.name in var.__dict__:
+            #            if attr.name in var.__dict__:
+            if attr.name in self.ncattrs(var):
                 #                attr_value = var.getncattr(attr.name)
                 attr_value = self.getncattr(var, attr.name)
                 # Parse attribute value
                 parsed_attr = parse_var_attr(attr_value)
 
                 # Resolved references in parsed as required by attribute properties
-                resolved_parsed_attr = collections.OrderedDict()
+                resolved_parsed_attr = {}  # collections.OrderedDict()
 
                 for k, v in parsed_attr.items():
-                    new_k = (
-                        self.resolve_reference(k, old_var, attr)
-                        if attr.resolve_key
-                        else k
-                    )
+                    #                    new_k = (
+                    #                        self.resolve_reference(k, old_var, attr)
+                    #                        if attr.resolve_key
+                    #                        else k
+                    #                    )
+                    if attr.resolve_key:
+                        k = self.resolve_reference(k, old_var, attr)
 
-                    new_v = (
-                        [
-                            self.resolve_reference(x, old_var, attr)
-                            for x in parsed_attr[k]
+                    #                    new_v = (
+                    #                        [
+                    #                            self.resolve_reference(x, old_var, attr)
+                    #                            for x in parsed_attr[k]
+                    #                        ]
+                    #                        if attr.resolve_value and parsed_attr[k] is not None
+                    #                        else parsed_attr[k]
+                    #                    )
+                    if attr.resolve_value and v is not None:
+                        v = [
+                            self.resolve_reference(x, old_var, attr) for x in v
                         ]
-                        if attr.resolve_value and parsed_attr[k] is not None
-                        else parsed_attr[k]
-                    )
 
-                    resolved_parsed_attr[new_k] = new_v
+                    resolved_parsed_attr[k] = v
 
                 # Re-generate attribute value string with resolved references
                 var.setncattr(
@@ -1044,33 +1172,40 @@ class _Flattener:
                 )
 
     def adapt_references(self, var):
-        """In a given variable, replace all references to variables in
+        """Adapt references.
+
+        In a given variable, replace all references to variables in
         attributes by references to the new names in the flattened
-        NetCDF. All references have to be already resolved as absolute
+        netCDF. All references have to be already resolved as absolute
         references.
 
         :param var: flattened variable in which references should be renamed with new names
 
         """
         for attr in _AttributeProperties:
-            if attr.name in var.__dict__:
+            #            if attr.name in var.__dict__:
+            if attr.name in self.ncattrs(var):
                 # attr_value = var.getncattr(attr.name)
                 attr_value = self.getncattr(var, attr.name)
                 # Parse attribute value
                 parsed_attr = parse_var_attr(attr_value)
 
-                adapted_parsed_attr = collections.OrderedDict()
+                adapted_parsed_attr = {}  # collections.OrderedDict()
 
                 for k, v in parsed_attr.items():
-                    new_k = self.adapt_name(k, attr) if attr.resolve_key else k
+                    #                    new_k = self.adapt_name(k, attr) if attr.resolve_key else k
+                    if attr.resolve_key:
+                        k = self.adapt_name(k, attr)
 
-                    new_v = (
-                        [self.adapt_name(x, attr) for x in parsed_attr[k]]
-                        if attr.resolve_value and parsed_attr[k] is not None
-                        else parsed_attr[k]
-                    )
+                    #                    new_v = (
+                    #                        [self.adapt_name(x, attr) for x in parsed_attr[k]]
+                    #                        if attr.resolve_value and parsed_attr[k] is not None
+                    #                        else parsed_attr[k]
+                    #                    )
+                    if attr.resolve_value and v is not None:
+                        v = [self.adapt_name(x, attr) for x in v]
 
-                    adapted_parsed_attr[new_k] = new_v
+                    adapted_parsed_attr[k] = v
 
                 new_attr_value = generate_var_attr_str(adapted_parsed_attr)
                 var.setncattr(attr.name, new_attr_value)
@@ -1084,7 +1219,9 @@ class _Flattener:
     #                      .format(attr.name, var.name, attr_value, new_attr_value))
 
     def adapt_name(self, resolved_ref, attr):
-        """Return name of flattened reference. If not found, raise
+        """Apapt the name.
+
+        Return name of flattened reference. If not found, raise
         exception or continue warning.
 
         :param resolved_ref: resolved reference to adapt
@@ -1144,7 +1281,9 @@ class _Flattener:
             return self.__pathname_format.format(self.path(group), name)
 
     def generate_mapping_str(self, input_group, name, new_name):
-        """Generate a string representing the name mapping of an element
+        """Generate string mapping.
+
+        Generates a string representing the name mapping of an element
         before and after flattening.
 
         :param input_group: group containing the non-flattened element
@@ -1214,7 +1353,9 @@ class _Flattener:
         return new_name
 
     def handle_reference_error(self, ref, context=None):
-        """Depending on lax/strict mode, either raise exception or log
+        """Handle reference error.
+
+        Depending on lax/strict mode, either raise exception or log
         warning. If lax, return reference placeholder.
 
         :param ref: reference
@@ -1233,13 +1374,6 @@ class _Flattener:
 
 
 class ReferenceException(Exception):
-    """Exception raised when references in attributes cannot be
-    resolved.
+    """Exception for unresolvable references in attributes."""
 
-    Attributes:
-        message -- explanation of the error
-
-    """
-
-    def __init__(self, message):
-        super().__init__(message)
+    pass
