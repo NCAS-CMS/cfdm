@@ -289,12 +289,21 @@ class _Flattener:
     __pathname_format = "{}/{}"
     __mapping_str_format = "{}: {}"
     __ref_not_found_error = "REF_NOT_FOUND"
-    __default_copy_slice_size = 200000000
+    __default_copy_slice_size = 134217728  # 128 MiB
 
     # name of the attributes used to store the mapping between original and flattened names
     __attr_map_name = "__flattener_name_mapping_attributes"
     __dim_map_name = "__flattener_name_mapping_dimensions"
     __var_map_name = "__flattener_name_mapping_variables"
+
+    # Mapping from numpy dtype endian format to what we expect
+    _dtype_endian_lookup = {
+        "=": "native",
+        ">": "big",
+        "<": "little",
+        "|": "native",
+        None: "native",
+    }
 
     def __init__(self, input_ds, lax_mode, _copy_data=True, copy_slices=None):
         """**Initialisation**
@@ -326,6 +335,24 @@ class _Flattener:
         self.__input_file = input_ds
         self.__output_file = None
 
+    #        if hasattr(input_ds, "_h5file"):
+    #            dataset_type = 'h5netcdf'
+    #        else:
+    #            dataset_type = 'netCDF4'
+    #
+    #        for method in ('attrs', 'chunksizes', 'contiguous', 'endian',
+    #                       'filepath', 'get_dims', 'getncattr', 'group', 'name',
+    #                       'ncattrs', 'path'):
+    #            setattr(self, method, getattr(self, f"_{method}_{dataset_type}"))
+
+    #    def _attrs_netCDF4(self, variable):
+    #        return {
+    #            attr: variable.getncattr(attr) for attr in variable.ncattrs()
+    #        }
+    #
+    #    def _attrs_h5netcdf(self, variable):
+    #        return variable.attrs
+
     def attrs(self, variable):
         try:
             # h5netcdf
@@ -335,6 +362,14 @@ class _Flattener:
             return {
                 attr: variable.getncattr(attr) for attr in variable.ncattrs()
             }
+
+    #    def _chunksizes_h5netcdf(self, variable):
+    #        return variable.chunks
+    #
+    #    def _chunksizes_netCDF4(self, variable):
+    #        chunking = variable.chunking()
+    #        if chunking == "contiguous":
+    #            return None
 
     def chunksizes(self, variable):
         try:
@@ -346,7 +381,55 @@ class _Flattener:
             # h5netcdf
             return variable.chunks
 
+    #    def _contiguous_h5netcdf(self, variable):
+    #        """Whether or not the variable data is contiguous on disk.
+    #
+    #        See `_contiguous_netCDF4` for details.
+    #        """
+    #        return variable.chunks is None
+    #
+    #    def _contiguous_netCDF4(self, variable):
+    #        """Whether or not the variable data is contiguous on disk.
+    #
+    #        :Parameters:
+    #
+    #            variable:
+    #                The variable.
+    #
+    #        :Returns:
+    #
+    #            `bool`
+    #                 `True` if the variable data is contiguous on disk,
+    #                 otherwise `False`.
+    #
+    #        **Examples**
+    #
+    #        >>> f.contiguous(variable)
+    #        False
+    #
+    #        """
+    #        return variable.chunking() == "contiguous"
+
     def contiguous(self, variable):
+        """Whether or not the variable data is contiguous on disk.
+
+        :Parameters:
+
+            variable: `netCDF4.Variable` or `h5netcdf.Variable`
+                The variable.
+
+        :Returns:
+
+            `bool`
+                 `True` if the variable data is contiguous on disk,
+                 otherwise `False`.
+
+        **Examples**
+
+        >>> f.contiguous(variable)
+        False
+
+        """
         try:
             # netCDF4
             return (variable.chunking() == "contiguous",)
@@ -354,44 +437,163 @@ class _Flattener:
             # h5netcdf
             return variable.chunks is None
 
-    def data_model(self, ds):
-        """Return the netCDF data model version.
+    #    def data_model(self, dataset):
+    #        """Return the netCDF data model version of the dataset.
+    #
+    #        :Parameters:
+    #
+    #            dataset: `netCDF4.Dataset` or `h5netcdf.File`
+    #                The dataset.
+    #
+    #        :Returns:
+    #
+    #            `str`
+    #                 The data model version, one of ``'NETCDF4'``,
+    #                 ``'NETCDF4_CLASSIC'``, ``'NETCDF3_CLASSIC'``,
+    #                 ``'NETCDF3_64BIT_OFFSET'``, or
+    #                 ``'NETCDF3_64BIT_DATA'``.
+    #
+    #        **Examples**
+    #
+    #        >>> f.data_model(dataset)
+    #        'NETCDF4'
+    #
+    #        """
+    #        try:
+    #            # netCDF4
+    #            return dataset.data_model
+    #        except AttributeError:
+    #            # h5netcdf
+    #            return "NETCDF4"
+
+    def dtype(self, variable):
+        """Return the data type of a variable.
+
+        :Parameters:
+
+            variable:
+                The dataset variable.
 
         :Returns:
 
-            `str`
+            `numpy.dtype`
+                 The data type.
+
+        **Examples**
+
+        >>> f.dtype(variable)
+        dtype('<f8')
 
         """
-        try:
-            # netCDF4
-            return ds.data_model
-        except AttributeError:
-            # h5netcdf
-            return "NETCDF4"
-
-    def dtype(self, variable):
         out = variable.dtype
         if out == "O":
             out = str
 
         return out
 
+    #    def _endian_netCDF4(self, variable):
+    #        """Return the endian-ness of a variable.
+    #
+    #        :Parameters:
+    #
+    #            variable:
+    #                The variable.
+    #
+    #        :Returns:
+    #
+    #            `str`
+    #                 The endian-ness (``'little'``, ``'big'``, or
+    #                 ``'native'``) of the variable.
+    #
+    #        **Examples**
+    #
+    #        >>> f.endian(variable)
+    #        'native'
+    #
+    #        """
+    #        return variable.endian()
+    #
+    #    def _endian_h5netcdf(self, variable):
+    #        """Return the endian-ness of a variable.
+    #
+    #        """
+    #        dtype = variable.dtype
+    #        return self._dtype_endian_lookup[getattr(dtype, "byteorder", None)]
+
     def endian(self, variable):
+        """Return the endian-ness of a variable.
+
+        :Parameters:
+
+            variable: `netCDF4.Variable` or `h5netcdf.Variable`
+                The variable.
+
+        :Returns:
+
+            `str`
+                 The endian-ness (``'little'``, ``'big'``, or
+                 ``'native'``) of the variable.
+
+        **Examples**
+
+        >>> f.endian(variable)
+        'native'
+
+        """
         try:
             # netCDF4
             return variable.endian()
         except AttributeError:
             # h5netcdf
-            return "native"
+            dtype = variable.dtype
+            return self._dtype_endian_lookup[getattr(dtype, "byteorder", None)]
+
+    #    def _filepath_netCDF4(self, dataset):
+    #        """Return the file path for the dataset.
+    #
+    #        :Parameters:
+    #
+    #            dataset:
+    #                The dataset.
+    #
+    #        :Returns:
+    #
+    #            `str`
+    #                 The file system path, or the opendap URL, for the
+    #                 dataset.
+    #
+    #        **Examples**
+    #
+    #        >>> f.filepath(dataset)
+    #        '/home/data/file.nc'
+    #
+    #        """
+    #        return dataset.filepath()
+    #
+    #    def _filepath_h5netcdf(self, dataset):
+    #        """Return the file path for the dataset.
+    #
+    #        """
+    #        return dataset.filename
 
     def filepath(self, dataset):
-        """Return the file path for the Dataset.
+        """Return the file path for the dataset.
+
+        :Parameters:
+
+            dataset: `netCDF4.Dataset` or `h5netcdf.File`
+                The dataset.
 
         :Returns:
 
             `str`
                  The file system path, or the opendap URL, for the
                  dataset.
+
+        **Examples**
+
+        >>> f.filepath(dataset)
+        '/home/data/file.nc'
 
         """
         try:
@@ -400,6 +602,39 @@ class _Flattener:
         except AttributeError:
             # h5netcdf
             return dataset.filename
+
+    #    def _get_dims_netCDF4(self, variable):
+    #        """Return.
+    #
+    #        :Returns:
+    #
+    #            `str`
+    #
+    #        """
+    #        return variable.get_dims()
+    #
+    #    def _get_dims_h5netcdf(self, variable):
+    #        """Return.
+    #
+    #        :Returns:
+    #
+    #            `str`
+    #
+    #        """
+    #        out = []
+    #        dimension_names = list(variable.dimensions)
+    #        group = variable._parent
+    #        while dimension_names:
+    #            for name in dimension_names[:]:
+    #                if name in group.dims:
+    #                    out.append(group.dims[name])
+    #                    dimension_names.remove(name)
+    #
+    #            group = group.parent
+    #            if group is None:
+    #                break
+    #
+    #        return out
 
     def get_dims(self, variable):
         """Return.
@@ -427,6 +662,27 @@ class _Flattener:
 
             return out
 
+    #    def _getncattr_netCDF4(self, x, attr):
+    #        """Retrieve a netCDF attribute.
+    #
+    #        :Parameters:
+    #
+    #            x: variable, group, or dataset
+    #
+    #            attr: `str`
+    #
+    #        :Returns:
+    #
+    #        """
+    #        return getattr(x, attr)
+    #
+    #    def _getncattr_h5netcdf(self, x, attr):
+    #        """Retrieve a netCDF attribute.
+    #
+    #
+    #        """
+    #        return x.attrs[attr]
+
     def getncattr(self, x, attr):
         """Retrieve a netCDF attribute.
 
@@ -446,6 +702,22 @@ class _Flattener:
             # h5netcdf
             return x.attrs[attr]
 
+    #    def _group_netCDF4(self, x):
+    #        """Return a.
+    #
+    #        :Returns:
+    #
+    #            `Group`
+    #
+    #        """
+    #        return x.group()
+    #
+    #    def _group_h5netcdf(self, x):
+    #        """Return a.
+    #
+    #        """
+    #        return x._parent
+
     def group(self, x):
         """Return a.
 
@@ -461,6 +733,28 @@ class _Flattener:
             # h5netcdf
             return x._parent
 
+    #    def _name_netCDF4(self, x):
+    #        """Return the netCDF name, without its groups.
+    #
+    #        :Returns:
+    #
+    #        """
+    #        return  x.name
+    #
+    #    def _name_h5netcdf(self, x):
+    #        """Return the netCDF name, without its groups.
+    #
+    #        :Returns:
+    #
+    #            `str`
+    #
+    #        """
+    #        out = x.name
+    #        if "/" in out:
+    #            out = x.name.split("/")[-1]
+    #
+    #        return out
+
     def name(self, x):
         """Return the netCDF name, without its groups.
 
@@ -475,6 +769,26 @@ class _Flattener:
             out = x.name.split("/")[-1]
 
         return out
+
+    #    def _ncattrs_netCDF4(self, x):
+    #        """Return netCDF attribute names.
+    #
+    #        :Parameters:
+    #
+    #            x: variable, group, or dataset
+    #
+    #        :Returns:
+    #
+    #            `list`
+    #
+    #        """
+    #        return x.ncattrs()
+    #
+    #    def _ncattrs_h5netcdf(self, x):
+    #        """Return netCDF attribute names.
+    #
+    #        """
+    #        return list(x.attrs)
 
     def ncattrs(self, x):
         """Return netCDF attribute names.
@@ -508,6 +822,29 @@ class _Flattener:
         except AttributeError:
             return
 
+    #    def _path_netCDF4(self, group):
+    #        """Return a simulated unix directory path to a group.
+    #
+    #        :Returns:
+    #
+    #            `str`
+    #
+    #        """
+    #        return group.path
+    #
+    #    def _path_h5netcdf(self, group):
+    #        """Return a simulated unix directory path to a group.
+    #
+    #        :Returns:
+    #
+    #            `str`
+    #
+    #        """
+    #        try:
+    #            return group.name
+    #        except AttributeError:
+    #            return "/"
+
     def path(self, group):
         """Return a simulated unix directory path to a group.
 
@@ -536,8 +873,8 @@ class _Flattener:
         #                or output_ds.data_model != 'NETCDF4':
         if (
             output_ds == self.__input_file
-            or self.filepath(output_ds) == self.filepath(self.__input_file)
-            or self.data_model(output_ds) != "NETCDF4"
+            or output_ds.filepath() == self.filepath(self.__input_file)
+            or output_ds.data_model != "NETCDF4"
         ):
             raise ValueError(
                 "Invalid inputs. Input and output datasets should be different, and output should be of "
@@ -1131,11 +1468,16 @@ class _Flattener:
         :param old_var: original variable (in group structure)
 
         """
+        var_attrs = self.attrs(var)
+        var_attrs_names = tuple(var_attrs)
         for attr in _AttributeProperties:
             #            if attr.name in var.__dict__:
-            if attr.name in self.ncattrs(var):
+            #            if attr.name in self.ncattrs(var):
+            if attr.name in var_attrs_names:  # self.ncattrs(var):
                 #                attr_value = var.getncattr(attr.name)
-                attr_value = self.getncattr(var, attr.name)
+                attr_value = var_attrs[
+                    attr.name
+                ]  # self.getncattr(var, attr.name)
                 # Parse attribute value
                 parsed_attr = parse_var_attr(attr_value)
 
@@ -1182,11 +1524,15 @@ class _Flattener:
         :param var: flattened variable in which references should be renamed with new names
 
         """
+        var_attrs = self.attrs(var)
+        var_attrs_names = tuple(var_attrs)
         for attr in _AttributeProperties:
             #            if attr.name in var.__dict__:
-            if attr.name in self.ncattrs(var):
+            if attr.name in var_attrs_names:  # self.ncattrs(var):
                 # attr_value = var.getncattr(attr.name)
-                attr_value = self.getncattr(var, attr.name)
+                attr_value = var_attrs[
+                    attr.name
+                ]  # self.getncattr(var, attr.name)
                 # Parse attribute value
                 parsed_attr = parse_var_attr(attr_value)
 

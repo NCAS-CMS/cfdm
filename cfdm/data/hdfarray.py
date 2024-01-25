@@ -30,6 +30,7 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         units=False,
         calendar=False,
         missing_values=None,
+        s3=None,
         source=None,
         copy=True,
     ):
@@ -82,6 +83,13 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 The missing value indicators defined by the variable
                 attributes. See `get_missing_values` for details.
 
+            s3: `dict` or `None`, optional
+                `s3fs.S3FileSystem` options for accessing S3 files.
+                If there is no ``'endpoint_url'`` key then `open` will
+                automatically derive one from the filename.
+
+                .. versionadded:: (cfdm) HDFVER
+
             {{init source: optional}}
 
             {{init copy: `bool`, optional}}
@@ -130,6 +138,11 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             except AttributeError:
                 missing_values = None
 
+            try:
+                s3 = source._get_component("s3", None)
+            except AttributeError:
+                s3 = None
+
         if shape is not None:
             self._set_component("shape", shape, copy=False)
 
@@ -158,6 +171,7 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         self._set_component("mask", mask, copy=False)
         self._set_component("units", units, copy=False)
         self._set_component("calendar", calendar, copy=False)
+        self._set_component("s3", s3, copy=False)
 
         # By default, close the file after data array access
         self._set_component("close", True, copy=False)
@@ -228,7 +242,7 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         return array
 
     def _check_safecast(self, attname):
-        """ToDOHDF.
+        """TODOHDF.
 
         Check to see that variable attribute exists can can be safely
         cast to variable data type.
@@ -492,16 +506,6 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             data = data + add_offset
 
         return data
-
-    #    def _get_attr(self, var, attr):
-    #        """TODOHDF.
-    #
-    #        .. versionadded:: (cfdm) HDFVER
-    #
-    #        :Parameters:
-    #
-    #        """
-    #        return var.attrs[attr]
 
     def close(self, dataset):
         """Close the dataset containing the data.

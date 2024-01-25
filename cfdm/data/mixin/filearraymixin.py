@@ -178,6 +178,26 @@ class FileArrayMixin:
         """
         return (self.get_format(),) * len(self.get_filenames())
 
+    def get_s3(self):
+        """Return `s3fs.S3FileSystem` options for accessing S3 files.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Returns:
+
+            `dict`
+                Keyword parameters to be passed to
+                `s3fs.S3FileSystem`. If there is no ``'endpoint_url'``
+                key then `open` will automatically derive one from the
+                filename.
+
+        """
+        out = self._get_component("s3", None)
+        if not out:
+            return {}
+
+        return out.copy()
+
     def open(self, func, *args, **kwargs):
         """Return a dataset file object and address.
 
@@ -204,22 +224,26 @@ class FileArrayMixin:
         """
         # Loop round the files, returning as soon as we find one that
         # works.
+        s3 = None
         filenames = self.get_filenames()
-        for filename, address in zip(filenames, self.get_addresses()):
+        for i, (filename, address) in enumerate(
+            zip(filenames, self.get_addresses())
+        ):
             url = urlparse(filename)
             if url.scheme == "file":
                 # Convert a file URI into an absolute path
                 filename = url.path
             elif url.scheme == "s3":
-                # Create an openable s3 file object
-                endpoint_url = f"https://{url.netloc}"
-                uri = url.path[1:]
-                s3 = {
-                    "anon": True,
-                    "client_kwargs": {"endpoint_url": endpoint_url},
-                }
+                # Create an openable S3 file object
+                if s3 is None:
+                    s3 = self.get_s3()
+
+                if "endpoint_url" not in s3:
+                    # Derive endpoint_url from filename
+                    s3["endpoint_url"] = f"https://{url.netloc}"
+
                 fs = S3FileSystem(**s3)
-                filename = fs.open(uri, "rb")
+                filename = fs.open(url.path[1:], "rb")
 
             try:
                 nc = func(filename, *args, **kwargs)

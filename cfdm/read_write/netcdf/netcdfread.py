@@ -452,16 +452,22 @@ class NetCDFRead(IORead):
         >>> r.file_close()
 
         """
-        for nc in self.read_vars["datasets"]:
+        g = self.read_vars
+
+        for nc in g["datasets"]:
             nc.close()
 
         # Close temporary flattened files
-        for flat_file in self.read_vars["flat_files"]:
+        for flat_file in g["flat_files"]:
             flat_file.close()
 
         # Close the original grouped file (v1.8.8.1)
-        if "nc_grouped" in self.read_vars:
-            self.read_vars["nc_grouped"].close()
+        if "nc_grouped" in g:
+            g["nc_grouped"].close()
+
+        # Close file-like object from S3 file systems
+        for filename in g["s3_file_objects"]:
+            filename.close()
 
     def file_open(self, filename, flatten=True, verbose=None):
         """Open the netCDf file for reading.
@@ -498,21 +504,29 @@ class NetCDFRead(IORead):
         netCDF = False
         HDF = False
 
+        # Deal with an file in an S3 object store
         u = urlparse(filename)
         if u.scheme == "s3":
             # Create an openable s3 file object
-            endpoint_url = f"https://{u.netloc}"
-            uri = u.path[1:]
             s3 = g["s3"]
-            if s3 is None:
-                s3 = {
-                    "anon": True,
-                    "client_kwargs": {"endpoint_url": endpoint_url},
-                }
+            g["s3_file_system_options"][filename] = s3
+            if "endpoint_url" not in s3:
+                # Derive endpoint_url from filename
+                s3 = g["s3"].copy()
+                s3["endpoint_url"] = f"https://{u.netloc}"
 
-            fs = S3FileSystem(**s3)
-            filename = fs.open(uri, "rb")
-            print(filename, type(filename))
+            key = tuple(sorted(s3.items()))
+            s3_file_systems = g["s3_file_systems"]
+            fs = s3_file_systems.get(key)
+            if fs is None:
+                # An s3 file system with these options does not exist,
+                # so create one.
+                fs = S3FileSystem(**s3)
+                s3_file_systems[key] = fs
+
+            filename = fs.open(u.path[1:], "rb")
+            g["s3_file_objects"].append(filename)
+
             if is_log_level_detail(logger):
                 logger.debug(
                     f"    s3: s3fs.S3FileSystem options: {s3}\n"
@@ -520,12 +534,15 @@ class NetCDFRead(IORead):
 
         #        nc = h5netcdf.File(filename, "r", decode_vlen_strings=True)
         try:
-            # raise OSError()
+            if g["no_HDF"]:
+                raise OSError("Requested to not use HDF to open file")
+
             nc = h5netcdf.File(filename, "r", decode_vlen_strings=True)
             HDF = True
         except OSError:
-            # File is not HDF. Assume instead that it's netCDF3 and
-            # open it with netCDF4.
+            # File could not be read by h5netcdf, or we've insisted
+            # that we don't use h5netcdf, so try to open it with
+            # netCDF4.
             try:
                 nc = netCDF4.Dataset(filename, "r")
                 netCDF = True
@@ -536,15 +553,10 @@ class NetCDFRead(IORead):
 
         g["original_HDF"] = HDF
         g["original_netCDF"] = netCDF
+
         # ------------------------------------------------------------
         # If the file has a group structure then flatten it (CF>=1.8)
         # ------------------------------------------------------------
-
-        if HDF:
-            print("Opened with h5netcdf")
-        else:
-            print("Opened with netCDF4")
-
         if flatten and nc.groups:
             # if HDF:
             #    # TODOHDF: Can't yet use HDF access to process groups
@@ -852,6 +864,8 @@ class NetCDFRead(IORead):
         warn_valid=False,
         domain=False,
         s3=None,
+        _s3_file_systems=None,
+        _no_HDF=False,
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
 
@@ -896,6 +910,21 @@ class NetCDFRead(IORead):
 
                 .. versionadded:: (cfdm) 1.9.0.0
 
+            s3: `bool`, optional
+                See `cfdm.read` for details
+
+                .. versionadded:: (cfdm) HDFVER
+
+
+            _s3_file_systems: `dict`, optional
+                TODOHDF
+
+                .. versionadded:: (cfdm) HDFVER
+
+            _no_HDF: `bool`, optional
+                See `cfdm.read` for details
+
+                .. versionadded:: (cfdm) HDFVER
         :Returns:
 
             `list`
@@ -994,10 +1023,24 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             # CFA
             # --------------------------------------------------------
+            #
             "cfa": False,
+            # --------------------------------------------------------
+            # HDF
+            # --------------------------------------------------------
+            #
+            "no_HDF": _no_HDF,
+            # --------------------------------------------------------
             # S3
+            # --------------------------------------------------------
             #
             "s3": s3,
+            #
+            "s3_file_systems": {},
+            #
+            "s3_file_system_options": {},
+            #
+            "s3_file_objects": [],
         }
 
         g = self.read_vars
@@ -1005,6 +1048,15 @@ class NetCDFRead(IORead):
         # Set versions
         for version in ("1.6", "1.7", "1.8", "1.9", "1.10", "1.11"):
             g["version"][version] = Version(version)
+
+        if s3 is None:
+            # Default s3 file system options
+            g["s3"] = {"anon": True}
+
+        if _s3_file_systems is not None:
+            # Update S3 file systems with those passed in as keyword
+            # parameter
+            g["s3_file_systems"] = _s3_file_systems
 
         # ------------------------------------------------------------
         # Add custom read vars
@@ -2123,8 +2175,14 @@ class NetCDFRead(IORead):
                 "\nScanning external file:\n-----------------------"
             )  # pragma: no cover
 
+            # Note: We pass in the s3 file system (if any) of the
+            #       parent file in case we can resuse it for the
+            #       external file
             external_read_vars = self.read(
-                external_file, _scan_only=True, verbose=verbose
+                external_file,
+                _scan_only=True,
+                _s3_file_systems=read_vars["s3_file_systems"],
+                verbose=verbose,
             )
 
             logger.info(
@@ -6106,6 +6164,10 @@ class NetCDFRead(IORead):
             "calendar": calendar,
             "missing_values": missing_values,
         }
+
+        s3 = g["s3_file_system_options"].get(filename)
+        if s3 is not None:
+            kwargs["s3"] = s3
 
         if return_kwargs_only:
             return kwargs

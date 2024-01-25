@@ -2356,14 +2356,16 @@ class CFDMImplementation(Implementation):
 
     def initialise_HDFArray(
         self,
-        filename=None,
-        address=None,
-        dtype=None,
-        shape=None,
-        mask=True,
-        units=False,
-        calendar=None,
-        missing_values=None,
+        **kwargs
+        #        filename=None,
+        #        address=None,
+        #        dtype=None,
+        #        shape=None,
+        #        mask=True,
+        #        units=False,
+        #        calendar=None,
+        #        missing_values=None,
+        #            s3=None,
     ):
         """Return a HDF array instance.
 
@@ -2393,22 +2395,15 @@ class CFDMImplementation(Implementation):
                 The missing value indicators defined by the variable
                 attributes.
 
+            s3
+
         :Returns:
 
             `HDFArray`
 
         """
         cls = self.get_class("HDFArray")
-        return cls(
-            filename=filename,
-            address=address,
-            dtype=dtype,
-            shape=shape,
-            mask=mask,
-            units=units,
-            calendar=calendar,
-            missing_values=missing_values,
-        )
+        return cls(**kwargs)
 
     def initialise_BoundsFromNodesArray(self, **kwargs):
         """Return a node bounds array.

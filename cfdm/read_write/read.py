@@ -17,6 +17,8 @@ def read(
     warn_valid=False,
     mask=True,
     domain=False,
+    s3=None,
+    _no_HDF=False,
     _implementation=_implementation,
 ):
     """Read field or domain constructs from a dataset.
@@ -262,6 +264,24 @@ def read(
 
             .. versionadded:: (cfdm) 1.9.0.0
 
+        s3: `dict`, optional
+
+            Provide keyword parameters to `s3fs.S3FileSystem` to
+            control the opening of files in an S3 object store. By
+            default, or if `None`, then ``s3={'anon': True,
+            'endpoint_url': <endpoint_url>}`` is used, where
+            ``<endpoint_url>`` is derived from each S3 file name. For
+            example, for file name
+            ``'s3://my-object-store/data/file.nc'``,
+            ``<endpoint_url>`` will be ``'https://my-object-store'``.
+
+            .. versionadded:: (cfdm) HDFVER
+
+        _no_HDF: `bool`, optional
+            TODOHDF
+
+            .. versionadded:: (cfdm) HDFVER
+
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that provides the
             returned field constructs.
@@ -334,6 +354,8 @@ def read(
                 warn_valid=warn_valid,
                 mask=mask,
                 domain=domain,
+                s3=s3,
+                _no_HDF=_no_HDF,
                 extra_read_vars=None,
             )
         except MaskError:
