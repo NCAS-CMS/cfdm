@@ -84,9 +84,11 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 attributes. See `get_missing_values` for details.
 
             s3: `dict` or `None`, optional
-                `s3fs.S3FileSystem` options for accessing S3 files.
-                If there is no ``'endpoint_url'`` key then `open` will
-                automatically derive one from the filename.
+                The `s3fs.S3FileSystem` options for accessing S3
+                files. If there are no options then ``anon=True`` is
+                assumed, and if there is no ``'endpoint_url'`` key
+                then one will automatically be derived one for each S3
+                filename.
 
                 .. versionadded:: (cfdm) HDFVER
 
@@ -210,14 +212,23 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         variable = dataset.variables[address]
         self.variable = variable
         array = variable[indices]
-        print (11)
+        print(11)
         if mask:
-            print (22)
+            print(22)
             self.scale = True
             self.always_mask = False
             self._isvlen = variable.dtype == np.dtype("O")
+            isvlen = variable.dtype == np.dtype("O")
             if not self._isvlen:
-                array = self._mask(array)
+                array = self._mask2(
+                    array,
+                    variable.dtype,
+                    variable.attrs,
+                    isvlen,
+                    self.scale,
+                    self.always_mask,
+                )
+                #                array = self._mask(array)
                 array = self._scale(array)
 
         # Set the units, if they haven't been set already.
@@ -241,6 +252,37 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
         array = self._process_string_and_char(array)
         return array
+
+    @classmethod
+    def _check_safecast2(cls, attname, var_dtype, attrs):
+        """TODOHDF.
+
+        Check to see that variable attribute exists can can be safely
+        cast to variable data type.
+
+        """
+        #        attrs = self.variable.attrs
+        if attname in attrs:
+            attvalue = attrs[attname]
+            att = np.array(attvalue)
+        else:
+            return False, None
+
+        is_safe = True
+        try:
+            atta = np.array(att, var_dtype)
+        except ValueError:
+            is_safe = False
+        else:
+            is_safe = _safecast(att, atta)
+
+        if not is_safe:
+            logger.warn(
+                f"WARNING: {attname} not used since it cannot "
+                "be safely cast to variable data type"
+            )  # pragma: no cover
+
+        return is_safe, attvalue
 
     def _check_safecast(self, attname):
         """TODOHDF.
@@ -275,7 +317,7 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
     def _mask(self, data):
         """TODOHDF."""
-        print ('MASK', data.shape)
+        print("MASK", data.shape)
         # Private function for creating a masked array, masking
         # missing_values and/or _FillValues.
 
@@ -469,6 +511,225 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             data = data[()]
 
         elif not self.always_mask and not masked_values:
+            # Return a regular numpy array if requested and there are
+            # no missing values
+            data = np.array(data, copy=False)
+
+        return data
+
+    @classmethod
+    def _mask2(
+        cls, data, var_dtype, attrs, isvlen, scale=False, always_mask=False
+    ):
+        """TODOHDF."""
+        print("MASK", data.shape)
+
+        if isvlen:
+            return data
+
+        # Private function for creating a masked array, masking
+        # missing_values and/or _FillValues.
+
+        #        attrs = self.variable.attrs
+        is_unsigned = attrs.get("_Unsigned", False) in ("true", "True")
+        is_unsigned_int = is_unsigned and data.dtype.kind == "i"
+
+        dtype = data.dtype
+        if scale and is_unsigned_int:
+            # Only do this if autoscale option is on.
+            dtype_unsigned_int = f"{dtype.byteorder}u{dtype.itemsize}"
+            data = data.view(dtype_unsigned_int)
+
+        totalmask = np.zeros(data.shape, np.bool_)
+        fill_value = None
+        safe_missval, missing_value = cls._check_safecast2(
+            "missing_value", var_dtype, attrs
+        )
+        if safe_missval:
+            mval = np.array(missing_value, var_dtype)
+            if scale and is_unsigned_int:
+                mval = mval.view(dtype_unsigned_int)
+
+            # create mask from missing values.
+            mvalmask = np.zeros(data.shape, np.bool_)
+            if mval.shape == ():  # mval a scalar.
+                mval = (mval,)  # make into iterable.
+
+            for m in mval:
+                # is scalar missing value a NaN?
+                try:
+                    mvalisnan = np.isnan(m)
+                except TypeError:
+                    # isnan fails on some dtypes
+                    mvalisnan = False
+
+                if mvalisnan:
+                    mvalmask += np.isnan(data)
+                else:
+                    mvalmask += data == m
+
+            if mvalmask.any():
+                # Set fill_value for masked array to missing_value (or
+                # 1st element if missing_value is a vector).
+                fill_value = mval[0]
+                totalmask += mvalmask
+
+        # set mask=True for data == fill value
+        safe_fillval, _FillValue = cls._check_safecast2(
+            "_FillValue", dtype, attrs
+        )
+        if safe_fillval:
+            fval = np.array(_FillValue, var_dtype)
+            if scale and is_unsigned_int:
+                fval = fval.view(dtype_unsigned_int)
+
+            # is _FillValue a NaN?
+            try:
+                fvalisnan = np.isnan(fval)
+            except Exception:
+                # isnan fails on some dtypes
+                fvalisnan = False
+
+            if fvalisnan:
+                mask = np.isnan(data)
+            elif (data == fval).any():
+                mask = data == fval
+            else:
+                mask = None
+
+            if mask is not None:
+                if fill_value is None:
+                    fill_value = fval
+
+                totalmask += mask
+        else:
+            # Don't return masked array if variable filling is disabled.
+            no_fill = 0
+            #                with nogil:
+            #                    ierr = nc_inq_var_fill(self._grpid,self._varid,&no_fill,NULL)
+            #                _ensure_nc_success(ierr)
+
+            # if no_fill is not 1, and not a byte variable, then use
+            # default fill value.  from
+            # http://www.unidata.ucar.edu/software/netcdf/docs/netcdf-c/Fill-Values.html#Fill-Values
+            # "If you need a fill value for a byte variable, it is
+            # recommended that you explicitly define an appropriate
+            # _FillValue attribute, as generic utilities such as
+            # ncdump will not assume a default fill value for byte
+            # variables."  Explained here too:
+            # http://www.unidata.ucar.edu/software/netcdf/docs/known_problems.html#ncdump_ubyte_fill
+            # "There should be no default fill values when reading any
+            # byte type, signed or unsigned, because the byte ranges
+            # are too small to assume one of the values should appear
+            # as a missing value unless a _FillValue attribute is set
+            # explicitly."  (do this only for non-vlens, since vlens
+            # don't have a default _FillValue)
+            if not isvlen and (
+                no_fill != 1 or dtype.str[1:] not in ("u1", "i1")
+            ):
+                fillval = np.array(default_fillvals[dtype.str[1:]], dtype)
+                has_fillval = data == fillval
+                # if data is an array scalar, has_fillval will be a
+                # boolean.  in that case convert to an array.
+                #                if type(has_fillval) == bool:
+                if isinstance(has_fillval, bool):
+                    has_fillval = np.asarray(has_fillval)
+
+                if has_fillval.any():
+                    if fill_value is None:
+                        fill_value = fillval
+
+                    mask = data == fillval
+                    totalmask += mask
+
+        # Set mask=True for data outside valid_min, valid_max.
+        validmin = None
+        validmax = None
+        # If valid_range exists use that, otherwise look for
+        # valid_min, valid_max. No special treatment of byte data as
+        # described at
+        # http://www.unidata.ucar.edu/software/netcdf/docs/attribute_conventions.html).
+        safe_validrange, valid_range = cls._check_safecast2(
+            "valid_range", var_dtype, attrs
+        )
+        safe_validmin, valid_min = cls._check_safecast2(
+            "valid_min", var_dtype, attrs
+        )
+        safe_validmax, valid_max = cls._check_safecast2(
+            "valid_max", var_dtype, attrs
+        )
+        if safe_validrange and valid_range.size == 2:
+            validmin = np.array(valid_range[0], var_dtype)
+            validmax = np.array(valid_range[1], var_dtype)
+        else:
+            if safe_validmin:
+                validmin = np.array(valid_min, var_dtype)
+
+            if safe_validmax:
+                validmax = np.array(valid_max, var_dtype)
+
+        if validmin is not None and scale and is_unsigned_int:
+            validmin = validmin.view(dtype_unsigned_int)
+
+        if validmax is not None and scale and is_unsigned_int:
+            validmax = validmax.view(dtype_unsigned_int)
+
+        # http://www.unidata.ucar.edu/software/netcdf/docs/attribute_conventions.html).
+        # "If the data type is byte and _FillValue is not explicitly
+        # defined, then the valid range should include all possible
+        # values.  Otherwise, the valid range should exclude the
+        # _FillValue (whether defined explicitly or by default) as
+        # follows. If the _FillValue is positive then it defines a
+        # valid maximum, otherwise it defines a valid minimum."
+        if safe_fillval:
+            fval = np.array(_FillValue, dtype)
+        else:
+            k = dtype.str[1:]
+            if k in ("u1", "i1"):
+                fval = None
+            else:
+                fval = np.array(default_fillvals[k], dtype)
+
+        if var_dtype.kind != "S":
+            # Don't set mask for character data
+
+            # Setting valid_min/valid_max to the _FillVaue is too
+            # surprising for many users (despite the netcdf docs
+            # attribute best practices suggesting clients should do
+            # this).
+            if validmin is not None:
+                totalmask += data < validmin
+
+            if validmax is not None:
+                totalmask += data > validmax
+
+        if fill_value is None and fval is not None:
+            fill_value = fval
+
+        # If all else fails, use default _FillValue as fill_value for
+        # masked array.
+        if fill_value is None:
+            fill_value = default_fillvals[dtype.str[1:]]
+
+        # Create masked array with computed mask
+        masked_values = bool(totalmask.any())
+        if masked_values:
+            data = np.ma.masked_array(
+                data, mask=totalmask, fill_value=fill_value
+            )
+        else:
+            # Always return masked array, if no values masked.
+            data = np.ma.masked_array(data)
+
+        # Scalar array with mask=True should be converted to
+        # np.ma.MaskedConstant to be consistent with slicing
+        # behavior of masked arrays.
+        if data.shape == () and data.mask.all():
+            # Return a scalar numpy masked constant not a 0-d masked
+            # array, so that data == np.ma.masked.
+            data = data[()]
+
+        elif not always_mask and not masked_values:
             # Return a regular numpy array if requested and there are
             # no missing values
             data = np.array(data, copy=False)

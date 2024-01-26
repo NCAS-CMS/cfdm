@@ -535,6 +535,7 @@ class NetCDFRead(IORead):
         #        nc = h5netcdf.File(filename, "r", decode_vlen_strings=True)
         try:
             if g["no_HDF"]:
+                print(99999999999999)
                 raise OSError("Requested to not use HDF to open file")
 
             nc = h5netcdf.File(filename, "r", decode_vlen_strings=True)

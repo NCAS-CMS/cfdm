@@ -11,21 +11,13 @@ class NetCDFFileMixin:
 
     """
 
-    def __repr__(self):
-        """Called by the `repr` built-in function.
-
-        x.__repr__() <==> repr(x)
-
-        """
-        return f"<{self.__class__.__name__}{self.shape}: {self}>"
-
-    def __str__(self):
-        """Called by the `str` built-in function.
-
-        x.__str__() <==> str(x)
-
-        """
-        return f"{self.get_filename(None)}, {self.get_address()}"
+    #    def __repr__(self):
+    #        """Called by the `repr` built-in function.
+    #
+    #        x.__repr__() <==> repr(x)
+    #
+    #        """
+    #        return f"<{self.__class__.__name__}{self.shape}: {self}>"
 
     def _get_attr(self, var, attr):
         """TODOHDF.
@@ -39,7 +31,8 @@ class NetCDFFileMixin:
             "Must implement {self.__class__.__name__}._get_attr"
         )  # pragma: no cover
 
-    def _process_string_and_char(self, array):
+    @classmethod
+    def _process_string_and_char(cls, array):
         """TODOHDF."""
         string_type = isinstance(array, str)
         kind = array.dtype.kind
@@ -194,9 +187,10 @@ class NetCDFFileMixin:
         :Returns:
 
             `dict`
-                Keyword parameters to be passed to
-                `s3fs.S3FileSystem`. If there is no ``'endpoint_url'``
-                key then `open` will automatically derive one from the
+                The `s3fs.S3FileSystem` options for accessing S3
+                files. If there are no options then ``anon=True`` is
+                assumed, and if there is no ``'endpoint_url'`` key
+                then one will automatically be derived one for each S3
                 filename.
 
         """

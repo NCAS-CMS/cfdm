@@ -1,6 +1,5 @@
 from urllib.parse import urlparse
 
-import h5netcdf
 from s3fs import S3FileSystem
 
 from ...functions import abspath
@@ -12,6 +11,14 @@ class FileArrayMixin:
     .. versionadded:: (cfdm) 1.10.1.0
 
     """
+
+    def __repr__(self):
+        """Called by the `repr` built-in function.
+
+        x.__repr__() <==> repr(x)
+
+        """
+        return f"<{self.__class__.__name__}{self.shape}: {self}>"
 
     def __str__(self):
         """Called by the `str` built-in function.
@@ -66,8 +73,11 @@ class FileArrayMixin:
 
         """
         addresses = self.get_addresses()
-        if len(addresses) == 1:
+        n = len(addresses)
+        if n == 1:
             return addresses[0]
+        elif n > 1:
+            return
 
         if default is None:
             return
@@ -205,7 +215,6 @@ class FileArrayMixin:
         """
         # Loop round the files, returning as soon as we find one that
         # works.
-        s3 = None
         filenames = self.get_filenames()
         for i, (filename, address) in enumerate(
             zip(filenames, self.get_addresses())
@@ -216,8 +225,9 @@ class FileArrayMixin:
                 filename = url.path
             elif url.scheme == "s3":
                 # Create an openable S3 file object
-                if s3 is None:
-                    s3 = self.get_s3()
+                s3 = self.get_s3()
+                if not s3:
+                    s3["anon"] = True
 
                 if "endpoint_url" not in s3:
                     # Derive endpoint_url from filename
@@ -226,12 +236,6 @@ class FileArrayMixin:
                 fs = S3FileSystem(**s3)
                 filename = fs.open(url.path[1:], "rb")
 
-                # Always use h5netcdf to access an S3 file
-                if func != h5netcdf.File:
-                    func = h5netcdf.File
-                    args NO = ()
-                    kwargs = {'decode_vlen_strings': True}
-                
             try:
                 nc = func(filename, *args, **kwargs)
             except FileNotFoundError:
