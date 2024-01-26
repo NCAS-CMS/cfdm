@@ -264,17 +264,19 @@ def read(
 
             .. versionadded:: (cfdm) 1.9.0.0
 
-        s3: `dict`, optional
-
-            Provide keyword parameters to `s3fs.S3FileSystem` to
+        s3: `dict` or `None`, optional
+            Keyword parameters to be passed to `s3fs.S3FileSystem` to
             control the opening of files in an S3 object store. By
-            default, or if `None`, then ``s3={'anon': True,
-            'endpoint_url': <endpoint_url>}`` is used, where
-            ``<endpoint_url>`` is derived from each S3 file name. For
-            example, for file name
-            ``'s3://my-object-store/data/file.nc'``,
-            ``<endpoint_url>`` will be ``'https://my-object-store'``.
+            default, or if `None`, then ``s3={'anon': True}``. Ignored
+            for file names that don't start with ``s3:``.
 
+            If and only if *s3* has no ``'endpoint_url'`` key, then
+            one will be automatically derived from the *filename*. For
+            example, if *filename* was
+            ``'s3://object-store/data/file.nc'``, then an
+            ``'endpoint_url'`` key with value
+            ``'https://object-store'`` would be created.
+ 
             .. versionadded:: (cfdm) HDFVER
 
         _no_HDF: `bool`, optional

@@ -186,6 +186,26 @@ class NetCDFFileMixin:
         """
         return self._get_component("mask")
 
+    def get_s3(self):
+        """Return `s3fs.S3FileSystem` options for accessing S3 files.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Returns:
+
+            `dict`
+                Keyword parameters to be passed to
+                `s3fs.S3FileSystem`. If there is no ``'endpoint_url'``
+                key then `open` will automatically derive one from the
+                filename.
+
+        """
+        out = self._get_component("s3", None)
+        if not out:
+            return {}
+
+        return out.copy()
+
     def get_missing_values(self):
         """The missing value indicators from the netCDF variable.
 

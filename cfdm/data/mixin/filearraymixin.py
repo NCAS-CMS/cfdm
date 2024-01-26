@@ -1,5 +1,6 @@
 from urllib.parse import urlparse
 
+import h5netcdf
 from s3fs import S3FileSystem
 
 from ...functions import abspath
@@ -178,26 +179,6 @@ class FileArrayMixin:
         """
         return (self.get_format(),) * len(self.get_filenames())
 
-    def get_s3(self):
-        """Return `s3fs.S3FileSystem` options for accessing S3 files.
-
-        .. versionadded:: (cfdm) HDFVER
-
-        :Returns:
-
-            `dict`
-                Keyword parameters to be passed to
-                `s3fs.S3FileSystem`. If there is no ``'endpoint_url'``
-                key then `open` will automatically derive one from the
-                filename.
-
-        """
-        out = self._get_component("s3", None)
-        if not out:
-            return {}
-
-        return out.copy()
-
     def open(self, func, *args, **kwargs):
         """Return a dataset file object and address.
 
@@ -245,6 +226,12 @@ class FileArrayMixin:
                 fs = S3FileSystem(**s3)
                 filename = fs.open(url.path[1:], "rb")
 
+                # Always use h5netcdf to access an S3 file
+                if func != h5netcdf.File:
+                    func = h5netcdf.File
+                    args NO = ()
+                    kwargs = {'decode_vlen_strings': True}
+                
             try:
                 nc = func(filename, *args, **kwargs)
             except FileNotFoundError:

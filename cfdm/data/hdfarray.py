@@ -210,8 +210,9 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         variable = dataset.variables[address]
         self.variable = variable
         array = variable[indices]
-
+        print (11)
         if mask:
+            print (22)
             self.scale = True
             self.always_mask = False
             self._isvlen = variable.dtype == np.dtype("O")
@@ -274,6 +275,7 @@ class HDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
     def _mask(self, data):
         """TODOHDF."""
+        print ('MASK', data.shape)
         # Private function for creating a masked array, masking
         # missing_values and/or _FillValues.
 
