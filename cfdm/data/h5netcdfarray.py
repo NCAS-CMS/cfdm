@@ -191,13 +191,13 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
         Indexing is similar to numpy indexing. The only difference to
         numpy indexing (given the restrictions on the type of indices
-        allowed) is:
+        allowed) is:   TODOHDF
 
           * When two or more dimension's indices are sequences of integers
             then these indices work independently along each dimension
             (similar to the way vector subscripts work in Fortran).
 
-        .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) HDFVER
 
         """
         dataset, address = self.open()
@@ -207,11 +207,13 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         groups, address = self.get_groups(address)
 
         if groups:
-            dataset = self._uuu(dataset, groups)
+            dataset = self._group(dataset, groups)
 
         # Get the variable by netCDF name
         variable = dataset.variables[address]
         array = variable[indices]
+
+        # Apply masking and scaling
         array = MaskScale.apply(
             variable, array, mask=mask, scale=mask, always_mask=False
         )
@@ -222,11 +224,17 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         self.close(dataset0)
         del dataset, dataset0
 
-        if not self.ndim:
-            # Hmm netCDF4 has a thing for making scalar size 1, 1d
-            array = array.squeeze()
-
         return array
+
+    def _get_attr(self, var, attr):
+        """TODOHDF.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameters:
+
+        """
+        return var.attrs[attr]
 
     def close(self, dataset):
         """Close the dataset containing the data.

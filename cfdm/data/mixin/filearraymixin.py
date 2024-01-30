@@ -53,7 +53,7 @@ class FileArrayMixin:
 
         """
         raise NotImplementedError(
-            "Must implement {self.__class__.__name__}._get_attr"
+            f"Must implement {self.__class__.__name__}._get_attr"
         )  # pragma: no cover
 
     def close(self, dataset):

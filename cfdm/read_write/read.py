@@ -18,7 +18,7 @@ def read(
     mask=True,
     domain=False,
     s3=None,
-    _no_HDF=False,
+    library=None,
     _implementation=_implementation,
 ):
     """Read field or domain constructs from a dataset.
@@ -279,7 +279,7 @@ def read(
 
             .. versionadded:: (cfdm) HDFVER
 
-        _no_HDF: `bool`, optional
+        library: `None` or `str`, optional
             TODOHDF
 
             .. versionadded:: (cfdm) HDFVER
@@ -357,7 +357,7 @@ def read(
                 mask=mask,
                 domain=domain,
                 s3=s3,
-                _no_HDF=_no_HDF,
+                library=library,
                 extra_read_vars=None,
             )
         except MaskError:

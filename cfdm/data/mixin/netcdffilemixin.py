@@ -1,6 +1,3 @@
-import netCDF4
-import numpy as np
-
 from ..numpyarray import NumpyArray
 
 
@@ -11,40 +8,33 @@ class NetCDFFileMixin:
 
     """
 
-    #    def __repr__(self):
-    #        """Called by the `repr` built-in function.
-    #
-    #        x.__repr__() <==> repr(x)
-    #
-    #        """
-    #        return f"<{self.__class__.__name__}{self.shape}: {self}>"
+    def _group(self, dataset, groups):
+        """Retrun the group object containing a variable.
 
-    @classmethod
-    def _process_string_and_char(cls, array):
-        """TODOHDF."""
-        string_type = isinstance(array, str)
-        kind = array.dtype.kind
-        if not string_type and kind in "SU":
-            # Collapse by concatenation the outermost (fastest
-            # varying) dimension of char array into
-            # memory. E.g. [['a','b','c']] becomes ['abc']
-            if kind == "U":
-                array = array.astype("S", copy=False)
+        .. versionadded:: (cfdm) HDFVER
 
-            array = netCDF4.chartostring(array)
-            shape = array.shape
-            array = np.array([x.rstrip() for x in array.flat], dtype="U")
-            array = np.reshape(array, shape)
-            array = np.ma.masked_where(array == "", array)
-        elif not string_type and kind == "O":
-            # An N-d (N>=1) string variable comes out as a numpy
-            # object array, so convert it to numpy string array.
-            array = array.astype("U", copy=False)
+        :Parameters:
 
-            # Mask the VLEN variable
-            array = np.ma.where(array == "", np.ma.masked, array)
+            dataset: `netCDF4.Dataset` or `h5netcdf.File`
+                The dataset containging the variable.
 
-        return array
+            groups: sequence of `str`
+                The definition of which group the variable is in. For
+                instance, of the variable is in group
+                ``/forecast/model`` then *groups* would be
+                ``['forecast', 'model']``.
+
+        :Returns:
+
+            `netCDF4.Dataset` or `netCDF4.Group`
+             or `h5netcdf.File` or `h5netcdf.Group`
+                The group object, which might be the root group.
+
+        """
+        for g in groups:
+            dataset = dataset.groups[g]
+
+        return dataset
 
     def _set_units(self, var):
         """The units and calendar properties.
@@ -57,7 +47,7 @@ class NetCDFFileMixin:
 
         :Parameters:
 
-            var: `netCDF4.Variable`
+            var: `netCDF4.Variable` or `h5netcdf.Variable`
                 The variable containing the units and calendar
                 definitions.
 
@@ -90,12 +80,6 @@ class NetCDFFileMixin:
             self._set_component("calendar", calendar, copy=False)
 
         return units, calendar
-
-    def _uuu(self, dataset, groups):
-        for g in groups:  # [:-1]:
-            dataset = dataset.groups[g]
-
-        return dataset  # dataset = dataset.groups[groups[-1]]
 
     @property
     def array(self):

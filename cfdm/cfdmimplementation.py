@@ -1359,10 +1359,10 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Data instance
+            Scalar `Data` instance
 
         """
-        return parent.data.maximum()
+        return parent.data.maximum(squeeze=True)
 
     def get_data_sum(self, parent):
         """Return the sum of the data.
@@ -1373,10 +1373,10 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Data instance
+            Scalar `Data` instance
 
         """
-        return parent.data.sum()
+        return parent.data.sum(squeeze=True)
 
     def get_count(self, construct):
         """Return the count variable of compressed data.

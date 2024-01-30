@@ -208,11 +208,7 @@ class NetCDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
         if groups:
             # Traverse the group structure, if there is one (CF>=1.8).
-            netcdf = self._uuu(netcdf, groups)
-        #            for g in groups[:-1]:
-        #                netcdf = netcdf.groups[g]
-        #
-        #            netcdf = netcdf.groups[groups[-1]]
+            netcdf = self._group(netcdf, groups)
 
         if isinstance(address, str):
             # Get the variable by netCDF name
@@ -245,7 +241,33 @@ class NetCDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             # Hmm netCDF4 has a thing for making scalar size 1, 1d
             array = array.squeeze()
 
-        array = self._process_string_and_char(array)
+        kind = array.dtype.kind
+        if not string_type and kind in "SU":
+            # --------------------------------------------------------
+            # Collapse (by concatenation) the outermost (fastest
+            # varying) dimension of char array into
+            # memory. E.g. [['a','b','c']] becomes ['abc']
+            # --------------------------------------------------------
+            if kind == "U":
+                array = array.astype("S", copy=False)
+
+            array = netCDF4.chartostring(array)
+            shape = array.shape
+            array = np.array([x.rstrip() for x in array.flat], dtype="U")
+            array = np.reshape(array, shape)
+            array = np.ma.masked_where(array == "", array)
+        elif not string_type and kind == "O":
+            # --------------------------------------------------------
+            # A netCDF string type N-d (N>=1) variable comes out as a
+            # numpy object array, so convert it to numpy string array.
+            # --------------------------------------------------------
+            array = array.astype("U", copy=False)
+
+            # --------------------------------------------------------
+            # netCDF4 does not auto-mask VLEN variable, so do it here.
+            # --------------------------------------------------------
+            array = np.ma.where(array == "", np.ma.masked, array)
+
         return array
 
     def __repr__(self):

@@ -155,23 +155,29 @@ class _AttributeProperties(Enum):
 
     """
 
-    ancillary_variables = (0, (False, True, True, False, False, False, False))
-    bounds = (1, (False, True, True, False, False, False, False))
-    cell_measures = (2, (False, True, False, True, False, False, False))
-    climatology = (3, (False, True, True, False, False, False, False))
-    coordinates = (4, (False, True, True, False, True, False, False))
+    # Coordinates
+    coordinates = (0, (False, True, True, False, True, False, False))
+    ancillary_variables = (1, (False, True, True, False, False, False, False))
+    climatology = (2, (False, True, True, False, False, False, False))
+    bounds = (3, (False, True, True, False, False, False, False))
+    # Cell measures
+    cell_measures = (4, (False, True, False, True, False, False, False))
+    # Coordinate references
     formula_terms = (5, (False, True, False, True, False, False, False))
-    geometry = (6, (False, True, True, False, False, False, False))
-    grid_mapping = (7, (False, True, True, True, False, False, False))
+    grid_mapping = (6, (False, True, True, True, False, False, False))
     # Geometry variables
+    geometry = (7, (False, True, True, False, False, False, False))
     interior_ring = (8, (False, True, True, False, False, False, False))
     node_coordinates = (9, (False, True, True, False, False, False, False))
     node_count = (10, (False, True, True, False, False, False, False))
     nodes = (11, (False, True, True, False, False, False, False))
     part_node_count = (12, (False, True, True, False, False, False, False))
+    # Compression by gathering
     compress = (13, (True, False, True, False, False, False, False))
+    # Discrete sampling geometries
     instance_dimension = (14, (True, False, True, False, False, False, False))
     sample_dimension = (15, (True, False, True, False, False, False, False))
+    # Cell methods
     cell_methods = (16, (2, 1, True, False, False, True, True))
     # Domain variable dimensions
     dimensions = (17, (True, False, True, False, False, False, False))
@@ -345,14 +351,6 @@ class _Flattener:
     #                       'ncattrs', 'path'):
     #            setattr(self, method, getattr(self, f"_{method}_{dataset_type}"))
 
-    #    def _attrs_netCDF4(self, variable):
-    #        return {
-    #            attr: variable.getncattr(attr) for attr in variable.ncattrs()
-    #        }
-    #
-    #    def _attrs_h5netcdf(self, variable):
-    #        return variable.attrs
-
     def attrs(self, variable):
         try:
             # h5netcdf
@@ -363,55 +361,23 @@ class _Flattener:
                 attr: variable.getncattr(attr) for attr in variable.ncattrs()
             }
 
-    #    def _chunksizes_h5netcdf(self, variable):
-    #        return variable.chunks
-    #
-    #    def _chunksizes_netCDF4(self, variable):
-    #        chunking = variable.chunking()
-    #        if chunking == "contiguous":
-    #            return None
-
     def chunksizes(self, variable):
+        """TODO."""
         try:
             # netCDF4
             chunking = variable.chunking()
             if chunking == "contiguous":
                 return None
+
+            return chunking
         except AttributeError:
             # h5netcdf
             return variable.chunks
 
-    #    def _contiguous_h5netcdf(self, variable):
-    #        """Whether or not the variable data is contiguous on disk.
-    #
-    #        See `_contiguous_netCDF4` for details.
-    #        """
-    #        return variable.chunks is None
-    #
-    #    def _contiguous_netCDF4(self, variable):
-    #        """Whether or not the variable data is contiguous on disk.
-    #
-    #        :Parameters:
-    #
-    #            variable:
-    #                The variable.
-    #
-    #        :Returns:
-    #
-    #            `bool`
-    #                 `True` if the variable data is contiguous on disk,
-    #                 otherwise `False`.
-    #
-    #        **Examples**
-    #
-    #        >>> f.contiguous(variable)
-    #        False
-    #
-    #        """
-    #        return variable.chunking() == "contiguous"
-
     def contiguous(self, variable):
         """Whether or not the variable data is contiguous on disk.
+
+        .. versionadded:: (cfdm) HDFVER
 
         :Parameters:
 
@@ -432,42 +398,15 @@ class _Flattener:
         """
         try:
             # netCDF4
-            return (variable.chunking() == "contiguous",)
+            return variable.chunking() == "contiguous"
         except AttributeError:
             # h5netcdf
             return variable.chunks is None
 
-    #    def data_model(self, dataset):
-    #        """Return the netCDF data model version of the dataset.
-    #
-    #        :Parameters:
-    #
-    #            dataset: `netCDF4.Dataset` or `h5netcdf.File`
-    #                The dataset.
-    #
-    #        :Returns:
-    #
-    #            `str`
-    #                 The data model version, one of ``'NETCDF4'``,
-    #                 ``'NETCDF4_CLASSIC'``, ``'NETCDF3_CLASSIC'``,
-    #                 ``'NETCDF3_64BIT_OFFSET'``, or
-    #                 ``'NETCDF3_64BIT_DATA'``.
-    #
-    #        **Examples**
-    #
-    #        >>> f.data_model(dataset)
-    #        'NETCDF4'
-    #
-    #        """
-    #        try:
-    #            # netCDF4
-    #            return dataset.data_model
-    #        except AttributeError:
-    #            # h5netcdf
-    #            return "NETCDF4"
-
     def dtype(self, variable):
         """Return the data type of a variable.
+
+        .. versionadded:: (cfdm) HDFVER
 
         :Parameters:
 
@@ -476,13 +415,16 @@ class _Flattener:
 
         :Returns:
 
-            `numpy.dtype`
+            `numpy.dtype` or `str`
                  The data type.
 
         **Examples**
 
         >>> f.dtype(variable)
         dtype('<f8')
+
+        >>> f.dtype(variable)
+        str
 
         """
         out = variable.dtype
@@ -491,37 +433,10 @@ class _Flattener:
 
         return out
 
-    #    def _endian_netCDF4(self, variable):
-    #        """Return the endian-ness of a variable.
-    #
-    #        :Parameters:
-    #
-    #            variable:
-    #                The variable.
-    #
-    #        :Returns:
-    #
-    #            `str`
-    #                 The endian-ness (``'little'``, ``'big'``, or
-    #                 ``'native'``) of the variable.
-    #
-    #        **Examples**
-    #
-    #        >>> f.endian(variable)
-    #        'native'
-    #
-    #        """
-    #        return variable.endian()
-    #
-    #    def _endian_h5netcdf(self, variable):
-    #        """Return the endian-ness of a variable.
-    #
-    #        """
-    #        dtype = variable.dtype
-    #        return self._dtype_endian_lookup[getattr(dtype, "byteorder", None)]
-
     def endian(self, variable):
         """Return the endian-ness of a variable.
+
+        .. versionadded:: (cfdm) HDFVER
 
         :Parameters:
 
@@ -548,36 +463,10 @@ class _Flattener:
             dtype = variable.dtype
             return self._dtype_endian_lookup[getattr(dtype, "byteorder", None)]
 
-    #    def _filepath_netCDF4(self, dataset):
-    #        """Return the file path for the dataset.
-    #
-    #        :Parameters:
-    #
-    #            dataset:
-    #                The dataset.
-    #
-    #        :Returns:
-    #
-    #            `str`
-    #                 The file system path, or the opendap URL, for the
-    #                 dataset.
-    #
-    #        **Examples**
-    #
-    #        >>> f.filepath(dataset)
-    #        '/home/data/file.nc'
-    #
-    #        """
-    #        return dataset.filepath()
-    #
-    #    def _filepath_h5netcdf(self, dataset):
-    #        """Return the file path for the dataset.
-    #
-    #        """
-    #        return dataset.filename
-
     def filepath(self, dataset):
         """Return the file path for the dataset.
+
+        .. versionadded:: (cfdm) HDFVER
 
         :Parameters:
 
@@ -603,88 +492,44 @@ class _Flattener:
             # h5netcdf
             return dataset.filename
 
-    #    def _get_dims_netCDF4(self, variable):
-    #        """Return.
-    #
-    #        :Returns:
-    #
-    #            `str`
-    #
-    #        """
-    #        return variable.get_dims()
-    #
-    #    def _get_dims_h5netcdf(self, variable):
-    #        """Return.
-    #
-    #        :Returns:
-    #
-    #            `str`
-    #
-    #        """
-    #        out = []
-    #        dimension_names = list(variable.dimensions)
-    #        group = variable._parent
-    #        while dimension_names:
-    #            for name in dimension_names[:]:
-    #                if name in group.dims:
-    #                    out.append(group.dims[name])
-    #                    dimension_names.remove(name)
-    #
-    #            group = group.parent
-    #            if group is None:
-    #                break
-    #
-    #        return out
-
     def get_dims(self, variable):
         """Return.
 
+        .. versionadded:: (cfdm) HDFVER
+
         :Returns:
 
-            `str`
+            `list`
 
         """
         try:
+            # netCDF4
             return variable.get_dims()
         except AttributeError:
-            out = []
+            # h5netcdf
+            dims = {}
             dimension_names = list(variable.dimensions)
             group = variable._parent
-            while dimension_names:
-                for name in dimension_names[:]:
-                    if name in group.dims:
-                        out.append(group.dims[name])
+            for name, dim in group.dims.items():
+                if name in dimension_names:
+                    dims[name] = dim
+                    dimension_names.remove(name)
+
+            group = group.parent
+            while group is not None and dimension_names:
+                for name, dim in group.dims.items():
+                    if name in dimension_names:
+                        dims[name] = dim
                         dimension_names.remove(name)
 
                 group = group.parent
-                if group is None:
-                    break
 
-            return out
-
-    #    def _getncattr_netCDF4(self, x, attr):
-    #        """Retrieve a netCDF attribute.
-    #
-    #        :Parameters:
-    #
-    #            x: variable, group, or dataset
-    #
-    #            attr: `str`
-    #
-    #        :Returns:
-    #
-    #        """
-    #        return getattr(x, attr)
-    #
-    #    def _getncattr_h5netcdf(self, x, attr):
-    #        """Retrieve a netCDF attribute.
-    #
-    #
-    #        """
-    #        return x.attrs[attr]
+            return [dims[name] for name in variable.dimensions]
 
     def getncattr(self, x, attr):
         """Retrieve a netCDF attribute.
+
+        .. versionadded:: (cfdm) HDFVER
 
         :Parameters:
 
@@ -702,24 +547,10 @@ class _Flattener:
             # h5netcdf
             return x.attrs[attr]
 
-    #    def _group_netCDF4(self, x):
-    #        """Return a.
-    #
-    #        :Returns:
-    #
-    #            `Group`
-    #
-    #        """
-    #        return x.group()
-    #
-    #    def _group_h5netcdf(self, x):
-    #        """Return a.
-    #
-    #        """
-    #        return x._parent
-
     def group(self, x):
         """Return a.
+
+        .. versionadded:: (cfdm) HDFVER
 
         :Returns:
 
@@ -733,30 +564,10 @@ class _Flattener:
             # h5netcdf
             return x._parent
 
-    #    def _name_netCDF4(self, x):
-    #        """Return the netCDF name, without its groups.
-    #
-    #        :Returns:
-    #
-    #        """
-    #        return  x.name
-    #
-    #    def _name_h5netcdf(self, x):
-    #        """Return the netCDF name, without its groups.
-    #
-    #        :Returns:
-    #
-    #            `str`
-    #
-    #        """
-    #        out = x.name
-    #        if "/" in out:
-    #            out = x.name.split("/")[-1]
-    #
-    #        return out
-
     def name(self, x):
         """Return the netCDF name, without its groups.
+
+        .. versionadded:: (cfdm) HDFVER
 
         :Returns:
 
@@ -770,28 +581,10 @@ class _Flattener:
 
         return out
 
-    #    def _ncattrs_netCDF4(self, x):
-    #        """Return netCDF attribute names.
-    #
-    #        :Parameters:
-    #
-    #            x: variable, group, or dataset
-    #
-    #        :Returns:
-    #
-    #            `list`
-    #
-    #        """
-    #        return x.ncattrs()
-    #
-    #    def _ncattrs_h5netcdf(self, x):
-    #        """Return netCDF attribute names.
-    #
-    #        """
-    #        return list(x.attrs)
-
     def ncattrs(self, x):
         """Return netCDF attribute names.
+
+        .. versionadded:: (cfdm) HDFVER
 
         :Parameters:
 
@@ -812,6 +605,8 @@ class _Flattener:
     def parent(self, group):
         """Return a simulated unix directory path to a group.
 
+        .. versionadded:: (cfdm) HDFVER
+
         :Returns:
 
             `str`
@@ -822,31 +617,10 @@ class _Flattener:
         except AttributeError:
             return
 
-    #    def _path_netCDF4(self, group):
-    #        """Return a simulated unix directory path to a group.
-    #
-    #        :Returns:
-    #
-    #            `str`
-    #
-    #        """
-    #        return group.path
-    #
-    #    def _path_h5netcdf(self, group):
-    #        """Return a simulated unix directory path to a group.
-    #
-    #        :Returns:
-    #
-    #            `str`
-    #
-    #        """
-    #        try:
-    #            return group.name
-    #        except AttributeError:
-    #            return "/"
-
     def path(self, group):
         """Return a simulated unix directory path to a group.
+
+        .. versionadded:: (cfdm) HDFVER
 
         :Returns:
 
@@ -1008,7 +782,6 @@ class _Flattener:
 
         # Replace old by new dimension names
         #        new_dims = list(map(lambda x: self.__dim_map[self.pathname(x.group(), x.name)], var.get_dims()))
-
         new_dims = list(
             map(
                 lambda x: self.__dim_map[

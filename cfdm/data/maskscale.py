@@ -47,11 +47,15 @@ class MaskScale:
     def _FillValue(cls, attrs, variable):
         """TODO."""
         if "_FillValue" not in attrs:
-            fillvalue = getattr(variable._h5ds, "fillvalue", None)
-            if fillvalue is not None:
-                attrs["_FillValue"] = fillvalue
-            elif variable.dtype.kind == "O":
-                attrs["_FillValue"] = default_fillvals["S1"]
+            try:
+                fillvalue = getattr(variable._h5ds, "fillvalue", None)
+            except AttributeError:
+                pass
+            else:
+                if fillvalue is not None:
+                    attrs["_FillValue"] = fillvalue
+                elif variable.dtype.kind == "O":
+                    attrs["_FillValue"] = default_fillvals["S1"]
 
         return attrs
 
@@ -162,7 +166,12 @@ class MaskScale:
             # explicitly."  (do this only for non-vlens, since vlens
             # don't have a default _FillValue)
             if no_fill != 1 or dtype.str[1:] not in ("u1", "i1"):
-                fillval = np.array(default_fillvals[dtype.str[1:]], dtype)
+                if dtype.kind == "S":
+                    default_fillval = default_fillvals["S1"]
+                else:
+                    default_fillval = default_fillvals[dtype.str[1:]]
+
+                fillval = np.array(default_fillval, dtype)
                 has_fillval = data == fillval
                 # if data is an array scalar, has_fillval will be a
                 # boolean.  in that case convert to an array.
@@ -177,7 +186,7 @@ class MaskScale:
                     mask = data == fillval
                     totalmask += mask
 
-        # Set mask=True for data outside valid_min, valid_max.
+        # Set mask=True for data outside [valid_min, valid_max]
         validmin = None
         validmax = None
         # If valid_range exists use that, otherwise look for
@@ -224,10 +233,15 @@ class MaskScale:
             if k in ("u1", "i1"):
                 fval = None
             else:
-                fval = np.array(default_fillvals[k], dtype)
+                if dtype.kind == "S":
+                    default_fillval = default_fillvals["S1"]
+                else:
+                    default_fillval = default_fillvals[k]
+
+                fval = np.array(default_fillval, dtype)
 
         if dtype.kind != "S":
-            # Don't set mask for character data
+            # Don't set validmin/validmax mask for character data
 
             # Setting valid_min/valid_max to the _FillVaue is too
             # surprising for many users (despite the netcdf docs
@@ -245,7 +259,10 @@ class MaskScale:
         # If all else fails, use default _FillValue as fill_value for
         # masked array.
         if fill_value is None:
-            fill_value = default_fillvals[dtype.str[1:]]
+            if dtype.kind == "S":
+                fill_value = default_fillvals["S1"]
+            else:
+                fill_value = default_fillvals[dtype.str[1:]]
 
         # Create masked array with computed mask
         masked_values = totalmask.any()
@@ -308,15 +325,32 @@ class MaskScale:
 
     @classmethod
     def apply(cls, variable, data, mask=True, scale=True, always_mask=False):
-        """TODO."""
-        attrs = cls._attrs(variable)
+        """TODO.
 
+        :Parameters:
+
+            variable: `h5netcdf.Variable` or `netCDF4.Variable`
+
+            data: `numpy.ndarray`
+
+            mask: `bool`
+
+            scale: `bool`
+
+            always_mask: `bool`
+
+        :Returns:
+
+            `numpy.ndarray`
+
+        """
+        attrs = cls._attrs(variable)
         dtype = variable.dtype
-        data_dtype = data.dtype
-        kind = data_dtype.kind
+
         if isinstance(data, str):
             data = np.array(data, dtype="S")
-        elif kind in "OSU":
+        elif data.dtype.kind in "OSU":
+            kind = data.dtype.kind
             if kind == "S":
                 data = netCDF4.chartostring(data)
 
@@ -325,10 +359,14 @@ class MaskScale:
             if kind == "O":
                 dtype = data.dtype
 
-        if mask or scale:
+        if dtype is str:  # isinstance(dtype, str):
+            dtype = data.dtype
+
+        if scale:
             dtype_unsigned_int = None
             is_unsigned_int = attrs.get("_Unsigned", False) in ("true", "True")
             if is_unsigned_int:
+                data_dtype = data.dtype
                 dtype_unsigned_int = (
                     f"{data_dtype.byteorder}u{data_dtype.itemsize}"
                 )

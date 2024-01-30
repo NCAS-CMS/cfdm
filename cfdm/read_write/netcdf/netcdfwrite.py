@@ -2661,7 +2661,8 @@ class NetCDFWrite(IOWrite):
         if g["dry_run"]:
             return
 
-        logger.info(f"    Writing {cfvar!r}")  # pragma: no cover
+        #        print (ncvar, repr(cfvar.properties()))
+        # logger.info(f"    Writing {cfvar!r}")  # pragma: no cover
 
         # Set 'construct_type'
         if not construct_type:
