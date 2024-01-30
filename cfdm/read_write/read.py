@@ -276,7 +276,7 @@ def read(
             ``'s3://object-store/data/file.nc'``, then an
             ``'endpoint_url'`` key with value
             ``'https://object-store'`` would be created.
- 
+
             .. versionadded:: (cfdm) HDFVER
 
         _no_HDF: `bool`, optional

@@ -19,18 +19,6 @@ class NetCDFFileMixin:
     #        """
     #        return f"<{self.__class__.__name__}{self.shape}: {self}>"
 
-    def _get_attr(self, var, attr):
-        """TODOHDF.
-
-        .. versionadded:: (cfdm) HDFVER
-
-        :Parameters:
-
-        """
-        raise NotImplementedError(
-            "Must implement {self.__class__.__name__}._get_attr"
-        )  # pragma: no cover
-
     @classmethod
     def _process_string_and_char(cls, array):
         """TODOHDF."""

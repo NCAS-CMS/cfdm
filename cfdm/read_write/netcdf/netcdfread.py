@@ -535,7 +535,7 @@ class NetCDFRead(IORead):
         #        nc = h5netcdf.File(filename, "r", decode_vlen_strings=True)
         try:
             if g["no_HDF"]:
-                print(99999999999999)
+                print("using netCDF4")
                 raise OSError("Requested to not use HDF to open file")
 
             nc = h5netcdf.File(filename, "r", decode_vlen_strings=True)
@@ -6174,10 +6174,11 @@ class NetCDFRead(IORead):
             return kwargs
 
         if g["original_netCDF"]:
+            # netCDF4
             array = self.implementation.initialise_NetCDFArray(**kwargs)
         else:
             # h5netcdf
-            array = self.implementation.initialise_HDFArray(**kwargs)
+            array = self.implementation.initialise_H5netcdfArray(**kwargs)
 
         return array, kwargs
 

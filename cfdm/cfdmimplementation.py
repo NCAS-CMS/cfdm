@@ -30,7 +30,7 @@ from .data import (
     CellConnectivityArray,
     Data,
     GatheredArray,
-    HDFArray,
+    H5netcdfArray,
     NetCDFArray,
     PointTopologyArray,
     RaggedContiguousArray,
@@ -2354,20 +2354,8 @@ class CFDMImplementation(Implementation):
             missing_values=missing_values,
         )
 
-    def initialise_HDFArray(
-        self,
-        **kwargs
-        #        filename=None,
-        #        address=None,
-        #        dtype=None,
-        #        shape=None,
-        #        mask=True,
-        #        units=False,
-        #        calendar=None,
-        #        missing_values=None,
-        #            s3=None,
-    ):
-        """Return a HDF array instance.
+    def initialise_H5netcdfArray(self, **kwargs):
+        """Return a `H5netcdfArray` instance.
 
         :Parameters:
 
@@ -2399,10 +2387,10 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            `HDFArray`
+            `H5netcdfArray`
 
         """
-        cls = self.get_class("HDFArray")
+        cls = self.get_class("H5netcdfArray")
         return cls(**kwargs)
 
     def initialise_BoundsFromNodesArray(self, **kwargs):
@@ -3759,7 +3747,7 @@ _implementation = CFDMImplementation(
     Data=Data,
     BoundsFromNodesArray=BoundsFromNodesArray,
     GatheredArray=GatheredArray,
-    HDFArray=HDFArray,
+    H5netcdfArray=H5netcdfArray,
     NetCDFArray=NetCDFArray,
     PointTopologyArray=PointTopologyArray,
     RaggedContiguousArray=RaggedContiguousArray,
@@ -3803,7 +3791,7 @@ def implementation():
      'Datum': <class 'cfdm.datum.Datum'>,
      'Data': <class 'cfdm.data.data.Data'>,
      'GatheredArray': <class 'cfdm.data.gatheredarray.GatheredArray'>,
-     'HDFArray': <class 'cfdm.data.hdfarray.HDFArray'>,
+     'H5netcdfArray': <class 'cfdm.data.h5netcdfarray.H5netcdfArray'>,
      'NetCDFArray': <class 'cfdm.data.netcdfarray.NetCDFArray'>,
      'PointTopologyArray': <class 'cfdm.data.pointtopologyarray.PointTopologyArray'>,
      'RaggedContiguousArray': <class 'cfdm.data.raggedcontiguousarray.RaggedContiguousArray'>,
