@@ -21,18 +21,19 @@ from packaging.version import Version
 from s3fs import S3FileSystem
 
 from ...decorators import _manage_log_level_via_verbosity
-#from ...flatten import _Flattener
-from ...flatten import flatten as netcdf_flatten
-from ...flatten.config import _flattener_separator
 from ...functions import is_log_level_debug, is_log_level_detail
 from .. import IORead
+from .flatten import netcdf_flatten
+from .flatten.config import (
+    flattener_attribute_map,
+    flattener_dimension_map,
+    flattener_separator,
+    flattener_variable_map,
+)
 
 logger = logging.getLogger(__name__)
 
 _cached_temporary_files = {}
-
-# _flattener_separator = netcdf_flattener._Flattener._Flattener__new_separator
-#_flattener_separator = _Flattener._Flattener__new_separator
 
 
 @dataclass()
@@ -510,19 +511,24 @@ class NetCDFRead(IORead):
         # Deal with an file in an S3 object store
         u = urlparse(filename)
         if u.scheme == "s3":
-            # Create an openable s3 file object
+            # Create an openable S3 file object
             s3 = g["s3"]
-            g["s3_file_system_options"][filename] = s3
+            if s3 is None:
+                # Default s3 file system options
+                s3 = {"anon": True}
+
             if "endpoint_url" not in s3:
                 # Derive endpoint_url from filename
-                s3 = g["s3"].copy()
+                s3 = s3.copy()
                 s3["endpoint_url"] = f"https://{u.netloc}"
+
+            g["s3_file_system_options"][filename] = s3
 
             key = tuple(sorted(s3.items()))
             s3_file_systems = g["s3_file_systems"]
             fs = s3_file_systems.get(key)
             if fs is None:
-                # An s3 file system with these options does not exist,
+                # An S3 file system with these options does not exist,
                 # so create one.
                 fs = S3FileSystem(**s3)
                 s3_file_systems[key] = fs
@@ -563,10 +569,10 @@ class NetCDFRead(IORead):
                 raise error
 
         else:
-            raise ValueError("TODO")
+            raise ValueError("Unknown library name: library={library!r}")
 
-        g["original_HDF"] = HDF
-        g["original_netCDF"] = netCDF
+        g["original_h5netcdf"] = HDF
+        g["original_netCDF4"] = netCDF
 
         # ------------------------------------------------------------
         # If the file has a group structure then flatten it (CF>=1.8)
@@ -588,7 +594,6 @@ class NetCDFRead(IORead):
             flat_nc.set_fill_off()
 
             # Flatten the file
-            #            netcdf_flattener.flatten(
             netcdf_flatten(nc, flat_nc, lax_mode=True, _copy_data=False)
 
             # Store the original grouped file. This is primarily
@@ -605,17 +610,43 @@ class NetCDFRead(IORead):
             g["has_groups"] = True
             g["flat_files"].append(flat_file)
 
-        g["netCDF"] = netCDF
-        g["HDF"] = HDF
+        g["netCDF4"] = netCDF
+        g["h5netcdf"] = HDF
         g["nc"] = nc
         return nc
 
     def _open_netCDF4(self, filename):
-        """TODO."""
+        """Return an open `netCDF4.Dataset`.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameters:
+
+            filename: `str`
+                The file to open
+
+        :Returns:
+
+            `netCDF4.Dataset`
+
+        """
         return netCDF4.Dataset(filename, "r")
 
     def _open_h5netcdf(self, filename):
-        """TODO."""
+        """Return an open `h5netcdf.File`.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameters:
+
+            filename: `str`
+                The file to open
+
+        :Returns:
+
+            `h5netcdf.File`
+
+        """
         return h5netcdf.File(filename, "r", decode_vlen_strings=True)
 
     @classmethod
@@ -923,7 +954,6 @@ class NetCDFRead(IORead):
 
                 .. versionadded:: (cfdm) HDFVER
 
-
             _s3_file_systems: `dict`, optional
                 TODOHDF
 
@@ -1131,7 +1161,7 @@ class NetCDFRead(IORead):
         # ----------------------------------------------------------------
         global_attributes = {}
         #        for attr in map(str,nc.ncattrs()):
-        for attr, value in self._file_global_attributes().items():
+        for attr, value in self._file_global_attributes(nc).items():
             attr = str(attr)
             if isinstance(value, bytes):
                 value = value.decode(errors="ignore")
@@ -1238,7 +1268,7 @@ class NetCDFRead(IORead):
 
         if has_groups:
             flattener_name_mapping_variables = getattr(
-                nc, "__flattener_name_mapping_variables", None
+                nc, flattener_variable_map, None
             )
             if flattener_name_mapping_variables is not None:
                 if isinstance(flattener_name_mapping_variables, str):
@@ -1251,7 +1281,7 @@ class NetCDFRead(IORead):
                 )
 
             flattener_name_mapping_dimensions = getattr(
-                nc, "__flattener_name_mapping_dimensions", None
+                nc, flattener_dimension_map, None
             )
             if flattener_name_mapping_dimensions is not None:
                 if isinstance(flattener_name_mapping_dimensions, str):
@@ -1270,7 +1300,7 @@ class NetCDFRead(IORead):
                         flattener_dimensions[key] = value[1:]
 
             flattener_name_mapping_attributes = getattr(
-                nc, "__flattener_name_mapping_attributes", None
+                nc, flattener_attribute_map, None
             )
             if flattener_name_mapping_attributes is not None:
                 if isinstance(flattener_name_mapping_attributes, str):
@@ -1301,19 +1331,19 @@ class NetCDFRead(IORead):
 
             # Remove flattener attributes from the global attributes
             for attr in (
-                "__flattener_name_mapping_variables",
-                "__flattener_name_mapping_dimensions",
-                "__flattener_name_mapping_attributes",
+                flattener_variable_map,
+                flattener_dimension_map,
+                flattener_attribute_map,
             ):
                 g["global_attributes"].pop(attr, None)
 
-        for ncvar in self._file_variables():
+        for ncvar in self._file_variables(nc):
             ncvar_basename = ncvar
             groups = ()
             group_attributes = {}
 
             #            variable = nc.variables[ncvar]
-            variable = self._file_variable(ncvar)
+            variable = self._file_variable(nc, ncvar)
 
             # --------------------------------------------------------
             # Specify the group structure for each variable (CF>=1.8)
@@ -1335,7 +1365,7 @@ class NetCDFRead(IORead):
                     # structure that was prepended to the netCDF
                     # variable name by the netCDF flattener.
                     ncvar_basename = re.sub(
-                        f"^{_flattener_separator.join(groups)}{_flattener_separator}",
+                        f"^{flattener_separator.join(groups)}{flattener_separator}",
                         "",
                         ncvar_flat,
                     )
@@ -1389,7 +1419,7 @@ class NetCDFRead(IORead):
         # Populate dimensions_groups abd dimension_basename
         # dictionaries
         #        for ncdim in nc.dimensions:
-        for ncdim in self._file_dimensions():
+        for ncdim in self._file_dimensions(nc):
             ncdim_org = ncdim
             ncdim_basename = ncdim
             groups = ()
@@ -1406,7 +1436,7 @@ class NetCDFRead(IORead):
                 if groups:
                     # This dimension is in a group.
                     ncdim_basename = re.sub(
-                        "^{_flattener_separator.join(groups)}{_flattener_separator}",
+                        "^{flattener_separator.join(groups)}{flattener_separator}",
                         "",
                         ncdim_flat,
                     )
@@ -1418,7 +1448,7 @@ class NetCDFRead(IORead):
             #                ncdim_org
             #            ].isunlimited()
             dimension_isunlimited[ncdim] = self._file_dimension_isunlimited(
-                ncdim_org
+                nc, ncdim_org
             )
 
         if has_groups:
@@ -1468,7 +1498,7 @@ class NetCDFRead(IORead):
         # The netCDF dimensions of the parent file
         internal_dimension_sizes = {}
         #        for name, dimension in nc.dimensions.items():
-        for name, dimension in self._file_dimensions().items():
+        for name, dimension in self._file_dimensions(nc).items():
             if (
                 has_groups
                 and dimension_isunlimited[flattener_dimensions[name]]
@@ -2281,6 +2311,8 @@ class NetCDFRead(IORead):
                     # Remove this ncvar from the set of external variables
                     external_variables.remove(ncvar)
 
+            # TODO h5netcdf S3: include s3 vars here?
+
     def _parse_compression_gathered(self, ncvar, compress):
         """Parse a list variable for compressing arrays by gathering."""
         g = self.read_vars
@@ -2631,8 +2663,7 @@ class NetCDFRead(IORead):
             # variable in this case.
             # --------------------------------------------------------
             nodes_per_geometry = self.implementation.initialise_Count()
-            #            size = g["nc"].dimensions[node_dimension].size
-            size = self._file_dimension_size(node_dimension)
+            size = self._file_dimension_size(g["nc"], node_dimension)
             ones = self.implementation.initialise_Data(
                 array=np.ones((size,), dtype="int32"), copy=False
             )
@@ -6106,7 +6137,7 @@ class NetCDFRead(IORead):
             group, name = self._netCDF4_group(
                 g["variable_grouped_dataset"][ncvar], ncvar
             )
-            variable = group.variables.get(name)  # h5netcdf
+            variable = group.variables.get(name)
         else:
             variable = g["variables"].get(ncvar)
 
@@ -6193,8 +6224,7 @@ class NetCDFRead(IORead):
         if return_kwargs_only:
             return kwargs
 
-        if g["original_netCDF"]:
-            # netCDF4
+        if g["original_netCDF4"]:
             array = self.implementation.initialise_NetCDFArray(**kwargs)
         else:
             # h5netcdf
@@ -10033,66 +10063,205 @@ class NetCDFRead(IORead):
 
         return ok
 
-    def _file_global_attributes(self):
-        """TODOHDF."""
-        g = self.read_vars
-        nc = g["nc"]
-        if g["netCDF"]:
+    def _file_global_attributes(self, nc):
+        """Return the global attributes from a dataset.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameters:
+
+            nc: `netCDF4.Dataset` or `h5netcdf.File`
+                The dataset.
+
+        :Returns:
+
+            `dict'-like
+                A dictionary of the attribute values keyed by their
+                names.
+
+        """
+        try:
+            # h5netcdf
+            return nc.attrs
+        except AttributeError:
             # netCDF4
             return {attr: nc.getncattr(attr) for attr in nc.ncattrs()}
 
-        # h5netcdf
-        return nc.attrs
+    def _file_dimensions(self, nc):
+        """Return all dimensions in the root group.
 
-    def _file_dimensions(self):
-        """TODOHDF."""
-        g = self.read_vars
-        return g["nc"].dimensions
+        .. versionadded:: (cfdm) HDFVER
 
-    def _file_dimension(self, dim_name):
-        """TODOHDF."""
-        return self._file_dimensions()[dim_name]
+        :Returns:
 
-    def _file_dimension_isunlimited(self, dim_name):
-        return self._file_dimension(dim_name).isunlimited()
+            `dict'-like
+                A dictionary of the dimensions keyed by their names.
 
-    def _file_dimension_size(self, dim_name):
-        """TODOHDF."""
-        return self._file_dimension(dim_name).size
+        """
+        return nc.dimensions
 
-    def _file_variables(self):
-        """TOODHDF."""
-        g = self.read_vars
-        return g["nc"].variables
+    def _file_dimension(self, nc, dim_name):
+        """Return a dimension from the root group of a dataset.
 
-    def _file_variable(self, var_name):
-        """TODOHDF."""
-        return self._file_variables()[var_name]
+        .. versionadded:: (cfdm) HDFVER
 
-    def _file_variable_attributes(self, var, names_only=False):
-        """TODOHDF."""
-        g = self.read_vars
-        if not names_only:
-            if g["netCDF"]:
-                # netCDF4
-                return {attr: var.getncattr(attr) for attr in var.ncattrs()}
+        :Parameters:
 
+            nc: `netCDF4.Dataset` or `h5netcdf.File`
+                The dataset.
+
+            dim_name: `str`
+                The dimension name.
+
+        :Returns:
+
+            `netCDF.Dimension` or `h5netcdf.Dimension`
+                The dimension.
+
+        """
+        return self._file_dimensions(nc)[dim_name]
+
+    def _file_dimension_isunlimited(self, nc, dim_name):
+        """Return a whether a dimension is unlimited.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameters:
+
+            nc: `netCDF4.Dataset` or `h5netcdf.File`
+                The dataset.
+
+            dim_name: `str`
+                The dimension name.
+
+        :Returns:
+
+            `bool`
+                Whether the dimension is unlimited.
+
+        """
+        return self._file_dimension(nc, dim_name).isunlimited()
+
+    def _file_dimension_size(self, nc, dim_name):
+        """Return a dimension is size.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameters:
+
+            nc: `netCDF4.Dataset` or `h5netcdf.File`
+                The dataset.
+
+            dim_name: `str`
+                The dimension name.
+
+        :Returns:
+
+            `int`
+                The dimssion size
+
+        """
+        return self._file_dimension(nc, dim_name).size
+
+    def _file_variables(self, nc):
+        """Return all variables in the root group.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameters:
+
+            nc: `netCDF4.Dataset` or `h5netcdf.File`
+                The dataset.
+
+        :Returns:
+
+            `dict'-like
+                A dictionary of the variables keyed by their names.
+
+        """
+        return nc.variables
+
+    def _file_variable(self, nc, var_name):
+        """Return a variable.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameters:
+
+            nc: `netCDF4.Dataset` or `h5netcdf.File`
+                The dataset.
+
+            var_name: `str`
+                The variable name.
+
+        :Returns:
+
+            `netCDF4.Variable` or `h5netcdf.Variable`
+                The variable.
+
+        """
+        return self._file_variables(nc)[var_name]
+
+    def _file_variable_attributes(self, var):
+        """Return the variable attribute names.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameters:
+
+            var: `netCDF4.Variable` or `h5netcdf.Variable`
+                The variable.
+
+        :Returns:
+
+            `dict`-like
+                A dictionary of the attribute values keyed by their
+                names.
+
+        """
+        try:
             # h5netcdf
             return var.attrs
-
-        if g["netCDF"]:
+        except AttributeError:
             # netCDF4
-            return var.ncattrs()
-
-        # h5netcdf
-        return list(var.attrs)
+            return {attr: var.getncattr(attr) for attr in var.ncattrs()}
 
     def _file_variable_dimensions(self, var):
-        """TODOHDF."""
+        """Return the variable dimension names.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameters:
+
+            var: `netCDF4.Variable` or `h5netcdf.Variable`
+                The variable.
+
+        :Returns:
+
+            `tuple` or `str`
+                The dimension names.
+
+        """
         return var.dimensions
 
     def _file_variable_size(self, var):
-        """TODOHDF."""
+        """Return the size of a variable's array.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameters:
+
+            var: `netCDF4.Variable` or `h5netcdf.Variable`
+                The variable.
+
+        :Returns:
+
+            `int`
+                The array size.
+
+        """
+        # Use try/except here because the variable type could differ
+        # from that implied by the value of self.read_vars["netCDF4"]
         try:
             # netCDF4
             return var.size
