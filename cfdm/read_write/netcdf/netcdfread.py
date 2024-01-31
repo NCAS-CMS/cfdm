@@ -21,8 +21,9 @@ from packaging.version import Version
 from s3fs import S3FileSystem
 
 from ...decorators import _manage_log_level_via_verbosity
-from ...flatten import _Flattener
+#from ...flatten import _Flattener
 from ...flatten import flatten as netcdf_flatten
+from ...flatten.config import _flattener_separator
 from ...functions import is_log_level_debug, is_log_level_detail
 from .. import IORead
 
@@ -31,7 +32,7 @@ logger = logging.getLogger(__name__)
 _cached_temporary_files = {}
 
 # _flattener_separator = netcdf_flattener._Flattener._Flattener__new_separator
-_flattener_separator = _Flattener._Flattener__new_separator
+#_flattener_separator = _Flattener._Flattener__new_separator
 
 
 @dataclass()
