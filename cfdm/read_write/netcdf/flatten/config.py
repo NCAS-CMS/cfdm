@@ -21,16 +21,16 @@ ref_not_found_error = "REF_NOT_FOUND"
 # Default size, in bytes, of slice to use when copying data arrays
 default_copy_slice_size = 134217728
 
-# NetCDF global attribute containing the mapping of flattened
-# attribute names to grouped attribute names
+# NetCDF global attribute in the flattened dataset containing the
+# mapping of flattened attribute names to grouped attribute names
 flattener_attribute_map = "__flattener_attribute_map"
 
-# NetCDF global attribute containing the mapping of flattened
-# dimension names to grouped attribute names
+# NetCDF global attribute in the flattened dataset containing the
+# mapping of flattened dimension names to grouped attribute names
 flattener_dimension_map = "__flattener_dimension_map"
 
-# NetCDF global attribute containing the mapping of flattened
-# variable names to grouped attribute names
+# NetCDF global attribute in the flattened dataset containing the
+# mapping of flattened variable names to grouped attribute names
 flattener_variable_map = "__flattener_variable_map"
 
 
@@ -48,7 +48,7 @@ class AttributeFeatures:
     # name: The attribute name
     name: str
     # ref_to_dim: Positive integer if contains references to
-    #             dimensions (highest int have priority)
+    #             dimensions (higher values have priority)
     ref_to_dim: int = 0
     # ref_to_var: Positive integer if contains references to variables
     #             (highest int have priority)
@@ -88,10 +88,17 @@ attribute_features = {
             resolve_key=True,
             stop_at_local_apex=True,
         ),
-        AttributeFeatures(
-            name="ancillary_variables", ref_to_var=1, resolve_key=True
-        ),
+        AttributeFeatures(name="bounds", ref_to_var=1, resolve_key=True),
         AttributeFeatures(name="climatology", ref_to_var=1, resolve_key=True),
+        # Cell methods
+        AttributeFeatures(
+            name="cell_methods",
+            ref_to_dim=2,
+            ref_to_var=1,
+            resolve_key=True,
+            accept_standard_names=True,
+            limit_to_scalar_coordinates=True,
+        ),
         # Cell measures
         AttributeFeatures(
             name="cell_measures", ref_to_var=1, resolve_value=True
@@ -106,6 +113,29 @@ attribute_features = {
             resolve_key=True,
             resolve_value=True,
         ),
+        # Ancillary variables
+        AttributeFeatures(
+            name="ancillary_variables", ref_to_var=1, resolve_key=True
+        ),
+        # Compression by gathering
+        AttributeFeatures(name="compress", ref_to_dim=1, resolve_key=True),
+        # Discrete sampling geometries
+        AttributeFeatures(
+            name="instance_dimension", ref_to_dim=1, resolve_key=True
+        ),
+        AttributeFeatures(
+            name="sample_dimension", ref_to_dim=1, resolve_key=True
+        ),
+        # Domain variables
+        AttributeFeatures(name="dimensions", ref_to_dim=1, resolve_key=True),
+        # Aggregation variables
+        AttributeFeatures(
+            name="aggregated_dimensions", ref_to_dim=1, resolve_key=True
+        ),
+        AttributeFeatures(
+            name="aggregated_data", ref_to_var=1, resolve_value=True
+        ),
+        # Cell geometries
         AttributeFeatures(name="geometry", ref_to_var=1, resolve_key=True),
         AttributeFeatures(
             name="interior_ring", ref_to_var=1, resolve_key=True
@@ -117,33 +147,6 @@ attribute_features = {
         AttributeFeatures(name="nodes", ref_to_var=1, resolve_key=True),
         AttributeFeatures(
             name="part_node_count", ref_to_var=1, resolve_key=True
-        ),
-        # Compression by gathering
-        AttributeFeatures(name="compress", ref_to_dim=1, resolve_key=True),
-        # Discrete sampling geometries
-        AttributeFeatures(
-            name="instance_dimension", ref_to_dim=1, resolve_key=True
-        ),
-        AttributeFeatures(
-            name="sample_dimension", ref_to_dim=1, resolve_key=True
-        ),
-        # Cell methods
-        AttributeFeatures(
-            name="cell_methods",
-            ref_to_dim=2,
-            ref_to_var=1,
-            resolve_key=True,
-            accept_standard_names=True,
-            limit_to_scalar_coordinates=True,
-        ),
-        # Domain variables
-        AttributeFeatures(name="dimensions", ref_to_dim=1, resolve_key=True),
-        # Aggregation variables
-        AttributeFeatures(
-            name="aggregated_dimensions", ref_to_dim=1, resolve_key=True
-        ),
-        AttributeFeatures(
-            name="aggregated_data", ref_to_var=1, resolve_value=True
         ),
         # UGRID variables
         AttributeFeatures(name="mesh", ref_to_var=1, resolve_key=True),

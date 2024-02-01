@@ -267,20 +267,29 @@ def read(
         s3: `dict` or `None`, optional
             Keyword parameters to be passed to `s3fs.S3FileSystem` to
             control the opening of files in an S3 object store. By
-            default, or if `None`, then ``s3={'anon': True}``. Ignored
-            for file names that don't start with ``s3:``.
+            default, or if `None`, then a value of ``{'anon': True}``
+            is used. Ignored for file names that don't start with
+            ``s3:``.
 
-            If and only if *s3* has no ``'endpoint_url'`` key, then
-            one will be automatically derived from the *filename*. For
-            example, if *filename* was
-            ``'s3://object-store/data/file.nc'``, then an
+            If and only if *s3* has no ``'endpoint_url'`` key (which
+            will always be the case when *s3* is `None`), then one
+            will be automatically derived from the file name and
+            included in the keyword parameters. For example, for a
+            file name of ``'s3://object-store/data/file.nc'``, then an
             ``'endpoint_url'`` key with value
-            ``'https://object-store'`` would be created.
+            ``'https://object-store'`` would be created. To disable
+            this behaviour, assign `None` to the ``'endpoint_url'``
+            key.
 
             .. versionadded:: (cfdm) HDFVER
 
         library: `None` or `str`, optional
-            TODOHDF
+            Specify which library to use for opening input files. By
+            default, or if `None`, then `netCDF4` will used unless it
+            fails to open a given file, in which case `h5netcdf` will
+            be used. Setting *library* to ``'netCDF4'`` or
+            ``'h5netcdf'`` will force the use of the `netCDF4` or
+            `h5netcdf` libraries respectively.
 
             .. versionadded:: (cfdm) HDFVER
 

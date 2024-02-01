@@ -32,6 +32,8 @@ _dtype_endian_lookup = {
     None: "native",
 }
 
+special_attributes = set(attribute_features)
+
 
 def netcdf_flatten(
     input_ds, output_ds, lax_mode=False, _copy_data=True, copy_slices=None
@@ -975,7 +977,7 @@ class _Flattener:
         if search_dim:
             dims_or_vars = current_group.dimensions
         else:
-            dims_or_vars = current_group.variables  # DCH
+            dims_or_vars = current_group.variables
 
         # Found in current group
         if ref in dims_or_vars.keys():
@@ -1024,23 +1026,23 @@ class _Flattener:
             # Did not find
             return None
 
-    def __escape_index_error(self, match, group_name):
-        """TODOHDF.
-
-        :param match: regex match
-        :param group_name: group name
-
-        :Returns:
-
-            `str`
-                The group in a match if it exists, an empty string
-                otherwise.
-
-        """
-        try:
-            return match.group(group_name)
-        except IndexError:
-            return ""
+    #    def __escape_index_error(self, match, group_name):
+    #        """TODOHDF.
+    #
+    #        :param match: regex match
+    #        :param group_name: group name
+    #
+    #        :Returns:
+    #
+    #            `str`
+    #                The group in a match if it exists, an empty string
+    #                otherwise.
+    #
+    #        """
+    #        try:
+    #            return match.group(group_name)
+    #        except IndexError:
+    #            return ""
 
     def resolve_references(self, var, old_var):
         """Resolve references.
@@ -1052,20 +1054,16 @@ class _Flattener:
         :param old_var: original variable (in group structure)
 
         """
-        for name, attr_value in self.attrs(var).items():
-            attr = attribute_features.get(name)
-            if attr is None:
-                continue
-
-            # Still here? Then resolve the references.
-
+        var_attrs = self.attrs(var)
+        for name in special_attributes.intersection(var_attrs):
             # Parse attribute value
-            parsed_attr = parse_var_attr(attr_value)
+            parsed_attr = parse_var_attr(var_attrs[name])
 
             # Resolved references in parsed as required by attribute
             # properties
             resolved_parsed_attr = {}
 
+            attr = attribute_features.get(name)
             for k, v in parsed_attr.items():
                 if attr.resolve_key:
                     k = self.resolve_reference(k, old_var, attr)
@@ -1092,18 +1090,15 @@ class _Flattener:
         :param var: flattened variable in which references should be renamed with new names
 
         """
-        for name, attr_value in self.attrs(var).items():
-            attr = attribute_features.get(name)
-            if attr is None:
-                continue
-
-            # Still here? Then adapt the references.
-
+        var_attrs = self.attrs(var)
+        for name in special_attributes.intersection(var_attrs):
             # Parse attribute value
+            attr_value = var_attrs[name]
             parsed_attr = parse_var_attr(attr_value)
 
-            adapted_parsed_attr = {}  # collections.OrderedDict()
+            adapted_parsed_attr = {}
 
+            attr = attribute_features.get(name)
             for k, v in parsed_attr.items():
                 if attr.resolve_key:
                     k = self.adapt_name(k, attr)
@@ -1119,8 +1114,6 @@ class _Flattener:
             logging.info(
                 f"        Value of {self.name(var)}.{attr.name} changed from "
                 f"{attr_value!r} to {new_attr_value!r}"
-                #                 f"   attribute {attr.name!r}  in {self.name(var)!r}: "
-                #                f"references {attr_value!r} renamed as {new_attr_value!r}"
             )
 
     def adapt_name(self, resolved_ref, attr):
