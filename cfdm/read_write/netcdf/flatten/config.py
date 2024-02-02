@@ -177,5 +177,22 @@ attribute_features = {
         AttributeFeatures(
             name="face_dimension", ref_to_dim=1, resolve_key=True
         ),
+        # Compression by coordinate subsampling
+        AttributeFeatures(
+            name="coordinate_interpolation",
+            ref_to_var=1,
+            resolve_key=True,
+            resolve_value=True,
+        ),
+        AttributeFeatures(
+            name="tie_point_mapping",
+            ref_to_dim=2,
+            ref_to_var=1,
+            resolve_key=True,
+            resolve_value=True,
+        ),
+        AttributeFeatures(
+            name="interpolation_parameters", ref_to_var=1, resolve_value=True
+        ),
     )
 }

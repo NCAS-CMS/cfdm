@@ -140,7 +140,6 @@ from .data import (
     Data,
     GatheredArray,
     H5netcdfArray,
-    MaskScale,
     NetCDFArray,
     NumpyArray,
     PointTopologyArray,
@@ -150,6 +149,7 @@ from .data import (
     RaggedIndexedContiguousArray,
     SparseArray,
     SubsampledArray,
+    VariableIndexer,
 )
 
 from .data import (

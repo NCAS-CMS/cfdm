@@ -9,18 +9,212 @@ default_fillvals = netCDF4.default_fillvals
 logger = logging.getLogger(__name__)
 
 
-class MaskScale:
-    """TODO."""
+class VariableIndexer:
+    """An indexer of netCDF variables that applies masking and scaling.
 
-    @classmethod
-    def _check_safecast(cls, attname, dtype, attrs):
-        """TODOHDF.
+    During indexing, masking and scaling is applied according to the
+    CF conventions, either of which may be disabled via initialisation
+    options.
 
-        Check to see that variable attribute exists can can be safely
-        cast to variable data type.
+    String and character variables are converted to unicode arrays,
+    the latter with the last dimension concatenated.
+
+    .. versionadded:: (cfdm) HDFVER
+
+    **Examples**
+
+    >>> nc = netCDF4.Dataset('file.nc', 'r')
+    >>> x = cfdm.VariableIndexer(nc.variables['x'])
+    >>> x.shape
+    (12, 64, 128)
+    >>> print(x[0, 0:4, 0:3])
+    [[236.5, 236.2, 236.0],
+     [240.9, --   , 239.6],
+     [243.4, 242.4, 241.3],
+     [243.1, 241.7, 240.4]]
+
+    >>> h5 = h5netcdf.File('file.nc', 'r')
+    >>> x = cfdm.VariableIndexer(h5.variables['x'])
+    >>> x.shape
+    (12, 64, 128)
+    >>> print(x[0, 0:4, 0:3])
+    [[236.5, 236.2, 236.0],
+     [240.9, --   , 239.6],
+     [243.4, 242.4, 241.3],
+     [243.1, 241.7, 240.4]]
+
+    """
+
+    def __init__(self, variable, mask=True, scale=True, always_masked=False):
+        """**Initialisation**
+
+        :Parameters:
+
+            variable: `netCDF4.Variable` or `h5netcdf.Variable`
+                The variable to be indexed. Any masking and scaling
+                that may be applied by the *variable* itself is
+                disabled, i.e. Any masking and scaling is always
+                applied by the `VariableIndexer` instance.
+
+            mask: `bool`
+                If True, the default, then an array returned by
+                indexing is automatically converted to a masked array
+                when missing values or fill values are present.
+
+            scale: `bool`
+                If True, the default, then the ``scale_factor`` and
+                ``add_offset`` are applied to an array returned by
+                indexing, and signed integer data is automatically
+                converted to unsigned integer data if the
+                ``_Unsigned`` attribute is set to "true" or "True".
+
+            always_masked: `bool`
+                If False, the default, then an array returned by
+                indexing which has no missing values is created as a
+                regular numpy array. If True then an array returned by
+                indexing is always a masked array, even if there are
+                no missing values.
 
         """
-        #        attrs = self.variable.attrs
+        self.variable = variable
+        self.mask = mask
+        self.scale = scale
+        self.always_masked = always_masked
+
+        self.shape = variable.shape
+
+    def __getitem__(self, index):
+        """Return a subspace of the variable as a `numpy` array.
+
+        v.__getitem__(index) <==> v[index]
+
+        Indexing follows rules defined by the variable.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        """
+        variable = self.variable
+        scale = self.scale
+
+        attrs = self._attrs(variable)
+        dtype = variable.dtype
+
+        netCDF4_scale = False
+        netCDF4_mask = False
+        try:
+            netCDF4_scale = variable.scale
+            netCDF4_mask = variable.mask
+        except AttributeError:
+            pass
+        else:
+            # Prevent netCDF4 from doing any masking and scaling
+            variable.set_auto_maskandscale(False)
+
+        # Index the variable
+        data = variable[index]
+
+        if isinstance(data, str):
+            data = np.array(data, dtype="S")
+        elif data.dtype.kind in "OSU":
+            kind = data.dtype.kind
+            if kind == "S":
+                data = netCDF4.chartostring(data)
+
+            # Assume that object arrays are arrays of strings
+            data = data.astype("S", copy=False)
+            if kind == "O":
+                dtype = data.dtype
+
+        if dtype is str:
+            dtype = data.dtype
+
+        if scale:
+            dtype_unsigned_int = None
+            is_unsigned_int = attrs.get("_Unsigned", False) in ("true", "True")
+            if is_unsigned_int:
+                data_dtype = data.dtype
+                dtype_unsigned_int = (
+                    f"{data_dtype.byteorder}u{data_dtype.itemsize}"
+                )
+                data = data.view(dtype_unsigned_int)
+
+        if self.mask:
+            attrs = self._FillValue(variable, attrs)
+            data = self._mask(
+                data,
+                dtype,
+                attrs,
+                scale=scale,
+                always_masked=self.always_masked,
+                dtype_unsigned_int=dtype_unsigned_int,
+            )
+
+        if scale:
+            data = self._scale(data, attrs)
+
+        if data.dtype.kind == "S":
+            # Assume that object arrays contain strings
+            data = data.astype("U", copy=False)
+
+        if netCDF4_scale:
+            variable.set_auto_scale(True)
+
+        if netCDF4_mask:
+            variable.set_auto_mask(True)
+
+        return data
+
+    def _attrs(self, variable):
+        """Return the variable attributes.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameter:
+
+            variable: `netCDF4.Variable` or `h5netcdf.Variable`
+                The variable to be indexed.
+
+        :Returns:
+
+            `dict`
+                The attributes.
+
+        """
+        try:
+            # h5netcdf
+            return dict(variable.attrs)
+        except AttributeError:
+            # netCDF4
+            return {
+                attr: variable.getncattr(attr) for attr in variable.ncattrs()
+            }
+
+    def _check_safecast(self, attname, dtype, attrs):
+        """Check an attribute's data type.
+
+        Checks to see that variable attribute exists and can be safely
+        cast to variable data type.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameter:
+
+            attname: `str`
+                The attribute name.
+
+            dtype: `numpy.dtype`
+                The variable data type.
+
+            attrs: `dict`
+                The variable attributes.
+
+        :Returns:
+
+            `bool`, value
+                Whether or not the attribute data type is consistent
+                with the variable data type, and the attribute value.
+
+        """
         if attname in attrs:
             attvalue = attrs[attname]
             att = np.array(attvalue)
@@ -38,20 +232,39 @@ class MaskScale:
         if not is_safe:
             logger.warn(
                 f"WARNING: {attname} not used since it cannot "
-                "be safely cast to variable data type"
+                "be safely cast to variable data type {dtype!r}"
             )  # pragma: no cover
 
         return is_safe, attvalue
 
-    @classmethod
-    def _FillValue(cls, attrs, variable):
-        """TODO."""
+    def _FillValue(self, variable, attrs):
+        """Set the variable _FillValue.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameter:
+
+            variable: `netCDF4.Variable` or `h5netcdf.Variable`
+                The variable to be indexed.
+
+            attrs: `dict`
+                The variable attributes. May get updated in-place.
+
+        :Returns:
+
+            `dict`
+                The variable attributes, updated in-place with
+                ``_FillValue`` if present and not previously set..
+
+        """
         if "_FillValue" not in attrs:
             try:
                 fillvalue = getattr(variable._h5ds, "fillvalue", None)
             except AttributeError:
+                # netCDf4
                 pass
             else:
+                # h5netcdf
                 if fillvalue is not None:
                     attrs["_FillValue"] = fillvalue
                 elif variable.dtype.kind == "O":
@@ -59,31 +272,53 @@ class MaskScale:
 
         return attrs
 
-    @classmethod
-    def _attrs(cls, variable):
-        """TODO."""
-        try:
-            return dict(variable.attrs)
-        except AttributeError:
-            return {
-                attr: variable.getncattr(attr) for attr in variable.ncattrs()
-            }
-
-    @classmethod
     def _mask(
-        cls,
+        self,
         data,
         dtype,
         attrs,
         scale=True,
-        always_mask=False,
+        always_masked=False,
         dtype_unsigned_int=None,
     ):
-        """TODOHDF."""
+        """Mask the data.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameter:
+
+            data: `numpy.ndarray`
+                The unmasked and unscaled data indexed from the
+                variable.
+
+            dtype: `numpy.dtype`
+                The data type of the variable (which may be different
+                to that of *data*).
+
+            attrs: `dict`
+                The variable attributes.
+
+            scale: `bool`
+                Whether the data is to be scaled.
+
+            always_masked: `bool`
+                Whether or not return a regular numpy array when there
+                are no missing values.
+
+            dtype_unsigned_int: `dtype` or `None`
+                The data type to which unsigned integer data has been
+                cast.
+
+        :Returns:
+
+            `nump.ndarray`
+                The masked (but not scaled) data.
+
+        """
         totalmask = np.zeros(data.shape, np.bool_)
         fill_value = None
 
-        safe_missval, missing_value = cls._check_safecast(
+        safe_missval, missing_value = self._check_safecast(
             "missing_value", dtype, attrs
         )
         if safe_missval:
@@ -116,7 +351,7 @@ class MaskScale:
                 totalmask += mvalmask
 
         # set mask=True for data == fill value
-        safe_fillval, _FillValue = cls._check_safecast(
+        safe_fillval, _FillValue = self._check_safecast(
             "_FillValue", dtype, attrs
         )
         if safe_fillval:
@@ -193,13 +428,13 @@ class MaskScale:
         # valid_min, valid_max. No special treatment of byte data as
         # described at
         # http://www.unidata.ucar.edu/software/netcdf/docs/attribute_conventions.html).
-        safe_validrange, valid_range = cls._check_safecast(
+        safe_validrange, valid_range = self._check_safecast(
             "valid_range", dtype, attrs
         )
-        safe_validmin, valid_min = cls._check_safecast(
+        safe_validmin, valid_min = self._check_safecast(
             "valid_min", dtype, attrs
         )
-        safe_validmax, valid_max = cls._check_safecast(
+        safe_validmax, valid_max = self._check_safecast(
             "valid_max", dtype, attrs
         )
         if safe_validrange and valid_range.size == 2:
@@ -282,16 +517,33 @@ class MaskScale:
             # array, so that data == np.ma.masked.
             data = data[()]
 
-        elif not always_mask and not masked_values:
+        elif not always_masked and not masked_values:
             # Return a regular numpy array if requested and there are
             # no missing values
             data = np.array(data, copy=False)
 
         return data
 
-    @classmethod
-    def _scale(cls, data, attrs):
-        """TODOHDF."""
+    def _scale(self, data, attrs):
+        """Scale the data..
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameter:
+
+            data: `numpy.ndarray`
+                The unmasked and unscaled data indexed from the
+                variable.
+
+            attrs: `dict`
+                The variable attributes.
+
+        :Returns:
+
+            `nump.ndarray`
+                The scaled data.
+
+        """
         # If variable has scale_factor and add_offset attributes,
         # apply them.
         scale_factor = attrs.get("scale_factor")
@@ -320,74 +572,5 @@ class MaskScale:
         elif add_offset is not None and add_offset != 0.0:
             # If variable has only add_offset attribute, add offset.
             data = data + add_offset
-
-        return data
-
-    @classmethod
-    def apply(cls, variable, data, mask=True, scale=True, always_mask=False):
-        """TODO.
-
-        :Parameters:
-
-            variable: `h5netcdf.Variable` or `netCDF4.Variable`
-
-            data: `numpy.ndarray`
-
-            mask: `bool`
-
-            scale: `bool`
-
-            always_mask: `bool`
-
-        :Returns:
-
-            `numpy.ndarray`
-
-        """
-        attrs = cls._attrs(variable)
-        dtype = variable.dtype
-
-        if isinstance(data, str):
-            data = np.array(data, dtype="S")
-        elif data.dtype.kind in "OSU":
-            kind = data.dtype.kind
-            if kind == "S":
-                data = netCDF4.chartostring(data)
-
-            # Assume that object arrays are arrays of strings
-            data = data.astype("S", copy=False)
-            if kind == "O":
-                dtype = data.dtype
-
-        if dtype is str:  # isinstance(dtype, str):
-            dtype = data.dtype
-
-        if scale:
-            dtype_unsigned_int = None
-            is_unsigned_int = attrs.get("_Unsigned", False) in ("true", "True")
-            if is_unsigned_int:
-                data_dtype = data.dtype
-                dtype_unsigned_int = (
-                    f"{data_dtype.byteorder}u{data_dtype.itemsize}"
-                )
-                data = data.view(dtype_unsigned_int)
-
-        if mask:
-            attrs = cls._FillValue(attrs, variable)
-            data = cls._mask(
-                data,
-                dtype,
-                attrs,
-                scale=scale,
-                always_mask=always_mask,
-                dtype_unsigned_int=dtype_unsigned_int,
-            )
-
-        if scale:
-            data = cls._scale(data, attrs)
-
-        if data.dtype.kind == "S":
-            # Assume that object arrays contain strings
-            data = data.astype("U", copy=False)
 
         return data

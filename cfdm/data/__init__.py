@@ -19,7 +19,6 @@ from .boundsfromnodesarray import BoundsFromNodesArray
 from .cellconnectivityarray import CellConnectivityArray
 from .gatheredarray import GatheredArray
 from .h5netcdfarray import H5netcdfArray
-from .maskscale import MaskScale
 from .netcdfarray import NetCDFArray
 from .numpyarray import NumpyArray
 from .pointtopologyarray import PointTopologyArray
@@ -28,5 +27,6 @@ from .raggedindexedarray import RaggedIndexedArray
 from .raggedindexedcontiguousarray import RaggedIndexedContiguousArray
 from .sparsearray import SparseArray
 from .subsampledarray import SubsampledArray
+from .variableindexer import VariableIndexer
 
 from .data import Data

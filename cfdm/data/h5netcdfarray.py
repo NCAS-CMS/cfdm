@@ -4,8 +4,8 @@ import h5netcdf
 import netCDF4
 
 from . import abstract
-from .maskscale import MaskScale
 from .mixin import FileArrayMixin, NetCDFFileMixin
+from .variableindexer import VariableIndexer
 
 _safecast = netCDF4.utils._safecast
 default_fillvals = netCDF4.default_fillvals.copy()
@@ -211,12 +211,12 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
         # Get the variable by netCDF name
         variable = dataset.variables[address]
-        array = variable[indices]
 
-        # Apply masking and scaling
-        array = MaskScale.apply(
-            variable, array, mask=mask, scale=mask, always_mask=False
+        # Get the data, applying masking and scaling as required.
+        array = VariableIndexer(
+            variable, mask=mask, scale=mask, always_mask=False
         )
+        array = array[indices]
 
         # Set the units, if they haven't been set already.
         self._set_units(variable)

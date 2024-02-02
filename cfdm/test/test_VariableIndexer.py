@@ -14,7 +14,7 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 n_tmpfiles = 1
 tmpfiles = [
-    tempfile.mkstemp("_test_geometry.nc", dir=os.getcwd())[1]
+    tempfile.mkstemp("_test_VariableIndxer.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
 ]
 (tempfile,) = tmpfiles
@@ -32,7 +32,7 @@ def _remove_tmpfiles():
 atexit.register(_remove_tmpfiles)
 
 
-class MaskScaleTest(unittest.TestCase):
+class VariableIndexerTest(unittest.TestCase):
     """Test the masking and scaling of netCDF data."""
 
     def test_mask(self):
