@@ -44,18 +44,6 @@ class FileArrayMixin:
         """Shape of the array."""
         return self._get_component("shape")
 
-    def _get_attr(self, var, attr):
-        """TODOHDF.
-
-        .. versionadded:: (cfdm) HDFVER
-
-        :Parameters:
-
-        """
-        raise NotImplementedError(
-            f"Must implement {self.__class__.__name__}._get_attr"
-        )  # pragma: no cover
-
     def close(self, dataset):
         """Close the dataset containing the data."""
         raise NotImplementedError(

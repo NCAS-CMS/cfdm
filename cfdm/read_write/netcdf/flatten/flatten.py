@@ -203,7 +203,30 @@ class _Flattener:
             }
 
     def chunksizes(self, variable):
-        """TODO."""
+        """Return the variable chunk sizes.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameters:
+
+            variable:
+                The dataset variable.
+
+        :Returns:
+
+            `None` or sequence of `int`
+                The chunksizes, or `None` if the variable is not
+                chunked.
+
+        **Examples**
+
+        >>> f.chunksizes(variable)
+        [1, 324, 432]
+
+        >>> f.chunksizes(variable)
+        None
+
+        """
         try:
             # netCDF4
             chunking = variable.chunking()
@@ -685,7 +708,7 @@ class _Flattener:
         self.resolve_references(new_var, var)
 
     def increment_pos(self, pos, dim, copy_slice_shape, var_shape):
-        """TODOHDF.
+        """Increment position.
 
         Increment position vector in a variable along a dimension by
         the matching slice length along than dimension. If end of the
@@ -1027,7 +1050,7 @@ class _Flattener:
             return None
 
     #    def __escape_index_error(self, match, group_name):
-    #        """TODOHDF.
+    #        """
     #
     #        :param match: regex match
     #        :param group_name: group name

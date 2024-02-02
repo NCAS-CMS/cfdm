@@ -287,11 +287,21 @@ class NetCDFArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         return f"{self.get_filename(None)}, {self.get_address()}"
 
     def _get_attr(self, var, attr):
-        """TODOHDF.
+        """Get a variable attribute.
 
         .. versionadded:: (cfdm) HDFVER
 
         :Parameters:
+
+            var: `netCDF.Variable`
+                The variable
+
+            attr: `str`
+                The attribute name.
+
+        :Returns:
+
+            The attirbute value.
 
         """
         return var.getncattr(attr)

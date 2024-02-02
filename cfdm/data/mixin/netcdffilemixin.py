@@ -2,11 +2,33 @@ from ..numpyarray import NumpyArray
 
 
 class NetCDFFileMixin:
-    """Mixin class TODOHDF.
+    """Mixin class for netCDF file arrays.
 
     .. versionadded:: (cfdm) HDFVER
 
     """
+
+    def _get_attr(self, var, attr):
+        """Get a variable attribute.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameters:
+
+            var:
+                The variable.
+
+            attr: `str`
+                The attribute name.
+
+        :Returns:
+
+            The attirbute value.
+
+        """
+        raise NotImplementedError(
+            f"Must implement {self.__class__.__name__}._get_attr"
+        )  # pragma: no cover
 
     def _group(self, dataset, groups):
         """Retrun the group object containing a variable.

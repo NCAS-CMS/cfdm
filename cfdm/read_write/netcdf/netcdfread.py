@@ -955,11 +955,11 @@ class NetCDFRead(IORead):
                 .. versionadded:: (cfdm) HDFVER
 
             _s3_file_systems: `dict`, optional
-                TODOHDF
+                Provide any already-open S3 file systems.
 
                 .. versionadded:: (cfdm) HDFVER
 
-           library: `None` or `str`, optional
+            library: `None` or `str`, optional
                 See `cfdm.read` for details
 
                 .. versionadded:: (cfdm) HDFVER

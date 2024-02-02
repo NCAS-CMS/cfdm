@@ -15,9 +15,9 @@ logger = logging.getLogger(__name__)
 
 
 class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
-    """An underlying array stored in an HDF file.
+    """An underlying array stored in a netCDF HDF file.
 
-    .. versionadded:: (cfdm) TODOHDF
+    .. versionadded:: (cfdm) HDFVER
 
     """
 
@@ -184,19 +184,6 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
         x.__getitem__(indices) <==> x[indices]
 
-        The indices that define the subspace must be either `Ellipsis` or
-        a sequence that contains an index for each dimension. In the
-        latter case, each dimension's index must either be a `slice`
-        object or a sequence of two or more integers.
-
-        Indexing is similar to numpy indexing. The only difference to
-        numpy indexing (given the restrictions on the type of indices
-        allowed) is:   TODOHDF
-
-          * When two or more dimension's indices are sequences of integers
-            then these indices work independently along each dimension
-            (similar to the way vector subscripts work in Fortran).
-
         .. versionadded:: (cfdm) HDFVER
 
         """
@@ -214,7 +201,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
         # Get the data, applying masking and scaling as required.
         array = VariableIndexer(
-            variable, mask=mask, scale=mask, always_mask=False
+            variable, mask=mask, scale=mask, always_masked=False
         )
         array = array[indices]
 
@@ -227,11 +214,21 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         return array
 
     def _get_attr(self, var, attr):
-        """TODOHDF.
+        """Get a variable attribute.
 
         .. versionadded:: (cfdm) HDFVER
 
         :Parameters:
+
+            var: `h5netcdf.Variable`
+                The variable.
+
+            attr: `str`
+                The attribute name.
+
+        :Returns:
+
+            The attirbute value.
 
         """
         return var.attrs[attr]
