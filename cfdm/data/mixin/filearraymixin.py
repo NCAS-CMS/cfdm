@@ -189,6 +189,56 @@ class FileArrayMixin:
         """
         return (self.get_format(),) * len(self.get_filenames())
 
+    def get_storage_options(self, filename=None, parsed_filename=None):
+        """Return `s3fs.S3FileSystem` options for accessing S3 files.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Parameters:
+
+            filename: `str`, optional
+                Used to the ``'endpoint_url'`` key if it has not been
+                previously defined. Ignored if *parse_filename* has
+                been set. By default the ``'endpoint_url'`` key, if
+                required, is set from the file name returned by
+                `get_filename`.
+        
+            parse_filename: `urllib.parse.ParseResult`, optional
+                Used to the ``'endpoint_url'`` key if it has not been
+                previously defined. By default the ``'endpoint_url'``
+                key, if required, is set from the file name returned
+                by `get_filename`.
+        
+        :Returns:
+
+            `dict`
+                The `s3fs.S3FileSystem` options.
+
+        """
+        out = self._get_component("storage_options", None)
+        if not out:
+            out = {}
+        else:
+            out = deepcopy(out)
+
+        if "endpoint_url" not in out:
+            if parsed_filename is None:
+                if filename is None:
+                    try:
+                        filename = self.get_filename()
+                    except AttributeError:
+                        pass
+                    else:
+                        parsed_filename = urlparse(filename)
+                else:
+                    parsed_filename = urlparse(filename)
+                    
+            if parsed_filename is not None and parsed_filename.scheme == "s3":
+                # Derive endpoint_url from filename
+                out["endpoint_url"] = f"https://{parsed_filename.netloc}"
+
+        return out
+    
     def open(self, func, *args, **kwargs):
         """Return a dataset file object and address.
 
@@ -216,35 +266,26 @@ class FileArrayMixin:
         # Loop round the files, returning as soon as we find one that
         # works.
         filenames = self.get_filenames()
-        for i, (filename, address) in enumerate(
-            zip(filenames, self.get_addresses())
-        ):
+        for filename, address in zip(filenames, self.get_addresses():
             url = urlparse(filename)
             if url.scheme == "file":
                 # Convert a file URI into an absolute path
                 filename = url.path
             elif url.scheme == "s3":
                 # Create an openable S3 file object
-                s3 = self.get_s3()
-                if not s3:
-                    s3["anon"] = True
-
-                if "endpoint_url" not in s3:
-                    # Derive endpoint_url from filename
-                    s3["endpoint_url"] = f"https://{url.netloc}"
-
-                fs = S3FileSystem(**s3)
+                storage_options = self.get_storage_options(parsed_filename=url)
+                fs = S3FileSystem(**storage_options)
                 filename = fs.open(url.path[1:], "rb")
 
             try:
-                nc = func(filename, *args, **kwargs)
+                dataset = func(filename, *args, **kwargs)
             except FileNotFoundError:
                 continue
             except RuntimeError as error:
                 raise RuntimeError(f"{error}: {filename}")
 
-            # Successfully opend a dataset, so return.
-            return nc, address
+            # Successfully opened a dataset, so return.
+            return dataset, address
 
         if len(filenames) == 1:
             raise FileNotFoundError(f"No such file: {filenames[0]}")

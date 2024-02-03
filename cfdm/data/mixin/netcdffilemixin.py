@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from ..numpyarray import NumpyArray
 
 
@@ -172,27 +174,6 @@ class NetCDFFileMixin:
 
         """
         return self._get_component("mask")
-
-    def get_s3(self):
-        """Return `s3fs.S3FileSystem` options for accessing S3 files.
-
-        .. versionadded:: (cfdm) HDFVER
-
-        :Returns:
-
-            `dict`
-                The `s3fs.S3FileSystem` options for accessing S3
-                files. If there are no options then ``anon=True`` is
-                assumed, and if there is no ``'endpoint_url'`` key
-                then one will automatically be derived one for each S3
-                filename.
-
-        """
-        out = self._get_component("s3", None)
-        if not out:
-            return {}
-
-        return out.copy()
 
     def get_missing_values(self):
         """The missing value indicators from the netCDF variable.

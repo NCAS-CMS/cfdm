@@ -17,8 +17,8 @@ def read(
     warn_valid=False,
     mask=True,
     domain=False,
-    s3=None,
-    library=None,
+    storage_options=None,
+    netCDF_backend=None,
     _implementation=_implementation,
 ):
     """Read field or domain constructs from a dataset.
@@ -264,31 +264,43 @@ def read(
 
             .. versionadded:: (cfdm) 1.9.0.0
 
-        s3: `dict` or `None`, optional
-            Keyword parameters to be passed to `s3fs.S3FileSystem` to
-            control the opening of files in an S3 object store. By
-            default, or if `None`, then a value of ``{'anon': True}``
-            is used. Ignored for file names that don't start with
-            ``s3:``.
+        storage_options: `dict` or `None`, optional
+            Key/value pairs to be passed on to the `s3fs.S3FileSystem`
+            file-system backend to control the opening of files in an
+            S3 object store. By default, or if `None`, then a value of
+            ``{'anon': True}`` is used. Ignored for file names that
+            don't start with ``s3:``.
 
-            If and only if *s3* has no ``'endpoint_url'`` key (which
-            will always be the case when *s3* is `None`), then one
-            will be automatically derived from the file name and
+            If and only if *s3* has no ``'endpoint_url'`` key, then
+            one will be automatically derived from the file name and
             included in the keyword parameters. For example, for a
-            file name of ``'s3://object-store/data/file.nc'``, then an
-            ``'endpoint_url'`` key with value
-            ``'https://object-store'`` would be created. To disable
-            this behaviour, assign `None` to the ``'endpoint_url'``
-            key.
+            file name of ``'s3://store/data/file.nc'``, an
+            ``'endpoint_url'`` key with value ``'https://store'``
+            would be created. To disable this behaviour, assign `None`
+            to the ``'endpoint_url'`` key.
+
+            *Parameter example:*
+              ``{'anon': True}``
+
+            *Parameter example:*
+              For a file name of ``'s3://store/data/file.nc'``, the
+              following are equivalent: ``{'anon': True}`` and
+              ``{'anon': True, 'endpoint_url': 'https://store'}``.
+
+            *Parameter example:*
+             ``{'key": 'kjhsadf8756', 'secret': '862t3gyebh',
+              'client_kwargs': {'endpoint_url': 'http://some-s3.com',
+              'config_kwargs': {'s3': {'addressing_style':
+              'virtual'}}``
 
             .. versionadded:: (cfdm) HDFVER
 
-        library: `None` or `str`, optional
-            Specify which library to use for opening input files. By
+        netCDF_backend: `None` or `str`, optional
+            Specify which library to use for opening netCDF files. By
             default, or if `None`, then `netCDF4` will used unless it
             fails to open a given file, in which case `h5netcdf` will
-            be used. Setting *library* to ``'netCDF4'`` or
-            ``'h5netcdf'`` will force the use of the `netCDF4` or
+            be used instead. Setting *netCDF_backend* to ``'netCDF4'``
+            or ``'h5netcdf'`` will force the use of the `netCDF4` or
             `h5netcdf` libraries respectively.
 
             .. versionadded:: (cfdm) HDFVER
@@ -365,8 +377,8 @@ def read(
                 warn_valid=warn_valid,
                 mask=mask,
                 domain=domain,
-                s3=s3,
-                library=library,
+                storage_options=storage_options,
+                netCDF_backend=netCDF_backend,
                 extra_read_vars=None,
             )
         except MaskError:

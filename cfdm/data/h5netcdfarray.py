@@ -31,7 +31,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         units=False,
         calendar=False,
         missing_values=None,
-        s3=None,
+        storage_options=None,
         source=None,
         copy=True,
     ):
@@ -84,12 +84,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 The missing value indicators defined by the variable
                 attributes. See `get_missing_values` for details.
 
-            s3: `dict` or `None`, optional
-                The `s3fs.S3FileSystem` options for accessing S3
-                files. If there are no options then ``anon=True`` is
-                assumed, and if there is no ``'endpoint_url'`` key
-                then one will automatically be derived one for each S3
-                filename.
+            {{storage_options: `dict` or `None`, optional}}
 
                 .. versionadded:: (cfdm) HDFVER
 
@@ -142,9 +137,9 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 missing_values = None
 
             try:
-                s3 = source._get_component("s3", None)
+                storage_options = source._get_component("storage_options", None)
             except AttributeError:
-                s3 = None
+                storage_options = None
 
         if shape is not None:
             self._set_component("shape", shape, copy=False)
@@ -174,7 +169,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         self._set_component("mask", mask, copy=False)
         self._set_component("units", units, copy=False)
         self._set_component("calendar", calendar, copy=False)
-        self._set_component("s3", s3, copy=False)
+        self._set_component("storage_options", storage_options, copy=False)
 
         # By default, close the file after data array access
         self._set_component("close", True, copy=False)
