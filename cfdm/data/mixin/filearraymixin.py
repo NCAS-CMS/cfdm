@@ -202,13 +202,13 @@ class FileArrayMixin:
                 been set. By default the ``'endpoint_url'`` key, if
                 required, is set from the file name returned by
                 `get_filename`.
-        
+
             parse_filename: `urllib.parse.ParseResult`, optional
                 Used to the ``'endpoint_url'`` key if it has not been
                 previously defined. By default the ``'endpoint_url'``
                 key, if required, is set from the file name returned
                 by `get_filename`.
-        
+
         :Returns:
 
             `dict`
@@ -232,13 +232,13 @@ class FileArrayMixin:
                         parsed_filename = urlparse(filename)
                 else:
                     parsed_filename = urlparse(filename)
-                    
+
             if parsed_filename is not None and parsed_filename.scheme == "s3":
                 # Derive endpoint_url from filename
                 out["endpoint_url"] = f"https://{parsed_filename.netloc}"
 
         return out
-    
+
     def open(self, func, *args, **kwargs):
         """Return a dataset file object and address.
 
@@ -266,7 +266,7 @@ class FileArrayMixin:
         # Loop round the files, returning as soon as we find one that
         # works.
         filenames = self.get_filenames()
-        for filename, address in zip(filenames, self.get_addresses():
+        for filename, address in zip(filenames, self.get_addresses()):
             url = urlparse(filename)
             if url.scheme == "file":
                 # Convert a file URI into an absolute path

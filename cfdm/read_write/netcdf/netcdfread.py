@@ -518,7 +518,7 @@ class NetCDFRead(IORead):
                 # Derive endpoint_url from filename
                 storage_options = storage_options.copy()
                 storage_options["endpoint_url"] = f"https://{u.netloc}"
- 
+
             key = tuple(sorted(s3.items()))
             file_systems = g["file_systems"]
             fs = file_systems.get(key)
@@ -565,7 +565,9 @@ class NetCDFRead(IORead):
                 raise error
 
         else:
-            raise ValueError("Unknown netCDF backend: netCDF_backend={netCDF_backend!r}")
+            raise ValueError(
+                "Unknown netCDF backend: netCDF_backend={netCDF_backend!r}"
+            )
 
         g["original_h5netcdf"] = HDF
         g["original_netCDF4"] = netCDF

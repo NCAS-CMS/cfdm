@@ -137,7 +137,9 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 missing_values = None
 
             try:
-                storage_options = source._get_component("storage_options", None)
+                storage_options = source._get_component(
+                    "storage_options", None
+                )
             except AttributeError:
                 storage_options = None
 
