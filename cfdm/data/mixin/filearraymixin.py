@@ -1,3 +1,4 @@
+from copy import deepcopy
 from urllib.parse import urlparse
 
 from s3fs import S3FileSystem

@@ -402,6 +402,35 @@ _docstring_substitution_definitions = {
     "{{init cell_dimension: `int`}}": """cell_dimension: `int`
                 The position of the *data* dimension that indexes the
                 cells, either ``0`` or ``1``.""",
+    # storage_options
+    "{{storage_options: `dict` or `None`, optional}}": """storage_options: `dict` or `None`, optional
+            Key/value pairs to be passed on to the `s3fs.S3FileSystem`
+            file-system backend to control the opening of files in an
+            S3 object store. By default, or if `None`, then a value of
+            ``{'anon': True}`` is used. Ignored for file names that
+            don't start with ``s3:``.
+
+            If and only if *s3* has no ``'endpoint_url'`` key, then
+            one will be automatically derived from the file name and
+            included in the keyword parameters. For example, for a
+            file name of ``'s3://store/data/file.nc'``, an
+            ``'endpoint_url'`` key with value ``'https://store'``
+            would be created. To disable this behaviour, assign `None`
+            to the ``'endpoint_url'`` key.
+
+            *Parameter example:*
+              ``{'anon': True}``
+
+            *Parameter example:*
+              For a file name of ``'s3://store/data/file.nc'``, the
+              following are equivalent: ``{'anon': True}`` and
+              ``{'anon': True, 'endpoint_url': 'https://store'}``.
+
+            *Parameter example:*
+                ``{'key": 'jhsadf8756', 'secret': '862t3gyebh',
+              'client_kwargs': {'endpoint_url': 'http://some-s3.com',
+              'config_kwargs': {'s3': {'addressing_style':
+              'virtual'}}``""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------

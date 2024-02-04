@@ -69,8 +69,8 @@ class VariableIndexerTest(unittest.TestCase):
 
         cfdm.write(fields, tempfile, warn_valid=False)
 
-        fh5 = cfdm.read(tempfile, library="h5netcdf")
-        fnc = cfdm.read(tempfile, library="netCDF4")
+        fh5 = cfdm.read(tempfile, netCDF_backend="h5netcdf")
+        fnc = cfdm.read(tempfile, netCDF_backend="netCDF4")
         for h, n in zip(fh5, fnc):
             self.assertTrue(h.data.mask.equals(n.data.mask))
 

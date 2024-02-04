@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 from ..numpyarray import NumpyArray
 
 

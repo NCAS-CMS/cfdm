@@ -519,7 +519,7 @@ class NetCDFRead(IORead):
                 storage_options = storage_options.copy()
                 storage_options["endpoint_url"] = f"https://{u.netloc}"
 
-            key = tuple(sorted(s3.items()))
+            key = tuple(sorted(storage_options.items()))
             file_systems = g["file_systems"]
             fs = file_systems.get(key)
             if fs is None:

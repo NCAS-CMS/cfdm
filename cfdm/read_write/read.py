@@ -23,12 +23,13 @@ def read(
 ):
     """Read field or domain constructs from a dataset.
 
-    The dataset may be a netCDF file on disk or on an OPeNDAP server,
-    or a CDL file on disk (see below).
+    The following file formats are supported: netCDF and CDL.
+
+    NetCDF files may be on disk, on an OPeNDAP server, or in an S3
+    object store.
 
     The returned constructs are sorted by the netCDF variable names of
     their corresponding data or domain variables.
-
 
     **CDL files**
 
@@ -288,7 +289,7 @@ def read(
               ``{'anon': True, 'endpoint_url': 'https://store'}``.
 
             *Parameter example:*
-             ``{'key": 'kjhsadf8756', 'secret': '862t3gyebh',
+              ``{'key": 'kjhsadf8756', 'secret': '862t3gyebh',
               'client_kwargs': {'endpoint_url': 'http://some-s3.com',
               'config_kwargs': {'s3': {'addressing_style':
               'virtual'}}``
