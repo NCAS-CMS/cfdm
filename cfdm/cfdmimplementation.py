@@ -31,7 +31,7 @@ from .data import (
     Data,
     GatheredArray,
     H5netcdfArray,
-    NetCDFArray,
+    NetCDF4Array,
     PointTopologyArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
@@ -2292,7 +2292,7 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("TiePointIndex")
         return cls()
 
-    def initialise_NetCDFArray(
+    def initialise_NetCDF4Array(
         self,
         filename=None,
         address=None,
@@ -2339,10 +2339,10 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            `NetCDFArray`
+            `NetCDF4Array`
 
         """
-        cls = self.get_class("NetCDFArray")
+        cls = self.get_class("NetCDF4Array")
         return cls(
             filename=filename,
             address=address,
@@ -3748,7 +3748,7 @@ _implementation = CFDMImplementation(
     BoundsFromNodesArray=BoundsFromNodesArray,
     GatheredArray=GatheredArray,
     H5netcdfArray=H5netcdfArray,
-    NetCDFArray=NetCDFArray,
+    NetCDF4Array=NetCDF4Array,
     PointTopologyArray=PointTopologyArray,
     RaggedContiguousArray=RaggedContiguousArray,
     RaggedIndexedArray=RaggedIndexedArray,
@@ -3792,7 +3792,7 @@ def implementation():
      'Data': <class 'cfdm.data.data.Data'>,
      'GatheredArray': <class 'cfdm.data.gatheredarray.GatheredArray'>,
      'H5netcdfArray': <class 'cfdm.data.h5netcdfarray.H5netcdfArray'>,
-     'NetCDFArray': <class 'cfdm.data.netcdfarray.NetCDFArray'>,
+     'NetCDF4Array': <class 'cfdm.data.netcdf4array.NetCDF4Array'>,
      'PointTopologyArray': <class 'cfdm.data.pointtopologyarray.PointTopologyArray'>,
      'RaggedContiguousArray': <class 'cfdm.data.raggedcontiguousarray.RaggedContiguousArray'>,
      'RaggedIndexedArray': <class 'cfdm.data.raggedindexedarray.RaggedIndexedArray'>,

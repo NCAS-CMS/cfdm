@@ -1,3 +1,15 @@
+Version 1.11.1.0
+----------------
+
+**2024-??-??**
+
+* New dependency: ``h5netcdf>=1.3.0``
+* New dependency: ``h5py>=3.10.``
+* New dependency: ``s3fs>=2024.2.0``
+* Removed dependency: ``netcdf_flattener``
+
+----  
+  
 Version 1.11.0.0
 ----------------
 

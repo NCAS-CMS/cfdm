@@ -19,7 +19,7 @@ from .boundsfromnodesarray import BoundsFromNodesArray
 from .cellconnectivityarray import CellConnectivityArray
 from .gatheredarray import GatheredArray
 from .h5netcdfarray import H5netcdfArray
-from .netcdfarray import NetCDFArray
+from .netcdf4array import NetCDF4Array
 from .numpyarray import NumpyArray
 from .pointtopologyarray import PointTopologyArray
 from .raggedcontiguousarray import RaggedContiguousArray

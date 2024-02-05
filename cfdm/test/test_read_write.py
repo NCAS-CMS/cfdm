@@ -671,22 +671,18 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_string(self):
         """Test the `string` keyword argument to `read` and `write`."""
-        f = cfdm.read(self.string_filename, netCDF_backend="netCDF4")
+        fn = cfdm.read(self.string_filename, netCDF_backend="netCDF4")
         fh = cfdm.read(self.string_filename, netCDF_backend="h5netcdf")
 
-        n = int(len(f) / 2)
+        n = int(len(fn) / 2)
 
         for i in range(0, n):
             j = i + n
-            self.assertTrue(
-                f[i].data.equals(f[j].data, verbose=3), f"{f[i]!r} {f[j]!r}"
-            )
-            self.assertTrue(
-                f[j].data.equals(f[i].data, verbose=3), f"{f[j]!r} {f[i]!r}"
-            )
+            self.assertTrue(fn[i].data.equals(fn[j].data, verbose=3))
+            self.assertTrue(fn[j].data.equals(fn[i].data, verbose=3))
 
         # Check that netCDF4 and h5netcdf give the same results
-        for i, j in zip(f, fh):
+        for i, j in zip(fn, fh):
             self.assertTrue(i.data.equals(j.data))
 
         # Note: Don't loop round all netCDF formats for better

@@ -894,7 +894,7 @@ class Data(abstract.Container):
         >>> f = {{package}}.read('file.nc')[0]
         >>> d = f.data
         >>> d.source()
-        <{{repr}}NetCDFArray(149, 182): file=file.nc variable=latitude>
+        <{{repr}}NetCDF4Array(149, 182): file=file.nc variable=latitude>
 
         """
         return self._get_component("array", default=default)

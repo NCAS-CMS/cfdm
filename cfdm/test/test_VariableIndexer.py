@@ -17,7 +17,7 @@ tmpfiles = [
     tempfile.mkstemp("_test_VariableIndxer.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
 ]
-(tempfile,) = tmpfiles
+(tmpfile,) = tmpfiles
 
 
 def _remove_tmpfiles():
@@ -31,12 +31,20 @@ def _remove_tmpfiles():
 
 atexit.register(_remove_tmpfiles)
 
+netCDF_backends = ("netCDF4", "h5netcdf")
+
 
 class VariableIndexerTest(unittest.TestCase):
     """Test the masking and scaling of netCDF data."""
 
+    def test_shape(self):
+        """Test VariableIndexer shape."""
+        n = np.ma.arange(9)
+        x = cfdm.VariableIndexer(n)
+        self.assertEqual(x.shape, n.shape)
+
     def test_mask(self):
-        """Test CF masking."""
+        """Test VariableIndexer for CF masking."""
         f0 = cfdm.example_field(0)
         f0.del_property("missing_value", None)
         f0.del_property("_FillValue", None)
@@ -67,15 +75,23 @@ class VariableIndexerTest(unittest.TestCase):
         f.set_property("valid_range", [valid_min, valid_max])
         fields.append(f)
 
-        cfdm.write(fields, tempfile, warn_valid=False)
+        cfdm.write(fields, tmpfile, warn_valid=False)
 
-        fh5 = cfdm.read(tempfile, netCDF_backend="h5netcdf")
-        fnc = cfdm.read(tempfile, netCDF_backend="netCDF4")
-        for h, n in zip(fh5, fnc):
-            self.assertTrue(h.data.mask.equals(n.data.mask))
+        # Check against netCDF4 with set_auto_maskandscale(True)
+        nc = netCDF4.Dataset(tmpfile, "r")
+        nc.set_auto_maskandscale(True)
+        nc.set_always_mask(True)
+        for backend in netCDF_backends:
+            f = cfdm.read(tmpfile, netCDF_backend=backend)
+            for g in f:
+                ncvar = g.nc_get_variable()
+                n = nc.variables[ncvar]
+                na = n[...]
+                self.assertTrue((g.array == na).all())
+                self.assertTrue((g.data.mask.array == na.mask).all())
 
     def test_scale(self):
-        """Test CF scaling."""
+        """Test VariableIndexer for CF scaling."""
         f = cfdm.example_field(0)
 
         array = np.ma.arange(40, dtype="int32").reshape(f.shape)
@@ -89,21 +105,33 @@ class VariableIndexerTest(unittest.TestCase):
         f.set_property("add_offset", add_offset)
         f.set_property("missing_value", 999)
 
-        cfdm.write(f, tempfile)
-        x = cfdm.read(tempfile)[0]
+        cfdm.write(f, tmpfile)
 
-        nc = netCDF4.Dataset(tempfile, "r")
-        q = nc.variables["q"]
-        q.set_auto_maskandscale(False)
+        # Check against netCDF4 with set_auto_maskandscale(True)
+        nc = netCDF4.Dataset(tmpfile, "r")
+        nc.set_auto_maskandscale(True)
+        nc.set_always_mask(True)
+        for backend in netCDF_backends:
+            f = cfdm.read(tmpfile, netCDF_backend=backend)
+            for g in f:
+                ncvar = g.nc_get_variable()
+                n = nc.variables[ncvar]
+                na = n[...]
+                self.assertTrue((g.array == na).all())
+                self.assertTrue((g.data.mask.array == na.mask).all())
 
-        raw = (array - add_offset) / scale_factor
-        raw[1, :] = 999
-        raw = raw.astype(array.dtype)
-        self.assertEqual(q.dtype, raw.dtype)
-        self.assertTrue((q[...] == raw).all())
-        nc.close()
+    def test_numpy(self):
+        """Test VariableIndexer for numpy."""
+        array = np.ma.arange(9)
+        x = cfdm.VariableIndexer(array)
+        x = x[...]
+        self.assertTrue((x == array).all())
 
-        x = x.array
+        x = cfdm.VariableIndexer(
+            array.copy(), attrs={"_FillValue": 4, "missing_value": (0, 8)}
+        )
+        x = x[...]
+        array[[0, 4, 8]] = np.ma.masked
         self.assertTrue((x.mask == array.mask).all())
         self.assertTrue((x == array).all())
 

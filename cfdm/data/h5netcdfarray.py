@@ -84,7 +84,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 The missing value indicators defined by the variable
                 attributes. See `get_missing_values` for details.
 
-            {{storage_options: `dict` or `None`, optional}}
+            {{init storage_options: `dict` or `None`, optional}}
 
                 .. versionadded:: (cfdm) HDFVER
 
@@ -198,7 +198,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
         # Get the data, applying masking and scaling as required.
         array = VariableIndexer(
-            variable, mask=mask, scale=mask, always_masked=False
+            variable, mask=mask, scale=True, always_mask=False
         )
         array = array[indices]
 

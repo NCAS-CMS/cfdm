@@ -6224,7 +6224,7 @@ class NetCDFRead(IORead):
             return kwargs
 
         if g["original_netCDF4"]:
-            array = self.implementation.initialise_NetCDFArray(**kwargs)
+            array = self.implementation.initialise_NetCDF4Array(**kwargs)
         else:
             # h5netcdf
             array = self.implementation.initialise_H5netcdfArray(**kwargs)

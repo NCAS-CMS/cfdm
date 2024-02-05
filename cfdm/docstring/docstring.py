@@ -403,7 +403,7 @@ _docstring_substitution_definitions = {
                 The position of the *data* dimension that indexes the
                 cells, either ``0`` or ``1``.""",
     # storage_options
-    "{{storage_options: `dict` or `None`, optional}}": """storage_options: `dict` or `None`, optional
+    "{{init storage_options: `dict` or `None`, optional}}": """storage_options: `dict` or `None`, optional
             Key/value pairs to be passed on to the `s3fs.S3FileSystem`
             file-system backend to control the opening of files in an
             S3 object store. By default, or if `None`, then a value of
@@ -419,18 +419,15 @@ _docstring_substitution_definitions = {
             to the ``'endpoint_url'`` key.
 
             *Parameter example:*
-              ``{'anon': True}``
-
-            *Parameter example:*
               For a file name of ``'s3://store/data/file.nc'``, the
               following are equivalent: ``{'anon': True}`` and
               ``{'anon': True, 'endpoint_url': 'https://store'}``.
 
             *Parameter example:*
-                ``{'key": 'jhsadf8756', 'secret': '862t3gyebh',
-              'client_kwargs': {'endpoint_url': 'http://some-s3.com',
-              'config_kwargs': {'s3': {'addressing_style':
-              'virtual'}}``""",
+              ``{'key": 'kjhsadf8756', 'secret': '862t3gyebh',
+              'endpoint_url': None, 'client_kwargs': {'endpoint_url':
+              'http://some-s3.com', 'config_kwargs': {'s3':
+              {'addressing_style': 'virtual'}}}}``""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------

@@ -184,7 +184,9 @@ The `cfdm.read` function has optional parameters to
   attributes are present (see :ref:`data masking <Data-mask>`); and
 
 * display information and issue warnings about the mapping of the
-  netCDF file contents to CF data model constructs.
+  netCDF file contents to CF data model constructs;
+
+* choose either `netCDF4` or `h5netcdf` backends for accessing netCDF files.
 
 .. _CF-compliance:
 

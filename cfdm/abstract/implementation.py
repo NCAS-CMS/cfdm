@@ -54,7 +54,7 @@ class Implementation(metaclass=abc.ABCMeta):
          'Index',
          'InteriorRing',
          'List',
-         'NetCDFArray',
+         'NetCDF4Array',
          'NodeCountProperties',
          'PartNodeCountProperties',
          'RaggedContiguousArray',

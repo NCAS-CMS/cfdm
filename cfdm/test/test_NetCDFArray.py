@@ -45,33 +45,33 @@ class NetCDFTest(unittest.TestCase):
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
 
-    def test_NetCDFArray_get_addresses(self):
-        """Test `NetCDFArray.get_addresses`"""
-        a = cfdm.NetCDFArray(address="tas")
+    def test_NetCDF4Array_get_addresses(self):
+        """Test `NetCDF4Array.get_addresses`"""
+        a = cfdm.NetCDF4Array(address="tas")
         self.assertEqual(a.get_addresses(), ("tas",))
 
-        a = cfdm.NetCDFArray(address=("tas1", "tas1"))
+        a = cfdm.NetCDF4Array(address=("tas1", "tas1"))
         self.assertEqual(a.get_addresses(), ("tas1", "tas1"))
 
-        a = cfdm.NetCDFArray()
+        a = cfdm.NetCDF4Array()
         self.assertEqual(a.get_addresses(), ())
 
-    def test_NetCDFArray_get_filenames(self):
-        """Test `NetCDFArray.get_filenames`"""
-        a = cfdm.NetCDFArray("/data1/file1")
+    def test_NetCDF4Array_get_filenames(self):
+        """Test `NetCDF4Array.get_filenames`"""
+        a = cfdm.NetCDF4Array("/data1/file1")
         self.assertEqual(a.get_filenames(), ("/data1/file1",))
 
-        a = cfdm.NetCDFArray(("/data1/file1",))
+        a = cfdm.NetCDF4Array(("/data1/file1",))
         self.assertEqual(a.get_filenames(), ("/data1/file1",))
 
-        a = cfdm.NetCDFArray(("/data1/file1", "/data2/file2"))
+        a = cfdm.NetCDF4Array(("/data1/file1", "/data2/file2"))
         self.assertEqual(a.get_filenames(), ("/data1/file1", "/data2/file2"))
 
-        a = cfdm.NetCDFArray()
+        a = cfdm.NetCDF4Array()
         self.assertEqual(a.get_filenames(), ())
 
-    def test_NetCDFArray_get_missing_values(self):
-        """Test NetCDFArray.get_missing_values."""
+    def test_NetCDF4Array_get_missing_values(self):
+        """Test NetCDF4Array.get_missing_values."""
         f = cfdm.example_field(0)
 
         f.set_property("missing_value", -999)
@@ -92,7 +92,7 @@ class NetCDFTest(unittest.TestCase):
         c = g.coordinate("latitude")
         self.assertEqual(c.data.source().get_missing_values(), {})
 
-        a = cfdm.NetCDFArray("file.nc", "ncvar")
+        a = cfdm.NetCDF4Array("file.nc", "ncvar")
         self.assertIsNone(a.get_missing_values())
 
 
