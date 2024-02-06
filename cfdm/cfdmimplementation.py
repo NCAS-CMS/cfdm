@@ -2292,50 +2292,15 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("TiePointIndex")
         return cls()
 
-    def initialise_NetCDF4Array(
-        self,
-        filename=None,
-        address=None,
-        dtype=None,
-        shape=None,
-        mask=True,
-        units=False,
-        calendar=None,
-        missing_values=None,
-    ):
-        """Return a netCDF array instance.
+    def initialise_NetCDF4Array(self, **kwargs):
+        """Return a `NetCDF4Array` instance.
 
         :Parameters:
 
-            filename: `str`
+            kwargs: optional
+                Initialisation parameters to pass to the new instance.
 
-            address: `str`
-
-            dytpe: `numpy.dtype`
-
-            shape: sequence of `int`, optional
-
-            mask: `bool`, optional
-
-            units: `str` or `None` or False, optional
-                The units of the netCDF variable. Set to `None` to
-                indicate that there are no units. If False (the
-                default) then the units are considered unset.
-
-                .. versionadded:: (cfdm) 1.10.0.2
-
-            calendar: `str` or `None`, optional
-                The calendar of the netCDF variable. By default, or if
-                set to `None`, then the CF default calendar is
-                assumed, if applicable.
-
-                .. versionadded:: (cfdm) 1.10.0.2
-
-            missing_values: `dict`, optional
-                The missing value indicators defined by the netCDF
-                variable attributes.
-
-                .. versionadded:: (cfdm) 1.10.0.3
+                .. versionadded:: (cfdm) HDFVER
 
         :Returns:
 
@@ -2343,47 +2308,17 @@ class CFDMImplementation(Implementation):
 
         """
         cls = self.get_class("NetCDF4Array")
-        return cls(
-            filename=filename,
-            address=address,
-            dtype=dtype,
-            shape=shape,
-            mask=mask,
-            units=units,
-            calendar=calendar,
-            missing_values=missing_values,
-        )
+        return cls(**kwargs)
 
     def initialise_H5netcdfArray(self, **kwargs):
         """Return a `H5netcdfArray` instance.
 
+        .. versionadded:: (cfdm) HDFVER
+
         :Parameters:
 
-            filename: `str`
-
-            address: `str`
-
-            dytpe: `numpy.dtype`
-
-            shape: sequence of `int`, optional
-
-            mask: `bool`, optional
-
-            units: `str` or `None` or False, optional
-                The units of the variable. Set to `None` to indicate
-                that there are no units. If False (the default) then
-                the units are considered unset.
-
-            calendar: `str` or `None`, optional
-                The calendar of the variable. By default, or if set to
-                `None`, then the CF default calendar is assumed, if
-                applicable.
-
-            missing_values: `dict`, optional
-                The missing value indicators defined by the variable
-                attributes.
-
-            s3
+            kwargs: optional
+                Initialisation parameters to pass to the new instance.
 
         :Returns:
 

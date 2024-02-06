@@ -2,7 +2,7 @@ import netCDF4
 
 from . import abstract
 from .mixin import FileArrayMixin, NetCDFFileMixin
-from .variableindexer import VariableIndexer
+from .netcdfindexer import NetCDFIndexer
 
 # import numpy as np
 
@@ -21,6 +21,7 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         dtype=None,
         shape=None,
         mask=True,
+        unpack=True,
         units=False,
         calendar=False,
         missing_values=None,
@@ -59,12 +60,22 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 If True (the default) then mask by convention when
                 reading data from disk.
 
-                A netCDF array is masked depending on the values of any of
-                the netCDF variable attributes ``valid_min``,
-                ``valid_max``, ``valid_range``, ``_FillValue`` and
-                ``missing_value``.
+                A netCDF array is masked depending on the values of
+                any of the netCDF attributes ``_FillValue``,
+                ``missing_value``, ``_Unsigned``, ``valid_min``,
+                ``valid_max``, and ``valid_range``.
 
                 .. versionadded:: (cfdm) 1.8.2
+
+            unpack: `bool`
+                If True (the default) then unpack by convention when
+                reading data from disk.
+
+                A netCDF array is unpacked depending on the values of
+                the netCDF attributes ``add_offset`` and
+                ``scale_factor``.
+
+                .. versionadded:: (cfdm) HDFVER
 
             units: `str` or `None`, optional
                 The units of the netCDF variable. Set to `None` to
@@ -135,6 +146,11 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 mask = True
 
             try:
+                unpack = source._get_component("unpack", True)
+            except AttributeError:
+                unpack = True
+
+            try:
                 units = source._get_component("units", False)
             except AttributeError:
                 units = False
@@ -174,7 +190,8 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             )
 
         self._set_component("dtype", dtype, copy=False)
-        self._set_component("mask", mask, copy=False)
+        self._set_component("mask", bool(mask), copy=False)
+        self._set_component("unpack", bool(unpack), copy=False)
         self._set_component("units", units, copy=False)
         self._set_component("calendar", calendar, copy=False)
 
@@ -205,9 +222,7 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         netcdf, address = self.open()
         dataset = netcdf
 
-        mask = self.get_mask()
         groups, address = self.get_groups(address)
-
         if groups:
             # Traverse the group structure, if there is one (CF>=1.8).
             netcdf = self._group(netcdf, groups)
@@ -222,8 +237,11 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                     break
 
         # Get the data, applying masking and scaling as required.
-        array = VariableIndexer(
-            variable, mask=mask, scale=True, always_mask=False
+        array = NetCDFIndexer(
+            variable,
+            mask=self.get_mask(),
+            unpack=self.get_unpack(),
+            always_mask=False,
         )
         array = array[indices]
 

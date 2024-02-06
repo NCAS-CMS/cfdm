@@ -7,6 +7,8 @@ import unittest
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
+import numpy as np
+
 import cfdm
 
 n_tmpfiles = 1
@@ -29,8 +31,8 @@ def _remove_tmpfiles():
 atexit.register(_remove_tmpfiles)
 
 
-class NetCDFTest(unittest.TestCase):
-    """Unit test for the NetCDF class."""
+class NetCDF4ArrayTest(unittest.TestCase):
+    """Unit test for the NetCDF4Array class."""
 
     def setUp(self):
         """Preparations called immediately before each test method."""
@@ -94,6 +96,53 @@ class NetCDFTest(unittest.TestCase):
 
         a = cfdm.NetCDF4Array("file.nc", "ncvar")
         self.assertIsNone(a.get_missing_values())
+
+    def test_NetCDF4Array_mask(self):
+        """Test NetCDF4Array masking."""
+        f = cfdm.example_field(0)
+        f.data[0] = np.ma.masked
+        cfdm.write(f, tmpfile)
+        array = f.array
+
+        n = cfdm.NetCDF4Array(tmpfile, f.nc_get_variable(), shape=f.shape)
+        self.assertTrue(n.get_mask())
+        n = n[...]
+        self.assertTrue((array.mask == n.mask).all())
+
+        n = cfdm.NetCDF4Array(
+            tmpfile, f.nc_get_variable(), shape=f.shape, mask=False
+        )
+        self.assertFalse(n.get_mask())
+        n = n[...]
+        self.assertEqual(np.ma.count(n), n.size)
+
+    def test_NetCDF4Array_unpack(self):
+        """Test NetCDF4Array unpacking."""
+        add_offset = 10.0
+        scale_factor = 3.14
+
+        f = cfdm.example_field(0)
+        f.data[0] = np.ma.masked
+        array0 = f.array
+        array1 = (array0 - add_offset) / scale_factor
+
+        f.set_property("add_offset", add_offset)
+        f.set_property("scale_factor", scale_factor)
+        cfdm.write(f, tmpfile)
+
+        n = cfdm.NetCDF4Array(tmpfile, f.nc_get_variable(), shape=f.shape)
+        self.assertTrue(n.get_unpack())
+        n = n[...]
+        self.assertTrue((n.mask == array0.mask).all())
+        self.assertTrue(np.ma.allclose(n, array0))
+
+        n = cfdm.NetCDF4Array(
+            tmpfile, f.nc_get_variable(), shape=f.shape, unpack=False
+        )
+        self.assertFalse(n.get_unpack())
+        n = n[...]
+        self.assertTrue((n.mask == array1.mask).all())
+        self.assertTrue((n == array1).all())
 
 
 if __name__ == "__main__":

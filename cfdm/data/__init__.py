@@ -20,6 +20,7 @@ from .cellconnectivityarray import CellConnectivityArray
 from .gatheredarray import GatheredArray
 from .h5netcdfarray import H5netcdfArray
 from .netcdf4array import NetCDF4Array
+from .netcdfindexer import NetCDFIndexer
 from .numpyarray import NumpyArray
 from .pointtopologyarray import PointTopologyArray
 from .raggedcontiguousarray import RaggedContiguousArray
@@ -27,6 +28,5 @@ from .raggedindexedarray import RaggedIndexedArray
 from .raggedindexedcontiguousarray import RaggedIndexedContiguousArray
 from .sparsearray import SparseArray
 from .subsampledarray import SubsampledArray
-from .variableindexer import VariableIndexer
 
 from .data import Data

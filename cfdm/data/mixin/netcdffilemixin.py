@@ -208,6 +208,19 @@ class NetCDFFileMixin:
 
         return out.copy()
 
+    def get_unpack(self):
+        """Whether or not to automatically unpack the data.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        **Examples**
+
+        >>> a.get_unpack()
+        True
+
+        """
+        return self._get_component("unpack")
+
     def to_memory(self):
         """Bring data on disk into memory.
 

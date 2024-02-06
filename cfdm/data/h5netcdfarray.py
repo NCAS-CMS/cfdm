@@ -5,7 +5,7 @@ import netCDF4
 
 from . import abstract
 from .mixin import FileArrayMixin, NetCDFFileMixin
-from .variableindexer import VariableIndexer
+from .netcdfindexer import NetCDFIndexer
 
 _safecast = netCDF4.utils._safecast
 default_fillvals = netCDF4.default_fillvals.copy()
@@ -28,6 +28,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         dtype=None,
         shape=None,
         mask=True,
+        unpack=True,
         units=False,
         calendar=False,
         missing_values=None,
@@ -64,10 +65,18 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 If True (the default) then mask by convention when
                 reading data from disk.
 
-                A netCDF array is masked depending on the values of any of
-                the netCDF variable attributes ``valid_min``,
-                ``valid_max``, ``valid_range``, ``_FillValue`` and
-                ``missing_value``.
+                A netCDF array is masked depending on the values of
+                any of the netCDF attributes ``_FillValue``,
+                ``missing_value``, ``_Unsigned``, ``valid_min``,
+                ``valid_max``, and ``valid_range``.
+
+            unpack: `bool`
+                If True (the default) then unpack by convention when
+                reading data from disk.
+
+                A netCDF array is unpacked depending on the values of
+                the netCDF attributes ``add_offset`` and
+                ``scale_factor``.
 
             units: `str` or `None`, optional
                 The units of the variable. Set to `None` to indicate
@@ -122,6 +131,11 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 mask = True
 
             try:
+                unpack = source._get_component("unpack", True)
+            except AttributeError:
+                unpack = True
+
+            try:
                 units = source._get_component("units", False)
             except AttributeError:
                 units = False
@@ -168,7 +182,8 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             )
 
         self._set_component("dtype", dtype, copy=False)
-        self._set_component("mask", mask, copy=False)
+        self._set_component("mask", bool(mask), copy=False)
+        self._set_component("unpack", bool(unpack), copy=False)
         self._set_component("units", units, copy=False)
         self._set_component("calendar", calendar, copy=False)
         self._set_component("storage_options", storage_options, copy=False)
@@ -187,9 +202,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         dataset, address = self.open()
         dataset0 = dataset
 
-        mask = self.get_mask()
         groups, address = self.get_groups(address)
-
         if groups:
             dataset = self._group(dataset, groups)
 
@@ -197,8 +210,11 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         variable = dataset.variables[address]
 
         # Get the data, applying masking and scaling as required.
-        array = VariableIndexer(
-            variable, mask=mask, scale=True, always_mask=False
+        array = NetCDFIndexer(
+            variable,
+            mask=self.get_mask(),
+            unpack=self.get_unpack(),
+            always_mask=False,
         )
         array = array[indices]
 

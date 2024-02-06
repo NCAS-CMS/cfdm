@@ -191,7 +191,7 @@ class FileArrayMixin:
         return (self.get_format(),) * len(self.get_filenames())
 
     def get_storage_options(
-        self, endpoint_url=True, filename=None, parsed_filename=None
+        self, create_endpoint_url=True, filename=None, parsed_filename=None
     ):
         """Return `s3fs.S3FileSystem` options for accessing S3 files.
 
@@ -199,8 +199,11 @@ class FileArrayMixin:
 
         :Parameters:
 
-            endpoint_url: `bool`, optional
-                TODOHDF
+            create_endpoint_url: `bool`, optional
+                If True, the default, then create an
+                ``'endpoint_url'`` if and only if one has not already
+                been provided. See *filename* and *parsed_filename*
+                for details.
 
             filename: `str`, optional
                 Used to set the ``'endpoint_url'`` key if it has not
@@ -215,27 +218,28 @@ class FileArrayMixin:
 
         :Returns:
 
-            `dict`
+            `dict` or `None`
                 The `s3fs.S3FileSystem` options.
-
 
         **Examples**
 
         >>> f.get_filename()
         's3://store/data/file.nc'
-        >>> f.get_storage_options(endpoint_url=False)
-        {'anon': True}
+        >>> f.get_storage_options(create_endpoint_url=False)
+        {}
         >>> f.get_storage_options()
-        {'anon': True, 'endpoint_url': 'https://store'}
+        {'endpoint_url': 'https://store'}
         >>> f.get_storage_options(filename='s3://other-store/data/file.nc')
-        {'anon': True, 'endpoint_url': 'https://other-store'}
+        {'endpoint_url': 'https://other-store'}
+        >>> f.get_storage_options(create_endpoint_url=False,
+        ...                       filename='s3://other-store/data/file.nc')
+        {}
 
         >>> f.get_storage_options()
-        {'key": 'kjhsadf8756',
-         'secret': '862t3gyebh',
-         'endpoint_url': None,
-         'client_kwargs': {'endpoint_url': 'http://some-s3.com',
-                           'config_kwargs': {'s3': {'addressing_style': 'virtual'}}}}
+        {'key: 'scaleway-api-key...',
+         'secret': 'scaleway-secretkey...',
+         'endpoint_url': 'https://s3.fr-par.scw.cloud',
+         'client_kwargs': {'region_name': 'fr-par'}}
 
         """
         out = self._get_component("storage_options", None)
@@ -244,7 +248,7 @@ class FileArrayMixin:
         else:
             out = deepcopy(out)
 
-        if endpoint_url and "endpoint_url" not in out:
+        if create_endpoint_url and "endpoint_url" not in out:
             if parsed_filename is None:
                 if filename is None:
                     try:
@@ -297,7 +301,7 @@ class FileArrayMixin:
             elif url.scheme == "s3":
                 # Create an openable S3 file object
                 storage_options = self.get_storage_options(
-                    endpoint_url=True, parsed_filename=url
+                    create_endpoint_url=True, parsed_filename=url
                 )
                 fs = S3FileSystem(**storage_options)
                 filename = fs.open(url.path[1:], "rb")

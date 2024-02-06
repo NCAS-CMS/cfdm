@@ -185,6 +185,7 @@ from .data import (
     GatheredArray,
     H5netcdfArray,
     NetCDF4Array,
+    NetCDFIndexer,
     NumpyArray,
     PointTopologyArray,
     RaggedArray,
@@ -193,7 +194,6 @@ from .data import (
     RaggedIndexedContiguousArray,
     SparseArray,
     SubsampledArray,
-    VariableIndexer,
 )
 
 from .data import (

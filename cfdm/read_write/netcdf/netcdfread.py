@@ -897,6 +897,7 @@ class NetCDFRead(IORead):
         _scan_only=False,
         verbose=None,
         mask=True,
+        unpack=True,
         warnings=True,
         warn_valid=False,
         domain=False,
@@ -936,6 +937,11 @@ class NetCDFRead(IORead):
                 See `cfdm.read` for details
 
                 .. versionadded:: (cfdm) 1.8.2
+
+            unpack: `bool`, optional
+                See `cfdm.read` for details
+
+                .. versionadded:: (cfdm) HDFVER
 
             warn_valid: `bool`, optional
                 See `cfdm.read` for details
@@ -1022,8 +1028,9 @@ class NetCDFRead(IORead):
             "vertical_crs": {},
             #
             "version": {},
-            # Auto mask?
+            # Auto mask and unpack?
             "mask": bool(mask),
+            "unpack": bool(unpack),
             # Warn for the presence of valid_[min|max|range]
             # attributes?
             "warn_valid": bool(warn_valid),
@@ -1087,8 +1094,7 @@ class NetCDFRead(IORead):
             g["version"][version] = Version(version)
 
         if storage_options is None:
-            # Default storage options
-            g["storage_options"] = {"anon": True}
+            storage_options = {"anon": True}
 
         if _file_systems is not None:
             # Update S3 file systems with those passed in as keyword
@@ -6211,6 +6217,7 @@ class NetCDFRead(IORead):
             "shape": shape,
             "dtype": dtype,
             "mask": g["mask"],
+            "unpack": g["unpack"],
             "units": units,
             "calendar": calendar,
             "missing_values": missing_values,

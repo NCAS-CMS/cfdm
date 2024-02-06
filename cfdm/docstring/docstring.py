@@ -402,32 +402,31 @@ _docstring_substitution_definitions = {
     "{{init cell_dimension: `int`}}": """cell_dimension: `int`
                 The position of the *data* dimension that indexes the
                 cells, either ``0`` or ``1``.""",
-    # storage_options
+    # init storage_options
     "{{init storage_options: `dict` or `None`, optional}}": """storage_options: `dict` or `None`, optional
-            Key/value pairs to be passed on to the `s3fs.S3FileSystem`
-            file-system backend to control the opening of files in an
-            S3 object store. By default, or if `None`, then a value of
-            ``{'anon': True}`` is used. Ignored for file names that
-            don't start with ``s3:``.
+                Key/value pairs to be passed on to the creation of an
+                `s3fs.S3FileSystem` file system to control the opening
+                of the file in an S3 object store. Ignored for a file
+                not in an S3 object store, i.e. one whose name does
+                not start with ``s3:``.
 
-            If and only if *s3* has no ``'endpoint_url'`` key, then
-            one will be automatically derived from the file name and
-            included in the keyword parameters. For example, for a
-            file name of ``'s3://store/data/file.nc'``, an
-            ``'endpoint_url'`` key with value ``'https://store'``
-            would be created. To disable this behaviour, assign `None`
-            to the ``'endpoint_url'`` key.
+                If an ``'endpoint_url'`` key is not in
+                *storage_options* then one will be automatically
+                derived for accessing an S3 file. For example, for a
+                file name of ``'s3://store/data/file.nc'``, an
+                ``'endpoint_url'`` key with value ``'https://store'``
+                would be created.
 
-            *Parameter example:*
-              For a file name of ``'s3://store/data/file.nc'``, the
-              following are equivalent: ``{'anon': True}`` and
-              ``{'anon': True, 'endpoint_url': 'https://store'}``.
+                *Parameter example:*
+                  For a file name of ``'s3://store/data/file.nc'``,
+                  the following are equivalent: ``None``, ``{}`` and
+                  ``{'endpoint_url': 'https://store'}``.
 
-            *Parameter example:*
-              ``{'key": 'kjhsadf8756', 'secret': '862t3gyebh',
-              'endpoint_url': None, 'client_kwargs': {'endpoint_url':
-              'http://some-s3.com', 'config_kwargs': {'s3':
-              {'addressing_style': 'virtual'}}}}``""",
+                *Parameter example:*
+                  ``{'key: 'scaleway-api-key...', 'secret':
+                  'scaleway-secretkey...', 'endpoint_url':
+                  'https://s3.fr-par.scw.cloud', 'client_kwargs':
+                  {'region_name': 'fr-par'}}``""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------

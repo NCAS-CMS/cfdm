@@ -16,6 +16,7 @@ def read(
     warnings=False,
     warn_valid=False,
     mask=True,
+    unpack=True,
     domain=False,
     storage_options=None,
     netCDF_backend=None,
@@ -232,16 +233,25 @@ def read(
             If True (the default) then mask by convention the data of
             field and metadata constructs.
 
-            The masking by convention of a netCDF array depends on the
-            values of any of the netCDF variable attributes
-            ``_FillValue``, ``missing_value``, ``valid_min``,
-            ``valid_max`` and ``valid_range``.
+            A netCDF array is masked depending on the values of any of
+            the netCDF attributes ``_FillValue``, ``missing_value``,
+            ``_Unsigned``, ``valid_min``, ``valid_max``, and
+            ``valid_range``.
 
             See
             https://ncas-cms.github.io/cfdm/tutorial.html#data-mask
             for details.
 
             .. versionadded:: (cfdm) 1.8.2
+
+        unpack: `bool`
+            If True (the default) then unpack by convention when
+            reading data from disk.
+
+            A netCDF array is unpacked depending on the values of the
+            netCDF attributes ``add_offset`` and ``scale_factor``.
+
+            .. versionadded:: (cfdm) HDFVER
 
         domain: `bool`, optional
             If True then return only the domain constructs that are
@@ -266,30 +276,31 @@ def read(
             .. versionadded:: (cfdm) 1.9.0.0
 
         storage_options: `dict` or `None`, optional
-            Key/value pairs to be passed on to the `s3fs.S3FileSystem`
-            file-system backend to control the opening of files in an
-            S3 object store. By default, or if `None`, then a value of
-            ``{'anon': True}`` is used. Ignored for file names that
-            don't start with ``s3:``.
+            Key/value pairs to be passed on to the creation of
+            `s3fs.S3FileSystem` file systems to control the opening of
+            files in S3 object stores. Ignored for files not in an S3
+            object store, i.e. those whose names do not start with
+            ``s3:``.
 
-            If and only if *s3* has no ``'endpoint_url'`` key, then
-            one will be automatically derived from the file name and
-            included in the keyword parameters. For example, for a
-            file name of ``'s3://store/data/file.nc'``, an
-            ``'endpoint_url'`` key with value ``'https://store'``
-            would be created. To disable this behaviour, assign `None`
-            to the ``'endpoint_url'`` key.
+            By default, or if `None`, then a value of ``{'anon':
+            True}`` is used.
+
+            If an ``'endpoint_url'`` key is not in *storage_options*
+            then one will be automatically derived for accessing each
+            S3 file. For example, for a file name of
+            ``'s3://store/data/file.nc'``, an ``'endpoint_url'`` key
+            with value ``'https://store'`` would be created.
 
             *Parameter example:*
               For a file name of ``'s3://store/data/file.nc'``, the
-              following are equivalent: ``{'anon': True}`` and
-              ``{'anon': True, 'endpoint_url': 'https://store'}``.
+              following are equivalent: ``None``, ``{'anon': True}``,
+              and ``{'anon': True, 'endpoint_url': 'https://store'}``.
 
             *Parameter example:*
-              ``{'key": 'kjhsadf8756', 'secret': '862t3gyebh',
-              'endpoint_url': None, 'client_kwargs': {'endpoint_url':
-              'http://some-s3.com', 'config_kwargs': {'s3':
-              {'addressing_style': 'virtual'}}}}``
+              ``{'key: 'scaleway-api-key...', 'secret':
+              'scaleway-secretkey...', 'endpoint_url':
+              'https://s3.fr-par.scw.cloud', 'client_kwargs':
+              {'region_name': 'fr-par'}}``
 
             .. versionadded:: (cfdm) HDFVER
 
@@ -374,6 +385,7 @@ def read(
                 warnings=warnings,
                 warn_valid=warn_valid,
                 mask=mask,
+                unpack=unpack,
                 domain=domain,
                 storage_options=storage_options,
                 netCDF_backend=netCDF_backend,

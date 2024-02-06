@@ -9,15 +9,21 @@ _default_fillvals = netCDF4.default_fillvals
 logger = logging.getLogger(__name__)
 
 
-class VariableIndexer:
-    """A data indexer that applies CF masking and scaling.
+class NetCDFIndexer:
+    """A data indexer that applies netCDF masking and unpacking.
 
-    During indexing, masking and scaling is applied according to the
-    CF conventions, either or both of which may be disabled via
+    During indexing, masking and unpacking is applied according to the
+    netCDF conventions, either or both of which may be disabled via
     initialisation options.
 
-    String and character variables are converted to unicode arrays,
-    the latter with the last dimension concatenated.
+    The netCDF conventions assign special meaning to the following
+    variable attributes: ``_FillValue``, ``missing_value``,
+    ``_Unsigned``, ``valid_max``, ``valid_min``, and ``valid_range``
+    (for masking); and ``add_offset`` and ``scale_factor`` (for
+    unpacking).
+
+    In addition, string and character variables are converted to
+    unicode arrays, the latter with the last dimension concatenated.
 
     Adapted from `netCDF4`.
 
@@ -27,7 +33,7 @@ class VariableIndexer:
 
     >>> import netCDF4
     >>> nc = netCDF4.Dataset('file.nc', 'r')
-    >>> x = cfdm.VariableIndexer(nc.variables['x'])
+    >>> x = cfdm.{{class}}(nc.variables['x'])
     >>> x.shape
     (12, 64, 128)
     >>> print(x[0, 0:4, 0:3])
@@ -38,7 +44,7 @@ class VariableIndexer:
 
     >>> import h5netcdf
     >>> h5 = h5netcdf.File('file.nc', 'r')
-    >>> x = cfdm.VariableIndexer(h5.variables['x'])
+    >>> x = cfdm.{{class}}(h5.variables['x'])
     >>> x.shape
     (12, 64, 128)
     >>> print(x[0, 0:4, 0:3])
@@ -49,37 +55,38 @@ class VariableIndexer:
 
     >>> import numpy as np
     >>> n = np.arange(9)
-    >>> x = cfdm.VariableIndexer(n)
+    >>> x = cfdm.{{class}}(n)
     >>> x.shape
     (9,)
     >>> print(x[...])
     [1 2 3 4 5 6 7 8]
-    >>> x = cfdm.VariableIndexer(n, attrs={'_FillValue': 4})
+    >>> x = cfdm.{{class}}(n, attrs={'_FillValue': 4})
     >>> print(x[...])
     [1 2 3 -- 5 6 7 8]
 
     """
 
     def __init__(
-        self, variable, mask=True, scale=True, always_mask=False, attrs=None
+        self, variable, mask=True, unpack=True, always_mask=False, attrs=None
     ):
         """**Initialisation**
 
         :Parameters:
 
             variable:
-                The variable to be indexed, one `netCDF4.Variable`,
+                The variable to be indexed, one of `netCDF4.Variable`,
                 `h5netcdf.Variable`, or `numpy.ndarray`. Any masking
-                and scaling that may be applied by the *variable*
-                itself is disabled, i.e. Any masking and scaling is
-                always applied by the `VariableIndexer` instance.
+                and unpacking that could be implemented by applied by
+                the *variable* itself is disabled, i.e. Any masking
+                and unpacking is always applied by the
+                `NetCDFIndexer` instance.
 
             mask: `bool`
                 If True, the default, then an array returned by
                 indexing is automatically converted to a masked array
                 when missing values or fill values are present.
 
-            scale: `bool`
+            unpack: `bool`
                 If True, the default, then the ``scale_factor`` and
                 ``add_offset`` are applied to an array returned by
                 indexing, and signed integer data is automatically
@@ -94,14 +101,17 @@ class VariableIndexer:
                 no missing values.
 
             attrs: `dict`, optional
+                Provide the netCDF attributes of the *variable* as
+                dictionary key/value pairs. If *attrs* is set then any
+                netCDF attributes stored by *variable* itself are
+                ignored.
 
         """
         self.variable = variable
         self.mask = mask
-        self.scale = scale
+        self.unpack = unpack
         self.always_mask = always_mask
-        self.attrs = attrs
-
+        self._attrs = attrs
         self.shape = variable.shape
 
     def __getitem__(self, index):
@@ -109,15 +119,14 @@ class VariableIndexer:
 
         v.__getitem__(index) <==> v[index]
 
-        Indexing follows rules defined by the variable.
+        Indexing follows the rules defined by the variable.
 
         .. versionadded:: (cfdm) HDFVER
 
         """
         variable = self.variable
-        scale = self.scale
-
-        attrs = self._attrs(variable)
+        unpack = self.unpack
+        attrs = self.attrs()
         dtype = variable.dtype
 
         netCDF4_scale = False
@@ -149,8 +158,8 @@ class VariableIndexer:
         if dtype is str:
             dtype = data.dtype
 
-        if scale:
-            dtype_unsigned_int = None
+        dtype_unsigned_int = None
+        if unpack:
             is_unsigned_int = attrs.get("_Unsigned", False) in ("true", "True")
             if is_unsigned_int:
                 data_dtype = data.dtype
@@ -165,15 +174,14 @@ class VariableIndexer:
                 data,
                 dtype,
                 attrs,
-                scale=scale,
+                unpack=unpack,
                 dtype_unsigned_int=dtype_unsigned_int,
             )
 
-        if scale:
-            data = self._scale(data, attrs)
+        if unpack:
+            data = self._unpack(data, attrs)
 
         if data.dtype.kind == "S":
-            # Assume that object arrays contain strings
             data = data.astype("U", copy=False)
 
         # Reset a netCDF4 variables's scale and mask behaviour
@@ -184,40 +192,6 @@ class VariableIndexer:
             variable.set_auto_mask(True)
 
         return data
-
-    def _attrs(self, variable):
-        """Return the variable attributes.
-
-        .. versionadded:: (cfdm) HDFVER
-
-        :Parameter:
-
-            variable:
-                The variable to be indexed, one `netCDF4.Variable`,
-                `h5netcdf.Variable`, or `numpy.ndarray`.
-
-        :Returns:
-
-            `dict`
-                The attributes.
-
-        """
-        if self.attrs is not None:
-            return self.attrs.copy()
-
-        try:
-            # h5netcdf
-            return dict(variable.attrs)
-        except AttributeError:
-            try:
-                # netCDF4
-                return {
-                    attr: variable.getncattr(attr)
-                    for attr in variable.ncattrs()
-                }
-            except AttributeError:
-                # numpy
-                return {}
 
     def _check_safecast(self, attname, dtype, attrs):
         """Check an attribute's data type.
@@ -273,9 +247,9 @@ class VariableIndexer:
         If the attributes already contain a ``_FillValue`` then
         nothing is done.
 
-        .. seealso:: `_default_FillValue`
-
         .. versionadded:: (cfdm) HDFVER
+
+        .. seealso:: `_default_FillValue`
 
         :Parameter:
 
@@ -309,9 +283,9 @@ class VariableIndexer:
     def _default_FillValue(self, dtype):
         """Return the default ``_FillValue`` for the given data type.
 
-        .. seealso:: `_set_FillValue`, `netCDF4.default_fillvals`
-
         .. versionadded:: (cfdm) HDFVER
+
+        .. seealso:: `_set_FillValue`, `netCDF4.default_fillvals`
 
         :Parameter:
 
@@ -333,7 +307,7 @@ class VariableIndexer:
         data,
         dtype,
         attrs,
-        scale=True,
+        unpack=True,
         dtype_unsigned_int=None,
     ):
         """Mask the data.
@@ -343,7 +317,7 @@ class VariableIndexer:
         :Parameter:
 
             data: `numpy.ndarray`
-                The unmasked and unscaled data indexed from the
+                The unmasked and unpacked data indexed from the
                 variable.
 
             dtype: `numpy.dtype`
@@ -353,8 +327,8 @@ class VariableIndexer:
             attrs: `dict`
                 The variable attributes.
 
-            scale: `bool`
-                Whether the data is to be scaled.
+            unpack: `bool`
+                Whether the data is to be unpacked.
 
             dtype_unsigned_int: `dtype` or `None`
                 The data type to which unsigned integer data has been
@@ -364,7 +338,7 @@ class VariableIndexer:
         :Returns:
 
             `nump.ndarray`
-                The masked (but not scaled) data.
+                The masked (but not unpacked) data.
 
         """
         totalmask = np.zeros(data.shape, np.bool_)
@@ -375,7 +349,7 @@ class VariableIndexer:
         )
         if safe_missval:
             mval = np.array(missing_value, dtype)
-            if scale and dtype_unsigned_int is not None:
+            if unpack and dtype_unsigned_int is not None:
                 mval = mval.view(dtype_unsigned_int)
 
             # Create mask from missing values.
@@ -384,7 +358,6 @@ class VariableIndexer:
                 mval = (mval,)  # Make into iterable.
 
             for m in mval:
-                # Is scalar missing value a NaN?
                 try:
                     mvalisnan = np.isnan(m)
                 except TypeError:
@@ -412,10 +385,9 @@ class VariableIndexer:
 
         if safe_fillval:
             fval = np.array(_FillValue, dtype)
-            if scale and dtype_unsigned_int is not None:
+            if unpack and dtype_unsigned_int is not None:
                 fval = fval.view(dtype_unsigned_int)
 
-            # Is _FillValue a NaN?
             try:
                 fvalisnan = np.isnan(fval)
             except Exception:
@@ -461,7 +433,7 @@ class VariableIndexer:
             if safe_validmax:
                 validmax = np.array(valid_max, dtype)
 
-        if scale:
+        if unpack:
             if validmin is not None and dtype_unsigned_int is not None:
                 validmin = validmin.view(dtype_unsigned_int)
 
@@ -493,15 +465,15 @@ class VariableIndexer:
 
         return data
 
-    def _scale(self, data, attrs):
-        """Scale the data..
+    def _unpack(self, data, attrs):
+        """Unpack the data..
 
         .. versionadded:: (cfdm) HDFVER
 
         :Parameter:
 
             data: `numpy.ndarray`
-                The unmasked and unscaled data indexed from the
+                The unmasked and unpacked data indexed from the
                 variable.
 
             attrs: `dict`
@@ -510,7 +482,7 @@ class VariableIndexer:
         :Returns:
 
             `nump.ndarray`
-                The scaled data.
+                The unpacked data.
 
         """
         # If variable has scale_factor and add_offset attributes,
@@ -543,3 +515,38 @@ class VariableIndexer:
             data = data + add_offset
 
         return data
+
+    def attrs(self):
+        """Return the netCDF attributes of the variable.
+
+        .. versionadded:: (cfdm) HDFVER
+
+        :Returns:
+
+            `dict`
+                The attributes.
+
+        **Examples**
+
+        >>> v.attrs()
+        {'standard_name': 'air_temperature',
+         'missing_value': -999.0}
+
+        """
+        if self._attrs is not None:
+            return self._attrs.copy()
+
+        variable = self.variable
+        try:
+            # h5netcdf
+            return dict(variable.attrs)
+        except AttributeError:
+            try:
+                # netCDF4
+                return {
+                    attr: variable.getncattr(attr)
+                    for attr in variable.ncattrs()
+                }
+            except AttributeError:
+                # numpy
+                return {}
