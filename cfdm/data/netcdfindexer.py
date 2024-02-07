@@ -16,14 +16,20 @@ class NetCDFIndexer:
     netCDF conventions, either or both of which may be disabled via
     initialisation options.
 
-    The netCDF conventions assign special meaning to the following
-    variable attributes: ``_FillValue``, ``missing_value``,
-    ``_Unsigned``, ``valid_max``, ``valid_min``, and ``valid_range``
-    (for masking); and ``add_offset`` and ``scale_factor`` (for
-    unpacking).
+    In addition, string and character variables are always converted
+    to unicode arrays, the latter with the last dimension
+    concatenated.
 
-    In addition, string and character variables are converted to
-    unicode arrays, the latter with the last dimension concatenated.
+    Masking and unpacking operations are defined by netCDF attributes,
+    which are either provided as part of the input *data* object, or
+    given with the input *attrs* parameter.
+
+    The netCDF attributes, all of which are optional, used are:
+
+      * For masking: ``_FillValue``, ``missing_value``, ``_Unsigned``,
+                     ``valid_max``, ``valid_min``, and ``valid_range``
+
+      * For unpacking: ``add_offset`` and ``scale_factor``
 
     Adapted from `netCDF4`.
 

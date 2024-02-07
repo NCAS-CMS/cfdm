@@ -4,6 +4,7 @@ import faulthandler
 import os
 import tempfile
 import unittest
+from urllib.parse import urlparse
 
 faulthandler.enable()  # to debug seg faults and timeouts
 
@@ -143,6 +144,51 @@ class NetCDF4ArrayTest(unittest.TestCase):
         n = n[...]
         self.assertTrue((n.mask == array1.mask).all())
         self.assertTrue((n == array1).all())
+
+    def test_NetCDF4Array_get_storage_options(self):
+        """Test NetCDF4Array get_storage_options."""
+        n = cfdm.NetCDF4Array(filename="filename.nc")
+        self.assertEqual(n.get_storage_options(), {})
+
+        n = cfdm.NetCDF4Array(
+            filename="filename.nc", storage_options={"anon": True}
+        )
+        self.assertEqual(n.get_storage_options(), {"anon": True})
+
+        n = cfdm.NetCDF4Array(filename="s3://store/filename.nc")
+        self.assertEqual(
+            n.get_storage_options(), {"endpoint_url": "https://store"}
+        )
+        self.assertEqual(n.get_storage_options(create_endpoint_url=False), {})
+
+        n = cfdm.NetCDF4Array(
+            filename="s3://store/filename.nc", storage_options={"anon": True}
+        )
+        self.assertEqual(
+            n.get_storage_options(),
+            {"anon": True, "endpoint_url": "https://store"},
+        )
+        self.assertEqual(
+            n.get_storage_options(create_endpoint_url=False), {"anon": True}
+        )
+        other_file = "s3://other/file.nc"
+        self.assertEqual(
+            n.get_storage_options(filename=other_file),
+            {"anon": True, "endpoint_url": "https://other"},
+        )
+        self.assertEqual(
+            n.get_storage_options(parsed_filename=urlparse(other_file)),
+            {"anon": True, "endpoint_url": "https://other"},
+        )
+
+        n = cfdm.NetCDF4Array(
+            filename="s3://store/filename.nc",
+            storage_options={"anon": True, "endpoint_url": None},
+        )
+        self.assertEqual(
+            n.get_storage_options(),
+            {"anon": True, "endpoint_url": None},
+        )
 
 
 if __name__ == "__main__":
