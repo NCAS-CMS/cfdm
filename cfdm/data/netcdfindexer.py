@@ -175,7 +175,7 @@ class NetCDFIndexer:
                 data = data.view(dtype_unsigned_int)
 
         if self.mask:
-            attrs = self._set_FillValue(variable, attrs)
+            #            attrs = self._set_FillValue(variable, attrs)
             data = self._mask(
                 data,
                 dtype,
@@ -291,7 +291,7 @@ class NetCDFIndexer:
 
         .. versionadded:: (cfdm) HDFVER
 
-        .. seealso:: `_set_FillValue`, `netCDF4.default_fillvals`
+        .. seealso:: `netCDF4.default_fillvals`
 
         :Parameter:
 

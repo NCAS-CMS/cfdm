@@ -31,7 +31,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         unpack=True,
         units=False,
         calendar=False,
-        missing_values=None,
+        attributes=None,
         storage_options=None,
         source=None,
         copy=True,
@@ -93,6 +93,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 The missing value indicators defined by the variable
                 attributes. See `get_missing_values` for details.
 
+
             {{init storage_options: `dict` or `None`, optional}}
 
                 .. versionadded:: (cfdm) HDFVER
@@ -146,9 +147,9 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 calendar = False
 
             try:
-                missing_values = source._get_component("missing_values", None)
+                attributes = source._get_component("attributes", None)
             except AttributeError:
-                missing_values = None
+                attributes = None
 
             try:
                 storage_options = source._get_component(
@@ -176,17 +177,13 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
             self._set_component("address", address, copy=False)
 
-        if missing_values is not None:
-            self._set_component(
-                "missing_values", missing_values.copy(), copy=False
-            )
-
         self._set_component("dtype", dtype, copy=False)
         self._set_component("mask", bool(mask), copy=False)
         self._set_component("unpack", bool(unpack), copy=False)
         self._set_component("units", units, copy=False)
         self._set_component("calendar", calendar, copy=False)
         self._set_component("storage_options", storage_options, copy=False)
+        self._set_component("attributes", attributes, copy=False)
 
         # By default, close the file after data array access
         self._set_component("close", True, copy=False)
@@ -218,7 +215,11 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         )
         array = array[indices]
 
-        # Set the units, if they haven't been set already.
+        # Set the attributes, if they haven't been set already.
+        self._set_attributes(variable)
+
+        # Set the units, if they haven't been set already (do this
+        # after setting the attributes).
         self._set_units(variable)
 
         self.close(dataset0)
@@ -226,25 +227,34 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
         return array
 
-    def _get_attr(self, var, attr):
-        """Get a variable attribute.
+    def _set_attributes(self, var):
+        """TODOHDF The units and calendar properties.
 
-        .. versionadded:: (cfdm) HDFVER
+        These are set from the netCDF variable attributes, but only if
+        they have already not been defined, either during {{class}}
+        instantiation or by a previous call to `_set_units`.
+
+        .. versionadded:: (cfdm) 1.10.0.1
 
         :Parameters:
 
-            var: `h5netcdf.Variable`
-                The variable.
-
-            attr: `str`
-                The attribute name.
+            var: `netCDF4.Variable` or `h5netcdf.Variable`
+                The variable containing the units and calendar
+                definitions.
 
         :Returns:
 
-            The attirbute value.
+            `tuple`
+                The units and calendar values, either of which may be
+                `None`.
 
         """
-        return var.attrs[attr]
+        attributes = self._get_component("attributes", None)
+        if attributes is not None:
+            return
+
+        attributes = dict(var.attrs)
+        self._set_component("attributes", attributes, copy=False)
 
     def close(self, dataset):
         """Close the dataset containing the data.

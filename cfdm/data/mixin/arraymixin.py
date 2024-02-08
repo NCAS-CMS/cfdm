@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import numpy as np
 
 
@@ -101,6 +103,14 @@ class ArrayMixin:
 
         return units, calendar
 
+    def get_attributes(self, default=ValueError()):
+        """TODOHDF."""
+        attributes = self._get_component("attributes", None)
+        if attributes is not None:
+            attributes = deepcopy(attributes)
+
+        return attributes
+
     def get_calendar(self, default=ValueError()):
         """The calendar of the array.
 
@@ -161,6 +171,12 @@ class ArrayMixin:
 
         """
         return self._get_component("compression_type", "")
+
+    def get_missing_values(self):
+        """TODOHDF."""
+        raise NotImplementedError(
+            f"Must implement {self.__class__.__name__}.get_missing_values"
+        )  # pragma: no cover
 
     @classmethod
     def get_subspace(cls, array, indices, copy=True):

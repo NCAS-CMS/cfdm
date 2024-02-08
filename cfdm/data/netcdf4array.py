@@ -24,7 +24,7 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         unpack=True,
         units=False,
         calendar=False,
-        missing_values=None,
+        attributes=None,
         storage_options=None,
         source=None,
         copy=True,
@@ -166,9 +166,9 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 calendar = False
 
             try:
-                missing_values = source._get_component("missing_values", None)
+                attributes = source._get_component("attributes", None)
             except AttributeError:
-                missing_values = None
+                attributes = None
 
             try:
                 storage_options = source._get_component(
@@ -196,17 +196,13 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
             self._set_component("address", address, copy=False)
 
-        if missing_values is not None:
-            self._set_component(
-                "missing_values", missing_values.copy(), copy=False
-            )
-
         self._set_component("dtype", dtype, copy=False)
         self._set_component("mask", bool(mask), copy=False)
         self._set_component("unpack", bool(unpack), copy=False)
         self._set_component("units", units, copy=False)
         self._set_component("calendar", calendar, copy=False)
         self._set_component("storage_options", storage_options, copy=False)
+        self._set_component("attributes", attributes, copy=False)
 
         # By default, close the netCDF file after data array access
         self._set_component("close", True, copy=False)
@@ -259,6 +255,9 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         array = array[indices]
 
         # Set the units, if they haven't been set already.
+        self._set_attributes(variable)
+
+        # Set the units, if they haven't been set already.
         self._set_units(variable)
 
         self.close(dataset)
@@ -286,25 +285,37 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         """
         return f"{self.get_filename(None)}, {self.get_address()}"
 
-    def _get_attr(self, var, attr):
-        """Get a variable attribute.
+    def _set_attributes(self, var):
+        """The units and calendar properties.
 
-        .. versionadded:: (cfdm) HDFVER
+        These are set from the netCDF variable attributes, but only if
+        they have already not been defined, either during {{class}}
+        instantiation or by a previous call to `_set_units`.
+
+        .. versionadded:: (cfdm) 1.10.0.1
 
         :Parameters:
 
-            var: `netCDF.Variable`
-                The variable
-
-            attr: `str`
-                The attribute name.
+            var: `netCDF4.Variable` or `h5netcdf.Variable`
+                The variable containing the units and calendar
+                definitions.
 
         :Returns:
 
-            The attirbute value.
+            `tuple`
+                The units and calendar values, either of which may be
+                `None`.
 
         """
-        return var.getncattr(attr)
+        # Note: Can't use None as the default since it is a valid
+        #       `units` or 'calendar' value that indicates that the
+        #       attribute has not been set in the dataset.
+        attributes = self._get_component("attributes", None)
+        if attributes is not None:
+            return
+
+        attributes = {attr: var.getncattr(attr) for attr in var.ncattrs()}
+        self._set_component("attributes", attributes, copy=False)
 
     def get_groups(self, address):
         """The netCDF4 group structure of a netCDF variable.

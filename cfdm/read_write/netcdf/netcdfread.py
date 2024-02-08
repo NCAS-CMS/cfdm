@@ -6191,26 +6191,6 @@ class NetCDFRead(IORead):
                     "calendar"
                 )
 
-        # Store the missing value indicators
-        missing_values = {}
-        for attr in (
-            "missing_value",
-            "_FillValue",
-            "valid_min",
-            "valid_max",
-            "valid_range",
-        ):
-            value = getattr(variable, attr, None)
-            if value is not None:
-                missing_values[attr] = value
-
-        valid_range = missing_values.get("valid_range")
-        if valid_range is not None:
-            try:
-                missing_values["valid_range"] = tuple(valid_range)
-            except TypeError:
-                pass
-
         kwargs = {
             "filename": filename,
             "address": ncvar,
@@ -6220,12 +6200,9 @@ class NetCDFRead(IORead):
             "unpack": g["unpack"],
             "units": units,
             "calendar": calendar,
-            "missing_values": missing_values,
+            "attributes": g["variable_attributes"][ncvar],
+            "storage_options": g["file_system_storage_options"].get(filename),
         }
-
-        storage_options = g["file_system_storage_options"].get(filename)
-        if storage_options is not None:
-            kwargs["storage_options"] = storage_options
 
         if return_kwargs_only:
             return kwargs

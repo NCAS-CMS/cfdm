@@ -79,7 +79,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
 
         f.set_property("missing_value", -999)
         f.set_property("_FillValue", -3)
-        f.set_property("valid_range", [-111, 222])
+        f.set_property("valid_min", -111)
         cfdm.write(f, tmpfile)
 
         g = cfdm.read(tmpfile)[0]
@@ -88,7 +88,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
             {
                 "missing_value": -999.0,
                 "_FillValue": -3,
-                "valid_range": (-111, 222),
+                "valid_min": -111,
             },
         )
 
@@ -96,7 +96,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
         self.assertEqual(c.data.source().get_missing_values(), {})
 
         a = cfdm.NetCDF4Array("file.nc", "ncvar")
-        self.assertIsNone(a.get_missing_values())
+        self.assertIsNone(a.get_missing_values(None))
 
     def test_NetCDF4Array_mask(self):
         """Test NetCDF4Array masking."""
@@ -188,6 +188,25 @@ class NetCDF4ArrayTest(unittest.TestCase):
         self.assertEqual(
             n.get_storage_options(),
             {"anon": True, "endpoint_url": None},
+        )
+
+    def test_NetCDF4Array_get_attributes(self):
+        """Test NetCDF4Array get_attributes."""
+        f = cfdm.example_field(0)
+        cfdm.write(f, tmpfile)
+        n = cfdm.NetCDF4Array(tmpfile, f.nc_get_variable(), shape=f.shape)
+        self.assertIsNone(n.get_attributes())
+
+        _ = n[...]
+        self.assertEqual(
+            n.get_attributes(),
+            {
+                "cell_methods": "area: mean",
+                "coordinates": "time",
+                "project": "research",
+                "standard_name": "specific_humidity",
+                "units": "1",
+            },
         )
 
 

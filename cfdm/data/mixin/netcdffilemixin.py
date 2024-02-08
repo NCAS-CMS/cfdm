@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from ..numpyarray import NumpyArray
 
 
@@ -7,28 +9,6 @@ class NetCDFFileMixin:
     .. versionadded:: (cfdm) HDFVER
 
     """
-
-    def _get_attr(self, var, attr):
-        """Get a variable attribute.
-
-        .. versionadded:: (cfdm) HDFVER
-
-        :Parameters:
-
-            var:
-                The variable.
-
-            attr: `str`
-                The attribute name.
-
-        :Returns:
-
-            The attirbute value.
-
-        """
-        raise NotImplementedError(
-            f"Must implement {self.__class__.__name__}._get_attr"
-        )  # pragma: no cover
 
     def _group(self, dataset, groups):
         """Retrun the group object containing a variable.
@@ -58,6 +38,32 @@ class NetCDFFileMixin:
 
         return dataset
 
+    def _set_attributes(self, var):
+        """The units and calendar properties.
+
+        These are set from the netCDF variable attributes, but only if
+        they have already not been defined, either during {{class}}
+        instantiation or by a previous call to `_set_units`.
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        :Parameters:
+
+            var: `netCDF4.Variable` or `h5netcdf.Variable`
+                The variable containing the units and calendar
+                definitions.
+
+        :Returns:
+
+            `tuple`
+                The units and calendar values, either of which may be
+                `None`.
+
+        """
+        raise NotImplementedError(
+            f"Must implement {self.__class__.__name__}._set_attributes"
+        )  # pragma: no cover
+
     def _set_units(self, var):
         """The units and calendar properties.
 
@@ -80,26 +86,21 @@ class NetCDFFileMixin:
                 `None`.
 
         """
+        # We assume that an attributes dictionary exists
+        attributes = self._get_component("attributes")
+
         # Note: Can't use None as the default since it is a valid
         #       `units` or 'calendar' value that indicates that the
         #       attribute has not been set in the dataset.
         units = self._get_component("units", False)
         if units is False:
-            try:
-                units = self._get_attr(var, "units")
-            except AttributeError:
-                units = None
-
-            self._set_component("units", units, copy=False)
+            self._set_component("units", attributes.get("units"), copy=False)
 
         calendar = self._get_component("calendar", False)
         if calendar is False:
-            try:
-                calendar = self._get_attr(var, "calendar")
-            except AttributeError:
-                calendar = None
-
-            self._set_component("calendar", calendar, copy=False)
+            self._set_component(
+                "calendar", attributes.get("calendar"), copy=False
+            )
 
         return units, calendar
 
@@ -173,10 +174,18 @@ class NetCDFFileMixin:
         """
         return self._get_component("mask")
 
-    def get_missing_values(self):
+    def get_missing_values(self, default=ValueError()):
         """The missing value indicators from the netCDF variable.
 
         .. versionadded:: (cfdm) 1.10.0.3
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter no missing
+                values have yet been defined.
+
+                {{default Exception}}
 
         :Returns:
 
@@ -189,8 +198,11 @@ class NetCDFFileMixin:
 
         **Examples**
 
-        >>> a.get_missing_values()
+        >>> a.get_missing_values(None)
         None
+
+        >>> b.get_missing_values({})
+        {}
 
         >>> b.get_missing_values()
         {}
@@ -202,11 +214,30 @@ class NetCDFFileMixin:
         {'valid_min': -999}
 
         """
-        out = self._get_component("missing_values", None)
-        if out is None:
-            return
+        attributes = self._get_component("attributes", None)
+        if attributes is None:
+            if default is None:
+                return
 
-        return out.copy()
+            return self._default(
+                default,
+                f"{self.__class__.__name__} missing values have not been set",
+            )
+
+        missing = {}
+        for attr in (
+            "_FillValue",
+            "_Unsigned",
+            "missing_value",
+            "valid_min",
+            "valid_max",
+            "valid_range",
+        ):
+            value = attributes.get(attr)
+            if value is not None:
+                missing[attr] = deepcopy(value)
+
+        return missing
 
     def get_unpack(self):
         """Whether or not to automatically unpack the data.
