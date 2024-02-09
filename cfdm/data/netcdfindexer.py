@@ -1,3 +1,22 @@
+"""License information:
+
+Substantial portions of this code were adapted from the `netCDF4`
+library, which carries MIT License as follows:
+
+Copyright 2008 Jeffrey Whitaker
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+"""
 import logging
 
 import netCDF4
@@ -24,12 +43,12 @@ class NetCDFIndexer:
     which are either provided as part of the input *data* object, or
     given with the input *attrs* parameter.
 
-    The netCDF attributes, all of which are optional, used are:
+    The relevant netCDF attributes that may be used are:
 
-      * For masking: ``_FillValue``, ``missing_value``, ``_Unsigned``,
-                     ``valid_max``, ``valid_min``, and ``valid_range``
+      * For masking: ``missing_value``, ``valid_max``, ``valid_min``,
+                     ``valid_range``, ``_FillValue``, ``_Unsigned``
 
-      * For unpacking: ``add_offset`` and ``scale_factor``
+      * For unpacking: ``add_offset``, ``scale_factor``, ``_Unsigned``
 
     Adapted from `netCDF4`.
 
@@ -60,15 +79,18 @@ class NetCDFIndexer:
      [243.1, 241.7, 240.4]]
 
     >>> import numpy as np
-    >>> n = np.arange(9)
+    >>> n = np.arange(7)
     >>> x = cfdm.{{class}}(n)
     >>> x.shape
     (9,)
     >>> print(x[...])
-    [1 2 3 4 5 6 7 8]
+    [0 1 2 3 4 5 6]
     >>> x = cfdm.{{class}}(n, attrs={'_FillValue': 4})
     >>> print(x[...])
-    [1 2 3 -- 5 6 7 8]
+    [0 1 2 3 -- 5 6]
+    >>> x = cfdm.{{class}}(n, mask=False, attrs={'_FillValue': 4})
+    >>> print(x[...])
+    [0 1 2 3 4 5 6]
 
     """
 
@@ -79,25 +101,24 @@ class NetCDFIndexer:
 
         :Parameters:
 
-            variable:
-                The variable to be indexed, one of `netCDF4.Variable`,
-                `h5netcdf.Variable`, or `numpy.ndarray`. Any masking
-                and unpacking that could be implemented by applied by
-                the *variable* itself is disabled, i.e. Any masking
-                and unpacking is always applied by the
-                `NetCDFIndexer` instance.
+            variable: `netCDF4.Variable` or `h5netcdf.Variable` or `numpy.ndarray`
+                The variable to be indexed. Any masking and unpacking
+                that could be applied by applied by the *variable*
+                itself is disabled, i.e. Any masking and unpacking is
+                always done by the `NetCDFIndexer` instance.
 
             mask: `bool`
                 If True, the default, then an array returned by
-                indexing is automatically converted to a masked array
-                when missing values or fill values are present.
+                indexing is automatically masked. Masking is governed
+                by the ``missing_value``, ``valid_max``,
+                ``valid_min``, ``valid_range``, ``_FillValue``, and
+                ``_Unsigned`` attributes.
 
             unpack: `bool`
-                If True, the default, then the ``scale_factor`` and
-                ``add_offset`` are applied to an array returned by
-                indexing, and signed integer data is automatically
-                converted to unsigned integer data if the
-                ``_Unsigned`` attribute is set to "true" or "True".
+                If True, the default, then an array returned by
+                indexing is automatically unpacked. Unpacking is
+                governed by the ``_Unsigned``, ``add_offset``, and
+                ``scale_factor`` attributes.
 
             always_mask: `bool`
                 If False, the default, then an array returned by
@@ -110,6 +131,8 @@ class NetCDFIndexer:
                 Provide the netCDF attributes of the *variable* as
                 dictionary key/value pairs. If *attrs* is set then any
                 netCDF attributes stored by *variable* itself are
+                ignored. Only the attributes relevant to masking and
+                unpacking are considers, and all other attributes are
                 ignored.
 
         """
@@ -143,7 +166,7 @@ class NetCDFIndexer:
             pass
         else:
             netCDF4_mask = variable.mask
-            # Prevent netCDF4 from doing any masking and scaling
+            # Prevent netCDF4 from doing any masking and unpacking
             variable.set_auto_maskandscale(False)
 
         # Index the variable
@@ -175,14 +198,7 @@ class NetCDFIndexer:
                 data = data.view(dtype_unsigned_int)
 
         if self.mask:
-            #            attrs = self._set_FillValue(variable, attrs)
-            data = self._mask(
-                data,
-                dtype,
-                attrs,
-                unpack=unpack,
-                dtype_unsigned_int=dtype_unsigned_int,
-            )
+            data = self._mask(data, dtype, attrs, dtype_unsigned_int)
 
         if unpack:
             data = self._unpack(data, attrs)
@@ -247,45 +263,6 @@ class NetCDFIndexer:
 
         return is_safe, attvalue
 
-    def _set_FillValue(self, variable, attrs):
-        """Set the ``_FillValue`` from a `h5netcdf.Variable`.
-
-        If the attributes already contain a ``_FillValue`` then
-        nothing is done.
-
-        .. versionadded:: (cfdm) HDFVER
-
-        .. seealso:: `_default_FillValue`
-
-        :Parameter:
-
-            variable: `h5netcdf.Variable`
-                The variable.
-
-            attrs: `dict`
-                The variable attributes. Will get updated in-place if
-                a ``_FillValue`` is found.
-
-        :Returns:
-
-            `dict`
-                The variable attributes, updated with ``_FillValue``
-                if present and not previously set.
-
-        """
-        if "_FillValue" not in attrs:
-            try:
-                # h5netcdf
-                _FillValue = getattr(variable._h5ds, "fillvalue", None)
-            except AttributeError:
-                # netCDf4
-                pass
-            else:
-                if _FillValue is not None:
-                    attrs["_FillValue"] = _FillValue
-
-        return attrs
-
     def _default_FillValue(self, dtype):
         """Return the default ``_FillValue`` for the given data type.
 
@@ -308,14 +285,7 @@ class NetCDFIndexer:
         else:
             return _default_fillvals[dtype.str[1:]]
 
-    def _mask(
-        self,
-        data,
-        dtype,
-        attrs,
-        unpack=True,
-        dtype_unsigned_int=None,
-    ):
+    def _mask(self, data, dtype, attrs, dtype_unsigned_int):
         """Mask the data.
 
         .. versionadded:: (cfdm) HDFVER
@@ -333,35 +303,34 @@ class NetCDFIndexer:
             attrs: `dict`
                 The variable attributes.
 
-            unpack: `bool`
-                Whether the data is to be unpacked.
-
             dtype_unsigned_int: `dtype` or `None`
-                The data type to which unsigned integer data has been
-                cast. Should be `None` for data that are not unsigned
-                integers.
+                The data type when the data have been cast to unsigned
+                integers, otherwise `None`.
 
         :Returns:
 
             `nump.ndarray`
-                The masked (but not unpacked) data.
+                The masked data.
 
         """
-        totalmask = np.zeros(data.shape, np.bool_)
+        #
+        totalmask = None
+        # The fill value for the returned numpy array
         fill_value = None
 
         safe_missval, missing_value = self._check_safecast(
             "missing_value", dtype, attrs
         )
         if safe_missval:
+            # --------------------------------------------------------
+            # Create mask from missing_value
+            # --------------------------------------------------------
             mval = np.array(missing_value, dtype)
-            if unpack and dtype_unsigned_int is not None:
+            if dtype_unsigned_int is not None:
                 mval = mval.view(dtype_unsigned_int)
 
-            # Create mask from missing values.
-            mvalmask = np.zeros(data.shape, np.bool_)
-            if not mval.ndim:  # mval a scalar.
-                mval = (mval,)  # Make into iterable.
+            if not mval.ndim:
+                mval = (mval,)
 
             for m in mval:
                 try:
@@ -371,15 +340,18 @@ class NetCDFIndexer:
                     mvalisnan = False
 
                 if mvalisnan:
-                    mvalmask += np.isnan(data)
+                    mask = np.isnan(data)
                 else:
-                    mvalmask += data == m
+                    mask = data == m
 
-            if mvalmask.any():
-                # Set fill_value for masked array to missing_value (or
-                # first element if missing_value is a vector).
+                if mask.any():
+                    if totalmask is None:
+                        totalmask = mask
+                    else:
+                        totalmask += mask
+
+            if totalmask is not None:
                 fill_value = mval[0]
-                totalmask += mvalmask
 
         # Set mask=True for data == fill value
         safe_fillval, _FillValue = self._check_safecast(
@@ -390,8 +362,11 @@ class NetCDFIndexer:
             safe_fillval = True
 
         if safe_fillval:
+            # --------------------------------------------------------
+            # Create mask from _FillValue
+            # --------------------------------------------------------
             fval = np.array(_FillValue, dtype)
-            if unpack and dtype_unsigned_int is not None:
+            if dtype_unsigned_int is not None:
                 fval = fval.view(dtype_unsigned_int)
 
             try:
@@ -402,16 +377,17 @@ class NetCDFIndexer:
 
             if fvalisnan:
                 mask = np.isnan(data)
-            elif (data == fval).any():
-                mask = data == fval
             else:
-                mask = None
+                mask = data == fval
 
-            if mask is not None:
+            if mask.any():
                 if fill_value is None:
                     fill_value = fval
 
-                totalmask += mask
+                if totalmask is None:
+                    totalmask = mask
+                else:
+                    totalmask += mask
 
         # Set mask=True for data outside [valid_min, valid_max]
         #
@@ -439,14 +415,17 @@ class NetCDFIndexer:
             if safe_validmax:
                 validmax = np.array(valid_max, dtype)
 
-        if unpack:
-            if validmin is not None and dtype_unsigned_int is not None:
+        if dtype_unsigned_int is not None:
+            if validmin is not None:
                 validmin = validmin.view(dtype_unsigned_int)
 
-            if validmax is not None and dtype_unsigned_int is not None:
+            if validmax is not None:
                 validmax = validmax.view(dtype_unsigned_int)
 
         if dtype.kind != "S":
+            # --------------------------------------------------------
+            # Create mask from valid_min. valid_max, valid_range
+            # --------------------------------------------------------
             # Don't set validmin/validmax mask for character data
             #
             # Setting valid_min/valid_max to the _FillVaue is too
@@ -454,19 +433,32 @@ class NetCDFIndexer:
             # attribute best practices suggesting clients should do
             # this).
             if validmin is not None:
-                totalmask += data < validmin
+                mask = data < validmin
+                if totalmask is None:
+                    totalmask = mask
+                else:
+                    totalmask += mask
 
             if validmax is not None:
-                totalmask += data > validmax
+                mask = data > validmax
+                if totalmask is None:
+                    totalmask = mask
+                else:
+                    totalmask += mask
 
+        # ------------------------------------------------------------
         # Mask the data
-        if totalmask.any():
-            data = np.ma.masked_array(data, mask=totalmask, fill_value=fval)
+        # ------------------------------------------------------------
+        if totalmask is not None and totalmask.any():
+            data = np.ma.masked_array(
+                data, mask=totalmask, fill_value=fill_value
+            )
             if not data.ndim:
                 # Return a scalar numpy masked constant not a 0-d
                 # masked array, so that data == np.ma.masked.
                 data = data[()]
-        elif self.always_mask:
+        elif self.always_mask and not np.ma.isMA(data):
+            # Return a masked array when there are no masked elements
             data = np.ma.masked_array(data)
 
         return data
@@ -491,34 +483,47 @@ class NetCDFIndexer:
                 The unpacked data.
 
         """
-        # If variable has scale_factor and add_offset attributes,
-        # apply them.
         scale_factor = attrs.get("scale_factor")
         add_offset = attrs.get("add_offset")
         try:
             if scale_factor is not None:
                 float(scale_factor)
+        except ValueError:
+            logging.warn(
+                "No unpacking done: 'scale_factor' attribute "
+                f"{scale_factor!r} can't be converted to a float"
+            )  # pragma: no cover
+            return data
 
+        try:
             if add_offset is not None:
                 float(add_offset)
         except ValueError:
             logging.warn(
-                "Invalid scale_factor or add_offset attribute, "
-                "no unpacking done."
+                "No unpacking done: 'add_offset' attribute "
+                f"{add_offset!r} can't be converted to a float"
             )  # pragma: no cover
             return data
 
-        if scale_factor is not None and add_offset is not None:
-            if add_offset != 0.0 or scale_factor != 1.0:
-                data = data * scale_factor + add_offset
+        if scale_factor is not None:
+            if add_offset is not None:
+                # scale_factor and add_offset
+                if add_offset != 0.0 or scale_factor != 1.0:
+                    data = data * scale_factor + add_offset
+                else:
+                    data = data.astype(np.array(scale_factor).dtype)
             else:
-                data = data.astype(scale_factor.dtype)
-        elif scale_factor is not None and scale_factor != 1.0:
-            # If variable has only scale_factor attribute, rescale.
-            data = data * scale_factor
-        elif add_offset is not None and add_offset != 0.0:
-            # If variable has only add_offset attribute, add offset.
-            data = data + add_offset
+                # scale_factor with no add_offset
+                if scale_factor != 1.0:
+                    data = data * scale_factor
+                else:
+                    data = data.astype(scale_factor.dtype)
+        elif add_offset is not None:
+            # add_offset with no scale_factor
+            if add_offset != 0.0:
+                data = data + add_offset
+            else:
+                data = data.astype(np.array(add_offset).dtype)
 
         return data
 
