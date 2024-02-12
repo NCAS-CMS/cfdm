@@ -1,8 +1,15 @@
-"""Netcdf flattener.
+"""Flatten NetCDF groups.
 
-This code has been adapted from the code found in the `netcdf_flattener`
-package, which is licensed with Apache License 2.0
-(http://www.apache.org/licenses/LICENSE-2.0)
+Portions of this code were adapted from the `netcdf_flattener`
+library, which carries the Apache 2.0 License:
+
+Copyright (c) 2020 EUMETSAT
+
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements. The ASF licenses this file to you
+under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0.
 
 """
 
@@ -12,12 +19,12 @@ import re
 import warnings
 
 from .config import (
-    attribute_features,
     default_copy_slice_size,
     flattener_attribute_map,
     flattener_dimension_map,
     flattener_separator,
     flattener_variable_map,
+    flattening_rules,
     group_separator,
     max_name_len,
     ref_not_found_error,
@@ -32,11 +39,13 @@ _dtype_endian_lookup = {
     None: "native",
 }
 
-special_attributes = set(attribute_features)
+# Set of netCDF attributes that may contain references to dimensions
+# or variables
+special_attributes = set(flattening_rules)
 
 
 def netcdf_flatten(
-    input_ds, output_ds, lax_mode=False, _copy_data=True, copy_slices=None
+    input_ds, output_ds, lax_mode=False, copy_data=True, copy_slices=None
 ):
     """Create a flattened version of a netCDF dataset.
 
@@ -44,34 +53,67 @@ def netcdf_flatten(
     "copy_slices" input allows to copy some or all of the variables in
     slices.
 
-    :param input_ds: input netcdf4 dataset
-    :param output_ds: output netcdf4 dataset
-    :param lax_mode: if false (default), not resolving a reference halts the execution. If true, continue with warning.
-    :param _copy_data: if true (default), then all data arrays are copied from the input to the output dataset.
-                       If false, then this does not happen.
-                       Use this option *only* if the data arrays of the flattened dataset are never to be accessed.
-                       If false then consider setting the fill mode for the output netcd4 dataset to "off" for improved performance.
-    :param copy_slices: dictionary containing variable_name: shape pairs, where variable_name is the path to the
-        variable name in the original Dataset (for instance /group1/group2/my_variable), and shape is either None for
-        using default slice value, or a custom slicing shap in the form of a tuple of the same dimension as the variable
-        (for instance (1000,2000,1500,) for a 3-dimensional variable). If a variable from the Dataset is not contained
-        in the dict, it will not be sliced and copied normally.
+    .. versionadded:: (cfdm) 1.11.1.0
+
+    :Parameters:
+
+        input_ds: `netCDF4.Dataset` or `h5netcdf.File`
+            The dataset to be falttened.
+
+        output_ds: `netCDF4.Dataset`
+            A container for the flattened dataset.
+
+        lax_mode: `bool`, optional
+            If False, the default, the not resolving a reference
+            halts the execution. If True, then continue with a
+            warning.
+
+        copy_data: `bool`, optional
+            If True, the default, then all data arrays are copied
+            from the input to the output dataset. If False, then
+            this does not happen. Use this option only if the data
+            arrays of the flattened dataset are never to be
+            accessed.
+
+        copy_slices: `dict`, optional
+            Dictionary containing variable_name/shape key/value
+            pairs, where variable_name is the path to the variable
+            name in the original dataset (for instance
+            ``/group1/group2/my_variable``), and shape is either
+            `None` for using default slice value, or a custom
+            slicing shape in the form of a tuple of the same
+            dimension as the variable (for instance ``(1000, 2000,
+            1500)`` for a 3-dimensional variable). If a variable
+            from the dataset is not contained in the dictionary
+            then it will not be sliced and copied normally.
 
     """
     _Flattener(
-        input_ds, lax_mode, _copy_data=_copy_data, copy_slices=copy_slices
+        input_ds, lax_mode, copy_data=copy_data, copy_slices=copy_slices
     ).flatten(output_ds)
 
 
-def parse_var_attr(input_str):
+def parse_var_attr(attribute):
     """Parse variable attribute of any form into a dict:
 
-     * 'time' -> OrderedDict([('time', [])])
-     * 'lat lon' -> OrderedDict([('lat', []), ('lon', [])])
-     * 'area: time volume: lat lon' -> OrderedDict([('area', ['time']), ('volume', ['lat', 'lon'])])
+     * 'time' -> {'time': []}
 
-    :param input_str: string to parse
-    :return: parsed string in an OrderedDict
+     * 'lat lon' -> {'lat': [], 'lon': []}
+
+     * 'area: time volume: lat lon' -> {'area': ['time'], 'volume':
+       ['lat', 'lon']}
+
+    .. versionadded:: (cfdm) 1.11.1.0
+
+    :Parameters:
+
+        attribute: `str`
+            The attribute value to parse.
+
+    :Returns:
+
+        `dict`
+            The parsed string.
 
     """
 
@@ -100,7 +142,7 @@ def parse_var_attr(input_str):
         )
     )
 
-    m = re.match(pat_all, input_str)
+    m = re.match(pat_all, attribute)
 
     # Output is always a dict. If input form is a list, dict values
     # are set as empty lists
@@ -128,7 +170,7 @@ def parse_var_attr(input_str):
                 out[term] = values
     else:
         raise ReferenceException(
-            f"Error while parsing attribute value: {input_str!r}"
+            f"Error while parsing attribute value: {attribute!r}"
         )
 
     return out
@@ -137,8 +179,17 @@ def parse_var_attr(input_str):
 def generate_var_attr_str(d):
     """Re-generate the attribute string from a dictionary.
 
-    :param d: dictionary
-    :return: valid attribute string
+    .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            d: `dict`
+                A resolved and parsed attribute.
+
+        :Returns:
+
+            `str`
+                The flattened attribute value.
 
     """
     parsed_list = []
@@ -148,7 +199,6 @@ def generate_var_attr_str(d):
         elif not v:
             parsed_list.append(f"{k}:")
         else:
-            #            parsed_list.append(k + ": " + (" ".join(v)))
             parsed_list.append(f"{k}: {' '.join(v)}")
 
     return " ".join(parsed_list)
@@ -160,21 +210,41 @@ class _Flattener:
     Contains the input file, the output file being flattened, and all
     the logic of the flattening process.
 
+    .. versionadded:: (cfdm) 1.11.1.0
+
     """
 
-    def __init__(self, input_ds, lax_mode, _copy_data=True, copy_slices=None):
+    def __init__(self, input_ds, lax_mode, copy_data=True, copy_slices=None):
         """**Initialisation**
 
-        :param input_ds: input netcdf dataset
-        :param lax_mode: if false (default), not resolving a reference halts the execution. If true, continue with warning.
-        :param _copy_data: if true (default), then all data arrays are copied from the input to the output dataset
-                           If false, then this does not happen.
-                           Use this option *only* if the data arrays of the flattened dataset are never to be accessed.
-        :param copy_slices: dictionary containing variable_name: shape pairs, where variable_name is the path to the
-            variable name in the original Dataset (for instance /group1/group2/my_variable), and shape is either None
-            for using default slice value, or a custom slicing shape in the form of a tuple of the same dimension as the
-            variable (for instance (1000,2000,1500,) for a 3-dimensional variable). If a variable from the Dataset is
-            not contained in the dict, it will not be sliced and copied normally.
+        :Parameters:
+
+            input_ds: `netCDF4.Dataset` or `h5netcdf.File`
+                The dataset to be falttened.
+
+            lax_mode: `bool`, optional
+                If False, the default, the not resolving a reference
+                halts the execution. If True, then continue with a
+                warning.
+
+            copy_data: `bool`, optional
+                If True, the default, then all data arrays are copied
+                from the input to the output dataset. If False, then
+                this does not happen. Use this option only if the data
+                arrays of the flattened dataset are never to be
+                accessed.
+
+            copy_slices: `dict`, optional
+                Dictionary containing variable_name/shape key/value
+                pairs, where variable_name is the path to the variable
+                name in the original dataset (for instance
+                ``/group1/group2/my_variable``), and shape is either
+                `None` for using default slice value, or a custom
+                slicing shape in the form of a tuple of the same
+                dimension as the variable (for instance ``(1000, 2000,
+                1500)`` for a 3-dimensional variable). If a variable
+                from the dataset is not contained in the dictionary
+                then it will not be sliced and copied normally.
 
         """
         self.__attr_map_value = []
@@ -186,16 +256,17 @@ class _Flattener:
 
         self.__lax_mode = lax_mode
 
-        self.__copy_data = _copy_data
+        self.__copy_data = copy_data
         self.__copy_slices = copy_slices
 
         self.__input_file = input_ds
         self.__output_file = None
 
     def attrs(self, variable):
+        """TODOHDF."""
         try:
             # h5netcdf
-            return variable.attrs
+            return dict(variable.attrs)
         except AttributeError:
             # netCDF4
             return {
@@ -205,7 +276,7 @@ class _Flattener:
     def chunksizes(self, variable):
         """Return the variable chunk sizes.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
@@ -241,7 +312,7 @@ class _Flattener:
     def contiguous(self, variable):
         """Whether or not the variable data is contiguous on disk.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
@@ -270,7 +341,7 @@ class _Flattener:
     def dtype(self, variable):
         """Return the data type of a variable.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
@@ -300,7 +371,7 @@ class _Flattener:
     def endian(self, variable):
         """Return the endian-ness of a variable.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
@@ -330,7 +401,7 @@ class _Flattener:
     def filepath(self, dataset):
         """Return the file path for the dataset.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
@@ -340,8 +411,8 @@ class _Flattener:
         :Returns:
 
             `str`
-                 The file system path, or the opendap URL, for the
-                 dataset.
+                The file system path, or the opendap URL, for the
+                dataset.
 
         **Examples**
 
@@ -359,7 +430,7 @@ class _Flattener:
     def get_dims(self, variable):
         """Return.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Returns:
 
@@ -393,7 +464,7 @@ class _Flattener:
     def getncattr(self, x, attr):
         """Retrieve a netCDF attribute.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
@@ -414,7 +485,7 @@ class _Flattener:
     def group(self, x):
         """Return a.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Returns:
 
@@ -431,7 +502,7 @@ class _Flattener:
     def name(self, x):
         """Return the netCDF name, without its groups.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Returns:
 
@@ -448,7 +519,7 @@ class _Flattener:
     def ncattrs(self, x):
         """Return netCDF attribute names.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
@@ -469,7 +540,7 @@ class _Flattener:
     def parent(self, group):
         """Return a simulated unix directory path to a group.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Returns:
 
@@ -484,7 +555,7 @@ class _Flattener:
     def path(self, group):
         """Return a simulated unix directory path to a group.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Returns:
 
@@ -504,7 +575,16 @@ class _Flattener:
     def flatten(self, output_ds):
         """Flattens and write to output file.
 
-        :param output_ds: The dataset in which to store the flattened result.
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            output_ds: `netCDF4.Dataset`
+                A container for the flattened dataset.
+
+        :Return:
+
+            `None`
 
         """
         logging.info(
@@ -548,7 +628,16 @@ class _Flattener:
     def process_group(self, input_group):
         """Flattens a given group to the output file.
 
-        :param input_group: group to flatten
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            input_group: `str`
+                The group to faltten.
+
+        :Returns:
+
+            `None`
 
         """
         logging.info(f"    Browsing group {self.path(input_group)}")
@@ -568,8 +657,19 @@ class _Flattener:
     def flatten_attribute(self, input_group, attr_name):
         """Flattens a given attribute from a group to the output file.
 
-        :param input_group: group containing the attribute to flatten
-        :param attr_name: name of the attribute to flatten
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            input_group: `str`
+                The group containing the attribute to flatten.
+
+            attr_name: `str`
+                The anme of the attribute.
+
+        :Returns:
+
+            `None`
 
         """
         logging.info(
@@ -593,7 +693,16 @@ class _Flattener:
     def flatten_dimension(self, dim):
         """Flattens a given dimension to the output file.
 
-        :param dim: dimension to flatten
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            dim: `netCDF4.Dimension` or `h5netcdf.Dimension`
+                The dimension to flatten.
+
+        :Returns:
+
+            `None`
 
         """
         logging.info(
@@ -626,7 +735,16 @@ class _Flattener:
     def flatten_variable(self, var):
         """Flattens a given variable to the output file.
 
-        :param var: variable to flatten
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            var: `netCDF4.Variable` or `h5netcdf.Variable`
+                The variable to flatten.
+
+        :Returns:
+
+            `None`
 
         """
         logging.info(
@@ -653,6 +771,14 @@ class _Flattener:
         fullname = self.pathname(self.group(var), self.name(var))
         logging.info(f"        Creating variable {new_name} from {fullname}")
 
+        attributes = self.attrs(var)
+
+        copy_data = self.__copy_data
+        if copy_data:
+            fill_value = attributes.pop("_FillValue", None)
+        else:
+            fill_value = False
+
         new_var = self.__output_file.createVariable(
             new_name,
             self.dtype(var),
@@ -665,18 +791,16 @@ class _Flattener:
             chunksizes=self.chunksizes(var),
             endian=self.endian(var),
             least_significant_digit=None,
-            fill_value=None,
+            fill_value=fill_value,
         )
 
-        if self.__copy_data:
+        if copy_data:
             # Find out slice method for variable and copy data
-            if (
-                self.__copy_slices is None
-                or fullname not in self.__copy_slices
-            ):
+            copy_slices = self.__copy_slices
+            if copy_slices is None or fullname not in copy_slices:
                 # Copy data as a whole
-                new_var[:] = var[:]
-            elif self.__copy_slices[fullname] is None:
+                new_var[...] = var[...]
+            elif copy_slices[fullname] is None:
                 # Copy with default slice size
                 copy_slice = tuple(
                     default_copy_slice_size // len(var.shape)
@@ -685,11 +809,11 @@ class _Flattener:
                 self.copy_var_by_slices(new_var, var, copy_slice)
             else:
                 # Copy in slices
-                copy_slice = self.__copy_slices[fullname]
+                copy_slice = copy_slices[fullname]
                 self.copy_var_by_slices(new_var, var, copy_slice)
 
         # Copy attributes
-        new_var.setncatts(self.attrs(var))
+        new_var.setncatts(attributes)
 
         # Store new name in dict for resolving references later
         self.__var_map[
@@ -715,11 +839,28 @@ class _Flattener:
         dimension is reached, recursively increment the next
         dimensions until a valid position is found.
 
-        :param pos: current position
-        :param dim: dimension to be incremented
-        :param copy_slice_shape: shape of the slice
-        :param var_shape: shape of the variable
-        :return True if a valid position is found within the variable, False otherwise
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            pos: `list`
+                The current slice position along each dimension of the
+                array.
+
+            dim: `int`
+                The position of the array dimension to be incremented.
+
+            copy_slice_shape: `list`
+                The shape of the copy slice.
+
+            var_shape: `tuple`
+                The shape of the whole variable.
+
+        :Returns:
+
+            `bool`
+                `True` if a valid position is found within the
+                variable, `False` otherwise.
 
         """
         # Try to increment dimension
@@ -749,9 +890,22 @@ class _Flattener:
     def copy_var_by_slices(self, new_var, old_var, copy_slice_shape):
         """Copy the data of a variable to a new one by slice.
 
-        :param new_var: new variable where to copy data
-        :param old_var: variable where data should be copied from
-        :param copy_slice_shape: shape of the slice
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            new_var: `netCDF4.Variable`
+                The new variable where to copy dataf.
+
+            old_var: `netCDF4.Variable` or `h5netcdf.Variable`
+                The variable where data should be copied from.
+
+            copy_slice_shape: `tuple`
+                The shape of the slice
+
+        :Returns:
+
+            `None`
 
         """
         logging.info(
@@ -781,16 +935,29 @@ class _Flattener:
                 pos, 0, copy_slice_shape, old_var.shape
             )
 
-    def resolve_reference(self, orig_ref, orig_var, attr):
+    def resolve_reference(self, orig_ref, orig_var, rules):
         """Resolve a refrence.
 
         Resolves the absolute path to a coordinate variable within the
         group structure.
 
-        :param orig_ref: reference to resolve
-        :param orig_var: variable originally containing the reference
-        :param attr: AttributeFeatures object item to know if ref to dim or var
-        :return: absolute path to the reference
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            orig_ref: `str`
+                The reference to resolve.
+
+            orig_var: `netCDF4.Variable` or `h5netcdf.Variable`
+                The original variable containing the reference.
+
+            rules: `FlatteningRules`
+                The flattening rules that apply to the reference.
+
+        :Returns:
+
+            `str`
+                The absolute path to the reference.
 
         """
         ref = orig_ref
@@ -798,10 +965,10 @@ class _Flattener:
         ref_type = ""
 
         # Resolve first as dim (True), or var (False)
-        resolve_dim_or_var = attr.ref_to_dim > attr.ref_to_var
+        resolve_dim_or_var = rules.ref_to_dim > rules.ref_to_var
 
         # Resolve var (resp. dim) if resolving as dim (resp. var) failed
-        resolve_alt = attr.ref_to_dim and attr.ref_to_var
+        resolve_alt = rules.ref_to_dim and rules.ref_to_var
 
         # Reference is already given by absolute path
         if ref.startswith(group_separator):
@@ -837,18 +1004,57 @@ class _Flattener:
         else:
             method = "Proximity"
             absolute_ref, ref_type = self.resolve_reference_proximity(
-                ref, resolve_dim_or_var, resolve_alt, orig_var, attr
+                ref,
+                resolve_dim_or_var,
+                resolve_alt,
+                orig_var,
+                rules,
             )
 
         # Post-search checks and return result
         return self.resolve_reference_post_processing(
-            absolute_ref, orig_ref, orig_var, attr, ref_type, method
+            absolute_ref,
+            orig_ref,
+            orig_var,
+            rules,
+            ref_type,
+            method,
         )
 
     def resolve_reference_proximity(
-        self, ref, resolve_dim_or_var, resolve_alt, orig_var, attr
+        self, ref, resolve_dim_or_var, resolve_alt, orig_var, rules
     ):
-        """Resolve reference: search by proximity."""
+        """Resolve reference: search by proximity.
+
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            ref: `str`
+                The reference to resolve.
+
+            resolve_dim_or_var: `bool`
+                Try to resolve first as dimension (True), or else as
+                variable (False).
+
+            resolve_alt: `bool`
+                Resolve as variable if resolving as dimension failed,
+                and vice versa.
+
+            orig_var: `netCDF4.Variable` or `h5netcdf.Variable`
+                The original variable containing the reference.
+
+            rules: `FlatteningRules`
+                The flattening rules that apply to the reference.
+
+        :Returns:
+
+            (`str` or `None, str)
+                The resolved reference (or `None` if unresolved), and
+                the type of reference (either ``'dimension'`` or
+                ``'variable'``).
+
+        """
         # First tentative as dim OR var
         if resolve_dim_or_var:
             ref_type = "dimension"
@@ -860,7 +1066,7 @@ class _Flattener:
             self.group(orig_var),
             resolve_dim_or_var,
             False,
-            attr.stop_at_local_apex,
+            rules.stop_at_local_apex,
         )
 
         # If failed and alternative possible, second tentative
@@ -875,7 +1081,7 @@ class _Flattener:
                 self.group(orig_var),
                 not resolve_dim_or_var,
                 False,
-                attr.stop_at_local_apex,
+                rules.stop_at_local_apex,
             )
 
         # If found, create ref string
@@ -890,11 +1096,42 @@ class _Flattener:
             return None, ""
 
     def resolve_reference_post_processing(
-        self, absolute_ref, orig_ref, orig_var, attr, ref_type, method
+        self, absolute_ref, orig_ref, orig_var, rules, ref_type, method
     ):
-        """Post-processing operations after resolving reference."""
+        """Post-processing operations after resolving reference.
+
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            absolute_ref: `str`
+                The absolute path of the reference.
+
+            orig_ref: `str`
+                The original reference.
+
+            orig_var: `netCDF4.Variable` or `h5netcdf.Variable`
+                The original variable containing the reference.
+
+            rules: `FlatteningRules`
+                The flattening rules that apply to the reference.
+
+            ref_type: `str`
+                the type of reference (either ``'dimension'`` or
+                ``'variable'``).
+
+            method: `str`
+                The method of reference resolution (either
+                ``'proximity'`` or ``'absolute'``).
+
+        :Returns:
+
+            `str`
+                The absolute reference.
+
+        """
         # If not found and accept standard name, assume standard name
-        if absolute_ref is None and attr.accept_standard_names:
+        if absolute_ref is None and rules.accept_standard_names:
             logging.info(
                 f"            Reference to {orig_ref!r} not "
                 "resolved. Assumed to be a standard name."
@@ -917,7 +1154,7 @@ class _Flattener:
         # additional check
         if (
             ref_type == "variable"
-            and attr.limit_to_scalar_coordinates
+            and rules.limit_to_scalar_coordinates
             and (
                 (
                     "coordinates" not in self.ncattrs(orig_var)
@@ -941,10 +1178,24 @@ class _Flattener:
         Resolves the absolute path to a reference within the group
         structure, using search by relative path.
 
-        :param ref: reference to resolve
-        :param current_group: current group where searching
-        :param search_dim: if true, search references to dimensions, if false, search references to variables
-        :return: absolute path to the coordinate
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            ref: `str`
+                The reference to resolve.
+
+            current_group: `str`
+                The current group of the reference.
+
+            search_dim: `bool`
+                If True then search for a dimension, otherwise a
+                variable.
+
+        :Returns:
+
+            `str`
+                The absolute path to the variable.
 
         """
         # Go up parent groups
@@ -989,12 +1240,31 @@ class _Flattener:
         group is reached. If coordinate variable, search until local
         apex is reached, Then search down in siblings.
 
-        :param ref: reference to resolve
-        :param current_group: current group where searching
-        :param search_dim: if true, search references to dimensions, if false, search references to variables
-        :param local_apex_reached: False initially, until apex is reached.
-        :param is_coordinate_variable: true, if looking for a coordinate variable
-        :return: absolute path to the coordinate
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            ref: `str`
+                The reference to resolve.
+
+            current_group:
+                The current group where searching.
+
+            search_dim: `bool`
+                If True then search for a dimension, otherwise a
+                variable.
+
+            local_apex_reached: `bool`
+                Whether or not the apex is previously been reached.
+
+            is_coordinate_variable: `bool`
+                Whether the search is for a coordiante variable.
+
+        :Returns:
+
+            `str` or `None`
+                The absolute path to the variable, if found, otherwise
+                `None`.
 
         """
         if search_dim:
@@ -1049,32 +1319,26 @@ class _Flattener:
             # Did not find
             return None
 
-    #    def __escape_index_error(self, match, group_name):
-    #        """
-    #
-    #        :param match: regex match
-    #        :param group_name: group name
-    #
-    #        :Returns:
-    #
-    #            `str`
-    #                The group in a match if it exists, an empty string
-    #                otherwise.
-    #
-    #        """
-    #        try:
-    #            return match.group(group_name)
-    #        except IndexError:
-    #            return ""
-
     def resolve_references(self, var, old_var):
         """Resolve references.
 
         In a given variable, replace all references to other variables
         in its attributes by absolute references.
 
-        :param var: flattened variable in which references should be renamed with absolute references
-        :param old_var: original variable (in group structure)
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            var: `netCDF4.Variable` or `h5netcdf.Variable`
+                The flattened variable in which references should be
+                renamed with absolute references.
+
+            old_var: `netCDF4.Variable` or `h5netcdf.Variable`
+                The original variable (in group structure).
+
+        :Returns:
+
+            `None`
 
         """
         var_attrs = self.attrs(var)
@@ -1086,20 +1350,20 @@ class _Flattener:
             # properties
             resolved_parsed_attr = {}
 
-            attr = attribute_features.get(name)
+            rules = flattening_rules.get(name)
             for k, v in parsed_attr.items():
-                if attr.resolve_key:
-                    k = self.resolve_reference(k, old_var, attr)
+                if rules.resolve_key:
+                    k = self.resolve_reference(k, old_var, rules)
 
-                if attr.resolve_value and v is not None:
-                    v = [self.resolve_reference(x, old_var, attr) for x in v]
+                if rules.resolve_value and v is not None:
+                    v = [self.resolve_reference(x, old_var, rules) for x in v]
 
                 resolved_parsed_attr[k] = v
 
             # Re-generate attribute value string with resolved
             # references
             var.setncattr(
-                attr.name, generate_var_attr_str(resolved_parsed_attr)
+                rules.name, generate_var_attr_str(resolved_parsed_attr)
             )
 
     def adapt_references(self, var):
@@ -1110,7 +1374,17 @@ class _Flattener:
         netCDF. All references have to be already resolved as absolute
         references.
 
-        :param var: flattened variable in which references should be renamed with new names
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            var: `netCDF4.Variable` or `h5netcdf.Variable`
+                The flattened variable in which references should be
+                renamed with new names.
+
+        :Returns:
+
+            `None`
 
         """
         var_attrs = self.attrs(var)
@@ -1121,33 +1395,42 @@ class _Flattener:
 
             adapted_parsed_attr = {}
 
-            attr = attribute_features.get(name)
+            rules = flattening_rules.get(name)
             for k, v in parsed_attr.items():
-                if attr.resolve_key:
-                    k = self.adapt_name(k, attr)
+                if rules.resolve_key:
+                    k = self.adapt_name(k, rules)
 
-                if attr.resolve_value and v is not None:
-                    v = [self.adapt_name(x, attr) for x in v]
+                if rules.resolve_value and v is not None:
+                    v = [self.adapt_name(x, rules) for x in v]
 
                 adapted_parsed_attr[k] = v
 
             new_attr_value = generate_var_attr_str(adapted_parsed_attr)
-            var.setncattr(attr.name, new_attr_value)
+            var.setncattr(rules.name, new_attr_value)
 
             logging.info(
-                f"        Value of {self.name(var)}.{attr.name} changed from "
-                f"{attr_value!r} to {new_attr_value!r}"
+                f"        Value of {self.name(var)}.{rules.name} changed "
+                f"from {attr_value!r} to {new_attr_value!r}"
             )
 
-    def adapt_name(self, resolved_ref, attr):
+    def adapt_name(self, resolved_ref, rules):
         """Apapt the name.
 
         Return name of flattened reference. If not found, raise
         exception or continue warning.
 
-        :param resolved_ref: resolved reference to adapt
-        :param attr: AttributeFeatures object item to know in which dict to look for name mapping
-        :return: adapted reference
+        .. versionadded:: (cfdm) 1.11.1.0
+
+            resolved_ref: `str`
+                The resolved reference.
+
+            rules: `FlatteningRules`
+                The flattening rules that apply to the reference.
+
+        :Returns:
+
+            `str`
+                The adapted reference.
 
         """
         # If ref contains Error message, leave as such
@@ -1155,10 +1438,10 @@ class _Flattener:
             return resolved_ref
 
         # Select highest priority map
-        if attr.ref_to_dim > attr.ref_to_var:
+        if rules.ref_to_dim > rules.ref_to_var:
             name_mapping = self.__dim_map
 
-        if attr.ref_to_dim < attr.ref_to_var:
+        if rules.ref_to_dim < rules.ref_to_var:
             name_mapping = self.__var_map
 
         # Try to find mapping
@@ -1167,19 +1450,19 @@ class _Flattener:
 
         # If not found, look in other map if allowed
         except KeyError:
-            if attr.ref_to_dim and attr.ref_to_var:
-                name_mapping = (
-                    self.__dim_map
-                    if attr.ref_to_dim < attr.ref_to_var
-                    else self.__var_map
-                )
+            if rules.ref_to_dim and rules.ref_to_var:
+                if rules.ref_to_dim < rules.ref_to_var:
+                    name_mapping = self.__dim_map
+                else:
+                    name_mapping = self.__var_map
+
                 try:
                     return name_mapping[resolved_ref]
                 except KeyError:
                     pass
 
         # If still not found, check if any standard name is allowed
-        if attr.accept_standard_names:
+        if rules.accept_standard_names:
             return resolved_ref
 
         else:
@@ -1189,22 +1472,26 @@ class _Flattener:
     def pathname(self, group, name):
         """Compose full path name to an element in a group structure:
 
-        /path/to/group/elt.
+        .. versionadded:: (cfdm) 1.11.1.0
 
-        :param group: group containing element
-        :param name: name of the element
-        :return: pathname
+        :Parameters:
+
+            current_group:
+                The group containing the dimension or variable.
+
+            name: `str`
+                The name of the dimension or variable.
+
+        :Returns:
+
+            `str`
+                The absolute path to the dimension or variable
 
         """
         if self.parent(group) is None:
             return group_separator + name
 
-        #        return pathname_format.format(self.path(group), name)
-        #
         return group_separator.join((self.path(group), name))
-
-    # return f"{self.path(group)}{group_separator}{name}")
-    # pathname_format.format(self.path(group), name)
 
     def generate_mapping_str(self, input_group, name, new_name):
         """Generate string mapping.
@@ -1212,24 +1499,46 @@ class _Flattener:
         Generates a string representing the name mapping of an element
         before and after flattening.
 
-        :param input_group: group containing the non-flattened element
-        :param name: name of the non-flattened element
-        :param new_name: name of the flattened element
-        :return: string representing the name mapping for the element
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            input_group:
+                The group containing the non-flattened dimension or
+                variable.
+
+            name: `str`
+                The name of the non-flattened dimension or variable.
+
+            new_name: `str`
+                The name of the flattened dimension or variable.
+
+        :Returns:
+
+            `str`
+                A string representing the name mapping for the
+                dimension or variable.
 
         """
         original_pathname = self.pathname(input_group, name)
-        mapping_str = f"{new_name}: {original_pathname}"
-        # mapping_str_format.format(
-        #    new_name, original_pathname
-        # )
-        return mapping_str
+        return f"{new_name}: {original_pathname}"
 
     def convert_path_to_valid_name(self, pathname):
         """Generate valid name from path.
 
-        :param pathname: pathname
-        :return: valid NetCDF name
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            pathname: `str`
+                The non-flattened namepath to a dimension or variable.
+
+            new_name: `str`
+                A flattened version of *pathname*.
+        :Returns:
+
+            `str`
+                The valid netCDF name.
 
         """
         return pathname.replace(group_separator, "", 1).replace(
@@ -1237,16 +1546,32 @@ class _Flattener:
         )
 
     def generate_flattened_name(self, input_group, orig_name):
-        """Convert full path of an element to a valid NetCDF name:
+        """Convert full path of an element to a valid NetCDF name.
 
-            - the name of an element is the concatenation of its containing group and its name,
-            - replaces / from paths (forbidden as NetCDF name),
-            - if name is longer than 255 characters, replace path to group by hash,
-            - if name is still too long, replace complete name by hash.
+        * The name of an element is the concatenation of its
+          containing group and its name;
 
-        :param input_group: group containing element
-        :param orig_name: original name of the element
-        :return: new valid name of the element
+        * replaces ``/`` from paths (forbidden as NetCDF name);
+
+        * if name is longer than 255 characters, replace path to group
+          by hash;
+
+        * if name is still too long, replace complete name by hash.
+
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            input_group:
+                The group containing the dimension or variable.
+
+            orig_name: `str`
+                The original name of the dimension or variable.
+
+        :Returns:
+
+            `str`
+                The new valid name of the dimension or variable.
 
         """
         # If element is at root: no change
@@ -1284,9 +1609,21 @@ class _Flattener:
         Depending on lax/strict mode, either raise exception or log
         warning. If lax, return reference placeholder.
 
-        :param ref: reference
-        :param context: additional context info to add to message
-        :return: if continue with warning, error replacement name for reference
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            ref: `str`
+                The reference
+
+            context: `str`
+                Additional context information to add to message.
+
+        :Returns:
+
+            `str`
+                The error message, or if *lax_mode* is True then a
+                `ReferenceException` is raised.
 
         """
         message = f"Reference {ref!r} could not be resolved"
@@ -1301,6 +1638,10 @@ class _Flattener:
 
 
 class ReferenceException(Exception):
-    """Exception for unresolvable references in attributes."""
+    """Exception for unresolvable references in attributes.
+
+    .. versionadded:: (cfdm) 1.11.1.0
+
+    """
 
     pass

@@ -6,6 +6,12 @@ from s3fs import S3FileSystem
 from ...functions import abspath
 
 
+class DeprecationError(Exception):
+    """Deprecation error."""
+
+    pass
+
+
 class FileArrayMixin:
     """Mixin class for a file container of an array.
 
@@ -105,6 +111,35 @@ class FileArrayMixin:
         """
         return self._get_component("address", ())
 
+    def get_attributes(self, default=ValueError()):
+        """The attributes of the array.
+
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                attributes have not been set. If set to an `Exception`
+                instance then it will be raised instead.
+
+        :Returns:
+
+                The attributes.
+
+        """
+        attributes = self._get_component("attributes", None)
+        if attributes is None:
+            if default is None:
+                return
+
+            return self._default(
+                default,
+                f"{self.__class__.__name__} attributes have not yet been set",
+            )
+
+        return deepcopy(attributes)
+
     def get_filename(self, default=AttributeError()):
         """The name of the file containing the array.
 
@@ -190,12 +225,24 @@ class FileArrayMixin:
         """
         return (self.get_format(),) * len(self.get_filenames())
 
+    def get_missing_values(self):
+        """The missing values of the data.
+
+        Deprecated at version 1.11.1.0. Use `get_attributes` instead.
+
+        """
+        raise DeprecationError(
+            f"{self.__class__.__name__}.get_missing_values was deprecated "
+            "at version 1.11.1.0 and is no longer available. "
+            "Use {self.__class__.__name__}.get_attributes instead."
+        )  # pragma: no cover
+
     def get_storage_options(
         self, create_endpoint_url=True, filename=None, parsed_filename=None
     ):
         """Return `s3fs.S3FileSystem` options for accessing S3 files.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 

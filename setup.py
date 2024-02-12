@@ -198,6 +198,7 @@ setup(
         "cfdm.read_write",
         "cfdm.read_write.abstract",
         "cfdm.read_write.netcdf",
+        "cfdm.read_write.netcdf.flatten",
         "cfdm.test",
     ],
     scripts=["scripts/cfdump"],

@@ -1,9 +1,11 @@
 """License information:
 
-Substantial portions of this code were adapted from the `netCDF4`
-library, which carries MIT License as follows:
+Portions of this code were adapted from the `netCDF4` library, which
+is lcensed with the carries MIT License:
 
 Copyright 2008 Jeffrey Whitaker
+
+https://opensource.org/license/mit
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -41,7 +43,7 @@ class NetCDFIndexer:
 
     Masking and unpacking operations are defined by netCDF attributes,
     which are either provided as part of the input *data* object, or
-    given with the input *attrs* parameter.
+    given with the input *attributes* parameter.
 
     The relevant netCDF attributes that may be used are:
 
@@ -50,15 +52,13 @@ class NetCDFIndexer:
 
       * For unpacking: ``add_offset``, ``scale_factor``, ``_Unsigned``
 
-    Adapted from `netCDF4`.
-
-    .. versionadded:: (cfdm) HDFVER
+    .. versionadded:: (cfdm) 1.11.1.0
 
     **Examples**
 
     >>> import netCDF4
     >>> nc = netCDF4.Dataset('file.nc', 'r')
-    >>> x = cfdm.{{class}}(nc.variables['x'])
+    >>> x = cfdm.NetCDFIndexer(nc.variables['x'])
     >>> x.shape
     (12, 64, 128)
     >>> print(x[0, 0:4, 0:3])
@@ -69,7 +69,7 @@ class NetCDFIndexer:
 
     >>> import h5netcdf
     >>> h5 = h5netcdf.File('file.nc', 'r')
-    >>> x = cfdm.{{class}}(h5.variables['x'])
+    >>> x = cfdm.NetCDFIndexer(h5.variables['x'])
     >>> x.shape
     (12, 64, 128)
     >>> print(x[0, 0:4, 0:3])
@@ -80,22 +80,27 @@ class NetCDFIndexer:
 
     >>> import numpy as np
     >>> n = np.arange(7)
-    >>> x = cfdm.{{class}}(n)
+    >>> x = cfdm.NetCDFIndexer(n)
     >>> x.shape
     (9,)
     >>> print(x[...])
     [0 1 2 3 4 5 6]
-    >>> x = cfdm.{{class}}(n, attrs={'_FillValue': 4})
+    >>> x = cfdm.NetCDFIndexer(n, attributes={'_FillValue': 4})
     >>> print(x[...])
     [0 1 2 3 -- 5 6]
-    >>> x = cfdm.{{class}}(n, mask=False, attrs={'_FillValue': 4})
+    >>> x = cfdm.NetCDFIndexer(n, mask=False, attributes={'_FillValue': 4})
     >>> print(x[...])
     [0 1 2 3 4 5 6]
 
     """
 
     def __init__(
-        self, variable, mask=True, unpack=True, always_mask=False, attrs=None
+        self,
+        variable,
+        mask=True,
+        unpack=True,
+        always_mask=False,
+        attributes=None,
     ):
         """**Initialisation**
 
@@ -127,21 +132,20 @@ class NetCDFIndexer:
                 indexing is always a masked array, even if there are
                 no missing values.
 
-            attrs: `dict`, optional
+            attributes: `dict`, optional
                 Provide the netCDF attributes of the *variable* as
-                dictionary key/value pairs. If *attrs* is set then any
-                netCDF attributes stored by *variable* itself are
-                ignored. Only the attributes relevant to masking and
-                unpacking are considers, and all other attributes are
-                ignored.
+                dictionary key/value pairs. If *attributes* is set
+                then any netCDF attributes stored by *variable* itself
+                are ignored. Only the attributes relevant to masking
+                and unpacking are considers, and all other attributes
+                are ignored.
 
         """
         self.variable = variable
         self.mask = mask
         self.unpack = unpack
         self.always_mask = always_mask
-        self._attrs = attrs
-        self.shape = variable.shape
+        self._attributes = attributes
 
     def __getitem__(self, index):
         """Return a subspace of the variable as a `numpy` array.
@@ -150,12 +154,12 @@ class NetCDFIndexer:
 
         Indexing follows the rules defined by the variable.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         """
         variable = self.variable
         unpack = self.unpack
-        attrs = self.attrs()
+        attributes = self.attributes()
         dtype = variable.dtype
 
         netCDF4_scale = False
@@ -189,7 +193,10 @@ class NetCDFIndexer:
 
         dtype_unsigned_int = None
         if unpack:
-            is_unsigned_int = attrs.get("_Unsigned", False) in ("true", "True")
+            is_unsigned_int = attributes.get("_Unsigned", False) in (
+                "true",
+                "True",
+            )
             if is_unsigned_int:
                 data_dtype = data.dtype
                 dtype_unsigned_int = (
@@ -198,10 +205,10 @@ class NetCDFIndexer:
                 data = data.view(dtype_unsigned_int)
 
         if self.mask:
-            data = self._mask(data, dtype, attrs, dtype_unsigned_int)
+            data = self._mask(data, dtype, attributes, dtype_unsigned_int)
 
         if unpack:
-            data = self._unpack(data, attrs)
+            data = self._unpack(data, attributes)
 
         if data.dtype.kind == "S":
             data = data.astype("U", copy=False)
@@ -215,13 +222,22 @@ class NetCDFIndexer:
 
         return data
 
-    def _check_safecast(self, attname, dtype, attrs):
+    @property
+    def shape(self):
+        """Tuple of the data dimension sizes.
+
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        """
+        return self.variable.shape
+
+    def _check_safecast(self, attname, dtype, attributes):
         """Check an attribute's data type.
 
         Checks to see that variable attribute exists and can be safely
         cast to variable data type.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameter:
 
@@ -231,7 +247,7 @@ class NetCDFIndexer:
             dtype: `numpy.dtype`
                 The variable data type.
 
-            attrs: `dict`
+            attributes: `dict`
                 The variable attributes.
 
         :Returns:
@@ -241,8 +257,8 @@ class NetCDFIndexer:
                 with the variable data type, and the attribute value.
 
         """
-        if attname in attrs:
-            attvalue = attrs[attname]
+        if attname in attributes:
+            attvalue = attributes[attname]
             att = np.array(attvalue)
         else:
             return False, None
@@ -266,7 +282,7 @@ class NetCDFIndexer:
     def _default_FillValue(self, dtype):
         """Return the default ``_FillValue`` for the given data type.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         .. seealso:: `netCDF4.default_fillvals`
 
@@ -285,10 +301,10 @@ class NetCDFIndexer:
         else:
             return _default_fillvals[dtype.str[1:]]
 
-    def _mask(self, data, dtype, attrs, dtype_unsigned_int):
+    def _mask(self, data, dtype, attributes, dtype_unsigned_int):
         """Mask the data.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameter:
 
@@ -300,7 +316,7 @@ class NetCDFIndexer:
                 The data type of the variable (which may be different
                 to that of *data*).
 
-            attrs: `dict`
+            attributes: `dict`
                 The variable attributes.
 
             dtype_unsigned_int: `dtype` or `None`
@@ -319,7 +335,7 @@ class NetCDFIndexer:
         fill_value = None
 
         safe_missval, missing_value = self._check_safecast(
-            "missing_value", dtype, attrs
+            "missing_value", dtype, attributes
         )
         if safe_missval:
             # --------------------------------------------------------
@@ -355,7 +371,7 @@ class NetCDFIndexer:
 
         # Set mask=True for data == fill value
         safe_fillval, _FillValue = self._check_safecast(
-            "_FillValue", dtype, attrs
+            "_FillValue", dtype, attributes
         )
         if not safe_fillval:
             _FillValue = self._default_FillValue(dtype)
@@ -397,13 +413,13 @@ class NetCDFIndexer:
         validmin = None
         validmax = None
         safe_validrange, valid_range = self._check_safecast(
-            "valid_range", dtype, attrs
+            "valid_range", dtype, attributes
         )
         safe_validmin, valid_min = self._check_safecast(
-            "valid_min", dtype, attrs
+            "valid_min", dtype, attributes
         )
         safe_validmax, valid_max = self._check_safecast(
-            "valid_max", dtype, attrs
+            "valid_max", dtype, attributes
         )
         if safe_validrange and valid_range.size == 2:
             validmin = np.array(valid_range[0], dtype)
@@ -463,10 +479,10 @@ class NetCDFIndexer:
 
         return data
 
-    def _unpack(self, data, attrs):
+    def _unpack(self, data, attributes):
         """Unpack the data..
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameter:
 
@@ -474,7 +490,7 @@ class NetCDFIndexer:
                 The unmasked and unpacked data indexed from the
                 variable.
 
-            attrs: `dict`
+            attributes: `dict`
                 The variable attributes.
 
         :Returns:
@@ -483,8 +499,8 @@ class NetCDFIndexer:
                 The unpacked data.
 
         """
-        scale_factor = attrs.get("scale_factor")
-        add_offset = attrs.get("add_offset")
+        scale_factor = attributes.get("scale_factor")
+        add_offset = attributes.get("add_offset")
         try:
             if scale_factor is not None:
                 float(scale_factor)
@@ -527,10 +543,10 @@ class NetCDFIndexer:
 
         return data
 
-    def attrs(self):
+    def attributes(self):
         """Return the netCDF attributes of the variable.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Returns:
 
@@ -539,13 +555,13 @@ class NetCDFIndexer:
 
         **Examples**
 
-        >>> v.attrs()
+        >>> v.attributes()
         {'standard_name': 'air_temperature',
          'missing_value': -999.0}
 
         """
-        if self._attrs is not None:
-            return self._attrs.copy()
+        if self._attributes is not None:
+            return self._attributes.copy()
 
         variable = self.variable
         try:

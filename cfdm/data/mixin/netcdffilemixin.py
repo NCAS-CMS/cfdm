@@ -1,19 +1,23 @@
-from copy import deepcopy
-
 from ..numpyarray import NumpyArray
+
+
+class DeprecationError(Exception):
+    """Deprecation error."""
+
+    pass
 
 
 class NetCDFFileMixin:
     """Mixin class for netCDF file arrays.
 
-    .. versionadded:: (cfdm) HDFVER
+    .. versionadded:: (cfdm) 1.11.1.0
 
     """
 
     def _group(self, dataset, groups):
         """Retrun the group object containing a variable.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
@@ -39,25 +43,23 @@ class NetCDFFileMixin:
         return dataset
 
     def _set_attributes(self, var):
-        """The units and calendar properties.
+        """Set the netCDF variable attributes.
 
         These are set from the netCDF variable attributes, but only if
-        they have already not been defined, either during {{class}}
-        instantiation or by a previous call to `_set_units`.
+        they have not already been defined, either during {{class}}
+        instantiation or by a previous call to `_set_attributes`.
 
-        .. versionadded:: (cfdm) 1.10.0.1
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
             var: `netCDF4.Variable` or `h5netcdf.Variable`
-                The variable containing the units and calendar
-                definitions.
+                The netCDF variable.
 
         :Returns:
 
-            `tuple`
-                The units and calendar values, either of which may be
-                `None`.
+            `dict`
+                The attributes.
 
         """
         raise NotImplementedError(
@@ -177,6 +179,8 @@ class NetCDFFileMixin:
     def get_missing_values(self, default=ValueError()):
         """The missing value indicators from the netCDF variable.
 
+        Deprecated at version 1.11.1.0. Use `get_attributes` instead.
+
         .. versionadded:: (cfdm) 1.10.0.3
 
         :Parameters:
@@ -214,35 +218,16 @@ class NetCDFFileMixin:
         {'valid_min': -999}
 
         """
-        attributes = self._get_component("attributes", None)
-        if attributes is None:
-            if default is None:
-                return
-
-            return self._default(
-                default,
-                f"{self.__class__.__name__} missing values have not been set",
-            )
-
-        missing = {}
-        for attr in (
-            "_FillValue",
-            "_Unsigned",
-            "missing_value",
-            "valid_min",
-            "valid_max",
-            "valid_range",
-        ):
-            value = attributes.get(attr)
-            if value is not None:
-                missing[attr] = deepcopy(value)
-
-        return missing
+        raise DeprecationError(
+            f"{self.__class__.__name__}.get_missing_values was deprecated "
+            "at version 1.11.1.0 and is no longer available. "
+            "Use {self.__class__.__name__}.get_attributes instead."
+        )
 
     def get_unpack(self):
         """Whether or not to automatically unpack the data.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         **Examples**
 

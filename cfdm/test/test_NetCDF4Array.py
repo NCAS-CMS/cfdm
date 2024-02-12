@@ -73,31 +73,6 @@ class NetCDF4ArrayTest(unittest.TestCase):
         a = cfdm.NetCDF4Array()
         self.assertEqual(a.get_filenames(), ())
 
-    def test_NetCDF4Array_get_missing_values(self):
-        """Test NetCDF4Array.get_missing_values."""
-        f = cfdm.example_field(0)
-
-        f.set_property("missing_value", -999)
-        f.set_property("_FillValue", -3)
-        f.set_property("valid_min", -111)
-        cfdm.write(f, tmpfile)
-
-        g = cfdm.read(tmpfile)[0]
-        self.assertEqual(
-            g.data.source().get_missing_values(),
-            {
-                "missing_value": -999.0,
-                "_FillValue": -3,
-                "valid_min": -111,
-            },
-        )
-
-        c = g.coordinate("latitude")
-        self.assertEqual(c.data.source().get_missing_values(), {})
-
-        a = cfdm.NetCDF4Array("file.nc", "ncvar")
-        self.assertIsNone(a.get_missing_values(None))
-
     def test_NetCDF4Array_mask(self):
         """Test NetCDF4Array masking."""
         f = cfdm.example_field(0)
@@ -195,8 +170,12 @@ class NetCDF4ArrayTest(unittest.TestCase):
         f = cfdm.example_field(0)
         cfdm.write(f, tmpfile)
         n = cfdm.NetCDF4Array(tmpfile, f.nc_get_variable(), shape=f.shape)
-        self.assertIsNone(n.get_attributes())
+        self.assertIsNone(n.get_attributes(None))
 
+        with self.assertRaises(ValueError):
+            n.get_attributes()
+
+        # Set attributes via indexing
         _ = n[...]
         self.assertEqual(
             n.get_attributes(),

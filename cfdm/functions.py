@@ -989,9 +989,6 @@ class Constant(metaclass=DocstringRewriteMeta):
         """Called by the `str` built-in function."""
         return str(self.value)
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def copy(self):
         """Return a deep copy.
 

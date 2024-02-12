@@ -184,6 +184,7 @@ from .data import (
     Data,
     GatheredArray,
     H5netcdfArray,
+    NetCDFArray,
     NetCDF4Array,
     NetCDFIndexer,
     NumpyArray,

@@ -15,9 +15,9 @@ logger = logging.getLogger(__name__)
 
 
 class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
-    """An underlying array stored in a netCDF HDF file.
+    """A netCDF array accessed with `h5netcdf`.
 
-    .. versionadded:: (cfdm) HDFVER
+    .. versionadded:: (cfdm) 1.11.1.0
 
     """
 
@@ -89,14 +89,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 applicable. If unset then the calendar will be set
                 during the first `__getitem__` call.
 
-            missing_values: `dict`, optional
-                The missing value indicators defined by the variable
-                attributes. See `get_missing_values` for details.
-
-
             {{init storage_options: `dict` or `None`, optional}}
-
-                .. versionadded:: (cfdm) HDFVER
 
             {{init source: optional}}
 
@@ -193,7 +186,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
         x.__getitem__(indices) <==> x[indices]
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         """
         dataset, address = self.open()
@@ -228,25 +221,23 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         return array
 
     def _set_attributes(self, var):
-        """TODOHDF The units and calendar properties.
+        """Set the netCDF variable attributes.
 
         These are set from the netCDF variable attributes, but only if
-        they have already not been defined, either during {{class}}
-        instantiation or by a previous call to `_set_units`.
+        they have not already been defined, either during {{class}}
+        instantiation or by a previous call to `_set_attributes`.
 
-        .. versionadded:: (cfdm) 1.10.0.1
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
-            var: `netCDF4.Variable` or `h5netcdf.Variable`
-                The variable containing the units and calendar
-                definitions.
+            var: `h5netcdf.Variable`
+                The netCDF variable.
 
         :Returns:
 
-            `tuple`
-                The units and calendar values, either of which may be
-                `None`.
+            `dict`
+                The attributes.
 
         """
         attributes = self._get_component("attributes", None)
@@ -259,7 +250,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
     def close(self, dataset):
         """Close the dataset containing the data.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 

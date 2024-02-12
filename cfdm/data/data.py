@@ -2217,7 +2217,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 size one. With this option, the result will broadcast
                 correctly against the original data.
 
-                .. versionaded:: (cfdm) HDFVER
+                .. versionaded:: (cfdm) 1.11.1.0
 
         :Returns:
 
@@ -2443,7 +2443,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 size one. With this option, the result will broadcast
                 correctly against the original data.
 
-                .. versionaded:: (cfdm) HDFVER
+                .. versionaded:: (cfdm) 1.11.1.0
 
         :Returns:
 

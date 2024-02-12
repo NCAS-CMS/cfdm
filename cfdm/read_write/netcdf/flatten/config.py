@@ -1,6 +1,6 @@
 """Configuration for netCDF group flattening.
 
-.. versionadded:: (cfdm) HDFVER
+.. versionadded:: (cfdm) 1.11.1.0
 
 """
 from dataclasses import dataclass
@@ -35,17 +35,18 @@ flattener_variable_map = "__flattener_variable_map"
 
 
 @dataclass()
-class AttributeFeatures:
-    """Data class that defines attribute flattening features.
+class FlatteningRules:
+    """Define the flattening rules for a netCDF attribute.
 
-    For a named netCDF attribute, the features a define how the
-    contents of the attribute are flattened.
+    For a named netCDF attribute, the rules a define how the contents
+    of the attribute are flattened.
 
-    .. versionadded:: (cfdm) HDFVER
+    .. versionadded:: (cfdm) 1.11.1.0
 
     """
 
-    # name: The attribute name
+    # name: The name of attribute containing the reference to be
+    #       flattened
     name: str
     # ref_to_dim: Positive integer if contains references to
     #             dimensions (higher values have priority)
@@ -76,22 +77,26 @@ class AttributeFeatures:
 
 
 # --------------------------------------------------------------------
-# Set flattening features for named CF attributes
+# Set the flattening rules for named CF attributes
 # --------------------------------------------------------------------
-attribute_features = {
+flattening_rules = {
     attr.name: attr
     for attr in (
+        # ------------------------------------------------------------
         # Coordinates
-        AttributeFeatures(
+        # ------------------------------------------------------------
+        FlatteningRules(
             name="coordinates",
             ref_to_var=1,
             resolve_key=True,
             stop_at_local_apex=True,
         ),
-        AttributeFeatures(name="bounds", ref_to_var=1, resolve_key=True),
-        AttributeFeatures(name="climatology", ref_to_var=1, resolve_key=True),
+        FlatteningRules(name="bounds", ref_to_var=1, resolve_key=True),
+        FlatteningRules(name="climatology", ref_to_var=1, resolve_key=True),
+        # ------------------------------------------------------------
         # Cell methods
-        AttributeFeatures(
+        # ------------------------------------------------------------
+        FlatteningRules(
             name="cell_methods",
             ref_to_dim=2,
             ref_to_var=1,
@@ -99,99 +104,113 @@ attribute_features = {
             accept_standard_names=True,
             limit_to_scalar_coordinates=True,
         ),
+        # ------------------------------------------------------------
         # Cell measures
-        AttributeFeatures(
+        # ------------------------------------------------------------
+        FlatteningRules(
             name="cell_measures", ref_to_var=1, resolve_value=True
         ),
+        # ------------------------------------------------------------
         # Coordinate references
-        AttributeFeatures(
+        # ------------------------------------------------------------
+        FlatteningRules(
             name="formula_terms", ref_to_var=1, resolve_value=True
         ),
-        AttributeFeatures(
+        FlatteningRules(
             name="grid_mapping",
             ref_to_var=1,
             resolve_key=True,
             resolve_value=True,
         ),
+        # ------------------------------------------------------------
         # Ancillary variables
-        AttributeFeatures(
+        # ------------------------------------------------------------
+        FlatteningRules(
             name="ancillary_variables", ref_to_var=1, resolve_key=True
         ),
+        # ------------------------------------------------------------
         # Compression by gathering
-        AttributeFeatures(name="compress", ref_to_dim=1, resolve_key=True),
+        # ------------------------------------------------------------
+        FlatteningRules(name="compress", ref_to_dim=1, resolve_key=True),
+        # ------------------------------------------------------------
         # Discrete sampling geometries
-        AttributeFeatures(
+        # ------------------------------------------------------------
+        FlatteningRules(
             name="instance_dimension", ref_to_dim=1, resolve_key=True
         ),
-        AttributeFeatures(
+        FlatteningRules(
             name="sample_dimension", ref_to_dim=1, resolve_key=True
         ),
+        # ------------------------------------------------------------
         # Domain variables
-        AttributeFeatures(name="dimensions", ref_to_dim=1, resolve_key=True),
+        # ------------------------------------------------------------
+        FlatteningRules(name="dimensions", ref_to_dim=1, resolve_key=True),
+        # ------------------------------------------------------------
         # Aggregation variables
-        AttributeFeatures(
+        # ------------------------------------------------------------
+        FlatteningRules(
             name="aggregated_dimensions", ref_to_dim=1, resolve_key=True
         ),
-        AttributeFeatures(
+        FlatteningRules(
             name="aggregated_data", ref_to_var=1, resolve_value=True
         ),
+        # ------------------------------------------------------------
         # Cell geometries
-        AttributeFeatures(name="geometry", ref_to_var=1, resolve_key=True),
-        AttributeFeatures(
-            name="interior_ring", ref_to_var=1, resolve_key=True
-        ),
-        AttributeFeatures(
+        # ------------------------------------------------------------
+        FlatteningRules(name="geometry", ref_to_var=1, resolve_key=True),
+        FlatteningRules(name="interior_ring", ref_to_var=1, resolve_key=True),
+        FlatteningRules(
             name="node_coordinates", ref_to_var=1, resolve_key=True
         ),
-        AttributeFeatures(name="node_count", ref_to_var=1, resolve_key=True),
-        AttributeFeatures(name="nodes", ref_to_var=1, resolve_key=True),
-        AttributeFeatures(
+        FlatteningRules(name="node_count", ref_to_var=1, resolve_key=True),
+        FlatteningRules(name="nodes", ref_to_var=1, resolve_key=True),
+        FlatteningRules(
             name="part_node_count", ref_to_var=1, resolve_key=True
         ),
+        # ------------------------------------------------------------
         # UGRID variables
-        AttributeFeatures(name="mesh", ref_to_var=1, resolve_key=True),
-        AttributeFeatures(
+        # ------------------------------------------------------------
+        FlatteningRules(name="mesh", ref_to_var=1, resolve_key=True),
+        FlatteningRules(
             name="edge_coordinates", ref_to_var=1, resolve_key=True
         ),
-        AttributeFeatures(
+        FlatteningRules(
             name="face_coordinates", ref_to_var=1, resolve_key=True
         ),
-        AttributeFeatures(
+        FlatteningRules(
             name="edge_node_connectivity", ref_to_var=1, resolve_key=True
         ),
-        AttributeFeatures(
+        FlatteningRules(
             name="face_node_connectivity", ref_to_var=1, resolve_key=True
         ),
-        AttributeFeatures(
+        FlatteningRules(
             name="face_face_connectivity", ref_to_var=1, resolve_key=True
         ),
-        AttributeFeatures(
+        FlatteningRules(
             name="edge_face_connectivity", ref_to_var=1, resolve_key=True
         ),
-        AttributeFeatures(
+        FlatteningRules(
             name="face_edge_connectivity", ref_to_var=1, resolve_key=True
         ),
-        AttributeFeatures(
-            name="edge_dimension", ref_to_dim=1, resolve_key=True
-        ),
-        AttributeFeatures(
-            name="face_dimension", ref_to_dim=1, resolve_key=True
-        ),
+        FlatteningRules(name="edge_dimension", ref_to_dim=1, resolve_key=True),
+        FlatteningRules(name="face_dimension", ref_to_dim=1, resolve_key=True),
+        # ------------------------------------------------------------
         # Compression by coordinate subsampling
-        AttributeFeatures(
+        # ------------------------------------------------------------
+        FlatteningRules(
             name="coordinate_interpolation",
             ref_to_var=1,
             resolve_key=True,
             resolve_value=True,
         ),
-        AttributeFeatures(
+        FlatteningRules(
             name="tie_point_mapping",
             ref_to_dim=2,
             ref_to_var=1,
             resolve_key=True,
             resolve_value=True,
         ),
-        AttributeFeatures(
+        FlatteningRules(
             name="interpolation_parameters", ref_to_var=1, resolve_value=True
         ),
     )

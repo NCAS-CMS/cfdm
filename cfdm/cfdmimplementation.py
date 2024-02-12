@@ -2300,7 +2300,7 @@ class CFDMImplementation(Implementation):
             kwargs: optional
                 Initialisation parameters to pass to the new instance.
 
-                .. versionadded:: (cfdm) HDFVER
+                .. versionadded:: (cfdm) 1.11.1.0
 
         :Returns:
 
@@ -2313,7 +2313,7 @@ class CFDMImplementation(Implementation):
     def initialise_H5netcdfArray(self, **kwargs):
         """Return a `H5netcdfArray` instance.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 

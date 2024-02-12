@@ -4,11 +4,9 @@ from . import abstract
 from .mixin import FileArrayMixin, NetCDFFileMixin
 from .netcdfindexer import NetCDFIndexer
 
-# import numpy as np
-
 
 class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
-    """An underlying array stored in a netCDF file.
+    """A netCDF array accessed with `netCDF4`.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -57,26 +55,13 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             ndim: `int`
                 The number of array dimensions in the netCDF file.
 
-            mask: `bool`
-                If True (the default) then mask by convention when
-                reading data from disk.
-
-                A netCDF array is masked depending on the values of
-                any of the netCDF attributes ``_FillValue``,
-                ``missing_value``, ``_Unsigned``, ``valid_min``,
-                ``valid_max``, and ``valid_range``.
+            {{init mask: `bool`, optional}}
 
                 .. versionadded:: (cfdm) 1.8.2
 
-            unpack: `bool`
-                If True (the default) then unpack by convention when
-                reading data from disk.
+            {{init unpack: `bool`, optional}}
 
-                A netCDF array is unpacked depending on the values of
-                the netCDF attributes ``add_offset`` and
-                ``scale_factor``.
-
-                .. versionadded:: (cfdm) HDFVER
+                .. versionadded:: (cfdm) 1.11.1.0
 
             units: `str` or `None`, optional
                 The units of the netCDF variable. Set to `None` to
@@ -93,16 +78,9 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
                 .. versionadded:: (cfdm) 1.10.0.1
 
-            missing_values: `dict`, optional
-                The missing value indicators defined by the netCDF
-                variable attributes. See `get_missing_values` for
-                details.
-
-                .. versionadded:: (cfdm) 1.10.0.3
-
             {{init storage_options: `dict` or `None`, optional}}
 
-                .. versionadded:: (cfdm) HDFVER
+                .. versionadded:: (cfdm) 1.11.1.0
 
             {{init source: optional}}
 
@@ -111,6 +89,11 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             {{init copy: `bool`, optional}}
 
                 .. versionadded:: (cfdm) 1.10.0.0
+
+            missing_values: Deprecated at version 1.11.1.0
+                The missing value indicators defined by the netCDF
+                variable attributes. The may now be recorded via the
+                *attributes* parameter
 
             ncvar:  Deprecated at version 1.10.1.0
                 Use the *address* parameter instead.
@@ -286,30 +269,25 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         return f"{self.get_filename(None)}, {self.get_address()}"
 
     def _set_attributes(self, var):
-        """The units and calendar properties.
+        """Set the netCDF variable attributes.
 
         These are set from the netCDF variable attributes, but only if
-        they have already not been defined, either during {{class}}
-        instantiation or by a previous call to `_set_units`.
+        they have not already been defined, either during {{class}}
+        instantiation or by a previous call to `_set_attributes`.
 
-        .. versionadded:: (cfdm) 1.10.0.1
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
-            var: `netCDF4.Variable` or `h5netcdf.Variable`
-                The variable containing the units and calendar
-                definitions.
+            var: `netCDF4.Variable`
+                The netCDF variable.
 
         :Returns:
 
-            `tuple`
-                The units and calendar values, either of which may be
-                `None`.
+            `dict`
+                The attributes.
 
         """
-        # Note: Can't use None as the default since it is a valid
-        #       `units` or 'calendar' value that indicates that the
-        #       attribute has not been set in the dataset.
         attributes = self._get_component("attributes", None)
         if attributes is not None:
             return

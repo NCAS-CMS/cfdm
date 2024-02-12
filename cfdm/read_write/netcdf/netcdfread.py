@@ -592,7 +592,7 @@ class NetCDFRead(IORead):
             flat_nc.set_fill_off()
 
             # Flatten the file
-            netcdf_flatten(nc, flat_nc, lax_mode=True, _copy_data=False)
+            netcdf_flatten(nc, flat_nc, lax_mode=True, copy_data=False)
 
             # Store the original grouped file. This is primarily
             # because the unlimited dimensions in the flattened
@@ -616,7 +616,7 @@ class NetCDFRead(IORead):
     def _open_netCDF4(self, filename):
         """Return an open `netCDF4.Dataset`.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
@@ -633,7 +633,7 @@ class NetCDFRead(IORead):
     def _open_h5netcdf(self, filename):
         """Return an open `h5netcdf.File`.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
@@ -941,7 +941,7 @@ class NetCDFRead(IORead):
             unpack: `bool`, optional
                 See `cfdm.read` for details
 
-                .. versionadded:: (cfdm) HDFVER
+                .. versionadded:: (cfdm) 1.11.1.0
 
             warn_valid: `bool`, optional
                 See `cfdm.read` for details
@@ -956,17 +956,17 @@ class NetCDFRead(IORead):
             storage_options: `bool`, optional
                 See `cfdm.read` for details
 
-                .. versionadded:: (cfdm) HDFVER
+                .. versionadded:: (cfdm) 1.11.1.0
 
             netCDF_backend: `None` or `str`, optional
                 See `cfdm.read` for details
 
-                .. versionadded:: (cfdm) HDFVER
+                .. versionadded:: (cfdm) 1.11.1.0
 
             _file_systems: `dict`, optional
                 Provide any already-open S3 file systems.
 
-                .. versionadded:: (cfdm) HDFVER
+                .. versionadded:: (cfdm) 1.11.1.0
 
         :Returns:
 
@@ -1094,7 +1094,7 @@ class NetCDFRead(IORead):
             g["version"][version] = Version(version)
 
         if storage_options is None:
-            storage_options = {"anon": True}
+            g["storage_options"] = {"anon": True}
 
         if _file_systems is not None:
             # Update S3 file systems with those passed in as keyword
@@ -1331,8 +1331,7 @@ class NetCDFRead(IORead):
                         group_attr = x[-1]
                         flattener_attributes.setdefault(tuple(groups), {})[
                             group_attr
-                        ] = self._file_global_attribute(flat_attr)
-            #                        ] = nc.getncattr(flat_attr)
+                        ] = self._file_global_attribute(nc, flat_attr)
 
             # Remove flattener attributes from the global attributes
             for attr in (
@@ -1347,7 +1346,6 @@ class NetCDFRead(IORead):
             groups = ()
             group_attributes = {}
 
-            #            variable = nc.variables[ncvar]
             variable = self._file_variable(nc, ncvar)
 
             # --------------------------------------------------------
@@ -1390,8 +1388,8 @@ class NetCDFRead(IORead):
                             flattener_attributes[hierarchy]
                         )
                 else:
-                    # Remove the leading / from the absolute netCDF
-                    # variable path
+                    # Remove the leading / (slash) from the absolute
+                    # netCDF variable path
                     ncvar = ncvar[1:]
                     flattener_variables[ncvar] = ncvar
 
@@ -1407,9 +1405,7 @@ class NetCDFRead(IORead):
                     value = value.decode(errors="ignore")
 
                 variable_attributes[ncvar][attr] = value
-            #                print (attr, value, type(value))
 
-            #            variable_dimensions[ncvar] = tuple(variable.dimensions)
             variable_dimensions[ncvar] = tuple(
                 self._file_variable_dimensions(variable)
             )
@@ -1421,9 +1417,8 @@ class NetCDFRead(IORead):
             variable_groups[ncvar] = groups
             variable_group_attributes[ncvar] = group_attributes
 
-        # Populate dimensions_groups abd dimension_basename
+        # Populate dimensions_groups and dimension_basename
         # dictionaries
-        #        for ncdim in nc.dimensions:
         for ncdim in self._file_dimensions(nc):
             ncdim_org = ncdim
             ncdim_basename = ncdim
@@ -1449,9 +1444,6 @@ class NetCDFRead(IORead):
             dimension_groups[ncdim] = groups
             dimension_basename[ncdim] = ncdim_basename
 
-            #            dimension_isunlimited[ncdim] = nc.dimensions[
-            #                ncdim_org
-            #            ].isunlimited()
             dimension_isunlimited[ncdim] = self._file_dimension_isunlimited(
                 nc, ncdim_org
             )
@@ -6119,18 +6111,18 @@ class NetCDFRead(IORead):
 
             return_kwargs_only: `bool`, optional
                 Only return the kwargs dictionary, without
-                instantiating a new `NetCDFArray`.
+                instantiating a new `NetCDF4Array` or `H5netcdfArray`.
 
                 .. versionadded:: (cfdm) 1.10.0.1
 
         :Returns:
 
-            (`NetCDFArray`, `dict`) or (`None`, `dict`) or `dict`
-                The new `NetCDFArray` instance and a dictionary of the
-                kwargs used to create it. If the array could not be
-                created then `None` is returned in its place. If
-                *return_kwargs_only* then only the dictionary is
-                returned.
+            (array, `dict`) or (`None`, `dict`) or `dict`
+                The new `NetCDF4Array` or `H5netcdfArray` instance and
+                a dictionary of the kwargs used to create it. If the
+                array could not be created then `None` is returned in
+                its place. If *return_kwargs_only* then only the
+                dictionary is returned.
 
         """
         g = self.read_vars
@@ -7310,7 +7302,7 @@ class NetCDFRead(IORead):
 
         :Parameters:
 
-            gathered_array: `NetCDFArray`
+            gathered_array: `NetCDF4Array` or `H5netcdfArray`
 
             compressed_dimensions: sequence of `int`
                 The position of the compressed dimension in the
@@ -10046,10 +10038,35 @@ class NetCDFRead(IORead):
 
         return ok
 
+    def _file_global_attribute(self, nc, attr):
+        """Return a global attribute from a dataset.
+
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            nc: `netCDF4.Dataset` or `h5netcdf.File`
+                The dataset.
+
+            attr: `str`
+                The global attribute name.
+
+        :Returns:
+
+                The global attribute value
+
+        """
+        try:
+            # netCDF4
+            return nc.getncattr(attr)
+        except AttributeError:
+            # h5netcdf
+            return nc.attrs[attr]
+
     def _file_global_attributes(self, nc):
         """Return the global attributes from a dataset.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
@@ -10073,7 +10090,7 @@ class NetCDFRead(IORead):
     def _file_dimensions(self, nc):
         """Return all dimensions in the root group.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Returns:
 
@@ -10086,7 +10103,7 @@ class NetCDFRead(IORead):
     def _file_dimension(self, nc, dim_name):
         """Return a dimension from the root group of a dataset.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
@@ -10107,7 +10124,7 @@ class NetCDFRead(IORead):
     def _file_dimension_isunlimited(self, nc, dim_name):
         """Return a whether a dimension is unlimited.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
@@ -10128,7 +10145,7 @@ class NetCDFRead(IORead):
     def _file_dimension_size(self, nc, dim_name):
         """Return a dimension is size.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
@@ -10149,7 +10166,7 @@ class NetCDFRead(IORead):
     def _file_variables(self, nc):
         """Return all variables in the root group.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
@@ -10167,7 +10184,7 @@ class NetCDFRead(IORead):
     def _file_variable(self, nc, var_name):
         """Return a variable.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
@@ -10188,7 +10205,7 @@ class NetCDFRead(IORead):
     def _file_variable_attributes(self, var):
         """Return the variable attribute names.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
@@ -10212,7 +10229,7 @@ class NetCDFRead(IORead):
     def _file_variable_dimensions(self, var):
         """Return the variable dimension names.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
@@ -10230,7 +10247,7 @@ class NetCDFRead(IORead):
     def _file_variable_size(self, var):
         """Return the size of a variable's array.
 
-        .. versionadded:: (cfdm) HDFVER
+        .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 

@@ -18,8 +18,8 @@ def read(
     mask=True,
     unpack=True,
     domain=False,
-    storage_options=None,
     netCDF_backend=None,
+    storage_options=None,
     _implementation=_implementation,
 ):
     """Read field or domain constructs from a dataset.
@@ -251,7 +251,7 @@ def read(
             A netCDF array is unpacked depending on the values of the
             netCDF attributes ``add_offset`` and ``scale_factor``.
 
-            .. versionadded:: (cfdm) HDFVER
+            .. versionadded:: (cfdm) 1.11.1.0
 
         domain: `bool`, optional
             If True then return only the domain constructs that are
@@ -274,6 +274,16 @@ def read(
                >>> ufd = cfdm.unique_constructs(x.domain for x in f)
 
             .. versionadded:: (cfdm) 1.9.0.0
+
+        netCDF_backend: `None` or `str`, optional
+            Specify which library to use for opening netCDF files. By
+            default, or if `None`, then `netCDF4` will used unless it
+            fails to open a given file, in which case `h5netcdf` will
+            be used instead. Setting *netCDF_backend* to ``'netCDF4'``
+            or ``'h5netcdf'`` will force the use of the `netCDF4` or
+            `h5netcdf` libraries respectively.
+
+            .. versionadded:: (cfdm) 1.11.1.0
 
         storage_options: `dict` or `None`, optional
             Key/value pairs to be passed on to the creation of
@@ -302,17 +312,7 @@ def read(
               'https://s3.fr-par.scw.cloud', 'client_kwargs':
               {'region_name': 'fr-par'}}``
 
-            .. versionadded:: (cfdm) HDFVER
-
-        netCDF_backend: `None` or `str`, optional
-            Specify which library to use for opening netCDF files. By
-            default, or if `None`, then `netCDF4` will used unless it
-            fails to open a given file, in which case `h5netcdf` will
-            be used instead. Setting *netCDF_backend* to ``'netCDF4'``
-            or ``'h5netcdf'`` will force the use of the `netCDF4` or
-            `h5netcdf` libraries respectively.
-
-            .. versionadded:: (cfdm) HDFVER
+            .. versionadded:: (cfdm) 1.11.1.0
 
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that provides the

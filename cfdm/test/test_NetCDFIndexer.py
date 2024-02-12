@@ -132,7 +132,7 @@ class NetCDFIndexerTest(unittest.TestCase):
         self.assertTrue((x == array).all())
 
         x = cfdm.NetCDFIndexer(
-            array.copy(), attrs={"_FillValue": 4, "missing_value": (0, 8)}
+            array.copy(), attributes={"_FillValue": 4, "missing_value": (0, 8)}
         )
         x = x[...]
         array[[0, 4, 8]] = np.ma.masked
