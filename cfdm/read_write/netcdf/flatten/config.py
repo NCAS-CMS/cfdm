@@ -18,9 +18,6 @@ flattener_separator = "__"
 # 'lax_mode=True' in `flatten`.
 ref_not_found_error = "REF_NOT_FOUND"
 
-# Default size, in bytes, of slice to use when copying data arrays
-default_copy_slice_size = 134217728
-
 # NetCDF global attribute in the flattened dataset containing the
 # mapping of flattened attribute names to grouped attribute names
 flattener_attribute_map = "__flattener_attribute_map"
@@ -52,7 +49,7 @@ class FlatteningRules:
     #             dimensions (higher values have priority)
     ref_to_dim: int = 0
     # ref_to_var: Positive integer if contains references to variables
-    #             (highest int have priority)
+    #             (highest values have priority)
     ref_to_var: int = 0
     # resolve_key: True if 'keys' have to be resolved in 'key1: value1
     #              key2: value2 value3' or 'key1 key2'

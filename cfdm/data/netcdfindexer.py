@@ -1,7 +1,7 @@
-"""License information:
+"""A data indexer that applies netCDF masking and unpacking.
 
 Portions of this code were adapted from the `netCDF4` library, which
-is lcensed with the carries MIT License:
+carries the MIT License:
 
 Copyright 2008 Jeffrey Whitaker
 
@@ -176,6 +176,7 @@ class NetCDFIndexer:
         # Index the variable
         data = variable[index]
 
+        # Convert str, char, and object data to byte strings
         if isinstance(data, str):
             data = np.array(data, dtype="S")
         elif data.dtype.kind in "OSU":
@@ -193,10 +194,7 @@ class NetCDFIndexer:
 
         dtype_unsigned_int = None
         if unpack:
-            is_unsigned_int = attributes.get("_Unsigned", False) in (
-                "true",
-                "True",
-            )
+            is_unsigned_int = attributes.get("_Unsigned") in ("true", "True")
             if is_unsigned_int:
                 data_dtype = data.dtype
                 dtype_unsigned_int = (
@@ -272,8 +270,8 @@ class NetCDFIndexer:
             is_safe = _safecast(att, atta)
 
         if not is_safe:
-            logger.warn(
-                f"WARNING: Attribute {attname} not used since it can't "
+            logger.info(
+                f"Mask attribute {attname!r} not used since it can't "
                 f"be safely cast to variable data type {dtype!r}"
             )  # pragma: no cover
 
@@ -329,7 +327,7 @@ class NetCDFIndexer:
                 The masked data.
 
         """
-        #
+        # The Boolean mask accounting for all methods of specification
         totalmask = None
         # The fill value for the returned numpy array
         fill_value = None

@@ -592,7 +592,7 @@ class NetCDFRead(IORead):
             flat_nc.set_fill_off()
 
             # Flatten the file
-            netcdf_flatten(nc, flat_nc, lax_mode=True, copy_data=False)
+            netcdf_flatten(nc, flat_nc, lax_mode=True, omit_data=True)
 
             # Store the original grouped file. This is primarily
             # because the unlimited dimensions in the flattened
@@ -10203,7 +10203,7 @@ class NetCDFRead(IORead):
         return self._file_variables(nc)[var_name]
 
     def _file_variable_attributes(self, var):
-        """Return the variable attribute names.
+        """Return the variable attributes.
 
         .. versionadded:: (cfdm) 1.11.1.0
 
@@ -10214,14 +10214,14 @@ class NetCDFRead(IORead):
 
         :Returns:
 
-            `dict`-like
+            `dict`
                 A dictionary of the attribute values keyed by their
                 names.
 
         """
         try:
             # h5netcdf
-            return var.attrs
+            return dict(var.attrs)
         except AttributeError:
             # netCDF4
             return {attr: var.getncattr(attr) for attr in var.ncattrs()}

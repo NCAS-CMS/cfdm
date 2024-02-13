@@ -3,10 +3,12 @@ Version 1.11.1.0
 
 **2024-??-??**
 
+* New function `cfdm.netcdf_flattener`
+  (https://github.com/NCAS-CMS/cfdm/issues/286)
 * Allow access to netCDF-4 files in S3 object stores
   (https://github.com/NCAS-CMS/cfdm/issues/285)
-* Refactored the flattening of netCDF-4 groups
-  (https://github.com/NCAS-CMS/cfdm/issues/286)
+* New class `cfdm.H5netcdfArray`
+* New class `cfdm.NetCDFIndexer`
 * New dependency: ``h5netcdf>=1.3.0``
 * New dependency: ``h5py>=3.10.0``
 * New dependency: ``s3fs>=2024.2.0``

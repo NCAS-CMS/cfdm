@@ -77,7 +77,7 @@ try:
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
-minimum_vn = "1.5.4"
+_minimum_vn = "1.5.4"
 if Version(netCDF4.__version__) < Version(_minimum_vn):
     raise ValueError(
         f"Bad netCDF4 version: cfdm requires netCDF4>={_minimum_vn}. "
@@ -242,6 +242,7 @@ from .abstract import Implementation
 from .cfdmimplementation import CFDMImplementation, implementation
 
 from .read_write import read, write
+from .read_write.netcdf.flatten import netcdf_flatten
 
 from .examplefield import example_field, example_fields, example_domain
 

@@ -1,25 +1,9 @@
-"""Flatten NetCDF groups.
-
-Portions of this code were adapted from the `netcdf_flattener`
-library, which carries the Apache 2.0 License:
-
-Copyright (c) 2020 EUMETSAT
-
-Licensed to the Apache Software Foundation (ASF) under one or more
-contributor license agreements. The ASF licenses this file to you
-under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0.
-
-"""
-
 import hashlib
 import logging
 import re
 import warnings
 
 from .config import (
-    default_copy_slice_size,
     flattener_attribute_map,
     flattener_dimension_map,
     flattener_separator,
@@ -45,20 +29,20 @@ special_attributes = set(flattening_rules)
 
 
 def netcdf_flatten(
-    input_ds, output_ds, lax_mode=False, copy_data=True, copy_slices=None
+    input_ds,
+    output_ds,
+    lax_mode=False,
+    omit_data=False,
+    write_chunksize=134217728,
 ):
     """Create a flattened version of a netCDF dataset.
-
-    For variable that are too big to fit in memory, the optional
-    "copy_slices" input allows to copy some or all of the variables in
-    slices.
 
     .. versionadded:: (cfdm) 1.11.1.0
 
     :Parameters:
 
         input_ds: `netCDF4.Dataset` or `h5netcdf.File`
-            The dataset to be falttened.
+            The dataset to be flattened.
 
         output_ds: `netCDF4.Dataset`
             A container for the flattened dataset.
@@ -68,44 +52,49 @@ def netcdf_flatten(
             halts the execution. If True, then continue with a
             warning.
 
-        copy_data: `bool`, optional
-            If True, the default, then all data arrays are copied
-            from the input to the output dataset. If False, then
-            this does not happen. Use this option only if the data
-            arrays of the flattened dataset are never to be
-            accessed.
+        omit_data: `bool`, optional
+            If True then do not copy the data of any variables from
+            *input_ds* to *output_ds*. This does not affect the amount
+            of netCDF variables and dimensions that are written to the
+            file, nor the netCDF variables' attributes, but for all
+            variables it does not create data on disk or in
+            memory. The resulting dataset will be smaller than it
+            otherwise would have been, and when the new dataset is
+            accessed the data of these variables will be represented
+            by an array of all missing data. If False, the default,
+            then all data arrays are copied.
 
-        copy_slices: `dict`, optional
-            Dictionary containing variable_name/shape key/value
-            pairs, where variable_name is the path to the variable
-            name in the original dataset (for instance
-            ``/group1/group2/my_variable``), and shape is either
-            `None` for using default slice value, or a custom
-            slicing shape in the form of a tuple of the same
-            dimension as the variable (for instance ``(1000, 2000,
-            1500)`` for a 3-dimensional variable). If a variable
-            from the dataset is not contained in the dictionary
-            then it will not be sliced and copied normally.
+        write_chunksize: `int`, optional
+            When *omit_data* is False, the copying of data is done
+            piecewise to keep memory usage down. *write_chunksize* is
+            the size in bytes of how much data is copied from
+            *input_ds* to *output_ds* for each piece. Ignored if
+            *omit_data* is True.
 
     """
     _Flattener(
-        input_ds, lax_mode, copy_data=copy_data, copy_slices=copy_slices
-    ).flatten(output_ds)
+        input_ds,
+        output_ds,
+        lax_mode,
+        omit_data=omit_data,
+        write_chunksize=write_chunksize,
+    ).flatten()
 
 
-def parse_var_attr(attribute):
+def parse_attribute(name, attribute):
     """Parse variable attribute of any form into a dict:
 
      * 'time' -> {'time': []}
-
      * 'lat lon' -> {'lat': [], 'lon': []}
-
      * 'area: time volume: lat lon' -> {'area': ['time'], 'volume':
        ['lat', 'lon']}
 
     .. versionadded:: (cfdm) 1.11.1.0
 
     :Parameters:
+
+        name: `str`
+            The attribute name (e.g. ``'cell_methods'```).
 
         attribute: `str`
             The attribute value to parse.
@@ -169,8 +158,8 @@ def parse_var_attr(attribute):
                 ]
                 out[term] = values
     else:
-        raise ReferenceException(
-            f"Error while parsing attribute value: {attribute!r}"
+        raise AttributeParsingException(
+            f"Error parsing {name!r} attribute with value {attribute!r}"
         )
 
     return out
@@ -181,15 +170,15 @@ def generate_var_attr_str(d):
 
     .. versionadded:: (cfdm) 1.11.1.0
 
-        :Parameters:
+    :Parameters:
 
-            d: `dict`
-                A resolved and parsed attribute.
+        d: `dict`
+            A resolved and parsed attribute.
 
-        :Returns:
+    :Returns:
 
-            `str`
-                The flattened attribute value.
+        `str`
+            The flattened attribute value.
 
     """
     parsed_list = []
@@ -214,56 +203,74 @@ class _Flattener:
 
     """
 
-    def __init__(self, input_ds, lax_mode, copy_data=True, copy_slices=None):
+    def __init__(
+        self,
+        input_ds,
+        output_ds,
+        lax_mode,
+        omit_data=False,
+        write_chunksize=134217728,
+    ):
         """**Initialisation**
 
         :Parameters:
 
             input_ds: `netCDF4.Dataset` or `h5netcdf.File`
-                The dataset to be falttened.
+                See `netcdf_flatten`.
+
+            output_ds: `netCDF4.Dataset`
+                See `netcdf_flatten`.
 
             lax_mode: `bool`, optional
-                If False, the default, the not resolving a reference
-                halts the execution. If True, then continue with a
-                warning.
+                See `netcdf_flatten`.
 
-            copy_data: `bool`, optional
-                If True, the default, then all data arrays are copied
-                from the input to the output dataset. If False, then
-                this does not happen. Use this option only if the data
-                arrays of the flattened dataset are never to be
-                accessed.
+            omit_data: `bool`, optional
+                See `netcdf_flatten`.
 
-            copy_slices: `dict`, optional
-                Dictionary containing variable_name/shape key/value
-                pairs, where variable_name is the path to the variable
-                name in the original dataset (for instance
-                ``/group1/group2/my_variable``), and shape is either
-                `None` for using default slice value, or a custom
-                slicing shape in the form of a tuple of the same
-                dimension as the variable (for instance ``(1000, 2000,
-                1500)`` for a 3-dimensional variable). If a variable
-                from the dataset is not contained in the dictionary
-                then it will not be sliced and copied normally.
+            write_chunksize: `int`, optional
+                See `netcdf_flatten`.
 
         """
-        self.__attr_map_value = []
-        self.__dim_map_value = []
-        self.__var_map_value = []
+        self._attr_map_value = []
+        self._dim_map_value = []
+        self._var_map_value = []
 
-        self.__dim_map = {}
-        self.__var_map = {}
+        self._dim_map = {}
+        self._var_map = {}
 
-        self.__lax_mode = lax_mode
+        self._input_ds = input_ds
+        self._output_ds = output_ds
+        self._lax_mode = lax_mode
+        self._omit_data = omit_data
+        self._write_chunksize = write_chunksize
 
-        self.__copy_data = copy_data
-        self.__copy_slices = copy_slices
-
-        self.__input_file = input_ds
-        self.__output_file = None
+        if (
+            output_ds == input_ds
+            or output_ds.filepath() == self.filepath(input_ds)
+            or output_ds.data_model != "NETCDF4"
+        ):
+            raise ValueError(
+                "Invalid inputs. Input and output datasets should "
+                "be different, and output should be of the 'NETCDF4' format."
+            )
 
     def attrs(self, variable):
-        """TODOHDF."""
+        """Return the variable attributes.
+
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        :Parameters:
+
+            var:
+                The dataset variable.
+
+        :Returns:
+
+            `dict`
+                A dictionary of the attribute values keyed by their
+                names.
+
+        """
         try:
             # h5netcdf
             return dict(variable.attrs)
@@ -572,57 +579,35 @@ class _Flattener:
             except AttributeError:
                 return group_separator
 
-    def flatten(self, output_ds):
-        """Flattens and write to output file.
+    def flatten(self):
+        """Flattens and writes to output file.
 
         .. versionadded:: (cfdm) 1.11.1.0
-
-        :Parameters:
-
-            output_ds: `netCDF4.Dataset`
-                A container for the flattened dataset.
 
         :Return:
 
             `None`
 
         """
-        logging.info(
-            f"Flattening the groups of {self.filepath(self.__input_file)}"
-        )
+        input_ds = self._input_ds
+        output_ds = self._output_ds
 
-        if (
-            output_ds == self.__input_file
-            or output_ds.filepath() == self.filepath(self.__input_file)
-            or output_ds.data_model != "NETCDF4"
-        ):
-            raise ValueError(
-                "Invalid inputs. Input and output datasets should "
-                "be different, and output should be of the 'NETCDF4' format."
-            )
-
-        self.__output_file = output_ds
+        logging.info(f"Flattening the groups of {self.filepath(input_ds)}")
 
         # Flatten product
-        self.process_group(self.__input_file)
+        self.process_group(input_ds)
 
         # Add name mapping attributes
-        self.__output_file.setncattr(
-            flattener_attribute_map, self.__attr_map_value
-        )
-        self.__output_file.setncattr(
-            flattener_dimension_map, self.__dim_map_value
-        )
-        self.__output_file.setncattr(
-            flattener_variable_map, self.__var_map_value
-        )
+        output_ds.setncattr(flattener_attribute_map, self._attr_map_value)
+        output_ds.setncattr(flattener_dimension_map, self._dim_map_value)
+        output_ds.setncattr(flattener_variable_map, self._var_map_value)
 
         # Browse flattened variables to rename references:
         logging.info(
             "    Browsing flattened variables to rename references "
             "in attributes"
         )
-        for var in self.__output_file.variables.values():
+        for var in output_ds.variables.values():
             self.adapt_references(var)
 
     def process_group(self, input_group):
@@ -681,12 +666,12 @@ class _Flattener:
         new_attr_name = self.generate_flattened_name(input_group, attr_name)
 
         # Write attribute
-        self.__output_file.setncattr(
+        self._output_ds.setncattr(
             new_attr_name, self.getncattr(input_group, attr_name)
         )
 
         # Store new naming for later and in mapping attribute
-        self.__attr_map_value.append(
+        self._attr_map_value.append(
             self.generate_mapping_str(input_group, attr_name, new_attr_name)
         )
 
@@ -716,17 +701,17 @@ class _Flattener:
         )
 
         # Write dimension
-        self.__output_file.createDimension(
+        self._output_ds.createDimension(
             new_name, (len(dim), None)[dim.isunlimited()]
         )
 
         # Store new name in dict for resolving references later
-        self.__dim_map[
+        self._dim_map[
             self.pathname(self.group(dim), self.name(dim))
         ] = new_name
 
         # Add to name mapping attribute
-        self.__dim_map_value.append(
+        self._dim_map_value.append(
             self.generate_mapping_str(
                 self.group(dim), self.name(dim), new_name
             )
@@ -760,7 +745,7 @@ class _Flattener:
         # Replace old by new dimension names
         new_dims = list(
             map(
-                lambda x: self.__dim_map[
+                lambda x: self._dim_map[
                     self.pathname(self.group(x), self.name(x))
                 ],
                 self.get_dims(var),
@@ -773,13 +758,13 @@ class _Flattener:
 
         attributes = self.attrs(var)
 
-        copy_data = self.__copy_data
-        if copy_data:
-            fill_value = attributes.pop("_FillValue", None)
-        else:
+        omit_data = self._omit_data
+        if omit_data:
             fill_value = False
+        else:
+            fill_value = attributes.pop("_FillValue", None)
 
-        new_var = self.__output_file.createVariable(
+        new_var = self._output_ds.createVariable(
             new_name,
             self.dtype(var),
             new_dims,
@@ -794,34 +779,19 @@ class _Flattener:
             fill_value=fill_value,
         )
 
-        if copy_data:
-            # Find out slice method for variable and copy data
-            copy_slices = self.__copy_slices
-            if copy_slices is None or fullname not in copy_slices:
-                # Copy data as a whole
-                new_var[...] = var[...]
-            elif copy_slices[fullname] is None:
-                # Copy with default slice size
-                copy_slice = tuple(
-                    default_copy_slice_size // len(var.shape)
-                    for _ in range(len(var.shape))
-                )
-                self.copy_var_by_slices(new_var, var, copy_slice)
-            else:
-                # Copy in slices
-                copy_slice = copy_slices[fullname]
-                self.copy_var_by_slices(new_var, var, copy_slice)
+        if not omit_data:
+            self.write_data_in_chunks(var, new_var)
 
         # Copy attributes
         new_var.setncatts(attributes)
 
         # Store new name in dict for resolving references later
-        self.__var_map[
+        self._var_map[
             self.pathname(self.group(var), self.name(var))
         ] = new_name
 
         # Add to name mapping attribute
-        self.__var_map_value.append(
+        self._var_map_value.append(
             self.generate_mapping_str(
                 self.group(var), self.name(var), new_name
             )
@@ -887,44 +857,44 @@ class _Flattener:
             # increment. Finish.
             return False
 
-    def copy_var_by_slices(self, new_var, old_var, copy_slice_shape):
+    def write_data_in_chunks(self, old_var, new_var):
         """Copy the data of a variable to a new one by slice.
 
         .. versionadded:: (cfdm) 1.11.1.0
 
         :Parameters:
 
-            new_var: `netCDF4.Variable`
-                The new variable where to copy dataf.
-
             old_var: `netCDF4.Variable` or `h5netcdf.Variable`
                 The variable where data should be copied from.
 
-            copy_slice_shape: `tuple`
-                The shape of the slice
+            new_var: `netCDF4.Variable`
+                The new variable where to copy data.
 
         :Returns:
 
             `None`
 
         """
-        logging.info(
-            f"        Copying data of {self.name(old_var)} in "
-            f"{copy_slice_shape} slices"
-        )
+        ndim = old_var.ndim
+        shape = old_var.shape
+        chunk_shape = (
+            (self.write_chunksize // (old_var.dtype.itemsize * ndim)),
+        ) * ndim
 
+        logging.info(
+            f"        Copying {self.name(old_var)!r} data in chunks of "
+            f"{chunk_shape}"
+        )
         # Initial position vector
-        pos = [0 for _ in range(len(copy_slice_shape))]
+        pos = [0] * ndim
 
         # Copy in slices until end reached
         var_end_reached = False
         while not var_end_reached:
             # Create current slice
             current_slice = tuple(
-                slice(
-                    pos[dim_i], min(old_var.shape[dim_i], pos[dim_i] + dim_l)
-                )
-                for dim_i, dim_l in enumerate(copy_slice_shape)
+                slice(pos[dim_i], min(shape[dim_i], pos[dim_i] + dim_l))
+                for dim_i, dim_l in enumerate(chunk_shape)
             )
 
             # Copy data in slice
@@ -932,7 +902,7 @@ class _Flattener:
 
             # Get next position
             var_end_reached = not self.increment_pos(
-                pos, 0, copy_slice_shape, old_var.shape
+                pos, 0, chunk_shape, shape
             )
 
     def resolve_reference(self, orig_ref, orig_var, rules):
@@ -964,11 +934,14 @@ class _Flattener:
         absolute_ref = None
         ref_type = ""
 
+        ref_to_dim = rules.ref_to_dim
+        ref_to_var = rules.ref_to_var
+
         # Resolve first as dim (True), or var (False)
-        resolve_dim_or_var = rules.ref_to_dim > rules.ref_to_var
+        resolve_dim_or_var = ref_to_dim > ref_to_var
 
         # Resolve var (resp. dim) if resolving as dim (resp. var) failed
-        resolve_alt = rules.ref_to_dim and rules.ref_to_var
+        resolve_alt = ref_to_dim and ref_to_var
 
         # Reference is already given by absolute path
         if ref.startswith(group_separator):
@@ -1061,12 +1034,14 @@ class _Flattener:
         else:
             ref_type = "variable"
 
+        stop_at_local_apex = rules.stop_at_local_apex
+
         resolved_var = self.search_by_proximity(
             ref,
             self.group(orig_var),
             resolve_dim_or_var,
             False,
-            rules.stop_at_local_apex,
+            stop_at_local_apex,
         )
 
         # If failed and alternative possible, second tentative
@@ -1081,7 +1056,7 @@ class _Flattener:
                 self.group(orig_var),
                 not resolve_dim_or_var,
                 False,
-                rules.stop_at_local_apex,
+                stop_at_local_apex,
             )
 
         # If found, create ref string
@@ -1160,7 +1135,7 @@ class _Flattener:
                     "coordinates" not in self.ncattrs(orig_var)
                     or orig_ref not in self.getncattr(orig_var, "coordinates")
                 )
-                or self._Flattener__input_file[absolute_ref].ndim > 0
+                or self._input_ds[absolute_ref].ndim > 0
             )
         ):
             logging.info(
@@ -1344,27 +1319,28 @@ class _Flattener:
         var_attrs = self.attrs(var)
         for name in special_attributes.intersection(var_attrs):
             # Parse attribute value
-            parsed_attr = parse_var_attr(var_attrs[name])
+            parsed_attribute = parse_attribute(name, var_attrs[name])
 
             # Resolved references in parsed as required by attribute
             # properties
             resolved_parsed_attr = {}
 
-            rules = flattening_rules.get(name)
-            for k, v in parsed_attr.items():
-                if rules.resolve_key:
+            rules = flattening_rules[name]
+            resolve_key = rules.resolve_key
+            resolve_value = rules.resolve_value
+
+            for k, v in parsed_attribute.items():
+                if resolve_key:
                     k = self.resolve_reference(k, old_var, rules)
 
-                if rules.resolve_value and v is not None:
+                if resolve_value and v is not None:
                     v = [self.resolve_reference(x, old_var, rules) for x in v]
 
                 resolved_parsed_attr[k] = v
 
             # Re-generate attribute value string with resolved
             # references
-            var.setncattr(
-                rules.name, generate_var_attr_str(resolved_parsed_attr)
-            )
+            var.setncattr(name, generate_var_attr_str(resolved_parsed_attr))
 
     def adapt_references(self, var):
         """Adapt references.
@@ -1390,27 +1366,30 @@ class _Flattener:
         var_attrs = self.attrs(var)
         for name in special_attributes.intersection(var_attrs):
             # Parse attribute value
-            attr_value = var_attrs[name]
-            parsed_attr = parse_var_attr(attr_value)
+            value = var_attrs[name]
+            parsed_attribute = parse_attribute(name, value)
 
             adapted_parsed_attr = {}
 
-            rules = flattening_rules.get(name)
-            for k, v in parsed_attr.items():
-                if rules.resolve_key:
+            rules = flattening_rules[name]
+            resolve_key = rules.resolve_key
+            resolve_value = rules.resolve_value
+
+            for k, v in parsed_attribute.items():
+                if resolve_key:
                     k = self.adapt_name(k, rules)
 
-                if rules.resolve_value and v is not None:
+                if resolve_value and v is not None:
                     v = [self.adapt_name(x, rules) for x in v]
 
                 adapted_parsed_attr[k] = v
 
             new_attr_value = generate_var_attr_str(adapted_parsed_attr)
-            var.setncattr(rules.name, new_attr_value)
+            var.setncattr(name, new_attr_value)
 
             logging.info(
-                f"        Value of {self.name(var)}.{rules.name} changed "
-                f"from {attr_value!r} to {new_attr_value!r}"
+                f"        Value of {self.name(var)}.{name} changed "
+                f"from {value!r} to {new_attr_value!r}"
             )
 
     def adapt_name(self, resolved_ref, rules):
@@ -1437,12 +1416,15 @@ class _Flattener:
         if ref_not_found_error in resolved_ref:
             return resolved_ref
 
-        # Select highest priority map
-        if rules.ref_to_dim > rules.ref_to_var:
-            name_mapping = self.__dim_map
+        ref_to_dim = rules.ref_to_dim
+        ref_to_var = rules.ref_to_var
 
-        if rules.ref_to_dim < rules.ref_to_var:
-            name_mapping = self.__var_map
+        # Select highest priority map
+        if ref_to_dim > ref_to_var:
+            name_mapping = self._dim_map
+
+        if ref_to_dim < ref_to_var:
+            name_mapping = self._var_map
 
         # Try to find mapping
         try:
@@ -1450,11 +1432,11 @@ class _Flattener:
 
         # If not found, look in other map if allowed
         except KeyError:
-            if rules.ref_to_dim and rules.ref_to_var:
-                if rules.ref_to_dim < rules.ref_to_var:
-                    name_mapping = self.__dim_map
+            if ref_to_dim and ref_to_var:
+                if ref_to_dim < ref_to_var:
+                    name_mapping = self._dim_map
                 else:
-                    name_mapping = self.__var_map
+                    name_mapping = self._var_map
 
                 try:
                     return name_mapping[resolved_ref]
@@ -1622,22 +1604,32 @@ class _Flattener:
         :Returns:
 
             `str`
-                The error message, or if *lax_mode* is True then a
-                `ReferenceException` is raised.
+                The error message, or if *lax_mode* is True then an
+                `UnresolvedReferenceException` is raised.
 
         """
         message = f"Reference {ref!r} could not be resolved"
         if context is not None:
             message = f"{message} from {context}"
 
-        if self.__lax_mode:
+        if self._lax_mode:
             warnings.warn(message)
             return f"{ref_not_found_error}_{ref}"
         else:
-            raise ReferenceException(message)
+            raise UnresolvedReferenceException(message)
 
 
-class ReferenceException(Exception):
+class AttributeParsingException(Exception):
+    """Exception for unparsable attribute.
+
+    .. versionadded:: (cfdm) 1.11.1.0
+
+    """
+
+    pass
+
+
+class UnresolvedReferenceException(Exception):
     """Exception for unresolvable references in attributes.
 
     .. versionadded:: (cfdm) 1.11.1.0

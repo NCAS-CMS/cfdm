@@ -20,6 +20,7 @@ Reading and writing
 
    cfdm.read 
    cfdm.write
+   cfdm.netcdf_flatten
 
 Constants
 ---------
