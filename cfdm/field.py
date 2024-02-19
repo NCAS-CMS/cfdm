@@ -1116,6 +1116,8 @@ class Field(
                             end = start + last
                             compressed_data[start:end] = d[:last]
                             start += last
+                    elif c.data.ndim == 1:
+                        compressed_data = data
                     else:
                         for last, d in zip(
                             count, data.flatten(range(data.ndim - 1))
@@ -1157,6 +1159,8 @@ class Field(
                             end = start + last
                             compressed_data[start:end] = d[:last]
                             start += last
+                    elif c.data.ndim == 1:
+                        compressed_data = data
                     else:
                         for last, d in zip(
                             count, data.flatten(range(c.data.ndim - 1))
@@ -1190,7 +1194,7 @@ class Field(
             return f
 
         if method == "contiguous":
-            if self.data.ndim != 2:
+            if self.data.ndim not in (1, 2): #!= 2:
                 raise ValueError(
                     "The field data must have exactly 2 dimensions for "
                     f"DSG ragged contiguous compression. Got {self.data.ndim}"
@@ -1222,32 +1226,39 @@ class Field(
             # --------------------------------------------------------
             # DSG compression
             # --------------------------------------------------------
-            flattened_data = data.flatten(range(data.ndim - 1))
+            if data.ndim == 1:
+                print ('HERE')
+                count = (data.size,)
+                compressed_field_data = data
+                N = count[0]
+            else:
+                flattened_data = data.flatten(range(data.ndim - 1))
 
-            count = []
-            masked = np.ma.masked
-            for d in flattened_data:
-                d = d.array
-                last = d.size
-                for i in d[::-1]:
-                    if i is not masked:
-                        break
-
-                    last -= 1
-
-                count.append(last)
-
-            N = sum(count)
-            compressed_field_data = _empty_compressed_data(data, (N,))
-
-            start = 0
-            for last, d in zip(count, flattened_data):
-                if not last:
-                    continue
-
-                end = start + last
-                compressed_field_data[start:end] = d[:last]
-                start += last
+                count = []
+                masked = np.ma.masked
+                for d in flattened_data:
+                    d = d.array
+                    last = d.size
+                    for i in d[::-1]:
+                        if i is not masked:
+                            break
+    
+                        last -= 1
+    
+                    count.append(last)
+    
+                N = sum(count)
+                compressed_field_data = _empty_compressed_data(data, (N,))
+    
+                start = 0
+                for last, d in zip(count, flattened_data):
+                    if not last:
+                        continue
+    
+                    end = start + last
+                    compressed_field_data[start:end] = d[:last]
+                    start += last
+                
 
         if method == "contiguous":
             # --------------------------------------------------------
