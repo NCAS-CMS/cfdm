@@ -2178,6 +2178,8 @@ class Field(
         (19, 73, 1, 96)
         >>> f.data.shape
         (19, 73, 1, 96)
+        >>> f.insert_dimension(None, 1).data.shape
+        (19, 1, 73, 1, 96)
 
         """
         f = _inplace_enabled_define_and_cleanup(self)
@@ -2185,11 +2187,11 @@ class Field(
         if axis is None:
             axis = f.set_construct(self._DomainAxis(1))
         else:
-            domain_axis = f.domain_axes(todict=True).get(axis)
-            if domain_axis is None:
-                raise ValueError(
-                    f"Can't insert non-existent domain axis: {axis}"
-                )
+            axis, domain_axis = f.domain_axis(
+                axis,
+                item=True,
+                default=ValueError("Can't identify a unique axis to insert"),
+            )
 
             if domain_axis.get_size() != 1:
                 raise ValueError(
