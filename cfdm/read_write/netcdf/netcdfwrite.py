@@ -2761,7 +2761,6 @@ class NetCDFWrite(IOWrite):
         )  # pragma: no cover
 
         try:
-            print(repr(cfvar))
             self._createVariable(**kwargs)
         except RuntimeError as error:
             error = str(error)
