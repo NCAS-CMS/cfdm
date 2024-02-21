@@ -539,7 +539,7 @@ class FieldTest(unittest.TestCase):
         f.set_construct(cfdm.DomainAxis(0), key="")
         self.assertTrue(f.has_construct(""))
 
-    def test_Field_squeeze_transpose_insert_dimension(self):
+    def test_Field_squeeze_transpose(self):
         """Test squeeze and transpose methods."""
         f = self.f1
 
@@ -555,7 +555,7 @@ class FieldTest(unittest.TestCase):
             (g.get_data_axes(), f.get_data_axes()),
         )
 
-    def test_Field_squeeze_insert_dimension(self):
+    def test_Field_insert_dimension(self):
         """Test cfdm.Field.insert_dimension method."""
         f = self.f1
         g = f.copy()
