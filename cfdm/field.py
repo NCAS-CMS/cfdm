@@ -7,6 +7,7 @@ from . import (
     Constructs,
     Count,
     Domain,
+    DomainAxis,
     Index,
     List,
     core,
@@ -105,6 +106,7 @@ class Field(
         instance._AuxiliaryCoordinate = AuxiliaryCoordinate
         instance._Constructs = Constructs
         instance._Domain = Domain
+        instance._DomainAxis = DomainAxis
         instance._RaggedContiguousArray = RaggedContiguousArray
         instance._RaggedIndexedArray = RaggedIndexedArray
         instance._RaggedIndexedContiguousArray = RaggedIndexedContiguousArray
@@ -1032,8 +1034,6 @@ class Field(
             return self._RaggedContiguousArray(
                 compressed_data,
                 shape=data.shape,
-                #                size=data.size,
-                #                ndim=data.ndim,
                 count_variable=count_variable,
             )
 
@@ -1041,8 +1041,6 @@ class Field(
             return self._RaggedIndexedArray(
                 compressed_data,
                 shape=data.shape,
-                #                size=data.size,
-                #                ndim=data.ndim,
                 index_variable=index_variable,
             )
 
@@ -1052,8 +1050,6 @@ class Field(
             return self._RaggedIndexedContiguousArray(
                 compressed_data,
                 shape=data.shape,
-                #                size=data.size,
-                #                ndim=data.ndim,
                 count_variable=count_variable,
                 index_variable=index_variable,
             )
@@ -1173,6 +1169,37 @@ class Field(
                     y = Array_func(f, compressed_data, data=data, **kwargs)
                     data._set_CompressedArray(y, copy=False)
 
+        def _derive_count(flattened_data):
+            """Derive the DSG count for each feature.
+
+            :Parameters:
+
+                flattened_data: array_like
+                    The 2-d flattened array from which to derive the
+                    counts. The leading dimension is the number of
+                    features.
+
+            :Returns:
+
+                `list`
+                    The count for each feature.
+
+            """
+            count = []
+            masked = np.ma.masked
+            for d in flattened_data:
+                d = d.array
+                last = d.size
+                for i in d[::-1]:
+                    if i is not masked:
+                        break
+
+                    last -= 1
+
+                count.append(last)
+
+            return count
+
         f = _inplace_enabled_define_and_cleanup(self)
 
         data = f.get_data(None)
@@ -1224,18 +1251,25 @@ class Field(
             # --------------------------------------------------------
             flattened_data = data.flatten(range(data.ndim - 1))
 
-            count = []
-            masked = np.ma.masked
-            for d in flattened_data:
-                d = d.array
-                last = d.size
-                for i in d[::-1]:
-                    if i is not masked:
-                        break
+            # Try to get the counts from an auxiliary coordinate
+            # construct that spans the same axes as the field data
+            count = None
+            data_axes = f.get_data_axes()
+            construct_axes = f.constructs.data_axes()
+            for key, c in (
+                f.auxiliary_coordinates().filter_by_data(todict=True).items()
+            ):
+                if construct_axes[key] != data_axes:
+                    continue
 
-                    last -= 1
+                count = _derive_count(c.data.flatten(range(c.ndim - 1)))
+                break
 
-                count.append(last)
+            if count is None:
+                # When no auxiliary coordinate constructs span the
+                # field data dimensions, get the counts from the field
+                # data.
+                count = _derive_count(flattened_data)
 
             N = sum(count)
             compressed_field_data = _empty_compressed_data(data, (N,))
@@ -2081,7 +2115,9 @@ class Field(
         return tuple([indices[axis] for axis in self.get_data_axes()])
 
     @_inplace_enabled(default=False)
-    def insert_dimension(self, axis, position=0, inplace=False):
+    def insert_dimension(
+        self, axis, position=0, constructs=False, inplace=False
+    ):
         """Expand the shape of the data array.
 
         Inserts a new size 1 axis, corresponding to an existing domain
@@ -2097,6 +2133,9 @@ class Field(
                 The identifier of the domain axis construct
                 corresponding to the inserted axis.
 
+                If *axis* is `None` then a new domain axis construct
+                will be created for the inserted dimension.
+
                 *Parameter example:*
                   ``axis='domainaxis2'``
 
@@ -2111,6 +2150,13 @@ class Field(
 
                 *Parameter example:*
                   ``position=-1``
+
+            constructs: `bool`
+                If True then also insert the new axis into all
+                metadata constructs that don't already include it. By
+                default, metadata constructs are not changed.
+
+                .. versionadded:: (cfdm) 1.11.1.0
 
             {{inplace: `bool`, optional}}
 
@@ -2132,22 +2178,30 @@ class Field(
         (19, 73, 1, 96)
         >>> f.data.shape
         (19, 73, 1, 96)
+        >>> f.insert_dimension(None, 1).data.shape
+        (19, 1, 73, 1, 96)
 
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        domain_axis = f.domain_axes(todict=True).get(axis)
-        if domain_axis is None:
-            raise ValueError(f"Can't insert non-existent domain axis: {axis}")
-
-        if domain_axis.get_size() != 1:
-            raise ValueError(
-                f"Can only insert axis of size 1. Axis {axis!r} has size "
-                f"{domain_axis.get_size()}"
+        if axis is None:
+            axis = f.set_construct(self._DomainAxis(1))
+        else:
+            axis, domain_axis = f.domain_axis(
+                axis,
+                item=True,
+                default=ValueError("Can't identify a unique axis to insert"),
             )
+
+            if domain_axis.get_size() != 1:
+                raise ValueError(
+                    f"Can only insert axis of size 1. Axis {axis!r} has size "
+                    f"{domain_axis.get_size()}"
+                )
 
         data_axes = f.get_data_axes(default=None)
         if data_axes is not None:
+            data_axes0 = data_axes[:]
             if axis in data_axes:
                 raise ValueError(
                     f"Can't insert a duplicate data array axis: {axis!r}"
@@ -2159,8 +2213,43 @@ class Field(
         # Expand the dims in the field's data array
         super(Field, f).insert_dimension(position, inplace=True)
 
+        # Update the axes
         if data_axes is not None:
             f.set_data_axes(data_axes)
+
+        if constructs:
+            if data_axes is None:
+                data_axes0 = []
+                position = 0
+
+            for key, construct in f.constructs.filter_by_data(
+                todict=True
+            ).items():
+                data = construct.get_data(
+                    None, _units=False, _fill_value=False
+                )
+                if data is None:
+                    continue
+
+                construct_axes = list(f.get_data_axes(key))
+                if axis in construct_axes:
+                    continue
+
+                # Find the position of the new axis
+                c_position = position
+                for a in data_axes0:
+                    if a not in construct_axes:
+                        c_position -= 1
+
+                if c_position < 0:
+                    c_position = 0
+
+                # Expand the dims in the construct's data array
+                construct.insert_dimension(c_position, inplace=True)
+
+                # Update the construct axes
+                construct_axes.insert(c_position, axis)
+                f.set_data_axes(axes=construct_axes, key=key)
 
         return f
 
