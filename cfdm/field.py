@@ -1176,7 +1176,7 @@ class Field(
 
                 flattened_data: array_like
                     The 2-d flattened array from which to derive the
-                    counts. The leading dimension if the number of
+                    counts. The leading dimension is the number of
                     features.
 
             :Returns:
