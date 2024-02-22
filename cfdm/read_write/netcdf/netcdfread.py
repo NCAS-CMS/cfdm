@@ -17,6 +17,7 @@ from uuid import uuid4
 import h5netcdf
 import netCDF4
 import numpy as np
+from dask.base import tokenize
 from packaging.version import Version
 from s3fs import S3FileSystem
 
@@ -514,12 +515,17 @@ class NetCDFRead(IORead):
             # Create an openable S3 file object
             storage_options = g["storage_options"]
             g["file_system_storage_options"][filename] = storage_options
-            if "endpoint_url" not in storage_options:
+
+            client_kwargs = storage_options.get("client_kwargs", {})
+            if (
+                "endpoint_url" not in storage_options
+                and "endpoint_url" not in client_kwargs
+            ):
                 # Derive endpoint_url from filename
                 storage_options = storage_options.copy()
                 storage_options["endpoint_url"] = f"https://{u.netloc}"
 
-            key = tuple(sorted(storage_options.items()))
+            key = tokenize(storage_options)
             file_systems = g["file_systems"]
             fs = file_systems.get(key)
             if fs is None:

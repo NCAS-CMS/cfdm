@@ -289,13 +289,18 @@ class FileArrayMixin:
          'client_kwargs': {'region_name': 'fr-par'}}
 
         """
-        out = self._get_component("storage_options", None)
-        if not out:
-            out = {}
+        storage_options = self._get_component("storage_options", None)
+        if not storage_options:
+            storage_options = {}
         else:
-            out = deepcopy(out)
+            storage_options = deepcopy(storage_options)
 
-        if create_endpoint_url and "endpoint_url" not in out:
+        client_kwargs = storage_options.get("client_kwargs", {})
+        if (
+            create_endpoint_url
+            and "endpoint_url" not in storage_options
+            and "endpoint_url" not in client_kwargs
+        ):
             if parsed_filename is None:
                 if filename is None:
                     try:
@@ -309,9 +314,11 @@ class FileArrayMixin:
 
             if parsed_filename is not None and parsed_filename.scheme == "s3":
                 # Derive endpoint_url from filename
-                out["endpoint_url"] = f"https://{parsed_filename.netloc}"
+                storage_options[
+                    "endpoint_url"
+                ] = f"https://{parsed_filename.netloc}"
 
-        return out
+        return storage_options
 
     def open(self, func, *args, **kwargs):
         """Return a dataset file object and address.
