@@ -227,7 +227,7 @@ class FunctionsTest(unittest.TestCase):
 
     def test_example_field(self):
         """Test the `example_field` function."""
-        top = 11
+        top = 12
 
         example_fields = cfdm.example_fields()
         self.assertEqual(len(example_fields), top)

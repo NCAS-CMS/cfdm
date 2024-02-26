@@ -5,6 +5,8 @@ Version 1.11.1.0
 
 * New keyword parameter to `cfdm.Field.insert_dimension`:
   ``constructs`` (https://github.com/NCAS-CMS/cfdm/issues/287)
+* New example field `11`: discrete sampling geometry trajectory
+  features (https://github.com/NCAS-CMS/cfdm/issues/2??)
 
 ----
 
