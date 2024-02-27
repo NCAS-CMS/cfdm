@@ -5168,6 +5168,7 @@ def example_field(n, _implementation=_implementation):
                 "Conventions": "CF-1.11",
                 "featureType": "trajectory",
                 "standard_name": "mole_fraction_of_ozone_in_air",
+                "units": "ppb",
             }
         )
         f.nc_set_variable("O3")
@@ -5196,7 +5197,13 @@ def example_field(n, _implementation=_implementation):
         #
         # auxiliary_coordinate: time
         c = AuxiliaryCoordinate()
-        c.set_properties({"standard_name": "time", "calendar": "standard"})
+        c.set_properties(
+            {
+                "standard_name": "time",
+                "calendar": "standard",
+                "units": "seconds since 2024-02-26 09:00:00",
+            }
+        )
         c.nc_set_variable("time")
         data = Data(
             [[60, 129, 180, 240]],
@@ -5214,7 +5221,7 @@ def example_field(n, _implementation=_implementation):
         #
         # auxiliary_coordinate: altitude
         c = AuxiliaryCoordinate()
-        c.set_properties({"standard_name": "altitude"})
+        c.set_properties({"standard_name": "altitude", "units": "m"})
         c.nc_set_variable("altitude")
         data = Data([[2577, 2576, 2575, 2563]], units="m", dtype="f4")
         c.set_data(data)
@@ -5227,7 +5234,7 @@ def example_field(n, _implementation=_implementation):
         #
         # auxiliary_coordinate: air_pressure
         c = AuxiliaryCoordinate()
-        c.set_properties({"standard_name": "air_pressure"})
+        c.set_properties({"standard_name": "air_pressure", "units": "hPa"})
         c.nc_set_variable("air_pressure")
         data = Data([[751, 755, 758, 780]], units="hPa", dtype="f4")
         c.set_data(data)
@@ -5240,7 +5247,9 @@ def example_field(n, _implementation=_implementation):
         #
         # auxiliary_coordinate: latitude
         c = AuxiliaryCoordinate()
-        c.set_properties({"standard_name": "latitude"})
+        c.set_properties(
+            {"standard_name": "latitude", "units": "degree_north"}
+        )
         c.nc_set_variable("latitude")
         data = Data([[52, 52.5, 52.6, 52.2]], units="degree_north", dtype="f8")
         c.set_data(data)
@@ -5253,7 +5262,9 @@ def example_field(n, _implementation=_implementation):
         #
         # auxiliary_coordinate: longitude
         c = AuxiliaryCoordinate()
-        c.set_properties({"standard_name": "longitude"})
+        c.set_properties(
+            {"standard_name": "longitude", "units": "degree_east"}
+        )
         c.nc_set_variable("longitude")
         data = Data([[0.0, 0.3, 0.2, 0.31]], units="degree_east", dtype="f8")
         c.set_data(data)
