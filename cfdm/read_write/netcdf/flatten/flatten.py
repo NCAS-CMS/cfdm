@@ -233,7 +233,7 @@ class _Flattener:
         self,
         input_ds,
         output_ds,
-        strict,
+        strict=True,
         omit_data=False,
         write_chunksize=134217728,
     ):
