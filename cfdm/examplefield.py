@@ -3,6 +3,9 @@ from .functions import CF
 
 _implementation = implementation()
 
+# The number of example fields
+_n_example_fields = 12
+
 
 def example_field(n, _implementation=_implementation):
     """Return an example field construct.
@@ -51,6 +54,9 @@ def example_field(n, _implementation=_implementation):
             ``9``   A UGRID mesh topology of edge cells.
 
             ``10``  A UGRID mesh topology of point cells.
+
+            ``11``  Discrete sampling geometry (DSG) "trajectory"
+                    features.
             ======  ==================================================
 
             See the examples for details.
@@ -200,6 +206,27 @@ def example_field(n, _implementation=_implementation):
                     : latitude(ncdim%nMesh2_face(3)) = [34.0, 34.0, 34.0] degrees_north
     Domain Topology : cell:face(ncdim%nMesh2_face(3), 4) = [[2, ..., --]]
     Cell connects   : connectivity:edge(ncdim%nMesh2_face(3), 5) = [[0, ..., --]]
+
+    >>> print(cfdm.example_field(10))
+    Field: air_pressure (ncvar%pa)
+    ------------------------------
+    Data            : air_pressure(time(2), ncdim%nMesh2_node(7)) hPa
+    Cell methods    : time(2): point (interval: 3600 s)
+    Dimension coords: time(2) = [2016-01-02 01:00:00, 2016-01-02 11:00:00] gregorian
+    Auxiliary coords: longitude(ncdim%nMesh2_node(7)) = [-45.0, ..., -40.0] degrees_east
+                    : latitude(ncdim%nMesh2_node(7)) = [35.0, ..., 34.0] degrees_north
+    Topologies      : cell:point(ncdim%nMesh2_node(7), 5) = [[0, ..., --]]
+
+    >>> print(cfdm.example_field(11))
+    Field: mole_fraction_of_ozone_in_air (ncvar%O3)
+    -----------------------------------------------
+    Data            : mole_fraction_of_ozone_in_air(cf_role=trajectory_id(1), ncdim%trajectory(4)) ppb
+    Auxiliary coords: time(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[2024-02-26 09:01:00, ..., 2024-02-26 09:04:00]] standard
+                    : altitude(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[2577.0, ..., 2563.0]] m
+                    : air_pressure(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[751.0, ..., 780.0]] hPa
+                    : latitude(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[52.0, ..., 52.2]] degree_north
+                    : longitude(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[0.0, ..., 0.31]] degree_east
+                    : cf_role=trajectory_id(cf_role=trajectory_id(1)) = [flight1]
 
     """
     # For safety given the private second argument which we might not
@@ -5136,10 +5163,137 @@ def example_field(n, _implementation=_implementation):
         #
         # field data axes
         f.set_data_axes(("domainaxis0", "domainaxis2"))
+    elif n == 11:
+        # field: mole_fraction_of_ozone_in_air
+        f = Field()
+        f.set_properties(
+            {
+                "Conventions": "CF-1.11",
+                "featureType": "trajectory",
+                "standard_name": "mole_fraction_of_ozone_in_air",
+                "units": "ppb",
+            }
+        )
+        f.nc_set_variable("O3")
+        data = Data(
+            [[50.0, 51.0, 49.0, 53.0]],
+            units="ppb",
+            dtype="f4",
+            fill_value=-9999.0,
+        )
+        f.set_data(data)
+        #
+        # netCDF global attributes
+        f.nc_set_global_attributes({"Conventions": None, "featureType": None})
+        #
+        # domain_axis: ncdim%dim
+        c = DomainAxis()
+        c.set_size(1)
+        c.nc_set_dimension("dim")
+        f.set_construct(c, key="domainaxis0", copy=False)
+        #
+        # domain_axis: ncdim%trajectory
+        c = DomainAxis()
+        c.set_size(4)
+        c.nc_set_dimension("trajectory")
+        f.set_construct(c, key="domainaxis1", copy=False)
+        #
+        # auxiliary_coordinate: time
+        c = AuxiliaryCoordinate()
+        c.set_properties(
+            {
+                "standard_name": "time",
+                "calendar": "standard",
+                "units": "seconds since 2024-02-26 09:00:00",
+            }
+        )
+        c.nc_set_variable("time")
+        data = Data(
+            [[60, 129, 180, 240]],
+            units="seconds since 2024-02-26 09:00:00",
+            calendar="standard",
+            dtype="f4",
+        )
+        c.set_data(data)
+        f.set_construct(
+            c,
+            axes=("domainaxis0", "domainaxis1"),
+            key="auxiliarycoordinate0",
+            copy=False,
+        )
+        #
+        # auxiliary_coordinate: altitude
+        c = AuxiliaryCoordinate()
+        c.set_properties({"standard_name": "altitude", "units": "m"})
+        c.nc_set_variable("altitude")
+        data = Data([[2577, 2576, 2575, 2563]], units="m", dtype="f4")
+        c.set_data(data)
+        f.set_construct(
+            c,
+            axes=("domainaxis0", "domainaxis1"),
+            key="auxiliarycoordinate1",
+            copy=False,
+        )
+        #
+        # auxiliary_coordinate: air_pressure
+        c = AuxiliaryCoordinate()
+        c.set_properties({"standard_name": "air_pressure", "units": "hPa"})
+        c.nc_set_variable("air_pressure")
+        data = Data([[751, 755, 758, 780]], units="hPa", dtype="f4")
+        c.set_data(data)
+        f.set_construct(
+            c,
+            axes=("domainaxis0", "domainaxis1"),
+            key="auxiliarycoordinate2",
+            copy=False,
+        )
+        #
+        # auxiliary_coordinate: latitude
+        c = AuxiliaryCoordinate()
+        c.set_properties(
+            {"standard_name": "latitude", "units": "degree_north"}
+        )
+        c.nc_set_variable("latitude")
+        data = Data([[52, 52.5, 52.6, 52.2]], units="degree_north", dtype="f8")
+        c.set_data(data)
+        f.set_construct(
+            c,
+            axes=("domainaxis0", "domainaxis1"),
+            key="auxiliarycoordinate3",
+            copy=False,
+        )
+        #
+        # auxiliary_coordinate: longitude
+        c = AuxiliaryCoordinate()
+        c.set_properties(
+            {"standard_name": "longitude", "units": "degree_east"}
+        )
+        c.nc_set_variable("longitude")
+        data = Data([[0.0, 0.3, 0.2, 0.31]], units="degree_east", dtype="f8")
+        c.set_data(data)
+        f.set_construct(
+            c,
+            axes=("domainaxis0", "domainaxis1"),
+            key="auxiliarycoordinate4",
+            copy=False,
+        )
+        #
+        # auxiliary_coordinate: cf_role=trajectory_id
+        c = AuxiliaryCoordinate()
+        c.set_properties({"cf_role": "trajectory_id"})
+        c.nc_set_variable("campaign")
+        data = Data(["flight1"], dtype="U7")
+        c.set_data(data)
+        f.set_construct(
+            c, axes=("domainaxis0",), key="auxiliarycoordinate5", copy=False
+        )
+        #
+        # field data axes
+        f.set_data_axes(("domainaxis0", "domainaxis1"))
     else:
         raise ValueError(
-            "Must select an example construct with an integer "
-            f"argument between 0 and 8 inclusive. Got {n!r}"
+            "Must select an example construct with an integer argument "
+            f"between 0 and {_n_example_fields - 1} inclusive. Got {n!r}"
         )
 
     return f
@@ -5193,6 +5347,9 @@ def example_fields(*n, _func=example_field):
             ``9``   A UGRID mesh topology of edge cells.
 
             ``10``  A UGRID mesh topology of point cells.
+
+            ``11``  Discrete sampling geometry (DSG) "trajectory"
+                    features.
             ======  ==================================================
 
             If no individual field constructs are selected then all
@@ -5224,7 +5381,8 @@ def example_fields(*n, _func=example_field):
      <Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1>,
      <Field: air_temperature(time(2), ncdim%nMesh2_face(3)) K>,
      <Field: northward_wind(time(2), ncdim%nMesh2_edge(9)) ms-1>,
-     <Field: air_pressure(time(2), ncdim%nMesh2_node(7)) hPa>]
+     <Field: air_pressure(time(2), ncdim%nMesh2_node(7)) hPa>,
+     <CF Field: mole_fraction_of_ozone_in_air(cf_role=trajectory_id(1), ncdim%trajectory(4)) ppb>]
 
     >>> cfdm.example_fields(7, 1)
     [<Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1>,
@@ -5302,6 +5460,9 @@ def example_domain(n, _func=example_field):
             ``9``   A UGRID mesh topology of edge cells.
 
             ``10``  A UGRID mesh topology of point cells.
+
+            ``11``  Discrete sampling geometry (DSG) "trajectory"
+                    features.
             ======  ==================================================
 
             See the examples for details.
@@ -5391,6 +5552,34 @@ def example_domain(n, _func=example_field):
     Auxiliary coords: latitude(grid_latitude(4), grid_longitude(5)) = [[52.4243, ..., 51.1163]] degrees_north
                     : longitude(grid_latitude(4), grid_longitude(5)) = [[8.0648, ..., 10.9238]] degrees_east
     Coord references: grid_mapping_name:rotated_latitude_longitude
+
+    >>> print(example_domain(8))
+    Dimension coords: time(2) = [2016-01-02 01:00:00, 2016-01-02 11:00:00] gregorian
+    Auxiliary coords: longitude(ncdim%nMesh2_face(3)) = [-44.0, -44.0, -42.0] degrees_east
+                    : latitude(ncdim%nMesh2_face(3)) = [34.0, 32.0, 34.0] degrees_north
+    Topologies      : cell:face(ncdim%nMesh2_face(3), 4) = [[2, ..., --]]
+    Connectivities  : connectivity:edge(ncdim%nMesh2_face(3), 5) = [[0, ..., --]]
+
+    >>> print(example_domain(9))
+    Dimension coords: time(2) = [2016-01-02 01:00:00, 2016-01-02 11:00:00] gregorian
+    Auxiliary coords: longitude(ncdim%nMesh2_edge(9)) = [-41.5, ..., -43.0] degrees_east
+                    : latitude(ncdim%nMesh2_edge(9)) = [34.5, ..., 32.0] degrees_north
+    Topologies      : cell:edge(ncdim%nMesh2_edge(9), 2) = [[1, ..., 5]]
+    Connectivities  : connectivity:node(ncdim%nMesh2_edge(9), 6) = [[0, ..., --]]
+
+    >>> print(example_domain(10))
+    Dimension coords: time(2) = [2016-01-02 01:00:00, 2016-01-02 11:00:00] gregorian
+    Auxiliary coords: longitude(ncdim%nMesh2_node(7)) = [-45.0, ..., -40.0] degrees_east
+                    : latitude(ncdim%nMesh2_node(7)) = [35.0, ..., 34.0] degrees_north
+    Topologies      : cell:point(ncdim%nMesh2_node(7), 5) = [[0, ..., --]]
+
+    >>> print(cfdm.example_domain(11)
+    Auxiliary coords: time(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[2024-02-26 09:01:00, ..., 2024-02-26 09:04:00]] standard
+                    : altitude(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[2577.0, ..., 2563.0]] m
+                    : air_pressure(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[751.0, ..., 780.0]] hPa
+                    : latitude(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[52.0, ..., 52.2]] degree_north
+                    : longitude(cf_role=trajectory_id(1), ncdim%trajectory(4)) = [[0.0, ..., 0.31]] degree_east
+                    : cf_role=trajectory_id(cf_role=trajectory_id(1)) = [flight1]
 
     """
     return _func(n).get_domain()
