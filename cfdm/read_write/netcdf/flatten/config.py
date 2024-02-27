@@ -36,7 +36,9 @@ class FlatteningRules:
     """Define the flattening rules for a netCDF attribute.
 
     For a named netCDF attribute, the rules a define how the contents
-    of the attribute are flattened.
+    of the attribute are flattened. For instance, the
+    ``ancillary_variables`` attribute contains the names of other
+    netCDF variables, separated by spaces.
 
     .. versionadded:: (cfdm) 1.11.1.0
 
@@ -58,7 +60,7 @@ class FlatteningRules:
     #                value1 key2: value2 value3'
     resolve_value: bool = False
     # stop_at_local_apex: True if upward research in the hierarchy has
-    #                     to stop at local apex
+    #                     to stop at local apex.
     stop_at_local_apex: bool = False
     # accept_standard_names: True if any standard name is valid in
     #                        place of references (in which case no

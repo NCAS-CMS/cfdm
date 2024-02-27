@@ -598,7 +598,7 @@ class NetCDFRead(IORead):
             flat_nc.set_fill_off()
 
             # Flatten the file
-            netcdf_flatten(nc, flat_nc, lax_mode=True, omit_data=True)
+            netcdf_flatten(nc, flat_nc, strict=False, omit_data=True)
 
             # Store the original grouped file. This is primarily
             # because the unlimited dimensions in the flattened

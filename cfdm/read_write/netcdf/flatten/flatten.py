@@ -14,7 +14,7 @@ from .config import (
     ref_not_found_error,
 )
 
-# Mapping from numpy dtype endian format to what we expect
+# Mapping from numpy dtype endian format that expected by netCDF4
 _dtype_endian_lookup = {
     "=": "native",
     ">": "big",
@@ -23,19 +23,45 @@ _dtype_endian_lookup = {
     None: "native",
 }
 
-# Set of netCDF attributes that may contain references to dimensions
-# or variables
-special_attributes = set(flattening_rules)
+# Set of netCDF attributes that contain references to dimensions or
+# variables
+referencing_attributes = set(flattening_rules)
 
 
 def netcdf_flatten(
     input_ds,
     output_ds,
-    lax_mode=False,
+    strict=True,
     omit_data=False,
     write_chunksize=134217728,
 ):
     """Create a flattened version of a netCDF dataset.
+
+    **CF-netCDF coordinate variables**
+
+    When a CF-netCDF coordinate variable in the input dataset is in a
+    different group to its corresponding dimension, the same variable
+    in the output flattened dataset will no longer be a CF-netCDF
+    coordinate variable, as its name will be prefixed with a different
+    group identifier than its dimension.
+
+    In such cases, it is up to the user to apply the proximal and
+    lateral search alogrithms, in conjunction with the mappings
+    defined in the ``flattener_name_mapping_variables`` and
+    ``flattener_name_mapping_dimensions`` global attributes, to find
+    which netCDF variables are acting as CF coordinate variables in
+    the flattened dataset. See
+    https://cfconventions.org/cf-conventions/cf-conventions.html#groups
+    for details.
+
+    For example, if an input dataset has dimension ``lat`` in the root
+    group and coordinate variable ``lat(lat)`` in group ``/group1``,
+    then the flattened dataset will contain dimension ``lat`` and
+    variable ``group1__lat(lat)``, both in its root group. In this
+    case, the ``flattener_name_mapping_variables`` global attribute of
+    the flattened dataset will contain the mapping ``'group1__lat:
+    /group1/lat'`` and the flattener_name_mapping_dimensions global
+    attribute will contain the mapping ``'lat: /lat'``.
 
     .. versionadded:: (cfdm) 1.11.1.0
 
@@ -47,10 +73,10 @@ def netcdf_flatten(
         output_ds: `netCDF4.Dataset`
             A container for the flattened dataset.
 
-        lax_mode: `bool`, optional
-            If False, the default, the not resolving a reference
-            halts the execution. If True, then continue with a
-            warning.
+        strict: `bool`, optional
+            If True, the default, then failing to resolve a reference
+            raises an exception. If False, a warning is issued and
+            flattening is continued.
 
         omit_data: `bool`, optional
             If True then do not copy the data of any variables from
@@ -75,7 +101,7 @@ def netcdf_flatten(
     _Flattener(
         input_ds,
         output_ds,
-        lax_mode,
+        strict,
         omit_data=omit_data,
         write_chunksize=write_chunksize,
     ).flatten()
@@ -207,7 +233,7 @@ class _Flattener:
         self,
         input_ds,
         output_ds,
-        lax_mode,
+        strict,
         omit_data=False,
         write_chunksize=134217728,
     ):
@@ -221,7 +247,7 @@ class _Flattener:
             output_ds: `netCDF4.Dataset`
                 See `netcdf_flatten`.
 
-            lax_mode: `bool`, optional
+            strict: `bool`, optional
                 See `netcdf_flatten`.
 
             omit_data: `bool`, optional
@@ -240,8 +266,8 @@ class _Flattener:
 
         self._input_ds = input_ds
         self._output_ds = output_ds
-        self._lax_mode = lax_mode
-        self._omit_data = omit_data
+        self._strict = bool(strict)
+        self._omit_data = bool(omit_data)
         self._write_chunksize = write_chunksize
 
         if (
@@ -1317,7 +1343,7 @@ class _Flattener:
 
         """
         var_attrs = self.attrs(var)
-        for name in special_attributes.intersection(var_attrs):
+        for name in referencing_attributes.intersection(var_attrs):
             # Parse attribute value
             parsed_attribute = parse_attribute(name, var_attrs[name])
 
@@ -1364,7 +1390,7 @@ class _Flattener:
 
         """
         var_attrs = self.attrs(var)
-        for name in special_attributes.intersection(var_attrs):
+        for name in referencing_attributes.intersection(var_attrs):
             # Parse attribute value
             value = var_attrs[name]
             parsed_attribute = parse_attribute(name, value)
@@ -1588,8 +1614,9 @@ class _Flattener:
     def handle_reference_error(self, ref, context=None):
         """Handle reference error.
 
-        Depending on lax/strict mode, either raise exception or log
-        warning. If lax, return reference placeholder.
+        Depending on the `_strict` mode, either raise an exception or
+        log a warning. If not strict then a reference placeholder is
+        returned.
 
         .. versionadded:: (cfdm) 1.11.1.0
 
@@ -1604,7 +1631,7 @@ class _Flattener:
         :Returns:
 
             `str`
-                The error message, or if *lax_mode* is True then an
+                The error message, or if `_strict` is `True` then an
                 `UnresolvedReferenceException` is raised.
 
         """
@@ -1612,11 +1639,11 @@ class _Flattener:
         if context is not None:
             message = f"{message} from {context}"
 
-        if self._lax_mode:
-            warnings.warn(message)
-            return f"{ref_not_found_error}_{ref}"
-        else:
+        if self._strict:
             raise UnresolvedReferenceException(message)
+
+        warnings.warn(message)
+        return f"{ref_not_found_error}_{ref}"
 
 
 class AttributeParsingException(Exception):
