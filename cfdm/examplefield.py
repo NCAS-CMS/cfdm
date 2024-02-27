@@ -3,6 +3,9 @@ from .functions import CF
 
 _implementation = implementation()
 
+# The number of example fields
+_n_example_fields = 12
+
 
 def example_field(n, _implementation=_implementation):
     """Return an example field construct.
@@ -5289,8 +5292,8 @@ def example_field(n, _implementation=_implementation):
         f.set_data_axes(("domainaxis0", "domainaxis1"))
     else:
         raise ValueError(
-            "Must select an example construct with an integer "
-            f"argument between 0 and 8 inclusive. Got {n!r}"
+            "Must select an example construct with an integer argument "
+            f"between 0 and {_n_example_fields - 1} inclusive. Got {n!r}"
         )
 
     return f
