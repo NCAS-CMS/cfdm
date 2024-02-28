@@ -513,17 +513,7 @@ class NetCDFRead(IORead):
         u = urlparse(filename)
         if u.scheme == "s3":
             # Create an openable S3 file object
-            storage_options = g["storage_options"]
-            g["file_system_storage_options"][filename] = storage_options
-
-            client_kwargs = storage_options.get("client_kwargs", {})
-            if (
-                "endpoint_url" not in storage_options
-                and "endpoint_url" not in client_kwargs
-            ):
-                # Derive endpoint_url from filename
-                storage_options = storage_options.copy()
-                storage_options["endpoint_url"] = f"https://{u.netloc}"
+            storage_options = _get_storage_options(filename, u)
 
             key = tokenize(storage_options)
             file_systems = g["file_systems"]
@@ -1100,7 +1090,12 @@ class NetCDFRead(IORead):
             g["version"][version] = Version(version)
 
         if storage_options is None:
-            g["storage_options"] = {"anon": True}
+            #            g["storage_options"] = {"anon": True}
+            g["storage_options"] = {
+                "anon": True,
+                "default_fill_cache": False,
+                "default_cache_type": "first",
+            }
 
         if _file_systems is not None:
             # Update S3 file systems with those passed in as keyword
@@ -10274,3 +10269,32 @@ class NetCDFRead(IORead):
         except AttributeError:
             # h5netcdf
             return prod(var.shape)
+
+    def _get_storage_options(self, filename, parsed_filename):
+        """TODO.
+
+        .. versionadded:: (cfdm) 1.11.1.0
+
+        """
+        g = self.read_vars
+        storage_options = g["storage_options"]
+        g["file_system_storage_options"][filename] = storage_options
+
+        storage_options = storage_options.copy()
+
+        client_kwargs = storage_options.get("client_kwargs", {})
+        if (
+            "endpoint_url" not in storage_options
+            and "endpoint_url" not in client_kwargs
+        ):
+            storage_options[
+                "endpoint_url"
+            ] = f"https://{parsed_filename.netloc}"
+
+        if "default_fill_cache" not in storage_options:
+            storage_options["default_fill_cache"] = False
+
+        if "default_cache_type" not in storage_options:
+            storage_options["default_cache_type"] = "first"
+
+        return storage_options

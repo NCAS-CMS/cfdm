@@ -292,8 +292,9 @@ def read(
             object store, i.e. those whose names do not start with
             ``s3:``.
 
-            By default, or if `None`, then a value of ``{'anon':
-            True}`` is used.
+            By default, or if `None`, then a value of ``{'anon': True,
+            'default_fill_cache': False, 'default_cache_type':
+            'first'}`` is used.
 
             If an ``'endpoint_url'`` key is not in *storage_options*
             then one will be automatically derived for accessing each
