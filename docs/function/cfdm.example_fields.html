@@ -38,7 +38,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cfdm 1.11.0.0</a></h1>
+<h1 class="logo"><a href="../index.html">cfdm 1.11.1.0</a></h1>
 
 
 
@@ -125,7 +125,7 @@ and by <a href="https://ncas.ac.uk/">NCAS</a>.
 <h1>cfdm.example_fields<a class="headerlink" href="#cfdm-example-fields" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cfdm.example_fields">
-<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">example_fields</code><span class="sig-paren">(</span><em class="sig-param">*n</em>, <em class="sig-param">_func=&lt;function example_field&gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.0.0/cfdm/examplefield.py#L5148-L5257"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.example_fields" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cfdm.</code><code class="sig-name descname">example_fields</code><span class="sig-paren">(</span><em class="sig-param">*n</em>, <em class="sig-param">_func=&lt;function example_field&gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.11.1.0/cfdm/examplefield.py#L5302-L5415"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.example_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return example field constructs.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version (cfdm): </span>1.8.9.0</p>
@@ -194,6 +194,10 @@ constructs.</p></td>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
 <td><p>A UGRID mesh topology of point cells.</p></td>
 </tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">11</span></code></p></td>
+<td><p>Discrete sampling geometry (DSG) “trajectory”
+features.</p></td>
+</tr>
 </tbody>
 </table>
 <p>If no individual field constructs are selected then all
@@ -225,7 +229,8 @@ be output in the order that they are given.</p>
 <span class="go"> &lt;Field: eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1&gt;,</span>
 <span class="go"> &lt;Field: air_temperature(time(2), ncdim%nMesh2_face(3)) K&gt;,</span>
 <span class="go"> &lt;Field: northward_wind(time(2), ncdim%nMesh2_edge(9)) ms-1&gt;,</span>
-<span class="go"> &lt;Field: air_pressure(time(2), ncdim%nMesh2_node(7)) hPa&gt;]</span>
+<span class="go"> &lt;Field: air_pressure(time(2), ncdim%nMesh2_node(7)) hPa&gt;,</span>
+<span class="go"> &lt;CF Field: mole_fraction_of_ozone_in_air(cf_role=trajectory_id(1), ncdim%trajectory(4)) ppb&gt;]</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">example_fields</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
@@ -257,7 +262,7 @@ be output in the order that they are given.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2023, NCAS | Page built on 2023-12-06.
+      &copy;2024, NCAS | Page built on 2024-03-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.5</a>
