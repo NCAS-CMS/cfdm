@@ -1,7 +1,7 @@
 Version 1.11.1.0
 ----------------
 
-**2024-??-??**
+**2024-03-01**
 
 * New keyword parameter to `cfdm.Field.insert_dimension`:
   ``constructs`` (https://github.com/NCAS-CMS/cfdm/issues/287)
