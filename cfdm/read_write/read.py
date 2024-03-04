@@ -245,11 +245,12 @@ def read(
             .. versionadded:: (cfdm) 1.8.2
 
         unpack: `bool`
-            If True (the default) then unpack by convention when
-            reading data from disk.
+            If True (the default) then unpack arrays by convention
+            when the data is read from disk.
 
-            A netCDF array is unpacked depending on the values of the
-            netCDF attributes ``add_offset`` and ``scale_factor``.
+            Unpacking is determined netCDF conventions for the
+            following attributes: ``add_offset``, ``scale_factor``,
+            and ``_Unsigned``.
 
             .. versionadded:: (cfdm) NEXTVERSION
 
