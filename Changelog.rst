@@ -25,7 +25,6 @@ Version 1.11.1.0
   ``constructs`` (https://github.com/NCAS-CMS/cfdm/issues/287)
 * New example field `11`: discrete sampling geometry trajectory
   features (https://github.com/NCAS-CMS/cfdm/issues/289)
->>>>>>> 2cfcf7f43f1a0940cd2da91439bc55599a8a02dc
 
 ----
 
