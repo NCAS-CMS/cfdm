@@ -304,8 +304,6 @@ def read(
             an ``'endpoint_url'`` key with value ``'https://store'``
             would be created.
 
-
-
             *Parameter example:*
               For a file name of ``'s3://store/data/file.nc'``, the
               following are equivalent: ``None``, ``{}``, and
