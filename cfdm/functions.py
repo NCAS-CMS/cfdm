@@ -325,7 +325,7 @@ def environment(display=True, paths=True):
     Python: 3.11.4
     packaging: 23.0
     numpy: 1.25.2
-    cfdm.core: 1.11.1.0
+    cfdm.core: NEXTVERSION
     HDF5 library: 1.14.2
     netcdf library: 4.9.2
     netCDF4: 1.6.4
@@ -334,14 +334,14 @@ def environment(display=True, paths=True):
     s3fs: 2023.12.2
     scipy: 1.11.3
     cftime: 1.6.2
-    cfdm: 1.11.1.0
+    cfdm: NEXTVERSION
 
     >>> cfdm.environment()
     Platform: Linux-5.15.0-92-generic-x86_64-with-glibc2.35
     Python: 3.11.4 /home/miniconda3/bin/python
     packaging: 23.0 /home/miniconda3/lib/python3.11/site-packages/packaging/__init__.py
     numpy: 1.25.2 /home/miniconda3/lib/python3.11/site-packages/numpy/__init__.py
-    cfdm.core: 1.11.1.0 /home/cfdm/cfdm/core/__init__.py
+    cfdm.core: NEXTVERSION /home/cfdm/cfdm/core/__init__.py
     HDF5 library: 1.14.2
     netcdf library: 4.9.2
     netCDF4: 1.6.4 /home/miniconda3/lib/python3.11/site-packages/netCDF4/__init__.py
@@ -350,7 +350,7 @@ def environment(display=True, paths=True):
     s3fs: 2023.12.2 /home/miniconda3/lib/python3.11/site-packages/s3fs/__init__.py
     scipy: 1.11.3 /home/miniconda3/lib/python3.11/site-packages/scipy/__init__.py
     cftime: 1.6.2 /home/miniconda3/lib/python3.11/site-packages/cftime/__init__.py
-    cfdm: 1.11.1.0 /home/miniconda3/lib/python3.11/site-packages/cfdm/__init__.py
+    cfdm: NEXTVERSION /home/miniconda3/lib/python3.11/site-packages/cfdm/__init__.py
 
     """
     out = core.environment(display=False, paths=paths)  # get all core env

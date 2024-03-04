@@ -61,7 +61,7 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
             {{init unpack: `bool`, optional}}
 
-                .. versionadded:: (cfdm) 1.11.1.0
+                .. versionadded:: (cfdm) NEXTVERSION
 
             units: `str` or `None`, optional
                 The units of the netCDF variable. Set to `None` to
@@ -80,7 +80,7 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
             {{init storage_options: `dict` or `None`, optional}}
 
-                .. versionadded:: (cfdm) 1.11.1.0
+                .. versionadded:: (cfdm) NEXTVERSION
 
             {{init source: optional}}
 
@@ -90,7 +90,7 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
                 .. versionadded:: (cfdm) 1.10.0.0
 
-            missing_values: Deprecated at version 1.11.1.0
+            missing_values: Deprecated at version NEXTVERSION
                 The missing value indicators defined by the netCDF
                 variable attributes. The may now be recorded via the
                 *attributes* parameter
@@ -275,7 +275,7 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         they have not already been defined, either during {{class}}
         instantiation or by a previous call to `_set_attributes`.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 

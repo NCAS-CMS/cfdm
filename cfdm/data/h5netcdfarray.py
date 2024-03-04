@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
     """A netCDF array accessed with `h5netcdf`.
 
-    .. versionadded:: (cfdm) 1.11.1.0
+    .. versionadded:: (cfdm) NEXTVERSION
 
     """
 
@@ -186,7 +186,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
         x.__getitem__(indices) <==> x[indices]
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         """
         dataset, address = self.open()
@@ -227,7 +227,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         they have not already been defined, either during {{class}}
         instantiation or by a previous call to `_set_attributes`.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -250,7 +250,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
     def close(self, dataset):
         """Close the dataset containing the data.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -268,15 +268,13 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
     def get_groups(self, address):
         """The netCDF4 group structure of a netCDF variable.
 
-        .. versionadded:: (cfdm) 1.8.6.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
             address: `str` or `int`
                 The netCDF variable name, or integer varid, from which
                 to get the groups.
-
-                .. versionadded:: (cfdm) 1.10.1.0
 
         :Returns:
 
@@ -315,6 +313,8 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         When multiple files have been provided an attempt is made to
         open each one, in the order stored, and a file object is
         returned from the first file that exists.
+
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 

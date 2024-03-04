@@ -114,7 +114,7 @@ class FileArrayMixin:
     def get_attributes(self, default=ValueError()):
         """The attributes of the array.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -228,12 +228,12 @@ class FileArrayMixin:
     def get_missing_values(self):
         """The missing values of the data.
 
-        Deprecated at version 1.11.1.0. Use `get_attributes` instead.
+        Deprecated at version NEXTVERSION. Use `get_attributes` instead.
 
         """
         raise DeprecationError(
             f"{self.__class__.__name__}.get_missing_values was deprecated "
-            "at version 1.11.1.0 and is no longer available. "
+            "at version NEXTVERSION and is no longer available. "
             "Use {self.__class__.__name__}.get_attributes instead."
         )  # pragma: no cover
 
@@ -242,7 +242,7 @@ class FileArrayMixin:
     ):
         """Return `s3fs.S3FileSystem` options for accessing S3 files.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 

@@ -39,7 +39,7 @@ def environment(display=True, paths=True):
     Python: 3.11.4
     packaging: 23.0
     numpy: 1.25.2
-    cfdm.core: 1.11.1.0
+    cfdm.core: NEXTVERSION
 
     """
     dependency_version_paths_mapping = {

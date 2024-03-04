@@ -41,18 +41,19 @@ class NetCDFIndexer:
     to unicode arrays, the latter with the last dimension
     concatenated.
 
-    Masking and unpacking operations are defined by netCDF attributes,
-    which are either provided as part of the input *data* object, or
-    given with the input *attributes* parameter.
+    Masking and unpacking operations are defined by the conventions
+    for netCDF attributes, which are either provided as part of the
+    input *data* object, or given with the input *attributes*
+    parameter.
 
-    The relevant netCDF attributes that may be used are:
+    The relevant netCDF attributes that are considered:
 
       * For masking: ``missing_value``, ``valid_max``, ``valid_min``,
                      ``valid_range``, ``_FillValue``, ``_Unsigned``
 
       * For unpacking: ``add_offset``, ``scale_factor``, ``_Unsigned``
 
-    .. versionadded:: (cfdm) 1.11.1.0
+    .. versionadded:: (cfdm) NEXTVERSION
 
     **Examples**
 
@@ -109,21 +110,23 @@ class NetCDFIndexer:
             variable: `netCDF4.Variable` or `h5netcdf.Variable` or `numpy.ndarray`
                 The variable to be indexed. Any masking and unpacking
                 that could be applied by applied by the *variable*
-                itself is disabled, i.e. Any masking and unpacking is
+                itself is disabled, i.e. any masking and unpacking is
                 always done by the `NetCDFIndexer` instance.
 
             mask: `bool`
                 If True, the default, then an array returned by
-                indexing is automatically masked. Masking is governed
-                by the ``missing_value``, ``valid_max``,
-                ``valid_min``, ``valid_range``, ``_FillValue``, and
-                ``_Unsigned`` attributes.
+                indexing is automatically masked. Masking is
+                determined by the netCDF conventions for the following
+                attributes: ``_FillValue``, ``missing_value``,
+                ``_Unsigned``, ``valid_max``, ``valid_min``, and
+                ``valid_range``.
 
             unpack: `bool`
                 If True, the default, then an array returned by
                 indexing is automatically unpacked. Unpacking is
-                governed by the ``_Unsigned``, ``add_offset``, and
-                ``scale_factor`` attributes.
+                determined netCDF conventions for the following
+                attributes: ``add_offset``, ``scale_factor``, and
+                ``_Unsigned``.
 
             always_mask: `bool`
                 If False, the default, then an array returned by
@@ -137,7 +140,7 @@ class NetCDFIndexer:
                 dictionary key/value pairs. If *attributes* is set
                 then any netCDF attributes stored by *variable* itself
                 are ignored. Only the attributes relevant to masking
-                and unpacking are considers, and all other attributes
+                and unpacking are considered, and all other attributes
                 are ignored.
 
         """
@@ -154,7 +157,7 @@ class NetCDFIndexer:
 
         Indexing follows the rules defined by the variable.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         """
         variable = self.variable
@@ -224,7 +227,7 @@ class NetCDFIndexer:
     def shape(self):
         """Tuple of the data dimension sizes.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         """
         return self.variable.shape
@@ -235,7 +238,7 @@ class NetCDFIndexer:
         Checks to see that variable attribute exists and can be safely
         cast to variable data type.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameter:
 
@@ -280,7 +283,7 @@ class NetCDFIndexer:
     def _default_FillValue(self, dtype):
         """Return the default ``_FillValue`` for the given data type.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `netCDF4.default_fillvals`
 
@@ -302,7 +305,7 @@ class NetCDFIndexer:
     def _mask(self, data, dtype, attributes, dtype_unsigned_int):
         """Mask the data.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameter:
 
@@ -480,7 +483,7 @@ class NetCDFIndexer:
     def _unpack(self, data, attributes):
         """Unpack the data..
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameter:
 
@@ -544,7 +547,7 @@ class NetCDFIndexer:
     def attributes(self):
         """Return the netCDF attributes of the variable.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 

@@ -1,6 +1,6 @@
 """Configuration for netCDF group flattening.
 
-.. versionadded:: (cfdm) 1.11.1.0
+.. versionadded:: (cfdm) NEXTVERSION
 
 """
 from dataclasses import dataclass
@@ -40,7 +40,7 @@ class FlatteningRules:
     ``ancillary_variables`` attribute contains the names of other
     netCDF variables, separated by spaces.
 
-    .. versionadded:: (cfdm) 1.11.1.0
+    .. versionadded:: (cfdm) NEXTVERSION
 
     """
 

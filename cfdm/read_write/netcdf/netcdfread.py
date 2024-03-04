@@ -511,10 +511,10 @@ class NetCDFRead(IORead):
 
         # Deal with an file in an S3 object store
         u = urlparse(filename)
+        storage_options = self._get_storage_options(filename, u)
+
         if u.scheme == "s3":
             # Create an openable S3 file object
-            storage_options = self._get_storage_options(filename, u)
-
             key = tokenize(storage_options)
             file_systems = g["file_systems"]
             fs = file_systems.get(key)
@@ -612,7 +612,7 @@ class NetCDFRead(IORead):
     def _open_netCDF4(self, filename):
         """Return an open `netCDF4.Dataset`.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -629,7 +629,7 @@ class NetCDFRead(IORead):
     def _open_h5netcdf(self, filename):
         """Return an open `h5netcdf.File`.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -937,7 +937,7 @@ class NetCDFRead(IORead):
             unpack: `bool`, optional
                 See `cfdm.read` for details
 
-                .. versionadded:: (cfdm) 1.11.1.0
+                .. versionadded:: (cfdm) NEXTVERSION
 
             warn_valid: `bool`, optional
                 See `cfdm.read` for details
@@ -952,17 +952,17 @@ class NetCDFRead(IORead):
             storage_options: `bool`, optional
                 See `cfdm.read` for details
 
-                .. versionadded:: (cfdm) 1.11.1.0
+                .. versionadded:: (cfdm) NEXTVERSION
 
             netCDF_backend: `None` or `str`, optional
                 See `cfdm.read` for details
 
-                .. versionadded:: (cfdm) 1.11.1.0
+                .. versionadded:: (cfdm) NEXTVERSION
 
             _file_systems: `dict`, optional
                 Provide any already-open S3 file systems.
 
-                .. versionadded:: (cfdm) 1.11.1.0
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -1063,12 +1063,10 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             # CFA
             # --------------------------------------------------------
-            #
             "cfa": False,
             # --------------------------------------------------------
             # NetCDF backend
             # --------------------------------------------------------
-            #
             "netCDF_backend": netCDF_backend,
             # --------------------------------------------------------
             # S3
@@ -1090,12 +1088,7 @@ class NetCDFRead(IORead):
             g["version"][version] = Version(version)
 
         if storage_options is None:
-            #            g["storage_options"] = {"anon": True}
-            g["storage_options"] = {
-                "anon": True,
-                "default_fill_cache": False,
-                "default_cache_type": "first",
-            }
+            g["storage_options"] = {}
 
         if _file_systems is not None:
             # Update S3 file systems with those passed in as keyword
@@ -10042,7 +10035,7 @@ class NetCDFRead(IORead):
     def _file_global_attribute(self, nc, attr):
         """Return a global attribute from a dataset.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -10067,7 +10060,7 @@ class NetCDFRead(IORead):
     def _file_global_attributes(self, nc):
         """Return the global attributes from a dataset.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -10091,7 +10084,7 @@ class NetCDFRead(IORead):
     def _file_dimensions(self, nc):
         """Return all dimensions in the root group.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -10104,7 +10097,7 @@ class NetCDFRead(IORead):
     def _file_dimension(self, nc, dim_name):
         """Return a dimension from the root group of a dataset.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -10125,7 +10118,7 @@ class NetCDFRead(IORead):
     def _file_dimension_isunlimited(self, nc, dim_name):
         """Return a whether a dimension is unlimited.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -10146,7 +10139,7 @@ class NetCDFRead(IORead):
     def _file_dimension_size(self, nc, dim_name):
         """Return a dimension is size.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -10167,7 +10160,7 @@ class NetCDFRead(IORead):
     def _file_variables(self, nc):
         """Return all variables in the root group.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -10185,7 +10178,7 @@ class NetCDFRead(IORead):
     def _file_variable(self, nc, var_name):
         """Return a variable.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -10206,7 +10199,7 @@ class NetCDFRead(IORead):
     def _file_variable_attributes(self, var):
         """Return the variable attributes.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -10230,7 +10223,7 @@ class NetCDFRead(IORead):
     def _file_variable_dimensions(self, var):
         """Return the variable dimension names.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -10248,7 +10241,7 @@ class NetCDFRead(IORead):
     def _file_variable_size(self, var):
         """Return the size of a variable's array.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -10273,14 +10266,11 @@ class NetCDFRead(IORead):
     def _get_storage_options(self, filename, parsed_filename):
         """TODO.
 
-        .. versionadded:: (cfdm) 1.11.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
         """
         g = self.read_vars
-        storage_options = g["storage_options"]
-        g["file_system_storage_options"][filename] = storage_options
-
-        storage_options = storage_options.copy()
+        storage_options = g["storage_options"].copy()
 
         client_kwargs = storage_options.get("client_kwargs", {})
         if (
@@ -10290,5 +10280,7 @@ class NetCDFRead(IORead):
             storage_options[
                 "endpoint_url"
             ] = f"https://{parsed_filename.netloc}"
+
+        g["file_system_storage_options"].setdefault(filename, storage_options)
 
         return storage_options

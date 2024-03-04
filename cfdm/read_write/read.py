@@ -251,7 +251,7 @@ def read(
             A netCDF array is unpacked depending on the values of the
             netCDF attributes ``add_offset`` and ``scale_factor``.
 
-            .. versionadded:: (cfdm) 1.11.1.0
+            .. versionadded:: (cfdm) NEXTVERSION
 
         domain: `bool`, optional
             If True then return only the domain constructs that are
@@ -283,7 +283,7 @@ def read(
             or ``'h5netcdf'`` will force the use of the `netCDF4` or
             `h5netcdf` libraries respectively.
 
-            .. versionadded:: (cfdm) 1.11.1.0
+            .. versionadded:: (cfdm) NEXTVERSION
 
         storage_options: `dict` or `None`, optional
             Key/value pairs to be passed on to the creation of
@@ -292,20 +292,22 @@ def read(
             object store, i.e. those whose names do not start with
             ``s3:``.
 
-            By default, or if `None`, then a value of ``{'anon': True,
-            'default_fill_cache': False, 'default_cache_type':
-            'first'}`` is used.
+            By default, or if `None` or ``{}``, then no options are
+            passed.
 
-            If an ``'endpoint_url'`` key is not in *storage_options*
-            then one will be automatically derived for accessing each
-            S3 file. For example, for a file name of
-            ``'s3://store/data/file.nc'``, an ``'endpoint_url'`` key
-            with value ``'https://store'`` would be created.
+            If the ``'endpoint_url'`` key is not in *storage_options*
+            or is not in a dictionary defined by the
+            ``'client_kwargs`` key (which is always the case when
+            *storage_options* is `None`), then one will be
+            automatically inserted for accessing each S3 file. For
+            example, for a file name of ``'s3://store/data/file.nc'``,
+            an ``'endpoint_url'`` key with value ``'https://store'``
+            would be created.
 
             *Parameter example:*
               For a file name of ``'s3://store/data/file.nc'``, the
-              following are equivalent: ``None``, ``{'anon': True}``,
-              and ``{'anon': True, 'endpoint_url': 'https://store'}``.
+              following are equivalent: ``None``, ``{}``, and
+              ``{'endpoint_url': 'https://store'}``.
 
             *Parameter example:*
               ``{'key: 'scaleway-api-key...', 'secret':
@@ -313,7 +315,12 @@ def read(
               'https://s3.fr-par.scw.cloud', 'client_kwargs':
               {'region_name': 'fr-par'}}``
 
-            .. versionadded:: (cfdm) 1.11.1.0
+            *Parameter example:*
+              The following are equivalent: ``{'endpoint_url':
+              'https://store'}`` ``{'client_kwargs': {'endpoint_url':
+              'https://store'}}``
+
+            .. versionadded:: (cfdm) NEXTVERSION
 
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that provides the
