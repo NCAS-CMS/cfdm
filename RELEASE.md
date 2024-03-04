@@ -1,3 +1,7 @@
+* Decide the version name to set for the new release, by
+  heeding the Versioning Strategy (see
+  https://ncas-cms.github.io/cfdm/releases.html#versioning-strategy).
+
 * Change the version and date in `cfdm/core/__init__.py`
   (`__version__` and `__date__` variables).
   
@@ -66,8 +70,14 @@
   sphinx-copybutton==0.5.1
   sphinx-toggleprompt==0.2.0
   sphinxcontrib-spelling==4.3.0
+  jinja2==3.0.3
   ```
- 
+
+  where the last requirement is to avoid a deprecation issue
+  relating to Jinja2 usage by the Sphinx libraries and
+  extensions. Note that the `enchant-2` library will probably
+  be required to provide the Enchant C library for these, also.
+
 * Test tutorial code:
 
   ```bash

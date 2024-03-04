@@ -1,5 +1,5 @@
-Version 1.11.1.0
-----------------
+Version NEXT
+------------
 
 **2024-??-??**
 
@@ -13,6 +13,19 @@ Version 1.11.1.0
 * New dependency: ``h5py>=3.10.0``
 * New dependency: ``s3fs>=2024.2.0``
 * Removed dependency: ``netcdf_flattener``
+
+----
+
+Version 1.11.1.0
+----------------
+
+**2024-03-01**
+
+* New keyword parameter to `cfdm.Field.insert_dimension`:
+  ``constructs`` (https://github.com/NCAS-CMS/cfdm/issues/287)
+* New example field `11`: discrete sampling geometry trajectory
+  features (https://github.com/NCAS-CMS/cfdm/issues/289)
+>>>>>>> 2cfcf7f43f1a0940cd2da91439bc55599a8a02dc
 
 ----
 
