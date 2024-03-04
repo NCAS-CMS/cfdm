@@ -513,7 +513,7 @@ class NetCDFRead(IORead):
         u = urlparse(filename)
         if u.scheme == "s3":
             # Create an openable S3 file object
-            storage_options = _get_storage_options(filename, u)
+            storage_options = self._get_storage_options(filename, u)
 
             key = tokenize(storage_options)
             file_systems = g["file_systems"]
@@ -10290,11 +10290,5 @@ class NetCDFRead(IORead):
             storage_options[
                 "endpoint_url"
             ] = f"https://{parsed_filename.netloc}"
-
-        if "default_fill_cache" not in storage_options:
-            storage_options["default_fill_cache"] = False
-
-        if "default_cache_type" not in storage_options:
-            storage_options["default_cache_type"] = "first"
 
         return storage_options
