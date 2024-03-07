@@ -470,14 +470,14 @@ class NetCDFRead(IORead):
             g["nc_grouped"].close()
 
         # Close s3fs.File objects
-        for f in g["s3fs.File_objects"]:
+        for f in g["s3fs_File_objects"]:
             f.close()
 
     def file_open(self, filename, flatten=True, verbose=None):
-        """Open the netCDf file for reading.
+        """Open the netCDF file for reading.
 
-        If the file has hierarchical groups then a flattened version of it
-        is returned, and the original grouped file remains open.
+        If the file has hierarchical groups then a flattened version
+        of it is returned, and the original grouped file remains open.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -515,20 +515,22 @@ class NetCDFRead(IORead):
 
         if u.scheme == "s3":
             # Create an openable S3 file object
-            key = tokenize(storage_options)
+            fs_key = tokenize(("s3", storage_options))
             file_systems = g["file_systems"]
-            fs = file_systems.get(key)
-            if fs is None:
+            file_system = file_systems.get(fs_key)
+            if file_system is None:
                 # An S3 file system with these options does not exist,
                 # so create one.
-                fs = S3FileSystem(**storage_options)
-                file_systems[key] = fs
+                file_system = S3FileSystem(**storage_options)
+                file_systems[fs_key] = file_system
 
-            filename = fs.open(u.path[1:], "rb")
-            g["s3fs.File_objects"].append(filename)
+            # Reset 'filename' to an s3fs.File object that can be
+            # passed to the netCDF backend
+            filename = file_system.open(u.path[1:], "rb")
+            g["s3fs_File_objects"].append(filename)
 
             if is_log_level_detail(logger):
-                logger.debug(
+                logger.detail(
                     f"    S3: s3fs.S3FileSystem options: {storage_options}\n"
                 )  # pragma: no cover
 
@@ -561,9 +563,7 @@ class NetCDFRead(IORead):
                 raise error
 
         else:
-            raise ValueError(
-                "Unknown netCDF backend: netCDF_backend={netCDF_backend!r}"
-            )
+            raise ValueError("Unknown netCDF backend: {netCDF_backend!r}")
 
         g["original_h5netcdf"] = HDF
         g["original_netCDF4"] = netCDF
@@ -974,6 +974,11 @@ class NetCDFRead(IORead):
         # Initialise netCDF read parameters
         # ------------------------------------------------------------
         self.read_vars = {
+            # --------------------------------------------------------
+            # Verbosity
+            # --------------------------------------------------------
+            "debug": is_log_level_debug(logger),
+            #
             "new_dimension_sizes": {},
             "formula_terms": {},
             "compression": {},
@@ -1078,10 +1083,12 @@ class NetCDFRead(IORead):
             #
             "file_system_storage_options": {},
             #
-            "s3fs.File_objects": [],
+            "s3fs_File_objects": [],
         }
 
         g = self.read_vars
+
+        debug = g["debug"]
 
         # Set versions
         for version in ("1.6", "1.7", "1.8", "1.9", "1.10", "1.11"):
@@ -1149,7 +1156,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         nc = self.file_open(filename, flatten=True, verbose=None)
         logger.info(f"Reading netCDF file: {filename}\n")  # pragma: no cover
-        if is_log_level_debug(logger):
+        if debug:
             logger.debug(
                 f"    Input netCDF dataset:\n        {nc}\n"
             )  # pragma: no cover
@@ -1181,7 +1188,7 @@ class NetCDFRead(IORead):
             #    pass
 
         g["global_attributes"] = global_attributes
-        if is_log_level_debug(logger):
+        if debug:
             logger.debug(
                 f"    Global attributes:\n        {g['global_attributes']}"
             )  # pragma: no cover
@@ -1448,7 +1455,7 @@ class NetCDFRead(IORead):
                 for name, value in variable_dimensions.items()
             }
 
-        if is_log_level_debug(logger):
+        if debug:
             logger.debug(
                 "    General read variables:\n"
                 "        read_vars['variable_dimensions'] =\n"
@@ -1564,7 +1571,7 @@ class NetCDFRead(IORead):
         #       '/forecasts/model/t': 't'}
         g["dimension_basename"] = dimension_basename
 
-        if is_log_level_debug(logger):
+        if debug:
             logger.debug(
                 "        read_vars['dimension_isunlimited'] =\n"
                 f"            {g['dimension_isunlimited']}\n"
@@ -1720,7 +1727,7 @@ class NetCDFRead(IORead):
                 # node coordinate variable
                 g["do_not_create_field"].add(geometry_ncvar)
 
-        if is_log_level_debug(logger):
+        if debug:
             logger.debug(
                 "    Compression read vars:\n"
                 "        read_vars['compression'] =\n"
@@ -1770,7 +1777,7 @@ class NetCDFRead(IORead):
                     # location_index_set
                     self._ugrid_parse_location_index_set(attributes)
 
-            if is_log_level_debug(logger):
+            if debug:
                 logger.debug(f"    UGRID meshes:\n       {g['mesh']}")
 
         if _scan_only:
@@ -1854,7 +1861,7 @@ class NetCDFRead(IORead):
                     },
                 )
 
-        if is_log_level_debug(logger):
+        if debug:
             logger.debug(
                 "    Reference read vars:\n"
                 "        read_vars['references'] =\n"
@@ -2458,12 +2465,13 @@ class NetCDFRead(IORead):
 
         """
         g = self.read_vars
+        debug = g["debug"]
 
         profile_dimension = g["compression"][sample_dimension][
             "ragged_contiguous"
         ]["profile_dimension"]
 
-        if is_log_level_debug(logger):
+        if debug:
             logger.debug(
                 "    Pre-processing indexed and contiguous compression "
                 f"for instance dimension: {instance_dimension}\n"
@@ -2506,7 +2514,7 @@ class NetCDFRead(IORead):
 
         del g["compression"][sample_dimension]["ragged_contiguous"]
 
-        if is_log_level_debug(logger):
+        if debug:
             logger.debug(
                 f"    Created read_vars['compression'][{sample_dimension!r}]"
                 "['ragged_indexed_contiguous']\n"
@@ -2958,7 +2966,7 @@ class NetCDFRead(IORead):
             "element_dimension_size": element_dimension_size,
         }
 
-        if is_log_level_debug(logger):
+        if g["debug"]:
             logger.debug(
                 "    Created "
                 f"read_vars['compression'][{indexed_sample_dimension!r}]['ragged_indexed']"
@@ -3426,7 +3434,7 @@ class NetCDFRead(IORead):
 
         field_properties.update(g["variable_attributes"][field_ncvar])
 
-        if is_log_level_debug(logger):
+        if g["debug"]:
             logger.debug(
                 "        netCDF attributes:\n"
                 f"            {field_properties}"
@@ -7898,7 +7906,7 @@ class NetCDFRead(IORead):
 
             # Though an error of sorts, set as debug level message;
             # read not terminated
-            if is_log_level_debug(logger):
+            if g["debug"]:
                 logger.debug(
                     f"    Error processing netCDF variable {field_ncvar}: "
                     f"{d['reason']}"
@@ -10264,9 +10272,26 @@ class NetCDFRead(IORead):
             return prod(var.shape)
 
     def _get_storage_options(self, filename, parsed_filename):
-        """TODO.
+        """Get the storage options for accessing a file.
+
+        If returned storage options will always include an
+        ``'endpoint_url'`` key.
 
         .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            filename: `str`
+                The name of the file.
+
+            parsed_filename: `urllib.parse.ParseResult`
+                The parsed file name, as returned by
+                ``urllib.parse.urlparse(filename)``.
+
+        :Returns:
+
+            `dict`
+                The storage options for accessing the file.
 
         """
         g = self.read_vars

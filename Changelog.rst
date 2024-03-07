@@ -12,6 +12,7 @@ Version NEXT
 * New dependency: ``h5netcdf>=1.3.0``
 * New dependency: ``h5py>=3.10.0``
 * New dependency: ``s3fs>=2024.2.0``
+* New dependency: ``dask>=2024.2.1``
 * Removed dependency: ``netcdf_flattener``
 
 ----
