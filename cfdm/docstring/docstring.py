@@ -421,23 +421,30 @@ _docstring_substitution_definitions = {
                 ``scale_factor``.""",
     # init storage_options
     "{{init storage_options: `dict` or `None`, optional}}": """storage_options: `dict` or `None`, optional
-                Key/value pairs to be passed on to the creation of an
-                `s3fs.S3FileSystem` file system to control the opening
-                of the file in an S3 object store. Ignored for a file
-                not in an S3 object store, i.e. one whose name does
-                not start with ``s3:``.
+                Key/value pairs to be passed on to the creation of
+                `s3fs.S3FileSystem` file systems to control the
+                opening of files in S3 object stores. Ignored for
+                files not in an S3 object store, i.e. those whose
+                names do not start with ``s3:``.
 
-                If an ``'endpoint_url'`` key is not in
-                *storage_options* then one will be automatically
-                derived for accessing an S3 file. For example, for a
-                file name of ``'s3://store/data/file.nc'``, an
-                ``'endpoint_url'`` key with value ``'https://store'``
-                would be created.
+                By default, or if `None`, then *storage_options* is
+                taken as ``{}``.
+
+                If the ``'endpoint_url'`` key is not in
+                *storage_options* or is not in a dictionary defined by
+                the ``'client_kwargs`` key (which is always the case
+                when *storage_options* is `None`), then one will be
+                automatically inserted for accessing an S3 file. For
+                example, for a file name of
+                ``'s3://store/data/file.nc'``, an ``'endpoint_url'``
+                key with value ``'https://store'`` would be created.
 
                 *Parameter example:*
                   For a file name of ``'s3://store/data/file.nc'``,
-                  the following are equivalent: ``None``, ``{}`` and
-                  ``{'endpoint_url': 'https://store'}``.
+                  the following are equivalent: ``None``, ``{}``, and
+                  ``{'endpoint_url': 'https://store'}``,
+                  ``{'client_kwargs': {'endpoint_url':
+                  'https://store'}}``
 
                 *Parameter example:*
                   ``{'key: 'scaleway-api-key...', 'secret':

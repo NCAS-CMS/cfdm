@@ -13,7 +13,7 @@ datasets and the inspection of CF data model constructs.
 
 __date__ = "2024-??-??"
 __cf_version__ = "1.11"
-__version__ = "1.11.1.0"
+__version__ = "1.11.2.0"
 
 from packaging import __version__ as _packaging_ver
 from packaging import __file__ as _packaging_file
