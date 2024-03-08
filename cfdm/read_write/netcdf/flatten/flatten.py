@@ -45,12 +45,12 @@ def netcdf_flatten(
     coordinate variable, as its name will be prefixed with a different
     group identifier than its dimension.
 
-    In such cases, it is up to the user to apply the proximal and
-    lateral search alogrithms, in conjunction with the mappings
-    defined in the ``flattener_name_mapping_variables`` and
-    ``flattener_name_mapping_dimensions`` global attributes, to find
-    which netCDF variables are acting as CF coordinate variables in
-    the flattened dataset. See
+    In such cases it is up to the user to apply the proximal and
+    lateral search alogrithms to the flattened dataset returned by
+    `netcdf_flatten`, in conjunction with the mappings defined in the
+    newly created global attributes ``__flattener_variable_map`` and
+    ``__flattener_dimension_map``, to find which netCDF variables are
+    acting as CF coordinate variables in the flattened dataset. See
     https://cfconventions.org/cf-conventions/cf-conventions.html#groups
     for details.
 
@@ -58,17 +58,18 @@ def netcdf_flatten(
     group and coordinate variable ``lat(lat)`` in group ``/group1``,
     then the flattened dataset will contain dimension ``lat`` and
     variable ``group1__lat(lat)``, both in its root group. In this
-    case, the ``flattener_name_mapping_variables`` global attribute of
-    the flattened dataset will contain the mapping ``'group1__lat:
-    /group1/lat'`` and the flattener_name_mapping_dimensions global
+    case, the ``__flattener_variable_map`` global attribute of the
+    flattened dataset will contain the mapping ``'group1__lat:
+    /group1/lat'``, and the ``__flattener_dimension_map`` global
     attribute will contain the mapping ``'lat: /lat'``.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
     :Parameters:
 
-        input_ds: `netCDF4.Dataset` or `h5netcdf.File`
-            The dataset to be flattened.
+        input_ds:
+            The dataset to be flattened, that has the same API as
+            `netCDF4.Dataset` or `h5netcdf.File`.
 
         output_ds: `netCDF4.Dataset`
             A container for the flattened dataset.
@@ -241,11 +242,12 @@ class _Flattener:
 
         :Parameters:
 
-            input_ds: `netCDF4.Dataset` or `h5netcdf.File`
-                See `netcdf_flatten`.
+            input_ds:
+                The dataset to be flattened, that has the same API as
+                `netCDF4.Dataset` or `h5netcdf.File`.
 
             output_ds: `netCDF4.Dataset`
-                See `netcdf_flatten`.
+                A container for the flattened dataset.
 
             strict: `bool`, optional
                 See `netcdf_flatten`.
@@ -287,8 +289,9 @@ class _Flattener:
 
         :Parameters:
 
-            var:
-                The dataset variable.
+            variable:
+                The variable, that has the same API as
+                `netCDF4.Variable` or `h5netcdf.Variable`.
 
         :Returns:
 
@@ -314,7 +317,8 @@ class _Flattener:
         :Parameters:
 
             variable:
-                The dataset variable.
+                The variable, that has the same API as
+                `netCDF4.Variable` or `h5netcdf.Variable`.
 
         :Returns:
 
@@ -349,8 +353,9 @@ class _Flattener:
 
         :Parameters:
 
-            variable: `netCDF4.Variable` or `h5netcdf.Variable`
-                The variable.
+            variable:
+                The variable, that has the same API as
+                `netCDF4.Variable` or `h5netcdf.Variable`.
 
         :Returns:
 
@@ -379,7 +384,8 @@ class _Flattener:
         :Parameters:
 
             variable:
-                The dataset variable.
+                The variable, that has the same API as
+                `netCDF4.Variable` or `h5netcdf.Variable`.
 
         :Returns:
 
@@ -408,8 +414,9 @@ class _Flattener:
 
         :Parameters:
 
-            variable: `netCDF4.Variable` or `h5netcdf.Variable`
-                The variable.
+            variable:
+                The variable, that has the same API as
+                `netCDF4.Variable` or `h5netcdf.Variable`.
 
         :Returns:
 
@@ -438,8 +445,9 @@ class _Flattener:
 
         :Parameters:
 
-            dataset: `netCDF4.Dataset` or `h5netcdf.File`
-                The dataset.
+            dataset:
+                The dataset, that has the same API as
+                `netCDF4.Dataset` or `h5netcdf.File`.
 
         :Returns:
 
@@ -708,8 +716,9 @@ class _Flattener:
 
         :Parameters:
 
-            dim: `netCDF4.Dimension` or `h5netcdf.Dimension`
-                The dimension to flatten.
+            dim:
+                The dimension to flatten, that has the same API as
+                `netCDF4.Dimension` or `h5netcdf.Dimension`.
 
         :Returns:
 
@@ -750,8 +759,9 @@ class _Flattener:
 
         :Parameters:
 
-            var: `netCDF4.Variable` or `h5netcdf.Variable`
-                The variable to flatten.
+            var:
+                The variable, that has the same API as
+                `netCDF4.Variable` or `h5netcdf.Variable`.
 
         :Returns:
 
@@ -890,11 +900,14 @@ class _Flattener:
 
         :Parameters:
 
-            old_var: `netCDF4.Variable` or `h5netcdf.Variable`
-                The variable where data should be copied from.
+            old_var:
+                The variable where the data should be copied from,
+                that has the same API as `netCDF4.Variable` or
+                `h5netcdf.Variable`.
 
-            new_var: `netCDF4.Variable`
-                The new variable where to copy data.
+            new_var:
+                The new variable in which copy the data, that has the
+                same API as `netCDF4.Variable` or `h5netcdf.Variable`.
 
         :Returns:
 
@@ -944,8 +957,10 @@ class _Flattener:
             orig_ref: `str`
                 The reference to resolve.
 
-            orig_var: `netCDF4.Variable` or `h5netcdf.Variable`
-                The original variable containing the reference.
+            orig_var:
+                The original variable containing the reference, that
+                has the same API as `netCDF4.Variable` or
+                `h5netcdf.Variable`.
 
             rules: `FlatteningRules`
                 The flattening rules that apply to the reference.
@@ -1040,8 +1055,10 @@ class _Flattener:
                 Resolve as variable if resolving as dimension failed,
                 and vice versa.
 
-            orig_var: `netCDF4.Variable` or `h5netcdf.Variable`
-                The original variable containing the reference.
+            orig_var:
+                The original variable containing the reference, that
+                has the same API as `netCDF4.Variable` or
+                `h5netcdf.Variable`.
 
             rules: `FlatteningRules`
                 The flattening rules that apply to the reference.
@@ -1111,8 +1128,10 @@ class _Flattener:
             orig_ref: `str`
                 The original reference.
 
-            orig_var: `netCDF4.Variable` or `h5netcdf.Variable`
-                The original variable containing the reference.
+            orig_var:
+                The original variable containing the reference, that
+                has the same API as `netCDF4.Variable` or
+                `h5netcdf.Variable`.
 
             rules: `FlatteningRules`
                 The flattening rules that apply to the reference.
@@ -1330,12 +1349,15 @@ class _Flattener:
 
         :Parameters:
 
-            var: `netCDF4.Variable` or `h5netcdf.Variable`
+            var:
                 The flattened variable in which references should be
-                renamed with absolute references.
+                renamed with absolute references, that has the same
+                API as `netCDF4.Variable` or `h5netcdf.Variable`.
 
-            old_var: `netCDF4.Variable` or `h5netcdf.Variable`
-                The original variable (in group structure).
+            old_var:
+                The original variable (in group structure), that has
+                the same API as `netCDF4.Variable` or
+                `h5netcdf.Variable`.
 
         :Returns:
 
@@ -1380,9 +1402,10 @@ class _Flattener:
 
         :Parameters:
 
-            var: `netCDF4.Variable` or `h5netcdf.Variable`
+            var:
                 The flattened variable in which references should be
-                renamed with new names.
+                renamed with new names, that has the same API as
+                `netCDF4.Variable` or `h5netcdf.Variable`.
 
         :Returns:
 

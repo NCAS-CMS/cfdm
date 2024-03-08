@@ -26,8 +26,8 @@ def read(
 
     The following file formats are supported: netCDF and CDL.
 
-    NetCDF files may be on disk, on an OPeNDAP server, or in an S3
-    object store.
+    NetCDF files may be on local disk, on an OPeNDAP server, or in an
+    S3 object store.
 
     The returned constructs are sorted by the netCDF variable names of
     their corresponding data or domain variables.
