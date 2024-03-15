@@ -2,7 +2,7 @@ import netCDF4
 
 from . import abstract
 from .mixin import FileArrayMixin, NetCDFFileMixin
-from .netcdfindexer import NetCDFIndexer
+from .netcdfindexer import netcdf_indexer
 
 
 class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
@@ -229,7 +229,7 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                     break
 
         # Get the data, applying masking and scaling as required.
-        array = NetCDFIndexer(
+        array = netcdf_indexer(
             variable,
             mask=self.get_mask(),
             unpack=self.get_unpack(),

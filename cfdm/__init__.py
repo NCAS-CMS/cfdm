@@ -186,7 +186,7 @@ from .data import (
     H5netcdfArray,
     NetCDFArray,
     NetCDF4Array,
-    NetCDFIndexer,
+    netcdf_indexer,
     NumpyArray,
     PointTopologyArray,
     RaggedArray,

@@ -30,7 +30,7 @@ _default_fillvals = netCDF4.default_fillvals
 logger = logging.getLogger(__name__)
 
 
-class NetCDFIndexer:
+class netcdf_indexer:
     """A data indexer that applies netCDF masking and unpacking.
 
     During indexing, masking and unpacking is applied according to the
@@ -62,7 +62,7 @@ class NetCDFIndexer:
 
     >>> import netCDF4
     >>> nc = netCDF4.Dataset('file.nc', 'r')
-    >>> x = cfdm.NetCDFIndexer(nc.variables['x'])
+    >>> x = cfdm.netcdf_indexer(nc.variables['x'])
     >>> x.shape
     (12, 64, 128)
     >>> print(x[0, 0:4, 0:3])
@@ -73,7 +73,7 @@ class NetCDFIndexer:
 
     >>> import h5netcdf
     >>> h5 = h5netcdf.File('file.nc', 'r')
-    >>> x = cfdm.NetCDFIndexer(h5.variables['x'])
+    >>> x = cfdm.netcdf_indexer(h5.variables['x'])
     >>> x.shape
     (12, 64, 128)
     >>> print(x[0, 0:4, 0:3])
@@ -84,15 +84,15 @@ class NetCDFIndexer:
 
     >>> import numpy as np
     >>> n = np.arange(7)
-    >>> x = cfdm.NetCDFIndexer(n)
+    >>> x = cfdm.netcdf_indexer(n)
     >>> x.shape
     (9,)
     >>> print(x[...])
     [0 1 2 3 4 5 6]
-    >>> x = cfdm.NetCDFIndexer(n, attributes={'_FillValue': 4})
+    >>> x = cfdm.netcdf_indexer(n, attributes={'_FillValue': 4})
     >>> print(x[...])
     [0 1 2 3 -- 5 6]
-    >>> x = cfdm.NetCDFIndexer(n, mask=False, attributes={'_FillValue': 4})
+    >>> x = cfdm.netcdf_indexer(n, mask=False, attributes={'_FillValue': 4})
     >>> print(x[...])
     [0 1 2 3 4 5 6]
 
@@ -118,7 +118,7 @@ class NetCDFIndexer:
                 could be applied by applied by *variable* itself
                 (e.g. by a `netCDF4.Variable` instance) is disabled,
                 ensuring that any masking and unpacking is always done
-                by the `NetCDFIndexer` instance.
+                by the `netcdf_indexer` instance.
 
             mask: `bool`
                 If True, the default, then an array returned by

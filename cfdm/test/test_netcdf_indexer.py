@@ -14,7 +14,7 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 n_tmpfiles = 1
 tmpfiles = [
-    tempfile.mkstemp("_test_NetCDFIndexer.nc", dir=os.getcwd())[1]
+    tempfile.mkstemp("_test_netcdf_indexer.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
 ]
 (tmpfile,) = tmpfiles
@@ -34,17 +34,17 @@ atexit.register(_remove_tmpfiles)
 netCDF_backends = ("netCDF4", "h5netcdf")
 
 
-class NetCDFIndexerTest(unittest.TestCase):
+class netcdf_indexerTest(unittest.TestCase):
     """Test the masking and scaling of netCDF data."""
 
-    def test_NetCDFIndexer_shape(self):
-        """Test NetCDFIndexer shape."""
+    def test_netcdf_indexer_shape(self):
+        """Test netcdf_indexer shape."""
         n = np.ma.arange(9)
-        x = cfdm.NetCDFIndexer(n)
+        x = cfdm.netcdf_indexer(n)
         self.assertEqual(x.shape, n.shape)
 
-    def test_NetCDFIndexer_mask(self):
-        """Test NetCDFIndexer for CF masking."""
+    def test_netcdf_indexer_mask(self):
+        """Test netcdf_indexer for CF masking."""
         f0 = cfdm.example_field(0)
         f0.del_property("missing_value", None)
         f0.del_property("_FillValue", None)
@@ -92,8 +92,8 @@ class NetCDFIndexerTest(unittest.TestCase):
 
         nc.close()
 
-    def test_NetCDFIndexer_scale(self):
-        """Test NetCDFIndexer for CF scaling."""
+    def test_netcdf_indexer_scale(self):
+        """Test netcdf_indexer for CF scaling."""
         f = cfdm.example_field(0)
 
         array = np.ma.arange(40, dtype="int32").reshape(f.shape)
@@ -124,14 +124,14 @@ class NetCDFIndexerTest(unittest.TestCase):
 
         nc.close()
 
-    def test_NetCDFIndexer_numpy(self):
-        """Test NetCDFIndexer for numpy."""
+    def test_netcdf_indexer_numpy(self):
+        """Test netcdf_indexer for numpy."""
         array = np.ma.arange(9)
-        x = cfdm.NetCDFIndexer(array)
+        x = cfdm.netcdf_indexer(array)
         x = x[...]
         self.assertTrue((x == array).all())
 
-        x = cfdm.NetCDFIndexer(
+        x = cfdm.netcdf_indexer(
             array.copy(), attributes={"_FillValue": 4, "missing_value": (0, 8)}
         )
         x = x[...]

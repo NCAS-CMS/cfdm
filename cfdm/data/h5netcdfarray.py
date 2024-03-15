@@ -5,7 +5,7 @@ import netCDF4
 
 from . import abstract
 from .mixin import FileArrayMixin, NetCDFFileMixin
-from .netcdfindexer import NetCDFIndexer
+from .netcdfindexer import netcdf_indexer
 
 _safecast = netCDF4.utils._safecast
 default_fillvals = netCDF4.default_fillvals.copy()
@@ -200,7 +200,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         variable = dataset.variables[address]
 
         # Get the data, applying masking and scaling as required.
-        array = NetCDFIndexer(
+        array = netcdf_indexer(
             variable,
             mask=self.get_mask(),
             unpack=self.get_unpack(),
