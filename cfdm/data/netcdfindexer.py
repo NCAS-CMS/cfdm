@@ -33,7 +33,12 @@ logger = logging.getLogger(__name__)
 
 
 class netcdf_indexer:
-    """A data indexer that applies netCDF masking and unpacking.
+    """A data indexer that also applies netCDF masking and unpacking.
+
+    Indexing is orthogonal, meaning that the index for each dimension
+    is applied independently, regardless of how that index was
+    defined. For instance, the indices ``[[0, 1], [1, 3], 0]`` and
+    ``[:2, 1::2, 0]`` will give identical results.
 
     During indexing, masking and unpacking is applied according to the
     netCDF conventions, either or both of which may be disabled via
@@ -164,7 +169,10 @@ class netcdf_indexer:
 
         v.__getitem__(index) <==> v[index]
 
-        Indexing follows the rules defined by the variable.
+        Indexing is orthogonal, meaning that the index for each
+        dimension is applied independently, regardless of how that
+        index was defined. For instance, the indices ``[[0, 1], [1,
+        3], 0]`` and ``[:2, 1::2, 0]`` will give identical results.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -230,7 +238,7 @@ class netcdf_indexer:
                 index2[n] = index[n]
                 data = data[tuple(index2)]
 
-        # Apply any integer indices
+        # Apply any integer indices orthogonally
         index3 = [0 if isinstance(i, Integral) else slice(None) for i in index]
         if index3:
             data = data[tuple(index3)]
