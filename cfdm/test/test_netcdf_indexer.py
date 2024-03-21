@@ -139,6 +139,21 @@ class netcdf_indexerTest(unittest.TestCase):
         self.assertTrue((x.mask == array.mask).all())
         self.assertTrue((x == array).all())
 
+    def test_netcdf_indexer_orthogonal_indexing(self):
+        """Test netcdf_indexer for numpy."""
+        array = np.ma.arange(120).reshape(2, 3, 4, 5)
+        x = cfdm.netcdf_indexer(array, mask=False, unpack=False)
+
+        y = x[..., [0, 2], :]
+        a = array[..., [0, 2], :]
+        self.assertTrue((y == a).all())
+
+        y = x[1, ..., [0, 2], [0, 2, 3]]
+        a = array[:, :, [0, 2], :]
+        a = a[..., [0, 2, 3]]
+        a = a[1, ...]
+        self.assertTrue((y == a).all())
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

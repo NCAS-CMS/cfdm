@@ -20,9 +20,11 @@ included in all copies or substantial portions of the Software.
 
 """
 import logging
+from numbers import Integral
 
 import netCDF4
 import numpy as np
+from dask.array.slicing import normalize_index
 
 _safecast = netCDF4.utils._safecast
 _default_fillvals = netCDF4.default_fillvals
@@ -185,8 +187,53 @@ class netcdf_indexer:
             netCDF4_mask = variable.mask
             variable.set_auto_maskandscale(False)
 
+        # ------------------------------------------------------------
         # Index the variable
-        data = variable[index]
+        # ------------------------------------------------------------
+        index = normalize_index(index, variable.shape)
+
+        # Find the positions of any list/1-d array indices
+        axes_with_list_indices = [
+            n
+            for n, i in enumerate(index)
+            if isinstance(i, list) or getattr(i, "shape", False)
+        ]
+
+        # Convert any integer indices to size 1 slices
+        index0 = [
+            slice(i, i + 1) if isinstance(i, Integral) else i for i in index
+        ]
+
+        data = variable
+        if len(axes_with_list_indices) <= 1 or getattr(
+            variable, "__orthogonal_indexing__", False
+        ):
+            # There is at most one list/1-d array index, and/or the
+            # variable natively supports orthogonal indexing.
+            data = data[tuple(index0)]
+        else:
+            # Emulate orthogonal indexing
+            #
+            # Apply the slice indices and the first list/1-d array
+            # index
+            index1 = [
+                i if isinstance(i, slice) else slice(None) for i in index0
+            ]
+            n = axes_with_list_indices[0]
+            index1[n] = index[n]
+            data = data[tuple(index1)]
+
+            # Apply the rest of the list/1-d array indices one at a time
+            ndim = variable.ndim
+            for n in axes_with_list_indices[1:]:
+                index2 = [slice(None)] * ndim
+                index2[n] = index[n]
+                data = data[tuple(index2)]
+
+        # Apply any integer indices
+        index3 = [0 if isinstance(i, Integral) else slice(None) for i in index]
+        if index3:
+            data = data[tuple(index3)]
 
         # Reset a netCDF4 variable's scale and mask behaviour
         if netCDF4_scale:
@@ -221,12 +268,16 @@ class netcdf_indexer:
                 )
                 data = data.view(dtype_unsigned_int)
 
+        # ------------------------------------------------------------
+        # Mask the data
+        # ------------------------------------------------------------
         if self.mask:
-            # Mask the data
             data = self._mask(data, dtype, attributes, dtype_unsigned_int)
 
+        # ------------------------------------------------------------
+        # Unpack the data
+        # ------------------------------------------------------------
         if unpack:
-            # Unpack the data
             data = self._unpack(data, attributes)
 
         # Make sure all strings are unicode
