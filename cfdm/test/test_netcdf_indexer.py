@@ -31,7 +31,7 @@ def _remove_tmpfiles():
 
 atexit.register(_remove_tmpfiles)
 
-netCDF_backends = ("netCDF4", "h5netcdf")
+netcdf_engines = ("netCDF4", "h5netcdf")
 
 
 class netcdf_indexerTest(unittest.TestCase):
@@ -44,7 +44,7 @@ class netcdf_indexerTest(unittest.TestCase):
         self.assertEqual(x.shape, n.shape)
 
     def test_netcdf_indexer_mask(self):
-        """Test netcdf_indexer for CF masking."""
+        """Test netcdf_indexer for masking."""
         f0 = cfdm.example_field(0)
         f0.del_property("missing_value", None)
         f0.del_property("_FillValue", None)
@@ -81,8 +81,8 @@ class netcdf_indexerTest(unittest.TestCase):
         nc = netCDF4.Dataset(tmpfile, "r")
         nc.set_auto_maskandscale(True)
         nc.set_always_mask(True)
-        for backend in netCDF_backends:
-            f = cfdm.read(tmpfile, netCDF_backend=backend)
+        for engine in netcdf_engines:
+            f = cfdm.read(tmpfile, netcdf_engine=engine)
             for g in f:
                 ncvar = g.nc_get_variable()
                 n = nc.variables[ncvar]
@@ -92,8 +92,8 @@ class netcdf_indexerTest(unittest.TestCase):
 
         nc.close()
 
-    def test_netcdf_indexer_scale(self):
-        """Test netcdf_indexer for CF scaling."""
+    def test_netcdf_indexer_unpack(self):
+        """Test netcdf_indexer for unpacking."""
         f = cfdm.example_field(0)
 
         array = np.ma.arange(40, dtype="int32").reshape(f.shape)
@@ -113,8 +113,8 @@ class netcdf_indexerTest(unittest.TestCase):
         nc = netCDF4.Dataset(tmpfile, "r")
         nc.set_auto_maskandscale(True)
         nc.set_always_mask(True)
-        for backend in netCDF_backends:
-            f = cfdm.read(tmpfile, netCDF_backend=backend)
+        for engine in netcdf_engines:
+            f = cfdm.read(tmpfile, netcdf_engine=engine)
             for g in f:
                 ncvar = g.nc_get_variable()
                 n = nc.variables[ncvar]

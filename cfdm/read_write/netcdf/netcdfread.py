@@ -507,7 +507,7 @@ class NetCDFRead(IORead):
 
         netCDF = False
         HDF = False
-        netCDF_backend = g["netCDF_backend"]
+        netcdf_engine = g["netcdf_engine"]
 
         # Deal with an file in an S3 object store
         u = urlparse(filename)
@@ -525,7 +525,7 @@ class NetCDFRead(IORead):
                 file_systems[fs_key] = file_system
 
             # Reset 'filename' to an s3fs.File object that can be
-            # passed to the netCDF backend
+            # passed to the netCDF engine
             filename = file_system.open(u.path[1:], "rb")
             g["s3fs_File_objects"].append(filename)
 
@@ -534,7 +534,7 @@ class NetCDFRead(IORead):
                     f"    S3: s3fs.S3FileSystem options: {storage_options}\n"
                 )  # pragma: no cover
 
-        if netCDF_backend is None:
+        if netcdf_engine is None:
             try:
                 # Try opening the file with netCDF4
                 nc = self._open_netCDF4(filename)
@@ -548,14 +548,14 @@ class NetCDFRead(IORead):
                 except Exception as error:
                     raise error
 
-        elif netCDF_backend == "netCDF4":
+        elif netcdf_engine == "netCDF4":
             try:
                 nc = self._open_netCDF4(filename)
                 netCDF = True
             except Exception as error:
                 raise error
 
-        elif netCDF_backend == "h5netcdf":
+        elif netcdf_engine == "h5netcdf":
             try:
                 nc = self._open_h5netcdf(filename)
                 HDF = True
@@ -563,7 +563,7 @@ class NetCDFRead(IORead):
                 raise error
 
         else:
-            raise ValueError("Unknown netCDF backend: {netCDF_backend!r}")
+            raise ValueError("Unknown netCDF engine: {netcdf_engine!r}")
 
         g["original_h5netcdf"] = HDF
         g["original_netCDF4"] = netCDF
@@ -899,7 +899,7 @@ class NetCDFRead(IORead):
         domain=False,
         storage_options=None,
         _file_systems=None,
-        netCDF_backend=None,
+        netcdf_engine=None,
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
 
@@ -954,7 +954,7 @@ class NetCDFRead(IORead):
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
-            netCDF_backend: `None` or `str`, optional
+            netcdf_engine: `None` or `str`, optional
                 See `cfdm.read` for details
 
                 .. versionadded:: (cfdm) NEXTVERSION
@@ -1070,9 +1070,9 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             "cfa": False,
             # --------------------------------------------------------
-            # NetCDF backend
+            # NetCDF engine
             # --------------------------------------------------------
-            "netCDF_backend": netCDF_backend,
+            "netcdf_engine": netcdf_engine,
             # --------------------------------------------------------
             # S3
             # --------------------------------------------------------

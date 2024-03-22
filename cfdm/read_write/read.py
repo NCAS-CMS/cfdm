@@ -18,7 +18,7 @@ def read(
     mask=True,
     unpack=True,
     domain=False,
-    netCDF_backend=None,
+    netcdf_engine=None,
     storage_options=None,
     _implementation=_implementation,
 ):
@@ -276,15 +276,19 @@ def read(
 
             .. versionadded:: (cfdm) 1.9.0.0
 
-        netCDF_backend: `None` or `str`, optional
-            Specify which library to use for opening netCDF files. By
-            default, or if `None`, then `netCDF4` will used unless it
-            fails to open a given file, in which case `h5netcdf` will
-            be used instead. Setting *netCDF_backend* to ``'netCDF4'``
-            or ``'h5netcdf'`` will force the use of the `netCDF4` or
-            `h5netcdf` libraries respectively.
+        netcdf_eninge: `None` or `str`, optional
+            Specify which library to use for opening and reading
+            netCDF files. By default, or if `None`, then the first one
+            of `netCDF4` and `h5netcdf` to successfully open the file
+            netCDF file is used. Setting *netcdf_engine* to one of
+            ``'netCDF4'`` and ``'h5netcdf'`` will force the use of
+            that library.
 
-            .. versionadded:: (cfdm) NEXTVERSION
+            .. note:: `h5netcdf` restricts the types of indices that
+                      define subspaces of its data. See
+                      https://docs.h5py.org for details.
+
+            .. versionadded:: NEXTVERSION
 
         storage_options: `dict` or `None`, optional
             Key/value pairs to be passed on to the creation of
@@ -378,9 +382,10 @@ def read(
         filename = netcdf.cdl_to_netcdf(filename)
 
     if netcdf.is_netcdf_file(filename):
-        # See https://github.com/NCAS-CMS/cfdm/issues/128 for context on the
-        # try/except here, which acts as a temporary fix pending decisions on
-        # the best way to handle CDL with only header or coordinate info.
+        # See https://github.com/NCAS-CMS/cfdm/issues/128 for context
+        # on the try/except here, which acts as a temporary fix
+        # pending decisions on the best way to handle CDL with only
+        # header or coordinate info.
         try:
             fields = netcdf.read(
                 filename,
@@ -393,7 +398,7 @@ def read(
                 unpack=unpack,
                 domain=domain,
                 storage_options=storage_options,
-                netCDF_backend=netCDF_backend,
+                netcdf_engine=netcdf_engine,
                 extra_read_vars=None,
             )
         except MaskError:
