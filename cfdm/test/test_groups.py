@@ -180,9 +180,7 @@ class GroupsTest(unittest.TestCase):
         )
         nc.close()
 
-        h = cfdm.read(
-            grouped_file, netcdf_engine="netCDF4", verbose="WARNING"
-        )
+        h = cfdm.read(grouped_file, netcdf_engine="netCDF4", verbose="WARNING")
         self.assertEqual(len(h), 1)
         h = h[0]
         self.assertTrue(f.equals(h, verbose=2))

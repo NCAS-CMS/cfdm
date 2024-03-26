@@ -154,6 +154,14 @@ class netcdf_indexerTest(unittest.TestCase):
         a = a[1, ...]
         self.assertTrue((y == a).all())
 
+    def test_netcdf_always_masked_array(self):
+        """Test netcdf_indexer for numpy masked output."""
+        array = np.ma.arange(9)
+        x = cfdm.netcdf_indexer(array)
+        self.assertFalse(np.ma.isMA(x[...]))
+        x = cfdm.netcdf_indexer(array, always_masked_array=True)
+        self.assertTrue(np.ma.isMA(x[...]))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

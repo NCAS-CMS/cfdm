@@ -53,15 +53,17 @@ class netcdf_indexer:
     input *data* object, or given with the input *attributes*
     parameter.
 
-    The relevant netCDF attributes that are considered:
+    The relevant netCDF attributes that are considered are:
 
       * For masking: ``missing_value``, ``valid_max``, ``valid_min``,
-                     ``valid_range``, ``_FillValue``,
+                     ``valid_range``, ``_FillValue``, and
                      ``_Unsigned``. Note that if ``_FillValue`` is not
                      present then the netCDF default value for the
-                     appropriate data type will be assumed.
+                     appropriate data type will be assumed, as defined
+                     by `netCDF4.default_fillvals`.
 
-      * For unpacking: ``add_offset``, ``scale_factor``, ``_Unsigned``
+      * For unpacking: ``add_offset``, ``scale_factor``, and
+                       ``_Unsigned``
 
     .. versionadded:: (cfdm) NEXTVERSION
 
@@ -102,6 +104,9 @@ class netcdf_indexer:
     >>> x = cfdm.netcdf_indexer(n, mask=False, attributes={'_FillValue': 4})
     >>> print(x[...])
     [0 1 2 3 4 5 6]
+    >>> x = cfdm.netcdf_indexer(n, mask=False, attributes={'_FillValue': 4})
+    >>> print(x[...])
+    [0 1 2 3 4 5 6]
 
     """
 
@@ -110,7 +115,7 @@ class netcdf_indexer:
         variable,
         mask=True,
         unpack=True,
-        always_mask=False,
+        always_masked_array=False,
         attributes=None,
     ):
         """**Initialisation**
@@ -122,10 +127,10 @@ class netcdf_indexer:
                 has the same API as one of `numpy.ndarray`,
                 `netCDF4.Variable` or `h5py.Variable` (which includes
                 `h5netcdf.Variable`). Any masking and unpacking that
-                could be applied by applied by *variable* itself
-                (e.g. by a `netCDF4.Variable` instance) is disabled,
-                ensuring that any masking and unpacking is always done
-                by the `netcdf_indexer` instance.
+                could be applied by *variable* itself (e.g. by a
+                `netCDF4.Variable` instance) is disabled, ensuring
+                that any masking and unpacking is always done by the
+                `netcdf_indexer` instance.
 
             mask: `bool`
                 If True, the default, then an array returned by
@@ -142,7 +147,7 @@ class netcdf_indexer:
                 attributes: ``add_offset``, ``scale_factor``, and
                 ``_Unsigned``.
 
-            always_mask: `bool`
+            always_masked_array: `bool`
                 If False, the default, then an array returned by
                 indexing which has no missing values is created as a
                 regular numpy array. If True then an array returned by
@@ -159,9 +164,9 @@ class netcdf_indexer:
 
         """
         self.variable = variable
-        self.mask = mask
-        self.unpack = unpack
-        self.always_mask = always_mask
+        self.mask = bool(mask)
+        self.unpack = bool(unpack)
+        self.always_masked_array = bool(always_masked_array)
         self._attributes = attributes
 
     def __getitem__(self, index):
@@ -370,8 +375,8 @@ class netcdf_indexer:
         """
         if dtype.kind in "OS":
             return _default_fillvals["S1"]
-        else:
-            return _default_fillvals[dtype.str[1:]]
+
+        return _default_fillvals[dtype.str[1:]]
 
     def _mask(self, data, dtype, attributes, dtype_unsigned_int):
         """Mask the data.
@@ -452,7 +457,6 @@ class netcdf_indexer:
             # --------------------------------------------------------
             # Create mask from _FillValue
             # --------------------------------------------------------
-
             fval = np.array(_FillValue, dtype)
             if dtype_unsigned_int is not None:
                 fval = fval.view(dtype_unsigned_int)
@@ -551,15 +555,19 @@ class netcdf_indexer:
         # ------------------------------------------------------------
         if totalmask is not None and totalmask.any():
             data = np.ma.masked_array(
-                data, mask=totalmask, fill_value=fill_value
+                data, mask=totalmask, fill_value=fill_value, copy=False
             )
             if not data.ndim:
                 # Return a scalar numpy masked constant not a 0-d
                 # masked array, so that data == np.ma.masked.
                 data = data[()]
-        elif self.always_mask and not np.ma.isMA(data):
-            # Return a masked array when there are no masked elements
-            data = np.ma.masked_array(data)
+        elif np.ma.isMA(data):
+            if not (self.always_masked_array or np.ma.is_masked(data)):
+                # Return a non-masked array
+                data = np.array(data, copy=False)
+        elif self.always_masked_array:
+            # Return a masked array
+            data = np.ma.masked_array(data, copy=False)
 
         return data
 
@@ -664,17 +672,17 @@ class netcdf_indexer:
 
         variable = self.variable
         try:
-            # h5py
+            # h5py API
             attrs = dict(variable.attrs)
         except AttributeError:
             try:
-                # netCDF4
+                # netCDF4 API
                 attrs = {
                     attr: variable.getncattr(attr)
                     for attr in variable.ncattrs()
                 }
             except AttributeError:
-                # numpy
+                # numpy API
                 attrs = {}
 
         self._attributes = attrs

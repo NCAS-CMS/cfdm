@@ -204,7 +204,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             variable,
             mask=self.get_mask(),
             unpack=self.get_unpack(),
-            always_mask=False,
+            always_masked_array=False,
         )
         array = array[indices]
 
