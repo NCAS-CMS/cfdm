@@ -812,10 +812,10 @@ class FieldDomain:
         "auxiliary_coordinate"], filter_by_identity=identities,
         **filter_kwargs)``.
 
-        . versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) 1.7.0
 
-        . seealso:: `auxiliary_coordinates`, `constructs`,
-                    `dimension_coordinates`
+        .. seealso:: `auxiliary_coordinates`, `constructs`,
+                     `dimension_coordinates`
 
         :Parameters:
 
@@ -841,19 +841,29 @@ class FieldDomain:
 
         **Examples**
 
-        >> f.coordinates()
+        >>> f = {{package}}.example_field(7)
+        >>> print(f)
+        Field: eastward_wind (ncvar%ua)
+        -------------------------------
+        Data            : eastward_wind(time(3), air_pressure(1), grid_latitude(4), grid_longitude(5)) m s-1
+        Cell methods    : time(3): mean
+        Dimension coords: time(3) = [1979-05-01 12:00:00, 1979-05-02 12:00:00, 1979-05-03 12:00:00] gregorian
+                        : air_pressure(1) = [850.0] hPa
+                        : grid_latitude(4) = [0.44, ..., -0.88] degrees
+                        : grid_longitude(5) = [-1.18, ..., 0.58] degrees
+        Auxiliary coords: latitude(grid_latitude(4), grid_longitude(5)) = [[52.4243, ..., 51.1163]] degrees_north
+                        : longitude(grid_latitude(4), grid_longitude(5)) = [[8.0648, ..., 10.9238]] degrees_east
+        Coord references: grid_mapping_name:rotated_latitude_longitude
+        >>> f.coordinates()
+        <Constructs: auxiliary_coordinate(2), dimension_coordinate(4)>
+        >>> print(f.coordinates())
         Constructs:
-        }
-
-        >> f.coordinates()
-        Constructs:
-        'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
-        'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
-        'auxiliarycoordinate2': <{{repr}}AuxiliaryCoordinate: long_name=Grid latitude name(10) >,
-        'dimensioncoordinate0': <{{repr}}DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
-        'dimensioncoordinate1': <{{repr}}DimensionCoordinate: grid_latitude(10) degrees>,
-        'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_longitude(9) degrees>,
-        'dimensioncoordinate3': <{{repr}}DimensionCoordinate: time(1) days since 2018-12-01 >}
+        {'auxiliarycoordinate0': <{{repr}}AuxiliaryCoordinate: latitude(4, 5) degrees_north>,
+         'auxiliarycoordinate1': <{{repr}}AuxiliaryCoordinate: longitude(4, 5) degrees_east>,
+         'dimensioncoordinate0': <{{repr}}DimensionCoordinate: time(3) days since 1979-1-1 gregorian>,
+         'dimensioncoordinate1': <{{repr}}DimensionCoordinate: air_pressure(1) hPa>,
+         'dimensioncoordinate2': <{{repr}}DimensionCoordinate: grid_latitude(4) degrees>,
+         'dimensioncoordinate3': <{{repr}}DimensionCoordinate: grid_longitude(5) degrees>}
 
         """
         return self._filter_interface(
