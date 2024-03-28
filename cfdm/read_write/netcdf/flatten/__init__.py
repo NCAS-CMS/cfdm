@@ -1,7 +1,7 @@
 """Flatten NetCDF groups.
 
 Portions of this package were adapted from the `netcdf_flattener`
-library, which carries the Apache 2.0 License:
+library, which carries the following Apache 2.0 License:
 
 Copyright (c) 2020 EUMETSAT
 

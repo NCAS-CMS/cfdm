@@ -42,6 +42,9 @@ class netcdf_indexerTest(unittest.TestCase):
         n = np.ma.arange(9)
         x = cfdm.netcdf_indexer(n)
         self.assertEqual(x.shape, n.shape)
+        self.assertEqual(x.size, n.size)
+        self.assertEqual(x.ndim, n.ndim)
+        self.assertEqual(x.dtype, n.dtype)
 
     def test_netcdf_indexer_mask(self):
         """Test netcdf_indexer for masking."""

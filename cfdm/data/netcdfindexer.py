@@ -1,7 +1,7 @@
 """A data indexer that applies netCDF masking and unpacking.
 
 Portions of this code were adapted from the `netCDF4` library, which
-carries the MIT License:
+carries the following MIT License:
 
 Copyright 2008 Jeffrey Whitaker
 
@@ -20,14 +20,13 @@ included in all copies or substantial portions of the Software.
 
 """
 import logging
+from math import prod
 from numbers import Integral
 
-import netCDF4
 import numpy as np
 from dask.array.slicing import normalize_index
-
-_safecast = netCDF4.utils._safecast
-_default_fillvals = netCDF4.default_fillvals
+from netCDF4 import chartostring, default_fillvals
+from netCDF4.utils import _safecast
 
 logger = logging.getLogger(__name__)
 
@@ -150,17 +149,19 @@ class netcdf_indexer:
             always_masked_array: `bool`
                 If False, the default, then an array returned by
                 indexing which has no missing values is created as a
-                regular numpy array. If True then an array returned by
-                indexing is always a masked array, even if there are
-                no missing values.
+                regular `numpy` array. If True then an array returned
+                by indexing is always a masked `numpy` array, even if
+                there are no missing values.
 
             attributes: `dict`, optional
-                Provide the netCDF attributes for *variable* as
-                dictionary key/value pairs. If *attributes* is not
-                `None, then any netCDF attributes stored by *variable*
-                itself are ignored. Only the attributes relevant to
-                masking and unpacking are considered, with all other
-                attributes being ignored.
+                Provide the netCDF attributes for the *variable* as
+                dictionary key/value pairs.  Only the attributes
+                relevant to masking and unpacking are considered, with
+                all other attributes being ignored. If *attributes* is
+                `None`, the default, then the netCDF attributes stored
+                by *variable* itself (if any) are used. If
+                *attributes* is not `None`, then any netCDF attributes
+                stored by *variable* itself are ignored.
 
         """
         self.variable = variable
@@ -176,8 +177,10 @@ class netcdf_indexer:
 
         Indexing is orthogonal, meaning that the index for each
         dimension is applied independently, regardless of how that
-        index was defined. For instance, the indices ``[[0, 1], [1,
-        3], 0]`` and ``[:2, 1::2, 0]`` will give identical results.
+        index was defined. For instance, the indices ``[[0, 1], [3,
+        6], 0]`` and ``[:2, 3:7:3, 0]`` will give identical
+        results. Note that this behaviour is different to that of
+        `numpy`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -201,18 +204,20 @@ class netcdf_indexer:
             variable.set_auto_maskandscale(False)
 
         # ------------------------------------------------------------
-        # Index the variable
+        # Index the variable with orthogonal indexing
         # ------------------------------------------------------------
         index = normalize_index(index, variable.shape)
 
-        # Find the positions of any list/1-d array indices
+        # Find the positions of any list/1-d array indices (which by
+        # now will contain only integers)
         axes_with_list_indices = [
             n
             for n, i in enumerate(index)
             if isinstance(i, list) or getattr(i, "shape", False)
         ]
 
-        # Convert any integer indices to size 1 slices
+        # Convert any integer indices to size 1 slices, so that their
+        # axes are not dropped yet (they will be dealt with later).
         index0 = [
             slice(i, i + 1) if isinstance(i, Integral) else i for i in index
         ]
@@ -225,25 +230,52 @@ class netcdf_indexer:
             # variable natively supports orthogonal indexing.
             data = data[tuple(index0)]
         else:
-            # Emulate orthogonal indexing
-            #
-            # Apply the slice indices and the first list/1-d array
-            # index
+            # Emulate orthogonal indexing with a sequence of
+            # subspaces, one for each list/1-d array index.
+
+            # 1) Apply the slice indices at the time as the list/1-d
+            #    array index that gives the smallest result.
+
+            # Create an index that replaces each list/1-d arrays with
+            # slice(None)
             index1 = [
                 i if isinstance(i, slice) else slice(None) for i in index0
             ]
-            n = axes_with_list_indices[0]
+
+            # Find the position of the list/1-d array index that gives
+            # the smallest result
+            shape1 = self.index_shape(index1, data.shape)
+            size1 = prod(shape1)
+            sizes = [
+                len(index[i]) * size1 // shape1[i]
+                for i in axes_with_list_indices
+            ]
+            n = axes_with_list_indices.pop(np.argmin(sizes))
+
+            # Apply the subspace of slices and the chosen list/1-d
+            # array index
             index1[n] = index[n]
             data = data[tuple(index1)]
 
-            # Apply the rest of the list/1-d array indices one at a time
+            # 2) Apply the rest of the list/1-d array indices, in the
+            #    order that gives the smallest result after each step.
             ndim = variable.ndim
-            for n in axes_with_list_indices[1:]:
+            while axes_with_list_indices:
+                shape1 = data.shape
+                size1 = data.size
+                sizes = [
+                    len(index[i]) * size1 // shape1[i]
+                    for i in axes_with_list_indices
+                ]
+                n = axes_with_list_indices.pop(np.argmin(sizes))
+
+                # Apply the subspace of for the chosen list/1-d array
+                # index
                 index2 = [slice(None)] * ndim
                 index2[n] = index[n]
                 data = data[tuple(index2)]
 
-        # Apply any integer indices orthogonally
+        # Apply any integer indices that will drop axes
         index3 = [0 if isinstance(i, Integral) else slice(None) for i in index]
         if index3:
             data = data[tuple(index3)]
@@ -261,7 +293,7 @@ class netcdf_indexer:
         elif data.dtype.kind in "OSU":
             kind = data.dtype.kind
             if kind == "S":
-                data = netCDF4.chartostring(data)
+                data = chartostring(data)
 
             # Assume that object arrays are arrays of strings
             data = data.astype("S", copy=False)
@@ -299,27 +331,26 @@ class netcdf_indexer:
 
         return data
 
-    @property
-    def shape(self):
-        """Tuple of the data dimension sizes.
+    def __orthogonal_indexing__(self):
+        """Flag to indicate that orthogonal indexing is supported.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        return self.variable.shape
+        return True
 
-    def _check_safecast(self, attname, dtype, attributes):
+    def _check_safecast(self, attr, dtype, attributes):
         """Check an attribute's data type.
 
         Checks to see that variable attribute exists and can be safely
-        cast to variable data type.
+        cast to variable's data type.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameter:
 
-            attname: `str`
-                The attribute name.
+            attr: `str`
+                The name of the attribute.
 
             dtype: `numpy.dtype`
                 The variable data type.
@@ -334,27 +365,26 @@ class netcdf_indexer:
                 with the variable data type, and the attribute value.
 
         """
-        if attname in attributes:
-            attvalue = attributes[attname]
+        if attr in attributes:
+            attvalue = attributes[attr]
             att = np.array(attvalue)
         else:
             return False, None
 
-        is_safe = True
         try:
             atta = np.array(att, dtype)
         except ValueError:
-            is_safe = False
+            safe = False
         else:
-            is_safe = _safecast(att, atta)
+            safe = _safecast(att, atta)
 
-        if not is_safe:
+        if not safe:
             logger.info(
-                f"Mask attribute {attname!r} not used since it can't "
+                f"Mask attribute {attr!r} not used since it can't "
                 f"be safely cast to variable data type {dtype!r}"
             )  # pragma: no cover
 
-        return is_safe, attvalue
+        return safe, attvalue
 
     def _default_FillValue(self, dtype):
         """Return the default ``_FillValue`` for the given data type.
@@ -366,7 +396,7 @@ class netcdf_indexer:
         :Parameter:
 
             dtype: `numpy.dtype`
-                The variable's data type
+                The data type.
 
         :Returns:
 
@@ -374,9 +404,9 @@ class netcdf_indexer:
 
         """
         if dtype.kind in "OS":
-            return _default_fillvals["S1"]
+            return default_fillvals["S1"]
 
-        return _default_fillvals[dtype.str[1:]]
+        return default_fillvals[dtype.str[1:]]
 
     def _mask(self, data, dtype, attributes, dtype_unsigned_int):
         """Mask the data.
@@ -649,6 +679,42 @@ class netcdf_indexer:
 
         return data
 
+    @property
+    def dtype(self):
+        """The data type of the array elements.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self.variable.dtype
+
+    @property
+    def ndim(self):
+        """Number of dimensions in the data array.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self.variable.ndim
+
+    @property
+    def shape(self):
+        """Tuple of the data dimension sizes.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self.variable.shape
+
+    @property
+    def size(self):
+        """Number of elements in the data array.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self.variable.size
+
     def attributes(self):
         """Return the netCDF attributes for the data.
 
@@ -687,3 +753,93 @@ class netcdf_indexer:
 
         self._attributes = attrs
         return attrs
+
+    @classmethod
+    def index_shape(cls, index, shape):
+        """Return the shape of the array subspace implied by indices.
+
+        .. versionadded:: (cfdm) NEXTRELEASE
+
+        :Parameters:
+
+            indices: `tuple`
+                The indices to be applied to an array with shape
+                *shape*.
+
+            shape: sequence of `ints`
+                The shape of the array to be subspaced.
+
+        :Returns:
+
+            `list`
+                The shape of the subspace defined by the *indices*.
+
+        **Examples**
+
+        >>> import numpy as np
+        >>> n.indices_shape((slice(2, 5), 4), (10, 20))
+        [3, 1]
+        >>> n.indices_shape(([2, 3, 4], np.arange(1, 6)), (10, 20))
+        [3, 5]
+
+        >>> n.indices_shape((slice(None), [True, False, True]), (10, 3))
+        [10, 2]
+
+        >>> index0 = np.arange(5)
+        >>> index0 = index0[index0 < 3]
+        >>> n.indices_shape((index0, []), (10, 20))
+        [3, 0]
+
+        >>> n.indices_shape((slice(1, 5, 3), 3), (10, 20))
+        [2, 1]
+        >>> n.indices_shape((slice(5, 1, -2), 3), (10, 20))
+        [2, 1]
+        >>> n.indices_shape((slice(5, 1, 3), 3), (10, 20))
+        [0, 1]
+        >>> n.indices_shape((slice(1, 5, -3), 3), (10, 20))
+        [0, 1]
+
+        """
+        implied_shape = []
+        for ind, full_size in zip(index, shape):
+            if isinstance(ind, slice):
+                start, stop, step = ind.indices(full_size)
+                if (stop - start) * step < 0:
+                    # E.g. 5:1:3 or 1:5:-3
+                    size = 0
+                else:
+                    size = abs((stop - start) / step)
+                    int_size = round(size)
+                    if size > int_size:
+                        size = int_size + 1
+                    else:
+                        size = int_size
+            elif isinstance(ind, np.ndarray):
+                if ind.dtype == bool:
+                    # Size is the number of True values in the array
+                    size = int(ind.sum())
+                else:
+                    size = ind.size
+
+                if not ind.ndim:
+                    # Scalar array
+                    continue
+            elif isinstance(ind, list):
+                if not ind:
+                    size = 0
+                else:
+                    i = ind[0]
+                    if isinstance(i, bool):
+                        # List of bool: Size is the number of True
+                        # values in the list
+                        size = sum(ind)
+                    else:
+                        # List of int
+                        size = len(ind)
+            else:
+                # Index is Integral
+                continue
+
+            implied_shape.append(size)
+
+        return implied_shape
