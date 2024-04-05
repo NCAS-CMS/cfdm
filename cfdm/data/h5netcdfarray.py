@@ -66,8 +66,8 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             {{init attributes: `dict` or `None`, optional}}
 
                 If *attributes* is `None`, the default, then the
-                netCDF attributes will be set from the netCDF variable
-                during the first `__getitem__` call.
+                attributes will be set from the netCDF variable during
+                the first `__getitem__` call.
 
                 .. versionadded:: (cfdm) NEXTRELEASE
 
