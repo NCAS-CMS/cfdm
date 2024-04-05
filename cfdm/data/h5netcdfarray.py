@@ -29,8 +29,6 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         shape=None,
         mask=True,
         unpack=True,
-        #        units=False,
-        #        calendar=False,
         attributes=None,
         storage_options=None,
         source=None,
@@ -61,39 +59,15 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             ndim: `int`
                 The number of array dimensions in the file.
 
-            mask: `bool`
-                If True (the default) then mask by convention when
-                reading data from disk.
+            {{init mask: `bool`, optional}}
 
-                A netCDF array is masked depending on the values of
-                any of the netCDF attributes ``_FillValue``,
-                ``missing_value``, ``_Unsigned``, ``valid_min``,
-                ``valid_max``, and ``valid_range``.
+            {{init unpack: `bool`, optional}}
 
-            unpack: `bool`
-                If True (the default) then unpack by convention when
-                reading data from disk.
-
-                A netCDF array is unpacked depending on the values of
-                the netCDF attributes ``add_offset`` and
-                ``scale_factor``.
-
-            units: `str` or `None`, optional
-                The units of the variable. Set to `None` to indicate
-                that there are no units. If unset then the units will
-                be set during the first `__getitem__` call.
-
-            calendar: `str` or `None`, optional
-                The calendar of the variable. By default, or if set to
-                `None`, then the CF default calendar is assumed, if
-                applicable. If unset then the calendar will be set
-                during the first `__getitem__` call.
-
-            {{attributes: `dict` or `None`, optional}}
+            {{init attributes: `dict` or `None`, optional}}
 
                 If *attributes* is `None`, the default, then the
-                attributes will be set from *variable* during the
-                first `__getitem__` call.
+                netCDF attributes will be set from the netCDF variable
+                during the first `__getitem__` call.
 
                 .. versionadded:: (cfdm) NEXTRELEASE
 
@@ -137,16 +111,6 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             except AttributeError:
                 unpack = True
 
-            #            try:
-            #                units = source._get_component("units", False)
-            #            except AttributeError:
-            #                units = False
-            #
-            #            try:
-            #                calendar = source._get_component("calendar", False)
-            #            except AttributeError:
-            #                calendar = False
-
             try:
                 attributes = source._get_component("attributes", None)
             except AttributeError:
@@ -181,8 +145,6 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         self._set_component("dtype", dtype, copy=False)
         self._set_component("mask", bool(mask), copy=False)
         self._set_component("unpack", bool(unpack), copy=False)
-        #        self._set_component("units", units, copy=False)
-        #        self._set_component("calendar", calendar, copy=False)
         self._set_component("storage_options", storage_options, copy=False)
         self._set_component("attributes", attributes, copy=False)
 
@@ -218,10 +180,6 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
         # Set the attributes, if they haven't been set already.
         self._set_attributes(variable)
-
-        #        # Set the units, if they haven't been set already (do this
-        #        # after setting the attributes).
-        #        self._set_units(variable)
 
         self.close(dataset0)
         del dataset, dataset0

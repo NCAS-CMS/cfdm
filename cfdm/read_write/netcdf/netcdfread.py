@@ -1505,12 +1505,12 @@ class NetCDFRead(IORead):
                 # size from the original grouped dataset, because
                 # unlimited dimensions have size 0 in the flattened
                 # dataset (because it contains no data) (v1.8.8.1)
-                group, ncdim = self._netCDF4_group(  # h5netcdf
+                group, ncdim = self._netCDF4_group(  # TODO h5netcdf ?
                     g["nc_grouped"], flattener_dimensions[name]
                 )
                 internal_dimension_sizes[name] = group.dimensions[
                     ncdim
-                ].size  # h5netcdf
+                ].size  # TODO h5netcdf ?
             else:
                 internal_dimension_sizes[name] = dimension.size
 
@@ -6171,26 +6171,15 @@ class NetCDFRead(IORead):
         filename = g["variable_filename"][ncvar]
 
         attributes = g["variable_attributes"][ncvar].copy()
-
-        # Get the units and calendar (before we overwrite ncvar)
-        #       units = g["variable_attributes"][ncvar].get("units")
-        #       calendar = g["variable_attributes"][ncvar].get("calendar")
-
         if coord_ncvar is not None:
             # Get the Units from the parent coordinate variable, if
             # they've not already been set.
             if "units" not in attributes:
-                #            if units is None:
-                #                units = g["vaariable_attributes"][coord_ncvar].get("units")
                 units = g["variable_attributes"][coord_ncvar].get("units")
                 if units is not None:
                     attributes["units"] = units
 
             if "calendar" not in attributes:
-                # if calendar is None:
-                # calendar = g["variable_attributes"][coord_ncvar].get(
-                #     "calendar"
-                # )
                 calendar = g["variable_attributes"][coord_ncvar].get(
                     "calendar"
                 )
@@ -6204,9 +6193,6 @@ class NetCDFRead(IORead):
             "dtype": dtype,
             "mask": g["mask"],
             "unpack": g["unpack"],
-            #            "units": units,
-            #            "calendar": calendar,
-            #            "attributes": g["variable_attributes"][ncvar],
             "attributes": attributes,
             "storage_options": g["file_system_storage_options"].get(filename),
         }
@@ -6277,8 +6263,6 @@ class NetCDFRead(IORead):
         attributes = kwargs["attributes"]
         units = attributes.get("units")
         calendar = attributes.get("calendar")
-        #        units = kwargs["units"]
-        #        calendar = kwargs["calendar"]
 
         compression = g["compression"]
 
@@ -9297,8 +9281,6 @@ class NetCDFRead(IORead):
             attributes = kwargs["attributes"]
             data = self._create_Data(
                 array,
-                #                units=kwargs["units"],
-                #                calendar=kwargs["calendar"],
                 units=attributes.get("units"),
                 calendar=attributes.get("calendar"),
                 ncvar=connectivity_ncvar,
@@ -9405,8 +9387,6 @@ class NetCDFRead(IORead):
         attributes = kwargs["attributes"]
         data = self._create_Data(
             array,
-            # units=kwargs["units"],
-            # calendar=kwargs["calendar"],
             units=attributes.get("units"),
             calendar=attributes.get("calendar"),
             ncvar=connectivity_ncvar,

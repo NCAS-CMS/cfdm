@@ -419,6 +419,10 @@ _docstring_substitution_definitions = {
                 A netCDF array is unpacked depending on the values of
                 the netCDF attributes ``add_offset`` and
                 ``scale_factor``.""",
+    # init attributes
+    "{{init attributes: `dict` or `None`, optional}}": """attributes: `dict` or `None`, optional
+                Provide netCDF attributes for the data as a dictionary
+                of key/value pairs.""",
     # init storage_options
     "{{init storage_options: `dict` or `None`, optional}}": """storage_options: `dict` or `None`, optional
                 Key/value pairs to be passed on to the creation of
@@ -451,10 +455,6 @@ _docstring_substitution_definitions = {
                   'scaleway-secretkey...', 'endpoint_url':
                   'https://s3.fr-par.scw.cloud', 'client_kwargs':
                   {'region_name': 'fr-par'}}``""",
-    # attributes
-    "{{attributes: `dict` or `None`, optional}}": """attributes: `dict` or `None`, optional
-                Provide netCDF attributes for the data as a dictionary
-                of key/value pairs.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------

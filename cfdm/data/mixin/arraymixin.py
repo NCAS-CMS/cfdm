@@ -1,7 +1,5 @@
 from copy import deepcopy
 
-import numpy as np
-
 
 class ArrayMixin:
     """Mixin class for a container of an array.
@@ -78,31 +76,6 @@ class ArrayMixin:
         """
         return 0
 
-    #   def _set_units(self):
-    #       """The units and calendar properties.
-    #
-    #       These are the values set during initialisation, defaulting to
-    #       `None` if either was not set at that time.
-    #
-    #       .. versionadded:: (cfdm) 1.10.1.0
-    #
-    #       :Returns:
-    #
-    #           `tuple`
-    #               The units and calendar values, either of which may be
-    #               `None`.
-    #
-    #       """
-    #       units = self.get_units(False)
-    #       if units is False:
-    #           self._set_component("units", None, copy=False)
-    #
-    #       calendar = self.get_calendar(False)
-    #       if calendar is False:
-    #           self._set_component("calendar", None, copy=False)
-    #
-    #       return units, calendar
-
     def get_attributes(self, default=ValueError()):
         """The attributes of the array.
 
@@ -155,8 +128,7 @@ class ArrayMixin:
 
         """
         attributes = self.get_attributes({})
-        calendar = attributes.get("calendar")
-        if calendar is None:
+        if "calendar" not in attributes:
             if default is None:
                 return
 
@@ -165,19 +137,7 @@ class ArrayMixin:
                 f"{self.__class__.__name__} 'calendar' has not been set",
             )
 
-        return calendar
-
-    #        calendar = self._get_component("calendar", False)
-    #        if calendar is False:
-    #            if default is None:
-    #                return
-    #
-    #            return self._default(
-    #                default,
-    #                f"{self.__class__.__name__} 'calendar' has not been set",
-    #            )
-    #
-    #        return calendar
+        return attributes["calendar"]
 
     def get_compression_type(self):
         """Returns the array's compression type.
@@ -207,111 +167,111 @@ class ArrayMixin:
         """
         return self._get_component("compression_type", "")
 
-    @classmethod
-    def get_subspace(cls, array, indices, copy=True):
-        """Return a subspace, defined by indices, of a numpy array.
-
-        Only certain type of indices are allowed. See the *indices*
-        parameter for details.
-
-        Indexing is similar to numpy indexing. Given the restrictions on
-        the type of indices allowed - see the *indicies* parameter - the
-        only difference to numpy indexing is
-
-          * When two or more dimension's indices are sequences of integers
-            then these indices work independently along each dimension
-            (similar to the way vector subscripts work in Fortran).
-
-        .. versionadded:: (cfdm) 1.8.7.0
-
-        :Parameters:
-
-            array: `numpy.ndarray`
-                The array to be subspaced.
-
-            indices:
-                The indices that define the subspace.
-
-                Must be either `Ellipsis` or a sequence that contains an
-                index for each dimension. In the latter case, each
-                dimension's index must either be a `slice` object or a
-                sequence of two or more integers.
-
-                  *Parameter example:*
-                    indices=Ellipsis
-
-                  *Parameter example:*
-                    indices=[[5, 7, 8]]
-
-                  *Parameter example:*
-                    indices=[slice(4, 7)]
-
-                  *Parameter example:*
-                    indices=[slice(None), [5, 7, 8]]
-
-                  *Parameter example:*
-                    indices=[[2, 5, 6], slice(15, 4, -2), [8, 7, 5]]
-
-            copy: `bool`
-                If `False` then the returned subspace may (or may not) be
-                independent of the input *array*. By default the returned
-                subspace is independent of the input *array*.
-
-        :Returns:
-
-            `numpy.ndarray`
-
-        """
-        if indices is not Ellipsis:
-            if not isinstance(indices, tuple):
-                indices = (indices,)
-
-            axes_with_list_indices = [
-                i for i, x in enumerate(indices) if not isinstance(x, slice)
-            ]
-            n_axes_with_list_indices = len(axes_with_list_indices)
-
-            if n_axes_with_list_indices < 2:
-                # ----------------------------------------------------
-                # At most one axis has a list-of-integers index so we
-                # can do a normal numpy subspace
-                # ----------------------------------------------------
-                array = array[tuple(indices)]
-            else:
-                # ----------------------------------------------------
-                # At least two axes have list-of-integers indices so
-                # we can't do a normal numpy subspace
-                # ----------------------------------------------------
-                n_indices = len(indices)
-                if n_axes_with_list_indices < n_indices:
-                    # Apply subspace defined by slices
-                    slices = [
-                        i if isinstance(i, slice) else slice(None)
-                        for i in indices
-                    ]
-                    array = array[tuple(slices)]
-
-                if n_axes_with_list_indices:
-                    # Apply subspaces defined by lists (this
-                    # methodology works for both numpy arrays and
-                    # scipy sparse arrays).
-                    lists = [slice(None)] * n_indices
-                    for axis in axes_with_list_indices:
-                        lists[axis] = indices[axis]
-                        array = array[tuple(lists)]
-                        lists[axis] = slice(None)
-
-        if copy:
-            if np.ma.isMA(array) and not array.ndim:
-                # This is because numpy.ma.copy doesn't work for
-                # scalar arrays (at the moment, at least)
-                ma_array = np.ma.empty((), dtype=array.dtype)
-                ma_array[...] = array
-                array = ma_array
-            else:
-                array = array.copy()
-
-        return array
+    #    @classmethod
+    #    def get_subspace(cls, array, indices, copy=True):
+    #        """Return a subspace, defined by indices, of a numpy array.
+    #
+    #        Only certain type of indices are allowed. See the *indices*
+    #        parameter for details.
+    #
+    #        Indexing is similar to numpy indexing. Given the restrictions on
+    #        the type of indices allowed - see the *indicies* parameter - the
+    #        only difference to numpy indexing is
+    #
+    #          * When two or more dimension's indices are sequences of integers
+    #            then these indices work independently along each dimension
+    #            (similar to the way vector subscripts work in Fortran).
+    #
+    #        .. versionadded:: (cfdm) 1.8.7.0
+    #
+    #        :Parameters:
+    #
+    #            array: `numpy.ndarray`
+    #                The array to be subspaced.
+    #
+    #            indices:
+    #                The indices that define the subspace.
+    #
+    #                Must be either `Ellipsis` or a sequence that contains an
+    #                index for each dimension. In the latter case, each
+    #                dimension's index must either be a `slice` object or a
+    #                sequence of two or more integers.
+    #
+    #                  *Parameter example:*
+    #                    indices=Ellipsis
+    #
+    #                  *Parameter example:*
+    #                    indices=[[5, 7, 8]]
+    #
+    #                  *Parameter example:*
+    #                    indices=[slice(4, 7)]
+    #
+    #                  *Parameter example:*
+    #                    indices=[slice(None), [5, 7, 8]]
+    #
+    #                  *Parameter example:*
+    #                    indices=[[2, 5, 6], slice(15, 4, -2), [8, 7, 5]]
+    #
+    #            copy: `bool`
+    #                If `False` then the returned subspace may (or may not) be
+    #                independent of the input *array*. By default the returned
+    #                subspace is independent of the input *array*.
+    #
+    #        :Returns:
+    #
+    #            `numpy.ndarray`
+    #
+    #        """
+    #        if indices is not Ellipsis:
+    #            if not isinstance(indices, tuple):
+    #                indices = (indices,)
+    #
+    #            axes_with_list_indices = [
+    #                i for i, x in enumerate(indices) if not isinstance(x, slice)
+    #            ]
+    #            n_axes_with_list_indices = len(axes_with_list_indices)
+    #
+    #            if n_axes_with_list_indices < 2:
+    #                # ----------------------------------------------------
+    #                # At most one axis has a list-of-integers index so we
+    #                # can do a normal numpy subspace
+    #                # ----------------------------------------------------
+    #                array = array[tuple(indices)]
+    #            else:
+    #                # ----------------------------------------------------
+    #                # At least two axes have list-of-integers indices so
+    #                # we can't do a normal numpy subspace
+    #                # ----------------------------------------------------
+    #                n_indices = len(indices)
+    #                if n_axes_with_list_indices < n_indices:
+    #                    # Apply subspace defined by slices
+    #                    slices = [
+    #                        i if isinstance(i, slice) else slice(None)
+    #                        for i in indices
+    #                    ]
+    #                    array = array[tuple(slices)]
+    #
+    #                if n_axes_with_list_indices:
+    #                    # Apply subspaces defined by lists (this
+    #                    # methodology works for both numpy arrays and
+    #                    # scipy sparse arrays).
+    #                    lists = [slice(None)] * n_indices
+    #                    for axis in axes_with_list_indices:
+    #                        lists[axis] = indices[axis]
+    #                        array = array[tuple(lists)]
+    #                        lists[axis] = slice(None)
+    #
+    #        if copy:
+    #            if np.ma.isMA(array) and not array.ndim:
+    #                # This is because numpy.ma.copy doesn't work for
+    #                # scalar arrays (at the moment, at least)
+    #                ma_array = np.ma.empty((), dtype=array.dtype)
+    #                ma_array[...] = array
+    #                array = ma_array
+    #            else:
+    #                array = array.copy()
+    #
+    #        return array
 
     def get_units(self, default=ValueError()):
         """The units of the array.
@@ -336,8 +296,7 @@ class ArrayMixin:
 
         """
         attributes = self.get_attributes({})
-        units = attributes.get("units")
-        if units is None:
+        if "units" not in attributes:
             if default is None:
                 return
 
@@ -346,17 +305,4 @@ class ArrayMixin:
                 f"{self.__class__.__name__} 'units' have not been set",
             )
 
-        return units
-
-
-#        units = self._get_component("units", False)
-#        if units is False:
-#            if default is None:
-#                return
-#
-#            return self._default(
-#                default,
-#                f"{self.__class__.__name__} 'units' have not been set",
-#            )
-#
-#        return units
+        return attributes["units"]

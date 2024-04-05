@@ -1,5 +1,6 @@
 import numpy as np
 
+from ..netcdfindexer import netcdf_indexer
 from .array import Array
 
 
@@ -192,7 +193,8 @@ class CompressedArray(Array):
         if indices is Ellipsis:
             return u
 
-        return self.get_subspace(u, indices, copy=True)
+        u = netcdf_indexer(u, mask=False, unpack=False)
+        return u[indices]
 
     def _first_or_last_element(self, indices):
         """Return the first or last element of the compressed array.

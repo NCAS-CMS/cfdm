@@ -20,8 +20,6 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         shape=None,
         mask=True,
         unpack=True,
-        #        units=False,
-        #        calendar=False,
         attributes=None,
         storage_options=None,
         source=None,
@@ -63,26 +61,11 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
-            units: `str` or `None`, optional
-                The units of the netCDF variable. Set to `None` to
-                indicate that there are no units. If unset then the
-                units will be set during the first `__getitem__` call.
-
-                .. versionadded:: (cfdm) 1.10.0.1
-
-            calendar: `str` or `None`, optional
-                The calendar of the netCDF variable. By default, or if
-                set to `None`, then the CF default calendar is
-                assumed, if applicable. If unset then the calendar
-                will be set during the first `__getitem__` call.
-
-                .. versionadded:: (cfdm) 1.10.0.1
-
-            {{attributes: `dict` or `None`, optional}}
+            {{init attributes: `dict` or `None`, optional}}
 
                 If *attributes* is `None`, the default, then the
-                attributes will be set from *variable* during the
-                first `__getitem__` call.
+                netCDF attributes will be set from the netCDF variable
+                during the first `__getitem__` call.
 
                 .. versionadded:: (cfdm) NEXTRELEASE
 
@@ -111,6 +94,14 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
             group: Deprecated at version 1.10.1.0
                 Use the *address* parameter instead.
+
+            units: `str` or `None`, optional
+                Deprecated at version NEXTRELEASE. Use the
+                *attributes* parameter instead.
+
+            calendar: `str` or `None`, optional
+                Deprecated at version NEXTRELEASE. Use the
+                *attributes* parameter instead.
 
         """
         super().__init__(source=source, copy=copy)

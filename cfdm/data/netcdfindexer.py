@@ -117,6 +117,7 @@ class netcdf_indexer:
         unpack=True,
         always_masked_array=False,
         attributes=None,
+        copy=False,
     ):
         """**Initialisation**
 
@@ -170,6 +171,7 @@ class netcdf_indexer:
         self.unpack = bool(unpack)
         self.always_masked_array = bool(always_masked_array)
         self._attributes = attributes
+        self._copy = copy
 
     def __getitem__(self, index):
         """Return a subspace of the variable as a `numpy` array.
@@ -257,6 +259,12 @@ class netcdf_indexer:
         # Make sure all strings are unicode
         if data.dtype.kind == "S":
             data = data.astype("U", copy=False)
+
+        # ------------------------------------------------------------
+        # Copy the data
+        # ------------------------------------------------------------
+        if self._copy:
+            data = data.copy()
 
         return data
 
@@ -694,18 +702,21 @@ class netcdf_indexer:
                 # scale_factor and add_offset
                 if add_offset != 0.0 or scale_factor != 1.0:
                     data = data * scale_factor + add_offset
+                    self._copy = False
                 else:
                     data = data.astype(np.array(scale_factor).dtype)
             else:
                 # scale_factor with no add_offset
                 if scale_factor != 1.0:
                     data = data * scale_factor
+                    self._copy = False
                 else:
                     data = data.astype(scale_factor.dtype)
         elif add_offset is not None:
             # add_offset with no scale_factor
             if add_offset != 0.0:
                 data = data + add_offset
+                self._copy = False
             else:
                 data = data.astype(np.array(add_offset).dtype)
 
