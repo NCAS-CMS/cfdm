@@ -29,8 +29,8 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         shape=None,
         mask=True,
         unpack=True,
-        units=False,
-        calendar=False,
+        #        units=False,
+        #        calendar=False,
         attributes=None,
         storage_options=None,
         source=None,
@@ -89,6 +89,14 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 applicable. If unset then the calendar will be set
                 during the first `__getitem__` call.
 
+            {{attributes: `dict` or `None`, optional}}
+
+                If *attributes* is `None`, the default, then the
+                attributes will be set from *variable* during the
+                first `__getitem__` call.
+
+                .. versionadded:: (cfdm) NEXTRELEASE
+
             {{init storage_options: `dict` or `None`, optional}}
 
             {{init source: optional}}
@@ -129,15 +137,15 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             except AttributeError:
                 unpack = True
 
-            try:
-                units = source._get_component("units", False)
-            except AttributeError:
-                units = False
-
-            try:
-                calendar = source._get_component("calendar", False)
-            except AttributeError:
-                calendar = False
+            #            try:
+            #                units = source._get_component("units", False)
+            #            except AttributeError:
+            #                units = False
+            #
+            #            try:
+            #                calendar = source._get_component("calendar", False)
+            #            except AttributeError:
+            #                calendar = False
 
             try:
                 attributes = source._get_component("attributes", None)
@@ -173,8 +181,8 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         self._set_component("dtype", dtype, copy=False)
         self._set_component("mask", bool(mask), copy=False)
         self._set_component("unpack", bool(unpack), copy=False)
-        self._set_component("units", units, copy=False)
-        self._set_component("calendar", calendar, copy=False)
+        #        self._set_component("units", units, copy=False)
+        #        self._set_component("calendar", calendar, copy=False)
         self._set_component("storage_options", storage_options, copy=False)
         self._set_component("attributes", attributes, copy=False)
 
@@ -211,9 +219,9 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         # Set the attributes, if they haven't been set already.
         self._set_attributes(variable)
 
-        # Set the units, if they haven't been set already (do this
-        # after setting the attributes).
-        self._set_units(variable)
+        #        # Set the units, if they haven't been set already (do this
+        #        # after setting the attributes).
+        #        self._set_units(variable)
 
         self.close(dataset0)
         del dataset, dataset0
@@ -224,7 +232,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         """Set the netCDF variable attributes.
 
         These are set from the netCDF variable attributes, but only if
-        they have not already been defined, either during {{class}}
+        they have not already been defined, either during `{{class}}`
         instantiation or by a previous call to `_set_attributes`.
 
         .. versionadded:: (cfdm) NEXTVERSION

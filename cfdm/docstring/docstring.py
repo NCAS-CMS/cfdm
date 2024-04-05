@@ -451,6 +451,10 @@ _docstring_substitution_definitions = {
                   'scaleway-secretkey...', 'endpoint_url':
                   'https://s3.fr-par.scw.cloud', 'client_kwargs':
                   {'region_name': 'fr-par'}}``""",
+    # attributes
+    "{{attributes: `dict` or `None`, optional}}": """attributes: `dict` or `None`, optional
+                Provide netCDF attributes for the data as a dictionary
+                of key/value pairs.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------

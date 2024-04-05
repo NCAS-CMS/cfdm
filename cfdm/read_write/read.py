@@ -248,9 +248,9 @@ def read(
             If True (the default) then unpack arrays by convention
             when the data is read from disk.
 
-            Unpacking is determined netCDF conventions for the
-            following attributes: ``add_offset``, ``scale_factor``,
-            and ``_Unsigned``.
+            Unpacking is determined by netCDF conventions for the
+            following variable attributes: ``add_offset``,
+            ``scale_factor``, and ``_Unsigned``.
 
             .. versionadded:: (cfdm) NEXTVERSION
 
@@ -277,7 +277,8 @@ def read(
             .. versionadded:: (cfdm) 1.9.0.0
 
         netcdf_eninge: `None` or `str`, optional
-            Specify which library to use for opening and reading
+
+            Specify which library to use for the opening and reading
             netCDF files. By default, or if `None`, then the first one
             of `netCDF4` and `h5netcdf` to successfully open the file
             netCDF file is used. Setting *netcdf_engine* to one of
@@ -288,21 +289,33 @@ def read(
                       define subspaces of its data. See
                       https://docs.h5py.org for details.
 
-            .. versionadded:: NEXTVERSION
+            .. versionadded:: (cfdm) NEXTVERSION
 
         storage_options: `dict` or `None`, optional
-            Key/value pairs to be passed on to the creation of
-            `s3fs.S3FileSystem` file systems to control the opening of
-            files in S3 object stores. Ignored for files not in an S3
-            object store, i.e. those whose names do not start with
-            ``s3:``.
+            Pass parameters to the backend file system driver, such as
+            username, password, server, port, etc. How the storage
+            options are interpreted depends on the location of the
+            file:
 
-            By default, or if `None`, then *storage_options* is taken
-            as ``{}``.
+            **Local File System**
 
-            If the ``'endpoint_url'`` key is not in *storage_options*
+            Storage options are ignored for local files.
+
+            **HTTP(S)**
+
+            Storage options are ignored for files available across the
+            network via OPeNDAP.
+
+            **S3-compatible services**
+
+            The backend used is `s3fs`, and the storage options are
+            used to initialise an `s3fs.S3FileSystem` file system
+            object. By default, or if `None`, then *storage_options*
+            is taken as ``{}``.
+
+            If the ``'endpoint_url'`` key is not in *storage_options*,
             or is not in a dictionary defined by the
-            ``'client_kwargs`` key (which is always the case when
+            ``'client_kwargs'`` key (both of which are the case when
             *storage_options* is `None`), then one will be
             automatically inserted for accessing an S3 file. For
             example, for a file name of ``'s3://store/data/file.nc'``,
@@ -311,8 +324,8 @@ def read(
 
             *Parameter example:*
               For a file name of ``'s3://store/data/file.nc'``, the
-              following are equivalent: ``None``, ``{}``, and
-              ``{'endpoint_url': 'https://store'}``,
+              following are equivalent: ``None``, ``{}``,
+              ``{'endpoint_url': 'https://store'}``, and
               ``{'client_kwargs': {'endpoint_url': 'https://store'}}``
 
             *Parameter example:*

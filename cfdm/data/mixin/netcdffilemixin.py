@@ -66,45 +66,45 @@ class NetCDFFileMixin:
             f"Must implement {self.__class__.__name__}._set_attributes"
         )  # pragma: no cover
 
-    def _set_units(self, var):
-        """The units and calendar properties.
-
-        These are set from the netCDF variable attributes, but only if
-        they have already not been defined, either during {{class}}
-        instantiation or by a previous call to `_set_units`.
-
-        .. versionadded:: (cfdm) 1.10.0.1
-
-        :Parameters:
-
-            var: `netCDF4.Variable` or `h5netcdf.Variable`
-                The variable containing the units and calendar
-                definitions.
-
-        :Returns:
-
-            `tuple`
-                The units and calendar values, either of which may be
-                `None`.
-
-        """
-        # We assume that an attributes dictionary exists
-        attributes = self._get_component("attributes")
-
-        # Note: Can't use None as the default since it is a valid
-        #       `units` or 'calendar' value that indicates that the
-        #       attribute has not been set in the dataset.
-        units = self._get_component("units", False)
-        if units is False:
-            self._set_component("units", attributes.get("units"), copy=False)
-
-        calendar = self._get_component("calendar", False)
-        if calendar is False:
-            self._set_component(
-                "calendar", attributes.get("calendar"), copy=False
-            )
-
-        return units, calendar
+    #    def _set_units(self, var):
+    #        """The units and calendar properties.
+    #
+    #        These are set from the netCDF variable attributes, but only if
+    #        they have already not been defined, either during {{class}}
+    #        instantiation or by a previous call to `_set_units`.
+    #
+    #        .. versionadded:: (cfdm) 1.10.0.1
+    #
+    #        :Parameters:
+    #
+    #            var: `netCDF4.Variable` or `h5netcdf.Variable`
+    #                The variable containing the units and calendar
+    #                definitions.
+    #
+    #        :Returns:
+    #
+    #            `tuple`
+    #                The units and calendar values, either of which may be
+    #                `None`.
+    #
+    #        """
+    #        # We assume that an attributes dictionary exists
+    #        attributes = self._get_component("attributes")
+    #
+    #        # Note: Can't use None as the default since it is a valid
+    #        #       `units` or 'calendar' value that indicates that the
+    #        #       attribute has not been set in the dataset.
+    #        units = self._get_component("units", False)
+    #        if units is False:
+    #            self._set_component("units", attributes.get("units"), copy=False)
+    #
+    #        calendar = self._get_component("calendar", False)
+    #        if calendar is False:
+    #            self._set_component(
+    #                "calendar", attributes.get("calendar"), copy=False
+    #            )
+    #
+    #        return units, calendar
 
     @property
     def array(self):

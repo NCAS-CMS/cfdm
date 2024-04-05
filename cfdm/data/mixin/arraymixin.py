@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import numpy as np
 
 
@@ -76,30 +78,60 @@ class ArrayMixin:
         """
         return 0
 
-    def _set_units(self):
-        """The units and calendar properties.
+    #   def _set_units(self):
+    #       """The units and calendar properties.
+    #
+    #       These are the values set during initialisation, defaulting to
+    #       `None` if either was not set at that time.
+    #
+    #       .. versionadded:: (cfdm) 1.10.1.0
+    #
+    #       :Returns:
+    #
+    #           `tuple`
+    #               The units and calendar values, either of which may be
+    #               `None`.
+    #
+    #       """
+    #       units = self.get_units(False)
+    #       if units is False:
+    #           self._set_component("units", None, copy=False)
+    #
+    #       calendar = self.get_calendar(False)
+    #       if calendar is False:
+    #           self._set_component("calendar", None, copy=False)
+    #
+    #       return units, calendar
 
-        These are the values set during initialisation, defaulting to
-        `None` if either was not set at that time.
+    def get_attributes(self, default=ValueError()):
+        """The attributes of the array.
 
-        .. versionadded:: (cfdm) 1.10.1.0
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                attributes have not been set. If set to an `Exception`
+                instance then it will be raised instead.
 
         :Returns:
 
-            `tuple`
-                The units and calendar values, either of which may be
-                `None`.
+            `dict`
+                The attributes.
 
         """
-        units = self.get_units(False)
-        if units is False:
-            self._set_component("units", None, copy=False)
+        attributes = self._get_component("attributes", None)
+        if attributes is None:
+            if default is None:
+                return
 
-        calendar = self.get_calendar(False)
-        if calendar is False:
-            self._set_component("calendar", None, copy=False)
+            return self._default(
+                default,
+                f"{self.__class__.__name__} attributes have not yet been set",
+            )
 
-        return units, calendar
+        return deepcopy(attributes)
 
     def get_calendar(self, default=ValueError()):
         """The calendar of the array.
@@ -122,8 +154,9 @@ class ArrayMixin:
                 The calendar value.
 
         """
-        calendar = self._get_component("calendar", False)
-        if calendar is False:
+        attributes = self.get_attributes({})
+        calendar = attributes.get("calendar")
+        if calendar is None:
             if default is None:
                 return
 
@@ -133,6 +166,18 @@ class ArrayMixin:
             )
 
         return calendar
+
+    #        calendar = self._get_component("calendar", False)
+    #        if calendar is False:
+    #            if default is None:
+    #                return
+    #
+    #            return self._default(
+    #                default,
+    #                f"{self.__class__.__name__} 'calendar' has not been set",
+    #            )
+    #
+    #        return calendar
 
     def get_compression_type(self):
         """Returns the array's compression type.
@@ -290,8 +335,9 @@ class ArrayMixin:
                 The units value.
 
         """
-        units = self._get_component("units", False)
-        if units is False:
+        attributes = self.get_attributes({})
+        units = attributes.get("units")
+        if units is None:
             if default is None:
                 return
 
@@ -301,3 +347,16 @@ class ArrayMixin:
             )
 
         return units
+
+
+#        units = self._get_component("units", False)
+#        if units is False:
+#            if default is None:
+#                return
+#
+#            return self._default(
+#                default,
+#                f"{self.__class__.__name__} 'units' have not been set",
+#            )
+#
+#        return units

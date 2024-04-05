@@ -111,34 +111,34 @@ class FileArrayMixin:
         """
         return self._get_component("address", ())
 
-    def get_attributes(self, default=ValueError()):
-        """The attributes of the array.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if the
-                attributes have not been set. If set to an `Exception`
-                instance then it will be raised instead.
-
-        :Returns:
-
-                The attributes.
-
-        """
-        attributes = self._get_component("attributes", None)
-        if attributes is None:
-            if default is None:
-                return
-
-            return self._default(
-                default,
-                f"{self.__class__.__name__} attributes have not yet been set",
-            )
-
-        return deepcopy(attributes)
+    #    def get_attributes(self, default=ValueError()):
+    #        """The attributes of the array.
+    #
+    #        .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #        :Parameters:
+    #
+    #            default: optional
+    #                Return the value of the *default* parameter if the
+    #                attributes have not been set. If set to an `Exception`
+    #                instance then it will be raised instead.
+    #
+    #        :Returns:
+    #
+    #                The attributes.
+    #
+    #        """
+    #        attributes = self._get_component("attributes", None)
+    #        if attributes is None:
+    #            if default is None:
+    #                return
+    #
+    #            return self._default(
+    #                default,
+    #                f"{self.__class__.__name__} attributes have not yet been set",
+    #            )
+    #
+    #        return deepcopy(attributes)
 
     def get_filename(self, default=AttributeError()):
         """The name of the file containing the array.

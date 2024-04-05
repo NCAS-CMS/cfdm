@@ -6170,20 +6170,32 @@ class NetCDFRead(IORead):
 
         filename = g["variable_filename"][ncvar]
 
+        attributes = g["variable_attributes"][ncvar].copy()
+
         # Get the units and calendar (before we overwrite ncvar)
-        units = g["variable_attributes"][ncvar].get("units")
-        calendar = g["variable_attributes"][ncvar].get("calendar")
+        #       units = g["variable_attributes"][ncvar].get("units")
+        #       calendar = g["variable_attributes"][ncvar].get("calendar")
 
         if coord_ncvar is not None:
             # Get the Units from the parent coordinate variable, if
             # they've not already been set.
-            if units is None:
+            if "units" not in attributes:
+                #            if units is None:
+                #                units = g["vaariable_attributes"][coord_ncvar].get("units")
                 units = g["variable_attributes"][coord_ncvar].get("units")
+                if units is not None:
+                    attributes["units"] = units
 
-            if calendar is None:
+            if "calendar" not in attributes:
+                # if calendar is None:
+                # calendar = g["variable_attributes"][coord_ncvar].get(
+                #     "calendar"
+                # )
                 calendar = g["variable_attributes"][coord_ncvar].get(
                     "calendar"
                 )
+                if calendar is not None:
+                    attributes["calendar"] = calendar
 
         kwargs = {
             "filename": filename,
@@ -6192,9 +6204,10 @@ class NetCDFRead(IORead):
             "dtype": dtype,
             "mask": g["mask"],
             "unpack": g["unpack"],
-            "units": units,
-            "calendar": calendar,
-            "attributes": g["variable_attributes"][ncvar],
+            #            "units": units,
+            #            "calendar": calendar,
+            #            "attributes": g["variable_attributes"][ncvar],
+            "attributes": attributes,
             "storage_options": g["file_system_storage_options"].get(filename),
         }
 
@@ -6260,8 +6273,12 @@ class NetCDFRead(IORead):
             return None
 
         filename = kwargs["filename"]
-        units = kwargs["units"]
-        calendar = kwargs["calendar"]
+
+        attributes = kwargs["attributes"]
+        units = attributes.get("units")
+        calendar = attributes.get("calendar")
+        #        units = kwargs["units"]
+        #        calendar = kwargs["calendar"]
 
         compression = g["compression"]
 
@@ -9277,10 +9294,13 @@ class NetCDFRead(IORead):
                 copy=False,
                 **{connectivity_attr: indices},
             )
+            attributes = kwargs["attributes"]
             data = self._create_Data(
                 array,
-                units=kwargs["units"],
-                calendar=kwargs["calendar"],
+                #                units=kwargs["units"],
+                #                calendar=kwargs["calendar"],
+                units=attributes.get("units"),
+                calendar=attributes.get("calendar"),
                 ncvar=connectivity_ncvar,
             )
         else:
@@ -9382,10 +9402,13 @@ class NetCDFRead(IORead):
             cell_dimension=cell_dimension,
             copy=False,
         )
+        attributes = kwargs["attributes"]
         data = self._create_Data(
             array,
-            units=kwargs["units"],
-            calendar=kwargs["calendar"],
+            # units=kwargs["units"],
+            # calendar=kwargs["calendar"],
+            units=attributes.get("units"),
+            calendar=attributes.get("calendar"),
             ncvar=connectivity_ncvar,
         )
 

@@ -37,7 +37,8 @@ class netcdf_indexer:
     Indexing is orthogonal, meaning that the index for each dimension
     is applied independently, regardless of how that index was
     defined. For instance, the indices ``[[0, 1], [1, 3], 0]`` and
-    ``[:2, 1::2, 0]`` will give identical results.
+    ``[:2, 1:4:2, 0]`` will give identical results. Note that this
+    behaviour is different to that of `numpy`.
 
     During indexing, masking and unpacking is applied according to the
     netCDF conventions, either or both of which may be disabled via
@@ -154,8 +155,8 @@ class netcdf_indexer:
                 there are no missing values.
 
             attributes: `dict`, optional
-                Provide the netCDF attributes for the *variable* as
-                dictionary key/value pairs.  Only the attributes
+                Provide netCDF attributes for the *variable* as a
+                dictionary key/value pairs. Only the attributes
                 relevant to masking and unpacking are considered, with
                 all other attributes being ignored. If *attributes* is
                 `None`, the default, then the netCDF attributes stored
@@ -177,8 +178,8 @@ class netcdf_indexer:
 
         Indexing is orthogonal, meaning that the index for each
         dimension is applied independently, regardless of how that
-        index was defined. For instance, the indices ``[[0, 1], [3,
-        6], 0]`` and ``[:2, 3:7:3, 0]`` will give identical
+        index was defined. For instance, the indices ``[[0, 1], [1,
+        3], 0]`` and ``[:2, 1:4:2, 0]`` will give identical
         results. Note that this behaviour is different to that of
         `numpy`.
 
@@ -191,7 +192,7 @@ class netcdf_indexer:
         dtype = variable.dtype
 
         # Prevent a netCDF4 variable from doing its own masking and
-        # unpacking
+        # unpacking during the indexing
         netCDF4_scale = False
         netCDF4_mask = False
         try:
@@ -204,81 +205,9 @@ class netcdf_indexer:
             variable.set_auto_maskandscale(False)
 
         # ------------------------------------------------------------
-        # Index the variable with orthogonal indexing
+        # Index the variable
         # ------------------------------------------------------------
-        index = normalize_index(index, variable.shape)
-
-        # Find the positions of any list/1-d array indices (which by
-        # now will contain only integers)
-        axes_with_list_indices = [
-            n
-            for n, i in enumerate(index)
-            if isinstance(i, list) or getattr(i, "shape", False)
-        ]
-
-        # Convert any integer indices to size 1 slices, so that their
-        # axes are not dropped yet (they will be dealt with later).
-        index0 = [
-            slice(i, i + 1) if isinstance(i, Integral) else i for i in index
-        ]
-
-        data = variable
-        if len(axes_with_list_indices) <= 1 or getattr(
-            variable, "__orthogonal_indexing__", False
-        ):
-            # There is at most one list/1-d array index, and/or the
-            # variable natively supports orthogonal indexing.
-            data = data[tuple(index0)]
-        else:
-            # Emulate orthogonal indexing with a sequence of
-            # subspaces, one for each list/1-d array index.
-
-            # 1) Apply the slice indices at the time as the list/1-d
-            #    array index that gives the smallest result.
-
-            # Create an index that replaces each list/1-d arrays with
-            # slice(None)
-            index1 = [
-                i if isinstance(i, slice) else slice(None) for i in index0
-            ]
-
-            # Find the position of the list/1-d array index that gives
-            # the smallest result
-            shape1 = self.index_shape(index1, data.shape)
-            size1 = prod(shape1)
-            sizes = [
-                len(index[i]) * size1 // shape1[i]
-                for i in axes_with_list_indices
-            ]
-            n = axes_with_list_indices.pop(np.argmin(sizes))
-
-            # Apply the subspace of slices and the chosen list/1-d
-            # array index
-            index1[n] = index[n]
-            data = data[tuple(index1)]
-
-            # 2) Apply the rest of the list/1-d array indices, in the
-            #    order that gives the smallest result after each step.
-            ndim = variable.ndim
-            while axes_with_list_indices:
-                shape1 = data.shape
-                size1 = data.size
-                sizes = [
-                    len(index[i]) * size1 // shape1[i]
-                    for i in axes_with_list_indices
-                ]
-                n = axes_with_list_indices.pop(np.argmin(sizes))
-
-                # Apply the subspace of for the chosen list/1-d array
-                # index
-                index2 = [slice(None)] * ndim
-                index2[n] = index[n]
-                data = data[tuple(index2)]
-
-        # Apply any integer indices that will drop axes
-        index3 = [0 if isinstance(i, Integral) else slice(None) for i in index]
-        if index3:
-            data = data[tuple(index3)]
+        data = self._index(index)
 
         # Reset a netCDF4 variable's scale and mask behaviour
         if netCDF4_scale:
@@ -407,6 +336,109 @@ class netcdf_indexer:
             return default_fillvals["S1"]
 
         return default_fillvals[dtype.str[1:]]
+
+    def _index(self, index):
+        """Get a subspace of the variable with orthogonal indexing.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `__getitem__`
+
+        :Parameter:
+
+            index:
+                The indices that define the subspace.
+
+        :Returns:
+
+            `numpy.ndarray`
+                The subspace of the variable.
+
+        """
+        variable = self.variable
+        index = normalize_index(index, variable.shape)
+
+        # Find the positions of any list/1-d array indices (which by
+        # now will contain only integers)
+        axes_with_list_indices = [
+            n
+            for n, i in enumerate(index)
+            if isinstance(i, list) or getattr(i, "shape", False)
+        ]
+
+        # Create an index that replaces integer indices with size 1
+        # slices, so that their axes are not dropped yet (they will be
+        # dealt with later).
+        index0 = [
+            slice(i, i + 1) if isinstance(i, Integral) else i for i in index
+        ]
+
+        data = variable
+        if len(axes_with_list_indices) <= 1 or getattr(
+            variable, "__orthogonal_indexing__", False
+        ):
+            # There is at most one list/1-d array index, and/or the
+            # variable natively supports orthogonal indexing.
+            #
+            # Note: `netCDF4.Variable` supports orthogonal indexing;
+            #       but `numpy.ndarray`, `h5netcdf.File` and
+            #       `h5py.File` do not.
+            data = data[tuple(index0)]
+        else:
+            # There are two or more list/1-d array index, and the
+            # variable does not natively support orthogonal indexing.
+            #
+            # Emulate orthogonal indexing with a sequence of
+            # subspaces, one for each list/1-d array index.
+
+            # 1) Apply the slice indices at the time as the list/1-d
+            #    array index that gives the smallest result.
+
+            # Create an index that replaces each list/1-d array with
+            # slice(None)
+            index1 = [
+                i if isinstance(i, slice) else slice(None) for i in index0
+            ]
+
+            # Find the position of the list/1-d array index that gives
+            # the smallest result.
+            shape1 = self.index_shape(index1, data.shape)
+            size1 = prod(shape1)
+            sizes = [
+                len(index[i]) * size1 // shape1[i]
+                for i in axes_with_list_indices
+            ]
+            n = axes_with_list_indices.pop(np.argmin(sizes))
+
+            # Apply the subspace of slices and the chosen list/1-d
+            # array index
+            index1[n] = index[n]
+            data = data[tuple(index1)]
+
+            # 2) Apply the rest of the list/1-d array indices, in the
+            #    order that gives the smallest result after each step.
+            ndim = variable.ndim
+            while axes_with_list_indices:
+                shape1 = data.shape
+                size1 = data.size
+                sizes = [
+                    len(index[i]) * size1 // shape1[i]
+                    for i in axes_with_list_indices
+                ]
+                n = axes_with_list_indices.pop(np.argmin(sizes))
+
+                # Apply the subspace of for the chosen list/1-d array
+                # index
+                index2 = [slice(None)] * ndim
+                index2[n] = index[n]
+                data = data[tuple(index2)]
+
+        # Apply any integer indices that will drop axes
+        index3 = [0 if isinstance(i, Integral) else slice(None) for i in index]
+        if index3:
+            data = data[tuple(index3)]
+
+        return data
 
     def _mask(self, data, dtype, attributes, dtype_unsigned_int):
         """Mask the data.
