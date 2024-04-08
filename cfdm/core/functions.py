@@ -3,9 +3,6 @@ import platform
 import sys
 from pickle import dumps, loads
 
-import numpy as np
-import packaging
-
 from . import __cf_version__, __file__, __version__
 
 
@@ -42,6 +39,9 @@ def environment(display=True, paths=True):
     cfdm.core: NEXTVERSION
 
     """
+    import numpy as np
+    import packaging
+
     dependency_version_paths_mapping = {
         "Platform": (platform.platform(), ""),
         "Python": (platform.python_version(), sys.executable),

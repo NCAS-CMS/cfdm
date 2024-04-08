@@ -149,10 +149,14 @@ class MeshArray(CompressedArray):
             # future reference.
             self._set_component("shape", u.shape, copy=False)
 
-        if indices is Ellipsis:
-            return u
-
-        u = netcdf_indexer(u, mask=False, unpack=False)
+        u = netcdf_indexer(
+            u,
+            mask=False,
+            unpack=False,
+            always_masked_array=False,
+            orthogonal_indexing=True,
+            copy=False,
+        )
         return u[indices]
 
     @property

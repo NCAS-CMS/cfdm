@@ -403,10 +403,14 @@ class SubsampledArray(CompressedArray):
             )
             u[u_indices] = subarray[...]
 
-        if indices is Ellipsis:
-            return u
-
-        u = netcdf_indexer(u, mask=False, unpack=False)
+        u = netcdf_indexer(
+            u,
+            mask=False,
+            unpack=False,
+            always_masked_array=False,
+            orthogonal_indexing=True,
+            copy=False,
+        )
         return u[indices]
 
     def _conformed_dependent_tie_points(self):

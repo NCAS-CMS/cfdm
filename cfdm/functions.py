@@ -4,13 +4,7 @@ from copy import deepcopy
 from functools import total_ordering
 from urllib.parse import urlparse
 
-import cftime
-import h5netcdf
-import h5py
-import netCDF4
 import numpy as np
-import s3fs
-import scipy
 
 from . import __cf_version__, __file__, __version__, core
 from .constants import CONSTANTS, ValidLogLevels
@@ -353,6 +347,14 @@ def environment(display=True, paths=True):
     cfdm: NEXTVERSION /home/miniconda3/lib/python3.11/site-packages/cfdm/__init__.py
 
     """
+    import cftime
+    import dask
+    import h5netcdf
+    import h5py
+    import netCDF4
+    import s3fs
+    import scipy
+
     out = core.environment(display=False, paths=paths)  # get all core env
 
     dependency_version_paths_mapping = {
@@ -363,6 +365,7 @@ def environment(display=True, paths=True):
         "h5py": (h5py.__version__, os.path.abspath(h5py.__file__)),
         "s3fs": (s3fs.__version__, os.path.abspath(s3fs.__file__)),
         "scipy": (scipy.__version__, os.path.abspath(scipy.__file__)),
+        "dask": (dask.__version__, os.path.abspath(dask.__file__)),
         "cftime": (cftime.__version__, os.path.abspath(cftime.__file__)),
         "cfdm": (__version__, os.path.abspath(__file__)),
     }

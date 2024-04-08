@@ -175,6 +175,8 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             mask=self.get_mask(),
             unpack=self.get_unpack(),
             always_masked_array=False,
+            orthogonal_indexing=True,
+            copy=False,
         )
         array = array[indices]
 

@@ -137,16 +137,6 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             except AttributeError:
                 unpack = True
 
-            #            try:
-            #                units = source._get_component("units", False)
-            #            except AttributeError:
-            #                units = False
-            #
-            #            try:
-            #                calendar = source._get_component("calendar", False)
-            #            except AttributeError:
-            #                calendar = False
-
             try:
                 attributes = source._get_component("attributes", None)
             except AttributeError:
@@ -181,8 +171,6 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         self._set_component("dtype", dtype, copy=False)
         self._set_component("mask", bool(mask), copy=False)
         self._set_component("unpack", bool(unpack), copy=False)
-        #        self._set_component("units", units, copy=False)
-        #        self._set_component("calendar", calendar, copy=False)
         self._set_component("storage_options", storage_options, copy=False)
         self._set_component("attributes", attributes, copy=False)
 
@@ -233,14 +221,13 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             mask=self.get_mask(),
             unpack=self.get_unpack(),
             always_masked_array=False,
+            orthogonal_indexing=True,
+            copy=False,
         )
         array = array[indices]
 
-        # Set the units, if they haven't been set already.
+        # Set the attributes, if they haven't been set already.
         self._set_attributes(variable)
-
-        #        # Set the units, if they haven't been set already.
-        #        self._set_units(variable)
 
         self.close(dataset)
         del netcdf, dataset

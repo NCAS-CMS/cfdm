@@ -34,11 +34,13 @@ logger = logging.getLogger(__name__)
 class netcdf_indexer:
     """A data indexer that also applies netCDF masking and unpacking.
 
-    Indexing is orthogonal, meaning that the index for each dimension
-    is applied independently, regardless of how that index was
-    defined. For instance, the indices ``[[0, 1], [1, 3], 0]`` and
-    ``[:2, 1:4:2, 0]`` will give identical results. Note that this
-    behaviour is different to that of `numpy`.
+    Indexing may be orthogonal or non-orthogonal. Orthogonal indexing
+    means that the index for each dimension is applied independently,
+    regardless of how that index was defined. For instance, the
+    indices ``[[0, 1], [1, 3], 0]`` and ``[:2, 1:4:2, 0]`` will give
+    identical results. This behaviour is different to that of
+    `numpy`. Non-orthogonal indexing means that normal `numpy`
+    indexing rules are applied.
 
     During indexing, masking and unpacking is applied according to the
     netCDF conventions, either or both of which may be disabled via
@@ -116,6 +118,7 @@ class netcdf_indexer:
         mask=True,
         unpack=True,
         always_masked_array=False,
+        orthogonal_indexing=False,
         attributes=None,
         copy=False,
     ):
@@ -155,6 +158,16 @@ class netcdf_indexer:
                 by indexing is always a masked `numpy` array, even if
                 there are no missing values.
 
+            orthogonal_indexing: `bool`, optional
+                If True then indexing is orthogonal, meaning that the
+                index for each dimension is applied independently,
+                regardless of how that index was defined. For
+                instance, the indices ``[[0, 1], [1, 3], 0]`` and
+                ``[:2, 1:4:2, 0]`` will give identical results. This
+                behaviour is different to that of `numpy`. If False,
+                the default, then normal `numpy` indexing rules are
+                applied.
+
             attributes: `dict`, optional
                 Provide netCDF attributes for the *variable* as a
                 dictionary key/value pairs. Only the attributes
@@ -165,25 +178,29 @@ class netcdf_indexer:
                 *attributes* is not `None`, then any netCDF attributes
                 stored by *variable* itself are ignored.
 
+            copy: `bool`, optional
+                If True then return a copy of the subspace that is not
+                a view of part of the the original data. If False, the
+                default, then the returned subspace could be either a
+                copy or a view.
+
         """
         self.variable = variable
         self.mask = bool(mask)
         self.unpack = bool(unpack)
         self.always_masked_array = bool(always_masked_array)
         self._attributes = attributes
-        self._copy = copy
+        self._copy = bool(copy)
+        self._orthogonal_indexing = bool(orthogonal_indexing)
 
     def __getitem__(self, index):
         """Return a subspace of the variable as a `numpy` array.
 
         v.__getitem__(index) <==> v[index]
 
-        Indexing is orthogonal, meaning that the index for each
-        dimension is applied independently, regardless of how that
-        index was defined. For instance, the indices ``[[0, 1], [1,
-        3], 0]`` and ``[:2, 1:4:2, 0]`` will give identical
-        results. Note that this behaviour is different to that of
-        `numpy`.
+        If `__orthogonal_indexing__` is True then indexing is
+        orthogonal.  If `__orthogonal_indexing__` is False then normal
+        `numpy` indexing rules are applied.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -268,13 +285,14 @@ class netcdf_indexer:
 
         return data
 
+    @property
     def __orthogonal_indexing__(self):
-        """Flag to indicate that orthogonal indexing is supported.
+        """Flag to indicate whether indexing is orthogonal.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        return True
+        return self._orthogonal_indexing
 
     def _check_safecast(self, attr, dtype, attributes):
         """Check an attribute's data type.
@@ -346,7 +364,7 @@ class netcdf_indexer:
         return default_fillvals[dtype.str[1:]]
 
     def _index(self, index):
-        """Get a subspace of the variable with orthogonal indexing.
+        """Get a subspace of the variable.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -363,8 +381,11 @@ class netcdf_indexer:
                 The subspace of the variable.
 
         """
-        variable = self.variable
-        index = normalize_index(index, variable.shape)
+        data = self.variable
+        if index is Ellipsis:
+            return data[...]
+
+        index = normalize_index(index, data.shape)
 
         # Find the positions of any list/1-d array indices (which by
         # now will contain only integers)
@@ -374,6 +395,24 @@ class netcdf_indexer:
             if isinstance(i, list) or getattr(i, "shape", False)
         ]
 
+        data_orthogonal_indexing = getattr(
+            data, "__orthogonal_indexing__", False
+        )
+        if not self.__orthogonal_indexing__:
+            # --------------------------------------------------------
+            # Do non-orthogonal indexing
+            # --------------------------------------------------------
+            if data_orthogonal_indexing and len(axes_with_list_indices) > 1:
+                raise IndexError(
+                    "Can't non-orthogonally index a "
+                    f"{data.__class__.__name__} object with index {index!r}"
+                )
+
+            return data[index]
+
+        # ------------------------------------------------------------
+        # Still here? Then do orthogonal indexing.
+        # ------------------------------------------------------------
         # Create an index that replaces integer indices with size 1
         # slices, so that their axes are not dropped yet (they will be
         # dealt with later).
@@ -381,15 +420,12 @@ class netcdf_indexer:
             slice(i, i + 1) if isinstance(i, Integral) else i for i in index
         ]
 
-        data = variable
-        if len(axes_with_list_indices) <= 1 or getattr(
-            variable, "__orthogonal_indexing__", False
-        ):
+        if data_orthogonal_indexing or len(axes_with_list_indices) <= 1:
             # There is at most one list/1-d array index, and/or the
             # variable natively supports orthogonal indexing.
             #
-            # Note: `netCDF4.Variable` supports orthogonal indexing;
-            #       but `numpy.ndarray`, `h5netcdf.File` and
+            # Note: `netCDF4.Variable` natively supports orthogonal
+            #       indexing; but `numpy.ndarray`, `h5netcdf.File` and
             #       `h5py.File` do not.
             data = data[tuple(index0)]
         else:
@@ -425,7 +461,7 @@ class netcdf_indexer:
 
             # 2) Apply the rest of the list/1-d array indices, in the
             #    order that gives the smallest result after each step.
-            ndim = variable.ndim
+            ndim = data.ndim
             while axes_with_list_indices:
                 shape1 = data.shape
                 size1 = data.size
@@ -434,9 +470,6 @@ class netcdf_indexer:
                     for i in axes_with_list_indices
                 ]
                 n = axes_with_list_indices.pop(np.argmin(sizes))
-
-                # Apply the subspace of for the chosen list/1-d array
-                # index
                 index2 = [slice(None)] * ndim
                 index2[n] = index[n]
                 data = data[tuple(index2)]

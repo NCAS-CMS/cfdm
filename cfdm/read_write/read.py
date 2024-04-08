@@ -245,7 +245,7 @@ def read(
             .. versionadded:: (cfdm) 1.8.2
 
         unpack: `bool`
-            If True (the default) then unpack arrays by convention
+            If True, the default, then unpack arrays by convention
             when the data is read from disk.
 
             Unpacking is determined by netCDF conventions for the
@@ -277,17 +277,12 @@ def read(
             .. versionadded:: (cfdm) 1.9.0.0
 
         netcdf_eninge: `None` or `str`, optional
-
-            Specify which library to use for the opening and reading
+            Specify which library to use for opening and reading
             netCDF files. By default, or if `None`, then the first one
             of `netCDF4` and `h5netcdf` to successfully open the file
             netCDF file is used. Setting *netcdf_engine* to one of
             ``'netCDF4'`` and ``'h5netcdf'`` will force the use of
             that library.
-
-            .. note:: `h5netcdf` restricts the types of indices that
-                      define subspaces of its data. See
-                      https://docs.h5py.org for details.
 
             .. versionadded:: (cfdm) NEXTVERSION
 
@@ -314,13 +309,13 @@ def read(
             is taken as ``{}``.
 
             If the ``'endpoint_url'`` key is not in *storage_options*,
-            or is not in a dictionary defined by the
-            ``'client_kwargs'`` key (both of which are the case when
-            *storage_options* is `None`), then one will be
-            automatically inserted for accessing an S3 file. For
-            example, for a file name of ``'s3://store/data/file.nc'``,
-            an ``'endpoint_url'`` key with value ``'https://store'``
-            would be created.
+            nor in a dictionary defined by the ``'client_kwargs'`` key
+            (both of which are the case when *storage_options* is
+            `None`), then one will be automatically inserted for
+            accessing an S3 file. For example, for a file name of
+            ``'s3://store/data/file.nc'``, an ``'endpoint_url'`` key
+            with value ``'https://store'`` would be created. To
+            disable this, set ``'endpoint_url'`` to `None`.
 
             *Parameter example:*
               For a file name of ``'s3://store/data/file.nc'``, the

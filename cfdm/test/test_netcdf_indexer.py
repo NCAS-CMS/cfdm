@@ -143,9 +143,11 @@ class netcdf_indexerTest(unittest.TestCase):
         self.assertTrue((x == array).all())
 
     def test_netcdf_indexer_orthogonal_indexing(self):
-        """Test netcdf_indexer for numpy."""
+        """Test netcdf_indexer for numpy orthogonal indexing."""
         array = np.ma.arange(120).reshape(2, 3, 4, 5)
-        x = cfdm.netcdf_indexer(array, mask=False, unpack=False)
+        x = cfdm.netcdf_indexer(
+            array, mask=False, unpack=False, orthogonal_indexing=True
+        )
 
         y = x[..., [0, 2], :]
         a = array[..., [0, 2], :]
@@ -157,6 +159,27 @@ class netcdf_indexerTest(unittest.TestCase):
         a = a[1, ...]
         self.assertTrue((y == a).all())
 
+    def test_netcdf_indexer_non_orthogonal_indexing(self):
+        """Test netcdf_indexer for numpy non-orthogonal indexing."""
+        array = np.ma.arange(120).reshape(2, 3, 4, 5)
+        x = cfdm.netcdf_indexer(array, mask=False, unpack=False)
+
+        y = x[..., [0, 2], :]
+        a = array[..., [0, 2], :]
+        self.assertTrue((y == a).all())
+
+        index = (Ellipsis, [0, 2], [2, 3])
+        y = x[index]
+        a = array[index]
+        self.assertEqual(y.shape, a.shape)
+        self.assertTrue((y == a).all())
+
+        index = (1, Ellipsis, [0, 2], [2, 3])
+        y = x[index]
+        a = array[index]
+        self.assertEqual(y.shape, a.shape)
+        self.assertTrue((y == a).all())
+
     def test_netcdf_always_masked_array(self):
         """Test netcdf_indexer for numpy masked output."""
         array = np.ma.arange(9)
@@ -164,6 +187,12 @@ class netcdf_indexerTest(unittest.TestCase):
         self.assertFalse(np.ma.isMA(x[...]))
         x = cfdm.netcdf_indexer(array, always_masked_array=True)
         self.assertTrue(np.ma.isMA(x[...]))
+
+    def test_netcdf_indexer_Ellipsis(self):
+        """Test netcdf_indexer with Ellipsis."""
+        n = np.arange(9)
+        x = cfdm.netcdf_indexer(n)
+        self.assertTrue((x[...] == n).all())
 
 
 if __name__ == "__main__":

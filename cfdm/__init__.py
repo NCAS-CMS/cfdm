@@ -116,7 +116,7 @@ try:
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
-_minimum_vn = "2024.2.0"
+_minimum_vn = "2024.3.0"
 if Version(s3fs.__version__) < Version(_minimum_vn):
     raise ValueError(
         f"Bad s3fs version: cfdm requires s3fs>={_minimum_vn}. "
@@ -134,6 +134,19 @@ if Version(scipy.__version__) < Version(_minimum_vn):
     raise ValueError(
         f"Bad scipy version: cfdm requires scipy>={_minimum_vn}. "
         f"Got {scipy.__version__} at {scipy.__file__}"
+    )
+
+# Check the version of dask
+try:
+    import dask
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+
+_minimum_vn = "2024.4.0"
+if Version(dask.__version__) < Version(_minimum_vn):
+    raise ValueError(
+        f"Bad scipy version: cfdm requires dask>={_minimum_vn}. "
+        f"Got {dask.__version__} at {dask.__file__}"
     )
 
 from .constants import masked

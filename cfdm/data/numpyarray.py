@@ -33,7 +33,12 @@ class NumpyArray(ArrayMixin, core.NumpyArray):
 
         """
         array = netcdf_indexer(
-            self._get_component("array"), mask=False, unpack=False, copy=True
+            self._get_component("array"),
+            mask=False,
+            unpack=False,
+            always_masked_array=False,
+            orthogonal_indexing=True,
+            copy=True,
         )
         return array[indices]
 

@@ -190,10 +190,14 @@ class CompressedArray(Array):
             )
             u[u_indices] = subarray[...]
 
-        if indices is Ellipsis:
-            return u
-
-        u = netcdf_indexer(u, mask=False, unpack=False)
+        u = netcdf_indexer(
+            u,
+            mask=False,
+            unpack=False,
+            always_masked_array=False,
+            orthogonal_indexing=True,
+            copy=False,
+        )
         return u[indices]
 
     def _first_or_last_element(self, indices):
