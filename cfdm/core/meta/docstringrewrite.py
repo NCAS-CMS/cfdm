@@ -1,10 +1,21 @@
 import inspect
-
+from re import compile
 from ..functions import CF
 
 _VN = CF()
 
+p = compile("{{.*?}}")
 
+#def multiple_replace(replacements, text):
+#    # Create a regular expression from the dictionary keys
+#    regex = compile(f"{'|'.join(map(re.escape, replacements.keys()))}")
+#    # For each match, look-up corresponding value in dictionary
+#    return regex.sub(lambda mo: replacements[mo.group()], text) 
+
+aaa = [0]
+xxx = [0]
+yyy = [0]
+zzz = [0]
 class DocstringRewriteMeta(type):
     """Modify docstrings at time of import.
 
@@ -611,18 +622,33 @@ class DocstringRewriteMeta(type):
             config: `dict`
 
         """
+#        print(repr(f))
+        zzz[0] += 1
         if class_docstring is not None:
             doc = class_docstring
         else:
             doc = f.__doc__
             if doc is None or "{{" not in doc:
                 return doc
-
+        yyy[0] += 1
+        
         # ------------------------------------------------------------
         # Do general substitutions first
         # ------------------------------------------------------------
-        for key, value in config.items():
-            # Substitute the key for the value
+        substitutions = p.findall(doc)
+        aaa[0] = max(aaa[0], len(substitutions))
+
+#        print (config.keys())
+#        if config:
+#            doc =         multiple_replace(config, doc)
+        
+        
+        for key in substitutions:
+            xxx[0] += 1
+            value = config.get(key)
+            if value is None:
+                continue
+        
             try:
                 # Compiled regular expression substitution
                 doc = key.sub(value, doc)
@@ -630,20 +656,40 @@ class DocstringRewriteMeta(type):
                 # String substitution
                 doc = doc.replace(key, value)
 
+            
+        
+        #for key, value in config.items():
+        #    xxx[0] += 1
+        #    # Substitute the key for the value
+        #    try:
+        #        # Compiled regular expression substitution
+        #        doc = key.sub(value, doc)
+        #    except AttributeError:
+        #        # String substitution
+        #        doc = doc.replace(key, value)
+
         # ------------------------------------------------------------
         # Now do special substitutions
         # ------------------------------------------------------------
         # Insert the name of the package
-        doc = doc.replace("{{package}}", package_name)
+        if "{{package}}" in substitutions:
+            xxx[0] += 1
+            doc = doc.replace("{{package}}", package_name)
 
         # Insert the name of the class containing this method
-        doc = doc.replace("{{class}}", class_name)
+        if "{{class}}" in substitutions:
+            xxx[0] += 1
+            doc = doc.replace("{{class}}", class_name)
 
         # Insert the lower case name of the class containing this method
-        doc = doc.replace("{{class_lower}}", class_name_lower)
+        if "{{class_lower}}" in substitutions:
+            xxx[0] += 1
+            doc = doc.replace("{{class_lower}}", class_name_lower)
 
         # Insert the CF version
-        doc = doc.replace("{{VN}}", _VN)
+        if "{{VN}}" in substitutions:
+            xxx[0] += 1
+            doc = doc.replace("{{VN}}", _VN)
 
         # ----------------------------------------------------------------
         # Set the rewritten docstring on the method
