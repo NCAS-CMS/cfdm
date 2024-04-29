@@ -368,21 +368,21 @@ class DocstringRewriteMeta(type):
         if doc_template is not None:
             doc = doc_template
 
-        if doc is not None and "{{" in doc:
-            doc_template = doc
-            doc = DocstringRewriteMeta._docstring_update(
-                package_name,
-                class_name,
-                class_name_lower,
-                None,
-                None,
-                docstring_rewrite,
-                class_docstring=doc,
-            )
-            attrs["__doc__"] = doc
+#        if doc is not None and "{{" in doc:
+        doc_template = doc
+        doc = DocstringRewriteMeta._docstring_update(
+            package_name,
+            class_name,
+            class_name_lower,
+            None,
+            None,
+            docstring_rewrite,
+            class_docstring=doc,
+        )
+        attrs["__doc__"] = doc
 
-            if set_doc_template_to_None:
-                doc_template = None
+        if set_doc_template_to_None:
+            doc_template = None
 
         attrs["__doc_template__"] = doc_template
 
@@ -622,79 +622,86 @@ class DocstringRewriteMeta(type):
             config: `dict`
 
         """
-#        print(repr(f))
-        zzz[0] += 1
+#        zzz[0] += 1
         if class_docstring is not None:
             doc = class_docstring
         else:
             doc = f.__doc__
-            if doc is None or "{{" not in doc:
-                return doc
-        yyy[0] += 1
+
+        if doc is None: #or "{{" not in doc:
+            return doc
+
+#        yyy[0] += 1
         
         # ------------------------------------------------------------
         # Do general substitutions first
         # ------------------------------------------------------------
         substitutions = p.findall(doc)
-        aaa[0] = max(aaa[0], len(substitutions))
+#        aaa[0] = max(aaa[0], len(substitutions))
 
+        if substitutions:
 #        print (config.keys())
 #        if config:
 #            doc =         multiple_replace(config, doc)
         
         
-        for key in substitutions:
-            xxx[0] += 1
-            value = config.get(key)
-            if value is None:
-                continue
-        
-            try:
-                # Compiled regular expression substitution
-                doc = key.sub(value, doc)
-            except AttributeError:
-                # String substitution
-                doc = doc.replace(key, value)
-
+            for key in substitutions:
+#                xxx[0] += 1
+                value = config.get(key)
+                if value is None:
+                    continue
             
-        
-        #for key, value in config.items():
-        #    xxx[0] += 1
-        #    # Substitute the key for the value
-        #    try:
-        #        # Compiled regular expression substitution
-        #        doc = key.sub(value, doc)
-        #    except AttributeError:
-        #        # String substitution
-        #        doc = doc.replace(key, value)
+                try:
+                    # Compiled regular expression substitution
+                    doc = key.sub(value, doc)
+                except AttributeError:
+                    # String substitution
+                    value = value.replace("{{package}}", package_name)
+                    value = value.replace("{{class}}", class_name)
+                    value = value.replace("{{class_lower}}", class_name_lower)
+                    value = value.replace("{{VN}}", _VN)
+                    doc = doc.replace(key, value)
+                    
+                    
+            
+            #for key, value in config.items():
+            #    xxx[0] += 1
+            #    # Substitute the key for the value
+            #    try:
+            #        # Compiled regular expression substitution
+            #        doc = key.sub(value, doc)
+            #    except AttributeError:
+            #        # String substitution
+            #        doc = doc.replace(key, value)
+    
+            # ------------------------------------------------------------
+            # Do special substitutions after the general ones, in case
+            # the general one themselves contained special ones.
+            # ------------------------------------------------------------
+            # Insert the name of the package
+#            if "{{package}}" in substitutions:
+#                xxx[0] += 1
+#            doc = doc.replace("{{package}}", package_name)
+    
+            # Insert the name of the class containing this method
+#            if "{{class}}" in substitutions:
+#                xxx[0] += 1
+ #           doc = doc.replace("{{class}}", class_name)
+    
+            # Insert the lower case name of the class containing this method
+#            if "{{class_lower}}" in substitutions:
+#                xxx[0] += 1
+  #          doc = doc.replace("{{class_lower}}", class_name_lower)
+    
+            # Insert the CF version
+#            if "{{VN}}" in substitutions:
+#                xxx[0] += 1
+   #         doc = doc.replace("{{VN}}", _VN)
 
-        # ------------------------------------------------------------
-        # Now do special substitutions
-        # ------------------------------------------------------------
-        # Insert the name of the package
-        if "{{package}}" in substitutions:
-            xxx[0] += 1
-            doc = doc.replace("{{package}}", package_name)
-
-        # Insert the name of the class containing this method
-        if "{{class}}" in substitutions:
-            xxx[0] += 1
-            doc = doc.replace("{{class}}", class_name)
-
-        # Insert the lower case name of the class containing this method
-        if "{{class_lower}}" in substitutions:
-            xxx[0] += 1
-            doc = doc.replace("{{class_lower}}", class_name_lower)
-
-        # Insert the CF version
-        if "{{VN}}" in substitutions:
-            xxx[0] += 1
-            doc = doc.replace("{{VN}}", _VN)
-
-        # ----------------------------------------------------------------
-        # Set the rewritten docstring on the method
-        # ----------------------------------------------------------------
-        if class_docstring is None:
-            f.__doc__ = doc
+            # ----------------------------------------------------------------
+            # Set the rewritten docstring on the method
+            # ----------------------------------------------------------------
+            if class_docstring is None:
+                f.__doc__ = doc
 
         return doc
