@@ -9,13 +9,7 @@ replacement text, and will be substituted as usual.
 
 Replacement text may not contain other non-special substitutions.
 
-Keys must be a `str` or `re.Pattern` object:
-
-* If a key is a `str` then the corresponding value must be a string.
-
-* If a key is a `re.Pattern` object then the corresponding value must
-  be a string or a callable, as accepted by the `re.Pattern.sub`
-  method.
+A key and its corresponding value must both be `str`.
 
 .. versionaddedd:: (cfdm) 1.8.7.0
 
@@ -94,7 +88,10 @@ _docstring_substitution_definitions = {
     "{{init data: data_like, optional}}": """data: data_like, optional
                 Set the data.
 
-                {{data_like}}
+                A data_like object is any object that can be converted
+                to a `Data` object, i.e. `numpy` array_like objects,
+                `Data` objects, and {{package}} instances that contain
+                `Data` objects.
 
                 The data also may be set after initialisation with the
                 `set_data` method.""",

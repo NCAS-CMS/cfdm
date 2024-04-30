@@ -281,6 +281,11 @@ class DocstringTest(unittest.TestCase):
                 self.assertIsInstance(d, dict)
                 self.assertIn("{{repr}}", d)
 
+                # Check that the special substitutions have not been
+                # overwritten
+                for key in x._docstring_special_substitutions():
+                    self.assertNotIn(key, d)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
