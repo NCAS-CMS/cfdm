@@ -1,3 +1,13 @@
+Version NEXTVERSION
+-------------------
+
+**2024-??-??**
+
+* Speed up time taken for import
+  (https://github.com/NCAS-CMS/cfdm/issues/???)
+
+----
+
 Version 1.11.1.0
 ----------------
 
