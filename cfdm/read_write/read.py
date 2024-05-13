@@ -18,7 +18,7 @@ def read(
     mask=True,
     unpack=True,
     domain=False,
-    netcdf_engine=None,
+    netcdf_backend=None,
     storage_options=None,
     _implementation=_implementation,
 ):
@@ -280,7 +280,7 @@ def read(
             Specify which library to use for opening and reading
             netCDF files. By default, or if `None`, then the first one
             of `netCDF4` and `h5netcdf` to successfully open the file
-            netCDF file is used. Setting *netcdf_engine* to one of
+            netCDF file is used. Setting *netcdf_backend* to one of
             ``'netCDF4'`` and ``'h5netcdf'`` will force the use of
             that library.
 
@@ -406,7 +406,7 @@ def read(
                 unpack=unpack,
                 domain=domain,
                 storage_options=storage_options,
-                netcdf_engine=netcdf_engine,
+                netcdf_backend=netcdf_backend,
                 extra_read_vars=None,
             )
         except MaskError:

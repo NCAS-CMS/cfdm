@@ -35,7 +35,7 @@ def netcdf_flatten(
     omit_data=False,
     write_chunksize=134217728,
 ):
-    """Create a flattened version of a netCDF dataset.
+    """Create a flattened version of a grouped netCDF dataset.
 
     **CF-netCDF coordinate variables**
 
@@ -48,8 +48,8 @@ def netcdf_flatten(
     In such cases it is up to the user to apply the proximal and
     lateral search alogrithms to the flattened dataset returned by
     `netcdf_flatten`, in conjunction with the mappings defined in the
-    newly created global attributes ``__flattener_variable_map`` and
-    ``__flattener_dimension_map``, to find which netCDF variables are
+    newly created global attributes ``_flattener_variable_map`` and
+    ``_flattener_dimension_map``, to find which netCDF variables are
     acting as CF coordinate variables in the flattened dataset. See
     https://cfconventions.org/cf-conventions/cf-conventions.html#groups
     for details.
@@ -58,9 +58,9 @@ def netcdf_flatten(
     group and coordinate variable ``lat(lat)`` in group ``/group1``,
     then the flattened dataset will contain dimension ``lat`` and
     variable ``group1__lat(lat)``, both in its root group. In this
-    case, the ``__flattener_variable_map`` global attribute of the
+    case, the ``_flattener_variable_map`` global attribute of the
     flattened dataset will contain the mapping ``'group1__lat:
-    /group1/lat'``, and the ``__flattener_dimension_map`` global
+    /group1/lat'``, and the ``_flattener_dimension_map`` global
     attribute will contain the mapping ``'lat: /lat'``.
 
     .. versionadded:: (cfdm) NEXTVERSION

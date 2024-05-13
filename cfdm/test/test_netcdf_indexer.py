@@ -31,7 +31,7 @@ def _remove_tmpfiles():
 
 atexit.register(_remove_tmpfiles)
 
-netcdf_engines = ("netCDF4", "h5netcdf")
+netcdf_backends = ("netCDF4", "h5netcdf")
 
 
 class netcdf_indexerTest(unittest.TestCase):
@@ -84,8 +84,8 @@ class netcdf_indexerTest(unittest.TestCase):
         nc = netCDF4.Dataset(tmpfile, "r")
         nc.set_auto_maskandscale(True)
         nc.set_always_mask(True)
-        for engine in netcdf_engines:
-            f = cfdm.read(tmpfile, netcdf_engine=engine)
+        for backend in netcdf_backends:
+            f = cfdm.read(tmpfile, netcdf_backend=backend)
             for g in f:
                 ncvar = g.nc_get_variable()
                 n = nc.variables[ncvar]
@@ -116,8 +116,8 @@ class netcdf_indexerTest(unittest.TestCase):
         nc = netCDF4.Dataset(tmpfile, "r")
         nc.set_auto_maskandscale(True)
         nc.set_always_mask(True)
-        for engine in netcdf_engines:
-            f = cfdm.read(tmpfile, netcdf_engine=engine)
+        for backend in netcdf_backends:
+            f = cfdm.read(tmpfile, netcdf_backend=backend)
             for g in f:
                 ncvar = g.nc_get_variable()
                 n = nc.variables[ncvar]

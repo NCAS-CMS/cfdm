@@ -404,8 +404,8 @@ class netcdf_indexer:
             # --------------------------------------------------------
             if data_orthogonal_indexing and len(axes_with_list_indices) > 1:
                 raise IndexError(
-                    "Can't non-orthogonally index a "
-                    f"{data.__class__.__name__} object with index {index!r}"
+                    "Can't non-orthogonally index "
+                    f"{data.__class__.__name__} with index {index!r}"
                 )
 
             return data[index]
@@ -413,9 +413,10 @@ class netcdf_indexer:
         # ------------------------------------------------------------
         # Still here? Then do orthogonal indexing.
         # ------------------------------------------------------------
+
         # Create an index that replaces integer indices with size 1
         # slices, so that their axes are not dropped yet (they will be
-        # dealt with later).
+        # dropeed later).
         index0 = [
             slice(i, i + 1) if isinstance(i, Integral) else i for i in index
         ]
@@ -429,10 +430,9 @@ class netcdf_indexer:
             #       `h5py.File` do not.
             data = data[tuple(index0)]
         else:
-            # There are two or more list/1-d array index, and the
-            # variable does not natively support orthogonal indexing.
-            #
-            # Emulate orthogonal indexing with a sequence of
+            # There are two or more list/1-d array indices, and the
+            # variable does not natively support orthogonal indexing
+            # => emulate orthogonal indexing with a sequence of
             # subspaces, one for each list/1-d array index.
 
             # 1) Apply the slice indices at the time as the list/1-d
@@ -445,17 +445,16 @@ class netcdf_indexer:
             ]
 
             # Find the position of the list/1-d array index that gives
-            # the smallest result.
+            # the smallest result, and apply the subspace of slices
+            # and the chosen list/1-d array index. This will give the
+            # samllest memory footprint of the whole operation.
             shape1 = self.index_shape(index1, data.shape)
             size1 = prod(shape1)
             sizes = [
-                len(index[i]) * size1 // shape1[i]
+                size1 * (len(index[i]) // shape1[i])
                 for i in axes_with_list_indices
             ]
             n = axes_with_list_indices.pop(np.argmin(sizes))
-
-            # Apply the subspace of slices and the chosen list/1-d
-            # array index
             index1[n] = index[n]
             data = data[tuple(index1)]
 

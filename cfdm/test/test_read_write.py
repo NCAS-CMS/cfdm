@@ -671,8 +671,8 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_string(self):
         """Test the `string` keyword argument to `read` and `write`."""
-        fn = cfdm.read(self.string_filename, netcdf_engine="netCDF4")
-        fh = cfdm.read(self.string_filename, netcdf_engine="h5netcdf")
+        fn = cfdm.read(self.string_filename, netcdf_backend="netCDF4")
+        fh = cfdm.read(self.string_filename, netcdf_backend="h5netcdf")
 
         n = int(len(fn) / 2)
 

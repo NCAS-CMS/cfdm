@@ -20,15 +20,15 @@ ref_not_found_error = "REF_NOT_FOUND"
 
 # NetCDF global attribute in the flattened dataset containing the
 # mapping of flattened attribute names to grouped attribute names
-flattener_attribute_map = "__flattener_attribute_map"
+flattener_attribute_map = "_flattener_attribute_map"
 
 # NetCDF global attribute in the flattened dataset containing the
 # mapping of flattened dimension names to grouped attribute names
-flattener_dimension_map = "__flattener_dimension_map"
+flattener_dimension_map = "_flattener_dimension_map"
 
 # NetCDF global attribute in the flattened dataset containing the
 # mapping of flattened variable names to grouped attribute names
-flattener_variable_map = "__flattener_variable_map"
+flattener_variable_map = "_flattener_variable_map"
 
 
 @dataclass()
@@ -36,9 +36,9 @@ class FlatteningRules:
     """Define the flattening rules for a netCDF attribute.
 
     For a named netCDF attribute, the rules a define how the contents
-    of the attribute are flattened. For instance, the
-    ``ancillary_variables`` attribute contains the names of other
-    netCDF variables, separated by spaces.
+    of the attribute are flattened. For instance, it has to be defined
+    that the ``ancillary_variables`` attribute contains the names of
+    other netCDF variables.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
@@ -48,10 +48,14 @@ class FlatteningRules:
     #       flattened
     name: str
     # ref_to_dim: Positive integer if contains references to
-    #             dimensions (higher values have priority)
+    #             dimensions. If ref_to_dim and ref_to_var are both
+    #             positive then the rule with the greater value is
+    #             tested first.
     ref_to_dim: int = 0
-    # ref_to_var: Positive integer if contains references to variables
-    #             (highest values have priority)
+    # ref_to_var: Positive integer if contains references to
+    #             variables. If ref_to_dim and ref_to_var are both
+    #             positive then the rule with the greater value is
+    #             tested first.
     ref_to_var: int = 0
     # resolve_key: True if 'keys' have to be resolved in 'key1: value1
     #              key2: value2 value3' or 'key1 key2'
