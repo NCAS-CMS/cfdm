@@ -1032,7 +1032,9 @@ class NetCDFRead(IORead):
         file_version = None
         for c in all_conventions:
             if c.startswith("CF-"):
-                file_version = c.replace("CF-", "", 1)
+                # Exclude ambiguous edge cases e.g. CF-1.X/CF-1.Y (seen IRL)
+                if c.count("CF-") == 1:
+                    file_version = c.replace("CF-", "", 1)
             elif c.startswith("UGRID-"):
                 # Allow UGRID if it has been specified in Conventions,
                 # regardless of the version of CF.
