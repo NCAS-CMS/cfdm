@@ -1030,18 +1030,23 @@ class NetCDFRead(IORead):
             all_conventions = Conventions.split()
 
         file_version = None
+        valid_version_pattern = re.compile("(\d+.\d+)")
         for c in all_conventions:
-            if c.startswith("CF-"):
-                # Exclude ambiguous edge cases e.g. CF-1.X/CF-1.Y (seen IRL)
-                if c.count("CF-") == 1:
-                    file_version = c.replace("CF-", "", 1)
-            elif c.startswith("UGRID-"):
+            cf_v = re.findall(r"CF-(.*)", c)
+            u_v = re.findall(r"UGRID-(.*)", c)
+            cfa_v = re.findall(r"CFA-(.*)", c)
+
+            # Else ambiguous e.g. CF-<badversionformat> or CF-1.X/CF-1.Y
+            if len(cf_v) == 1 and re.findall(valid_version_pattern, cf_v[0]):
+                file_version = cf_v[0]
+            elif len(u_v) == 1 and re.findall(valid_version_pattern, u_v[0]):
                 # Allow UGRID if it has been specified in Conventions,
                 # regardless of the version of CF.
-                g["UGRID_version"] = Version(c.replace("UGRID-", "", 1))
-            elif c.startswith("CFA-"):
+                g["UGRID_version"] = Version(u_v[0])
+            elif len(cfa_v) == 1 and re.findall(
+                    valid_version_pattern, cfa_v[0]):
                 g["cfa"] = True
-                g["CFA_version"] = Version(c.replace("CFA-", "", 1))
+                g["CFA_version"] = Version(cfa_v[0])
             elif c == "CFA":
                 g["cfa"] = True
                 g["CFA_version"] = Version("0.4")
