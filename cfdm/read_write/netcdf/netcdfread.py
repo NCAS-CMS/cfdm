@@ -1030,23 +1030,25 @@ class NetCDFRead(IORead):
             all_conventions = Conventions.split()
 
         file_version = None
-        valid_version_pattern = re.compile("(\d+.\d+)")
         for c in all_conventions:
-            cf_v = re.findall(r"CF-(.*)", c)
-            u_v = re.findall(r"UGRID-(.*)", c)
-            cfa_v = re.findall(r"CFA-(.*)", c)
+            # Be particularly strict with the regex to account for ambiguous
+            # values e.g. CF-<badversionformat> or CF-1.X/CF-1.Y. Note that
+            # the '^' and '$' start and end of string tokens ensure that
+            # only zero or one match can be found per given string c (hence
+            # taking group(1) when given conditional is True below is safe).
+            cf_v = re.search(r"^CF-(\d+.\d+)$", c)
+            u_v = re.search(r"^UGRID-(\d+.\d+)$", c)
+            cfa_v = re.search(r"^CFA-(\d+.\d+)$", c)
 
-            # Else ambiguous e.g. CF-<badversionformat> or CF-1.X/CF-1.Y
-            if len(cf_v) == 1 and re.findall(valid_version_pattern, cf_v[0]):
-                file_version = cf_v[0]
-            elif len(u_v) == 1 and re.findall(valid_version_pattern, u_v[0]):
+            if cf_v:
+                file_version = cf_v.group(1)
+            elif u_v:
                 # Allow UGRID if it has been specified in Conventions,
                 # regardless of the version of CF.
-                g["UGRID_version"] = Version(u_v[0])
-            elif len(cfa_v) == 1 and re.findall(
-                    valid_version_pattern, cfa_v[0]):
+                g["UGRID_version"] = Version(u_v.group(1))
+            elif cfa_v:
                 g["cfa"] = True
-                g["CFA_version"] = Version(cfa_v[0])
+                g["CFA_version"] = Version(cfa_v.group(1))
             elif c == "CFA":
                 g["cfa"] = True
                 g["CFA_version"] = Version("0.4")
