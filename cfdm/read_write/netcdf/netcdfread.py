@@ -1025,7 +1025,7 @@ class NetCDFRead(IORead):
 
         # If the string contains any commas, it is assumed to be a
         # comma-separated list.
-        all_conventions = re.split(",\s*", Conventions)
+        all_conventions = re.split(r",\s*", Conventions)
         if all_conventions[0] == Conventions:
             all_conventions = Conventions.split()
 
