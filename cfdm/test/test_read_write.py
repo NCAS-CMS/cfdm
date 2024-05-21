@@ -702,6 +702,55 @@ class read_writeTest(unittest.TestCase):
                         ):
                             self.assertTrue(i.equals(j, verbose=3))
 
+    def test_read_write_Conventions_version_processing(self):
+        """TODO."""
+        f = cfdm.read(self.filename)[0]
+
+        valid_version_ends = ["1.11", "1", "2.30.4"]
+        invalid_version_ends = ["1.1/1.2", "bad", ".11", ""]
+
+        # Construct single valid values for standards
+        cf_valid_conv = [f"CF-{v}" for v in valid_version_ends]
+        # Also valid - see
+        # http://cfconventions.org/cf-conventions/conformance.html, section
+        # 2.6.1 ('Identification of Conventions')
+        cf_valid_conv.append("CF-1.12-draft")
+        ugrid_valid_conv = [f"UGRID-{v}" for v in valid_version_ends]
+        cfa_valid_conv = [f"CFA-{v}" for v in valid_version_ends]
+        other_valid_conv = [f"somestandard-{v}" for v in valid_version_ends]
+
+        # Construct some mixed compound valid values for standards. Reverse
+        # one list to make version IDs differ on at least one standard and take
+        # final items of cf_valid_conv to include '-draft' non-trivial value.
+        zip_valid = list(zip(
+            cf_valid_conv[1:], ugrid_valid_conv, reversed(cfa_valid_conv),
+            other_valid_conv
+        ))
+        # Only space and comma delimiters are valid (see Conformance doc.)
+        combinations_comma_delim = [",".join(c) for c in zip_valid]
+        combinations_space_delim = [" ".join(e) for e in zip_valid]
+
+        all_valid_conv = (
+            cf_valid_conv + ugrid_valid_conv + cfa_valid_conv +
+            other_valid_conv + combinations_comma_delim +
+            combinations_space_delim
+        )
+
+        for set_conv_value in all_valid_conv:
+            cfdm.write(f, tmpfile)
+
+            # TODO: get the update to Conventions globla attr. working using
+            # cf instead of netCDF4, for some reason cf setting isn't working.
+            #
+            # Open with append mode, just want to update the global attribute
+            n = netCDF4.Dataset(tmpfile, "a")
+            n.Conventions = set_conv_value
+            n.close()
+
+            g = cfdm.read(tmpfile)[0]
+            self.assertEqual(g.get_property("Conventions"), set_conv_value)
+
+
     def test_read_write_Conventions(self):
         """Test the `Conventions` keyword argument to `write`."""
         f = cfdm.read(self.filename)[0]
