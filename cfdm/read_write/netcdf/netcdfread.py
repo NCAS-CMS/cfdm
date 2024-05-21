@@ -1039,6 +1039,8 @@ class NetCDFRead(IORead):
             #   * the '(\d+(.\d+)*)' regex ensures a valid input to
             #     Version(), allowing any level of versioning identifier
             #     detail e.g. 1.23.34.45.6 (for future-proofing).
+            #     See https://packaging.python.org/en/latest/specifications/
+            #         version-specifiers/ for more on valid input to Version()
             v_id = r"^{}-(\d+(.\d+)*)$"
             cf_v = re.search(v_id.format("CF"), c)
             u_v = re.search(v_id.format("UGRID"), c)
@@ -1046,13 +1048,17 @@ class NetCDFRead(IORead):
 
             # For the case of CF, also valid is 'CF-X-draft', where X
             # is the present but unreleased version, e.g. "CF-1.12-draft".
-            v_id_draft = v_id[:-2] + "-draft)$"  # == + "draft" + v_id[-2:]
+            v_id_draft = v_id[:-2] + "-draft)$"  # i.e. + "draft" + v_id[-2:]
             cf_v_draft = re.search(v_id_draft.format("CF"), c)
 
             if cf_v:
                 file_version = cf_v.group(1)
             elif cf_v_draft:
-                file_version = cf_v_draft.group(1)
+                # TODO: what should we set when Conventions=X.Y-draft?
+                # Is it best to set to the X.Y i.e. upcoming version, though
+                # it only obeys a draft state of that which may be updated
+                # so that it becoes non-conformant? If so, set as follows:
+                file_version = cf_v_draft.group(1).rstrip("-draft")
             elif u_v:
                 # Allow UGRID if it has been specified in Conventions,
                 # regardless of the version of CF.
