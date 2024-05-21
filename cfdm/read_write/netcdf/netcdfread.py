@@ -1039,12 +1039,20 @@ class NetCDFRead(IORead):
             #   * the '(\d+(.\d+)*)' regex ensures a valid input to
             #     Version(), allowing any level of versioning identifier
             #     detail e.g. 1.23.34.45.6 (for future-proofing).
-            cf_v = re.search(r"^CF-(\d+(.\d+)*)$", c)
-            u_v = re.search(r"^UGRID-(\d+(.\d+)*)$", c)
-            cfa_v = re.search(r"^CFA-(\d+(.\d+)*)$", c)
+            v_id = r"^{}-(\d+(.\d+)*)$"
+            cf_v = re.search(v_id.format("CF"), c)
+            u_v = re.search(v_id.format("UGRID"), c)
+            cfa_v = re.search(v_id.format("CFA"), c)
+
+            # For the case of CF, also valid is 'CF-X-draft', where X
+            # is the present but unreleased version, e.g. "CF-1.12-draft".
+            v_id_draft = v_id[:-2] + "-draft)$"  # == + "draft" + v_id[-2:]
+            cf_v_draft = re.search(v_id_draft.format("CF"), c)
 
             if cf_v:
                 file_version = cf_v.group(1)
+            elif cf_v_draft:
+                file_version = cf_v_draft.group(1)
             elif u_v:
                 # Allow UGRID if it has been specified in Conventions,
                 # regardless of the version of CF.
