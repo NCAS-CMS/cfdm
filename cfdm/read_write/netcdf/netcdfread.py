@@ -1020,9 +1020,10 @@ class NetCDFRead(IORead):
 
         # ------------------------------------------------------------
         # Find the CF version for the file, and the CFA version.
+        # (See '2.6.1 Identification of Conventions' in the CF Conformance
+        # document for valid inputs for the 'Conventions' property.)
         # ------------------------------------------------------------
         Conventions = g["global_attributes"].get("Conventions", "")
-
         # If the string contains any commas, it is assumed to be a
         # comma-separated list.
         all_conventions = re.split(r",\s*", Conventions)
@@ -1032,13 +1033,15 @@ class NetCDFRead(IORead):
         file_version = None
         for c in all_conventions:
             # Be particularly strict with the regex to account for ambiguous
-            # values e.g. CF-<badversionformat> or CF-1.X/CF-1.Y. Note that
-            # the '^' and '$' start and end of string tokens ensure that
-            # only zero or one match can be found per given string c (hence
-            # taking group(1) when given conditional is True below is safe).
-            cf_v = re.search(r"^CF-(\d+.\d+)$", c)
-            u_v = re.search(r"^UGRID-(\d+.\d+)$", c)
-            cfa_v = re.search(r"^CFA-(\d+.\d+)$", c)
+            # values e.g. CF-<badversionformat> or CF-1.X/CF-1.Y. Note that:
+            #   * the '^' and '$' start and end of string tokens ensure that
+            #     only zero or one match can be found per given string c;
+            #   * the '(\d+(.\d+)*)' regex ensures a valid input to
+            #     Version(), allowing any level of versioning identifier
+            #     detail e.g. 1.23.34.45.6 (for future-proofing).
+            cf_v = re.search(r"^CF-(\d+(.\d+)*)$", c)
+            u_v = re.search(r"^UGRID-(\d+(.\d+)*)$", c)
+            cfa_v = re.search(r"^CFA-(\d+(.\d+)*)$", c)
 
             if cf_v:
                 file_version = cf_v.group(1)
