@@ -1036,12 +1036,12 @@ class NetCDFRead(IORead):
             # values e.g. CF-<badversionformat> or CF-1.X/CF-1.Y. Note that:
             #   * the '^' and '$' start and end of string tokens ensure that
             #     only zero or one match can be found per given string c;
-            #   * the '(\d+(.\d+)*)' regex ensures a valid input to
+            #   * the regex below ensures a valid input to
             #     Version(), allowing any level of versioning identifier
             #     detail e.g. 1.23.34.45.6 (for future-proofing).
             #     See https://packaging.python.org/en/latest/specifications/
             #         version-specifiers/ for more on valid input to Version()
-            v_id = r"^{}-(\d+(.\d+)*)$"
+            v_id = r"^{}-(\d+(\.\d+)*)$"
             cf_v = re.search(v_id.format("CF"), c)
             u_v = re.search(v_id.format("UGRID"), c)
             cfa_v = re.search(v_id.format("CFA"), c)
@@ -1051,6 +1051,7 @@ class NetCDFRead(IORead):
             v_id_draft = v_id[:-2] + "-draft)$"  # i.e. + "draft" + v_id[-2:]
             cf_v_draft = re.search(v_id_draft.format("CF"), c)
 
+            print(c, "TESTING AGAINST", cf_v, u_v, cfa_v)
             if cf_v:
                 file_version = cf_v.group(1)
             elif cf_v_draft:
