@@ -1,3 +1,14 @@
+Version NEXTVERSION
+-------------------
+
+**2024-??-??**
+
+* Fix bug that returned incorrect results when an invalid identifer is
+  provided to `cf.Field.cell_methods`
+  (https://github.com/NCAS-CMS/cfdm/issues/2699)
+
+----
+
 Version 1.11.1.0
 ----------------
 

@@ -662,6 +662,18 @@ class Field(
 
         **Examples**
 
+        >>> f = {{package}}.example_field(1)
+        >>> print(f.cell_methods())
+        Constructs:
+        {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+        'cellmethod1': <CellMethod: domainaxis3: maximum>}
+        >>> print(f.cell_methods('time'))
+        Constructs:
+        {'cellmethod1': <CellMethod: domainaxis3: maximum>}
+        >>> print(f.cell_methods('bad identifier'))
+        Constructs:
+        {}
+
         """
         cached = filter_kwargs.get("cached")
         if cached is not None:
@@ -702,6 +714,13 @@ class Field(
                         keys.add(cm_key)
 
             identities = ()
+            if not keys:
+                # Specify a key of None to ensure that no cell methods
+                # are selected. (If keys is an empty set then all cell
+                # methods are selected, which is not what we want,
+                # here.)
+                keys = (None,)
+
             filter_kwargs = {
                 "filter_by_key": keys,
                 "todict": filter_kwargs.pop("todict", False),
