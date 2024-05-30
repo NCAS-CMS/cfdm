@@ -1046,20 +1046,8 @@ class NetCDFRead(IORead):
             u_v = re.search(v_id.format("UGRID"), c)
             cfa_v = re.search(v_id.format("CFA"), c)
 
-            # For the case of CF, also valid is 'CF-X-draft', where X
-            # is the present but unreleased version, e.g. "CF-1.12-draft".
-            v_id_draft = v_id[:-2] + "-draft)$"  # i.e. + "draft" + v_id[-2:]
-            cf_v_draft = re.search(v_id_draft.format("CF"), c)
-
-            print(c, "TESTING AGAINST", cf_v, u_v, cfa_v)
             if cf_v:
                 file_version = cf_v.group(1)
-            elif cf_v_draft:
-                # TODO: what should we set when Conventions=X.Y-draft?
-                # Is it best to set to the X.Y i.e. upcoming version, though
-                # it only obeys a draft state of that which may be updated
-                # so that it becoes non-conformant? If so, set as follows:
-                file_version = cf_v_draft.group(1).rstrip("-draft")
             elif u_v:
                 # Allow UGRID if it has been specified in Conventions,
                 # regardless of the version of CF.

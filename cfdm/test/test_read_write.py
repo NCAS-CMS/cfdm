@@ -702,28 +702,21 @@ class read_writeTest(unittest.TestCase):
                         ):
                             self.assertTrue(i.equals(j, verbose=3))
 
-    def test_read_write_Conventions_version_processing(self):
-        """TODO."""
+    def test_read_write_Conventions_version(self):
+        """TODO Test the `Conventions`."""
         f = cfdm.read(self.filename)[0]
 
-        valid_version_ends = ["1.11", "1", "2.30.4"]
-        invalid_version_ends = ["1.1/1.2", "bad", ".11", ""]
-
         # Construct single valid values for standards
+        valid_version_ends = ["1.11", "1", "2.30.4"]
         cf_valid_conv = [f"CF-{v}" for v in valid_version_ends]
-        # Also valid - see
-        # http://cfconventions.org/cf-conventions/conformance.html, section
-        # 2.6.1 ('Identification of Conventions')
-        cf_valid_conv.append("CF-1.12-draft")
         ugrid_valid_conv = [f"UGRID-{v}" for v in valid_version_ends]
         cfa_valid_conv = [f"CFA-{v}" for v in valid_version_ends]
         other_valid_conv = [f"somestandard-{v}" for v in valid_version_ends]
 
         # Construct some mixed compound valid values for standards. Reverse
-        # one list to make version IDs differ on at least one standard and take
-        # final items of cf_valid_conv to include '-draft' non-trivial value.
+        # one list to make version IDs differ on at least one standard.
         zip_valid = list(zip(
-            cf_valid_conv[1:], ugrid_valid_conv, reversed(cfa_valid_conv),
+            cf_valid_conv, reversed(ugrid_valid_conv), cfa_valid_conv,
             other_valid_conv
         ))
         # Only space and comma delimiters are valid (see Conformance doc.)
@@ -736,6 +729,8 @@ class read_writeTest(unittest.TestCase):
             combinations_space_delim
         )
 
+        # Check that valid Conventions version specifications get set as the
+        # corresponding version on the Conventions property.
         for set_conv_value in all_valid_conv:
             cfdm.write(f, tmpfile)
 
@@ -750,6 +745,38 @@ class read_writeTest(unittest.TestCase):
             g = cfdm.read(tmpfile)[0]
             self.assertEqual(g.get_property("Conventions"), set_conv_value)
 
+        invalid_version_ends = ["1.1/1.2", "bad", ".11", ""]
+        cf_invalid_conv = [f"CF-{v}" for v in invalid_version_ends]
+        ugrid_invalid_conv = [f"UGRID-{v}" for v in invalid_version_ends]
+        cfa_invalid_conv = [f"CFA-{v}" for v in invalid_version_ends]
+        other_invalid_conv = [f"somestandard-{v}" for v in invalid_version_ends]
+        zip_invalid = zip(
+            cf_invalid_conv, ugrid_invalid_conv, cfa_invalid_conv,
+            other_invalid_conv
+        )
+        combinations_comma_delim = [
+            ",".join(c) for c in zip_invalid
+        ]
+        # TODO add combination with some valid and some invalid...
+        all_invalid_conv = (
+            cf_invalid_conv + ugrid_invalid_conv + cfa_invalid_conv +
+            other_invalid_conv + combinations_comma_delim
+        )
+
+        # Check that invalid version specifications get ignored, so that the
+        # file is successfully read in, but is given default-logic version.
+        for set_conv_value in all_invalid_conv:
+            # cfdm.implementation().get_cf_version()
+            get_conv_value = f.get_property("Conventions")
+            cfdm.write(f, tmpfile)
+
+            # TODO: as for equivalent logic in above block
+            n = netCDF4.Dataset(tmpfile, "a")
+            n.Conventions = set_conv_value
+            n.close()
+
+            g = cfdm.read(tmpfile)[0]
+            self.assertEqual(g.get_property("Conventions"), get_conv_value)
 
     def test_read_write_Conventions(self):
         """Test the `Conventions` keyword argument to `write`."""
