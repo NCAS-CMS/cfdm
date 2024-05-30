@@ -703,7 +703,7 @@ class read_writeTest(unittest.TestCase):
                             self.assertTrue(i.equals(j, verbose=3))
 
     def test_read_write_Conventions_version(self):
-        """TODO Test the `Conventions`."""
+        """Test processing of `Conventions` attribute to field property."""
         f = cfdm.read(self.filename)[0]
 
         # Construct single valid values for standards
@@ -721,7 +721,7 @@ class read_writeTest(unittest.TestCase):
         ))
         # Only space and comma delimiters are valid (see Conformance doc.)
         combinations_comma_delim = [",".join(c) for c in zip_valid]
-        combinations_space_delim = [" ".join(e) for e in zip_valid]
+        combinations_space_delim = [" ".join(c) for c in zip_valid]
 
         all_valid_conv = (
             cf_valid_conv + ugrid_valid_conv + cfa_valid_conv +
@@ -734,9 +734,7 @@ class read_writeTest(unittest.TestCase):
         for set_conv_value in all_valid_conv:
             cfdm.write(f, tmpfile)
 
-            # TODO: get the update to Conventions globla attr. working using
-            # cf instead of netCDF4, for some reason cf setting isn't working.
-            #
+            # Can't use cfdm to change Conventions property so must use netCDF4
             # Open with append mode, just want to update the global attribute
             n = netCDF4.Dataset(tmpfile, "a")
             n.Conventions = set_conv_value
@@ -754,23 +752,31 @@ class read_writeTest(unittest.TestCase):
             cf_invalid_conv, ugrid_invalid_conv, cfa_invalid_conv,
             other_invalid_conv
         )
-        combinations_comma_delim = [
-            ",".join(c) for c in zip_invalid
-        ]
-        # TODO add combination with some valid and some invalid...
+        bad_combinations_good_delim = [",".join(c) for c in zip_invalid]
+        # Include valid values with bad (unsupported) delimiters
+        good_combinations_bad_delim = ["- ".join(c) for c in zip_valid]
+
         all_invalid_conv = (
             cf_invalid_conv + ugrid_invalid_conv + cfa_invalid_conv +
-            other_invalid_conv + combinations_comma_delim
+            other_invalid_conv + bad_combinations_good_delim +
+            good_combinations_bad_delim
         )
+
+        # Include a mixture of valid and invalid version specifiers
+        some_valid_some_invalid_conv = [
+            " ".join(c) for c in zip(
+                cf_invalid_conv, reversed(ugrid_valid_conv), cfa_invalid_conv,
+                other_valid_conv)
+        ]
 
         # Check that invalid version specifications get ignored, so that the
         # file is successfully read in, but is given default-logic version.
-        for set_conv_value in all_invalid_conv:
-            # cfdm.implementation().get_cf_version()
+        for set_conv_value in (
+                all_invalid_conv + some_valid_some_invalid_conv):
             get_conv_value = f.get_property("Conventions")
             cfdm.write(f, tmpfile)
 
-            # TODO: as for equivalent logic in above block
+            # Can't use cfdm to change Conventions property so must use netCDF4
             n = netCDF4.Dataset(tmpfile, "a")
             n.Conventions = set_conv_value
             n.close()
