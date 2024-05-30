@@ -355,6 +355,10 @@ class FieldTest(unittest.TestCase):
         for key, value in constructs.items():
             self.assertIsInstance(value, cfdm.CellMethod)
 
+        # Check that no cell methods are returned when a bad
+        # identifier is provided
+        self.assertFalse(f.cell_methods("bad identifier"))
+
         constructs = f.coordinate_references()
         n = 2
         self.assertEqual(len(constructs), n)
