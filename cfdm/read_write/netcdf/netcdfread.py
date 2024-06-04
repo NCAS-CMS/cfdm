@@ -1069,6 +1069,11 @@ class NetCDFRead(IORead):
                 file_version = self.implementation.get_cf_version()
 
         g["file_version"] = Version(file_version)
+        if is_log_level_debug(logger):
+            logger.debug(
+                "    Versioning:\n        read_vars['file_version'] ="
+                f"{g['file_version']}"
+            )  # pragma: no cover
 
         # Set minimum/maximum versions
         for vn in ("1.6", "1.7", "1.8", "1.9", "1.10", "1.11"):
