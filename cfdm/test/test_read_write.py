@@ -704,6 +704,8 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_Conventions_version(self):
         """Test processing of `Conventions` attribute to field property."""
+        from packaging.version import Version
+
         f = cfdm.read(self.filename)[0]
 
         # Construct single valid values for standards
@@ -781,8 +783,14 @@ class read_writeTest(unittest.TestCase):
             n.Conventions = set_conv_value
             n.close()
 
+            self.assertEqual(
+                cfdm.read(tmpfile, _scan_only=True)["file_version"],
+                Version(get_conv_value.lstrip("CF-"))
+            )
             g = cfdm.read(tmpfile)[0]
-            self.assertEqual(g.get_property("Conventions"), get_conv_value)
+            # TODO: do we want to re-set the Conventions property as well,
+            # given it is invalid?
+            self.assertEqual(g.get_property("Conventions"), set_conv_value)
 
     def test_read_write_Conventions(self):
         """Test the `Conventions` keyword argument to `write`."""
