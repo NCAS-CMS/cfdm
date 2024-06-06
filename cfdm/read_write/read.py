@@ -18,6 +18,7 @@ def read(
     mask=True,
     domain=False,
     _implementation=_implementation,
+    _scan_only=False,
 ):
     """Read field or domain constructs from a dataset.
 
@@ -335,6 +336,7 @@ def read(
                 mask=mask,
                 domain=domain,
                 extra_read_vars=None,
+                _scan_only=_scan_only,
             )
         except MaskError:
             # Some data required for field interpretation is missing,
