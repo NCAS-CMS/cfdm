@@ -3949,7 +3949,7 @@ class NetCDFWrite(IOWrite):
         # Ancillary variables
         if field and ancillary_variables:
             ancillary_variables = " ".join(ancillary_variables)
-            ancillary_variables = re.sub("\s+", " ", ancillary_variables)
+            ancillary_variables = re.sub(r"\s+", " ", ancillary_variables)
             logger.info(
                 "    Writing ancillary_variables attribute to "
                 f"netCDF variable {ncvar}: {ancillary_variables!r}"
