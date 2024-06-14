@@ -1001,6 +1001,16 @@ class read_writeTest(unittest.TestCase):
             f = cfdm.read(remote)
             self.assertEqual(len(f), 1)
 
+    def test_write_parametric_Z_coordinate(self):
+        """Test write of parametric Z coordinate."""
+        # Thes write when a parametric Z dimension coordinate does not
+        # have a compute_standard_name attribute
+        f = cfdm.example_field(1)
+        f.coordinate("atmosphere_hybrid_height_coordinate").del_property(
+            "computed_standard_name", None
+        )
+        cfdm.write(f, tmpfile)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
