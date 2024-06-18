@@ -20,6 +20,7 @@ Keys must be a `str` or `re.Pattern` object:
 .. versionaddedd:: (cfdm) 1.8.7.0
 
 """
+
 _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # General susbstitutions (not indent-dependent)
