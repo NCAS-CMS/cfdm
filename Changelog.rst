@@ -1,10 +1,13 @@
-Version NEXTRELEASE
+Version NEXTVERSION
 -------------------
 
 **2024-??-??**
 
 * Upgrades to allow cfdm to work with Python 3.12
   (https://github.com/NCAS-CMS/cfdm/issues/302)
+* Extension to the HDF5 chunks API
+  (https://github.com/NCAS-CMS/cfdm/issues/???)
+* New dependency: ``dask>=2024.6.0``
 
 ----
 

@@ -1044,25 +1044,22 @@ class CFDMImplementation(Implementation):
         return field.nc_variable_groups()
 
     def nc_get_hdf5_chunksizes(self, data):
-        """Return the HDF5 chunksizes for the data.
+        """Get the HDF5 chunksizes for the data.
 
         ..versionadded:: (cfdm) 1.7.2
 
         :Parameters:
 
-            data: Data instance
+            data: `Data`
 
         :Returns:
 
-            `tuple` or `None`
-                The HDF5 chunksizes, or `None` if they haven't been set.
+            `tuple` or `int` or `str` or `None`
+                The HDF5 chunking strategy , or `None` if it hasn't
+                been set.
 
         """
-        out = data.nc_hdf5_chunksizes()
-        if not out:
-            out = None
-
-        return out
+        return data.nc_hdf5_chunksizes()
 
     def nc_get_sample_dimension(self, count, default=None):
         """Return the name of the netCDF sample dimension.

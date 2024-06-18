@@ -116,6 +116,11 @@ _docstring_substitution_definitions = {
         was produced by combining other objects that also store their
         original file names, then the returned files will be the
         collection of original files from all contributing sources.""",
+    "{{hdf5 chunks note}}": """.. note:: An HDF5 chunking strategy defined by a sequence of
+                  integers, that defines the maximum number of array
+                  elements in each chunk along each axis, is cleared
+                  from the output of methods that change the data
+                  shape.""",
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentataion)
     # ------------------------1----------------------------------------

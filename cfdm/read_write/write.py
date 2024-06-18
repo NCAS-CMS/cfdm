@@ -27,6 +27,7 @@ def write(
     group=True,
     coordinates=False,
     omit_data=None,
+    hdf5_chunks="4MiB",
     _implementation=_implementation,
 ):
     """Write field and domain constructs to a netCDF file.
@@ -78,8 +79,7 @@ def write(
     `~cfdm.DomainAxis.nc_set_unlimited` methods of a domain axis
     construct.
 
-
-    **NetCDF hierarchical groups**
+    **NetCDF4 hierarchical groups**
 
     Hierarchical groups in CF provide a mechanism to structure
     variables within netCDF4 datasets with well defined rules for
@@ -88,13 +88,16 @@ def write(
     netCDF interface will, by default, be recreated in the output
     dataset. See the *group* parameter for details.
 
+    **NetCDF4 HDF5 chunksizes**
 
-    **NetCDF4 HDF chunksizes**
-
-    HDF5 chunksizes may be set on construct's data. See the
-    `~cfdm.Data.nc_hdf5_chunksizes`,
-    `~cfdm.Data.nc_clear_hdf5_chunksizes` and
-    `~cfdm.Data.nc_set_hdf5_chunksizes` methods of a `Data` instance.
+    HDF5 chunking is configured by the *hdf5_chunks* parameter, which
+    defines the chunking strategy for all output data (including the
+    option of no chunking). However, this may be overridden by any
+    construct's for any construct via the
+    `~cfdm.Data.nc_set_hdf5_chunksizes`,
+    `~cfdm.Data.nc_hdf5_chunksizes`, and
+    `~cfdm.Data.nc_clear_hdf5_chunksizes` methods of a `Data`
+    instance.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -158,7 +161,7 @@ def write(
             dimension sizes.
 
             ``'NETCDF4_CLASSIC'`` files use the version 4 disk format
-            (HDF5), but omits features not found in the version 3
+            (HDF5), but omit features not found in the version 3
             API. They can be read by HDF5 clients. They can also be
             read by netCDF3 clients only if they have been re-linked
             against the netCDF4 library.
@@ -530,6 +533,55 @@ def write(
 
             .. versionadded:: (cfdm) 1.10.0.1
 
+        hdf5_chunks: `str` or `int` or `float`, optional
+            The HDF5 chunking strategy. The *hdf5_chunks* parameter
+            defines the maximum size in bytes of the HDF5 chunks for
+            all data arrays being written to the file.
+
+            It may be number of bytes (floats are rounded down to the
+            nearest integer), or a string representing a quantity of
+            byte units. For instance 1024 bytes may be specified with
+            any of ``1024``, ``1024.5``, ``'1024'``, ``'1024 B'``,
+            ``'1 KiB'``, ``'0.0009765625 MiB'``, etc. Recognised byte
+            units are (case insensitve): ``B``, ``KiB``, ``MiB``,
+            ``GiB``, ``TiB``, ``PiB``, ``KB``, ``MB``, ``GB``, ``TB``,
+            and ``PB``.  The spaces in strings are optional.
+
+            The data may be written contiguously (i.e. with no
+            chunking) if *hdf5_chunks* is set to ``'contiguous'``.
+
+            By default, *hdf5_chunks* is ``'4MiB'``, the same as the
+            netCDF default value.
+
+            The algorithm that defines the chunks shapes maximises the
+            number of chunks that are approximately equal to (but
+            never exceeding) the target chunk size, preferring
+            "square-like" chunk shapes as much as possible. For
+            example, with *hdf_chunks* of ``'4 MiB'``, a data array of
+            64-bit floats with shape ``(400, 300, 60)`` will be
+            written with 20 HDF5 chunks: the first axis will be split
+            across 5 chunks of 93, 93, 93, 93, and 28 elements; the
+            second axis across 4 chunks of 93, 93, 93, and 21
+            elements; and the third axis across 1 chunk of 60
+            elements. This results in 12 HDF5 chunks having size
+            93*93*60*8 B = 3.9592 MiB, just under the target size,
+            with the remaining 8 chunks at the "edges" of the array
+            being considerably smaller.
+
+            The data may be written contiguously (i.e. with no
+            chunking) if *hdf5_chunks* is set to ``'contiguous'``.
+
+            If any data being written out has had HDF5 chunking
+            explicitly set, via the `Data.nc_set_hdf5_chunksizes`
+            method, then its chunking strategy is always used in
+            preference to the chunking strategy defined by
+            *hdf5_chunks*.
+
+            Ignored for NETCDF3 output formats, for which all data is
+            always written out contiguously.
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that defines field
             and metadata constructs and their components.
@@ -579,4 +631,5 @@ def write(
             coordinates=coordinates,
             extra_write_vars=None,
             omit_data=omit_data,
+            hdf5_chunks=hdf5_chunks,
         )

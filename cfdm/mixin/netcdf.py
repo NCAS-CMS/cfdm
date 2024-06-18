@@ -1,3 +1,5 @@
+from dask.utils import parse_bytes
+
 from ..core.functions import deepcopy
 
 
@@ -2477,13 +2479,9 @@ class NetCDFHDF5(NetCDF):
     """
 
     def nc_hdf5_chunksizes(self):
-        """Return the HDF5 chunksizes for the data.
+        """Get the HDF5 chunking strategy for the data.
 
-        .. note:: Chunksizes are cleared from the output of methods that
-                  change the data shape.
-
-        .. note:: Chunksizes are ignored for netCDF3 files that do not use
-                  HDF5.
+        {{hdf5 chunks note}}
 
         .. versionadded:: (cfdm) 1.7.2
 
@@ -2491,32 +2489,42 @@ class NetCDFHDF5(NetCDF):
 
         :Returns:
 
-            `tuple`
-                The current chunksizes.
+            `tuple` or `int` or `str` or `None`
+                The current chunking strategy when writing to a
+                netCDF4 file. An `int` defines the maximum size in
+                bytes of the HDF5 chunks; a `tuple` of integers
+                defines the maximum number of array elements in each
+                chunk along each axis; the string ``'contiguous'``
+                means that will be no HDF5 chunking; and `None` means
+                that the chunking strategy will be determined at write
+                time by `{{package}}.write`.
 
         **Examples**
 
         >>> d.shape
         (1, 96, 73)
-        >>> d.nc_set_hdf5_chunksizes([1, 48, 73])
+        >>> d.nc_set_hdf5_chunksizes([1, 35, 73])
         >>> d.nc_hdf5_chunksizes()
-        (1, 48, 73)
+        (1, 35, 73)
         >>> d.nc_clear_hdf5_chunksizes()
-        (1, 48, 73)
+        (1, 35, 73)
         >>> d.nc_hdf5_chunksizes()
-        ()
+        None
+        >>> d.nc_set_hdf5_chunksizes('contiguous')
+        >>> d.nc_hdf5_chunksizes()
+        'contiguous'
+        >>> d.nc_set_hdf5_chunksizes('1 KiB')
+        >>> d.nc_hdf5_chunksizes()
+        1024
+        >>> d.nc_set_hdf5_chunksizes(None)
+        >>> d.nc_hdf5_chunksizes()
+        None
 
         """
-        return self._get_component("netcdf").get("hdf5_chunksizes", ())
+        return self._get_component("netcdf").get("hdf5_chunksizes")
 
     def nc_clear_hdf5_chunksizes(self):
-        """Clear the HDF5 chunksizes for the data.
-
-        .. note:: Chunksizes are cleared from the output of methods that
-                  change the data shape.
-
-        .. note:: Chunksizes are ignored for netCDF3 files that do not use
-                  HDF5.
+        """Clear the HDF5 chunking strategy for the data.
 
         .. versionadded:: (cfdm) 1.7.2
 
@@ -2524,32 +2532,38 @@ class NetCDFHDF5(NetCDF):
 
         :Returns:
 
-            `tuple`
-                The chunksizes defined prior to being cleared.
+            `tuple` or `int` or `str` or `None`
+                The chunking strategy prior to being cleared. See
+                `nc_hdf5_chunksizes` for details.
 
         **Examples**
 
         >>> d.shape
         (1, 96, 73)
-        >>> d.nc_set_hdf5_chunksizes([1, 48, 73])
+        >>> d.nc_set_hdf5_chunksizes([1, 35, 73])
         >>> d.nc_hdf5_chunksizes()
-        (1, 48, 73)
+        (1, 35, 73)
         >>> d.nc_clear_hdf5_chunksizes()
-        (1, 48, 73)
+        (1, 35, 73)
         >>> d.nc_hdf5_chunksizes()
-        ()
+        None
+        >>> d.nc_set_hdf5_chunksizes('contiguous')
+        >>> d.nc_hdf5_chunksizes()
+        'contiguous'
+        >>> d.nc_set_hdf5_chunksizes('1 KiB')
+        >>> d.nc_hdf5_chunksizes()
+        1024
+        >>> d.nc_set_hdf5_chunksizes(None)
+        >>> d.nc_hdf5_chunksizes()
+        None
 
         """
-        return self._get_component("netcdf").pop("hdf5_chunksizes", ())
+        return self._get_component("netcdf").pop("hdf5_chunksizes", None)
 
     def nc_set_hdf5_chunksizes(self, chunksizes):
-        """Set the HDF5 chunksizes for the data.
+        """Set the HDF5 chunking strategy for the data.
 
-        .. note:: Chunksizes are cleared from the output of methods that
-                  change the data shape.
-
-        .. note:: Chunksizes are ignored for netCDF3 files that do not use
-                  HDF5.
+        {{hdf5 chunks note}}
 
         .. versionadded:: (cfdm) 1.7.2
 
@@ -2557,9 +2571,15 @@ class NetCDFHDF5(NetCDF):
 
         :Parameters:
 
-            chunksizes: sequence of `int`
-                The chunksizes for each dimension. Can be integers from 0
-                to the dimension size.
+            chunksizes: `int` or `str` or `None` or sequence of `int`
+                Set the chunking strategy when writing to a netCDF4
+                file. An `int` or string like ``'4MiB'`` defines the
+                maximum size in bytes of the HDF5 chunks; a `tuple` of
+                integers defines the maximum number of array elements
+                in each chunk along each axis; the string
+                ``'contiguous'`` means that will be no HDF5 chunking;
+                and `None` means that the chunking strategy will be
+                determined at write time by `{{package}}.write`.
 
         :Returns:
 
@@ -2569,33 +2589,67 @@ class NetCDFHDF5(NetCDF):
 
         >>> d.shape
         (1, 96, 73)
-        >>> d.nc_set_hdf5_chunksizes([1, 48, 73])
+        >>> d.nc_set_hdf5_chunksizes([1, 35, 73])
         >>> d.nc_hdf5_chunksizes()
-        (1, 48, 73)
+        (1, 35, 73)
         >>> d.nc_clear_hdf5_chunksizes()
-        (1, 48, 73)
+        (1, 35, 73)
         >>> d.nc_hdf5_chunksizes()
-        ()
+        None
+        >>> d.nc_set_hdf5_chunksizes('contiguous')
+        >>> d.nc_hdf5_chunksizes()
+        'contiguous'
+        >>> d.nc_set_hdf5_chunksizes('1 KiB')
+        >>> d.nc_hdf5_chunksizes()
+        1024
+        >>> d.nc_set_hdf5_chunksizes(None)
+        >>> d.nc_hdf5_chunksizes()
+        None
 
         """
-        try:
+        if chunksizes is None:
+            self.nc_clear_hdf5_chunksizes()
+            return
+
+        if chunksizes != "contiguous":
             shape = self.shape
-        except AttributeError:
-            pass
-        else:
-            if len(chunksizes) != len(shape):
+            try:
+                chunksizes = parse_bytes(chunksizes)
+            except ValueError:
                 raise ValueError(
-                    "chunksizes must be a sequence with the same length "
-                    "as dimensions"
+                    f"Invalid chunksizes specification: {chunksizes!r}"
                 )
+            except AttributeError:
+                # If chunksizes is a sequence then an AttributeError
+                # will be raised
+                try:
+                    chunksizes = tuple(chunksizes)
+                except TypeError:
+                    raise ValueError(
+                        f"Invalid chunksizes specification: {chunksizes!r}"
+                    )
 
-            for i, j in zip(chunksizes, shape):
-                if i < 0:
-                    raise ValueError("chunksize cannot be negative")
-                if i > j:
-                    raise ValueError("chunksize cannot exceed dimension size")
+                if len(chunksizes) != len(shape):
+                    raise ValueError(
+                        f"A sequence of chunk element sizes ({chunksizes!r}) "
+                        "must have the same length as the number of "
+                        f"dimensions in the data ({len(shape)})"
+                    )
 
-        self._get_component("netcdf")["hdf5_chunksizes"] = tuple(chunksizes)
+                for i, j in zip(chunksizes, shape):
+                    if i <= 0:
+                        raise ValueError(
+                            "A dimension's chunk element size must be must be "
+                            f"positive. Got: {i!r}"
+                        )
+
+                    if i > j:
+                        raise ValueError(
+                            f"A dimension's chunk element size ({i!r}) "
+                            f"cannot exceed the size of the dimension ({j})"
+                        )
+
+        self._get_component("netcdf")["hdf5_chunksizes"] = chunksizes
 
 
 class NetCDFUnlimitedDimension(NetCDF):

@@ -4,3 +4,4 @@ numpy>=1.15
 netcdf-flattener>=1.2.0
 packaging>=20.0
 scipy>=1.10.0
+dask>=2024.6.0

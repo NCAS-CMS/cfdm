@@ -793,6 +793,32 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             int(cfdm.Data([1, 2]))
 
+    def test_Data_hdf5_chunksizes(self):
+        """Test Data.nc_hdf5_chunksizes."""
+        d = cfdm.Data(np.arange(24).reshape(2, 3, 4))
+        self.assertIsNone(d.nc_hdf5_chunksizes())
+        self.assertIsNone(d.nc_set_hdf5_chunksizes([2, 2, 2]))
+        self.assertEqual(d.nc_hdf5_chunksizes(), (2, 2, 2))
+        self.assertEqual(d.nc_clear_hdf5_chunksizes(), (2, 2, 2))
+        self.assertIsNone(d.nc_hdf5_chunksizes())
+
+        self.assertIsNone(d.nc_set_hdf5_chunksizes("contiguous"))
+        self.assertEqual(d.nc_hdf5_chunksizes(), "contiguous")
+        self.assertEqual(d.nc_clear_hdf5_chunksizes(), "contiguous")
+        self.assertIsNone(d.nc_hdf5_chunksizes())
+
+        self.assertIsNone(d.nc_set_hdf5_chunksizes(None))
+        self.assertIsNone(d.nc_hdf5_chunksizes())
+
+        for chunksizes in (1024, "1 KiB"):
+            self.assertIsNone(d.nc_set_hdf5_chunksizes(chunksizes))
+            self.assertEqual(d.nc_clear_hdf5_chunksizes(), 1024)
+
+        # Bad chunk sizes
+        for chunksizes in ([2], [-1, 3, 4], "bad"):
+            with self.assertRaises(ValueError):
+                d.nc_set_hdf5_chunksizes(chunksizes)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

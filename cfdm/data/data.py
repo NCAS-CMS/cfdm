@@ -361,8 +361,10 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         out = self.copy(array=False)
         out._set_Array(array, copy=False)
 
-        if out.shape != self.shape:
-            # Delete hdf5 chunksizes
+        if (
+            isinstance(out.nc_hdf5_chunksizes(), tuple)
+            and out.shape != self.shape
+        ):
             out.nc_clear_hdf5_chunksizes()
 
         return out
@@ -1816,7 +1818,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         d._set_Array(array, copy=False)
 
         # Delete hdf5 chunksizes
-        d.nc_clear_hdf5_chunksizes()
+        if isinstance(d.nc_hdf5_chunksizes(), tuple):
+            d.nc_clear_hdf5_chunksizes()
 
         return d
 
@@ -2260,7 +2263,10 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         out = self.copy(array=False)
         out._set_Array(array, copy=False)
 
-        if out.shape != self.shape:
+        if (
+            isinstance(out.nc_hdf5_chunksizes(), tuple)
+            and out.shape != self.shape
+        ):
             # Delete hdf5 chunksizes
             out.nc_clear_hdf5_chunksizes()
 
@@ -2332,7 +2338,10 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         out = self.copy(array=False)
         out._set_Array(array, copy=False)
 
-        if out.shape != self.shape:
+        if (
+            isinstance(out.nc_hdf5_chunksizes(), tuple)
+            and out.shape != self.shape
+        ):
             # Delete hdf5 chunksizes
             out.nc_clear_hdf5_chunksizes()
 
@@ -2409,8 +2418,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         d._set_Array(array, copy=False)
 
-        # Delete hdf5 chunksizes
-        d.nc_clear_hdf5_chunksizes()
+        if isinstance(d.nc_hdf5_chunksizes(), tuple):
+            d.nc_clear_hdf5_chunksizes()
 
         return d
 
@@ -2477,7 +2486,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         d = self.copy(array=False)
         d._set_Array(array, copy=False)
 
-        if d.shape != self.shape:
+        if isinstance(d.nc_hdf5_chunksizes(), tuple) and d.shape != self.shape:
             # Delete hdf5 chunksizes
             d.nc_clear_hdf5_chunksizes()
 
@@ -3262,7 +3271,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         d = self.copy(array=False)
         d._set_Array(array, copy=False)
 
-        if d.shape != self.shape:
+        if isinstance(d.nc_hdf5_chunksizes(), tuple) and d.shape != self.shape:
             # Delete hdf5 chunksizes
             d.nc_clear_hdf5_chunksizes()
 
