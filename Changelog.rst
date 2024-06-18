@@ -5,6 +5,9 @@ Version NEXTRELEASE
 
 * Upgrades to allow cfdm to work with Python 3.12
   (https://github.com/NCAS-CMS/cfdm/issues/302)
+* Fix bug that caused `cfdm.write` to fail when a parametric Z
+  dimension coordinate did not have a ``computed_standard_name``
+  attribute (https://github.com/NCAS-CMS/cfdm/issues/303)
 
 ----
 
