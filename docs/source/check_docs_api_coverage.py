@@ -15,6 +15,7 @@ Call as:
    $ python check_api_coverage.py <docs/source/ directory path>
 
 """
+
 import os
 import re
 import sys

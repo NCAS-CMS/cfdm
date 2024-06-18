@@ -2673,7 +2673,7 @@ class NetCDFWrite(IOWrite):
             datatype = self._datatype(cfvar)
             data, ncdimensions = self._transform_strings(
                 data,
-                ncdimensions
+                ncdimensions,
                 #                cfvar, data, ncdimensions
             )
 

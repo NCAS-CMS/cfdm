@@ -1231,10 +1231,10 @@ class NetCDFRead(IORead):
                                 variable_attributes[ncvar][attr]
                             )
                         except UnicodeEncodeError:
-                            variable_attributes[ncvar][
-                                attr
-                            ] = variable_attributes[ncvar][attr].encode(
-                                errors="ignore"
+                            variable_attributes[ncvar][attr] = (
+                                variable_attributes[ncvar][attr].encode(
+                                    errors="ignore"
+                                )
                             )
                 except UnicodeDecodeError:
                     pass
@@ -6251,12 +6251,12 @@ class NetCDFRead(IORead):
                         for term, param_ncvar in rec[
                             "interpolation_parameters"
                         ].items():
-                            interpolation_parameters[
-                                term
-                            ] = self._copy_construct(
-                                "interpolation_parameter",
-                                parent_ncvar,
-                                param_ncvar,
+                            interpolation_parameters[term] = (
+                                self._copy_construct(
+                                    "interpolation_parameter",
+                                    parent_ncvar,
+                                    param_ncvar,
+                                )
                             )
 
                             # For each intepolation parameter, record
@@ -8428,9 +8428,11 @@ class NetCDFRead(IORead):
                 mapping = self.read_vars["flattener_variables"]
                 if trailing_colon:
                     out = [
-                        mapping[ncvar[:-1]] + ":"
-                        if ncvar.endswith(":")
-                        else mapping[ncvar]
+                        (
+                            mapping[ncvar[:-1]] + ":"
+                            if ncvar.endswith(":")
+                            else mapping[ncvar]
+                        )
                         for ncvar in out
                     ]
                 else:
@@ -9105,9 +9107,9 @@ class NetCDFRead(IORead):
 
         # Create data
         if cell == "point":
-            properties[
-                "long_name"
-            ] = "Maps every point to its connected points"
+            properties["long_name"] = (
+                "Maps every point to its connected points"
+            )
             indices, kwargs = self._create_netcdfarray(connectivity_ncvar)
             n_nodes = self.read_vars["internal_dimension_sizes"][
                 mesh.ncdim[location]
