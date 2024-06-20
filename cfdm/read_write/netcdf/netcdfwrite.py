@@ -2674,7 +2674,7 @@ class NetCDFWrite(IOWrite):
             datatype = self._datatype(cfvar)
             data, ncdimensions = self._transform_strings(
                 data,
-                ncdimensions
+                ncdimensions,
                 #                cfvar, data, ncdimensions
             )
 
@@ -3324,7 +3324,7 @@ class NetCDFWrite(IOWrite):
                 coord, "computed_standard_name", None
             )
             if x is None:
-                self.implementation.set_property(
+                self.implementation.set_properties(
                     field_coordinates[key],
                     {"computed_standard_name": csn},
                     copy=False,
@@ -3950,7 +3950,7 @@ class NetCDFWrite(IOWrite):
         # Ancillary variables
         if field and ancillary_variables:
             ancillary_variables = " ".join(ancillary_variables)
-            ancillary_variables = re.sub("\s+", " ", ancillary_variables)
+            ancillary_variables = re.sub(r"\s+", " ", ancillary_variables)
             logger.info(
                 "    Writing ancillary_variables attribute to "
                 f"netCDF variable {ncvar}: {ancillary_variables!r}"

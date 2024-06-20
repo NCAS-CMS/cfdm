@@ -784,6 +784,15 @@ class DataTest(unittest.TestCase):
         self.assertTrue(np.isclose(da, a).all())
         self.assertTrue((da.mask == a.mask).all())
 
+    def test_Data__int__(self):
+        """Test Data.__int__."""
+        for x in (1.1, [1.1], [[1.1]]):
+            self.assertEqual(int(cfdm.Data(x)), 1)
+
+        # Can't int on data with size > 1
+        with self.assertRaises(TypeError):
+            int(cfdm.Data([1, 2]))
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

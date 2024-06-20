@@ -1200,7 +1200,7 @@ class NetCDFRead(IORead):
 
         # If the string contains any commas, it is assumed to be a
         # comma-separated list.
-        all_conventions = re.split(",\s*", Conventions)
+        all_conventions = re.split(r",\s*", Conventions)
         if all_conventions[0] == Conventions:
             all_conventions = Conventions.split()
 
@@ -6425,12 +6425,12 @@ class NetCDFRead(IORead):
                         for term, param_ncvar in rec[
                             "interpolation_parameters"
                         ].items():
-                            interpolation_parameters[
-                                term
-                            ] = self._copy_construct(
-                                "interpolation_parameter",
-                                parent_ncvar,
-                                param_ncvar,
+                            interpolation_parameters[term] = (
+                                self._copy_construct(
+                                    "interpolation_parameter",
+                                    parent_ncvar,
+                                    param_ncvar,
+                                )
                             )
 
                             # For each intepolation parameter, record
@@ -8587,9 +8587,11 @@ class NetCDFRead(IORead):
                 mapping = self.read_vars["flattener_variables"]
                 if trailing_colon:
                     out = [
-                        mapping[ncvar[:-1]] + ":"
-                        if ncvar.endswith(":")
-                        else mapping[ncvar]
+                        (
+                            mapping[ncvar[:-1]] + ":"
+                            if ncvar.endswith(":")
+                            else mapping[ncvar]
+                        )
                         for ncvar in out
                     ]
                 else:
@@ -9264,9 +9266,9 @@ class NetCDFRead(IORead):
 
         # Create data
         if cell == "point":
-            properties[
-                "long_name"
-            ] = "Maps every point to its connected points"
+            properties["long_name"] = (
+                "Maps every point to its connected points"
+            )
             indices, kwargs = self._create_netcdfarray(connectivity_ncvar)
             n_nodes = self.read_vars["internal_dimension_sizes"][
                 mesh.ncdim[location]

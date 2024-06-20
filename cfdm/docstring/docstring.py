@@ -21,7 +21,6 @@ Keys must be a `str` or `re.Pattern` object:
 
 """
 
-
 _docstring_substitution_definitions = {
     # ----------------------------------------------------------------
     # General substitutions (not indent-dependent)

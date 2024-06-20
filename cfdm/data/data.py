@@ -395,7 +395,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 f"Python scalars. Got {self}"
             )
 
-        return int(self.array)
+        return int(self.array[(0,) * self.ndim])
 
     def __iter__(self):
         """Called when an iterator is required.
