@@ -629,6 +629,12 @@ class NetCDFRead(IORead):
     def _open_h5netcdf(self, filename):
         """Return an open `h5netcdf.File`.
 
+        Uses values of the ``rdcc_nbytes``, ``rdcc_w0``, and
+        ``rdcc_nslots`` parameters to `h5netcdf.File` that correspond
+        to the default values of the `netCDF4.set_chunk_cache`
+        parameters ``size``, ``nelems``, and ``preemption``,
+        respectively.
+
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
@@ -641,7 +647,14 @@ class NetCDFRead(IORead):
             `h5netcdf.File`
 
         """
-        return h5netcdf.File(filename, "r", decode_vlen_strings=True)
+        return h5netcdf.File(
+            filename,
+            "r",
+            decode_vlen_strings=True,
+            rdcc_nbytes=16777216,
+            rdcc_w0=0.75,
+            rdcc_nslots=4133,
+        )
 
     @classmethod
     def cdl_to_netcdf(cls, filename):
@@ -650,7 +663,7 @@ class NetCDFRead(IORead):
         :Parameters:
 
             filename: `str`
-                The name sdef _netof the CDL file.
+                The name of the CDL file.
 
         :Returns:
 
@@ -1076,13 +1089,13 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             # S3
             # --------------------------------------------------------
-            #
+            # Input file system storage options
             "storage_options": storage_options,
-            #
-            "file_systems": {},
-            #
+            # File system storage options for each file
             "file_system_storage_options": {},
-            #
+            # Cached s3fs.S3FileSystem objects
+            "file_systems": {},
+            # Cache of open s3fs.File objects
             "s3fs_File_objects": [],
         }
 
@@ -1166,26 +1179,12 @@ class NetCDFRead(IORead):
         # 'global_attributes' dictionary
         # ----------------------------------------------------------------
         global_attributes = {}
-        #        for attr in map(str,nc.ncattrs()):
         for attr, value in self._file_global_attributes(nc).items():
             attr = str(attr)
             if isinstance(value, bytes):
                 value = value.decode(errors="ignore")
 
             global_attributes[attr] = value
-            #                print (attr, value, type(value))
-
-            #            var
-            # try:
-            #    if isinstance(value, str):
-            #        try:
-            #            global_attributes[attr] = str(value)
-            #        except UnicodeEncodeError:
-            #            global_attributes[attr] = value.encode(errors="ignore")
-            #    else:
-            #        global_attributes[attr] = value.decode('utf-8')
-            # except UnicodeDecodeError:
-            #    pass
 
         g["global_attributes"] = global_attributes
         if debug:
@@ -1397,7 +1396,6 @@ class NetCDFRead(IORead):
                 variable_grouped_dataset[ncvar] = g["nc_grouped"]
 
             variable_attributes[ncvar] = {}
-            #            for attr in map(str, variable.ncattrs()):
             for attr, value in self._file_variable_attributes(
                 variable
             ).items():
@@ -1495,7 +1493,6 @@ class NetCDFRead(IORead):
 
         # The netCDF dimensions of the parent file
         internal_dimension_sizes = {}
-        #        for name, dimension in nc.dimensions.items():
         for name, dimension in self._file_dimensions(nc).items():
             if (
                 has_groups
@@ -2308,8 +2305,6 @@ class NetCDFRead(IORead):
 
                     # Remove this ncvar from the set of external variables
                     external_variables.remove(ncvar)
-
-            # TODO h5netcdf S3: include s3 vars here?
 
     def _parse_compression_gathered(self, ncvar, compress):
         """Parse a list variable for compressing arrays by gathering."""

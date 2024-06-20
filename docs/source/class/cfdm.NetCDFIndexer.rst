@@ -19,11 +19,11 @@ Inspection
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-   
+
    ~cfdm.NetCDFIndexer.attributes
 
 .. rubric:: Attributes
-   
+
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/
@@ -38,5 +38,5 @@ Special
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-   
+
    ~cfdm.NetCDFIndexer.__getitem__

@@ -111,35 +111,6 @@ class FileArrayMixin:
         """
         return self._get_component("address", ())
 
-    #    def get_attributes(self, default=ValueError()):
-    #        """The attributes of the array.
-    #
-    #        .. versionadded:: (cfdm) NEXTVERSION
-    #
-    #        :Parameters:
-    #
-    #            default: optional
-    #                Return the value of the *default* parameter if the
-    #                attributes have not been set. If set to an `Exception`
-    #                instance then it will be raised instead.
-    #
-    #        :Returns:
-    #
-    #                The attributes.
-    #
-    #        """
-    #        attributes = self._get_component("attributes", None)
-    #        if attributes is None:
-    #            if default is None:
-    #                return
-    #
-    #            return self._default(
-    #                default,
-    #                f"{self.__class__.__name__} attributes have not yet been set",
-    #            )
-    #
-    #        return deepcopy(attributes)
-
     def get_filename(self, default=AttributeError()):
         """The name of the file containing the array.
 
@@ -248,20 +219,20 @@ class FileArrayMixin:
 
             create_endpoint_url: `bool`, optional
                 If True, the default, then create an
-                ``'endpoint_url'`` if and only if one has not already
-                been provided. See *filename* and *parsed_filename*
-                for details.
+                ``'endpoint_url'`` option if and only if one has not
+                already been provided. See *filename* and
+                *parsed_filename* for details.
 
             filename: `str`, optional
-                Used to set the ``'endpoint_url'`` key if it has not
-                been previously defined. Ignored if *parse_filename*
-                has been set.
+                Used to set the ``'endpoint_url'`` option if it has
+                not been previously defined. Ignored if
+                *parse_filename* has been set.
 
             parsed_filename: `urllib.parse.ParseResult`, optional
-                Used to set the ``'endpoint_url'`` key if it has not
-                been previously defined. By default the
-                ``'endpoint_url'`` key, if required, is set from the
-                file name returned by `get_filename`.
+                Used to set the ``'endpoint_url'`` option if it has
+                not been previously defined. By default the
+                ``'endpoint_url'`` optiona, if required, is set from
+                the file name returned by `get_filename`.
 
         :Returns:
 
@@ -339,7 +310,7 @@ class FileArrayMixin:
 
         :Returns:
 
-            `tuple`
+            2-`tuple`
                 The file object for the dataset, and the address of
                 the data within the file.
 

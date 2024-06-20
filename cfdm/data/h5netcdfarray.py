@@ -204,16 +204,13 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
         :Returns:
 
-            `dict`
-                The attributes.
+            `None`
 
         """
-        attributes = self._get_component("attributes", None)
-        if attributes is not None:
+        if self._get_component("attributes", None) is not None:
             return
 
-        attributes = dict(var.attrs)
-        self._set_component("attributes", attributes, copy=False)
+        self._set_component("attributes", dict(var.attrs), copy=False)
 
     def close(self, dataset):
         """Close the dataset containing the data.

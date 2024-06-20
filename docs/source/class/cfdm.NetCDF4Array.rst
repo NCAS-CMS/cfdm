@@ -19,19 +19,18 @@ Inspection
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-   
+
    ~cfdm.NetCDF4Array.get_compression_type
    ~cfdm.NetCDF4Array.get_subspace
    ~cfdm.NetCDF4Array.get_attributes
 
-   
 .. rubric:: Attributes
 
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
-   
+
    ~cfdm.NetCDF4Array.array
    ~cfdm.NetCDF4Array.dtype
    ~cfdm.NetCDF4Array.ndim
@@ -47,20 +46,20 @@ Units
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-   
+
    ~cfdm.NetCDF4Array.get_calendar
    ~cfdm.NetCDF4Array.get_units
-   
+
 File
 ----
-   
+
 .. rubric:: Methods
 
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-   
+
    ~cfdm.NetCDF4Array.get_address
    ~cfdm.NetCDF4Array.get_addresses
    ~cfdm.NetCDF4Array.close
@@ -73,7 +72,7 @@ File
    ~cfdm.NetCDF4Array.get_mask
    ~cfdm.NetCDF4Array.get_unpack
    ~cfdm.NetCDF4Array.get_storage_options
-   
+
 Miscellaneous
 -------------
 
@@ -81,10 +80,10 @@ Miscellaneous
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-   
+
    ~cfdm.NetCDF4Array.copy
    ~cfdm.NetCDF4Array.to_memory
-   
+
 Special
 -------
 
@@ -92,32 +91,32 @@ Special
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-   
+
    ~cfdm.NetCDF4Array.__getitem__
 
 Docstring substitutions
------------------------                   
-                                          
-.. rubric:: Methods                       
-                                          
-.. autosummary::                          
-   :nosignatures:                         
-   :toctree: ../method/                   
-   :template: method.rst                  
-                                          
+-----------------------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
    ~cfdm.NetCDF4Array._docstring_special_substitutions
-   ~cfdm.NetCDF4Array._docstring_substitutions        
-   ~cfdm.NetCDF4Array._docstring_package_depth        
-   ~cfdm.NetCDF4Array._docstring_method_exclusions    
+   ~cfdm.NetCDF4Array._docstring_substitutions
+   ~cfdm.NetCDF4Array._docstring_package_depth
+   ~cfdm.NetCDF4Array._docstring_method_exclusions
 
 Deprecated
 ----------
-                                          
-.. rubric:: Methods                       
-                                          
-.. autosummary::                          
-   :nosignatures:                         
-   :toctree: ../method/                   
-   :template: method.rst                  
-                                          
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
    ~cfdm.NetCDF4Array.get_missing_values

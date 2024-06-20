@@ -24,14 +24,13 @@ Inspection
    ~cfdm.H5netcdfArray.get_subspace
    ~cfdm.H5netcdfArray.get_attributes
 
-   
 .. rubric:: Attributes
 
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
-   
+
    ~cfdm.H5netcdfArray.array
    ~cfdm.H5netcdfArray.dtype
    ~cfdm.H5netcdfArray.ndim
@@ -47,20 +46,20 @@ Units
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-   
+
    ~cfdm.H5netcdfArray.get_calendar
    ~cfdm.H5netcdfArray.get_units
-   
+
 File
 ----
-   
+
 .. rubric:: Methods
 
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-   
+
    ~cfdm.H5netcdfArray.get_address
    ~cfdm.H5netcdfArray.get_addresses
    ~cfdm.H5netcdfArray.close
@@ -73,7 +72,7 @@ File
    ~cfdm.H5netcdfArray.get_mask
    ~cfdm.H5netcdfArray.get_unpack
    ~cfdm.H5netcdfArray.get_storage_options
-   
+
 Miscellaneous
 -------------
 
@@ -81,10 +80,10 @@ Miscellaneous
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-   
+
    ~cfdm.H5netcdfArray.copy
    ~cfdm.H5netcdfArray.to_memory
-   
+
 Special
 -------
 
@@ -92,32 +91,32 @@ Special
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-   
+
    ~cfdm.H5netcdfArray.__getitem__
 
 Docstring substitutions
 -----------------------                   
-                                          
+
 .. rubric:: Methods                       
-                                          
+
 .. autosummary::                          
-   :nosignatures:                         
-   :toctree: ../method/                   
-   :template: method.rst                  
-                                          
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
    ~cfdm.H5netcdfArray._docstring_special_substitutions
-   ~cfdm.H5netcdfArray._docstring_substitutions        
-   ~cfdm.H5netcdfArray._docstring_package_depth        
-   ~cfdm.H5netcdfArray._docstring_method_exclusions    
+   ~cfdm.H5netcdfArray._docstring_substitutions
+   ~cfdm.H5netcdfArray._docstring_package_depth
+   ~cfdm.H5netcdfArray._docstring_method_exclusions
 
 Deprecated
 ----------
-                                          
-.. rubric:: Methods                       
-                                          
-.. autosummary::                          
-   :nosignatures:                         
-   :toctree: ../method/                   
-   :template: method.rst                  
-                                          
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
    ~cfdm.H5netcdfArray.get_missing_values

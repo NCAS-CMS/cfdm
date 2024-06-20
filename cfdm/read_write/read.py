@@ -292,42 +292,39 @@ def read(
             options are interpreted depends on the location of the
             file:
 
-            **Local File System**
+            * **Local File System**: Storage options are ignored for
+              local files.
 
-            Storage options are ignored for local files.
+            * **HTTP(S)**: Storage options are ignored for files
+              available across the network via OPeNDAP.
 
-            **HTTP(S)**
+            * **S3-compatible services**: The backend used is `s3fs`,
+              and the storage options are used to initialise an
+              `s3fs.S3FileSystem` file system object. By default, or
+              if `None`, then *storage_options* is taken as ``{}``.
 
-            Storage options are ignored for files available across the
-            network via OPeNDAP.
+              If the ``'endpoint_url'`` key is not in
+              *storage_options*, nor in a dictionary defined by the
+              ``'client_kwargs'`` key (both of which are the case when
+              *storage_options* is `None`), then one will be
+              automatically inserted for accessing an S3 file. For
+              instance, with a file name of
+              ``'s3://store/data/file.nc'``, an ``'endpoint_url'`` key
+              with value ``'https://store'`` would be created. To
+              disable this, set the ``'endpoint_url'`` key to `None`.
 
-            **S3-compatible services**
+              *Parameter example:*
+                For a file name of ``'s3://store/data/file.nc'``, the
+                following are equivalent: ``None``, ``{}``,
+                ``{'endpoint_url': 'https://store'}``, and
+                ``{'client_kwargs': {'endpoint_url':
+                'https://store'}}``
 
-            The backend used is `s3fs`, and the storage options are
-            used to initialise an `s3fs.S3FileSystem` file system
-            object. By default, or if `None`, then *storage_options*
-            is taken as ``{}``.
-
-            If the ``'endpoint_url'`` key is not in *storage_options*,
-            nor in a dictionary defined by the ``'client_kwargs'`` key
-            (both of which are the case when *storage_options* is
-            `None`), then one will be automatically inserted for
-            accessing an S3 file. For example, for a file name of
-            ``'s3://store/data/file.nc'``, an ``'endpoint_url'`` key
-            with value ``'https://store'`` would be created. To
-            disable this, set ``'endpoint_url'`` to `None`.
-
-            *Parameter example:*
-              For a file name of ``'s3://store/data/file.nc'``, the
-              following are equivalent: ``None``, ``{}``,
-              ``{'endpoint_url': 'https://store'}``, and
-              ``{'client_kwargs': {'endpoint_url': 'https://store'}}``
-
-            *Parameter example:*
-              ``{'key: 'scaleway-api-key...', 'secret':
-              'scaleway-secretkey...', 'endpoint_url':
-              'https://s3.fr-par.scw.cloud', 'client_kwargs':
-              {'region_name': 'fr-par'}}``
+              *Parameter example:*
+                ``{'key: 'scaleway-api-key...', 'secret':
+                'scaleway-secretkey...', 'endpoint_url':
+                'https://s3.fr-par.scw.cloud', 'client_kwargs':
+                {'region_name': 'fr-par'}}``
 
             .. versionadded:: (cfdm) NEXTVERSION
 
