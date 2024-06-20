@@ -19,8 +19,8 @@ Version NEXTVERSION
 * New class `cfdm.NetCDFIndexer`
 * New dependency: ``h5netcdf>=1.3.0``
 * New dependency: ``h5py>=3.10.0``
-* New dependency: ``s3fs>=2024.3.0``
-* New dependency: ``dask>=2024.4.1``
+* New dependency: ``s3fs>=2024.6.0``
+* New dependency: ``dask>=2024.6.0``
 * Removed dependency: ``netcdf_flattener``
 
 ----

@@ -10307,9 +10307,9 @@ class NetCDFRead(IORead):
             "endpoint_url" not in storage_options
             and "endpoint_url" not in client_kwargs
         ):
-            storage_options[
-                "endpoint_url"
-            ] = f"https://{parsed_filename.netloc}"
+            storage_options["endpoint_url"] = (
+                f"https://{parsed_filename.netloc}"
+            )
 
         g["file_system_storage_options"].setdefault(filename, storage_options)
 

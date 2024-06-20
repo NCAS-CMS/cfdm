@@ -3,6 +3,7 @@
 .. versionadded:: (cfdm) NEXTVERSION
 
 """
+
 from dataclasses import dataclass
 
 # Maximum length of name after which it is replaced with its hash

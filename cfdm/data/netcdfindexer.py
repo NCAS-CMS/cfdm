@@ -1,7 +1,7 @@
 """A data indexer that applies netCDF masking and unpacking.
 
-Portions of this code were adapted from the `netCDF4` library, which
-carries the following MIT License:
+Portions of this code were adapted from the `netCDF4` Python library,
+which carries the following MIT License:
 
 Copyright 2008 Jeffrey Whitaker
 
@@ -19,6 +19,7 @@ The above copyright notice and this permission notice shall be
 included in all copies or substantial portions of the Software.
 
 """
+
 import logging
 from math import prod
 from numbers import Integral
@@ -38,22 +39,18 @@ class netcdf_indexer:
     means that the index for each dimension is applied independently,
     regardless of how that index was defined. For instance, the
     indices ``[[0, 1], [1, 3], 0]`` and ``[:2, 1:4:2, 0]`` will give
-    identical results. This behaviour is different to that of
-    `numpy`. Non-orthogonal indexing means that normal `numpy`
-    indexing rules are applied.
-
-    During indexing, masking and unpacking is applied according to the
-    netCDF conventions, either or both of which may be disabled via
-    initialisation options.
+    identical results. Orthogonal indexing is different to the
+    indexing behaviour of `numpy`. Non-orthogonal indexing means that
+    normal `numpy` indexing rules are applied.
 
     In addition, string and character variables are always converted
     to unicode arrays, the latter with the last dimension
     concatenated.
 
-    Masking and unpacking operations are defined by the conventions
-    for netCDF attributes, which are either provided as part of the
-    input *data* object, or given with the input *attributes*
-    parameter.
+    Masking and unpacking operations, either or both may be disabled
+    via initialisation options, are defined by the conventions for
+    netCDF attributes, which are either provided as part of the input
+    *variable* object, or given with the input *attributes* parameter.
 
     The relevant netCDF attributes that are considered are:
 
@@ -129,7 +126,7 @@ class netcdf_indexer:
             variable:
                 The variable to be indexed. May be any variable that
                 has the same API as one of `numpy.ndarray`,
-                `netCDF4.Variable` or `h5py.Variable` (which includes
+                `netCDF4.Variable`, or `h5py.Variable` (which includes
                 `h5netcdf.Variable`). Any masking and unpacking that
                 could be applied by *variable* itself (e.g. by a
                 `netCDF4.Variable` instance) is disabled, ensuring
@@ -174,15 +171,20 @@ class netcdf_indexer:
                 relevant to masking and unpacking are considered, with
                 all other attributes being ignored. If *attributes* is
                 `None`, the default, then the netCDF attributes stored
-                by *variable* itself (if any) are used. If
-                *attributes* is not `None`, then any netCDF attributes
-                stored by *variable* itself are ignored.
+                by *variable* (if any) are used. If *attributes* is
+                not `None`, then any netCDF attributes stored by
+                *variable* are ignored.
 
             copy: `bool`, optional
-                If True then return a copy of the subspace that is not
-                a view of part of the the original data. If False, the
-                default, then the returned subspace could be either a
-                copy or a view.
+                If True then return a `numpy` array that is not a view
+                of part of the the original data, i.e. in-place
+                changes to the returned subspace will not affect the
+                original *variable*. This is done by returning an
+                in-memory copy the subspace. If False, the default, no
+                in-memory copy is done, and then whether or not
+                in-place changes to the returned subspace affect
+                *variable* will depend on how subspacing is
+                implemented by *variable*`.
 
         """
         self.variable = variable
@@ -196,7 +198,7 @@ class netcdf_indexer:
     def __getitem__(self, index):
         """Return a subspace of the variable as a `numpy` array.
 
-        v.__getitem__(index) <==> v[index]
+        n.__getitem__(index) <==> v[index]
 
         If `__orthogonal_indexing__` is True then indexing is
         orthogonal.  If `__orthogonal_indexing__` is False then normal
@@ -414,9 +416,9 @@ class netcdf_indexer:
         # Still here? Then do orthogonal indexing.
         # ------------------------------------------------------------
 
-        # Create an index that replaces integer indices with size 1
-        # slices, so that their axes are not dropped yet (they will be
-        # dropeed later).
+        # Create an index that replaces integers with size 1 slices,
+        # so that their axes are not dropped yet (they will be dropped
+        # later).
         index0 = [
             slice(i, i + 1) if isinstance(i, Integral) else i for i in index
         ]
@@ -426,17 +428,18 @@ class netcdf_indexer:
             # variable natively supports orthogonal indexing.
             #
             # Note: `netCDF4.Variable` natively supports orthogonal
-            #       indexing; but `numpy.ndarray`, `h5netcdf.File` and
-            #       `h5py.File` do not.
+            #       indexing; but `h5netcdf.File`, `h5py.File`, and
+            #       `numpy.ndarray`, do not.
             data = data[tuple(index0)]
         else:
             # There are two or more list/1-d array indices, and the
             # variable does not natively support orthogonal indexing
             # => emulate orthogonal indexing with a sequence of
-            # subspaces, one for each list/1-d array index.
+            # independent subspaces, one for each list/1-d array
+            # index.
 
-            # 1) Apply the slice indices at the time as the list/1-d
-            #    array index that gives the smallest result.
+            # 1) Apply the slice indices at the same time as the
+            #    list/1-d array index that gives the smallest result.
 
             # Create an index that replaces each list/1-d array with
             # slice(None)
@@ -447,7 +450,7 @@ class netcdf_indexer:
             # Find the position of the list/1-d array index that gives
             # the smallest result, and apply the subspace of slices
             # and the chosen list/1-d array index. This will give the
-            # samllest memory footprint of the whole operation.
+            # smallest high-water memory mark of the whole operation.
             shape1 = self.index_shape(index1, data.shape)
             size1 = prod(shape1)
             sizes = [
@@ -503,7 +506,7 @@ class netcdf_indexer:
 
         :Returns:
 
-            `nump.ndarray`
+            `numpy.ndarray`
                 The masked data.
 
         """
@@ -802,7 +805,7 @@ class netcdf_indexer:
 
         **Examples**
 
-        >>> v.attributes()
+        >>> n.attributes()
         {'standard_name': 'air_temperature',
          'missing_value': -999.0}
 
@@ -833,46 +836,48 @@ class netcdf_indexer:
     def index_shape(cls, index, shape):
         """Return the shape of the array subspace implied by indices.
 
-        .. versionadded:: (cfdm) NEXTRELEASE
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
-            indices: `tuple`
+            index: `tuple`
                 The indices to be applied to an array with shape
                 *shape*.
 
-            shape: sequence of `ints`
+            shape: sequence of `int`
                 The shape of the array to be subspaced.
 
         :Returns:
 
             `list`
-                The shape of the subspace defined by the *indices*.
+                The shape of the subspace defined by the *index*.
 
         **Examples**
 
         >>> import numpy as np
-        >>> n.indices_shape((slice(2, 5), 4), (10, 20))
+        >>> n.index_shape((slice(2, 5), [4]), (10, 20))
         [3, 1]
-        >>> n.indices_shape(([2, 3, 4], np.arange(1, 6)), (10, 20))
+        >>> n.index_shape((slice(2, 5), 4), (10, 20))
+        [3]
+        >>> n.index_shape(([2, 3, 4], np.arange(1, 6)), (10, 20))
         [3, 5]
 
-        >>> n.indices_shape((slice(None), [True, False, True]), (10, 3))
+        >>> n.index_shape((slice(None), [True, False, True]), (10, 3))
         [10, 2]
 
         >>> index0 = np.arange(5)
         >>> index0 = index0[index0 < 3]
-        >>> n.indices_shape((index0, []), (10, 20))
+        >>> n.index_shape((index0, []), (10, 20))
         [3, 0]
 
-        >>> n.indices_shape((slice(1, 5, 3), 3), (10, 20))
+        >>> n.index_shape((slice(1, 5, 3), [3]), (10, 20))
         [2, 1]
-        >>> n.indices_shape((slice(5, 1, -2), 3), (10, 20))
-        [2, 1]
-        >>> n.indices_shape((slice(5, 1, 3), 3), (10, 20))
+        >>> n.index_shape((slice(5, 1, -2), 3), (10, 20))
+        [2]
+        >>> n.index_shape((slice(5, 1, 3), [3]), (10, 20))
         [0, 1]
-        >>> n.indices_shape((slice(1, 5, -3), 3), (10, 20))
-        [0, 1]
+        >>> n.index_shape((slice(1, 5, -3), 3), (10, 20))
+        [0]
 
         """
         implied_shape = []

@@ -117,7 +117,7 @@ try:
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
-_minimum_vn = "2024.3.0"
+_minimum_vn = "2024.6.0"
 if Version(s3fs.__version__) < Version(_minimum_vn):
     raise ValueError(
         f"Bad s3fs version: cfdm requires s3fs>={_minimum_vn}. "
@@ -143,7 +143,7 @@ try:
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
-_minimum_vn = "2024.4.0"
+_minimum_vn = "2024.6.0"
 if Version(dask.__version__) < Version(_minimum_vn):
     raise ValueError(
         f"Bad scipy version: cfdm requires dask>={_minimum_vn}. "

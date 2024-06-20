@@ -314,9 +314,9 @@ class FileArrayMixin:
 
             if parsed_filename is not None and parsed_filename.scheme == "s3":
                 # Derive endpoint_url from filename
-                storage_options[
-                    "endpoint_url"
-                ] = f"https://{parsed_filename.netloc}"
+                storage_options["endpoint_url"] = (
+                    f"https://{parsed_filename.netloc}"
+                )
 
         return storage_options
 

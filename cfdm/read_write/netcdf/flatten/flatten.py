@@ -741,9 +741,9 @@ class _Flattener:
         )
 
         # Store new name in dict for resolving references later
-        self._dim_map[
-            self.pathname(self.group(dim), self.name(dim))
-        ] = new_name
+        self._dim_map[self.pathname(self.group(dim), self.name(dim))] = (
+            new_name
+        )
 
         # Add to name mapping attribute
         self._dim_map_value.append(
@@ -822,9 +822,9 @@ class _Flattener:
         new_var.setncatts(attributes)
 
         # Store new name in dict for resolving references later
-        self._var_map[
-            self.pathname(self.group(var), self.name(var))
-        ] = new_name
+        self._var_map[self.pathname(self.group(var), self.name(var))] = (
+            new_name
+        )
 
         # Add to name mapping attribute
         self._var_map_value.append(

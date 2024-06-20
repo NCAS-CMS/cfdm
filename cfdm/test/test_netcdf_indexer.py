@@ -194,6 +194,32 @@ class netcdf_indexerTest(unittest.TestCase):
         x = cfdm.netcdf_indexer(n)
         self.assertTrue((x[...] == n).all())
 
+    def test_netcdf_indexer_index_shape(self):
+        """Test netcdf_indexer shape."""
+        x = cfdm.netcdf_indexer
+        self.assertEqual(x.index_shape((slice(2, 5), [4]), (10, 20)), [3, 1])
+        self.assertEqual(x.index_shape((slice(2, 5), 4), (10, 20)), [3])
+        self.assertEqual(
+            x.index_shape(([2, 3, 4], np.arange(1, 6)), (10, 20)), [3, 5]
+        )
+
+        self.assertEqual(
+            x.index_shape((slice(None), [True, False, True]), (10, 3)), [10, 2]
+        )
+
+        index0 = np.arange(5)
+        index0 = index0[index0 < 3]
+        self.assertEqual(x.index_shape((index0, []), (10, 20)), [3, 0])
+
+        self.assertEqual(
+            x.index_shape((slice(1, 5, 3), [3]), (10, 20)), [2, 1]
+        )
+        self.assertEqual(x.index_shape((slice(5, 1, -2), 3), (10, 20)), [2])
+        self.assertEqual(
+            x.index_shape((slice(5, 1, 3), [3]), (10, 20)), [0, 1]
+        )
+        self.assertEqual(x.index_shape((slice(1, 5, -3), 3), (10, 20)), [0])
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
