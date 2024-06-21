@@ -3367,7 +3367,7 @@ class NetCDFWrite(IOWrite):
                 coord, "computed_standard_name", None
             )
             if x is None:
-                self.implementation.set_property(
+                self.implementation.set_properties(
                     field_coordinates[key],
                     {"computed_standard_name": csn},
                     copy=False,

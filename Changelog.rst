@@ -7,6 +7,9 @@ Version NEXTVERSION
   (https://github.com/NCAS-CMS/cfdm/issues/302)
 * Extension to the HDF5 chunks API
   (https://github.com/NCAS-CMS/cfdm/issues/???)
+* Fix bug that caused `cfdm.write` to fail when a parametric Z
+  dimension coordinate did not have a ``computed_standard_name``
+  attribute (https://github.com/NCAS-CMS/cfdm/issues/303)
 * New dependency: ``dask>=2024.6.0``
 
 ----
