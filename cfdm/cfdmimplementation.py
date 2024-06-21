@@ -1044,7 +1044,7 @@ class CFDMImplementation(Implementation):
         return field.nc_variable_groups()
 
     def nc_get_hdf5_chunksizes(self, data):
-        """Get the HDF5 chunksizes for the data.
+        """Get the HDF5 chunking strategy for the data.
 
         ..versionadded:: (cfdm) 1.7.2
 
@@ -1055,8 +1055,7 @@ class CFDMImplementation(Implementation):
         :Returns:
 
             `tuple` or `int` or `str` or `None`
-                The HDF5 chunking strategy , or `None` if it hasn't
-                been set.
+                The HDF5 chunking strategy.
 
         """
         return data.nc_hdf5_chunksizes()

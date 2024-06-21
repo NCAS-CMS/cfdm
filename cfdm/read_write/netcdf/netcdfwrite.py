@@ -2702,16 +2702,16 @@ class NetCDFWrite(IOWrite):
         else:
             lsd = None
 
-        # Set HDF5 chunksizes: Either use those provided on the data,
-        # or work them out.
+        # Set the HDF5 chunk strategy: Either use that provided on the
+        # data, or else work it out.
         contiguous = False
         chunksizes = None
         compressed = bool(
             set(ncdimensions).intersection(g["sample_ncdim"].values())
         )
         if data is not None:
+            # Get the chunking strategy defined by the data itself
             chunksizes = self.implementation.nc_get_hdf5_chunksizes(data)
-
             if chunksizes == "contiguous":
                 contiguous = True
                 chunksizes = None
@@ -2724,10 +2724,11 @@ class NetCDFWrite(IOWrite):
                     hdf5 = hdf5_chunks
 
                 if chunksizes is None:
-                    # Work out the HDF chunk sizes
+                    # Work out the chunking strategy
                     if hdf5 == "contiguous":
                         contiguous = True
                     else:
+                        # Not contiguous => chunked
                         if compressed:
                             # Base HDF5 chunks on the compressed data
                             # that is actually going into the file
@@ -2735,23 +2736,22 @@ class NetCDFWrite(IOWrite):
                         else:
                             d = data
 
-                        dtype = g["datatype"].get(d.dtype)
-                        if dtype is None:
-                            dtype = d.dtype
+                        d_dtype = d.dtype
+                        dtype = g["datatype"].get(d_dtype, d_dtype)
 
                         with dask_config.set({"array.chunk-size": hdf5}):
                             chunksizes = normalize_chunks(
                                 ("auto",) * d.ndim, shape=d.shape, dtype=dtype
                             )
 
-                        # These Dask chunks might look something like
-                        # ((100, 100, 50), (250, 250, 4)). However, we
-                        # need one number per dimension, so we choose
-                        # the largest since that is closest to the
-                        # requested HDF5 chunk size.
+                        # 'chunksizes' currently might look something
+                        # like ((96,96,96,50), (250,250,4)). However
+                        # we need only one number per dimension, so we
+                        # choose the largest since that is closest to
+                        # the requested HDF5 chunk size: [96,250].
                         chunksizes = [max(c) for c in chunksizes]
 
-        logger.detail(
+        logger.debug(
             f"      HDF5 chunksizes: {chunksizes}\n"
             f"      HDF5 contiguous: {contiguous}"
         )  # pragma: no cover

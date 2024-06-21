@@ -1011,7 +1011,7 @@ class read_writeTest(unittest.TestCase):
         )
         cfdm.write(f, tmpfile)
 
-    def test_zzz_write_hdf5_chunks(self):
+    def test_write_hdf5_chunks(self):
         """Test the 'hdf5_chunks' parameter to `cfdm.write`."""
         f = cfdm.example_field(5)
         f.nc_set_variable("data")

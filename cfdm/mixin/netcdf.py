@@ -2489,15 +2489,11 @@ class NetCDFHDF5(NetCDF):
 
         :Returns:
 
-            `tuple` or `int` or `str` or `None`
+            `int` or `tuple` or `str` or `None`
                 The current chunking strategy when writing to a
-                netCDF4 file. An `int` defines the maximum size in
-                bytes of the HDF5 chunks; a `tuple` of integers
-                defines the maximum number of array elements in each
-                chunk along each axis; the string ``'contiguous'``
-                means that will be no HDF5 chunking; and `None` means
-                that the chunking strategy will be determined at write
-                time by `{{package}}.write`.
+                netCDF4 file.
+
+                {{hdf5 chunk strategy}}
 
         **Examples**
 
@@ -2532,8 +2528,8 @@ class NetCDFHDF5(NetCDF):
 
         :Returns:
 
-            `tuple` or `int` or `str` or `None`
-                The chunking strategy prior to being cleared. See
+            `int` or `tuple` or `str` or `None`
+                 The chunking strategy prior to being cleared. See
                 `nc_hdf5_chunksizes` for details.
 
         **Examples**
@@ -2573,13 +2569,9 @@ class NetCDFHDF5(NetCDF):
 
             chunksizes: `int` or `str` or `None` or sequence of `int`
                 Set the chunking strategy when writing to a netCDF4
-                file. An `int` or string like ``'4MiB'`` defines the
-                maximum size in bytes of the HDF5 chunks; a `tuple` of
-                integers defines the maximum number of array elements
-                in each chunk along each axis; the string
-                ``'contiguous'`` means that will be no HDF5 chunking;
-                and `None` means that the chunking strategy will be
-                determined at write time by `{{package}}.write`.
+                file.
+
+                {{hdf5 chunk strategy}}
 
         :Returns:
 
@@ -2639,14 +2631,15 @@ class NetCDFHDF5(NetCDF):
                 for i, j in zip(chunksizes, shape):
                     if i <= 0:
                         raise ValueError(
-                            "A dimension's chunk element size must be must be "
-                            f"positive. Got: {i!r}"
+                            "A dimension's chunk element maximum size must "
+                            f"be must be positive. Got: {i!r}"
                         )
 
                     if i > j:
                         raise ValueError(
-                            f"A dimension's chunk element size ({i!r}) "
-                            f"cannot exceed the size of the dimension ({j})"
+                            "A dimension's chunk element maximum size "
+                            f"({i!r}) cannot exceed the size of the "
+                            f"dimension ({j})"
                         )
 
         self._get_component("netcdf")["hdf5_chunksizes"] = chunksizes

@@ -361,6 +361,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         out = self.copy(array=False)
         out._set_Array(array, copy=False)
 
+        # Remove an HDF5 chunking strategy that no longer applies
         if (
             isinstance(out.nc_hdf5_chunksizes(), tuple)
             and out.shape != self.shape
@@ -1817,7 +1818,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         d._set_Array(array, copy=False)
 
-        # Delete hdf5 chunksizes
+        # Remove an HDF5 chunking strategy that no longer applies
         if isinstance(d.nc_hdf5_chunksizes(), tuple):
             d.nc_clear_hdf5_chunksizes()
 
@@ -2263,6 +2264,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         out = self.copy(array=False)
         out._set_Array(array, copy=False)
 
+        # Remove an HDF5 chunking strategy that no longer applies
         if (
             isinstance(out.nc_hdf5_chunksizes(), tuple)
             and out.shape != self.shape
@@ -2338,6 +2340,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         out = self.copy(array=False)
         out._set_Array(array, copy=False)
 
+        # Remove an HDF5 chunking strategy that no longer applies
         if (
             isinstance(out.nc_hdf5_chunksizes(), tuple)
             and out.shape != self.shape
@@ -2418,6 +2421,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         d._set_Array(array, copy=False)
 
+        # Remove an HDF5 chunking strategy that no longer applies
         if isinstance(d.nc_hdf5_chunksizes(), tuple):
             d.nc_clear_hdf5_chunksizes()
 
@@ -2486,6 +2490,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         d = self.copy(array=False)
         d._set_Array(array, copy=False)
 
+        # Remove an HDF5 chunking strategy that no longer applies
         if isinstance(d.nc_hdf5_chunksizes(), tuple) and d.shape != self.shape:
             # Delete hdf5 chunksizes
             d.nc_clear_hdf5_chunksizes()
@@ -3271,6 +3276,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         d = self.copy(array=False)
         d._set_Array(array, copy=False)
 
+        # Remove an HDF5 chunking strategy that no longer applies
         if isinstance(d.nc_hdf5_chunksizes(), tuple) and d.shape != self.shape:
             # Delete hdf5 chunksizes
             d.nc_clear_hdf5_chunksizes()

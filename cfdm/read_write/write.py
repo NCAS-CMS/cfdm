@@ -92,11 +92,10 @@ def write(
 
     HDF5 chunking is configured by the *hdf5_chunks* parameter, which
     defines the chunking strategy for all output data (including the
-    option of no chunking). However, this may be overridden by any
-    construct's for any construct via the
-    `~cfdm.Data.nc_set_hdf5_chunksizes`,
+    option of no chunking). However, this may be overridden for any
+    construct via the `~cfdm.Data.nc_set_hdf5_chunksizes`,
     `~cfdm.Data.nc_hdf5_chunksizes`, and
-    `~cfdm.Data.nc_clear_hdf5_chunksizes` methods of a `Data`
+    `~cfdm.Data.nc_clear_hdf5_chunksizes` methods of its `Data`
     instance.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -534,51 +533,51 @@ def write(
             .. versionadded:: (cfdm) 1.10.0.1
 
         hdf5_chunks: `str` or `int` or `float`, optional
-            The HDF5 chunking strategy. The *hdf5_chunks* parameter
-            defines the maximum size in bytes of the HDF5 chunks for
-            all data arrays being written to the file.
+            The HDF5 chunking strategy for data arrays being written
+            to the file. The *hdf5_chunks* parameter either defines
+            the maximum size in bytes of the HDF5 chunks, or else
+            specifies that the data are to be written contiguously
+            (ie. not chunked).
 
-            It may be number of bytes (floats are rounded down to the
-            nearest integer), or a string representing a quantity of
-            byte units. For instance 1024 bytes may be specified with
-            any of ``1024``, ``1024.5``, ``'1024'``, ``'1024 B'``,
-            ``'1 KiB'``, ``'0.0009765625 MiB'``, etc. Recognised byte
-            units are (case insensitve): ``B``, ``KiB``, ``MiB``,
-            ``GiB``, ``TiB``, ``PiB``, ``KB``, ``MB``, ``GB``, ``TB``,
-            and ``PB``.  The spaces in strings are optional.
-
-            The data may be written contiguously (i.e. with no
-            chunking) if *hdf5_chunks* is set to ``'contiguous'``.
-
-            By default, *hdf5_chunks* is ``'4MiB'``, the same as the
-            netCDF default value.
-
-            The algorithm that defines the chunks shapes maximises the
-            number of chunks that are approximately equal to (but
-            never exceeding) the target chunk size, preferring
-            "square-like" chunk shapes as much as possible. For
-            example, with *hdf_chunks* of ``'4 MiB'``, a data array of
-            64-bit floats with shape ``(400, 300, 60)`` will be
-            written with 20 HDF5 chunks: the first axis will be split
-            across 5 chunks of 93, 93, 93, 93, and 28 elements; the
-            second axis across 4 chunks of 93, 93, 93, and 21
-            elements; and the third axis across 1 chunk of 60
-            elements. This results in 12 HDF5 chunks having size
-            93*93*60*8 B = 3.9592 MiB, just under the target size,
-            with the remaining 8 chunks at the "edges" of the array
-            being considerably smaller.
-
-            The data may be written contiguously (i.e. with no
-            chunking) if *hdf5_chunks* is set to ``'contiguous'``.
-
-            If any data being written out has had HDF5 chunking
-            explicitly set, via the `Data.nc_set_hdf5_chunksizes`
-            method, then its chunking strategy is always used in
-            preference to the chunking strategy defined by
-            *hdf5_chunks*.
+            However, if any data being written out has had HDF5
+            chunking explicitly set via its
+            `Data.nc_set_hdf5_chunksizes` method, then this chunking
+            strategy will be used in preference to that defined by the
+            *hdf5_chunks* parameter.
 
             Ignored for NETCDF3 output formats, for which all data is
             always written out contiguously.
+
+            The *hdf5_chunks* parameter may be a number of bytes
+            (floats are rounded down to the nearest integer), or a
+            string representing a quantity of byte units. For instance
+            1024 bytes may be specified with any of ``1024``,
+            ``1024.5``, ``'1024'``, ``'1024 B'``, ``'1 KiB'``,
+            ``'0.0009765625 MiB'``, etc. Recognised byte units are
+            (case insensitve): ``B``, ``KiB``, ``MiB``, ``GiB``,
+            ``TiB``, ``PiB``, ``KB``, ``MB``, ``GB``, ``TB``, and
+            ``PB``.  The spaces in strings are optional. If
+            *hdf5_chunks* is the string ``'contiguous'`` then data
+            will be written contiguously.
+
+            By default, *hdf5_chunks* is ``'4MiB'``, the same as the
+            netCDF default value.
+    
+            When the *hdf5_chunks* parameter is being used to define
+            the chunk shape for a given data array, the algorithm
+            prefers "square-like" chunk shapes, maximising the amount
+            that are completely filled with data values. For example,
+            with *hdf_chunks* of ``'4 MiB'``, a data array of 64-bit
+            floats with shape ``(400, 300, 60)`` will be written with
+            20 HDF5 chunks, each of which contains 3.9592 MiB: the
+            first axis is split across 5 chunks containing 93, 93, 93,
+            93, and 28 elements; the second axis across 4 chunks
+            containing 93, 93, 93, and 21 elements; and the third axis
+            across 1 chunk containing 60 elements. 12 of these chunks
+            are completely filled with 93*93*60 data values
+            (93*93*60*8 B = 3.9592 MiB), whilst the remaining 8 chunks
+            at the "edges" of the array contain only 93*21*60,
+            28*93*60, or 28*21*60 data values.
 
             .. versionadded:: (cfdm) NEXTVERSION
 
