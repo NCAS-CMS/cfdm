@@ -535,9 +535,9 @@ def write(
         hdf5_chunks: `str` or `int` or `float`, optional
             The HDF5 chunking strategy for data arrays being written
             to the file. The *hdf5_chunks* parameter either defines
-            the maximum size in bytes of the HDF5 chunks, or else
-            specifies that the data are to be written contiguously
-            (ie. not chunked).
+            the size in bytes of the HDF5 chunks, or else specifies
+            that the data are to be written contiguously (ie. not
+            chunked).
 
             However, if any data array being written out has had HDF5
             chunking explicitly set via its
@@ -564,9 +564,9 @@ def write(
             netCDF default value.
 
             When the *hdf5_chunks* parameter is being used to define
-            the chunk shape for a given data array, the algorithm
-            prefers "square-like" chunk shapes, maximising the amount
-            of chunks that are completely filled with data values. For
+            the chunk shape for a given data array, "square-like"
+            chunk shapes are preferred, maximising the amount of
+            chunks that are completely filled with data values. For
             example, with *hdf_chunks* of ``'4 MiB'``, a data array of
             64-bit floats with shape ``(400, 300, 60)`` will be
             written with 20 HDF5 chunks, each of which contains 3.9592

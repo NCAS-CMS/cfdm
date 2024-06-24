@@ -116,11 +116,23 @@ _docstring_substitution_definitions = {
         original file names, then the returned files will be the
         collection of original files from all contributing sources.""",
     # hdf5 chunks note
-    "{{hdf5 chunks note}}": """.. note:: An HDF5 chunking strategy that is defined by a
-                  sequence of integers, which defines the maximum
-                  number of array elements in each chunk along each
-                  axis, is removed by methods that change the data
-                  shape.""",
+    "{{hdf5 chunks note}}": """* `None`: No HDF5 chunking strategy has been defined. The
+          chunking strategy will be determined at write time by
+          `{{package}}.write`.
+
+        * `int`: The size in bytes of the HDF5 chunks. "Square-like"
+          chunk shapes are preferred, maximising the amount of chunks
+          that are completely filled with data values. See
+          `{{package}}.write` for details.
+
+        * `tuple` of `int`: The maximum number of array elements in
+          each chunk along each axis
+
+          .. note:: This chunking strategy ir removed (i.e. replaced
+                    by `None`) by methods that change the data shape.
+
+        * ``'contiguous'``: No HDF5 chunking, i.e. the data will
+          written to the file contiguously.""",
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentataion)
     # ------------------------1----------------------------------------

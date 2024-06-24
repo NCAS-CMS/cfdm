@@ -2523,6 +2523,8 @@ class NetCDFHDF5(NetCDF):
     def nc_clear_hdf5_chunksizes(self):
         """Clear the HDF5 chunking strategy for the data.
 
+        {{hdf5 chunks note}}
+
         .. versionadded:: (cfdm) 1.7.2
 
         .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
