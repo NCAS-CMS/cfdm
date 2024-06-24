@@ -2485,7 +2485,8 @@ class NetCDFHDF5(NetCDF):
 
         .. versionadded:: (cfdm) 1.7.2
 
-        .. seealso:: `nc_clear_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`
+        .. seealso:: `nc_clear_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
+                     `{{package}}.write`
 
         :Returns:
 
@@ -2524,7 +2525,8 @@ class NetCDFHDF5(NetCDF):
 
         .. versionadded:: (cfdm) 1.7.2
 
-        .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`
+        .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
+                     `{{package}}.write`
 
         :Returns:
 
@@ -2563,7 +2565,8 @@ class NetCDFHDF5(NetCDF):
 
         .. versionadded:: (cfdm) 1.7.2
 
-        .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`
+        .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
+                     `{{package}}.write`
 
         :Parameters:
 
@@ -2623,7 +2626,8 @@ class NetCDFHDF5(NetCDF):
 
                 if len(chunksizes) != len(shape):
                     raise ValueError(
-                        f"A sequence of chunk element sizes ({chunksizes!r}) "
+                        "A sequence of the maximum number of elements in a "
+                        f"chunk for each dimension ({chunksizes!r}) "
                         "must have the same length as the number of "
                         f"dimensions in the data ({len(shape)})"
                     )
@@ -2631,14 +2635,14 @@ class NetCDFHDF5(NetCDF):
                 for i, j in zip(chunksizes, shape):
                     if i <= 0:
                         raise ValueError(
-                            "A dimension's chunk element maximum size must "
-                            f"be must be positive. Got: {i!r}"
+                            "A dimension's maximum number of elements in a "
+                            f"chunk be must be positive. Got: {i!r}"
                         )
 
                     if i > j:
                         raise ValueError(
-                            "A dimension's chunk element maximum size "
-                            f"({i!r}) cannot exceed the size of the "
+                            "A dimension's maximum number of elements in a "
+                            f"chunk ({i!r}) cannot exceed the size of the "
                             f"dimension ({j})"
                         )
 

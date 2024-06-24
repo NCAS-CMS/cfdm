@@ -539,7 +539,7 @@ def write(
             specifies that the data are to be written contiguously
             (ie. not chunked).
 
-            However, if any data being written out has had HDF5
+            However, if any data array being written out has had HDF5
             chunking explicitly set via its
             `Data.nc_set_hdf5_chunksizes` method, then this chunking
             strategy will be used in preference to that defined by the
@@ -562,21 +562,21 @@ def write(
 
             By default, *hdf5_chunks* is ``'4MiB'``, the same as the
             netCDF default value.
-    
+
             When the *hdf5_chunks* parameter is being used to define
             the chunk shape for a given data array, the algorithm
             prefers "square-like" chunk shapes, maximising the amount
-            that are completely filled with data values. For example,
-            with *hdf_chunks* of ``'4 MiB'``, a data array of 64-bit
-            floats with shape ``(400, 300, 60)`` will be written with
-            20 HDF5 chunks, each of which contains 3.9592 MiB: the
-            first axis is split across 5 chunks containing 93, 93, 93,
-            93, and 28 elements; the second axis across 4 chunks
-            containing 93, 93, 93, and 21 elements; and the third axis
-            across 1 chunk containing 60 elements. 12 of these chunks
-            are completely filled with 93*93*60 data values
-            (93*93*60*8 B = 3.9592 MiB), whilst the remaining 8 chunks
-            at the "edges" of the array contain only 93*21*60,
+            of chunks that are completely filled with data values. For
+            example, with *hdf_chunks* of ``'4 MiB'``, a data array of
+            64-bit floats with shape ``(400, 300, 60)`` will be
+            written with 20 HDF5 chunks, each of which contains 3.9592
+            MiB: the first axis is split across 5 chunks containing
+            93, 93, 93, 93, and 28 elements; the second axis across 4
+            chunks containing 93, 93, 93, and 21 elements; and the
+            third axis across 1 chunk containing 60 elements. 12 of
+            these chunks are completely filled with 93*93*60 data
+            values (93*93*60*8 B = 3.9592 MiB), whilst the remaining 8
+            chunks at the "edges" of the array contain only 93*21*60,
             28*93*60, or 28*21*60 data values.
 
             .. versionadded:: (cfdm) NEXTVERSION

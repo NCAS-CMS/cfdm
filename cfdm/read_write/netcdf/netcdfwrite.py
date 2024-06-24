@@ -2745,7 +2745,7 @@ class NetCDFWrite(IOWrite):
                             )
 
                         # 'chunksizes' currently might look something
-                        # like ((96,96,96,50), (250,250,4)). However
+                        # like ((96,96,96,50), (250,250,4)). However,x
                         # we need only one number per dimension, so we
                         # choose the largest since that is closest to
                         # the requested HDF5 chunk size: [96,250].
