@@ -4536,7 +4536,7 @@ class NetCDFWrite(IOWrite):
         group=True,
         coordinates=False,
         omit_data=None,
-        hdf5_chunks="4MiB",
+        hdf5_chunks="default",
     ):
         """Write field and domain constructs to a netCDF file.
 
@@ -4897,6 +4897,14 @@ class NetCDFWrite(IOWrite):
 
         # Parse hdf5_chunks
         if hdf5_chunks != "contiguous":
+            if hdf5_chunks == "default":
+                if compress:
+                    # Default for compressed data
+                    hdf5_chunks = "8MiB"
+                else:
+                    # Default for uncompressed data
+                    hdf5_chunks = "4MiB"
+
             try:
                 self.write_vars["hdf5_chunks"] = parse_bytes(hdf5_chunks)
             except (ValueError, AttributeError):
