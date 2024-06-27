@@ -541,9 +541,9 @@ def write(
 
             However, if any data array being written out has had HDF5
             chunking explicitly set via its
-            `Data.nc_set_hdf5_chunksizes` method, then this chunking
-            strategy will be used in preference to that defined by the
-            *hdf5_chunks* parameter.
+            `Data.nc_set_hdf5_chunksizes` method then, for that data
+            array alone, this chunking strategy will be used in
+            preference to that defined by the *hdf5_chunks* parameter.
 
             Ignored for NETCDF3 output formats, for which all data is
             always written out contiguously.
