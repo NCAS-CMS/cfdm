@@ -2560,7 +2560,7 @@ class NetCDFHDF5(NetCDF):
         """
         return self._get_component("netcdf").pop("hdf5_chunksizes", None)
 
-    def nc_set_hdf5_chunksizes(self, chunksizes):
+    def nc_set_hdf5_chunksizes(self, chunksizes, clip=False):
         """Set the HDF5 chunking strategy for the data.
 
         {{hdf5 chunks note}}
@@ -2577,6 +2577,11 @@ class NetCDFHDF5(NetCDF):
                 file.
 
                 {{hdf5 chunk strategy}}
+
+            clip: `bool`, optional
+                TODOHDF5CHUNKS
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -2602,6 +2607,8 @@ class NetCDFHDF5(NetCDF):
         >>> d.nc_set_hdf5_chunksizes(None)
         >>> d.nc_hdf5_chunksizes()
         None
+
+        TODOHDF5CHUNKS - clip example
 
         """
         if chunksizes is None:
@@ -2634,19 +2641,27 @@ class NetCDFHDF5(NetCDF):
                         f"dimensions in the data ({len(shape)})"
                     )
 
+                c = []
                 for i, j in zip(chunksizes, shape):
-                    if i <= 0:
+                    if i > j:
+                        if not clip:
+                            raise ValueError(
+                                "A dimension's maximum number of elements "
+                                f"in a chunk ({i!r}) cannot exceed the "
+                                f"size of the dimension ({j})"
+                            )
+
+                        # Reduce chunk size to the dimension size
+                        i = j
+                    elif i <= 0:
                         raise ValueError(
                             "A dimension's maximum number of elements in a "
                             f"chunk be must be positive. Got: {i!r}"
                         )
 
-                    if i > j:
-                        raise ValueError(
-                            "A dimension's maximum number of elements in a "
-                            f"chunk ({i!r}) cannot exceed the size of the "
-                            f"dimension ({j})"
-                        )
+                    c.append(i)
+
+                chunksizes = tuple(c)
 
         self._get_component("netcdf")["hdf5_chunksizes"] = chunksizes
 
