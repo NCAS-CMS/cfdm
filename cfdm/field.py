@@ -2441,6 +2441,37 @@ class Field(
 
         return f
 
+    def nc_set_hdf5_chunksizes(self, chunksizes, clip=False, ignore=False):
+        """TODOHDF5CHUNKS."""
+        if isinstance(chunksizes, dict):
+            c = list(self.shape)
+            data_axes = self.get_data_axes()
+            for identity, value in chunksizes.items():
+                axis = self.domain_axis(identity, key=True, default=None)
+                if axis is None:
+                    if ignore:
+                        continue
+
+                    raise ValueError(
+                        f"Can't find unique {identity!r} axis. "
+                        "Consider setting ignore=True"
+                    )
+
+                try:
+                    position = data_axes.index(axis)
+                except ValueError:
+                    if not ignore:
+                        raise ValueError(
+                            f"{identity!r} axis is not spanned by the "
+                            "data array"
+                        )
+                else:
+                    c[position] = value
+
+            chunksizes = c
+
+        return super().nc_set_hdf5_chunksizes(chunksizes)
+
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
         """Remove size one axes from the data.
