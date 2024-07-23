@@ -610,7 +610,7 @@ class NetCDFRead(IORead):
         return nc
 
     def _open_netCDF4(self, filename):
-        """Return an open `netCDF4.Dataset`.
+        """Return a `netCDF4.Dataset` open in read-only mode.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -627,7 +627,7 @@ class NetCDFRead(IORead):
         return netCDF4.Dataset(filename, "r")
 
     def _open_h5netcdf(self, filename):
-        """Return an open `h5netcdf.File`.
+        """Return a `h5netcdf.File` open in read-only mode.
 
         Uses values of the ``rdcc_nbytes``, ``rdcc_w0``, and
         ``rdcc_nslots`` parameters to `h5netcdf.File` that correspond
