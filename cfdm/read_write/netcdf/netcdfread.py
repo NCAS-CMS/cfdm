@@ -505,8 +505,8 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        xnetCDF = False
-        xHDF = False
+        netcdf = False
+        hdf = False
         netcdf_backend = g["netcdf_backend"]
 
         # Deal with a file in an S3 object store
@@ -538,13 +538,13 @@ class NetCDFRead(IORead):
             try:
                 # Try opening the file with netCDF4
                 nc = self._open_netCDF4(filename)
-                xnetCDF = True
+                netcdf = True
             except Exception:
                 # The file could not be read by netCDF4 so try opening
                 # it with h5netcdf
                 try:
                     nc = self._open_h5netcdf(filename)
-                    xHDF = True
+                    hdf = True
                 except Exception as error:
                     raise error
 
@@ -558,15 +558,15 @@ class NetCDFRead(IORead):
         elif netcdf_backend == "h5netcdf":
             try:
                 nc = self._open_h5netcdf(filename)
-                xHDF = True
+                hdf = True
             except Exception as error:
                 raise error
 
         else:
             raise ValueError(f"Unknown netCDF backend: {netcdf_backend!r}")
 
-        g["original_h5netcdf"] = xHDF
-        g["original_netCDF4"] = xnetCDF
+        g["original_h5netcdf"] = hdf
+        g["original_netCDF4"] = netcdf
 
         # ------------------------------------------------------------
         # If the file has a group structure then flatten it (CF>=1.8)
@@ -598,19 +598,19 @@ class NetCDFRead(IORead):
 
             nc = flat_nc
 
-            xnetCDF = True
-            xHDF = False
+            netcdf = True
+            hdf = False
 
             g["has_groups"] = True
             g["flat_files"].append(flat_file)
 
-        g["netCDF4"] = xnetCDF
-        g["h5netcdf"] = xHDF
+        g["netCDF4"] = netcdf
+        g["h5netcdf"] = hdf
         g["nc"] = nc
         return nc
 
     def _open_netCDF4(self, filename):
-        """Return a `netCDF4.Dataset` open in read-only mode.
+        """Return an open `netCDF4.Dataset`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -627,7 +627,7 @@ class NetCDFRead(IORead):
         return netCDF4.Dataset(filename, "r")
 
     def _open_h5netcdf(self, filename):
-        """Return a `h5netcdf.File` open in read-only mode.
+        """Return an open `h5netcdf.File`.
 
         Uses values of the ``rdcc_nbytes``, ``rdcc_w0``, and
         ``rdcc_nslots`` parameters to `h5netcdf.File` that correspond
