@@ -509,7 +509,7 @@ class NetCDFRead(IORead):
         HDF = False
         netcdf_backend = g["netcdf_backend"]
 
-        # Deal with an file in an S3 object store
+        # Deal with a file in an S3 object store
         u = urlparse(filename)
         storage_options = self._get_storage_options(filename, u)
 
@@ -563,7 +563,7 @@ class NetCDFRead(IORead):
                 raise error
 
         else:
-            raise ValueError("Unknown netCDF backend: {netcdf_backend!r}")
+            raise ValueError(f"Unknown netCDF backend: {netcdf_backend!r}")
 
         g["original_h5netcdf"] = HDF
         g["original_netCDF4"] = netCDF
@@ -10055,7 +10055,7 @@ class NetCDFRead(IORead):
 
         :Returns:
 
-                The global attribute value
+                The global attribute value.
 
         """
         try:
@@ -10077,7 +10077,7 @@ class NetCDFRead(IORead):
 
         :Returns:
 
-            `dict'-like
+            `dict`-like
                 A dictionary of the attribute values keyed by their
                 names.
 
@@ -10096,7 +10096,7 @@ class NetCDFRead(IORead):
 
         :Returns:
 
-            `dict'-like
+            `dict`-like
                 A dictionary of the dimensions keyed by their names.
 
         """
@@ -10124,7 +10124,7 @@ class NetCDFRead(IORead):
         return self._file_dimensions(nc)[dim_name]
 
     def _file_dimension_isunlimited(self, nc, dim_name):
-        """Return a whether a dimension is unlimited.
+        """Return whether a dimension is unlimited.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -10145,7 +10145,7 @@ class NetCDFRead(IORead):
         return self._file_dimension(nc, dim_name).isunlimited()
 
     def _file_dimension_size(self, nc, dim_name):
-        """Return a dimension is size.
+        """Return a dimension's size.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -10160,7 +10160,7 @@ class NetCDFRead(IORead):
         :Returns:
 
             `int`
-                The dimssion size
+                The dimension size.
 
         """
         return self._file_dimension(nc, dim_name).size
@@ -10177,7 +10177,7 @@ class NetCDFRead(IORead):
 
         :Returns:
 
-            `dict'-like
+            `dict`-like
                 A dictionary of the variables keyed by their names.
 
         """
