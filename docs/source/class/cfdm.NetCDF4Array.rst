@@ -108,15 +108,3 @@ Docstring substitutions
    ~cfdm.NetCDF4Array._docstring_substitutions
    ~cfdm.NetCDF4Array._docstring_package_depth
    ~cfdm.NetCDF4Array._docstring_method_exclusions
-
-Deprecated
-----------
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.NetCDF4Array.get_missing_values
