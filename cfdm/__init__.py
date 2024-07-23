@@ -53,7 +53,6 @@ _requires = core._requires + (
     "netCDF4",
     "scipy",
     "h5netcdf",
-    "h5py",
     "s3fs",
 )
 
