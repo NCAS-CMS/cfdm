@@ -279,7 +279,7 @@ def read(
         netcdf_eninge: `None` or `str`, optional
             Specify which library to use for opening and reading
             netCDF files. By default, or if `None`, then the first one
-            of `netCDF4` and `h5netcdf` to successfully open the file
+            of `netCDF4` and `h5netcdf` to successfully open the
             netCDF file is used. Setting *netcdf_backend* to one of
             ``'netCDF4'`` and ``'h5netcdf'`` will force the use of
             that library.
@@ -321,7 +321,7 @@ def read(
                 'https://store'}}``
 
               *Parameter example:*
-                ``{'key: 'scaleway-api-key...', 'secret':
+                ``{'key': 'scaleway-api-key...', 'secret':
                 'scaleway-secretkey...', 'endpoint_url':
                 'https://s3.fr-par.scw.cloud', 'client_kwargs':
                 {'region_name': 'fr-par'}}``

@@ -205,7 +205,7 @@ class FileArrayMixin:
         raise DeprecationError(
             f"{self.__class__.__name__}.get_missing_values was deprecated "
             "at version NEXTVERSION and is no longer available. "
-            "Use {self.__class__.__name__}.get_attributes instead."
+            f"Use {self.__class__.__name__}.get_attributes instead."
         )  # pragma: no cover
 
     def get_storage_options(
@@ -226,12 +226,12 @@ class FileArrayMixin:
             filename: `str`, optional
                 Used to set the ``'endpoint_url'`` option if it has
                 not been previously defined. Ignored if
-                *parse_filename* has been set.
+                *parsed_filename* has been set.
 
             parsed_filename: `urllib.parse.ParseResult`, optional
                 Used to set the ``'endpoint_url'`` option if it has
                 not been previously defined. By default the
-                ``'endpoint_url'`` optiona, if required, is set from
+                ``'endpoint_url'`` option, if required, is set from
                 the file name returned by `get_filename`.
 
         :Returns:
@@ -254,7 +254,7 @@ class FileArrayMixin:
         {}
 
         >>> f.get_storage_options()
-        {'key: 'scaleway-api-key...',
+        {'key': 'scaleway-api-key...',
          'secret': 'scaleway-secretkey...',
          'endpoint_url': 'https://s3.fr-par.scw.cloud',
          'client_kwargs': {'region_name': 'fr-par'}}

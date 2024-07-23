@@ -15,14 +15,14 @@ class NetCDFFileMixin:
     """
 
     def _group(self, dataset, groups):
-        """Retrun the group object containing a variable.
+        """Return the group object containing a variable.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
             dataset: `netCDF4.Dataset` or `h5netcdf.File`
-                The dataset containging the variable.
+                The dataset containing the variable.
 
             groups: sequence of `str`
                 The definition of which group the variable is in. For
@@ -94,7 +94,7 @@ class NetCDFFileMixin:
         :Parameters:
 
             dataset:
-                The dataset to be be closed.
+                The dataset to be closed.
 
         :Returns:
 
@@ -146,7 +146,7 @@ class NetCDFFileMixin:
         :Parameters:
 
             default: optional
-                Return the value of the *default* parameter no missing
+                Return the value of the *default* parameter if no missing
                 values have yet been defined.
 
                 {{default Exception}}
@@ -181,7 +181,7 @@ class NetCDFFileMixin:
         raise DeprecationError(
             f"{self.__class__.__name__}.get_missing_values was deprecated "
             "at version NEXTVERSION and is no longer available. "
-            "Use {self.__class__.__name__}.get_attributes instead."
+            f"Use {self.__class__.__name__}.get_attributes instead."
         )
 
     def get_unpack(self):
@@ -205,7 +205,7 @@ class NetCDFFileMixin:
         :Returns:
 
             `NumpyArray`
-                The new with all of its data in memory.
+                The new array with all of its data in memory.
 
         """
         return NumpyArray(self[...])

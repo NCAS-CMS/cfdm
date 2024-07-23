@@ -2211,7 +2211,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
                 {{axes int examples}}
 
-            squeeze: `bool`, optional}}
+            squeeze: `bool`, optional
                 If this is set to False, the default, the axes which
                 are reduced are left in the result as dimensions with
                 size one. With this option, the result will broadcast
@@ -2437,7 +2437,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
                 {{axes int examples}}
 
-            squeeze: `bool`, optional}}
+            squeeze: `bool`, optional
                 If this is set to False, the default, the axes which
                 are reduced are left in the result as dimensions with
                 size one. With this option, the result will broadcast

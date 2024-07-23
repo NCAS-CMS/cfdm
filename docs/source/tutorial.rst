@@ -184,7 +184,7 @@ The `cfdm.read` function has optional parameters to
   attributes are present (see :ref:`data masking <Data-mask>`); and
 
 * display information and issue warnings about the mapping of the
-  netCDF file contents to CF data model constructs;
+  netCDF file contents to CF data model constructs; and
 
 * choose either `netCDF4` or `h5netcdf` backends for accessing netCDF
   files.
@@ -2857,7 +2857,7 @@ instances for the field and metadata constructs. It is, however,
 possible to create data from arrays that reside on disk. The
 `cfdm.read` function creates data in this manner. A pointer to an
 array in a netCDF file can be stored in a `~cfdm.NetCDF4Array` or
-`~cfdm.H5netcdfAarray` instance, which is is used to initialise a
+`~cfdm.H5netcdfAarray` instance, which is used to initialise a
 `~cfdm.Data` instance.
 
 .. code-block:: python

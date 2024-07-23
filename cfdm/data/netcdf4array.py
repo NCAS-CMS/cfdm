@@ -67,7 +67,7 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 attributes will be set from the netCDF variable during
                 the first `__getitem__` call.
 
-                .. versionadded:: (cfdm) NEXTRELEASE
+                .. versionadded:: (cfdm) NEXTVERSION
 
             {{init storage_options: `dict` or `None`, optional}}
 
@@ -83,7 +83,7 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
             missing_values: Deprecated at version NEXTVERSION
                 The missing value indicators defined by the netCDF
-                variable attributes. The may now be recorded via the
+                variable attributes. They may now be recorded via the
                 *attributes* parameter
 
             ncvar:  Deprecated at version 1.10.1.0
@@ -96,11 +96,11 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 Use the *address* parameter instead.
 
             units: `str` or `None`, optional
-                Deprecated at version NEXTRELEASE. Use the
+                Deprecated at version NEXTVERSION. Use the
                 *attributes* parameter instead.
 
             calendar: `str` or `None`, optional
-                Deprecated at version NEXTRELEASE. Use the
+                Deprecated at version NEXTVERSION. Use the
                 *attributes* parameter instead.
 
         """
@@ -333,7 +333,7 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         :Parameters:
 
             dataset: `netCDF4.Dataset`
-                The netCDF dataset to be be closed.
+                The netCDF dataset to be closed.
 
         :Returns:
 

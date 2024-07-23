@@ -326,6 +326,7 @@ def environment(display=True, paths=True):
     h5netcdf: 1.3.0
     h5py: 3.10.0
     s3fs: 2023.12.2
+    dask: 2024.7.0
     scipy: 1.11.3
     cftime: 1.6.2
     cfdm: NEXTVERSION
@@ -343,6 +344,7 @@ def environment(display=True, paths=True):
     h5py: 3.10.0 /home/miniconda3/lib/python3.11/site-packages/h5py/__init__.py
     s3fs: 2023.12.2 /home/miniconda3/lib/python3.11/site-packages/s3fs/__init__.py
     scipy: 1.11.3 /home/miniconda3/lib/python3.11/site-packages/scipy/__init__.py
+    dask: 2024.7.0 /home/miniconda3/lib/python3.11/site-packages/dask/__init__.py
     cftime: 1.6.2 /home/miniconda3/lib/python3.11/site-packages/cftime/__init__.py
     cfdm: NEXTVERSION /home/miniconda3/lib/python3.11/site-packages/cfdm/__init__.py
 

@@ -69,7 +69,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 attributes will be set from the netCDF variable during
                 the first `__getitem__` call.
 
-                .. versionadded:: (cfdm) NEXTRELEASE
+                .. versionadded:: (cfdm) NEXTVERSION
 
             {{init storage_options: `dict` or `None`, optional}}
 
@@ -220,7 +220,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         :Parameters:
 
             dataset: `h5netcdf.File`
-                The netCDF dataset to be be closed.
+                The netCDF dataset to be closed.
 
         :Returns:
 

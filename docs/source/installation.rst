@@ -156,7 +156,7 @@ The cfdm package requires:
 
 * `numpy <http://www.numpy.org>`_, version 1.15 or newer.
 
-* `netCDF4 <https://pypi.org/project/netCDF>`_, version 1.5.4 or
+* `netCDF4 <https://pypi.org/project/netCDF4>`_, version 1.5.4 or
   newer.
 
 * `cftime <https://pypi.org/project/cftime>`_, version 1.6.0 or
