@@ -46,13 +46,6 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
             shape: `tuple`
                 The array dimension sizes in the netCDF file.
-
-            size: `int`
-                Number of elements in the array in the netCDF file.
-
-            ndim: `int`
-                The number of array dimensions in the netCDF file.
-
             {{init mask: `bool`, optional}}
 
                 .. versionadded:: (cfdm) 1.8.2
