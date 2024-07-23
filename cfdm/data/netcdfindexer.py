@@ -103,9 +103,6 @@ class netcdf_indexer:
     >>> x = cfdm.netcdf_indexer(n, mask=False, attributes={'_FillValue': 4})
     >>> print(x[...])
     [0 1 2 3 4 5 6]
-    >>> x = cfdm.netcdf_indexer(n, mask=False, attributes={'_FillValue': 4})
-    >>> print(x[...])
-    [0 1 2 3 4 5 6]
 
     """
 
