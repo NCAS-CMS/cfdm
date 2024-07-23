@@ -53,12 +53,6 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             shape: `tuple`
                 The array dimension sizes in the file.
 
-            size: `int`
-                Number of elements in the array in the file.
-
-            ndim: `int`
-                The number of array dimensions in the file.
-
             {{init mask: `bool`, optional}}
 
             {{init unpack: `bool`, optional}}
