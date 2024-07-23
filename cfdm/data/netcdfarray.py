@@ -86,7 +86,7 @@ class NetCDFArray:
 
             missing_values: Deprecated at version NEXTVERSION
                 The missing value indicators defined by the netCDF
-                variable attributes. The may now be recorded via the
+                variable attributes. They may now be recorded via the
                 *attributes* parameter
 
             ncvar:  Deprecated at version 1.10.1.0
