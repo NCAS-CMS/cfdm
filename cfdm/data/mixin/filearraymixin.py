@@ -83,8 +83,6 @@ class FileArrayMixin:
         n = len(addresses)
         if n == 1:
             return addresses[0]
-        elif n > 1:
-            return
 
         if default is None:
             return
