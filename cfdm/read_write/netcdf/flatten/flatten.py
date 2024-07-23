@@ -27,7 +27,7 @@ from .config import (
     ref_not_found_error,
 )
 
-# Mapping from numpy dtype endian format that expected by netCDF4
+# Mapping from numpy dtype endian format to that expected by netCDF4
 _dtype_endian_lookup = {
     "=": "native",
     ">": "big",
@@ -134,7 +134,7 @@ def parse_attribute(name, attribute):
     :Parameters:
 
         name: `str`
-            The attribute name (e.g. ``'cell_methods'```).
+            The attribute name (e.g. ``'cell_methods'``).
 
         attribute: `str`
             The attribute value to parse.
@@ -465,7 +465,7 @@ class _Flattener:
         :Returns:
 
             `str`
-                The file system path, or the opendap URL, for the
+                The file system path, or the OPeNDAP URL, for the
                 dataset.
 
         **Examples**
@@ -665,7 +665,7 @@ class _Flattener:
         :Parameters:
 
             input_group: `str`
-                The group to faltten.
+                The group to flatten.
 
         :Returns:
 
@@ -697,7 +697,7 @@ class _Flattener:
                 The group containing the attribute to flatten.
 
             attr_name: `str`
-                The anme of the attribute.
+                The name of the attribute.
 
         :Returns:
 
@@ -854,7 +854,7 @@ class _Flattener:
         """Increment position.
 
         Increment position vector in a variable along a dimension by
-        the matching slice length along than dimension. If end of the
+        the matching slice length along that dimension. If end of the
         dimension is reached, recursively increment the next
         dimensions until a valid position is found.
 
@@ -919,7 +919,7 @@ class _Flattener:
                 `h5netcdf.Variable`.
 
             new_var:
-                The new variable in which copy the data, that has the
+                The new variable in which to copy the data, that has the
                 same API as `netCDF4.Variable` or `h5netcdf.Variable`.
 
         :Returns:
@@ -958,7 +958,7 @@ class _Flattener:
             )
 
     def resolve_reference(self, orig_ref, orig_var, rules):
-        """Resolve a refrence.
+        """Resolve a reference.
 
         Resolves the absolute path to a coordinate variable within the
         group structure.
@@ -1271,7 +1271,7 @@ class _Flattener:
 
         First search up in the hierarchy for the reference, until root
         group is reached. If coordinate variable, search until local
-        apex is reached, Then search down in siblings.
+        apex is reached, then search down in siblings.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1288,7 +1288,7 @@ class _Flattener:
                 variable.
 
             local_apex_reached: `bool`
-                Whether or not the apex is previously been reached.
+                Whether or not the apex has previously been reached.
 
             is_coordinate_variable: `bool`
                 Whether the search is for a coordiante variable.
@@ -1313,7 +1313,7 @@ class _Flattener:
             local_apex_reached or ref in current_group.dimensions.keys()
         )
 
-        # Check if has to continue looking in parent group
+        # Check if have to continue looking in parent group
         # - normal search: continue until root is reached
         # - coordinate variable: continue until local apex is reached
         if is_coordinate_variable:
@@ -1458,7 +1458,7 @@ class _Flattener:
         """Apapt the name.
 
         Return name of flattened reference. If not found, raise
-        exception or continue warning.
+        exception or continue with a warning.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1514,7 +1514,7 @@ class _Flattener:
             return self.handle_reference_error(resolved_ref)
 
     def pathname(self, group, name):
-        """Compose full path name to an element in a group structure:
+        """Compose full path name to an element in a group structure.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
