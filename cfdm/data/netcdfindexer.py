@@ -94,7 +94,7 @@ class netcdf_indexer:
     >>> n = np.arange(7)
     >>> x = cfdm.netcdf_indexer(n)
     >>> x.shape
-    (9,)
+    (7,)
     >>> print(x[...])
     [0 1 2 3 4 5 6]
     >>> x = cfdm.netcdf_indexer(n, attributes={'_FillValue': 4})
