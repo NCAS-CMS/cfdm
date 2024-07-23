@@ -505,8 +505,8 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        netCDF = False
-        HDF = False
+        xnetCDF = False
+        xHDF = False
         netcdf_backend = g["netcdf_backend"]
 
         # Deal with a file in an S3 object store
@@ -538,13 +538,13 @@ class NetCDFRead(IORead):
             try:
                 # Try opening the file with netCDF4
                 nc = self._open_netCDF4(filename)
-                netCDF = True
+                xnetCDF = True
             except Exception:
                 # The file could not be read by netCDF4 so try opening
                 # it with h5netcdf
                 try:
                     nc = self._open_h5netcdf(filename)
-                    HDF = True
+                    xHDF = True
                 except Exception as error:
                     raise error
 
@@ -558,15 +558,15 @@ class NetCDFRead(IORead):
         elif netcdf_backend == "h5netcdf":
             try:
                 nc = self._open_h5netcdf(filename)
-                HDF = True
+                xHDF = True
             except Exception as error:
                 raise error
 
         else:
             raise ValueError(f"Unknown netCDF backend: {netcdf_backend!r}")
 
-        g["original_h5netcdf"] = HDF
-        g["original_netCDF4"] = netCDF
+        g["original_h5netcdf"] = xHDF
+        g["original_netCDF4"] = xnetCDF
 
         # ------------------------------------------------------------
         # If the file has a group structure then flatten it (CF>=1.8)
@@ -598,14 +598,14 @@ class NetCDFRead(IORead):
 
             nc = flat_nc
 
-            netCDF = True
-            HDF = False
+            xnetCDF = True
+            xHDF = False
 
             g["has_groups"] = True
             g["flat_files"].append(flat_file)
 
-        g["netCDF4"] = netCDF
-        g["h5netcdf"] = HDF
+        g["netCDF4"] = xnetCDF
+        g["h5netcdf"] = xHDF
         g["nc"] = nc
         return nc
 
