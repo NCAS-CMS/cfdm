@@ -108,15 +108,3 @@ Docstring substitutions
    ~cfdm.H5netcdfArray._docstring_substitutions
    ~cfdm.H5netcdfArray._docstring_package_depth
    ~cfdm.H5netcdfArray._docstring_method_exclusions
-
-Deprecated
-----------
-
-.. rubric:: Methods
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cfdm.H5netcdfArray.get_missing_values
