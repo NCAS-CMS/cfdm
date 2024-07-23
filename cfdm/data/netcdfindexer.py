@@ -130,7 +130,7 @@ class netcdf_indexer:
                 that any masking and unpacking is always done by the
                 `netcdf_indexer` instance.
 
-            mask: `bool`
+            mask: `bool`, optional
                 If True, the default, then an array returned by
                 indexing is automatically masked. Masking is
                 determined by the netCDF conventions for the following
@@ -138,14 +138,14 @@ class netcdf_indexer:
                 ``_Unsigned``, ``valid_max``, ``valid_min``, and
                 ``valid_range``.
 
-            unpack: `bool`
+            unpack: `bool`, optional
                 If True, the default, then an array returned by
                 indexing is automatically unpacked. Unpacking is
                 determined by the netCDF conventions for the following
                 attributes: ``add_offset``, ``scale_factor``, and
                 ``_Unsigned``.
 
-            always_masked_array: `bool`
+            always_masked_array: `bool`, optional
                 If False, the default, then an array returned by
                 indexing which has no missing values is created as a
                 regular `numpy` array. If True then an array returned
@@ -164,7 +164,7 @@ class netcdf_indexer:
 
             attributes: `dict`, optional
                 Provide netCDF attributes for the *variable* as a
-                dictionary key/value pairs. Only the attributes
+                dictionary of key/value pairs. Only the attributes
                 relevant to masking and unpacking are considered, with
                 all other attributes being ignored. If *attributes* is
                 `None`, the default, then the netCDF attributes stored
@@ -174,14 +174,14 @@ class netcdf_indexer:
 
             copy: `bool`, optional
                 If True then return a `numpy` array that is not a view
-                of part of the the original data, i.e. in-place
+                of part of the original data, i.e. in-place
                 changes to the returned subspace will not affect the
                 original *variable*. This is done by returning an
                 in-memory copy the subspace. If False, the default, no
-                in-memory copy is done, and then whether or not
+                in-memory copy is made, and then whether or not
                 in-place changes to the returned subspace affect
                 *variable* will depend on how subspacing is
-                implemented by *variable*`.
+                implemented by *variable*.
 
         """
         self.variable = variable
