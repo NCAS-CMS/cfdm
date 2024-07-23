@@ -16,7 +16,7 @@ Version NEXTVERSION
   dimension coordinate did not have a ``computed_standard_name``
   attribute (https://github.com/NCAS-CMS/cfdm/issues/303)
 * New class `cfdm.H5netcdfArray`
-* New class `cfdm.NetCDFIndexer`
+* New class `cfdm.NetCDF4Array`
 * New dependency: ``h5netcdf>=1.3.0``
 * New dependency: ``h5py>=3.10.0``
 * New dependency: ``s3fs>=2024.6.0``
