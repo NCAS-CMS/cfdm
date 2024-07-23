@@ -482,7 +482,7 @@ class _Flattener:
             return dataset.filename
 
     def get_dims(self, variable):
-        """Return.
+        """Return the dimensions associated with a variable.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -537,7 +537,7 @@ class _Flattener:
             return x.attrs[attr]
 
     def group(self, x):
-        """Return a.
+        """Return the group that a variable belongs to.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -592,7 +592,7 @@ class _Flattener:
             return list(x.attrs)
 
     def parent(self, group):
-        """Return a simulated unix directory path to a group.
+        """Return a simulated unix parent group.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
