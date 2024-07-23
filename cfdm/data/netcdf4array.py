@@ -346,8 +346,8 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         :Returns:
 
             (`netCDF4.Dataset`, `str`)
-                The open file object, and the address of the data
-                within the file.
+                The file object open in read-only mode, and the
+                address of the data within the file.
 
         """
         return super().open(netCDF4.Dataset, mode="r")
