@@ -551,7 +551,7 @@ class NetCDFRead(IORead):
         elif netcdf_backend == "netCDF4":
             try:
                 nc = self._open_netCDF4(filename)
-                netCDF = True
+                netcdf = True
             except Exception as error:
                 raise error
 
@@ -1502,7 +1502,7 @@ class NetCDFRead(IORead):
                 # size from the original grouped dataset, because
                 # unlimited dimensions have size 0 in the flattened
                 # dataset (because it contains no data) (v1.8.8.1)
-                group, ncdim = self._netCDF4_group(  # TODO h5netcdf ?
+                group, ncdim = self._netCDF4_group(
                     g["nc_grouped"], flattener_dimensions[name]
                 )
                 internal_dimension_sizes[name] = group.dimensions[
