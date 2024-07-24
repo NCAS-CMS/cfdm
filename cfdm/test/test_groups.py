@@ -329,7 +329,7 @@ class GroupsTest(unittest.TestCase):
         """Test the compression of hierarchical groups."""
         f = cfdm.example_field(4)
 
-        ungrouped_file = ungrouped_file3.nc
+        ungrouped_file = ungrouped_file3
         grouped_file = grouped_file3
 
         f.compress("indexed_contiguous", inplace=True)

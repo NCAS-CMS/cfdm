@@ -1505,9 +1505,7 @@ class NetCDFRead(IORead):
                 group, ncdim = self._netCDF4_group(
                     g["nc_grouped"], flattener_dimensions[name]
                 )
-                internal_dimension_sizes[name] = group.dimensions[
-                    ncdim
-                ].size  # TODO h5netcdf ?
+                internal_dimension_sizes[name] = group.dimensions[ncdim].size
             else:
                 internal_dimension_sizes[name] = dimension.size
 
