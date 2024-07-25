@@ -2194,7 +2194,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         return parsed_indices
 
-    def maximum(self, axes=None):
+    def maximum(self, axes=None, squeeze=False):
         """Return the maximum of an array or the maximum along axes.
 
         Missing data array elements are omitted from the calculation.
@@ -2210,6 +2210,14 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 maximum over all axes is returned.
 
                 {{axes int examples}}
+
+            squeeze: `bool`, optional
+                If this is set to False, the default, the axes which
+                are reduced are left in the result as dimensions with
+                size one. With this option, the result will broadcast
+                correctly against the original data.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -2255,7 +2263,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             raise ValueError(f"Can't find maximum of data: {error}")
 
         array = self.array
-        array = np.amax(array, axis=axes, keepdims=True)
+        array = np.amax(array, axis=axes, keepdims=not squeeze)
 
         out = self.copy(array=False)
         out._set_Array(array, copy=False)
@@ -2414,7 +2422,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         return d
 
-    def sum(self, axes=None):
+    def sum(self, axes=None, squeeze=False):
         """Return the sum of an array or the sum along axes.
 
         Missing data array elements are omitted from the calculation.
@@ -2428,6 +2436,14 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 sum over all axes is returned.
 
                 {{axes int examples}}
+
+            squeeze: `bool`, optional
+                If this is set to False, the default, the axes which
+                are reduced are left in the result as dimensions with
+                size one. With this option, the result will broadcast
+                correctly against the original data.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -2471,8 +2487,9 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             axes = self._parse_axes(axes)
         except ValueError as error:
             raise ValueError(f"Can't sum data: {error}")
+
         array = self.array
-        array = np.sum(array, axis=axes, keepdims=True)
+        array = np.sum(array, axis=axes, keepdims=not squeeze)
 
         d = self.copy(array=False)
         d._set_Array(array, copy=False)

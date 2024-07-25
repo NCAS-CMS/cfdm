@@ -1,13 +1,29 @@
-Version NEXTRELEASE
+Version NEXTVERSION
 -------------------
 
 **2024-??-??**
 
 * Upgrades to allow cfdm to work with Python 3.12
   (https://github.com/NCAS-CMS/cfdm/issues/302)
+* New function `cfdm.netcdf_flattener` that replaces the import of
+  `netcdf_flattener` (https://github.com/NCAS-CMS/cfdm/issues/286)
+* New function `cfdm.netcdf_indexer` that applies netCDF masking and
+  unpacking to arbitrary arrays
+  (https://github.com/NCAS-CMS/cfdm/issues/285)
+* Allow access to netCDF-4 files in S3 object stores
+  (https://github.com/NCAS-CMS/cfdm/issues/285)
+* Allow a choice of netCDF engines
+  (https://github.com/NCAS-CMS/cfdm/issues/285)
 * Fix bug that caused `cfdm.write` to fail when a parametric Z
   dimension coordinate did not have a ``computed_standard_name``
   attribute (https://github.com/NCAS-CMS/cfdm/issues/303)
+* New class `cfdm.H5netcdfArray`
+* New class `cfdm.NetCDF4Array`
+* New dependency: ``h5netcdf>=1.3.0``
+* New dependency: ``h5py>=3.10.0``
+* New dependency: ``s3fs>=2024.6.0``
+* New dependency: ``dask>=2024.6.0``
+* Removed dependency: ``netcdf_flattener``
 
 ----
 

@@ -671,18 +671,19 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_write_string(self):
         """Test the `string` keyword argument to `read` and `write`."""
-        f = cfdm.read(self.string_filename)
+        fN = cfdm.read(self.string_filename, netcdf_backend="netCDF4")
+        fH = cfdm.read(self.string_filename, netcdf_backend="h5netcdf")
 
-        n = int(len(f) / 2)
+        n = int(len(fN) / 2)
 
         for i in range(0, n):
             j = i + n
-            self.assertTrue(
-                f[i].data.equals(f[j].data, verbose=3), f"{f[i]!r} {f[j]!r}"
-            )
-            self.assertTrue(
-                f[j].data.equals(f[i].data, verbose=3), f"{f[j]!r} {f[i]!r}"
-            )
+            self.assertTrue(fN[i].data.equals(fN[j].data, verbose=3))
+            self.assertTrue(fN[j].data.equals(fN[i].data, verbose=3))
+
+        # Check that netCDF4 and h5netcdf give the same results
+        for i, j in zip(fN, fH):
+            self.assertTrue(i.data.equals(j.data))
 
         # Note: Don't loop round all netCDF formats for better
         #       performance. Just one netCDF3 and one netCDF4 format
@@ -926,8 +927,8 @@ class read_writeTest(unittest.TestCase):
         g = g[0]
 
         # Check that the data are missing
-        self.assertFalse(g.array.count())
-        self.assertFalse(g.construct("grid_latitude").array.count())
+        self.assertFalse(np.ma.count(g.array))
+        self.assertFalse(np.ma.count(g.construct("grid_latitude").array))
 
         # Check that a dump works
         g.dump(display=False)
@@ -937,16 +938,16 @@ class read_writeTest(unittest.TestCase):
 
         # Check that only the field and dimension coordinate data are
         # missing
-        self.assertFalse(g.array.count())
-        self.assertFalse(g.construct("grid_latitude").array.count())
-        self.assertTrue(g.construct("latitude").array.count())
+        self.assertFalse(np.ma.count(g.array))
+        self.assertFalse(np.ma.count(g.construct("grid_latitude").array))
+        self.assertTrue(np.ma.count(g.construct("latitude").array))
 
         cfdm.write(f, tmpfile, omit_data="field")
         g = cfdm.read(tmpfile)[0]
 
         # Check that only the field data are missing
-        self.assertFalse(g.array.count())
-        self.assertTrue(g.construct("grid_latitude").array.count())
+        self.assertFalse(np.ma.count(g.array))
+        self.assertTrue(np.ma.count(g.construct("grid_latitude").array))
 
     def test_read_write_domain_ancillary(self):
         """Test when domain ancillary equals dimension coordinate."""

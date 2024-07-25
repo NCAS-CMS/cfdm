@@ -502,7 +502,7 @@ def write(
             variables' attributes, but does not create data on disk
             for the requested variables. The resulting file will be
             smaller than it otherwise would have been, and when the
-            new file is read then the data of these variables will be
+            new file is read the data of these variables will be
             represented by an array of all missing data.
 
             The *omit_data* parameter may be one, or a sequence, of:

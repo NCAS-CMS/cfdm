@@ -11,9 +11,9 @@ datasets and the inspection of CF data model constructs.
 
 """
 
-__date__ = "2024-03-01"
+__date__ = "2024-??-??"
 __cf_version__ = "1.11"
-__version__ = "1.11.1.0"
+__version__ = "1.11.2.0"
 
 from packaging import __version__ as _packaging_ver
 from packaging import __file__ as _packaging_file
@@ -21,19 +21,9 @@ from packaging.version import Version
 
 import platform
 
-_requires = ("numpy", "netCDF4", "packaging")
+_requires = ("numpy", "packaging")
 
 _error0 = f"cfdm.core requires the modules {', '.join(_requires)}. "
-
-try:
-    import netCDF4
-except ImportError as error1:
-    raise ImportError(_error0 + str(error1))
-
-try:
-    import numpy as np
-except ImportError as error1:
-    raise ImportError(_error0 + str(error1))
 
 # Check the version of python
 _minimum_vn = "3.8.0"
@@ -44,22 +34,24 @@ if Version(platform.python_version()) < Version(_minimum_vn):
     )
 
 # Check the version of packaging
+try:
+    import packaging
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+
 _minimum_vn = "20.0"
 if Version(_packaging_ver) < Version(_minimum_vn):
     raise ValueError(
-        f"Bad packaging version: cfdm requires packaging>={_minimum_vn}. "
+        f"Bad packaging version: cfdm.core requires packaging>={_minimum_vn}. "
         f"Got {_packaging_ver} at {_packaging_file}"
     )
 
-# Check the version of netCDF4
-_minimum_vn = "1.5.4"
-if Version(netCDF4.__version__) < Version(_minimum_vn):
-    raise ValueError(
-        f"Bad netCDF4 version: cfdm.core requires netCDF4>={_minimum_vn}. "
-        f"Got {netCDF4.__version__} at {netCDF4.__file__}"
-    )
-
 # Check the version of numpy
+try:
+    import numpy as np
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+
 _minimum_vn = "1.15"
 if Version(np.__version__) < Version(_minimum_vn):
     raise ValueError(

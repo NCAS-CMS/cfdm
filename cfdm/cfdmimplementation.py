@@ -30,7 +30,8 @@ from .data import (
     CellConnectivityArray,
     Data,
     GatheredArray,
-    NetCDFArray,
+    H5netcdfArray,
+    NetCDF4Array,
     PointTopologyArray,
     RaggedContiguousArray,
     RaggedIndexedArray,
@@ -1358,10 +1359,10 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Data instance
+            Scalar `Data` instance
 
         """
-        return parent.data.maximum()
+        return parent.data.maximum(squeeze=True)
 
     def get_data_sum(self, parent):
         """Return the sum of the data.
@@ -1372,10 +1373,10 @@ class CFDMImplementation(Implementation):
 
         :Returns:
 
-            Data instance
+            Scalar `Data` instance
 
         """
-        return parent.data.sum()
+        return parent.data.sum(squeeze=True)
 
     def get_count(self, construct):
         """Return the count variable of compressed data.
@@ -2291,67 +2292,41 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("TiePointIndex")
         return cls()
 
-    def initialise_NetCDFArray(
-        self,
-        filename=None,
-        address=None,
-        dtype=None,
-        shape=None,
-        mask=True,
-        units=False,
-        calendar=None,
-        missing_values=None,
-    ):
-        """Return a netCDF array instance.
+    def initialise_NetCDF4Array(self, **kwargs):
+        """Return a `NetCDF4Array` instance.
 
         :Parameters:
 
-            filename: `str`
+            kwargs: optional
+                Initialisation parameters to pass to the new instance.
 
-            address: `str`
-
-            dytpe: `numpy.dtype`
-
-            shape: sequence of `int`, optional
-
-            mask: `bool`, optional
-
-            units: `str` or `None` or False, optional
-                The units of the netCDF variable. Set to `None` to
-                indicate that there are no units. If False (the
-                default) then the units are considered unset.
-
-                .. versionadded:: (cfdm) 1.10.0.2
-
-            calendar: `str` or `None`, optional
-                The calendar of the netCDF variable. By default, or if
-                set to `None`, then the CF default calendar is
-                assumed, if applicable.
-
-                .. versionadded:: (cfdm) 1.10.0.2
-
-            missing_values: `dict`, optional
-                The missing value indicators defined by the netCDF
-                variable attributes.
-
-                .. versionadded:: (cfdm) 1.10.0.3
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
-            `NetCDFArray`
+            `NetCDF4Array`
 
         """
-        cls = self.get_class("NetCDFArray")
-        return cls(
-            filename=filename,
-            address=address,
-            dtype=dtype,
-            shape=shape,
-            mask=mask,
-            units=units,
-            calendar=calendar,
-            missing_values=missing_values,
-        )
+        cls = self.get_class("NetCDF4Array")
+        return cls(**kwargs)
+
+    def initialise_H5netcdfArray(self, **kwargs):
+        """Return a `H5netcdfArray` instance.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            kwargs: optional
+                Initialisation parameters to pass to the new instance.
+
+        :Returns:
+
+            `H5netcdfArray`
+
+        """
+        cls = self.get_class("H5netcdfArray")
+        return cls(**kwargs)
 
     def initialise_BoundsFromNodesArray(self, **kwargs):
         """Return a node bounds array.
@@ -3707,7 +3682,8 @@ _implementation = CFDMImplementation(
     Data=Data,
     BoundsFromNodesArray=BoundsFromNodesArray,
     GatheredArray=GatheredArray,
-    NetCDFArray=NetCDFArray,
+    H5netcdfArray=H5netcdfArray,
+    NetCDF4Array=NetCDF4Array,
     PointTopologyArray=PointTopologyArray,
     RaggedContiguousArray=RaggedContiguousArray,
     RaggedIndexedArray=RaggedIndexedArray,
@@ -3750,7 +3726,8 @@ def implementation():
      'Datum': <class 'cfdm.datum.Datum'>,
      'Data': <class 'cfdm.data.data.Data'>,
      'GatheredArray': <class 'cfdm.data.gatheredarray.GatheredArray'>,
-     'NetCDFArray': <class 'cfdm.data.netcdfarray.NetCDFArray'>,
+     'H5netcdfArray': <class 'cfdm.data.h5netcdfarray.H5netcdfArray'>,
+     'NetCDF4Array': <class 'cfdm.data.netcdf4array.NetCDF4Array'>,
      'PointTopologyArray': <class 'cfdm.data.pointtopologyarray.PointTopologyArray'>,
      'RaggedContiguousArray': <class 'cfdm.data.raggedcontiguousarray.RaggedContiguousArray'>,
      'RaggedIndexedArray': <class 'cfdm.data.raggedindexedarray.RaggedIndexedArray'>,
