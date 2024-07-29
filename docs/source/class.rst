@@ -74,7 +74,8 @@ Data classes
    :toctree: class/
 
    cfdm.Data
-   cfdm.NetCDFArray
+   cfdm.NetCDF4Array
+   cfdm.H5netcdfArray
    cfdm.NumpyArray
    cfdm.Array
 

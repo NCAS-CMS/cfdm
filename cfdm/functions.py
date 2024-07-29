@@ -4,10 +4,7 @@ from copy import deepcopy
 from functools import total_ordering
 from urllib.parse import urlparse
 
-import cftime
-import netcdf_flattener
 import numpy as np
-import scipy
 
 from . import __cf_version__, __file__, __version__, core
 from .constants import CONSTANTS, ValidLogLevels
@@ -317,46 +314,61 @@ def environment(display=True, paths=True):
 
     **Examples**
 
-    >>> cfdm.environment()
-    Platform: Linux-5.14.0-1048-oem-x86_64-with-glibc2.31
-    HDF5 library: 1.12.1
-    netcdf library: 4.8.1
-    Python: 3.9.12 /home/user/miniconda3/bin/python
-    netCDF4: 1.6.0 /home/user/miniconda3/lib/python3.9/site-packages/netCDF4/__init__.py
-    numpy: 1.22.3 /home/user/miniconda3/lib/python3.9/site-packages/numpy/__init__.py
-    cfdm.core: 1.11.0.0 /home/user/miniconda3/lib/python3.9/site-packages/cfdm/core/__init__.py
-    scipy: 1.11.3 /home/user/miniconda3/lib/python3.11/site-packages/scipy/__init__.py
-    cftime: 1.6.1 /home/user/miniconda3/lib/python3.9/site-packages/cftime/__init__.py
-    netcdf_flattener: 1.2.0 /home/user/miniconda3/lib/python3.9/site-packages/netcdf_flattener/__init__.py
-    cfdm: 1.11.0.0 /home/user/miniconda3/lib/python3.9/site-packages/cfdm/__init__.py
-
     >>> cfdm.environment(paths=False)
-    HDF5 library: 1.12.1
-    netcdf library: 4.8.1
-    Python: 3.9.12
-    netCDF4: 1.6.0
-    numpy: 1.22.3
-    cfdm.core: 1.11.0.0
+    Platform: Linux-5.15.0-92-generic-x86_64-with-glibc2.35
+    Python: 3.11.4
+    packaging: 23.0
+    numpy: 1.25.2
+    cfdm.core: NEXTVERSION
+    HDF5 library: 1.14.2
+    netcdf library: 4.9.2
+    netCDF4: 1.6.4
+    h5netcdf: 1.3.0
+    h5py: 3.10.0
+    s3fs: 2023.12.2
+    dask: 2024.7.0
     scipy: 1.11.3
-    cftime: 1.6.1
-    netcdf_flattener: 1.2.0
-    cfdm: 1.11.0.0
+    cftime: 1.6.2
+    cfdm: NEXTVERSION
+
+    >>> cfdm.environment()
+    Platform: Linux-5.15.0-92-generic-x86_64-with-glibc2.35
+    Python: 3.11.4 /home/miniconda3/bin/python
+    packaging: 23.0 /home/miniconda3/lib/python3.11/site-packages/packaging/__init__.py
+    numpy: 1.25.2 /home/miniconda3/lib/python3.11/site-packages/numpy/__init__.py
+    cfdm.core: NEXTVERSION /home/cfdm/cfdm/core/__init__.py
+    HDF5 library: 1.14.2
+    netcdf library: 4.9.2
+    netCDF4: 1.6.4 /home/miniconda3/lib/python3.11/site-packages/netCDF4/__init__.py
+    h5netcdf: 1.3.0 /home/miniconda3/lib/python3.11/site-packages/h5netcdf/__init__.py
+    h5py: 3.10.0 /home/miniconda3/lib/python3.11/site-packages/h5py/__init__.py
+    s3fs: 2023.12.2 /home/miniconda3/lib/python3.11/site-packages/s3fs/__init__.py
+    scipy: 1.11.3 /home/miniconda3/lib/python3.11/site-packages/scipy/__init__.py
+    dask: 2024.7.0 /home/miniconda3/lib/python3.11/site-packages/dask/__init__.py
+    cftime: 1.6.2 /home/miniconda3/lib/python3.11/site-packages/cftime/__init__.py
+    cfdm: NEXTVERSION /home/miniconda3/lib/python3.11/site-packages/cfdm/__init__.py
 
     """
+    import cftime
+    import dask
+    import h5netcdf
+    import h5py
+    import netCDF4
+    import s3fs
+    import scipy
+
     out = core.environment(display=False, paths=paths)  # get all core env
 
-    try:
-        netcdf_flattener_version = netcdf_flattener.__version__
-    except AttributeError:
-        netcdf_flattener_version = "unknown version"
-
     dependency_version_paths_mapping = {
+        "HDF5 library": (netCDF4.__hdf5libversion__, ""),
+        "netcdf library": (netCDF4.__netcdf4libversion__, ""),
+        "netCDF4": (netCDF4.__version__, os.path.abspath(netCDF4.__file__)),
+        "h5netcdf": (h5netcdf.__version__, os.path.abspath(h5netcdf.__file__)),
+        "h5py": (h5py.__version__, os.path.abspath(h5py.__file__)),
+        "s3fs": (s3fs.__version__, os.path.abspath(s3fs.__file__)),
         "scipy": (scipy.__version__, os.path.abspath(scipy.__file__)),
+        "dask": (dask.__version__, os.path.abspath(dask.__file__)),
         "cftime": (cftime.__version__, os.path.abspath(cftime.__file__)),
-        "netcdf_flattener": (
-            netcdf_flattener_version,
-            os.path.abspath(netcdf_flattener.__file__),
-        ),
         "cfdm": (__version__, os.path.abspath(__file__)),
     }
     string = "{0}: {1!s}"
@@ -982,9 +994,6 @@ class Constant(metaclass=DocstringRewriteMeta):
         """Called by the `str` built-in function."""
         return str(self.value)
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     def copy(self):
         """Return a deep copy.
 

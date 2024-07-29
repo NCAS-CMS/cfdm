@@ -18,7 +18,10 @@ from .subarray.abstract import MeshSubarray, Subarray, SubsampledSubarray
 from .boundsfromnodesarray import BoundsFromNodesArray
 from .cellconnectivityarray import CellConnectivityArray
 from .gatheredarray import GatheredArray
+from .h5netcdfarray import H5netcdfArray
 from .netcdfarray import NetCDFArray
+from .netcdf4array import NetCDF4Array
+from .netcdfindexer import netcdf_indexer
 from .numpyarray import NumpyArray
 from .pointtopologyarray import PointTopologyArray
 from .raggedcontiguousarray import RaggedContiguousArray

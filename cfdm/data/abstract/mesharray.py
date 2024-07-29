@@ -3,6 +3,7 @@ from numbers import Number
 
 import numpy as np
 
+from ..netcdfindexer import netcdf_indexer
 from .compressedarray import CompressedArray
 
 
@@ -148,10 +149,15 @@ class MeshArray(CompressedArray):
             # future reference.
             self._set_component("shape", u.shape, copy=False)
 
-        if indices is Ellipsis:
-            return u
-
-        return self.get_subspace(u, indices, copy=False)
+        u = netcdf_indexer(
+            u,
+            mask=False,
+            unpack=False,
+            always_masked_array=False,
+            orthogonal_indexing=True,
+            copy=False,
+        )
+        return u[indices]
 
     @property
     def dtype(self):

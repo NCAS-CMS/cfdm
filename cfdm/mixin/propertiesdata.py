@@ -100,7 +100,7 @@ class PropertiesData(Properties):
         if units is None:
             isreftime = bool(self.get_property("calendar", False))
         else:
-            isreftime = "since" in units
+            isreftime = "since" in str(units)
 
         if isreftime:
             units += " " + self.get_property("calendar", "")
