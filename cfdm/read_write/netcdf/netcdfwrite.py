@@ -2745,10 +2745,9 @@ class NetCDFWrite(IOWrite):
                             )
 
                         # 'chunksizes' currently might look something
-                        # like ((96,96,96,50), (250,250,4)). However,x
+                        # like ((96,96,96,50), (250,250,4)). However,
                         # we need only one number per dimension, so we
-                        # choose the largest since that is closest to
-                        # the requested HDF5 chunk size: [96,250].
+                        # choose the largest: [96,250].
                         chunksizes = [max(c) for c in chunksizes]
 
         logger.debug(
@@ -4900,10 +4899,10 @@ class NetCDFWrite(IOWrite):
             if hdf5_chunks == "default":
                 if compress:
                     # Default for compressed data
-                    hdf5_chunks = "8MiB"
+                    hdf5_chunks = "8 MiB"
                 else:
                     # Default for uncompressed data
-                    hdf5_chunks = "4MiB"
+                    hdf5_chunks = "4 MiB"
 
             try:
                 self.write_vars["hdf5_chunks"] = parse_bytes(hdf5_chunks)

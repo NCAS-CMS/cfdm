@@ -536,14 +536,24 @@ def write(
             The HDF5 chunking strategy for data arrays being written
             to the file. The *hdf5_chunks* parameter either defines
             the size in bytes of the HDF5 chunks, or else specifies
-            that the data are to be written contiguously (ie. not
+            that the data are to be written contiguously (i.e. not
             chunked).
 
-            However, if any data array being written out has had HDF5
-            chunking explicitly set via its
-            `Data.nc_set_hdf5_chunksizes` method then, for that data
-            array alone, this chunking strategy will be used in
-            preference to that defined by the *hdf5_chunks* parameter.
+            However, if any data being written out has an HDF5
+            chunking strategy defined by its `Data.nc_hdf5_chunksizes`
+            method then, for that data array alone, this chunking
+            strategy will be used in preference to that defined by the
+            *hdf5_chunks* parameter.
+
+            .. note:: Any data returned by `cfdm.read` will, by
+                      default, have the original HDF5 chunking
+                      strategy defined by its
+                      `Data.nc_hdf5_chunksizes` method. Therefore that
+                      same HDF5 chunking strategy (or a modifcation of
+                      it if chunksize-affecting operations have been
+                      carried out) will be used in the output netCDF4
+                      file. To disable this behaviour, see the
+                      *store_hdf5_chunks* parameter to `cfdm.read`.
 
             Ignored for NETCDF3 output formats, for which all data is
             always written out contiguously.
@@ -551,10 +561,10 @@ def write(
             The *hdf5_chunks* parameter may be a number of bytes
             (floats are rounded down to the nearest integer), or a
             string representing a quantity of byte units. For instance
-            1024 bytes may be specified with any of ``1024``,
-            ``1024.9``, ``'1024'``, ``'1024 B'``, ``'1 KiB'``,
-            ``'0.0009765625 MiB'``, etc. Recognised byte units are
-            (case insensitve): ``B``, ``KiB``, ``MiB``, ``GiB``,
+            a chunksize of 1024 bytes may be specified with any of
+            ``1024``, ``1024.9``, ``'1024'``, ``'1024 B'``, ``'1
+            KiB'``, ``'0.0009765625 MiB'``, etc. Recognised byte units
+            are (case insensitive): ``B``, ``KiB``, ``MiB``, ``GiB``,
             ``TiB``, ``PiB``, ``KB``, ``MB``, ``GB``, ``TB``, and
             ``PB``. The spaces in strings are optional.
 
@@ -566,26 +576,26 @@ def write(
             uncompressed (i.e. *compress* is zero), or ``'8 MiB'``
             will be used if the data are written compressed
             (i.e. *compress* is non-zero). Assuming that compression
-            reduces the size by a factor of 2, the larger value in the
-            compressed case ensures that, in general, compressed HDF5
-            chunks should take up the same amount of disk space as
-            uncompressed HDF5 chunks.
+            reduces the size by approximately a factor of two, the
+            larger value in the compressed case ensures that
+            compressed HDF5 chunks should take up a similar amount of
+            disk space as uncompressed HDF5 chunks.
 
             When the *hdf5_chunks* parameter is used to define the
-            HDF5 chunk shape for a given data array, "square-like"
-            HDF5 chunk shapes are preferred, maximising the amount of
+            HDF5 chunk shape for a data array, "square-like" HDF5
+            chunk shapes are preferred, and maximising the amount of
             chunks that are completely filled with data values. For
             example, with *hdf_chunks* of ``'4 MiB'``, a data array of
             64-bit floats with shape ``(400, 300, 60)`` will be
-            written with 20 HDF5 chunks, each of which contains 3.9592
-            MiB: the first axis is split across 5 chunks containing
-            93, 93, 93, 93, and 28 elements; the second axis across 4
-            chunks containing 93, 93, 93, and 21 elements; and the
-            third axis across 1 chunk containing 60 elements. 12 of
-            these chunks are completely filled with 93*93*60 data
-            values (93*93*60*8 B = 3.9592 MiB), whilst the remaining 8
-            chunks at the "edges" of the array contain only 93*21*60,
-            28*93*60, or 28*21*60 data values.
+            written (uncompressed) with 20 HDF5 chunks, each of which
+            contains 3.9592 MiB: the first axis is split across 5
+            chunks containing 93, 93, 93, 93, and 28 elements; the
+            second axis across 4 chunks containing 93, 93, 93, and 21
+            elements; and the third axis across 1 chunk containing 60
+            elements. 12 of these chunks are completely filled with
+            93*93*60 data values (93*93*60*8 B = 3.9592 MiB), whilst
+            the remaining 8 chunks at the "edges" of the array contain
+            only 93*21*60, 28*93*60, or 28*21*60 data values.
 
             .. versionadded:: (cfdm) NEXTVERSION
 

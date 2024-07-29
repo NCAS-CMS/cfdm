@@ -913,6 +913,7 @@ class NetCDFRead(IORead):
         storage_options=None,
         _file_systems=None,
         netcdf_backend=None,
+        store_hdf5_chunks=True,
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
 
@@ -974,6 +975,11 @@ class NetCDFRead(IORead):
 
             _file_systems: `dict`, optional
                 Provide any already-open S3 file systems.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            store_hdf_chunks: `bool`, optional
+                TODOHDFCHUNKS
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1097,6 +1103,10 @@ class NetCDFRead(IORead):
             "file_systems": {},
             # Cache of open s3fs.File objects
             "s3fs_File_objects": [],
+            # --------------------------------------------------------
+            # HDF chunks
+            # --------------------------------------------------------
+            'store_hdf5_chunks': bool(store_hdf5_chunks),
         }
 
         g = self.read_vars
@@ -7475,9 +7485,6 @@ class NetCDFRead(IORead):
                 The name of the netCDF variable that contains the
                 data.
 
-                .. note:: Not currently used here, but must be
-                          available to subclasses.
-
             units: `str`, optional
                 The units of *array*. By default, or if `None`, it is
                 assumed that there are no units.
@@ -7502,6 +7509,11 @@ class NetCDFRead(IORead):
             copy=False,
             **kwargs,
         )
+
+        # Store the HDF5 chunk sizes (if not contiguous)
+        if ncvar is not None and self.read_vars['store_hdf5_chunks']:
+            chunks = self._HDF5_chunks(ncvar)
+            self.implementation.nc_set_hdf5_chunksizes(data, chunks)
 
         return data
 
@@ -10307,3 +10319,39 @@ class NetCDFRead(IORead):
         g["file_system_storage_options"].setdefault(filename, storage_options)
 
         return storage_options
+
+    def _HDF5_chunks(self, ncvar):
+        """Return the variable chunk sizes.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            variablencvar: `str`
+                The netCDF variable name.
+
+        :Returns:
+
+            `None` or `str` or sequence of `int`
+                The chunksizes for each dimension, or
+                ``'contiguous'``, or if the dataset is NETCDF3,
+                `None`.
+
+        **Examples**
+
+        >>> n._variable_HDF5_chunksizes('tas')
+        [1, 324, 432]
+        >>> n._variable_HDF5_chunksizes('pr')
+        'contiguous'
+        >>> n._variable_HDF5_chunksizes('ua')
+        None
+
+        """
+
+        nc = self.read_vars["variable_dataset"][ncvar]
+        try:
+            # netCDF4
+            return nc[ncvar].chunking()
+        except AttributeError:
+            # h5netcdf
+            return nc[ncvar].chunks

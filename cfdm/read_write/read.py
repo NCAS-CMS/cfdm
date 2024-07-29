@@ -20,6 +20,7 @@ def read(
     domain=False,
     netcdf_backend=None,
     storage_options=None,
+        store_hdf5_chunks=True,
     _implementation=_implementation,
 ):
     """Read field or domain constructs from a dataset.
@@ -328,6 +329,39 @@ def read(
 
             .. versionadded:: (cfdm) NEXTVERSION
 
+        store_hdf5_chunks: `bool`, optional
+
+
+            If True (the default) then store the HDF5 chunking
+            strategy for each netCDF variable on its corresponding
+            `Data` objects, defined by their `Data.nc_hdf5_chunksizes`
+            methods. If False then the HDF5 chunking strategy is not
+            stored and the `Data.nc_hdf5_chunksizes` method will be
+            `None` for all `Data` objects.
+
+            For data read from netCDF3 datasets, which have no HDF
+            chunking strategy, the `Data.nc_hdf5_chunksizes` method is
+            always `None`.
+
+            The decision on whether or not to store the HDF chunking
+            strategy will depend on if it is intended for the returned
+            fields, unmodified or otherwise, to be written back to
+            disk with `cfdm.write`. If not, then it is of no
+            consequence whether or not the original HDF5 chunking
+            strategy is stored. Otherwise, the HDF5 chunking strategy
+            used for writing to disk depends on whether or not a
+            `Data` object has an HDF5 chunking strategy defined by its
+            `Data.nc_hdf5_chunksizes` method at the time of
+            writing. See the *hdf5_chunks* parameter to `cfdm.write`
+            for more details.
+
+            Note that operations that change the data shape (such as
+            slicing) will also automatically modify an HDF5 chunking
+            strategy to be consistent with the new shape, and this may
+            not result in optimal chunk shapes.
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that provides the
             returned field constructs.
@@ -404,6 +438,7 @@ def read(
                 domain=domain,
                 storage_options=storage_options,
                 netcdf_backend=netcdf_backend,
+                store_hdf5_chunks=store_hdf5_chunks,
                 extra_read_vars=None,
             )
         except MaskError:

@@ -2651,7 +2651,7 @@ class NetCDFHDF5(NetCDF):
                                 f"size of the dimension ({j})"
                             )
 
-                        # Reduce chunk size to the dimension size
+                        # Clip chunk size to the dimension size
                         i = j
                     elif i <= 0:
                         raise ValueError(
