@@ -1106,7 +1106,7 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             # HDF chunks
             # --------------------------------------------------------
-            'store_hdf5_chunks': bool(store_hdf5_chunks),
+            "store_hdf5_chunks": bool(store_hdf5_chunks),
         }
 
         g = self.read_vars
@@ -7510,10 +7510,13 @@ class NetCDFRead(IORead):
             **kwargs,
         )
 
-        # Store the HDF5 chunk sizes (if not contiguous)
-        if ncvar is not None and self.read_vars['store_hdf5_chunks']:
-            chunks = self._HDF5_chunks(ncvar)
-            self.implementation.nc_set_hdf5_chunksizes(data, chunks)
+        # Store the HDF5 chunking
+        if self.read_vars["store_hdf5_chunks"] and ncvar is not None:
+            chunks, shape = self._hdf5_chunks(ncvar)
+            if shape == data.shape:
+                # Only store the HDF chunking if 'data' has the same
+                # shape as its netCDF variable
+                self.implementation.nc_set_hdf5_chunksizes(data, chunks)
 
         return data
 
@@ -10320,7 +10323,7 @@ class NetCDFRead(IORead):
 
         return storage_options
 
-    def _HDF5_chunks(self, ncvar):
+    def _hdf5_chunks(self, ncvar):
         """Return the variable chunk sizes.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -10332,26 +10335,37 @@ class NetCDFRead(IORead):
 
         :Returns:
 
-            `None` or `str` or sequence of `int`
-                The chunksizes for each dimension, or
-                ``'contiguous'``, or if the dataset is NETCDF3,
-                `None`.
+            2-tuple:
+                The variable chunking strategy (`None` for netCDF3, or
+                ``'contiguous'`` or sequence of `int`) and its shape.
 
         **Examples**
 
-        >>> n._variable_HDF5_chunksizes('tas')
+        >>> n._variable_hdf5_chunksizes('tas')
         [1, 324, 432]
-        >>> n._variable_HDF5_chunksizes('pr')
+        >>> n._variable_hdf5_chunksizes('pr')
         'contiguous'
-        >>> n._variable_HDF5_chunksizes('ua')
+        >>> n._variable_hdf5_chunksizes('ua')
         None
 
         """
-
         nc = self.read_vars["variable_dataset"][ncvar]
+
+        # 'nc' is the flattened dataset, so replace an ncvar with
+        # groups (e.g. '/forecast/tas') with its flattened version
+        # (e.g. 'forecast__tas')
+        if ncvar.startswith("/"):
+            ncvar = ncvar[1:]
+            ncvar = ncvar.replace("/", flattener_separator)
+
+        var = nc[ncvar]
         try:
             # netCDF4
-            return nc[ncvar].chunking()
+            chunks = var.chunking()
         except AttributeError:
             # h5netcdf
-            return nc[ncvar].chunks
+            chunks = var.chunks
+            if chunks is None:
+                chunks = "contiguous"
+
+        return chunks, var.shape

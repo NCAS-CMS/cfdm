@@ -20,7 +20,7 @@ def read(
     domain=False,
     netcdf_backend=None,
     storage_options=None,
-        store_hdf5_chunks=True,
+    store_hdf5_chunks=True,
     _implementation=_implementation,
 ):
     """Read field or domain constructs from a dataset.
