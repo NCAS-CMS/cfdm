@@ -1,5 +1,6 @@
 from .. import core
 from .mixin import ArrayMixin
+from .netcdfindexer import netcdf_indexer
 
 
 class NumpyArray(ArrayMixin, core.NumpyArray):
@@ -31,9 +32,15 @@ class NumpyArray(ArrayMixin, core.NumpyArray):
         .. versionadded:: (cfdm) 1.7.0
 
         """
-        return self.get_subspace(
-            self._get_component("array"), indices, copy=True
+        array = netcdf_indexer(
+            self._get_component("array"),
+            mask=False,
+            unpack=False,
+            always_masked_array=False,
+            orthogonal_indexing=True,
+            copy=True,
         )
+        return array[indices]
 
     def to_memory(self):
         """Bring data on disk into memory.

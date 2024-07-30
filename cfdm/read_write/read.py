@@ -16,17 +16,22 @@ def read(
     warnings=False,
     warn_valid=False,
     mask=True,
+    unpack=True,
     domain=False,
+    netcdf_backend=None,
+    storage_options=None,
+    store_hdf5_chunks=True,
     _implementation=_implementation,
 ):
     """Read field or domain constructs from a dataset.
 
-    The dataset may be a netCDF file on disk or on an OPeNDAP server,
-    or a CDL file on disk (see below).
+    The following file formats are supported: netCDF and CDL.
+
+    NetCDF files may be on local disk, on an OPeNDAP server, or in an
+    S3 object store.
 
     The returned constructs are sorted by the netCDF variable names of
     their corresponding data or domain variables.
-
 
     **CDL files**
 
@@ -229,16 +234,26 @@ def read(
             If True (the default) then mask by convention the data of
             field and metadata constructs.
 
-            The masking by convention of a netCDF array depends on the
-            values of any of the netCDF variable attributes
-            ``_FillValue``, ``missing_value``, ``valid_min``,
-            ``valid_max`` and ``valid_range``.
+            A netCDF array is masked depending on the values of any of
+            the netCDF attributes ``_FillValue``, ``missing_value``,
+            ``_Unsigned``, ``valid_min``, ``valid_max``, and
+            ``valid_range``.
 
             See
             https://ncas-cms.github.io/cfdm/tutorial.html#data-mask
             for details.
 
             .. versionadded:: (cfdm) 1.8.2
+
+        unpack: `bool`
+            If True, the default, then unpack arrays by convention
+            when the data is read from disk.
+
+            Unpacking is determined by netCDF conventions for the
+            following variable attributes: ``add_offset``,
+            ``scale_factor``, and ``_Unsigned``.
+
+            .. versionadded:: (cfdm) NEXTVERSION
 
         domain: `bool`, optional
             If True then return only the domain constructs that are
@@ -261,6 +276,91 @@ def read(
                >>> ufd = cfdm.unique_constructs(x.domain for x in f)
 
             .. versionadded:: (cfdm) 1.9.0.0
+
+        netcdf_eninge: `None` or `str`, optional
+            Specify which library to use for opening and reading
+            netCDF files. By default, or if `None`, then the first one
+            of `netCDF4` and `h5netcdf` to successfully open the
+            netCDF file is used. Setting *netcdf_backend* to one of
+            ``'netCDF4'`` and ``'h5netcdf'`` will force the use of
+            that library.
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
+        storage_options: `dict` or `None`, optional
+            Pass parameters to the backend file system driver, such as
+            username, password, server, port, etc. How the storage
+            options are interpreted depends on the location of the
+            file:
+
+            * **Local File System**: Storage options are ignored for
+              local files.
+
+            * **HTTP(S)**: Storage options are ignored for files
+              available across the network via OPeNDAP.
+
+            * **S3-compatible services**: The backend used is `s3fs`,
+              and the storage options are used to initialise an
+              `s3fs.S3FileSystem` file system object. By default, or
+              if `None`, then *storage_options* is taken as ``{}``.
+
+              If the ``'endpoint_url'`` key is not in
+              *storage_options*, nor in a dictionary defined by the
+              ``'client_kwargs'`` key (both of which are the case when
+              *storage_options* is `None`), then one will be
+              automatically inserted for accessing an S3 file. For
+              instance, with a file name of
+              ``'s3://store/data/file.nc'``, an ``'endpoint_url'`` key
+              with value ``'https://store'`` would be created. To
+              disable this, set the ``'endpoint_url'`` key to `None`.
+
+              *Parameter example:*
+                For a file name of ``'s3://store/data/file.nc'``, the
+                following are equivalent: ``None``, ``{}``,
+                ``{'endpoint_url': 'https://store'}``, and
+                ``{'client_kwargs': {'endpoint_url':
+                'https://store'}}``
+
+              *Parameter example:*
+                ``{'key': 'scaleway-api-key...', 'secret':
+                'scaleway-secretkey...', 'endpoint_url':
+                'https://s3.fr-par.scw.cloud', 'client_kwargs':
+                {'region_name': 'fr-par'}}``
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
+        store_hdf5_chunks: `bool`, optional
+
+
+            If True (the default) then store the HDF5 chunking
+            strategy for each netCDF variable on its corresponding
+            `Data` objects, defined by their `Data.nc_hdf5_chunksizes`
+            methods. If False then the HDF5 chunking strategy is not
+            stored and the `Data.nc_hdf5_chunksizes` method will be
+            `None` for all `Data` objects.
+
+            For data read from netCDF3 datasets, which have no HDF
+            chunking strategy, the `Data.nc_hdf5_chunksizes` method is
+            always `None`.
+
+            The decision on whether or not to store the HDF chunking
+            strategy will depend on if it is intended for the returned
+            fields, unmodified or otherwise, to be written back to
+            disk with `cfdm.write`. If not, then it is of no
+            consequence whether or not the original HDF5 chunking
+            strategy is stored. Otherwise, the HDF5 chunking strategy
+            used for writing to disk depends on whether or not a
+            `Data` object has an HDF5 chunking strategy defined by its
+            `Data.nc_hdf5_chunksizes` method at the time of
+            writing. See the *hdf5_chunks* parameter to `cfdm.write`
+            for more details.
+
+            Note that operations that change the data shape (such as
+            slicing) will also automatically modify an HDF5 chunking
+            strategy to be consistent with the new shape, and this may
+            not result in optimal chunk shapes.
+
+            .. versionadded:: (cfdm) NEXTVERSION
 
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that provides the
@@ -321,9 +421,10 @@ def read(
         filename = netcdf.cdl_to_netcdf(filename)
 
     if netcdf.is_netcdf_file(filename):
-        # See https://github.com/NCAS-CMS/cfdm/issues/128 for context on the
-        # try/except here, which acts as a temporary fix pending decisions on
-        # the best way to handle CDL with only header or coordinate info.
+        # See https://github.com/NCAS-CMS/cfdm/issues/128 for context
+        # on the try/except here, which acts as a temporary fix
+        # pending decisions on the best way to handle CDL with only
+        # header or coordinate info.
         try:
             fields = netcdf.read(
                 filename,
@@ -333,7 +434,11 @@ def read(
                 warnings=warnings,
                 warn_valid=warn_valid,
                 mask=mask,
+                unpack=unpack,
                 domain=domain,
+                storage_options=storage_options,
+                netcdf_backend=netcdf_backend,
+                store_hdf5_chunks=store_hdf5_chunks,
                 extra_read_vars=None,
             )
         except MaskError:

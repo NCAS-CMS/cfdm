@@ -46,6 +46,30 @@ atexit.register(_remove_tmpfiles)
 class GroupsTest(unittest.TestCase):
     """Test treatment of netCDF4 files with hierarchical groups."""
 
+    def _check_h5netcdf_groups(self, h5, nc):
+        """Check that an h5netcdf read gives same results as netCDF4.
+
+        :Parameters:
+
+            h5: `Field`
+
+            nc: `Field`
+
+        :Returns:
+
+            `None`
+
+        """
+        self.assertTrue(h5.equals(nc, verbose=3))
+        self.assertEqual(h5.nc_variable_groups(), nc.nc_variable_groups())
+        for key, ch5 in h5.constructs.items():
+            if hasattr(ch5, "nc_variable_groups"):
+                self.assertEqual(
+                    ch5.nc_variable_groups(),
+                    nc.constructs[key].nc_variable_groups(),
+                    key,
+                )
+
     def setUp(self):
         """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
@@ -65,6 +89,7 @@ class GroupsTest(unittest.TestCase):
 
         ungrouped_file = ungrouped_file1
         grouped_file = grouped_file1
+        #        grouped_file = "delme_grouped.nc"
 
         # Add a second grid mapping
         datum = cfdm.Datum(parameters={"earth_radius": 7000000})
@@ -103,9 +128,12 @@ class GroupsTest(unittest.TestCase):
         )
         nc.close()
 
+        grouped_file = grouped_file1
+
         h = cfdm.read(grouped_file, verbose=1)
         self.assertEqual(len(h), 1, repr(h))
-        self.assertTrue(f.equals(h[0], verbose=2))
+        h = h[0]
+        self.assertTrue(f.equals(h))
 
         # ------------------------------------------------------------
         # Move constructs one by one to the /forecast group. The order
@@ -135,7 +163,7 @@ class GroupsTest(unittest.TestCase):
 
             # Check that the field construct hasn't changed
             h = cfdm.read(grouped_file, verbose=1)
-            self.assertEqual(len(h), 1, repr(h))
+            self.assertEqual(len(h), 1)
             self.assertTrue(f.equals(h[0], verbose=2), name)
 
         # ------------------------------------------------------------
@@ -152,9 +180,17 @@ class GroupsTest(unittest.TestCase):
         )
         nc.close()
 
-        h = cfdm.read(grouped_file, verbose="WARNING")
-        self.assertEqual(len(h), 1, repr(h))
-        self.assertTrue(f.equals(h[0], verbose=2))
+        h = cfdm.read(
+            grouped_file, netcdf_backend="netCDF4", verbose="WARNING"
+        )
+        self.assertEqual(len(h), 1)
+        h = h[0]
+        self.assertTrue(f.equals(h, verbose=2))
+
+        # Check that h5netcdf reads the file correctly
+        h5 = cfdm.read(grouped_file, netcdf_backend="h5netcdf")
+        self.assertEqual(len(h5), 1)
+        self._check_h5netcdf_groups(h5[0], h)
 
     def test_groups_geometry(self):
         """Test that geometries are considered in the correct groups."""
@@ -281,7 +317,13 @@ class GroupsTest(unittest.TestCase):
         # Check that the field construct hasn't changed
         h = cfdm.read(grouped_file, verbose=1)
         self.assertEqual(len(h), 1, repr(h))
-        self.assertTrue(f.equals(h[0], verbose=2))
+        h = h[0]
+        self.assertTrue(f.equals(h, verbose=2))
+
+        # Check that h5netcdf reads the file correctly
+        h5 = cfdm.read(grouped_file, netcdf_backend="h5netcdf")
+        self.assertEqual(len(h5), 1)
+        self._check_h5netcdf_groups(h5[0], h)
 
     def test_groups_compression(self):
         """Test the compression of hierarchical groups."""
@@ -294,7 +336,7 @@ class GroupsTest(unittest.TestCase):
         f.data.get_count().nc_set_variable("count")
         f.data.get_index().nc_set_variable("index")
 
-        cfdm.write(f, ungrouped_file, verbose=1)
+        cfdm.write(f, ungrouped_file)
         g = cfdm.read(ungrouped_file)[0]
         self.assertTrue(f.equals(g, verbose=2))
 
@@ -348,7 +390,13 @@ class GroupsTest(unittest.TestCase):
 
         h = cfdm.read(grouped_file, verbose=1)
         self.assertEqual(len(h), 1, repr(h))
-        self.assertTrue(f.equals(h[0], verbose=2))
+        h = h[0]
+        self.assertTrue(f.equals(h, verbose=2))
+
+        # Check that h5netcdf reads the file correctly
+        h5 = cfdm.read(grouped_file, netcdf_backend="h5netcdf")
+        self.assertEqual(len(h5), 1)
+        self._check_h5netcdf_groups(h5[0], h)
 
     def test_groups_dimension(self):
         """Test the dimensions of hierarchical groups."""
@@ -418,6 +466,11 @@ class GroupsTest(unittest.TestCase):
         h = h[0]
         self.assertTrue(f.equals(h, verbose=3))
 
+        # Check that h5netcdf reads the file correctly
+        h5 = cfdm.read(grouped_file, netcdf_backend="h5netcdf")
+        self.assertEqual(len(h5), 1)
+        self._check_h5netcdf_groups(h5[0], h)
+
     def test_groups_unlimited_dimension(self):
         """Test the group behaviour of an unlimited dimension."""
         f = cfdm.example_field(0)
@@ -448,12 +501,18 @@ class GroupsTest(unittest.TestCase):
         f.nc_set_variable_groups(["forecast", "model"])
 
         grouped_file = grouped_file5
+
         cfdm.write(f, grouped_file5, verbose=1)
 
-        h = cfdm.read(grouped_file, verbose=1)
+        h = cfdm.read(grouped_file, netcdf_backend="netCDF4")
         self.assertEqual(len(h), 1)
         h = h[0]
-        self.assertTrue(f.equals(h, verbose=3))
+        self.assertTrue(f.equals(h))
+
+        # Check that h5netcdf reads the file correctly
+        h5 = cfdm.read(grouped_file, netcdf_backend="h5netcdf")
+        self.assertEqual(len(h5), 1)
+        self._check_h5netcdf_groups(h5[0], h)
 
     def test_groups_identical_coordinates(self):
         """Test for identical coordinates in different groups."""

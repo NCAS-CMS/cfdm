@@ -113,11 +113,11 @@ instance or `cfdm.Domain` instance respectively. Henceforth the phrase
 ----------------------------------------------------
 
 The `cfdm.read` function reads a `netCDF
-<https://www.unidata.ucar.edu/software/netcdf/>`_ file from disk, or
-from an `OPeNDAP <https://www.opendap.org/>`_ URL [#dap]_, and by
-default returns the contents as a Python list of zero or more field
-constructs. This list contains a field construct to represent each of
-the CF-netCDF data variables in the file.
+<https://www.unidata.ucar.edu/software/netcdf/>`_ file from disk, from
+an `OPeNDAP <https://www.opendap.org/>`_ URL [#dap]_, or from an S3
+object store, and by default returns the contents as a Python list of
+zero or more field constructs. This list contains a field construct to
+represent each of the CF-netCDF data variables in the file.
 
 Datasets of any version of CF up to and including CF-|version| can be
 read.
@@ -184,7 +184,10 @@ The `cfdm.read` function has optional parameters to
   attributes are present (see :ref:`data masking <Data-mask>`); and
 
 * display information and issue warnings about the mapping of the
-  netCDF file contents to CF data model constructs.
+  netCDF file contents to CF data model constructs; and
+
+* choose either `netCDF4` or `h5netcdf` backends for accessing netCDF
+  files.
 
 .. _CF-compliance:
 
@@ -2853,19 +2856,20 @@ All the of above examples use arrays in memory to construct the data
 instances for the field and metadata constructs. It is, however,
 possible to create data from arrays that reside on disk. The
 `cfdm.read` function creates data in this manner. A pointer to an
-array in a netCDF file can be stored in a `~cfdm.NetCDFArray`
-instance, which is is used to initialise a `~cfdm.Data` instance.
+array in a netCDF file can be stored in a `~cfdm.NetCDF4Array` or
+`~cfdm.H5netcdfAarray` instance, which is used to initialise a
+`~cfdm.Data` instance.
 
 .. code-block:: python
    :caption: *Define a variable from a dataset with the netCDF package
-             and use it to create a NetCDFArray instance with which to
+             and use it to create a NetCDF4Array instance with which to
              initialise a Data instance.*
 		
    >>> import netCDF4
    >>> nc = netCDF4.Dataset('file.nc', 'r')
    >>> v = nc.variables['ta']
-   >>> netcdf_array = cfdm.NetCDFArray(filename='file.nc', address='ta',
-   ...	                               dtype=v.dtype, shape=v.shape)
+   >>> netcdf_array = cfdm.NetCDF4Array(filename='file.nc', address='ta',
+   ...	                                dtype=v.dtype, shape=v.shape)
    >>> data_disk = cfdm.Data(netcdf_array)
 
   
@@ -2881,7 +2885,7 @@ instance, which is is used to initialise a `~cfdm.Data` instance.
 
 Note that data type, number of dimensions, dimension sizes and number
 of elements of the array on disk that are used to initialise the
-`~cfdm.NetCDFArray` instance are those expected by the CF data model,
+`~cfdm.NetCDF4Array` instance are those expected by the CF data model,
 which may be different to those of the netCDF variable in the file
 (although they are the same in the above example). For example, a
 netCDF character array of shape ``(12, 9)`` is viewed in cfdm as a

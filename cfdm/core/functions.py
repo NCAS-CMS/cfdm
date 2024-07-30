@@ -3,9 +3,6 @@ import platform
 import sys
 from pickle import dumps, loads
 
-import netCDF4
-import numpy as np
-
 from . import __cf_version__, __file__, __version__
 
 
@@ -34,32 +31,24 @@ def environment(display=True, paths=True):
 
     **Examples**
 
-    >>> environment()
-
-    Platform: Linux-5.14.0-1048-oem-x86_64-with-glibc2.31
-    HDF5 library: 1.12.1
-    netcdf library: 4.8.1
-    Python: 3.9.12 /home/user/miniconda3/bin/python
-    netCDF4: 1.6.0 /home/user/miniconda3/lib/python3.9/site-packages/netCDF4/__init__.py
-    numpy: 1.22.3 /home/user/miniconda3/lib/python3.9/site-packages/numpy/__init__.py
-    cfdm.core: 1.10.0.0 /home/user/miniconda3/lib/python3.9/site-packages/cfdm/core/__init__.py
-
-    >>> environment(paths=False)
-    Platform: Linux-5.14.0-1048-oem-x86_64-with-glibc2.31
-    HDF5 library: 1.12.1
-    netcdf library: 4.8.1
-    Python: 3.9.12
-    netCDF4: 1.6.0
-    numpy: 1.22.3
-    cfdm.core: 1.10.0.0
+    >>> cfdm.core.environment(paths=False)
+    Platform: Linux-5.15.0-92-generic-x86_64-with-glibc2.35
+    Python: 3.11.4
+    packaging: 23.0
+    numpy: 1.25.2
+    cfdm.core: NEXTVERSION
 
     """
+    import numpy as np
+    import packaging
+
     dependency_version_paths_mapping = {
         "Platform": (platform.platform(), ""),
-        "HDF5 library": (netCDF4.__hdf5libversion__, ""),
-        "netcdf library": (netCDF4.__netcdf4libversion__, ""),
         "Python": (platform.python_version(), sys.executable),
-        "netCDF4": (netCDF4.__version__, os.path.abspath(netCDF4.__file__)),
+        "packaging": (
+            packaging.__version__,
+            os.path.abspath(packaging.__file__),
+        ),
         "numpy": (np.__version__, os.path.abspath(np.__file__)),
         "cfdm.core": (__version__, os.path.abspath(__file__)),
     }

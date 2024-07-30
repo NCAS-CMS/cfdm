@@ -560,6 +560,10 @@ class DataTest(unittest.TestCase):
         self.assertEqual(e.nc_hdf5_chunksizes(), (1, 1, 3))
         e = d.sum(axes=1)
         self.assertEqual(e.nc_hdf5_chunksizes(), (1, 1, 3))
+        e = d.max(axes=1, squeeze=True)
+        self.assertEqual(e.nc_hdf5_chunksizes(), (1, 3))
+        e = d.sum(axes=1, squeeze=True)
+        self.assertEqual(e.nc_hdf5_chunksizes(), (1, 3))
 
     def test_Data_dtype_mask(self):
         """Test the dtype and mask Data methods."""

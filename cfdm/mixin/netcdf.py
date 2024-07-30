@@ -2579,7 +2579,9 @@ class NetCDFHDF5(NetCDF):
                 {{hdf5 chunk strategy}}
 
             clip: `bool`, optional
-                TODOHDF5CHUNKS
+                If True and *chunksizes* is a seqience of `int` then
+                clip (i.e. limit) each integer to be no greater than
+                its corresponding dimension size.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -2607,8 +2609,9 @@ class NetCDFHDF5(NetCDF):
         >>> d.nc_set_hdf5_chunksizes(None)
         >>> d.nc_hdf5_chunksizes()
         None
-
-        TODOHDF5CHUNKS - clip example
+        >>> d.nc_set_hdf5_chunksizes([12, 32, 144], clip=True)
+        >>> d.nc_hdf5_chunksizes()
+        (1, 32, 73)
 
         """
         if chunksizes is None:
@@ -2625,7 +2628,7 @@ class NetCDFHDF5(NetCDF):
                 )
             except AttributeError:
                 # If chunksizes is a sequence then an AttributeError
-                # will be raised
+                # will have been raised, rather than a ValueError.
                 try:
                     chunksizes = tuple(chunksizes)
                 except TypeError:
@@ -2635,10 +2638,9 @@ class NetCDFHDF5(NetCDF):
 
                 if len(chunksizes) != len(shape):
                     raise ValueError(
-                        "A sequence of the maximum number of elements in a "
-                        f"chunk for each dimension ({chunksizes!r}) "
-                        "must have the same length as the number of "
-                        f"dimensions in the data ({len(shape)})"
+                        "When chunksizes is a sequence of integers "
+                        f"{chunksizes!r} then it must have the same length "
+                        f"as the number of data dimensions ({len(shape)})"
                     )
 
                 c = []
@@ -2646,17 +2648,18 @@ class NetCDFHDF5(NetCDF):
                     if i > j:
                         if not clip:
                             raise ValueError(
-                                "A dimension's maximum number of elements "
-                                f"in a chunk ({i!r}) cannot exceed the "
-                                f"size of the dimension ({j})"
+                                "When chunksizes is a sequence of integers "
+                                f"{chunksizes!r}, each value must be no "
+                                "greater than its corresponding dimension "
+                                f"size {shape}. Consider setting clip=True"
                             )
 
-                        # Reduce chunk size to the dimension size
+                        # Clip chunk size to the dimension size
                         i = j
                     elif i <= 0:
                         raise ValueError(
-                            "A dimension's maximum number of elements in a "
-                            f"chunk be must be positive. Got: {i!r}"
+                            "When chunksizes is a sequence of integers "
+                            f"({chunksizes!r}), each value must be positive"
                         )
 
                     c.append(i)

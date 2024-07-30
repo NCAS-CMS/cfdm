@@ -48,16 +48,22 @@ __date__ = core.__date__
 __cf_version__ = core.__cf_version__
 __version__ = core.__version__
 
-_requires = ("cftime", "netcdf_flattener", "scipy")
+_requires = core._requires + (
+    "cftime",
+    "netCDF4",
+    "scipy",
+    "h5netcdf",
+    "s3fs",
+)
 
 _error0 = f"cfdm requires the modules {', '.join(_requires)}. "
 
+# Check the version of cftime
 try:
     import cftime
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
-# Check the version of cftime
 _minimum_vn = "1.6.0"
 if Version(cftime.__version__) < Version(_minimum_vn):
     raise ValueError(
@@ -65,32 +71,82 @@ if Version(cftime.__version__) < Version(_minimum_vn):
         f"Got {cftime.__version__} at {cftime.__file__}"
     )
 
+# Check the version of netCDF4
 try:
-    import netcdf_flattener
+    import netCDF4
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
-# Check the version of netcdf_flattener
-_minimum_vn = "1.2.0"
-if Version(netcdf_flattener.__version__) < Version(_minimum_vn):
+_minimum_vn = "1.5.4"
+if Version(netCDF4.__version__) < Version(_minimum_vn):
     raise ValueError(
-        f"Bad netcdf_flattener version: cfdm requires "
-        f"netcdf_flattener>={_minimum_vn}. Got {netcdf_flattener.__version__} "
-        f"at {netcdf_flattener.__file__}"
+        f"Bad netCDF4 version: cfdm requires netCDF4>={_minimum_vn}. "
+        f"Got {netCDF4.__version__} at {netCDF4.__file__}"
     )
 
+# Check the version of h5netcdf
+try:
+    import h5netcdf
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+
+_minimum_vn = "1.3.0"
+if Version(h5netcdf.__version__) < Version(_minimum_vn):
+    raise ValueError(
+        f"Bad h5netcdf version: cfdm requires h5netcdf>={_minimum_vn}. "
+        f"Got {h5netcdf.__version__} at {h5netcdf.__file__}"
+    )
+
+# Check the version of h5py
+try:
+    import h5py
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+
+_minimum_vn = "3.10.0"
+if Version(h5py.__version__) < Version(_minimum_vn):
+    raise ValueError(
+        f"Bad h5py version: cfdm requires h5py>={_minimum_vn}. "
+        f"Got {h5py.__version__} at {h5py.__file__}"
+    )
+
+# Check the version of s3fs
+try:
+    import s3fs
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+
+_minimum_vn = "2024.6.0"
+if Version(s3fs.__version__) < Version(_minimum_vn):
+    raise ValueError(
+        f"Bad s3fs version: cfdm requires s3fs>={_minimum_vn}. "
+        f"Got {s3fs.__version__} at {s3fs.__file__}"
+    )
+
+# Check the version of scipy
 try:
     import scipy
 except ImportError as error1:
     raise ImportError(_error0 + str(error1))
 
-# Check the version of scipy
 _minimum_vn = "1.10.0"
 if Version(scipy.__version__) < Version(_minimum_vn):
     raise ValueError(
-        f"Bad scipy version: cfdm requires "
-        f"scipy>={_minimum_vn}. Got {scipy.__version__} "
-        f"at {scipy.__file__}"
+        f"Bad scipy version: cfdm requires scipy>={_minimum_vn}. "
+        f"Got {scipy.__version__} at {scipy.__file__}"
+    )
+
+# Check the version of dask
+try:
+    import dask
+except ImportError as error1:
+    raise ImportError(_error0 + str(error1))
+
+_minimum_vn = "2024.6.0"
+if Version(dask.__version__) < Version(_minimum_vn):
+    raise ValueError(
+        f"Bad scipy version: cfdm requires dask>={_minimum_vn}. "
+        f"Got {dask.__version__} at {dask.__file__}"
     )
 
 from .constants import masked
@@ -140,7 +196,10 @@ from .data import (
     CompressedArray,
     Data,
     GatheredArray,
+    H5netcdfArray,
     NetCDFArray,
+    NetCDF4Array,
+    netcdf_indexer,
     NumpyArray,
     PointTopologyArray,
     RaggedArray,
@@ -196,6 +255,7 @@ from .abstract import Implementation
 from .cfdmimplementation import CFDMImplementation, implementation
 
 from .read_write import read, write
+from .read_write.netcdf.flatten import netcdf_flatten
 
 from .examplefield import example_field, example_fields, example_domain
 

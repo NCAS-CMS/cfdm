@@ -2203,7 +2203,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         return parsed_indices
 
-    def maximum(self, axes=None):
+    def maximum(self, axes=None, squeeze=False):
         """Return the maximum of an array or the maximum along axes.
 
         Missing data array elements are omitted from the calculation.
@@ -2219,6 +2219,14 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 maximum over all axes is returned.
 
                 {{axes int examples}}
+
+            squeeze: `bool`, optional
+                If this is set to False, the default, the axes which
+                are reduced are left in the result as dimensions with
+                size one. With this option, the result will broadcast
+                correctly against the original data.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -2263,8 +2271,12 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         except ValueError as error:
             raise ValueError(f"Can't find maximum of data: {error}")
 
+        if axes is None:
+            axes = tuple(range(self.ndim))
+
+        keepdims = not squeeze
         array = self.array
-        array = np.amax(array, axis=axes, keepdims=True)
+        array = np.amax(array, axis=axes, keepdims=keepdims)
 
         out = self.copy(array=False)
         out._set_Array(array, copy=False)
@@ -2272,6 +2284,11 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         # Update the HDF5 chunking strategy
         chunksizes = out.nc_hdf5_chunksizes()
         if isinstance(chunksizes, tuple) and out.shape != self.shape:
+            if not keepdims:
+                chunksizes = [
+                    size for i, size in enumerate(chunksizes) if i not in axes
+                ]
+
             out.nc_set_hdf5_chunksizes(chunksizes, clip=True)
 
         return out
@@ -2336,8 +2353,12 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         except ValueError as error:
             raise ValueError(f"Can't find minimum of data: {error}")
 
+        if axes is None:
+            axes = tuple(range(self.ndim))
+
+        keepdims = True
         array = self.array
-        array = np.amin(array, axis=axes, keepdims=True)
+        array = np.amin(array, axis=axes, keepdims=keepdims)
 
         out = self.copy(array=False)
         out._set_Array(array, copy=False)
@@ -2345,6 +2366,11 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         # Update the HDF5 chunking strategy
         chunksizes = out.nc_hdf5_chunksizes()
         if isinstance(chunksizes, tuple) and out.shape != self.shape:
+            if not keepdims:
+                chunksizes = [
+                    size for i, size in enumerate(chunksizes) if i not in axes
+                ]
+
             out.nc_set_hdf5_chunksizes(chunksizes, clip=True)
 
         return out
@@ -2430,7 +2456,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         return d
 
-    def sum(self, axes=None):
+    def sum(self, axes=None, squeeze=False):
         """Return the sum of an array or the sum along axes.
 
         Missing data array elements are omitted from the calculation.
@@ -2444,6 +2470,14 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 sum over all axes is returned.
 
                 {{axes int examples}}
+
+            squeeze: `bool`, optional
+                If this is set to False, the default, the axes which
+                are reduced are left in the result as dimensions with
+                size one. With this option, the result will broadcast
+                correctly against the original data.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -2487,8 +2521,13 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             axes = self._parse_axes(axes)
         except ValueError as error:
             raise ValueError(f"Can't sum data: {error}")
+
+        if axes is None:
+            axes = tuple(range(self.ndim))
+
+        keepdims = not squeeze
         array = self.array
-        array = np.sum(array, axis=axes, keepdims=True)
+        array = np.sum(array, axis=axes, keepdims=keepdims)
 
         d = self.copy(array=False)
         d._set_Array(array, copy=False)
@@ -2496,6 +2535,11 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         # Update the HDF5 chunking strategy
         chunksizes = d.nc_hdf5_chunksizes()
         if isinstance(chunksizes, tuple) and d.shape != self.shape:
+            if not keepdims:
+                chunksizes = [
+                    size for i, size in enumerate(chunksizes) if i not in axes
+                ]
+
             d.nc_set_hdf5_chunksizes(chunksizes, clip=True)
 
         return d
@@ -3294,9 +3338,9 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
     # ----------------------------------------------------------------
     # Aliases
     # ----------------------------------------------------------------
-    def max(self, axes=None):
+    def max(self, axes=None, squeeze=False):
         """Alias for `maximum`."""
-        return self.maximum(axes=axes)
+        return self.maximum(axes=axes, squeeze=squeeze)
 
     def min(self, axes=None):
         """Alias for `minimum`."""
