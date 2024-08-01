@@ -334,31 +334,22 @@ def read(
 
             If True (the default) then store the HDF5 chunking
             strategy for each netCDF variable on its corresponding
-            `Data` objects, defined by their `Data.nc_hdf5_chunksizes`
-            methods. If False then the HDF5 chunking strategy is not
-            stored and the `Data.nc_hdf5_chunksizes` method will be
-            `None` for all `Data` objects.
+            `Data` objects, accessible via by their
+            `Data.nc_hdf5_chunksizes` methods. If False then the HDF5
+            chunking strategy is not stored (i.e.
+            `Data.nc_hdf5_chunksizes` method will return `None` for
+            all `Data` objects).
 
-            For data read from netCDF3 datasets, which have no HDF
-            chunking strategy, the `Data.nc_hdf5_chunksizes` method is
-            always `None`.
+            If *store_hdf5_chunks* is True then the stored HDF5
+            chunking strategies (unless they have been subsequently
+            modified) will be used when writing the data back to disk
+            with `cfdm.write`. If *store_hdf5_chunks* is False then
+            `cfdm.write` will itself determine the HDF chunking
+            strategies when writing the data back to disk. See the
+            *hdf5_chunks* parameter to `cfdm.write` for more details.
 
-            The decision on whether or not to store the HDF chunking
-            strategy will depend on if it is intended for the returned
-            fields, unmodified or otherwise, to be written back to
-            disk with `cfdm.write`. If not, then it is of no
-            consequence whether or not the original HDF5 chunking
-            strategy is stored. Otherwise, the HDF5 chunking strategy
-            used for writing to disk depends on whether or not a
-            `Data` object has an HDF5 chunking strategy defined by its
-            `Data.nc_hdf5_chunksizes` method at the time of
-            writing. See the *hdf5_chunks* parameter to `cfdm.write`
-            for more details.
-
-            Note that operations that change the data shape (such as
-            slicing) will also automatically modify an HDF5 chunking
-            strategy to be consistent with the new shape, and this may
-            not result in optimal chunk shapes.
+            For data read from netCDF3 datasets, no HDF5 chunking
+            strategy is stored.
 
             .. versionadded:: (cfdm) NEXTVERSION
 

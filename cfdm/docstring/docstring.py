@@ -116,24 +116,24 @@ _docstring_substitution_definitions = {
         original file names, then the returned files will be the
         collection of original files from all contributing sources.""",
     # hdf5 chunks note
-    "{{hdf5 chunks note}}": """The HDF5 chunking strategy, that is only implemented when the
-        data is written to a netCDF4 dataset with `{{package}}.write`,
-        is defined in one of the following ways:
+    "{{hdf5 chunks note}}": """The HDF5 chunking strategy is only used when the data is
+        written to a netCDF4 dataset with `{{package}}.write`, and is
+        defined in one of the following ways:
 
         * `None`: No HDF5 chunking strategy has been defined. The
           chunking strategy will be determined at write time by
           `{{package}}.write`.
 
-        * ``'contiguous'``: No HDF5 chunking, i.e. the data will
-          written to the file contiguously.
+        * ``'contiguous'``: The data will written to the file
+          contiguously, i.e. no chunking.
 
         * `int`: The size in bytes of the HDF5 chunks. "Square-like"
           chunk shapes are preferred, maximising the amount of chunks
           that are completely filled with data values. See
           `{{package}}.write` for details.
 
-        * `tuple` of `int`: The maximum number of array elements in
-          each chunk along each axis. This chunking strategy may be
+        * `tuple` of `int`: The maximum number of array elements in a
+          chunk along each axis. This chunking strategy may be
           automatically modified by methods that change the data shape
           (such as `insert_dimension`).""",
     # ----------------------------------------------------------------

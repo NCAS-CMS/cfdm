@@ -2702,62 +2702,8 @@ class NetCDFWrite(IOWrite):
         else:
             lsd = None
 
-        # ------------------------------------------------------------
-        # HDF5 chunk strategy: Either use that provided on the data,
-        # or else work it out.
-        # ------------------------------------------------------------
-        contiguous, chunksizes = self._hhh(data, ncdimensions)
-        #
-        #        contiguous = False
-        #        chunksizes = None
-        #        compressed = bool(
-        #            set(ncdimensions).intersection(g["sample_ncdim"].values())
-        #        )
-        #        if data is not None:
-        #            # Get the chunking strategy defined by the data itself
-        #            chunksizes = self.implementation.nc_get_hdf5_chunksizes(data)
-        #            if chunksizes == "contiguous":
-        #                # Contiguous
-        #                contiguous = True
-        #                chunksizes = None
-        #            else:
-        #                hdf5_chunks = g["hdf5_chunks"]
-        #                if isinstance(chunksizes, int):
-        #                    # chunksizes is an int
-        #                    hdf5 = chunksizes
-        #                    chunksizes = None
-        #                else:
-        #                    # chunksizes is None or a tuple of int
-        #                    hdf5 = hdf5_chunks
-        #
-        #                if chunksizes is None:
-        #                    # Work out the chunking strategy
-        #                    if hdf5 == "contiguous":
-        #                        # Contiguous
-        #                        contiguous = True
-        #                    else:
-        #                        # Chunked
-        #                        if compressed:
-        #                            # Base the HDF5 chunks on the compressed
-        #                            # data that is going into the file
-        #                            d = self.implementation.get_compressed_array(data)
-        #                        else:
-        #                            d = data
-        #
-        #                        d_dtype = d.dtype
-        #                        dtype = g["datatype"].get(d_dtype, d_dtype)
-        #
-        #                        with dask_config.set({"array.chunk-size": hdf5}):
-        #                            chunksizes = normalize_chunks(
-        #                                ("auto",) * d.ndim, shape=d.shape, dtype=dtype
-        #                            )
-        #
-        #                        # 'chunksizes' currently might look something
-        #                        # like ((96,96,96,50), (250,250,4)). However,
-        #                        # we need only one number per dimension, so we
-        #                        # choose the largest: [96,250].
-        #                        chunksizes = [max(c) for c in chunksizes]
-
+        # Set the HDF5 chunk strategy
+        contiguous, chunksizes = self._chunking_parameters(data, ncdimensions)
         logger.debug(
             f"      HDF5 chunksizes: {chunksizes}\n"
             f"      HDF5 contiguous: {contiguous}"
@@ -4547,7 +4493,7 @@ class NetCDFWrite(IOWrite):
         group=True,
         coordinates=False,
         omit_data=None,
-        hdf5_chunks="4 MiB",
+        hdf5_chunks="4MiB",
     ):
         """Write field and domain constructs to a netCDF file.
 
@@ -5365,9 +5311,23 @@ class NetCDFWrite(IOWrite):
         """
         pass
 
-    def _hhh(self, data, ncdimensions):
-        """
+    def _chunking_parameters(self, data, ncdimensions):
+        """Set chunking parameters for `netCDF4.createVariable`.
+
         .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            data: `Data` or `None`
+                The data being written.
+
+            ncdimensions: `tuple`
+                The data netCDF dimensions.
+
+        :Returns:
+
+            2-tuple
+                The variable's chunking and shape.
 
         """
         if data is None:
@@ -5401,7 +5361,7 @@ class NetCDFWrite(IOWrite):
             return True, None
 
         #  Still here? Then work out the chunks from the size given by
-        #  the hdf5_chunks parameter (e.g. "4 MiB") and the data shape
+        #  the hdf5_chunks parameter (e.g. "4MiB") and the data shape
         #  (e.g. (12, 73, 96)).
         compressed = bool(
             set(ncdimensions).intersection(g["sample_ncdim"].values())

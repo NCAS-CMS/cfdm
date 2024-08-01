@@ -27,7 +27,7 @@ def write(
     group=True,
     coordinates=False,
     omit_data=None,
-    hdf5_chunks="4 MiB",
+    hdf5_chunks="4MiB",
     _implementation=_implementation,
 ):
     """Write field and domain constructs to a netCDF file.
@@ -536,54 +536,52 @@ def write(
             The HDF5 chunking strategy for data arrays being written
             to the file.
 
+            Ignored for netCDF3 output formats, for which all data is
+            always written out contiguously.
+
             The *hdf5_chunks* parameter either defines the size in
             bytes of the HDF5 chunks, or else specifies that the data
             are to be written contiguously (i.e. not
             chunked). However, if any data being written out has an
             HDF5 chunking strategy defined by its
-            `Data.nc_hdf5_chunksizes` method then, for that data
-            array, its own chunking strategy will be used in
-            preference to that defined by the *hdf5_chunks* parameter.
+            `Data.nc_hdf5_chunksizes` method then that data will use
+            its own HDF5 chunking strategy in preference to that
+            defined by the *hdf5_chunks* parameter.
 
-            .. note:: * Data returned by `cfdm.read` will have, by
-                        default, the original file's HDF5 chunking
-                        strategy defined by its
-                        `Data.nc_hdf5_chunksizes` method. Therefore
-                        that same HDF5 chunking strategy (or a
-                        modifcation of it if chunksize-affecting
-                        operations have been carried out) will be used
-                        in the output netCDF4 file. To disable this
-                        behaviour, see the *store_hdf5_chunks*
-                        parameter to `cfdm.read`.
-
-                      * The size given by *hdf5_chunks* parameter is
-                        translated into a chunk shape defined in
-                        numbers of elements along each dimension, and
-                        assuming that the data are uncompressed. If
-                        the data are not compressed (i.e. the
-                        *compress* parameter is ``0``) then each HDF5
-                        chunk will take up approximately that size on
-                        disk. If the data are compressed then each
-                        HDF5 chunk will take up (possibly
-                        considerably) less than that size on disk.
-
-            Ignored for NETCDF3 output formats, for which all data is
-            always written out contiguously.
-
-            The *hdf5_chunks* parameter may be a number of bytes
-            (floats are rounded down to the nearest integer), or a
-            string representing a quantity of byte units. For instance
-            a chunksize of 1024 bytes may be specified with any of
+            If the *hdf5_chunks* parameter is a number of bytes
+            (floats are rounded down to the nearest integer) or a
+            string representing a quantity of byte units, then that
+            size defines the chunksize for the data. For instance a
+            chunksize of 1024 bytes may be specified with any of
             ``1024``, ``1024.9``, ``'1024'``, ``'1024 B'``, ``'1
             KiB'``, ``'0.0009765625 MiB'``, etc. Recognised byte units
             are (case insensitive): ``B``, ``KiB``, ``MiB``, ``GiB``,
             ``TiB``, ``PiB``, ``KB``, ``MB``, ``GB``, ``TB``, and
-            ``PB``. The spaces in strings are optional.
+            ``PB``. Spaces in the strings are optional.
 
             If *hdf5_chunks* is the string ``'contiguous'`` then data
             will be written contiguously.
 
             By default, *hdf5_chunks* is ``'4 MiB'``
+
+            .. note:: * Data returned by `cfdm.read` will, by default,
+                        store the original file's HDF5 chunking
+                        strategy. Therefore, that same HDF5 chunking
+                        strategy (or a modifcation of it if
+                        shape-changing operations have been carried
+                        out) will be used in the output netCDF4
+                        file. To change this behaviour, see the
+                        *store_hdf5_chunks* parameter to `cfdm.read`.
+
+                      * The size given by the *hdf5_chunks* parameter
+                        is translated into a chunk shape defined by
+                        numbers of elements along each dimension, such
+                        that an uncompressed chunk is as close as
+                        possible to the given size. If compression is
+                        being used (i.e. if the *compress* parameter
+                        is creater than ``0``) then each HDF5 chunk
+                        will take up (possibly considerably) less than
+                        that size on disk.
 
             When the *hdf5_chunks* parameter is used to define the
             HDF5 chunk shape for a data array, "square-like" HDF5
