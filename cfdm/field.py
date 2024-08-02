@@ -2441,11 +2441,14 @@ class Field(
 
         return f
 
-    def nc_set_hdf5_chunksizes(self, chunksizes, clip=False, ignore=False):
+    def nc_set_hdf5_chunksizes(
+        self, chunksizes, clip=False, constructs=False, ignore=False
+    ):
         """TODOHDF5CHUNKS."""
+        chunksizes_is_dict = True
+        data_axes = self.get_data_axes()
         if isinstance(chunksizes, dict):
-            c = list(self.shape)
-            data_axes = self.get_data_axes()
+            c = {}
             for identity, value in chunksizes.items():
                 axis = self.domain_axis(identity, key=True, default=None)
                 if axis is None:
@@ -2460,17 +2463,46 @@ class Field(
                 try:
                     position = data_axes.index(axis)
                 except ValueError:
-                    if not ignore:
-                        raise ValueError(
-                            f"{identity!r} axis is not spanned by the "
-                            "data array"
-                        )
+                    pass
                 else:
                     c[position] = value
 
             chunksizes = c
+        elif chunksizes is None or isinstance(chunksizes, (int, str)):
+            chunksizes_is_dict = False
+        else:
+            chunksizes = {n: value for n, value in enumerate(chunksizes)}
 
-        return super().nc_set_hdf5_chunksizes(chunksizes)
+        self.data.nc_set_hdf5_chunksizes(chunksizes)
+
+        if constructs:
+            if chunksizes_is_dict:
+                # Convert 'chunksizes' dictioanary keys to domain axis
+                # identifiers
+                chunksizes = {
+                    data_axes[n]: value for n, value in chunksizes.items()
+                }
+
+            for key, construct in self.constructs.filter_by_data(
+                todict=True
+            ).items():
+                data = construct.get_data(
+                    None, _units=False, _fill_value=False
+                )
+                if data is None:
+                    continue
+
+                if chunksizes_is_dict:
+                    construct_axes = self.get_data_axes(key)
+                    c = {
+                        n: chunksizes[axis]
+                        for n, axis in enumerate(construct_axes)
+                        if axis in chunksizes
+                    }
+                else:
+                    c = chunksizes
+
+                construct.data.nc_set_hdf5_chunksizes(c)
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):

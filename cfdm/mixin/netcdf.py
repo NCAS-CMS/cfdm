@@ -2494,7 +2494,13 @@ class NetCDFHDF5(NetCDF):
                 The current chunking strategy when writing to a
                 netCDF4 file.
 
-                {{hdf5 chunk strategy}}
+                An `int` defines the maximum size in bytes of the HDF5
+                chunks; a `tuple` of integers defines the maximum
+                number of array elements in each chunk along each
+                axis; the string ``'contiguous'`` means that there
+                will be no HDF5 chunking; and `None` means that the
+                chunking strategy will be determined at write time by
+                `{{package}}.write`.
 
         **Examples**
 
@@ -2572,14 +2578,23 @@ class NetCDFHDF5(NetCDF):
 
         :Parameters:
 
-            chunksizes: `int` or `str` or `None` or sequence of `int`
+            chunksizes: `int` or `str` or `None` or `dict` or sequence of `int`
                 Set the chunking strategy when writing to a netCDF4
                 file.
 
-                {{hdf5 chunk strategy}}
+                An `int` defines the maximum size in bytes of the HDF5
+                chunks; a `tuple` of integers defines the maximum
+                number of array elements in each chunk along each
+                axis; a `dict` deines the chunk size for given
+                dimension positions (unspecified dimensions default to
+                the exising chunk size or the dimension size,
+                whichever is larger); the string ``'contiguous'``
+                means that there will be no HDF5 chunking; and `None`
+                means that the chunking strategy will be determined at
+                write time by `{{package}}.write`.
 
             clip: `bool`, optional
-                If True and *chunksizes* is a seqience of `int` then
+                If True and *chunksizes* is a sequence of `int` then
                 clip (i.e. limit) each integer to be no greater than
                 its corresponding dimension size.
 
@@ -2612,11 +2627,28 @@ class NetCDFHDF5(NetCDF):
         >>> d.nc_set_hdf5_chunksizes([12, 32, 144], clip=True)
         >>> d.nc_hdf5_chunksizes()
         (1, 32, 73)
+        >>> d.nc_clear_hdf5_chunksizes()
+        (1, 35, 73)
+        >>> d.nc_set_hdf5_chunksizes({1: 24})
+        >>> d.nc_hdf5_chunksizes()
+        (1, 24, 73)
+        >>> d.nc_hdf5_chunksizes({1: 1, 2: 50})
+        (1, 24, 50)
 
         """
         if chunksizes is None:
             self.nc_clear_hdf5_chunksizes()
             return
+
+        # Convert a dictionary to a sequence.
+        if isinstance(chunksizes, dict):
+            org_chunksizes = self.nc_hdf5_chunksizes()
+            if not isinstance(org_chunksizes, tuple):
+                org_chunksizes = self.shape
+
+            chunksizes = [
+                chunksizes.get(n, j) for n, j in enumerate(org_chunksizes)
+            ]
 
         if chunksizes != "contiguous":
             shape = self.shape
@@ -2644,22 +2676,21 @@ class NetCDFHDF5(NetCDF):
                     )
 
                 c = []
-                for i, j in zip(chunksizes, shape):
+                for n, (i, j) in enumerate(zip(chunksizes, shape)):
                     if i > j:
                         if not clip:
                             raise ValueError(
-                                "When chunksizes is a sequence of integers "
-                                f"{chunksizes!r}, each value must be no "
-                                "greater than its corresponding dimension "
-                                f"size {shape}. Consider setting clip=True"
+                                f"The chunksize ({i}) for dimension {n} must "
+                                f"be no greater than the dimenson size ({j}), "
+                                "unless clip=True"
                             )
 
                         # Clip chunk size to the dimension size
                         i = j
                     elif i <= 0:
                         raise ValueError(
-                            "When chunksizes is a sequence of integers "
-                            f"({chunksizes!r}), each value must be positive"
+                            f"The chunksize ({i}) for dimension {n} must "
+                            "be a positive integer"
                         )
 
                     c.append(i)

@@ -504,12 +504,4 @@ _docstring_substitution_definitions = {
     "{{Returns original filenames}}": """The original file names in normalised absolute
                 form. If there are no original files then an empty
                 `set` will be returned.""",
-    # hdf5 chunk strategy
-    "{{hdf5 chunk strategy}}": """An `int` defines the maximum size in bytes of the HDF5
-                chunks; a `tuple` of integers defines the maximum
-                number of array elements in each chunk along each
-                axis; the string ``'contiguous'`` means that there
-                will be no HDF5 chunking; and `None` means that the
-                chunking strategy will be determined at write time by
-                `{{package}}.write`.""",
 }

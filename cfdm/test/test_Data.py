@@ -845,6 +845,12 @@ class DataTest(unittest.TestCase):
         self.assertIsNone(d.nc_set_hdf5_chunksizes(None))
         self.assertIsNone(d.nc_hdf5_chunksizes())
 
+        d.nc_clear_hdf5_chunksizes()
+        d.nc_set_hdf5_chunksizes({1: 2})
+        self.assertEqual(d.nc_hdf5_chunksizes(), (2, 2, 4))
+        d.nc_set_hdf5_chunksizes({0: 1, 2: 3})
+        self.assertEqual(d.nc_hdf5_chunksizes(), (1, 2, 3))
+
         for chunksizes in (1024, "1 KiB"):
             self.assertIsNone(d.nc_set_hdf5_chunksizes(chunksizes))
             self.assertEqual(d.nc_clear_hdf5_chunksizes(), 1024)
