@@ -323,10 +323,6 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
           the same behaviour as indexing on a Variable object of the
           netCDF4 package.
 
-        If HDF5 chunk sizes have been provided then they will be
-        adjusted so that no dimension's chunks size exceeds the
-        dimension size.
-
         .. versionadded:: (cfdm) 1.7.0
 
         .. seealso:: `__setitem__`, `_parse_indices`

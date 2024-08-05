@@ -57,7 +57,6 @@ def read(
     `~cfdm.DomainAxis.nc_set_unlimited` methods of a domain axis
     construct.
 
-
     **NetCDF hierarchical groups**
 
     Hierarchical groups in CF provide a mechanism to structure
@@ -70,7 +69,6 @@ def read(
     compliance to earlier versions of the CF conventions, the groups
     will be interpreted as per the latest release of the CF
     conventions.
-
 
     **CF-compliance**
 
@@ -330,26 +328,21 @@ def read(
             .. versionadded:: (cfdm) NEXTVERSION
 
         store_hdf5_chunks: `bool`, optional
-
-
             If True (the default) then store the HDF5 chunking
-            strategy for each netCDF variable on its corresponding
-            `Data` objects, accessible via by their
-            `Data.nc_hdf5_chunksizes` methods. If False then the HDF5
-            chunking strategy is not stored (i.e.
-            `Data.nc_hdf5_chunksizes` method will return `None` for
-            all `Data` objects).
+            strategy for each returned data array. The strategy is
+            accessible via a `Data` instances's `~Data.nc_hdf5_chunksizes`
+            method. When the HDF5 chunking strategy is stored, it will
+            be used when the data is written to a new netCDF4 file
+            (unless the strategy was modified prior to writing).
 
-            If *store_hdf5_chunks* is True then the stored HDF5
-            chunking strategies (unless they have been subsequently
-            modified) will be used when writing the data back to disk
-            with `cfdm.write`. If *store_hdf5_chunks* is False then
-            `cfdm.write` will itself determine the HDF chunking
-            strategies when writing the data back to disk. See the
-            *hdf5_chunks* parameter to `cfdm.write` for more details.
+            If False, or if the file being read is not in netCDF4
+            format, then no HDF5 chunking strategy is stored.
+            (i.e. `~Data.nc_hdf5_chunksizes` method will return `None`
+            for all `Data` objects).
 
-            For data read from netCDF3 datasets, no HDF5 chunking
-            strategy is stored.
+            See the *hdf5_chunks* parameter to `cfdm.write` for
+            details on how the HDF5 chunking strategy is determined at
+            the time of writing.
 
             .. versionadded:: (cfdm) NEXTVERSION
 

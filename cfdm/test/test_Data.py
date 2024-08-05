@@ -860,6 +860,15 @@ class DataTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 d.nc_set_hdf5_chunksizes(chunksizes)
 
+        # todict
+        d.nc_set_hdf5_chunksizes([2, 3, 4])
+        self.assertEqual(d.nc_hdf5_chunksizes(todict=True), {0: 2, 1: 3, 2: 4})
+
+        for chunksizes in (None, "contiguous", 1024):
+            d.nc_set_hdf5_chunksizes(chunksizes)
+            with self.assertRaises(ValueError):
+                d.nc_hdf5_chunksizes(todict=True)
+
         # clip
         d.nc_set_hdf5_chunksizes([999, 999, 999], clip=True)
         self.assertEqual(d.nc_hdf5_chunksizes(), d.shape)

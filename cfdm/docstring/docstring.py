@@ -115,27 +115,6 @@ _docstring_substitution_definitions = {
         was produced by combining other objects that also store their
         original file names, then the returned files will be the
         collection of original files from all contributing sources.""",
-    # hdf5 chunks note
-    "{{hdf5 chunks note}}": """The HDF5 chunking strategy is only used when the data is
-        written to a netCDF4 dataset with `{{package}}.write`, and is
-        defined in one of the following ways:
-
-        * `None`: No HDF5 chunking strategy has been defined. The
-          chunking strategy will be determined at write time by
-          `{{package}}.write`.
-
-        * ``'contiguous'``: The data will written to the file
-          contiguously, i.e. no chunking.
-
-        * `int`: The size in bytes of the HDF5 chunks. "Square-like"
-          chunk shapes are preferred, maximising the amount of chunks
-          that are completely filled with data values. See
-          `{{package}}.write` for details.
-
-        * `tuple` of `int`: The maximum number of array elements in a
-          chunk along each axis. This chunking strategy may be
-          automatically modified by methods that change the data shape
-          (such as `insert_dimension`).""",
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentataion)
     # ------------------------1----------------------------------------
@@ -405,6 +384,60 @@ _docstring_substitution_definitions = {
                 stored. The original file names of any constituent
                 parts are not updated. Can't be used with the *define*
                 parameter.""",
+    # hdf5 chunksizes
+    "{{hdf5 chunksizes}}": """chunksizes: `None` or `str` or `int` or `float` or `dict` or sequence of `int`
+                Set the chunking strategy for writing to a netCDF4
+                file. One of:
+
+                {{hdf5 options}}""",
+    # hdf5 clip
+    "{{hdf5 clip: `bool`, optional}}": """clip: `bool`, optional
+                If True, and *chunksizes* is a `dict` or a sequence of
+                `int`, then clip (i.e. limit) each integer value to be
+                no greater than its corresponding axis size.""",
+    # hdf5 todict
+    "{{hdf5 todict: `bool`, optional}}": """todict: `bool`, optional
+                Ignored if unless the HDF chunking strategy comprises
+                the maximum number of array elements in a chunk along
+                each data axis. Otherwise, if True then return the HDF
+                chunk sizes in a `dict` keyed by axis positions; or if
+                False (the default) then a `tuple` of `int` will be
+                returned.""",
+    # Returns nc_hdf5_chunksizes
+    "{{Returns nc_hdf5_chunksizes}}": """`None` or `str` or `int` or `dict` or `tuple` of `int`
+                The current chunking strategy when writing to a
+                netCDF4 file. One of:
+
+                * `None`: No HDF5 chunking strategy has been
+                  defined. The chunking strategy will be determined at
+                  write time by `{{package}}.write`.
+
+                * ``'contiguous'``: The data will written to the file
+                  contiguously, i.e. no chunking.
+
+                * `int` or `str`: The size in bytes of the HDF5
+                  chunks. A string represents a quantity of byte
+                  units. "Square-like" chunk shapes are preferred,
+                  maximising the amount of chunks that are completely
+                  filled with data values. For instance a chunksize of
+                  1024 bytes may be specified with any of ``1024``,
+                  ``'1024'``, ``'1024 B'``, ``'1 KiB'``,
+                  ``'0.0009765625 MiB'``, etc. Recognised byte units
+                  are (case insensitive): ``B``, ``KiB``, ``MiB``,
+                  ``GiB``, ``TiB``, ``PiB``, ``KB``, ``MB``, ``GB``,
+                  ``TB``, and ``PB``.
+
+                * `tuple` of `int`: The maximum number of array
+                  elements in a chunk along each data axis. This
+                  chunking strategy may get automatically modified by
+                  methods that change the data shape (such as
+                  `insert_dimension`).
+
+                * `dict`: The maximum number of array elements in a
+                  chunk along each axis. See the *todict* parameter
+                  for details. This chunking strategy may get
+                  automatically modified by methods that change the
+                  data shape (such as `insert_dimension`).""",
     # init source
     "{{init compressed_dimensions: `dict`}}": """compressed_dimensions: `dict`
                 Mapping of compressed to uncompressed dimensions.
@@ -504,4 +537,40 @@ _docstring_substitution_definitions = {
     "{{Returns original filenames}}": """The original file names in normalised absolute
                 form. If there are no original files then an empty
                 `set` will be returned.""",
+    # hdf5 options
+    "{{hdf5 options}}": """* `None`: No HDF5 chunking strategy has been
+                  defined. The chunking strategy will be determined at
+                  write time by `{{package}}.write`.
+
+                * ``'contiguous'``: The data will written to the file
+                  contiguously, i.e. no chunking.
+
+                * `int` or `float` or `str`: The size in bytes of the
+                  HDF5 chunks. A floating point value is rounded down
+                  to the nearest integer, and a string represents a
+                  quantity of byte units. "Square-like" chunk shapes
+                  are preferred, maximising the amount of chunks that
+                  are completely filled with data values. For instance
+                  a chunksize of 1024 bytes may be specified with any
+                  of ``1024``, ``1024.9``, ``'1024'``, ``'1024.9'``,
+                  ``'1024 B'``, ``'1 KiB'``, ``'0.0009765625 MiB'``,
+                  etc. Recognised byte units are (case insensitive):
+                  ``B``, ``KiB``, ``MiB``, ``GiB``, ``TiB``, ``PiB``,
+                  ``KB``, ``MB``, ``GB``, ``TB``, and ``PB``. Spaces
+                  in strings are optional.
+
+                * sequence of `int`: The maximum number of array
+                  elements in a chunk along each data axis. This
+                  chunking strategy may get automatically modified by
+                  methods that change the data shape (such as
+                  `insert_dimension`).
+
+                * `dict`: The maximum number of array elements in a
+                  chunk along the axes specified by the dictionary
+                  keys. The chunk size for an unspecified axis
+                  defaults to an existing chunk size for that axis, if
+                  there is one, or the axis size. This chunking
+                  strategy may get automatically modified by methods
+                  that change the data shape (such as
+                  `insert_dimension`).  """,
 }

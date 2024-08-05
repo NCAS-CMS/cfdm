@@ -1178,12 +1178,16 @@ class CFDMImplementation(Implementation):
 
             data: `Data`
 
-            chunksizes: `int` or `str` or `None` or sequence of `int`
+            chunksizes: `int` or `str` or `None` or `dict` or sequence of `int`
                 Set the chunking strategy when writing to a netCDF4
                 file.
 
             clip: `bool`, optional
-                TODOHDF5CHUNKS
+                If True, and *chunksizes* is a `dict` or a sequence of
+                `int`, then clip (i.e. limit) each integer value to be
+                no greater than its corresponding axis size.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 

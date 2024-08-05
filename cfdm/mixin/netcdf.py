@@ -2478,29 +2478,23 @@ class NetCDFHDF5(NetCDF):
 
     """
 
-    def nc_hdf5_chunksizes(self):
+    def nc_hdf5_chunksizes(self, todict=False):
         """Get the HDF5 chunking strategy for the data.
-
-        {{hdf5 chunks note}}
 
         .. versionadded:: (cfdm) 1.7.2
 
         .. seealso:: `nc_clear_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
                      `{{package}}.write`
 
+        :Parameters:
+
+            {{hdf5 todict: `bool`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
         :Returns:
 
-            `int` or `tuple` or `str` or `None`
-                The current chunking strategy when writing to a
-                netCDF4 file.
-
-                An `int` defines the maximum size in bytes of the HDF5
-                chunks; a `tuple` of integers defines the maximum
-                number of array elements in each chunk along each
-                axis; the string ``'contiguous'`` means that there
-                will be no HDF5 chunking; and `None` means that the
-                chunking strategy will be determined at write time by
-                `{{package}}.write`.
+            {{Returns nc_hdf5_chunksizes}}
 
         **Examples**
 
@@ -2509,6 +2503,8 @@ class NetCDFHDF5(NetCDF):
         >>> d.nc_set_hdf5_chunksizes([1, 35, 73])
         >>> d.nc_hdf5_chunksizes()
         (1, 35, 73)
+        >>> d.nc_hdf5_chunksizes(todict=True)
+        {0: 1, 1: 35, 2: 73}
         >>> d.nc_clear_hdf5_chunksizes()
         (1, 35, 73)
         >>> d.nc_hdf5_chunksizes()
@@ -2524,12 +2520,22 @@ class NetCDFHDF5(NetCDF):
         None
 
         """
-        return self._get_component("netcdf").get("hdf5_chunksizes")
+        chunksizes = self._get_component("netcdf").get("hdf5_chunksizes")
+
+        if todict:
+            if not isinstance(chunksizes, tuple):
+                raise ValueError(
+                    "Can only set todict=True when the HDF chunking strategy "
+                    "comprises the maximum number of array elements in a "
+                    f"chunk along each data axis. Got: {chunksizes!r}"
+                )
+
+            chunksizes = {n: value for n, value in enumerate(chunksizes)}
+
+        return chunksizes
 
     def nc_clear_hdf5_chunksizes(self):
         """Clear the HDF5 chunking strategy for the data.
-
-        {{hdf5 chunks note}}
 
         .. versionadded:: (cfdm) 1.7.2
 
@@ -2538,9 +2544,10 @@ class NetCDFHDF5(NetCDF):
 
         :Returns:
 
-            `int` or `tuple` or `str` or `None`
-                 The chunking strategy prior to being cleared. See
-                `nc_hdf5_chunksizes` for details.
+            `None` or `str` or `int` or `tuple` of `int`
+                The chunking strategy prior to being cleared, as would
+                be returned by `nc_hdf5_chunksizes`.
+
 
         **Examples**
 
@@ -2569,8 +2576,6 @@ class NetCDFHDF5(NetCDF):
     def nc_set_hdf5_chunksizes(self, chunksizes, clip=False):
         """Set the HDF5 chunking strategy for the data.
 
-        {{hdf5 chunks note}}
-
         .. versionadded:: (cfdm) 1.7.2
 
         .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
@@ -2578,25 +2583,11 @@ class NetCDFHDF5(NetCDF):
 
         :Parameters:
 
-            chunksizes: `int` or `str` or `None` or `dict` or sequence of `int`
-                Set the chunking strategy when writing to a netCDF4
-                file.
+            {{hdf5 chunksizes}}
+                  Each dictionary key is an integer that specifies an
+                  axis by its position in the data array.
 
-                An `int` defines the maximum size in bytes of the HDF5
-                chunks; a `tuple` of integers defines the maximum
-                number of array elements in each chunk along each
-                axis; a `dict` deines the chunk size for given
-                dimension positions (unspecified dimensions default to
-                the exising chunk size or the dimension size,
-                whichever is larger); the string ``'contiguous'``
-                means that there will be no HDF5 chunking; and `None`
-                means that the chunking strategy will be determined at
-                write time by `{{package}}.write`.
-
-            clip: `bool`, optional
-                If True and *chunksizes* is a sequence of `int` then
-                clip (i.e. limit) each integer to be no greater than
-                its corresponding dimension size.
+            {{hdf5 clip: `bool`, optional}}
 
                 .. versionadded:: (cfdm) NEXTVERSION
 

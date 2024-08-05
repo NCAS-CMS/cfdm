@@ -726,6 +726,71 @@ class PropertiesData(Properties):
 
         return v
 
+    def nc_hdf5_chunksizes(self):
+        """Get the HDF5 chunking strategy for the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_hdf5_chunksizes`,
+                     `nc_set_hdf5_chunksizes`, `{{package}}.write`
+
+        :Parameters:
+
+            {{hdf5 todict: `bool`, optional}}
+
+        :Returns:
+
+            {{Returns nc_hdf5_chunksizes}}
+
+        """
+        data = self.get_data(None, _units=False, _fill_value=False)
+        if data is not None:
+            return data.nc_hdf5_chunksizes()
+
+    def nc_clear_hdf5_chunksizes(self):
+        """Clear the HDF5 chunking strategy for the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
+                     `{{package}}.write`
+
+        :Returns:
+
+            `None` or `str` or `int` or `tuple` of `int`
+                The chunking strategy prior to being cleared, as would
+                be returned by `nc_hdf5_chunksizes`.
+
+        """
+        data = self.get_data(None, _units=False, _fill_value=False)
+        if data is not None:
+            return data.nc_clear_hdf5_chunksizes()
+
+    def nc_set_hdf5_chunksizes(self, chunksizes, clip=False):
+        """Set the HDF5 chunking strategy.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
+                     `{{package}}.write`
+
+        :Parameters:
+
+            {{hdf5 chunksizes}}
+                  Each dictionary key is an integer that specifies an
+                  axis by its position in the data array.
+
+            {{hdf5 clip: `bool`, optional}}
+
+        :Returns:
+
+            `None`
+
+        """
+        data = self.get_data(None, _units=False, _fill_value=False)
+        if data is not None:
+            data.nc_set_hdf5_chunksizes(chunksizes, clip=clip)
+
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
         """Remove size one axes from the data array.
