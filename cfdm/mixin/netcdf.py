@@ -2483,7 +2483,8 @@ class NetCDFHDF5(NetCDF):
 
         .. versionadded:: (cfdm) 1.7.2
 
-        .. seealso:: `nc_clear_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
+        .. seealso:: `nc_clear_hdf5_chunksizes`,
+                     `nc_set_hdf5_chunksizes`, `{{package}}.read`,
                      `{{package}}.write`
 
         :Parameters:
@@ -2539,7 +2540,7 @@ class NetCDFHDF5(NetCDF):
         .. versionadded:: (cfdm) 1.7.2
 
         .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
-                     `{{package}}.write`
+                     `{{package}}.read`, `{{package}}.write`
 
         :Returns:
 
@@ -2571,7 +2572,7 @@ class NetCDFHDF5(NetCDF):
         .. versionadded:: (cfdm) 1.7.2
 
         .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
-                     `{{package}}.write`
+                     `{{package}}.read`, `{{package}}.write`
 
         :Parameters:
 

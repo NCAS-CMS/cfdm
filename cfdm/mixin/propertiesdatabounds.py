@@ -1370,7 +1370,7 @@ class PropertiesDataBounds(PropertiesData):
         .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
-                     `{{package}}.write`
+                     `{{package}}.read`, `{{package}}.write`
 
         :Parameters:
 
@@ -1413,7 +1413,8 @@ class PropertiesDataBounds(PropertiesData):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `{{package}}.write`
+        .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
+                     `{{package}}.read`, `{{package}}.write`
 
         :Parameters:
 

@@ -120,7 +120,7 @@ _docstring_substitution_definitions = {
         original file names, then the returned files will be the
         collection of original files from all contributing sources.""",
     # ----------------------------------------------------------------
-    # Method description substitutions (3 levels of indentataion)
+    # Method description substitutions (3 levels of indentation)
     # ------------------------1----------------------------------------
     # atol: number, optional
     "{{atol: number, optional}}": """atol: number, optional
@@ -261,9 +261,10 @@ _docstring_substitution_definitions = {
     # s
     "{{s: array_like, optional}}": """s: array_like, optional
                 If set to a single number in the range [0, 1] then
-                this value is returned for the interpolation coeficient
-                ``s``. By default ``s`` is calculated for each of the
-                interpolation subararea's uncompressed locations.""",
+                this value is returned for the interpolation
+                coefficient ``s``. By default ``s`` is calculated for
+                each of the interpolation subarea's uncompressed
+                locations.""",
     # s_i
     "{{s_i: array_like}}": """s_i: array_like
                 A value for the interpolation coefficient ``s`` for

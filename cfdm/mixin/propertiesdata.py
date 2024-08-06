@@ -732,7 +732,8 @@ class PropertiesData(Properties):
         .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `nc_clear_hdf5_chunksizes`,
-                     `nc_set_hdf5_chunksizes`, `{{package}}.write`
+                     `nc_set_hdf5_chunksizes`, `{{package}}.read`,
+                     `{{package}}.write`
 
         :Parameters:
 
@@ -753,7 +754,7 @@ class PropertiesData(Properties):
         .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
-                     `{{package}}.write`
+                     `{{package}}.read`, `{{package}}.write`
 
         :Returns:
 
@@ -772,7 +773,7 @@ class PropertiesData(Properties):
         .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
-                     `{{package}}.write`
+                     `{{package}}.read`, `{{package}}.write`
 
         :Parameters:
 

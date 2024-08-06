@@ -2448,7 +2448,8 @@ class Field(
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `nc_clear_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
+        .. seealso:: `nc_clear_hdf5_chunksizes`,
+                     `nc_set_hdf5_chunksizes`, `{{package}}.read`,
                      `{{package}}.write`
 
         :Parameters:
@@ -2493,6 +2494,57 @@ class Field(
 
         return chunksizes
 
+    def nc_clear_hdf5_chunksizes(self, constructs=False):
+        """Clear the HDF5 chunking strategy.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
+                     `{{package}}.read`, `{{package}}.write`
+
+        :Parameters:
+
+            constructs: `dict` or `bool`, optional
+                Also clear the HDF5 chunking strategy from selected
+                metadata constructs. The chunking strategies of
+                unselected metadata constructs are unchanged.
+
+                If *constructs* is a `dict` then the selected metadata
+                constructs are those that would be returned by
+                ``f.constructs.filter(**constructs,
+                filter_by_data=True)``. Note that an empty dictionary
+                will therefore select all metadata constructs that
+                have data. See `~Constructs.filter` for details.
+
+                For *constructs* being anything other than a
+                dictionary, if it evaluates to True then all metadata
+                constructs that have data are selected, and if it
+                evaluates to False (the default) then no metadata
+                constructs selected.
+
+        :Returns:
+
+            `None` or `str` or `int` or `tuple` of `int`
+                The chunking strategy prior to being cleared, as would
+                be returned by `nc_hdf5_chunksizes`.
+
+        """
+        # Clear HDF5 chunksizes from the metadata
+        if isinstance(constructs, dict):
+            constructs = constructs.copy()
+        elif constructs:
+            constructs = {}
+        else:
+            constructs = None
+
+        if constructs is not None:
+            constructs["filter_by_data"] = True
+            constructs["todict"] = True
+            for key, construct in self.constructs.filter(**constructs).items():
+                construct.nc_clear_hdf5_chunksizes()
+
+        return super().nc_clear_hdf5_chunksizes()
+
     def nc_set_hdf5_chunksizes(
         self,
         chunksizes,
@@ -2503,7 +2555,7 @@ class Field(
         """Set the HDF5 chunking strategy.
 
         .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
-                     `{{package}}.write`
+                     `{{package}}.read`, `{{package}}.write`
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -2517,7 +2569,7 @@ class Field(
                   array. See `domain_axis` for details.
 
             constructs: `dict` or `bool`, optional
-                Also apply the HDF5 chunking strategy of field
+                Also apply the HDF5 chunking strategy of the field
                 construct data to the applicable axes of selected
                 metadata constructs. The chunking strategies of
                 unselected metadata constructs are unchanged.
@@ -2671,7 +2723,7 @@ class Field(
                 data_axes[n]: value for n, value in enumerate(chunksizes)
             }
 
-        self.data.nc_set_hdf5_chunksizes(chunksizes)
+        super().nc_set_hdf5_chunksizes(chunksizes)
 
         # Set HDF5 chunksizes on the metadata
         if isinstance(constructs, dict):
@@ -2684,14 +2736,7 @@ class Field(
         if constructs is not None:
             constructs["filter_by_data"] = True
             constructs["todict"] = True
-
             for key, construct in self.constructs.filter(**constructs).items():
-                data = construct.get_data(
-                    None, _units=False, _fill_value=False
-                )
-                if data is None:
-                    continue
-
                 if chunksizes_keys:
                     construct_axes = self.get_data_axes(key)
                     c = {
@@ -2702,7 +2747,7 @@ class Field(
                 else:
                     c = chunksizes
 
-                construct.data.nc_set_hdf5_chunksizes(c)
+                construct.nc_set_hdf5_chunksizes(c)
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):

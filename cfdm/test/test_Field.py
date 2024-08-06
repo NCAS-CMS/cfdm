@@ -987,6 +987,27 @@ class FieldTest(unittest.TestCase):
             "contiguous",
         )
 
+        # clear
+        f.nc_set_hdf5_chunksizes("contiguous", constructs=True)
+        self.assertEqual(f.nc_clear_hdf5_chunksizes(), "contiguous")
+        self.assertIsNone(
+            f.nc_clear_hdf5_chunksizes(
+                constructs={"filter_by_identity": ("longitude",)}
+            )
+        )
+        self.assertEqual(
+            f.dimension_coordinate("latitude").nc_hdf5_chunksizes(),
+            "contiguous",
+        )
+        self.assertIsNone(
+            f.dimension_coordinate("longitude").nc_hdf5_chunksizes()
+        )
+
+        f.nc_clear_hdf5_chunksizes(constructs={})
+        self.assertIsNone(
+            f.dimension_coordinate("latitude").nc_hdf5_chunksizes()
+        )
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
