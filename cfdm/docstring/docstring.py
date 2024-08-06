@@ -405,14 +405,15 @@ _docstring_substitution_definitions = {
                   to the nearest integer, and a string represents a
                   quantity of byte units. "Square-like" chunk shapes
                   are preferred, maximising the amount of chunks that
-                  are completely filled with data values. For instance
-                  a chunksize of 1024 bytes may be specified with any
-                  of ``1024``, ``1024.9``, ``'1024'``, ``'1024.9'``,
-                  ``'1024 B'``, ``'1 KiB'``, ``'0.0009765625 MiB'``,
-                  etc. Recognised byte units are (case insensitive):
-                  ``B``, ``KiB``, ``MiB``, ``GiB``, ``TiB``, ``PiB``,
-                  ``KB``, ``MB``, ``GB``, ``TB``, and ``PB``. Spaces
-                  in strings are optional.
+                  are completely filled with data values (see the
+                  *hdf5_chunks* parameter of `{{package}}.write` for
+                  details). For instance a chunksize of 1024 bytes may
+                  be specified with any of ``1024``, ``1024.9``,
+                  ``'1024'``, ``'1024.9'``, ``'1024 B'``, ``'1 KiB'``,
+                  ``'0.0009765625 MiB'``, etc. Recognised byte units
+                  are (case insensitive): ``B``, ``KiB``, ``MiB``,
+                  ``GiB``, ``TiB``, ``PiB``, ``KB``, ``MB``, ``GB``,
+                  ``TB``, and ``PB``. Spaces in strings are optional.
 
                 * sequence: The maximum number of array elements in a
                   chunk along each data axis. Values are automatically
@@ -432,7 +433,7 @@ _docstring_substitution_definitions = {
                   full axis size; and floating point values are round
                   down to the nearest integer. The chunk size for an
                   unspecified axis defaults to an existing chunk size
-                  for that axis, if there is one, or the axis
+                  for that axis, if there is one, or else the axis
                   size. This chunking strategy may get automatically
                   modified by methods that change the data shape (such
                   as `insert_dimension`).""",
@@ -461,13 +462,14 @@ _docstring_substitution_definitions = {
                   chunks. A string represents a quantity of byte
                   units. "Square-like" chunk shapes are preferred,
                   maximising the amount of chunks that are completely
-                  filled with data values. For instance a chunksize of
-                  1024 bytes may be specified with any of ``1024``,
-                  ``'1024'``, ``'1024 B'``, ``'1 KiB'``,
-                  ``'0.0009765625 MiB'``, etc. Recognised byte units
-                  are (case insensitive): ``B``, ``KiB``, ``MiB``,
-                  ``GiB``, ``TiB``, ``PiB``, ``KB``, ``MB``, ``GB``,
-                  ``TB``, and ``PB``.
+                  filled with data values (see the *hdf5_chunks*
+                  parameter of `{{package}}.write` for details). For
+                  instance a chunksize of 1024 bytes may be specified
+                  with any of ``1024``, ``'1024'``, ``'1024 B'``, ``'1
+                  KiB'``, ``'0.0009765625 MiB'``, etc. Recognised byte
+                  units are (case insensitive): ``B``, ``KiB``,
+                  ``MiB``, ``GiB``, ``TiB``, ``PiB``, ``KB``, ``MB``,
+                  ``GB``, ``TB``, and ``PB``.
 
                 * `tuple` of `int`: The maximum number of array
                   elements in a chunk along each data axis. This
@@ -552,7 +554,7 @@ _docstring_substitution_definitions = {
                   'https://s3.fr-par.scw.cloud', 'client_kwargs':
                   {'region_name': 'fr-par'}}``""",
     # ----------------------------------------------------------------
-    # Method description susbstitutions (4 levels of indentataion)
+    # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------
     # Returns constructs
     "{{Returns constructs}}": """

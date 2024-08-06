@@ -2521,7 +2521,6 @@ class NetCDFHDF5(NetCDF):
 
         """
         chunksizes = self._get_component("netcdf").get("hdf5_chunksizes")
-
         if todict:
             if not isinstance(chunksizes, tuple):
                 raise ValueError(
@@ -2554,20 +2553,13 @@ class NetCDFHDF5(NetCDF):
         >>> d.shape
         (1, 96, 73)
         >>> d.nc_set_hdf5_chunksizes([1, 35, 73])
-        >>> d.nc_hdf5_chunksizes()
-        (1, 35, 73)
         >>> d.nc_clear_hdf5_chunksizes()
         (1, 35, 73)
-        >>> d.nc_hdf5_chunksizes()
-        None
-        >>> d.nc_set_hdf5_chunksizes('contiguous')
-        >>> d.nc_hdf5_chunksizes()
-        'contiguous'
         >>> d.nc_set_hdf5_chunksizes('1 KiB')
-        >>> d.nc_hdf5_chunksizes()
+        >>> d.nc_clear_hdf5_chunksizes()
         1024
         >>> d.nc_set_hdf5_chunksizes(None)
-        >>> d.nc_hdf5_chunksizes()
+        >>> print(d.nc_clear_hdf5_chunksizes())
         None
 
         """
@@ -2658,22 +2650,24 @@ class NetCDFHDF5(NetCDF):
 
                 if len(chunksizes) != len(shape):
                     raise ValueError(
-                        "When chunksizes is a sequence of integers "
-                        f"{chunksizes!r} then it must have the same length "
-                        f"as the number of data dimensions ({len(shape)})"
+                        f"When chunksizes is a sequence {chunksizes!r} then "
+                        "it must have the same length as the number of "
+                        f"data dimensions ({len(shape)})"
                     )
 
                 c = []
                 for n, (i, j) in enumerate(zip(chunksizes, shape)):
                     if i is None or i == -1 or i > j:
+                        # Set the chunk size to the dimension size
                         i = j
-                    elif i <= 0:
+                    elif i > 0:
+                        # Make sure the chunk size is an integer
+                        i = int(i)
+                    else:
                         raise ValueError(
                             f"Chunksize for dimension position {n} must be "
                             f"None, -1, or a positive number. Got {i!r}"
                         )
-                    else:
-                        i = int(i)
 
                     c.append(i)
 

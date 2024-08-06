@@ -2517,12 +2517,12 @@ class Field(
                   array. See `domain_axis` for details.
 
             constructs: `dict` or `bool`, optional
-                Also apply the field construct's data HDF5 chunking
-                strategy to the applicable axes of selected metadata
-                constructs. The chunking strategies of unselected
-                metadata constructs are unchanged.
+                Also apply the HDF5 chunking strategy of field
+                construct data to the applicable axes of selected
+                metadata constructs. The chunking strategies of
+                unselected metadata constructs are unchanged.
 
-                If set to a `dict` then the selected metadata
+                If *constructs* is a `dict` then the selected metadata
                 constructs are those that would be returned by
                 ``f.constructs.filter(**constructs,
                 filter_by_data=True)``. Note that an empty dictionary
@@ -2537,7 +2537,7 @@ class Field(
 
             ignore: `bool`, optional
                 If True and *chunksizes* is a `dict` then ignore any
-                dictionary keys that do not identifiy a unique axis of
+                dictionary keys that do not identify a unique axis of
                 the field construct's data. If False, the default,
                 then an exception will be raised when such keys are
                 encountered.
@@ -2663,10 +2663,10 @@ class Field(
         elif constructs and not (
             chunksizes is None or isinstance(chunksizes, (int, str))
         ):
-            # 'chunksizes' is not None, an integer, nor a string; so
-            # it must be a sequence of integers => Create a dictionary
-            # keyed by domain axis identifiers for use with the
-            # metadata consturcts.
+            # 'chunksizes' is not None, not an integer, nor a string;
+            # so it must be a sequence => Create a dictionary keyed by
+            # domain axis identifiers for use with the metadata
+            # constructs.
             chunksizes_keys = {
                 data_axes[n]: value for n, value in enumerate(chunksizes)
             }

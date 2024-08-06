@@ -537,9 +537,19 @@ def write(
 
             If any data being written already stores its own chunking
             stragey (i.e. its `nc_hdf5_chunksizes` method returns
-            something other than `None`)  then, for that data alone, it
+            something other than `None`) then, for that data alone, it
             is used in preference to the strategy defined by the
             *hdf5_chunks* parameter.
+
+            .. note:: By default, a data array returned by `cfdm.read`
+                      stores its HDF5 chunking strategy from the file
+                      being read. When this happens, that same HDF5
+                      chunking strategy will be used when the data is
+                      written to an output netCDF4 file (unless the
+                      strategy was modified or removed prior to
+                      writing). To prevent the HDF5 chunking strategy
+                      from the original file being stored, see the
+                      *store_hdf5_chunks* parameter to `cfdm.read`.
 
             Ignored for netCDF3 output formats, for which all data is
             always written out contiguously.
@@ -565,22 +575,13 @@ def write(
             By default, *hdf5_chunks* is ``'4 MiB'`` (i.e. 4194304
             bytes).
 
-            .. note:: Any data array returned by `cfdm.read` stores,
-                      by default, the HDF5 chunking strategy from the
-                      file being read. When this happens, that same
-                      HDF5 chunking strategy will be used when the
-                      data is written to the output netCDF4 file
-                      (unless the strategy was modified prior to
-                      writing). To change this behaviour, see the
-                      *store_hdf5_chunks* parameter to `cfdm.read`.
-
             When the HDF5 chunk size is defined by a number of bytes
             (taken either the *hdf5_chunks* parameter, or as stored by
             the data itself), "square-like" HDF5 chunk shapes are
             preferred that maximise the amount of chunks that are
             completely filled with data values. For example, with
             *hdf_chunks* of ``'4 MiB'``, a data array of 64-bit floats
-            with shape ``(400, 300, 60)`` will be written with 20 HDF5
+            with shape (400, 300, 60) will be written with 20 HDF5
             chunks, each of which contains 3.9592 MiB: the first axis
             is split across 5 chunks containing 93, 93, 93, 93, and 28
             elements; the second axis across 4 chunks containing 93,

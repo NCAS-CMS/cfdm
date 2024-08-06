@@ -330,15 +330,18 @@ def read(
         store_hdf5_chunks: `bool`, optional
             If True (the default) then store the HDF5 chunking
             strategy for each returned data array. The strategy is
-            accessible via a `Data` instances's `~Data.nc_hdf5_chunksizes`
-            method. When the HDF5 chunking strategy is stored, it will
-            be used when the data is written to a new netCDF4 file
-            (unless the strategy was modified prior to writing).
+            accessible via a `Data` instance's
+            `~Data.nc_hdf5_chunksizes` method. When the HDF5 chunking
+            strategy is stored, it will be used when the data is
+            written to a new netCDF4 file with `cfdm.write` (unless
+            the strategy was modified prior to writing).
 
             If False, or if the file being read is not in netCDF4
             format, then no HDF5 chunking strategy is stored.
             (i.e. `~Data.nc_hdf5_chunksizes` method will return `None`
-            for all `Data` objects).
+            for all `Data` objects). In this case, when the data is
+            written to a new netCDF4 file, the HDF5 chunking strategy
+            will be determined by `cfdm.write`.
 
             See the *hdf5_chunks* parameter to `cfdm.write` for
             details on how the HDF5 chunking strategy is determined at
