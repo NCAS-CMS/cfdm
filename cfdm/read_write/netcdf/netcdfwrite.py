@@ -5348,21 +5348,21 @@ class NetCDFWrite(IOWrite):
         # Still here?
         hdf5_chunks = g["hdf5_chunks"]
         if isinstance(chunksizes, int):
-            # chunksizes is an int
+            # Reset hdf_chunks to the integer given by 'data'
             hdf5_chunks = chunksizes
         elif chunksizes is not None:
             # Chunked as defined by the tuple of int given by 'data'
             return False, chunksizes
 
         # Still here? Then work out the chunking strategy from the
-        # hdf5_chunks parameter
+        # hdf5_chunnks
         if hdf5_chunks == "contiguous":
-            # Contiguous
+            # Contiguous as defined by 'hdf_chunks'
             return True, None
 
-        #  Still here? Then work out the chunks from the size given by
-        #  the hdf5_chunks parameter (e.g. "4MiB") and the data shape
-        #  (e.g. (12, 73, 96)).
+        # Still here? Then work out the chunks from both the
+        # size-in-bytes given by hdf5_chunks (e.g. 1024, or '1 KiB'),
+        # and the data shape (e.g. (12, 73, 96)).
         compressed = bool(
             set(ncdimensions).intersection(g["sample_ncdim"].values())
         )
@@ -5377,14 +5377,11 @@ class NetCDFWrite(IOWrite):
         dtype = g["datatype"].get(d_dtype, d_dtype)
 
         with dask_config.set({"array.chunk-size": hdf5_chunks}):
-            chunksizes = normalize_chunks(
-                ("auto",) * d.ndim, shape=d.shape, dtype=dtype
-            )
+            chunksizes = normalize_chunks("auto", shape=d.shape, dtype=dtype)
 
-        # 'chunksizes' currently might look something
-        # like ((96,96,96,50), (250,250,4)). However,
-        # we need only one number per dimension, so we
-        # choose the largest: [96,250].
+        # 'chunksizes' currently might look something like ((96, 96,
+        # 96, 50), (250, 250, 4)). However, we only want one number
+        # per dimension, so we choose the largest: [96, 250].
         chunksizes = [max(c) for c in chunksizes]
 
         return False, chunksizes

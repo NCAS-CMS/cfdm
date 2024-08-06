@@ -407,7 +407,7 @@ _docstring_substitution_definitions = {
                   quantity of byte units. "Square-like" chunk shapes
                   are preferred, maximising the amount of chunks that
                   are completely filled with data values (see the
-                  *hdf5_chunks* parameter of `{{package}}.write` for
+                  `{{package}}.write` *hdf5_chunks* parameter for
                   details). For instance a chunksize of 1024 bytes may
                   be specified with any of ``1024``, ``1024.9``,
                   ``'1024'``, ``'1024.9'``, ``'1024 B'``, ``'1 KiB'``,
@@ -463,14 +463,14 @@ _docstring_substitution_definitions = {
                   chunks. A string represents a quantity of byte
                   units. "Square-like" chunk shapes are preferred,
                   maximising the amount of chunks that are completely
-                  filled with data values (see the *hdf5_chunks*
-                  parameter of `{{package}}.write` for details). For
-                  instance a chunksize of 1024 bytes may be specified
-                  with any of ``1024``, ``'1024'``, ``'1024 B'``, ``'1
-                  KiB'``, ``'0.0009765625 MiB'``, etc. Recognised byte
-                  units are (case insensitive): ``B``, ``KiB``,
-                  ``MiB``, ``GiB``, ``TiB``, ``PiB``, ``KB``, ``MB``,
-                  ``GB``, ``TB``, and ``PB``.
+                  filled with data values (see the `{{package}}.write`
+                  *hdf5_chunks* parameter for details). For instance a
+                  chunksize of 1024 bytes may be specified with any of
+                  ``1024``, ``'1024'``, ``'1024 B'``, ``'1 KiB'``,
+                  ``'0.0009765625 MiB'``, etc. Recognised byte units
+                  are (case insensitive): ``B``, ``KiB``, ``MiB``,
+                  ``GiB``, ``TiB``, ``PiB``, ``KB``, ``MB``, ``GB``,
+                  ``TB``, and ``PB``.
 
                 * `tuple` of `int`: The maximum number of array
                   elements in a chunk along each data axis. This

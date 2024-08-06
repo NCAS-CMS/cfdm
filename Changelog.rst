@@ -6,7 +6,7 @@ Version NEXTVERSION
 * Upgrades to allow cfdm to work with Python 3.12
   (https://github.com/NCAS-CMS/cfdm/issues/302)
 * Extension to the HDF5 chunks API
-  (https://github.com/NCAS-CMS/cfdm/issues/???)
+  (https://github.com/NCAS-CMS/cfdm/issues/309)
 * New function `cfdm.netcdf_flattener` that replaces the import of
   `netcdf_flattener` (https://github.com/NCAS-CMS/cfdm/issues/286)
 * New function `cfdm.netcdf_indexer` that applies netCDF masking and

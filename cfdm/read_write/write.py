@@ -27,7 +27,7 @@ def write(
     group=True,
     coordinates=False,
     omit_data=None,
-    hdf5_chunks="4MiB",
+    hdf5_chunks="4 MiB",
     _implementation=_implementation,
 ):
     """Write field and domain constructs to a netCDF file.

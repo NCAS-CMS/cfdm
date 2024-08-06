@@ -1041,19 +1041,26 @@ class read_writeTest(unittest.TestCase):
 
         # Check that user-set chunks are not overridden
         for chunking in ([5, 4, 3], "contiguous"):
-            f.data.nc_set_hdf5_chunksizes(chunking)
+            f.nc_set_hdf5_chunksizes(chunking)
             for hdf5_chunks in ("4MiB", "contiguous"):
                 cfdm.write(f, tmpfile, hdf5_chunks=hdf5_chunks)
                 nc = netCDF4.Dataset(tmpfile, "r")
                 self.assertEqual(nc.variables["data"].chunking(), chunking)
                 nc.close()
 
-        f.data.nc_set_hdf5_chunksizes("120 B")
-        for hdf5_chunks in ("4MiB", "contiguous"):
+        f.nc_set_hdf5_chunksizes("120 B")
+        for hdf5_chunks in ("contiguous", "4MiB"):
             cfdm.write(f, tmpfile, hdf5_chunks=hdf5_chunks)
             nc = netCDF4.Dataset(tmpfile, "r")
             self.assertEqual(nc.variables["data"].chunking(), [2, 2, 2])
             nc.close()
+
+        # store_hdf5_chunks
+        f = cfdm.read(tmpfile)[0]
+        self.assertEqual(f.nc_hdf5_chunksizes(), (2, 2, 2))
+
+        f = cfdm.read(tmpfile, store_hdf5_chunks=False)[0]
+        self.assertIsNone(f.nc_hdf5_chunksizes())
 
 
 if __name__ == "__main__":
