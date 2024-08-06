@@ -856,7 +856,7 @@ class DataTest(unittest.TestCase):
             self.assertEqual(d.nc_clear_hdf5_chunksizes(), 1024)
 
         # Bad chunk sizes
-        for chunksizes in ([2], [-1, 3, 4], [-1, 3, 999], "bad"):
+        for chunksizes in ([2], [-99, 3, 4], "bad"):
             with self.assertRaises(ValueError):
                 d.nc_set_hdf5_chunksizes(chunksizes)
 
@@ -869,8 +869,8 @@ class DataTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 d.nc_hdf5_chunksizes(todict=True)
 
-        # clip
-        d.nc_set_hdf5_chunksizes([999, 999, 999], clip=True)
+        # full axis size
+        d.nc_set_hdf5_chunksizes([-1, None, 999])
         self.assertEqual(d.nc_hdf5_chunksizes(), d.shape)
 
     def test_Data__getitem__(self):

@@ -2573,7 +2573,7 @@ class NetCDFHDF5(NetCDF):
         """
         return self._get_component("netcdf").pop("hdf5_chunksizes", None)
 
-    def nc_set_hdf5_chunksizes(self, chunksizes, clip=False):
+    def nc_set_hdf5_chunksizes(self, chunksizes):
         """Set the HDF5 chunking strategy for the data.
 
         .. versionadded:: (cfdm) 1.7.2
@@ -2586,10 +2586,6 @@ class NetCDFHDF5(NetCDF):
             {{hdf5 chunksizes}}
                   Each dictionary key is an integer that specifies an
                   axis by its position in the data array.
-
-            {{hdf5 clip: `bool`, optional}}
-
-                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -2615,15 +2611,15 @@ class NetCDFHDF5(NetCDF):
         >>> d.nc_set_hdf5_chunksizes(None)
         >>> d.nc_hdf5_chunksizes()
         None
-        >>> d.nc_set_hdf5_chunksizes([12, 32, 144], clip=True)
+        >>> d.nc_set_hdf5_chunksizes([9999, -1, None])
         >>> d.nc_hdf5_chunksizes()
-        (1, 32, 73)
+        (1, 96, 73)
         >>> d.nc_clear_hdf5_chunksizes()
-        (1, 35, 73)
+        (1, 96, 73)
         >>> d.nc_set_hdf5_chunksizes({1: 24})
         >>> d.nc_hdf5_chunksizes()
         (1, 24, 73)
-        >>> d.nc_hdf5_chunksizes({1: 1, 2: 50})
+        >>> d.nc_hdf5_chunksizes({0: None, 2: 50})
         (1, 24, 50)
 
         """
@@ -2631,18 +2627,19 @@ class NetCDFHDF5(NetCDF):
             self.nc_clear_hdf5_chunksizes()
             return
 
+        shape = self.shape
+
         # Convert a dictionary to a sequence.
         if isinstance(chunksizes, dict):
             org_chunksizes = self.nc_hdf5_chunksizes()
             if not isinstance(org_chunksizes, tuple):
-                org_chunksizes = self.shape
+                org_chunksizes = shape
 
             chunksizes = [
                 chunksizes.get(n, j) for n, j in enumerate(org_chunksizes)
             ]
 
         if chunksizes != "contiguous":
-            shape = self.shape
             try:
                 chunksizes = parse_bytes(chunksizes)
             except ValueError:
@@ -2668,21 +2665,15 @@ class NetCDFHDF5(NetCDF):
 
                 c = []
                 for n, (i, j) in enumerate(zip(chunksizes, shape)):
-                    if i > j:
-                        if not clip:
-                            raise ValueError(
-                                f"The chunksize ({i}) for dimension {n} must "
-                                f"be no greater than the dimenson size ({j}), "
-                                "unless clip=True"
-                            )
-
-                        # Clip chunk size to the dimension size
+                    if i is None or i == -1 or i > j:
                         i = j
                     elif i <= 0:
                         raise ValueError(
-                            f"The chunksize ({i}) for dimension {n} must "
-                            "be a positive integer"
+                            f"Chunksize for dimension position {n} must be "
+                            f"None, -1, or a positive number. Got {i!r}"
                         )
+                    else:
+                        i = int(i)
 
                     c.append(i)
 

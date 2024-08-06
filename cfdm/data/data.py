@@ -364,7 +364,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         # Update the HDF5 chunking strategy
         chunksizes = out.nc_hdf5_chunksizes()
         if isinstance(chunksizes, tuple) and out.shape != self.shape:
-            out.nc_set_hdf5_chunksizes(chunksizes, clip=True)
+            out.nc_set_hdf5_chunksizes(chunksizes)
 
         return out
 
@@ -2285,7 +2285,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                     size for i, size in enumerate(chunksizes) if i not in axes
                 ]
 
-            out.nc_set_hdf5_chunksizes(chunksizes, clip=True)
+            out.nc_set_hdf5_chunksizes(chunksizes)
 
         return out
 
@@ -2367,7 +2367,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                     size for i, size in enumerate(chunksizes) if i not in axes
                 ]
 
-            out.nc_set_hdf5_chunksizes(chunksizes, clip=True)
+            out.nc_set_hdf5_chunksizes(chunksizes)
 
         return out
 
@@ -2536,7 +2536,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                     size for i, size in enumerate(chunksizes) if i not in axes
                 ]
 
-            d.nc_set_hdf5_chunksizes(chunksizes, clip=True)
+            d.nc_set_hdf5_chunksizes(chunksizes)
 
         return d
 

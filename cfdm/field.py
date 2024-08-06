@@ -77,6 +77,8 @@ class Field(
 
     {{netCDF geometry group}}
 
+    {{netCDF HDF5 chunks}}
+
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
@@ -2452,11 +2454,11 @@ class Field(
         :Parameters:
 
             todict: `bool`, optional
-                If True then the HDF chunking strategy must comprise
+                If True then the HDF5 chunking strategy must comprise
                 the maximum number of array elements in a chunk along
                 each data axis, and these HDF chunk sizes are returned
                 in a `dict` keyed by domain axis identities. If False
-                ( the default) then the HDF chunking strategy is
+                (the default) then the HDF chunking strategy is
                 returned with any of the return options other than a
                 `dict`, as described below.
 
@@ -2494,7 +2496,6 @@ class Field(
     def nc_set_hdf5_chunksizes(
         self,
         chunksizes,
-        clip=False,
         ignore=False,
         constructs=False,
         **filter_kwargs,
@@ -2514,8 +2515,6 @@ class Field(
                   **filter_kwargs)``, and it is allowed to specify a
                   domain axis that is not spanned by the data
                   array. See `domain_axis` for details.
-
-            {{hdf5 clip: `bool`, optional}}
 
             constructs: `dict` or `bool`, optional
                 Also apply the field construct's data HDF5 chunking
@@ -2592,12 +2591,12 @@ class Field(
         >>> print(f.nc_hdf5_chunksizes())
         None
 
-        >>> f.nc_set_hdf5_chunksizes({'latitude': 999}, clip=True)
-        >>> print(f.nc_hdf5_chunksizes())
+        >>> f.nc_set_hdf5_chunksizes([-1, None])
+        >>> f.nc_hdf5_chunksizes()
         (5, 8)
-        >>> f.nc_set_hdf5_chunksizes([999, 3], clip=True)
-        >>> print(f.nc_hdf5_chunksizes())
-        (5, 3)
+        >>> f.nc_set_hdf5_chunksizes(({'latitude': 999})
+        >>> f.nc_hdf5_chunksizes()
+        (5, 8)
 
         >>> f.nc_set_hdf5_chunksizes({'latitude': 4, 'time': 1})
         >>> f.nc_hdf5_chunksizes()
@@ -2616,23 +2615,15 @@ class Field(
         (4,)
         >>> f.dimension_coordinate('longitude').nc_hdf5_chunksizes()
         (8,)
-
-        >>> f.nc_set_hdf5_chunksizes('contiguous', constructs={})
-        >>> f.nc_set_hdf5_chunksizes(1024, constructs={'filter_by_axis': ('longitude',)})
-        >>> f.dimension_coordinate('time').nc_hdf5_chunksizes()
+        >>> f.nc_set_hdf5_chunksizes('contiguous', constructs={'filter_by_axis': ('longitude',)})
+        >>> f.nc_hdf5_chunksizes()
         'contiguous'
-        >>> f.dimension_coordinate('latitude').nc_hdf5_chunksizes()
-        'contiguous'
-        >>> f.dimension_coordinate('longitude').nc_hdf5_chunksizes()
-        1024
-
-        >>> f.nc_set_hdf5_chunksizes({'latitude': 4, 'time': 1}, constructs=True)
-        >>> f.dimension_coordinate('time').nc_hdf5_chunksizes()
+         >>> f.dimension_coordinate('time').nc_hdf5_chunksizes()
         (1,)
         >>> f.dimension_coordinate('latitude').nc_hdf5_chunksizes()
         (4,)
         >>> f.dimension_coordinate('longitude').nc_hdf5_chunksizes()
-        (8,)
+        'contiguous'
 
         >>> f.nc_set_hdf5_chunksizes({'height': 19, 'latitude': 3})
         Traceback
@@ -2680,7 +2671,7 @@ class Field(
                 data_axes[n]: value for n, value in enumerate(chunksizes)
             }
 
-        self.data.nc_set_hdf5_chunksizes(chunksizes, clip=clip)
+        self.data.nc_set_hdf5_chunksizes(chunksizes)
 
         # Set HDF5 chunksizes on the metadata
         if isinstance(constructs, dict):
@@ -2711,7 +2702,7 @@ class Field(
                 else:
                     c = chunksizes
 
-                construct.data.nc_set_hdf5_chunksizes(c, clip=clip)
+                construct.data.nc_set_hdf5_chunksizes(c)
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):

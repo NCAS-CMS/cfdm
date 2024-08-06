@@ -1169,7 +1169,7 @@ class CFDMImplementation(Implementation):
         for attr, value in attributes.items():
             field.nc_set_group_attribute(attr, value)
 
-    def nc_set_hdf5_chunksizes(self, data, chunksizes, clip=False):
+    def nc_set_hdf5_chunksizes(self, data, chunksizes):
         """Set the HDF5 chunking strategy for the data.
 
         ..versionadded:: (cfdm) NEXTVERSION
@@ -1178,23 +1178,16 @@ class CFDMImplementation(Implementation):
 
             data: `Data`
 
-            chunksizes: `int` or `str` or `None` or `dict` or sequence of `int`
+            chunksizes: `int` or `str` or `None` or `dict` or a sequence
                 Set the chunking strategy when writing to a netCDF4
                 file.
-
-            clip: `bool`, optional
-                If True, and *chunksizes* is a `dict` or a sequence of
-                `int`, then clip (i.e. limit) each integer value to be
-                no greater than its corresponding axis size.
-
-                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
             `None`
 
         """
-        return data.nc_set_hdf5_chunksizes(chunksizes, clip=clip)
+        return data.nc_set_hdf5_chunksizes(chunksizes)
 
     def equal_components(self, construct0, construct1, ignore_type=False):
         """Whether or not two field construct components are equal.

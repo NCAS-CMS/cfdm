@@ -35,6 +35,8 @@ class Count(
     `nc_get_sample_dimension`, `nc_del_sample_dimension` and
     `nc_has_sample_dimension` methods.
 
+    {{netCDF HDF5 chunks}}
+
     .. versionadded:: (cfdm) 1.7.0
 
     """

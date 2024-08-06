@@ -1407,7 +1407,7 @@ class PropertiesDataBounds(PropertiesData):
                 interior_ring.nc_clear_hdf5_chunksizes()
 
     def nc_set_hdf5_chunksizes(
-        self, chunksizes, clip=False, bounds=True, interior_ring=True
+        self, chunksizes, bounds=True, interior_ring=True
     ):
         """Set the HDF5 chunking strategy.
 
@@ -1420,8 +1420,6 @@ class PropertiesDataBounds(PropertiesData):
             {{hdf5 chunksizes}}
                   Each dictionary key is an integer that specifies an
                   axis by its position in the data array.
-
-            {{hdf5 clip: `bool`, optional}}
 
             bounds: `bool`, optional
                 If True, the default, then apply the HDF5 chunking
@@ -1441,7 +1439,7 @@ class PropertiesDataBounds(PropertiesData):
             `None`
 
         """
-        super().nc_set_hdf5_chunksizes(chunksizes, clip=clip)
+        super().nc_set_hdf5_chunksizes(chunksizes)
 
         c = self.nc_hdf5_chunksizes()
         if isinstance(c, tuple):
@@ -1451,13 +1449,13 @@ class PropertiesDataBounds(PropertiesData):
         if bounds:
             bounds = self.get_bounds(None)
             if bounds is not None:
-                bounds.nc_set_hdf5_chunksizes(c, clip=clip)
+                bounds.nc_set_hdf5_chunksizes(c)
 
         # Set the  interior_ring HDF5 chunks
         if interior_ring:
             interior_ring = self.get_interior_ring(None)
             if interior_ring is not None:
-                interior_ring.nc_set_hdf5_chunksizes(c, clip=clip)
+                interior_ring.nc_set_hdf5_chunksizes(c)
 
     def set_node_count(self, node_count, copy=True):
         """Set the node count variable for geometry bounds.

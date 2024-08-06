@@ -947,10 +947,11 @@ class FieldTest(unittest.TestCase):
                 f.nc_hdf5_chunksizes(todict=True)
 
         # ignore keyword
-        f.nc_set_hdf5_chunksizes({"latitude": 4, "BAD": 99}, ignore=True)
+        f.nc_clear_hdf5_chunksizes()
+        f.nc_set_hdf5_chunksizes({"latitude": 4, "BAD_axis": 99}, ignore=True)
         self.assertEqual(f.nc_hdf5_chunksizes(), (4, 8))
         with self.assertRaises(ValueError):
-            f.nc_set_hdf5_chunksizes({"latitude": 4, "BAD": 99})
+            f.nc_set_hdf5_chunksizes({"latitude": 4, "BAD_axis": 99})
 
         # filter_kwargs keyword
         f.nc_set_hdf5_chunksizes({"latitude": 4}, filter_by_naxes=(1,))
@@ -971,19 +972,19 @@ class FieldTest(unittest.TestCase):
             f.dimension_coordinate("longitude").nc_hdf5_chunksizes(), (8,)
         )
 
-        f.nc_set_hdf5_chunksizes("contiguous", constructs={})
         f.nc_set_hdf5_chunksizes(
-            1024, constructs={"filter_by_axis": ("longitude",)}
+            "contiguous", constructs={"filter_by_axis": ("longitude",)}
+        )
+        self.assertEqual(f.nc_hdf5_chunksizes(), "contiguous")
+        self.assertEqual(
+            f.dimension_coordinate("time").nc_hdf5_chunksizes(), (1,)
         )
         self.assertEqual(
-            f.dimension_coordinate("time").nc_hdf5_chunksizes(), "contiguous"
+            f.dimension_coordinate("latitude").nc_hdf5_chunksizes(), (4,)
         )
         self.assertEqual(
-            f.dimension_coordinate("latitude").nc_hdf5_chunksizes(),
+            f.dimension_coordinate("longitude").nc_hdf5_chunksizes(),
             "contiguous",
-        )
-        self.assertEqual(
-            f.dimension_coordinate("longitude").nc_hdf5_chunksizes(), 1024
         )
 
 

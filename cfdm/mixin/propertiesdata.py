@@ -726,7 +726,7 @@ class PropertiesData(Properties):
 
         return v
 
-    def nc_hdf5_chunksizes(self):
+    def nc_hdf5_chunksizes(self, todict=False):
         """Get the HDF5 chunking strategy for the data.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -745,7 +745,7 @@ class PropertiesData(Properties):
         """
         data = self.get_data(None, _units=False, _fill_value=False)
         if data is not None:
-            return data.nc_hdf5_chunksizes()
+            return data.nc_hdf5_chunksizes(todict=todict)
 
     def nc_clear_hdf5_chunksizes(self):
         """Clear the HDF5 chunking strategy for the data.
@@ -766,7 +766,7 @@ class PropertiesData(Properties):
         if data is not None:
             return data.nc_clear_hdf5_chunksizes()
 
-    def nc_set_hdf5_chunksizes(self, chunksizes, clip=False):
+    def nc_set_hdf5_chunksizes(self, chunksizes):
         """Set the HDF5 chunking strategy.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -780,8 +780,6 @@ class PropertiesData(Properties):
                   Each dictionary key is an integer that specifies an
                   axis by its position in the data array.
 
-            {{hdf5 clip: `bool`, optional}}
-
         :Returns:
 
             `None`
@@ -789,7 +787,7 @@ class PropertiesData(Properties):
         """
         data = self.get_data(None, _units=False, _fill_value=False)
         if data is not None:
-            data.nc_set_hdf5_chunksizes(chunksizes, clip=clip)
+            data.nc_set_hdf5_chunksizes(chunksizes)
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
