@@ -111,6 +111,8 @@ class DomainTopology(
     be accessed with the `nc_set_variable`, `nc_get_variable`,
     `nc_del_variable`, and `nc_has_variable` methods.
 
+    {{netCDF HDF5 chunks}}
+
     .. versionadded:: (cfdm) 1.11.0.0
 
     """

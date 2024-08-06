@@ -38,6 +38,8 @@ class DimensionCoordinate(
 
     {{netCDF variable}}
 
+    {{netCDF HDF5 chunks}}
+
     .. versionadded:: (cfdm) 1.7.0
 
     """

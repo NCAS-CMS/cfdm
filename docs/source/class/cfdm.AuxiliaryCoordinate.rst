@@ -218,6 +218,20 @@ Groups
    ~cfdm.AuxiliaryCoordinate.nc_node_coordinate_variable_groups
    ~cfdm.AuxiliaryCoordinate.nc_set_node_coordinate_variable_groups
 
+HDF5 chunks
+^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.AuxiliaryCoordinate.nc_hdf5_chunksizes
+   ~cfdm.AuxiliaryCoordinate.nc_set_hdf5_chunksizes
+   ~cfdm.AuxiliaryCoordinate.nc_clear_hdf5_chunksizes
+
 Special
 -------
 

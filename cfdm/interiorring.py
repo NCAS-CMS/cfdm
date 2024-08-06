@@ -28,6 +28,8 @@ class InteriorRing(
 
     {{netCDF variable}}
 
+    {{netCDF HDF5 chunks}}
+
     The name of the netCDF dimension spanned by the interior ring
     variable's data (which does not correspond to a domain axis
     construct) may be accessed with the `nc_set_dimension`,

@@ -196,6 +196,20 @@ Groups
    ~cfdm.DomainAncillary.nc_clear_variable_groups
    ~cfdm.DomainAncillary.nc_set_variable_groups
 
+HDF5 chunks
+^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DomainAncillary.nc_hdf5_chunksizes
+   ~cfdm.DomainAncillary.nc_set_hdf5_chunksizes
+   ~cfdm.DomainAncillary.nc_clear_hdf5_chunksizes
+
 Special
 -------
 

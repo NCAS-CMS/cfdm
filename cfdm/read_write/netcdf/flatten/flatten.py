@@ -1,5 +1,7 @@
-"""Portions of this code were adapted from the `netcdf_flattener`
-library, which carries the following Apache 2.0 License:
+"""Create a flattened version of a grouped netCDF dataset.
+
+Portions of this code were adapted from the `netcdf_flattener`
+library, which carries the following Apache 2.0 Licence:
 
 Copyright (c) 2020 EUMETSAT
 

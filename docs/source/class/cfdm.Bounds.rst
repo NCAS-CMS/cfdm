@@ -133,6 +133,20 @@ Groups
    ~cfdm.Bounds.nc_clear_dimension_groups
    ~cfdm.Bounds.nc_set_dimension_groups
 
+HDF5 chunks
+^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Bounds.nc_hdf5_chunksizes
+   ~cfdm.Bounds.nc_set_hdf5_chunksizes
+   ~cfdm.Bounds.nc_clear_hdf5_chunksizes
+
 Special
 -------
 

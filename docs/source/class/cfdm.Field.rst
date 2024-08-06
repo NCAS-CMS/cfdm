@@ -257,6 +257,20 @@ Geometries
    ~cfdm.Field.nc_set_geometry_variable_groups
    ~cfdm.Field.nc_clear_geometry_variable_groups
 
+HDF5 chunks
+^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Field.nc_hdf5_chunksizes
+   ~cfdm.Field.nc_set_hdf5_chunksizes
+   ~cfdm.Field.nc_clear_hdf5_chunksizes
+
 Components
 ^^^^^^^^^^
 

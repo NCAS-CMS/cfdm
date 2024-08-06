@@ -38,6 +38,8 @@ class Bounds(
 
     {{netCDF variable group}}
 
+    {{netCDF HDF5 chunks}}
+
     .. versionadded:: (cfdm) 1.7.0
 
     """

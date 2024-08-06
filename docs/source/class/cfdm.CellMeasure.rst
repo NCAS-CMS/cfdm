@@ -143,6 +143,20 @@ Groups
    ~cfdm.CellMeasure.nc_clear_variable_groups
    ~cfdm.CellMeasure.nc_set_variable_groups
 
+HDF5 chunks
+^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.CellMeasure.nc_hdf5_chunksizes
+   ~cfdm.CellMeasure.nc_set_hdf5_chunksizes
+   ~cfdm.CellMeasure.nc_clear_hdf5_chunksizes
+
 Special
 -------
 

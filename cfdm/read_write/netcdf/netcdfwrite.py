@@ -5,6 +5,9 @@ import re
 
 import netCDF4
 import numpy as np
+from dask import config as dask_config
+from dask.array.core import normalize_chunks
+from dask.utils import parse_bytes
 from packaging.version import Version
 
 from ...decorators import _manage_log_level_via_verbosity
@@ -2699,15 +2702,12 @@ class NetCDFWrite(IOWrite):
         else:
             lsd = None
 
-        # Set HDF chunksizes
-        chunksizes = None
-        if data is not None:
-            chunksizes = self.implementation.nc_get_hdf5_chunksizes(data)
-
-        if chunksizes is not None:
-            logger.detail(
-                f"      HDF5 chunksizes: {chunksizes}"
-            )  # pragma: no cover
+        # Set the HDF5 chunk strategy
+        contiguous, chunksizes = self._chunking_parameters(data, ncdimensions)
+        logger.debug(
+            f"      HDF5 chunksizes: {chunksizes}\n"
+            f"      HDF5 contiguous: {contiguous}"
+        )  # pragma: no cover
 
         # ------------------------------------------------------------
         # Check that each dimension of the netCDF variable is in the
@@ -2740,6 +2740,7 @@ class NetCDFWrite(IOWrite):
             "datatype": datatype,
             "dimensions": ncdimensions_basename,
             "endian": g["endian"],
+            "contiguous": contiguous,
             "chunksizes": chunksizes,
             "least_significant_digit": lsd,
             "fill_value": fill_value,
@@ -4492,6 +4493,7 @@ class NetCDFWrite(IOWrite):
         group=True,
         coordinates=False,
         omit_data=None,
+        hdf5_chunks="4MiB",
     ):
         """Write field and domain constructs to a netCDF file.
 
@@ -4718,6 +4720,13 @@ class NetCDFWrite(IOWrite):
 
                 .. versionadded:: (cfdm) 1.10.0.1
 
+            hdf5_chunks: `str`, `int`, or `float`, optional
+                The HDF5 chunking strategy.
+
+                See `cfdm.write` for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
         :Returns:
 
             `None`
@@ -4829,6 +4838,8 @@ class NetCDFWrite(IOWrite):
             "post_dry_run": False,
             # Do not write the data of the named construct types.
             "omit_data": omit_data,
+            # HDF5 chunking stategy
+            "hdf5_chunks": hdf5_chunks,
         }
 
         if mode not in ("w", "a", "r+"):
@@ -4840,6 +4851,16 @@ class NetCDFWrite(IOWrite):
             mode = "a"
 
         self.write_vars["mode"] = mode
+
+        # Parse hdf5_chunks
+        if hdf5_chunks != "contiguous":
+            try:
+                self.write_vars["hdf5_chunks"] = parse_bytes(hdf5_chunks)
+            except (ValueError, AttributeError):
+                raise ValueError(
+                    "Invalid value for the 'hdf5_chunks' keyword: "
+                    f"{hdf5_chunks!r}."
+                )
 
         effective_mode = mode  # actual mode to use for the first IO iteration
         effective_fields = fields
@@ -5289,3 +5310,78 @@ class NetCDFWrite(IOWrite):
 
         """
         pass
+
+    def _chunking_parameters(self, data, ncdimensions):
+        """Set chunking parameters for `netCDF4.createVariable`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            data: `Data` or `None`
+                The data being written.
+
+            ncdimensions: `tuple`
+                The data netCDF dimensions.
+
+        :Returns:
+
+            2-tuple
+                The variable's chunking and shape.
+
+        """
+        if data is None:
+            return False, None
+
+        g = self.write_vars
+
+        # ------------------------------------------------------------
+        # HDF5 chunk strategy: Either use that provided on the data,
+        # or else work it out.
+        # ------------------------------------------------------------
+        # Get the chunking strategy defined by the data itself
+        chunksizes = self.implementation.nc_get_hdf5_chunksizes(data)
+        if chunksizes == "contiguous":
+            # Contiguous as defined by 'data'
+            return True, None
+
+        # Still here?
+        hdf5_chunks = g["hdf5_chunks"]
+        if isinstance(chunksizes, int):
+            # Reset hdf_chunks to the integer given by 'data'
+            hdf5_chunks = chunksizes
+        elif chunksizes is not None:
+            # Chunked as defined by the tuple of int given by 'data'
+            return False, chunksizes
+
+        # Still here? Then work out the chunking strategy from the
+        # hdf5_chunnks
+        if hdf5_chunks == "contiguous":
+            # Contiguous as defined by 'hdf_chunks'
+            return True, None
+
+        # Still here? Then work out the chunks from both the
+        # size-in-bytes given by hdf5_chunks (e.g. 1024, or '1 KiB'),
+        # and the data shape (e.g. (12, 73, 96)).
+        compressed = bool(
+            set(ncdimensions).intersection(g["sample_ncdim"].values())
+        )
+        if compressed:
+            # Base the HDF5 chunks on the compressed
+            # data that is going into the file
+            d = self.implementation.get_compressed_array(data)
+        else:
+            d = data
+
+        d_dtype = d.dtype
+        dtype = g["datatype"].get(d_dtype, d_dtype)
+
+        with dask_config.set({"array.chunk-size": hdf5_chunks}):
+            chunksizes = normalize_chunks("auto", shape=d.shape, dtype=dtype)
+
+        # 'chunksizes' currently might look something like ((96, 96,
+        # 96, 50), (250, 250, 4)). However, we only want one number
+        # per dimension, so we choose the largest: [96, 250].
+        chunksizes = [max(c) for c in chunksizes]
+
+        return False, chunksizes

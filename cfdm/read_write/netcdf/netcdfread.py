@@ -913,6 +913,7 @@ class NetCDFRead(IORead):
         storage_options=None,
         _file_systems=None,
         netcdf_backend=None,
+        store_hdf5_chunks=True,
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
 
@@ -974,6 +975,12 @@ class NetCDFRead(IORead):
 
             _file_systems: `dict`, optional
                 Provide any already-open S3 file systems.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            store_hdf_chunks: `bool`, optional
+                 Storing the HDF5 chunking strategy. See `cfdm.read`
+                 for details.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1097,6 +1104,10 @@ class NetCDFRead(IORead):
             "file_systems": {},
             # Cache of open s3fs.File objects
             "s3fs_File_objects": [],
+            # --------------------------------------------------------
+            # Whether or not to store HDF chunks
+            # --------------------------------------------------------
+            "store_hdf5_chunks": bool(store_hdf5_chunks),
         }
 
         g = self.read_vars
@@ -7475,9 +7486,6 @@ class NetCDFRead(IORead):
                 The name of the netCDF variable that contains the
                 data.
 
-                .. note:: Not currently used here, but must be
-                          available to subclasses.
-
             units: `str`, optional
                 The units of *array*. By default, or if `None`, it is
                 assumed that there are no units.
@@ -7502,6 +7510,16 @@ class NetCDFRead(IORead):
             copy=False,
             **kwargs,
         )
+
+        # Store the HDF5 chunking
+        if self.read_vars["store_hdf5_chunks"] and ncvar is not None:
+            chunks, shape = self._get_hdf5_chunks(ncvar)
+            if shape == data.shape:
+                # Only store the HDF chunking if 'data' has the same
+                # shape as its netCDF variable. This may not be the
+                # case for variables compressed by convention
+                # (e.g. some DSG variables).
+                self.implementation.nc_set_hdf5_chunksizes(data, chunks)
 
         return data
 
@@ -10307,3 +10325,51 @@ class NetCDFRead(IORead):
         g["file_system_storage_options"].setdefault(filename, storage_options)
 
         return storage_options
+
+    def _get_hdf5_chunks(self, ncvar):
+        """Return a netCDF variable's HDF5 chunks.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            ncvar: `str`
+                The netCDF variable name.
+
+        :Returns:
+
+            2-tuple:
+                The variable's chunking strategy (`None` for netCDF3,
+                ``'contiguous'`` or a sequence of `int`) and its
+                shape.
+
+        **Examples**
+
+        >>> n._get_hdf5_chunks('tas')
+        [1, 324, 432], (12, 324, 432)
+        >>> n._get_hdf5_chunks('pr')
+        'contiguous', (12, 324, 432)
+        >>> n._get_hdf5_chunks('ua')
+        None, (12, 324, 432)
+
+        """
+        nc = self.read_vars["variable_dataset"][ncvar]
+
+        # 'nc' is the flattened dataset, so replace an 'ncvar' string
+        # that contains groups (e.g. '/forecast/tas') with its
+        # flattened version (e.g. 'forecast__tas').
+        if ncvar.startswith("/"):
+            ncvar = ncvar[1:]
+            ncvar = ncvar.replace("/", flattener_separator)
+
+        var = nc[ncvar]
+        try:
+            # netCDF4
+            chunks = var.chunking()
+        except AttributeError:
+            # h5netcdf
+            chunks = var.chunks
+            if chunks is None:
+                chunks = "contiguous"
+
+        return chunks, var.shape
