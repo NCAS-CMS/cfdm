@@ -4,21 +4,96 @@ from functools import lru_cache, partial, reduce
 from itertools import product
 from operator import mul
 
+import cftime
 import dask.array as da
 import numpy as np
 
-from ..cfdatetime import (
-    canonical_calendar,
-    default_calendar,
-    dt,
-    dt2rt,
-    rt2dt,
-    st2rt,
-)
-from ..units import Units
-from .dask_utils import cf_YMDhms
+from cfunits import Units
 
-_units_None = Units(None)
+def allclose(x, y, masked_equal=True, rtol=None, atol=None):
+    """An effective dask.array.ma.allclose method.
+
+    True if two dask arrays are element-wise equal within a tolerance.
+
+    Equivalent to allclose except that masked values are treated as
+    equal (default) or unequal, depending on the masked_equal
+    argument.
+
+    Define an effective da.ma.allclose method here because one is
+    currently missing in the Dask codebase.
+
+    Note that all default arguments are the same as those provided to
+    the corresponding NumPy method (see the `numpy.ma.allclose` API
+    reference).
+
+    .. versionadded:: 3.14.0
+
+    :Parameters:
+
+        x: a dask array to compare with y
+
+        y: a dask array to compare with x
+
+        masked_equal: `bool`, optional
+            Whether masked values in a and b are considered equal
+            (True) or not (False). They are considered equal by
+            default.
+
+        {{rtol: number, optional}}
+
+        {{atol: number, optional}}
+
+    :Returns:
+
+        `bool`
+            A Boolean value indicating whether or not the two dask
+            arrays are element-wise equal to the given *rtol* and
+            *atol* tolerance.
+
+    """
+    # TODODASK: put in a PR to Dask to request to add as genuine method.
+
+    if rtol is None:
+        rtol = cf_rtol()
+    if atol is None:
+        atol = cf_atol()
+
+    # Must pass rtol=rtol, atol=atol in as kwargs to allclose, rather than it
+    # using those in local scope from the outer function arguments, because
+    # Dask's internal algorithms require these to be set as parameters.
+    def allclose(a_blocks, b_blocks, rtol=rtol, atol=atol):
+        """Run `ma.allclose` across multiple blocks over two arrays."""
+        result = True
+        # Handle scalars, including 0-d arrays, for which a_blocks and
+        # b_blocks will have the corresponding type and hence not be iterable.
+        # With this approach, we avoid inspecting sizes or lengths, and for
+        # the 0-d array blocks the following iteration can be used unchanged
+        # and will only execute once with block sizes as desired of:
+        # (np.array(<int size>),)[0] = array(<int size>). Note
+        # can't check against more general case of collections.abc.Iterable
+        # because a 0-d array is also iterable, but in practice always a list.
+        if not isinstance(a_blocks, list):
+            a_blocks = (a_blocks,)
+        if not isinstance(b_blocks, list):
+            b_blocks = (b_blocks,)
+
+        # Note: If a_blocks or b_blocks has more than one chunk in
+        #       more than one dimension they will comprise a nested
+        #       sequence of sequences, that needs to be flattened so
+        #       that we can safely iterate through the actual numpy
+        #       array elements.
+
+        for a, b in zip(flatten(a_blocks), flatten(b_blocks)):
+            result &= np.ma.allclose(
+                a, b, masked_equal=masked_equal, rtol=rtol, atol=atol
+            )
+
+        return result
+
+    axes = tuple(range(x.ndim))
+    return da.blockwise(
+        allclose, "", x, axes, y, axes, dtype=bool, rtol=rtol, atol=atol
+    )
 
 
 def is_numeric_dtype(array):
@@ -38,33 +113,33 @@ def is_numeric_dtype(array):
     **Examples**
 
     >>> a = np.array([0, 1, 2])
-    >>> cf.data.utils.is_numeric_dtype(a)
+    >>> cfdm.data.utils.is_numeric_dtype(a)
     True
     >>> a = np.array([False, True, True])
-    >>> cf.data.utils.is_numeric_dtype(a)
+    >>> cfdm.data.utils.is_numeric_dtype(a)
     True
     >>> a = np.array(["a", "b", "c"], dtype="S1")
-    >>> cf.data.utils.is_numeric_dtype(a)
+    >>> cfdm.data.utils.is_numeric_dtype(a)
     False
     >>> a = np.ma.array([10.0, 2.0, 3.0], mask=[1, 0, 0])
-    >>> cf.data.utils.is_numeric_dtype(a)
+    >>> cfdm.data.utils.is_numeric_dtype(a)
     True
     >>> a = np.array(10)
-    >>> cf.data.utils.is_numeric_dtype(a)
+    >>> cfdm.data.utils.is_numeric_dtype(a)
     True
     >>> a = np.empty(1, dtype=object)
-    >>> cf.data.utils.is_numeric_dtype(a)
+    >>> cfdm.data.utils.is_numeric_dtype(a)
     False
 
     """
     dtype = array.dtype
 
-    # This checks if the dtype is either a standard "numeric" type (i.e.
-    # int types, floating point types or complex floating point types)
-    # or Boolean, which are effectively a restricted int type (0 or 1).
-    # We determine the former by seeing if it sits under the 'np.number'
-    # top-level dtype in the NumPy dtype hierarchy; see the
-    # 'Hierarchy of type objects' figure diagram under:
+    # This checks if the dtype is either a standard "numeric" type
+    # (i.e.  int types, floating point types or complex floating point
+    # types) or Boolean, which are effectively a restricted int type
+    # (0 or 1).  We determine the former by seeing if it sits under
+    # the 'np.number' top-level dtype in the NumPy dtype hierarchy;
+    # see the 'Hierarchy of type objects' figure diagram under:
     # https://numpy.org/doc/stable/reference/arrays.scalars.html#scalars
     return np.issubdtype(dtype, np.number) or np.issubdtype(dtype, np.bool_)
 
@@ -94,7 +169,7 @@ def convert_to_datetime(a, units):
 
     >>> import dask.array as da
     >>> d = da.from_array(2.5)
-    >>> e = cf.data.utils.convert_to_datetime(d, cf.Units("days since 2000-12-01"))
+    >>> e = cfdm.data.utils.convert_to_datetime(d, cfdm.Units("days since 2000-12-01"))
     >>> print(e.compute())
     2000-12-03 12:00:00
 
@@ -118,7 +193,7 @@ def convert_to_reftime(a, units=None, first_value=None):
 
         a: `dask.array.Array`
 
-        units: `Units`, optional
+        units: `cfdm.Units`, optional
              Specify the units for the output reference time
              values. By default the units are inferred from the first
              non-missing value in the array, or set to ``<Units: days
@@ -132,20 +207,20 @@ def convert_to_reftime(a, units=None, first_value=None):
 
     :Returns:
 
-        (`dask.array.Array`, `Units`)
+        (`dask.array.Array`, `cfdm.Units`)
             The reference times, and their units.
 
     >>> import dask.array as da
     >>> d = da.from_array(2.5)
-    >>> e = cf.data.utils.convert_to_datetime(d, cf.Units("days since 2000-12-01"))
+    >>> e = cfdm.data.utils.convert_to_datetime(d, cfdm.Units("days since 2000-12-01"))
 
-    >>> f, u = cf.data.utils.convert_to_reftime(e)
+    >>> f, u = cfdm.data.utils.convert_to_reftime(e)
     >>> f.compute()
     0.5
     >>> u
     <Units: days since 2000-12-3 standard>
 
-    >>> f, u = cf.data.utils.convert_to_reftime(e, cf.Units("days since 1999-12-01"))
+    >>> f, u = cfdm.data.utils.convert_to_reftime(e, cfdm.Units("days since 1999-12-01"))
     >>> f.compute()
     368.5
     >>> u
@@ -177,10 +252,10 @@ def convert_to_reftime(a, units=None, first_value=None):
         if first_value is not None:
             x = first_value
         else:
-            x = dt(1970, 1, 1, calendar=default_calendar)
+            x = cftime.DatetimeGregorian(1970, 1, 1)
 
         x_since = "days since " + "-".join(map(str, (x.year, x.month, x.day)))
-        x_calendar = getattr(x, "calendar", default_calendar)
+        x_calendar = getattr(x, "calendar", "standard")
 
         d_calendar = getattr(units, "calendar", None)
         d_units = getattr(units, "units", None)
@@ -258,22 +333,22 @@ def first_non_missing_value(a, cached=None, method="index"):
     >>> print(d.compute())
     [[0 1 2 3]
      [4 5 6 7]]
-    >>> cf.data.utils.first_non_missing_value(d)
+    >>> cfdm.data.utils.first_non_missing_value(d)
     0
-    >>> cf.data.utils.first_non_missing_value(d, cached=99)
+    >>> cfdm.data.utils.first_non_missing_value(d, cached=99)
     99
-    >>> d[0, 0] = cf.masked
-    >>> cf.data.utils.first_non_missing_value(d)
+    >>> d[0, 0] = cfdm.masked
+    >>> cfdm.data.utils.first_non_missing_value(d)
     1
-    >>> d[0, :] = cf.masked
-    >>> cf.data.utils.first_non_missing_value(d)
+    >>> d[0, :] = cfdm.masked
+    >>> cfdm.data.utils.first_non_missing_value(d)
     4
-    >>> cf.data.utils.first_non_missing_value(d, cached=99)
+    >>> cfdm.data.utils.first_non_missing_value(d, cached=99)
     99
-    >>> d[...] = cf.masked
-    >>> print(cf.data.utils.first_non_missing_value(d))
+    >>> d[...] = cfdm.masked
+    >>> print(cfdm.data.utils.first_non_missing_value(d))
     None
-    >>> print(cf.data.utils.first_non_missing_value(d, cached=99))
+    >>> print(cfdm.data.utils.first_non_missing_value(d, cached=99))
     99
 
     """
@@ -318,48 +393,6 @@ def first_non_missing_value(a, cached=None, method="index"):
     raise ValueError(f"Unknown value of 'method': {method!r}")
 
 
-def unique_calendars(a):
-    """Find the unique calendars from a dask array of date-time objects.
-
-    .. versionadded:: 3.14.0
-
-    :Parameters:
-
-        array: `dask.array.Array`
-            A dask array of data-time objects.
-
-    :Returns:
-
-        `set`
-            The unique calendars.
-
-    """
-
-    def _get_calendar(x):
-        return getattr(x, "calendar", default_calendar)
-
-    _calendars = np.vectorize(_get_calendar, otypes=[np.dtype(str)])
-
-    # TODODASK
-    #
-    # da.unique doesn't work well with masked data (2022-02-07), so do
-    # move to numpy-space for now. When da.unique is better we can
-    # replace the next two lines of code with:
-    #
-    #   a = a.map_blocks(_calendars, dtype=str)
-    #   calendars = da.unique(array).compute()
-    a = _calendars(a.compute())
-    calendars = np.unique(a)
-
-    if np.ma.isMA(calendars):
-        calendars = calendars.compressed()
-
-    # Replace each calendar with its canonical name
-    out = [canonical_calendar[cal] for cal in calendars.tolist()]
-
-    return set(out)
-
-
 @lru_cache(maxsize=32)
 def new_axis_identifier(existing_axes=(), basename="dim"):
     """Return a new, unique axis identifier.
@@ -384,29 +417,29 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
 
     **Examples**
 
-    >>> cf.data.utils.new_axis_identifier()
+    >>> cfdm.data.utils.new_axis_identifier()
     'dim0'
-    >>> cf.data.utils.new_axis_identifier(['dim0'])
+    >>> cfdm.data.utils.new_axis_identifier(['dim0'])
     'dim1'
-    >>> cf.data.utils.new_axis_identifier(['dim3'])
+    >>> cfdm.data.utils.new_axis_identifier(['dim3'])
     'dim1'
-     >>> cf.data.utils.new_axis_identifier(['dim1'])
+     >>> cfdm.data.utils.new_axis_identifier(['dim1'])
     'dim2'
-    >>> cf.data.utils.new_axis_identifier(['dim1', 'dim0'])
+    >>> cfdm.data.utils.new_axis_identifier(['dim1', 'dim0'])
     'dim2'
-    >>> cf.data.utils.new_axis_identifier(['dim3', 'dim4'])
+    >>> cfdm.data.utils.new_axis_identifier(['dim3', 'dim4'])
     'dim2'
-    >>> cf.data.utils.new_axis_identifier(['dim2', 'dim0'])
+    >>> cfdm.data.utils.new_axis_identifier(['dim2', 'dim0'])
     'dim3'
-    >>> cf.data.utils.new_axis_identifier(['dim3', 'dim4', 'dim0'])
+    >>> cfdm.data.utils.new_axis_identifier(['dim3', 'dim4', 'dim0'])
     'dim5'
-    >>> cf.data.utils.new_axis_identifier(basename='axis')
+    >>> cfdm.data.utils.new_axis_identifier(basename='axis')
     'axis0'
-    >>> cf.data.utils.new_axis_identifier(basename='axis')
+    >>> cfdm.data.utils.new_axis_identifier(basename='axis')
     'axis0'
-    >>> cf.data.utils.new_axis_identifier(['dim0'], basename='axis')
+    >>> cfdm.data.utils.new_axis_identifier(['dim0'], basename='axis')
     'axis1'
-    >>> cf.data.utils.new_axis_identifier(['dim0', 'dim1'], basename='axis')
+    >>> cfdm.data.utils.new_axis_identifier(['dim0', 'dim1'], basename='axis')
     'axis2'
 
     """
@@ -561,62 +594,6 @@ def scalar_masked_array(dtype=float):
     return a
 
 
-def conform_units(value, units, message=None):
-    """Conform units.
-
-    If *value* has units defined by its `Units` attribute then
-
-    * If the value units are equal to *units* then *value* is returned
-      unchanged;
-
-    * If the value units are equivalent to *units* then a copy of
-      *value* converted to *units* is returned;
-
-    * If the value units are not equivalent to *units* then an
-      exception is raised.
-
-    In all other cases *value* is returned unchanged.
-
-    .. versionadded:: 3.14.0
-
-    :Parameters:
-
-        value:
-            The value whose units are to be conformed to *units*.
-
-        units: `Units`
-            The units to conform to.
-
-        message: `str`, optional
-            If the value units are not equivalent to *units* then use
-            this message when the exception is raised. By default a
-            message that is independent of the calling context is
-            used.
-
-    :Returns:
-
-            The *value* with conformed units.
-
-    **Examples**
-
-    >>> cf.data.utils.conform_units(1, cf.Units('m'))
-    1
-    >>> cf.data.utils.conform_units([1, 2, 3], cf.Units('m'))
-    [1, 2, 3]
-    >>> import numpy as np
-    >>> cf.data.utils.conform_units(np.array([1, 2, 3]), cf.Units('m'))
-    array([1, 2, 3])
-    >>> cf.data.utils.conform_units('string', cf.Units('m'))
-    'string'
-    >>> d = cf.Data([1, 2] , 'm')
-    >>> cf.data.utils.conform_units(d, cf.Units('m'))
-    <CF Data(2): [1, 2] m>
-    >>> d = cf.Data([1, 2] , 'km')
-    >>> cf.data.utils.conform_units(d, cf.Units('m'))
-    <CF Data(2): [1000.0, 2000.0] m>
-    >>> cf.data.utils.conform_units(d, cf.Units('s'))
-    Traceback (most recent call last):
-        ...
     ValueError: Units <Units: km> are incompatible with units <Units: s>
     >>> cf.data.utils.conform_units(d, cf.Units('s'), message='My message')
     Traceback (most recent call last):
@@ -624,7 +601,7 @@ def conform_units(value, units, message=None):
     ValueError: My message
 
     """
-    value_units = getattr(value, "Units", None)
+    value_units = getattr(value, "_Units", None)
     if value_units is None or value_units == units:
         return value
 
@@ -642,52 +619,6 @@ def conform_units(value, units, message=None):
         raise ValueError(message)
 
     return value
-
-
-def YMDhms(d, attr):
-    """Return a date-time component of the data.
-
-    Only applicable for data with reference time units. The returned
-    `Data` will have the same mask hardness as the original array.
-
-    .. versionadded:: 3.14.0
-
-    .. seealso:: `~cf.Data.year`, ~cf.Data.month`, `~cf.Data.day`,
-                 `~cf.Data.hour`, `~cf.Data.minute`, `~cf.Data.second`
-
-    :Parameters:
-
-        d: `Data`
-            The data from which to extract date-time component.
-
-        attr: `str`
-            The name of the date-time component, one of ``'year'``,
-            ``'month'``, ``'day'``, ``'hour'``, ``'minute'``,
-            ``'second'``.
-
-    :Returns:
-
-        `Data`
-            The date-time component
-
-    **Examples**
-
-    >>> d = cf.Data([0, 1, 2], 'days since 1999-12-31')
-    >>> cf.data.utils.YMDhms(d, 'year').array
-    >>> array([1999, 2000, 2000])
-
-    """
-    units = d.Units
-    if not units.isreftime:
-        raise ValueError(f"Can't get {attr}s from data with {units!r}")
-
-    d = d._asdatetime()
-    dx = d.to_dask_array()
-    dx = dx.map_blocks(partial(cf_YMDhms, attr=attr), dtype=int)
-    d._set_dask(dx)
-    d.override_units(Units(None), inplace=True)
-    return d
-
 
 def where_broadcastable(data, x, name):
     """Check broadcastability for `cf.Data.where` assignments.
@@ -1058,3 +989,141 @@ def normalize_chunks(chunks, shape=None, dtype=None):
         for chunk, size in zip(chunks, shape)
     ]
     return tuple(out)
+
+def dt2rt(array, units_in, units_out, dummy1=None):
+    """Return numeric time values from datetime objects.
+
+    .. seealso:: `rt2dt`
+
+    :Parameters:
+
+        array: numpy array-like of date-time objects
+            The datetime objects must be in UTC with no time-zone
+            offset.
+
+      units_in:
+            Ignored.
+
+        units_out: `Units`
+            The units of the numeric time values. If there is a
+            time-zone offset in *units_out*, it will be applied to the
+            returned numeric values.
+
+        dummy1:
+            Ignored.
+
+    :Returns:
+
+        `numpy.ndarray`
+            An array of numbers with the same shape as *array*.
+
+    **Examples**
+
+    >>> print(
+    ...   cf.cfdatetime.dt2rt(
+    ...     np.ma.array([0, cf.dt('2001-11-16 12:00')], mask=[True, False]),
+    ...     None,
+    ...     units_out=cf.Units('days since 2000-01-01')
+    ...   )
+    ... )
+    [-- 685.5]
+
+    """
+    isscalar = not np.ndim(array)
+
+    array = cftime.date2num(
+        array, units=units_out.units, calendar=units_out._utime.calendar
+    )
+
+    if isscalar:
+        if array is np.ma.masked:
+            array = np.ma.masked_all(())
+        else:
+            array = np.asanyarray(array)
+
+    return array
+
+def rt2dt(array, units_in, units_out=None, dummy1=None):
+    """Convert reference times to date-time objects.
+
+    The returned array is always independent.
+
+    .. seealso:: `dt2rt`
+
+    :Parameters:
+
+        array: numpy array-like
+
+        units_in: `Units`
+
+        units_out: *optional*
+            Ignored.
+
+        dummy1:
+            Ignored.
+
+    :Returns:
+
+        `numpy.ndarray`
+            An array of `cftime.datetime` objects with the same shape
+            as *array*.
+
+    **Examples**
+
+    >>> print(
+    ...   cf.cfdatetime.rt2dt(
+    ...     np.ma.array([0, 685.5], mask=[True, False]),
+    ...     units_in=cf.Units('days since 2000-01-01')
+    ...   )
+    ... )
+    [--
+     cftime.DatetimeGregorian(2001, 11, 16, 12, 0, 0, 0, has_year_zero=False)]
+
+    """
+    ndim = np.ndim(array)
+    if not ndim and np.ma.is_masked(array):
+        # num2date has issues with scalar masked arrays with a True
+        # mask
+        return np.ma.masked_all((), dtype=object)
+
+    units = units_in.units
+    calendar = getattr(units_in, "calendar", "standard")
+
+    array = cftime.num2date(
+        array, units, calendar, only_use_cftime_datetimes=True
+    )
+
+    if not isinstance(array, np.ndarray):
+        array = np.array(array, dtype=object)
+
+    return array
+
+def st2rt(array, units_in, units_out, dummy1=None):
+    """The returned array is always independent.
+
+    :Parameters:
+
+        array: numpy array-like of ISO 8601 date-time strings
+
+        units_in: `Units` or `None`
+
+        units_out: `Units`
+
+        dummy1:
+            Ignored.
+
+    :Returns:
+
+        `numpy.ndarray`
+            An array of floats with the same shape as *array*.
+
+    """
+    array = st2dt(array, units_in)
+    array = cftime.date2num(
+        array, units=units_out.units, calendar=units_out._utime.calendar
+    )
+
+    if not np.ndim(array):
+        array = np.asanyarray(array)
+
+    return array

@@ -7,7 +7,6 @@ from numbers import Integral
 from operator import mul
 from os import sep
 
-import cfdm
 import cftime
 import dask.array as da
 import numpy as np
@@ -19,7 +18,8 @@ from dask.highlevelgraph import HighLevelGraph
 from dask.optimization import cull
 from scipy.sparse import issparse
 
-from ..cfdatetime import dt as cf_dt
+from cfunits import Units
+
 from ..constants import masked as cf_masked
 from ..decorators import (
     _deprecated_kwarg_check,
@@ -29,47 +29,36 @@ from ..decorators import (
     _manage_log_level_via_verbosity,
 )
 from ..functions import (
-    _DEPRECATION_ERROR_KWARGS,
     _numpy_allclose,
     _section,
     abspath,
     atol,
     default_netCDF_fillvals,
-    free_memory,
     parse_indices,
     rtol,
 )
-from ..mixin2 import CFANetCDF, Container
-from ..units import Units
-from .collapse import Collapse
+
+from ..mixin.container import Container
+from ..mixin.files import Files
+from ..mixin.netcdf import NetCDFHDF5
+
 from .creation import generate_axis_identifiers, to_dask
 
-# REVIEW: getitem: `data.py`: import cf_asanyarray, cf_filled, cf_is_masked
+# REVIEW: getitem: `data.py`: import asanyarray, filled
 from .dask_utils import (
-    _da_ma_allclose,
-    cf_asanyarray,
-    cf_contains,
-    cf_dt2rt,
-    cf_filled,
-    cf_harden_mask,
-    cf_is_masked,
-    cf_percentile,
-    cf_rt2dt,
-    cf_soften_mask,
+    allclose,
+    asanyarray,
+    filled,
+    harden_mask,
+    soften_mask,
     cf_units,
-    cf_where,
 )
-from .mixin import DataClassDeprecationsMixin
 from .utils import (
-    YMDhms,
-    collapse,
-    conform_units,
     convert_to_datetime,
     convert_to_reftime,
     first_non_missing_value,
     is_numeric_dtype,
     new_axis_identifier,
-    scalar_masked_array,
 )
 
 logger = logging.getLogger(__name__)
@@ -78,25 +67,17 @@ logger = logging.getLogger(__name__)
 # Constants
 # --------------------------------------------------------------------
 _year_length = 365.242198781
-_month_length = _year_length / 12
+_month_length = 30.436849898416668
 
 _empty_set = set()
-
-_units_None = Units()
-_units_1 = Units("1")
-_units_radians = Units("radians")
 
 _month_units = ("month", "months")
 _year_units = ("year", "years", "yr")
 
-_dtype_float32 = np.dtype("float32")
-_dtype_float = np.dtype(float)
-_dtype_bool = np.dtype(bool)
-
 _DEFAULT_CHUNKS = "auto"
 _DEFAULT_HARDMASK = True
 
-# Contstants used to specify which `Data` components should be cleared
+# Contstants used to specify which `{{class}}` components should be cleared
 # when a new dask array is set. See `Data._clear_after_dask_update`
 # for details.
 _NONE = 0  # =   0b0000
@@ -106,7 +87,7 @@ _CFA = 4  # =    0b0100
 _ALL = 15  # =   0b1111
 
 
-class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
+class Data(Container, NetCDFHDF5, Files, core.Data):
     """An N-dimensional data array with units and masked values.
 
     * Contains an N-dimensional, indexable and broadcastable array with
@@ -170,6 +151,12 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
     """
 
+#    def __new__(cls, *args, **kwargs):
+#        """Store TODODASK"""
+#        instance = super().__new__(cls)
+#        instance._Units_class = Units
+#        return instance
+        
     def __init__(
         self,
         array=None,
@@ -194,7 +181,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
             array: optional
                 The array of values. May be a scalar or array-like
-                object, including another `Data` instance, anything
+                object, including another `{{class}}` instance, anything
                 with a `!to_dask_array` method, `numpy` array, `dask`
                 array, `xarray` array, `cf.Array` subclass, `list`,
                 `tuple`, scalar.
@@ -265,7 +252,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 Apply this mask to the data given by the *array*
                 parameter. By default, or if *mask* is `None`, no mask
                 is applied. May be any scalar or array-like object
-                (such as a `list`, `numpy` array or `Data` instance)
+                (such as a `list`, `numpy` array or `{{class}}` instance)
                 that is broadcastable to the shape of *array*. Masking
                 will be carried out where the mask elements evaluate
                 to `True`.
@@ -310,7 +297,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 data are computed.
 
                 In general, setting *to_memory* to True is not the same
-                as calling the `persist` of the newly created `Data`
+                as calling the `persist` of the newly created `{{class}}`
                 object, which also decompresses data compressed by
                 convention and computes any data type, mask and
                 date-time modifications.
@@ -337,7 +324,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
                 * ``'first_non_missing_value'``: Provide keyword
                   arguments to the
-                  `cf.data.utils.first_non_missing_value`
+                  `{{package}}.data.utils.first_non_missing_value`
                   function. This is used when the input array contains
                   date-time strings or objects, and may affect
                   performance.
@@ -350,15 +337,19 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data(5)
-        >>> d = cf.Data([1,2,3], units='K')
+        >>> d = {{package}}.{{class}}(5)
+        >>> d = {{package}}.{{class}}([1,2,3], units='K')
         >>> import numpy
-        >>> d = cf.Data(numpy.arange(10).reshape(2,5),
+        >>> d = {{package}}.{{class}}(numpy.arange(10).reshape(2,5),
         ...             units=Units('m/s'), fill_value=-999)
-        >>> d = cf.Data('fly')
-        >>> d = cf.Data(tuple('fly'))
+        >>> d = {{package}}.{{class}}('fly')
+        >>> d = {{package}}.{{class}}(tuple('fly'))
 
         """
+        # Initialise the netCDF components
+        self._initialise_netcdf(source)
+        self._initialise_original_filenames(source)
+
         if source is None and isinstance(array, self.__class__):
             source = array
 
@@ -431,7 +422,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         self._cyclic = _empty_set
 
         # Create the _axes attribute: an ordered sequence of unique
-        # (within this `Data` instance) names for each array axis.
+        # (within this `{{class}}` instance) names for each array axis.
         self._axes = generate_axis_identifiers(ndim)
 
         if not _use_array:
@@ -621,22 +612,22 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data([1, 2, 3], 'metres')
+        >>> d = {{package}}.{{class}}([1, 2, 3], 'metres')
         >>> for e in d:
         ...     print(repr(e))
         ...
-        <CF Data(1): [1] metres>
-        <CF Data(1): [2] metres>
-        <CF Data(1): [3] metres>
+        <{{repr}}{{class}}(1): [1] metres>
+        <{{repr}}{{class}}(1): [2] metres>
+        <{{repr}}{{class}}(1): [3] metres>
 
-        >>> d = cf.Data([[1, 2], [3, 4]], 'metres')
+        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]], 'metres')
         >>> for e in d:
         ...     print(repr(e))
         ...
-        <CF Data: [1, 2] metres>
-        <CF Data: [3, 4] metres>
+        <{{repr}}{{class}}: [1, 2] metres>
+        <{{repr}}{{class}}: [3, 4] metres>
 
-        >>> d = cf.Data(99, 'metres')
+        >>> d = {{package}}.{{class}}(99, 'metres')
         >>> for e in d:
         ...     print(repr(e))
         ...
@@ -671,13 +662,13 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> len(cf.Data([1, 2, 3]))
+        >>> len({{package}}.{{class}}([1, 2, 3]))
         3
-        >>> len(cf.Data([[1, 2, 3]]))
+        >>> len({{package}}.{{class}}([[1, 2, 3]]))
         1
-        >>> len(cf.Data([[1, 2, 3], [4, 5, 6]]))
+        >>> len({{package}}.{{class}}([[1, 2, 3], [4, 5, 6]]))
         2
-        >>> len(cf.Data(1))
+        >>> len({{package}}.{{class}}(1))
         Traceback (most recent call last):
             ...
         TypeError: len() of unsized object
@@ -704,9 +695,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> bool(cf.Data(1.5))
+        >>> bool({{package}}.{{class}}(1.5))
         True
-        >>> bool(cf.Data([[False]]))
+        >>> bool({{package}}.{{class}}([[False]]))
         False
 
         """
@@ -745,13 +736,13 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-            `Data`
+            `{{class}}`
                 The subspace of the data.
 
         **Examples**
 
         >>> import numpy
-        >>> d = Data(numpy.arange(100, 190).reshape(1, 10, 9))
+        >>> d = {{package}}.{{class}}(numpy.arange(100, 190).reshape(1, 10, 9))
         >>> d.shape
         (1, 10, 9)
         >>> d[:, :, 1].shape
@@ -1027,25 +1018,27 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
                 indices[i] = index
 
+        # DASK: needs to be in cf-python
         # Roll axes with cyclic slices
-        if roll:
-            # For example, if assigning to slice(-2, 3) has been
-            # requested on a cyclic axis (and we're not using numpy
-            # indexing), then we roll that axis by two points and
-            # assign to slice(0, 5) instead. The axis is then unrolled
-            # by two points afer the assignment has been made.
-            axes = self._axes
-            if not self._cyclic.issuperset([axes[i] for i in roll]):
-                raise IndexError(
-                    "Can't do a cyclic assignment to a non-cyclic axis"
-                )
+        # if roll:
+        #     # For example, if assigning to slice(-2, 3) has been
+        #     # requested on a cyclic axis (and we're not using numpy
+        #     # indexing), then we roll that axis by two points and
+        #     # assign to slice(0, 5) instead. The axis is then unrolled
+        #     # by two points afer the assignment has been made.
+        #     axes = self._axes
+        #     if not self._cyclic.issuperset([axes[i] for i in roll]):
+        #         raise IndexError(
+        #             "Can't do a cyclic assignment to a non-cyclic axis"
+        #         )
+        # 
+        #     roll_axes = tuple(roll.keys())
+        #     shifts = tuple(roll.values())
+        #     self.roll(shift=shifts, axis=roll_axes, inplace=True)
 
-            roll_axes = tuple(roll.keys())
-            shifts = tuple(roll.values())
-            self.roll(shift=shifts, axis=roll_axes, inplace=True)
-
+        # DASK: nneds to be in cf-python
         # Make sure that the units of value are the same as self
-        value = conform_units(value, self.Units)
+        # value = conform_units(value, self.Units)
 
         # Missing values could be affected, so make sure that the mask
         # hardness has been applied.
@@ -1055,23 +1048,25 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         self._set_subspace(dx, indices, value)
         self._set_dask(dx)
 
+        # DASK: nneds to be in cf-python
         # Unroll any axes that were rolled to enable a cyclic
         # assignment
-        if roll:
-            shifts = [-shift for shift in shifts]
-            self.roll(shift=shifts, axis=roll_axes, inplace=True)
+        # if roll:
+        #     shifts = [-shift for shift in shifts]
+        #     self.roll(shift=shifts, axis=roll_axes, inplace=True)
 
+        # DASK: nneds to be in cf-python
         # Reset the original array values at locations that are
         # excluded from the assignment by True values in any ancillary
         # masks
-        if ancillary_mask:
-            indices = tuple(indices)
-            original_self = original_self[indices]
-            reset = self[indices]
-            for mask in ancillary_mask:
-                reset.where(mask, original_self, inplace=True)
-
-            self[indices] = reset
+        # if ancillary_mask:
+        #     indices = tuple(indices)
+        #     original_self = original_self[indices]
+        #     reset = self[indices]
+        #     for mask in ancillary_mask:
+        #         reset.where(mask, original_self, inplace=True)
+        # 
+        #     self[indices] = reset
 
         return
 
@@ -1112,7 +1107,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data([[1, 2, 3],
+        >>> d = {{package}}.{{class}}([[1, 2, 3],
         ...              [4, 5, 6]])
         >>> e = d[[0], [0, 2]]
         >>> e.shape
@@ -1149,7 +1144,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data([[1, 2, 3],
+        >>> d = {{package}}.{{class}}([[1, 2, 3],
         ...              [4, 5, 6]])
         >>> d.__keepdims_indexing__
         True
@@ -1402,7 +1397,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data([1, 2, 3])
+        >>> d = {{package}}.{{class}}([1, 2, 3])
         >>> dx = d._del_dask()
         >>> d._del_dask("No dask array")
         'No dask array'
@@ -1549,6 +1544,34 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         """
         self._custom["cfa_write"] = bool(status)
+    @property
+    def Units(self):
+        """The `Units` object containing the units of the data array.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([1, 2, 3], units='m')
+        >>> d.Units
+        <Units: m>
+        >>> d.Units = {{package}}.Units('kilometres')
+        >>> d.Units
+        <Units: kilometres>
+        >>> d.Units = {{package}}.Units('km')
+        >>> d.Units
+        <Units: km>
+
+        """
+        return self._Units
+
+    @Units.setter
+    def Units(self, value):
+        # DASK: needs to be in cf-python
+        self._Units = value
+
+    @Units.deleter
+    def Units(self):
+        # DASK: needs to be in cf-python
+        del self._Units
 
     @_inplace_enabled(default=False)
     def pad_missing(self, axis, pad_width=None, to_size=None, inplace=False):
@@ -1574,13 +1597,13 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-            `Data` or `None`
+            `{{class}}` or `None`
                 The padded data, or `None` if the operation was
                 in-place.
 
         **Examples**
 
-        >>> d = cf.Data(np.arange(6).reshape(2, 3))
+        >>> d = {{package}}.{{class}}(np.arange(6).reshape(2, 3))
         >>> print(d.array)
         [[0 1 2]
          [3 4 5]]
@@ -1681,7 +1704,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-            `Data` or `None`
+            `{{class}}` or `None`
                 The persisted data. If the operation was in-place then
                 `None` is returned.
 
@@ -1713,7 +1736,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data([1, 2])
+        >>> d = {{package}}.{{class}}([1, 2])
         >>> d.cfa_get_term()
         False
 
@@ -1737,7 +1760,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data([1, 2])
+        >>> d = {{package}}.{{class}}([1, 2])
         >>> d.cfa_get_write()
         False
 
@@ -1829,12 +1852,12 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data([1, 2, 3.0], 'km')
+        >>> d = {{package}}.{{class}}([1, 2, 3.0], 'km')
         >>> d.compute()
         array([1., 2., 3.])
 
         >>> from scipy.sparse import csr_array
-        >>> d = cf.Data(csr_array((2, 3)))
+        >>> d = {{package}}.{{class}}(csr_array((2, 3)))
         >>> d.compute()
         <2x3 sparse array of type '<class 'numpy.float64'>'
                 with 0 stored elements in Compressed Sparse Row format>
@@ -1891,13 +1914,13 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-            `Data` or `None`
+            `{{class}}` or `None`
                 The rechunked data, or `None` if the operation was
                 in-place.
 
         **Examples**
 
-        >>> x = cf.Data.ones((1000, 1000), chunks=(100, 100))
+        >>> x = {{package}}.{{class}}.empty((1000, 1000), chunks=(100, 100))
 
         Specify uniform chunk sizes with a tuple
 
@@ -1959,12 +1982,12 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-            `Data`
+            `{{class}}`
                 A new Data array.
 
         **Examples**
 
-        >>> d = cf.Data([[1, 2, -3, -4, -5]])
+        >>> d = {{package}}.{{class}}([[1, 2, -3, -4, -5]])
 
         >>> e = d._unary_operation('__abs__')
         >>> print(e.array)
@@ -2411,34 +2434,18 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
     @property
     def _Units(self):
-        """Storage for the units.
-
-        The units are stored in a `Units` object, and reflect the
-        units of the (yet to be computed) elements of the underlying
-        data.
-
-        .. warning:: Assigning to `_Units` does *not* trigger a units
-                     conversion of the underlying data
-                     values. Therefore assigning to `_Units` should
-                     only be done in cases when it is known that the
-                     intrinsic units represented by the data values
-                     are inconsistent with the existing value of
-                     `_Units`. Before assigning to `_Units`, first
-                     consider if assigning to `Units`, or calling the
-                     `override_units` or `override_calendar` method is
-                     a more appropriate course of action, and use one
-                     of those if possible.
+        """Storage for the units in a `Units` object.
 
         """
-        return self._get_component("_Units")
+        return self._get_component("Units")
 
     @_Units.setter
     def _Units(self, value):
-        self._set_component("_Units" , value, copy=False)
+        self._set_component("Units" , value, copy=False)
 
     @_Units.deleter
     def _Units(self):
-        self._set_component("_Units",  _units_None, copy=False)
+        self._set_component("Units",  Units(None), copy=False)
 
     @property
     def _axes(self):
@@ -2468,7 +2475,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data.ones((6, 5), chunks=(2, 4))
+        >>> d = {{package}}.{{class}}.empty((6, 5), chunks=(2, 4))
         >>> d.chunks
         ((2, 2, 2), (4, 1))
         >>> d.numblocks
@@ -2482,93 +2489,13 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         # 'asanyarray=False'.
         return self.to_dask_array(asanyarray=False).chunks
 
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
-    @property
-    def Units(self):
-        """The `cf.Units` object containing the units of the data array.
-
-        Can be set to any units equivalent to the existing units.
-
-        .. seealso `override_units`, `override_calendar`
-
-        **Examples**
-
-        >>> d = cf.Data([1, 2, 3], units='m')
-        >>> d.Units
-        <Units: m>
-        >>> d.Units = cf.Units('kilmetres')
-        >>> d.Units
-        <Units: kilmetres>
-        >>> d.Units = cf.Units('km')
-        >>> d.Units
-        <Units: km>
-
-        """
-        return self._Units
-
-    @Units.setter
-    def Units(self, value):
-        try:
-            old_units = self._Units
-        except KeyError:
-            pass
-        else:
-            if not old_units or self.Units.equals(value):
-                self._Units = value
-                return
-
-            if old_units and not old_units.equivalent(value):
-                raise ValueError(
-                    f"Can't set Units to {value!r} that are not "
-                    f"equivalent to the current units {old_units!r}. "
-                    "Consider using the override_units method instead."
-                )
-
-        dtype = self.dtype
-        if dtype.kind in "iu":
-            if dtype.char in "iI":
-                dtype = _dtype_float32
-            else:
-                dtype = _dtype_float
-
-        cf_func = partial(cf_units, from_units=old_units, to_units=value)
-
-        # REVIEW: getitem: `Units`: set 'asanyarray'
-        # 'cf_units' has its own call to 'cf_asanyarray', so we can
-        # set 'asanyarray=False'.
-        dx = self.to_dask_array(asanyarray=False)
-        dx = dx.map_blocks(cf_func, dtype=dtype)
-
-        # Setting equivalent units doesn't affect the CFA write
-        # status. Nor does it invalidate any cached values, but only
-        # because we'll adjust those, too.
-        self._set_dask(dx, clear=_ALL ^ _CACHE ^ _CFA)
-
-        # Adjust cached values for the new units
-        cache = self._get_cached_elements()
-        if cache:
-            self._set_cached_elements(
-                {index: cf_func(value) for index, value in cache.items()}
-            )
-
-        self._Units = value
-
-    @Units.deleter
-    def Units(self):
-        raise ValueError(
-            "Can't delete the Units attribute. "
-            "Consider using the override_units method instead."
-        )
-
     @property
     def data(self):
         """The data as an object identity.
 
         **Examples**
 
-        >>> d = cf.Data([1, 2], 'm')
+        >>> d = {{package}}.{{class}}([1, 2], 'm')
         >>> d.data is d
         True
 
@@ -2584,7 +2511,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data([1, 2.5, 3.9])
+        >>> d = {{package}}.{{class}}([1, 2.5, 3.9])
         >>> d.dtype
         dtype('float64')
         >>> print(d.array)
@@ -2680,7 +2607,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data([1, 2, 3])
+        >>> d = {{package}}.{{class}}([1, 2, 3])
         >>> d.hardmask
         True
         >>> d[0] = cf.masked
@@ -2716,7 +2643,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data([[1, 1.5, 2]])
+        >>> d = {{package}}.{{class}}([[1, 1.5, 2]])
         >>> d.dtype
         dtype('float64')
         >>> d.size, d.dtype.itemsize
@@ -2746,23 +2673,23 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
+        >>> d = {{package}}.{{class}}([[1, 2, 3], [4, 5, 6]])
         >>> d.ndim
         2
 
-        >>> d = cf.Data([[1, 2, 3]])
+        >>> d = {{package}}.{{class}}([[1, 2, 3]])
         >>> d.ndim
         2
 
-        >>> d = cf.Data([[3]])
+        >>> d = {{package}}.{{class}}([[3]])
         >>> d.ndim
         2
 
-        >>> d = cf.Data([3])
+        >>> d = {{package}}.{{class}}([3])
         >>> d.ndim
         1
 
-        >>> d = cf.Data(3)
+        >>> d = {{package}}.{{class}}(3)
         >>> d.ndim
         0
 
@@ -2783,7 +2710,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data.ones((6, 5), chunks=(2, 4))
+        >>> d = {{package}}.{{class}}.empty((6, 5), chunks=(2, 4))
         >>> d.chunks
         ((2, 2, 2), (4, 1))
         >>> d.numblocks
@@ -2807,7 +2734,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data.ones((6, 5), chunks=(2, 4))
+        >>> d = {{package}}.{{class}}.empty((6, 5), chunks=(2, 4))
         >>> d.chunks
         ((2, 2, 2), (4, 1))
         >>> d.numblocks
@@ -2832,19 +2759,19 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
+        >>> d = {{package}}.{{class}}([[1, 2, 3], [4, 5, 6]])
         >>> d.shape
         (2, 3)
 
-        >>> d = cf.Data([[1, 2, 3]])
+        >>> d = {{package}}.{{class}}([[1, 2, 3]])
         >>> d.shape
         (1, 3)
 
-        >>> d = cf.Data([[3]])
+        >>> d = {{package}}.{{class}}([[3]])
         >>> d.shape
         (1, 1)
 
-        >>> d = cf.Data(3)
+        >>> d = {{package}}.{{class}}(3)
         >>> d.shape
         ()
 
@@ -2870,23 +2797,23 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
+        >>> d = {{package}}.{{class}}([[1, 2, 3], [4, 5, 6]])
         >>> d.size
         6
 
-        >>> d = cf.Data([[1, 2, 3]])
+        >>> d = {{package}}.{{class}}([[1, 2, 3]])
         >>> d.size
         3
 
-        >>> d = cf.Data([[3]])
+        >>> d = {{package}}.{{class}}([[3]])
         >>> d.size
         1
 
-        >>> d = cf.Data([3])
+        >>> d = {{package}}.{{class}}([3])
         >>> d.size
         1
 
-        >>> d = cf.Data(3)
+        >>> d = {{package}}.{{class}}(3)
         >>> d.size
         1
 
@@ -2925,7 +2852,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data([1, 2, 3.0], 'km')
+        >>> d = {{package}}.{{class}}([1, 2, 3.0], 'km')
         >>> a = d.array
         >>> isinstance(a, numpy.ndarray)
         True
@@ -2938,7 +2865,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         >>> print(d[0])
         -99.0 km
 
-        >>> d = cf.Data('2000-12-1', units='days since 1999-12-1')
+        >>> d = {{package}}.{{class}}('2000-12-1', units='days since 1999-12-1')
         >>> print(d.array)
         366
         >>> print(d.datetime_array)
@@ -2989,12 +2916,13 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         if not units.isreftime:
             raise ValueError(
-                f"Can't create date-time array from units {self.Units!r}"
+                f"Can't create date-time array from units {self._Units!r}"
             )
 
-        if getattr(units, "calendar", None) == "none":
+        calendar = getattr(units, "calendar", None)
+        if calendar == "none":
             raise ValueError(
-                f"Can't create date-time array from units {self.Units!r} "
+                f"Can't create date-time array from units {self._Units!r} "
                 "because calendar is 'none'"
             )
 
@@ -3002,29 +2930,18 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         # Convert months and years to days, because cftime won't work
         # otherwise.
-        if units1 in ("months", "month"):
-            d = self * _month_length
-            d.override_units(
-                Units(
-                    f"days since {reftime}",
-                    calendar=getattr(units, "calendar", None),
-                ),
-                inplace=True,
-            )
-        elif units1 in ("years", "year", "yr"):
-            d = self * _year_length
-            d.override_units(
-                Units(
-                    f"days since {reftime}",
-                    calendar=getattr(units, "calendar", None),
-                ),
-                inplace=True,
-            )
+        year_length = 365.242198781  # Number of days in a Udunits year   
+        if units1 in _month_units:
+            d = self * (year_length/12)
+            units = self._Units_class(f"days since {reftime}", calendar)
+        elif units1 in _year_units:
+            d = self * year_length
+            units = self._Units_class(f"days since {reftime}", calendar)
         else:
             d = self
 
         dx = d.to_dask_array()
-        dx = convert_to_datetime(dx, d.Units)
+        dx = convert_to_datetime(dx, units)
 
         a = dx.compute()
 
@@ -3047,7 +2964,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-            `Data`
+            `{{class}}`
 
         **Examples**
 
@@ -3066,7 +2983,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         mask = da.ma.getmaskarray(dx)
 
         mask_data_obj._set_dask(mask)
-        mask_data_obj.override_units(_units_None, inplace=True)
+        mask_data_obj._Units = Units(None)
         mask_data_obj.hardmask = _DEFAULT_HARDMASK
 
         return mask_data_obj
@@ -3091,35 +3008,35 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-            `Data`
+            `{{class}}`
                 Whether or any data array elements evaluate to True.
 
         **Examples**
 
-        >>> d = cf.Data([[0, 2], [0, 4]])
+        >>> d = {{package}}.{{class}}([[0, 2], [0, 4]])
         >>> d.any()
-        <CF Data(1, 1): [[True]]>
+        <{{repr}}{{class}}(1, 1): [[True]]>
         >>> d.any(keepdims=False)
-        <CF Data(1, 1): True>
+        <{{repr}}{{class}}(1, 1): True>
         >>> d.any(axis=0)
-        <CF Data(1, 2): [[False, True]]>
+        <{{repr}}{{class}}(1, 2): [[False, True]]>
         >>> d.any(axis=1)
-        <CF Data(2, 1): [[True, True]]>
+        <{{repr}}{{class}}(2, 1): [[True, True]]>
         >>> d.any(axis=())
-        <CF Data(2, 2): [[False, ..., True]]>
+        <{{repr}}{{class}}(2, 2): [[False, ..., True]]>
 
         >>> d[0] = cf.masked
         >>> print(d.array)
         [[-- --]
          [0 4]]
         >>> d.any(axis=0)
-        <CF Data(1, 2): [[False, True]]>
+        <{{repr}}{{class}}(1, 2): [[False, True]]>
         >>> d.any(axis=1)
-        <CF Data(2, 1): [[--, True]]>
+        <{{repr}}{{class}}(2, 1): [[--, True]]>
 
         >>> d[...] = cf.masked
         >>> d.any()
-        <CF Data(1, 1): [[--]]>
+        <{{repr}}{{class}}(1, 1): [[--]]>
         >>> bool(d.any())
         False
         >>> bool(d.any(keepdims=False))
@@ -3131,7 +3048,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dx = da.any(dx, axis=axis, keepdims=keepdims, split_every=split_every)
         d._set_dask(dx)
         d.hardmask = _DEFAULT_HARDMASK
-        d.override_units(_units_None, inplace=True)
+        d._Units = Units(None)
         return d
 
     @_inplace_enabled(default=False)
@@ -3208,14 +3125,14 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-            `Data` or `None`
+            `{{class}}` or `None`
                 The data with masked values. If the operation was in-place
                 then `None` is returned.
 
         **Examples**
 
         >>> import numpy
-        >>> d = cf.Data(numpy.arange(12).reshape(3, 4), 'm')
+        >>> d = {{package}}.{{class}}(numpy.arange(12).reshape(3, 4), 'm')
         >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2 3]
@@ -3344,7 +3261,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-            `Data`
+            `{{class}}`
 
         """
         return self
@@ -3373,7 +3290,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data.full((5, 8), 1, chunks=4)
+        >>> d = {{package}}.{{class}}.empty((5, 8), 1, chunks=4)
         >>> d.get_filenames()
         set()
 
@@ -3384,10 +3301,10 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         >>> a = cf.read("file_A.nc", chunks=4)[0].data
         >>> a += 999
         >>> b = cf.read("file_B.nc", chunks=4)[0].data
-        >>> c = cf.Data(b.array, units=b.Units, chunks=4)
+        >>> c = {{package}}.{{class}}(b.array, units=b.Units, chunks=4)
         >>> print(a.shape, b.shape, c.shape)
         (5, 8) (5, 8) (5, 8)
-        >>> d = cf.Data.concatenate([a, a.copy(), b, c], axis=1)
+        >>> d = cf.Data.concatenate([a, a.copy(), b, c], axis=1) TODODASK
         >>> print(d.shape)
         (5, 32)
 
@@ -3419,7 +3336,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             except AttributeError:
                 pass
 
-        return out
+        return ou
 
     def get_units(self, default=ValueError()):
         """Return the units.
@@ -3450,7 +3367,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         """
         try:
-            return self.Units.units
+            return self._Units.units
         except AttributeError:
             return super().get_units(default=default)
 
@@ -3483,38 +3400,10 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         """
         try:
-            return self.Units.calendar
+            return self._Units.calendar
         except (AttributeError, KeyError):
             return super().get_calendar(default=default)
 
-    def set_calendar(self, calendar):
-        """Set the calendar.
-
-        .. seealso:: `override_calendar`, `override_units`,
-                     `del_calendar`, `get_calendar`
-
-        :Parameters:
-
-            value: `str`
-                The new calendar.
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> d.set_calendar('none')
-        >>> d.get_calendar
-        'none'
-        >>> d.del_calendar()
-        >>> d.get_calendar()
-        ValueError: Can't get non-existent calendar
-        >>> print(d.get_calendar(None))
-        None
-
-        """
-        self.Units = Units(self.get_units(default=None), calendar)
 
     def add_file_location(self, location):
         """Add a new file location in-place.
@@ -3569,35 +3458,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         return location
 
-    def set_units(self, value):
-        """Set the units.
-
-        .. seealso:: `override_units`, `del_units`, `get_units`,
-                     `has_units`, `Units`
-
-        :Parameters:
-
-            value: `str`
-                The new units.
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> d.set_units('watt')
-        >>> d.get_units()
-        'watt'
-        >>> d.del_units()
-        >>> d.get_units()
-        ValueError: Can't get non-existent units
-        >>> print(d.get_units(None))
-        None
-
-        """
-        self.Units = Units(value, self.get_calendar(default=None))
-
     @_inplace_enabled(default=False)
     @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
     def max(
@@ -3637,14 +3497,14 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-            `Data` or `None`
+            `{{class}}` or `None`
                 The collapsed data, or `None` if the operation was
                 in-place.
 
         **Examples**
 
         >>> a = np.ma.arange(12).reshape(4, 3)
-        >>> d = cf.Data(a, 'K')
+        >>> d = {{package}}.{{class}}(a, 'K')
         >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
@@ -3652,7 +3512,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
          [6 7 8]
          [9 10 11]]
         >>> d.max()
-        <CF Data(1, 1): [[11]] K>
+        <{{repr}}{{class}}(1, 1): [[11]] K>
 
         """
         # TODODASK
@@ -3698,22 +3558,20 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
             {{split_every: `int` or `dict`, optional}}
 
-                .. versionadded:: 3.14.0
-
             {{inplace: `bool`, optional}}
 
             {{i: deprecated at version 3.0.0}}
 
         :Returns:
 
-            `Data` or `None`
+            `{{class}}` or `None`
                 The collapsed data, or `None` if the operation was
                 in-place.
 
         **Examples**
 
         >>> a = np.ma.arange(12).reshape(4, 3)
-        >>> d = cf.Data(a, 'K')
+        >>> d = {{package}}.{{class}}(a, 'K')
         >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
@@ -3721,7 +3579,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
          [6 7 8]
          [9 10 11]]
         >>> d.min()
-        <CF Data(1, 1): [[0]] K>
+        <{{repr}}{{class}}(1, 1): [[0]] K>
 
         """
         # TODODASK
@@ -3735,6 +3593,64 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             mtol=mtol,
         )
         return d
+    
+    def set_calendar(self, calendar):
+        """Set the calendar.
+
+        .. seealso:: `override_calendar`, `override_units`,
+                     `del_calendar`, `get_calendar`
+
+        :Parameters:
+
+            value: `str`
+                The new calendar.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d.set_calendar('none')
+        >>> d.get_calendar
+        'none'
+        >>> d.del_calendar()
+        >>> d.get_calendar()
+        ValueError: Can't get non-existent calendar
+        >>> print(d.get_calendar(None))
+        None
+
+        """
+        self.Units = Units(self.get_units(default=None), calendar)
+
+    def set_units(self, value):
+        """Set the units.
+
+        .. seealso:: `override_units`, `del_units`, `get_units`,
+                     `has_units`, `Units`
+
+        :Parameters:
+
+            value: `str`
+                The new units.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d.set_units('watt')
+        >>> d.get_units()
+        'watt'
+        >>> d.del_units()
+        >>> d.get_units()
+        ValueError: Can't get non-existent units
+        >>> print(d.get_units(None))
+        None
+
+        """
+        self.Units = Units(value, self.get_calendar(default=None))
 
     @property
     def sparse_array(self):
@@ -3803,7 +3719,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-            `Data` or `None`
+            `{{class}}` or `None`
                 The uncompressed data, or `None` if the operation was
                 in-place.
 
@@ -3833,18 +3749,18 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-            `Data`
+            `{{class}}`
                 The unique values in a 1-d array.
 
         **Examples**
 
-        >>> d = cf.Data([[4, 2, 1], [1, 2, 3]], 'metre')
+        >>> d = {{package}}.{{class}}([[4, 2, 1], [1, 2, 3]], 'metre')
         >>> print(d.array)
         [[4 2 1]
          [1 2 3]]
         >>> e = d.unique()
         >>> e
-        <CF Data(4): [1, ..., 4] metre>
+        <{{repr}}{{class}}(4): [1, ..., 4] metre>
         >>> print(e.array)
         [1 2 3 4]
         >>> d[0, 0] = cf.masked
@@ -3868,7 +3784,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         # REVIEW: getitem: `unique`: set 'asanyarray'
         # The applicable chunk function will have its own call to
-        # 'cf_asanyarray', so we can set 'asanyarray=False'.
+        # 'asanyarray', so we can set 'asanyarray=False'.
         dx = d.to_dask_array(asanyarray=False)
         dx = Collapse().unique(dx, split_every=split_every)
 
@@ -3964,8 +3880,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         # Check that each instance has the same units. Do this before
         # any other possible short circuits.
-        self_Units = self.Units
-        other_Units = other.Units
+        self_Units = self._Units
+        other_Units = other._Units
         if self_Units != other_Units:
             if is_log_level_info(logger):
                 logger.info(
@@ -4020,7 +3936,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         self_is_numeric = is_numeric_dtype(self_dx)
         other_is_numeric = is_numeric_dtype(other_dx)
         if self_is_numeric and other_is_numeric:
-            data_comparison = _da_ma_allclose(
+            data_comparison = allclose(
                 self_dx,
                 other_dx,
                 masked_equal=True,
@@ -4085,7 +4001,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-            `Data` or `None`
+            `{{class}}` or `None`
 
         **Examples**
 
@@ -4140,14 +4056,14 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data([1, 2, 3], hardmask=False)
+        >>> d = {{package}}.{{class}}([1, 2, 3], hardmask=False)
         >>> d.hardmask
         False
         >>> d.harden_mask()
         >>> d.hardmask
         True
 
-        >>> d = cf.Data([1, 2, 3], mask=[False, True, False])
+        >>> d = {{package}}.{{class}}([1, 2, 3], mask=[False, True, False])
         >>> d.hardmask
         True
         >>> d[1] = 999
@@ -4156,76 +4072,12 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         """
         # REVIEW: getitem: `hardmask`: set 'asanyarray'
-        # 'cf_harden_mask' has its own call to 'cf_asanyarray', so we
+        # 'harden_mask' has its own call to 'asanyarray', so we
         # can set 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
-        dx = dx.map_blocks(cf_harden_mask, dtype=self.dtype)
+        dx = dx.map_blocks(harden_mask, dtype=self.dtype)
         self._set_dask(dx, clear=_NONE)
         self.hardmask = True
-
-    def has_calendar(self):
-        """Whether a calendar has been set.
-
-        .. seealso:: `del_calendar`, `get_calendar`, `set_calendar`,
-                     `has_units`, `Units`
-
-        :Returns:
-
-            `bool`
-                True if the calendar has been set, otherwise False.
-
-        **Examples**
-
-        >>> d = cf.Data(1, "days since 2000-1-1", calendar="noleap")
-        >>> d.has_calendar()
-        True
-
-        >>> d = cf.Data(1, calendar="noleap")
-        >>> d.has_calendar()
-        True
-
-        >>> d = cf.Data(1, "days since 2000-1-1")
-        >>> d.has_calendar()
-        False
-
-        >>> d = cf.Data(1, "m")
-        >>> d.has_calendar()
-        False
-
-        """
-        return hasattr(self.Units, "calendar")
-
-    def has_units(self):
-        """Whether units have been set.
-
-        .. seealso:: `del_units`, `get_units`, `set_units`,
-                     `has_calendar`, `Units`
-
-        :Returns:
-
-            `bool`
-                True if units have been set, otherwise False.
-
-        **Examples**
-
-        >>> d = cf.Data(1, "")
-        >>> d.has_units()
-        True
-
-        >>> d = cf.Data(1, "m")
-        >>> d.has_units()
-        True
-
-        >>> d = cf.Data(1)
-        >>> d.has_units()
-        False
-
-        >>> d = cf.Data(1, calendar='noleap')
-        >>> d.has_units()
-        False
-
-        """
-        return hasattr(self.Units, "units")
 
     def soften_mask(self):
         """Force the mask to soft.
@@ -4240,14 +4092,14 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data([1, 2, 3])
+        >>> d = {{package}}.{{class}}([1, 2, 3])
         >>> d.hardmask
         True
         >>> d.soften_mask()
         >>> d.hardmask
         False
 
-        >>> d = cf.Data([1, 2, 3], mask=[False, True, False], hardmask=False)
+        >>> d = {{package}}.{{class}}([1, 2, 3], mask=[False, True, False], hardmask=False)
         >>> d.hardmask
         False
         >>> d[1] = 999
@@ -4256,7 +4108,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         """
         # REVIEW: getitem: `soften_mask`: set 'asanyarray'
-        # 'cf_soften_mask' has its own call to 'cf_asanyarray', so we
+        # 'cf_soften_mask' has its own call to 'asanyarray', so we
         # can set 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
         dx = dx.map_blocks(cf_soften_mask, dtype=self.dtype)
@@ -4297,6 +4149,8 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 # This chunk doesn't contain a file array
                 pass
 
+        # TODODASK: check active-storage-new for updates to this method
+            
         return out
 
     @_inplace_enabled(default=False)
@@ -4317,12 +4171,12 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-            `Data` or `None`
+            `{{class}}` or `None`
                 The filled data, or `None` if the operation was in-place.
 
         **Examples**
 
-        >>> d = cf.Data([[1, 2, 3]])
+        >>> d = {{package}}.{{class}}([[1, 2, 3]])
         >>> print(d.filled().array)
         [[1 2 3]]
         >>> d[0, 0] = cf.masked
@@ -4349,10 +4203,10 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                     )
 
         # REVIEW: getitem: `filled`: set 'asanyarray'
-        # 'cf_filled' has its own call to 'cf_asanyarray', so we can
+        # 'cf_filled' has its own call to 'asanyarray', so we can
         # set 'asanyarray=False'.
         dx = d.to_dask_array(asanyarray=False)
-        dx = dx.map_blocks(cf_filled, fill_value=fill_value, dtype=d.dtype)
+        dx = dx.map_blocks(filled, fill_value=fill_value, dtype=d.dtype)
         d._set_dask(dx)
 
         return d
@@ -4394,12 +4248,16 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         foo <class 'str'>
 
         """
-        try:
-            return self._get_component("cached_elements")[0]
-        except KeyError:
-            item = self._item((slice(0, 1, 1),) * self.ndim)
-            self._set_cached_elements({0: item})
-            return item
+        cached_elements = self._get_component("cached_elements", None)
+        if cached_elements is not None:
+            try:
+                return cached_elements[0]
+            except KeyError:
+                pass
+        
+        item = self._item((slice(0, 1, 1),) * self.ndim)
+        self._set_cached_elements({0: item})
+        return item
 
     def second_element(self):
         """Return the second element of the data as a scalar.
@@ -4433,12 +4291,16 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         bar <class 'str'>
 
         """
-        try:
-            return self._get_component("cached_elements")[1]
-        except KeyError:
-            item = self._item(np.unravel_index(1, self.shape))
-            self._set_cached_elements({1: item})
-            return item
+        cached_elements = self._get_component("cached_elements", None)
+        if cached_elements is not None:
+            try:
+                return cached_elements[1]
+            except KeyError:
+                pass
+            
+        item = self._item(np.unravel_index(1, self.shape))
+        self._set_cached_elements({1: item})
+        return item
 
     def last_element(self):
         """Return the last element of the data as a scalar.
@@ -4477,12 +4339,16 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         bar <class 'str'>
 
         """
-        try:
-            return self._get_component("cached_elements")[-1]
-        except KeyError:
-            item = self._item((slice(-1, None, 1),) * self.ndim)
-            self._set_cached_elements({-1: item})
-            return item
+        cached_elements = self._get_component("cached_elements", None)
+        if cached_elements is not None:
+            try:
+                return cached_elements[-1]
+            except KeyError:
+                pass
+
+        item = self._item((slice(-1, None, 1),) * self.ndim)
+        self._set_cached_elements({-1: item})
+        return item
 
     @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
@@ -4513,16 +4379,16 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-            `Data` or `None`
+            `{{class}}` or `None`
                 The flattened data, or `None` if the operation was
                 in-place.
 
         **Examples**
 
         >>> import numpy as np
-        >>> d = cf.Data(np.arange(24).reshape(1, 2, 3, 4))
+        >>> d = {{package}}.{{class}}(np.arange(24).reshape(1, 2, 3, 4))
         >>> d
-        <CF Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
+        <{{repr}}{{class}}(1, 2, 3, 4): [[[[0, ..., 23]]]]>
         >>> print(d.array)
         [[[[ 0  1  2  3]
            [ 4  5  6  7]
@@ -4533,17 +4399,17 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         >>> e = d.flatten()
         >>> e
-        <CF Data(24): [0, ..., 23]>
+        <{{repr}}{{class}}(24): [0, ..., 23]>
         >>> print(e.array)
         [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23]
 
         >>> e = d.flatten([])
         >>> e
-        <CF Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
+        <{{repr}}{{class}}(1, 2, 3, 4): [[[[0, ..., 23]]]]>
 
         >>> e = d.flatten([1, 3])
         >>> e
-        <CF Data(1, 8, 3): [[[0, ..., 23]]]>
+        <{{repr}}{{class}}(1, 8, 3): [[[0, ..., 23]]]>
         >>> print(e.array)
         [[[ 0  4  8]
           [ 1  5  9]
@@ -4556,7 +4422,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         >>> d.flatten([0, -1], inplace=True)
         >>> d
-        <CF Data(4, 2, 3): [[[0, ..., 23]]]>
+        <{{repr}}{{class}}(4, 2, 3): [[[0, ..., 23]]]>
         >>> print(d.array)
         [[[ 0  4  8]
           [12 16 20]]
@@ -4631,7 +4497,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data(np.arange(405).reshape(3, 9, 15),
+        >>> d = {{package}}.{{class}}(np.arange(405).reshape(3, 9, 15),
         ...             chunks=((1, 2), (9,), (4, 5, 6)))
         >>> d.npartitions
         6
@@ -4656,92 +4522,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
             for starts, shapes in zip(cumdims, chunks)
         ]
         return product(*indices)
-
-    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
-    @_inplace_enabled(default=False)
-    def override_units(self, units, inplace=False, i=False):
-        """Override the data array units.
-
-        Not to be confused with setting the `Units` attribute to units
-        which are equivalent to the original units. This is different
-        because in this case the new units need not be equivalent to the
-        original ones and the data array elements will not be changed to
-        reflect the new units.
-
-        :Parameters:
-
-            units: `str` or `Units`
-                The new units for the data array.
-
-            {{inplace: `bool`, optional}}
-
-            {{i: deprecated at version 3.0.0}}
-
-        :Returns:
-
-            `Data` or `None`
-                The new data, or `None` if the operation was in-place.
-
-        **Examples**
-
-        >>> d = cf.Data(1012.0, 'hPa')
-        >>> e = d.override_units('km')
-        >>> e.Units
-        <Units: km>
-        >>> e.datum()
-        1012.0
-        >>> d.override_units(cf.Units('watts'), inplace=True)
-        >>> d.Units
-        <Units: watts>
-        >>> d.datum()
-        1012.0
-
-        """
-        d = _inplace_enabled_define_and_cleanup(self)
-        d._Units = Units(units)
-        return d
-
-    @_deprecated_kwarg_check("i", version="3.0.0", removed_at="4.0.0")
-    @_inplace_enabled(default=False)
-    def override_calendar(self, calendar, inplace=False, i=False):
-        """Override the calendar of the data array elements.
-
-        Not to be confused with using the `change_calendar` method or
-        setting the `d.Units.calendar`. `override_calendar` is different
-        because the new calendar need not be equivalent to the original
-        ones and the data array elements will not be changed to reflect
-        the new units.
-
-        :Parameters:
-
-            calendar: `str`
-                The new calendar.
-
-            {{inplace: `bool`, optional}}
-
-            {{i: deprecated at version 3.0.0}}
-
-        :Returns:
-
-            `Data` or `None`
-                The new data, or `None` if the operation was in-place.
-
-        **Examples**
-
-        >>> d = cf.Data(1, 'days since 2020-02-28')
-        >>> d
-        <CF Data(): 2020-02-29 00:00:00>
-        >>> d.datum()
-        1
-        >>> e = d.override_calendar('noleap')
-        <CF Data(): 2020-03-01 00:00:00 noleap>
-        >>> e.datum()
-        1
-
-        """
-        d = _inplace_enabled_define_and_cleanup(self)
-        d._Units = Units(d.Units._units, calendar)
-        return d
 
     # REVIEW: getitem: `to_dask_array`: new keyword 'asanyarray'
     def to_dask_array(self, apply_mask_hardness=False, asanyarray=None):
@@ -4775,11 +4555,11 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         :Returns:
 
             `dask.array.Array`
-                The dask array contained within the `Data` instance.
+                The dask array contained within the `{{class}}` instance.
 
         **Examples**
 
-        >>> d = cf.Data([1, 2, 3, 4], 'm')
+        >>> d = {{package}}.{{class}}([1, 2, 3, 4], 'm')
         >>> dx = d.to_dask_array()
         >>> dx
         >>> dask.array<array, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
@@ -4787,9 +4567,9 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         True
 
         >>> d.to_dask_array(apply_mask_hardness=True)
-        dask.array<cf_harden_mask, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
+        dask.array<harden_mask, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
 
-        >>> d = cf.Data([1, 2, 3, 4], 'm', hardmask=False)
+        >>> d = {{package}}.{{class}}([1, 2, 3, 4], 'm', hardmask=False)
         >>> d.to_dask_array(apply_mask_hardness=True)
         dask.array<cf_soften_mask, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
 
@@ -4806,15 +4586,15 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
             dx = self._get_component("dask")
             # Note: The mask hardness functions have their own calls
-            #       to 'cf_asanyarray', so we can don't need worry about
+            #       to 'asanyarray', so we can don't need worry about
             #       setting another one.
         else:
             if asanyarray is None:
                 asanyarray = self.__asanyarray__
 
             if asanyarray:
-                # Add a new cf_asanyarray layer to the output graph
-                dx = dx.map_blocks(cf_asanyarray, dtype=dx.dtype)
+                # Add a new asanyarray layer to the output graph
+                dx = dx.map_blocks(asanyarray, dtype=dx.dtype)
 
         return dx
 
@@ -4936,15 +4716,15 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data([9], 'm')
+        >>> d = {{package}}.{{class}}([9], 'm')
         >>> d.inspect()
-        <CF Data(1): [9] m>
+        <{{repr}}{{class}}(1): [9] m>
         -------------------
         {'_components': {'custom': {'_Units': <Units: m>,
                                     '_axes': ('dim0',),
                                     '_cyclic': set(),
                                     '_hardmask': True,
-                                    'dask': dask.array<cf_harden_mask, shape=(1,), dtype=int64, chunksize=(1,), chunktype=numpy.ndarray>},
+                                    'dask': dask.array<harden_mask, shape=(1,), dtype=int64, chunksize=(1,), chunktype=numpy.ndarray>},
                          'netcdf': {}}}
 
         """
@@ -4973,7 +4753,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data([1, 2, 3, 4, 5], chunks=3)
+        >>> d = {{package}}.{{class}}([1, 2, 3, 4, 5], chunks=3)
         >>> d = d[:2]
         >>> dict(d.to_dask_array().dask)
         {('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3]),
@@ -5022,7 +4802,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-            `Data` or `None`
+            `{{class}}` or `None`
                 The squeezed data array.
 
         **Examples**
@@ -5129,7 +4909,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
                 chunk's array object has an `__asanyarray__` attribute
                 that is also `True`. If False then do not do this. If
                 `None`, the default, then the final operation is added
-                if the `Data` object's `__asanyarray__` attribute is
+                if the `{{class}}` object's `__asanyarray__` attribute is
                 `True`.
 
                 .. versionadded:: NEXTVERSION
@@ -5141,7 +4921,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data([1, 2, 3, 4], chunks=2)
+        >>> d = {{package}}.{{class}}([1, 2, 3, 4], chunks=2)
         >>> d.todict()
         {('array-2f41b21b4cd29f757a7bfa932bf67832', 0): array([1, 2]),
          ('array-2f41b21b4cd29f757a7bfa932bf67832', 1): array([3, 4])}
@@ -5187,19 +4967,19 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         **Examples**
 
-        >>> d = cf.Data(9)
+        >>> d = {{package}}.{{class}}(9)
         >>> d.tolist()
         9
 
-        >>> d = cf.Data([1, 2])
+        >>> d = {{package}}.{{class}}([1, 2])
         >>> d.tolist()
         [1, 2]
 
-        >>> d = cf.Data(([[1, 2], [3, 4]]))
+        >>> d = {{package}}.{{class}}(([[1, 2], [3, 4]]))
         >>> d.tolist()
         [[1, 2], [3, 4]]
 
-        >>> d.equals(cf.Data(d.tolist()))
+        >>> d.equals({{package}}.{{class}}(d.tolist()))
         True
 
         """
@@ -5225,7 +5005,7 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-            `Data` or `None`
+            `{{class}}` or `None`
 
         **Examples**
 
@@ -5277,7 +5057,6 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
         dtype=None,
         units=None,
         calendar=None,
-        fill_value=None,
         chunks=_DEFAULT_CHUNKS,
     ):
         """Return a new array of given shape and type, without
@@ -5304,23 +5083,20 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
                 .. versionadded:: 3.14.0
 
-            fill_value: deprecated at version 3.14.0
-                Use `set_fill_value` instead.
-
         :Returns:
 
-            `Data`
+            `{{class}}`
                 Array of uninitialised (arbitrary) data of the given
                 shape and dtype.
 
         **Examples**
 
-        >>> d = cf.Data.empty((2, 2))
+        >>> d = {{package}}.{{class}}.empty((2, 2))
         >>> print(d.array)
         [[ -9.74499359e+001  6.69583040e-309],
          [  2.13182611e-314  3.06959433e-309]]         #uninitialised
 
-        >>> d = cf.Data.empty((2,), dtype=bool)
+        >>> d = {{package}}.{{class}}.empty((2,), dtype=bool)
         >>> print(d.array)
         [ False  True]                                 #uninitialised
 
@@ -5351,14 +5127,14 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
 
         :Returns:
 
-            `Data` or `None`
+            `{{class}}` or `None`
                 The collapsed data, or `None` if the operation was
                 in-place.
 
         **Examples**
 
         >>> a = np.ma.arange(12).reshape(4, 3)
-        >>> d = cf.Data(a, 'K')
+        >>> d = {{package}}.{{class}}(a, 'K')
         >>> d[1, 1] = cf.masked
         >>> print(d.array)
         [[0 1 2]
@@ -5366,13 +5142,13 @@ class Data(DataClassDeprecationsMixin, CFANetCDF, Container, cfdm.Data):
          [6 7 8]
          [9 10 11]]
         >>> d.sum()
-        <CF Data(1, 1): [[62]] K>
+        <{{repr}}{{class}}(1, 1): [[62]] K>
 
         >>> w = np.linspace(1, 2, 3)
         >>> print(w)
         [1.  1.5 2. ]
-        >>> d.sum(weights=cf.Data(w, 'm'))
-        <CF Data(1, 1): [[97.0]] K>
+        >>> d.sum(weights={{package}}.{{class}}(w, 'm'))
+        <{{repr}}{{class}}(1, 1): [[97.0]] K>
 
         """
         # Parse the axes. By default flattened input is used.
