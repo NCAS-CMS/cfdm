@@ -26,6 +26,7 @@ from .decorators import (
     _manage_log_level_via_verbosity,
     _test_decorator_args,
 )
+from .functions import parse_indices
 
 logger = logging.getLogger(__name__)
 
@@ -312,7 +313,7 @@ class Field(
 
         data = self.get_data(_fill_value=False)
 
-        indices = data._parse_indices(indices)
+        indices = parse_indices(data.shape, indices)
         indices = tuple(indices)
 
         data_axes = self.get_data_axes()

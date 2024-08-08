@@ -1362,7 +1362,7 @@ class CFDMImplementation(Implementation):
             Scalar `Data` instance
 
         """
-        return parent.data.maximum(squeeze=True)
+        return parent.data.max(squeeze=True)
 
     def get_data_sum(self, parent):
         """Return the sum of the data.

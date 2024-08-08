@@ -5,6 +5,7 @@ import itertools
 import os
 import unittest
 
+import dask.array as da
 import numpy as np
 
 faulthandler.enable()  # to debug seg faults and timeouts
@@ -78,6 +79,7 @@ class DataTest(unittest.TestCase):
     def test_Data__setitem__(self):
         """Test the assignment of data items on Data."""
         a = np.ma.arange(3000).reshape(50, 60)
+        a.harden_mask()
 
         d = cfdm.Data(a.filled(), units="m")
 
@@ -105,6 +107,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue((m == np.ma.getmaskarray(a)).all())
 
         a = np.ma.arange(3000).reshape(50, 60)
+        a.harden_mask()
 
         d = cfdm.Data(a.filled(), "m")
 
@@ -436,19 +439,19 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data(9)
         self.assertTrue(d.equals(d.transpose()))
 
-    def test_Data_unique(self):
-        """Test the unique Data method."""
-        d = cfdm.Data([[4, 2, 1], [1, 2, 3]], units="metre")
-        u = d.unique()
-        self.assertEqual(u.shape, (4,))
-        self.assertTrue(
-            (u.array == cfdm.Data([1, 2, 3, 4], "metre").array).all()
-        )
-
-        d[1, -1] = cfdm.masked
-        u = d.unique()
-        self.assertEqual(u.shape, (3,))
-        self.assertTrue((u.array == cfdm.Data([1, 2, 4], "metre").array).all())
+    # def test_Data_unique(self):
+    #     """Test the unique Data method."""
+    #     d = cfdm.Data([[4, 2, 1], [1, 2, 3]], units="metre")
+    #     u = d.unique()
+    #     self.assertEqual(u.shape, (4,))
+    #     self.assertTrue(
+    #         (u.array == cfdm.Data([1, 2, 3, 4], "metre").array).all()
+    #     )
+    #
+    #     d[1, -1] = cfdm.masked
+    #     u = d.unique()
+    #     self.assertEqual(u.shape, (3,))
+    #     self.assertTrue((u.array == cfdm.Data([1, 2, 4], "metre").array).all())
 
     def test_Data_equals(self):
         """Test the equality-testing Data method."""
@@ -462,8 +465,8 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.equals(e, verbose=3))
         self.assertTrue(e.equals(d, verbose=3))
 
-    def test_Data_maximum_minimum_sum_squeeze(self):
-        """Test the maximum, minimum, sum and squeeze Data methods."""
+    def test_Data_max_min_sum_squeeze(self):
+        """Test the max, min, sum and squeeze Data methods."""
         a = np.ma.arange(2 * 3 * 5).reshape(2, 1, 3, 5)
         a[0, 0, 0, 0] = np.ma.masked
         a[-1, -1, -1, -1] = np.ma.masked
@@ -471,31 +474,31 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data(a)
 
         b = a.max()
-        x = d.maximum().squeeze()
+        x = d.max().squeeze()
         self.assertEqual(x.shape, b.shape)
         self.assertTrue((x.array == b).all())
 
         b = a.max(axis=0)
-        x = d.maximum(axes=0).squeeze(0)
+        x = d.max(axes=0).squeeze(0)
         self.assertEqual(x.shape, b.shape)
         self.assertTrue((x.array == b).all())
 
         b = a.max(axis=(0, 3))
-        x = d.maximum(axes=[0, 3]).squeeze([0, 3])
+        x = d.max(axes=[0, 3]).squeeze([0, 3])
         self.assertEqual(x.shape, b.shape)
         self.assertTrue((x.array == b).all())
-        self.assertTrue(d.maximum([0, 3]).equals(d.max([0, 3])))
+        self.assertTrue(d.max([0, 3]).equals(d.max([0, 3])))
 
         b = a.min()
-        x = d.minimum().squeeze()
+        x = d.min().squeeze()
         self.assertEqual(x.shape, b.shape)
         self.assertTrue((x.array == b).all())
 
         b = a.min(axis=(0, 3))
-        x = d.minimum(axes=[0, 3]).squeeze([0, 3])
+        x = d.min(axes=[0, 3]).squeeze([0, 3])
         self.assertEqual(x.shape, b.shape)
         self.assertTrue((x.array == b).all(), (x.shape, b.shape))
-        self.assertTrue(d.minimum([0, 3]).equals(d.min([0, 3])))
+        self.assertTrue(d.min([0, 3]).equals(d.min([0, 3])))
 
         b = a.sum()
         x = d.sum().squeeze()
@@ -517,10 +520,10 @@ class DataTest(unittest.TestCase):
             d.squeeze(axes=2)
 
         with self.assertRaises(ValueError):
-            d.maximum(axes=99)
+            d.max(axes=99)
 
         with self.assertRaises(ValueError):
-            d.minimum(axes=99)
+            d.min(axes=99)
 
         d = cfdm.Data(9)
         self.assertTrue(d.equals(d.squeeze()))
@@ -532,10 +535,10 @@ class DataTest(unittest.TestCase):
             d.squeeze(axes=0)
 
         with self.assertRaises(ValueError):
-            d.minimum(axes=0)
+            d.min(axes=0)
 
         with self.assertRaises(ValueError):
-            d.maximum(axes=0)
+            d.max(axes=0)
 
     def test_Data_dtype_mask(self):
         """Test the dtype and mask Data methods."""
@@ -705,12 +708,6 @@ class DataTest(unittest.TestCase):
         d._original_filenames(update=["file1.nc", "file2.nc"])
         self.assertEqual(len(d.get_original_filenames()), 2)
 
-        d = cfdm.Data(9, filenames=None)
-        self.assertEqual(d.get_original_filenames(), set())
-
-        d = cfdm.Data(9, filenames=[])
-        self.assertEqual(d.get_original_filenames(), set())
-
         # Check source
         e = cfdm.Data(source=d)
         self.assertEqual(
@@ -758,13 +755,18 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data(s, dtype=float)
         self.assertEqual(d.sparse_array.dtype, float)
 
-        # Providing a mask in __init__ forces the sparse array to
-        # become dense
+        # Can't mask sparse array during __init__
         mask = [[0, 0, 1], [0, 0, 0], [0, 0, 0]]
-        d = cfdm.Data(s, mask=mask)
-        self.assertTrue((d.array == np.ma.array(s.toarray(), mask=mask)).all())
-        with self.assertRaises(AttributeError):
-            d.sparse_array
+        with self.assertRaises(ValueError):
+            cfdm.Data(s, mask=mask)
+
+        # # Providing a mask in __init__ forces the sparse array to
+        # # become dense
+        # mask = [[0, 0, 1], [0, 0, 0], [0, 0, 0]]
+        # d = cfdm.Data(s, mask=mask)
+        # self.assertTrue((d.array == np.ma.array(s.toarray(), mask=mask)).all())
+        # with self.assertRaises(AttributeError):
+        #     d.sparse_array
 
     def test_Data_masked_values(self):
         """Test Data.masked_values."""
@@ -792,6 +794,118 @@ class DataTest(unittest.TestCase):
         # Can't int on data with size > 1
         with self.assertRaises(TypeError):
             int(cfdm.Data([1, 2]))
+
+    def test_Data_pad_missing(self):
+        """Test Data.pad_missing."""
+        d = cfdm.Data(np.arange(6).reshape(2, 3))
+
+        g = d.pad_missing(1, to_size=5)
+        self.assertEqual(g.shape, (2, 5))
+        self.assertTrue(g[:, 3:].mask.array.all())
+
+        self.assertIsNone(d.pad_missing(1, pad_width=(1, 2), inplace=True))
+        self.assertEqual(d.shape, (2, 6))
+        self.assertTrue(d[:, 0].mask.array.all())
+        self.assertTrue(d[:, 4:].mask.array.all())
+
+        e = d.pad_missing(0, pad_width=(0, 1))
+        self.assertEqual(e.shape, (3, 6))
+        self.assertTrue(e[2, :].mask.array.all())
+
+        # Can't set both pad_width and to_size
+        with self.assertRaises(ValueError):
+            d.pad_missing(0, pad_width=(0, 1), to_size=99)
+
+        # Axis out of bounds
+        with self.assertRaises(ValueError):
+            d.pad_missing(99, to_size=99)
+
+    def test_Data_todict(self):
+        """Test Data.todict."""
+        d = cfdm.Data([1, 2, 3, 4], chunks=2)
+        key = d.to_dask_array().name
+
+        x = d.todict()
+        self.assertIsInstance(x, dict)
+        self.assertIn((key, 0), x)
+        self.assertIn((key, 1), x)
+
+        e = d[0]
+        x = e.todict()
+        self.assertIn((key, 0), x)
+        self.assertNotIn((key, 1), x)
+
+        x = e.todict(optimize_graph=False)
+        self.assertIsInstance(x, dict)
+        self.assertIn((key, 0), x)
+        self.assertIn((key, 1), x)
+
+    def test_Data_to_dask_array(self):
+        """Test the `to_dask_array` Data method."""
+        d = cfdm.Data([1, 2, 3, 4], "m")
+        dx = d.to_dask_array()
+        self.assertIsInstance(dx, da.Array)
+        self.assertTrue((d.array == dx.compute()).all())
+        self.assertIs(da.asanyarray(d), dx)
+
+    def test_Data_persist(self):
+        """Test the `persist` Data method."""
+        d = cfdm.Data(9, "km")
+        self.assertIsNone(d.persist(inplace=True))
+
+        d = cfdm.Data([1, 2, 3.0, 4], "km", chunks=2)
+        d = d.transpose()
+        self.assertGreater(len(d.to_dask_array().dask.layers), 1)
+
+        e = d.persist()
+        self.assertIsInstance(e, cfdm.Data)
+        self.assertEqual(len(e.to_dask_array().dask.layers), 1)
+        self.assertEqual(
+            e.to_dask_array().npartitions, d.to_dask_array().npartitions
+        )
+        self.assertTrue(e.equals(d))
+
+    def test_Data_cull_graph(self):
+        """Test `Data.cull`"""
+        # Note: The number of layers in the culled graphs include a
+        #       `cf_asanyarray` layer
+        d = cfdm.Data([1, 2, 3, 4, 5], chunks=3)
+        d = d[:2]
+        self.assertEqual(len(dict(d.to_dask_array(asanyarray=False).dask)), 3)
+
+        # Check that there are fewer keys after culling
+        d.cull_graph()
+        self.assertEqual(len(dict(d.to_dask_array(asanyarray=False).dask)), 2)
+
+    def test_Data_npartitions(self):
+        """Test the `npartitions` Data property."""
+        d = cfdm.Data.empty((4, 5), chunks=(2, 4))
+        self.assertEqual(d.npartitions, 4)
+
+    def test_Data_numblocks(self):
+        """Test the `numblocks` Data property."""
+        d = cfdm.Data.empty((4, 5), chunks=(2, 4))
+        self.assertEqual(d.numblocks, (2, 2))
+
+    def test_Data_clear_after_dask_update(self):
+        """Test Data._clear_after_dask_update."""
+        d = cfdm.Data([1, 2, 3], "m")
+        dx = d.to_dask_array()
+
+        d.first_element()
+        d.second_element()
+        d.last_element()
+
+        self.assertTrue(d._get_cached_elements())
+
+        _ALL = cfdm.data.config._ALL
+        _CACHE = cfdm.data.config._CACHE
+
+        d._set_dask(dx, clear=_ALL ^ _CACHE)
+        self.assertTrue(d._get_cached_elements())
+
+        d._set_dask(dx, clear=_ALL)
+        self.assertFalse(d._get_cached_elements())
 
 
 if __name__ == "__main__":

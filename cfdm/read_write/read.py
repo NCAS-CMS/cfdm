@@ -1,4 +1,5 @@
 import os
+from numbers import Integral
 
 from numpy.ma.core import MaskError
 
@@ -20,6 +21,7 @@ def read(
     domain=False,
     netcdf_backend=None,
     storage_options=None,
+    chunks="auto",
     _implementation=_implementation,
 ):
     """Read field or domain constructs from a dataset.
@@ -328,6 +330,75 @@ def read(
 
             .. versionadded:: (cfdm) NEXTVERSION
 
+        chunks: `str`, `int`, `None`, or `dict`, optional
+            Specify the `dask` chunking of dimensions for data in the
+            input files.
+
+            By default, ``'auto'`` is used to specify the array
+            chunking, which uses a chunk size in bytes defined by the
+            `cf.chunksize` function, preferring square-like chunk
+            shapes across all data dimensions.
+
+            If *chunks* is a `str` then each data array uses this
+            chunk size in bytes, preferring square-like chunk shapes
+            across all data dimensions. Any string value accepted by
+            the *chunks* parameter of the `dask.array.from_array`
+            function is permitted.
+
+            *Parameter example:*
+              A chunksize of 2 MiB may be specified as ``'2097152'``
+              or ``'2 MiB'``.
+
+            If *chunks* is `-1` or `None` then for each there is no
+            chunking, i.e. every data array has one chunk regardless
+            of its size.
+
+            If *chunks* is a positive `int` then each data array
+            dimension has chunks with this number of elements.
+
+            If *chunks* is a `dict`, then each of its keys identifies
+            dimension in the file, with a value that defines the
+            chunking for that dimension whenever it is spanned by
+            data.
+
+            Each dictionary key identifies a file dimension in one of
+            three ways: 1. the netCDF dimension name, preceded by
+            ``ncdim%`` (e.g. ``'ncdim%lat'``); 2. the "standard name"
+            attribute of a CF-netCDF coordinate variable that spans
+            the dimension (e.g. ``'latitude'``); or 3. the "axis"
+            attribute of a CF-netCDF coordinate variable that spans
+            the dimension (e.g. ``'Y'``).
+
+            The dictionary values may be `str`, `int` or `None`, with
+            the same meanings as those types for the *chunks*
+            parameter but applying only to the specified dimension. A
+            `tuple` or `list` of integers that sum to the dimension
+            size may also be given.
+
+            Not specifying a file dimension in the dictionary is
+            equivalent to it being defined with a value of ``'auto'``.
+
+            *Parameter example:*
+              ``{'T': '0.5 MiB', 'Y': [36, 37], 'X': None}``
+
+            *Parameter example:*
+              If a netCDF file contains dimensions ``time``, ``z``,
+              ``lat`` and ``lon``, then ``{'ncdim%time': 12,
+              'ncdim%lat', None, 'ncdim%lon': None}`` will ensure that
+              all ``time`` axes have a chunksize of 12; and all
+              ``lat`` and ``lon`` axes are not chunked; and all ``z``
+              axes are chunked to comply as closely as possible with
+              the default chunks size.
+
+              If the netCDF also contains a ``time`` coordinate
+              variable with a ``standard_name`` attribute of
+              ``'time'`` and an ``axis`` attribute of ``'T'``, then
+              the same chunking could be specified with either
+              ``{'time': 12, 'ncdim%lat', None, 'ncdim%lon': None}``
+              or ``{'T': 12, 'ncdim%lat', None, 'ncdim%lon': None}``.
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that provides the
             returned field constructs.
@@ -368,6 +439,13 @@ def read(
     elif isinstance(extra, str):
         extra = (extra,)
 
+    # Check chunks
+    if chunks is not None and not isinstance(chunks, (str, Integral, dict)):
+        raise ValueError(
+            "'chunks' parameter must be of type str, int, None or dict. "
+            f"Got: {chunks!r}"
+        )
+
     filename = os.path.expanduser(os.path.expandvars(filename))
 
     if netcdf.is_dir(filename):
@@ -404,6 +482,7 @@ def read(
                 domain=domain,
                 storage_options=storage_options,
                 netcdf_backend=netcdf_backend,
+                chunks=chunks,
                 extra_read_vars=None,
             )
         except MaskError:

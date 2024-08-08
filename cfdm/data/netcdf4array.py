@@ -1,11 +1,14 @@
 import netCDF4
 
 from . import abstract
-from .mixin import FileArrayMixin, NetCDFFileMixin
+from .locks import netcdf_lock
+from .mixin import FileArrayMixin, IndexMixin, NetCDFFileMixin
 from .netcdfindexer import netcdf_indexer
 
 
-class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
+class NetCDF4Array(
+    IndexMixin, NetCDFFileMixin, FileArrayMixin, abstract.Array
+):
     """A netCDF array accessed with `netCDF4`.
 
     .. versionadded:: (cfdm) 1.7.0
@@ -170,15 +173,53 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         # By default, close the netCDF file after data array access
         self._set_component("close", True, copy=False)
 
-    def __getitem__(self, indices):
-        """Returns a subspace of the array as a numpy array.
+    def __repr__(self):
+        """Called by the `repr` built-in function.
 
-        x.__getitem__(indices) <==> x[indices]
+        x.__repr__() <==> repr(x)
 
-        The indices that define the subspace must be either `Ellipsis` or
-        a sequence that contains an index for each dimension. In the
-        latter case, each dimension's index must either be a `slice`
-        object or a sequence of two or more integers.
+        """
+        return f"<{self.__class__.__name__}{self.shape}: {self}>"
+
+    def __str__(self):
+        """Called by the `str` built-in function.
+
+        x.__str__() <==> str(x)
+
+        """
+        return f"{self.get_filename(None)}, {self.get_address()}"
+
+    def __dask_tokenize__(self):
+        """Return a value fully representative of the object.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return super().__dask_tokenize__() + (self.get_mask(),)
+
+    @property
+    def _lock(self):
+        """Set the lock for use in `dask.array.from_array`.
+
+        Returns a lock object because concurrent reads are not
+        currently supported by the netCDF and HDF libraries. The lock
+        object will be the same for all `NetCDF4Array` and
+        `H5netcdfArray` instances, regardless of the dataset they
+        access, which means that access to all netCDF and HDF files
+        coordinates around the same lock.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return netcdf_lock
+
+    def _get_array(self, index=None):
+        """Returns a subspace of the dataset variable.
+
+        TODODASK
+
+        The indices that define the subspace must be a sequence that
+        contains an index for each dimension.
 
         Indexing is similar to numpy indexing. The only difference to
         numpy indexing (given the restrictions on the type of indices
@@ -190,7 +231,33 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
         .. versionadded:: (cfdm) 1.7.0
 
+        .. versionadded:: NEXTVERSION
+
+        .. seealso:: `__array__`, `index`
+
+        :Parameters:
+
+            {{index: `tuple` or `None`, optional}}
+
+        :Returns:
+
+            `numpy.ndarray`
+                The subspace.
+
         """
+        if index is None:
+            index = self.index()
+
+        # Note: We need to lock because the netCDF file is about to be
+        #       accessed.
+        self._lock.acquire()
+
+        # # Note: It's cfdm.NetCDFArray.__getitem__ that we want to call
+        # #       here, but we use 'Container' in super because that
+        # #       comes immediately before cfdm.NetCDFArray in the
+        # #       method resolution order.
+        # array = super(Container, self).__getitem__(index)
+
         netcdf, address = self.open()
         dataset = netcdf
 
@@ -217,7 +284,7 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             orthogonal_indexing=True,
             copy=False,
         )
-        array = array[indices]
+        array = array[index]
 
         # Set the attributes, if they haven't been set already.
         self._set_attributes(variable)
@@ -229,23 +296,8 @@ class NetCDF4Array(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             # Hmm netCDF4 has a thing for making scalar size 1, 1d
             array = array.squeeze()
 
+        self._lock.release()
         return array
-
-    def __repr__(self):
-        """Called by the `repr` built-in function.
-
-        x.__repr__() <==> repr(x)
-
-        """
-        return f"<{self.__class__.__name__}{self.shape}: {self}>"
-
-    def __str__(self):
-        """Called by the `str` built-in function.
-
-        x.__str__() <==> str(x)
-
-        """
-        return f"{self.get_filename(None)}, {self.get_address()}"
 
     def _set_attributes(self, var):
         """Set the netCDF variable attributes.

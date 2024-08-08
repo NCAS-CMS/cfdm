@@ -913,6 +913,7 @@ class NetCDFRead(IORead):
         storage_options=None,
         _file_systems=None,
         netcdf_backend=None,
+        chunks="auto",
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
 
@@ -969,6 +970,12 @@ class NetCDFRead(IORead):
 
             netcdf_backend: `None` or `str`, optional
                 See `cfdm.read` for details
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            chunks: `str`, `int`, `None`, or `dict`, optional
+                Specify the `dask` chunking of dimensions for data in
+                the input files. See `cfdm.read` for details
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1097,6 +1104,10 @@ class NetCDFRead(IORead):
             "file_systems": {},
             # Cache of open s3fs.File objects
             "s3fs_File_objects": [],
+            # --------------------------------------------------------
+            # Dask
+            # --------------------------------------------------------
+            "chunks": chunks,
         }
 
         g = self.read_vars
@@ -7460,6 +7471,7 @@ class NetCDFRead(IORead):
         ncvar,
         units=None,
         calendar=None,
+        ncdimensions=(),
         **kwargs,
     ):
         """Create a Data object from a netCDF variable.
@@ -7475,9 +7487,6 @@ class NetCDFRead(IORead):
                 The name of the netCDF variable that contains the
                 data.
 
-                .. note:: Not currently used here, but must be
-                          available to subclasses.
-
             units: `str`, optional
                 The units of *array*. By default, or if `None`, it is
                 assumed that there are no units.
@@ -7485,6 +7494,11 @@ class NetCDFRead(IORead):
             calendar: `str`, optional
                 The calendar of *array*. By default, or if `None`, it is
                 assumed that there is no calendar.
+
+            ncdimensions: sequence of `str`, optional
+                The netCDF dimensions spanned by the array.
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
             kwargs: optional
                 Extra parameters to pass to the initialisation of the
@@ -7495,10 +7509,50 @@ class NetCDFRead(IORead):
             `Data`
 
         """
+        if array.dtype is None:
+            # The array is based on a netCDF VLEN variable, and
+            # therefore has unknown data type. To find the correct
+            # data type (e.g. "<U7"), we need to read the entire array
+            # from its netCDF variable into memory to find the longest
+            # string.
+            g = self.read_vars
+            if g["has_groups"]:
+                group, name = self._netCDF4_group(
+                    g["variable_grouped_dataset"][ncvar], ncvar
+                )
+                variable = group.variables.get(name)
+            else:
+                variable = g["variables"].get(ncvar)
+
+            array = variable[...]
+
+            string_type = isinstance(array, str)
+            if string_type:
+                # A netCDF string type scalar variable comes out as Python
+                # str object, so convert it to a numpy array.
+                array = np.array(array, dtype=f"U{len(array)}")
+
+            if not variable.ndim:
+                # NetCDF4 has a thing for making scalar size 1
+                # variables into 1d arrays
+                array = array.squeeze()
+
+            if not string_type:
+                # A N-d (N>=1) netCDF string type variable comes out
+                # as a numpy object array, so convert it to numpy
+                # string array.
+                array = array.astype("U", copy=False)
+                # NetCDF4 doesn't auto-mask VLEN variables
+                array = np.ma.where(array == "", np.ma.masked, array)
+
+        # Parse dask chunks
+        chunks = self._parse_chunks(ncvar)
+
         data = self.implementation.initialise_Data(
             array=array,
             units=units,
             calendar=calendar,
+            chunks=chunks,
             copy=False,
             **kwargs,
         )
@@ -10307,3 +10361,68 @@ class NetCDFRead(IORead):
         g["file_system_storage_options"].setdefault(filename, storage_options)
 
         return storage_options
+
+    def _parse_chunks(self, ncvar):
+        """Parse the dask chunks.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            ncvar: `str`
+                The name of the netCDF variable containing the array.
+
+        :Returns:
+
+            `str`, `int` or `dict`
+                The parsed chunks that are suitable for passing to a
+                `Data` object containing the variable's array.
+
+        """
+        g = self.read_vars
+
+        default_chunks = "auto"
+        chunks = g.get("chunks", default_chunks)
+
+        if chunks is None:
+            return -1
+
+        if isinstance(chunks, dict):
+            if not chunks:
+                return default_chunks
+
+            # For ncdimensions = ('time', 'lat'):
+            #
+            # chunks={} -> ["auto", "auto"]
+            # chunks={'ncdim%time': 12} -> [12, "auto"]
+            # chunks={'ncdim%time': 12, 'ncdim%lat': 10000} -> [12, 10000]
+            # chunks={'ncdim%time': 12, 'ncdim%lat': "20MB"} -> [12, "20MB"]
+            # chunks={'ncdim%time': 12, 'latitude': -1} -> [12, -1]
+            # chunks={'ncdim%time': 12, 'Y': None} -> [12, None]
+            # chunks={'ncdim%time': 12, 'ncdim%lat': (30, 90)} -> [12, (30, 90)]
+            # chunks={'ncdim%time': 12, 'ncdim%lat': None, 'X': 5} -> [12, None]
+            attributes = g["variable_attributes"]
+            chunks2 = []
+            for ncdim in g["variable_dimensions"][ncvar]:
+                key = f"ncdim%{ncdim}"
+                if key in chunks:
+                    chunks2.append(chunks[key])
+                    continue
+
+                found_coord_attr = False
+                dim_coord_attrs = attributes.get(ncdim)
+                if dim_coord_attrs is not None:
+                    for attr in ("standard_name", "axis"):
+                        key = dim_coord_attrs.get(attr)
+                        if key in chunks:
+                            found_coord_attr = True
+                            chunks2.append(chunks[key])
+                            break
+
+                if not found_coord_attr:
+                    # Use default chunks for this dimension
+                    chunks2.append(default_chunks)
+
+            chunks = chunks2
+
+        return chunks

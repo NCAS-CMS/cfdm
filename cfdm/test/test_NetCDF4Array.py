@@ -82,14 +82,14 @@ class NetCDF4ArrayTest(unittest.TestCase):
 
         n = cfdm.NetCDF4Array(tmpfile, f.nc_get_variable(), shape=f.shape)
         self.assertTrue(n.get_mask())
-        n = n[...]
+        n = np.asanyarray(n[...])
         self.assertTrue((array.mask == n.mask).all())
 
         n = cfdm.NetCDF4Array(
             tmpfile, f.nc_get_variable(), shape=f.shape, mask=False
         )
         self.assertFalse(n.get_mask())
-        n = n[...]
+        n = np.asanyarray(n[...])
         self.assertEqual(np.ma.count(n), n.size)
 
     def test_NetCDF4Array_unpack(self):
@@ -108,7 +108,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
 
         n = cfdm.NetCDF4Array(tmpfile, f.nc_get_variable(), shape=f.shape)
         self.assertTrue(n.get_unpack())
-        n = n[...]
+        n = np.asanyarray(n[...])
         self.assertTrue((n.mask == array0.mask).all())
         self.assertTrue(np.ma.allclose(n, array0))
 
@@ -116,7 +116,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
             tmpfile, f.nc_get_variable(), shape=f.shape, unpack=False
         )
         self.assertFalse(n.get_unpack())
-        n = n[...]
+        n = np.asanyarray(n[...])
         self.assertTrue((n.mask == array1.mask).all())
         self.assertTrue((n == array1).all())
 
@@ -176,7 +176,8 @@ class NetCDF4ArrayTest(unittest.TestCase):
             n.get_attributes()
 
         # Set attributes via indexing
-        _ = n[...]
+        n = n[...]
+        _ = np.asanyarray(n)
         self.assertEqual(
             n.get_attributes(),
             {

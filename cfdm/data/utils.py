@@ -1,14 +1,17 @@
 """General functions useful for `Data` functionality."""
 
-from functools import lru_cache, partial, reduce
+from functools import lru_cache, partial
 from itertools import product
-from operator import mul
 
 import cftime
 import dask.array as da
 import numpy as np
+from dask.core import flatten
 
-from cfunits import Units
+from .config import Units
+
+_default_calendar = "standard"
+
 
 def allclose(x, y, masked_equal=True, rtol=None, atol=None):
     """An effective dask.array.ma.allclose method.
@@ -26,7 +29,7 @@ def allclose(x, y, masked_equal=True, rtol=None, atol=None):
     the corresponding NumPy method (see the `numpy.ma.allclose` API
     reference).
 
-    .. versionadded:: 3.14.0
+    .. versionadded:: (cfdm) NEXTVERSION
 
     :Parameters:
 
@@ -51,12 +54,8 @@ def allclose(x, y, masked_equal=True, rtol=None, atol=None):
             *atol* tolerance.
 
     """
-    # TODODASK: put in a PR to Dask to request to add as genuine method.
-
-    if rtol is None:
-        rtol = cf_rtol()
-    if atol is None:
-        atol = cf_atol()
+    if rtol is None or atol is None:
+        raise ValueError("TODODASK")
 
     # Must pass rtol=rtol, atol=atol in as kwargs to allclose, rather than it
     # using those in local scope from the outer function arguments, because
@@ -99,7 +98,7 @@ def allclose(x, y, masked_equal=True, rtol=None, atol=None):
 def is_numeric_dtype(array):
     """True if the given array is of a numeric or boolean data type.
 
-    .. versionadded:: 3.14.0
+    .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -147,7 +146,7 @@ def is_numeric_dtype(array):
 def convert_to_datetime(a, units):
     """Convert a dask array of numbers to one of date-time objects.
 
-    .. versionadded:: 3.14.0
+    .. versionadded:: (cfdm) NEXTVERSION
 
     .. seealso `convert_to_reftime`
 
@@ -185,7 +184,7 @@ def convert_to_reftime(a, units=None, first_value=None):
     """Convert a dask array of string or object date-times to floating
     point reference times.
 
-    .. versionadded:: 3.14.0
+    .. versionadded:: (cfdm) NEXTVERSION
 
     .. seealso `convert_to_datetime`
 
@@ -193,7 +192,7 @@ def convert_to_reftime(a, units=None, first_value=None):
 
         a: `dask.array.Array`
 
-        units: `cfdm.Units`, optional
+        units: `Units`, optional
              Specify the units for the output reference time
              values. By default the units are inferred from the first
              non-missing value in the array, or set to ``<Units: days
@@ -207,12 +206,12 @@ def convert_to_reftime(a, units=None, first_value=None):
 
     :Returns:
 
-        (`dask.array.Array`, `cfdm.Units`)
+        (`dask.array.Array`, `Units`)
             The reference times, and their units.
 
     >>> import dask.array as da
     >>> d = da.from_array(2.5)
-    >>> e = cfdm.data.utils.convert_to_datetime(d, cfdm.Units("days since 2000-12-01"))
+    >>> e = cfdm.data.utils.convert_to_datetime(d, Units("days since 2000-12-01"))
 
     >>> f, u = cfdm.data.utils.convert_to_reftime(e)
     >>> f.compute()
@@ -220,7 +219,7 @@ def convert_to_reftime(a, units=None, first_value=None):
     >>> u
     <Units: days since 2000-12-3 standard>
 
-    >>> f, u = cfdm.data.utils.convert_to_reftime(e, cfdm.Units("days since 1999-12-01"))
+    >>> f, u = cfdm.data.utils.convert_to_reftime(e, Units("days since 1999-12-01"))
     >>> f.compute()
     368.5
     >>> u
@@ -239,7 +238,7 @@ def convert_to_reftime(a, units=None, first_value=None):
 
             units = Units(
                 "days since " + YMD,
-                getattr(units, "calendar", default_calendar),
+                getattr(units, "calendar", _default_calendar),
             )
 
         a = a.map_blocks(
@@ -291,7 +290,7 @@ def convert_to_reftime(a, units=None, first_value=None):
 def first_non_missing_value(a, cached=None, method="index"):
     """Return the first non-missing value of a dask array.
 
-    .. versionadded:: 3.14.0
+    .. versionadded:: (cfdm) NEXTVERSION
 
     :Parameters:
 
@@ -394,12 +393,43 @@ def first_non_missing_value(a, cached=None, method="index"):
 
 
 @lru_cache(maxsize=32)
+def generate_axis_identifiers(n):
+    """Return new axis identifiers for a given number of axes.
+
+    The names are arbitrary and have no semantic meaning.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    :Parameters:
+
+        n: `int`
+            Generate this number of axis identifiers.
+
+    :Returns:
+
+        `list`
+            The new axis identifiers.
+
+    **Examples**
+
+    >>> cf.data.creation.generate_axis_identifiers(0)
+    []
+    >>> cf.data.creation.generate_axis_identifiers(1)
+    ['dim0']
+    >>> cf.data.creation.generate_axis_identifiers(3)
+    ['dim0', 'dim1', 'dim2']
+
+    """
+    return [f"dim{i}" for i in range(n)]
+
+
+@lru_cache(maxsize=32)
 def new_axis_identifier(existing_axes=(), basename="dim"):
     """Return a new, unique axis identifier.
 
     The name is arbitrary and has no semantic meaning.
 
-    .. versionadded:: 3.14.0
+    .. versionadded:: (cfdm) NEXTVERSION
 
     :Parameters:
 
@@ -455,7 +485,7 @@ def new_axis_identifier(existing_axes=(), basename="dim"):
 def chunk_positions(chunks):
     """Find the position of each chunk.
 
-    .. versionadded:: 3.14.0
+    .. versionadded:: (cfdm) NEXTVERSION
 
     .. seealso:: `chunk_indices`, `chunk_locations`, `chunk_shapes`
 
@@ -485,7 +515,7 @@ def chunk_positions(chunks):
 def chunk_shapes(chunks):
     """Find the shape of each chunk.
 
-    .. versionadded:: 3.14.0
+    .. versionadded:: (cfdm) NEXTVERSION
 
     .. seealso:: `chunk_indices`, `chunk_locations`, `chunk_positions`
 
@@ -515,7 +545,7 @@ def chunk_shapes(chunks):
 def chunk_locations(chunks):
     """Find the shape of each chunk.
 
-    .. versionadded:: 3.15.0
+    .. versionadded:: (cfdm) NEXTVERSION
 
     .. seealso:: `chunk_indices`, `chunk_positions`, `chunk_shapes`
 
@@ -549,399 +579,6 @@ def chunk_locations(chunks):
     return product(*locations)
 
 
-def scalar_masked_array(dtype=float):
-    """Return a scalar masked array.
-
-     .. versionadded:: 3.14.0
-
-     :Parmaeters:
-
-         dtype: data-type, optional
-             Desired output data-type for the array, e.g,
-             `numpy.int8`. Default is `numpy.float64`.
-
-     :Returns:
-
-         `np.ma.core.MaskedArray`
-             The scalar masked array.
-
-     **Examples**
-
-     >>> cf.data.utils.scalar_masked_array()
-     masked_array(data=--,
-                  mask=True,
-            fill_value=1e+20,
-                 dtype=float64)
-     >>> cf.data.utils.scalar_masked_array(dtype('int32'))
-     masked_array(data=--,
-                  mask=True,
-            fill_value=999999,
-                 dtype=int32)
-     >>> cf.data.utils.scalar_masked_array('U45')
-     masked_array(data=--,
-                  mask=True,
-            fill_value='N/A',
-                dtype='<U45')
-    >>> cf.data.utils.scalar_masked_array(bool)
-    masked_array(data=--,
-                 mask=True,
-            fill_value=True,
-                dtype=bool)
-
-    """
-    a = np.ma.empty((), dtype=dtype)
-    a.mask = True
-    return a
-
-
-    ValueError: Units <Units: km> are incompatible with units <Units: s>
-    >>> cf.data.utils.conform_units(d, cf.Units('s'), message='My message')
-    Traceback (most recent call last):
-        ...
-    ValueError: My message
-
-    """
-    value_units = getattr(value, "_Units", None)
-    if value_units is None or value_units == units:
-        return value
-
-    if value_units.equivalent(units):
-        value = value.copy()
-        value.Units = units
-        return value
-
-    if value_units and units:
-        if message is None:
-            message = (
-                f"Units {value_units!r} are incompatible with units {units!r}"
-            )
-
-        raise ValueError(message)
-
-    return value
-
-def where_broadcastable(data, x, name):
-    """Check broadcastability for `cf.Data.where` assignments.
-
-    Raises an exception unless the *data* and *x* parameters are
-    broadcastable across each other, such that the size of the result
-    is identical to the size of *data*. Leading size 1 dimensions of
-    *x* are ignored, thereby also ensuring that the shape of the
-    result is identical to the shape of *data*.
-
-    .. versionadded:: 3.14.0
-
-    .. seealso:: `cf.Data.where`
-
-    :Parameters:
-
-        data, x: `Data`
-            The arrays to compare.
-
-        name: `str`
-            A name for *x* that is used in exception error messages.
-
-    :Returns:
-
-        `Data`
-             The input parameter *x*, or a modified copy without
-             leading size 1 dimensions. If *x* can not be acceptably
-             broadcast to *data* then a `ValueError` is raised.
-
-    """
-    ndim_x = x.ndim
-    if not ndim_x:
-        return x
-
-    error = 0
-
-    shape_x = x.shape
-    shape_data = data.shape
-
-    shape_x0 = shape_x
-    ndim_difference = ndim_x - data.ndim
-
-    if ndim_difference > 0:
-        if shape_x[:ndim_difference] == (1,) * ndim_difference:
-            # Remove leading ize 1 dimensions
-            x = x.reshape(shape_x[ndim_difference:])
-            shape_x = x.shape
-        else:
-            error += 1
-
-    for n, m in zip(shape_x[::-1], shape_data[::-1]):
-        if n != m and m > 1 and n > 1:
-            raise ValueError(
-                f"where: {name!r} parameter with shape {shape_x0} can not "
-                f"be broadcast across data with shape {shape_data}"
-            )
-
-        if m == 1 and n > 1:
-            error += 1
-
-    if error:
-        raise ValueError(
-            f"where: {name!r} parameter with shape {shape_x0} can not "
-            f"be broadcast across data with shape {shape_data} when the "
-            "result will have a different shape to the data"
-        )
-
-    return x
-
-
-def collapse(
-    func,
-    d,
-    axis=None,
-    weights=None,
-    keepdims=True,
-    mtol=1,
-    ddof=None,
-    split_every=None,
-):
-    """Collapse data in-place using a given funcion.
-
-     .. versionadded:: 3.14.0
-
-     .. seealso:: `parse_weights`
-
-    :Parameters:
-
-        func: callable
-            The function that collapses the underlying `dask` array of
-            *d*. Must have the minimum signature (parameters and
-            default values) ``func(dx, axis=None, keepdims=False,
-            mtol=None, split_every=None)`` (optionally including
-            ``weights=None`` or ``ddof=None``), where ``dx`` is a the
-            dask array contained in *d*.
-
-        d: `Data`
-            The data to be collapsed.
-
-        axis: (sequence of) int, optional
-            The axes to be collapsed. By default all axes are
-            collapsed, resulting in output with size 1. Each axis is
-            identified by its integer position. If *axes* is an empty
-            sequence then the collapse is applied to each scalar
-            element and the reuslt has the same shape as the input
-            data.
-
-        weights: data_like, `dict`, or `None`, optional
-            Weights associated with values of the data. By default
-            *weights* is `None`, meaning that all non-missing elements
-            of the data have a weight of 1 and all missing elements
-            have a weight of 0.
-
-            If *weights* is a data_like object then it must be
-            broadcastable to the array.
-
-            If *weights* is a dictionary then each key specifies axes
-            of the data (an `int` or `tuple` of `int`), with a
-            corresponding value of data_like weights for those
-            axes. The dimensions of a weights value must correspond to
-            its key axes in the same order. Not all of the axes need
-            weights assigned to them. The weights that will be used
-            will be an outer product of the dictionary's values.
-
-            However they are specified, the weights are internally
-            broadcast to the shape of the data, and those weights that
-            are missing data, or that correspond to the missing
-            elements of the data, are assigned a weight of 0.
-
-            For collapse functions that do not have a ``weights``
-            parameter, *weights* must be `None`.
-
-        keepdims: `bool`, optional
-            By default, the axes which are collapsed are left in the
-            result as dimensions with size one, so that the result
-            will broadcast correctly against the input array. If set
-            to False then collapsed axes are removed from the data.
-
-        mtol: number, optional
-            The sample size threshold below which collapsed values are
-            set to missing data. It is defined as a fraction (between
-            0 and 1 inclusive) of the contributing input data values.
-
-            The default of *mtol* is 1, meaning that a missing datum
-            in the output array occurs whenever all of its
-            contributing input array elements are missing data.
-
-            For other values, a missing datum in the output array
-            occurs whenever more than ``100*mtol%`` of its
-            contributing input array elements are missing data.
-
-        ddof: number, optional
-            The delta degrees of freedom. The number of degrees of
-            freedom used in the calculation is (N-*ddof*) where N
-            represents the number of non-missing elements.
-
-            For collapse functions that do not have a ``ddof``
-            parameter, *ddof* must be `None`.
-
-        split_every: `int` or `dict`, optional
-            Determines the depth of the recursive aggregation. See
-            `dask.array.reduction` for details.
-
-    :Returns:
-
-        (`Data`, formatted weights)
-            The collapsed data and the output of ``parse_weights(d,
-            weights, axis)``.
-
-    """
-    kwargs = {
-        "axis": axis,
-        "keepdims": keepdims,
-        "split_every": split_every,
-        "mtol": mtol,
-        # REVIEW: active: `collapse`: pass the active storage status onto the collapse functions
-#        "active_storage": d.active_storage,
-    }
-
-    weights = parse_weights(d, weights, axis)
-    if weights is not None:
-        kwargs["weights"] = weights
-
-    if ddof is not None:
-        kwargs["ddof"] = ddof
-
-    # REVIEW: getitem: `collapse`: set 'asanyarray'
-    # The applicable chunk function will have its own call to
-    # 'cf_asanyarray', so we can set 'asanyarray=False'. Also, setting
-    # asanyarray=False will ensure that any active storage operations
-    # are not compromised.
-    dx = d.to_dask_array(asanyarray=False)
-    dx = func(dx, **kwargs)
-    d._set_dask(dx)
-
-    return d, weights
-
-
-def parse_weights(d, weights, axis=None):
-    """Parse the weights input to `collapse`.
-
-     .. versionadded:: 3.14.0
-
-     .. seealso:: `collapse`
-
-    :Parameters:
-
-        d: `Data`
-            The data to be collapsed.
-
-        weights: data_like or `dict`
-            See `collapse` for details.
-
-        axis: (sequence of) `int`, optional
-            See `collapse` for details.
-
-    :Returns:
-
-        `Data` or `None`
-            * If *weights* is a data_like object then they are
-              returned unchanged as a `Data` object. It is up to the
-              downstream functions to check if the weights can be
-              broadcast to the data.
-
-            * If *weights* is a dictionary then the dictionary
-              values', i.e. the weights components, outer product is
-              returned in `Data` object that is broadcastable to the
-              data.
-
-              If the dictionary is empty, or none of the axes defined
-              by the keys correspond to collapse axes defined by
-              *axis*, then then the collapse is unweighted and `None`
-              is returned.
-
-            Note that, in all cases, the returned weights are *not*
-            modified to account for missing values in the data.
-
-    **Examples**
-
-    >>> d = cf.Data(np.arange(12)).reshape(4, 3)
-
-    >>> cf.data.utils.parse_weights(d, [1, 2, 1], (0, 1))
-    <CF Data(3): [1, 2, 1]>
-
-    >>> cf.data.utils.parse_weights(d, [[1, 2, 1]], (0, 1))
-    <CF Data(1, 3): [[1, 2, 1]]>
-
-    >>> cf.data.utils.parse_weights(d, {1: [1, 2, 1]}, (0, 1))
-    <CF Data(1, 3): [[1, 2, 1]]>
-
-    >>> print(
-    ...     cf.data.utils.parse_weights(
-    ...         d, {0: [1, 2, 3, 4], 1: [1, 2, 1]}, (0, 1)
-    ...     )
-    ... )
-    [[1 2 1]
-     [2 4 2]
-     [3 6 3]
-     [4 8 4]]
-
-    >>> print(cf.data.utils.parse_weights(d, {}, (0, 1)))
-    None
-
-    >>> print(cf.data.utils.parse_weights(d, {1: [1, 2, 1]}, 0))
-    None
-
-    """
-    if weights is None:
-        # No weights
-        return
-
-    if not isinstance(weights, dict):
-        # Weights is data_like. Don't check broadcastability to d,
-        # leave that to whatever uses the weights.
-        return type(d).asdata(weights)
-
-    if not weights:
-        # No weights (empty dictionary)
-        return
-
-    if axis is None:
-        axis = tuple(range(d.ndim))
-    else:
-        axis = d._parse_axes(axis)
-
-    weights = weights.copy()
-    weights_axes = set()
-    for key, value in tuple(weights.items()):
-        del weights[key]
-        key = d._parse_axes(key)
-        if weights_axes.intersection(key):
-            raise ValueError("Duplicate weights axis")
-
-        weights[tuple(key)] = value
-        weights_axes.update(key)
-
-    if not weights_axes.intersection(axis):
-        # No weights span collapse axes
-        return
-
-    # For each component, add missing dimensions as size 1.
-    w = []
-    shape = d.shape
-    axes = d._axes
-    # REVIEW: active: `parse_weights`: minor refactor
-    Data = type(d)
-    for key, value in weights.items():
-        value = Data.asdata(value)
-
-        # Make sure axes are in ascending order
-        if key != tuple(sorted(key)):
-            key1 = [axes[i] for i in key]
-            new_order = [key1.index(axis) for axis in axes if axis in key1]
-            value = value.transpose(new_order)
-
-        new_shape = [n if i in key else 1 for i, n in enumerate(shape)]
-        w.append(value.reshape(new_shape))
-
-    # Return the product of the weights components, which will be
-    # broadcastable to d
-    return reduce(mul, w)
-
-
 def normalize_chunks(chunks, shape=None, dtype=None):
     """Normalize chunks to tuple of tuples.
 
@@ -953,7 +590,7 @@ def normalize_chunks(chunks, shape=None, dtype=None):
     identical to `dask.array.core.normalize_chunks`. If it does, then
     the output chunks for each such axis will be ``(nan,)``.
 
-    .. versionadded 3.16.0
+    .. versionadded (cfdm) NEXTVERSION
 
     :Parameters:
 
@@ -989,6 +626,7 @@ def normalize_chunks(chunks, shape=None, dtype=None):
         for chunk, size in zip(chunks, shape)
     ]
     return tuple(out)
+
 
 def dt2rt(array, units_in, units_out, dummy1=None):
     """Return numeric time values from datetime objects.
@@ -1042,6 +680,7 @@ def dt2rt(array, units_in, units_out, dummy1=None):
             array = np.asanyarray(array)
 
     return array
+
 
 def rt2dt(array, units_in, units_out=None, dummy1=None):
     """Convert reference times to date-time objects.
@@ -1098,6 +737,68 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
 
     return array
 
+
+def st2datetime(date_string, calendar=None):
+    """Parse an ISO 8601 date-time string into a `cftime` object.
+
+    :Parameters:
+
+        date_string: `str`
+
+    :Returns:
+
+        `cftime.datetime`
+
+    """
+    if date_string.count("-") != 2:
+        raise ValueError(
+            "Input date-time string must contain at least a year, a month "
+            "and a day"
+        )
+
+    x = cftime._parse_date(date_string)
+    if len(x) == 7:
+        year, month, day, hour, minute, second, utc_offset = x
+        microsecond = 0
+    else:
+        year, month, day, hour, minute, second, microsecond, utc_offset = x
+
+    if utc_offset:
+        raise ValueError("Can't specify a time offset from UTC")
+
+    return cftime.datetime(
+        year, month, day, hour, minute, second, microsecond, calendar=calendar
+    )
+
+
+def st2dt(array, units_in=None, dummy0=None, dummy1=None):
+    """The returned array is always independent.
+
+    :Parameters:
+
+        array: numpy array-like
+
+        units_in: `Units`, optional
+
+        dummy0: optional
+            Ignored.
+
+        dummy1: optional
+            Ignored.
+
+    :Returns:
+
+        `numpy.ndarray`
+            An array of `cftime.datetime` objects with the same shape
+            as *array*.
+
+    **Examples**
+
+    """
+    func = partial(st2datetime, calendar=units_in._calendar)
+    return np.vectorize(func, otypes=[object])(array)
+
+
 def st2rt(array, units_in, units_out, dummy1=None):
     """The returned array is always independent.
 
@@ -1119,11 +820,4 @@ def st2rt(array, units_in, units_out, dummy1=None):
 
     """
     array = st2dt(array, units_in)
-    array = cftime.date2num(
-        array, units=units_out.units, calendar=units_out._utime.calendar
-    )
-
-    if not np.ndim(array):
-        array = np.asanyarray(array)
-
-    return array
+    return dt2rt(array, None, units_out)

@@ -2,9 +2,12 @@ import logging
 import os
 from copy import deepcopy
 from functools import total_ordering
+from math import isnan
+from numbers import Integral
 from urllib.parse import urlparse
 
 import numpy as np
+from dask.base import is_dask_collection
 
 from . import __cf_version__, __file__, __version__, core
 from .constants import CONSTANTS, ValidLogLevels
@@ -1648,3 +1651,369 @@ def integer_dtype(n):
         dtype = np.dtype(int)
 
     return dtype
+
+
+def _numpy_allclose(a, b, rtol=None, atol=None, verbose=None):
+    """Returns True if two broadcastable arrays have equal values to
+    within numerical tolerance, False otherwise.
+
+    The tolerance values are positive, typically very small numbers. The
+    relative difference (``rtol * abs(b)``) and the absolute difference
+    ``atol`` are added together to compare against the absolute difference
+    between ``a`` and ``b``.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    :Parameters:
+
+        a, b : array_like
+            Input arrays to compare.
+
+        atol : float, optional
+            The absolute tolerance for all numerical comparisons, By
+            default the value returned by the `atol` function is used.
+
+        rtol : float, optional
+            The relative tolerance for all numerical comparisons, By
+            default the value returned by the `rtol` function is used.
+
+    :Returns:
+
+        `bool`
+            Returns True if the arrays are equal, otherwise False.
+
+    **Examples**
+
+    >>> cf._numpy_allclose([1, 2], [1, 2])
+    True
+    >>> cf._numpy_allclose(numpy.array([1, 2]), numpy.array([1, 2]))
+    True
+    >>> cf._numpy_allclose([1, 2], [1, 2, 3])
+    False
+    >>> cf._numpy_allclose([1, 2], [1, 4])
+    False
+
+    >>> a = numpy.ma.array([1])
+    >>> b = numpy.ma.array([2])
+    >>> a[0] = numpy.ma.masked
+    >>> b[0] = numpy.ma.masked
+    >>> cf._numpy_allclose(a, b)
+    True
+
+    """
+    # TODO: we want to use @_manage_log_level_via_verbosity on this function
+    # but we cannot, since importing it to this module would lead to a
+    # circular import dependency with the decorators module. Tentative plan
+    # is to move the function elsewhere. For now, it is not 'loggified'.
+
+    # THIS IS WHERE SOME NUMPY FUTURE WARNINGS ARE COMING FROM
+
+    a_is_masked = np.ma.isMA(a)
+    b_is_masked = np.ma.isMA(b)
+
+    if not (a_is_masked or b_is_masked):
+        try:
+            return np.allclose(a, b, rtol=rtol, atol=atol)
+        except (IndexError, NotImplementedError, TypeError):
+            return np.all(a == b)
+    else:
+        if a_is_masked and b_is_masked:
+            if (a.mask != b.mask).any():
+                if verbose:
+                    print("Different masks (A)")
+
+                return False
+        else:
+            if np.ma.is_masked(a) or np.ma.is_masked(b):
+                if verbose:
+                    print("Different masks (B)")
+
+                return False
+
+        try:
+            return np.ma.allclose(a, b, rtol=rtol, atol=atol)
+        except (IndexError, NotImplementedError, TypeError):
+            # To prevent a bug causing some header/coord-only CDL reads or
+            # aggregations to error. See also TODO comment below.
+            if a.dtype == b.dtype:
+                out = np.ma.all(a == b)
+            else:
+                # TODO: is this most sensible? Or should we attempt dtype
+                # conversion and then compare? Probably we should avoid
+                # altogether by catching the different dtypes upstream?
+                out = False
+            if out is np.ma.masked:
+                return True
+            else:
+                return out
+
+
+def indices_shape(indices, full_shape, keepdims=True):
+    """Return the shape of the array subspace implied by indices.
+
+    **Performance**
+
+    Boolean `dask` arrays will be computed, and `dask` arrays with
+    unknown size will have their chunk sizes computed.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    .. seealso:: `cf.parse_indices`
+
+    :Parameters:
+
+        indices: `tuple`
+            The indices to be applied to an array with shape
+            *full_shape*.
+
+        full_shape: sequence of `ints`
+            The shape of the array to be subspaced.
+
+        keepdims: `bool`, optional
+            If True then an integral index is converted to a
+            slice. For instance, ``3`` would become ``slice(3, 4)``.
+
+    :Returns:
+
+        `list`
+            The shape of the subspace defined by the *indices*.
+
+    **Examples**
+
+    >>> import numpy as np
+    >>> import dask.array as da
+
+    >>> cf.indices_shape((slice(2, 5), 4), (10, 20))
+    [3, 1]
+    >>> cf.indices_shape(([2, 3, 4], np.arange(1, 6)), (10, 20))
+    [3, 5]
+
+    >>> index0 = [False] * 5
+    >>> index0[2:5] = [True] * 3
+    >>> cf.indices_shape((index0, da.arange(1, 6)), (10, 20))
+    [3, 5]
+
+    >>> index0 = da.full((5,), False, dtype=bool)
+    >>> index0[2:5] = True
+    >>> index1 = np.full((6,), False, dtype=bool)
+    >>> index1[1:6] = True
+    >>> cf.indices_shape((index0, index1), (10, 20))
+    [3, 5]
+
+    >>> index0 = da.arange(5)
+    >>> index0 = index0[index0 < 3]
+    >>> cf.indices_shape((index0, []), (10, 20))
+    [3, 0]
+
+    >>> cf.indices_shape((da.from_array(2), np.array(3)), (10, 20))
+    [1, 1]
+    >>> cf.indices_shape((da.from_array([]), np.array(())), (10, 20))
+    [0, 0]
+    >>> cf.indices_shape((slice(1, 5, 3), 3), (10, 20))
+    [2, 1]
+    >>> cf.indices_shape((slice(5, 1, -2), 3), (10, 20))
+    [2, 1]
+    >>> cf.indices_shape((slice(5, 1, 3), 3), (10, 20))
+    [0, 1]
+    >>> cf.indices_shape((slice(1, 5, -3), 3), (10, 20))
+    [0, 1]
+
+    >>> cf.indices_shape((slice(2, 5), 4), (10, 20), keepdims=False)
+    [3]
+    >>> cf.indices_shape((da.from_array(2), 3), (10, 20), keepdims=False)
+    []
+    >>> cf.indices_shape((2, np.array(3)), (10, 20), keepdims=False)
+    []
+
+    """
+    shape = []
+    for index, full_size in zip(indices, full_shape):
+        if isinstance(index, slice):
+            start, stop, step = index.indices(full_size)
+            if (stop - start) * step < 0:
+                # E.g. 5:1:3 or 1:5:-3
+                size = 0
+            else:
+                size = abs((stop - start) / step)
+                int_size = round(size)
+                if size > int_size:
+                    size = int_size + 1
+                else:
+                    size = int_size
+        elif is_dask_collection(index) or isinstance(index, np.ndarray):
+            if index.dtype == bool:
+                # Size is the number of True values in the array
+                size = int(index.sum())
+            else:
+                size = index.size
+                if isnan(size):
+                    index.compute_chunk_sizes()
+                    size = index.size
+
+            if not keepdims and not index.ndim:
+                # Scalar array
+                continue
+        elif isinstance(index, list):
+            size = len(index)
+            if size:
+                i = index[0]
+                if isinstance(i, bool):
+                    # Size is the number of True values in the list
+                    size = sum(index)
+        else:
+            # Index is Integral
+            if not keepdims:
+                continue
+
+            size = 1
+
+        shape.append(size)
+
+    return shape
+
+
+def parse_indices(shape, indices, cyclic=False, keepdims=True):
+    """Parse indices for array access and assignment.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    :Parameters:
+
+        shape: sequence of `ints`
+            The shape of the array.
+
+        indices: `tuple`
+            The indices to be applied.
+
+        keepdims: `bool`, optional
+            If True then an integral index is converted to a
+            slice. For instance, ``3`` would become ``slice(3, 4)``.
+
+    :Returns:
+
+        `list` [, `dict`]
+            The parsed indices. If *cyclic* is True then a dictionary
+            is also returned that contains the parameters needed to
+            interpret any cyclic slices.
+
+    **Examples**
+
+    >>> cf.parse_indices((5, 8), ([1, 2, 4, 6],))
+    [array([1, 2, 4, 6]), slice(None, None, None)]
+    >>> cf.parse_indices((5, 8), (Ellipsis, [2, 4, 6]))
+    [slice(None, None, None), [2, 4, 6]]
+    >>> cf.parse_indices((5, 8), (Ellipsis, 4))
+    [slice(None, None, None), slice(4, 5, 1)]
+    >>> cf.parse_indices((5, 8), (Ellipsis, 4), keepdims=False)
+    [slice(None, None, None), 4]
+    >>> cf.parse_indices((5, 8), (slice(-2, 2)), cyclic=False)
+    [slice(-2, 2, None), slice(None, None, None)]
+    >>> cf.parse_indices((5, 8), (slice(-2, 2)), cyclic=True)
+    ([slice(0, 4, 1), slice(None, None, None)], {0: 2})
+    >>> cf.parse_indices((5, 8), (cf.Data([1, 3]),))
+    [dask.array<array, shape=(2,), dtype=int64, chunksize=(2,), chunktype=numpy.ndarray>, slice(None, None, None)]
+
+    """
+    parsed_indices = []
+    #    roll = {}
+
+    if not isinstance(indices, tuple):
+        indices = (indices,)
+
+    # Initialise the list of parsed indices as the input indices with any
+    # Ellipsis objects expanded
+    length = len(indices)
+    n = len(shape)
+    ndim = n
+    for index in indices:
+        if index is Ellipsis:
+            m = n - length + 1
+            parsed_indices.extend([slice(None)] * m)
+            n -= m
+        else:
+            parsed_indices.append(index)
+            n -= 1
+
+        length -= 1
+
+    len_parsed_indices = len(parsed_indices)
+
+    if ndim and len_parsed_indices > ndim:
+        raise IndexError(
+            f"Invalid indices {parsed_indices} for array with shape {shape}"
+        )
+
+    if len_parsed_indices < ndim:
+        parsed_indices.extend([slice(None)] * (ndim - len_parsed_indices))
+
+    if not ndim and parsed_indices:
+        raise IndexError(
+            "Scalar array can only be indexed with () or Ellipsis"
+        )
+
+    for i, (index, size) in enumerate(zip(parsed_indices, shape)):
+        # cyclic and isinstance(index, slice):
+        #  # Check for a cyclic slice
+        #  try:
+        #      index = normalize_slice(index, size, cyclic=True)
+        #  except IndexError:
+        #      # Non-cyclic slice
+        #      pass
+        #  else:
+        #      # Cyclic slice
+        #      start = index.start
+        #      stop = index.stop
+        #      step = index.step
+        #      if (
+        #          step > 0
+        #          and -size <= start < 0
+        #          and 0 <= stop <= size + start
+        #      ):
+        #          # x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        #          # x[ -1:0:1] => [9]
+        #          # x[ -1:1:1] => [9, 0]
+        #          # x[ -1:3:1] => [9, 0, 1, 2]
+        #          # x[ -1:9:1] => [9, 0, 1, 2, 3, 4, 5, 6, 7, 8]
+        #          # x[ -4:0:1] => [6, 7, 8, 9]
+        #          # x[ -4:1:1] => [6, 7, 8, 9, 0]
+        #          # x[ -4:3:1] => [6, 7, 8, 9, 0, 1, 2]
+        #          # x[ -4:6:1] => [6, 7, 8, 9, 0, 1, 2, 3, 4, 5]
+        #          # x[ -9:0:1] => [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        #          # x[ -9:1:1] => [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+        #          # x[-10:0:1] => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        #          index = slice(0, stop - start, step)
+        #          roll[i] = -start
+        #
+        #      elif (
+        #          step < 0 and 0 <= start < size and start - size <= stop < 0
+        #      ):
+        #          # x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        #          # x[0: -4:-1] => [0, 9, 8, 7]
+        #          # x[6: -1:-1] => [6, 5, 4, 3, 2, 1, 0]
+        #          # x[6: -2:-1] => [6, 5, 4, 3, 2, 1, 0, 9]
+        #          # x[6: -4:-1] => [6, 5, 4, 3, 2, 1, 0, 9, 8, 7]
+        #          # x[0: -2:-1] => [0, 9]
+        #          # x[0:-10:-1] => [0, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+        #          index = slice(start - stop - 1, None, step)
+        #          roll[i] = -1 - stop
+
+        if keepdims and isinstance(index, Integral):
+            # Convert an integral index to a slice
+            if index == -1:
+                index = slice(-1, None, None)
+            else:
+                index = slice(index, index + 1, 1)
+
+        elif hasattr(index, "to_dask_array"):
+            to_dask_array = index.to_dask_array
+            if callable(to_dask_array):
+                # Replace index with its Dask array
+                index = to_dask_array()
+
+        parsed_indices[i] = index
+
+    # if not cyclic:
+    #     return parsed_indices
+    #
+    # return parsed_indices, roll
+    return parsed_indices

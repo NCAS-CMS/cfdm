@@ -1,20 +1,18 @@
 import logging
 
 import h5netcdf
-import netCDF4
 
 from . import abstract
-from .mixin import FileArrayMixin, NetCDFFileMixin
+from .locks import netcdf_lock
+from .mixin import FileArrayMixin, IndexMixin, NetCDFFileMixin
 from .netcdfindexer import netcdf_indexer
-
-_safecast = netCDF4.utils._safecast
-default_fillvals = netCDF4.default_fillvals.copy()
-default_fillvals["O"] = default_fillvals["S1"]
 
 logger = logging.getLogger(__name__)
 
 
-class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
+class H5netcdfArray(
+    IndexMixin, NetCDFFileMixin, FileArrayMixin, abstract.Array
+):
     """A netCDF array accessed with `h5netcdf`.
 
     .. versionadded:: (cfdm) NEXTVERSION
@@ -145,14 +143,60 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         # By default, close the file after data array access
         self._set_component("close", True, copy=False)
 
-    def __getitem__(self, indices):
-        """Returns a subspace of the array as a numpy array.
-
-        x.__getitem__(indices) <==> x[indices]
+    def __dask_tokenize__(self):
+        """Return a value fully representative of the object.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
+        return super().__dask_tokenize__() + (self.get_mask(),)
+
+    @property
+    def _lock(self):
+        """Set the lock for use in `dask.array.from_array`.
+
+        Returns a lock object because concurrent reads are not
+        currently supported by the HDF5 library. The lock object will
+        be the same for all `NetCDF4Array` and `H5netcdfArray`
+        instances, regardless of the dataset they access, which means
+        that access to all netCDF and HDF files coordinates around the
+        same lock.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return netcdf_lock
+
+    def _get_array(self, index=None):
+        """Returns a subspace of the dataset variable.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `__array__`, `index`
+
+        :Parameters:
+
+            {{index: `tuple` or `None`, optional}}
+
+        :Returns:
+
+            `numpy.ndarray`
+                The subspace.
+
+        """
+        if index is None:
+            index = self.index()
+
+        # Note: We need to lock because the netCDF file is about to be
+        #       accessed.
+        self._lock.acquire()
+
+        # # Note: It's cfdm.H5netcdfArray.__getitem__ that we want to
+        # #       call here, but we use 'Container' in super because
+        # #       that comes immediately before cfdm.H5netcdfArray in
+        # #       the method resolution order.
+        # array = super(Container, self).__getitem__(index)
+
         dataset, address = self.open()
         dataset0 = dataset
 
@@ -172,7 +216,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             orthogonal_indexing=True,
             copy=False,
         )
-        array = array[indices]
+        array = array[index]
 
         # Set the attributes, if they haven't been set already.
         self._set_attributes(variable)
@@ -180,6 +224,7 @@ class H5netcdfArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         self.close(dataset0)
         del dataset, dataset0
 
+        self._lock.release()
         return array
 
     def _set_attributes(self, var):

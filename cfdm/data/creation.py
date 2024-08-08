@@ -10,7 +10,7 @@ from dask.base import is_dask_collection
 def to_dask(array, chunks, **from_array_options):
     """Create a `dask` array.
 
-    .. versionadded:: 3.14.0
+    .. versionadded:: (cfdm) NEXTVERSION
 
     :Parameters:
 
@@ -93,34 +93,3 @@ def to_dask(array, chunks, **from_array_options):
         # Try again with 'chunks=-1', in case the failure was due to
         # not being able to use auto rechunking with object dtype.
         return da.from_array(array, chunks=-1, **kwargs)
-
-
-@lru_cache(maxsize=32)
-def generate_axis_identifiers(n):
-    """Return new axis identifiers for a given number of axes.
-
-    The names are arbitrary and have no semantic meaning.
-
-    .. versionadded:: 3.14.0
-
-    :Parameters:
-
-        n: `int`
-            Generate this number of axis identifiers.
-
-    :Returns:
-
-        `list`
-            The new axis identifiers.
-
-    **Examples**
-
-    >>> cf.data.creation.generate_axis_identifiers(0)
-    []
-    >>> cf.data.creation.generate_axis_identifiers(1)
-    ['dim0']
-    >>> cf.data.creation.generate_axis_identifiers(3)
-    ['dim0', 'dim1', 'dim2']
-
-    """
-    return [f"dim{i}" for i in range(n)]
