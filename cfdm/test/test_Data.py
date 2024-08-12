@@ -1,10 +1,13 @@
+import atexit
 import copy
 import datetime
 import faulthandler
 import itertools
 import os
+import tempfile
 import unittest
 
+import cftime
 import dask.array as da
 import numpy as np
 
@@ -12,9 +15,33 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
 
+# To facilitate the testing of logging outputs (see comment tag
+# 'Logging note')
+logger = cfdm.logging.getLogger(__name__)
+
+
+n_tmpfiles = 2
+tmpfiles = [
+    tempfile.mkstemp("_test_Data.nc", dir=os.getcwd())[1]
+    for i in range(n_tmpfiles)
+]
+file_A, file_B = tmpfiles
+
+
+def _remove_tmpfiles():
+    """Try to remove defined temporary files by deleting their paths."""
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+
+
+atexit.register(_remove_tmpfiles)
+
 
 def axes_combinations(ndim):
-    """Create axes permutations for `test_Data_flatten`."""
+    """Create axes permutations for `test_Data_flatten`"""
     return [
         axes
         for n in range(1, ndim + 1)
@@ -28,7 +55,7 @@ class DataTest(unittest.TestCase):
     def setUp(self):
         """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
-        cfdm.log_level("DISABLE")
+        # cfdm.log_level("DISABLE")
         # Note: to enable all messages for given methods, lines or calls (those
         # without a 'verbose' option to do the same) e.g. to debug them, wrap
         # them (for methods, start-to-end internally) as follows:
@@ -40,8 +67,32 @@ class DataTest(unittest.TestCase):
             os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
         )
 
+    def test_Data__init__basic(self):
+        """Test basic Datea.__init__"""
+        # Most __init__ parameters are covered by the various other
+        # tests, so this is mainly to check trivial cases.
+        cfdm.Data(0, "s")
+        cfdm.Data(array=np.arange(5))
+        cfdm.Data(source=self.filename)
+
+        d = cfdm.Data()
+        with self.assertRaises(ValueError):
+            d.ndim
+
+        with self.assertRaises(ValueError):
+            d.get_filenames()
+
+    def test_Data__init__no_args(self):
+        """Test Data.__init__ with no arg."""
+        # Most __init__ parameters are covered by the various other
+        # tests, so this is mainly to check trivial cases.
+        cfdm.Data()
+        cfdm.Data(0, "s")
+        cfdm.Data(array=np.arange(5))
+        cfdm.Data(source=self.filename)
+
     def test_Data_any(self):
-        """Test the any Data method."""
+        """Test Data.any."""
         d = cfdm.Data([[0, 0, 0]])
         self.assertFalse(d.any())
         d[0, 0] = np.ma.masked
@@ -50,6 +101,26 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.any())
         d[...] = np.ma.masked
         self.assertFalse(d.any())
+
+        d = cfdm.Data([[0, 2], [0, 4]])
+        self.assertTrue(d.any())
+        self.assertEqual(d.any(keepdims=False).shape, ())
+        self.assertEqual(d.any(axis=()).shape, d.shape)
+        self.assertTrue((d.any(axis=0).array == [False, True]).all())
+        self.assertTrue((d.any(axis=1).array == [True, True]).all())
+        self.assertEqual(d.any().Units, cfdm.Units())
+
+        d[0] = cfdm.masked
+        self.assertTrue((d.any(axis=0).array == [False, True]).all())
+        self.assertTrue(
+            (
+                d.any(axis=1).array == np.ma.array([True, True], mask=[1, 0])
+            ).all()
+        )
+
+        d[...] = cfdm.masked
+        self.assertFalse(d.any())
+        self.assertFalse(d.any(keepdims=False))
 
     def test_Data__repr__str(self):
         """Test all means of Data inspection."""
@@ -76,8 +147,143 @@ class DataTest(unittest.TestCase):
         self.assertTrue(str(d) == "[--, 2000-01-21 00:00:00]")
         self.assertTrue(repr(d) == "<Data(2): [--, 2000-01-21 00:00:00]>")
 
+        # Cached elements
+        elements0 = (0, -1, 1)
+        for array in ([1], [1, 2], [1, 2, 3]):
+            elements = elements0[: len(array)]
+
+            d = cfdm.Data(array)
+            cache = d._get_cached_elements()
+            for element in elements:
+                self.assertNotIn(element, cache)
+
+            self.assertEqual(str(d), str(array))
+            cache = d._get_cached_elements()
+            for element in elements:
+                self.assertIn(element, cache)
+
+            d[0] = 1
+            cache = d._get_cached_elements()
+            for element in elements:
+                self.assertNotIn(element, cache)
+
+            self.assertEqual(str(d), str(array))
+            cache = d._get_cached_elements()
+            for element in elements:
+                self.assertIn(element, cache)
+
+            #            d += 0
+            #            cache = d._get_cached_elements()
+            #            for element in elements:
+            #                self.assertNotIn(element, cache)
+
+            self.assertEqual(str(d), str(array))
+            cache = d._get_cached_elements()
+            for element in elements:
+                self.assertIn(element, cache)
+
+        # Test when size > 3, i.e. second element is not there.
+        d = cfdm.Data([1, 2, 3, 4])
+        cache = d._get_cached_elements()
+        for element in elements0:
+            self.assertNotIn(element, cache)
+
+        self.assertEqual(str(d), "[1, ..., 4]")
+        cache = d._get_cached_elements()
+        self.assertNotIn(1, cache)
+        for element in elements0[:2]:
+            self.assertIn(element, cache)
+
+        d[0] = 1
+        for element in elements0:
+            self.assertNotIn(element, d._get_cached_elements())
+
     def test_Data__setitem__(self):
         """Test the assignment of data items on Data."""
+        for hardmask in (False, True):
+            a = np.ma.arange(90).reshape(9, 10)
+            if hardmask:
+                a.harden_mask()
+            else:
+                a.soften_mask()
+
+            d = cfdm.Data(a.copy(), "metres", hardmask=hardmask, chunks=(3, 5))
+
+            a[:, 1] = np.ma.masked
+            d[:, 1] = cfdm.masked
+
+            a[0, 2] = -6
+            d[0, 2] = -6
+
+            a[0:3, 1] = -1
+            d[0:3, 1] = -1
+
+            a[0:2, 3] = -1
+            d[0:2, 3] = -1
+
+            a[3, 4:6] = -2
+            d[3, 4:6] = -2
+
+            a[0:2, 1:4] = -3
+            d[0:2, 1:4] = -3
+
+            a[5:7, [3, 5, 6]] = -4
+            d[5:7, [3, 5, 6]] = -4
+
+            a[8, [8, 6, 5]] = -5
+            d[8, [8, 6, 5]] = -5
+
+            a[...] = -a
+            d[...] = -d
+
+            a[0] = a[2]
+            d[0] = d[2]
+
+            a[:, 0] = a[:, 2]
+            d[:, 0] = d[:, 2]
+
+            a[:, 1] = a[:, 3]
+            d[:, 1] = a[:, 3:4]  # Note: a, not d
+
+            d.__keepdims_indexing__ = False
+
+            a[:, 2] = a[:, 4]
+            d[:, 2] = d[:, 4]  # Note: d, not a
+
+            self.assertTrue((d.array == a).all())
+            self.assertTrue((d.array.mask == a.mask).all())
+
+        # Multiple 1-d array indices
+        a = np.arange(180).reshape(9, 2, 10)
+        value = -1 - np.arange(16).reshape(4, 1, 4)
+
+        d = cfdm.Data(a.copy())
+        d[[2, 4, 6, 8], 0, [1, 2, 3, 4]] = value
+        self.assertEqual(
+            np.count_nonzero(np.ma.where(d.array < 0, 1, 0)), value.size
+        )
+
+        d = cfdm.Data(a.copy())
+        d[[2, 4, 6, 8], :, [1, 2, 3, 4]] = value
+        self.assertEqual(
+            np.count_nonzero(np.ma.where(d.array < 0, 1, 0)),
+            value.size * d.shape[1],
+        )
+
+        d = cfdm.Data(a.copy())
+        d[[1, 2, 4, 5], 0, [5, 6, 7, -1]] = value
+        self.assertEqual(
+            np.count_nonzero(np.ma.where(d.array < 0, 1, 0)), value.size
+        )
+
+        d = cfdm.Data(a.copy())
+        value = np.squeeze(value)
+        d.__keepdims_indexing__ = False
+        d[[2, 4, 6, 8], 0, [1, 2, 3, 4]] = value
+        self.assertEqual(
+            np.count_nonzero(np.ma.where(d.array < 0, 1, 0)), value.size
+        )
+
         a = np.ma.arange(3000).reshape(50, 60)
         a.harden_mask()
 
@@ -231,7 +437,7 @@ class DataTest(unittest.TestCase):
             self.assertEqual((d.array < 0).sum(), 4)
 
     def test_Data_apply_masking(self):
-        """Test the `apply_masking` Data method."""
+        """Test Data.apply_masking."""
         a = np.ma.arange(12).reshape(3, 4)
         a[1, 1] = np.ma.masked
 
@@ -303,10 +509,34 @@ class DataTest(unittest.TestCase):
     #            pass
 
     def test_Data_array(self):
-        """Test the array Data method."""
-        # ------------------------------------------------------------
-        # Numpy array interface (__array__)
-        # ------------------------------------------------------------
+        """Test Data.array."""
+        # Scalar numeric array
+        d = cfdm.Data(9, "km")
+        a = d.array
+        self.assertEqual(a.shape, ())
+        self.assertEqual(a, np.array(9))
+        d[...] = cfdm.masked
+        a = d.array
+        self.assertEqual(a.shape, ())
+        self.assertIs(a[()], np.ma.masked)
+
+        # Non-scalar numeric array
+        b = np.arange(24).reshape(2, 1, 3, 4)
+        d = cfdm.Data(b, "km", fill_value=-123)
+        a = d.array
+        a[0, 0, 0, 0] = -999
+        a2 = d.array
+        self.assertTrue((a2 == b).all())
+        self.assertFalse((a2 == a).all())
+
+        # Fill value
+        d[0, 0, 0, 0] = cfdm.masked
+        self.assertEqual(d.array.fill_value, d.get_fill_value())
+
+        # Date-time array
+        d = cfdm.Data([["2000-12-3 12:00"]], "days since 2000-12-01", dt=True)
+        self.assertEqual(d.array, 2.5)
+
         a = np.arange(12, dtype="int32").reshape(3, 4)
 
         d = cfdm.Data(a, units="km")
@@ -349,7 +579,7 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.array, 2.5)
 
     def test_Data_datetime_array(self):
-        """Test the `datetime_array` Data method."""
+        """Test Data.datetime_array."""
         d = cfdm.Data([11292.5, 11293], units="days since 1970-1-1")
         dt = d.datetime_array
         self.assertEqual(dt[0], datetime.datetime(2000, 12, 1, 12, 0))
@@ -368,8 +598,52 @@ class DataTest(unittest.TestCase):
         dt = d.datetime_array
         self.assertIs(dt[()], np.ma.masked)
 
+        # Scalar array
+        for d, x in zip(
+            [
+                cfdm.Data(11292.5, "days since 1970-1-1"),
+                cfdm.Data("2000-12-1 12:00", dt=True),
+            ],
+            [11292.5, 0],
+        ):
+            a = d.datetime_array
+            self.assertEqual(a.shape, ())
+            self.assertEqual(
+                a, np.array(cfdm.dt("2000-12-1 12:00", calendar="standard"))
+            )
+
+            a = d.array
+            self.assertEqual(a.shape, ())
+            self.assertEqual(a, x)
+
+        # Non-scalar array
+        for d, x in zip(
+            [
+                cfdm.Data([[11292.5, 11293.5]], "days since 1970-1-1"),
+                cfdm.Data([["2000-12-1 12:00", "2000-12-2 12:00"]], dt=True),
+            ],
+            ([[11292.5, 11293.5]], [[0, 1]]),
+        ):
+            a = d.datetime_array
+            self.assertTrue(
+                (
+                    a
+                    == np.array(
+                        [
+                            [
+                                cftime.DatetimeGregorian(2000, 12, 1, 12, 0),
+                                cftime.DatetimeGregorian(2000, 12, 2, 12, 0),
+                            ]
+                        ]
+                    )
+                ).all()
+            )
+
+            a = d.array
+            self.assertTrue((a == x).all())
+
     def test_Data_flatten(self):
-        """Test the flatten Data method."""
+        """Test Data.flatten."""
         ma = np.ma.arange(24).reshape(1, 2, 3, 4)
         ma[0, 1, 1, 2] = cfdm.masked
         ma[0, 0, 2, 1] = cfdm.masked
@@ -419,7 +693,7 @@ class DataTest(unittest.TestCase):
             d.flatten(0)
 
     def test_Data_transpose(self):
-        """Test the transpose Data method."""
+        """Test Data.transpose."""
         a = np.arange(2 * 3 * 5).reshape(2, 1, 3, 5)
         d = cfdm.Data(a.copy())
 
@@ -444,7 +718,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.equals(d.transpose()))
 
     # def test_Data_unique(self):
-    #     """Test the unique Data method."""
+    #     """Test the unique Data method"""
     #     d = cfdm.Data([[4, 2, 1], [1, 2, 3]], units="metre")
     #     u = d.unique()
     #     self.assertEqual(u.shape, (4,))
@@ -459,15 +733,331 @@ class DataTest(unittest.TestCase):
 
     def test_Data_equals(self):
         """Test the equality-testing Data method."""
-        a = np.ma.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
-        a[0, 0, 2, 3] = np.ma.masked
+        shape = 3, 4
+        chunksize = 2, 6
+        a = np.arange(12).reshape(*shape)
 
-        d = cfdm.Data(a, units="days since 2000-2-2", calendar="noleap")
-        e = copy.deepcopy(d)
+        d = cfdm.Data(a, "m", chunks=chunksize)
+        self.assertTrue(d.equals(d))  # check equal to self
+        self.assertTrue(d.equals(d.copy()))  # also do self-equality checks!
 
-        self.assertTrue(d.equals(d, verbose=3))
-        self.assertTrue(d.equals(e, verbose=3))
-        self.assertTrue(e.equals(d, verbose=3))
+        # Different but equivalent datatype, which should *fail* the equality
+        # test (i.e. equals return False) because we want equals to check
+        # for strict equality, including equality of data type.
+        d2 = cfdm.Data(a.astype(np.float32), "m", chunks=chunksize)
+        self.assertTrue(d2.equals(d2.copy()))
+        with self.assertLogs(level=-1) as catch:
+            self.assertFalse(d2.equals(d, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different data types: float32 != int64" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
+        e = cfdm.Data(a, "s", chunks=chunksize)  # different units to d
+        self.assertTrue(e.equals(e.copy()))
+        with self.assertLogs(level=-1) as catch:
+            self.assertFalse(e.equals(d, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different Units (<Units: s>, <Units: m>)" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
+        f = cfdm.Data(np.arange(12), "m", chunks=(6,))  # different shape to d
+        self.assertTrue(f.equals(f.copy()))
+        with self.assertLogs(level=-1) as catch:
+            self.assertFalse(f.equals(d, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different shapes: (12,) != (3, 4)" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
+        g = cfdm.Data(
+            np.ones(shape, dtype="int64"), "m", chunks=chunksize
+        )  # different values
+        self.assertTrue(g.equals(g.copy()))
+        with self.assertLogs(level=-1) as catch:
+            self.assertFalse(g.equals(d, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
+        # Test NaN values
+        d3 = cfdm.Data(a.astype(np.float64), "m", chunks=chunksize)
+        h = cfdm.Data(np.full(shape, np.nan), "m", chunks=chunksize)
+        # TODODASK: implement and test equal_nan kwarg to configure NaN eq.
+        self.assertFalse(h.equals(h.copy()))
+        with self.assertLogs(level=-1) as catch:
+            # Compare to d3 not d since np.nan has dtype float64 (IEEE 754)
+            self.assertFalse(h.equals(d3, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
+        # Test inf values
+        i = cfdm.Data(np.full(shape, np.inf), "m", chunks=chunksize)
+        self.assertTrue(i.equals(i.copy()))
+        with self.assertLogs(level=-1) as catch:
+            # np.inf is also of dtype float64 (see comment on NaN tests above)
+            self.assertFalse(i.equals(d3, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        with self.assertLogs(level=-1) as catch:
+            self.assertFalse(h.equals(i, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
+        # Test masked arrays
+        # 1. Example case where the masks differ only (data is identical)
+        mask_test_chunksize = (2, 1)
+        j1 = cfdm.Data(
+            np.ma.array([1.0, 2.0, 3.0], mask=[1, 0, 0]),
+            "m",
+            chunks=mask_test_chunksize,
+        )
+        self.assertTrue(j1.equals(j1.copy()))
+        j2 = cfdm.Data(
+            np.ma.array([1.0, 2.0, 3.0], mask=[0, 1, 0]),
+            "m",
+            chunks=mask_test_chunksize,
+        )
+        self.assertTrue(j2.equals(j2.copy()))
+        with self.assertLogs(level=-1) as catch:
+            self.assertFalse(j1.equals(j2, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        # 2. Example case where the data differs only (masks are identical)
+        j3 = cfdm.Data(
+            np.ma.array([1.0, 2.0, 100.0], mask=[1, 0, 0]),
+            "m",
+            chunks=mask_test_chunksize,
+        )
+        self.assertTrue(j3.equals(j3.copy()))
+        with self.assertLogs(level=-1) as catch:
+            self.assertFalse(j1.equals(j3, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
+        # 3. Trivial case of data that is fully masked
+        j4 = cfdm.Data(
+            np.ma.masked_all(shape, dtype="int"), "m", chunks=chunksize
+        )
+        self.assertTrue(j4.equals(j4.copy()))
+        with self.assertLogs(level=-1) as catch:
+            self.assertFalse(j4.equals(d, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        # 4. Case where all the unmasked data is 'allclose' to other data but
+        # the data is not 'allclose' to it where it is masked, i.e. the data
+        # on its own (namely without considering the mask) is not equal to the
+        # other data on its own (e.g. note the 0-th element in below examples).
+        # This differs to case (2): there data differs *only where unmasked*.
+        # Note these *should* be considered equal inside cfdm.Data, and indeed
+        # np.ma.allclose and our own _da_ma_allclose methods also hold
+        # these to be 'allclose'.
+        j5 = cfdm.Data(
+            np.ma.array([1.0, 2.0, 3.0], mask=[1, 0, 0]),
+            "m",
+            chunks=mask_test_chunksize,
+        )
+        self.assertTrue(j5.equals(j5.copy()))
+        j6 = cfdm.Data(
+            np.ma.array([10.0, 2.0, 3.0], mask=[1, 0, 0]),
+            "m",
+            chunks=mask_test_chunksize,
+        )
+        self.assertTrue(j6.equals(j6.copy()))
+        self.assertTrue(j5.equals(j6))
+
+        # Test non-numeric dtype arrays
+        sa1 = cfdm.Data(
+            np.array(["one", "two", "three"], dtype="S5"), "m", chunks=(3,)
+        )
+        self.assertTrue(sa1.equals(sa1.copy()))
+        sa2_data = np.array(["one", "two", "four"], dtype="S4")
+        sa2 = cfdm.Data(sa2_data, "m", chunks=(3,))
+        self.assertTrue(sa2.equals(sa2.copy()))
+        # Unlike for numeric types, for string-like data as long as the data
+        # is the same consider the arrays equal, even if the dtype differs.
+        # TODODASK: this behaviour will be added via cfdm, test fails for now
+        # ## self.assertTrue(sa1.equals(sa2))
+        sa3_data = sa2_data.astype("S5")
+        sa3 = cfdm.Data(sa3_data, "m", chunks=mask_test_chunksize)
+        self.assertTrue(sa3.equals(sa3.copy()))
+        with self.assertLogs(level=-1) as catch:
+            self.assertFalse(sa1.equals(sa3, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        # ...including masked string arrays
+        sa4 = cfdm.Data(
+            np.ma.array(["one", "two", "three"], mask=[0, 0, 1], dtype="S5"),
+            "m",
+            chunks=mask_test_chunksize,
+        )
+        self.assertTrue(sa4.equals(sa4.copy()))
+        sa5 = cfdm.Data(
+            np.ma.array(["one", "two", "three"], mask=[0, 1, 0], dtype="S5"),
+            "m",
+            chunks=mask_test_chunksize,
+        )
+        self.assertTrue(sa5.equals(sa5.copy()))
+        with self.assertLogs(level=-1) as catch:
+            self.assertFalse(sa4.equals(sa5, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
+        # Test where inputs are scalars
+        scalar_test_chunksize = (10,)
+        s1 = cfdm.Data(1, chunks=scalar_test_chunksize)
+        self.assertTrue(s1.equals(s1.copy()))
+        s2 = cfdm.Data(10, chunks=scalar_test_chunksize)
+        self.assertTrue(s2.equals(s2.copy()))
+        s3 = cfdm.Data("a_string", chunks=scalar_test_chunksize)
+        self.assertTrue(s3.equals(s3.copy()))
+        # 1. both are scalars
+        with self.assertLogs(level=-1) as catch:
+            self.assertFalse(s1.equals(s2, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        with self.assertLogs(level=-1) as catch:
+            self.assertFalse(s1.equals(s3, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different data types: int64 != <U8" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        # 2. only one is a scalar
+        with self.assertLogs(level=-1) as catch:
+            self.assertFalse(s1.equals(d, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different shapes: () != (3, 4)" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+
+        # Test rtol and atol parameters
+        tol_check_chunksize = 1, 1
+        k1 = cfdm.Data(np.array([10.0, 20.0]), chunks=tol_check_chunksize)
+        self.assertTrue(k1.equals(k1.copy()))
+        k2 = cfdm.Data(np.array([10.01, 20.01]), chunks=tol_check_chunksize)
+        self.assertTrue(k2.equals(k2.copy()))
+        # Only one log check is sufficient here
+        with self.assertLogs(level=-1) as catch:
+            self.assertFalse(k1.equals(k2, atol=0.005, rtol=0, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different array values (atol=0.005, rtol=0.0)"
+                    in log_msg
+                    for log_msg in catch.output
+                )
+            )
+        self.assertTrue(k1.equals(k2, atol=0.02, rtol=0))
+        self.assertFalse(k1.equals(k2, atol=0, rtol=0.0005))
+        self.assertTrue(k1.equals(k2, atol=0, rtol=0.002))
+
+        # Test ignore_fill_value parameter
+        m1 = cfdm.Data(1, fill_value=1000, chunks=scalar_test_chunksize)
+        self.assertTrue(m1.equals(m1.copy()))
+        m2 = cfdm.Data(1, fill_value=2000, chunks=scalar_test_chunksize)
+        self.assertTrue(m2.equals(m2.copy()))
+        with self.assertLogs(level=-1) as catch:
+            self.assertFalse(m1.equals(m2, verbose=2))
+            self.assertTrue(
+                any(
+                    "Data: Different fill value: 1000 != 2000" in log_msg
+                    for log_msg in catch.output
+                )
+            )
+            self.assertTrue(m1.equals(m2, ignore_fill_value=True))
+
+        # Test verbose parameter: 1/'INFO' level is behaviour change boundary
+        for checks in [(1, False), (2, True)]:
+            verbosity_level, expect_to_see_msg = checks
+            with self.assertLogs(level=-1) as catch:
+                # Logging note: want to assert in the former case (verbosity=1)
+                # that nothing is logged, but need to use workaround to prevent
+                # AssertionError on fact that nothing is logged here. When at
+                # Python =>3.10 this can be replaced by 'assertNoLogs' method.
+                logger.warning(
+                    "Log warning to prevent test error on empty log."
+                )
+
+                self.assertFalse(d2.equals(d, verbose=verbosity_level))
+                self.assertIs(
+                    any(
+                        "Data: Different data types: float32 != int64"
+                        in log_msg
+                        for log_msg in catch.output
+                    ),
+                    expect_to_see_msg,
+                )
+
+        # Test ignore_data_type parameter
+        self.assertTrue(d2.equals(d, ignore_data_type=True))
+
+        # Test all possible chunk combinations
+        for j, i in itertools.product([1, 2], [1, 2, 3]):
+            d = cfdm.Data(np.arange(6).reshape(2, 3), "m", chunks=(j, i))
+            for j, i in itertools.product([1, 2], [1, 2, 3]):
+                e = cfdm.Data(np.arange(6).reshape(2, 3), "m", chunks=(j, i))
+                self.assertTrue(d.equals(e))
+
+    #    def test_Data_equals(self):
+    #        """Test the equality-testing Data method"""
+    #        a = np.ma.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
+    #        a[0, 0, 2, 3] = np.ma.masked
+    #
+    #        d = cfdm.Data(a, units="days since 2000-2-2", calendar="noleap")
+    #        e = copy.deepcopy(d)
+    #
+    #        self.assertTrue(d.equals(d, verbose=3))
+    #        self.assertTrue(d.equals(e, verbose=3))
+    #        self.assertTrue(e.equals(d, verbose=3))
 
     def test_Data_max_min_sum_squeeze(self):
         """Test the max, min, sum and squeeze Data methods."""
@@ -581,10 +1171,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.mask.array == np.ma.getmaskarray(a)).all())
 
     def test_Data_get_index(self):
-        """Test the `get_index` Data method."""
-#        d = cfdm.Data([[281, 279, 278, 279]])
-#        self.assertIsNone(d.get_index(default=None))
-
+        """Test Data.get_index."""
         f = cfdm.read("DSG_timeSeries_indexed.nc")[0]
         f = f.data
         d = cfdm.Data(cfdm.RaggedIndexedArray(source=f.source()))
@@ -596,10 +1183,7 @@ class DataTest(unittest.TestCase):
             d.get_index()
 
     def test_Data_get_list(self):
-        """Test the `get_list` Data method."""
-#        d = cfdm.Data([[281, 279, 278, 279]])
-#        self.assertIsNone(d.get_list(default=None))
-
+        """Test Data.get_list."""
         f = cfdm.read("gathered.nc")[0]
         f = f.data
         d = cfdm.Data(cfdm.GatheredArray(source=f.source()))
@@ -611,10 +1195,7 @@ class DataTest(unittest.TestCase):
             d.get_list()
 
     def test_Data_get_count(self):
-        """Test the `get_count` Data method."""
-#        d = cfdm.Data([[281, 279, 278, 279]])
-#        self.assertIsNone(d.get_count(default=None))
-
+        """Test Data.get_count."""
         f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
         f = f.data
         d = cfdm.Data(cfdm.RaggedContiguousArray(source=f.source()))
@@ -626,7 +1207,7 @@ class DataTest(unittest.TestCase):
             d.get_count()
 
     def test_Data_filled(self):
-        """Test the filled Data method."""
+        """Test Data.filled."""
         d = cfdm.Data([[1, 2, 3]])
         self.assertTrue((d.filled().array == [[1, 2, 3]]).all())
 
@@ -644,7 +1225,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.filled().array == ["", "b", "c"]).all())
 
     def test_Data_insert_dimension(self):
-        """Test the `insert_dimension` Data method."""
+        """Test Data.insert_dimension."""
         d = cfdm.Data([list(range(12))])
         self.assertEqual(d.shape, (1, 12))
         e = d.squeeze()
@@ -689,12 +1270,12 @@ class DataTest(unittest.TestCase):
             d.insert_dimension(1000)
 
     def test_Data_get_compressed_dimension(self):
-        """Test the `get_compressed_dimension` Data method."""
+        """Test Data.get_compressed_dimension."""
         d = cfdm.Data([[281, 279, 278, 279]])
         self.assertIsNone(d.get_compressed_dimension(None))
 
     def test_Data__format__(self):
-        """Test the `__format__` Data method."""
+        """Test Data.__format__"""
         d = cfdm.Data(9, "metres")
         self.assertEqual(f"{d}", "9 metres")
         self.assertEqual(f"{d!s}", "9 metres")
@@ -715,7 +1296,7 @@ class DataTest(unittest.TestCase):
             f"{d:.3f}"
 
     def test_Data_orginal_filenames(self):
-        """Test the `original_filenames` Data method."""
+        """Test Data.original_filenames."""
         d = cfdm.Data(9, "metres")
         self.assertEqual(d.get_original_filenames(), set())
 
@@ -759,17 +1340,17 @@ class DataTest(unittest.TestCase):
             d._original_filenames(update="file4.nc", clear=True)
 
     def test_Data_first_element(self):
-        """Test the `first_element` Data methods."""
+        """Test Data.first_element."""
         d = cfdm.Data(np.arange(6).reshape(1, 6, 1))
         self.assertEqual(d.first_element(), 0)
 
     def test_Data_second_element(self):
-        """Test the `second_element` Data methods."""
+        """Test Data.second_element."""
         d = cfdm.Data(np.arange(6).reshape(1, 6, 1))
         self.assertEqual(d.second_element(), 1)
 
     def test_Data_last_element(self):
-        """Test the `last_element` Data methods."""
+        """Test Data.last_element."""
         d = cfdm.Data(np.arange(6).reshape(1, 6, 1))
         self.assertEqual(d.last_element(), 5)
 
@@ -821,13 +1402,13 @@ class DataTest(unittest.TestCase):
         self.assertTrue((da.mask == a.mask).all())
 
     def test_Data__int__(self):
-        """Test Data.__int__."""
-        for x in (1.1, [1.1], [[1.1]]):
-            self.assertEqual(int(cfdm.Data(x)), 1)
+        """Test Data.__int__"""
+        for x in (-1.9, -1.5, -1.4, -1, 0, 1, 1.0, 1.4, 1.9):
+            self.assertEqual(int(cfdm.Data(x)), int(x))
+            self.assertEqual(int(cfdm.Data(x)), int(x))
 
-        # Can't int on data with size > 1
-        with self.assertRaises(TypeError):
-            int(cfdm.Data([1, 2]))
+        with self.assertRaises(Exception):
+            _ = int(cfdm.Data([1, 2]))
 
     def test_Data_pad_missing(self):
         """Test Data.pad_missing."""
@@ -875,7 +1456,7 @@ class DataTest(unittest.TestCase):
         self.assertIn((key, 1), x)
 
     def test_Data_to_dask_array(self):
-        """Test the `to_dask_array` Data method."""
+        """Test Data.to_dask_array."""
         d = cfdm.Data([1, 2, 3, 4], "m")
         dx = d.to_dask_array()
         self.assertIsInstance(dx, da.Array)
@@ -883,7 +1464,7 @@ class DataTest(unittest.TestCase):
         self.assertIs(da.asanyarray(d), dx)
 
     def test_Data_persist(self):
-        """Test the `persist` Data method."""
+        """Test Data.persist` Data method."""
         d = cfdm.Data(9, "km")
         self.assertIsNone(d.persist(inplace=True))
 
@@ -900,7 +1481,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(e.equals(d))
 
     def test_Data_cull_graph(self):
-        """Test `Data.cull`"""
+        """Test Data.cull."""
         # Note: The number of layers in the culled graphs include a
         #       `cfdm_asanyarray` layer
         d = cfdm.Data([1, 2, 3, 4, 5], chunks=3)
@@ -912,12 +1493,12 @@ class DataTest(unittest.TestCase):
         self.assertEqual(len(dict(d.to_dask_array(asanyarray=False).dask)), 2)
 
     def test_Data_npartitions(self):
-        """Test the `npartitions` Data property."""
+        """Test Data.npartitions."""
         d = cfdm.Data.empty((4, 5), chunks=(2, 4))
         self.assertEqual(d.npartitions, 4)
 
     def test_Data_numblocks(self):
-        """Test the `numblocks` Data property."""
+        """Test Data.numblocks."""
         d = cfdm.Data.empty((4, 5), chunks=(2, 4))
         self.assertEqual(d.numblocks, (2, 2))
 
@@ -943,14 +1524,111 @@ class DataTest(unittest.TestCase):
 
     def test_Data_months_years(self):
         """Test Data with 'months/years since' units specifications."""
-        print("TODODASK test_Data_months_years")
+        calendar = "360_day"
+        d = cfdm.Data(
+            [1.0, 2],
+            units=cfdm.Units("months since 2000-1-1", calendar=calendar),
+        )
+        self.assertTrue((d.array == np.array([1.0, 2])).all())
+        a = np.array(
+            [
+                cftime.Datetime360Day(2000, 2, 1, 10, 29, 3, 831223),
+                cftime.Datetime360Day(2000, 3, 1, 20, 58, 7, 662446),
+            ]
+        )
+
+        self.assertTrue((d.datetime_array == a).all())
+
+        calendar = "standard"
+        d = cfdm.Data(
+            [1.0, 2],
+            units=cfdm.Units("months since 2000-1-1", calendar=calendar),
+        )
+        self.assertTrue((d.array == np.array([1.0, 2])).all())
+        a = np.array(
+            [
+                cftime.DatetimeGregorian(2000, 1, 31, 10, 29, 3, 831223),
+                cftime.DatetimeGregorian(2000, 3, 1, 20, 58, 7, 662446),
+            ]
+        )
+        self.assertTrue((d.datetime_array == a).all())
+
+        calendar = "360_day"
+        d = cfdm.Data(
+            [1.0, 2],
+            units=cfdm.Units("years since 2000-1-1", calendar=calendar),
+        )
+        self.assertTrue((d.array == np.array([1.0, 2])).all())
+        a = np.array(
+            [
+                cftime.Datetime360Day(2001, 1, 6, 5, 48, 45, 974678),
+                cftime.Datetime360Day(2002, 1, 11, 11, 37, 31, 949357),
+            ]
+        )
+        self.assertTrue((d.datetime_array == a).all())
+
+        calendar = "standard"
+        d = cfdm.Data(
+            [1.0, 2],
+            units=cfdm.Units("years since 2000-1-1", calendar=calendar),
+        )
+        self.assertTrue((d.array == np.array([1.0, 2])).all())
+        a = np.array(
+            [
+                cftime.DatetimeGregorian(2000, 12, 31, 5, 48, 45, 974678),
+                cftime.DatetimeGregorian(2001, 12, 31, 11, 37, 31, 949357),
+            ]
+        )
+        self.assertTrue((d.datetime_array == a).all())
 
     def test_Data_datetime_array(self):
-        """Test the `datetime_array` Data property."""
-        print("TODODASK test_Data_datetime_array")
+        """Test Data.datetime_array."""
+        # Scalar array
+        for d, x in zip(
+            [
+                cfdm.Data(11292.5, "days since 1970-1-1"),
+                cfdm.Data("2000-12-1 12:00", dt=True),
+            ],
+            [11292.5, 0],
+        ):
+            a = d.datetime_array
+            self.assertEqual(a.shape, ())
+            self.assertEqual(
+                a, np.array(cftime.DatetimeGregorian(2000, 12, 1, 12, 0))
+            )
+
+            a = d.array
+            self.assertEqual(a.shape, ())
+            self.assertEqual(a, x)
+
+        # Non-scalar array
+        for d, x in zip(
+            [
+                cfdm.Data([[11292.5, 11293.5]], "days since 1970-1-1"),
+                cfdm.Data([["2000-12-1 12:00", "2000-12-2 12:00"]], dt=True),
+            ],
+            ([[11292.5, 11293.5]], [[0, 1]]),
+        ):
+            a = d.datetime_array
+            self.assertTrue(
+                (
+                    a
+                    == np.array(
+                        [
+                            [
+                                cftime.DatetimeGregorian(2000, 12, 1, 12, 0),
+                                cftime.DatetimeGregorian(2000, 12, 2, 12, 0),
+                            ]
+                        ]
+                    )
+                ).all()
+            )
+
+            a = d.array
+            self.assertTrue((a == x).all())
 
     def test_Data_compute(self):
-        """Test the `compute` Data method."""
+        """Test Data.compute."""
         # Scalar numeric array
         d = cfdm.Data(9, "km")
         a = d.compute()
@@ -977,13 +1655,13 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.compute(), 2.5)
 
     def test_Data_chunks(self):
-        """Test the `chunks` Data property."""
+        """Test Data.chunks."""
         dx = da.empty((4, 5), chunks=(2, 4))
         d = cfdm.Data.empty((4, 5), chunks=(2, 4))
         self.assertEqual(d.chunks, dx.chunks)
 
     def test_Data_rechunk(self):
-        """Test the `rechunk` Data method."""
+        """Test Data.rechunk."""
         dx = da.empty((4, 5), chunks=(2, 4)).rechunk(-1)
         d = cfdm.Data.empty((4, 5), chunks=(2, 4)).rechunk(-1)
         self.assertEqual(d.chunks, dx.chunks)
@@ -1004,7 +1682,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(e.equals(d[:2]))
 
     def test_Data_reshape(self):
-        """Test the `reshape` Data method."""
+        """Test Data.reshape."""
         a = np.arange(12).reshape(3, 4)
         d = cfdm.Data(a)
         self.assertIsNone(d.reshape(*d.shape, inplace=True))
@@ -1064,9 +1742,8 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data([8, 9])
         self.assertEqual(len(d.reshape(1, 2)._axes), 2)
 
-
     def test_Data_get_units(self):
-        """Test the `get_units` Data method."""
+        """Test Data.get_units."""
         for units in ("", "m", "days since 2000-01-01"):
             d = cfdm.Data(1, units)
             self.assertEqual(d.get_units(), units)
@@ -1076,37 +1753,35 @@ class DataTest(unittest.TestCase):
             d.get_units()
 
     def test_Data_set_calendar(self):
-        """Test the `set_calendar` Data method."""
+        """Test Data.set_calendar."""
         d = cfdm.Data(1, "days since 2000-01-01")
         d.set_calendar("standard")
-
-        with self.assertRaises(ValueError):
-            d.set_calendar("noleap")
+        d.set_calendar("noleap")
 
         d = cfdm.Data(1, "m")
         d.set_calendar("noleap")
         self.assertEqual(d.Units, cfdm.Units("m"))
 
     def test_Data_set_units(self):
-        """Test the `set_units` Data method."""
+        """Test Data.set_units."""
         for units in (None, "", "m", "days since 2000-01-01"):
             d = cfdm.Data(1, units)
             self.assertEqual(d.Units, cfdm.Units(units))
 
         d = cfdm.Data(1, "m")
         d.set_units("km")
-        self.assertEqual(d.array, 0.001)
+        self.assertEqual(d.Units, cfdm.Units("km"))
 
         d = cfdm.Data(1, "days since 2000-01-01", calendar="noleap")
         d.set_units("days since 1999-12-31")
-        self.assertEqual(d.array, 2)
-
-        # Can't set to Units that are not equivalent
-        with self.assertRaises(ValueError):
-            d.set_units("km")
+        self.assertEqual(
+            d.Units, cfdm.Units("days since 1999-12-31", calendar="noleap")
+        )
+        d.set_units("km")
+        self.assertEqual(d.Units, cfdm.Units("km"))
 
     def test_Data_tolist(self):
-        """Test the `tolist` Data method."""
+        """Test Data.tolist."""
         for x in (1, [1, 2], [[1, 2], [3, 4]]):
             d = cfdm.Data(x)
             e = d.tolist()
@@ -1114,7 +1789,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(d.equals(cfdm.Data(e)))
 
     def test_Data_data(self):
-        """Test the `data` Data property."""
+        """Test Data.data."""
         for d in [
             cfdm.Data(1),
             cfdm.Data([1, 2], fill_value=0),
@@ -1125,7 +1800,7 @@ class DataTest(unittest.TestCase):
             self.assertIs(d.data, d)
 
     def test_Data_hardmask(self):
-        """Test the `hardmask` Data property."""
+        """Test Data.hardmask."""
         d = cfdm.Data([1, 2, 3])
         d.hardmask = True
         self.assertTrue(d.hardmask)
@@ -1141,28 +1816,628 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.array.mask == [False, False, False]).all())
 
     def test_Data_harden_mask(self):
-        """Test the `harden_mask` Data method."""
+        """Test Data.harden_mask."""
         d = cfdm.Data([1, 2, 3], hardmask=False)
         d.harden_mask()
         self.assertTrue(d.hardmask)
         self.assertEqual(len(d.to_dask_array().dask.layers), 2)
 
     def test_Data_soften_mask(self):
-        """Test the `soften_mask` Data method."""
+        """Test Data.soften_mask."""
         d = cfdm.Data([1, 2, 3], hardmask=True)
         d.soften_mask()
         self.assertFalse(d.hardmask)
         self.assertEqual(len(d.to_dask_array().dask.layers), 2)
 
     def test_Data_get_data(self):
-        """Test the `get_data` Data method."""
+        """Test Data.get_data."""
         d = cfdm.Data(9)
         self.assertIs(d, d.get_data())
 
     def test_Data__init__datetime(self):
-        """Test `Data.__init__` for datetime objects."""
-        print("TODODASKtest _Data__init__datetime ")
-       
+        """Test Data.__init__ for datetime objects."""
+        dt = cftime.DatetimeGregorian(2000, 1, 1)
+        for a in (dt, [dt], [[dt]]):
+            d = cfdm.Data(a)
+            self.assertEqual(d.array, 0)
+
+        dt = [dt, cftime.DatetimeGregorian(2000, 2, 1)]
+        d = cfdm.Data(dt)
+        self.assertTrue((d.array == [0, 31]).all())
+
+        dt = np.ma.array(dt, mask=[True, False])
+        d = cfdm.Data(dt)
+        self.assertTrue((d.array == [-999, 0]).all())
+
+        units = cfdm.Units("days since 2000-01-01", calendar="noleap")
+        for array, dt in zip(
+            (
+                [1, 2],
+                ["2000-01-02", "2000-01-03"],
+                [
+                    cftime.DatetimeNoLeap(2000, 1, 2),
+                    cftime.DatetimeNoLeap(2000, 1, 3),
+                ],
+            ),
+            (False, True, False),
+        ):
+            d = cfdm.Data(array, units=units, dt=dt)
+            self.assertTrue((d.array == [1, 2]).all())
+            self.assertTrue(
+                (
+                    d.datetime_array
+                    == [
+                        cftime.DatetimeNoLeap(2000, 1, 2),
+                        cftime.DatetimeNoLeap(2000, 1, 3),
+                    ]
+                ).all()
+            )
+
+    def test_Data_clear_after_dask_update(self):
+        """Test Data._clear_after_dask_update."""
+        d = cfdm.Data([1, 2, 3], "m")
+        dx = d.to_dask_array()
+
+        d.first_element()
+        d.second_element()
+        d.last_element()
+
+        self.assertTrue(d._get_cached_elements())
+
+        _ALL = cfdm.data.config._ALL
+        _CACHE = cfdm.data.config._CACHE
+
+        d._set_dask(dx, clear=_ALL ^ _CACHE)
+        self.assertTrue(d._get_cached_elements())
+
+        d._set_dask(dx, clear=_ALL)
+        self.assertFalse(d._get_cached_elements())
+
+    def test_Data_mask(self):
+        """Test Data.mask."""
+        # Test for a masked Data object (having some masked points)
+        a = np.ma.arange(12).reshape(3, 4)
+        a[1, 1] = np.ma.masked
+        d = cfdm.Data(a, units="m", chunks=(2, 2))
+        self.assertTrue((a == d.array).all())
+        self.assertTrue((a.mask == d.mask.array).all())
+        self.assertEqual(d.mask.shape, d.shape)
+        self.assertEqual(d.mask.dtype, bool)
+        self.assertEqual(d.mask.Units, cfdm.Units(None))
+        self.assertTrue(d.mask.hardmask)
+        self.assertIn(True, d.mask.array)
+
+        # Test for a non-masked Data object
+        a2 = np.arange(-100, 200.0, dtype=float).reshape(3, 4, 5, 5)
+        d2 = cfdm.Data(a2, units="m", chunks=(1, 2, 3, 4))
+        d2[...] = a2
+        self.assertTrue((a2 == d2.array).all())
+        self.assertEqual(d2.shape, d2.mask.shape)
+        self.assertEqual(d2.mask.dtype, bool)
+        self.assertEqual(d2.mask.Units, cfdm.Units(None))
+        self.assertTrue(d2.mask.hardmask)
+        self.assertNotIn(True, d2.mask.array)
+
+        # Test for a masked Data object of string type, including chunking
+        a3 = np.ma.array(["one", "two", "four"], dtype="S4")
+        a3[1] = np.ma.masked
+        d3 = cfdm.Data(a3, "m", chunks=(3,))
+        self.assertTrue((a3 == d3.array).all())
+        self.assertEqual(d3.shape, d3.mask.shape)
+        self.assertEqual(d3.mask.dtype, bool)
+        self.assertEqual(d3.mask.Units, cfdm.Units(None))
+        self.assertTrue(d3.mask.hardmask)
+        self.assertTrue(d3.mask.array[1], True)
+
+    def test_Data__init__dtype_mask(self):
+        """Test Data.__init__ for Data with `dtype` and `mask`
+        keywords."""
+        for m in (1, 20, True):
+            d = cfdm.Data([[1, 2, 3], [4, 5, 6]], mask=m)
+            self.assertFalse(np.ma.count(d.array))
+            self.assertEqual(d.shape, (2, 3))
+
+        for m in (0, False):
+            d = cfdm.Data([[1, 2, 3], [4, 5, 6]], mask=m)
+            self.assertEqual(np.ma.count(d.array), d.size)
+            self.assertEqual(d.shape, (2, 3))
+
+        d = cfdm.Data([[1, 2, 3], [4, 5, 6]], mask=[[0], [1]])
+        self.assertEqual(np.ma.count(d.array), 3)
+        self.assertEqual(d.shape, (2, 3))
+
+        d = cfdm.Data([[1, 2, 3], [4, 5, 6]], mask=[0, 1, 1])
+        self.assertEqual(np.ma.count(d.array), 2)
+        self.assertEqual(d.shape, (2, 3))
+
+        d = cfdm.Data([[1, 2, 3], [4, 5, 6]], mask=[[0, 1, 0], [1, 0, 1]])
+        self.assertEqual(np.ma.count(d.array), 3)
+        self.assertEqual(d.shape, (2, 3))
+
+        a = np.ma.array(
+            [[280.0, -99, -99, -99], [281.0, 279.0, 278.0, 279.0]],
+            dtype=float,
+            mask=[[0, 1, 1, 1], [0, 0, 0, 0]],
+        )
+
+        d = cfdm.Data([[280, -99, -99, -99], [281, 279, 278, 279]])
+        self.assertEqual(d.dtype, np.dtype(int))
+
+        d = cfdm.Data(
+            [[280, -99, -99, -99], [281, 279, 278, 279]],
+            dtype=float,
+            mask=[[0, 1, 1, 1], [0, 0, 0, 0]],
+        )
+
+        self.assertEqual(d.dtype, a.dtype)
+        self.assertEqual(d.mask.shape, a.mask.shape)
+        self.assertTrue((d.array == a).all())
+        self.assertTrue((d.mask.array == np.ma.getmaskarray(a)).all())
+
+        a = np.array(
+            [[280.0, -99, -99, -99], [281.0, 279.0, 278.0, 279.0]], dtype=float
+        )
+        mask = np.ma.masked_all(a.shape).mask
+
+        d = cfdm.Data(
+            [[280, -99, -99, -99], [281, 279, 278, 279]], dtype=float
+        )
+
+        self.assertEqual(d.dtype, a.dtype)
+        self.assertEqual(d.mask.shape, mask.shape)
+        self.assertTrue((d.array == a).all())
+        self.assertTrue((d.mask.array == np.ma.getmaskarray(a)).all())
+
+        # Mask broadcasting
+        a = np.ma.array(
+            [[280.0, -99, -99, -99], [281.0, 279.0, 278.0, 279.0]],
+            dtype=float,
+            mask=[[0, 1, 1, 0], [0, 1, 1, 0]],
+        )
+
+        d = cfdm.Data(
+            [[280, -99, -99, -99], [281, 279, 278, 279]],
+            dtype=float,
+            mask=[0, 1, 1, 0],
+        )
+
+        self.assertEqual(d.dtype, a.dtype)
+        self.assertEqual(d.mask.shape, a.mask.shape)
+        self.assertTrue((d.array == a).all())
+        self.assertTrue((d.mask.array == np.ma.getmaskarray(a)).all())
+
+    def test_Data__getitem__(self):
+        """Test the access of data elements from Data."""
+        d = cfdm.Data(np.ma.arange(450).reshape(9, 10, 5), chunks=(4, 5, 1))
+
+        for indices in (
+            Ellipsis,
+            (slice(None), slice(None)),
+            (slice(None), Ellipsis),
+            (Ellipsis, slice(None)),
+            (Ellipsis, slice(None), Ellipsis),
+        ):
+            self.assertEqual(d[indices].shape, d.shape)
+
+        for indices in (
+            ([1, 3, 4], slice(None), [2, -1]),
+            (slice(0, 6, 2), slice(None), [2, -1]),
+            (slice(0, 6, 2), slice(None), slice(2, 5, 2)),
+            (slice(0, 6, 2), list(range(10)), slice(2, 5, 2)),
+        ):
+            self.assertEqual(d[indices].shape, (3, 10, 2))
+
+        for indices in (
+            (slice(0, 6, 2), -2, [2, -1]),
+            (slice(0, 6, 2), -2, slice(2, 5, 2)),
+        ):
+            self.assertEqual(d[indices].shape, (3, 1, 2))
+
+        for indices in (
+            ([1, 3, 4], -2, [2, -1]),
+            ([4, 3, 1], -2, [2, -1]),
+            ([1, 4, 3], -2, [2, -1]),
+            ([4, 1, 4], -2, [2, -1]),
+        ):
+            e = d[indices]
+            self.assertEqual(e.shape, (3, 1, 2))
+            self.assertEqual(e._axes, d._axes)
+
+        d.__keepdims_indexing__ = False
+        self.assertFalse(d.__keepdims_indexing__)
+        for indices in (
+            ([1, 3, 4], -2, [2, -1]),
+            (slice(0, 6, 2), -2, [2, -1]),
+            (slice(0, 6, 2), -2, slice(2, 5, 2)),
+            ([1, 4, 3], -2, [2, -1]),
+            ([4, 3, 4], -2, [2, -1]),
+            ([1, 4, 4], -2, [2, -1]),
+        ):
+            e = d[indices]
+            self.assertFalse(e.__keepdims_indexing__)
+            self.assertEqual(e.shape, (3, 2))
+            self.assertEqual(e._axes, d._axes[0::2])
+
+        self.assertFalse(d.__keepdims_indexing__)
+        d.__keepdims_indexing__ = True
+        self.assertTrue(d.__keepdims_indexing__)
+
+        d = cfdm.Data(np.ma.arange(24).reshape(3, 8))
+        e = d[0, 2:4]
+
+        # Keepdims indexing
+        d = cfdm.Data([[1, 2, 3], [4, 5, 6]])
+        self.assertEqual(d[0].shape, (1, 3))
+        self.assertEqual(d[:, 1].shape, (2, 1))
+        self.assertEqual(d[0, 1].shape, (1, 1))
+        d.__keepdims_indexing__ = False
+        self.assertEqual(d[0].shape, (3,))
+        self.assertEqual(d[:, 1].shape, (2,))
+        self.assertEqual(d[0, 1].shape, ())
+        d.__keepdims_indexing__ = True
+
+        # Orthogonal indexing
+        self.assertEqual(d[[0], [0, 2]].shape, (1, 2))
+        self.assertEqual(d[[0, 1], [0, 2]].shape, (2, 2))
+        self.assertEqual(d[[0, 1], [2]].shape, (2, 1))
+
+        # Indices that have a 'to_dask_array' method
+        d = cfdm.Data(np.arange(45).reshape(9, 5), chunks=(4, 5))
+        indices = (cfdm.Data([1, 3]), cfdm.Data([0, 1, 2, 3, 4]) > 1)
+        self.assertEqual(d[indices].shape, (2, 3))
+
+        # ... and with a masked array
+        a = d.array
+        d = cfdm.Data(np.ma.where(a < 20, np.ma.masked, a))
+        e = d[cfdm.Data([0, 7]), 0]
+        f = cfdm.Data([-999, 35], mask=[True, False]).reshape(2, 1)
+        self.assertTrue(e.equals(f))
+
+        # REVIEW: getitem: `test_Data__getitem__`: Chained subspaces reading from disk
+        # Chained subspaces reading from disk
+        f = cfdm.read(self.filename)[0]
+        d = f.data
+        a = d[:1, [1, 3, 4], :][:, [True, False, True], ::-2].array
+        b = d.array[:1, [1, 3, 4], :][:, [True, False, True], ::-2]
+        self.assertTrue((a == b).all())
+
+        d.__keepdims_indexing__ = False
+        a = d[0, [1, 3, 4], :][[True, False, True], ::-2].array
+        b = d.array[0, [1, 3, 4], :][[True, False, True], ::-2]
+        self.assertTrue((a == b).all())
+
+    def test_Data_BINARY_AND_UNARY_OPERATORS(self):
+        """Test arithmetic, logical and comparison operators on Data."""
+        a = np.arange(3 * 4 * 5).reshape(3, 4, 5)
+        b = a[...]
+        b[2:] = a[2:] + 1
+
+        d = cfdm.Data(a)
+        e = cfdm.Data(b)
+
+        self.assertTrue((d == e).equals(cfdm.Data(a == b)))
+        self.assertTrue((d != e).equals(cfdm.Data(a != b)))
+        self.assertTrue((d >= e).equals(cfdm.Data(a >= b)))
+        self.assertTrue((d <= e).equals(cfdm.Data(a <= b)))
+        self.assertTrue((d > e).equals(cfdm.Data(a > b)))
+        self.assertTrue((d < e).equals(cfdm.Data(a < b)))
+
+        self.assertTrue((d & e).equals(cfdm.Data(a & b)))
+        self.assertTrue((d | e).equals(cfdm.Data(a | b)))
+        self.assertTrue((d ^ e).equals(cfdm.Data(a ^ b)))
+        self.assertTrue((d << e).equals(cfdm.Data(a << b)))
+        self.assertTrue((d >> e).equals(cfdm.Data(a >> b)))
+
+        self.assertTrue(d.__rand__(e).equals(cfdm.Data(a.__rand__(b))))
+        self.assertTrue(d.__ror__(e).equals(cfdm.Data(a.__ror__(b))))
+        self.assertTrue(d.__rxor__(e).equals(cfdm.Data(a.__rxor__(b))))
+        self.assertTrue(d.__rshift__(e).equals(cfdm.Data(a.__rshift__(b))))
+        self.assertTrue(d.__rlshift__(e).equals(cfdm.Data(a.__rlshift__(b))))
+        self.assertTrue(d.__rrshift__(e).equals(cfdm.Data(a.__rrshift__(b))))
+
+        a &= b
+        d &= e
+        self.assertTrue(d.equals(cfdm.Data(a)))
+        a |= b
+        d |= e
+        self.assertTrue(d.equals(cfdm.Data(a)))
+        a ^= b
+        d ^= e
+        self.assertTrue(d.equals(cfdm.Data(a)))
+        a <<= b
+        d <<= e
+        self.assertTrue(d.equals(cfdm.Data(a)))
+        a >>= b
+        d >>= e
+        self.assertTrue(d.equals(cfdm.Data(a)))
+        a &= b
+        d &= e
+        self.assertTrue(d.equals(cfdm.Data(a)))
+        a &= b
+        d &= e
+        self.assertTrue(d.equals(cfdm.Data(a)))
+
+        self.assertTrue((~d).equals(cfdm.Data(~a)))
+        self.assertTrue((-d).equals(cfdm.Data(-a)))
+        self.assertTrue((+d).equals(cfdm.Data(+a)))
+        self.assertTrue((abs(d)).equals(cfdm.Data(abs(a))))
+
+    def test_Data__len__(self):
+        """Test Data.__len__"""
+        self.assertEqual(3, len(cfdm.Data([1, 2, 3])))
+        self.assertEqual(2, len(cfdm.Data([[1, 2, 3], [4, 5, 6]])))
+        self.assertEqual(1, len(cfdm.Data([[1, 2, 3]])))
+
+        # len() of unsized object
+        with self.assertRaises(TypeError):
+            len(cfdm.Data(1))
+
+    def test_Data__float__(self):
+        """Test Data.__float__"""
+        for x in (-1.9, -1.5, -1.4, -1, 0, 1, 1.0, 1.4, 1.9):
+            self.assertEqual(float(cfdm.Data(x)), float(x))
+            self.assertEqual(float(cfdm.Data(x)), float(x))
+
+        with self.assertRaises(TypeError):
+            float(cfdm.Data([1, 2]))
+
+    def test_Data_del_units(self):
+        """Test Data.del_units."""
+        d = cfdm.Data(1)
+        with self.assertRaises(ValueError):
+            d.del_units()
+
+        d = cfdm.Data(1, "m")
+        self.assertEqual(d.del_units(), "m")
+        with self.assertRaises(ValueError):
+            d.del_units()
+
+        d = cfdm.Data(1, "days since 2000-1-1")
+        self.assertEqual(d.del_units(), "days since 2000-1-1")
+        with self.assertRaises(ValueError):
+            d.del_units()
+
+        d = cfdm.Data(1, "days since 2000-1-1", calendar="noleap")
+        self.assertEqual(d.del_units(), "days since 2000-1-1")
+        self.assertEqual(d.Units, cfdm.Units(None, "noleap"))
+        with self.assertRaises(ValueError):
+            d.del_units()
+
+    def test_Data_del_calendar(self):
+        """Test Data.del_calendar."""
+        for units in (None, "", "m", "days since 2000-1-1"):
+            d = cfdm.Data(1, units)
+            with self.assertRaises(ValueError):
+                d.del_calendar()
+
+        d = cfdm.Data(1, "days since 2000-1-1", calendar="noleap")
+        self.assertEqual(d.del_calendar(), "noleap")
+        with self.assertRaises(ValueError):
+            d.del_calendar()
+
+    def test_Data_has_units(self):
+        """Test Data.has_units."""
+        d = cfdm.Data(1, "")
+        self.assertTrue(d.has_units())
+        d = cfdm.Data(1, "m")
+        self.assertTrue(d.has_units())
+
+        d = cfdm.Data(1)
+        self.assertFalse(d.has_units())
+        d = cfdm.Data(1, calendar="noleap")
+        self.assertFalse(d.has_units())
+
+    def test_Data_has_calendar(self):
+        """Test Data.has_calendar."""
+        d = cfdm.Data(1, "days since 2000-1-1", calendar="noleap")
+        self.assertTrue(d.has_calendar())
+
+        for units in (None, "", "m", "days since 2000-1-1"):
+            d = cfdm.Data(1, units)
+            self.assertFalse(d.has_calendar())
+
+    def test_Data__init__compression(self):
+        """Test Data initialised from compressed data sources."""
+        # Ragged
+        for f in cfdm.read("DSG_timeSeries_contiguous.nc"):
+            f = f.data
+            d = cfdm.Data(cfdm.RaggedContiguousArray(source=f.source()))
+            self.assertTrue((d.array == f.array).all())
+
+        for f in cfdm.read("DSG_timeSeries_indexed.nc"):
+            f = f.data
+            d = cfdm.Data(cfdm.RaggedIndexedArray(source=f.source()))
+            self.assertTrue((d.array == f.array).all())
+
+        for f in cfdm.read("DSG_timeSeriesProfile_indexed_contiguous.nc"):
+            f = f.data
+            d = cfdm.Data(cfdm.RaggedIndexedContiguousArray(source=f.source()))
+            self.assertTrue((d.array == f.array).all())
+
+        # Ragged bounds
+        f = cfdm.read("DSG_timeSeriesProfile_indexed_contiguous.nc")[0]
+        f = f.construct("long_name=height above mean sea level").bounds.data
+        d = cfdm.Data(cfdm.RaggedIndexedContiguousArray(source=f.source()))
+        self.assertTrue((d.array == f.array).all())
+
+        # Gathered
+        for f in cfdm.read("gathered.nc"):
+            f = f.data
+            d = cfdm.Data(cfdm.GatheredArray(source=f.source()))
+            self.assertTrue((d.array == f.array).all())
+
+        # Subsampled
+        f = cfdm.read("subsampled_2.nc")[-3]
+        f = f.construct("longitude").data
+        d = cfdm.Data(cfdm.SubsampledArray(source=f.source()))
+        self.assertTrue((d.array == f.array).all())
+
+    def test_Data_empty(self):
+        """Test Data.empty."""
+        for shape, dtype_in, dtype_out in zip(
+            [(), (3,), (4, 5)], [None, int, bool], [float, int, bool]
+        ):
+            d = cfdm.Data.empty(shape, dtype=dtype_in, chunks=-1)
+            self.assertEqual(d.shape, shape)
+            self.assertEqual(d.dtype, dtype_out)
+
+    def test_Data__iter__(self):
+        """Test Data.__iter__"""
+        for d in (
+            cfdm.Data([1, 2, 3], "metres"),
+            cfdm.Data([[1, 2], [3, 4]], "metres"),
+        ):
+            d.__keepdims_indexing__ = False
+            for i, e in enumerate(d):
+                self.assertTrue(e.equals(d[i]))
+
+        for d in (
+            cfdm.Data([1, 2, 3], "metres"),
+            cfdm.Data([[1, 2], [3, 4]], "metres"),
+        ):
+            d.__keepdims_indexing__ = True
+            for i, e in enumerate(d):
+                out = d[i]
+                self.assertTrue(e.equals(out.reshape(out.shape[1:])))
+
+        # iteration over a 0-d Data
+        with self.assertRaises(TypeError):
+            list(cfdm.Data(99, "metres"))
+
+    def test_Data__bool__(self):
+        """Test Data.__bool__"""
+        for x in (1, 1.5, True, "x"):
+            self.assertTrue(bool(cfdm.Data(x)))
+            self.assertTrue(bool(cfdm.Data([[x]])))
+
+        for x in (0, 0.0, False, ""):
+            self.assertFalse(bool(cfdm.Data(x)))
+            self.assertFalse(bool(cfdm.Data([[x]])))
+
+        with self.assertRaises(ValueError):
+            bool(cfdm.Data([]))
+
+        with self.assertRaises(ValueError):
+            bool(cfdm.Data([1, 2]))
+
+    def test_Data_fill_value(self):
+        """Test the `fill_value` Data property."""
+        d = cfdm.Data([1, 2], "m")
+        self.assertIsNone(d.fill_value)
+        d.fill_value = 999
+        self.assertEqual(d.fill_value, 999)
+        del d.fill_value
+        self.assertIsNone(d.fill_value)
+
+    def test_Data_uncompress(self):
+        """Test Data.uncompress."""
+        f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
+        a = f.data.array
+        d = cfdm.Data(cfdm.RaggedContiguousArray(source=f.data.source()))
+
+        self.assertTrue(d.get_compression_type())
+        self.assertTrue((d.array == a).all())
+
+        self.assertIsNone(d.uncompress(inplace=True))
+        self.assertFalse(d.get_compression_type())
+        self.assertTrue((d.array == a).all())
+
+    def test_Data__atol(self):
+        """Test Data._atol."""
+        d = cfdm.Data(1)
+        self.assertEqual(d._atol, cfdm.atol())
+        cfdm.atol(0.001)
+        self.assertEqual(d._atol, 0.001)
+
+    def test_Data__rtol(self):
+        """Test Data._rtol."""
+        d = cfdm.Data(1)
+        self.assertEqual(d._rtol, cfdm.rtol())
+        cfdm.rtol(0.001)
+        self.assertEqual(d._rtol, 0.001)
+
+    def test_Data_compressed_array(self):
+        """Test Data.compressed_array."""
+        f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
+        f = f.data
+        d = cfdm.Data(cfdm.RaggedContiguousArray(source=f.source()))
+        self.assertTrue((d.compressed_array == f.compressed_array).all())
+
+        d = cfdm.Data([1, 2, 3], "m")
+        with self.assertRaises(ValueError):
+            d.compressed_array
+
+    def test_Data_get_compressed(self):
+        """Test the Data methods which get compression properties."""
+        # Compressed
+        f = cfdm.read("DSG_timeSeries_contiguous.nc")[0]
+        f = f.data
+        d = cfdm.Data(cfdm.RaggedContiguousArray(source=f.source()))
+
+        self.assertEqual(d.get_compressed_axes(), f.get_compressed_axes())
+        self.assertEqual(d.get_compression_type(), f.get_compression_type())
+        self.assertEqual(
+            d.get_compressed_dimension(), f.get_compressed_dimension()
+        )
+
+        # Uncompressed
+        d = cfdm.Data(9)
+
+        self.assertEqual(d.get_compressed_axes(), [])
+        self.assertEqual(d.get_compression_type(), "")
+
+        with self.assertRaises(ValueError):
+            d.get_compressed_dimension()
+
+    def test_Data_Units(self):
+        """Test Data.Units."""
+        d = cfdm.Data(100, "m")
+        self.assertEqual(d.Units, cfdm.Units("m"))
+
+        d.Units = cfdm.Units("km")
+        self.assertEqual(d.Units, cfdm.Units("km"))
+
+        # Assign units when none were set
+        d = cfdm.Data(100)
+        d.Units = cfdm.Units("km")
+        self.assertEqual(d.Units, cfdm.Units("km"))
+
+        d = cfdm.Data(100, "")
+
+        # Delete units
+        del d.Units
+        self.assertEqual(d.Units, cfdm.Units(None))
+
+    def test_Data_get_filenames(self):
+        """Test Data.get_filenames."""
+        d = cfdm.Data.empty((5, 8), float, chunks=4)
+        self.assertEqual(d.get_filenames(), set())
+
+        f = cfdm.example_field(0)
+        cfdm.write(f, file_A)
+        a = cfdm.read(file_A, chunks=4)[0].data
+        self.assertEqual(a.data.get_filenames(), set([file_A]))
+        a.persist(inplace=True)
+        self.assertEqual(a.data.get_filenames(), set())
+
+    def test_Data_get_filenames(self):
+        """Test Data.chunk_indices."""
+        d = cfdm.Data(
+            np.arange(405).reshape(3, 9, 15), chunks=((1, 2), (9,), (4, 5, 6))
+        )
+        self.assertEqual(d.npartitions, 6)
+        self.assertEqual(
+            list(d.chunk_indices()),
+            [
+                (slice(0, 1, None), slice(0, 9, None), slice(0, 4, None)),
+                (slice(0, 1, None), slice(0, 9, None), slice(4, 9, None)),
+                (slice(0, 1, None), slice(0, 9, None), slice(9, 15, None)),
+                (slice(1, 3, None), slice(0, 9, None), slice(0, 4, None)),
+                (slice(1, 3, None), slice(0, 9, None), slice(4, 9, None)),
+                (slice(1, 3, None), slice(0, 9, None), slice(9, 15, None)),
+            ],
+        )
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

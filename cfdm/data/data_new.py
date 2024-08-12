@@ -366,6 +366,14 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             # Mask hardness
             self.hardmask = getattr(source, "hardmask", _DEFAULT_HARDMASK)
 
+            # Indexing flags
+            self.__keepdims_indexing__ = getattr(
+                source, "__keepdims_indexing__", True
+            )
+            self.__orothogonal_indexing__ = getattr(
+                source, "__orthogonal_indexing__", True
+            )
+
             # File components
             self._initialise_netcdf(source)
             self._initialise_original_filenames(source)
@@ -401,7 +409,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             ndim = np.ndim(array)
 
         # Create the _axes attribute: an ordered sequence of unique
-        # (within this `{{class}}` instance) names for each array axis.
+        # names (within this instance) for each array axis.
         self._axes = generate_axis_identifiers(ndim)
 
         if not _use_array:
@@ -511,28 +519,51 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
             self.masked_values(mask_value, inplace=True)
 
-    @property
-    def dask_compressed_array(self):
-        """Returns a dask array of the compressed data.
+    def __bool__(self):
+        """Truth value testing and the built-in operation `bool`
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        x.__bool__() <==> bool(x)
 
-        :Returns:
+        **Performance**
 
-            `dask.array.Array`
-                The compressed data.
+        `__bool__` causes all delayed operations to be computed.
 
         **Examples**
 
-        >>> a = d.dask_compressed_array
+        >>> bool({{package}}.{{class}}(1.5))
+        True
+        >>> bool({{package}}.{{class}}([[False]]))
+        False
 
         """
-        ca = self.source(None)
+        size = self.size
+        if size != 1:
+            raise ValueError(
+                f"The truth value of a {self.__class__.__name__} with {size} "
+                "elements is ambiguous. Use d.any() or d.all()"
+            )
 
-        if ca is None or not ca.get_compression_type():
-            raise ValueError("not compressed: can't get compressed dask array")
+        return bool(self.to_dask_array())
 
-        return ca.to_dask_array()
+    def __float__(self):
+        """Called to implement the built-in function `float`
+
+        x.__float__() <==> float(x)
+
+        **Performance**
+
+        `__float__` causes all delayed operations to be executed,
+        unless the dask array size is already known to be greater than
+        1.
+
+        """
+        if self.size != 1:
+            raise TypeError(
+                "only length-1 arrays can be converted to "
+                f"Python scalars. Got {self}"
+            )
+
+        return float(self.array[(0,) * self.ndim])
 
     def __format__(self, format_spec):
         """Interpret format specifiers for size 1 arrays.
@@ -583,155 +614,6 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             f"Can't format Data array of size {n} with "
             f"format code {format_spec}"
         )
-
-    def __float__(self):
-        """Called to implement the built-in function `float`
-
-        x.__float__() <==> float(x)
-
-        **Performance**
-
-        `__float__` causes all delayed operations to be executed,
-        unless the dask array size is already known to be greater than
-        1.
-
-        """
-        if self.size != 1:
-            raise TypeError(
-                "only length-1 arrays can be converted to "
-                f"Python scalars. Got {self}"
-            )
-
-        return float(self.array[(0,) * self.ndim])
-
-    def __int__(self):
-        """Called to implement the built-in function `int`
-
-        x.__int__() <==> int(x)
-
-        **Performance**
-
-        `__int__` causes all delayed operations to be executed, unless
-        the dask array size is already known to be greater than 1.
-
-        """
-        if self.size != 1:
-            raise TypeError(
-                "only length-1 arrays can be converted to "
-                f"Python scalars. Got {self}"
-            )
-
-        return int(self.array[(0,) * self.ndim])
-
-    def __iter__(self):
-        """Called when an iterator is required.
-
-        x.__iter__() <==> iter(x)
-
-        **Performance**
-
-        If the shape of the data is unknown then it is calculated
-        immediately by executing all delayed operations.
-
-        **Examples**
-
-        >>> d = {{package}}.{{class}}([1, 2, 3], 'metres')
-        >>> for e in d:
-        ...     print(repr(e))
-        ...
-        <{{repr}}{{class}}(1): [1] metres>
-        <{{repr}}{{class}}(1): [2] metres>
-        <{{repr}}{{class}}(1): [3] metres>
-
-        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]], 'metres')
-        >>> for e in d:
-        ...     print(repr(e))
-        ...
-        <{{repr}}{{class}}: [1, 2] metres>
-        <{{repr}}{{class}}: [3, 4] metres>
-
-        >>> d = {{package}}.{{class}}(99, 'metres')
-        >>> for e in d:
-        ...     print(repr(e))
-        ...
-        Traceback (most recent call last):
-            ...
-        TypeError: iteration over a 0-d Data
-
-        """
-        try:
-            n = len(self)
-        except TypeError:
-            raise TypeError(f"iteration over a 0-d {self.__class__.__name__}")
-
-        if self.__keepdims_indexing__:
-            for i in range(n):
-                out = self[i]
-                out.reshape(out.shape[1:], inplace=True)
-                yield out
-        else:
-            for i in range(n):
-                yield self[i]
-
-    def __len__(self):
-        """Called to implement the built-in function `len`.
-
-        x.__len__() <==> len(x)
-
-        **Performance**
-
-        If the shape of the data is unknown then it is calculated
-        immediately by executing all delayed operations.
-
-        **Examples**
-
-        >>> len({{package}}.{{class}}([1, 2, 3]))
-        3
-        >>> len({{package}}.{{class}}([[1, 2, 3]]))
-        1
-        >>> len({{package}}.{{class}}([[1, 2, 3], [4, 5, 6]]))
-        2
-        >>> len({{package}}.{{class}}(1))
-        Traceback (most recent call last):
-            ...
-        TypeError: len() of unsized object
-
-        """
-        # REVIEW: getitem: `__len__`: set 'asanyarray'
-        # The dask graph is never going to be computed, so we can set
-        # 'asanyarray=False'.
-        dx = self.to_dask_array(asanyarray=False)
-        if math.isnan(dx.size):
-            logger.debug("Computing data len: Performance may be degraded")
-            dx.compute_chunk_sizes()
-
-        return len(dx)
-
-    def __bool__(self):
-        """Truth value testing and the built-in operation `bool`
-
-        x.__bool__() <==> bool(x)
-
-        **Performance**
-
-        `__bool__` causes all delayed operations to be computed.
-
-        **Examples**
-
-        >>> bool({{package}}.{{class}}(1.5))
-        True
-        >>> bool({{package}}.{{class}}([[False]]))
-        False
-
-        """
-        size = self.size
-        if size != 1:
-            raise ValueError(
-                f"The truth value of a {self.__class__.__name__} with {size} "
-                "elements is ambiguous. Use d.any() or d.all()"
-            )
-
-        return bool(self.to_dask_array())
 
     def __getitem__(self, indices):
         """Return a subspace of the data defined by indices.
@@ -854,11 +736,112 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             ]
             new._axes = new_axes
 
-        if new.shape != self.shape:
-            # Delete hdf5 chunksizes when the shape has changed.
-            new.nc_clear_hdf5_chunksizes()  # TODODASK
+        # TODODASK: HDF5 chunks from branch hdf5-chunks
 
         return new
+
+    def __int__(self):
+        """Called to implement the built-in function `int`
+
+        x.__int__() <==> int(x)
+
+        **Performance**
+
+        `__int__` causes all delayed operations to be executed, unless
+        the dask array size is already known to be greater than 1.
+
+        """
+        if self.size != 1:
+            raise TypeError(
+                "only length-1 arrays can be converted to "
+                f"Python scalars. Got {self}"
+            )
+
+        return int(self.array[(0,) * self.ndim])
+
+    def __iter__(self):
+        """Called when an iterator is required.
+
+        x.__iter__() <==> iter(x)
+
+        **Performance**
+
+        If the shape of the data is unknown then it is calculated
+        immediately by executing all delayed operations.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([1, 2, 3], 'metres')
+        >>> for e in d:
+        ...     print(repr(e))
+        ...
+        <{{repr}}{{class}}(1): [1] metres>
+        <{{repr}}{{class}}(1): [2] metres>
+        <{{repr}}{{class}}(1): [3] metres>
+
+        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]], 'metres')
+        >>> for e in d:
+        ...     print(repr(e))
+        ...
+        <{{repr}}{{class}}: [1, 2] metres>
+        <{{repr}}{{class}}: [3, 4] metres>
+
+        >>> d = {{package}}.{{class}}(99, 'metres')
+        >>> for e in d:
+        ...     print(repr(e))
+        ...
+        Traceback (most recent call last):
+            ...
+        TypeError: iteration over a 0-d Data
+
+        """
+        try:
+            n = len(self)
+        except TypeError:
+            raise TypeError(f"iteration over a 0-d {self.__class__.__name__}")
+
+        if self.__keepdims_indexing__:
+            for i in range(n):
+                out = self[i]
+                out.reshape(out.shape[1:], inplace=True)
+                yield out
+        else:
+            for i in range(n):
+                yield self[i]
+
+    def __len__(self):
+        """Called to implement the built-in function `len`.
+
+        x.__len__() <==> len(x)
+
+        **Performance**
+
+        If the shape of the data is unknown then it is calculated
+        immediately by executing all delayed operations.
+
+        **Examples**
+
+        >>> len({{package}}.{{class}}([1, 2, 3]))
+        3
+        >>> len({{package}}.{{class}}([[1, 2, 3]]))
+        1
+        >>> len({{package}}.{{class}}([[1, 2, 3], [4, 5, 6]]))
+        2
+        >>> len({{package}}.{{class}}(1))
+        Traceback (most recent call last):
+            ...
+        TypeError: len() of unsized object
+
+        """
+        # REVIEW: getitem: `__len__`: set 'asanyarray'
+        # The dask graph is never going to be computed, so we can set
+        # 'asanyarray=False'.
+        dx = self.to_dask_array(asanyarray=False)
+        if math.isnan(dx.size):
+            logger.debug("Computing data len: Performance may be degraded")
+            dx.compute_chunk_sizes()
+
+        return len(dx)
 
     def __repr__(self):
         """Called by the `repr` built-in function.
@@ -1018,7 +1001,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         #     shifts = tuple(roll.values())
         #     self.roll(shift=shifts, axis=roll_axes, inplace=True)
 
-        # DASK: nneds to be in cf-python
+        # DASK: needs to be in cf-python
         # Make sure that the units of value are the same as self
         # value = conform_units(value, self.Units)
 
@@ -1030,7 +1013,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         self._set_subspace(dx, indices, value)
         self._set_dask(dx)
 
-        # DASK: nneds to be in cf-python
+        # DASK: needs to be in cf-python
         # Unroll any axes that were rolled to enable a cyclic
         # assignment
         # if roll:
@@ -1155,6 +1138,286 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         return out
 
+    def __eq__(self, other):
+        """The rich comparison operator ``==``
+
+        x.__eq__(y) <==> x==y
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._binary_operation(other, "__eq__")
+
+    def __ne__(self, other):
+        """The rich comparison operator ``!=``
+
+        x.__ne__(y) <==> x!=y
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._binary_operation(other, "__ne__")
+
+    def __ge__(self, other):
+        """The rich comparison operator ``>=``
+
+        x.__ge__(y) <==> x>=y
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._binary_operation(other, "__ge__")
+
+    def __gt__(self, other):
+        """The rich comparison operator ``>``
+
+        x.__gt__(y) <==> x>y
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._binary_operation(other, "__gt__")
+
+    def __le__(self, other):
+        """The rich comparison operator ``<=``
+
+        x.__le__(y) <==> x<=y
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._binary_operation(other, "__le__")
+
+    def __lt__(self, other):
+        """The rich comparison operator ``<``
+
+        x.__lt__(y) <==> x<y
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._binary_operation(other, "__lt__")
+
+    def __and__(self, other):
+        """The binary bitwise operation ``&``
+
+        x.__and__(y) <==> x&y
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._binary_operation(other, "__and__")
+
+    def __iand__(self, other):
+        """The augmented bitwise assignment ``&=``
+
+        x.__iand__(y) <==> x&=y
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._binary_operation(other, "__iand__")
+
+    def __rand__(self, other):
+        """The binary bitwise operation ``&`` with reflected operands.
+
+        x.__rand__(y) <==> y&x
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._binary_operation(other, "__rand__")
+
+    def __or__(self, other):
+        """The binary bitwise operation ``|``
+
+        x.__or__(y) <==> x|y
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._binary_operation(other, "__or__")
+
+    def __ior__(self, other):
+        """The augmented bitwise assignment ``|=``
+
+        x.__ior__(y) <==> x|=y
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._binary_operation(other, "__ior__")
+
+    def __ror__(self, other):
+        """The binary bitwise operation ``|`` with reflected operands.
+
+        x.__ror__(y) <==> y|x
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._binary_operation(other, "__ror__")
+
+    def __xor__(self, other):
+        """The binary bitwise operation ``^``
+
+        x.__xor__(y) <==> x^y
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._binary_operation(other, "__xor__")
+
+    def __ixor__(self, other):
+        """The augmented bitwise assignment ``^=``
+
+        x.__ixor__(y) <==> x^=y
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._binary_operation(other, "__ixor__")
+
+    def __rxor__(self, other):
+        """The binary bitwise operation ``^`` with reflected operands.
+
+        x.__rxor__(y) <==> y^x
+
+        """
+        return self._binary_operation(other, "__rxor__")
+
+    def __lshift__(self, y):
+        """The binary bitwise operation ``<<``
+
+        x.__lshift__(y) <==> x<<y
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._binary_operation(y, "__lshift__")
+
+    def __ilshift__(self, y):
+        """The augmented bitwise assignment ``<<=``
+
+        x.__ilshift__(y) <==> x<<=y
+
+        """
+        return self._binary_operation(y, "__ilshift__")
+
+    def __rlshift__(self, y):
+        """The binary bitwise operation ``<<`` with reflected operands.
+
+        x.__rlshift__(y) <==> y<<x
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._binary_operation(y, "__rlshift__")
+
+    def __rshift__(self, y):
+        """The binary bitwise operation ``>>``
+
+        x.__lshift__(y) <==> x>>y
+
+        """
+        return self._binary_operation(y, "__rshift__")
+
+    def __irshift__(self, y):
+        """The augmented bitwise assignment ``>>=``
+
+        x.__irshift__(y) <==> x>>=y
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._binary_operation(y, "__irshift__")
+
+    def __rrshift__(self, y):
+        """The binary bitwise operation ``>>`` with reflected operands.
+
+        x.__rrshift__(y) <==> y>>x
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._binary_operation(y, "__rrshift__")
+
+    def __abs__(self):
+        """The unary arithmetic operation ``abs``
+
+        x.__abs__() <==> abs(x)
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._unary_operation("__abs__")
+
+    def __neg__(self):
+        """The unary arithmetic operation ``-``
+
+        x.__neg__() <==> -x
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._unary_operation("__neg__")
+
+    def __invert__(self):
+        """The unary bitwise operation ``~``
+
+        x.__invert__() <==> ~x
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._unary_operation("__invert__")
+
+    def __pos__(self):
+        """The unary arithmetic operation ``+``
+
+        x.__pos__() <==> +x
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._unary_operation("__pos__")
+
+    def __array__(self, *dtype):
+        """The numpy array interface.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        :Parameters:
+
+            dtype: optional
+                Typecode or data-type to which the array is cast.
+
+        :Returns:
+
+            `numpy.ndarray`
+                An independent numpy array of the data.
+
+        **Examples**
+
+
+        >>> d = {{package}}.{{class}}([1, 2, 3])
+        >>> a = numpy.array(d)
+        >>> print(type(a))
+        <class 'numpy.ndarray'>
+        >>> a[0] = -99
+        >>> d
+        <{{repr}}{{class}}(3): [1, 2, 3]>
+        >>> b = numpy.array(d, float)
+        >>> print(b)
+        [1. 2. 3.]
+
+        """
+        array = self.array
+        if not dtype:
+            return array
+        else:
+            return array.astype(dtype[0], copy=False)
+
     # REVIEW: getitem: `__asanyarray__`: new property `__asanyarray__`
     @property
     def __asanyarray__(self):
@@ -1174,40 +1437,6 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         """
         return self._get_component("__asanyarray__", True)
-
-    @property
-    def __orthogonal_indexing__(self):
-        """Flag to indicate that orthogonal indexing is supported.
-
-        Always True, indicating that 'orthogonal indexing' is
-        applied. This means that when indices are 1-d arrays or lists
-        then they subspace along each dimension independently. This
-        behaviour is similar to Fortran, but different to `numpy`.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `__keepdims_indexing__`, `__getitem__`,
-                     `__setitem__`,
-                     `netCDF4.Variable.__orthogonal_indexing__`
-
-        **Examples**
-
-        >>> d = {{package}}.{{class}}([[1, 2, 3],
-        ...              [4, 5, 6]])
-        >>> e = d[[0], [0, 2]]
-        >>> e.shape
-        (1, 2)
-        >>> print(e.array)
-        [[1 3]]
-        >>> e = d[[0, 1], [0, 2]]
-        >>> e.shape
-        (2, 2)
-        >>> print(e.array)
-        [[1 3]
-         [4 6]]
-
-        """
-        return True
 
     @property
     def __keepdims_indexing__(self):
@@ -1281,45 +1510,79 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         return self._get_component("__keepdims_indexing__", True)
 
-    def __array__(self, *dtype):
-        """The numpy array interface.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        :Parameters:
-
-            dtype: optional
-                Typecode or data-type to which the array is cast.
-
-        :Returns:
-
-            `numpy.ndarray`
-                An independent numpy array of the data.
-
-        **Examples**
-
-
-        >>> d = {{package}}.{{class}}([1, 2, 3])
-        >>> a = numpy.array(d)
-        >>> print(type(a))
-        <class 'numpy.ndarray'>
-        >>> a[0] = -99
-        >>> d
-        <{{repr}}{{class}}(3): [1, 2, 3]>
-        >>> b = numpy.array(d, float)
-        >>> print(b)
-        [1. 2. 3.]
-
-        """
-        array = self.array
-        if not dtype:
-            return array
-        else:
-            return array.astype(dtype[0], copy=False)
-
     @__keepdims_indexing__.setter
     def __keepdims_indexing__(self, value):
         self._set_component("__keepdims_indexing__", bool(value), copy=False)
+
+    @property
+    def __orthogonal_indexing__(self):
+        """Flag to indicate that orthogonal indexing is supported.
+
+        Always True, indicating that 'orthogonal indexing' is
+        applied. This means that when indices are 1-d arrays or lists
+        then they subspace along each dimension independently. This
+        behaviour is similar to Fortran, but different to `numpy`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `__keepdims_indexing__`, `__getitem__`,
+                     `__setitem__`,
+                     `netCDF4.Variable.__orthogonal_indexing__`
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([[1, 2, 3],
+        ...              [4, 5, 6]])
+        >>> e = d[[0], [0, 2]]
+        >>> e.shape
+        (1, 2)
+        >>> print(e.array)
+        [[1 3]]
+        >>> e = d[[0, 1], [0, 2]]
+        >>> e.shape
+        (2, 2)
+        >>> print(e.array)
+        [[1 3]
+         [4 6]]
+
+        """
+        return True
+
+    @property
+    def _Units(self):
+        """Storage for the units in a `{{package}}.Units` object.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `Units`
+
+        """
+        return self._get_component("Units")
+
+    @_Units.setter
+    def _Units(self, value):
+        self._set_component("Units", value, copy=False)
+
+    @_Units.deleter
+    def _Units(self):
+        self._set_component("Units", self._Units_class(None), copy=False)
+
+    @property
+    def _axes(self):
+        """Storage for the axis identifiers.
+
+        Contains a `tuple` of identifiers, one for each array axis.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        # CF-PYTHON: Override
+        return self._get_component("axes")
+
+    @_axes.setter
+    def _axes(self, value):
+        # CF-PYTHON: Override
+        self._set_component("axes", tuple(value), copy=False)
 
     def _binary_operation(self, other, method):
         """Implement binary arithmetic and comparison operations with
@@ -1347,8 +1610,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = cf.Data([0, 1, 2, 3])
-        >>> e = cf.Data([1, 1, 3, 4])
+        >>> d = {{package}}.{{class}}([0, 1, 2, 3])
+        >>> e = {{package}}.{{class}}([1, 1, 3, 4])
 
         >>> f = d._binary_operation(e, '__add__')
         >>> print(f.array)
@@ -1371,8 +1634,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         # ------------------------------------------------------------
         if not isinstance(other, self.__class__):
             if other is None:
-                # Can't sensibly initialise a Data object from a bare
-                # `None` (issue #281)
+                # Can't sensibly initialise a Data object from `None`
                 other = np.array(None, dtype=object)
 
             other = type(self)(other)
@@ -1424,7 +1686,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
             return self
 
-        else:  # not, so concerns a new Data object copied from self, data0
+        else:
             data0._set_dask(result)
             if axes is not None:
                 data0._axes = axes
@@ -1511,6 +1773,155 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         return self._del_component("cfa_write", False)
 
+    def _del_cached_elements(self):
+        """Delete any cached element values.
+
+        Updates *data* in-place to remove the cached element values.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `_get_cached_elements`, `_set_cached_elements`
+
+        :Returns:
+
+            `None`
+
+        """
+        self._del_component("cached_elements", None)
+
+    def _del_dask(self, default=ValueError(), clear=_ALL):
+        """Remove the dask array.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `to_dask_array`, `_clear_after_dask_update`,
+                     `_set_dask`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the
+                dask array axes has not been set. If set to an
+                `Exception` instance then it will be raised instead.
+
+            clear: `int`, optional
+                Specify which components should be removed. By default
+                *clear* is the ``_ALL`` integer-valued constant, which
+                results in all components being removed. See
+                `_clear_after_dask_update` for details. If there is
+                no dask array then no components are removed,
+                regardless of the value of *clear*.
+
+        :Returns:
+
+            `dask.array.Array`
+                The removed dask array.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([1, 2, 3])
+        >>> dx = d._del_dask()
+        >>> d._del_dask("No dask array")
+        'No dask array'
+        >>> d._del_dask()
+        Traceback (most recent call last):
+            ...
+        ValueError: 'Data' has no dask array
+        >>> d._del_dask(RuntimeError('No dask array'))
+        Traceback (most recent call last):
+            ...
+        RuntimeError: No dask array
+
+        """
+        out = self._del_component("dask", None)
+        if out is None:
+            return self._default(
+                default, f"{self.__class__.__name__!r} has no dask array"
+            )
+
+        self._clear_after_dask_update(clear)
+        return out
+
+    def _get_cached_elements(self):
+        """Return the cache of selected element values.
+
+        .. warning:: Never change the returned dictionary in-place.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `_del_cached_elements`, `_set_cached_elements`
+
+        :Returns:
+
+            `dict`
+                The cached element values, where the keys are the
+                element positions within the dask array and the values
+                are the cached values for each position.
+
+        **Examples**
+
+        >>> d._get_cached_elements()
+        {}
+
+        >>> d._get_cached_elements()
+        {0: 273.15, 1: 274.56, -1: 269.95}
+
+        """
+        return self._get_component("cached_elements", {})
+
+    def _is_abstract_Array_subclass(self, array):
+        """Whether or not an array is a type of Array.
+
+        :Parameters:
+
+            array:
+
+        :Returns:
+
+            `bool`
+
+        """
+        return isinstance(array, Array)
+
+    def _item(self, index):
+        """Return an element of the data as a scalar.
+
+        It is assumed, but not checked, that the given index selects
+        exactly one element.
+
+        :Parameters:
+
+            index:
+
+        :Returns:
+
+                The selected element of the data.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([[1, 2, 3]], 'km')
+        >>> x = d._item((0, -1))
+        >>> print(x, type(x))
+        3 <class 'int'>
+        >>> x = d._item((0, 1))
+        >>> print(x, type(x))
+        2 <class 'int'>
+        >>> d[0, 1] = {{package}}.masked
+        >>> d._item((slice(None), slice(1, 2)))
+        masked
+
+        """
+        array = self[index].array
+
+        if not np.ma.isMA(array):
+            return array.item()
+
+        mask = array.mask
+        if mask is np.ma.nomask or not mask.item():
+            return array.item()
+
+        return np.ma.masked
+
     def _parse_axes(self, axes):
         """Parses the data axes and returns valid non-duplicate axes.
 
@@ -1557,6 +1968,68 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             raise ValueError(f"Duplicate axis: {axes2}")
 
         return tuple(axes2)
+
+    def _set_cached_elements(self, elements):
+        """Cache selected element values.
+
+        Updates the `{{class}}` instance in-place to store the given
+        element values.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `_del_cached_elements`, `_get_cached_elements`
+
+        :Parameters:
+
+            elements: `dict`
+               Zero or more element values to be cached, each keyed by
+               a unique identifier to allow unambiguous retrieval.
+               Existing cached elements not specified by *elements*
+               will not be removed.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d._set_cached_elements({0: 273.15})
+
+        """
+        if not elements:
+            return
+
+        cache = self._get_component("cached_elements", None)
+        if cache:
+            cache = cache.copy()
+            cache.update(elements)
+        else:
+            cache = elements.copy()
+
+        self._set_component("cached_elements", cache, copy=False)
+
+    def _set_CompressedArray(self, array, copy=True):
+        """Set the compressed array.
+
+        .. versionadded:: (cfdm) 1.7.11
+
+        .. seealso:: `_set_Array`
+
+        :Parameters:
+
+            array: subclass of `CompressedArray`
+                The compressed array to be inserted.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d._set_CompressedArray(a)
+
+        """
+        self._set_Array(array, copy=copy)
 
     # REVIEW: getitem: `_set_dask`: new keyword 'asanyarray'
     def _set_dask(self, dx, copy=False, clear=_ALL, asanyarray=False):
@@ -1619,178 +2092,6 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             self._set_component("__asanyarray__", bool(asanyarray), copy=False)
 
         self._clear_after_dask_update(clear)
-
-    def _del_dask(self, default=ValueError(), clear=_ALL):
-        """Remove the dask array.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `to_dask_array`, `_clear_after_dask_update`,
-                     `_set_dask`
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if the
-                dask array axes has not been set. If set to an
-                `Exception` instance then it will be raised instead.
-
-            clear: `int`, optional
-                Specify which components should be removed. By default
-                *clear* is the ``_ALL`` integer-valued constant, which
-                results in all components being removed. See
-                `_clear_after_dask_update` for details. If there is
-                no dask array then no components are removed,
-                regardless of the value of *clear*.
-
-        :Returns:
-
-            `dask.array.Array`
-                The removed dask array.
-
-        **Examples**
-
-        >>> d = {{package}}.{{class}}([1, 2, 3])
-        >>> dx = d._del_dask()
-        >>> d._del_dask("No dask array")
-        'No dask array'
-        >>> d._del_dask()
-        Traceback (most recent call last):
-            ...
-        ValueError: 'Data' has no dask array
-        >>> d._del_dask(RuntimeError('No dask array'))
-        Traceback (most recent call last):
-            ...
-        RuntimeError: No dask array
-
-        """
-        out = self._del_component("dask", None)
-        if out is None:
-            return self._default(
-                default, f"{self.__class__.__name__!r} has no dask array"
-            )
-
-        self._clear_after_dask_update(clear)
-        return out
-
-    def _del_cached_elements(self):
-        """Delete any cached element values.
-
-        Updates *data* in-place to remove the cached element values.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `_get_cached_elements`, `_set_cached_elements`
-
-        :Returns:
-
-            `None`
-
-        """
-        self._del_component("cached_elements", None)
-
-    def _get_cached_elements(self):
-        """Return the cache of selected element values.
-
-        .. warning:: Never change the returned dictionary in-place.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `_del_cached_elements`, `_set_cached_elements`
-
-        :Returns:
-
-            `dict`
-                The cached element values, where the keys are the
-                element positions within the dask array and the values
-                are the cached values for each position.
-
-        **Examples**
-
-        >>> d._get_cached_elements()
-        {}
-
-        >>> d._get_cached_elements()
-        {0: 273.15, 1: 274.56, -1: 269.95}
-
-        """
-        return self._get_component("cached_elements", {})
-
-    def _is_abstract_Array_subclass(self, array):
-        """Whether or not an array is a type of Array.
-
-        :Parameters:
-
-            array:
-
-        :Returns:
-
-            `bool`
-
-        """
-        return isinstance(array, Array)
-
-    def _set_cached_elements(self, elements):
-        """Cache selected element values.
-
-        Updates *data* in-place to store the given element values
-        within its ``custom`` dictionary. TODODASK
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `_del_cached_elements`, `_get_cached_elements`
-
-        :Parameters:
-
-            elements: `dict`
-               Zero or more element values to be cached, each keyed by
-               a unique identifier to allow unambiguous retrieval.
-               Existing cached elements not specified by *elements*
-               will not be removed.
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> d._set_cached_elements({0: 273.15})
-
-        """
-        if not elements:
-            return
-
-        cache = self._get_component("cached_elements", None)
-        if cache:
-            cache = cache.copy()
-            cache.update(elements)
-        else:
-            cache = elements.copy()
-
-        self._set_component("cached_elements", cache, copy=False)
-
-    def _set_CompressedArray(self, array, copy=True):
-        """Set the compressed array.
-
-        .. versionadded:: (cfdm) 1.7.11
-
-        .. seealso:: `_set_Array`
-
-        :Parameters:
-
-            array: subclass of `CompressedArray`
-                The compressed array to be inserted.
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> d._set_CompressedArray(a)
-
-        """
-        self._set_Array(array, copy=copy)
 
     @classmethod
     def _set_subspace(cls, array, indices, value, orthogonal_indexing=True):
@@ -1958,9 +2259,10 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                     try:
                         array[i] = value
                     except NotImplementedError:
-                        # Assume that 'i' contains multiple size 1
-                        # lists, which are not implemented by Dask:
-                        # replace the size lists with integers.
+                        # Assume that this error was raised because
+                        # 'i' contains multiple size 1 lists, which
+                        # are not implemented by Dask => Replace the
+                        # size 1 lists with integers.
                         i = [
                             x[0] if isinstance(x, list) and len(x) == 1 else x
                             for x in i
@@ -2005,435 +2307,15 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                     try:
                         array[i] = value[j]
                     except NotImplementedError:
-                        # Assume that 'i' contains multiple size 1
-                        # lists, which are not implemented by Dask:
-                        # replace the size lists with integers.
+                        # Assume that this error was raised because
+                        # 'i' contains multiple size 1 lists, which
+                        # are not implemented by Dask => Replace the
+                        # size 1 lists with integers.
                         i = [
                             x[0] if isinstance(x, list) and len(x) == 1 else x
                             for x in i
                         ]
                         array[tuple(i)] = value[j]
-
-    @property
-    def Units(self):
-        """The `Units` object containing the units of the data array.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        **Examples**
-
-        >>> d = {{package}}.{{class}}([1, 2, 3], units='m')
-        >>> d.Units
-        <Units: m>
-        >>> d.Units = {{package}}.Units('kilometres')
-        >>> d.Units
-        <Units: kilometres>
-        >>> d.Units = {{package}}.Units('km')
-        >>> d.Units
-        <Units: km>
-
-        """
-        return self._Units
-
-    @Units.setter
-    def Units(self, value):
-        # DASK: needs to be in cf-python
-        self._Units = value
-
-    @Units.deleter
-    def Units(self):
-        # DASK: needs to be in cf-python
-        del self._Units
-
-    @_inplace_enabled(default=False)
-    def pad_missing(self, axis, pad_width=None, to_size=None, inplace=False):
-        """Pad an axis with missing data.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Parameters:
-
-            axis: `int`
-                Select the axis for which the padding is to be
-                applied.
-
-                *Parameter example:*
-                  Pad second axis: ``axis=1``.
-
-                *Parameter example:*
-                  Pad the last axis: ``axis=-1``.
-
-            {{pad_width: sequence of `int`, optional}}
-
-            {{to_size: `int`, optional}}
-
-            {{inplace: `bool`, optional}}
-
-        :Returns:
-
-            `{{class}}` or `None`
-                The padded data, or `None` if the operation was
-                in-place.
-
-        **Examples**
-
-        >>> d = {{package}}.{{class}}(np.arange(6).reshape(2, 3))
-        >>> print(d.array)
-        [[0 1 2]
-         [3 4 5]]
-        >>> e = d.pad_missing(1, (1, 2))
-        >>> print(e.array)
-        [[-- 0 1 2 -- --]
-         [-- 3 4 5 -- --]]
-        >>> f = e.pad_missing(0, (0, 1))
-        >>> print(f.array)
-        [[--  0  1  2 -- --]
-         [--  3  4  5 -- --]
-         [-- -- -- -- -- --]]
-
-        >>> g = d.pad_missing(1, to_size=5)
-        >>> print(g.array)
-        [[0 1 2 -- --]
-         [3 4 5 -- --]]
-
-        """
-        if not 0 <= axis < self.ndim:
-            raise ValueError(
-                f"'axis' must be a valid dimension position. Got {axis}"
-            )
-
-        if to_size is not None:
-            # Set pad_width from to_size
-            if pad_width is not None:
-                raise ValueError("Can't set both 'pad_width' and 'to_size'")
-
-            pad_width = (0, to_size - self.shape[axis])
-        elif pad_width is None:
-            raise ValueError("Must set either 'pad_width' or 'to_size'")
-
-        pad_width = np.asarray(pad_width)
-        if pad_width.shape != (2,) or not pad_width.dtype.kind == "i":
-            raise ValueError(
-                "'pad_width' must be a sequence of two integers. "
-                f"Got: {pad_width}"
-            )
-
-        pad_width = tuple(pad_width)
-        if any(n < 0 for n in pad_width):
-            if to_size is not None:
-                raise ValueError(
-                    f"'to_size' ({to_size}) must not be smaller than the "
-                    f"original axis size ({self.shape[axis]})"
-                )
-
-            raise ValueError(
-                f"Can't set a negative number of pad values. Got: {pad_width}"
-            )
-
-        d = _inplace_enabled_define_and_cleanup(self)
-
-        dx = d.to_dask_array()
-        mask0 = da.ma.getmaskarray(dx)
-
-        pad = [(0, 0)] * dx.ndim
-        pad[axis] = pad_width
-
-        # Pad the data with zero. This will lose the original mask.
-        dx = da.pad(dx, pad, mode="constant", constant_values=0)
-
-        # Pad the mask with True
-        mask = da.pad(mask0, pad, mode="constant", constant_values=True)
-
-        # Set the mask
-        dx = da.ma.masked_where(mask, dx)
-
-        d._set_dask(dx)
-        return d
-
-    @_inplace_enabled(default=False)
-    def persist(self, inplace=False):
-        """Persist the underlying dask array into memory.
-
-        This turns an underlying lazy dask array into a equivalent
-        chunked dask array, but now with the results fully computed.
-
-        `persist` is particularly useful when using distributed
-        systems, because the results will be kept in distributed
-        memory, rather than returned to the local process.
-
-        Compare with `compute` and `array`.
-
-        **Performance**
-
-        `persist` causes all delayed operations to be computed.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `compute`, `array`, `datetime_array`,
-                     `dask.array.Array.persist`
-
-        :Parameters:
-
-            {{inplace: `bool`, optional}}
-
-        :Returns:
-
-            `{{class}}` or `None`
-                The persisted data. If the operation was in-place then
-                `None` is returned.
-
-        **Examples**
-
-        >>> e = d.persist()
-
-        """
-        d = _inplace_enabled_define_and_cleanup(self)
-        dx = self.to_dask_array()
-        dx = dx.persist()
-        d._set_dask(dx, clear=_ALL ^ _ARRAY ^ _CACHE)
-        return d
-
-    def compute(self):  # noqa: F811
-        """A view of the computed data.
-
-        In-place changes to the returned array *might* affect the
-        underlying dask array, depending on how the dask array has
-        been defined, including any delayed operations.
-
-        The returned array has the same mask hardness and fill values
-        as the data.
-
-        Compare with `array`.
-
-        **Performance**
-
-        `compute` causes all delayed operations to be computed.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `persist`, `array`, `datetime_array`,
-                     `sparse_array`
-
-        :Returns:
-
-                An in-memory view of the data
-
-        **Examples**
-
-        >>> d = {{package}}.{{class}}([1, 2, 3.0], 'km')
-        >>> d.compute()
-        array([1., 2., 3.])
-
-        >>> from scipy.sparse import csr_array
-        >>> d = {{package}}.{{class}}(csr_array((2, 3)))
-        >>> d.compute()
-        <2x3 sparse array of type '<class 'numpy.float64'>'
-                with 0 stored elements in Compressed Sparse Row format>
-        >>>: d.array
-        array([[0., 0., 0.],
-               [0., 0., 0.]])
-        >>> d.compute().toarray()
-        array([[0., 0., 0.],
-               [0., 0., 0.]])
-
-        """
-        dx = self.to_dask_array()
-        a = dx.compute()
-
-        if np.ma.isMA(a):
-            if self.hardmask:
-                a.harden_mask()
-            else:
-                a.soften_mask()
-
-            a.set_fill_value(self.get_fill_value(None))
-
-        return a
-
-    def creation_commands(
-        self, name="data", namespace=None, indent=0, string=True
-    ):
-        """Return the commands that would create the data object.
-
-        .. versionadded:: (cfdm) 1.8.7.0
-
-        :Parameters:
-
-            name: `str` or `None`, optional
-                Set the variable name of `Data` object that the commands
-                create.
-
-            {{namespace: `str`, optional}}
-
-            {{indent: `int`, optional}}
-
-            {{string: `bool`, optional}}
-
-        :Returns:
-
-            {{returns creation_commands}}
-
-        **Examples**
-
-        >>> d = {{package}}.{{class}}([[0.0, 45.0], [45.0, 90.0]],
-        ...                           units='degrees_east')
-        >>> print(d.creation_commands())
-        data = {{package}}.{{class}}([[0.0, 45.0], [45.0, 90.0]], units='degrees_east', dtype='f8')
-
-        >>> d = {{package}}.{{class}}(['alpha', 'beta', 'gamma', 'delta'],
-        ...                           mask = [1, 0, 0, 0])
-        >>> d.creation_commands(name='d', namespace='', string=False)
-        ["d = Data(['', 'beta', 'gamma', 'delta'], dtype='U5', mask=Data([True, False, False, False], dtype='b1'))"]
-
-        """
-        namespace0 = namespace
-        if namespace is None:
-            namespace = self._package() + "."
-        elif namespace and not namespace.endswith("."):
-            namespace += "."
-
-        mask = self.mask
-        if mask.any():
-            if name == "mask":
-                raise ValueError(
-                    "When the data is masked, the 'name' parameter "
-                    "can not have the value 'mask'"
-                )
-            masked = True
-            array = self.filled().array.tolist()
-        else:
-            masked = False
-            array = self.array.tolist()
-
-        units = self.get_units(None)
-        if units is None:
-            units = ""
-        else:
-            units = f", units={units!r}"
-
-        calendar = self.get_calendar(None)
-        if calendar is None:
-            calendar = ""
-        else:
-            calendar = f", calendar={calendar!r}"
-
-        fill_value = self.get_fill_value(None)
-        if fill_value is None:
-            fill_value = ""
-        else:
-            fill_value = f", fill_value={fill_value}"
-
-        dtype = self.dtype.descr[0][1][1:]
-
-        if masked:
-            mask = mask.creation_commands(
-                name="mask", namespace=namespace0, indent=0, string=True
-            )
-            mask = mask.replace("mask = ", "mask=", 1)
-            mask = f", {mask}"
-        else:
-            mask = ""
-
-        if name is None:
-            name = ""
-        else:
-            name = name + " = "
-
-        out = []
-        out.append(
-            f"{name}{namespace}{self.__class__.__name__}({array}{units}"
-            f"{calendar}, dtype={dtype!r}{mask}{fill_value})"
-        )
-
-        if string:
-            indent = " " * indent
-            out[0] = indent + out[0]
-            out = ("\n" + indent).join(out)
-
-        return out
-
-    @_inplace_enabled(default=False)
-    def rechunk(
-        self,
-        chunks=_DEFAULT_CHUNKS,
-        threshold=None,
-        block_size_limit=None,
-        balance=False,
-        inplace=False,
-    ):
-        """Change the chunk structure of the data.
-
-        **Performance**
-
-        Rechunking can sometimes be expensive and incur a lot of
-        communication overheads.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `chunks`, `dask.array.rechunk`
-
-        :Parameters:
-
-            {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
-
-            {{threshold: `int`, optional}}
-
-            {{block_size_limit: `int`, optional}}
-
-            {{balance: `bool`, optional}}
-
-        :Returns:
-
-            `{{class}}` or `None`
-                The rechunked data, or `None` if the operation was
-                in-place.
-
-        **Examples**
-
-        >>> x = {{package}}.{{class}}.empty((1000, 1000), chunks=(100, 100))
-
-        Specify uniform chunk sizes with a tuple
-
-        >>> y = x.rechunk((1000, 10))
-
-        Or chunk only specific dimensions with a dictionary
-
-        >>> y = x.rechunk({0: 1000})
-
-        Use the value ``-1`` to specify that you want a single chunk
-        along a dimension or the value ``"auto"`` to specify that dask
-        can freely rechunk a dimension to attain blocks of a uniform
-        block size.
-
-        >>> y = x.rechunk({0: -1, 1: 'auto'}, block_size_limit=1e8)
-
-        If a chunk size does not divide the dimension then rechunk
-        will leave any unevenness to the last chunk.
-
-        >>> x.rechunk(chunks=(400, -1)).chunks
-        ((400, 400, 200), (1000,))
-
-        However if you want more balanced chunks, and don't mind
-        `dask` choosing a different chunksize for you then you can use
-        the ``balance=True`` option.
-
-        >>> x.rechunk(chunks=(400, -1), balance=True).chunks
-        ((500, 500), (1000,))
-
-        """
-        d = _inplace_enabled_define_and_cleanup(self)
-
-        # REVIEW: getitem: `rechunk`: set 'asanyarray'
-        # Dask rechunking is essentially a wrapper for __getitem__
-        # calls on the chunks, which means that we can use the same
-        # 'asanyarray' and 'clear' keywords to `_set_dask` as are used
-        # in `__gettem__`.
-
-        dx = d.to_dask_array(asanyarray=False)
-        dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
-        d._set_dask(dx, clear=_ALL ^ _ARRAY ^ _CACHE, asanyarray=True)
-
-        return d
 
     def _unary_operation(self, operation):
         """Implement unary arithmetic operations.
@@ -2479,500 +2361,67 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         return out
 
-    def __add__(self, other):
-        """The binary arithmetic operation ``+``
-
-        x.__add__(y) <==> x+y
-
-        """
-        return self._binary_operation(other, "__add__")
-
-    def __iadd__(self, other):
-        """The augmented arithmetic assignment ``+=``
-
-        x.__iadd__(y) <==> x+=y
-
-        """
-        return self._binary_operation(other, "__iadd__")
-
-    def __radd__(self, other):
-        """The binary arithmetic operation ``+`` with reflected
-        operands.
-
-        x.__radd__(y) <==> y+x
-
-        """
-        return self._binary_operation(other, "__radd__")
-
-    def __sub__(self, other):
-        """The binary arithmetic operation ``-``
-
-        x.__sub__(y) <==> x-y
-
-        """
-        return self._binary_operation(other, "__sub__")
-
-    def __isub__(self, other):
-        """The augmented arithmetic assignment ``-=``
-
-        x.__isub__(y) <==> x-=y
-
-        """
-        return self._binary_operation(other, "__isub__")
-
-    def __rsub__(self, other):
-        """The binary arithmetic operation ``-`` with reflected
-        operands.
-
-        x.__rsub__(y) <==> y-x
-
-        """
-        return self._binary_operation(other, "__rsub__")
-
-    def __mul__(self, other):
-        """The binary arithmetic operation ``*``
-
-        x.__mul__(y) <==> x*y
-
-        """
-        return self._binary_operation(other, "__mul__")
-
-    def __imul__(self, other):
-        """The augmented arithmetic assignment ``*=``
-
-        x.__imul__(y) <==> x*=y
-
-        """
-        return self._binary_operation(other, "__imul__")
-
-    def __rmul__(self, other):
-        """The binary arithmetic operation ``*`` with reflected
-        operands.
-
-        x.__rmul__(y) <==> y*x
-
-        """
-        return self._binary_operation(other, "__rmul__")
-
-    def __div__(self, other):
-        """The binary arithmetic operation ``/``
-
-        x.__div__(y) <==> x/y
-
-        """
-        return self._binary_operation(other, "__div__")
-
-    def __idiv__(self, other):
-        """The augmented arithmetic assignment ``/=``
-
-        x.__idiv__(y) <==> x/=y
-
-        """
-        return self._binary_operation(other, "__idiv__")
-
-    def __rdiv__(self, other):
-        """The binary arithmetic operation ``/`` with reflected
-        operands.
-
-        x.__rdiv__(y) <==> y/x
-
-        """
-        return self._binary_operation(other, "__rdiv__")
-
-    def __floordiv__(self, other):
-        """The binary arithmetic operation ``//``
-
-        x.__floordiv__(y) <==> x//y
-
-        """
-        return self._binary_operation(other, "__floordiv__")
-
-    def __ifloordiv__(self, other):
-        """The ``//=``
-
-        x.__ifloordiv__(y) <==> x//=y
-
-        """
-        return self._binary_operation(other, "__ifloordiv__")
-
-    def __rfloordiv__(self, other):
-        """The ``//`` operation with reflected operands.
-
-        x.__rfloordiv__(y) <==> y//x
-
-        """
-        return self._binary_operation(other, "__rfloordiv__")
-
-    def __truediv__(self, other):
-        """The binary arithmetic operation ``/`` (true division)
-
-        x.__truediv__(y) <==> x/y
-
-        """
-        return self._binary_operation(other, "__truediv__")
-
-    def __itruediv__(self, other):
-        """The augmented arithmetic assignment ``/=`` (true division)
-
-        x.__itruediv__(y) <==> x/=y
-
-        """
-        return self._binary_operation(other, "__itruediv__")
-
-    def __rtruediv__(self, other):
-        """The binary arithmetic operation ``/`` (true division) with
-        reflected operands.
-
-        x.__rtruediv__(y) <==> y/x
-
-        """
-        return self._binary_operation(other, "__rtruediv__")
-
-    def __pow__(self, other, modulo=None):
-        """The binary arithmetic operations ``**`` and ``pow``
-
-        x.__pow__(y) <==> x**y
-
-        """
-        if modulo is not None:
-            raise NotImplementedError(
-                "3-argument power not supported for {!r}".format(
-                    self.__class__.__name__
-                )
-            )
-
-        return self._binary_operation(other, "__pow__")
-
-    def __ipow__(self, other, modulo=None):
-        """The augmented arithmetic assignment ``**=``
-
-        x.__ipow__(y) <==> x**=y
-
-        """
-        if modulo is not None:
-            raise NotImplementedError(
-                "3-argument power not supported for {!r}".format(
-                    self.__class__.__name__
-                )
-            )
-
-        return self._binary_operation(other, "__ipow__")
-
-    def __rpow__(self, other, modulo=None):
-        """The binary arithmetic operations ``**`` and ``pow`` with
-        reflected operands.
-
-        x.__rpow__(y) <==> y**x
-
-        """
-        if modulo is not None:
-            raise NotImplementedError(
-                "3-argument power not supported for {!r}".format(
-                    self.__class__.__name__
-                )
-            )
-
-        return self._binary_operation(other, "__rpow__")
-
-    def __mod__(self, other):
-        """The binary arithmetic operation ``%``
-
-        x.__mod__(y) <==> x % y
-
-        """
-        return self._binary_operation(other, "__mod__")
-
-    def __imod__(self, other):
-        """The binary arithmetic operation ``%=``
-
-        x.__imod__(y) <==> x %= y
-
-        """
-        return self._binary_operation(other, "__imod__")
-
-    def __rmod__(self, other):
-        """The binary arithmetic operation ``%`` with reflected
-        operands.
-
-        x.__rmod__(y) <==> y % x
-
-        """
-        return self._binary_operation(other, "__rmod__")
-
-    def __eq__(self, other):
-        """The rich comparison operator ``==``
-
-        x.__eq__(y) <==> x==y
-
-        """
-        return self._binary_operation(other, "__eq__")
-
-    def __ne__(self, other):
-        """The rich comparison operator ``!=``
-
-        x.__ne__(y) <==> x!=y
-
-        """
-        return self._binary_operation(other, "__ne__")
-
-    def __ge__(self, other):
-        """The rich comparison operator ``>=``
-
-        x.__ge__(y) <==> x>=y
-
-        """
-        return self._binary_operation(other, "__ge__")
-
-    def __gt__(self, other):
-        """The rich comparison operator ``>``
-
-        x.__gt__(y) <==> x>y
-
-        """
-        return self._binary_operation(other, "__gt__")
-
-    def __le__(self, other):
-        """The rich comparison operator ``<=``
-
-        x.__le__(y) <==> x<=y
-
-        """
-        return self._binary_operation(other, "__le__")
-
-    def __lt__(self, other):
-        """The rich comparison operator ``<``
-
-        x.__lt__(y) <==> x<y
-
-        """
-        return self._binary_operation(other, "__lt__")
-
-    def __and__(self, other):
-        """The binary bitwise operation ``&``
-
-        x.__and__(y) <==> x&y
-
-        """
-        return self._binary_operation(other, "__and__")
-
-    def __iand__(self, other):
-        """The augmented bitwise assignment ``&=``
-
-        x.__iand__(y) <==> x&=y
-
-        """
-        return self._binary_operation(other, "__iand__")
-
-    def __rand__(self, other):
-        """The binary bitwise operation ``&`` with reflected operands.
-
-        x.__rand__(y) <==> y&x
-
-        """
-        return self._binary_operation(other, "__rand__")
-
-    def __or__(self, other):
-        """The binary bitwise operation ``|``
-
-        x.__or__(y) <==> x|y
-
-        """
-        return self._binary_operation(other, "__or__")
-
-    def __ior__(self, other):
-        """The augmented bitwise assignment ``|=``
-
-        x.__ior__(y) <==> x|=y
-
-        """
-        return self._binary_operation(other, "__ior__")
-
-    def __ror__(self, other):
-        """The binary bitwise operation ``|`` with reflected operands.
-
-        x.__ror__(y) <==> y|x
-
-        """
-        return self._binary_operation(other, "__ror__")
-
-    def __xor__(self, other):
-        """The binary bitwise operation ``^``
-
-        x.__xor__(y) <==> x^y
-
-        """
-        return self._binary_operation(other, "__xor__")
-
-    def __ixor__(self, other):
-        """The augmented bitwise assignment ``^=``
-
-        x.__ixor__(y) <==> x^=y
-
-        """
-        return self._binary_operation(other, "__ixor__")
-
-    def __rxor__(self, other):
-        """The binary bitwise operation ``^`` with reflected operands.
-
-        x.__rxor__(y) <==> y^x
-
-        """
-        return self._binary_operation(other, "__rxor__")
-
-    def __lshift__(self, y):
-        """The binary bitwise operation ``<<``
-
-        x.__lshift__(y) <==> x<<y
-
-        """
-        return self._binary_operation(y, "__lshift__")
-
-    def __ilshift__(self, y):
-        """The augmented bitwise assignment ``<<=``
-
-        x.__ilshift__(y) <==> x<<=y
-
-        """
-        return self._binary_operation(y, "__ilshift__")
-
-    def __rlshift__(self, y):
-        """The binary bitwise operation ``<<`` with reflected operands.
-
-        x.__rlshift__(y) <==> y<<x
-
-        """
-        return self._binary_operation(y, "__rlshift__")
-
-    def __rshift__(self, y):
-        """The binary bitwise operation ``>>``
-
-        x.__lshift__(y) <==> x>>y
-
-        """
-        return self._binary_operation(y, "__rshift__")
-
-    def __irshift__(self, y):
-        """The augmented bitwise assignment ``>>=``
-
-        x.__irshift__(y) <==> x>>=y
-
-        """
-        return self._binary_operation(y, "__irshift__")
-
-    def __rrshift__(self, y):
-        """The binary bitwise operation ``>>`` with reflected operands.
-
-        x.__rrshift__(y) <==> y>>x
-
-        """
-        return self._binary_operation(y, "__rrshift__")
-
-    def __abs__(self):
-        """The unary arithmetic operation ``abs``
-
-        x.__abs__() <==> abs(x)
-
-        """
-        return self._unary_operation("__abs__")
-
-    def __neg__(self):
-        """The unary arithmetic operation ``-``
-
-        x.__neg__() <==> -x
-
-        """
-        return self._unary_operation("__neg__")
-
-    def __invert__(self):
-        """The unary bitwise operation ``~``
-
-        x.__invert__() <==> ~x
-
-        """
-        return self._unary_operation("__invert__")
-
-    def __pos__(self):
-        """The unary arithmetic operation ``+``
-
-        x.__pos__() <==> +x
-
-        """
-        return self._unary_operation("__pos__")
-
     @property
-    def _Units(self):
-        """Storage for the units in a `{{package}}.Units` object.
+    def array(self):
+        """A numpy array copy of the data.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+        In-place changes to the returned numpy array do not affect the
+        underlying dask array.
 
-        .. seealso:: `Units`
+        The returned numpy array has the same mask hardness and fill
+        values as the data.
 
-        """
-        return self._get_component("Units")
+        Compare with `compute`.
 
-    @_Units.setter
-    def _Units(self, value):
-        self._set_component("Units", value, copy=False)
+        **Performance**
 
-    @_Units.deleter
-    def _Units(self):
-        self._set_component("Units", self._Units_class(None), copy=False)
+        `array` causes all delayed operations to be computed. The
+        returned `numpy` array is a deep copy of that returned by
+        created `compute`.
 
-    @property
-    def _axes(self):
-        """Storage for the axis identifiers.
-
-        Contains a `tuple` of identifiers, one for each array axis.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        """
-        # TODODASK Note: override in cf-python
-        return self._get_component("axes")  # , None)
-
-    @_axes.setter
-    def _axes(self, value):
-        self._set_component("axes", tuple(value), copy=False)
-        # TODODASK Note: override in cf-python
-
-    def _item(self, index):
-        """Return an element of the data as a scalar.
-
-        It is assumed, but not checked, that the given index selects
-        exactly one element.
-
-        :Parameters:
-
-            index:
-
-        :Returns:
-
-                The selected element of the data.
+        .. seealso:: `datetime_array`, `compute`, `persist`
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([[1, 2, 3]], 'km')
-        >>> x = d._item((0, -1))
-        >>> print(x, type(x))
-        3 <class 'int'>
-        >>> x = d._item((0, 1))
-        >>> print(x, type(x))
-        2 <class 'int'>
-        >>> d[0, 1] = {{package}}.masked
-        >>> d._item((slice(None), slice(1, 2)))
-        masked
+        >>> d = {{package}}.{{class}}([1, 2, 3.0], 'km')
+        >>> a = d.array
+        >>> isinstance(a, numpy.ndarray)
+        True
+        >>> print(a)
+        [ 1.  2.  3.]
+        >>> d[0] = -99
+        >>> print(a[0])
+        1.0
+        >>> a[0] = 88
+        >>> print(d[0])
+        -99.0 km
+
+        >>> d = {{package}}.{{class}}('2000-12-1', units='days since 1999-12-1')
+        >>> print(d.array)
+        366
+        >>> print(d.datetime_array)
+        2000-12-01 00:00:00
 
         """
-        array = self[index].array
+        a = self.compute().copy()
+        if issparse(a):
+            a = a.toarray()
+        elif not isinstance(a, np.ndarray):
+            a = np.asanyarray(a)
 
-        if not np.ma.isMA(array):
-            return array.item()
+        if not a.size:
+            return a
 
-        mask = array.mask
-        if mask is np.ma.nomask or not mask.item():
-            return array.item()
+        # Set cached elements
+        items = [0, -1]
+        if a.ndim == 2 and a.shape[-1] == 2:
+            items.extend((1, -2))
+        elif a.size == 3:
+            items.append(1)
 
-        return np.ma.masked
+        self._set_cached_elements({i: a.item(i) for i in items})
+
+        return a
 
     @property
     def chunks(self):
@@ -3024,6 +2473,29 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         return ca.compressed_array
 
     @property
+    def dask_compressed_array(self):
+        """Returns a dask array of the compressed data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `dask.array.Array`
+                The compressed data.
+
+        **Examples**
+
+        >>> a = d.dask_compressed_array
+
+        """
+        ca = self.source(None)
+
+        if ca is None or not ca.get_compression_type():
+            raise ValueError("not compressed: can't get compressed dask array")
+
+        return ca.to_dask_array()
+
+    @property
     def data(self):
         """The data as an object identity.
 
@@ -3035,6 +2507,73 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         """
         return self
+
+    @property
+    def datetime_array(self):
+        """An independent numpy array of date-time objects.
+
+        Only applicable to data arrays with reference time units.
+
+        If the calendar has not been set then the CF default calendar will
+        be used and the units will be updated accordingly.
+
+        The data-type of the data array is unchanged.
+
+        .. seealso:: `array`, `compute`, `persist`
+
+        **Performance**
+
+        `datetime_array` causes all delayed operations to be computed.
+
+        **Examples**
+
+        """
+        units = self.Units
+
+        if not units.isreftime:
+            raise ValueError(
+                f"Can't create date-time array from units {self._Units!r}"
+            )
+
+        calendar = getattr(units, "calendar", None)
+        if calendar == "none":
+            raise ValueError(
+                f"Can't create date-time array from units {self._Units!r} "
+                "because calendar is 'none'"
+            )
+
+        units1, reftime = units.units.split(" since ")
+
+        # Convert months and years to days, because cftime won't work
+        # otherwise.
+
+        d = self
+        dx = d.to_dask_array()
+        year_length = 365.242198781  # Number of days in a Udunits year
+        if units1 in ("month", "months"):
+            dx = dx * (year_length / 12)
+            #            d = type(self)(dx, units=self.Units)
+            units = self._Units_class(f"days since {reftime}", calendar)
+        elif units1 in ("year", "years", "yr"):
+            dx = dx * year_length
+            #            d = type(self)(dx, units=self.Units)
+            #            d = self * year_length
+            units = self._Units_class(f"days since {reftime}", calendar)
+
+        #        dx = d.to_dask_array()
+        dx = convert_to_datetime(dx, units)
+
+        a = dx.compute()
+
+        if np.ma.isMA(a):
+            if self.hardmask:
+                a.harden_mask()
+            else:
+                a.soften_mask()
+
+            a.set_fill_value(self.get_fill_value(None))
+
+        return a
 
     @property
     def dtype(self):
@@ -3080,6 +2619,38 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             dx = self.to_dask_array()
             dx = dx.astype(value)
             self._set_dask(dx)
+
+    @property
+    def fill_value(self):
+        """The data array missing data value.
+
+        If set to `None` then the default `numpy` fill value
+        appropriate to the data array's data-type will be used.
+
+        Deleting this attribute is equivalent to setting it to `None`,
+        so this attribute is guaranteed to always exist.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        **Examples**
+
+        >>> d.fill_value = 9999.0
+        >>> d.fill_value
+        9999.0
+        >>> del d.fill_value
+        >>> d.fill_value
+        None
+
+        """
+        return self.get_fill_value(None)
+
+    @fill_value.setter
+    def fill_value(self, value):
+        self.set_fill_value(value)
+
+    @fill_value.deleter
+    def fill_value(self):
+        self.del_fill_value(None)
 
     @property
     def hardmask(self):
@@ -3135,6 +2706,39 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
     @hardmask.setter
     def hardmask(self, value):
         self._set_component("hardmask", bool(value), copy=False)
+
+    @property
+    def mask(self):
+        """The Boolean missing data mask of the data array.
+
+        The Boolean mask has True where the data array has missing data
+        and False otherwise.
+
+        :Returns:
+
+            `{{class}}`
+
+        **Examples**
+
+        >>> d.shape
+        (12, 73, 96)
+        >>> m = d.mask
+        >>> m.dtype
+        dtype('bool')
+        >>> m.shape
+        (12, 73, 96)
+
+        """
+        mask_data_obj = self.copy(array=False)
+
+        dx = self.to_dask_array()
+        mask = da.ma.getmaskarray(dx)
+
+        mask_data_obj._set_dask(mask)
+        mask_data_obj._Units = self._Units_class(None)
+        mask_data_obj.hardmask = _DEFAULT_HARDMASK
+
+        return mask_data_obj
 
     @property
     def nbytes(self):
@@ -3337,121 +2941,125 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         return size
 
     @property
-    def array(self):
-        """A numpy array copy of the data.
+    def sparse_array(self):
+        """Return an independent `scipy` sparse array of the data.
 
-        In-place changes to the returned numpy array do not affect the
-        underlying dask array.
+        In-place changes to the returned sparse array do not affect
+        the underlying dask array.
 
-        The returned numpy array has the same mask hardness and fill
-        values as the data.
-
-        Compare with `compute`.
+        An `AttributeError` is raised if a sparse array representation
+        is not available.
 
         **Performance**
 
-        `array` causes all delayed operations to be computed. The
-        returned `numpy` array is a deep copy of that returned by
-        created `compute`.
+        `sparse_array` causes all delayed operations to be
+        computed. The returned sparse array is a deep copy of that
+        returned by created `compute`.
 
-        .. seealso:: `datetime_array`, `compute`, `persist`
+        .. versionadded:: (cfdm) 1.11.0.0
+
+        .. seealso:: `array`
+
+        :Returns:
+
+                An independent `scipy` sparse array of the data.
+
+        **Examples**
+
+        >>> from scipy.sparse import issparse
+        >>> issparse(d.sparse_array)
+        True
+
+        """
+        array = self.compute()
+        if issparse(array):
+            return array.copy()
+
+        raise AttributeError(
+            f"The array is of type {type(array)}, and a sparse array "
+            "representation of the data is not available."
+        )
+
+    @property
+    def Units(self):
+        """The `Units` object containing the units of the data array.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([1, 2, 3], units='m')
+        >>> d.Units
+        <Units: m>
+        >>> d.Units = {{package}}.Units('kilometres')
+        >>> d.Units
+        <Units: kilometres>
+        >>> d.Units = {{package}}.Units('km')
+        >>> d.Units
+        <Units: km>
+
+        """
+        return self._Units
+
+    @Units.setter
+    def Units(self, value):
+        # CF-PYTHON: Override
+        self._Units = value
+
+    @Units.deleter
+    def Units(self):
+        # CF-PYTHON: Override
+        del self._Units
+
+    def compute(self):  # noqa: F811
+        """A view of the computed data.
+
+        In-place changes to the returned array *might* affect the
+        underlying dask array, depending on how the dask array has
+        been defined, including any delayed operations.
+
+        The returned array has the same mask hardness and fill values
+        as the data.
+
+        Compare with `array`.
+
+        **Performance**
+
+        `compute` causes all delayed operations to be computed.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `persist`, `array`, `datetime_array`,
+                     `sparse_array`
+
+        :Returns:
+
+                An in-memory view of the data
 
         **Examples**
 
         >>> d = {{package}}.{{class}}([1, 2, 3.0], 'km')
-        >>> a = d.array
-        >>> isinstance(a, numpy.ndarray)
-        True
-        >>> print(a)
-        [ 1.  2.  3.]
-        >>> d[0] = -99
-        >>> print(a[0])
-        1.0
-        >>> a[0] = 88
-        >>> print(d[0])
-        -99.0 km
+        >>> d.compute()
+        array([1., 2., 3.])
 
-        >>> d = {{package}}.{{class}}('2000-12-1', units='days since 1999-12-1')
-        >>> print(d.array)
-        366
-        >>> print(d.datetime_array)
-        2000-12-01 00:00:00
+        >>> from scipy.sparse import csr_array
+        >>> d = {{package}}.{{class}}(csr_array((2, 3)))
+        >>> d.compute()
+        <2x3 sparse array of type '<class 'numpy.float64'>'
+                with 0 stored elements in Compressed Sparse Row format>
+        >>>: d.array
+        array([[0., 0., 0.],
+               [0., 0., 0.]])
+        >>> d.compute().toarray()
+        array([[0., 0., 0.],
+               [0., 0., 0.]])
 
         """
-        a = self.compute().copy()
-        if issparse(a):
-            a = a.toarray()
-        elif not isinstance(a, np.ndarray):
-            a = np.asanyarray(a)
-
-        if not a.size:
-            return a
-
-        # Set cached elements
-        items = [0, -1]
-        if a.ndim == 2 and a.shape[-1] == 2:
-            items.extend((1, -2))
-        elif a.size == 3:
-            items.append(1)
-
-        self._set_cached_elements({i: a.item(i) for i in items})
-
-        return a
-
-    @property
-    def datetime_array(self):
-        """An independent numpy array of date-time objects.
-
-        Only applicable to data arrays with reference time units.
-
-        If the calendar has not been set then the CF default calendar will
-        be used and the units will be updated accordingly.
-
-        The data-type of the data array is unchanged.
-
-        .. seealso:: `array`, `compute`, `persist`
-
-        **Performance**
-
-        `datetime_array` causes all delayed operations to be computed.
-
-        **Examples**
-
-        """
-        units = self.Units
-
-        if not units.isreftime:
-            raise ValueError(
-                f"Can't create date-time array from units {self._Units!r}"
-            )
-
-        calendar = getattr(units, "calendar", None)
-        if calendar == "none":
-            raise ValueError(
-                f"Can't create date-time array from units {self._Units!r} "
-                "because calendar is 'none'"
-            )
-
-        units1, reftime = units.units.split(" since ")
-
-        # Convert months and years to days, because cftime won't work
-        # otherwise.
-        year_length = 365.242198781  # Number of days in a Udunits year
-        if units1 in ("month", "months"):
-            d = self * (year_length / 12)
-            units = self._Units_class(f"days since {reftime}", calendar)
-        elif units1 in ("year", "years", "yr"):
-            d = self * year_length
-            units = self._Units_class(f"days since {reftime}", calendar)
-        else:
-            d = self
-
-        dx = d.to_dask_array()
-        dx = convert_to_datetime(dx, units)
-
+        dx = self.to_dask_array()
         a = dx.compute()
 
-        if np.ma.isMA(a):
+        if np.ma.isMA(a) and a is not np.ma.masked:
+            a.set_fill_value(999)
             if self.hardmask:
                 a.harden_mask()
             else:
@@ -3461,38 +3069,150 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         return a
 
-    @property
-    def mask(self):
-        """The Boolean missing data mask of the data array.
+    def creation_commands(
+        self, name="data", namespace=None, indent=0, string=True
+    ):
+        """Return the commands that would create the data object.
 
-        The Boolean mask has True where the data array has missing data
-        and False otherwise.
+        .. versionadded:: (cfdm) 1.8.7.0
+
+        :Parameters:
+
+            name: `str` or `None`, optional
+                Set the variable name of `Data` object that the commands
+                create.
+
+            {{namespace: `str`, optional}}
+
+            {{indent: `int`, optional}}
+
+            {{string: `bool`, optional}}
 
         :Returns:
 
-            `{{class}}`
+            {{returns creation_commands}}
 
         **Examples**
 
-        >>> d.shape
-        (12, 73, 96)
-        >>> m = d.mask
-        >>> m.dtype
-        dtype('bool')
-        >>> m.shape
-        (12, 73, 96)
+        >>> d = {{package}}.{{class}}([[0.0, 45.0], [45.0, 90.0]],
+        ...                           units='degrees_east')
+        >>> print(d.creation_commands())
+        data = {{package}}.{{class}}([[0.0, 45.0], [45.0, 90.0]], units='degrees_east', dtype='f8')
+
+        >>> d = {{package}}.{{class}}(['alpha', 'beta', 'gamma', 'delta'],
+        ...                           mask = [1, 0, 0, 0])
+        >>> d.creation_commands(name='d', namespace='', string=False)
+        ["d = Data(['', 'beta', 'gamma', 'delta'], dtype='U5', mask=Data([True, False, False, False], dtype='b1'))"]
 
         """
-        mask_data_obj = self.copy(array=False)
+        namespace0 = namespace
+        if namespace is None:
+            namespace = self._package() + "."
+        elif namespace and not namespace.endswith("."):
+            namespace += "."
 
-        dx = self.to_dask_array()
-        mask = da.ma.getmaskarray(dx)
+        mask = self.mask
+        if mask.any():
+            if name == "mask":
+                raise ValueError(
+                    "When the data is masked, the 'name' parameter "
+                    "can not have the value 'mask'"
+                )
+            masked = True
+            array = self.filled().array.tolist()
+        else:
+            masked = False
+            array = self.array.tolist()
 
-        mask_data_obj._set_dask(mask)
-        mask_data_obj._Units = self._Units_class(None)
-        mask_data_obj.hardmask = _DEFAULT_HARDMASK
+        units = self.get_units(None)
+        if units is None:
+            units = ""
+        else:
+            units = f", units={units!r}"
 
-        return mask_data_obj
+        calendar = self.get_calendar(None)
+        if calendar is None:
+            calendar = ""
+        else:
+            calendar = f", calendar={calendar!r}"
+
+        fill_value = self.get_fill_value(None)
+        if fill_value is None:
+            fill_value = ""
+        else:
+            fill_value = f", fill_value={fill_value}"
+
+        dtype = self.dtype.descr[0][1][1:]
+
+        if masked:
+            mask = mask.creation_commands(
+                name="mask", namespace=namespace0, indent=0, string=True
+            )
+            mask = mask.replace("mask = ", "mask=", 1)
+            mask = f", {mask}"
+        else:
+            mask = ""
+
+        if name is None:
+            name = ""
+        else:
+            name = name + " = "
+
+        out = []
+        out.append(
+            f"{name}{namespace}{self.__class__.__name__}({array}{units}"
+            f"{calendar}, dtype={dtype!r}{mask}{fill_value})"
+        )
+
+        if string:
+            indent = " " * indent
+            out[0] = indent + out[0]
+            out = ("\n" + indent).join(out)
+
+        return out
+
+    def cull_graph(self):
+        """Remove unnecessary tasks from the dask graph in-place.
+
+        **Performance**
+
+        An unnecessary task is one which does not contribute to the
+        computed result. Such tasks are always automatically removed
+        (culled) at compute time, but removing them beforehand might
+        improve performance by reducing the amount of work done in
+        later steps.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `dask.optimization.cull`
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([1, 2, 3, 4, 5], chunks=3)
+        >>> d = d[:2]
+        >>> dict(d.to_dask_array().dask)
+        {('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3]),
+         ('array-21ea057f160746a3d3f0943bba945460', 1): array([4, 5]),
+         ('getitem-3e4edac0a632402f6b45923a6b9d215f',
+          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-21ea057f160746a3d3f0943bba945460',
+           0), (slice(0, 2, 1),))}
+        >>> d.cull_graph()
+        >>> dict(d.to_dask_array().dask)
+        {('getitem-3e4edac0a632402f6b45923a6b9d215f',
+          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-21ea057f160746a3d3f0943bba945460',
+           0), (slice(0, 2, 1),)),
+         ('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3])}
+
+        """
+        # REVIEW: getitem: `cull_graph`: set 'asanyarray'
+        dx = self.to_dask_array(asanyarray=False)
+        dsk, _ = cull(dx.dask, dx.__dask_keys__())
+        dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
+        self._set_dask(dx, clear=_NONE, asanyarray=None)
 
     def any(self, axis=None, keepdims=True, split_every=None):
         """Test whether any data array elements evaluate to True.
@@ -3758,524 +3478,51 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         return d
 
-    def get_count(self, default=ValueError()):
-        """Return the count variable for a compressed array.
+    def chunk_indices(self):
+        """Return indices that define each dask compute chunk.
 
-        .. versionadded:: (cfdm) 1.7.0
+        .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `get_index`, `get_list`
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if a count
-                variable has not been set. If set to an `Exception`
-                instance then it will be raised instead.
+        .. seealso:: `chunks`
 
         :Returns:
 
-                The count variable.
+            `itertools.product`
+                An iterator over tuples of indices of the data array.
 
         **Examples**
 
-        >>> c = d.get_count()
+        >>> d = {{package}}.{{class}}(np.arange(405).reshape(3, 9, 15),
+        ...     chunks=((1, 2), (9,), (4, 5, 6)))
+        >>> d.npartitions
+        6
+        >>> for index in d.chunk_indices():
+        ...     print(index)
+        ...
+        (slice(0, 1, None), slice(0, 9, None), slice(0, 4, None))
+        (slice(0, 1, None), slice(0, 9, None), slice(4, 9, None))
+        (slice(0, 1, None), slice(0, 9, None), slice(9, 15, None))
+        (slice(1, 3, None), slice(0, 9, None), slice(0, 4, None))
+        (slice(1, 3, None), slice(0, 9, None), slice(4, 9, None))
+        (slice(1, 3, None), slice(0, 9, None), slice(9, 15, None))
 
         """
-        try:
-            return self._get_Array().get_count()
-        except (AttributeError, ValueError):
-            return self._default(
-                default, f"{self.__class__.__name__!r} has no count variable"
-            )
+        from dask.utils import cached_cumsum
 
-    def get_data(self, default=ValueError(), _units=None, _fill_value=None):
-        """Returns the data.
+        chunks = self.chunks
 
-        .. versionadded:: 3.0.0
+        cumdims = [cached_cumsum(bds, initial_zero=True) for bds in chunks]
+        indices = [
+            [slice(s, s + dim) for s, dim in zip(starts, shapes)]
+            for starts, shapes in zip(cumdims, chunks)
+        ]
+        return product(*indices)
 
-        :Returns:
+    def del_calendar(self, default=ValueError()):
+        """Delete the calendar.
 
-            `{{class}}`
-
-        """
-        return self
-
-    def get_list(self, default=ValueError()):
-        """Return the list variable for a compressed array.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        .. seealso:: `get_count`, `get_index`
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if an index
-                variable has not been set. If set to an `Exception`
-                instance then it will be raised instead.
-
-        :Returns:
-
-                The list variable.
-
-        **Examples**
-
-        >>> l = d.get_list()
-
-        """
-        try:
-            return self._get_Array().get_list()
-        except (AttributeError, ValueError):
-            return self._default(
-                default, f"{self.__class__.__name__!r} has no list variable"
-            )
-
-    def get_tie_point_indices(self, default=ValueError()):
-        """Return the list variable for a compressed array.
-
-        .. versionadded:: (cfdm) 1.10.0.1
-
-        .. seealso:: `get_dependent_tie_points`,
-                     `get_interpolation_parameters`,
-                     `get_index`, `get_list`
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if no tie
-                point index variables have been set. If set to an
-                `Exception` instance then it will be raised instead.
-
-        :Returns:
-
-            `dict`
-                The tie point index variable for each subsampled
-                dimension. A key identifies a subsampled dimension by
-                its integer position in the compressed array, and its
-                value is a `TiePointIndex` variable.
-
-        **Examples**
-
-        >>> l = d.get_tie_point_indices()
-
-        """
-        try:
-            return self._get_Array().get_tie_point_indices()
-        except (AttributeError, ValueError):
-            return self._default(
-                default,
-                f"{self.__class__.__name__!r} has no "
-                "tie point index variables",
-            )
-
-    def get_compressed_axes(self):
-        """Returns the dimensions that are compressed in the array.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        .. seealso:: `compressed_array`, `get_compressed_dimension`,
-                     `get_compression_type`
-
-        :Returns:
-
-            `list`
-                The dimensions of the data that are compressed to a single
-                dimension in the underlying array. If the data are not
-                compressed then an empty list is returned.
-
-        **Examples**
-
-        >>> d.shape
-        (2, 3, 4, 5, 6)
-        >>> d.compressed_array.shape
-        (2, 14, 6)
-        >>> d.get_compressed_axes()
-        [1, 2, 3]
-
-        >>> d.get_compression_type()
-        ''
-        >>> d.get_compressed_axes()
-        []
-
-        """
-        ca = self._get_Array(None)
-
-        if ca is None:
-            return []
-
-        return ca.get_compressed_axes()
-
-    def get_compressed_dimension(self, default=ValueError()):
-        """Returns the compressed dimension's array position.
-
-        That is, returns the position of the compressed dimension
-        in the compressed array.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        .. seealso:: `compressed_array`, `get_compressed_axes`,
-                     `get_compression_type`
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter there is no
-                compressed dimension. If set to an `Exception` instance
-                then it will be raised instead.
-
-        :Returns:
-
-            `int`
-                The position of the compressed dimension in the compressed
-                array.
-
-        **Examples**
-
-        >>> d.get_compressed_dimension()
-        2
-
-        """
-        try:
-            return self._get_Array().get_compressed_dimension()
-        except (AttributeError, ValueError):
-            return self._default(
-                default,
-                f"{self.__class__.__name__!r} has no compressed dimension",
-            )
-
-    def get_compression_type(self):
-        """Returns the type of compression applied to the array.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        .. seealso:: `compressed_array`, `compression_axes`,
-                     `get_compressed_dimension`
-
-        :Returns:
-
-            `str`
-                The compression type. An empty string means that no
-                compression has been applied.
-
-        **Examples**
-
-        >>> d.get_compression_type()
-        ''
-
-        >>> d.get_compression_type()
-        'gathered'
-
-        >>> d.get_compression_type()
-        'ragged contiguous'
-
-        """
-        ma = self._get_Array(None)
-        if ma is None:
-            return ""
-
-        return ma.get_compression_type()
-
-    def get_tie_point_indices(self, default=ValueError()):
-        """Return the list variable for a compressed array.
-
-        .. versionadded:: (cfdm) 1.10.0.1
-
-        .. seealso:: `get_dependent_tie_points`,
-                     `get_interpolation_parameters`,
-                     `get_index`, `get_list`
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if no tie
-                point index variables have been set. If set to an
-                `Exception` instance then it will be raised instead.
-
-        :Returns:
-
-            `dict`
-                The tie point index variable for each subsampled
-                dimension. A key identifies a subsampled dimension by
-                its integer position in the compressed array, and its
-                value is a `TiePointIndex` variable.
-
-        **Examples**
-
-        >>> l = d.get_tie_point_indices()
-
-        """
-        try:
-            return self._get_Array().get_tie_point_indices()
-        except (AttributeError, ValueError):
-            return self._default(
-                default,
-                f"{self.__class__.__name__!r} has no "
-                "tie point index variables",
-            )
-
-    def get_compressed_dimension(self, default=ValueError()):
-        """Returns the compressed dimension's array position.
-
-        That is, returns the position of the compressed dimension
-        in the compressed array.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        .. seealso:: `compressed_array`, `get_compressed_axes`,
-                     `get_compression_type`
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter there is no
-                compressed dimension. If set to an `Exception` instance
-                then it will be raised instead.
-
-        :Returns:
-
-            `int`
-                The position of the compressed dimension in the compressed
-                array.
-
-        **Examples**
-
-        >>> d.get_compressed_dimension()
-        2
-
-        """
-        try:
-            return self._get_Array().get_compressed_dimension()
-        except (AttributeError, ValueError):
-            return self._default(
-                default,
-                f"{self.__class__.__name__!r} has no compressed dimension",
-            )
-
-    def get_dependent_tie_points(self, default=ValueError()):
-        """Return the list variable for a compressed array.
-
-        .. versionadded:: (cfdm) 1.10.0.1
-
-        .. seealso:: `get_tie_point_indices`,
-                     `get_interpolation_parameters`, `get_index`,
-                     `get_list`
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if no
-                dependent tie point index variables have been set. If
-                set to an `Exception` instance then it will be raised
-                instead.
-
-        :Returns:
-
-            `dict`
-                The dependent tie point arrays needed by the
-                interpolation method, keyed by the dependent tie point
-                identities. Each key is a dependent tie point
-                identity, whose value is a `Data` variable.
-
-        **Examples**
-
-        >>> l = d.get_dependent_tie_points()
-
-        """
-        try:
-            return self._get_Array().get_dependent_tie_points()
-        except (AttributeError, ValueError):
-            return self._default(
-                default,
-                f"{self.__class__.__name__!r} has no dependent "
-                "tie point index variables",
-            )
-
-    def get_index(self, default=ValueError()):
-        """Return the index variable for a compressed array.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        .. seealso:: `get_count`, `get_list`
-
-        :Parameters:
-
-            default: optional
-                Return *default* if index variable has not been set.
-
-            default: optional
-                Return the value of the *default* parameter if an index
-                variable has not been set. If set to an `Exception`
-                instance then it will be raised instead.
-
-        :Returns:
-
-                The index variable.
-
-        **Examples**
-
-        >>> i = d.get_index()
-
-        """
-        try:
-            return self._get_Array().get_index()
-        except (AttributeError, ValueError):
-            return self._default(
-                default, f"{self.__class__.__name__!r} has no index variable"
-            )
-
-    def get_interpolation_parameters(self, default=ValueError()):
-        """Return the list variable for a compressed array.
-
-        .. versionadded:: (cfdm) 1.10.0.1
-
-        .. seealso:: `get_dependent_tie_points`,
-                     `get_tie_point_indices`, `get_index`,
-                     `get_list`
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if no
-                interpolation parameters have been set. If set to an
-                `Exception` instance then it will be raised instead.
-
-        :Returns:
-
-            `dict`
-                Interpolation parameters required by the subsampling
-                interpolation method. Each key is an interpolation
-                parameter term name, whose value is an
-                `InterpolationParameter` variable.
-
-                Interpolation parameter term names for the
-                standardised interpolation methods are defined in CF
-                Appendix J "Coordinate Interpolation Methods".
-
-        **Examples**
-
-        >>> l = d.get_interpolation_parameters()
-
-        """
-        try:
-            return self._get_Array().get_interpolation_parameters()
-        except (AttributeError, ValueError):
-            return self._default(
-                default,
-                f"{self.__class__.__name__!r} has no subsampling "
-                "interpolation parameters",
-            )
-
-    def get_filenames(self):
-        """The names of files containing parts of the data array.
-
-        Returns the names of any files that may be required to deliver
-        the computed data array. This set may contain fewer names than
-        the collection of file names that defined the data when it was
-        first instantiated, as could be the case after the data has
-        been subspaced.
-
-        **Implementation**
-
-        A `dask` chunk that contributes to the computed array is
-        assumed to reference data within a file if that chunk's array
-        object has a callable `get_filenames` method, the output of
-        which is added to the returned `set`.
-
-        :Returns:
-
-            `set`
-                The file names. If no files are required to compute
-                the data then an empty `set` is returned.
-
-        **Examples**
-
-        >>> d = {{package}}.{{class}}.empty((5, 8), 1, chunks=4)
-        >>> d.get_filenames()
-        set()
-
-        >>> f = {{package}}.example_field(0)
-        >>> {{package}}.write(f, "file_A.nc")
-        >>> {{package}}.write(f, "file_B.nc")
-
-        >>> a = {{package}}.read("file_A.nc", chunks=4)[0].data
-        >>> a += 999
-        >>> b = {{package}}.read("file_B.nc", chunks=4)[0].data
-        >>> c = {{package}}.{{class}}(b.array, units=b.Units, chunks=4)
-        >>> print(a.shape, b.shape, c.shape)
-        (5, 8) (5, 8) (5, 8)
-        >>> d = cf.Data.concatenate([a, a.copy(), b, c], axis=1) TODODASK
-        >>> print(d.shape)
-        (5, 32)
-
-        >>> d.get_filenames()
-        {'file_A.nc', 'file_B.nc'}
-        >>> d[:, 2:7].get_filenames()
-        {'file_A.nc'}
-        >>> d[:, 2:14].get_filenames()
-        {'file_A.nc', 'file_B.nc'}
-        >>> d[:, 2:20].get_filenames()
-        {'file_A.nc', 'file_B.nc'}
-        >>> d[:, 2:30].get_filenames()
-        {'file_A.nc', 'file_B.nc'}
-        >>> d[:, 29:30].get_filenames()
-        set()
-        >>> d[2, 3] = -99
-        >>> d[2, 3].get_filenames()
-        {'file_A.nc'}
-
-        """
-        out = set()
-
-        # REVIEW: getitem: `get_filenames`: set 'asanyarray'
-        # The dask graph is never going to be computed, so we can set
-        # 'asanyarray=False'.
-        for a in self.todict(asanyarray=False).values():
-            try:
-                out.update(a.get_filenames())
-            except AttributeError:
-                pass
-
-        # TODODASK: update
-
-        return out
-
-    def get_units(self, default=ValueError()):
-        """Return the units.
-
-        .. seealso:: `del_units`, `set_units`
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if the units
-                have not been set. If set to an `Exception` instance then
-                it will be raised instead.
-
-        :Returns:
-
-                The units.
-
-        **Examples**
-
-        >>> d.set_units('metres')
-        >>> d.get_units()
-        'metres'
-        >>> d.del_units()
-        >>> d.get_units()
-        ValueError: Can't get non-existent units
-        >>> print(d.get_units(None))
-        None
-
-        """
-        try:
-            return self.Units.units
-        except (ValueError, AttributeError):
-            return super().get_units(default=default)
-
-    def get_calendar(self, default=ValueError()):
-        """Return the calendar.
-
-        .. seealso:: `del_calendar`, `set_calendar`
+        .. seealso:: `get_calendar`, `has_calendar`, `set_calendar`,
+                     `del_units`, `Units`
 
         :Parameters:
 
@@ -4286,49 +3533,64 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-                The calendar.
+            `str`
+                The value of the deleted calendar.
 
         **Examples**
 
-        >>> d.set_calendar('julian')
-        >>> d.get_calendar
-        'metres'
+        >>> d = {{package}}.{{class}}(1, "days since 2000-1-1", calendar="noleap")
         >>> d.del_calendar()
-        >>> d.get_calendar()
-        ValueError: Can't get non-existent calendar
-        >>> print(d.get_calendar(None))
+        'noleap'
+        >>> print(d.del_calendar())
         None
 
+        >>> d = {{package}}.{{class}}(1, "days since 2000-1-1")
+        >>> print(d.del_calendar())
+        None
+
+        >>> d = {{package}}.{{class}}(1, "m")
+        Traceback (most recent call last):
+            ...
+        ValueError: Units <Units: m> have no calendar
+
         """
-        try:
-            return self.Units.calendar
-        except (ValueError, AttributeError):
-            return super().get_calendar(default=default)
+        units = self.Units
+        if not units.isreftime:
+            return self._default(default, f"Units {units!r} have no calendar")
 
-    def add_file_location(self, location):
-        """Add a new file location in-place.
+        calendar = getattr(units, "calendar", None)
+        if calendar is None:
+            return self._default(
+                default, f"{self.__class__.__name__} has no calendar"
+            )
 
-        All data definitions that reference files are additionally
-        referenced from the given location.
+        self._Units = self._Units_class(self.get_units(None), None)
+        return calendar
+
+    def del_file_location(self, location):
+        """Remove a file location in-place.
+
+        All data definitions that reference files will have references
+        to files in the given location removed from them.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `del_file_location`, `file_locations`
+        .. seealso:: `add_file_location`, `file_locations`
 
         :Parameters:
 
             location: `str`
-                The new location.
+                 The file location to remove.
 
         :Returns:
 
             `str`
-                The new location as an absolute path with no trailing
-                path name component separator.
+                The removed location as an absolute path with no
+                trailing path name component separator.
 
         **Examples**
 
-        >>> d.add_file_location('/data/model/')
+        >>> d.del_file_location('/data/model/')
         '/data/model'
 
         """
@@ -4336,13 +3598,13 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         updated = False
 
-        # REVIEW: getitem: `add_file_location`: set 'asanyarray'
+        # REVIEW: getitem: `del_file_location`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
         dsk = self.todict(asanyarray=False)
         for key, a in dsk.items():
             try:
-                dsk[key] = a.add_file_location(location)
+                dsk[key] = a.del_file_location(location)
             except AttributeError:
                 # This chunk doesn't contain a file array
                 continue
@@ -4358,279 +3620,106 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         return location
 
-    @_inplace_enabled(default=False)
-    def max(
-        self,
-        axes=None,
-        squeeze=False,
-        mtol=1,
-        split_every=None,
-        inplace=False,
-    ):
-        """Calculate maximum values.
+    def del_units(self, default=ValueError()):
+        """Delete the units.
 
-        Calculates the maximum value or the maximum values along axes.
-
-        See
-        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
-        for mathematical definitions.
-
-        .. versionadded:: (cfdm) 1.8.0
-
-         ..seealso:: `min`, `sum`
+        .. seealso:: `get_units`, `has_units`, `set_units`,
+                     `del_calendar`, `Units`
 
         :Parameters:
 
-            {{collapse axes: (sequence of) `int`, optional}}
-
-            {{collapse squeeze: `bool`, optional}}
-
-            {{mtol: number, optional}}
-
-            {{split_every: `int` or `dict`, optional}}
-
-                .. versionadded:: 3.14.0
-
-            {{inplace: `bool`, optional}}
+            default: optional
+                Return the value of the *default* parameter if the
+                units has not been set. If set to an `Exception`
+                instance then it will be raised instead.
 
         :Returns:
 
-            `{{class}}` or `None`
-                The collapsed data, or `None` if the operation was
-                in-place.
+            `str`
+                The value of the deleted units.
 
         **Examples**
 
-        >>> a = np.ma.arange(12).reshape(4, 3)
-        >>> d = {{package}}.{{class}}(a, 'K')
-        >>> d[1, 1] = {{package}}.masked
-        >>> print(d.array)
-        [[0 1 2]
-         [3 -- 5]
-         [6 7 8]
-         [9 10 11]]
-        >>> d.max()
-        <{{repr}}{{class}}(1, 1): [[11]] K>
-
-        """
-        # Parse the axes. By default flattened input is used.
-        try:
-            axes = self._parse_axes(axes)
-        except ValueError as error:
-            raise ValueError(f"Can't max data: {error}")
-
-        d = self.copy()
-        dx = d.to_dask_array()
-        dx = dx.max(axis=axes, keepdims=not squeeze)
-        d._set_dask(dx)
-
-        # TODODASK: _axes
-
-        # TODODASK: HDF5 chunks
-        return d
-
-    def min(
-        self,
-        axes=None,
-        squeeze=False,
-    ):
-        """Calculate minimum values.
-
-        Calculates the minimum value or the minimum values along axes.
-
-        See
-        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
-        for mathematical definitions.
-
-        .. versionadded:: (cfdm) 1.8.0
-
-         ..seealso:: `max`, `sum`
-
-        :Parameters:
-
-            {{collapse axes: (sequence of) `int`, optional}}
-
-            {{collapse squeeze: `bool`, optional}}
-
-        :Returns:
-
-            `{{class}}` or `None`
-                The collapsed data, or `None` if the operation was
-                in-place.
-
-        **Examples**
-
-        >>> a = np.ma.arange(12).reshape(4, 3)
-        >>> d = {{package}}.{{class}}(a, 'K')
-        >>> d[1, 1] = {{package}}.masked
-        >>> print(d.array)
-        [[0 1 2]
-         [3 -- 5]
-         [6 7 8]
-         [9 10 11]]
-        >>> d.min()
-        <{{repr}}{{class}}(1, 1): [[0]] K>
-
-        """
-        # Parse the axes. By default flattened input is used.
-        try:
-            axes = self._parse_axes(axes)
-        except ValueError as error:
-            raise ValueError(f"Can't min data: {error}")
-
-        d = self.copy()
-        dx = d.to_dask_array()
-        dx = dx.min(axis=axes, keepdims=not squeeze)
-        d._set_dask(dx)
-
-        # TODODASK: _axes
-
-        # TODODASK: HDF5 chunks
-        return d
-
-    def set_calendar(self, calendar):
-        """Set the calendar.
-
-        .. seealso:: `override_calendar`, `override_units`,
-                     `del_calendar`, `get_calendar`
-
-        :Parameters:
-
-            value: `str`
-                The new calendar.
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> d.set_calendar('none')
-        >>> d.get_calendar
-        'none'
-        >>> d.del_calendar()
-        >>> d.get_calendar()
-        ValueError: Can't get non-existent calendar
-        >>> print(d.get_calendar(None))
-        None
-
-        """
-        self.Units = self._Units_class(self.get_units(default=None), calendar)
-
-    def set_units(self, value):
-        """Set the units.
-
-        .. seealso:: `override_units`, `del_units`, `get_units`,
-                     `has_units`, `Units`
-
-        :Parameters:
-
-            value: `str`
-                The new units.
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> d.set_units('watt')
-        >>> d.get_units()
-        'watt'
+        >>> d = {{package}}.{{class}}(1, "m")
         >>> d.del_units()
-        >>> d.get_units()
-        ValueError: Can't get non-existent units
-        >>> print(d.get_units(None))
-        None
+        'm'
+        >>> d.Units
+        <Units: >
+        >>> d.del_units()
+        Traceback (most recent call last):
+            ...
+        ValueError: Data has no units
+
+        >>> d = {{package}}.{{class}}(1, "days since 2000-1-1", calendar="noleap")
+        >>> d.del_units()
+        'days since 2000-1-1'
+        >>> d.Units
+        <Units: noleap>
 
         """
-        self.Units = self._Units_class(value, self.get_calendar(default=None))
+        u = self.Units
+        units = getattr(u, "units", None)
+        calendar = getattr(u, "calendar", None)
+        self._Units = self._Units_class(None, calendar)
 
-    @property
-    def sparse_array(self):
-        """Return an independent `scipy` sparse array of the data.
+        if units is not None:
+            return units
 
-        In-place changes to the returned sparse array do not affect
-        the underlying dask array.
-
-        An `AttributeError` is raised if a sparse array representation
-        is not available.
-
-        **Performance**
-
-        `sparse_array` causes all delayed operations to be
-        computed. The returned sparse array is a deep copy of that
-        returned by created `compute`.
-
-        .. versionadded:: (cfdm) 1.11.0.0
-
-        .. seealso:: `array`
-
-        :Returns:
-
-                An independent `scipy` sparse array of the data.
-
-        **Examples**
-
-        >>> from scipy.sparse import issparse
-        >>> issparse(d.sparse_array)
-        True
-
-        """
-        array = self.compute()
-        if issparse(array):
-            return array.copy()
-
-        raise AttributeError(
-            "A sparse array representation of the data is not available"
+        return self._default(
+            default, f"{self.__class__.__name__} has no units"
         )
 
-    @_inplace_enabled(default=False)
-    def uncompress(self, inplace=False):
-        """Uncompress the data.
-
-        Only affects data that is compressed by convention, i.e.
-
-          * Ragged arrays for discrete sampling geometries (DSG) and
-            simple geometry cell definitions.
-
-          * Compression by gathering.
-
-          * Compression by coordinate subsampling.
-
-        Data that is already uncompressed is returned
-        unchanged. Whether the data is compressed or not does not
-        alter its functionality nor external appearance, but may
-        affect how the data are written to a dataset on disk.
-
-        .. versionadded:: 3.0.6
-
-        .. seealso:: `array`, `compressed_array`, `source`
+    @classmethod
+    def empty(
+        cls,
+        shape,
+        dtype=None,
+        units=None,
+        calendar=None,
+        chunks=_DEFAULT_CHUNKS,
+    ):
+        """Return a new array of given shape and type, without
+        initialising entries.
 
         :Parameters:
 
-            {{inplace: `bool`, optional}}
+            shape: `int` or `tuple` of `int`
+                The shape of the new array. e.g. ``(2, 3)`` or ``2``.
+
+            dtype: data-type
+                The desired output data-type for the array, e.g.
+                `numpy.int8`. The default is `numpy.float64`.
+
+            units: `str` or `Units`
+                The units for the new data array.
+
+            calendar: `str`, optional
+                The calendar for reference time units.
+
+            {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
-            `{{class}}` or `None`
-                The uncompressed data, or `None` if the operation was
-                in-place.
+            `{{class}}`
+                Array of uninitialised (arbitrary) data of the given
+                shape and dtype.
 
         **Examples**
 
-        >>> d.get_compression_type()
-        'ragged contiguous'
-        >>> d.uncompress()
-        >>> d.get_compression_type()
-        ''
+        >>> d = {{package}}.{{class}}.empty((2, 2))
+        >>> print(d.array)
+        [[ -9.74499359e+001  6.69583040e-309],
+         [  2.13182611e-314  3.06959433e-309]]         #uninitialised
+
+        >>> d = {{package}}.{{class}}.empty((2,), dtype=bool)
+        >>> print(d.array)
+        [ False  True]                                 #uninitialised
 
         """
-        d = _inplace_enabled_define_and_cleanup(self)
-        if d.get_compression_type():
-            d._del_Array(None)
-
-        return d
+        dx = da.empty(shape, dtype=dtype, chunks=chunks)
+        return cls(dx, units=units, calendar=calendar)
 
     @_manage_log_level_via_verbosity
     def equals(
@@ -4842,139 +3931,6 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         else:
             return True
 
-    @_inplace_enabled(default=False)
-    def insert_dimension(self, position=0, inplace=False):
-        """Expand the shape of the data array in place.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        .. seealso:: `flatten`, `squeeze`, `transpose`
-
-        :Parameters:
-
-            position: `int`, optional
-                Specify the position that the new axis will have in the data
-                array axes. By default the new axis has position 0, the
-                slowest varying position.
-
-            {{inplace: `bool`, optional}}
-
-        :Returns:
-
-            `{{class}}` or `None`
-
-        **Examples**
-
-        """
-        # TODODASKAPI bring back expand_dims alias (or rather alias this to
-        # that)
-
-        d = _inplace_enabled_define_and_cleanup(self)
-
-        # Parse position
-        if not isinstance(position, int):
-            raise ValueError("Position parameter must be an integer")
-
-        ndim = d.ndim
-        if -ndim - 1 <= position < 0:
-            position += ndim + 1
-        elif not 0 <= position <= ndim:
-            raise ValueError(
-                f"Can't insert dimension: Invalid position {position!r}"
-            )
-
-        shape = list(d.shape)
-        shape.insert(position, 1)
-
-        dx = d.to_dask_array()
-        dx = dx.reshape(shape)
-
-        # Inserting a dimension doesn't affect the cached elements nor
-        # the CFA write status
-        d._set_dask(dx, clear=_ALL ^ _CACHE ^ _CFA)
-
-        # Expand _axes
-        axis = new_axis_identifier(d._axes)
-        data_axes = list(d._axes)
-        data_axes.insert(position, axis)
-        d._axes = data_axes
-
-        # TODODASK: HDF5 chunks
-
-        return d
-
-    def harden_mask(self):
-        """Force the mask to hard.
-
-        Whether the mask of a masked array is hard or soft is
-        determined by its `hardmask` property. `harden_mask` sets
-        `hardmask` to `True`.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `hardmask`, `soften_mask`
-
-        **Examples**
-
-        >>> d = {{package}}.{{class}}([1, 2, 3], hardmask=False)
-        >>> d.hardmask
-        False
-        >>> d.harden_mask()
-        >>> d.hardmask
-        True
-
-        >>> d = {{package}}.{{class}}([1, 2, 3], mask=[False, True, False])
-        >>> d.hardmask
-        True
-        >>> d[1] = 999
-        >>> print(d.array)
-        [1 -- 3]
-
-        """
-        # REVIEW: getitem: `hardmask`: set 'asanyarray'
-        # 'harden_mask' has its own call to 'asanyarray', so we
-        # can set 'asanyarray=False'.
-        dx = self.to_dask_array(asanyarray=False)
-        dx = dx.map_blocks(harden_mask, dtype=self.dtype)
-        self._set_dask(dx, clear=_NONE)
-        self.hardmask = True
-
-    def soften_mask(self):
-        """Force the mask to soft.
-
-        Whether the mask of a masked array is hard or soft is
-        determined by its `hardmask` property. `soften_mask` sets
-        `hardmask` to `False`.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `hardmask`, `harden_mask`
-
-        **Examples**
-
-        >>> d = {{package}}.{{class}}([1, 2, 3])
-        >>> d.hardmask
-        True
-        >>> d.soften_mask()
-        >>> d.hardmask
-        False
-
-        >>> d = {{package}}.{{class}}([1, 2, 3], mask=[False, True, False], hardmask=False)
-        >>> d.hardmask
-        False
-        >>> d[1] = 999
-        >>> print(d.array)
-        [  1 999   3]
-
-        """
-        # REVIEW: getitem: `soften_mask`: set 'asanyarray'
-        # 'soften_mask' has its own call to 'asanyarray', so we
-        # can set 'asanyarray=False'.
-        dx = self.to_dask_array(asanyarray=False)
-        dx = dx.map_blocks(soften_mask, dtype=self.dtype)
-        self._set_dask(dx, clear=_NONE)
-        self.hardmask = False
-
     def file_locations(self):
         """The locations of files containing parts of the data.
 
@@ -5009,7 +3965,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 # This chunk doesn't contain a file array
                 pass
 
-        # TODODASK: check active-storage-new for updates to this method
+        # TODODASK: Get updates to this method from cf-python branch
+        #           active-storage-new
 
         return out
 
@@ -5023,9 +3980,9 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
             fill_value: scalar, optional
                 The fill value. By default the fill returned by
-                `get_fill_value` is used, or if this is not set then the
-                netCDF default fill value for the data type is used (as
-                defined by `netCDF.fillvals`).
+                `get_fill_value` is used, or if this is not set then
+                the netCDF default fill value for the data type is
+                used, as defined by `netCDF.default_fillvals`.
 
             {{inplace: `bool`, optional}}
 
@@ -5117,93 +4074,6 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             self._set_cached_elements({0: item})
             return item
 
-    def second_element(self):
-        """Return the second element of the data as a scalar.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        .. seealso:: `first_element`, `last_element`
-
-        **Performance**
-
-        If possible, a cached value is returned. Otherwise the delayed
-        operations needed to compute the element are executed, and
-        cached for subsequent calls.
-
-        :Returns:
-
-                The second element of the data.
-
-        **Examples**
-
-        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
-        >>> x = d.second_element()
-        >>> print(x, type(x))
-        2 <class 'int'>
-        >>> d[0, 1] = {{package}}.masked
-        >>> y = d.second_element()
-        >>> print(y, type(y))
-        -- <class 'numpy.ma.core.MaskedConstant'>
-
-        >>> d = {{package}}.{{class}}(['foo', 'bar'])
-        >>> x = d.second_element()
-        >>> print(x, type(x))
-        bar <class 'str'>
-
-        """
-        try:
-            return self._get_cached_elements()[1]
-        except KeyError:
-            item = self._item(np.unravel_index(1, self.shape))
-            self._set_cached_elements({1: item})
-            return item
-
-    def last_element(self):
-        """Return the last element of the data as a scalar.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        .. seealso:: `first_element`, `second_element`
-
-        **Performance**
-
-        If possible, a cached value is returned. Otherwise the delayed
-        operations needed to compute the element are executed, and
-        cached for subsequent calls.
-
-        :Returns:
-
-                The last element of the data.
-
-        **Examples**
-
-        >>> d = {{package}}.{{class}}(9.0)
-        >>> x = d.last_element()
-        >>> print(x, type(x))
-        9.0 <class 'float'>
-
-        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
-        >>> x = d.last_element()
-        >>> print(x, type(x))
-        4 <class 'int'>
-        >>> d[-1, -1] = {{package}}.masked
-        >>> y = d.last_element()
-        >>> print(y, type(y))
-        -- <class 'numpy.ma.core.MaskedConstant'>
-
-        >>> d = {{package}}.{{class}}(['foo', 'bar'])
-        >>> x = d.last_element()
-        >>> print(x, type(x))
-        bar <class 'str'>
-
-        """
-        try:
-            return self._get_cached_elements()[-1]
-        except KeyError:
-            item = self._item((slice(-1, None, 1),) * self.ndim)
-            self._set_cached_elements({-1: item})
-            return item
-
     @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
         """Flatten specified axes of the data.
@@ -5224,9 +4094,9 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
             axes: (sequence of) `int`
                 Select the axes to be flattened. By default all axes
-                are flattened. Each axis is identified by its integer
-                position. No axes are flattened if *axes* is an empty
-                sequence.
+                are flattened. Each axis is identified by its positive
+                or negative integer position. No axes are flattened if
+                *axes* is an empty sequence.
 
             {{inplace: `bool`, optional}}
 
@@ -5332,175 +4202,664 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         dx = dx.reshape(new_shape)
         d._set_dask(dx)
 
-        # TODODASK: HDF5 chunks
+        # TODODASK: HDF5 chunks from branch hdf5-chunks
 
         return d
 
-    def chunk_indices(self):
-        """Return indices that define each dask compute chunk.
+    def get_calendar(self, default=ValueError()):
+        """Return the calendar.
 
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `chunks`
-
-        :Returns:
-
-            `itertools.product`
-                An iterator over tuples of indices of the data array.
-
-        **Examples**
-
-        >>> d = {{package}}.{{class}}(np.arange(405).reshape(3, 9, 15),
-        ...     chunks=((1, 2), (9,), (4, 5, 6)))
-        >>> d.npartitions
-        6
-        >>> for index in d.chunk_indices():
-        ...     print(index)
-        ...
-        (slice(0, 1, None), slice(0, 9, None), slice(0, 4, None))
-        (slice(0, 1, None), slice(0, 9, None), slice(4, 9, None))
-        (slice(0, 1, None), slice(0, 9, None), slice(9, 15, None))
-        (slice(1, 3, None), slice(0, 9, None), slice(0, 4, None))
-        (slice(1, 3, None), slice(0, 9, None), slice(4, 9, None))
-        (slice(1, 3, None), slice(0, 9, None), slice(9, 15, None))
-
-        """
-        from dask.utils import cached_cumsum
-
-        chunks = self.chunks
-
-        cumdims = [cached_cumsum(bds, initial_zero=True) for bds in chunks]
-        indices = [
-            [slice(s, s + dim) for s, dim in zip(starts, shapes)]
-            for starts, shapes in zip(cumdims, chunks)
-        ]
-        return product(*indices)
-
-    # REVIEW: getitem: `to_dask_array`: new keyword 'asanyarray'
-    def to_dask_array(self, apply_mask_hardness=False, asanyarray=None):
-        """Convert the data to a `dask` array.
-
-        .. warning:: By default, the mask hardness of the returned
-                     dask array might not be the same as that
-                     specified by the `hardmask` attribute.
-
-                     This could cause problems if a subsequent
-                     operation on the returned dask array involves the
-                     un-masking of masked values (such as by indexed
-                     assignment).
-
-                     To guarantee that the mask hardness of the
-                     returned dask array is correct, set the
-                     *apply_mask_hardness* parameter to True.
-
-        .. versionadded:: (cfdm) NEXTVERSION
+        .. seealso:: `del_calendar`, `set_calendar`
 
         :Parameters:
 
-            apply_mask_hardness: `bool`, optional
-                If True then force the mask hardness of the returned
-                array to be that given by the `hardmask` attribute.
-
-            {{asanyarray: `bool` or `None`, optional}}
+            default: optional
+                Return the value of the *default* parameter if the
+                calendar has not been set. If set to an `Exception`
+                instance then it will be raised instead.
 
         :Returns:
 
-            `dask.array.Array`
-                The dask array contained within the `{{class}}` instance.
+                The calendar.
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([1, 2, 3, 4], 'm')
-        >>> dx = d.to_dask_array()
-        >>> dx
-        >>> dask.array<array, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
-        >>> dask.array.asanyarray(d) is dx
-        True
-
-        >>> d.to_dask_array(apply_mask_hardness=True)
-        dask.array<harden_mask, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
-
-        >>> d = {{package}}.{{class}}([1, 2, 3, 4], 'm', hardmask=False)
-        >>> d.to_dask_array(apply_mask_hardness=True)
-        dask.array<soften_mask, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
+        >>> d.set_calendar('julian')
+        >>> d.get_calendar
+        'metres'
+        >>> d.del_calendar()
+        >>> d.get_calendar()
+        ValueError: Can't get non-existent calendar
+        >>> print(d.get_calendar(None))
+        None
 
         """
-        dx = self._get_component("dask", None)
-        if dx is None:
-            raise ValueError(f"{self.__class__.__name__} object has no data")
+        try:
+            return self.Units.calendar
+        except (ValueError, AttributeError):
+            return super().get_calendar(default=default)
 
-        if apply_mask_hardness:
-            if self.hardmask:
-                self.harden_mask()
-            else:
-                self.soften_mask()
+    def get_count(self, default=ValueError()):
+        """Return the count variable for a compressed array.
 
-            dx = self._get_component("dask")
-            # Note: The mask hardness functions have their own calls
-            #       to 'asanyarray', so we can don't need worry about
-            #       setting another one.
-        else:
-            if asanyarray is None:
-                asanyarray = self.__asanyarray__
+        .. versionadded:: (cfdm) 1.7.0
 
-            if asanyarray:
-                # Add a new asanyarray layer to the output graph
-                dx = dx.map_blocks(cfdm_asanyarray, dtype=dx.dtype)
-
-        return dx
-
-    def del_file_location(self, location):
-        """Remove a file location in-place.
-
-        All data definitions that reference files will have references
-        to files in the given location removed from them.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `add_file_location`, `file_locations`
+        .. seealso:: `get_index`, `get_list`
 
         :Parameters:
 
-            location: `str`
-                 The file location to remove.
+            default: optional
+                Return the value of the *default* parameter if a count
+                variable has not been set. If set to an `Exception`
+                instance then it will be raised instead.
+
+        :Returns:
+
+                The count variable.
+
+        **Examples**
+
+        >>> c = d.get_count()
+
+        """
+        try:
+            return self._get_Array().get_count()
+        except (AttributeError, ValueError):
+            return self._default(
+                default, f"{self.__class__.__name__!r} has no count variable"
+            )
+
+    def get_data(self, default=ValueError(), _units=None, _fill_value=None):
+        """Returns the data.
+
+        .. versionadded:: 3.0.0
+
+        :Returns:
+
+            `{{class}}`
+
+        """
+        return self
+
+    def get_compressed_axes(self):
+        """Returns the dimensions that are compressed in the array.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `compressed_array`, `get_compressed_dimension`,
+                     `get_compression_type`
+
+        :Returns:
+
+            `list`
+                The dimensions of the data that are compressed to a single
+                dimension in the underlying array. If the data are not
+                compressed then an empty list is returned.
+
+        **Examples**
+
+        >>> d.shape
+        (2, 3, 4, 5, 6)
+        >>> d.compressed_array.shape
+        (2, 14, 6)
+        >>> d.get_compressed_axes()
+        [1, 2, 3]
+
+        >>> d.get_compression_type()
+        ''
+        >>> d.get_compressed_axes()
+        []
+
+        """
+        ca = self._get_Array(None)
+
+        if ca is None:
+            return []
+
+        return ca.get_compressed_axes()
+
+    def get_compression_type(self):
+        """Returns the type of compression applied to the array.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `compressed_array`, `compression_axes`,
+                     `get_compressed_dimension`
 
         :Returns:
 
             `str`
-                The removed location as an absolute path with no
-                trailing path name component separator.
+                The compression type. An empty string means that no
+                compression has been applied.
 
         **Examples**
 
-        >>> d.del_file_location('/data/model/')
-        '/data/model'
+        >>> d.get_compression_type()
+        ''
+
+        >>> d.get_compression_type()
+        'gathered'
+
+        >>> d.get_compression_type()
+        'ragged contiguous'
 
         """
-        location = abspath(location).rstrip(sep)
+        ma = self._get_Array(None)
+        if ma is None:
+            return ""
 
-        updated = False
+        return ma.get_compression_type()
 
-        # REVIEW: getitem: `del_file_location`: set 'asanyarray'
+    def get_compressed_dimension(self, default=ValueError()):
+        """Returns the compressed dimension's array position.
+
+        That is, returns the position of the compressed dimension
+        in the compressed array.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `compressed_array`, `get_compressed_axes`,
+                     `get_compression_type`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter there is no
+                compressed dimension. If set to an `Exception` instance
+                then it will be raised instead.
+
+        :Returns:
+
+            `int`
+                The position of the compressed dimension in the compressed
+                array.
+
+        **Examples**
+
+        >>> d.get_compressed_dimension()
+        2
+
+        """
+        try:
+            return self._get_Array().get_compressed_dimension()
+        except (AttributeError, ValueError):
+            return self._default(
+                default,
+                f"{self.__class__.__name__!r} has no compressed dimension",
+            )
+
+    def get_dependent_tie_points(self, default=ValueError()):
+        """Return the list variable for a compressed array.
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        .. seealso:: `get_tie_point_indices`,
+                     `get_interpolation_parameters`, `get_index`,
+                     `get_list`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if no
+                dependent tie point index variables have been set. If
+                set to an `Exception` instance then it will be raised
+                instead.
+
+        :Returns:
+
+            `dict`
+                The dependent tie point arrays needed by the
+                interpolation method, keyed by the dependent tie point
+                identities. Each key is a dependent tie point
+                identity, whose value is a `Data` variable.
+
+        **Examples**
+
+        >>> l = d.get_dependent_tie_points()
+
+        """
+        try:
+            return self._get_Array().get_dependent_tie_points()
+        except (AttributeError, ValueError):
+            return self._default(
+                default,
+                f"{self.__class__.__name__!r} has no dependent "
+                "tie point index variables",
+            )
+
+    def get_filenames(self):
+        """The names of files containing parts of the data array.
+
+        Returns the names of any files that may be required to deliver
+        the computed data array. This set may contain fewer names than
+        the collection of file names that defined the data when it was
+        first instantiated, as could be the case after the data has
+        been subspaced.
+
+        **Implementation**
+
+        A `dask` chunk that contributes to the computed array is
+        assumed to reference data within a file if that chunk's array
+        object has a callable `get_filenames` method, the output of
+        which is added to the returned `set`.
+
+        :Returns:
+
+            `set`
+                The file names. If no files are required to compute
+                the data then an empty `set` is returned.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}.empty((5, 8), 1, chunks=4)
+        >>> d.get_filenames()
+        set()
+
+        >>> f = {{package}}.example_field(0)
+        >>> {{package}}.write(f, "file.nc")
+        >>> d = {{package}}.read("file.nc")[0].data
+        >>> d.get_filenames()
+        {'file.nc'}
+
+        """
+        out = set()
+
+        # REVIEW: getitem: `get_filenames`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
-        dsk = self.todict(asanyarray=False)
-        for key, a in dsk.items():
+        for a in self.todict(asanyarray=False).values():
             try:
-                dsk[key] = a.del_file_location(location)
+                out.update(a.get_filenames())
             except AttributeError:
-                # This chunk doesn't contain a file array
-                continue
+                pass
 
-            # This chunk contains a file array and the dask graph has
-            # been updated
-            updated = True
+        # TODODASK: HDF5 chunks from branch hdf5-chunks
 
-        if updated:
-            dx = self.to_dask_array(asanyarray=False)
-            dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
-            self._set_dask(dx, clear=_NONE, asanyarray=None)
+        return out
 
-        return location
+    def get_index(self, default=ValueError()):
+        """Return the index variable for a compressed array.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `get_count`, `get_list`
+
+        :Parameters:
+
+            default: optional
+                Return *default* if index variable has not been set.
+
+            default: optional
+                Return the value of the *default* parameter if an index
+                variable has not been set. If set to an `Exception`
+                instance then it will be raised instead.
+
+        :Returns:
+
+                The index variable.
+
+        **Examples**
+
+        >>> i = d.get_index()
+
+        """
+        try:
+            return self._get_Array().get_index()
+        except (AttributeError, ValueError):
+            return self._default(
+                default, f"{self.__class__.__name__!r} has no index variable"
+            )
+
+    def get_interpolation_parameters(self, default=ValueError()):
+        """Return the list variable for a compressed array.
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        .. seealso:: `get_dependent_tie_points`,
+                     `get_tie_point_indices`, `get_index`,
+                     `get_list`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if no
+                interpolation parameters have been set. If set to an
+                `Exception` instance then it will be raised instead.
+
+        :Returns:
+
+            `dict`
+                Interpolation parameters required by the subsampling
+                interpolation method. Each key is an interpolation
+                parameter term name, whose value is an
+                `InterpolationParameter` variable.
+
+                Interpolation parameter term names for the
+                standardised interpolation methods are defined in CF
+                Appendix J "Coordinate Interpolation Methods".
+
+        **Examples**
+
+        >>> l = d.get_interpolation_parameters()
+
+        """
+        try:
+            return self._get_Array().get_interpolation_parameters()
+        except (AttributeError, ValueError):
+            return self._default(
+                default,
+                f"{self.__class__.__name__!r} has no subsampling "
+                "interpolation parameters",
+            )
+
+    def get_list(self, default=ValueError()):
+        """Return the list variable for a compressed array.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `get_count`, `get_index`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if an index
+                variable has not been set. If set to an `Exception`
+                instance then it will be raised instead.
+
+        :Returns:
+
+                The list variable.
+
+        **Examples**
+
+        >>> l = d.get_list()
+
+        """
+        try:
+            return self._get_Array().get_list()
+        except (AttributeError, ValueError):
+            return self._default(
+                default, f"{self.__class__.__name__!r} has no list variable"
+            )
+
+    def get_tie_point_indices(self, default=ValueError()):
+        """Return the list variable for a compressed array.
+
+        .. versionadded:: (cfdm) 1.10.0.1
+
+        .. seealso:: `get_dependent_tie_points`,
+                     `get_interpolation_parameters`,
+                     `get_index`, `get_list`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if no tie
+                point index variables have been set. If set to an
+                `Exception` instance then it will be raised instead.
+
+        :Returns:
+
+            `dict`
+                The tie point index variable for each subsampled
+                dimension. A key identifies a subsampled dimension by
+                its integer position in the compressed array, and its
+                value is a `TiePointIndex` variable.
+
+        **Examples**
+
+        >>> l = d.get_tie_point_indices()
+
+        """
+        try:
+            return self._get_Array().get_tie_point_indices()
+        except (AttributeError, ValueError):
+            return self._default(
+                default,
+                f"{self.__class__.__name__!r} has no "
+                "tie point index variables",
+            )
+
+    def get_units(self, default=ValueError()):
+        """Return the units.
+
+        .. seealso:: `del_units`, `set_units`
+
+        :Parameters:
+
+            default: optional
+                Return the value of the *default* parameter if the units
+                have not been set. If set to an `Exception` instance then
+                it will be raised instead.
+
+        :Returns:
+
+                The units.
+
+        **Examples**
+
+        >>> d.set_units('metres')
+        >>> d.get_units()
+        'metres'
+        >>> d.del_units()
+        >>> d.get_units()
+        ValueError: Can't get non-existent units
+        >>> print(d.get_units(None))
+        None
+
+        """
+        try:
+            return self.Units.units
+        except (ValueError, AttributeError):
+            return super().get_units(default=default)
+
+    def harden_mask(self):
+        """Force the mask to hard.
+
+        Whether the mask of a masked array is hard or soft is
+        determined by its `hardmask` property. `harden_mask` sets
+        `hardmask` to `True`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `hardmask`, `soften_mask`
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([1, 2, 3], hardmask=False)
+        >>> d.hardmask
+        False
+        >>> d.harden_mask()
+        >>> d.hardmask
+        True
+
+        >>> d = {{package}}.{{class}}([1, 2, 3], mask=[False, True, False])
+        >>> d.hardmask
+        True
+        >>> d[1] = 999
+        >>> print(d.array)
+        [1 -- 3]
+
+        """
+        # REVIEW: getitem: `hardmask`: set 'asanyarray'
+        # 'harden_mask' has its own call to 'asanyarray', so we
+        # can set 'asanyarray=False'.
+        dx = self.to_dask_array(asanyarray=False)
+        dx = dx.map_blocks(harden_mask, dtype=self.dtype)
+        self._set_dask(dx, clear=_NONE)
+        self.hardmask = True
+
+    def has_calendar(self):
+        """Whether a calendar has been set.
+
+        .. seealso:: `del_calendar`, `get_calendar`, `set_calendar`,
+                     `has_units`, `Units`
+
+        :Returns:
+
+            `bool`
+                `True` if the calendar has been set, otherwise
+                `False`.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}(1, "days since 2000-1-1", calendar="noleap")
+        >>> d.has_calendar()
+        True
+
+        >>> d = {{package}}.{{class}}(1, calendar="noleap")
+        >>> d.has_calendar()
+        True
+
+        >>> d = {{package}}.{{class}}(1, "days since 2000-1-1")
+        >>> d.has_calendar()
+        False
+
+        >>> d = {{package}}.{{class}}(1, "m")
+        >>> d.has_calendar()
+        False
+
+        """
+        return hasattr(self.Units, "calendar")
+
+    def has_units(self):
+        """Whether units have been set.
+
+        .. seealso:: `del_units`, `get_units`, `set_units`,
+                     `has_calendar`, `Units`
+
+        :Returns:
+
+            `bool`
+                `True` if units have been set, otherwise `False`.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}(1, "")
+        >>> d.has_units()
+        True
+
+        >>> d = {{package}}.{{class}}(1, "m")
+        >>> d.has_units()
+        True
+
+        >>> d = {{package}}.{{class}}(1)
+        >>> d.has_units()
+        False
+
+        >>> d = {{package}}.{{class}}(1, calendar='noleap')
+        >>> d.has_units()
+        False
+
+        """
+        return hasattr(self.Units, "units")
+
+    @_inplace_enabled(default=False)
+    def insert_dimension(self, position=0, inplace=False):
+        """Expand the shape of the data array in place.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `flatten`, `squeeze`, `transpose`
+
+        :Parameters:
+
+            position: `int`, optional
+                Specify the position that the new axis will have in the data
+                array axes. By default the new axis has position 0, the
+                slowest varying position.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+
+        **Examples**
+
+        """
+        # TODODASKAPI bring back expand_dims alias (or rather alias this to
+        # that)
+
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        # Parse position
+        if not isinstance(position, int):
+            raise ValueError("Position parameter must be an integer")
+
+        ndim = d.ndim
+        if -ndim - 1 <= position < 0:
+            position += ndim + 1
+        elif not 0 <= position <= ndim:
+            raise ValueError(
+                f"Can't insert dimension: Invalid position {position!r}"
+            )
+
+        shape = list(d.shape)
+        shape.insert(position, 1)
+
+        dx = d.to_dask_array()
+        dx = dx.reshape(shape)
+
+        # Inserting a dimension doesn't affect the cached elements nor
+        # the CFA write status
+        d._set_dask(dx, clear=_ALL ^ _CACHE ^ _CFA)
+
+        # Expand _axes
+        axis = new_axis_identifier(d._axes)
+        data_axes = list(d._axes)
+        data_axes.insert(position, axis)
+        d._axes = data_axes
+
+        # TODODASK: HDF5 chunks from branch hdf5-chunks
+
+        return d
+
+    def last_element(self):
+        """Return the last element of the data as a scalar.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `first_element`, `second_element`
+
+        **Performance**
+
+        If possible, a cached value is returned. Otherwise the delayed
+        operations needed to compute the element are executed, and
+        cached for subsequent calls.
+
+        :Returns:
+
+                The last element of the data.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}(9.0)
+        >>> x = d.last_element()
+        >>> print(x, type(x))
+        9.0 <class 'float'>
+
+        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
+        >>> x = d.last_element()
+        >>> print(x, type(x))
+        4 <class 'int'>
+        >>> d[-1, -1] = {{package}}.masked
+        >>> y = d.last_element()
+        >>> print(y, type(y))
+        -- <class 'numpy.ma.core.MaskedConstant'>
+
+        >>> d = {{package}}.{{class}}(['foo', 'bar'])
+        >>> x = d.last_element()
+        >>> print(x, type(x))
+        bar <class 'str'>
+
+        """
+        try:
+            return self._get_cached_elements()[-1]
+        except KeyError:
+            item = self._item((slice(-1, None, 1),) * self.ndim)
+            self._set_cached_elements({-1: item})
+            return item
 
     @_inplace_enabled(default=False)
     def masked_values(self, value, rtol=None, atol=None, inplace=False):
@@ -5556,20 +4915,520 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         d._set_dask(dx)
         return d
 
-    def cull_graph(self):
-        """Remove unnecessary tasks from the dask graph in-place.
+    @_inplace_enabled(default=False)
+    def max(
+        self,
+        axes=None,
+        squeeze=False,
+        split_every=None,
+        inplace=False,
+    ):
+        """Calculate maximum values.
 
-        **Performance**
+        Calculates the maximum value or the maximum values along axes.
 
-        An unnecessary task is one which does not contribute to the
-        computed result. Such tasks are always automatically removed
-        (culled) at compute time, but removing them beforehand might
-        improve performance by reducing the amount of work done in
-        later steps.
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
+        .. versionadded:: (cfdm) 1.8.0
+
+         ..seealso:: `min`, `sum`
+
+        :Parameters:
+
+            {{collapse axes: (sequence of) `int`, optional}}
+
+            {{collapse squeeze: `bool`, optional}}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The collapsed data, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = {{package}}.{{class}}(a, 'K')
+        >>> d[1, 1] = {{package}}.masked
+        >>> print(d.array)
+        [[0 1 2]
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
+        >>> d.max()
+        <{{repr}}{{class}}(1, 1): [[11]] K>
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        # Parse the axes. By default flattened input is used.
+        try:
+            iaxes = d._parse_axes(axes)
+        except ValueError as error:
+            raise ValueError(f"Can't max data: {error}")
+
+        keepdims = not squeeze
+        dx = d.to_dask_array()
+        dx = dx.max(axis=iaxes, keepdims=keepdims, split_every=split_every)
+        d._set_dask(dx)
+
+        # Remove collapsed axis identifiers
+        if iaxes and not keepdims:
+            d._axes = [
+                axis for i, axis in enumerate(d._axes) if i not in iaxes
+            ]
+
+        # TODODASK: HDF5 chunks from branch hdf5-chunks
+
+        return d
+
+    @_inplace_enabled(default=False)
+    def min(self, axes=None, squeeze=False, split_every=None, inplace=False):
+        """Calculate minimum values.
+
+        Calculates the minimum value or the minimum values along axes.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
+        .. versionadded:: (cfdm) 1.8.0
+
+         ..seealso:: `max`, `sum`
+
+        :Parameters:
+
+            {{collapse axes: (sequence of) `int`, optional}}
+
+            {{collapse squeeze: `bool`, optional}}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The collapsed data, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = {{package}}.{{class}}(a, 'K')
+        >>> d[1, 1] = {{package}}.masked
+        >>> print(d.array)
+        [[0 1 2]
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
+        >>> d.min()
+        <{{repr}}{{class}}(1, 1): [[0]] K>
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        # Parse the axes. By default flattened input is used.
+        try:
+            iaxes = d._parse_axes(axes)
+        except ValueError as error:
+            raise ValueError(f"Can't min data: {error}")
+
+        keepdims = not squeeze
+        dx = d.to_dask_array()
+        dx = dx.min(axis=iaxes, keepdims=keepdims, split_every=split_every)
+        d._set_dask(dx)
+
+        # Remove collapsed axis identifiers
+        if iaxes and not keepdims:
+            d._axes = [
+                axis for i, axis in enumerate(d._axes) if i not in iaxes
+            ]
+
+        # TODODASK: HDF5 chunks from branch hdf5-chunks
+
+        return d
+
+    @_inplace_enabled(default=False)
+    def pad_missing(self, axis, pad_width=None, to_size=None, inplace=False):
+        """Pad an axis with missing data.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `dask.optimization.cull`
+        :Parameters:
+
+            axis: `int`
+                Select the axis for which the padding is to be
+                applied.
+
+                *Parameter example:*
+                  Pad second axis: ``axis=1``.
+
+                *Parameter example:*
+                  Pad the last axis: ``axis=-1``.
+
+            {{pad_width: sequence of `int`, optional}}
+
+            {{to_size: `int`, optional}}
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The padded data, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}(np.arange(6).reshape(2, 3))
+        >>> print(d.array)
+        [[0 1 2]
+         [3 4 5]]
+        >>> e = d.pad_missing(1, (1, 2))
+        >>> print(e.array)
+        [[-- 0 1 2 -- --]
+         [-- 3 4 5 -- --]]
+        >>> f = e.pad_missing(0, (0, 1))
+        >>> print(f.array)
+        [[--  0  1  2 -- --]
+         [--  3  4  5 -- --]
+         [-- -- -- -- -- --]]
+
+        >>> g = d.pad_missing(1, to_size=5)
+        >>> print(g.array)
+        [[0 1 2 -- --]
+         [3 4 5 -- --]]
+
+        """
+        if not 0 <= axis < self.ndim:
+            raise ValueError(
+                f"'axis' must be a valid dimension position. Got {axis}"
+            )
+
+        if to_size is not None:
+            # Set pad_width from to_size
+            if pad_width is not None:
+                raise ValueError("Can't set both 'pad_width' and 'to_size'")
+
+            pad_width = (0, to_size - self.shape[axis])
+        elif pad_width is None:
+            raise ValueError("Must set either 'pad_width' or 'to_size'")
+
+        pad_width = np.asarray(pad_width)
+        if pad_width.shape != (2,) or not pad_width.dtype.kind == "i":
+            raise ValueError(
+                "'pad_width' must be a sequence of two integers. "
+                f"Got: {pad_width}"
+            )
+
+        pad_width = tuple(pad_width)
+        if any(n < 0 for n in pad_width):
+            if to_size is not None:
+                raise ValueError(
+                    f"'to_size' ({to_size}) must not be smaller than the "
+                    f"original axis size ({self.shape[axis]})"
+                )
+
+            raise ValueError(
+                f"Can't set a negative number of pad values. Got: {pad_width}"
+            )
+
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        dx = d.to_dask_array()
+        mask0 = da.ma.getmaskarray(dx)
+
+        pad = [(0, 0)] * dx.ndim
+        pad[axis] = pad_width
+
+        # Pad the data with zero. This will lose the original mask.
+        dx = da.pad(dx, pad, mode="constant", constant_values=0)
+
+        # Pad the mask with True
+        mask = da.pad(mask0, pad, mode="constant", constant_values=True)
+
+        # Set the mask
+        dx = da.ma.masked_where(mask, dx)
+
+        d._set_dask(dx)
+        return d
+
+    @_inplace_enabled(default=False)
+    def persist(self, inplace=False):
+        """Persist the underlying dask array into memory.
+
+        This turns an underlying lazy dask array into a equivalent
+        chunked dask array, but now with the results fully computed.
+
+        `persist` is particularly useful when using distributed
+        systems, because the results will be kept in distributed
+        memory, rather than returned to the local process.
+
+        Compare with `compute` and `array`.
+
+        **Performance**
+
+        `persist` causes all delayed operations to be computed.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `compute`, `array`, `datetime_array`,
+                     `dask.array.Array.persist`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The persisted data. If the operation was in-place then
+                `None` is returned.
+
+        **Examples**
+
+        >>> e = d.persist()
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = self.to_dask_array()
+        dx = dx.persist()
+        d._set_dask(dx, clear=_ALL ^ _ARRAY ^ _CACHE)
+        return d
+
+    @_inplace_enabled(default=False)
+    def rechunk(
+        self,
+        chunks=_DEFAULT_CHUNKS,
+        threshold=None,
+        block_size_limit=None,
+        balance=False,
+        inplace=False,
+    ):
+        """Change the chunk structure of the data.
+
+        **Performance**
+
+        Rechunking can sometimes be expensive and incur a lot of
+        communication overheads.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `chunks`, `dask.array.rechunk`
+
+        :Parameters:
+
+            {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
+
+            {{threshold: `int`, optional}}
+
+            {{block_size_limit: `int`, optional}}
+
+            {{balance: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The rechunked data, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> x = {{package}}.{{class}}.empty((1000, 1000), chunks=(100, 100))
+
+        Specify uniform chunk sizes with a tuple
+
+        >>> y = x.rechunk((1000, 10))
+
+        Or chunk only specific dimensions with a dictionary
+
+        >>> y = x.rechunk({0: 1000})
+
+        Use the value ``-1`` to specify that you want a single chunk
+        along a dimension or the value ``"auto"`` to specify that dask
+        can freely rechunk a dimension to attain blocks of a uniform
+        block size.
+
+        >>> y = x.rechunk({0: -1, 1: 'auto'}, block_size_limit=1e8)
+
+        If a chunk size does not divide the dimension then rechunk
+        will leave any unevenness to the last chunk.
+
+        >>> x.rechunk(chunks=(400, -1)).chunks
+        ((400, 400, 200), (1000,))
+
+        However if you want more balanced chunks, and don't mind
+        `dask` choosing a different chunksize for you then you can use
+        the ``balance=True`` option.
+
+        >>> x.rechunk(chunks=(400, -1), balance=True).chunks
+        ((500, 500), (1000,))
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        # Dask rechunking is essentially a wrapper for __getitem__
+        # calls on the chunks, which means that we can use the same
+        # 'asanyarray' and 'clear' keywords to `_set_dask` as are used
+        # in `__gettem__`.
+        dx = d.to_dask_array(asanyarray=False)
+        dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
+        d._set_dask(dx, clear=_ALL ^ _ARRAY ^ _CACHE, asanyarray=True)
+
+        return d
+
+    @_inplace_enabled(default=False)
+    def reshape(self, *shape, merge_chunks=True, limit=None, inplace=False):
+        """Change the shape of the data without changing its values.
+
+        It assumes that the array is stored in row-major order, and
+        only allows for reshapings that collapse or merge dimensions
+        like ``(1, 2, 3, 4) -> (1, 6, 4)`` or ``(64,) -> (4, 4, 4)``.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            shape: `tuple` of `int`, or any number of `int`
+                The new shape for the data, which should be compatible
+                with the original shape. If an integer, then the
+                result will be a 1-d array of that length. One shape
+                dimension can be -1, in which case the value is
+                inferred from the length of the array and remaining
+                dimensions.
+
+            merge_chunks: `bool`
+                When True (the default) merge chunks using the logic
+                in `dask.array.rechunk` when communication is
+                necessary given the input array chunking and the
+                output shape. When False, the input array will be
+                rechunked to a chunksize of 1, which can create very
+                many tasks. See `dask.array.reshape` for details.
+
+            limit: int, optional
+                The maximum block size to target in bytes. If no limit
+                is provided, it defaults to a size in bytes defined by
+                the `cf.chunksize` function.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Data` or `None`
+                 The reshaped data, or `None` if the operation was
+                 in-place.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}(np.arange(12))
+        >>> print(d.array)
+        [ 0  1  2  3  4  5  6  7  8  9 10 11]
+        >>> print(d.reshape(3, 4).array)
+        [[ 0  1  2  3]
+         [ 4  5  6  7]
+         [ 8  9 10 11]]
+        >>> print(d.reshape((4, 3)).array)
+        [[ 0  1  2]
+         [ 3  4  5]
+         [ 6  7  8]
+         [ 9 10 11]]
+        >>> print(d.reshape(-1, 6).array)
+        [[ 0  1  2  3  4  5]
+         [ 6  7  8  9 10 11]]
+        >>>  print(d.reshape(1, 1, 2, 6).array)
+        [[[[ 0  1  2  3  4  5]
+           [ 6  7  8  9 10 11]]]]
+        >>> print(d.reshape(1, 1, -1).array)
+        [[[[ 0  1  2  3  4  5  6  7  8  9 10 11]]]]
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = d.to_dask_array()
+        dx = dx.reshape(*shape, merge_chunks=merge_chunks, limit=limit)
+
+        # Set axes when the new array has more dimensions than self
+        axes = None
+        ndim0 = self.ndim
+        if not ndim0:
+            axes = generate_axis_identifiers(dx.ndim)
+        else:
+            diff = dx.ndim - ndim0
+            if diff > 0:
+                axes = list(self._axes)
+                for _ in range(diff):
+                    axes.insert(0, new_axis_identifier(tuple(axes)))
+
+        if axes is not None:
+            d._axes = axes
+
+        d._set_dask(dx)
+
+        # CF-PYTHON: override
+
+        return d
+
+    def second_element(self):
+        """Return the second element of the data as a scalar.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        .. seealso:: `first_element`, `last_element`
+
+        **Performance**
+
+        If possible, a cached value is returned. Otherwise the delayed
+        operations needed to compute the element are executed, and
+        cached for subsequent calls.
+
+        :Returns:
+
+                The second element of the data.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
+        >>> x = d.second_element()
+        >>> print(x, type(x))
+        2 <class 'int'>
+        >>> d[0, 1] = {{package}}.masked
+        >>> y = d.second_element()
+        >>> print(y, type(y))
+        -- <class 'numpy.ma.core.MaskedConstant'>
+
+        >>> d = {{package}}.{{class}}(['foo', 'bar'])
+        >>> x = d.second_element()
+        >>> print(x, type(x))
+        bar <class 'str'>
+
+        """
+        try:
+            return self._get_cached_elements()[1]
+        except KeyError:
+            item = self._item(np.unravel_index(1, self.shape))
+            self._set_cached_elements({1: item})
+            return item
+
+    def set_calendar(self, calendar):
+        """Set the calendar.
+
+        .. seealso:: `override_calendar`, `override_units`,
+                     `del_calendar`, `get_calendar`
+
+        :Parameters:
+
+            value: `str`
+                The new calendar.
 
         :Returns:
 
@@ -5577,27 +5436,82 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([1, 2, 3, 4, 5], chunks=3)
-        >>> d = d[:2]
-        >>> dict(d.to_dask_array().dask)
-        {('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3]),
-         ('array-21ea057f160746a3d3f0943bba945460', 1): array([4, 5]),
-         ('getitem-3e4edac0a632402f6b45923a6b9d215f',
-          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-21ea057f160746a3d3f0943bba945460',
-           0), (slice(0, 2, 1),))}
-        >>> d.cull_graph()
-        >>> dict(d.to_dask_array().dask)
-        {('getitem-3e4edac0a632402f6b45923a6b9d215f',
-          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-21ea057f160746a3d3f0943bba945460',
-           0), (slice(0, 2, 1),)),
-         ('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3])}
+        >>> d.set_calendar('none')
+        >>> d.get_calendar
+        'none'
+        >>> d.del_calendar()
+        >>> d.get_calendar()
+        ValueError: Can't get non-existent calendar
+        >>> print(d.get_calendar(None))
+        None
 
         """
-        # REVIEW: getitem: `cull_graph`: set 'asanyarray'
+        self.Units = self._Units_class(self.get_units(default=None), calendar)
+
+    def set_units(self, value):
+        """Set the units.
+
+        .. seealso:: `override_units`, `del_units`, `get_units`,
+                     `has_units`, `Units`
+
+        :Parameters:
+
+            value: `str`
+                The new units.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d.set_units('watt')
+        >>> d.get_units()
+        'watt'
+        >>> d.del_units()
+        >>> d.get_units()
+        ValueError: Can't get non-existent units
+        >>> print(d.get_units(None))
+        None
+
+        """
+        self.Units = self._Units_class(value, self.get_calendar(default=None))
+
+    def soften_mask(self):
+        """Force the mask to soft.
+
+        Whether the mask of a masked array is hard or soft is
+        determined by its `hardmask` property. `soften_mask` sets
+        `hardmask` to `False`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `hardmask`, `harden_mask`
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([1, 2, 3])
+        >>> d.hardmask
+        True
+        >>> d.soften_mask()
+        >>> d.hardmask
+        False
+
+        >>> d = {{package}}.{{class}}([1, 2, 3], mask=[False, True, False], hardmask=False)
+        >>> d.hardmask
+        False
+        >>> d[1] = 999
+        >>> print(d.array)
+        [  1 999   3]
+
+        """
+        # REVIEW: getitem: `soften_mask`: set 'asanyarray'
+        # 'soften_mask' has its own call to 'asanyarray', so we
+        # can set 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
-        dsk, _ = cull(dx.dask, dx.__dask_keys__())
-        dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
-        self._set_dask(dx, clear=_NONE, asanyarray=None)
+        dx = dx.map_blocks(soften_mask, dtype=self.dtype)
+        self._set_dask(dx, clear=_NONE)
+        self.hardmask = False
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
@@ -5612,14 +5526,11 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         :Parameters:
 
-            axes: (sequence of) int, optional
+            axes: (sequence of) `int`, optional
                 Select the axes. By default all size 1 axes are
-                removed. The *axes* argument may be one, or a
-                sequence, of integers that select the axis
-                corresponding to the given position in the list of
-                axes of the data array.
-
-                No axes are removed if *axes* is an empty sequence.
+                removed. Each axis is identified by its positive or
+                negative integer position. No axes are removed if
+                *axes* is an empty sequence.
 
             {{inplace: `bool`, optional}}
 
@@ -5699,8 +5610,155 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         # Remove the squeezed axes names
         d._axes = [axis for i, axis in enumerate(d._axes) if i not in iaxes]
 
-        # TODODASK: HDF5 chunks
+        # TODODASK: HDF5 chunks from branch hdf5-chunks
+
         return d
+
+    @_inplace_enabled(default=False)
+    def sum(self, axes=None, squeeze=False, split_every=None, inplace=False):
+        """Calculate sum values.
+
+        Calculates the sum value or the sum values along axes.
+
+        See
+        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+        for mathematical definitions.
+
+         ..seealso:: `max`, `min`
+
+        :Parameters:
+
+            {{collapse axes: (sequence of) `int`, optional}}
+
+            {{collapse squeeze: `bool`, optional}}
+
+            {{split_every: `int` or `dict`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The collapsed data, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> a = np.ma.arange(12).reshape(4, 3)
+        >>> d = {{package}}.{{class}}(a, 'K')
+        >>> d[1, 1] = {{package}}.masked
+        >>> print(d.array)
+        [[0 1 2]
+         [3 -- 5]
+         [6 7 8]
+         [9 10 11]]
+        >>> d.sum()
+        <{{repr}}{{class}}(1, 1): [[62]] K>
+
+        >>> w = np.linspace(1, 2, 3)
+        >>> print(w)
+        [1.  1.5 2. ]
+        >>> d.sum(weights={{package}}.{{class}}(w, 'm'))
+        <{{repr}}{{class}}(1, 1): [[97.0]] K>
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        # Parse the axes. By default flattened input is used.
+        try:
+            iaxes = d._parse_axes(axes)
+        except ValueError as error:
+            raise ValueError(f"Can't sum data: {error}")
+
+        keepdims = not squeeze
+        dx = d.to_dask_array()
+        dx = dx.sum(axis=iaxes, keepdims=keepdims, split_every=split_every)
+        d._set_dask(dx)
+
+        # Remove collapsed axis identifiers
+        if iaxes and not keepdims:
+            d._axes = [
+                axis for i, axis in enumerate(d._axes) if i not in iaxes
+            ]
+
+        # TODODASK: HDF5 chunks from branch hdf5-chunks
+
+        return d
+
+    # REVIEW: getitem: `to_dask_array`: new keyword 'asanyarray'
+    def to_dask_array(self, apply_mask_hardness=False, asanyarray=None):
+        """Convert the data to a `dask` array.
+
+        .. warning:: By default, the mask hardness of the returned
+                     dask array might not be the same as that
+                     specified by the `hardmask` attribute.
+
+                     This could cause problems if a subsequent
+                     operation on the returned dask array involves the
+                     un-masking of masked values (such as by indexed
+                     assignment).
+
+                     To guarantee that the mask hardness of the
+                     returned dask array is correct, set the
+                     *apply_mask_hardness* parameter to True.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            apply_mask_hardness: `bool`, optional
+                If True then force the mask hardness of the returned
+                array to be that given by the `hardmask` attribute.
+
+            {{asanyarray: `bool` or `None`, optional}}
+
+        :Returns:
+
+            `dask.array.Array`
+                The dask array contained within the `{{class}}` instance.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([1, 2, 3, 4], 'm')
+        >>> dx = d.to_dask_array()
+        >>> dx
+        >>> dask.array<array, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
+        >>> dask.array.asanyarray(d) is dx
+        True
+
+        >>> d.to_dask_array(apply_mask_hardness=True)
+        dask.array<harden_mask, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
+
+        >>> d = {{package}}.{{class}}([1, 2, 3, 4], 'm', hardmask=False)
+        >>> d.to_dask_array(apply_mask_hardness=True)
+        dask.array<soften_mask, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
+
+        """
+        dx = self._get_component("dask", None)
+        if dx is None:
+            raise ValueError(f"{self.__class__.__name__} object has no data")
+
+        if apply_mask_hardness:
+            if self.hardmask:
+                self.harden_mask()
+            else:
+                self.soften_mask()
+
+            dx = self._get_component("dask")
+            # Note: The mask hardness functions have their own calls
+            #       to 'asanyarray', so we can don't need worry about
+            #       setting another one.
+        else:
+            if asanyarray is None:
+                asanyarray = self.__asanyarray__
+
+            if asanyarray:
+                # Add a new asanyarray layer to the output graph
+                dx = dx.map_blocks(cfdm_asanyarray, dtype=dx.dtype)
+
+        return dx
 
     # REVIEW: getitem: `todict`: new keywords 'apply_mask_hardness', 'asanyarray'
     def todict(
@@ -5819,7 +5877,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             axes: (sequence of) `int`
                 The new axis order of the data array. By default the order
                 is reversed. Each axis of the new order is identified by
-                its original integer position.
+                its original positive or negative integer position.
 
             {{inplace: `bool`, optional}}
 
@@ -5867,213 +5925,55 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         d._set_dask(dx)
 
-        # TODODASk: HDF5 chunks
+        # TODODASK: HDF5 chunks from branch hdf5-chunks
+
         return d
 
-    @classmethod
-    def empty(
-        cls,
-        shape,
-        dtype=None,
-        units=None,
-        calendar=None,
-        chunks=_DEFAULT_CHUNKS,
-    ):
-        """Return a new array of given shape and type, without
-        initialising entries.
-
-        :Parameters:
-
-            shape: `int` or `tuple` of `int`
-                The shape of the new array. e.g. ``(2, 3)`` or ``2``.
-
-            dtype: data-type
-                The desired output data-type for the array, e.g.
-                `numpy.int8`. The default is `numpy.float64`.
-
-            units: `str` or `Units`
-                The units for the new data array.
-
-            calendar: `str`, optional
-                The calendar for reference time units.
-
-            {{chunks: `int`, `tuple`, `dict` or `str`, optional}}
-
-                .. versionadded:: (cfdm) NEXTVERSION
-
-        :Returns:
-
-            `{{class}}`
-                Array of uninitialised (arbitrary) data of the given
-                shape and dtype.
-
-        **Examples**
-
-        >>> d = {{package}}.{{class}}.empty((2, 2))
-        >>> print(d.array)
-        [[ -9.74499359e+001  6.69583040e-309],
-         [  2.13182611e-314  3.06959433e-309]]         #uninitialised
-
-        >>> d = {{package}}.{{class}}.empty((2,), dtype=bool)
-        >>> print(d.array)
-        [ False  True]                                 #uninitialised
-
-        """
-        dx = da.empty(shape, dtype=dtype, chunks=chunks)
-        return cls(dx, units=units, calendar=calendar)
-
     @_inplace_enabled(default=False)
-    def reshape(self, *shape, merge_chunks=True, limit=None, inplace=False):
-        """Change the shape of the data without changing its values.
+    def uncompress(self, inplace=False):
+        """Uncompress the data.
 
-        It assumes that the array is stored in row-major order, and
-        only allows for reshapings that collapse or merge dimensions
-        like ``(1, 2, 3, 4) -> (1, 6, 4)`` or ``(64,) -> (4, 4, 4)``.
+        Only affects data that is compressed by convention, i.e.
 
-        .. versionadded:: (cfdm) NEXTVERSION
+          * Ragged arrays for discrete sampling geometries (DSG) and
+            simple geometry cell definitions.
+
+          * Compression by gathering.
+
+          * Compression by coordinate subsampling.
+
+        Data that is already uncompressed is returned
+        unchanged. Whether the data is compressed or not does not
+        alter its functionality nor external appearance, but may
+        affect how the data are written to a dataset on disk.
+
+        .. versionadded:: (cfdm) 1.7.3
+
+        .. seealso:: `array`, `compressed_array`, `source`
 
         :Parameters:
-
-            shape: `tuple` of `int`, or any number of `int`
-                The new shape for the data, which should be compatible
-                with the original shape. If an integer, then the
-                result will be a 1-d array of that length. One shape
-                dimension can be -1, in which case the value is
-                inferred from the length of the array and remaining
-                dimensions.
-
-            merge_chunks: `bool`
-                When True (the default) merge chunks using the logic
-                in `dask.array.rechunk` when communication is
-                necessary given the input array chunking and the
-                output shape. When False, the input array will be
-                rechunked to a chunksize of 1, which can create very
-                many tasks. See `dask.array.reshape` for details.
-
-            limit: int, optional
-                The maximum block size to target in bytes. If no limit
-                is provided, it defaults to a size in bytes defined by
-                the `cf.chunksize` function.
 
             {{inplace: `bool`, optional}}
 
         :Returns:
 
-            `Data` or `None`
-                 The reshaped data, or `None` if the operation was
-                 in-place.
-
-        **Examples**
-
-        >>> d = cf.Data(np.arange(12))
-        >>> print(d.array)
-        [ 0  1  2  3  4  5  6  7  8  9 10 11]
-        >>> print(d.reshape(3, 4).array)
-        [[ 0  1  2  3]
-         [ 4  5  6  7]
-         [ 8  9 10 11]]
-        >>> print(d.reshape((4, 3)).array)
-        [[ 0  1  2]
-         [ 3  4  5]
-         [ 6  7  8]
-         [ 9 10 11]]
-        >>> print(d.reshape(-1, 6).array)
-        [[ 0  1  2  3  4  5]
-         [ 6  7  8  9 10 11]]
-        >>>  print(d.reshape(1, 1, 2, 6).array)
-        [[[[ 0  1  2  3  4  5]
-           [ 6  7  8  9 10 11]]]]
-        >>> print(d.reshape(1, 1, -1).array)
-        [[[[ 0  1  2  3  4  5  6  7  8  9 10 11]]]]
-
-        """
-        d = _inplace_enabled_define_and_cleanup(self)
-        dx = d.to_dask_array()
-        dx = dx.reshape(*shape, merge_chunks=merge_chunks, limit=limit)
-
-        # Set axes when the new array has more dimensions than self
-        axes = None
-        ndim0 = self.ndim
-        if not ndim0:
-            axes = generate_axis_identifiers(dx.ndim)
-        else:
-            diff = dx.ndim - ndim0
-            if diff > 0:
-                axes = list(self._axes)
-                for _ in range(diff):
-                    axes.insert(0, new_axis_identifier(tuple(axes)))
-
-        if axes is not None:
-            d._axes = axes
-
-        d._set_dask(dx)
-
-        # cf-python: cyclic ?
-
-        return d
-
-    @_inplace_enabled(default=False)
-    def sum(
-        self,
-        axes=None,
-        squeeze=False,
-    ):
-        """Calculate sum values.
-
-        Calculates the sum value or the sum values along axes.
-
-        See
-        https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
-        for mathematical definitions.
-
-        .. versionadded:: (cfdm) TODODASK
-
-         ..seealso:: `max`, `min`
-
-        :Parameters:
-
-            {{collapse axes: (sequence of) `int`, optional}}
-
-        :Returns:
-
             `{{class}}` or `None`
-                The collapsed data, or `None` if the operation was
+                The uncompressed data, or `None` if the operation was
                 in-place.
 
         **Examples**
 
-        >>> a = np.ma.arange(12).reshape(4, 3)
-        >>> d = {{package}}.{{class}}(a, 'K')
-        >>> d[1, 1] = {{package}}.masked
-        >>> print(d.array)
-        [[0 1 2]
-         [3 -- 5]
-         [6 7 8]
-         [9 10 11]]
-        >>> d.sum()
-        <{{repr}}{{class}}(1, 1): [[62]] K>
-
-        >>> w = np.linspace(1, 2, 3)
-        >>> print(w)
-        [1.  1.5 2. ]
-        >>> d.sum(weights={{package}}.{{class}}(w, 'm'))
-        <{{repr}}{{class}}(1, 1): [[97.0]] K>
+        >>> d.get_compression_type()
+        'ragged contiguous'
+        >>> d.uncompress()
+        >>> d.get_compression_type()
+        ''
 
         """
-        # Parse the axes. By default flattened input is used.
-        try:
-            axes = self._parse_axes(axes)
-        except ValueError as error:
-            raise ValueError(f"Can't sum data: {error}")
+        d = _inplace_enabled_define_and_cleanup(self)
+        if d.get_compression_type():
+            d._del_Array(None)
 
-        d = self.copy()
-        dx = d.to_dask_array()
-        dx = dx.sum(axis=axes, keepdims=not squeeze)
-        d._set_dask(dx)
-
-        # TODODASK: _axes
-
-        # TODODASK: HDF5 chunks
         return d
 
     # ----------------------------------------------------------------

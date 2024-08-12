@@ -21,6 +21,7 @@ def read(
     domain=False,
     netcdf_backend=None,
     storage_options=None,
+    cache=True,
     chunks="auto",
     _implementation=_implementation,
 ):
@@ -330,6 +331,17 @@ def read(
 
             .. versionadded:: (cfdm) NEXTVERSION
 
+        cache: `bool`, optional
+            If True, the default, then cache the first and last array
+            elements of metadata constructs (not field constructs) for
+            fast future access. In addition, the second and
+            penultimate array elements will be cached from coordinate
+            bounds when there are two bounds per cell. For remote
+            data, setting *cache* to False may speed up the parsing of
+            the file.
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
         chunks: `str`, `int`, `None`, or `dict`, optional
             Specify the `dask` chunking of dimensions for data in the
             input files.
@@ -482,6 +494,7 @@ def read(
                 domain=domain,
                 storage_options=storage_options,
                 netcdf_backend=netcdf_backend,
+                cache=bool(cache),
                 chunks=chunks,
                 extra_read_vars=None,
             )

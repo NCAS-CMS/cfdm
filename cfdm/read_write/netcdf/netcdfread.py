@@ -913,6 +913,7 @@ class NetCDFRead(IORead):
         storage_options=None,
         _file_systems=None,
         netcdf_backend=None,
+        cache=True,
         chunks="auto",
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
@@ -970,6 +971,12 @@ class NetCDFRead(IORead):
 
             netcdf_backend: `None` or `str`, optional
                 See `cfdm.read` for details
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            cache: `bool`, optional
+                Control array element caching. See `cfdm.read` for
+                details
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1104,6 +1111,10 @@ class NetCDFRead(IORead):
             "file_systems": {},
             # Cache of open s3fs.File objects
             "s3fs_File_objects": [],
+            # --------------------------------------------------------
+            # Array element caching
+            # --------------------------------------------------------
+            "cache": cache,
             # --------------------------------------------------------
             # Dask
             # --------------------------------------------------------
@@ -6489,6 +6500,24 @@ class NetCDFRead(IORead):
         )
         data._original_filenames(define=filename)
 
+        # ------------------------------------------------------------
+        # Cache selected values from disk
+        # ------------------------------------------------------------
+        if (
+            not compression_index
+            and g.get("cache")
+            and self.implementation.get_construct_type(construct) != "field"
+        ):
+            # Only cache values from non-field data and
+            # non-compression-index data, on the assumptions that:
+            #
+            # a) Field data is, in general, so large that finding the
+            #    cached values takes too long.
+            #
+            # b) Cached values are never really required for
+            #    compression index data.
+            self._cache_data_elements(data, ncvar)
+
         return data
 
     def _create_domain_axis(self, size, ncdim=None):
@@ -10426,3 +10455,154 @@ class NetCDFRead(IORead):
             chunks = chunks2
 
         return chunks
+
+    def _cache_data_elements(self, data, ncvar):
+        """Cache selected element values.
+
+        Updates *data* in-place to store its first, second,
+        penultimate, and last element values (as appropriate).
+
+        Doing this here is quite cheap because only the individual
+        elements are read from the already-open file, as opposed to
+        being retrieved from *data* (which would require a whole dask
+        chunk to be read to get each single value).
+
+        However, empirical evidence shows that using netCDF4 to access
+        the first and last elements of a large array on disk
+        (e.g. shape (1, 75, 1207, 1442)) is slow (e.g. ~2 seconds) and
+        doesn't scale well with array size (i.e. it takes
+        disproportionally longer for larger arrays). Such arrays are
+        usually in field constructs, for which `cf.aggregate` does not
+        need to know any array values, so this method should be used
+        with caution, if at all, on field construct data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            data: `Data`
+                The data to be updated with its cached values.
+
+            ncvar: `str`
+                The name of the netCDF variable that contains the
+                data.
+
+        :Returns:
+
+            `None`
+
+        """
+
+        if data.data.get_compression_type():
+            # Don't get cached elements from arrays compressed by
+            # convention, as they'll likely be wrong.
+            return
+
+        g = self.read_vars
+
+        # Get the netCDF4.Variable for the data
+        if g["has_groups"]:
+            group, name = self._netCDF4_group(
+                g["variable_grouped_dataset"][ncvar], ncvar
+            )
+            variable = group.variables.get(name)
+        else:
+            variable = g["variables"].get(ncvar)
+
+        # Get the required element values
+        size = data.size
+        ndim = data.ndim
+
+        char = False
+        if variable.ndim == ndim + 1:
+            dtype = variable.dtype
+            if dtype is not str and dtype.kind in "SU":
+                # This variable is a netCDF classic style char array
+                # with a trailing dimension that needs to be collapsed
+                char = True
+
+        if ndim == 1:
+            # Also cache the second element for 1-d data, on the
+            # assumption that they may well be dimension coordinate
+            # data.
+            if size == 1:
+                indices = (0, -1)
+                value = variable[...]
+                values = (value, value)
+            elif size == 2:
+                indices = (0, 1, -1)
+                value = variable[-1:]
+                values = (variable[:1], value, value)
+            else:
+                indices = (0, 1, -1)
+                values = (variable[:1], variable[1:2], variable[-1:])
+        elif ndim == 2 and data.shape[-1] == 2:
+            # Assume that 2-d data with a last dimension of size 2
+            # contains coordinate bounds, for which it is useful to
+            # cache the upper and lower bounds of the the first and
+            # last cells.
+            indices = (0, 1, -2, -1)
+            ndim1 = ndim - 1
+            values = (
+                variable[(slice(0, 1),) * ndim1 + (slice(0, 1),)],
+                variable[(slice(0, 1),) * ndim1 + (slice(1, 2),)],
+            )
+            if data.size == 2:
+                values = values + values
+            else:
+                values += (
+                    variable[(slice(-1, None, 1),) * ndim1 + (slice(0, 1),)],
+                    variable[(slice(-1, None, 1),) * ndim1 + (slice(1, 2),)],
+                )
+        elif size == 1:
+            indices = (0, -1)
+            value = variable[...]
+            values = (value, value)
+        elif size == 3:
+            indices = (0, 1, -1)
+            if char:
+                values = variable[...].reshape(3, variable.shape[-1])
+            else:
+                values = variable[...].flatten()
+        else:
+            indices = (0, -1)
+            values = (
+                variable[(slice(0, 1),) * ndim],
+                variable[(slice(-1, None, 1),) * ndim],
+            )
+
+        # Create a dictionary of the element values
+        elements = {}
+        for index, value in zip(indices, values):
+            if char:
+                # Variable is a netCDF classic style char array, so
+                # collapse (by concatenation) the outermost (fastest
+                # varying) dimension. E.g. [['a','b','c']] becomes
+                # ['abc']
+                if value.dtype.kind == "U":
+                    value = value.astype("S")
+
+                a = netCDF4.chartostring(value)
+                shape = a.shape
+                a = np.array([x.rstrip() for x in a.flat])
+                a = np.reshape(a, shape)
+                value = np.ma.masked_where(a == "", a)
+
+            if np.ma.is_masked(value):
+                value = np.ma.masked
+            else:
+                try:
+                    value = value.item()
+                except (AttributeError, ValueError):
+                    # AttributeError: A netCDF string type scalar
+                    # variable comes out as Python str object, which
+                    # has no 'item' method.
+                    #
+                    # ValueError: A size-0 array can't be converted to
+                    # a Python scalar.
+                    pass
+
+            elements[index] = value
+
+        # Store the elements in the data object
+        data._set_cached_elements(elements)

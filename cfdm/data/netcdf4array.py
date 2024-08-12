@@ -49,6 +49,7 @@ class NetCDF4Array(
 
             shape: `tuple`
                 The array dimension sizes in the netCDF file.
+
             {{init mask: `bool`, optional}}
 
                 .. versionadded:: (cfdm) 1.8.2

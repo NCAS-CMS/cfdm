@@ -238,6 +238,8 @@ from .coordinateconversion import CoordinateConversion
 from .datum import Datum
 from .interiorring import InteriorRing
 
+from .units import Units
+
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .cellconnectivity import CellConnectivity
 from .cellmeasure import CellMeasure

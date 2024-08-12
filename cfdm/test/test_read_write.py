@@ -579,7 +579,6 @@ class read_writeTest(unittest.TestCase):
         geometry_1_file = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "geometry_1.nc"
         )
-        tmpfileh2 = "delme.nc"
         subprocess.run(
             " ".join(["ncdump", "-h", geometry_1_file, ">", tmpfileh2]),
             shell=True,
