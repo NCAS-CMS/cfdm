@@ -9,8 +9,7 @@ class CompressedArrayMixin:
     """
 
     def _lock_file_read(self, array):
-        """Try to return a dask array that does not support concurrent
-        reads.
+        """Try to return an array that doesn't support concurrent reads.
 
         .. versionadded:: (cfdm) NEXTVERSION
 

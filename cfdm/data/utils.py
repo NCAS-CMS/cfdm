@@ -412,11 +412,11 @@ def generate_axis_identifiers(n):
 
     **Examples**
 
-    >>> cf.data.creation.generate_axis_identifiers(0)
+    >>> cfdm.data.creation.generate_axis_identifiers(0)
     []
-    >>> cf.data.creation.generate_axis_identifiers(1)
+    >>> cfdm.data.creation.generate_axis_identifiers(1)
     ['dim0']
-    >>> cf.data.creation.generate_axis_identifiers(3)
+    >>> cfdm.data.creation.generate_axis_identifiers(3)
     ['dim0', 'dim1', 'dim2']
 
     """
@@ -498,7 +498,7 @@ def chunk_positions(chunks):
     **Examples**
 
     >>> chunks = ((1, 2), (9,), (44, 55, 66))
-    >>> for position in cf.data.utils.chunk_positions(chunks):
+    >>> for position in cfdm.data.utils.chunk_positions(chunks):
     ...     print(position)
     ...
     (0, 0, 0)
@@ -528,7 +528,7 @@ def chunk_shapes(chunks):
     **Examples**
 
     >>> chunks = ((1, 2), (9,), (4, 5, 6))
-    >>> for shape in cf.data.utils.chunk_shapes(chunks):
+    >>> for shape in cfdm.data.utils.chunk_shapes(chunks):
     ...     print(shape)
     ...
     (1, 9, 4)
@@ -558,7 +558,7 @@ def chunk_locations(chunks):
     **Examples**
 
     >>> chunks = ((1, 2), (9,), (4, 5, 6))
-    >>> for location in cf.data.utils.chunk_locations(chunks):
+    >>> for location in cfdm.data.utils.chunk_locations(chunks):
     ...     print(location)
     ...
     ((0, 1), (0, 9), (0, 4))
@@ -631,6 +631,8 @@ def normalize_chunks(chunks, shape=None, dtype=None):
 def dt2rt(array, units_in, units_out, dummy1=None):
     """Return numeric time values from datetime objects.
 
+    .. versionadded:: (cfdm) NEXTVERSION
+
     .. seealso:: `rt2dt`
 
     :Parameters:
@@ -658,10 +660,10 @@ def dt2rt(array, units_in, units_out, dummy1=None):
     **Examples**
 
     >>> print(
-    ...   cf.cfdatetime.dt2rt(
-    ...     np.ma.array([0, cf.dt('2001-11-16 12:00')], mask=[True, False]),
+    ...   cfdm.data.utils.dt2rt(
+    ...     np.ma.array([0, cftime.DatetimeGregorian(2001, 11, 16, 12)], mask=[True, False]),
     ...     None,
-    ...     units_out=cf.Units('days since 2000-01-01')
+    ...     units_out=cfdm.Units('days since 2000-01-01')
     ...   )
     ... )
     [-- 685.5]
@@ -684,6 +686,8 @@ def dt2rt(array, units_in, units_out, dummy1=None):
 
 def rt2dt(array, units_in, units_out=None, dummy1=None):
     """Convert reference times to date-time objects.
+
+    .. versionadded:: (cfdm) NEXTVERSION
 
     The returned array is always independent.
 
@@ -710,9 +714,9 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
     **Examples**
 
     >>> print(
-    ...   cf.cfdatetime.rt2dt(
+    ...   cfdm.data.utils.rt2dt(
     ...     np.ma.array([0, 685.5], mask=[True, False]),
-    ...     units_in=cf.Units('days since 2000-01-01')
+    ...     units_in=cfdm.Units('days since 2000-01-01')
     ...   )
     ... )
     [--
@@ -740,6 +744,8 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
 
 def st2datetime(date_string, calendar=None):
     """Parse an ISO 8601 date-time string into a `cftime` object.
+
+    .. versionadded:: (cfdm) NEXTVERSION
 
     :Parameters:
 
@@ -774,6 +780,8 @@ def st2datetime(date_string, calendar=None):
 def st2dt(array, units_in=None, dummy0=None, dummy1=None):
     """The returned array is always independent.
 
+    .. versionadded:: (cfdm) NEXTVERSION
+
     :Parameters:
 
         array: numpy array-like
@@ -801,6 +809,8 @@ def st2dt(array, units_in=None, dummy0=None, dummy1=None):
 
 def st2rt(array, units_in, units_out, dummy1=None):
     """The returned array is always independent.
+
+    .. versionadded:: (cfdm) NEXTVERSION
 
     :Parameters:
 

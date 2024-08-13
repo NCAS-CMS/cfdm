@@ -45,10 +45,10 @@ from .config import (
 from .creation import to_dask
 from .dask_utils import (
     cfdm_asanyarray,
+    cfdm_filled,
+    cfdm_harden_mask,
+    cfdm_soften_mask,
     cfdm_where,
-    filled,
-    harden_mask,
-    soften_mask,
 )
 from .utils import (
     allclose,
@@ -2546,21 +2546,20 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         # Convert months and years to days, because cftime won't work
         # otherwise.
+        #
+        # UDUNITS defines a year to be the interval between two
+        # successive passages of the sun through vernal equinox, and a
+        # month to be exactly 1/12 of that interval.
+        year_length = 365.242198781
 
-        d = self
-        dx = d.to_dask_array()
-        year_length = 365.242198781  # Number of days in a Udunits year
+        dx = self.to_dask_array()
         if units1 in ("month", "months"):
             dx = dx * (year_length / 12)
-            #            d = type(self)(dx, units=self.Units)
             units = self._Units_class(f"days since {reftime}", calendar)
         elif units1 in ("year", "years", "yr"):
             dx = dx * year_length
-            #            d = type(self)(dx, units=self.Units)
-            #            d = self * year_length
             units = self._Units_class(f"days since {reftime}", calendar)
 
-        #        dx = d.to_dask_array()
         dx = convert_to_datetime(dx, units)
 
         a = dx.compute()
@@ -2606,14 +2605,14 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         """
         # REVIEW: getitem: `dtype`: set 'asanyarray'
-        # The dask graph is never going to be computed, so we can set
+        # This dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
         return dx.dtype
 
     @dtype.setter
     def dtype(self, value):
-        # Only change the datatype if it's different to that of the
+        # Only change the data type if it's different to that of the
         # dask array
         if self.dtype != value:
             dx = self.to_dask_array()
@@ -3953,22 +3952,19 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         {'/home/data1', 'file:///data2'}
 
         """
-        out = set()
+        out = []
 
         # REVIEW: getitem: `file_locations`: set 'asanyarray'
-        # The dask graph is never going to be computed, so we can set
+        # This dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
         for key, a in self.todict(asanyarray=False).items():
             try:
-                out.update(a.file_locations())
+                out.extend(a.file_locations())
             except AttributeError:
                 # This chunk doesn't contain a file array
                 pass
 
-        # TODODASK: Get updates to this method from cf-python branch
-        #           active-storage-new
-
-        return out
+        return set(out)
 
     @_inplace_enabled(default=False)
     def filled(self, fill_value=None, inplace=False):
@@ -4020,10 +4016,10 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                     )
 
         # REVIEW: getitem: `filled`: set 'asanyarray'
-        # 'filled' has its own call to 'asanyarray', so we can
-        # set 'asanyarray=False'.
+        # 'cfdm_filled' has its own call to 'cfdm_asanyarray', so we
+        # can set 'asanyarray=False'.
         dx = d.to_dask_array(asanyarray=False)
-        dx = dx.map_blocks(filled, fill_value=fill_value, dtype=d.dtype)
+        dx = dx.map_blocks(cfdm_filled, fill_value=fill_value, dtype=d.dtype)
         d._set_dask(dx)
 
         return d
@@ -4174,11 +4170,10 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         else:
             axes = sorted(d._parse_axes(axes))
 
-        n_axes = len(axes)
-        if n_axes <= 1:
+        if len(axes) <= 1:
             return d
 
-        dx = d.to_dask_array()
+        shape = self.shape
 
         # It is important that the first axis in the list is the
         # left-most flattened axis.
@@ -4188,20 +4183,26 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         #      transposed with order [0, 1, 2, 4, 3, 5]
         order = [i for i in range(ndim) if i not in axes]
         order[axes[0] : axes[0]] = axes
-        dx = dx.transpose(order)
+        d = d.transpose(order)
 
         # Find the flattened shape.
         #
         # E.g. if the *transposed* shape is (10, 20, 30, 50, 40, 60)
         #      and *transposed* axes [2, 3] are to be flattened then
         #      the new shape will be (10, 20, 1500, 40, 60)
-        shape = d.shape
         new_shape = [n for i, n in enumerate(shape) if i not in axes]
         new_shape.insert(axes[0], reduce(mul, [shape[i] for i in axes], 1))
 
+        dx = d.to_dask_array()
         dx = dx.reshape(new_shape)
         d._set_dask(dx)
 
+        data_axes0 = d._axes
+        data_axes = [
+            axis for i, axis in enumerate(data_axes0) if i not in axes
+        ]
+        data_axes.insert(axes[0], new_axis_identifier(data_axes0))
+        d._axes = data_axes
         # TODODASK: HDF5 chunks from branch hdf5-chunks
 
         return d
@@ -4682,10 +4683,10 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         """
         # REVIEW: getitem: `hardmask`: set 'asanyarray'
-        # 'harden_mask' has its own call to 'asanyarray', so we
-        # can set 'asanyarray=False'.
+        # 'cfdm_harden_mask' has its own call to 'cfdm_asanyarray', so
+        # we can set 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
-        dx = dx.map_blocks(harden_mask, dtype=self.dtype)
+        dx = dx.map_blocks(cfdm_harden_mask, dtype=self.dtype)
         self._set_dask(dx, clear=_NONE)
         self.hardmask = True
 
@@ -4778,9 +4779,6 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         **Examples**
 
         """
-        # TODODASKAPI bring back expand_dims alias (or rather alias this to
-        # that)
-
         d = _inplace_enabled_define_and_cleanup(self)
 
         # Parse position
@@ -5506,10 +5504,10 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         """
         # REVIEW: getitem: `soften_mask`: set 'asanyarray'
-        # 'soften_mask' has its own call to 'asanyarray', so we
-        # can set 'asanyarray=False'.
+        # 'cfdm_soften_mask' has its own call to 'cfdm_asanyarray', so
+        # we can set 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
-        dx = dx.map_blocks(soften_mask, dtype=self.dtype)
+        dx = dx.map_blocks(cfdm_soften_mask, dtype=self.dtype)
         self._set_dask(dx, clear=_NONE)
         self.hardmask = False
 
@@ -5729,11 +5727,11 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         True
 
         >>> d.to_dask_array(apply_mask_hardness=True)
-        dask.array<harden_mask, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
+        dask.array<cfdm_harden_mask, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
 
         >>> d = {{package}}.{{class}}([1, 2, 3, 4], 'm', hardmask=False)
         >>> d.to_dask_array(apply_mask_hardness=True)
-        dask.array<soften_mask, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
+        dask.array<cfdm_soften_mask, shape=(4,), dtype=int64, chunksize=(4,), chunktype=numpy.ndarray>
 
         """
         dx = self._get_component("dask", None)

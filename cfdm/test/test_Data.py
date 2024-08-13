@@ -1,5 +1,4 @@
 import atexit
-import copy
 import datetime
 import faulthandler
 import itertools
@@ -577,70 +576,6 @@ class DataTest(unittest.TestCase):
         # Date-time array
         d = cfdm.Data([["2000-12-3 12:00"]], "days since 2000-12-01", dt=True)
         self.assertEqual(d.array, 2.5)
-
-    def test_Data_datetime_array(self):
-        """Test Data.datetime_array."""
-        d = cfdm.Data([11292.5, 11293], units="days since 1970-1-1")
-        dt = d.datetime_array
-        self.assertEqual(dt[0], datetime.datetime(2000, 12, 1, 12, 0))
-        self.assertEqual(dt[1], datetime.datetime(2000, 12, 2, 0, 0))
-
-        d[0] = cfdm.masked
-        dt = d.datetime_array
-        self.assertIs(dt[0], np.ma.masked)
-        self.assertEqual(dt[1], datetime.datetime(2000, 12, 2, 0, 0))
-
-        d = cfdm.Data(11292.5, units="days since 1970-1-1")
-        dt = d.datetime_array
-        self.assertEqual(dt[()], datetime.datetime(2000, 12, 1, 12, 0))
-
-        d[()] = cfdm.masked
-        dt = d.datetime_array
-        self.assertIs(dt[()], np.ma.masked)
-
-        # Scalar array
-        for d, x in zip(
-            [
-                cfdm.Data(11292.5, "days since 1970-1-1"),
-                cfdm.Data("2000-12-1 12:00", dt=True),
-            ],
-            [11292.5, 0],
-        ):
-            a = d.datetime_array
-            self.assertEqual(a.shape, ())
-            self.assertEqual(
-                a, np.array(cfdm.dt("2000-12-1 12:00", calendar="standard"))
-            )
-
-            a = d.array
-            self.assertEqual(a.shape, ())
-            self.assertEqual(a, x)
-
-        # Non-scalar array
-        for d, x in zip(
-            [
-                cfdm.Data([[11292.5, 11293.5]], "days since 1970-1-1"),
-                cfdm.Data([["2000-12-1 12:00", "2000-12-2 12:00"]], dt=True),
-            ],
-            ([[11292.5, 11293.5]], [[0, 1]]),
-        ):
-            a = d.datetime_array
-            self.assertTrue(
-                (
-                    a
-                    == np.array(
-                        [
-                            [
-                                cftime.DatetimeGregorian(2000, 12, 1, 12, 0),
-                                cftime.DatetimeGregorian(2000, 12, 2, 12, 0),
-                            ]
-                        ]
-                    )
-                ).all()
-            )
-
-            a = d.array
-            self.assertTrue((a == x).all())
 
     def test_Data_flatten(self):
         """Test Data.flatten."""
@@ -1583,6 +1518,24 @@ class DataTest(unittest.TestCase):
 
     def test_Data_datetime_array(self):
         """Test Data.datetime_array."""
+        d = cfdm.Data([11292.5, 11293], units="days since 1970-1-1")
+        dt = d.datetime_array
+        self.assertEqual(dt[0], datetime.datetime(2000, 12, 1, 12, 0))
+        self.assertEqual(dt[1], datetime.datetime(2000, 12, 2, 0, 0))
+
+        d[0] = cfdm.masked
+        dt = d.datetime_array
+        self.assertIs(dt[0], np.ma.masked)
+        self.assertEqual(dt[1], datetime.datetime(2000, 12, 2, 0, 0))
+
+        d = cfdm.Data(11292.5, units="days since 1970-1-1")
+        dt = d.datetime_array
+        self.assertEqual(dt[()], datetime.datetime(2000, 12, 1, 12, 0))
+
+        d[()] = cfdm.masked
+        dt = d.datetime_array
+        self.assertIs(dt[()], np.ma.masked)
+
         # Scalar array
         for d, x in zip(
             [
@@ -1873,26 +1826,6 @@ class DataTest(unittest.TestCase):
                 ).all()
             )
 
-    def test_Data_clear_after_dask_update(self):
-        """Test Data._clear_after_dask_update."""
-        d = cfdm.Data([1, 2, 3], "m")
-        dx = d.to_dask_array()
-
-        d.first_element()
-        d.second_element()
-        d.last_element()
-
-        self.assertTrue(d._get_cached_elements())
-
-        _ALL = cfdm.data.config._ALL
-        _CACHE = cfdm.data.config._CACHE
-
-        d._set_dask(dx, clear=_ALL ^ _CACHE)
-        self.assertTrue(d._get_cached_elements())
-
-        d._set_dask(dx, clear=_ALL)
-        self.assertFalse(d._get_cached_elements())
-
     def test_Data_mask(self):
         """Test Data.mask."""
         # Test for a masked Data object (having some masked points)
@@ -1930,8 +1863,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d3.mask.array[1], True)
 
     def test_Data__init__dtype_mask(self):
-        """Test Data.__init__ for Data with `dtype` and `mask`
-        keywords."""
+        """Test Data.__init__ with `dtype` and `mask` keywords."""
         for m in (1, 20, True):
             d = cfdm.Data([[1, 2, 3], [4, 5, 6]], mask=m)
             self.assertFalse(np.ma.count(d.array))
@@ -2420,7 +2352,7 @@ class DataTest(unittest.TestCase):
         a.persist(inplace=True)
         self.assertEqual(a.data.get_filenames(), set())
 
-    def test_Data_get_filenames(self):
+    def test_Data_chunk_indices(self):
         """Test Data.chunk_indices."""
         d = cfdm.Data(
             np.arange(405).reshape(3, 9, 15), chunks=((1, 2), (9,), (4, 5, 6))

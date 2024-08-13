@@ -10492,7 +10492,6 @@ class NetCDFRead(IORead):
             `None`
 
         """
-
         if data.data.get_compression_type():
             # Don't get cached elements from arrays compressed by
             # convention, as they'll likely be wrong.

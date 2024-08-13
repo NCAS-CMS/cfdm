@@ -34,74 +34,7 @@ def cfdm_asanyarray(a):
     return a
 
 
-def harden_mask(a):
-    """Harden the mask of a masked `numpy` array.
-
-    Has no effect if the array is not a masked array.
-
-    .. versionadded:: (cfdm) NEXTVERSION
-
-    .. seealso:: `cfdm.Data.harden_mask`
-
-    :Parameters:
-
-        a: `numpy.ndarray`
-            The array to have a hardened mask.
-
-    :Returns:
-
-        `numpy.ndarray`
-            The array with hardened mask.
-
-    """
-    # REVIEW: getitem: `harden_mask`: convert a to a usable array
-    a = cfdm_asanyarray(a)
-    if np.ma.isMA(a):
-        try:
-            a.harden_mask()
-        except AttributeError:
-            # Trap cases when the input array is not a numpy array
-            # (e.g. it might be numpy.ma.masked).
-            pass
-
-    return a
-
-
-def soften_mask(a):
-    """Soften the mask of a masked `numpy` array.
-
-    Has no effect if the array is not a masked array.
-
-    .. versionadded:: (cfdm) NEXTVERSION
-
-    .. seealso:: `cfdm.Data.soften_mask`
-
-    :Parameters:
-
-        a: `numpy.ndarray`
-            The array to have a softened mask.
-
-    :Returns:
-
-        `numpy.ndarray`
-            The array with softened mask.
-
-    """
-    # REVIEW: getitem: `soften_mask`: convert a to a usable array
-    a = cfdm_asanyarray(a)
-
-    if np.ma.isMA(a):
-        try:
-            a.soften_mask()
-        except AttributeError:
-            # Trap cases when the input array is not a numpy array
-            # (e.g. it might be numpy.ma.masked).
-            pass
-
-    return a
-
-
-def filled(a, fill_value=None):
+def cfdm_filled(a, fill_value=None):
     """Replace masked elements with a fill value.
 
     .. versionadded:: (cfdm) NEXTVERSION
@@ -134,12 +67,86 @@ def filled(a, fill_value=None):
     return np.ma.filled(a, fill_value=fill_value)
 
 
+def cfdm_harden_mask(a):
+    """Harden the mask of a masked `numpy` array.
+
+    Has no effect if the array is not a masked array.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    :Parameters:
+
+        a: `numpy.ndarray`
+            The array to have a hardened mask.
+
+    :Returns:
+
+        `numpy.ndarray`
+            The array with hardened mask.
+
+    """
+    # REVIEW: getitem: `harden_mask`: convert a to a usable array
+    a = cfdm_asanyarray(a)
+    if np.ma.isMA(a):
+        try:
+            a.harden_mask()
+        except AttributeError:
+            # Trap cases when the input array is not a numpy array
+            # (e.g. it might be numpy.ma.masked).
+            pass
+
+    return a
+
+
+def cfdm_soften_mask(a):
+    """Soften the mask of a masked `numpy` array.
+
+    Has no effect if the array is not a masked array.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    :Parameters:
+
+        a: `numpy.ndarray`
+            The array to have a softened mask.
+
+    :Returns:
+
+        `numpy.ndarray`
+            The array with softened mask.
+
+    """
+    # REVIEW: getitem: `soften_mask`: convert a to a usable array
+    a = cfdm_asanyarray(a)
+
+    if np.ma.isMA(a):
+        try:
+            a.soften_mask()
+        except AttributeError:
+            # Trap cases when the input array is not a numpy array
+            # (e.g. it might be numpy.ma.masked).
+            pass
+
+    return a
+
+
 def cfdm_where(array, condition, x, y, hardmask):
     """Set elements of *array* from *x* or *y* depending on *condition*.
 
     The input *array* is not changed in-place.
 
-    See `where` for details on the expected functionality.
+    **Missing data**
+
+    Array elements may be set to missing values if either *x* or *y*
+    are the `cfdm.masked` constant, or by assignment from any missing
+    data elements in *x* or *y*.
+
+    If the *array* mask is hard then missing data values in the array
+    will not be overwritten, regardless of the content of *x* and *y*.
+
+    If the *condition* contains missing data then the corresponding
+    elements in the array will not be assigned to, regardless of the
+    contents of *x* and *y*.
 
     .. note:: This function correctly sets the mask hardness of the
               output array.

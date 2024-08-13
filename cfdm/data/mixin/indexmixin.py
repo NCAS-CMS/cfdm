@@ -33,14 +33,14 @@ class IndexMixin:
     [[ 1,  2,  4],
      [21, 22, 24]]
 
-    .. versionadded:: NEXTVERSION
+    .. versionadded:: (cfdm) NEXTVERSION
 
     """
 
     def __array__(self, *dtype):
         """Convert the `{{class}}` into a `numpy` array.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
@@ -85,7 +85,7 @@ class IndexMixin:
         96]`` will be retrieved from the data when `__array__` is
         called.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `index`, `original_shape`, `__array__`,
                      `__getitem__`
@@ -208,10 +208,9 @@ class IndexMixin:
 
     @property
     def __asanyarray__(self):
-        """Whether the array is accessed by conversion to a `numpy`
-        array.
+        """True if the array is accessed by conversion to `numpy`.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -223,7 +222,7 @@ class IndexMixin:
     def _get_array(self, index=None):
         """Returns a subspace of the data as a `numpy` array.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `__array__`, `index`
 
@@ -249,7 +248,7 @@ class IndexMixin:
         The `shape` is defined by the `index` applied to the
         `original_shape`.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `shape`, `original_shape`
 
@@ -351,7 +350,7 @@ class IndexMixin:
         The `shape` is defined by the result of subspacing the data in
         its original shape with the indices given by `index`.
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `index`, `shape`
 
