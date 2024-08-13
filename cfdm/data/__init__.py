@@ -30,5 +30,4 @@ from .raggedindexedcontiguousarray import RaggedIndexedContiguousArray
 from .sparsearray import SparseArray
 from .subsampledarray import SubsampledArray
 
-from .data import DataOld
-from .data_new import Data
+from .data import Data
