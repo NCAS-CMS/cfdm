@@ -6173,63 +6173,6 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        if self._cfa_is_aggregation_variable(ncvar):
-            # --------------------------------------------------------
-            # Create a netCDF array for an aggregation variable
-            # --------------------------------------------------------
-            kwargs = self._create_netcdfarray(
-                ncvar,
-                unpacked_dtype=unpacked_dtype,
-                coord_ncvar=coord_ncvar,
-                return_kwargs_only=True,
-            )
-
-            # Get rid of the incorrect shape. This will end up getting set
-            # correctly by the CFANetCDFArray instance.
-            kwargs.pop("shape", None)
-
-            fragment_array_variables = g["fragment_array_variables"]
-            standardised_terms = ("location", "file", "address", "value")
-
-            instructions = []
-            aggregation_instructions = {}
-            for term, term_ncvar in g["parsed_aggregated_data"][ncvar].items():
-                if term not in standardised_terms:
-                    continue
-
-                aggregation_instructions[term] = fragment_array_variables[
-                    term_ncvar
-                ]
-                instructions.append(f"{term}: {term_ncvar}")
-
-                if term == "file":
-                    kwargs["substitutions"] = g["location_substitutions"].get(
-                        term_ncvar
-                    )
-
-            kwargs["x"] = aggregation_instructions
-            kwargs["instructions"] = " ".join(sorted(instructions))
-
-            # Use the kwargs to create a CFANetCDFArray instance
-            if g["original_netCDF4"]:
-                array = self.implementation.initialise_CFANetCDF4Array(
-                    **kwargs
-                )
-            else:
-                # h5netcdf
-                array = self.implementation.initialise_CFAH5netcdfArray(
-                    **kwargs
-                )
-
-            if return_kwargs_only:
-                return kwargs
-
-            return array, kwargs
-
-        # ------------------------------------------------------------
-        # Still here? Then create a netCDF array for a non-aggregation
-        # variable.
-        # ------------------------------------------------------------
         if g["has_groups"]:
             # Get the variable from the original grouped file. This is
             # primarily so that unlimited dimensions don't come out
@@ -6298,14 +6241,58 @@ class NetCDFRead(IORead):
             "storage_options": g["file_system_storage_options"].get(filename),
         }
 
+        if not self._cfa_is_aggregation_variable(ncvar):
+            if return_kwargs_only:
+                return kwargs
+
+            if g["original_netCDF4"]:
+                array = self.implementation.initialise_NetCDF4Array(**kwargs)
+            else:
+                # h5netcdf
+                array = self.implementation.initialise_H5netcdfArray(**kwargs)
+
+            return array, kwargs
+
+        # ------------------------------------------------------------
+        # Still here? Then create a netCDF array for an
+        # aggregation variable
+        # ------------------------------------------------------------
+
+        # Get rid of the incorrect shape. This will end up getting set
+        # correctly by the CFANetCDFArray instance.
+        kwargs.pop("shape", None)
+
+        fragment_array_variables = g["fragment_array_variables"]
+        standardised_terms = ("shape", "location", "address", "value")
+
+        instructions = []
+        aggregation_instructions = {}
+        for term, term_ncvar in g["parsed_aggregated_data"][ncvar].items():
+            if term not in standardised_terms:
+                continue
+
+            aggregation_instructions[term] = fragment_array_variables[
+                term_ncvar
+            ]
+            instructions.append(f"{term}: {term_ncvar}")
+
+            if term == "file":
+                kwargs["substitutions"] = g["location_substitutions"].get(
+                    term_ncvar
+                )
+
+        kwargs["x"] = aggregation_instructions
+        kwargs["instructions"] = " ".join(sorted(instructions))
+
         if return_kwargs_only:
             return kwargs
 
+        # Use the kwargs to create a CFANetCDFArray instance
         if g["original_netCDF4"]:
-            array = self.implementation.initialise_NetCDF4Array(**kwargs)
+            array = self.implementation.initialise_CFANetCDF4Array(**kwargs)
         else:
             # h5netcdf
-            array = self.implementation.initialise_H5netcdfArray(**kwargs)
+            array = self.implementation.initialise_CFAH5netcdfArray(**kwargs)
 
         return array, kwargs
 
@@ -6610,12 +6597,51 @@ class NetCDFRead(IORead):
             self._cache_data_elements(data, ncvar)
 
         # ------------------------------------------------------------
-        # Set aggregation parameters
+        # Set data aggregation parameters
         # ------------------------------------------------------------
-        self._cfa_set_aggregation_parameters(
-            construct, data, ncvar, netcdf_array, netcdf_kwargs
-        )
+        if not self._cfa_is_aggregation_variable(ncvar):
+            # For non-aggregation variables, set the CFA write status
+            # to True when there is exactly one dask chunk.
+            if data.npartitions == 1:
+                data._nc_set_aggregated_write(True)
+                data._nc_set_aggregated_fragment_type("location")
+        else:
+            if construct is not None:
+                # Remove the aggregation attributes from the construct
+                self.implementation.del_property(
+                    construct, "aggregated_dimensions", None
+                )
+                aggregated_data = self.implementation.del_property(
+                    construct, "aggregated_data", None
+                )
+                # Store the 'aggregated_data' attribute information
+                if aggregated_data:
+                    data.nc_set_aggregated_data(aggregated_data)
 
+            # Set the CFA write status to True iff each non-aggregated
+            # axis has exactly one Dask chunk
+            cfa_write = True
+            for n, numblocks in zip(
+                netcdf_array.get_fragment_array_shape(), data.numblocks
+            ):
+                if n == 1 and numblocks > 1:
+                    # Note: n is always 1 for non-aggregated axes
+                    cfa_write = False
+                    break
+
+            data._nc_set_aggregated_write(cfa_write)
+
+            # Store the file substitutions
+            data.nc_update_aggregated_substitutions(
+                netcdf_kwargs.get("substitutions")
+            )
+
+            # Store the fragment type
+            data._nc_set_aggregated_fragment_type(
+                netcdf_array.get_fragment_type()
+            )
+
+        # Return the data object
         return data
 
     def _create_domain_axis(self, size, ncdim=None):
@@ -10801,51 +10827,3 @@ class NetCDFRead(IORead):
 
         g["parsed_aggregated_data"][ncvar] = out
         return out
-
-    def _cfa_set_aggregation_parameters(
-        self, construct, data, ncvar, netcdf_array, netcdf_kwargs
-    ):
-        """TODOCFA."""
-        # For non-aggregation variables, set the CFA write status to
-        # True when there is exactly one dask chunk.
-        if not self._cfa_is_aggregation_variable(ncvar):
-            if data.npartitions == 1:
-                data._nc_set_aggregated_write(True)
-                data._nc_set_aggregated_fragment_type("location")
-                
-            return
-
-        # Still here? Then this is an aggregation variable.
-
-        if construct is not None:
-            # Remove the aggregation attributes from the construct
-            self.implementation.del_property(
-                construct, "aggregated_dimensions", None
-            )
-            aggregated_data = self.implementation.del_property(
-                construct, "aggregated_data", None
-            )
-            # Store the 'aggregated_data' attribute information
-            if aggregated_data:
-                data._nc_set_aggregated_data(aggregated_data)
-
-        # Set the CFA write status to True iff each non-aggregated
-        # axis has exactly one Dask chunk
-        cfa_write = True
-        for n, numblocks in zip(
-            netcdf_array.get_fragment_shape(), data.numblocks
-        ):
-            if n == 1 and numblocks > 1:
-                # Note: n is always 1 for non-aggregated axes
-                cfa_write = False
-                break
-
-        data._nc_set_aggregated_write(cfa_write)
-
-        # Store the file substitutions
-        data.nc_update_aggregated_substitutions(
-            netcdf_kwargs.get("substitutions")
-        )
-
-        # Store the fragment type
-        data._nc_set_aggregated_fragment_type(netcdf_array.get_fragment_type())

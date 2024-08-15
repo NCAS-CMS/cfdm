@@ -157,13 +157,14 @@ class CFATest(unittest.TestCase):
                 f"${{base}}: {cwd}",
             )
             self.assertEqual(
-                cfa_location[...], f"file://${{base}}/{os.path.basename(tmpfile1)}"
+                cfa_location[...],
+                f"file://${{base}}/{os.path.basename(tmpfile1)}",
             )
             nc.close()
 
         g = cfdm.read(tmpfile2)
         self.assertEqual(len(g), 1)
-        self.assertTrue(f.equals(g[0]))
+        self.assertTrue(f.equals(g[0], verbose=-1))
 
     def test_CFA_substitutions_2(self):
         """Test aggregation substitution URI substitutions (2)."""

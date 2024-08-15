@@ -5539,7 +5539,7 @@ class NetCDFWrite(IOWrite):
                 "aggregated_data": " ".join(sorted(aggregated_data_attr)),
             },
         )
-        
+
     def _filled_string_array(self, array, fill_value=""):
         """Fill a string array.
 

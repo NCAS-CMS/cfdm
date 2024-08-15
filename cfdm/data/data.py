@@ -6020,14 +6020,14 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
     @_inplace_enabled(default=False)
     def unique(self, inplace=False):
-        """TODOCFA"""
+        """TODOCFA."""
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         u = np.unique(dx.compute())
         dx = to_dask(u, _DEFAULT_CHUNKS)
         d._set_dask(dx)
         return d
-    
+
     # ----------------------------------------------------------------
     # Aliases
     # ----------------------------------------------------------------

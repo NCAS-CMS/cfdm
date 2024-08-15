@@ -1,10 +1,6 @@
 from ..abstract import Array
 from ..mixin import FileArrayMixin, IndexMixin
-from . import FragmentH5netcdfArray, FragmentNetCDF4Array
 from .mixin import FragmentArrayMixin
-
-# from .fragmentnetcdf4array import FragmentNetCDF4Array
-# from .fragmenth5netcdfarray import FragmentH5netcdfArray
 
 
 class FragmentFileArray(
@@ -23,6 +19,8 @@ class FragmentFileArray(
 
     def __new__(cls, *args, **kwargs):
         """TODOCFA."""
+        from . import FragmentH5netcdfArray, FragmentNetCDF4Array
+
         instance = super().__new__(cls)
         instance._FragmentArrays = (
             FragmentNetCDF4Array,

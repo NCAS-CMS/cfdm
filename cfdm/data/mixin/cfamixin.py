@@ -21,7 +21,7 @@ class CFAMixin:
         """
         # Import fragment array classes. Do this here (as opposed to
         # outside the class) to avoid a circular import.
-        from ...fragment import FragmentFileArray, FragmentValueArray
+        from ..fragment import FragmentFileArray, FragmentValueArray
 
         instance = super().__new__(cls)
         instance._FragmentArray = {
@@ -142,6 +142,11 @@ class CFAMixin:
             except AttributeError:
                 substitutions = None
 
+            try:
+                fragment_type = source.get_fragment_type()
+            except AttributeError:
+                fragment_type = None
+
         elif filename is not None:
             shape, fragment_array_shape, fragment_type, aggregated_data = (
                 self._parse_cfa(x, substitutions)
@@ -176,9 +181,6 @@ class CFAMixin:
         self._set_component("aggregated_data", aggregated_data, copy=False)
         self._set_component("instructions", instructions, copy=False)
         self._set_component("fragment_type", fragment_type, copy=False)
-
-        print ('init', fragment_type)
-        
         if substitutions is not None:
             self._set_component(
                 "substitutions", substitutions.copy(), copy=False
@@ -211,10 +213,10 @@ class CFAMixin:
         """
         aggregated_data = {}
 
-        location = x["location"]
-        ndim = location.shape[0]
+        shape = x["shape"]
+        ndim = shape.shape[0]
         compressed = np.ma.compressed
-        chunks = [compressed(i).tolist() for i in location]
+        chunks = [compressed(i).tolist() for i in shape]
         aggregated_shape = [sum(c) for c in chunks]
         fragment_array_indices = chunk_positions(chunks)
         fragment_shapes = chunk_locations(chunks)
@@ -769,7 +771,8 @@ class CFAMixin:
             kwargs = aggregated_data[fragment_index].copy()
             kwargs.pop("shape", None)
 
-            if storage_options and fragment_type == "location":
+            if fragment_type == "location":
+                kwargs["filename"] = kwargs.pop("location")
                 kwargs["storage_options"] = storage_options
 
             fragment = FragmentArray(

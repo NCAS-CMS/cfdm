@@ -4726,15 +4726,17 @@ class NetCDFAggregation(NetCDFMixin):
         {}
 
         """
-        if value:
-            if isinstance(value, str):
-                v = split(r"\s+", value)
-                value = {term[:-1]: var for term, var in zip(v[::2], v[1::2])}
-            else:
-                # 'value' is a dictionary
-                value = value.copy()
-
-            self._get_component("netcdf")["aggregated_data"] = value
+        if not value:
+            self.nc_del_aggregated_data()
+            
+        if isinstance(value, str):
+            v = split(r"\s+", value)
+            value = {term[:-1]: var for term, var in zip(v[::2], v[1::2])}
+        else:
+            # 'value' is a dictionary
+            value = value.copy()
+            
+        self._get_component("netcdf")["aggregated_data"] = value
 
     def _nc_del_aggregated_fragment_type(self, default=ValueError()):
         """TODOCFA.
