@@ -28,7 +28,7 @@ from ..decorators import (
 from ..functions import _numpy_allclose, abspath, parse_indices
 from ..mixin.container import Container
 from ..mixin.files import Files
-from ..mixin.netcdf import NetCDFHDF5
+from ..mixin.netcdf import NetCDFAggregation, NetCDFHDF5
 
 # REVIEW: getitem: `data.py`: import asanyarray, filled
 from .abstract import Array
@@ -63,7 +63,7 @@ from .utils import (
 logger = logging.getLogger(__name__)
 
 
-class Data(Container, NetCDFHDF5, Files, core.Data):
+class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     """An N-dimensional data array with units and masked values.
 
     * Contains an N-dimensional, indexable and broadcastable array with
@@ -1703,7 +1703,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `_del_Array`, `_del_cached_elements`,
-                     `_cfa_del_write`, `_set_dask`
+                     `nc_del_aggregated_write`, `_set_dask`
 
         :Parameters:
 
@@ -1754,24 +1754,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         if clear & _CFA:
             # Set the CFA write status to False
-            self._cfa_del_write()
-
-    def _cfa_del_write(self):
-        """Set the CFA write status of the data to `False`.
-
-        TODOCFA: Placeholder
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `cfa_get_write`, `_cfa_set_write`
-
-        :Returns:
-
-            `bool`
-                The CFA status prior to deletion.
-
-        """
-        return self._del_component("cfa_write", False)
+            self.nc_del_aggregated_write()
 
     def _del_cached_elements(self):
         """Delete any cached element values.

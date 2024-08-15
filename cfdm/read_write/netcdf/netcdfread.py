@@ -1630,7 +1630,7 @@ class NetCDFRead(IORead):
                 variable_dimensions[ncvar] = tuple(map(str, ncdimensions))
 
                 # Parse the fragment array variables
-                parsed_aggregated_data = self._parse_aggregated_data(
+                self._parse_aggregated_data(
                     ncvar, attributes.get("aggregated_data")
                 )
 
@@ -6170,9 +6170,9 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        if self._is_aggregation_variable(ncvar):
+        if self._cfa_is_aggregation_variable(ncvar):
             # --------------------------------------------------------
-            # Create a netCDF array for a non-aggregation variable
+            # Create a netCDF array for an aggregation variable
             # --------------------------------------------------------
             kwargs = self._create_netcdfarray(
                 ncvar,
@@ -6346,18 +6346,20 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        array, kwargs = self._create_netcdfarray(
+        netcdf_array, netcdf_kwargs = self._create_netcdfarray(
             ncvar,
             unpacked_dtype=unpacked_dtype,
             coord_ncvar=coord_ncvar,
         )
 
-        if array is None:
+        if netcdf_array is None:
             return None
 
-        filename = kwargs["filename"]
+        array = netcdf_array
+        
+        filename = netcdf_kwargs["filename"]
 
-        attributes = kwargs["attributes"]
+        attributes = netcdf_kwargs["attributes"]
         units = attributes.get("units")
         calendar = attributes.get("calendar")
 
@@ -6599,14 +6601,11 @@ class NetCDFRead(IORead):
             # b) Cached values are never really required for
             #    compression index data.
             self._cache_data_elements(data, ncvar)
-        
-        # Set the CF aggregation variable write status to True when
-        # there is exactly one Dask chunk
-        if data.npartitions == 1:
-            data._cfa_set_write(True)
 
-        # Store the file substitutions
-        data.cfa_update_file_substitutions(kwargs.get("substitutions"))
+        # ------------------------------------------------------------
+        # Set aggregation parameters
+        # ------------------------------------------------------------
+        self._cfa_set_aggregation_parameters(data, netcdf_array, netcdf_kwargs)
 
         return data
 
@@ -10696,7 +10695,7 @@ class NetCDFRead(IORead):
         # Store the elements in the data object
         data._set_cached_elements(elements)
         
-    def _is_aggregation_variable(self, ncvar):
+    def _cfa_is_aggregation_variable(self, ncvar):
         """Return True if *ncvar* is a CF-netCDF aggregated variable.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -10718,7 +10717,7 @@ class NetCDFRead(IORead):
             and ncvar not in g["external_variables"]
         )
 
-    def _parse_aggregated_data(self, ncvar, aggregated_data):
+    def _cfa_parse_aggregated_data(self, ncvar, aggregated_data):
         """Parse a CF-netCDF 'aggregated_data' attribute.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -10757,7 +10756,7 @@ class NetCDFRead(IORead):
             out[term] = term_ncvar
 
             if term_ncvar in fragment_array_variables:
-                # Already processed this term
+                # We've already processed this term
                 continue
 
             attributes =  variable_attributes[term_ncvar]
@@ -10794,33 +10793,41 @@ class NetCDFRead(IORead):
         g["parsed_aggregated_data"][ncvar] = out
         return out
 
-    def _cfa_fff(self, ncvar, data):
-        if self._is_aggregated_variable(ncvar):            
-            # Set the CFA write status to True iff each non-aggregated
-            # axis has exactly one dask storage chunk
-            if cfa_term:
-                data._cfa_set_term(True)
-            else:
-                cfa_write = True
-                for n, numblocks in zip(
-                    cfa_array.get_fragment_shape(), data.numblocks
-                ):
-                    if n == 1 and numblocks > 1:
-                        # Note: 'n == 1' is True for non-aggregated axes
-                        cfa_write = False
-                        break
-    
-                data._cfa_set_write(cfa_write)
-    
-                # Store the 'aggregated_data' attribute TODOCFA - what is this for?
-                if aggregated_data:
-                    data.cfa_set_aggregated_data(aggregated_data)
-    
-                # Store the file substitutions
-                data.cfa_update_file_substitutions(kwargs.get("substitutions"))
-
-        else:
-            # Set the CFA write status to True when there is exactly
-            # one dask chunk
+    def _cfa_set_aggregation_parameters(self, data, netcdf_array, netcdf_kwargs):
+        """TODOCFA"""
+        # For non-aggregation variables, set the CFA write status to
+        # True when there is exactly one dask chunk.
+        if not self._cfa_is_aggregated_variable(ncvar):            
             if data.npartitions == 1:
-                data._cfa_set_write(True)
+                data._set_aggregated_write(True)
+                data._nc_set_aggregated_fragment_type("location")
+        
+            return     
+
+        # Still here? Then this is an aggregation variable.
+        
+        # Set the CFA write status to True iff each non-aggregated
+        # axis has exactly one Dask chunk
+        cfa_write = True
+        for n, numblocks in zip(
+                netcdf_array.get_fragment_shape(), data.numblocks
+        ):
+            if n == 1 and numblocks > 1:
+                # Note: n is always 1 for non-aggregated axes
+                cfa_write = False
+                break
+            
+        data._set_aggregated_write(cfa_write)
+        
+        # Store the 'aggregated_data' attribute information
+        if aggregated_data:
+            data.nc_set_aggregated_data(aggregated_data)
+            
+        # Store the file substitutions
+        data.nc_update_aggregated_substitutions(
+            netcdf_kwargs.get("substitutions")
+        )
+            
+        # Store the fragment type
+        data._nc_set_aggregated_fragment_type(netcdf_array.get_fragment_type())
+        

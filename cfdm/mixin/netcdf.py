@@ -1,3 +1,5 @@
+from re import split
+
 from ..core.functions import deepcopy
 
 
@@ -3577,18 +3579,6 @@ class NetCDFSubsampledDimension(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         """
         return self._nc_del("subsampled_dimension", default=default)
 
-    #        try:
-    #            return self._get_component("netcdf").pop("subsampled_dimension")
-    #        except KeyError:
-    #            if default is None:
-    #                return default
-    #
-    #            return self._default(
-    #                default,
-    #                f"{self.__class__.__name__} has no netCDF subsampled "
-    #                "dimension name",
-    #            )
-
     def nc_get_subsampled_dimension(self, default=ValueError()):
         """Return the netCDF subsampled dimension name.
 
@@ -3630,19 +3620,6 @@ class NetCDFSubsampledDimension(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         """
         return self._nc_get("subsampled_dimension", default=default)
 
-    #
-    #        try:
-    #            return self._get_component("netcdf")["subsampled_dimension"]
-    #        except KeyError:
-    #            if default is None:
-    #                return default
-    #
-    #            return self._default(
-    #                default,
-    #                f"{self.__class__.__name__} has no netCDF subsampled "
-    #                "dimension name",
-    #            )
-
     def nc_has_subsampled_dimension(self):
         """Whether the netCDF subsampled dimension name has been set.
 
@@ -3675,7 +3652,6 @@ class NetCDFSubsampledDimension(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
         None
 
         """
-        #        return "subsampled_dimension" in self._get_component("netcdf")
         return self._nc_has("subsampled_dimension")
 
     def nc_set_subsampled_dimension(self, value):
@@ -3720,28 +3696,6 @@ class NetCDFSubsampledDimension(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
 
         """
         return self._nc_set("subsampled_dimension", value)
-
-    #        if not value or value == "/":
-    #            raise ValueError(
-    #                f"Invalid netCDF subsampled dimension name: {value!r}"
-    #            )
-    #
-    #        if "/" in value:
-    #            if not value.startswith("/"):
-    #                raise ValueError(
-    #                    "A netCDF subsampled dimension name with a group "
-    #                    f"structure must start with a '/'. Got {value!r}"
-    #                )
-    #
-    #            if value.count("/") == 1:
-    #                value = value[1:]
-    #            elif value.endswith("/"):
-    #                raise ValueError(
-    #                    "A netCDF subsampled dimension name with a group "
-    #                    f"structure can't end with a '/'. Got {value!r}"
-    #                )
-    #
-    #        self._get_component("netcdf")["subsampled_dimension"] = value
 
     def nc_subsampled_dimension_groups(self):
         """Return the netCDF subsampled dimension group hierarchy.
@@ -4565,3 +4519,577 @@ class NetCDFNodeCoordinateVariable(NetCDF, NetCDFMixin, NetCDFGroupsMixin):
             nc_set=self.nc_set_node_coordinate_variable,
             nc_groups=self.nc_node_coordinate_variable_groups,
         )
+
+
+class NetCDFAggregation(NetCDFMixin):
+    """Mixin class for netCDF aggregated variables.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    """
+    def nc_del_aggregated_data(self):
+        """Remove the netCDF aggregated_data terms.
+
+        The aggregation instructions are stored in the
+        ``aggregation_data`` attribute of a CF aggregation variable.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_get_aggregated_data`,
+                     `nc_has_aggregated_data`,
+                     `nc_set_aggregated_data`
+
+        :Returns:
+
+            `dict`
+                The removed netCDF aggregated_data terms in a
+                dictionary whose key/value pairs are the feature names
+                and their corresponding fragment array variable names.
+
+        **Examples**
+
+        >>> f.nc_set_aggregated_data(
+        ...     {'shape': 'shape',
+        ...      'location': 'location',
+        ...      'address': 'address'}
+        ... )
+        >>> f.nc_has_aggregated_data()
+        True
+        >>> f.nc_get_aggregated_data()
+        {'location': 'nc_location',
+         'file': 'nc_file',
+         'address': 'nc_address',
+         'format': 'c ',
+         'tracking_id': 'tracking_id'}
+        >>> f.nc_del_aggregated_data()
+        {'location': 'nc_location',
+         'file': 'nc_file',
+         'address': 'nc_address',
+         'format': 'nc_format',
+         'tracking_id': 'tracking_id'}
+        >>> f.nc_has_aggregated_data()
+        False
+        >>> f.nc_del_aggregated_data()
+        {}
+        >>> f.nc_get_aggregated_data()
+        {}
+
+        """
+        return self._nc_del("nc_aggregated_data", {}).copy()
+
+    def nc_get_aggregated_data(self):
+        """Return the netCDF aggregated_data terms.
+
+        The aggregation instructions are stored in the
+        ``aggregation_data`` attribute of a CF aggregation variable.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_aggregated_data`,
+                     `nc_has_aggregated_data`,
+                     `nc_set_aggregated_data`
+
+        :Returns:
+
+            `dict`
+                The netCDF aggregated_data terms in a dictionary whose
+                key/value pairs are the feature names and their
+                corresponding fragment array variable names.
+
+        **Examples**
+
+        >>> f.nc_set_aggregated_data(
+        ...     {'location': 'nc_location',
+        ...      'file': 'nc_file',
+        ...      'address': 'nc_address',
+        ...      'format': 'nc_format',
+        ...      'tracking_id': 'tracking_id'}
+        ... )
+        >>> f.nc_has_aggregated_data()
+        True
+        >>> f.nc_get_aggregated_data()
+        {'location': 'nc_location',
+         'file': 'nc_file',
+         'address': 'nc_address',
+         'format': 'nc_format',
+         'tracking_id': 'tracking_id'}
+        >>> f.nc_del_aggregated_data()
+        {'location': 'nc_location',
+         'file': 'nc_file',
+         'address': 'nc_address',
+         'format': 'nc_format',
+         'tracking_id': 'tracking_id'}
+        >>> f.nc_has_aggregated_data()
+        False
+        >>> f.nc_del_aggregated_data()
+        {}
+        >>> f.nc_get_aggregated_data()
+        {}
+
+        """
+        out = self._nc_get("nc_aggregated_data", default=None)
+        if out is not None:
+            return out.copy()
+
+        return {}
+
+    def nc_has_aggregated_data(self):
+        """Whether any netCDF aggregated_data terms have been set.
+
+        The aggregation instructions are stored in the
+        ``aggregation_data`` attribute of a CF aggregation variable.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_aggregated_data`,
+                     `nc_get_aggregated_data`,
+                     `nc_set_aggregated_data`
+
+        :Returns:
+
+            `bool`
+                `True` if the netCDF aggregated_data terms have been
+                set, otherwise `False`.
+
+        **Examples**
+
+        >>> f.nc_set_aggregated_data(
+        ...     {'location': 'nc_location',
+        ...      'file': 'nc_file',
+        ...      'address': 'nc_address',
+        ...      'format': 'nc_format',
+        ...      'tracking_id': 'tracking_id'}
+        ... )
+        >>> f.nc_has_aggregated_data()
+        True
+        >>> f.nc_get_aggregated_data()
+        {'location': 'nc_location',
+         'file': 'nc_file',
+         'address': 'nc_address',
+         'format': 'nc_format',
+         'tracking_id': 'tracking_id'}
+        >>> f.nc_del_aggregated_data()
+        {'location': 'nc_location',
+         'file': 'nc_file',
+         'address': 'nc_address',
+         'format': 'nc_format',
+         'tracking_id': 'tracking_id'}
+        >>> f.nc_has_aggregated_data()
+        False
+        >>> f.nc_del_aggregated_data()
+        {}
+        >>> f.nc_get_aggregated_data()
+        {}
+
+        """
+        return self._nc_has("nc_aggregated_data")
+
+    def nc_set_aggregated_data(self, value):
+        """Set the netCDF aggregated_data terms.
+
+        The aggregation instructions are stored in the
+        ``aggregation_data`` attribute of a CF aggregation variable.
+
+        If there are any ``/`` (slash) characters in the netCDF
+        variable names then these act as delimiters for a group
+        hierarchy. By default, or if the name starts with a ``/``
+        character and contains no others, the name is assumed to be in
+        the root group.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_aggregated_data`,
+                     `nc_get_aggregated_data`,
+                     `nc_has_aggregated_data`
+
+        :Parameters:
+
+            value: `str` or `dict`
+                The aggregation instruction terms and their TODOCFA
+                corresponding netCDF variable names. Either a
+                CFA-netCDF-compliant string value of an
+                ``aggregated_data`` attribute, or a dictionary whose
+                key/value pairs are the aggregation instruction terms
+                and their corresponding variable names.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f.nc_set_aggregated_data(
+        ...     {'location': 'nc_location',
+        ...      'file': 'nc_file',
+        ...      'address': 'nc_address',
+        ...      'format': 'nc_format',
+        ...      'tracking_id': 'tracking_id'}
+        ... )
+        >>> f.nc_has_aggregated_data()
+        True
+        >>> f.nc_get_aggregated_data()
+        {'location': 'nc_location',
+         'file': 'nc_file',
+         'address': 'nc_address',
+         'format': 'nc_format',
+         'tracking_id': 'tracking_id'}
+        >>> f.nc_del_aggregated_data()
+        {'location': 'nc_location',
+         'file': 'nc_file',
+         'address': 'nc_address',
+         'format': 'nc_format',
+         'tracking_id': 'tracking_id'}
+        >>> f.nc_has_aggregated_data()
+        False
+        >>> f.nc_del_aggregated_data()
+        {}
+        >>> f.nc_get_aggregated_data()
+        {}
+
+        """
+        if value:
+            if isinstance(value, str):
+                v = split("\s+", value)
+                value = {term[:-1]: var for term, var in zip(v[::2], v[1::2])}
+            else:
+                # 'value' is a dictionary
+                value = value.copy()
+
+            self._nc_set("nc_aggregated_data", value)
+
+
+    def _nc_del_aggregated_fragment_type(self, default=ValueError()):
+        """TODOCFA
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._nc_del("nc_aggregated_fragment_type", default)
+
+    def _nc_get_aggregated_fragment_type(self, default=ValueError()):
+        """TODOCFA
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return self._nc_get("nc_aggregated_fragment_type", default)
+    
+    def _nc_set_aggregated_fragment_type(self, ftype):
+        """TODOCFA
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        self._nc_set("nc_aggregated_fragment_type", value)
+
+    def nc_del_aggregated_write(self):
+        """TODOCFA
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_get_aggregated_write`,
+                     `nc_set_aggregated_write`
+
+        """
+        return self._nc_del("nc_aggregated_write", False)
+
+    def nc_get_aggregated_write(self):
+        """Set the CFA write status of the data to `False`.TODOCFA
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_aggregated_write`,
+                     `nc_set_aggregated_write`
+
+        :Returns:
+
+            `bool`
+                The CFA status prior to deletion.TODOCFA
+
+        """
+        return self._nc_get("nc_aggregated_write", False)
+
+    def _nc_set_aggregated_write(self, status):
+        """TODOCFA
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_aggregated_write`,
+                     `nc_get_aggregated_write`,
+                     `nc_set_aggregated_write`
+
+        """
+        self._nc_set("nc_aggregated_write", bool(status))
+
+    def nc_set_aggregated_write(self, ftype):
+        """TODOCFA
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_aggregated_write`,
+                     `nc_get_aggregated_write`
+
+        """
+        if status:
+            raise ValueError(
+                "'nc_set_aggregated_write' only allows the netCDF "
+                "aggregation write status to be set to False. "
+                "(At your own risk you may use '_nc_set_aggregated_write' "
+                "to set the status to True.)"
+            )
+
+        self._nc_set_aggregated_write(status)
+
+    def nc_clear_aggregated_substitutions(self):
+        """Remove all neCDF aggregation substitution definitions.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_aggregated_substitution`,
+                     `nc_aggregated_substitutions`,
+                     `nc_has_aggregated_substitutions`,
+                     `nc_update_aggregated_substitutions`
+
+        :Returns:
+
+            `dict`
+                {{Returns nc_clear_aggregated_substitutions}}
+
+        **Examples**
+
+        >>> f.nc_update_aggregated_substitutions({'base': 'file:///data/'})
+        >>> f.nc_has_aggregated_substitutions()
+        True
+        >>> f.nc_aggregated_substitutions()
+        {'${base}': 'file:///data/'}
+        >>> f.nc_update_aggregated_substitutions({'${base2}': '/home/data/'})
+        >>> f.nc_aggregated_substitutions()
+        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+        >>> f.nc_update_aggregated_substitutions({'${base}': '/new/location/'})
+        >>> f.nc_aggregated_substitutions()
+        {'${base}': '/new/location/', '${base2}': '/home/data/'}
+        >>> f.nc_del_aggregated_substitution('${base}')
+        {'${base}': '/new/location/'}
+        >>> f.nc_clear_aggregated_substitutions()
+        {'${base2}': '/home/data/'}
+        >>> f.nc_has_aggregated_substitutions()
+        False
+        >>> f.nc_aggregated_substitutions()
+        {}
+        >>> f.nc_clear_aggregated_substitutions()
+        {}
+        >>> print(f.nc_del_aggregated_substitution('base', None))
+        None
+
+        """
+        return self._nc_del("nc_aggregated_substitutions", {}).copy()
+
+    def nc_del_aggregated_substitution(self, base):
+        """Remove a neCDF aggregation substitution definition.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_aggregated_substitutions`,
+                     `nc_aggregated_substitutions`,
+                     `nc_has_aggregated_substitutions`,
+                     `nc_update_aggregated_substitutions`
+
+        :Parameters:
+
+            {{cfa base: `str`}}
+
+        :Returns:
+
+            `dict`
+                {{Returns nc_del_aggregated_substitution}}
+
+        **Examples**
+
+        >>> f.nc_update_aggregated_substitutions({'base': 'file:///data/'})
+        >>> f.nc_has_aggregated_substitutions()
+        True
+        >>> f.nc_aggregated_substitutions()
+        {'${base}': 'file:///data/'}
+        >>> f.nc_update_aggregated_substitutions({'${base2}': '/home/data/'})
+        >>> f.nc_aggregated_substitutions()
+        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+        >>> f.nc_update_aggregated_substitutions({'${base}': '/new/location/'})
+        >>> f.nc_aggregated_substitutions()
+        {'${base}': '/new/location/', '${base2}': '/home/data/'}
+        >>> f.nc_del_aggregated_substitution('${base}')
+        {'${base}': '/new/location/'}
+        >>> f.nc_clear_aggregated_substitutions()
+        {'${base2}': '/home/data/'}
+        >>> f.nc_has_aggregated_substitutions()
+        False
+        >>> f.nc_aggregated_substitutions()
+        {}
+        >>> f.nc_clear_aggregated_substitutions()
+        {}
+        >>> print(f.nc_del_aggregated_substitution('base'))
+        {}
+
+        """
+        if not (base.startswith("${") and base.endswith("}")):
+            base = f"${{{base}}}"
+
+        subs = self.nc_aggregated_substitutions()
+        if base not in subs:
+            return {}
+
+        out = {base: subs.pop(base)}
+        if subs:
+            self._nc_set("nc_aggregated_substitutions", subs)
+        else:
+            self._nc_del("nc_aggregated_substitutions", None)
+
+        return out
+
+    def nc_aggregated_substitutions(self):
+        """Return the neCDF aggregation substitution definitions.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_aggregated_substitutions`,
+                     `nc_del_aggregated_substitution`,
+                     `nc_has_aggregated_substitutions`,
+                     `nc_update_aggregated_substitutions`
+        :Returns:
+
+            `dict`
+                The CFA-netCDF file name substitutions.
+
+        **Examples**
+
+        >>> f.nc_update_aggregated_substitutions({'base': 'file:///data/'})
+        >>> f.nc_has_aggregated_substitutions()
+        True
+        >>> f.nc_aggregated_substitutions()
+        {'${base}': 'file:///data/'}
+        >>> f.nc_update_aggregated_substitutions({'${base2}': '/home/data/'})
+        >>> f.nc_aggregated_substitutions()
+        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+        >>> f.nc_update_aggregated_substitutions({'${base}': '/new/location/'})
+        >>> f.nc_aggregated_substitutions()
+        {'${base}': '/new/location/', '${base2}': '/home/data/'}
+        >>> f.nc_del_aggregated_substitution('${base}')
+        {'${base}': '/new/location/'}
+        >>> f.nc_clear_aggregated_substitutions()
+        {'${base2}': '/home/data/'}
+        >>> f.nc_has_aggregated_substitutions()
+        False
+        >>> f.nc_aggregated_substitutions()
+        {}
+        >>> f.nc_clear_aggregated_substitutions()
+        {}
+        >>> print(f.nc_del_aggregated_substitution('base', None))
+        None
+
+        """
+        out = self._nc_get("nc_aggregated_substitutions", default=None)
+        if out is not None:
+            return out.copy()
+
+        return {}
+
+    def nc_has_aggregated_substitutions(self):
+        """Whether there are any neCDF aggregation substitution definitions.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_aggregated_substitutions`,
+                     `nc_del_aggregated_substitution`,
+                     `nc_aggregated_substitutions`,
+                     `nc_update_aggregated_substitutions`
+
+        :Returns:
+
+            `bool`
+                `True` if any CFA-netCDF file name substitutions have
+                been set, otherwise `False`.
+
+        **Examples**
+
+        >>> f.nc_update_aggregated_substitutions({'base': 'file:///data/'})
+        >>> f.nc_has_aggregated_substitutions()
+        True
+        >>> f.nc_aggregated_substitutions()
+        {'${base}': 'file:///data/'}
+        >>> f.nc_update_aggregated_substitutions({'${base2}': '/home/data/'})
+        >>> f.nc_aggregated_substitutions()
+        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+        >>> f.nc_update_aggregated_substitutions({'${base}': '/new/location/'})
+        >>> f.nc_aggregated_substitutions()
+        {'${base}': '/new/location/', '${base2}': '/home/data/'}
+        >>> f.nc_del_aggregated_substitution('${base}')
+        {'${base}': '/new/location/'}
+        >>> f.nc_clear_aggregated_substitutions()
+        {'${base2}': '/home/data/'}
+        >>> f.nc_has_aggregated_substitutions()
+        False
+        >>> f.nc_aggregated_substitutions()
+        {}
+        >>> f.nc_clear_aggregated_substitutions()
+        {}
+        >>> print(f.nc_del_aggregated_substitution('base', None))
+        None
+
+        """
+        return self._nc_has("nc_aggregated_substitutions")
+
+    def nc_update_aggregated_substitutions(self, substitutions):
+        """Update the neCDF aggregation substitution definitions.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_aggregated_substitutions`,
+                     `nc_del_aggregated_substitution`,
+                     `nc_aggregated_substitutions`,
+                     `nc_has_aggregated_substitutions`
+
+        :Parameters:
+
+            {{cfa substitutions: `dict`}}
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f.nc_update_aggregated_substitutions({'base': 'file:///data/'})
+        >>> f.nc_has_aggregated_substitutions()
+        True
+        >>> f.nc_aggregated_substitutions()
+        {'${base}': 'file:///data/'}
+        >>> f.nc_update_aggregated_substitutions({'${base2}': '/home/data/'})
+        >>> f.nc_aggregated_substitutions()
+        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+        >>> f.nc_update_aggregated_substitutions({'${base}': '/new/location/'})
+        >>> f.nc_aggregated_substitutions()
+        {'${base}': '/new/location/', '${base2}': '/home/data/'}
+        >>> f.nc_del_aggregated_substitution('${base}')
+        {'${base}': '/new/location/'}
+        >>> f.nc_clear_aggregated_substitutions()
+        {'${base2}': '/home/data/'}
+        >>> f.nc_has_aggregated_substitutions()
+        False
+        >>> f.nc_aggregated_substitutions()
+        {}
+        >>> f.nc_clear_aggregated_substitutions()
+        {}
+        >>> print(f.nc_del_aggregated_substitution('base', None))
+        None
+
+        """
+        if not substitutions:
+            return
+
+        substitutions = substitutions.copy()
+        for base, sub in tuple(substitutions.items()):
+            if not (base.startswith("${") and base.endswith("}")):
+                substitutions[f"${{{base}}}"] = substitutions.pop(base)
+
+        subs = self.nc_aggregated_substitutions()
+        subs.update(substitutions)
+        self._nc_set("nc_aggregated_substitutions", subs)
