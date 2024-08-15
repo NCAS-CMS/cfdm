@@ -2993,6 +2993,66 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # CF-PYTHON: Override
         del self._Units
 
+    @_inplace_enabled(default=False)
+    def compressed(self, inplace=False):
+        """Return all non-masked values in a one dimensional data array.
+
+        Not to be confused with compression by convention (see the
+        `uncompress` method).
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `flatten`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Data` or `None`
+                The non-masked values, or `None` if the operation was
+                in-place.
+
+        **Examples**
+
+        >>> d = {{package}}.{class}}(numpy.arange(12).reshape(3, 4), 'm')
+        >>> print(d.array)
+        [[ 0  1  2  3]
+         [ 4  5  6  7]
+         [ 8  9 10 11]]
+        >>> print(d.compressed().array)
+        [ 0  1  2  3  4  5  6  7  8  9 10 11]
+        >>> d[1, 1] = {{package}}.masked
+        >>> d[2, 3] = {{package}}.masked
+        >>> print(d.array)
+        [[0  1  2  3]
+         [4 --  6  7]
+         [8  9 10 --]]
+        >>> print(d.compressed().array)
+        [ 0  1  2  3  4  6  7  8  9 10]
+
+        >>> d = {{package}}.{class}}(9)
+        >>> print(d.compressed().array)
+        [9]
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        dx = d.to_dask_array()
+        dx = da.blockwise(
+            np.ma.compressed,
+            "i",
+            dx.ravel(),
+            "i",
+            adjust_chunks={"i": lambda n: np.nan},
+            dtype=dx.dtype,
+            meta=np.array((), dtype=dx.dtype),
+        )
+
+        d._set_dask(dx)
+        return d
+
     def compute(self):  # noqa: F811
         """A view of the computed data.
 
@@ -4067,7 +4127,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         .. versionadded:: (cfdm) 1.7.11
 
-        .. seealso:: `insert_dimension`, `squeeze`, `transpose`
+        .. seealso:: `compressed`, `insert_dimension`, `squeeze`,
+                     `transpose`
 
         :Parameters:
 
@@ -5957,6 +6018,16 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         return d
 
+    @_inplace_enabled(default=False)
+    def unique(self, inplace=False):
+        """TODOCFA"""
+        d = _inplace_enabled_define_and_cleanup(self)
+        dx = d.to_dask_array()
+        u = np.unique(dx.compute())
+        dx = to_dask(u, _DEFAULT_CHUNKS)
+        d._set_dask(dx)
+        return d
+    
     # ----------------------------------------------------------------
     # Aliases
     # ----------------------------------------------------------------

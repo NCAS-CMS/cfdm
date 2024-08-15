@@ -4527,6 +4527,7 @@ class NetCDFAggregation(NetCDFMixin):
     .. versionadded:: (cfdm) NEXTVERSION
 
     """
+
     def nc_del_aggregated_data(self):
         """Remove the netCDF aggregated_data terms.
 
@@ -4556,17 +4557,13 @@ class NetCDFAggregation(NetCDFMixin):
         >>> f.nc_has_aggregated_data()
         True
         >>> f.nc_get_aggregated_data()
-        {'location': 'nc_location',
-         'file': 'nc_file',
-         'address': 'nc_address',
-         'format': 'c ',
-         'tracking_id': 'tracking_id'}
+        {'shape': 'shape',
+         'location': 'location',
+         'address': 'address'}
         >>> f.nc_del_aggregated_data()
-        {'location': 'nc_location',
-         'file': 'nc_file',
-         'address': 'nc_address',
-         'format': 'nc_format',
-         'tracking_id': 'tracking_id'}
+        {'shape': 'shape',
+         'location': 'location',
+         'address': 'address'}
         >>> f.nc_has_aggregated_data()
         False
         >>> f.nc_del_aggregated_data()
@@ -4575,7 +4572,7 @@ class NetCDFAggregation(NetCDFMixin):
         {}
 
         """
-        return self._nc_del("nc_aggregated_data", {}).copy()
+        return self._nc_del("aggregated_data", {}).copy()
 
     def nc_get_aggregated_data(self):
         """Return the netCDF aggregated_data terms.
@@ -4599,26 +4596,20 @@ class NetCDFAggregation(NetCDFMixin):
         **Examples**
 
         >>> f.nc_set_aggregated_data(
-        ...     {'location': 'nc_location',
-        ...      'file': 'nc_file',
-        ...      'address': 'nc_address',
-        ...      'format': 'nc_format',
-        ...      'tracking_id': 'tracking_id'}
+        ...     {'shape': 'shape',
+        ...      'location': 'location',
+        ...      'address': 'address'}
         ... )
         >>> f.nc_has_aggregated_data()
         True
         >>> f.nc_get_aggregated_data()
-        {'location': 'nc_location',
-         'file': 'nc_file',
-         'address': 'nc_address',
-         'format': 'nc_format',
-         'tracking_id': 'tracking_id'}
+        {'shape': 'shape',
+         'location': 'location',
+         'address': 'address'}
         >>> f.nc_del_aggregated_data()
-        {'location': 'nc_location',
-         'file': 'nc_file',
-         'address': 'nc_address',
-         'format': 'nc_format',
-         'tracking_id': 'tracking_id'}
+        {'shape': 'shape',
+         'location': 'location',
+         'address': 'address'}
         >>> f.nc_has_aggregated_data()
         False
         >>> f.nc_del_aggregated_data()
@@ -4627,7 +4618,7 @@ class NetCDFAggregation(NetCDFMixin):
         {}
 
         """
-        out = self._nc_get("nc_aggregated_data", default=None)
+        out = self._nc_get("aggregated_data", default=None)
         if out is not None:
             return out.copy()
 
@@ -4654,26 +4645,20 @@ class NetCDFAggregation(NetCDFMixin):
         **Examples**
 
         >>> f.nc_set_aggregated_data(
-        ...     {'location': 'nc_location',
-        ...      'file': 'nc_file',
-        ...      'address': 'nc_address',
-        ...      'format': 'nc_format',
-        ...      'tracking_id': 'tracking_id'}
+        ...     {'shape': 'shape',
+        ...      'location': 'location',
+        ...      'address': 'address'}
         ... )
         >>> f.nc_has_aggregated_data()
         True
         >>> f.nc_get_aggregated_data()
-        {'location': 'nc_location',
-         'file': 'nc_file',
-         'address': 'nc_address',
-         'format': 'nc_format',
-         'tracking_id': 'tracking_id'}
+        {'shape': 'shape',
+         'location': 'location',
+         'address': 'address'}
         >>> f.nc_del_aggregated_data()
-        {'location': 'nc_location',
-         'file': 'nc_file',
-         'address': 'nc_address',
-         'format': 'nc_format',
-         'tracking_id': 'tracking_id'}
+        {'shape': 'shape',
+         'location': 'location',
+         'address': 'address'}
         >>> f.nc_has_aggregated_data()
         False
         >>> f.nc_del_aggregated_data()
@@ -4682,7 +4667,7 @@ class NetCDFAggregation(NetCDFMixin):
         {}
 
         """
-        return self._nc_has("nc_aggregated_data")
+        return self._nc_has("aggregated_data")
 
     def nc_set_aggregated_data(self, value):
         """Set the netCDF aggregated_data terms.
@@ -4719,26 +4704,20 @@ class NetCDFAggregation(NetCDFMixin):
         **Examples**
 
         >>> f.nc_set_aggregated_data(
-        ...     {'location': 'nc_location',
-        ...      'file': 'nc_file',
-        ...      'address': 'nc_address',
-        ...      'format': 'nc_format',
-        ...      'tracking_id': 'tracking_id'}
+        ...     {'shape': 'shape',
+        ...      'location': 'location',
+        ...      'address': 'address'}
         ... )
         >>> f.nc_has_aggregated_data()
         True
         >>> f.nc_get_aggregated_data()
-        {'location': 'nc_location',
-         'file': 'nc_file',
-         'address': 'nc_address',
-         'format': 'nc_format',
-         'tracking_id': 'tracking_id'}
+        {'shape': 'shape',
+         'location': 'location',
+         'address': 'address'}
         >>> f.nc_del_aggregated_data()
-        {'location': 'nc_location',
-         'file': 'nc_file',
-         'address': 'nc_address',
-         'format': 'nc_format',
-         'tracking_id': 'tracking_id'}
+        {'shape': 'shape',
+         'location': 'location',
+         'address': 'address'}
         >>> f.nc_has_aggregated_data()
         False
         >>> f.nc_del_aggregated_data()
@@ -4749,41 +4728,45 @@ class NetCDFAggregation(NetCDFMixin):
         """
         if value:
             if isinstance(value, str):
-                v = split("\s+", value)
+                v = split(r"\s+", value)
                 value = {term[:-1]: var for term, var in zip(v[::2], v[1::2])}
             else:
                 # 'value' is a dictionary
                 value = value.copy()
 
-            self._nc_set("nc_aggregated_data", value)
-
+            self._get_component("netcdf")["aggregated_data"] = value
 
     def _nc_del_aggregated_fragment_type(self, default=ValueError()):
-        """TODOCFA
+        """TODOCFA.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        return self._nc_del("nc_aggregated_fragment_type", default)
+        return self._nc_del("aggregated_fragment_type", default)
 
-    def _nc_get_aggregated_fragment_type(self, default=ValueError()):
-        """TODOCFA
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        """
-        return self._nc_get("nc_aggregated_fragment_type", default)
-    
-    def _nc_set_aggregated_fragment_type(self, ftype):
-        """TODOCFA
+    def _nc_get_aggregated_fragment_type(self):
+        """TODOCFA.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        self._nc_set("nc_aggregated_fragment_type", value)
+        return self._nc_get("aggregated_fragment_type", None)
+
+    def _nc_set_aggregated_fragment_type(self, value):
+        """TODOCFA.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            value: `str`
+                TODOCFA
+
+        """
+        self._get_component("netcdf")["aggregated_fragment_type"] = value
 
     def nc_del_aggregated_write(self):
-        """TODOCFA
+        """TODOCFA.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -4791,10 +4774,10 @@ class NetCDFAggregation(NetCDFMixin):
                      `nc_set_aggregated_write`
 
         """
-        return self._nc_del("nc_aggregated_write", False)
+        return self._nc_del("aggregated_write", False)
 
     def nc_get_aggregated_write(self):
-        """Set the CFA write status of the data to `False`.TODOCFA
+        """Set the CFA write status of the data to `False`.TODOCFA.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -4807,10 +4790,10 @@ class NetCDFAggregation(NetCDFMixin):
                 The CFA status prior to deletion.TODOCFA
 
         """
-        return self._nc_get("nc_aggregated_write", False)
+        return self._nc_get("aggregated_write", False)
 
     def _nc_set_aggregated_write(self, status):
-        """TODOCFA
+        """TODOCFA.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -4818,11 +4801,16 @@ class NetCDFAggregation(NetCDFMixin):
                      `nc_get_aggregated_write`,
                      `nc_set_aggregated_write`
 
-        """
-        self._nc_set("nc_aggregated_write", bool(status))
+        :Parameters:
 
-    def nc_set_aggregated_write(self, ftype):
-        """TODOCFA
+            status: `bool`
+                TODOCFA
+
+        """
+        self._get_component("netcdf")["aggregated_write"] = bool(status)
+
+    def nc_set_aggregated_write(self, status):
+        """TODOCFA.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -4882,7 +4870,7 @@ class NetCDFAggregation(NetCDFMixin):
         None
 
         """
-        return self._nc_del("nc_aggregated_substitutions", {}).copy()
+        return self._nc_del("aggregated_substitutions", {}).copy()
 
     def nc_del_aggregated_substitution(self, base):
         """Remove a neCDF aggregation substitution definition.
@@ -4939,9 +4927,9 @@ class NetCDFAggregation(NetCDFMixin):
 
         out = {base: subs.pop(base)}
         if subs:
-            self._nc_set("nc_aggregated_substitutions", subs)
+            self._get_component("netcdf")["aggregated_substitutions"] = subs
         else:
-            self._nc_del("nc_aggregated_substitutions", None)
+            self._nc_del("aggregated_substitutions", None)
 
         return out
 
@@ -4986,14 +4974,15 @@ class NetCDFAggregation(NetCDFMixin):
         None
 
         """
-        out = self._nc_get("nc_aggregated_substitutions", default=None)
+        out = self._nc_get("aggregated_substitutions", default=None)
         if out is not None:
             return out.copy()
 
         return {}
 
     def nc_has_aggregated_substitutions(self):
-        """Whether there are any neCDF aggregation substitution definitions.
+        """Whether there are any neCDF aggregation substitution
+        definitions.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -5035,7 +5024,7 @@ class NetCDFAggregation(NetCDFMixin):
         None
 
         """
-        return self._nc_has("nc_aggregated_substitutions")
+        return self._nc_has("aggregated_substitutions")
 
     def nc_update_aggregated_substitutions(self, substitutions):
         """Update the neCDF aggregation substitution definitions.
@@ -5092,4 +5081,4 @@ class NetCDFAggregation(NetCDFMixin):
 
         subs = self.nc_aggregated_substitutions()
         subs.update(substitutions)
-        self._nc_set("nc_aggregated_substitutions", subs)
+        self._get_component("netcdf")["aggregated_substitutions"] = subs

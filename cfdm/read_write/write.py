@@ -27,6 +27,7 @@ def write(
     group=True,
     coordinates=False,
     omit_data=None,
+    cfa=False,
     _implementation=_implementation,
 ):
     """Write field and domain constructs to a netCDF file.
@@ -530,6 +531,93 @@ def write(
 
             .. versionadded:: (cfdm) 1.10.0.1
 
+        cfa: `bool` or `dict`, optional
+            If True or a (possibly empty) dictionary then write
+            selected constructs as aggregation variables, where
+            possible and where requested.
+
+            If *cfa* is a dictionary then it is used to configure the
+            aggregation variable write process. The default options
+            are ``{'constructs': 'field', 'absolute_paths': True,
+            'strict': True, 'substitutions': {}}``, and the dictionary
+            may have any subset of the following key/value pairs to
+            override these defaults:
+
+            * ``'constructs'``: `dict` or (sequence of) `str`
+
+              The types of construct to be written as aggregation
+              variables. By default only field constructs are written
+              as aggregation variables.
+
+              The types may be given as a (sequence of) `str`, which
+              may take any of the values allowed by the *omit_data*
+              parameter (e.g. 'field', 'auxiliary_coordinate',
+              etc.). Alternatively, the same types may be given as
+              keys to a `dict` whose values specify the number of
+              dimensions that a construct must also have if it is to
+              be written as an aggregation variable. A value of `None`
+              means no restriction on the number of dimensions.
+
+              *Example:*
+                Equivalent ways to only write cell measure constructs
+                as aggregation variables: ``'cell_measure``,
+                ``['cell_measure']``, ``{'cell_measure': None}``.
+
+              *Example:*
+                Equivalent ways to only write field and auxiliary
+                coordinate constructs as aggregation variables:
+                ``('field', 'auxiliary_coordinate')`` and ``{'field':
+                None, 'auxiliary_coordinate': None}``.
+
+              *Example:*
+                To only write two-dimensional auxiliary coordinate
+                constructs as aggregation variables:
+                ``{'auxiliary_coordinate': 2}``.
+
+              *Example:*
+                Write auxiliary coordinate constructs with two
+                dimensions as aggregation variables, and also all
+                field constructs: ``{'field': None,
+                'auxiliary_coordinate': 2}``.
+
+            * ``'absolute_paths'``: `bool`
+
+              How to write fragment file names. Set to True (the
+              default) for them to be written as absolute URIs, or
+              else set to False for them to be written as
+              relative-path URI references, taken as being relative to
+              the location of the aggregation file being created.
+
+            * ``'strict'``: `bool`
+
+              If True (the default) then an exception is raised if it
+              is not possible to create an aggregation variable from
+              data identified by the ``'constructs'`` option. If False
+              then a normal, non-aggregation variable will be written
+              in this case.
+
+            * ``'substitutions'``: `dict`
+
+              A dictionary whose key/value pairs define text
+              substitutions to be applied to the fragment file
+              names. Each key may be specified with or without the
+              ``${...}`` syntax. For instance, the following are
+              equivalent: ``{'base': 'sub'}``, ``{'${base}': 'sub'}``.
+              The substitutions are used in conjunction with, and take
+              precedence over, any that are also defined on individual
+              constructs (see
+              `cfdm.Data.nc_update_aggregated_substitutions` for
+              details).
+
+              Substitutions are stored in the output file by the
+              ``substitutions`` attribute of the "location" fragment
+              array variable.
+
+              *Example:*
+                ``{'base': 'file:///data/'}``
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that defines field
             and metadata constructs and their components.
@@ -553,6 +641,46 @@ def write(
     # Initialise the netCDF write object
     # ----------------------------------------------------------------
     netcdf = NetCDFWrite(_implementation)
+
+    # ----------------------------------------------------------------
+    # CFA
+    # ----------------------------------------------------------------
+    if isinstance(cfa, dict):
+        cfa_options = cfa.copy()
+        cfa = True
+    else:
+        cfa_options = {}
+        cfa = bool(cfa)
+
+    if cfa:
+        keys = ("constructs", "absolute_paths", "strict", "substitutions")
+        if not set(cfa_options).issubset(keys):
+            raise ValueError(
+                "Invalid dictionary key to the 'cfa_options' "
+                f"parameter. Valid keys are {keys}. Got: {cfa_options}"
+            )
+
+        cfa_options.setdefault("constructs", "field")
+        cfa_options.setdefault("absolute_paths", True)
+        cfa_options.setdefault("strict", True)
+        cfa_options.setdefault("substitutions", {})
+
+        constructs = cfa_options["constructs"]
+        if isinstance(constructs, dict):
+            cfa_options["constructs"] = constructs.copy()
+        else:
+            if isinstance(constructs, str):
+                constructs = (constructs,)
+
+            cfa_options["constructs"] = {c: None for c in constructs}
+
+        substitutions = cfa_options["substitutions"].copy()
+        for base, sub in tuple(substitutions.items()):
+            if not (base.startswith("${") and base.endswith("}")):
+                # Add missing ${...}
+                substitutions[f"${{{base}}}"] = substitutions.pop(base)
+
+        cfa_options["substitutions"] = substitutions
 
     if fields:
         netcdf.write(
@@ -579,4 +707,6 @@ def write(
             coordinates=coordinates,
             extra_write_vars=None,
             omit_data=omit_data,
+            cfa=cfa,
+            cfa_options=cfa_options,
         )
