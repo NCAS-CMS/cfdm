@@ -203,6 +203,7 @@ class FragmentFileArray(
         # Loop round the files, returning as soon as we find one that
         # is accessible.
         filenames = self.get_filenames()
+        print (filenames)
         for filename, address in zip(filenames, self.get_addresses()):
             kwargs["filename"] = filename
             kwargs["address"] = address
@@ -211,13 +212,12 @@ class FragmentFileArray(
             )
 
             for FragmentArray in self._FragmentArrays:
+                print (FragmentArray, kwargs)
                 try:
                     return FragmentArray(**kwargs)._get_array(index)
-                except FileNotFoundError:
+                except Exception:
                     pass
-                except KeyError:
-                    raise ValueError("unknown backend: T sadasds TODO")
-
+            print(1212)
         # Still here?
         if len(filenames) == 1:
             raise FileNotFoundError(f"No such fragment file: {filenames[0]}")

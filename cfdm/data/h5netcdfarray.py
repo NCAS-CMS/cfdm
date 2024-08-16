@@ -189,7 +189,7 @@ class H5netcdfArray(
 
         # Note: We need to lock because the netCDF file is about to be
         #       accessed.
-        self._lock.acquire()
+#        self._lock.acquire()
 
         # # Note: It's cfdm.H5netcdfArray.__getitem__ that we want to
         # #       call here, but we use 'Container' in super because
@@ -197,34 +197,35 @@ class H5netcdfArray(
         # #       the method resolution order.
         # array = super(Container, self).__getitem__(index)
 
-        dataset, address = self.open()
-        dataset0 = dataset
+        with self._lock:
+            dataset, address = self.open()
+            dataset0 = dataset
+            
+            groups, address = self.get_groups(address)
+            if groups:
+                dataset = self._group(dataset, groups)
+            
+            # Get the variable by netCDF name
+            variable = dataset.variables[address]
+            
+            # Get the data, applying masking and scaling as required.
+            array = netcdf_indexer(
+                variable,
+                mask=self.get_mask(),
+                unpack=self.get_unpack(),
+                always_masked_array=False,
+                orthogonal_indexing=True,
+                copy=False,
+            )
+            array = array[index]
+            
+            # Set the attributes, if they haven't been set already.
+            self._set_attributes(variable)
+            
+            self.close(dataset0)
+            del dataset, dataset0
 
-        groups, address = self.get_groups(address)
-        if groups:
-            dataset = self._group(dataset, groups)
-
-        # Get the variable by netCDF name
-        variable = dataset.variables[address]
-
-        # Get the data, applying masking and scaling as required.
-        array = netcdf_indexer(
-            variable,
-            mask=self.get_mask(),
-            unpack=self.get_unpack(),
-            always_masked_array=False,
-            orthogonal_indexing=True,
-            copy=False,
-        )
-        array = array[index]
-
-        # Set the attributes, if they haven't been set already.
-        self._set_attributes(variable)
-
-        self.close(dataset0)
-        del dataset, dataset0
-
-        self._lock.release()
+#        self._lock.release()
         return array
 
     def _set_attributes(self, var):

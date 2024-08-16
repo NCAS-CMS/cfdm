@@ -251,7 +251,7 @@ class NetCDF4Array(
 
         # Note: We need to lock because the netCDF file is about to be
         #       accessed.
-        self._lock.acquire()
+#       self._lock.acquire()
 
         # # Note: It's cfdm.NetCDFArray.__getitem__ that we want to call
         # #       here, but we use 'Container' in super because that
@@ -259,45 +259,46 @@ class NetCDF4Array(
         # #       method resolution order.
         # array = super(Container, self).__getitem__(index)
 
-        netcdf, address = self.open()
-        dataset = netcdf
-
-        groups, address = self.get_groups(address)
-        if groups:
-            # Traverse the group structure, if there is one (CF>=1.8).
-            netcdf = self._group(netcdf, groups)
-
-        if isinstance(address, str):
-            # Get the variable by netCDF name
-            variable = netcdf.variables[address]
-        else:
-            # Get the variable by netCDF integer ID
-            for variable in netcdf.variables.values():
-                if variable._varid == address:
-                    break
-
-        # Get the data, applying masking and scaling as required.
-        array = netcdf_indexer(
-            variable,
-            mask=self.get_mask(),
-            unpack=self.get_unpack(),
-            always_masked_array=False,
-            orthogonal_indexing=True,
-            copy=False,
-        )
-        array = array[index]
-
-        # Set the attributes, if they haven't been set already.
-        self._set_attributes(variable)
-
-        self.close(dataset)
-        del netcdf, dataset
+        with self._lock:
+            netcdf, address = self.open()
+            dataset = netcdf
+         
+            groups, address = self.get_groups(address)
+            if groups:
+                # Traverse the group structure, if there is one (CF>=1.8).
+                netcdf = self._group(netcdf, groups)
+    
+            if isinstance(address, str):
+                # Get the variable by netCDF name
+                variable = netcdf.variables[address]
+            else:
+                # Get the variable by netCDF integer ID
+                for variable in netcdf.variables.values():
+                    if variable._varid == address:
+                        break
+    
+            # Get the data, applying masking and scaling as required.
+            array = netcdf_indexer(
+                variable,
+                mask=self.get_mask(),
+                unpack=self.get_unpack(),
+                always_masked_array=False,
+                orthogonal_indexing=True,
+                copy=False,
+            )
+            array = array[index]
+    
+            # Set the attributes, if they haven't been set already.
+            self._set_attributes(variable)
+    
+            self.close(dataset)
+            del netcdf, dataset
 
         if not self.ndim:
             # Hmm netCDF4 has a thing for making scalar size 1, 1d
             array = array.squeeze()
 
-        self._lock.release()
+#       self._lock.release()
         return array
 
     def _set_attributes(self, var):
@@ -403,4 +404,7 @@ class NetCDF4Array(
                 address of the data within the file.
 
         """
+#       try:
         return super().open(netCDF4.Dataset, mode="r")
+#       except Exception:
+#           self._lock.release()
