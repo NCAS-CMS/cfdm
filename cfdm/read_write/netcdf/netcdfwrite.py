@@ -2978,6 +2978,7 @@ class NetCDFWrite(IOWrite):
                 data,
                 cfvar,
             )
+            print('here3')
             return
 
         # ------------------------------------------------------------
@@ -5378,7 +5379,7 @@ class NetCDFWrite(IOWrite):
                 # number-of-dimenions criterion and the data is
                 # flagged as OK.
                 if ndim is None or ndim == len(domain_axes):
-                    cfa_get_write = data.nc_get_aggregated_write()
+                    cfa_get_write = data.nc_get_aggregated_write_status()
                     if not cfa_get_write and cfa_options["strict"]:
                         if g["mode"] == "w":
                             os.remove(g["filename"])
@@ -5465,39 +5466,40 @@ class NetCDFWrite(IOWrite):
         aggregated_data_attr = []
 
         # Shape
-        term = "shape"
-        data = cfa[term]
-        term_ncvar = self._cfa_write_fragment_array_variable(
-            data,
-            aggregated_data.get(term, f"cfa_{term}"),
+        feature = "shape"
+        feature_ncvar = self._cfa_write_fragment_array_variable(
+                cfa[feature],
+            aggregated_data.get(feature, f"cfa_{feature}"),
             shape_ncdimensions,
         )
-        aggregated_data_attr.append(f"{term}: {term_ncvar}")
+        aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 
         if "location" in cfa:
             # Location
-            term = "location"
+            feature = "location"
 
             substitutions = data.nc_aggregated_substitutions()
+            print (data.shape, 'substitutions',substitutions)
             substitutions.update(g["cfa_options"].get("substitutions", {}))
             if substitutions:
+                print ('here1')
                 # Create the "substitutions" netCDF attribute
                 subs = []
                 for base, sub in substitutions.items():
                     subs.append(f"{base}: {sub}")
 
                 attributes = {"substitutions": " ".join(sorted(subs))}
+                print ('attributes=',attributes)
             else:
                 attributes = None
 
-            data = cfa[term]
-            term_ncvar = self._cfa_write_fragment_array_variable(
-                data,
-                aggregated_data.get(term, f"cfa_{term}"),
+            feature_ncvar = self._cfa_write_fragment_array_variable(
+                cfa[feature],
+                aggregated_data.get(feature, f"cfa_{feature}"),
                 fragment_array_ncdimensions,
                 attributes=attributes,
             )
-            aggregated_data_attr.append(f"{term}: {term_ncvar}")
+            aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 
             # Address
             term = "address"
@@ -5519,15 +5521,14 @@ class NetCDFWrite(IOWrite):
             aggregated_data_attr.append(f"{term}: {term_ncvar}")
         else:
             # Value
-            term = "value"
-            data = cfa[term]
-            term_ncvar = self._cfa_write_fragment_array_variable(
-                data,
-                aggregated_data.get(term, f"cfa_{term}"),
+            feature = "value"
+            feature_ncvar = self._cfa_write_fragment_array_variable(
+                cfa[feature],
+                aggregated_data.get(feature, f"cfa_{feature}"),
                 fragment_array_ncdimensions,
             )
-            aggregated_data_attr.append(f"{term}: {term_ncvar}")
-
+            aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
+        print ('here2')
         # ------------------------------------------------------------
         # Add the aggregation variable attributes
         # ------------------------------------------------------------
@@ -5740,7 +5741,7 @@ class NetCDFWrite(IOWrite):
 
         out = {"shape": type(data)(aggregation_shape)}
 
-        if data._nc_get_aggregated_fragment_type() == "location":
+        if data.nc_get_aggregated_fragment_type() == "location":
             # --------------------------------------------------------
             # Create location and address arrays
             # --------------------------------------------------------

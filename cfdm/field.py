@@ -1448,10 +1448,12 @@ class Field(
 
         """
         if isinstance(fields, cls):
-            raise ValueError("TODOCFA")
+            raise ValueError("Must provied a sequence of Field objects")
 
+        fields = tuple(fields)
         field0 = fields[0]
-        axis = field0.domain_axis(
+        data_axes = field0.get_data_axes()        
+        axis_key = field0.domain_axis(
             axis,
             key=True,
             default=ValueError(
@@ -1459,9 +1461,11 @@ class Field(
             ),
         )
         try:
-            axis = field0.get_data_axes().index(axis)
+            axis = data_axes.index(axis_key)
         except ValueError:
-            raise ValueError("TODOCFA")
+            raise ValueError(
+                "The field's data must span the concatenation axis"
+            )
 
         out = field0
         if copy:
@@ -1470,8 +1474,7 @@ class Field(
         if len(fields) == 1:
             return out
 
-        data0 = field0.get_data(_fill_value=False, _units=False)
-        new_data = type(data0).concatenate(
+        new_data = out._Data.concatenate(
             [f.get_data(_fill_value=False) for f in fields],
             axis=axis,
             cull_graph=cull_graph,
@@ -1480,9 +1483,7 @@ class Field(
         )
 
         # Change the domain axis size
-        data_axes = out.get_data_axes()
-        dim = data_axes[axis]
-        out.set_construct(out._DomainAxis(size=new_data.shape[axis]), key=dim)
+        out.set_construct(out._DomainAxis(size=new_data.shape[axis]), key=axis_key)
 
         # Insert the concatenated data
         out.set_data(new_data, axes=data_axes, copy=False)
@@ -1495,7 +1496,7 @@ class Field(
         ).items():
             construct_axes = field0.get_data_axes(key)
 
-            if dim not in construct_axes:
+            if axis_key not in construct_axes:
                 # This construct does not span the concatenating axis
                 # in the first field
                 continue
@@ -1521,7 +1522,7 @@ class Field(
             try:
                 construct = construct.concatenate(
                     constructs,
-                    axis=construct_axes.index(dim),
+                    axis=construct_axes.index(axis_key),
                     cull_graph=cull_graph,
                     relaxed_units=relaxed_units,
                     copy=copy,

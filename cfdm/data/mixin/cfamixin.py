@@ -530,7 +530,7 @@ class CFAMixin:
                 index = [0] * ndim
                 for j in range(n_fragments):
                     index[dim] = j
-                    loc = aggregated_data[tuple(index)]["location"][dim]
+                    loc = aggregated_data[tuple(index)]["shape"][dim]
                     chunk_size = loc[1] - loc[0]
                     c.append(chunk_size)
 

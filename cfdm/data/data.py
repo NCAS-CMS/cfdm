@@ -3210,10 +3210,14 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         [ 1.     0.05   0.075]
 
         """
+        if isinstance(data, cls):
+            raise ValueError("Must provied a sequence of Data objects")
+
         data = tuple(data)
-        if len(data) < 2:
+        n_data = len(data)
+        if not n_data:
             raise ValueError(
-                "Can't concatenate: Must provide at least two data arrays"
+                "Can't concatenate: Must provide at least one Data object"
             )
 
         if cull_graph:
@@ -3232,6 +3236,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         if not data0.ndim:
             data0.insert_dimension(inplace=True)
+
+        if n_data == 1:
+            return data0
 
         processed_data = [data0]
         for data1 in data[1:]:
