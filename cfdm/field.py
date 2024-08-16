@@ -1407,6 +1407,138 @@ class Field(
 
         return f
 
+    @classmethod
+    def concatenate(
+        cls, fields, axis=0, cull_graph=False, relaxed_units=False, copy=True
+    ):
+        """Join a together sequence of '{{class}}`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `Data.concatenate`, `Data.cull_graph`
+
+        :Parameters:
+
+            fields: (sequence of) `{{class}}`
+                The fields to concatenate.
+
+            axis: `int`, optional
+                The axis along which the arrays will be joined. The
+                default is 0. Note that scalar arrays are treated as
+                if they were one dimensional. TODOCFA
+
+            {{cull_graph: `bool`, optional}}
+
+            {{relaxed_units: `bool`, optional}}
+
+            copy: `bool`, optional
+                If True (the default) then make copies of the
+                `{{class}}` constructs, prior to the concatenation,
+                thereby ensuring that the input constructs are not
+                changed by the concatenation process. If False then
+                some or all input constructs might be changed
+                in-place, but the concatenation process will be
+                faster.
+
+        :Returns:
+
+            `{{class}}`
+                The field generated from the concatenation of input
+                fields.
+
+        """
+        if isinstance(fields, cls):
+            raise ValueError("TODOCFA")
+
+        field0 = fields[0]
+        axis = field0.domain_axis(
+            axis,
+            key=True,
+            default=ValueError(
+                f"Can't identify a unique concatenation axis from {axis!r}"
+            ),
+        )
+        try:
+            axis = field0.get_data_axes().index(axis)
+        except ValueError:
+            raise ValueError("TODOCFA")
+
+        out = field0
+        if copy:
+            out = out.copy()
+
+        if len(fields) == 1:
+            return out
+
+        data0 = field0.get_data(_fill_value=False, _units=False)
+        new_data = type(data0).concatenate(
+            [f.get_data(_fill_value=False) for f in fields],
+            axis=axis,
+            cull_graph=cull_graph,
+            relaxed_units=relaxed_units,
+            copy=copy,
+        )
+
+        # Change the domain axis size
+        data_axes = out.get_data_axes()
+        dim = data_axes[axis]
+        out.set_construct(out._DomainAxis(size=new_data.shape[axis]), key=dim)
+
+        # Insert the concatenated data
+        out.set_data(new_data, axes=data_axes, copy=False)
+
+        # ------------------------------------------------------------
+        # Concatenate constructs with data
+        # ------------------------------------------------------------
+        for key, construct in field0.constructs.filter_by_data(
+            todict=True
+        ).items():
+            construct_axes = field0.get_data_axes(key)
+
+            if dim not in construct_axes:
+                # This construct does not span the concatenating axis
+                # in the first field
+                continue
+
+            constructs = [construct]
+            for f in fields[1:]:
+                c = f.constructs.get(key)
+                if c is None:
+                    # This field does not have this construct
+                    constructs = None
+                    break
+
+                constructs.append(c)
+
+            if not constructs:
+                # Not every field has this construct, so remove it
+                # from the output field.
+                out.del_construct(key)
+                continue
+
+            # Still here? Then try concatenating the constructs from
+            # each field.
+            try:
+                construct = construct.concatenate(
+                    constructs,
+                    axis=construct_axes.index(dim),
+                    cull_graph=cull_graph,
+                    relaxed_units=relaxed_units,
+                    copy=copy,
+                )
+            except ValueError:
+                # Couldn't concatenate this construct, so remove it from
+                # the output field.
+                out.del_construct(key)
+            else:
+                # Successfully concatenated this construct, so insert
+                # it into the output field.
+                out.set_construct(
+                    construct, key=key, axes=construct_axes, copy=False
+                )
+
+        return out
+
     def creation_commands(
         self,
         representative_data=False,

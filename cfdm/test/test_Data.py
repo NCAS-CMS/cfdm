@@ -2370,6 +2370,112 @@ class DataTest(unittest.TestCase):
             ],
         )
 
+    def test_Data_concatenate(self):
+        """Test Data.concatenate."""
+        # Unitless operation with default axis (axis=0):
+        d_np = np.arange(120).reshape(30, 4)
+        e_np = np.arange(120, 280).reshape(40, 4)
+        d = cfdm.Data(d_np)
+        e = cfdm.Data(e_np)
+        f_np = np.concatenate((d_np, e_np), axis=0)
+        f = cfdm.Data.concatenate((d, e))
+
+        self.assertEqual(f.shape, f_np.shape)
+        self.assertTrue((f.array == f_np).all())
+
+        d_np = np.array([[1, 2], [3, 4]])
+        e_np = np.array([[5.0, 6.0]])
+        d = cfdm.Data(d_np, "km")
+        e = cfdm.Data(e_np, "km")
+        f_np = np.concatenate((d_np, e_np), axis=0)
+        f = cfdm.Data.concatenate([d, e])
+        self.assertEqual(f.shape, f_np.shape)
+        self.assertTrue((f.array == f_np).all())
+
+        # Check axes equivalency:
+        self.assertTrue(f.equals(cfdm.Data.concatenate((d, e), axis=-2)))
+
+        # Non-default axis specification:
+        e_np = np.array([[5.0], [6.0]])  # for compatible shapes with axis=1
+        e = cfdm.Data(e_np, "km")
+        f_np = np.concatenate((d_np, e_np), axis=1)
+        f = cfdm.Data.concatenate((d, e), axis=1)
+
+        self.assertEqual(f.shape, f_np.shape)
+        self.assertTrue((f.array == f_np).all())
+
+        # Operation with every data item in sequence being a scalar:
+        d_np = np.array(1)
+        e_np = np.array(50.0)
+        d = cfdm.Data(d_np, "km")
+        e = cfdm.Data(e_np, "km")
+
+        # Note can't use the following (to compute answer):
+        #     f_np = np.concatenate([d_np, e_np])
+        # here since we have different behaviour to NumPy w.r.t scalars, where
+        # NumPy would error for the above with:
+        #     ValueError: zero-dimensional arrays cannot be concatenated
+        f_answer = np.array([d_np, e_np])
+        f = cfdm.Data.concatenate((d, e))
+
+        self.assertEqual(f.shape, f_answer.shape)
+        self.assertTrue((f.array == f_answer).all())
+
+        # Operation with some scalar and some non-scalar data in the sequence:
+        e_np = np.array([50.0, 75.0])
+        e = cfdm.Data(e_np, "km")
+
+        # As per above comment, can't use np.concatenate to compute
+        f_answer = np.array([1.0, 50, 75])
+        f = cfdm.Data.concatenate((d, e))
+        self.assertEqual(f.shape, f_answer.shape)
+        self.assertTrue((f.array == f_answer).all())
+
+        # Check cached elements
+        cached = f._get_cached_elements()
+        self.assertEqual(cached[0], d.first_element())
+        self.assertEqual(cached[-1], e.last_element())
+
+        # Check concatenation with one invalid units
+        d.Units = cfdm.Units("foo")
+        with self.assertRaises(ValueError):
+            f = cfdm.Data.concatenate([d, e], relaxed_units=True)
+
+        with self.assertRaises(ValueError):
+            f = cfdm.Data.concatenate([d, e], axis=1)
+
+        # Check concatenation with both invalid units
+        d.Units = cfdm.Units("foo")
+        e.Units = cfdm.Units("foo")
+        f = cfdm.Data.concatenate([d, e], relaxed_units=True)
+        with self.assertRaises(ValueError):
+            f = cfdm.Data.concatenate([d, e])
+
+        e.Units = cfdm.Units("foobar")
+        with self.assertRaises(ValueError):
+            f = cfdm.Data.concatenate([d, e], relaxed_units=True)
+
+        with self.assertRaises(ValueError):
+            f = cfdm.Data.concatenate([d, e])
+
+        e.Units = cfdm.Units("metre")
+        with self.assertRaises(ValueError):
+            f = cfdm.Data.concatenate([d, e], relaxed_units=True)
+
+        with self.assertRaises(ValueError):
+            f = cfdm.Data.concatenate([d, e], axis=1)
+
+        # Test cached elements
+        d = cfdm.Data([1, 2, 3])
+        e = cfdm.Data([4, 5])
+        repr(d)
+        repr(e)
+        f = cfdm.Data.concatenate([d, e], axis=0)
+        self.assertEqual(
+            f._get_cached_elements(),
+            {0: d.first_element(), -1: e.last_element()},
+        )
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

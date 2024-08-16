@@ -903,6 +903,26 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(removed_properties, properties)
         self.assertEqual(f.properties(), {})
 
+    def test_Field_concatenate(self):
+        """Test Field.concatenate."""
+        f = self.f1.copy()
+
+        g = cfdm.Field.concatenate([f.copy()], axis=0)
+        self.assertEqual(g.shape, (1, 10, 9))
+
+        x = [f.copy() for i in range(8)]
+
+        g = cfdm.Field.concatenate(x, axis=0)
+        self.assertEqual(g.shape, (8, 10, 9))
+
+        key = x[3].construct_key("latitude")
+        x[3].del_construct(key)
+        g = cfdm.Field.concatenate(x, axis=0)
+        self.assertEqual(g.shape, (8, 10, 9))
+
+        with self.assertRaises(Exception):
+            g = cfdm.Field.concatenate([], axis=0)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

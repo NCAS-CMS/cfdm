@@ -350,6 +350,64 @@ class PropertiesData(Properties):
 
         return v
 
+    @classmethod
+    def concatenate(
+        cls,
+        variables,
+        axis=0,
+        cull_graph=False,
+        relaxed_units=False,
+        copy=True,
+    ):
+        """Join a together sequence of '{{class}}`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `Data.concatenate`, `Data.cull_graph`
+
+        :Parameters:
+
+            variables: sequence of constructs.
+
+            axis: `int`, optional
+
+            {{cull_graph: `bool`, optional}}
+
+            {{relaxed_units: `bool`, optional}}
+
+            copy: `bool`, optional
+                If True (the default) then make copies of the
+                `{{class}}` constructs, prior to the concatenation,
+                thereby ensuring that the input constructs are not
+                changed by the concatenation process. If False then
+                some or all input constructs might be changed
+                in-place, but the concatenation process will be
+                faster.
+
+        :Returns:
+
+            `{{class}}`
+                TODOCFA
+
+        """
+        out = variables[0]
+        if copy:
+            out = out.copy()
+
+        if len(variables) == 1:
+            return out
+
+        data = out.get_data(_fill_value=False, _units=False)
+        new_data = type(data).concatenate(
+            [v.get_data(_fill_value=False) for v in variables],
+            axis=axis,
+            cull_graph=cull_graph,
+            relaxed_units=relaxed_units,
+            copy=copy,
+        )
+        out.set_data(new_data, copy=False)
+        return out
+
     def creation_commands(
         self,
         representative_data=False,

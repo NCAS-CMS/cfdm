@@ -384,6 +384,85 @@ class PropertiesDataBounds(PropertiesData):
 
         return c
 
+    @classmethod
+    def concatenate(
+        cls,
+        variables,
+        axis=0,
+        cull_graph=False,
+        relaxed_units=False,
+        copy=True,
+    ):
+        """Join a together sequence of '{{class}}`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `Data.concatenate`, `Data.cull_graph`
+
+        :Parameters:
+
+            variables: sequence of constructs
+
+            axis: `int`, optional
+
+            {{cull_graph: `bool`, optional}}
+
+            {{relaxed_units: `bool`, optional}}
+
+            copy: `bool`, optional
+                If True (the default) then make copies of the
+                `{{class}}` objects, prior to the concatenation,
+                thereby ensuring that the input constructs are not
+                changed by the concatenation process. If False then
+                some or all input constructs might be changed
+                in-place, but the concatenation process will be
+                faster.
+
+        :Returns:
+
+            `{{class}}`
+                TODOCFA
+
+        """
+        variable0 = variables[0]
+        if copy:
+            variable0 = variable0.copy()
+
+        if len(variables) == 1:
+            return variable0
+
+        out = super().concatenate(
+            variables,
+            axis=axis,
+            cull_graph=cull_graph,
+            relaxed_units=relaxed_units,
+            copy=copy,
+        )
+
+        bounds = variable0.get_bounds(None)
+        if bounds is not None:
+            bounds = bounds.concatenate(
+                [v.get_bounds() for v in variables],
+                axis=axis,
+                cull_graph=cull_graph,
+                relaxed_units=relaxed_units,
+                copy=copy,
+            )
+            out.set_bounds(bounds, copy=False)
+
+        interior_ring = variable0.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring = interior_ring.concatenate(
+                [v.get_interior_ring() for v in variables],
+                axis=axis,
+                cull_graph=cull_graph,
+                relaxed_units=relaxed_units,
+                copy=copy,
+            )
+            out.set_interior_ring(interior_ring, copy=False)
+
+        return out
+
     def creation_commands(
         self,
         representative_data=False,

@@ -363,6 +363,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 except AttributeError:
                     pass
 
+            # Cached elements
+            try:
+                self._set_cached_elements(source._get_cached_elements())
+            except AttributeError:
+                pass
+
             # Mask hardness
             self.hardmask = getattr(source, "hardmask", _DEFAULT_HARDMASK)
 
@@ -1703,7 +1709,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `_del_Array`, `_del_cached_elements`,
-                     `nc_del_aggregated_write`, `_set_dask`
+                     `nc_del_aggregated_write_status`, `_set_dask`
 
         :Parameters:
 
@@ -1754,7 +1760,30 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         if clear & _CFA:
             # Set the CFA write status to False
-            self.nc_del_aggregated_write()
+            self.nc_del_aggregated_write_status()
+
+    @classmethod
+    def _concatenate_conform_units(
+        cls, data1, units0, relaxed_units, copy, copied
+    ):
+        """TODOCFA."""
+        # Check and conform, if necessary, the units of all inputs
+        units1 = data1.Units
+        if (
+            relaxed_units
+            and not units0.isvalid
+            and not units1.isvalid
+            and units0.__dict__ == units1.__dict__
+        ):
+            # Allow identical invalid units to be equal
+            pass
+        elif not units0.equals(units1):
+            raise ValueError(
+                "Can't concatenate: All the input arrays must have "
+                f"equal units. Got {units0!r} and {units1!r}"
+            )
+
+        return data1
 
     def _del_cached_elements(self):
         """Delete any cached element values.
@@ -2014,7 +2043,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """
         self._set_Array(array, copy=copy)
 
-    # REVIEW: getitem: `_set_dask`: new keyword 'asanyarray'
     def _set_dask(self, dx, copy=False, clear=_ALL, asanyarray=False):
         """Set the dask array.
 
@@ -3110,6 +3138,209 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             a.set_fill_value(self.get_fill_value(None))
 
         return a
+
+    @classmethod
+    def concatenate(
+        cls, data, axis=0, cull_graph=False, relaxed_units=False, copy=True
+    ):
+        """Join a sequence of data arrays together.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `cull_graph`
+
+        :Parameters:
+
+            data: sequence of `Data`
+                The data arrays to be concatenated. Concatenation is
+                carried out in the order given. Each data array must
+                have equivalent units and the same shape, except in
+                the concatenation axis. Note that scalar arrays are
+                treated as if they were one dimensional.
+
+            axis: `int`, optional
+                The axis along which the arrays will be joined. The
+                default is 0. Note that scalar arrays are treated as
+                if they were one dimensional.
+
+            {{cull_graph: `bool`, optional}}
+
+            {{relaxed_units: `bool`, optional}}
+
+            copy: `bool`, optional
+                If True (the default) then make copies of the data, if
+                required, prior to the concatenation, thereby ensuring
+                that the input data arrays are not changed by the
+                concatenation process. If False then some or all input
+                data arrays might be changed in-place, but the
+                concatenation process will be faster.
+
+        :Returns:
+
+            `Data`
+                The concatenated data.
+
+        **Examples**
+
+        >>> d = cf.Data([[1, 2], [3, 4]], 'km')
+        >>> e = cf.Data([[5.0, 6.0]], 'metre')
+        >>> f = cf.Data.concatenate((d, e))
+        >>> print(f.array)
+        [[ 1.     2.   ]
+         [ 3.     4.   ]
+         [ 0.005  0.006]]
+        >>> f.equals(cf.Data.concatenate((d, e), axis=-2))
+        True
+
+        >>> e = cf.Data([[5.0], [6.0]], 'metre')
+        >>> f = cf.Data.concatenate((d, e), axis=1)
+        >>> print(f.array)
+        [[ 1.     2.     0.005]
+         [ 3.     4.     0.006]]
+
+        >>> d = cf.Data(1, 'km')
+        >>> e = cf.Data(50.0, 'metre')
+        >>> f = cf.Data.concatenate((d, e))
+        >>> print(f.array)
+        [ 1.    0.05]
+
+        >>> e = cf.Data([50.0, 75.0], 'metre')
+        >>> f = cf.Data.concatenate((d, e))
+        >>> print(f.array)
+        [ 1.     0.05   0.075]
+
+        """
+        data = tuple(data)
+        if len(data) < 2:
+            raise ValueError(
+                "Can't concatenate: Must provide at least two data arrays"
+            )
+
+        if cull_graph:
+            # Remove unnecessary components from the graph, which may
+            # improve performance, and because complicated task graphs
+            # can sometimes confuse da.concatenate.
+            for d in data:
+                d.cull_graph()
+
+        data0 = data[0]
+        units0 = data0.Units
+        data0_cached_elements = data0._get_cached_elements()
+
+        if copy:
+            data0 = data0.copy()
+
+        if not data0.ndim:
+            data0.insert_dimension(inplace=True)
+
+        processed_data = [data0]
+        for data1 in data[1:]:
+            # Turn any scalar array into a 1-d array
+            copied = False
+            if not data1.ndim:
+                if copy:
+                    data1 = data1.copy()
+                    copied = True
+
+                data1.insert_dimension(inplace=True)
+
+            # Check and conform xthe units of all inputs
+            data1 = cls._concatenate_conform_units(
+                data1, units0, relaxed_units, copy, copied
+            )
+            processed_data.append(data1)
+
+        # Get data as dask arrays and apply concatenation
+        # operation. We can set 'asanyarray=False' because at compute
+        # time the concatenation operation does not need to access the
+        # actual data.
+        dxs = [d.to_dask_array(asanyarray=False) for d in processed_data]
+        dx = da.concatenate(dxs, axis=axis)
+
+        # Set the CFA write status
+        #
+        # Assume at first that all input data instances have True
+        # status, but ...
+        cfa = _CFA
+        for d in processed_data:
+            if not d.nc_get_aggregated_write_status():
+                # ... the CFA write status is False when any input
+                # data instance has False status;
+                cfa = _NONE
+                break
+
+        if cfa != _NONE:
+            non_concat_axis_chunks0 = list(processed_data[0].chunks)
+            non_concat_axis_chunks0.pop(axis)
+            for d in processed_data[1:]:
+                non_concat_axis_chunks = list(d.chunks)
+                non_concat_axis_chunks.pop(axis)
+                if non_concat_axis_chunks != non_concat_axis_chunks0:
+                    # ... the CFA write status must also be False when
+                    # any two input data instances have different
+                    # chunk patterns for the non-concatenated axes;
+                    cfa = _NONE
+                    break
+
+        if cfa != _NONE:
+            fragment_type = processed_data[0].nc_get_aggregated_fragment_type()
+            for d in processed_data[1:]:
+                if d.nc_get_aggregated_fragment_type() != fragment_type:
+                    # ... when any two input Data objects have
+                    # different fragment types, then we can't write as
+                    # an aggregation variable;
+                    data0._nc_del_aggregated_fragment_type()
+                    cfa = _NONE
+                    break
+
+        # Define the __asanyarray__ status
+        asanyarray = processed_data[0].__asanyarray__
+        for d in processed_data[1:]:
+            if d.__asanyarray__ != asanyarray:
+                # If and only if any two input Data objects have
+                # different __asanyarray__ values, then set
+                # asanyarray=True on the concatenation.
+                asanyarray = True
+                break
+
+        # Set the aggregated_data terms and aggregated substitutions
+        # by combining them from all of the input data instances,
+        # giving precedence to those towards the left hand side of the
+        # input list.
+        if data0.nc_get_aggregated_write_status():
+            aggregated_data = {}
+            substitutions = {}
+            for d in processed_data[::-1]:
+                aggregated_data.update(d.nc_get_aggregated_data())
+                substitutions.update(d.nc_aggregated_substitutions())
+
+            if aggregated_data:
+                data0.nc_set_aggregated_data(aggregated_data)
+
+            if substitutions:
+                data0.nc_update_aggregated_substitutions(substitutions)
+
+        # Set the new dask array
+        data0._set_dask(dx, clear=_ALL ^ cfa, asanyarray=asanyarray)
+
+        # Set appropriate cached elements (after '_set_dask' has just
+        # cleared them from data0).
+        cached_elements = {}
+        i = 0
+        element = data0_cached_elements.get(i)
+        if element is not None:
+            cached_elements[i] = element
+
+        i = -1
+        element = processed_data[i]._get_cached_elements().get(i)
+        if element is not None:
+            cached_elements[i] = element
+
+        if cached_elements:
+            data0._set_cached_elements(cached_elements)
+
+        # Return the concatneated data
+        return data0
 
     def creation_commands(
         self, name="data", namespace=None, indent=0, string=True

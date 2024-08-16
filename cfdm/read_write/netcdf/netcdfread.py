@@ -6603,7 +6603,7 @@ class NetCDFRead(IORead):
             # For non-aggregation variables, set the CFA write status
             # to True when there is exactly one dask chunk.
             if data.npartitions == 1:
-                data._nc_set_aggregated_write(True)
+                data._nc_set_aggregated_write_status(True)
                 data._nc_set_aggregated_fragment_type("location")
         else:
             if construct is not None:
@@ -6629,7 +6629,7 @@ class NetCDFRead(IORead):
                     cfa_write = False
                     break
 
-            data._nc_set_aggregated_write(cfa_write)
+            data._nc_set_aggregated_write_status(cfa_write)
 
             # Store the file substitutions
             data.nc_update_aggregated_substitutions(

@@ -4728,25 +4728,25 @@ class NetCDFAggregation(NetCDFMixin):
         """
         if not value:
             self.nc_del_aggregated_data()
-            
+
         if isinstance(value, str):
             v = split(r"\s+", value)
             value = {term[:-1]: var for term, var in zip(v[::2], v[1::2])}
         else:
             # 'value' is a dictionary
             value = value.copy()
-            
+
         self._get_component("netcdf")["aggregated_data"] = value
 
-    def _nc_del_aggregated_fragment_type(self, default=ValueError()):
+    def _nc_del_aggregated_fragment_type(self):
         """TODOCFA.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        return self._nc_del("aggregated_fragment_type", default)
+        return self._nc_del("aggregated_fragment_type", None)
 
-    def _nc_get_aggregated_fragment_type(self):
+    def nc_get_aggregated_fragment_type(self):
         """TODOCFA.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -4767,24 +4767,24 @@ class NetCDFAggregation(NetCDFMixin):
         """
         self._get_component("netcdf")["aggregated_fragment_type"] = value
 
-    def nc_del_aggregated_write(self):
+    def nc_del_aggregated_write_status(self):
         """TODOCFA.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `nc_get_aggregated_write`,
-                     `nc_set_aggregated_write`
+        .. seealso:: `nc_get_aggregated_write_status`,
+                     `nc_set_aggregated_write_status`
 
         """
-        return self._nc_del("aggregated_write", False)
+        return self._nc_del("aggregated_write_status", False)
 
-    def nc_get_aggregated_write(self):
+    def nc_get_aggregated_write_status(self):
         """Set the CFA write status of the data to `False`.TODOCFA.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `nc_del_aggregated_write`,
-                     `nc_set_aggregated_write`
+        .. seealso:: `nc_del_aggregated_write_status`,
+                     `nc_set_aggregated_write_status`
 
         :Returns:
 
@@ -4792,16 +4792,16 @@ class NetCDFAggregation(NetCDFMixin):
                 The CFA status prior to deletion.TODOCFA
 
         """
-        return self._nc_get("aggregated_write", False)
+        return self._nc_get("aggregated_write_status", False)
 
-    def _nc_set_aggregated_write(self, status):
+    def _nc_set_aggregated_write_status(self, status):
         """TODOCFA.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `nc_del_aggregated_write`,
-                     `nc_get_aggregated_write`,
-                     `nc_set_aggregated_write`
+        .. seealso:: `nc_del_aggregated_write_status`,
+                     `nc_get_aggregated_write_status`,
+                     `nc_set_aggregated_write_status`
 
         :Parameters:
 
@@ -4809,26 +4809,26 @@ class NetCDFAggregation(NetCDFMixin):
                 TODOCFA
 
         """
-        self._get_component("netcdf")["aggregated_write"] = bool(status)
+        self._get_component("netcdf")["aggregated_write_status"] = bool(status)
 
-    def nc_set_aggregated_write(self, status):
+    def nc_set_aggregated_write_status(self, status):
         """TODOCFA.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `nc_del_aggregated_write`,
-                     `nc_get_aggregated_write`
+        .. seealso:: `nc_del_aggregated_write_status`,
+                     `nc_get_aggregated_write_status`
 
         """
         if status:
             raise ValueError(
-                "'nc_set_aggregated_write' only allows the netCDF "
-                "aggregation write status to be set to False. "
-                "(At your own risk you may use '_nc_set_aggregated_write' "
-                "to set the status to True.)"
+                "'nc_set_aggregated_write_status' only allows the netCDF "
+                "aggregation write status to be set to False. (At your own "
+                "risk you may use '_nc_set_aggregated_write_status' to set "
+                "the status to True.)"
             )
 
-        self._nc_set_aggregated_write(status)
+        self._nc_set_aggregated_write_status(status)
 
     def nc_clear_aggregated_substitutions(self):
         """Remove all neCDF aggregation substitution definitions.
