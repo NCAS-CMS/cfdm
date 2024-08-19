@@ -160,7 +160,6 @@ class FragmentFileArray(
         # By default, close the file after data array access
         self._set_component("close", True, copy=False)
 
-    # REVIEW: getitem: `_get_array`: new method to convert subspace to numpy array
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
@@ -203,7 +202,6 @@ class FragmentFileArray(
         # Loop round the files, returning as soon as we find one that
         # is accessible.
         filenames = self.get_filenames()
-        print (filenames)
         for filename, address in zip(filenames, self.get_addresses()):
             kwargs["filename"] = filename
             kwargs["address"] = address
@@ -212,14 +210,10 @@ class FragmentFileArray(
             )
 
             for FragmentArray in self._FragmentArrays:
-                print (FragmentArray, kwargs)
                 try:
                     return FragmentArray(**kwargs)._get_array(index)
                 except Exception:
                     pass
-            print(1212)
-        # Still here?
-        if len(filenames) == 1:
-            raise FileNotFoundError(f"No such fragment file: {filenames[0]}")
 
-        raise FileNotFoundError(f"No such fragment files: {filenames}")
+        # Still here?
+        raise OSError(f"Can't access any of the fragment files: {filenames}")

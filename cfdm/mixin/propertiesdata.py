@@ -8,6 +8,7 @@ from ..decorators import (
     _manage_log_level_via_verbosity,
     _test_decorator_args,
 )
+from ..functions import dirname
 from . import Properties
 
 logger = logging.getLogger(__name__)
@@ -254,6 +255,43 @@ class PropertiesData(Properties):
 
         return data.datetime_array
 
+    def add_file_directory(self, directory):
+        """Add a new file directory in-place.
+
+        Another version of every file referenced by the data is
+        provided in the given *directory*.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `del_file_directory`, `file_directories`,
+                     `replace_file_directory`
+
+        :Parameters:
+
+            directory: `str`
+                The new directory.
+
+        :Returns:
+
+            `str`
+                The new directory as an absolute path.
+
+        **Examples**
+
+        >>> f.get_filenames()
+        {'/data/file1.nc', '/home/file2.nc'}
+        >>> f.add_file_directory('/new/')
+        '/new'
+        >>> f.get_filenames()
+        {'/data/file1.nc', '/new/file1.nc', '/home/file2.nc', '/new/file2.nc'}
+
+        """
+        data = self.get_data(None, _fill_value=False, _units=False)
+        if data is not None:
+            return data.add_file_directory(directory)
+
+        return dirname(directory)
+
     @_inplace_enabled(default=False)
     def apply_masking(self, inplace=False):
         """Apply masking as defined by the CF conventions.
@@ -359,7 +397,7 @@ class PropertiesData(Properties):
         relaxed_units=False,
         copy=True,
     ):
-        """Join a together sequence of '{{class}}`.
+        """Join a together sequence of `{{class}}`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -370,24 +408,20 @@ class PropertiesData(Properties):
             variables: sequence of constructs.
 
             axis: `int`, optional
+                Select the axis to along which to concatenate, defined
+                by its position in the data array. By default
+                concatenatoin is along the axis in position 0.
 
             {{cull_graph: `bool`, optional}}
 
             {{relaxed_units: `bool`, optional}}
 
-            copy: `bool`, optional
-                If True (the default) then make copies of the
-                `{{class}}` constructs, prior to the concatenation,
-                thereby ensuring that the input constructs are not
-                changed by the concatenation process. If False then
-                some or all input constructs might be changed
-                in-place, but the concatenation process will be
-                faster.
+            {{concatenate copy: `bool`, optional}}
 
         :Returns:
 
             `{{class}}`
-                TODOCFA
+                The concatenated construct.
 
         """
         out = variables[0]
@@ -501,6 +535,44 @@ class PropertiesData(Properties):
             out = ("\n" + indent).join(out)
 
         return out
+
+    def del_file_directory(self, directory):
+        """Remove a file directory in-place.
+
+        Every file in *directory* that is referenced by the data is
+        removed. If this results in part of the data being undefined
+        then an exception is raised.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `add_file_directory`, `file_directories`,
+                     `replace_file_directory`
+
+        :Parameters:
+
+            directory: `str`
+                 The file directory to remove.
+
+        :Returns:
+
+            `str`
+                The removed directory as an absolute path.
+
+        **Examples**
+
+        >>> f.get_filenames()
+        {'/data/file1.nc', '/home/file2.nc'}
+        >>> f.del_file_directory('/data/')
+        '/data'
+        >>> f.get_filenames()
+        {'/home/file2.nc'}
+
+        """
+        data = self.get_data(None, _fill_value=False, _units=False)
+        if data is not None:
+            return data.del_file_directory(directory)
+
+        return dirname(directory)
 
     @_display_or_return
     def dump(
@@ -719,6 +791,33 @@ class PropertiesData(Properties):
 
         return True
 
+    def file_directories(self):
+        """The directories of files containing parts of the data.
+
+        Returns the locations of any files referenced by the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `add_file_directory`, `del_file_directory`,
+                     `replace_file_directory`
+
+        :Returns:
+
+            `set`
+                The unique set of file directories as absolute paths.
+
+        **Examples**
+
+        >>> d.file_directories()
+        {'/home/data1', 'file:///data2'}
+
+        """
+        data = self.get_data(None, _fill_value=False, _units=False)
+        if data is not None:
+            return data.file_directories()
+
+        return set()
+
     def get_filenames(self):
         """Return the name of the file or files containing the data.
 
@@ -783,6 +882,46 @@ class PropertiesData(Properties):
             data.insert_dimension(position, inplace=True)
 
         return v
+
+    def replace_file_directory(self, old_directory, new_directory):
+        """Replace a file directory in-place.
+
+        Every file in *old_directory* that is referenced by the data
+        is redefined to be in *new_directory*.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `add_file_directory`, `del_file_directory`,
+                     `file_directories`
+
+        :Parameters:
+
+            old_directory: `str`
+                The new directory to be replaced.
+
+            new_directory: `str`
+                The new directory.
+
+        :Returns:
+
+            `str`
+                The new directory as an absolute path.
+
+        **Examples**
+
+        >>> d.get_filenames()
+        {'/data/file1.nc', '/home/file2.nc'}
+        >>> d.replace_file_directory('/data', '/new/data/path/')
+        '/new/data/path'
+        >>> d.get_filenames()
+        {'/new/data/path/file1.nc', '/home/file2.nc'}
+
+        """
+        data = self.get_data(None, _fill_value=False, _units=False)
+        if data is not None:
+            return data.replace_file_directory(old_directory, new_directory)
+
+        return dirname(new_directory)
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):

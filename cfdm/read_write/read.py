@@ -23,6 +23,7 @@ def read(
     storage_options=None,
     cache=True,
     chunks="auto",
+    cfa=None,
     _implementation=_implementation,
 ):
     """Read field or domain constructs from a dataset.
@@ -411,6 +412,29 @@ def read(
 
             .. versionadded:: (cfdm) NEXTVERSION
 
+        cfa: `dict`, optional
+            Configure the reading of CF-netCDF aggregation files. The
+            dictionary may have any subset of the following key/value
+            pairs to override the information read from the file:
+
+            * ``'substitutions'``: `dict`
+
+              A dictionary whose key/value pairs define text
+              substitutions to be applied to the fragment file
+              names. Each key may be specified with or without the
+              ``${*}`` syntax (where `*` represents any amount of any
+              characters). For instance, ``{'substitution':
+              'replacement'}`` and ``{'${substitution}' are equivalent
+              'replacement'}``. The substitutions are used in
+              conjunction with, and take precedence over, any that are
+              stored in the aggregation file by the ``substitutions``
+              attribute of a ``location`` fragement array variable.
+
+              *Example:*
+                ``{'replacement': 'file:///data/'}``
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that provides the
             returned field constructs.
@@ -450,6 +474,29 @@ def read(
         extra = ()
     elif isinstance(extra, str):
         extra = (extra,)
+
+    # Parse the 'cfa' parameter
+    if cfa is None:
+        cfa_config = {}
+    else:
+        cfa_config = cfa.copy()
+        keys = ("substitutions",)
+        if not set(cfa_config.issubset(keys)):
+            raise ValueError(
+                "Invalid dictionary key to the 'cfa' parameter."
+                f"Valid keys are {keys}. Got: {cfa_config}"
+            )
+
+    if "substitutions" in cfa_config:
+        substitutions = cfa_config["substitutions"].copy()
+        for base, sub in tuple(substitutions.items()):
+            if not (base.startswith("${") and base.endswith("}")):
+                # Add missing ${...}
+                substitutions[f"${{{base}}}"] = substitutions.pop(base)
+    else:
+        substitutions = {}
+
+    cfa_config["substitutions"] = substitutions
 
     # Check chunks
     if chunks is not None and not isinstance(chunks, (str, Integral, dict)):
@@ -497,6 +544,7 @@ def read(
                 cache=bool(cache),
                 chunks=chunks,
                 extra_read_vars=None,
+                cfa=cfa_config,
             )
         except MaskError:
             # Some data required for field interpretation is missing,

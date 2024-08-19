@@ -456,6 +456,53 @@ def abspath(filename):
     return filename
 
 
+def dirname(path):
+    """Return a normalised absolute version of a path directory.
+
+    .. versionadded:: (cfdm) NEXTVERSION
+
+    :Parameters:
+
+        path: `str`
+            The name of the path.
+
+    :Returns:
+
+        `str`
+            The normalised absolutised version of the directory of
+            *path*.
+
+    **Examples**
+
+    >>> import os
+    >>> os.getcwd()
+    '/data/archive'
+    >>> cfdm.dirname('/data/archive/file.nc')
+    '/data/archive'
+    >>> cfdm.dirname('/data/archive/')
+    '/data/archive'
+    >>> cfdm.dirname('/data/archive')
+    '/data/archive'
+    >>> cfdm.dirname'..//archive///file.nc')
+    '/data/archive'
+    >>> cfdm.abspath('http://data/archive/file.nc')
+    'http://data/archive'
+    >>> cfdm.abspath('file://data/archive/file.nc')
+    'file://data/archive'
+
+    """
+    u = urlparse(path)
+    if u.scheme:
+        return os.path.dirname(u.geturl())
+
+    # Local file
+    u = u.path
+    if not os.path.isdir(u):
+        u = os.path.dirname(u)
+
+    return os.path.abspath(u)
+
+
 def unique_constructs(constructs, ignore_properties=None, copy=True):
     """Return the unique constructs from a sequence.
 

@@ -6,7 +6,6 @@ from itertools import product, zip_longest
 from math import prod
 from numbers import Integral
 from operator import mul
-from os import sep
 
 import dask.array as da
 import numpy as np
@@ -25,7 +24,7 @@ from ..decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
-from ..functions import _numpy_allclose, abspath, parse_indices
+from ..functions import _numpy_allclose, dirname, parse_indices
 from ..mixin.container import Container
 from ..mixin.files import Files
 from ..mixin.netcdf import NetCDFAggregation, NetCDFHDF5
@@ -1737,10 +1736,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 then no components are removed.
 
                 To retain a component and remove all others, use
-                ``_ALL`` with the bitwise OR operator. For instance,
-                if *clear* is ``_ALL ^ _CACHE`` then the cached
-                element values will be kept but all other components
-                will be removed.
+                ``_ALL`` with the bitwise OR operator when defining
+                *clear*. For instance, if *clear* is ``_ALL ^ _CACHE``
+                then the cached element values will be kept but all
+                other components will be removed.
 
         :Returns:
 
@@ -3494,6 +3493,62 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
         self._set_dask(dx, clear=_NONE, asanyarray=None)
 
+    def add_file_directory(self, directory):
+        """Add a new file directory in-place.
+
+        Another version of every file referenced by the data is
+        provided in the given *directory*.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `del_file_directory`, `file_directories`,
+                     `replace_file_directory`
+
+        :Parameters:
+
+            directory: `str`
+                The new directory.
+
+        :Returns:
+
+            `str`
+                The new directory as an absolute path.
+
+        **Examples**
+
+        >>> d.get_filenames()
+        {'/data/file1.nc', '/home/file2.nc'}
+        >>> d.add_file_directory('/new/')
+        '/new'
+        >>> d.get_filenames()
+        {'/data/file1.nc', '/new/file1.nc', '/home/file2.nc', '/new/file2.nc'}
+
+        """
+        directory = dirname(directory)
+
+        updated = False
+
+        # The Dask graph is never going to be computed, so we can set
+        # 'asanyarray=False'.
+        dsk = self.todict(asanyarray=False)
+        for key, a in dsk.items():
+            try:
+                dsk[key] = a.add_file_directory(directory)
+            except AttributeError:
+                # This Dask chunk doesn't contain a file array
+                continue
+
+            # This Dask chunk contains a file array, and the Dask
+            # graph has been updated.
+            updated = True
+
+        if updated:
+            dx = self.to_dask_array(asanyarray=False)
+            dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
+            self._set_dask(dx, clear=_NONE, asanyarray=None)
+
+        return directory
+
     def any(self, axis=None, keepdims=True, split_every=None):
         """Test whether any data array elements evaluate to True.
 
@@ -3847,44 +3902,48 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         self._Units = self._Units_class(self.get_units(None), None)
         return calendar
 
-    def del_file_location(self, location):
-        """Remove a file location in-place.
+    def del_file_directory(self, directory):
+        """Remove a file directory in-place.
 
-        All data definitions that reference files will have references
-        to files in the given location removed from them.
+        Every file in *directory* that is referenced by the data is
+        removed. If this results in part of the data being undefined
+        then an exception is raised.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `add_file_location`, `file_locations`
+        .. seealso:: `add_file_directory`, `file_directories`,
+                     `replace_file_directory`
 
         :Parameters:
 
-            location: `str`
-                 The file location to remove.
+            directory: `str`
+                 The file directory to remove.
 
         :Returns:
 
             `str`
-                The removed location as an absolute path with no
-                trailing path name component separator.
+                The removed directory as an absolute path.
 
         **Examples**
 
-        >>> d.del_file_location('/data/model/')
-        '/data/model'
+        >>> d.get_filenames()
+        {'/data/file1.nc', '/home/file2.nc'}
+        >>> d.del_file_directory('/data/')
+        '/data'
+        >>> d.get_filenames()
+        {'/home/file2.nc'}
 
         """
-        location = abspath(location).rstrip(sep)
+        directory = dirname(directory)
 
         updated = False
 
-        # REVIEW: getitem: `del_file_location`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
         dsk = self.todict(asanyarray=False)
         for key, a in dsk.items():
             try:
-                dsk[key] = a.del_file_location(location)
+                dsk[key] = a.del_file_directory(directory)
             except AttributeError:
                 # This chunk doesn't contain a file array
                 continue
@@ -3898,7 +3957,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
             self._set_dask(dx, clear=_NONE, asanyarray=None)
 
-        return location
+        return directory
 
     def del_units(self, default=ValueError()):
         """Delete the units.
@@ -3958,8 +4017,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         calendar=None,
         chunks=_DEFAULT_CHUNKS,
     ):
-        """Return a new array of given shape and type, without
-        initialising entries.
+        """Return a new array xwithout initialising entries.
 
         :Parameters:
 
@@ -4211,36 +4269,34 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         else:
             return True
 
-    def file_locations(self):
-        """The locations of files containing parts of the data.
+    def file_directories(self):
+        """The directories of files containing parts of the data.
 
-        Returns the locations of any files that may be required to
-        deliver the computed data array.
+        Returns the locations of any files referenced by the data.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `add_file_location`, `del_file_location`
+        .. seealso:: `add_file_directory`, `del_file_directory`,
+                     `replace_file_directory`
 
         :Returns:
 
             `set`
-                The unique file locations as absolute paths with no
-                trailing path name component separator.
+                The unique set of file directories as absolute paths.
 
         **Examples**
 
-        >>> d.file_locations()
+        >>> d.file_directories()
         {'/home/data1', 'file:///data2'}
 
         """
         out = []
 
-        # REVIEW: getitem: `file_locations`: set 'asanyarray'
         # This dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
         for key, a in self.todict(asanyarray=False).items():
             try:
-                out.extend(a.file_locations())
+                out.extend(a.file_directories())
             except AttributeError:
                 # This chunk doesn't contain a file array
                 pass
@@ -5567,6 +5623,67 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         d._set_dask(dx, clear=_ALL ^ _ARRAY ^ _CACHE, asanyarray=True)
 
         return d
+
+    def replace_file_directory(self, old_directory, new_directory):
+        """Replace a file directory in-place.
+
+        Every file in *old_directory* that is referenced by the data
+        is redefined to be in *new_directory*.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `add_file_directory`, `del_file_directory`,
+                     `file_directories`
+
+        :Parameters:
+
+            old_directory: `str`
+                The directory to be replaced.
+
+            new_directory: `str`
+                The new directory.
+
+        :Returns:
+
+            `str`
+                The new directory as an absolute path.
+
+        **Examples**
+
+        >>> d.get_filenames()
+        {'/data/file1.nc', '/home/file2.nc'}
+        >>> d.replace_file_directory('/data', '/new/data/path/')
+        '/new/data/path'
+        >>> d.get_filenames()
+        {'/new/data/path/file1.nc', '/home/file2.nc'}
+
+        """
+        old_directory = dirname(old_directory)
+        new_directory = dirname(new_directory)
+        updated = False
+
+        # The Dask graph is never going to be computed, so we can set
+        # 'asanyarray=False'.
+        dsk = self.todict(asanyarray=False)
+        for key, a in dsk.items():
+            try:
+                dsk[key] = a.replace_file_directory(
+                    old_directory, new_directory
+                )
+            except AttributeError:
+                # This Dask chunk doesn't contain a file array
+                continue
+
+            # This Dask chunk contains a file array, and the Dask
+            # graph has been updated.
+            updated = True
+
+        if updated:
+            dx = self.to_dask_array(asanyarray=False)
+            dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
+            self._set_dask(dx, clear=_NONE, asanyarray=None)
+
+        return new_directory
 
     @_inplace_enabled(default=False)
     def reshape(self, *shape, merge_chunks=True, limit=None, inplace=False):

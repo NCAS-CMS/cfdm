@@ -12,7 +12,7 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
 
-n_tmpfiles = 5
+n_tmpfiles = 4
 tmpfiles = [
     tempfile.mkstemp("_test_CFA.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
@@ -20,9 +20,8 @@ tmpfiles = [
 (
     tmpfile1,
     tmpfile2,
-    tmpfile3,
-    tmpfile4,
-    tmpfile5,
+    nc_file,
+    cfa_file,
 ) = tmpfiles
 
 
@@ -55,8 +54,8 @@ class CFATest(unittest.TestCase):
         f = cfdm.read(tmpfile1)[0]
 
         for fmt in self.netcdf_fmts:
-            cfdm.write(f, tmpfile2, fmt=fmt, cfa=True)
-            g = cfdm.read(tmpfile2)
+            cfdm.write(f, cfa_file, fmt=fmt, cfa=True)
+            g = cfdm.read(cfa_file)
             self.assertEqual(len(g), 1)
             self.assertTrue(f.equals(g[0]))
 
@@ -71,8 +70,6 @@ class CFATest(unittest.TestCase):
         b = cfdm.read(tmpfile2)[0]
         a = cfdm.Field.concatenate([a, b], axis=0)
 
-        nc_file = tmpfile3
-        cfa_file = tmpfile4
         cfdm.write(a, nc_file)
         cfdm.write(a, cfa_file, cfa=True)
 
@@ -87,42 +84,40 @@ class CFATest(unittest.TestCase):
         """Test 'strict' option to the cfdm.write 'cfa' keyword."""
         f = cfdm.example_field(0)
 
-        # By default, can't write as CF-netCDF those variables
-        # selected for CFA treatment, but which aren't suitable.
+        # By default, can't write in-memory arrays as aggregation
+        # variables
         with self.assertRaises(ValueError):
-            cfdm.write(f, tmpfile1, cfa=True)
+            cfdm.write(f, cfa_file, cfa=True)
 
         # The previous line should have deleted the output file
-        self.assertFalse(os.path.exists(tmpfile1))
+        self.assertFalse(os.path.exists(cfa_file))
 
-        cfdm.write(f, tmpfile1, cfa={"strict": False})
-        g = cfdm.read(tmpfile1)
+        cfdm.write(f, nc_file, cfa={"strict": False})
+        g = cfdm.read(nc_file)
         self.assertEqual(len(g), 1)
         self.assertTrue(g[0].equals(f))
 
-        cfdm.write(g, tmpfile2, cfa={"strict": True})
-        g = cfdm.read(tmpfile2)
+        cfdm.write(g, cfa_file, cfa={"strict": True})
+        g = cfdm.read(cfa_file)
         self.assertEqual(len(g), 1)
         self.assertTrue(g[0].equals(f))
 
     def test_CFA_substitutions_0(self):
         """Test aggregation substitution URI substitutions (0)."""
         f = cfdm.example_field(0)
-        tmpfile1 = 'tmpfile1.nc'
         cfdm.write(f, tmpfile1)
         f = cfdm.read(tmpfile1)[0]
 
         cwd = os.getcwd()
         f.data.nc_update_aggregated_substitutions({"base": cwd})
 
-        tmpfile2 = 'tmpfile2.nc'
         cfdm.write(
             f,
-            tmpfile2,
+            cfa_file,
             cfa={"absolute_paths": True},
         )
 
-        nc = netCDF4.Dataset(tmpfile2, "r")
+        nc = netCDF4.Dataset(cfa_file, "r")
         cfa_location = nc.variables["cfa_location"]
         self.assertEqual(
             cfa_location.getncattr("substitutions"),
@@ -133,19 +128,12 @@ class CFATest(unittest.TestCase):
         )
         nc.close()
 
-        g = cfdm.read(tmpfile2)
+        g = cfdm.read(cfa_file)
         self.assertEqual(len(g), 1)
-        print ('END 8')
-        print (f)
-        print(g[0])
-        print (g[0].data.compute())
         self.assertTrue(f.equals(g[0], verbose=-1))
-        print ('END 9')
 
     def test_CFA_substitutions_1(self):
         """Test aggregation substitution URI substitutions (1)."""
-        print ('SKIPPED')
-        return
         f = cfdm.example_field(0)
         cfdm.write(f, tmpfile1)
         f = cfdm.read(tmpfile1)[0]
@@ -154,11 +142,11 @@ class CFATest(unittest.TestCase):
         for base in ("base", "${base}"):
             cfdm.write(
                 f,
-                tmpfile2,
+                cfa_file,
                 cfa={"absolute_paths": True, "substitutions": {base: cwd}},
             )
 
-            nc = netCDF4.Dataset(tmpfile2, "r")
+            nc = netCDF4.Dataset(cfa_file, "r")
             cfa_location = nc.variables["cfa_location"]
             self.assertEqual(
                 cfa_location.getncattr("substitutions"),
@@ -170,15 +158,14 @@ class CFATest(unittest.TestCase):
             )
             nc.close()
 
-        g = cfdm.read(tmpfile2)
+        g = cfdm.read(cfa_file)
         self.assertEqual(len(g), 1)
         self.assertTrue(f.equals(g[0], verbose=-1))
 
     def test_CFA_substitutions_2(self):
         """Test aggregation substitution URI substitutions (2)."""
-        print ('SKIPPED')
-        return 
         f = cfdm.example_field(0)
+        tmpfile1 = "tmpfile1.nc"
         cfdm.write(f, tmpfile1)
         f = cfdm.read(tmpfile1)[0]
 
@@ -186,17 +173,17 @@ class CFATest(unittest.TestCase):
 
         f.data.nc_clear_aggregated_substitutions()
         f.data.nc_update_aggregated_substitutions({"base": cwd})
-
+        cfa_file = "cfa_file.nc"
         cfdm.write(
             f,
-            tmpfile2,
+            cfa_file,
             cfa={
                 "absolute_paths": True,
                 "substitutions": {"base2": "/bad/location"},
             },
         )
 
-        nc = netCDF4.Dataset(tmpfile2, "r")
+        nc = netCDF4.Dataset(cfa_file, "r")
         cfa_location = nc.variables["cfa_location"]
         self.assertEqual(
             cfa_location.getncattr("substitutions"),
@@ -207,7 +194,7 @@ class CFATest(unittest.TestCase):
         )
         nc.close()
 
-        g = cfdm.read(tmpfile2)
+        g = cfdm.read(cfa_file)
         self.assertEqual(len(g), 1)
         self.assertTrue(f.equals(g[0]))
 
@@ -216,11 +203,11 @@ class CFATest(unittest.TestCase):
 
         cfdm.write(
             f,
-            tmpfile2,
+            cfa_file,
             cfa={"absolute_paths": True, "substitutions": {"base": cwd}},
         )
 
-        nc = netCDF4.Dataset(tmpfile2, "r")
+        nc = netCDF4.Dataset(cfa_file, "r")
         cfa_location = nc.variables["cfa_location"]
         self.assertEqual(
             cfa_location.getncattr("substitutions"),
@@ -231,7 +218,7 @@ class CFATest(unittest.TestCase):
         )
         nc.close()
 
-        g = cfdm.read(tmpfile2)
+        g = cfdm.read(cfa_file)
         self.assertEqual(len(g), 1)
         self.assertTrue(f.equals(g[0]))
 
@@ -240,11 +227,11 @@ class CFATest(unittest.TestCase):
 
         cfdm.write(
             f,
-            tmpfile2,
+            cfa_file,
             cfa={"absolute_paths": True, "substitutions": {"base": cwd}},
         )
 
-        nc = netCDF4.Dataset(tmpfile2, "r")
+        nc = netCDF4.Dataset(cfa_file, "r")
         cfa_location = nc.variables["cfa_location"]
         self.assertEqual(
             cfa_location.getncattr("substitutions"),
@@ -255,7 +242,7 @@ class CFATest(unittest.TestCase):
         )
         nc.close()
 
-        g = cfdm.read(tmpfile2)
+        g = cfdm.read(cfa_file)
         self.assertEqual(len(g), 1)
         self.assertTrue(f.equals(g[0]))
 
@@ -273,21 +260,20 @@ class CFATest(unittest.TestCase):
                 os.path.basename(tmpfile1),
             ),
         ):
-            cfdm.write(f, tmpfile2, cfa={"absolute_paths": absolute_paths})
+            cfdm.write(f, cfa_file, cfa={"absolute_paths": absolute_paths})
 
-            nc = netCDF4.Dataset(tmpfile2, "r")
+            nc = netCDF4.Dataset(cfa_file, "r")
             cfa_location = nc.variables["cfa_location"]
             self.assertEqual(cfa_location[...], filename)
             nc.close()
 
-            g = cfdm.read(tmpfile2)
+            g = cfdm.read(cfa_file)
             self.assertEqual(len(g), 1)
             self.assertTrue(f.equals(g[0]))
 
     def test_CFA_constructs(self):
-        """Test choice of constructs to write as aggregation variables.
-
-        """
+        """Test choice of constructs to write as aggregation
+        variables."""
         f = cfdm.example_field(1)
         f.del_construct("time")
         f.del_construct("long_name=Grid latitude name")
@@ -380,10 +366,10 @@ class CFATest(unittest.TestCase):
         f = cfdm.example_field(0)
         cfdm.write(f, tmpfile1)
         f = cfdm.read(tmpfile1)[0]
-        f.add_file_location("/new/location")
+        f.add_file_directory("/new/path")
 
-        cfdm.write(f, tmpfile2, cfa=True)
-        g = cfdm.read(tmpfile2)
+        cfdm.write(f, cfa_file, cfa=True)
+        g = cfdm.read(cfa_file)
         self.assertEqual(len(g), 1)
         g = g[0]
         self.assertTrue(f.equals(g))

@@ -438,6 +438,53 @@ class Field(
         """
         print("_test_docstring_substitution_Field")
 
+    def add_file_directory(
+        self,
+        directory,
+        constructs=True,
+    ):
+        """Add a new file directory in-place.
+
+        Another version of every file referenced by the data is
+        provided in the given *directory*.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `del_file_directory`, `file_directories`,
+                     `replace_file_directory`
+
+        :Parameters:
+
+            directory: `str`
+                The new directory.
+
+            constructs: `bool`, optional
+                If True (the default) then add also the directory to
+                the data of metadata constructs. IF False then don't
+                do this.
+
+        :Returns:
+
+            `str`
+                The new directory as an absolute path.
+
+        **Examples**
+
+        >>> f.get_filenames()
+        {'/data/file1.nc', '/home/file2.nc'}
+        >>> f.add_file_directory('/new/')
+        '/new'
+        >>> f.get_filenames()
+        {'/data/file1.nc', '/new/file1.nc', '/home/file2.nc', '/new/file2.nc'}
+
+        """
+        directory = super().add_file_directory(directory)
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                c.add_file_directory(directory)
+
+        return directory
+
     def field_ancillary(
         self,
         *identity,
@@ -1409,7 +1456,7 @@ class Field(
 
     @classmethod
     def concatenate(
-        cls, fields, axis=0, cull_graph=False, relaxed_units=False, copy=True
+        cls, fields, axis, cull_graph=False, relaxed_units=False, copy=True
     ):
         """Join a together sequence of '{{class}}`.
 
@@ -1419,32 +1466,27 @@ class Field(
 
         :Parameters:
 
-            fields: (sequence of) `{{class}}`
+            fields: sequence of `{{class}}`
                 The fields to concatenate.
 
-            axis: `int`, optional
-                The axis along which the arrays will be joined. The
-                default is 0. Note that scalar arrays are treated as
-                if they were one dimensional. TODOCFA
+            axis:
+                Select the domain axis to along which to concatenate,
+                defined by that which would be selected by passing
+                *axis* to a call of the field construct's
+                `domain_axis` method. For example, for a value of
+                'time', the domain axis construct returned by
+                ``f.domain_axis('time')`` is selected.
 
             {{cull_graph: `bool`, optional}}
 
             {{relaxed_units: `bool`, optional}}
 
-            copy: `bool`, optional
-                If True (the default) then make copies of the
-                `{{class}}` constructs, prior to the concatenation,
-                thereby ensuring that the input constructs are not
-                changed by the concatenation process. If False then
-                some or all input constructs might be changed
-                in-place, but the concatenation process will be
-                faster.
+            {{concatenate copy: `bool`, optional}}
 
         :Returns:
 
             `{{class}}`
-                The field generated from the concatenation of input
-                fields.
+                The concatenated construct.
 
         """
         if isinstance(fields, cls):
@@ -1452,7 +1494,7 @@ class Field(
 
         fields = tuple(fields)
         field0 = fields[0]
-        data_axes = field0.get_data_axes()        
+        data_axes = field0.get_data_axes()
         axis_key = field0.domain_axis(
             axis,
             key=True,
@@ -1483,7 +1525,9 @@ class Field(
         )
 
         # Change the domain axis size
-        out.set_construct(out._DomainAxis(size=new_data.shape[axis]), key=axis_key)
+        out.set_construct(
+            out._DomainAxis(size=new_data.shape[axis]), key=axis_key
+        )
 
         # Insert the concatenated data
         out.set_data(new_data, axes=data_axes, copy=False)
@@ -1821,6 +1865,50 @@ class Field(
 
         return out
 
+    def del_file_directory(self, directory, constructs=True):
+        """Remove a file directory in-place.
+
+        Every file in *directory* that is referenced by the data is
+        removed. If this results in part of the data being undefined
+        then an exception is raised.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `add_file_directory`, `file_directories`,
+                     `replace_file_directory`
+
+        :Parameters:
+
+            directory: `str`
+                 The file directory to remove.
+
+            constructs: `bool`, optional
+                If True (the default) then add also the directory to
+                the data of metadata constructs. IF False then don't
+                do this.
+
+        :Returns:
+
+            `str`
+                The removed directory as an absolute path.
+
+        **Examples**
+
+        >>> f.get_filenames()
+        {'/data/file1.nc', '/home/file2.nc'}
+        >>> f.del_file_directory('/data/')
+        '/data'
+        >>> f.get_filenames()
+        {'/home/file2.nc'}
+
+        """
+        directory = super().del_file_directory(directory)
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                c.del_file_directory(directory)
+
+        return directory
+
     @_display_or_return
     def dump(self, display=True, _level=0, _title=None):
         """A full description of the field construct.
@@ -1916,6 +2004,41 @@ class Field(
         )
 
         return "\n".join(string)
+
+    def file_directories(self, constructs=True):
+        """The directories of files containing parts of the data.
+
+        Returns the locations of any files referenced by the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `add_file_directory`, `del_file_directory`,
+                     `replace_file_directory`
+
+        :Parameters:
+
+            constructs: `bool`, optional
+                If True (the default) then add also the directory to
+                the data of metadata constructs. IF False then don't
+                do this.
+
+        :Returns:
+
+            `set`
+                The unique set of file directories as absolute paths.
+
+        **Examples**
+
+        >>> d.file_directories()
+        {'/home/data1', 'file:///data2'}
+
+        """
+        directories = super().file_directories()
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                directories.update(c.file_directories())
+
+        return directories
 
     def get_data_axes(self, *identity, default=ValueError(), **filter_kwargs):
         """Gets the keys of the axes spanned by the construct data.
@@ -2574,6 +2697,56 @@ class Field(
                             )
 
         return f
+
+    def replace_file_directory(
+        self, old_directory, new_directory, constructs=True
+    ):
+        """Replace a file directory in-place.
+
+        Every file in *old_directory* that is referenced by the data
+        is redefined to be in *new_directory*.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `add_file_directory`, `del_file_directory`,
+                     `file_directories`
+
+        :Parameters:
+
+            old_directory: `str`
+                The new directory to be replaced.
+
+            new_directory: `str`
+                The new directory.
+
+            constructs: `bool`, optional
+                If True (the default) then add also the directory to
+                the data of metadata constructs. IF False then don't
+                do this.
+
+        :Returns:
+
+            `str`
+                The new directory as an absolute path.
+
+        **Examples**
+
+        >>> d.get_filenames()
+        {'/data/file1.nc', '/home/file2.nc'}
+        >>> d.replace_file_directory('/data', '/new/data/path/')
+        '/new/data/path'
+        >>> d.get_filenames()
+        {'/new/data/path/file1.nc', '/home/file2.nc'}
+
+        """
+        new_directory = super().replace_file_directory(
+            old_directory, new_directory
+        )
+        if constructs:
+            for c in self.constructs.filter_by_data(todict=True).values():
+                c.replace_file_directory(old_directory, new_directory)
+
+        return new_directory
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):

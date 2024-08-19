@@ -15,6 +15,7 @@ from .subarray import (
 
 from .subarray.abstract import MeshSubarray, Subarray, SubsampledSubarray
 
+from .aggregatedarray import AggregatedArray
 from .boundsfromnodesarray import BoundsFromNodesArray
 from .cellconnectivityarray import CellConnectivityArray
 from .gatheredarray import GatheredArray

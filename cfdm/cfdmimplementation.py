@@ -26,6 +26,7 @@ from . import (
 )
 from .abstract import Implementation
 from .data import (
+    AggregatedArray,
     BoundsFromNodesArray,
     CellConnectivityArray,
     CFAH5netcdfArray,
@@ -1890,6 +1891,24 @@ class CFDMImplementation(Implementation):
         cls = self.get_class("CFANetCDF4Array")
         return cls(**kwargs)
 
+    def initialise_AggregatedArray(self, **kwargs):
+        """Return a `AggregatedArray` instance.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            kwargs: optional
+                Initialisation parameters to pass to the new instance.
+
+        :Returns:
+
+            `AggregatedArray`
+
+        """
+        cls = self.get_class("AggregatedArray")
+        return cls(**kwargs)
+
     def initialise_CoordinateConversion(
         self, domain_ancillaries=None, parameters=None
     ):
@@ -3694,6 +3713,7 @@ class CFDMImplementation(Implementation):
 
 _implementation = CFDMImplementation(
     cf_version=CF(),
+    AggregatedArray=AggregatedArray,
     AuxiliaryCoordinate=AuxiliaryCoordinate,
     CellConnectivity=CellConnectivity,
     CellConnectivityArray=CellConnectivityArray,

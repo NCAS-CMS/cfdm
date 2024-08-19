@@ -156,6 +156,7 @@ class FullArray(IndexMixin, Array):
 
             `numpy.ndarray`
                 An independent numpy array of the data.
+
         """
         return np.asanyarray(self)
 
@@ -212,7 +213,7 @@ class FullArray(IndexMixin, Array):
 
 
 def fullarray_implements(numpy_function):
-    """Register an __array_function__ implementation for FullArray objects.
+    """An __array_function__ implementation for `FullArray` objects.
 
     .. versionadded:: (cfdm) NEXTVERSION
 

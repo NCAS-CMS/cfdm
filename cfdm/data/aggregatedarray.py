@@ -1,13 +1,19 @@
 from copy import deepcopy
 from itertools import accumulate, product
+from os.path import abspath, relpath
+from urllib.parse import ParseResult, urlparse
 
 import numpy as np
 
-from ..utils import chunk_locations, chunk_positions
+from ..functions import dirname
+from . import abstract
+from .fragment import FragmentFileArray, FragmentValueArray
+from .mixin import FileArrayMixin, NetCDFFileMixin
+from .utils import chunk_locations, chunk_positions
 
 
-class CFAMixin:
-    """Mixin class for a CFA array.
+class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
+    """TODOCFA  Mixin class for a CFA array.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
@@ -19,10 +25,6 @@ class CFAMixin:
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        # Import fragment array classes. Do this here (as opposed to
-        # outside the class) to avoid a circular import.
-        from ..fragment import FragmentFileArray, FragmentValueArray
-
         instance = super().__new__(cls)
         instance._FragmentArray = {
             "location": FragmentFileArray,
@@ -147,33 +149,27 @@ class CFAMixin:
             except AttributeError:
                 fragment_type = None
 
-        elif filename is not None:
-            shape, fragment_array_shape, fragment_type, aggregated_data = (
-                self._parse_cfa(x, substitutions)
-            )
+        else:
+            if filename is not None:
+                shape, fragment_array_shape, fragment_type, aggregated_data = (
+                    self._parse_cfa(filename, x, substitutions)
+                )
+            else:
+                shape = None
+                fragment_array_shape = None
+                aggregated_data = None
+                fragment_type = None
+                instructions = None
+
             super().__init__(
                 filename=filename,
                 address=address,
                 shape=shape,
                 dtype=dtype,
-                mask=mask,
                 attributes=attributes,
+                storage_options=storage_options,
                 copy=copy,
             )
-        else:
-            super().__init__(
-                filename=filename,
-                address=address,
-                dtype=dtype,
-                mask=mask,
-                attributes=attributes,
-                copy=copy,
-            )
-
-            fragment_array_shape = None
-            aggregated_data = None
-            fragment_type = None
-            instructions = None
 
         self._set_component(
             "fragment_array_shape", fragment_array_shape, copy=False
@@ -186,16 +182,21 @@ class CFAMixin:
                 "substitutions", substitutions.copy(), copy=False
             )
 
-    def _parse_cfa(self, x, substitutions):
+        self._set_component("mask", True, copy=False)
+        self._set_component("unpack", True, copy=False)
+
+    def _parse_cfa(self, aggregated_filename, x, substitutions):
         """Parse the aggregated data instructions.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
-            x: `dict`
+            aggregated_filename: `str` TODOCFA
 
-            substitutions: `dict` or `None`
+            x: `dict` TODOCFA
+
+            substitutions: `dict` or `None` TODOCFA
                 A dictionary whose key/value pairs define text
                 substitutions to be applied to the fragment file
                 names. Each key must be specified with the ``${...}``
@@ -221,26 +222,10 @@ class CFAMixin:
         fragment_array_indices = chunk_positions(chunks)
         fragment_shapes = chunk_locations(chunks)
 
-        if "value" in x:
+        if "location" in x:
             # --------------------------------------------------------
-            # Each fragment contains a constant value, not file
-            # locations.
-            # --------------------------------------------------------
-            fragment_type = "value"
-            value = x["value"]
-            fragment_array_shape = value.shape
-            aggregated_data = {
-                index: {
-                    "shape": shape,
-                    "value": value[index].item(),
-                }
-                for index, shape in zip(
-                    fragment_array_indices, fragment_shapes
-                )
-            }
-        else:
-            # --------------------------------------------------------
-            # Each fragment contains file locations
+            # Each fragment contains file locations, rather than a
+            # constant value.
             # --------------------------------------------------------
             fragment_type = "location"
             a = x["address"]
@@ -279,17 +264,58 @@ class CFAMixin:
                     "address": address,
                 }
 
-            # Apply string substitutions to the fragment filenames
-            if substitutions:
-                for aaa in aggregated_data.values():
-                    location = []
-                    for filename in aaa["location"]:
+            # Get the aggregation file details so that relative-path
+            # URI reference fragment filenames can be made absolute
+            u = urlparse(aggregated_filename)
+            directory = dirname(u.path)
+            aggregation_file_scheme = u.scheme
+            if not aggregation_file_scheme:
+                aggregation_file_scheme = "file"
+
+            # Apply string substitutions to the fragment filenames,
+            # and convert relative-path URI references.
+            for fragments in aggregated_data.values():
+                location = []
+                for filename in fragments["location"]:
+                    if substitutions:
                         for base, sub in substitutions.items():
                             filename = filename.replace(base, sub)
 
-                        location.append(filename)
+                    if not urlparse(filename).scheme:
+                        # Fragment filename is a relative-path URI
+                        # reference, so replace it with its absolute
+                        # path.
+                        filename = abspath(relpath(filename, start=directory))
+                        filename = ParseResult(
+                            scheme=aggregation_file_scheme,
+                            netloc="",
+                            path=filename,
+                            params="",
+                            query="",
+                            fragment="",
+                        ).geturl()
 
-                    aaa["location"] = location
+                    location.append(filename)
+
+                fragments["location"] = location
+
+        else:
+            # --------------------------------------------------------
+            # Each fragment contains a constant value, rather than
+            # file locations.
+            # --------------------------------------------------------
+            fragment_type = "value"
+            value = x["value"]
+            fragment_array_shape = value.shape
+            aggregated_data = {
+                index: {
+                    "shape": shape,
+                    "value": value[index].item(),
+                }
+                for index, shape in zip(
+                    fragment_array_indices, fragment_shapes
+                )
+            }
 
         return (
             aggregated_shape,
@@ -297,6 +323,19 @@ class CFAMixin:
             fragment_type,
             aggregated_data,
         )
+
+    @property
+    def __asanyarray__(self):
+        """True if the array is accessed by conversion to `numpy`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `True`
+
+        """
+        return True
 
     def __dask_tokenize__(self):
         """Used by `dask.base.tokenize`.
@@ -311,13 +350,13 @@ class CFAMixin:
 
         return out + (aggregated_data,)
 
-    def __getitem__(self, indices):
+    def __getitem__(self, index):
         """Return a subspace of the field defined by indices.
 
-        Never intended to be called.
+        .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        return NotImplemented  # pragma: no cover
+        return self.to_dask_array()[index].compute()
 
     def get_aggregated_data(self, copy=True):
         """Get the aggregation data dictionary.

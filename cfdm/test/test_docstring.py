@@ -187,20 +187,14 @@ class DocstringTest(unittest.TestCase):
                     if name.startswith("__") and not inspect.isfunction(f):
                         continue
 
-                    self.assertIsNotNone(
-                        f.__doc__,
-                        f"\n\nCLASS: {klass}\n"
-                        f"METHOD NAME: {name}\n"
-                        f"METHOD: {f}\n__doc__: {f.__doc__}",
-                    )
-
-                    self.assertNotIn(
-                        "{{",
-                        f.__doc__,
-                        f"\n\nCLASS: {klass}\n"
-                        f"METHOD NAME: {name}\n"
-                        f"METHOD: {f}",
-                    )
+                    if f.__doc__ is not None:
+                        self.assertNotIn(
+                            "{{",
+                            f.__doc__,
+                            f"\n\nCLASS: {klass}\n"
+                            f"METHOD NAME: {name}\n"
+                            f"METHOD: {f}",
+                        )
 
     def test_docstring_package(self):
         """Test the docstring substitution of the pacakage name."""

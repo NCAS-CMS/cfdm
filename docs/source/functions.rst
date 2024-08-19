@@ -48,6 +48,7 @@ Miscellaneous
    :template: function.rst
 
    cfdm.abspath
+   cfdm.dirname
    cfdm.environment
    cfdm.example_field
    cfdm.example_fields

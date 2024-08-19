@@ -10,7 +10,8 @@ from copy import deepcopy
 from dataclasses import dataclass, field
 from functools import reduce
 from math import nan, prod
-from pathlib import PurePath
+
+# from pathlib import PurePath
 from typing import Any
 from urllib.parse import urlparse
 from uuid import uuid4
@@ -24,7 +25,7 @@ from s3fs import S3FileSystem
 
 from ...data.netcdfindexer import netcdf_indexer
 from ...decorators import _manage_log_level_via_verbosity
-from ...functions import is_log_level_debug, is_log_level_detail
+from ...functions import dirname, is_log_level_debug, is_log_level_detail
 from .. import IORead
 from .flatten import netcdf_flatten
 from .flatten.config import (
@@ -917,6 +918,7 @@ class NetCDFRead(IORead):
         netcdf_backend=None,
         cache=True,
         chunks="auto",
+        cfa=None,
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
 
@@ -985,6 +987,12 @@ class NetCDFRead(IORead):
             chunks: `str`, `int`, `None`, or `dict`, optional
                 Specify the `dask` chunking of dimensions for data in
                 the input files. See `cfdm.read` for details
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+             cfa: `dict`, optional
+                Configure the reading of CF-netCDF aggregation files.
+                See `cfdm.read` for detailsa
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1118,12 +1126,17 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             "chunks": chunks,
             # --------------------------------------------------------
-            # Aggregation variables
+            # Aggregation
             # --------------------------------------------------------
             "parsed_aggregated_data": {},
+            # URI substitutions for location fragment array variables
             "location_substitutions": {},
+            # fragment_array_variables as numpy arrays
             "fragment_array_variables": {},
-            "aggregation_file_path": None,
+            # The directory of the aggregation file
+            "aggregation_file_directory": None,
+            # Aggregation configuration overrides
+            "cfa": cfa if cfa else {},
         }
 
         g = self.read_vars
@@ -1641,9 +1654,7 @@ class NetCDFRead(IORead):
 
             if g["parsed_aggregated_data"]:
                 # TODOCFA: do we need this?
-                g["aggregation_file_path"] = PurePath(
-                    os.path.abspath(g["filename"])
-                ).parent
+                g["aggregation_file_directory"] = dirname(g["filename"])
 
         # ------------------------------------------------------------
         # List variables
@@ -6259,7 +6270,7 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
 
         # Get rid of the incorrect shape. This will end up getting set
-        # correctly by the CFANetCDFArray instance.
+        # correctly by the AggregatedArray instance.
         kwargs.pop("shape", None)
 
         fragment_array_variables = g["fragment_array_variables"]
@@ -6269,6 +6280,10 @@ class NetCDFRead(IORead):
         aggregation_instructions = {}
         for term, term_ncvar in g["parsed_aggregated_data"][ncvar].items():
             if term not in standardised_terms:
+                logger.warning(
+                    "Ignoring invalid aggregated_data fragment array "
+                    f"feature: {term}"
+                )
                 continue
 
             aggregation_instructions[term] = fragment_array_variables[
@@ -6276,7 +6291,7 @@ class NetCDFRead(IORead):
             ]
             instructions.append(f"{term}: {term_ncvar}")
 
-            if term == "file":
+            if term == "location":
                 kwargs["substitutions"] = g["location_substitutions"].get(
                     term_ncvar
                 )
@@ -6288,11 +6303,14 @@ class NetCDFRead(IORead):
             return kwargs
 
         # Use the kwargs to create a CFANetCDFArray instance
-        if g["original_netCDF4"]:
-            array = self.implementation.initialise_CFANetCDF4Array(**kwargs)
-        else:
-            # h5netcdf
-            array = self.implementation.initialise_CFAH5netcdfArray(**kwargs)
+        #        if g["original_netCDF4"]:
+        #            array = self.implementation.initialise_CFANetCDF4Array(**kwargs)
+        #        else:
+        #            # h5netcdf
+        #            array = self.implementation.initialise_CFAH5netcdfArray(**kwargs)
+
+        # Use the kwargs to create a AggregatedArray instance
+        array = self.implementation.initialise_AggregatedArray(**kwargs)
 
         return array, kwargs
 
@@ -6600,8 +6618,8 @@ class NetCDFRead(IORead):
         # Set data aggregation parameters
         # ------------------------------------------------------------
         if not self._cfa_is_aggregation_variable(ncvar):
-            # For non-aggregation variables, set the CFA write status
-            # to True when there is exactly one dask chunk.
+            # For non-aggregation variables, set the aggregated write
+            # status to True when there is exactly one dask chunk.
             if data.npartitions == 1:
                 data._nc_set_aggregated_write_status(True)
                 data._nc_set_aggregated_fragment_type("location")
@@ -6618,8 +6636,8 @@ class NetCDFRead(IORead):
                 if aggregated_data:
                     data.nc_set_aggregated_data(aggregated_data)
 
-            # Set the CFA write status to True iff each non-aggregated
-            # axis has exactly one Dask chunk
+            # Set the aggregated write status to True iff each
+            # non-aggregated axis has exactly one Dask chunk
             cfa_write = True
             for n, numblocks in zip(
                 netcdf_array.get_fragment_array_shape(), data.numblocks
@@ -10806,10 +10824,11 @@ class NetCDFRead(IORead):
             )
             fragment_array_variables[term_ncvar] = array[...]
 
-            if term == "file":
+            if term == "location":
                 # Find any URI substitutions stored in the location
                 # fragment array variable's "substitutions" attribute
                 subs = attributes.get("substitutions")
+                override_subs = g["cfa"].get("substitutions", {})
                 if subs:
                     # Convert the string "substitution: replacement"
                     # to the dictionary {"substitution":
@@ -10822,8 +10841,11 @@ class NetCDFRead(IORead):
                     # Apply user-defined URI substitutions, which take
                     # precedence over those defined on the location
                     # fragment array variable.
-                    subs.update(g["cfa_options"].get("substitutions", {}))
-                    g["location_substitutions"][term_ncvar] = subs
+                    subs.update(override_subs)
+                else:
+                    subs = override_subs
+
+                g["location_substitutions"][term_ncvar] = subs
 
         g["parsed_aggregated_data"][ncvar] = out
         return out

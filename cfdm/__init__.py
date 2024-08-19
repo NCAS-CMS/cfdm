@@ -161,6 +161,7 @@ from .functions import (
     abspath,
     atol,
     configuration,
+    dirname,
     environment,
     integer_dtype,
     log_level,

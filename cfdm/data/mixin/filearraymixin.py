@@ -1,4 +1,6 @@
 from copy import deepcopy
+from os import sep
+from os.path import basename, dirname, join
 from urllib.parse import urlparse
 
 from s3fs import S3FileSystem
@@ -64,11 +66,194 @@ class FileArrayMixin:
         """Shape of the array."""
         return self._get_component("shape")
 
+    def add_file_directory(self, directory):
+        """Add a new file directory, not in-place.
+
+        All existing files are additionally referenced from the given
+        directory.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `del_file_directory`, `file_directories`
+
+        :Parameters:
+
+            directory: `str`
+                The new directory.
+
+        :Returns:
+
+            `{{class}}`
+                A new {{class}} with all previous files additionally
+                referenced from *directory*.
+
+        **Examples**
+
+        >>> a.get_filenames()
+        ('/data1/file1',)
+        >>> a.get_addresses()
+        ('tas',)
+        >>> b = a.add_file_directory('/home')
+        >>> b.get_filenames()
+        ('/data1/file1', '/home/file1')
+        >>> b.get_addresses()
+        ('tas', 'tas')
+
+        >>> a.get_filenames()
+        ('/data1/file1', '/data2/file2',)
+        >>> a.get_addresses()
+        ('tas', 'tas')
+        >>> b = a.add_file_directory('/home/')
+        >>> b = get_filenames()
+        ('/data1/file1', '/data2/file2', '/home/file1', '/home/file2')
+        >>> b.get_addresses()
+        ('tas', 'tas', 'tas', 'tas')
+
+        >>> a.get_filenames()
+        ('/data1/file1', '/data2/file1',)
+        >>> a.get_addresses()
+        ('tas1', 'tas2')
+        >>> b = a.add_file_directory('/home/')
+        >>> b.get_filenames()
+        ('/data1/file1', '/data2/file1', '/home/file1')
+        >>> b.get_addresses()
+        ('tas1', 'tas2', 'tas1')
+
+        >>> a.get_filenames()
+        ('/data1/file1', '/data2/file1',)
+        >>> a.get_addresses()
+        ('tas1', 'tas2')
+        >>> b = a.add_file_directory('/data1')
+        >>> b.get_filenames()
+        ('/data1/file1', '/data2/file1')
+        >>> b.get_addresses()
+        ('tas1', 'tas2')
+
+        """
+        directory = abspath(directory).rstrip(sep)
+
+        filenames = self.get_filenames()
+        addresses = self.get_addresses()
+
+        # Note: It is assumed that each existing file name is either
+        #       an absolute path or an absolute URI.
+        new_filenames = list(filenames)
+        new_addresses = list(addresses)
+        for filename, address in zip(filenames, addresses):
+            new_filename = join(directory, basename(filename))
+            if new_filename not in new_filenames:
+                new_filenames.append(new_filename)
+                new_addresses.append(address)
+
+        a = self.copy()
+        a._set_component("filename", tuple(new_filenames), copy=False)
+        a._set_component(
+            "address",
+            tuple(new_addresses),
+            copy=False,
+        )
+        return a
+
     def close(self, dataset):
         """Close the dataset containing the data."""
         raise NotImplementedError(
             f"Must implement {self.__class__.__name__}.close"
         )  # pragma: no cover
+
+    def del_file_directory(self, directory):
+        """Remove a file directory, not in-place.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `add_file_directory`, `file_directories`
+
+        :Parameters:
+
+            directory: `str`
+                 The file directory to remove.
+
+        :Returns:
+
+            `{{class}}`
+                A new {{class}} with reference to files in *directory*
+                removed.
+
+        **Examples**
+
+        >>> a.get_filenames()
+        ('/data1/file1', '/data2/file2')
+        >>> a.get_addresses()
+        ('tas1', 'tas2')
+        >>> b = a.del_file_directory('/data1')
+        >>> b = get_filenames()
+        ('/data2/file2',)
+        >>> b.get_addresses()
+        ('tas2',)
+
+        >>> a.get_filenames()
+        ('/data1/file1', '/data2/file1', '/data2/file2')
+        >>> a.get_addresses()
+        ('tas1', 'tas1', 'tas2')
+        >>> b = a.del_file_directory('/data2')
+        >>> b.get_filenames()
+        ('/data1/file1',)
+        >>> b.get_addresses()
+        ('tas1',)
+
+        """
+        directory = abspath(directory).rstrip(sep)
+
+        new_filenames = []
+        new_addresses = []
+        for filename, address in zip(
+            self.get_filenames(), self.get_addresses()
+        ):
+            if dirname(filename) != directory:
+                new_filenames.append(filename)
+                new_addresses.append(address)
+
+        if not new_filenames:
+            raise ValueError(
+                "Can't delete a file directory when it results in there "
+                "being no files"
+            )
+
+        a = self.copy()
+        a._set_component("filename", tuple(new_filenames), copy=False)
+        a._set_component("address", tuple(new_addresses), copy=False)
+        return a
+
+    def file_directories(self):
+        """The file directories.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `tuple`
+                The file directory names, one for each file, as
+                absolute paths with no trailing path name component
+                separator.
+
+        **Examples**
+
+        >>> a.get_filenames()
+        ('/data1/file1',)
+        >>> a.file_directories()
+        ('/data1,)
+
+        >>> a.get_filenames()
+        ('/data1/file1', '/data2/file2')
+        >>> a.file_directories()
+        ('/data1', '/data2')
+
+        >>> a.get_filenames()
+        ('/data1/file1', '/data2/file2', '/data1/file2')
+        >>> a.file_directories()
+        ('/data1', '/data2', '/data1')
+
+        """
+        return tuple(map(dirname, self.get_filenames()))
 
     def get_address(self, default=AttributeError()):
         """The name of the file containing the array.
@@ -356,3 +541,96 @@ class FileArrayMixin:
             raise FileNotFoundError(f"No such file: {filenames[0]}")
 
         raise FileNotFoundError(f"No such files: {filenames}")
+
+    def replace_file_directory(self, old_directory, new_directory):
+        """Add a new file directory, not in-place. TODOCFA.
+
+        All existing files are additionally referenced from the given
+        directory.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `del_file_directory`, `file_directories`
+
+        :Parameters:
+
+            directory: `str`
+                The new directory.
+
+        :Returns:
+
+            `{{class}}`
+                A new {{class}} with all previous files additionally
+                referenced from *directory*.
+
+        **Examples**
+
+        >>> a.get_filenames()
+        ('/data1/file1',)
+        >>> a.get_addresses()
+        ('tas',)
+        >>> b = a.add_file_directory('/home')
+        >>> b.get_filenames()
+        ('/data1/file1', '/home/file1')
+        >>> b.get_addresses()
+        ('tas', 'tas')
+
+        >>> a.get_filenames()
+        ('/data1/file1', '/data2/file2',)
+        >>> a.get_addresses()
+        ('tas', 'tas')
+        >>> b = a.add_file_directory('/home/')
+        >>> b = get_filenames()
+        ('/data1/file1', '/data2/file2', '/home/file1', '/home/file2')
+        >>> b.get_addresses()
+        ('tas', 'tas', 'tas', 'tas')
+
+        >>> a.get_filenames()
+        ('/data1/file1', '/data2/file1',)
+        >>> a.get_addresses()
+        ('tas1', 'tas2')
+        >>> b = a.add_file_directory('/home/')
+        >>> b.get_filenames()
+        ('/data1/file1', '/data2/file1', '/home/file1')
+        >>> b.get_addresses()
+        ('tas1', 'tas2', 'tas1')
+
+        >>> a.get_filenames()
+        ('/data1/file1', '/data2/file1',)
+        >>> a.get_addresses()
+        ('tas1', 'tas2')
+        >>> b = a.add_file_directory('/data1')
+        >>> b.get_filenames()
+        ('/data1/file1', '/data2/file1')
+        >>> b.get_addresses()
+        ('tas1', 'tas2')
+
+        """
+        old_directory = abspath(old_directory).rstrip(sep)
+        new_directory = abspath(new_directory).rstrip(sep)
+
+        filenames = self.get_filenames()
+        addresses = self.get_addresses()
+
+        # Note: It is assumed that each existing file name is either
+        #       an absolute path or an absolute URI.
+        new_filenames = []
+        new_addresses = []
+        for filename, address in zip(filenames, addresses):
+            if dirname(filename) == old_directory:
+                new_filename = join(new_directory, basename(filename))
+                if new_filename not in new_filenames:
+                    new_filenames.append(new_filename)
+                    new_addresses.append(address)
+            else:
+                new_filenames.append(filename)
+                new_addresses.append(address)
+
+        a = self.copy()
+        a._set_component("filename", tuple(new_filenames), copy=False)
+        a._set_component(
+            "address",
+            tuple(new_addresses),
+            copy=False,
+        )
+        return a

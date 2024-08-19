@@ -1,4 +1,4 @@
-"""Define docstring substitutions.
+"""Descufine docstring substitutions.
 
 Text to be replaced is specified as a key in the returned dictionary,
 with the replacement text defined by the corresponding value.
@@ -582,12 +582,55 @@ _docstring_substitution_definitions = {
     "{{to_size: `int`, optional}}": """to_size: `int`, optional
                 Pad the axis after so that the new axis has the given
                 size.""",
+    # cfa substitutions
+    "{{cfa substitutions: `dict`}}": """substitutions: `dict`
+                The CF-netCDF aggregation file location substitution
+                definitions in a dictionary whose key/value pairs are
+                the file name parts to be substituted and their
+                corresponding replacement text.
+
+                Each substitution definition may be specified with or
+                without the ``${...}`` syntax. For instance, the
+                following are equivalent: ``{'substitution':
+                'replacement'}``, ``{'${substitution}':
+                'replacement'}``.""",
+    # cfa base
+    "{{cfa substitution: `str`}}": """substitution: `str`
+                The CF-netCDF aggregation file location substitution
+                definition to be removed. May be specified with or
+                without the ``${...}`` syntax. For instance, the
+                following are equivalent: ``'substitution'`` and
+                ``'${substitution}'``.""",
+    # cull_graph
+    "{{cull_graph: `bool`, optional}}": """cull_graph: `bool`, optional
+                If True then unnecessary tasks are removed (culled)
+                from each array's dask graph before
+                concatenation. This process can have a considerable
+                overhead but can sometimes improve the overall
+                performance of a workflow. If False (the default) then
+                dask graphs are not culled. See
+                `dask.optimization.cull` for details.""",
+    # relaxed_units
+    "{{relaxed_units: `bool`, optional}}": """relaxed_units: `bool`, optional
+                If True then allow the concatenation of data with
+                invalid but otherwise equal units. By default, if any
+                data array has invalid units then the concatenation
+                will fail. A `Units` object is considered to be
+                invalid if its `!isvalid` attribute is `False`.""",
+    # relaxed_units
+    "{{concatenate copy: `bool`, optional}}": """copy: `bool`, optional
+                If True (the default) then make copies of the
+                `{{class}}` objects prior to the concatenation,
+                thereby ensuring that the input constructs are not
+                changed by the concatenation process. If False then
+                some or all input constructs might be changed
+                in-place, but the concatenation process will be
+                faster.""",
     # ----------------------------------------------------------------
     # Method description susbstitutions (4 levels of indentataion)
     # ----------------------------------------------------------------
     # Returns constructs
-    "{{Returns constructs}}": """
-                The selected constructs in a new `Constructs` object,
+    "{{Returns constructs}}": """The selected constructs in a new `Constructs` object,
                 unless modified by any *filter_kwargs* parameters. The
                 returned object will contain no constructs if none
                 were selected.""",
@@ -610,4 +653,21 @@ _docstring_substitution_definitions = {
     "{{Returns original filenames}}": """The original file names in normalised absolute
                 form. If there are no original files then an empty
                 `set` will be returned.""",
+    # Returns nc_clear_aggregations_substitutions
+    "{{Returns nc_clear_aggregated_substitutions}}": """The removed CF-netCDF aggregation file location
+                substitutions in a dictionary whose key/value pairs
+                are the location name parts to be substituted and
+                their corresponding replacement text.""",
+    # Returns nc_del_aggregated_substitution
+    "{{Returns nc_del_aggregated_substitution}}": """The removed CF-netCDF aggregation file location
+                substitution in a dictionary whose key/value pairs are
+                the location name part to be substituted and its
+                corresponding replacement text. If the given
+                substitution was not defined then an empty dictionary
+                is returned.""",
+    # Returns nc_aggregated_substitutions
+    "{{Returns nc_aggregated_substitutions}}": """The CF-netCDF aggregation file location substitutions
+                in a dictionary whose key/value pairs are the file
+                name parts to be substituted and their corresponding
+                replacement text.""",
 }

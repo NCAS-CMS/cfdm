@@ -583,6 +583,22 @@ class FunctionsTest(unittest.TestCase):
         self.assertIsInstance(repr(c), str)
         self.assertEqual(str(c), str(dict(**c)))
 
+    def test_dirname(self):
+        """Test cfdm.dirname."""
+        self.assertEqual(cfdm.dirname("/model/data"), "/model")
+        self.assertEqual(cfdm.dirname("/model/data/"), "/model/data")
+        self.assertEqual(cfdm.dirname("/model/data/file.nc"), "/model/data")
+        self.assertEqual(
+            cfdm.dirname("file://model/data/"), "file://model/data"
+        )
+        self.assertEqual(
+            cfdm.dirname("file:///model/data/"), "file:///model/data"
+        )
+
+        self.assertEqual(
+            cfdm.dirname("file:///model/data/file.nc"), "file:///model/data"
+        )
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

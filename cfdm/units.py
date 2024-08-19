@@ -12,8 +12,7 @@ if _libpath is None:
 
 
 class Units(metaclass=DocstringRewriteMeta):
-    """Store, combine and compare physical units and convert numeric
-    values to different units.
+    """Store, combine and compare physical units.
 
     This is a convenience class that creates a `cfunits.Units`
     instance.

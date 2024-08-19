@@ -288,6 +288,20 @@ class PropertiesDataBounds(PropertiesData):
 
         return out
 
+    def add_file_directory(self, directory):  # noqa: D102
+        # Docstring is inherited
+        directory = super().add_file_directory(directory)
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            bounds.add_file_directory(directory)
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.add_file_directory(directory)
+
+        return directory
+
     @_inplace_enabled(default=False)
     def apply_masking(self, bounds=True, inplace=False):
         """Apply masking as defined by the CF conventions.
@@ -404,24 +418,20 @@ class PropertiesDataBounds(PropertiesData):
             variables: sequence of constructs
 
             axis: `int`, optional
+                Select the axis to along which to concatenate, defined
+                by its position in the data array. By default
+                concatenatoin is along the axis in position 0.
 
             {{cull_graph: `bool`, optional}}
 
             {{relaxed_units: `bool`, optional}}
 
-            copy: `bool`, optional
-                If True (the default) then make copies of the
-                `{{class}}` objects, prior to the concatenation,
-                thereby ensuring that the input constructs are not
-                changed by the concatenation process. If False then
-                some or all input constructs might be changed
-                in-place, but the concatenation process will be
-                faster.
+            {{concatenate copy: `bool`, optional}}
 
         :Returns:
 
             `{{class}}`
-                TODOCFA
+                The concatenated construct.
 
         """
         variable0 = variables[0]
@@ -613,6 +623,20 @@ class PropertiesDataBounds(PropertiesData):
             out = ("\n" + indent).join(out)
 
         return out
+
+    def del_file_directory(self, directory):  # noqa: D102
+        # Docstring is inherited
+        directory = super().add_file_directory(directory)
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            bounds.del_file_directory(directory)
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.del_file_directory(directory)
+
+        return directory
 
     def del_node_count(self, default=ValueError()):
         """Remove the node count variable for geometry bounds.
@@ -1001,6 +1025,20 @@ class PropertiesDataBounds(PropertiesData):
                 default,
                 f"{self.__class__.__name__} has no node count variable",
             )
+
+        return out
+
+    def file_directories(self):  # noqa: D102
+        # Docstring is inherited
+        out = super().file_directories()
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            out.update(bounds.file_directories())
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            out.update(interior_ring.file_directories())
 
         return out
 
@@ -1443,6 +1481,24 @@ class PropertiesDataBounds(PropertiesData):
             interior_ring.insert_dimension(position, inplace=True)
 
         return c
+
+    def replace_file_directory(
+        self, old_directory, new_directory
+    ):  # noqa: D102
+        # Docstring is inherited
+        directory = super().replace_file_directory(
+            old_directory, new_directory
+        )
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            bounds.replace_file_directory(old_directory, new_directory)
+
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.replace_file_directory(old_directory, new_directory)
+
+        return directory
 
     def set_node_count(self, node_count, copy=True):
         """Set the node count variable for geometry bounds.

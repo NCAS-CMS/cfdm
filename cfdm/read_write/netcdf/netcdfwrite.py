@@ -2978,7 +2978,6 @@ class NetCDFWrite(IOWrite):
                 data,
                 cfvar,
             )
-            print('here3')
             return
 
         # ------------------------------------------------------------
@@ -5468,7 +5467,7 @@ class NetCDFWrite(IOWrite):
         # Shape
         feature = "shape"
         feature_ncvar = self._cfa_write_fragment_array_variable(
-                cfa[feature],
+            cfa[feature],
             aggregated_data.get(feature, f"cfa_{feature}"),
             shape_ncdimensions,
         )
@@ -5479,17 +5478,14 @@ class NetCDFWrite(IOWrite):
             feature = "location"
 
             substitutions = data.nc_aggregated_substitutions()
-            print (data.shape, 'substitutions',substitutions)
             substitutions.update(g["cfa_options"].get("substitutions", {}))
             if substitutions:
-                print ('here1')
                 # Create the "substitutions" netCDF attribute
                 subs = []
                 for base, sub in substitutions.items():
                     subs.append(f"{base}: {sub}")
 
                 attributes = {"substitutions": " ".join(sorted(subs))}
-                print ('attributes=',attributes)
             else:
                 attributes = None
 
@@ -5528,7 +5524,7 @@ class NetCDFWrite(IOWrite):
                 fragment_array_ncdimensions,
             )
             aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
-        print ('here2')
+
         # ------------------------------------------------------------
         # Add the aggregation variable attributes
         # ------------------------------------------------------------

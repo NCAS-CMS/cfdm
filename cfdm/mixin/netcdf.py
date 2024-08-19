@@ -4768,18 +4768,29 @@ class NetCDFAggregation(NetCDFMixin):
         self._get_component("netcdf")["aggregated_fragment_type"] = value
 
     def nc_del_aggregated_write_status(self):
-        """TODOCFA.
+        """Set the netCDF aggregation write status to `False`.
+
+        Writing the data as CF-netCDf aggregated data will only be
+        allowed if the write status is True.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `nc_get_aggregated_write_status`,
                      `nc_set_aggregated_write_status`
 
+        :Returns:
+
+            `bool`
+                The netCDF aggregation write status prior to deletion.
+
         """
         return self._nc_del("aggregated_write_status", False)
 
     def nc_get_aggregated_write_status(self):
-        """Set the CFA write status of the data to `False`.TODOCFA.
+        """Get the netCDF aggregation write status.
+
+        Writing the data as CF-netCDf aggregated data will only be
+        allowed if the write status is True.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -4789,13 +4800,16 @@ class NetCDFAggregation(NetCDFMixin):
         :Returns:
 
             `bool`
-                The CFA status prior to deletion.TODOCFA
+                The netCDF aggregation write status.
 
         """
         return self._nc_get("aggregated_write_status", False)
 
     def _nc_set_aggregated_write_status(self, status):
-        """TODOCFA.
+        """Set the netCDF aggregation write status.
+
+        Writing the data as CF-netCDf aggregated data will only be
+        allowed if the write status is True.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -4806,18 +4820,34 @@ class NetCDFAggregation(NetCDFMixin):
         :Parameters:
 
             status: `bool`
-                TODOCFA
+                The new write status.
+
+        :Returns:
+
+            `None`
 
         """
         self._get_component("netcdf")["aggregated_write_status"] = bool(status)
 
     def nc_set_aggregated_write_status(self, status):
-        """TODOCFA.
+        """Set the netCDF aggregation write status.
+
+        Writing the data as CF-netCDf aggregated data will only be
+        allowed if the write status is True.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `nc_del_aggregated_write_status`,
                      `nc_get_aggregated_write_status`
+
+        :Parameters:
+
+            status: `bool`
+                The new write status.
+
+        :Returns:
+
+            `None`
 
         """
         if status:
@@ -4855,11 +4885,11 @@ class NetCDFAggregation(NetCDFMixin):
         >>> f.nc_update_aggregated_substitutions({'${base2}': '/home/data/'})
         >>> f.nc_aggregated_substitutions()
         {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.nc_update_aggregated_substitutions({'${base}': '/new/location/'})
+        >>> f.nc_update_aggregated_substitutions({'${base}': '/new/path/'})
         >>> f.nc_aggregated_substitutions()
-        {'${base}': '/new/location/', '${base2}': '/home/data/'}
+        {'${base}': '/new/path/', '${base2}': '/home/data/'}
         >>> f.nc_del_aggregated_substitution('${base}')
-        {'${base}': '/new/location/'}
+        {'${base}': '/new/path/'}
         >>> f.nc_clear_aggregated_substitutions()
         {'${base2}': '/home/data/'}
         >>> f.nc_has_aggregated_substitutions()
@@ -4874,7 +4904,7 @@ class NetCDFAggregation(NetCDFMixin):
         """
         return self._nc_del("aggregated_substitutions", {}).copy()
 
-    def nc_del_aggregated_substitution(self, base):
+    def nc_del_aggregated_substitution(self, substitution):
         """Remove a neCDF aggregation substitution definition.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -4886,7 +4916,7 @@ class NetCDFAggregation(NetCDFMixin):
 
         :Parameters:
 
-            {{cfa base: `str`}}
+            {{cfa substitution: `str`}}
 
         :Returns:
 
@@ -4895,6 +4925,8 @@ class NetCDFAggregation(NetCDFMixin):
 
         **Examples**
 
+        >>> f.nc_aggregated_substitutions()
+        {}
         >>> f.nc_update_aggregated_substitutions({'base': 'file:///data/'})
         >>> f.nc_has_aggregated_substitutions()
         True
@@ -4903,11 +4935,11 @@ class NetCDFAggregation(NetCDFMixin):
         >>> f.nc_update_aggregated_substitutions({'${base2}': '/home/data/'})
         >>> f.nc_aggregated_substitutions()
         {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.nc_update_aggregated_substitutions({'${base}': '/new/location/'})
+        >>> f.nc_update_aggregated_substitutions({'${base}': '/new/path/'})
         >>> f.nc_aggregated_substitutions()
-        {'${base}': '/new/location/', '${base2}': '/home/data/'}
+        {'${base}': '/new/path/', '${base2}': '/home/data/'}
         >>> f.nc_del_aggregated_substitution('${base}')
-        {'${base}': '/new/location/'}
+        {'${base}': '/new/path/'}
         >>> f.nc_clear_aggregated_substitutions()
         {'${base2}': '/home/data/'}
         >>> f.nc_has_aggregated_substitutions()
@@ -4920,14 +4952,14 @@ class NetCDFAggregation(NetCDFMixin):
         {}
 
         """
-        if not (base.startswith("${") and base.endswith("}")):
-            base = f"${{{base}}}"
+        if not (substitution.startswith("${") and substitution.endswith("}")):
+            substitution = f"${{{substitution}}}"
 
         subs = self.nc_aggregated_substitutions()
-        if base not in subs:
+        if substitution not in subs:
             return {}
 
-        out = {base: subs.pop(base)}
+        out = {substitution: subs.pop(substitution)}
         if subs:
             self._get_component("netcdf")["aggregated_substitutions"] = subs
         else:
@@ -4944,13 +4976,16 @@ class NetCDFAggregation(NetCDFMixin):
                      `nc_del_aggregated_substitution`,
                      `nc_has_aggregated_substitutions`,
                      `nc_update_aggregated_substitutions`
+
         :Returns:
 
             `dict`
-                The CFA-netCDF file name substitutions.
+                {{Returns nc_aggregated_substitutions}}
 
         **Examples**
 
+        >>> f.nc_aggregated_substitutions()
+        {}
         >>> f.nc_update_aggregated_substitutions({'base': 'file:///data/'})
         >>> f.nc_has_aggregated_substitutions()
         True
@@ -4959,11 +4994,11 @@ class NetCDFAggregation(NetCDFMixin):
         >>> f.nc_update_aggregated_substitutions({'${base2}': '/home/data/'})
         >>> f.nc_aggregated_substitutions()
         {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.nc_update_aggregated_substitutions({'${base}': '/new/location/'})
+        >>> f.nc_update_aggregated_substitutions({'${base}': '/new/path/'})
         >>> f.nc_aggregated_substitutions()
-        {'${base}': '/new/location/', '${base2}': '/home/data/'}
+        {'${base}': '/new/path/', '${base2}': '/home/data/'}
         >>> f.nc_del_aggregated_substitution('${base}')
-        {'${base}': '/new/location/'}
+        {'${base}': '/new/path/'}
         >>> f.nc_clear_aggregated_substitutions()
         {'${base2}': '/home/data/'}
         >>> f.nc_has_aggregated_substitutions()
@@ -4983,8 +5018,7 @@ class NetCDFAggregation(NetCDFMixin):
         return {}
 
     def nc_has_aggregated_substitutions(self):
-        """Whether there are any neCDF aggregation substitution
-        definitions.
+        """Whether there are neCDF aggregation substitution definitions.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -4996,11 +5030,13 @@ class NetCDFAggregation(NetCDFMixin):
         :Returns:
 
             `bool`
-                `True` if any CFA-netCDF file name substitutions have
-                been set, otherwise `False`.
+                `True` if any CF-netCDF aggregation file name
+                substitutions have been set, otherwise `False`.
 
         **Examples**
 
+        >>> f.nc_aggregated_substitutions()
+        {}
         >>> f.nc_update_aggregated_substitutions({'base': 'file:///data/'})
         >>> f.nc_has_aggregated_substitutions()
         True
@@ -5009,11 +5045,11 @@ class NetCDFAggregation(NetCDFMixin):
         >>> f.nc_update_aggregated_substitutions({'${base2}': '/home/data/'})
         >>> f.nc_aggregated_substitutions()
         {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.nc_update_aggregated_substitutions({'${base}': '/new/location/'})
+        >>> f.nc_update_aggregated_substitutions({'${base}': '/new/path/'})
         >>> f.nc_aggregated_substitutions()
-        {'${base}': '/new/location/', '${base2}': '/home/data/'}
+        {'${base}': '/new/path/', '${base2}': '/home/data/'}
         >>> f.nc_del_aggregated_substitution('${base}')
-        {'${base}': '/new/location/'}
+        {'${base}': '/new/path/'}
         >>> f.nc_clear_aggregated_substitutions()
         {'${base2}': '/home/data/'}
         >>> f.nc_has_aggregated_substitutions()
@@ -5048,6 +5084,8 @@ class NetCDFAggregation(NetCDFMixin):
 
         **Examples**
 
+        >>> f.nc_aggregated_substitutions()
+        {}
         >>> f.nc_update_aggregated_substitutions({'base': 'file:///data/'})
         >>> f.nc_has_aggregated_substitutions()
         True
@@ -5056,11 +5094,11 @@ class NetCDFAggregation(NetCDFMixin):
         >>> f.nc_update_aggregated_substitutions({'${base2}': '/home/data/'})
         >>> f.nc_aggregated_substitutions()
         {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.nc_update_aggregated_substitutions({'${base}': '/new/location/'})
+        >>> f.nc_update_aggregated_substitutions({'${base}': '/new/path/'})
         >>> f.nc_aggregated_substitutions()
-        {'${base}': '/new/location/', '${base2}': '/home/data/'}
+        {'${base}': '/new/path/', '${base2}': '/home/data/'}
         >>> f.nc_del_aggregated_substitution('${base}')
-        {'${base}': '/new/location/'}
+        {'${base}': '/new/path/'}
         >>> f.nc_clear_aggregated_substitutions()
         {'${base2}': '/home/data/'}
         >>> f.nc_has_aggregated_substitutions()

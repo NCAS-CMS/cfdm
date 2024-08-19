@@ -2476,6 +2476,93 @@ class DataTest(unittest.TestCase):
             {0: d.first_element(), -1: e.last_element()},
         )
 
+    def test_Data_aggregated_data(self):
+        """Test Data aggregated_data methods."""
+        d = cfdm.Data(9)
+        aggregated_data = {
+            "location": "location",
+            "shape": "shape",
+            "address": "cfa_address",
+        }
+
+        self.assertFalse(d.nc_has_aggregated_data())
+        self.assertIsNone(d.nc_set_aggregated_data(aggregated_data))
+        self.assertTrue(d.nc_has_aggregated_data())
+        self.assertEqual(d.nc_get_aggregated_data(), aggregated_data)
+        self.assertEqual(d.nc_del_aggregated_data(), aggregated_data)
+        self.assertFalse(d.nc_has_aggregated_data())
+        self.assertEqual(d.nc_get_aggregated_data(), {})
+        self.assertEqual(d.nc_del_aggregated_data(), {})
+
+    def test_Data_aggregated_substitutions(self):
+        """Test Data CFA aggregated substitutions methods."""
+        d = cfdm.Data(9)
+        self.assertFalse(d.nc_has_aggregated_substitutions())
+        self.assertIsNone(
+            d.nc_update_aggregated_substitutions({"base": "file:///data/"})
+        )
+        self.assertTrue(d.nc_has_aggregated_substitutions())
+        self.assertEqual(
+            d.nc_aggregated_substitutions(), {"${base}": "file:///data/"}
+        )
+
+        d.nc_update_aggregated_substitutions({"${base2}": "/home/data/"})
+        self.assertEqual(
+            d.nc_aggregated_substitutions(),
+            {"${base}": "file:///data/", "${base2}": "/home/data/"},
+        )
+
+        d.nc_update_aggregated_substitutions({"${base}": "/new/location/"})
+        self.assertEqual(
+            d.nc_aggregated_substitutions(),
+            {"${base}": "/new/location/", "${base2}": "/home/data/"},
+        )
+        self.assertEqual(
+            d.nc_del_aggregated_substitution("${base}"),
+            {"${base}": "/new/location/"},
+        )
+        self.assertEqual(
+            d.nc_clear_aggregated_substitutions(), {"${base2}": "/home/data/"}
+        )
+        self.assertFalse(d.nc_has_aggregated_substitutions())
+        self.assertEqual(d.nc_aggregated_substitutions(), {})
+        self.assertEqual(d.nc_clear_aggregated_substitutions(), {})
+        self.assertEqual(d.nc_del_aggregated_substitution("base"), {})
+
+    def test_Data_file_directory(self):
+        """Test `Data` file directory methods."""
+        f = cfdm.example_field(0)
+
+        self.assertEqual(
+            f.data.add_file_directory("/data/model/"), "/data/model"
+        )
+
+        cfdm.write(f, file_A)
+        d = cfdm.read(file_A, chunks=4)[0].data
+        self.assertGreater(d.npartitions, 1)
+
+        e = d.copy()
+        directory = os.path.dirname(os.path.abspath(file_A))
+
+        self.assertEqual(d.file_directories(), set((directory,)))
+        self.assertEqual(d.add_file_directory("/data/model/"), "/data/model")
+        self.assertEqual(d.file_directories(), set((directory, "/data/model")))
+
+        # Check that we haven't changed 'e'
+        self.assertEqual(e.file_directories(), set((directory,)))
+
+        self.assertEqual(d.del_file_directory("/data/model/"), "/data/model")
+        self.assertEqual(d.file_directories(), set((directory,)))
+        d.del_file_directory("/invalid")
+        self.assertEqual(d.file_directories(), set((directory,)))
+
+        # Replace directory
+        d.replace_file_directory(directory, "/new/path/")
+        self.assertEqual(d.file_directories(), set(("/new/path",)))
+        self.assertEqual(
+            d.get_filenames(), set((f"/new/path/{os.path.basename(file_A)}",))
+        )
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

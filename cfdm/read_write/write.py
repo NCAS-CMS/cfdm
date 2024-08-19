@@ -532,16 +532,18 @@ def write(
             .. versionadded:: (cfdm) 1.10.0.1
 
         cfa: `bool` or `dict`, optional
-            If True or a (possibly empty) dictionary then write
+
+            If True or a (possibly empty) dictionary, then write
             selected constructs as aggregation variables, where
             possible and where requested.
 
             If *cfa* is a dictionary then it is used to configure the
-            aggregation variable write process. The default options
-            are ``{'constructs': 'field', 'absolute_paths': True,
-            'strict': True, 'substitutions': {}}``, and the dictionary
-            may have any subset of the following key/value pairs to
-            override these defaults:
+            aggregation variable write process. The default options,
+            which also apply if *cfa* is True, are ``{'constructs':
+            'field', 'absolute_paths': True, 'strict': True,
+            'substitutions': {}}``, and the dictionary may have any
+            subset of the following key/value pairs to override these
+            defaults:
 
             * ``'constructs'``: `dict` or (sequence of) `str`
 
