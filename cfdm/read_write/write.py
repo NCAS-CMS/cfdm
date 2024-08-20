@@ -532,7 +532,6 @@ def write(
             .. versionadded:: (cfdm) 1.10.0.1
 
         cfa: `bool` or `dict`, optional
-
             If True or a (possibly empty) dictionary, then write
             selected constructs as aggregation variables, where
             possible and where requested.
@@ -639,6 +638,9 @@ def write(
     >>> cfdm.write(f, 'file.nc', Conventions='CMIP-6.2')
 
     """
+    if not fields:
+        return
+
     # ----------------------------------------------------------------
     # Initialise the netCDF write object
     # ----------------------------------------------------------------
@@ -666,6 +668,7 @@ def write(
         cfa_options.setdefault("absolute_paths", True)
         cfa_options.setdefault("strict", True)
         cfa_options.setdefault("substitutions", {})
+        cfa_options.setdefault("auto", True)
 
         constructs = cfa_options["constructs"]
         if isinstance(constructs, dict):
@@ -684,31 +687,30 @@ def write(
 
         cfa_options["substitutions"] = substitutions
 
-    if fields:
-        netcdf.write(
-            fields,
-            filename,
-            fmt=fmt,
-            mode=mode,
-            overwrite=overwrite,
-            global_attributes=global_attributes,
-            variable_attributes=variable_attributes,
-            file_descriptors=file_descriptors,
-            external=external,
-            Conventions=Conventions,
-            datatype=datatype,
-            least_significant_digit=least_significant_digit,
-            endian=endian,
-            compress=compress,
-            shuffle=shuffle,
-            fletcher32=fletcher32,
-            string=string,
-            verbose=verbose,
-            warn_valid=warn_valid,
-            group=group,
-            coordinates=coordinates,
-            extra_write_vars=None,
-            omit_data=omit_data,
-            cfa=cfa,
-            cfa_options=cfa_options,
-        )
+    netcdf.write(
+        fields,
+        filename,
+        fmt=fmt,
+        mode=mode,
+        overwrite=overwrite,
+        global_attributes=global_attributes,
+        variable_attributes=variable_attributes,
+        file_descriptors=file_descriptors,
+        external=external,
+        Conventions=Conventions,
+        datatype=datatype,
+        least_significant_digit=least_significant_digit,
+        endian=endian,
+        compress=compress,
+        shuffle=shuffle,
+        fletcher32=fletcher32,
+        string=string,
+        verbose=verbose,
+        warn_valid=warn_valid,
+        group=group,
+        coordinates=coordinates,
+        extra_write_vars=None,
+        omit_data=omit_data,
+        cfa=cfa,
+        cfa_options=cfa_options,
+    )

@@ -2752,7 +2752,7 @@ class NetCDFWrite(IOWrite):
             kwargs.update(g["netcdf_compression"])
 
         # Set keyword arguments for a scalar aggregation variable
-        if self._write_as_cfa(cfvar, construct_type, domain_axes):
+        if self._write_as_cfa(ncvar, cfvar, construct_type, domain_axes):
             kwargs["dimensions"] = ()
             kwargs["chunksizes"] = None
             # TODOCFA: contiguous/chunksizes
@@ -2968,7 +2968,7 @@ class NetCDFWrite(IOWrite):
         """
         g = self.write_vars
 
-        if self._write_as_cfa(cfvar, construct_type, domain_axes):
+        if self._write_as_cfa(ncvar, cfvar, construct_type, domain_axes):
             # --------------------------------------------------------
             # Write the data as an aggregation variable
             # --------------------------------------------------------
@@ -4871,6 +4871,8 @@ class NetCDFWrite(IOWrite):
             "cfa_options": {} if cfa_options is None else cfa_options,
             # The directory of the aggregation file
             "aggregation_file_directory": None,
+            # Whether or not to write as a CF aggregation variable.
+            "cfa_write_status": {},
         }
 
         if mode not in ("w", "a", "r+"):
@@ -5332,8 +5334,8 @@ class NetCDFWrite(IOWrite):
         """
         pass
 
-    def _write_as_cfa(self, cfvar, construct_type, domain_axes):
-        """Whether or not to write as an aggregation variable.
+    def _write_as_cfa(self, ncvar, cfvar, construct_type, domain_axes):
+        """Whether or not to write as a CF aggregation variable.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -5355,20 +5357,41 @@ class NetCDFWrite(IOWrite):
                 aggregation variable.
 
         """
+        g = self.write_vars
+
+        cfa_write_status = False
+
         if construct_type is None:
             # This prevents recursion whilst writing fragment array
             # variables.
-            return False
+            g["cfa_write_status"][ncvar] = cfa_write_status
+            return cfa_write_status
 
-        g = self.write_vars
         if not g["cfa"]:
-            return False
+            g["cfa_write_status"][ncvar] = cfa_write_status
+            return cfa_write_status
+
+        cfa_write_status = g["cfa_write_status"].get(ncvar)
+        if cfa_write_status is not None:
+            return cfa_write_status
 
         data = self.implementation.get_data(cfvar, None)
         if data is None:
-            return False
+            g["cfa_write_status"][ncvar] = cfa_write_status
+            return cfa_write_status
 
+        cfa_write_status = data.nc_get_aggregation_write_status()
         cfa_options = g["cfa_options"]
+        if ( # Move up ....
+                cfa_write_status
+                and cfa_options.get("auto", False)
+                and data.nc_get_aggregated_data()
+        ):
+            print("auotoooo", ncvar)
+            g["cfa_write_status"][ncvar] = cfa_write_status
+            return cfa_write_status
+
+        cfa_write_status = False
         for ctype, ndim in cfa_options.get("constructs", {}).items():
             # Write as an aggregation variable if it has an
             # appropriate construct type ...
@@ -5393,11 +5416,12 @@ class NetCDFWrite(IOWrite):
                             "a normal, non-aggregation variable."
                         )
 
-                    return cfa_write_status
+                    break
 
                 break
 
-        return False
+        g["cfa_write_status"][ncvar] = cfa_write_status
+        return cfa_write_status
 
     def _create_cfa_data(self, ncvar, ncdimensions, data, cfvar):
         """Write an aggregation variable to the netCDF file.
@@ -5427,12 +5451,22 @@ class NetCDFWrite(IOWrite):
         cfa = self._cfa_aggregation_instructions(data, cfvar)
 
         # ------------------------------------------------------------
-        # Get the shape netCDF dimensions. These always start with
-        # "f_{size}_loc".
+        # Write the fragment array variables to the netCDF file
         # ------------------------------------------------------------
+        aggregated_data = data.nc_get_aggregated_data()
+        aggregated_data_attr = []
+
+        # ------------------------------------------------------------
+        # Shape
+        # ------------------------------------------------------------
+        feature = "shape"
+        shape = cfa[feature]
+
+        # Get the shape netCDF dimensions from the 'shape' fragment
+        # array variable.
         shape_ncdimensions = []
-        for size in cfa["shape"].shape:
-            l_ncdim = f"f_{size}_loc"
+        for size in shape.shape:
+            l_ncdim = f"f_shape_{size}"
             if l_ncdim not in g["dimensions"]:
                 # Create a new location dimension
                 self._write_dimension(l_ncdim, None, size=size)
@@ -5441,43 +5475,60 @@ class NetCDFWrite(IOWrite):
 
         shape_ncdimensions = tuple(shape_ncdimensions)
 
-        # ------------------------------------------------------------
-        # Get the fragment array netCDF dimensions. These always start
-        # with "f_".
-        # ------------------------------------------------------------
-        aggregation_address = cfa["address"]
-        fragment_array_ncdimensions = []
-        for ncdim, size in zip(
-            ncdimensions + ("extra",) * (aggregation_address.ndim - ndim),
-            aggregation_address.shape,
-        ):
-            f_ncdim = f"f_{ncdim}"
-            if f_ncdim not in g["dimensions"]:
-                # Create a new fragment array dimension
-                self._write_dimension(f_ncdim, None, size=size)
+        ## ------------------------------------------------------------
+        ## Get the fragment array netCDF dimensions. These always start
+        ## with "f_".
+        ## ------------------------------------------------------------
+        # aggregation_address = cfa["address"]
+        # fragment_array_ncdimensions = []
+        # for ncdim, size in zip(
+        #    ncdimensions + ("extra",) * (aggregation_address.ndim - ndim),
+        #    aggregation_address.shape,
+        # ):
+        #    f_ncdim = f"f_{ncdim}"
+        #    if f_ncdim not in g["dimensions"]:
+        #        # Create a new fragment array dimension
+        #        self._write_dimension(f_ncdim, None, size=size)
+        #
+        #    fragment_array_ncdimensions.append(f_ncdim)
+        #
+        # fragment_array_ncdimensions = tuple(fragment_array_ncdimensions)
 
-            fragment_array_ncdimensions.append(f_ncdim)
-
-        fragment_array_ncdimensions = tuple(fragment_array_ncdimensions)
-
-        # ------------------------------------------------------------
-        # Write the fragment array variables to the netCDF file
-        # ------------------------------------------------------------
-        aggregated_data = data.nc_get_aggregated_data()
-        aggregated_data_attr = []
-
-        # Shape
-        feature = "shape"
         feature_ncvar = self._cfa_write_fragment_array_variable(
-            cfa[feature],
+            shape,
             aggregated_data.get(feature, f"cfa_{feature}"),
             shape_ncdimensions,
         )
         aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 
         if "location" in cfa:
+            # --------------------------------------------------------
             # Location
+            # --------------------------------------------------------
             feature = "location"
+            location = cfa[feature]
+
+            #            aggregation_address = cfa["address"] #
+
+            # Get the fragment array netCDF dimensions from the
+            # 'location' fragment array variable.
+            fragment_array_ncdimensions = []
+            for ncdim, size in zip(
+                ncdimensions + ("extra",) * (location.ndim - ndim),
+                location.shape,
+            ):
+                f_ncdim = f"f_{ncdim}"
+                fragment_array_ncdimensions.append(f_ncdim)
+                if f_ncdim not in g["dimensions"]:
+                    # Create a new fragment array dimension
+                    self._write_dimension(f_ncdim, None, size=size)
+
+            fragment_array_ncdimensions = tuple(fragment_array_ncdimensions)
+
+            # Location
+            #            feature = "location"#
+            #
+            #            aggregation_location = cfa[feature]
 
             substitutions = data.nc_aggregation_substitutions()
             substitutions.update(g["cfa_options"].get("substitutions", {}))
@@ -5492,36 +5543,54 @@ class NetCDFWrite(IOWrite):
                 attributes = None
 
             feature_ncvar = self._cfa_write_fragment_array_variable(
-                cfa[feature],
+                location,  # cfa[feature],
                 aggregated_data.get(feature, f"cfa_{feature}"),
                 fragment_array_ncdimensions,
                 attributes=attributes,
             )
             aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 
+            # --------------------------------------------------------
             # Address
-            term = "address"
+            # --------------------------------------------------------
+            feature = "address"
 
             # Attempt to reduce addresses to a common scalar value
-            u = cfa[term].unique().compressed().persist()
+            u = cfa[feature].unique().compressed().persist()
             if u.size == 1:
-                cfa[term] = u.squeeze()
+                cfa[feature] = u.squeeze()
                 dimensions = ()
             else:
                 dimensions = fragment_array_ncdimensions
 
-            data = cfa[term]
-            term_ncvar = self._cfa_write_fragment_array_variable(
-                data,
-                aggregated_data.get(term, f"cfa_{term}"),
+            address = cfa[feature]
+            feature_ncvar = self._cfa_write_fragment_array_variable(
+                address,
+                aggregated_data.get(feature, f"cfa_{feature}"),
                 dimensions,
             )
-            aggregated_data_attr.append(f"{term}: {term_ncvar}")
+            aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
         else:
+            # --------------------------------------------------------
             # Value
+            # --------------------------------------------------------
             feature = "value"
+            value = cfa[feature]
+
+            # Get the fragment array netCDF dimensions from the
+            # 'value' fragment array variable.
+            fragment_array_ncdimensions = []
+            for ncdim, size in zip(ncdimensions, value.shape):
+                f_ncdim = f"f_{ncdim}"
+                fragment_array_ncdimensions.append(f_ncdim)
+                if f_ncdim not in g["dimensions"]:
+                    # Create a new fragment array dimension
+                    self._write_dimension(f_ncdim, None, size=size)
+
+            fragment_array_ncdimensions = tuple(fragment_array_ncdimensions)
+
             feature_ncvar = self._cfa_write_fragment_array_variable(
-                cfa[feature],
+                value,
                 aggregated_data.get(feature, f"cfa_{feature}"),
                 fragment_array_ncdimensions,
             )
@@ -5651,7 +5720,7 @@ class NetCDFWrite(IOWrite):
 
         :Returns:
 
-            `set` of 3-tuples
+            `set` of 2-tuples
                 A set containing 3-tuples giving the file names,
                 the addresses in the files, and the file formats. If
                 no files are required to compute the data then
@@ -5660,16 +5729,14 @@ class NetCDFWrite(IOWrite):
         **Examples**
 
         >>> n._cfa_get_file_details(data):
-        {(('/home/file.nc',), ('tas',), ('nc',))}
+        {(('/home/file.nc',), ('tas',))}
 
         """
         out = []
         out_append = out.append
         for a in data.todict().values():
             try:
-                out_append(
-                    (a.get_filenames(), a.get_addresses(), a.get_formats())
-                )
+                out_append((a.get_filenames(), a.get_addresses()))
             except AttributeError:
                 pass
 
@@ -5755,19 +5822,20 @@ class NetCDFWrite(IOWrite):
                     if file_details:
                         raise ValueError(
                             f"Can't write {cfvar!r} as a CF aggregation "
-                            f"variable Dask chunk defined by index {indices} "
-                            "spans two or more fragments. "
-                            "A possible fix for this is to set chunks=None "
-                            "as an argument to a prior call to 'read'"
+                            "variable: Dask chunk defined by index "
+                            f"{indices} spans two or more fragments. "
+                            "If the data was created by 'read', then a "
+                            "possible fix for this is to set chunks=None "
+                            "as an argument to the 'read' function."
                         )
 
                     raise ValueError(
-                        f"Can't write {cfvar!r} as a CF aggregation variable: "
-                        f"Dask chunk defined by index {indices} spans "
-                        "zero fragments."
+                        f"Can't write {cfvar!r} as a CF aggregation "
+                        f"variable: Dask chunk defined by index {indices} "
+                        "spans zero fragments."
                     )
 
-                filenames, addresses, formats = file_details.pop()
+                filenames, addresses = file_details.pop()
 
                 if len(filenames) > n_trailing:
                     n_trailing = len(filenames)
@@ -5844,7 +5912,6 @@ class NetCDFWrite(IOWrite):
             # ------------------------------------------------------------
             # Create a value array
             # ------------------------------------------------------------
-
             # Transform the data so that it spans the fragment
             # dimensions with one value per fragment. If a chunk has
             # more than one unique value then the fragment's value is

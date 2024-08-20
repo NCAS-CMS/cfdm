@@ -404,7 +404,9 @@ class CFATest(unittest.TestCase):
 
     def test_CFA_value(self):
         """Test the value aggregation variable."""
-        f = cfdm.read("aggregation_value.nc")[0]
+        f = cfdm.read("aggregation_value.nc")
+        self.assertEqual(len(f), 1)
+        f = f[0]
         fa = f.field_ancillary()
         self.assertEqual(fa.shape, (12,))
 
@@ -414,9 +416,12 @@ class CFATest(unittest.TestCase):
 
         self.assertTrue((fa[:3].array == fragment_value_uid[0]).all())
         self.assertTrue((fa[3:].array == fragment_value_uid[1]).all())
+        cfa_file = "cfa_file.nc"
+        cfdm.write(
+            f, cfa_file, cfa={"constructs": ["field", "field_ancillary"]}
+        )
 
-        cfdm.write(f, cfa_file, cfa=True)
-        
+
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cfdm.environment()
