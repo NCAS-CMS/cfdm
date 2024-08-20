@@ -10,6 +10,7 @@ from packaging.version import Version
 
 from ...data.dask_utils import cfdm_asanyarray
 from ...decorators import _manage_log_level_via_verbosity
+from ...functions import integer_dtype
 from .. import IOWrite
 from .netcdfread import NetCDFRead
 
@@ -4739,16 +4740,14 @@ class NetCDFWrite(IOWrite):
                 .. versionadded:: (cfdm) 1.10.0.1
 
             cfa: `bool`, optional
-                Whether or not to create aggregation variables.
-
-                See `cfdm.write` for details.
+                Whether or not to create aggregation variables. See
+                `cfdm.write` for details.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
             cfa_options: `bool`, optional
-                Configure the creation of aggregation variables.
-
-                See `cfdm.write` for details.
+                Configure the creation of aggregation variables. See
+                `cfdm.write` for details.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -4870,8 +4869,8 @@ class NetCDFWrite(IOWrite):
             "cfa": bool(cfa),
             # Configuration options for writing aggregation variables
             "cfa_options": {} if cfa_options is None else cfa_options,
-            # The directory path of the aggregation file
-            "cfa_dir": None,
+            # The directory of the aggregation file
+            "aggregation_file_directory": None,
         }
 
         if mode not in ("w", "a", "r+"):
@@ -5371,14 +5370,15 @@ class NetCDFWrite(IOWrite):
 
         cfa_options = g["cfa_options"]
         for ctype, ndim in cfa_options.get("constructs", {}).items():
-            # Write as CFA if it has an appropriate construct type ...
+            # Write as an aggregation variable if it has an
+            # appropriate construct type ...
             if ctype in (construct_type, "all"):
                 # ... and then only if it satisfies the
-                # number-of-dimenions criterion and the data is
+                # number-of-dimensions criterion, and the data is
                 # flagged as OK.
                 if ndim is None or ndim == len(domain_axes):
-                    cfa_get_write = data.nc_get_aggregated_write_status()
-                    if not cfa_get_write and cfa_options["strict"]:
+                    cfa_write_status = data.nc_get_aggregation_write_status()
+                    if not cfa_write_status and cfa_options["strict"]:
                         if g["mode"] == "w":
                             os.remove(g["filename"])
 
@@ -5390,10 +5390,10 @@ class NetCDFWrite(IOWrite):
                             "changed relative to those in a fragment file."
                             "Setting the cfa keyword's 'strict' option to "
                             "False will allow this variable to be written as "
-                            "a normal, non-aggregation variable." 
+                            "a normal, non-aggregation variable."
                         )
 
-                    return cfa_get_write
+                    return cfa_write_status
 
                 break
 
@@ -5479,7 +5479,7 @@ class NetCDFWrite(IOWrite):
             # Location
             feature = "location"
 
-            substitutions = data.nc_aggregated_substitutions()
+            substitutions = data.nc_aggregation_substitutions()
             substitutions.update(g["cfa_options"].get("substitutions", {}))
             if substitutions:
                 # Create the "substitutions" netCDF attribute
@@ -5712,34 +5712,33 @@ class NetCDFWrite(IOWrite):
         # Define location fragment array variable susbstitutions,
         # giving precedence over those set on the Data object to those
         # provided by the cfa_options.
-        substitutions = data.nc_aggregated_substitutions()
+        substitutions = data.nc_aggregation_substitutions()
         substitutions.update(g["cfa_options"].get("substitutions", {}))
 
         absolute_paths = g["cfa_options"].get("absolute_paths")
-        cfa_dir = g["cfa_dir"]
+        cfa_dir = g["aggregation_file_directory"]
         if cfa_dir is None:
             cfa_dir = PurePath(abspath(g["filename"])).parent
-            g["cfa_dir"] = cfa_dir
+            g["aggregation_file_directory"] = cfa_dir
 
         # ------------------------------------------------------------
         # Create the shape array
         # ------------------------------------------------------------
         a_shape = data.numblocks
-        ndim = data.ndim
-        dtype = np.dtype(np.int32)
-        if (
-            max(data.to_dask_array(asanyarray=False).chunksize)
-            > np.iinfo(dtype).max
-        ):
-            dtype = np.dtype(np.int64)
-
-        aggregation_shape = np.ma.masked_all((ndim, max(a_shape)), dtype=dtype)
-        for i, chunks in enumerate(data.chunks):
-            aggregation_shape[i, : len(chunks)] = chunks
+        if a_shape:
+            ndim = data.ndim
+            aggregation_shape = np.ma.masked_all(
+                (ndim, max(a_shape)), dtype=integer_dtype(max(data.chunksize))
+            )
+            for i, chunks in enumerate(data.chunks):
+                aggregation_shape[i, : len(chunks)] = chunks
+        else:
+            # Scalar 'shape' fragment array variable
+            aggregation_shape = np.ones((), dtype=np.dtype("int32"))
 
         out = {"shape": type(data)(aggregation_shape)}
 
-        if data.nc_get_aggregated_fragment_type() == "location":
+        if data.nc_get_aggregation_fragment_type() == "location":
             # --------------------------------------------------------
             # Create location and address arrays
             # --------------------------------------------------------

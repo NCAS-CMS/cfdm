@@ -110,9 +110,8 @@ class FullArray(IndexMixin, Array):
 
         return f"Filled with {fill_value!r}"
 
-    # REVIEW: getitem: `_get_array`: new method to convert subspace to numpy array
     def _get_array(self, index=None):
-        """Returns the full array.
+        """Returns the data as a `numpy` array.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -125,7 +124,7 @@ class FullArray(IndexMixin, Array):
         :Returns:
 
             `numpy.ndarray`
-                The subspace.
+                The data.
 
         """
         if index is None:
@@ -145,7 +144,6 @@ class FullArray(IndexMixin, Array):
 
         return array
 
-    # REVIEW: getitem: `array`: New property to convert subspace to numpy array
     @property
     def array(self):
         """Return an independent numpy array containing the data.
@@ -158,7 +156,7 @@ class FullArray(IndexMixin, Array):
                 An independent numpy array of the data.
 
         """
-        return np.asanyarray(self)
+        return self._get_array()
 
     @property
     def dtype(self):
@@ -252,4 +250,4 @@ def unique(
     if x is np.ma.masked:
         return np.ma.masked_all((1,), dtype=a.dtype)
 
-    return np.array([x], dtype=a.dtype)
+    return np.array((x,), dtype=a.dtype)

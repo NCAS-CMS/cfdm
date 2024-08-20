@@ -38,6 +38,8 @@ atexit.register(_remove_tmpfiles)
 
 
 class CFATest(unittest.TestCase):
+    """Unit test for aggregation variables."""
+
     netcdf3_fmts = [
         "NETCDF3_CLASSIC",
         "NETCDF3_64BIT",
@@ -109,7 +111,7 @@ class CFATest(unittest.TestCase):
         f = cfdm.read(tmpfile1)[0]
 
         cwd = os.getcwd()
-        f.data.nc_update_aggregated_substitutions({"base": cwd})
+        f.data.nc_update_aggregation_substitutions({"base": cwd})
 
         cfdm.write(
             f,
@@ -130,7 +132,7 @@ class CFATest(unittest.TestCase):
 
         g = cfdm.read(cfa_file)
         self.assertEqual(len(g), 1)
-        self.assertTrue(f.equals(g[0], verbose=-1))
+        self.assertTrue(f.equals(g[0]))
 
     def test_CFA_substitutions_1(self):
         """Test aggregation substitution URI substitutions (1)."""
@@ -160,7 +162,7 @@ class CFATest(unittest.TestCase):
 
         g = cfdm.read(cfa_file)
         self.assertEqual(len(g), 1)
-        self.assertTrue(f.equals(g[0], verbose=-1))
+        self.assertTrue(f.equals(g[0]))
 
     def test_CFA_substitutions_2(self):
         """Test aggregation substitution URI substitutions (2)."""
@@ -170,8 +172,8 @@ class CFATest(unittest.TestCase):
 
         cwd = os.getcwd()
 
-        f.data.nc_clear_aggregated_substitutions()
-        f.data.nc_update_aggregated_substitutions({"base": cwd})
+        f.data.nc_clear_aggregation_substitutions()
+        f.data.nc_update_aggregation_substitutions({"base": cwd})
         cfdm.write(
             f,
             cfa_file,
@@ -196,8 +198,8 @@ class CFATest(unittest.TestCase):
         self.assertEqual(len(g), 1)
         self.assertTrue(f.equals(g[0]))
 
-        f.data.nc_clear_aggregated_substitutions()
-        f.data.nc_update_aggregated_substitutions({"base": "/bad/location"})
+        f.data.nc_clear_aggregation_substitutions()
+        f.data.nc_update_aggregation_substitutions({"base": "/bad/location"})
 
         cfdm.write(
             f,
@@ -220,8 +222,8 @@ class CFATest(unittest.TestCase):
         self.assertEqual(len(g), 1)
         self.assertTrue(f.equals(g[0]))
 
-        f.data.nc_clear_aggregated_substitutions()
-        f.data.nc_update_aggregated_substitutions({"base2": "/bad/location"})
+        f.data.nc_clear_aggregation_substitutions()
+        f.data.nc_update_aggregation_substitutions({"base2": "/bad/location"})
 
         cfdm.write(
             f,
@@ -245,8 +247,7 @@ class CFATest(unittest.TestCase):
         self.assertTrue(f.equals(g[0]))
 
     def test_CFA_absolute_paths(self):
-        """Test aggregation 'absolute_paths' option to the cfa.write
-        'cfa' keyword."""
+        """Test aggregation 'absolute_paths' option to cfdm.write."""
         f = cfdm.example_field(0)
         cfdm.write(f, tmpfile1)
         f = cfdm.read(tmpfile1)[0]
@@ -270,8 +271,7 @@ class CFATest(unittest.TestCase):
             self.assertTrue(f.equals(g[0]))
 
     def test_CFA_constructs(self):
-        """Test choice of constructs to write as aggregation
-        variables."""
+        """Test aggregation 'constructs' option to cfdm.write."""
         f = cfdm.example_field(1)
         f.del_construct("time")
         f.del_construct("long_name=Grid latitude name")
@@ -395,18 +395,28 @@ class CFATest(unittest.TestCase):
     def test_CFA_scalar(self):
         """Test scalar aggregation variable."""
         f = cfdm.example_field(0)
-        f = f[0,0].squeeze()
-        tmpfile1 = 'tmpfile1.nc'
+        f = f[0, 0].squeeze()
         cfdm.write(f, tmpfile1)
         g = cfdm.read(tmpfile1)[0]
-        print(g)
-        cfa_file = "cfa_file.nc"
-        cfdm.write(
-            g,
-            cfa_file,
-            cfa=True       )
+        cfdm.write(g, cfa_file, cfa=True)
+        h = cfdm.read(cfa_file)[0]
+        self.assertTrue(h.equals(f))
 
+    def test_CFA_value(self):
+        """Test the value aggregation variable."""
+        f = cfdm.read("aggregation_value.nc")[0]
+        fa = f.field_ancillary()
+        self.assertEqual(fa.shape, (12,))
 
+        nc = netCDF4.Dataset("aggregation_value.nc", "r")
+        fragment_value_uid = nc.variables["fragment_value_uid"][...]
+        nc.close()
+
+        self.assertTrue((fa[:3].array == fragment_value_uid[0]).all())
+        self.assertTrue((fa[3:].array == fragment_value_uid[1]).all())
+
+        cfdm.write(f, cfa_file, cfa=True)
+        
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cfdm.environment()

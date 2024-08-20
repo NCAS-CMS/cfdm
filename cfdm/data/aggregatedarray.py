@@ -185,6 +185,40 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         self._set_component("mask", True, copy=False)
         self._set_component("unpack", True, copy=False)
 
+    def __getitem__(self, index):
+        """Return a subspace.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return NotImplemented
+
+    def __dask_tokenize__(self):
+        """Used by `dask.base.tokenize`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        out = super().__dask_tokenize__()
+        aggregated_data = self._get_component("instructions", None)
+        if aggregated_data is None:
+            aggregated_data = self.get_aggregated_data(copy=False)
+
+        return out + (aggregated_data,)
+
+    @property
+    def __asanyarray__(self):
+        """True if the array is accessed by conversion to `numpy`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `True`
+
+        """
+        return True
+
     def _parse_cfa(self, aggregated_filename, x, substitutions):
         """Parse the aggregated data instructions.
 
@@ -215,10 +249,16 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         aggregated_data = {}
 
         shape = x["shape"]
-        ndim = shape.shape[0]
-        compressed = np.ma.compressed
-        chunks = [compressed(i).tolist() for i in shape]
-        aggregated_shape = [sum(c) for c in chunks]
+        if shape.ndim:
+            ndim = shape.shape[0]
+            compressed = np.ma.compressed
+            chunks = [compressed(i).tolist() for i in shape]
+        else:
+            # Scalar 'shape' fragment array variable
+            ndim = 0
+            chunks = []
+
+        aggregated_shape = tuple([sum(c) for c in chunks])
         fragment_array_indices = chunk_positions(chunks)
         fragment_shapes = chunk_locations(chunks)
 
@@ -325,38 +365,13 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         )
 
     @property
-    def __asanyarray__(self):
-        """True if the array is accessed by conversion to `numpy`.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Returns:
-
-            `True`
-
-        """
-        return True
-
-    def __dask_tokenize__(self):
-        """Used by `dask.base.tokenize`.
+    def array(self):
+        """A numpy array copy of the data.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        out = super().__dask_tokenize__()
-        aggregated_data = self._get_component("instructions", None)
-        if aggregated_data is None:
-            aggregated_data = self.get_aggregated_data(copy=False)
-
-        return out + (aggregated_data,)
-
-    def __getitem__(self, index):
-        """Return a subspace of the field defined by indices.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        """
-        return self.to_dask_array()[index].compute()
+        return self[...]
 
     def get_aggregated_data(self, copy=True):
         """Get the aggregation data dictionary.

@@ -1445,8 +1445,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
     @property
     def __keepdims_indexing__(self):
-        """Flag to indicate whether dimensions indexed with integers are
-        kept.
+        """Flag to indicate if axes indexed with integers are kept.
 
         If set to True (the default) then providing a single integer
         as a single-axis index does *not* reduce the number of array
@@ -1590,8 +1589,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         self._set_component("axes", tuple(value), copy=False)
 
     def _binary_operation(self, other, method):
-        """Implement binary arithmetic and comparison operations with
-        the numpy broadcasting rules.
+        """Implement binary arithmetic and comparison operations.
 
         It is called by the binary arithmetic and comparison
         methods, such as `__sub__`, `__imul__`, `__rdiv__`, `__lt__`, etc.
@@ -1708,7 +1706,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `_del_Array`, `_del_cached_elements`,
-                     `nc_del_aggregated_write_status`, `_set_dask`
+                     `nc_del_aggregation_write_status`, `_set_dask`
 
         :Parameters:
 
@@ -1759,13 +1757,41 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         if clear & _CFA:
             # Set the CFA write status to False
-            self.nc_del_aggregated_write_status()
+            self.nc_del_aggregation_write_status()
 
     @classmethod
-    def _concatenate_conform_units(
-        cls, data1, units0, relaxed_units, copy, copied
-    ):
-        """TODOCFA."""
+    def _concatenate_conform_units(cls, data1, units0, relaxed_units, copy):
+        """Check and conform the units of the data.
+
+        This method is a helper function for `concatenate` that may be
+        easily overridden in sublcasses.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `concatenate`
+
+        :Parameters:
+
+            data1: `{{class}}`
+                Data with units.
+
+            units0: `Units`
+                The units to conform *data1* to.
+
+            {{relaxed_units: `bool`, optional}}
+
+            copy: `bool`
+                If False then modify *data1* in-place. Otherwise a
+                copy of it is modified.
+
+        :Returns:
+
+            `{{class}}`
+                Returns *data1*, possibly modified so that it conforms
+                to *units0*. If *copy* is False then if *data1* is
+                modified, it is done so in-place.
+
+        """
         # Check and conform, if necessary, the units of all inputs
         units1 = data1.Units
         if (
@@ -2136,7 +2162,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         changed in-place.
 
         >>> a = np.arange(40).reshape(5, 8)
-        >>> {{package}}.Data._set_subspace(a, [[1, 4 ,3], [7, 6, 1]],
+        >>> {{package}}.{{class}}._set_subspace(a, [[1, 4 ,3], [7, 6, 1]],
         ...                    np.array([[-1, -2, -3]]))
         >>> print(a)
         [[ 0  1  2  3  4  5  6  7]
@@ -2146,7 +2172,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
          [32 -3 34 35 36 37 -2 -1]]
 
         >>> a = np.arange(40).reshape(5, 8)
-        >>> {{package}}.Data._set_subspace(a, [[1, 4 ,3], [7, 6, 1]],
+        >>> {{package}}.{{class}}._set_subspace(a, [[1, 4 ,3], [7, 6, 1]],
         ...                    np.array([[-1, -2, -3]]),
         ...                    orthogonal_indexing=False)
         >>> print(a)
@@ -2162,7 +2188,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         [[-1. -2. -3.]
          [-4. -5. -6.]
          [-7. -8. -9.]]
-        >>> {{package}}.Data._set_subspace(a, [[4, 4 ,1], [7, 6, 1]], value)
+        >>> {{package}}.{{class}}._set_subspace(a, [[4, 4 ,1], [7, 6, 1]], value)
         >>> print(a)
         [[ 0  1  2  3  4  5  6  7]
          [ 8 -9 10 11 12 13 -8 -7]
@@ -2452,10 +2478,34 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         6
 
         """
-        # REVIEW: getitem: `chunks`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
         return self.to_dask_array(asanyarray=False).chunks
+
+    @property
+    def chunksize(self):
+        """The largest `dask` chunk size for each dimension.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `chunks`, `npartitions`, `numblocks`, `rechunk`
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}.empty((6, 5), chunks=(2, 4))
+         >>> d.chunks
+        ((2, 2, 2), (4, 1))
+        >>> d.chunksize
+        (2, 4)
+        >>> d.numblocks
+        (3, 2)
+        >>> d.npartitions
+        6
+
+        """
+        # The dask graph is never going to be computed, so we can set
+        # 'asanyarray=False'.
+        return self.to_dask_array(asanyarray=False).chunksize
 
     @property
     def compressed_array(self):
@@ -2825,13 +2875,15 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `chunks`, `numblocks`, `rechunk`
+        .. seealso:: `chunks`, `chunksize`, `numblocks`, `rechunk`
 
         **Examples**
 
         >>> d = {{package}}.{{class}}.empty((6, 5), chunks=(2, 4))
         >>> d.chunks
         ((2, 2, 2), (4, 1))
+        >>> d.chunksize
+        (2, 4)
         >>> d.numblocks
         (3, 2)
         >>> d.npartitions
@@ -2849,13 +2901,15 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `chunks`, `npartitions`, `rechunk`
+        .. seealso:: `chunks`, `chunksize`, `npartitions`, `rechunk`
 
         **Examples**
 
         >>> d = {{package}}.{{class}}.empty((6, 5), chunks=(2, 4))
         >>> d.chunks
         ((2, 2, 2), (4, 1))
+        >>> d.chunksize
+        (2, 4)
         >>> d.numblocks
         (3, 2)
         >>> d.npartitions
@@ -3181,32 +3235,27 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-        >>> d = cf.Data([[1, 2], [3, 4]], 'km')
-        >>> e = cf.Data([[5.0, 6.0]], 'metre')
-        >>> f = cf.Data.concatenate((d, e))
+        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
+        >>> e = {{package}}.{{class}}([[5.0, 6.0]])
+        >>> f = {{package}}.{{class}}.concatenate((d, e))
         >>> print(f.array)
         [[ 1.     2.   ]
          [ 3.     4.   ]
-         [ 0.005  0.006]]
-        >>> f.equals(cf.Data.concatenate((d, e), axis=-2))
+         [ 5.     6.   ]]
+        >>> f.equals({{package}}.{{class}}.concatenate((d, e), axis=-2))
         True
 
-        >>> e = cf.Data([[5.0], [6.0]], 'metre')
-        >>> f = cf.Data.concatenate((d, e), axis=1)
+        >>> e = {{package}}.{{class}}([[5.0], [6.0]])
+        >>> f = {{package}}.{{class}}.concatenate((d, e), axis=1)
         >>> print(f.array)
-        [[ 1.     2.     0.005]
-         [ 3.     4.     0.006]]
+        [[ 1.     2.     5.]
+         [ 3.     4.     6.]]
 
-        >>> d = cf.Data(1, 'km')
-        >>> e = cf.Data(50.0, 'metre')
-        >>> f = cf.Data.concatenate((d, e))
+        >>> d = {{package}}.{{class}}(1)
+        >>> e = {{package}}.{{class}}(50.0)
+        >>> f = {{package}}.{{class}}.concatenate((d, e))
         >>> print(f.array)
-        [ 1.    0.05]
-
-        >>> e = cf.Data([50.0, 75.0], 'metre')
-        >>> f = cf.Data.concatenate((d, e))
-        >>> print(f.array)
-        [ 1.     0.05   0.075]
+        [ 1.    50.]
 
         """
         if isinstance(data, cls):
@@ -3250,10 +3299,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
                 data1.insert_dimension(inplace=True)
 
-            # Check and conform xthe units of all inputs
+            # Check and conform the units of data1 with respect to
+            # those of data0
             data1 = cls._concatenate_conform_units(
-                data1, units0, relaxed_units, copy, copied
+                data1, units0, relaxed_units, copy and not copied
             )
+
             processed_data.append(data1)
 
         # Get data as dask arrays and apply concatenation
@@ -3263,15 +3314,15 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         dxs = [d.to_dask_array(asanyarray=False) for d in processed_data]
         dx = da.concatenate(dxs, axis=axis)
 
-        # Set the CFA write status
+        # Set the aggregation write status
         #
         # Assume at first that all input data instances have True
         # status, but ...
         cfa = _CFA
         for d in processed_data:
-            if not d.nc_get_aggregated_write_status():
-                # ... the CFA write status is False when any input
-                # data instance has False status;
+            if not d.nc_get_aggregation_write_status():
+                # ... the write status is False when any input data
+                # instance has False status;
                 cfa = _NONE
                 break
 
@@ -3282,20 +3333,22 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 non_concat_axis_chunks = list(d.chunks)
                 non_concat_axis_chunks.pop(axis)
                 if non_concat_axis_chunks != non_concat_axis_chunks0:
-                    # ... the CFA write status must also be False when
-                    # any two input data instances have different
-                    # chunk patterns for the non-concatenated axes;
+                    # ... the write status must also be False when any
+                    # two input data instances have different chunk
+                    # patterns for the non-concatenated axes;
                     cfa = _NONE
                     break
 
         if cfa != _NONE:
-            fragment_type = processed_data[0].nc_get_aggregated_fragment_type()
+            fragment_type = processed_data[
+                0
+            ].nc_get_aggregation_fragment_type()
             for d in processed_data[1:]:
-                if d.nc_get_aggregated_fragment_type() != fragment_type:
+                if d.nc_get_aggregation_fragment_type() != fragment_type:
                     # ... when any two input Data objects have
                     # different fragment types, then we can't write as
                     # an aggregation variable;
-                    data0._nc_del_aggregated_fragment_type()
+                    data0._nc_del_aggregation_fragment_type()
                     cfa = _NONE
                     break
 
@@ -3313,18 +3366,18 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # by combining them from all of the input data instances,
         # giving precedence to those towards the left hand side of the
         # input list.
-        if data0.nc_get_aggregated_write_status():
+        if data0.nc_get_aggregation_write_status():
             aggregated_data = {}
             substitutions = {}
             for d in processed_data[::-1]:
                 aggregated_data.update(d.nc_get_aggregated_data())
-                substitutions.update(d.nc_aggregated_substitutions())
+                substitutions.update(d.nc_aggregation_substitutions())
 
             if aggregated_data:
                 data0.nc_set_aggregated_data(aggregated_data)
 
             if substitutions:
-                data0.nc_update_aggregated_substitutions(substitutions)
+                data0.nc_update_aggregation_substitutions(substitutions)
 
         # Set the new dask array
         data0._set_dask(dx, clear=_ALL ^ cfa, asanyarray=asanyarray)
@@ -6157,7 +6210,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         return dx
 
-    # REVIEW: getitem: `todict`: new keywords 'apply_mask_hardness', 'asanyarray'
     def todict(
         self, optimize_graph=True, apply_mask_hardness=False, asanyarray=None
     ):
@@ -6169,7 +6221,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Parameters:
 
-            `optimize_graph`: `bool`
+            optimize_graph: `bool`
                 If True, the default, then prior to being converted to
                 a dictionary, the graph is optimised to remove unused
                 chunks. Note that optimising the graph can add a
@@ -6375,11 +6427,37 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
     @_inplace_enabled(default=False)
     def unique(self, inplace=False):
-        """TODOCFA."""
+        """The unique elements of the data.
+
+        Returns the sorted unique elements of the array.
+
+        :Returns:
+
+            `{{class}}`
+                The unique values in a 1-d array.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([[4, 2, 1], [1, 2, 3]], 'metre')
+        >>> print(d.array)
+        [[4 2 1]
+         [1 2 3]]
+        >>> e = d.unique()
+        >>> print(e.array)
+        [1 2 3 4]
+        >>> d[0, 0] = {{package}}.masked
+        >>> print(d.array)
+        [[-- 2 1]
+         [1 2 3]]
+        >>> e = d.unique()
+        >>> print(e.array)
+        [1 2 3 --]
+
+        """
         d = _inplace_enabled_define_and_cleanup(self)
         dx = d.to_dask_array()
         u = np.unique(dx.compute())
-        dx = to_dask(u, _DEFAULT_CHUNKS)
+        dx = da.from_array(u, chunks=_DEFAULT_CHUNKS)
         d._set_dask(dx)
         return d
 

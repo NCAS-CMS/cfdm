@@ -11,7 +11,7 @@ class FragmentValueArray(FragmentArrayMixin, FullArray):
 
     def __init__(
         self,
-        fill_value=None,
+        value=None,
         dtype=None,
         shape=None,
         aggregated_units=False,
@@ -24,8 +24,8 @@ class FragmentValueArray(FragmentArrayMixin, FullArray):
 
         :Parameters:
 
-            fill_value: scalar
-                The fill value.
+            value: scalar
+                The fill value. TODOCFA
 
             dtype: `numpy.dtype`
                 The data type of the aggregated array. May be `None`
@@ -52,7 +52,7 @@ class FragmentValueArray(FragmentArrayMixin, FullArray):
 
         """
         super().__init__(
-            fill_value=fill_value,
+            fill_value=value,
             dtype=dtype,
             shape=shape,
             attributes=attributes,

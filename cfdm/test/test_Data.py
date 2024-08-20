@@ -652,19 +652,21 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data(9)
         self.assertTrue(d.equals(d.transpose()))
 
-    # def test_Data_unique(self):
-    #     """Test the unique Data method"""
-    #     d = cfdm.Data([[4, 2, 1], [1, 2, 3]], units="metre")
-    #     u = d.unique()
-    #     self.assertEqual(u.shape, (4,))
-    #     self.assertTrue(
-    #         (u.array == cfdm.Data([1, 2, 3, 4], "metre").array).all()
-    #     )
-    #
-    #     d[1, -1] = cfdm.masked
-    #     u = d.unique()
-    #     self.assertEqual(u.shape, (3,))
-    #     self.assertTrue((u.array == cfdm.Data([1, 2, 4], "metre").array).all())
+    def test_Data_unique(self):
+        """Test Data.unique."""
+        d = cfdm.Data([[4, 2, 1], [1, 2, 3]], units="metre")
+        u = d.unique()
+        self.assertEqual(u.shape, (4,))
+        self.assertTrue(
+            (u.array == cfdm.Data([1, 2, 3, 4], "metre").array).all()
+        )
+
+        d[1, -1] = cfdm.masked
+        u = d.unique()
+        self.assertEqual(u.shape, (4,))
+        self.assertTrue(
+            (u.array == np.ma.array([1, 2, 4, -99], mask=[0, 0, 0, 1])).all()
+        )
 
     def test_Data_equals(self):
         """Test the equality-testing Data method."""
@@ -2379,7 +2381,6 @@ class DataTest(unittest.TestCase):
         e = cfdm.Data(e_np)
         f_np = np.concatenate((d_np, e_np), axis=0)
         f = cfdm.Data.concatenate((d, e))
-
         self.assertEqual(f.shape, f_np.shape)
         self.assertTrue((f.array == f_np).all())
 
@@ -2400,7 +2401,6 @@ class DataTest(unittest.TestCase):
         e = cfdm.Data(e_np, "km")
         f_np = np.concatenate((d_np, e_np), axis=1)
         f = cfdm.Data.concatenate((d, e), axis=1)
-
         self.assertEqual(f.shape, f_np.shape)
         self.assertTrue((f.array == f_np).all())
 
@@ -2417,7 +2417,6 @@ class DataTest(unittest.TestCase):
         #     ValueError: zero-dimensional arrays cannot be concatenated
         f_answer = np.array([d_np, e_np])
         f = cfdm.Data.concatenate((d, e))
-
         self.assertEqual(f.shape, f_answer.shape)
         self.assertTrue((f.array == f_answer).all())
 
@@ -2494,40 +2493,40 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.nc_get_aggregated_data(), {})
         self.assertEqual(d.nc_del_aggregated_data(), {})
 
-    def test_Data_aggregated_substitutions(self):
-        """Test Data CFA aggregated substitutions methods."""
+    def test_Data_aggregation_substitutions(self):
+        """Test Data CFA aggregation substitutions methods."""
         d = cfdm.Data(9)
-        self.assertFalse(d.nc_has_aggregated_substitutions())
+        self.assertFalse(d.nc_has_aggregation_substitutions())
         self.assertIsNone(
-            d.nc_update_aggregated_substitutions({"base": "file:///data/"})
+            d.nc_update_aggregation_substitutions({"base": "file:///data/"})
         )
-        self.assertTrue(d.nc_has_aggregated_substitutions())
+        self.assertTrue(d.nc_has_aggregation_substitutions())
         self.assertEqual(
-            d.nc_aggregated_substitutions(), {"${base}": "file:///data/"}
+            d.nc_aggregation_substitutions(), {"${base}": "file:///data/"}
         )
 
-        d.nc_update_aggregated_substitutions({"${base2}": "/home/data/"})
+        d.nc_update_aggregation_substitutions({"${base2}": "/home/data/"})
         self.assertEqual(
-            d.nc_aggregated_substitutions(),
+            d.nc_aggregation_substitutions(),
             {"${base}": "file:///data/", "${base2}": "/home/data/"},
         )
 
-        d.nc_update_aggregated_substitutions({"${base}": "/new/location/"})
+        d.nc_update_aggregation_substitutions({"${base}": "/new/location/"})
         self.assertEqual(
-            d.nc_aggregated_substitutions(),
+            d.nc_aggregation_substitutions(),
             {"${base}": "/new/location/", "${base2}": "/home/data/"},
         )
         self.assertEqual(
-            d.nc_del_aggregated_substitution("${base}"),
+            d.nc_del_aggregation_substitution("${base}"),
             {"${base}": "/new/location/"},
         )
         self.assertEqual(
-            d.nc_clear_aggregated_substitutions(), {"${base2}": "/home/data/"}
+            d.nc_clear_aggregation_substitutions(), {"${base2}": "/home/data/"}
         )
-        self.assertFalse(d.nc_has_aggregated_substitutions())
-        self.assertEqual(d.nc_aggregated_substitutions(), {})
-        self.assertEqual(d.nc_clear_aggregated_substitutions(), {})
-        self.assertEqual(d.nc_del_aggregated_substitution("base"), {})
+        self.assertFalse(d.nc_has_aggregation_substitutions())
+        self.assertEqual(d.nc_aggregation_substitutions(), {})
+        self.assertEqual(d.nc_clear_aggregation_substitutions(), {})
+        self.assertEqual(d.nc_del_aggregation_substitution("base"), {})
 
     def test_Data_file_directory(self):
         """Test `Data` file directory methods."""

@@ -6286,19 +6286,22 @@ class NetCDFRead(IORead):
                 )
                 continue
 
-            aggregation_instructions[term] = fragment_array_variables[
-                term_ncvar
-            ]
+            fragment_array_variable = fragment_array_variables[term_ncvar]
+            aggregation_instructions[term] = fragment_array_variable
             instructions.append(f"{term}: {term_ncvar}")
 
             if term == "location":
                 kwargs["substitutions"] = g["location_substitutions"].get(
                     term_ncvar
                 )
+            elif term == "value" and kwargs["dtype"] is None:
+                # This is a string-valued aggregation variable with a
+                # 'value' fragment array variable, so set the correct
+                # numpy data type
+                kwargs["dtype"] = fragment_array_variable.dtype
 
         kwargs["x"] = aggregation_instructions
         kwargs["instructions"] = " ".join(sorted(instructions))
-
         if return_kwargs_only:
             return kwargs
 
@@ -6311,7 +6314,6 @@ class NetCDFRead(IORead):
 
         # Use the kwargs to create a AggregatedArray instance
         array = self.implementation.initialise_AggregatedArray(**kwargs)
-
         return array, kwargs
 
     def _create_data(
@@ -6599,10 +6601,12 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Cache selected values from disk
         # ------------------------------------------------------------
+        aggregation_variable = self._cfa_is_aggregation_variable(ncvar)
         if (
             not compression_index
             and g.get("cache")
             and self.implementation.get_construct_type(construct) != "field"
+            and not aggregation_variable
         ):
             # Only cache values from non-field data and
             # non-compression-index data, on the assumptions that:
@@ -6617,12 +6621,12 @@ class NetCDFRead(IORead):
         # ------------------------------------------------------------
         # Set data aggregation parameters
         # ------------------------------------------------------------
-        if not self._cfa_is_aggregation_variable(ncvar):
+        if not aggregation_variable:
             # For non-aggregation variables, set the aggregated write
             # status to True when there is exactly one dask chunk.
             if data.npartitions == 1:
-                data._nc_set_aggregated_write_status(True)
-                data._nc_set_aggregated_fragment_type("location")
+                data._nc_set_aggregation_write_status(True)
+                data._nc_set_aggregation_fragment_type("location")
         else:
             if construct is not None:
                 # Remove the aggregation attributes from the construct
@@ -6638,24 +6642,24 @@ class NetCDFRead(IORead):
 
             # Set the aggregated write status to True iff each
             # non-aggregated axis has exactly one Dask chunk
-            cfa_write = True
+            cfa_write_status = True
             for n, numblocks in zip(
                 netcdf_array.get_fragment_array_shape(), data.numblocks
             ):
                 if n == 1 and numblocks > 1:
                     # Note: n is always 1 for non-aggregated axes
-                    cfa_write = False
+                    cfa_write_status = False
                     break
 
-            data._nc_set_aggregated_write_status(cfa_write)
+            data._nc_set_aggregation_write_status(cfa_write_status)
 
             # Store the file substitutions
-            data.nc_update_aggregated_substitutions(
-                netcdf_kwargs.get("substitutions")
+            data.nc_update_aggregation_substitutions(
+                netcdf_kwargs.get("substitutions", {})
             )
 
             # Store the fragment type
-            data._nc_set_aggregated_fragment_type(
+            data._nc_set_aggregation_fragment_type(
                 netcdf_array.get_fragment_type()
             )
 
@@ -7681,11 +7685,6 @@ class NetCDFRead(IORead):
 
         """
         if array.dtype is None:
-            # The array is based on a netCDF VLEN variable, and
-            # therefore has unknown data type. To find the correct
-            # data type (e.g. "<U7"), we need to read the entire array
-            # from its netCDF variable into memory to find the longest
-            # string.
             g = self.read_vars
             if g["has_groups"]:
                 group, name = self._netCDF4_group(

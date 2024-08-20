@@ -4738,23 +4738,31 @@ class NetCDFAggregation(NetCDFMixin):
 
         self._get_component("netcdf")["aggregated_data"] = value
 
-    def _nc_del_aggregated_fragment_type(self):
+    def _nc_del_aggregation_fragment_type(self):
         """TODOCFA.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        """
-        return self._nc_del("aggregated_fragment_type", None)
+        :Returns:
 
-    def nc_get_aggregated_fragment_type(self):
+            TODOCFA
+
+        """
+        return self._nc_del("aggregation_fragment_type", None)
+
+    def nc_get_aggregation_fragment_type(self):
         """TODOCFA.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        """
-        return self._nc_get("aggregated_fragment_type", None)
+        :Returns:
 
-    def _nc_set_aggregated_fragment_type(self, value):
+            TODOCFA
+
+        """
+        return self._nc_get("aggregation_fragment_type", None)
+
+    def _nc_set_aggregation_fragment_type(self, value):
         """TODOCFA.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -4764,10 +4772,14 @@ class NetCDFAggregation(NetCDFMixin):
             value: `str`
                 TODOCFA
 
-        """
-        self._get_component("netcdf")["aggregated_fragment_type"] = value
+        :Returns:
 
-    def nc_del_aggregated_write_status(self):
+            `None`
+
+        """
+        self._get_component("netcdf")["aggregation_fragment_type"] = value
+
+    def nc_del_aggregation_write_status(self):
         """Set the netCDF aggregation write status to `False`.
 
         Writing the data as CF-netCDf aggregated data will only be
@@ -4775,8 +4787,8 @@ class NetCDFAggregation(NetCDFMixin):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `nc_get_aggregated_write_status`,
-                     `nc_set_aggregated_write_status`
+        .. seealso:: `nc_get_aggregation_write_status`,
+                     `nc_set_aggregation_write_status`
 
         :Returns:
 
@@ -4784,9 +4796,9 @@ class NetCDFAggregation(NetCDFMixin):
                 The netCDF aggregation write status prior to deletion.
 
         """
-        return self._nc_del("aggregated_write_status", False)
+        return self._nc_del("aggregation_write_status", False)
 
-    def nc_get_aggregated_write_status(self):
+    def nc_get_aggregation_write_status(self):
         """Get the netCDF aggregation write status.
 
         Writing the data as CF-netCDf aggregated data will only be
@@ -4794,8 +4806,8 @@ class NetCDFAggregation(NetCDFMixin):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `nc_del_aggregated_write_status`,
-                     `nc_set_aggregated_write_status`
+        .. seealso:: `nc_del_aggregation_write_status`,
+                     `nc_set_aggregation_write_status`
 
         :Returns:
 
@@ -4803,9 +4815,9 @@ class NetCDFAggregation(NetCDFMixin):
                 The netCDF aggregation write status.
 
         """
-        return self._nc_get("aggregated_write_status", False)
+        return self._nc_get("aggregation_write_status", False)
 
-    def _nc_set_aggregated_write_status(self, status):
+    def _nc_set_aggregation_write_status(self, status):
         """Set the netCDF aggregation write status.
 
         Writing the data as CF-netCDf aggregated data will only be
@@ -4813,9 +4825,9 @@ class NetCDFAggregation(NetCDFMixin):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `nc_del_aggregated_write_status`,
-                     `nc_get_aggregated_write_status`,
-                     `nc_set_aggregated_write_status`
+        .. seealso:: `nc_del_aggregation_write_status`,
+                     `nc_get_aggregation_write_status`,
+                     `nc_set_aggregation_write_status`
 
         :Parameters:
 
@@ -4827,9 +4839,11 @@ class NetCDFAggregation(NetCDFMixin):
             `None`
 
         """
-        self._get_component("netcdf")["aggregated_write_status"] = bool(status)
+        self._get_component("netcdf")["aggregation_write_status"] = bool(
+            status
+        )
 
-    def nc_set_aggregated_write_status(self, status):
+    def nc_set_aggregation_write_status(self, status):
         """Set the netCDF aggregation write status.
 
         Writing the data as CF-netCDf aggregated data will only be
@@ -4837,8 +4851,8 @@ class NetCDFAggregation(NetCDFMixin):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `nc_del_aggregated_write_status`,
-                     `nc_get_aggregated_write_status`
+        .. seealso:: `nc_del_aggregation_write_status`,
+                     `nc_get_aggregation_write_status`
 
         :Parameters:
 
@@ -4852,67 +4866,67 @@ class NetCDFAggregation(NetCDFMixin):
         """
         if status:
             raise ValueError(
-                "'nc_set_aggregated_write_status' only allows the netCDF "
+                "'nc_set_aggregation_write_status' only allows the netCDF "
                 "aggregation write status to be set to False. (At your own "
-                "risk you may use '_nc_set_aggregated_write_status' to set "
+                "risk you may use '_nc_set_aggregation_write_status' to set "
                 "the status to True.)"
             )
 
-        self._nc_set_aggregated_write_status(status)
+        self._nc_set_aggregation_write_status(status)
 
-    def nc_clear_aggregated_substitutions(self):
+    def nc_clear_aggregation_substitutions(self):
         """Remove all neCDF aggregation substitution definitions.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `nc_del_aggregated_substitution`,
-                     `nc_aggregated_substitutions`,
-                     `nc_has_aggregated_substitutions`,
-                     `nc_update_aggregated_substitutions`
+        .. seealso:: `nc_del_aggregation_substitution`,
+                     `nc_aggregation_substitutions`,
+                     `nc_has_aggregation_substitutions`,
+                     `nc_update_aggregation_substitutions`
 
         :Returns:
 
             `dict`
-                {{Returns nc_clear_aggregated_substitutions}}
+                {{Returns nc_clear_aggregation_substitutions}}
 
         **Examples**
 
-        >>> f.nc_update_aggregated_substitutions({'base': 'file:///data/'})
-        >>> f.nc_has_aggregated_substitutions()
+        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+        >>> f.nc_has_aggregation_substitutions()
         True
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_aggregation_substitutions()
         {'${base}': 'file:///data/'}
-        >>> f.nc_update_aggregated_substitutions({'${base2}': '/home/data/'})
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+        >>> f.nc_aggregation_substitutions()
         {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.nc_update_aggregated_substitutions({'${base}': '/new/path/'})
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+        >>> f.nc_aggregation_substitutions()
         {'${base}': '/new/path/', '${base2}': '/home/data/'}
-        >>> f.nc_del_aggregated_substitution('${base}')
+        >>> f.nc_del_aggregation_substitution('${base}')
         {'${base}': '/new/path/'}
-        >>> f.nc_clear_aggregated_substitutions()
+        >>> f.nc_clear_aggregation_substitutions()
         {'${base2}': '/home/data/'}
-        >>> f.nc_has_aggregated_substitutions()
+        >>> f.nc_has_aggregation_substitutions()
         False
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_aggregation_substitutions()
         {}
-        >>> f.nc_clear_aggregated_substitutions()
+        >>> f.nc_clear_aggregation_substitutions()
         {}
-        >>> print(f.nc_del_aggregated_substitution('base', None))
+        >>> print(f.nc_del_aggregation_substitution('base', None))
         None
 
         """
-        return self._nc_del("aggregated_substitutions", {}).copy()
+        return self._nc_del("aggregation_substitutions", {}).copy()
 
-    def nc_del_aggregated_substitution(self, substitution):
+    def nc_del_aggregation_substitution(self, substitution):
         """Remove a neCDF aggregation substitution definition.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `nc_clear_aggregated_substitutions`,
-                     `nc_aggregated_substitutions`,
-                     `nc_has_aggregated_substitutions`,
-                     `nc_update_aggregated_substitutions`
+        .. seealso:: `nc_clear_aggregation_substitutions`,
+                     `nc_aggregation_substitutions`,
+                     `nc_has_aggregation_substitutions`,
+                     `nc_update_aggregation_substitutions`
 
         :Parameters:
 
@@ -4921,111 +4935,111 @@ class NetCDFAggregation(NetCDFMixin):
         :Returns:
 
             `dict`
-                {{Returns nc_del_aggregated_substitution}}
+                {{Returns nc_del_aggregation_substitution}}
 
         **Examples**
 
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_aggregation_substitutions()
         {}
-        >>> f.nc_update_aggregated_substitutions({'base': 'file:///data/'})
-        >>> f.nc_has_aggregated_substitutions()
+        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+        >>> f.nc_has_aggregation_substitutions()
         True
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_aggregation_substitutions()
         {'${base}': 'file:///data/'}
-        >>> f.nc_update_aggregated_substitutions({'${base2}': '/home/data/'})
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+        >>> f.nc_aggregation_substitutions()
         {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.nc_update_aggregated_substitutions({'${base}': '/new/path/'})
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+        >>> f.nc_aggregation_substitutions()
         {'${base}': '/new/path/', '${base2}': '/home/data/'}
-        >>> f.nc_del_aggregated_substitution('${base}')
+        >>> f.nc_del_aggregation_substitution('${base}')
         {'${base}': '/new/path/'}
-        >>> f.nc_clear_aggregated_substitutions()
+        >>> f.nc_clear_aggregation_substitutions()
         {'${base2}': '/home/data/'}
-        >>> f.nc_has_aggregated_substitutions()
+        >>> f.nc_has_aggregation_substitutions()
         False
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_aggregation_substitutions()
         {}
-        >>> f.nc_clear_aggregated_substitutions()
+        >>> f.nc_clear_aggregation_substitutions()
         {}
-        >>> print(f.nc_del_aggregated_substitution('base'))
+        >>> print(f.nc_del_aggregation_substitution('base'))
         {}
 
         """
         if not (substitution.startswith("${") and substitution.endswith("}")):
             substitution = f"${{{substitution}}}"
 
-        subs = self.nc_aggregated_substitutions()
+        subs = self.nc_aggregation_substitutions()
         if substitution not in subs:
             return {}
 
         out = {substitution: subs.pop(substitution)}
         if subs:
-            self._get_component("netcdf")["aggregated_substitutions"] = subs
+            self._get_component("netcdf")["aggregation_substitutions"] = subs
         else:
-            self._nc_del("aggregated_substitutions", None)
+            self._nc_del("aggregation_substitutions", None)
 
         return out
 
-    def nc_aggregated_substitutions(self):
+    def nc_aggregation_substitutions(self):
         """Return the neCDF aggregation substitution definitions.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `nc_clear_aggregated_substitutions`,
-                     `nc_del_aggregated_substitution`,
-                     `nc_has_aggregated_substitutions`,
-                     `nc_update_aggregated_substitutions`
+        .. seealso:: `nc_clear_aggregation_substitutions`,
+                     `nc_del_aggregation_substitution`,
+                     `nc_has_aggregation_substitutions`,
+                     `nc_update_aggregation_substitutions`
 
         :Returns:
 
             `dict`
-                {{Returns nc_aggregated_substitutions}}
+                {{Returns nc_aggregation_substitutions}}
 
         **Examples**
 
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_aggregation_substitutions()
         {}
-        >>> f.nc_update_aggregated_substitutions({'base': 'file:///data/'})
-        >>> f.nc_has_aggregated_substitutions()
+        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+        >>> f.nc_has_aggregation_substitutions()
         True
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_aggregation_substitutions()
         {'${base}': 'file:///data/'}
-        >>> f.nc_update_aggregated_substitutions({'${base2}': '/home/data/'})
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+        >>> f.nc_aggregation_substitutions()
         {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.nc_update_aggregated_substitutions({'${base}': '/new/path/'})
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+        >>> f.nc_aggregation_substitutions()
         {'${base}': '/new/path/', '${base2}': '/home/data/'}
-        >>> f.nc_del_aggregated_substitution('${base}')
+        >>> f.nc_del_aggregation_substitution('${base}')
         {'${base}': '/new/path/'}
-        >>> f.nc_clear_aggregated_substitutions()
+        >>> f.nc_clear_aggregation_substitutions()
         {'${base2}': '/home/data/'}
-        >>> f.nc_has_aggregated_substitutions()
+        >>> f.nc_has_aggregation_substitutions()
         False
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_aggregation_substitutions()
         {}
-        >>> f.nc_clear_aggregated_substitutions()
+        >>> f.nc_clear_aggregation_substitutions()
         {}
-        >>> print(f.nc_del_aggregated_substitution('base', None))
+        >>> print(f.nc_del_aggregation_substitution('base', None))
         None
 
         """
-        out = self._nc_get("aggregated_substitutions", default=None)
+        out = self._nc_get("aggregation_substitutions", default=None)
         if out is not None:
             return out.copy()
 
         return {}
 
-    def nc_has_aggregated_substitutions(self):
+    def nc_has_aggregation_substitutions(self):
         """Whether there are neCDF aggregation substitution definitions.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `nc_clear_aggregated_substitutions`,
-                     `nc_del_aggregated_substitution`,
-                     `nc_aggregated_substitutions`,
-                     `nc_update_aggregated_substitutions`
+        .. seealso:: `nc_clear_aggregation_substitutions`,
+                     `nc_del_aggregation_substitution`,
+                     `nc_aggregation_substitutions`,
+                     `nc_update_aggregation_substitutions`
 
         :Returns:
 
@@ -5035,44 +5049,44 @@ class NetCDFAggregation(NetCDFMixin):
 
         **Examples**
 
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_aggregation_substitutions()
         {}
-        >>> f.nc_update_aggregated_substitutions({'base': 'file:///data/'})
-        >>> f.nc_has_aggregated_substitutions()
+        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+        >>> f.nc_has_aggregation_substitutions()
         True
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_aggregation_substitutions()
         {'${base}': 'file:///data/'}
-        >>> f.nc_update_aggregated_substitutions({'${base2}': '/home/data/'})
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+        >>> f.nc_aggregation_substitutions()
         {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.nc_update_aggregated_substitutions({'${base}': '/new/path/'})
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+        >>> f.nc_aggregation_substitutions()
         {'${base}': '/new/path/', '${base2}': '/home/data/'}
-        >>> f.nc_del_aggregated_substitution('${base}')
+        >>> f.nc_del_aggregation_substitution('${base}')
         {'${base}': '/new/path/'}
-        >>> f.nc_clear_aggregated_substitutions()
+        >>> f.nc_clear_aggregation_substitutions()
         {'${base2}': '/home/data/'}
-        >>> f.nc_has_aggregated_substitutions()
+        >>> f.nc_has_aggregation_substitutions()
         False
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_aggregation_substitutions()
         {}
-        >>> f.nc_clear_aggregated_substitutions()
+        >>> f.nc_clear_aggregation_substitutions()
         {}
-        >>> print(f.nc_del_aggregated_substitution('base', None))
+        >>> print(f.nc_del_aggregation_substitution('base', None))
         None
 
         """
-        return self._nc_has("aggregated_substitutions")
+        return self._nc_has("aggregation_substitutions")
 
-    def nc_update_aggregated_substitutions(self, substitutions):
+    def nc_update_aggregation_substitutions(self, substitutions):
         """Update the neCDF aggregation substitution definitions.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `nc_clear_aggregated_substitutions`,
-                     `nc_del_aggregated_substitution`,
-                     `nc_aggregated_substitutions`,
-                     `nc_has_aggregated_substitutions`
+        .. seealso:: `nc_clear_aggregation_substitutions`,
+                     `nc_del_aggregation_substitution`,
+                     `nc_aggregation_substitutions`,
+                     `nc_has_aggregation_substitutions`
 
         :Parameters:
 
@@ -5084,30 +5098,30 @@ class NetCDFAggregation(NetCDFMixin):
 
         **Examples**
 
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_aggregation_substitutions()
         {}
-        >>> f.nc_update_aggregated_substitutions({'base': 'file:///data/'})
-        >>> f.nc_has_aggregated_substitutions()
+        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+        >>> f.nc_has_aggregation_substitutions()
         True
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_aggregation_substitutions()
         {'${base}': 'file:///data/'}
-        >>> f.nc_update_aggregated_substitutions({'${base2}': '/home/data/'})
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+        >>> f.nc_aggregation_substitutions()
         {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.nc_update_aggregated_substitutions({'${base}': '/new/path/'})
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+        >>> f.nc_aggregation_substitutions()
         {'${base}': '/new/path/', '${base2}': '/home/data/'}
-        >>> f.nc_del_aggregated_substitution('${base}')
+        >>> f.nc_del_aggregation_substitution('${base}')
         {'${base}': '/new/path/'}
-        >>> f.nc_clear_aggregated_substitutions()
+        >>> f.nc_clear_aggregation_substitutions()
         {'${base2}': '/home/data/'}
-        >>> f.nc_has_aggregated_substitutions()
+        >>> f.nc_has_aggregation_substitutions()
         False
-        >>> f.nc_aggregated_substitutions()
+        >>> f.nc_aggregation_substitutions()
         {}
-        >>> f.nc_clear_aggregated_substitutions()
+        >>> f.nc_clear_aggregation_substitutions()
         {}
-        >>> print(f.nc_del_aggregated_substitution('base', None))
+        >>> print(f.nc_del_aggregation_substitution('base', None))
         None
 
         """
@@ -5119,6 +5133,6 @@ class NetCDFAggregation(NetCDFMixin):
             if not (base.startswith("${") and base.endswith("}")):
                 substitutions[f"${{{base}}}"] = substitutions.pop(base)
 
-        subs = self.nc_aggregated_substitutions()
+        subs = self.nc_aggregation_substitutions()
         subs.update(substitutions)
-        self._get_component("netcdf")["aggregated_substitutions"] = subs
+        self._get_component("netcdf")["aggregation_substitutions"] = subs
