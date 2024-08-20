@@ -5327,7 +5327,8 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             2-tuple
-                The variable's chunking and shape.
+                The *contiguous* and *chunksizes* parameters for
+                `netCDF4.createVariable`.
 
         """
         if data is None:
@@ -5379,9 +5380,13 @@ class NetCDFWrite(IOWrite):
         with dask_config.set({"array.chunk-size": hdf5_chunks}):
             chunksizes = normalize_chunks("auto", shape=d.shape, dtype=dtype)
 
-        # 'chunksizes' currently might look something like ((96, 96,
-        # 96, 50), (250, 250, 4)). However, we only want one number
-        # per dimension, so we choose the largest: [96, 250].
-        chunksizes = [max(c) for c in chunksizes]
-
-        return False, chunksizes
+        if chunksizes:
+            # 'chunksizes' looks something like ((96, 96, 96, 50),
+            # (250, 250, 4)). However, we only want one number per
+            # dimension, so we choose the largest: [96, 250].
+            chunksizes = [max(c) for c in chunksizes]
+            return False, chunksizes
+        else:
+            # The data is scalar, so 'chunksizes' is () => write the
+            # data contiguously.
+            return True, None

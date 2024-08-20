@@ -1062,6 +1062,14 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read(tmpfile, store_hdf5_chunks=False)[0]
         self.assertIsNone(f.nc_hdf5_chunksizes())
 
+        # Scalar data is written contiguously
+        f = cfdm.example_field(0)
+        f = f[0, 0].squeeze()
+        cfdm.write(f, tmpfile)
+        nc = netCDF4.Dataset(tmpfile, "r")
+        self.assertEqual(nc.variables["q"].chunking(), "contiguous")
+        nc.close()
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
