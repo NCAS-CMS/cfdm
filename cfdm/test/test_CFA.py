@@ -165,7 +165,6 @@ class CFATest(unittest.TestCase):
     def test_CFA_substitutions_2(self):
         """Test aggregation substitution URI substitutions (2)."""
         f = cfdm.example_field(0)
-        tmpfile1 = "tmpfile1.nc"
         cfdm.write(f, tmpfile1)
         f = cfdm.read(tmpfile1)[0]
 
@@ -173,7 +172,6 @@ class CFATest(unittest.TestCase):
 
         f.data.nc_clear_aggregated_substitutions()
         f.data.nc_update_aggregated_substitutions({"base": cwd})
-        cfa_file = "cfa_file.nc"
         cfdm.write(
             f,
             cfa_file,
@@ -388,11 +386,25 @@ class CFATest(unittest.TestCase):
         f.del_construct("longitude")
         cfdm.write(f, tmpfile1)
         g = cfdm.read(tmpfile1)
-        cfdm.write(g, tmpfile2, cfa=True)
+        cfdm.write(g, cfa_file, cfa=True)
 
         # Check that the aggregation file can be read
-        h = cfdm.read(tmpfile2)
+        h = cfdm.read(cfa_file)
         self.assertEqual(len(h), 1)
+
+    def test_CFA_scalar(self):
+        """Test scalar aggregation variable."""
+        f = cfdm.example_field(0)
+        f = f[0,0].squeeze()
+        tmpfile1 = 'tmpfile1.nc'
+        cfdm.write(f, tmpfile1)
+        g = cfdm.read(tmpfile1)[0]
+        print(g)
+        cfa_file = "cfa_file.nc"
+        cfdm.write(
+            g,
+            cfa_file,
+            cfa=True       )
 
 
 if __name__ == "__main__":

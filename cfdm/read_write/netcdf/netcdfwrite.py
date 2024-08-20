@@ -2056,7 +2056,6 @@ class NetCDFWrite(IOWrite):
             extra = {}
 
         g = self.write_vars
-
         scalar_coord = self.implementation.squeeze(coord_1d, axes=0)
 
         if not self._already_in_file(scalar_coord, ()):
@@ -5388,7 +5387,10 @@ class NetCDFWrite(IOWrite):
                             "variable. Possible reasons for this "
                             "include i) there is more than one Dask chunk "
                             "per fragment, and ii) data values have been "
-                            "changed relative to those in the fragments."
+                            "changed relative to those in a fragment file."
+                            "Setting the cfa keyword's 'strict' option to "
+                            "False will allow this variable to be written as "
+                            "a normal, non-aggregation variable." 
                         )
 
                     return cfa_get_write
