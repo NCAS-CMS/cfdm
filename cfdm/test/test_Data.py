@@ -5,6 +5,7 @@ import itertools
 import os
 import tempfile
 import unittest
+import warnings
 
 import cftime
 import dask.array as da
@@ -65,6 +66,31 @@ class DataTest(unittest.TestCase):
         self.filename = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "test_file.nc"
         )
+
+        expexted_warning_msgs = [
+            "divide by zero encountered in " + np_method
+            for np_method in (
+                "arctanh",
+                "log",
+                "double_scalars",
+            )
+        ] + [
+            "invalid value encountered in " + np_method
+            for np_method in (
+                "arcsin",
+                "arccos",
+                "arctanh",
+                "arccosh",
+                "log",
+                "sqrt",
+                "double_scalars",
+                "true_divide",
+            )
+        ]
+        for expected_warning in expexted_warning_msgs:
+            warnings.filterwarnings(
+                "ignore", category=RuntimeWarning, message=expected_warning
+            )
 
     def test_Data__init__basic(self):
         """Test basic Datea.__init__"""

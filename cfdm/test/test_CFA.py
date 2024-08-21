@@ -50,13 +50,13 @@ class CFATest(unittest.TestCase):
     netcdf_fmts = netcdf3_fmts + netcdf4_fmts
 
     def test_CFA_fmt(self):
-        """Test the cfdm.read 'fmt' and 'cfa' keywords."""
+        """Test the cfdm.read 'fmt' keyword with cfa."""
         f = cfdm.example_field(0)
         cfdm.write(f, tmpfile1)
         f = cfdm.read(tmpfile1)[0]
 
         for fmt in self.netcdf_fmts:
-            cfdm.write(f, cfa_file, fmt=fmt, cfa=True)
+            cfdm.write(f, cfa_file, fmt=fmt, cfa="field")
             g = cfdm.read(cfa_file)
             self.assertEqual(len(g), 1)
             self.assertTrue(f.equals(g[0]))
@@ -73,7 +73,7 @@ class CFATest(unittest.TestCase):
         a = cfdm.Field.concatenate([a, b], axis=0)
 
         cfdm.write(a, nc_file)
-        cfdm.write(a, cfa_file, cfa=True)
+        cfdm.write(a, cfa_file, cfa="field")
 
         n = cfdm.read(nc_file)
         c = cfdm.read(cfa_file)
@@ -89,17 +89,17 @@ class CFATest(unittest.TestCase):
         # By default, can't write in-memory arrays as aggregation
         # variables
         with self.assertRaises(ValueError):
-            cfdm.write(f, cfa_file, cfa=True)
+            cfdm.write(f, cfa_file, cfa="field")
 
         # The previous line should have deleted the output file
         self.assertFalse(os.path.exists(cfa_file))
 
-        cfdm.write(f, nc_file, cfa={"strict": False})
+        cfdm.write(f, nc_file, cfa={"constructs": "field", "strict": False})
         g = cfdm.read(nc_file)
         self.assertEqual(len(g), 1)
         self.assertTrue(g[0].equals(f))
 
-        cfdm.write(g, cfa_file, cfa={"strict": True})
+        cfdm.write(g, cfa_file, cfa={"constructs": "field", "strict": True})
         g = cfdm.read(cfa_file)
         self.assertEqual(len(g), 1)
         self.assertTrue(g[0].equals(f))
@@ -116,7 +116,7 @@ class CFATest(unittest.TestCase):
         cfdm.write(
             f,
             cfa_file,
-            cfa={"absolute_paths": True},
+            cfa={"constructs": "field", "absolute_paths": True},
         )
 
         nc = netCDF4.Dataset(cfa_file, "r")
@@ -145,7 +145,11 @@ class CFATest(unittest.TestCase):
             cfdm.write(
                 f,
                 cfa_file,
-                cfa={"absolute_paths": True, "substitutions": {base: cwd}},
+                cfa={
+                    "constructs": "field",
+                    "absolute_paths": True,
+                    "substitutions": {base: cwd},
+                },
             )
 
             nc = netCDF4.Dataset(cfa_file, "r")
@@ -178,6 +182,7 @@ class CFATest(unittest.TestCase):
             f,
             cfa_file,
             cfa={
+                "constructs": "field",
                 "absolute_paths": True,
                 "substitutions": {"base2": "/bad/location"},
             },
@@ -204,7 +209,11 @@ class CFATest(unittest.TestCase):
         cfdm.write(
             f,
             cfa_file,
-            cfa={"absolute_paths": True, "substitutions": {"base": cwd}},
+            cfa={
+                "constructs": "field",
+                "absolute_paths": True,
+                "substitutions": {"base": cwd},
+            },
         )
 
         nc = netCDF4.Dataset(cfa_file, "r")
@@ -228,7 +237,11 @@ class CFATest(unittest.TestCase):
         cfdm.write(
             f,
             cfa_file,
-            cfa={"absolute_paths": True, "substitutions": {"base": cwd}},
+            cfa={
+                "constructs": "field",
+                "absolute_paths": True,
+                "substitutions": {"base": cwd},
+            },
         )
 
         nc = netCDF4.Dataset(cfa_file, "r")
@@ -259,7 +272,11 @@ class CFATest(unittest.TestCase):
                 os.path.basename(tmpfile1),
             ),
         ):
-            cfdm.write(f, cfa_file, cfa={"absolute_paths": absolute_paths})
+            cfdm.write(
+                f,
+                cfa_file,
+                cfa={"constructs": "field", "absolute_paths": absolute_paths},
+            )
 
             nc = netCDF4.Dataset(cfa_file, "r")
             cfa_location = nc.variables["cfa_location"]
@@ -366,7 +383,7 @@ class CFATest(unittest.TestCase):
         f = cfdm.read(tmpfile1)[0]
         f.add_file_directory("/new/path")
 
-        cfdm.write(f, cfa_file, cfa=True)
+        cfdm.write(f, cfa_file, cfa="field")
         g = cfdm.read(cfa_file)
         self.assertEqual(len(g), 1)
         g = g[0]
@@ -377,20 +394,14 @@ class CFATest(unittest.TestCase):
 
     def test_CFA_unlimited_dimension(self):
         """Test aggregation files with unlimited dimensions."""
-        # Create an aggregation file from a field that has an
-        # unlimited dimension and no metadata constructs spanning that
-        # dimension
+        # Aggregated dimensions cannot be unlimited
         f = cfdm.example_field(0)
         axis = f.domain_axis("longitude")
         axis.nc_set_unlimited(True)
-        f.del_construct("longitude")
         cfdm.write(f, tmpfile1)
         g = cfdm.read(tmpfile1)
-        cfdm.write(g, cfa_file, cfa=True)
-
-        # Check that the aggregation file can be read
-        h = cfdm.read(cfa_file)
-        self.assertEqual(len(h), 1)
+        with self.assertRaises(ValueError):
+            cfdm.write(g, cfa_file, cfa="field")
 
     def test_CFA_scalar(self):
         """Test scalar aggregation variable."""
@@ -398,7 +409,7 @@ class CFATest(unittest.TestCase):
         f = f[0, 0].squeeze()
         cfdm.write(f, tmpfile1)
         g = cfdm.read(tmpfile1)[0]
-        cfdm.write(g, cfa_file, cfa=True)
+        cfdm.write(g, cfa_file, cfa="field")
         h = cfdm.read(cfa_file)[0]
         self.assertTrue(h.equals(f))
 
@@ -420,6 +431,49 @@ class CFATest(unittest.TestCase):
         cfdm.write(
             f, cfa_file, cfa={"constructs": ["field", "field_ancillary"]}
         )
+
+    def test_CFA_xxxx_cfa(self):
+        """Test the cfdm.write 'cfa' keyword."""
+        f = cfdm.example_field(0)
+        #        f.del_construct('time')
+        cfdm.write(f, tmpfile1)
+        f = cfdm.read(tmpfile1)[0]
+        tmpfile2 = "tmpfile2.nc"
+        cfdm.write(f, tmpfile2, cfa="field")
+        g = cfdm.read(tmpfile2)[0]
+
+        cfa_file = "cfa_file1.nc"
+        # Default of cfa="auto" - check that aggregation variable
+        # gets written
+        cfdm.write(g, cfa_file)
+        nc = netCDF4.Dataset(cfa_file, "r")
+        self.assertIsNotNone(
+            getattr(nc.variables["q"], "aggregated_data", None)
+        )
+        nc.close()
+
+        cfdm.write(g, cfa_file, cfa={"constructs": {"auto": 2}})
+        nc = netCDF4.Dataset(cfa_file, "r")
+        self.assertIsNotNone(
+            getattr(nc.variables["q"], "aggregated_data", None)
+        )
+        nc.close()
+
+        cfdm.write(
+            g,
+            cfa_file,
+            cfa={
+                "constructs": ["auto", "dimension_coordinate"],
+                "strict": False,
+            },
+        )
+        nc = netCDF4.Dataset(cfa_file, "r")
+        for ncvar in ("q", "lat", "lon"):
+            self.assertIsNotNone(
+                getattr(nc.variables[ncvar], "aggregated_data", None)
+            )
+
+        nc.close()
 
 
 if __name__ == "__main__":

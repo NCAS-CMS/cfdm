@@ -1469,8 +1469,7 @@ class NetCDFWrite(IOWrite):
             if ncdim not in ncdim_to_size:
                 size = self.implementation.get_data_size(nodes)
                 logger.info(
-                    f"    Writing size {size} netCDF node dimension: "
-                    f"{ncdim}"
+                    f"    Writing size {size} netCDF node dimension: {ncdim}"
                 )  # pragma: no cover
 
                 ncdim_to_size[ncdim] = size
@@ -2972,6 +2971,15 @@ class NetCDFWrite(IOWrite):
             # --------------------------------------------------------
             # Write the data as an aggregation variable
             # --------------------------------------------------------
+            # Check that aggregated dimensions are not unlimited
+            dims = g["netcdf"].dimensions
+            for ncdim in ncdimensions:
+                if dims[ncdim].isunlimited():
+                    raise ValueError(
+                        f"Can't write aggregation variable {ncvar!r} with "
+                        f"unlimited agregated dimension {ncdim!r}"
+                    )
+
             self._create_cfa_data(
                 ncvar,
                 ncdimensions,
@@ -4137,9 +4145,6 @@ class NetCDFWrite(IOWrite):
     def _unlimited(self, field, axis):
         """Whether an axis is unlimited.
 
-        TODOCFA If a CFA-netCDF file is being written then no axis can be
-        unlimited, i.e. `False` is always returned.
-
         .. versionadded:: (cfdm) 1.7.0
 
         :Parameters:
@@ -4155,9 +4160,6 @@ class NetCDFWrite(IOWrite):
             `bool`
 
         """
-        if self.write_vars["cfa"]:
-            return False
-
         return self.implementation.nc_is_unlimited_axis(field, axis)
 
     def _write_group(self, parent_group, group_name):
@@ -4866,12 +4868,13 @@ class NetCDFWrite(IOWrite):
             # Aggregation variables
             # --------------------------------------------------------
             # Whether or not to write any aggregation variables
-            "cfa": bool(cfa),
+#            "cfa": bool(cfa),
             # Configuration options for writing aggregation variables
-            "cfa_options": {} if cfa_options is None else cfa_options,
+            "cfa": {} if cfa_options is None else cfa_options,
             # The directory of the aggregation file
             "aggregation_file_directory": None,
-            # Whether or not to write as a CF aggregation variable.
+            # Cache the CF aggregation variable write status for each
+            # variable
             "cfa_write_status": {},
         }
 
@@ -5359,40 +5362,51 @@ class NetCDFWrite(IOWrite):
         """
         g = self.write_vars
 
-        cfa_write_status = False
-
-        if construct_type is None:
-            # This prevents recursion whilst writing fragment array
-            # variables.
-            g["cfa_write_status"][ncvar] = cfa_write_status
-            return cfa_write_status
-
-        if not g["cfa"]:
-            g["cfa_write_status"][ncvar] = cfa_write_status
-            return cfa_write_status
-
         cfa_write_status = g["cfa_write_status"].get(ncvar)
         if cfa_write_status is not None:
             return cfa_write_status
 
+        if construct_type is None:
+            # This prevents recursion whilst writing fragment array
+            # variables.
+            g["cfa_write_status"][ncvar] = False
+            return False
+
         data = self.implementation.get_data(cfvar, None)
         if data is None:
-            g["cfa_write_status"][ncvar] = cfa_write_status
-            return cfa_write_status
+            g["cfa_write_status"][ncvar] = False
+            return False
 
-        cfa_write_status = data.nc_get_aggregation_write_status()
-        cfa_options = g["cfa_options"]
-        if ( # Move up ....
-                cfa_write_status
-                and cfa_options.get("auto", False)
-                and data.nc_get_aggregated_data()
-        ):
-            print("auotoooo", ncvar)
-            g["cfa_write_status"][ncvar] = cfa_write_status
-            return cfa_write_status
+        cfa_options = g["cfa"]
+        constructs = cfa_options.get("constructs")
+
+        if constructs is None:
+            g["cfa_write_status"][ncvar] = False
+            return False
 
         cfa_write_status = False
-        for ctype, ndim in cfa_options.get("constructs", {}).items():
+        if "auto" in constructs:
+            # In 'auto' mode, data will be written as an aggregation
+            # variable if it:
+            #
+            # 1) has a write_status of True
+            # 2) has an aggregated_data definition
+            # 3) meets the number-of-dimensions criterion
+            cfa_write_status = data.nc_get_aggregation_write_status() and bool(
+                data.nc_get_aggregated_data()
+            )
+            if cfa_write_status:
+                ndim = constructs["auto"]
+                if ndim is not None and ndim != len(domain_axes):
+                    # Number-of-dimensions criterion is not met
+                    cfa_write_status = False
+
+            if cfa_write_status:
+                g["cfa_write_status"][ncvar] = cfa_write_status
+                return cfa_write_status
+
+        cfa_write_status = False
+        for ctype, ndim in constructs.items():
             # Write as an aggregation variable if it has an
             # appropriate construct type ...
             if ctype in (construct_type, "all"):
@@ -5401,7 +5415,7 @@ class NetCDFWrite(IOWrite):
                 # flagged as OK.
                 if ndim is None or ndim == len(domain_axes):
                     cfa_write_status = data.nc_get_aggregation_write_status()
-                    if not cfa_write_status and cfa_options["strict"]:
+                    if not cfa_write_status and cfa_options.get("strict", True):
                         if g["mode"] == "w":
                             os.remove(g["filename"])
 
@@ -5475,25 +5489,7 @@ class NetCDFWrite(IOWrite):
 
         shape_ncdimensions = tuple(shape_ncdimensions)
 
-        ## ------------------------------------------------------------
-        ## Get the fragment array netCDF dimensions. These always start
-        ## with "f_".
-        ## ------------------------------------------------------------
-        # aggregation_address = cfa["address"]
-        # fragment_array_ncdimensions = []
-        # for ncdim, size in zip(
-        #    ncdimensions + ("extra",) * (aggregation_address.ndim - ndim),
-        #    aggregation_address.shape,
-        # ):
-        #    f_ncdim = f"f_{ncdim}"
-        #    if f_ncdim not in g["dimensions"]:
-        #        # Create a new fragment array dimension
-        #        self._write_dimension(f_ncdim, None, size=size)
-        #
-        #    fragment_array_ncdimensions.append(f_ncdim)
-        #
-        # fragment_array_ncdimensions = tuple(fragment_array_ncdimensions)
-
+        # Write the fragment array variable to the netCDF dataset
         feature_ncvar = self._cfa_write_fragment_array_variable(
             shape,
             aggregated_data.get(feature, f"cfa_{feature}"),
@@ -5507,8 +5503,6 @@ class NetCDFWrite(IOWrite):
             # --------------------------------------------------------
             feature = "location"
             location = cfa[feature]
-
-            #            aggregation_address = cfa["address"] #
 
             # Get the fragment array netCDF dimensions from the
             # 'location' fragment array variable.
@@ -5525,13 +5519,10 @@ class NetCDFWrite(IOWrite):
 
             fragment_array_ncdimensions = tuple(fragment_array_ncdimensions)
 
-            # Location
-            #            feature = "location"#
-            #
-            #            aggregation_location = cfa[feature]
-
+            # Create a 'susbstutions' netCDF attribute for the
+            # 'location' fragment array variable
             substitutions = data.nc_aggregation_substitutions()
-            substitutions.update(g["cfa_options"].get("substitutions", {}))
+            substitutions.update(g["cfa"].get("substitutions", {}))
             if substitutions:
                 # Create the "substitutions" netCDF attribute
                 subs = []
@@ -5542,6 +5533,7 @@ class NetCDFWrite(IOWrite):
             else:
                 attributes = None
 
+            # Write the fragment array variable to the netCDF dataset
             feature_ncvar = self._cfa_write_fragment_array_variable(
                 location,  # cfa[feature],
                 aggregated_data.get(feature, f"cfa_{feature}"),
@@ -5564,6 +5556,8 @@ class NetCDFWrite(IOWrite):
                 dimensions = fragment_array_ncdimensions
 
             address = cfa[feature]
+
+            # Write the fragment array variable to the netCDF dataset
             feature_ncvar = self._cfa_write_fragment_array_variable(
                 address,
                 aggregated_data.get(feature, f"cfa_{feature}"),
@@ -5589,6 +5583,7 @@ class NetCDFWrite(IOWrite):
 
             fragment_array_ncdimensions = tuple(fragment_array_ncdimensions)
 
+            # Write the fragment array variable to the netCDF dataset
             feature_ncvar = self._cfa_write_fragment_array_variable(
                 value,
                 aggregated_data.get(feature, f"cfa_{feature}"),
@@ -5647,7 +5642,7 @@ class NetCDFWrite(IOWrite):
                 The netCDF variable name.
 
             ncdimensions: `tuple` of `str`
-                The variable's netCDF dimensions.
+                The fragment array variable's netCDF dimensions.
 
             attributes: `dict`, optional
                 Any attributes to attach to the variable.
@@ -5780,9 +5775,9 @@ class NetCDFWrite(IOWrite):
         # giving precedence over those set on the Data object to those
         # provided by the cfa_options.
         substitutions = data.nc_aggregation_substitutions()
-        substitutions.update(g["cfa_options"].get("substitutions", {}))
+        substitutions.update(g["cfa"].get("substitutions", {}))
 
-        absolute_paths = g["cfa_options"].get("absolute_paths")
+        absolute_paths = g["cfa"].get("absolute_paths", True)
         cfa_dir = g["aggregation_file_directory"]
         if cfa_dir is None:
             cfa_dir = PurePath(abspath(g["filename"])).parent
@@ -5847,8 +5842,10 @@ class NetCDFWrite(IOWrite):
                     if not uri_scheme:
                         filename = abspath(join(cfa_dir, filename))
                         if absolute_paths:
+                            # Use an absolute URI
                             filename = PurePath(filename).as_uri()
                         else:
+                            # Use a relative-path URI reference
                             filename = relpath(filename, start=cfa_dir)
                     elif not absolute_paths and uri_scheme == "file":
                         filename = relpath(uri.path, start=cfa_dir)

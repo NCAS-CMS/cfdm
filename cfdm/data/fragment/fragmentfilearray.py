@@ -209,6 +209,8 @@ class FragmentFileArray(
                 create_endpoint_url=False
             )
 
+            # Loop round the fragment array backends until we find one
+            # that can open the file
             for FragmentArray in self._FragmentArrays:
                 try:
                     return FragmentArray(**kwargs)._get_array(index)

@@ -3314,73 +3314,86 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         dxs = [d.to_dask_array(asanyarray=False) for d in processed_data]
         dx = da.concatenate(dxs, axis=axis)
 
+        # ------------------------------------------------------------
         # Set the aggregation write status
+        # ------------------------------------------------------------
         #
         # Assume at first that all input data instances have True
         # status, but ...
         cfa = _CFA
         for d in processed_data:
             if not d.nc_get_aggregation_write_status():
-                # ... the write status is False when any input data
-                # instance has False status;
+                # 1) The write status must be False when any input
+                #    data object has False status.
                 cfa = _NONE
                 break
 
         if cfa != _NONE:
-            non_concat_axis_chunks0 = list(processed_data[0].chunks)
+            non_concat_axis_chunks0 = list(data[0].chunks)
             non_concat_axis_chunks0.pop(axis)
             for d in processed_data[1:]:
                 non_concat_axis_chunks = list(d.chunks)
                 non_concat_axis_chunks.pop(axis)
                 if non_concat_axis_chunks != non_concat_axis_chunks0:
-                    # ... the write status must also be False when any
-                    # two input data instances have different chunk
-                    # patterns for the non-concatenated axes;
+                    # 2) The write status must be False when any two
+                    #    input data objects have different chunk
+                    #    patterns for the non-concatenated axes.
                     cfa = _NONE
                     break
 
         if cfa != _NONE:
-            fragment_type = processed_data[
-                0
-            ].nc_get_aggregation_fragment_type()
+            fragment_type = data[0].nc_get_aggregation_fragment_type()
             for d in processed_data[1:]:
                 if d.nc_get_aggregation_fragment_type() != fragment_type:
-                    # ... when any two input Data objects have
-                    # different fragment types, then we can't write as
-                    # an aggregation variable;
+                    # 3) The write status must be False when any two
+                    #    input Data objects have different fragment
+                    #    types.
                     data0._nc_del_aggregation_fragment_type()
                     cfa = _NONE
                     break
 
-        # Define the __asanyarray__ status
-        asanyarray = processed_data[0].__asanyarray__
+        # ------------------------------------------------------------
+        # Set the __asanyarray__ status
+        # ------------------------------------------------------------
+        asanyarray = data[0].__asanyarray__
         for d in processed_data[1:]:
             if d.__asanyarray__ != asanyarray:
                 # If and only if any two input Data objects have
                 # different __asanyarray__ values, then set
-                # asanyarray=True on the concatenation.
+                # asanyarray=True for the concatenation.
                 asanyarray = True
                 break
 
-        # Set the aggregated_data terms and aggregated substitutions
-        # by combining them from all of the input data instances,
-        # giving precedence to those towards the left hand side of the
-        # input list.
-        if data0.nc_get_aggregation_write_status():
-            aggregated_data = {}
-            substitutions = {}
-            for d in processed_data[::-1]:
-                aggregated_data.update(d.nc_get_aggregated_data())
-                substitutions.update(d.nc_aggregation_substitutions())
+        # ------------------------------------------------------------
+        # Set the concatenated dask array
+        # ------------------------------------------------------------
+        data0._set_dask(dx, clear=_ALL ^ cfa, asanyarray=asanyarray)
 
-            if aggregated_data:
-                data0.nc_set_aggregated_data(aggregated_data)
+        if data0.nc_get_aggregation_write_status():
+            # Set the netCDF aggregated_data terms, giving precedence
+            # to those towards the left hand side of the input
+            # list. If any input Data object has no aggregated_data
+            # terms, then nor will the concatenated data.
+            aggregated_data = {}
+            for d in processed_data[::-1]:
+                value = d.nc_get_aggregated_data()
+                if not value:
+                    aggregated_data = {}
+                    break
+
+                aggregated_data.update(value)
+
+            data0.nc_set_aggregated_data(aggregated_data)
+
+            # Set the aggregation substitutions by combining them from
+            # all of the input data instances, giving precedence to
+            # those towards the left hand side of the input list.
+            substitutions = {}
+            for d in processed_data[:0:-1]:
+                substitutions.update(d.nc_aggregation_substitutions())
 
             if substitutions:
                 data0.nc_update_aggregation_substitutions(substitutions)
-
-        # Set the new dask array
-        data0._set_dask(dx, clear=_ALL ^ cfa, asanyarray=asanyarray)
 
         # Set appropriate cached elements (after '_set_dask' has just
         # cleared them from data0).
@@ -3398,7 +3411,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         if cached_elements:
             data0._set_cached_elements(cached_elements)
 
-        # Return the concatneated data
+        # Return the concatenated data
         return data0
 
     def creation_commands(
@@ -3550,7 +3563,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """Add a new file directory in-place.
 
         Another version of every file referenced by the data is
-        provided in the given *directory*.
+        provided in the given directory.
 
         .. versionadded:: (cfdm) NEXTVERSION
 

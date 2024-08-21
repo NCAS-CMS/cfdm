@@ -654,19 +654,19 @@ _docstring_substitution_definitions = {
                 form. If there are no original files then an empty
                 `set` will be returned.""",
     # Returns nc_clear_aggregations_substitutions
-    "{{Returns nc_clear_aggregated_substitutions}}": """The removed CF-netCDF aggregation file location
+    "{{Returns nc_clear_aggregation_substitutions}}": """The removed CF-netCDF aggregation file location
                 substitutions in a dictionary whose key/value pairs
                 are the location name parts to be substituted and
                 their corresponding replacement text.""",
-    # Returns nc_del_aggregated_substitution
-    "{{Returns nc_del_aggregated_substitution}}": """The removed CF-netCDF aggregation file location
+    # Returns nc_del_aggregation_substitution
+    "{{Returns nc_del_aggregation_substitution}}": """The removed CF-netCDF aggregation file location
                 substitution in a dictionary whose key/value pairs are
                 the location name part to be substituted and its
                 corresponding replacement text. If the given
                 substitution was not defined then an empty dictionary
                 is returned.""",
-    # Returns nc_aggregated_substitutions
-    "{{Returns nc_aggregated_substitutions}}": """The CF-netCDF aggregation file location substitutions
+    # Returns nc_aggregation_substitutions
+    "{{Returns nc_aggregation_substitutions}}": """The CF-netCDF aggregation file location substitutions
                 in a dictionary whose key/value pairs are the file
                 name parts to be substituted and their corresponding
                 replacement text.""",

@@ -1,6 +1,6 @@
 from copy import deepcopy
 from itertools import accumulate, product
-from os.path import abspath, relpath
+from pathlib import Path
 from urllib.parse import ParseResult, urlparse
 
 import numpy as np
@@ -241,8 +241,8 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             4-`tuple`
                 1. The shape of the aggregated data.
                 2. The shape of the array of fragments.
-                3. The type of the fragments (either ``"value"`` or
-                   ``"location"``).
+                3. The type of the fragments (either ``'value'`` or
+                   ``'location'``).
                 4. The parsed aggregation instructions.
 
         """
@@ -264,7 +264,7 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
         if "location" in x:
             # --------------------------------------------------------
-            # Each fragment contains file locations, rather than a
+            # Each fragment comprises file locations, rather than a
             # constant value.
             # --------------------------------------------------------
             fragment_type = "location"
@@ -304,44 +304,54 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                     "address": address,
                 }
 
-            # Get the aggregation file details so that relative-path
-            # URI reference fragment filenames can be made absolute
+            # Get the aggregation file scheme, and its directory
+            # (omitting the scheme).
+            #
+            # E.g. if the aggregation file is
+            #      'http:///data/model/file.nc' then the scheme is
+            #      'http' and the directory is '/data/model'.
+            #
+            # E.g. if the aggregation file is '/data/model/file.nc'
+            #      then the scheme is 'file' and the directory is
+            #      '/data/model'.
             u = urlparse(aggregated_filename)
-            directory = dirname(u.path)
+            aggregation_file_directory = dirname(u.path)
             aggregation_file_scheme = u.scheme
             if not aggregation_file_scheme:
                 aggregation_file_scheme = "file"
 
-            # Apply string substitutions to the fragment filenames,
-            # and convert relative-path URI references.
+            # Convert relative-path URI references to absolute URIs,
+            # and apply string substitutions to the fragment
+            # filenames.
             for fragments in aggregated_data.values():
-                location = []
+                locations = []
                 for filename in fragments["location"]:
                     if substitutions:
                         for base, sub in substitutions.items():
                             filename = filename.replace(base, sub)
 
                     if not urlparse(filename).scheme:
-                        # Fragment filename is a relative-path URI
-                        # reference, so replace it with its absolute
-                        # path.
-                        filename = abspath(relpath(filename, start=directory))
+                        # Fragment location is a relative-path URI
+                        # reference, so replace it with an absolute
+                        # URI.
+                        filename = Path(
+                            aggregation_file_directory, filename
+                        ).resolve()
                         filename = ParseResult(
                             scheme=aggregation_file_scheme,
                             netloc="",
-                            path=filename,
+                            path=str(filename),
                             params="",
                             query="",
                             fragment="",
                         ).geturl()
 
-                    location.append(filename)
+                    locations.append(filename)
 
-                fragments["location"] = location
-
+                fragments["location"] = locations
         else:
             # --------------------------------------------------------
-            # Each fragment contains a constant value, rather than
+            # Each fragment comprises a constant value, rather than
             # file locations.
             # --------------------------------------------------------
             fragment_type = "value"
@@ -378,7 +388,7 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
         The aggregation data dictionary contains the definitions of
         the fragments and the instructions on how to aggregate them.
-        The keys are indices of the CFA fragment dimensions,
+        The keys are indices of the fragment array dimensions,
         e.g. ``(1, 0, 0 ,0)``.
 
         .. versionadded:: (cfdm) NEXTVERSION

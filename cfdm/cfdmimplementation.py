@@ -1713,7 +1713,10 @@ class CFDMImplementation(Implementation):
         <Data(180, 2): [[0, ..., 359]] degrees_north>
 
         """
-        return parent.get_data(default=default)
+        try:
+            return parent.get_data(default=default)
+        except AttributeError:
+            return default
 
     def get_data_axes(self, parent, key, default=None):
         """Get domain axis identifiers.

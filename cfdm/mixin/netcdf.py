@@ -4572,7 +4572,11 @@ class NetCDFAggregation(NetCDFMixin):
         {}
 
         """
-        return self._nc_del("aggregated_data", {}).copy()
+        out = self._nc_del("aggregated_data", None)
+        if out is None:
+            return {}
+
+        return out.copy()
 
     def nc_get_aggregated_data(self):
         """Return the netCDF aggregated_data terms.
@@ -4618,11 +4622,11 @@ class NetCDFAggregation(NetCDFMixin):
         {}
 
         """
-        out = self._nc_get("aggregated_data", default=None)
-        if out is not None:
-            return out.copy()
+        out = self._nc_get("aggregated_data", None)
+        if out is None:
+            return {}
 
-        return {}
+        return out.copy()
 
     def nc_has_aggregated_data(self):
         """Whether any netCDF aggregated_data terms have been set.
