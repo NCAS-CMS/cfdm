@@ -517,6 +517,8 @@ def write(
             ``'dimension_coordinate'``  Dimension coordinate constructs
             ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
             ``'cell_measure'``          Cell measure constructs
+            ``'domain_topology'``       Domain topology constructs
+            ``'cell_connectivity'``     Cell connectivity constructs
             ``'all'``                   All of the above constructs
             ==========================  ===============================
 
@@ -531,7 +533,7 @@ def write(
 
             .. versionadded:: (cfdm) 1.10.0.1
 
-        cfa: ``str`` or `bool` or `dict`, optional
+        cfa: `str` or `dict` or `None`, optional
             Specify which netCDF variables, if any, should be written
             as CF aggregation variables.
 
@@ -546,73 +548,30 @@ def write(
             CF-netCDF aggregation variable will be written as an
             aggregation variable.
 
-            If *cfa* is a dictionary then it is used to configure the
-            aggregation variable write process. The default options,
-            which also apply if *cfa* is True, are ``{'constructs':
-            'field', 'absolute_paths': True, 'strict': True,
-            'substitutions': {}}``, and the dictionary may have any
-            subset of the following key/value pairs to override these
-            defaults:
+            If *cfa* is `None` then no aggregation variables will be
+            created.
 
-            This is entirely equivalent to setting *cfa* to the
-            dictionary ``{'constructs': 'auto'}``.
+            If *cfa* is a dictionary then it is used to explicitly
+            configure the writing of aggregation variables. It may
+            have some or all of the following keys:
 
-
-            If *cfa* is ``'auto'`` (the default) then data only which
-            are unchanged from being read from a CF-netCDF aggregation
-            variable will be written as an aggregation variable. This
-            is entirely equivalent to setting *cfa* to the dictionary
-            ``{'constructs': 'auto'}``.
-
-            If *cfa* is any of the string values allowed by the
-            *omit_data* parameter (e.g. ``'field'``,
-            ``'auxiliary_coordinate'``, ``'all'`` etc.).  This is
-            entirely equivalent to setting *cfa* to the dictionary
-            ``{'constructs': cfa}``.`True` is entirely equivalent
-            to setting *cfa* to the dictionary ``{'constructs':
-            'field', 'absolute_paths': True, 'strict': True,
-            'substitutions': {}}`
-
-            If *cfa* is a dictionary then it is used to configure the
-            aggregation variable write process. The default options,
-            which also apply if *cfa* is True, are ``{'constructs':
-            'field', 'absolute_paths': True, 'strict': True,
-            'substitutions': {}}``, and the dictionary may have any
-            subset of the following key/value pairs to override these
-            defaults:
-
-            If *cfa* is a dictionary, then it defines
-
-            If True or a (possibly empty) dictionary, then write
-            selected constructs as aggregation variables, where
-            requested and where possible.
-
-            if *cfa* is ``'auto'`` then the default options are
-            ``{'auto': 'all', 'constructs': (), 'absolute_paths':
-            True, 'strict': True, 'substitutions': {}}``
-
-
-            If *cfa* is a dictionary then it is used to configure the
-            aggregation variable write process. The default options,
-            which also apply if *cfa* is True, are ``{'constructs':
-            'field', 'absolute_paths': True, 'strict': True,
-            'substitutions': {}}``, and the dictionary may have any
-            subset of the following key/value pairs to override these
-            defaults:
-
-            * ``'constructs'``: `dict` or (sequence of) `str`
+            * ``'constructs'``: `None`, `dict` or `(sequence of) `str`
 
               The types of construct to be written as aggregation
               variables. There is no default.
 
+              If the type is `None` then no aggregation variables will
+              be created.
+
               The types may be given as a (sequence of) `str`, which
-              may take any of the values, with the same meanings
-              allowed by the *omit_data* parameter . Alternatively, the same
-              types may be given as keys to a `dict` whose values
-              specify the number of dimensions that a construct must
-              also have if it is to be written as an aggregation
-              variable. A value of `None` means no restriction on the
-              number of dimensions.
+              may take any of the string values allowed by the *cfa*
+              parameter, with the same meanings (see above.
+
+              The same string-valued types may be given as keys to a
+              `dict` whose values specify the number of dimensions
+              that a construct must also have if it is to be written
+              as an aggregation variable. A value of `None` means no
+              restriction on the number of dimensions.
 
               *Example:*
                 Equivalent ways to only write cell measure constructs
@@ -636,13 +595,14 @@ def write(
                 field constructs: ``{'field': None,
                 'auxiliary_coordinate': 2}``.
 
-            * ``'absolute_paths'``: `bool`
+            * ``'absolute_uri'``: `bool`
 
               How to write fragment file names. Set to True (the
               default) for them to be written as absolute URIs, or
               else set to False for them to be written as
               relative-path URI references, taken as being relative to
-              the location of the aggregation file being created.
+              the location of *filename*, the aggregation file being
+              created.
 
             * ``'strict'``: `bool`
 
@@ -704,25 +664,32 @@ def write(
     # ----------------------------------------------------------------
     # CFA
     # ----------------------------------------------------------------
-    if not cfa:
+    if cfa is None:
         cfa = {"constructs", None}
-    elif isinstance(cfa, dict):
-        cfa = cfa.copy()
-        if "constructs" not in cfa:
-            raise ValueError("TODOCFA tttttt")
     elif isinstance(cfa, str):
         cfa = {"constructs": cfa}
-    else:
-        raise ValueError("TODOCFA invalid cfa value")
+    elif isinstance(cfa, dict):
+        keys = ("constructs", "absolute_uri", "strict", "substitutions")
+        if not set(cfa).issubset(keys):
+            raise ValueError(
+                f"Invalid dictionary key to the 'cfa' keyword: {cfa!r}. "
+                f"Valid keys are {keys}"
+            )
 
-    keys = ("constructs", "absolute_paths", "strict", "substitutions")
-    if not set(cfa).issubset(keys):
+        if "constructs" not in cfa:
+            raise ValueError(
+                "When the 'cfa' keyword is a dictionary, it must have a "
+                f"'constructs' key. Got: {cfa!r}"
+            )
+
+        cfa = cfa.copy()
+    else:
         raise ValueError(
-            "Invalid dictionary key to the 'cfa' parameter. "
-            f"Valid keys are {keys}. Got: {cfa!r}"
+            f"Invalid value for the 'cfa' keyword: {cfa!r}. "
+            "Should be a string, a dictionary, or None"
         )
 
-    cfa.setdefault("absolute_paths", True)
+    cfa.setdefault("absolute_uri", True)
     cfa.setdefault("strict", True)
     cfa.setdefault("substitutions", {})
 
@@ -735,13 +702,15 @@ def write(
 
         cfa["constructs"] = {c: None for c in constructs}
 
-    substitutions = cfa["substitutions"].copy()
-    for base, sub in tuple(substitutions.items()):
-        if not (base.startswith("${") and base.endswith("}")):
-            # Add missing ${...}
-            substitutions[f"${{{base}}}"] = substitutions.pop(base)
+    substitutions = cfa["substitutions"]
+    if substitutions:
+        substitutions = substitutions.copy()
+        for base, sub in tuple(substitutions.items()):
+            if not (base.startswith("${") and base.endswith("}")):
+                # Add missing ${...}
+                substitutions[f"${{{base}}}"] = substitutions.pop(base)
 
-    cfa["substitutions"] = substitutions
+        cfa["substitutions"] = substitutions
 
     netcdf.write(
         fields,
@@ -767,5 +736,5 @@ def write(
         coordinates=coordinates,
         extra_write_vars=None,
         omit_data=omit_data,
-        cfa_options=cfa,
+        cfa=cfa,
     )

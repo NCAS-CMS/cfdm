@@ -533,7 +533,7 @@ class read_writeTest(unittest.TestCase):
             domain_axes = f.domain_axes()
 
             domain_axes["domainaxis0"].nc_set_unlimited(True)
-            cfdm.write(f, tmpfile, fmt=fmt, cfa=False)
+            cfdm.write(f, tmpfile, fmt=fmt, cfa=None)
 
             f = cfdm.read(tmpfile)[0]
             domain_axes = f.domain_axes()
@@ -545,7 +545,7 @@ class read_writeTest(unittest.TestCase):
 
         domain_axes["domainaxis0"].nc_set_unlimited(True)
         domain_axes["domainaxis2"].nc_set_unlimited(True)
-        cfdm.write(f, tmpfile, fmt="NETCDF4", cfa=False)
+        cfdm.write(f, tmpfile, fmt="NETCDF4", cfa=None)
 
         f = cfdm.read(tmpfile)[0]
         domain_axes = f.domain_axes()

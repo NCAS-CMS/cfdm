@@ -116,7 +116,7 @@ class CFATest(unittest.TestCase):
         cfdm.write(
             f,
             cfa_file,
-            cfa={"constructs": "field", "absolute_paths": True},
+            cfa={"constructs": "field", "absolute_uri": True},
         )
 
         nc = netCDF4.Dataset(cfa_file, "r")
@@ -147,7 +147,7 @@ class CFATest(unittest.TestCase):
                 cfa_file,
                 cfa={
                     "constructs": "field",
-                    "absolute_paths": True,
+                    "absolute_uri": True,
                     "substitutions": {base: cwd},
                 },
             )
@@ -183,7 +183,7 @@ class CFATest(unittest.TestCase):
             cfa_file,
             cfa={
                 "constructs": "field",
-                "absolute_paths": True,
+                "absolute_uri": True,
                 "substitutions": {"base2": "/bad/location"},
             },
         )
@@ -211,7 +211,7 @@ class CFATest(unittest.TestCase):
             cfa_file,
             cfa={
                 "constructs": "field",
-                "absolute_paths": True,
+                "absolute_uri": True,
                 "substitutions": {"base": cwd},
             },
         )
@@ -239,7 +239,7 @@ class CFATest(unittest.TestCase):
             cfa_file,
             cfa={
                 "constructs": "field",
-                "absolute_paths": True,
+                "absolute_uri": True,
                 "substitutions": {"base": cwd},
             },
         )
@@ -259,13 +259,13 @@ class CFATest(unittest.TestCase):
         self.assertEqual(len(g), 1)
         self.assertTrue(f.equals(g[0]))
 
-    def test_CFA_absolute_paths(self):
-        """Test aggregation 'absolute_paths' option to cfdm.write."""
+    def test_CFA_absolute_uri(self):
+        """Test aggregation 'absolute_uri' option to cfdm.write."""
         f = cfdm.example_field(0)
         cfdm.write(f, tmpfile1)
         f = cfdm.read(tmpfile1)[0]
 
-        for absolute_paths, filename in zip(
+        for absolute_uri, filename in zip(
             (True, False),
             (
                 PurePath(os.path.abspath(tmpfile1)).as_uri(),
@@ -275,7 +275,7 @@ class CFATest(unittest.TestCase):
             cfdm.write(
                 f,
                 cfa_file,
-                cfa={"constructs": "field", "absolute_paths": absolute_paths},
+                cfa={"constructs": "field", "absolute_uri": absolute_uri},
             )
 
             nc = netCDF4.Dataset(cfa_file, "r")

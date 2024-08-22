@@ -2754,7 +2754,7 @@ class NetCDFWrite(IOWrite):
         if self._write_as_cfa(ncvar, cfvar, construct_type, domain_axes):
             kwargs["dimensions"] = ()
             kwargs["chunksizes"] = None
-            # TODOCFA: contiguous/chunksizes
+            # TODOCFA: contiguous/chunksizes (consider after merge of  hdf5-chunks)
 
         # Note: this is a trivial assignment in standalone cfdm, but
         # required for non-trivial customisation applied by subclasses
@@ -4513,8 +4513,7 @@ class NetCDFWrite(IOWrite):
         group=True,
         coordinates=False,
         omit_data=None,
-        cfa=False,
-        cfa_options=None,
+        cfa=None,
     ):
         """Write field and domain constructs to a netCDF file.
 
@@ -4741,13 +4740,7 @@ class NetCDFWrite(IOWrite):
 
                 .. versionadded:: (cfdm) 1.10.0.1
 
-            cfa: `bool`, optional
-                Whether or not to create aggregation variables. See
-                `cfdm.write` for details.
-
-                .. versionadded:: (cfdm) NEXTVERSION
-
-            cfa_options: `bool`, optional
+            cfa: `dict` or `None`, optional
                 Configure the creation of aggregation variables. See
                 `cfdm.write` for details.
 
@@ -4867,10 +4860,8 @@ class NetCDFWrite(IOWrite):
             # --------------------------------------------------------
             # Aggregation variables
             # --------------------------------------------------------
-            # Whether or not to write any aggregation variables
-#            "cfa": bool(cfa),
             # Configuration options for writing aggregation variables
-            "cfa": {} if cfa_options is None else cfa_options,
+            "cfa": {} if cfa is None else cfa,
             # The directory of the aggregation file
             "aggregation_file_directory": None,
             # Cache the CF aggregation variable write status for each
@@ -5377,8 +5368,8 @@ class NetCDFWrite(IOWrite):
             g["cfa_write_status"][ncvar] = False
             return False
 
-        cfa_options = g["cfa"]
-        constructs = cfa_options.get("constructs")
+        cfa = g["cfa"]
+        constructs = cfa.get("constructs")
 
         if constructs is None:
             g["cfa_write_status"][ncvar] = False
@@ -5415,19 +5406,23 @@ class NetCDFWrite(IOWrite):
                 # flagged as OK.
                 if ndim is None or ndim == len(domain_axes):
                     cfa_write_status = data.nc_get_aggregation_write_status()
-                    if not cfa_write_status and cfa_options.get("strict", True):
+                    if not cfa_write_status and cfa.get("strict", True):
                         if g["mode"] == "w":
                             os.remove(g["filename"])
 
                         raise ValueError(
                             f"Can't write {cfvar!r} as an aggregation "
-                            "variable. Possible reasons for this "
-                            "include i) there is more than one Dask chunk "
-                            "per fragment, and ii) data values have been "
-                            "changed relative to those in a fragment file."
-                            "Setting the cfa keyword's 'strict' option to "
-                            "False will allow this variable to be written as "
-                            "a normal, non-aggregation variable."
+                            "variable."
+                            "\n\n"
+                            "Possible reasons for this include 1) there is "
+                            "more than one Dask chunk per fragment, and "
+                            "2) data values have been changed relative to "
+                            "those in a fragment file."
+                            "\n\n"
+                            "Consider setting the cfa keyword's 'strict' "
+                            "option to False, which will allow this variable "
+                            "to be written as a normal, non-aggregation "
+                            "variable."
                         )
 
                     break
@@ -5773,11 +5768,11 @@ class NetCDFWrite(IOWrite):
 
         # Define location fragment array variable susbstitutions,
         # giving precedence over those set on the Data object to those
-        # provided by the cfa_options.
+        # provided by the cfa options.
         substitutions = data.nc_aggregation_substitutions()
         substitutions.update(g["cfa"].get("substitutions", {}))
 
-        absolute_paths = g["cfa"].get("absolute_paths", True)
+        absolute_uri = g["cfa"].get("absolute_uri", True)
         cfa_dir = g["aggregation_file_directory"]
         if cfa_dir is None:
             cfa_dir = PurePath(abspath(g["filename"])).parent
@@ -5841,13 +5836,13 @@ class NetCDFWrite(IOWrite):
                     uri_scheme = uri.scheme
                     if not uri_scheme:
                         filename = abspath(join(cfa_dir, filename))
-                        if absolute_paths:
+                        if absolute_uri:
                             # Use an absolute URI
                             filename = PurePath(filename).as_uri()
                         else:
                             # Use a relative-path URI reference
                             filename = relpath(filename, start=cfa_dir)
-                    elif not absolute_paths and uri_scheme == "file":
+                    elif not absolute_uri and uri_scheme == "file":
                         filename = relpath(uri.path, start=cfa_dir)
 
                     if substitutions:
