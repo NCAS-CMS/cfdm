@@ -4853,8 +4853,8 @@ class NetCDFRead(IORead):
 
         **Examples**
 
-            >>> n._is_char('regions')
-            True
+        >>> n._is_char('regions')
+        True
 
         """
         datatype = self.read_vars["variables"][ncvar].dtype
@@ -7574,8 +7574,8 @@ class NetCDFRead(IORead):
                 # NetCDF4 doesn't auto-mask VLEN variables
                 array = np.ma.where(array == "", np.ma.masked, array)
 
-        # Parse dask chunks
-        chunks = self._parse_chunks(ncvar)
+        # Set the dask chunking strategy
+        chunks = self._dask_chunks(ncvar)
 
         data = self.implementation.initialise_Data(
             array=array,
@@ -10391,8 +10391,8 @@ class NetCDFRead(IORead):
 
         return storage_options
 
-    def _parse_chunks(self, ncvar):
-        """Parse the dask chunks.
+    def _dask_chunks(self, ncvar):
+        """Set the Dask chunking strategy for a netCDF variable.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -10403,9 +10403,18 @@ class NetCDFRead(IORead):
 
         :Returns:
 
-            `str`, `int` or `dict`
-                The parsed chunks that are suitable for passing to a
-                `Data` object containing the variable's array.
+            `str` or `int` or `list`
+                The chunks that are suitable for passing to a `Data`
+                object containing the variable's array.
+
+        **Examples**
+
+        >>> n._dask_chunks('tas')
+        -1
+        >>> n._dask_chunks('pr')
+        "auto"        
+        >>> n._dask_chunks('ua')
+        [1, 73, "auto"]
 
         """
         g = self.read_vars
@@ -10420,16 +10429,16 @@ class NetCDFRead(IORead):
             if not chunks:
                 return default_chunks
 
-            # For ncdimensions = ('time', 'lat'):
+            # For ncdimensions = ('t', 'lat'):
             #
             # chunks={} -> ["auto", "auto"]
-            # chunks={'ncdim%time': 12} -> [12, "auto"]
-            # chunks={'ncdim%time': 12, 'ncdim%lat': 10000} -> [12, 10000]
-            # chunks={'ncdim%time': 12, 'ncdim%lat': "20MB"} -> [12, "20MB"]
-            # chunks={'ncdim%time': 12, 'latitude': -1} -> [12, -1]
-            # chunks={'ncdim%time': 12, 'Y': None} -> [12, None]
-            # chunks={'ncdim%time': 12, 'ncdim%lat': (30, 90)} -> [12, (30, 90)]
-            # chunks={'ncdim%time': 12, 'ncdim%lat': None, 'X': 5} -> [12, None]
+            # chunks={'ncdim%t': 12} -> [12, "auto"]
+            # chunks={'ncdim%t': 12, 'ncdim%lat': 10000} -> [12, 10000]
+            # chunks={'ncdim%t': 12, 'ncdim%lat': "20MB"} -> [12, "20MB"]
+            # chunks={'ncdim%t': 12, 'latitude': -1} -> [12, -1]
+            # chunks={'ncdim%t': 12, 'Y': None} -> [12, None]
+            # chunks={'ncdim%t': 12, 'ncdim%lat': (30, 90)} -> [12, (30, 90)]
+            # chunks={'ncdim%t': 12, 'ncdim%lat': None, 'X': 5} -> [12, None]
             attributes = g["variable_attributes"]
             chunks2 = []
             for ncdim in g["variable_dimensions"][ncvar]:

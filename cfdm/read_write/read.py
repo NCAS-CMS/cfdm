@@ -374,18 +374,25 @@ def read(
             data.
 
             Each dictionary key identifies a file dimension in one of
-            three ways: 1. the netCDF dimension name, preceded by
-            ``ncdim%`` (e.g. ``'ncdim%lat'``); 2. the "standard name"
-            attribute of a CF-netCDF coordinate variable that spans
-            the dimension (e.g. ``'latitude'``); or 3. the "axis"
-            attribute of a CF-netCDF coordinate variable that spans
-            the dimension (e.g. ``'Y'``).
+            three ways:
+
+            1. the netCDF dimension name, preceded by ``ncdim%``
+              (e.g. ``'ncdim%lat'``);
+
+            2. the value of the "standard name" attribute of a
+               CF-netCDF coordinate variable that spans the dimension
+               (e.g. ``'latitude'``);
+
+            3.  the value of the "axis" attribute of a CF-netCDF
+               coordinate variable that spans the dimension
+               (e.g. ``'Y'``).
 
             The dictionary values may be `str`, `int` or `None`, with
             the same meanings as those types for the *chunks*
-            parameter but applying only to the specified dimension. A
+            parameter itself, but applying only to the specified
+            dimension. In addition, a dictionary value may be a
             `tuple` or `list` of integers that sum to the dimension
-            size may also be given.
+            size.
 
             Not specifying a file dimension in the dictionary is
             equivalent to it being defined with a value of ``'auto'``.
@@ -396,19 +403,19 @@ def read(
             *Parameter example:*
               If a netCDF file contains dimensions ``time``, ``z``,
               ``lat`` and ``lon``, then ``{'ncdim%time': 12,
-              'ncdim%lat', None, 'ncdim%lon': None}`` will ensure that
-              all ``time`` axes have a chunksize of 12; and all
-              ``lat`` and ``lon`` axes are not chunked; and all ``z``
-              axes are chunked to comply as closely as possible with
-              the default chunks size.
+              'ncdim%lat', None, 'ncdim%lon': None}`` will ensure
+              that, for all applicable data arrays, all ``time`` axes
+              have a chunksize of 12; all ``lat`` and ``lon`` axes are
+              not chunked; and all ``z`` axes are chunked to comply as
+              closely as possible with the default chunk size.
 
-              If the netCDF also contains a ``time`` coordinate
-              variable with a ``standard_name`` attribute of
-              ``'time'`` and an ``axis`` attribute of ``'T'``, then
-              the same chunking could be specified with either
-              ``{'time': 12, 'ncdim%lat', None, 'ncdim%lon': None}``
-              or ``{'T': 12, 'ncdim%lat', None, 'ncdim%lon': None}``.
-
+              If the netCDF file also contains a ``time`` coordinate
+              variable with a "standard_name" attribute of ``'time'``
+              and an "axis" attribute of ``'T'``, then the same
+              chunking could be specified with either ``{'time': 12,
+              'ncdim%lat', None, 'ncdim%lon': None}`` or ``{'T': 12,
+              'ncdim%lat', None, 'ncdim%lon': None}``.
+    
             .. versionadded:: (cfdm) NEXTVERSION
 
         _implementation: (subclass of) `CFDMImplementation`, optional
@@ -454,7 +461,7 @@ def read(
     # Check chunks
     if chunks is not None and not isinstance(chunks, (str, Integral, dict)):
         raise ValueError(
-            "'chunks' parameter must be of type str, int, None or dict. "
+            "The 'chunks' keyword must be of type str, int, None or dict. "
             f"Got: {chunks!r}"
         )
 
