@@ -432,7 +432,7 @@ class CFATest(unittest.TestCase):
             f, cfa_file, cfa={"constructs": ["field", "field_ancillary"]}
         )
 
-    def test_CFA_xxxx_cfa(self):
+    def test_CFA_cfa(self):
         """Test the cfdm.write 'cfa' keyword."""
         f = cfdm.example_field(0)
         #        f.del_construct('time')
@@ -474,6 +474,11 @@ class CFATest(unittest.TestCase):
             )
 
         nc.close()
+
+        # Check bad values of cfa
+        for cfa in (False, True, (), []):
+            with self.assertRaises(ValueError):
+                cfdm.write(g, cfa_file, cfa=cfa)
 
 
 if __name__ == "__main__":

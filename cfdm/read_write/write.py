@@ -662,10 +662,10 @@ def write(
     netcdf = NetCDFWrite(_implementation)
 
     # ----------------------------------------------------------------
-    # CFA
+    # CF aggregation
     # ----------------------------------------------------------------
     if cfa is None:
-        cfa = {"constructs", None}
+        cfa = {"constructs": None}
     elif isinstance(cfa, str):
         cfa = {"constructs": cfa}
     elif isinstance(cfa, dict):

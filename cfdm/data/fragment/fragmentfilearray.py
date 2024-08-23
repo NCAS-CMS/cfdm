@@ -23,6 +23,8 @@ class FragmentFileArray(
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
+        # Import fragment classes. Do this here (as opposed to outside
+        # the class) to aid subclassing.
         from . import FragmentH5netcdfArray, FragmentNetCDF4Array
 
         instance = super().__new__(cls)

@@ -1133,8 +1133,6 @@ class NetCDFRead(IORead):
             "location_substitutions": {},
             # fragment_array_variables as numpy arrays
             "fragment_array_variables": {},
-            # The directory of the aggregation file
-            "aggregation_file_directory": None,
             # Aggregation configuration overrides
             "cfa": cfa if cfa else {},
         }
@@ -1651,10 +1649,6 @@ class NetCDFRead(IORead):
             # Do not create fields/domains from fragment array
             # variables
             g["do_not_create_field"].update(g["fragment_array_variables"])
-
-            if g["parsed_aggregated_data"]:
-                # TODOCFA: do we need this?
-                g["aggregation_file_directory"] = dirname(g["filename"])
 
         # ------------------------------------------------------------
         # List variables
@@ -6304,13 +6298,6 @@ class NetCDFRead(IORead):
         kwargs["instructions"] = " ".join(sorted(instructions))
         if return_kwargs_only:
             return kwargs
-
-        # Use the kwargs to create a CFANetCDFArray instance
-        #        if g["original_netCDF4"]:
-        #            array = self.implementation.initialise_CFANetCDF4Array(**kwargs)
-        #        else:
-        #            # h5netcdf
-        #            array = self.implementation.initialise_CFAH5netcdfArray(**kwargs)
 
         # Use the kwargs to create a AggregatedArray instance
         array = self.implementation.initialise_AggregatedArray(**kwargs)

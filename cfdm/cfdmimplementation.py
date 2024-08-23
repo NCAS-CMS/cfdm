@@ -29,8 +29,6 @@ from .data import (
     AggregatedArray,
     BoundsFromNodesArray,
     CellConnectivityArray,
-    CFAH5netcdfArray,
-    CFANetCDF4Array,
     Data,
     GatheredArray,
     H5netcdfArray,
@@ -1857,42 +1855,6 @@ class CFDMImplementation(Implementation):
         """
         cls = self.get_class("CellMethod")
         return cls(axes=axes, method=method, qualifiers=qualifiers)
-
-    def initialise_CFAH5netcdfArray(self, **kwargs):
-        """Return a `CFAH5netcdfArray` instance.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Parameters:
-
-            kwargs: optional
-                Initialisation parameters to pass to the new instance.
-
-        :Returns:
-
-            `CFAH5netcdfArray`
-
-        """
-        cls = self.get_class("CFAH5netcdfArray")
-        return cls(**kwargs)
-
-    def initialise_CFANetCDF4Array(self, **kwargs):
-        """Return a `CFANetCDF4Array` instance.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Parameters:
-
-            kwargs: optional
-                Initialisation parameters to pass to the new instance.
-
-        :Returns:
-
-            `CFANetCDF4Array`
-
-        """
-        cls = self.get_class("CFANetCDF4Array")
-        return cls(**kwargs)
 
     def initialise_AggregatedArray(self, **kwargs):
         """Return a `AggregatedArray` instance.
@@ -3723,8 +3685,6 @@ _implementation = CFDMImplementation(
     CellMeasure=CellMeasure,
     CellMethod=CellMethod,
     CoordinateReference=CoordinateReference,
-    CFAH5netcdfArray=CFAH5netcdfArray,
-    CFANetCDF4Array=CFANetCDF4Array,
     DimensionCoordinate=DimensionCoordinate,
     Domain=Domain,
     DomainAncillary=DomainAncillary,

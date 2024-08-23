@@ -81,7 +81,7 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
             substitutions: `dict`, optional
                 A dictionary whose key/value pairs define text
-                substitutions to be applied to the fragment file
+                substitutions to be applied to fragment file
                 names. Each key must be specified with the ``${...}``
                 syntax, for instance ``{'${base}': 'sub'}``.
 
@@ -226,15 +226,17 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
         :Parameters:
 
-            aggregated_filename: `str` TODOCFA
+            aggregated_filename: `str`
+                The name of the aggregation file.
 
             x: `dict` TODOCFA
 
-            substitutions: `dict` or `None` TODOCFA
+            substitutions: `dict` or `None`
                 A dictionary whose key/value pairs define text
-                substitutions to be applied to the fragment file
+                substitutions to be applied to fragment file
                 names. Each key must be specified with the ``${...}``
-                syntax, for instance ``{'${base}': 'sub'}``.
+                syntax, for instance ``{'${base}': 'sub'}``. `None` is
+                equivalent to an empty dictionary.
 
         :Returns:
 

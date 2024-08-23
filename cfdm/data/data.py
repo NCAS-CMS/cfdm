@@ -31,6 +31,7 @@ from ..mixin.netcdf import NetCDFAggregation, NetCDFHDF5
 
 # REVIEW: getitem: `data.py`: import asanyarray, filled
 from .abstract import Array
+# TODOCFA: this config thing might be good with subclasses ...?
 from .config import (
     _ALL,
     _ARRAY,

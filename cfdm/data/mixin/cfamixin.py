@@ -7,20 +7,20 @@ from ..utils import chunk_locations, chunk_positions
 
 
 class CFAMixin:
-    """Mixin class for a CFA array.
+    """Mixin class for a fragment of aggregated data.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
     """
 
     def __new__(cls, *args, **kwargs):
-        """Store fragment array classes.
+        """Store fragment classes.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        # Import fragment array classes. Do this here (as opposed to
-        # outside the class) to avoid a circular import.
+        # Import fragment classes. Do this here (as opposed to outside
+        # the class) to avoid circular import, and to aid subclassing.
         from ..fragment import FragmentFileArray, FragmentValueArray
 
         instance = super().__new__(cls)
@@ -50,11 +50,11 @@ class CFAMixin:
         :Parameters:
 
             filename: (sequence of) `str`, optional
-                The name of the CFA file containing the array. If a
-                sequence then it must contain one element.
+                The name of fragment file containing the array. If a
+                sequence, then it must contain one element.
 
             address: (sequence of) `str`, optional
-                The name of the CFA aggregation variable for the
+                The name of the CF aggregation variable for the
                 array. If a sequence then it must contain one element.
 
             dtype: `numpy.dtype`
@@ -74,8 +74,9 @@ class CFAMixin:
 
             instructions: `str`, optional
                 The ``aggregated_data`` attribute value as found on
-                the CFA variable. If set then this will be used to
-                improve the performance of `__dask_tokenize__`.
+                the CF aggregation variable. If set then this will be
+                used to improve the performance of
+                `__dask_tokenize__`.
 
             substitutions: `dict`, optional
                 A dictionary whose key/value pairs define text
@@ -205,7 +206,7 @@ class CFAMixin:
 
             4-`tuple`
                 1. The shape of the aggregated data.
-                2. The shape of the array of fragments.
+                2. The shape of the fragment array.
                 3. The type of the fragments (either ``"value"`` or
                    ``"location"``).
                 4. The parsed aggregation instructions.
@@ -324,7 +325,7 @@ class CFAMixin:
 
         The aggregation data dictionary contains the definitions of
         the fragments and the instructions on how to aggregate them.
-        The keys are indices of the CFA fragment dimensions,
+        The keys are indices of the fragment array dimensions,
         e.g. ``(1, 0, 0 ,0)``.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -715,7 +716,7 @@ class CFAMixin:
         )
 
     def to_dask_array(self, chunks="auto"):
-        """Create a dask array with `FragmentArray` chunks.
+        """Create a dask array with for the aggregated data.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -727,9 +728,10 @@ class CFAMixin:
                 Any value accepted by the *chunks* parameter of the
                 `dask.array.from_array` function is allowed.
 
-                The chunk sizes implied by *chunks* for a dimension that
-                has been fragmented are ignored and replaced with values
-                that are implied by that dimensions fragment sizes.
+                The chunk sizes implied by *chunks* for a dimension
+                that has been fragmented by two or more fragments are
+                ignored, and replaced with the sizes of the fragments
+                along that dimension.
 
         :Returns:
 
@@ -757,7 +759,7 @@ class CFAMixin:
             FragmentArray = self._FragmentArray[fragment_type]
         except KeyError:
             raise ValueError(
-                "Can't get fragment array class for unknown "
+                "Can't get the fragment class for an unknown "
                 f"fragment type: {fragment_type!r}"
             )
 
