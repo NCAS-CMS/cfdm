@@ -10419,6 +10419,10 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
+
+        if chunks == "storage":
+            
+        
         default_chunks = "auto"
         chunks = g.get("chunks", default_chunks)
 
@@ -10614,3 +10618,41 @@ class NetCDFRead(IORead):
 
         # Store the elements in the data object
         data._set_cached_elements(elements)
+
+    def _netcdf_chunksizes(self, variable):
+        """Return the variable chunk sizes.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            variable:
+                The variable, that has the same API as
+                `netCDF4.Variable` or `h5netcdf.Variable`.
+
+        :Returns:
+
+            sequence of `int`
+                The chunksizes. If the variable is contiguous
+                (i.e. not chunked) then the variable's shape is
+                returned.
+
+        **Examples**
+
+        >>> f.chunksizes(variable)
+        [1, 324, 432]
+
+        """
+        try:
+            # netCDF4
+            chunking = variable.chunking()
+            if chunking == "contiguous":
+                chunking = None
+        except AttributeError:
+            # h5netcdf
+            chunking = variable.chunks
+            
+        if chunking is None:
+            return list(variable.shape)
+
+        return chunking
