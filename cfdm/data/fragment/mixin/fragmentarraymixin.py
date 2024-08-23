@@ -6,7 +6,7 @@ from ....units import Units
 
 
 class FragmentArrayMixin:
-    """Mixin class for a CFA fragment array. TODOCFA.
+    """Mixin class for a fragment of aggregated data.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
@@ -63,8 +63,8 @@ class FragmentArrayMixin:
                 array = super()._get_array(Ellipsis)
                 if array.size > prod(self.original_shape):
                     raise ValueError(
-                        f"Can't get CFA fragment data from ({self}) when "
-                        "the fragment has two or more missing size 1 "
+                        f"Can't get fragment data from ({self}) when "
+                        "the the fragment has two or more missing size 1 "
                         "dimensions, whilst also spanning two or more "
                         "Dask compute chunks."
                         "\n\n"
@@ -118,7 +118,7 @@ class FragmentArrayMixin:
                     raise ValueError(
                         "TODOACTIVE. Placeholder notification thatn "
                         "we can't yet dealing with active "
-                        "storage reductions on CFA fragments."
+                        "storage reductions on fragments."
                     )
                 else:
                     # 'array' is a numpy array

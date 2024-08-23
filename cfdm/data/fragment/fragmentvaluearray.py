@@ -3,7 +3,7 @@ from .mixin import FragmentArrayMixin
 
 
 class FragmentValueArray(FragmentArrayMixin, FullArray):
-    """A CFA fragment array that is filled with a value.
+    """A fragment of aggregated data that has a constant value.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
@@ -25,7 +25,7 @@ class FragmentValueArray(FragmentArrayMixin, FullArray):
         :Parameters:
 
             value: scalar
-                The fill value. TODOCFA
+                The constant value for the fragment.
 
             dtype: `numpy.dtype`
                 The data type of the aggregated array. May be `None`

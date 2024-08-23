@@ -9,7 +9,7 @@ class FragmentFileArray(
     FileArrayMixin,
     Array,
 ):
-    """A TODOCFA netCDF fragment array.
+    """Fragment of aggregated data in a file.
 
     Access will be with either `netCDF4` or `h5netcdf`.
 
@@ -18,7 +18,11 @@ class FragmentFileArray(
     """
 
     def __new__(cls, *args, **kwargs):
-        """TODOCFA."""
+        """Store fragment classes.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
         from . import FragmentH5netcdfArray, FragmentNetCDF4Array
 
         instance = super().__new__(cls)

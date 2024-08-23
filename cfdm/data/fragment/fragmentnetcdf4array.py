@@ -3,7 +3,7 @@ from .mixin import FragmentArrayMixin
 
 
 class FragmentNetCDF4Array(FragmentArrayMixin, NetCDF4Array):
-    """A netCDF fragment array accessed with `netCDF4`.
+    """A fragment of aggregated data in a file accessed with `netCDF4`.
 
     .. versionadded:: (cfdm) NEXTVERSION
 

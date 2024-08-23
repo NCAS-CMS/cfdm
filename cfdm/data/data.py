@@ -1723,8 +1723,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 * If ``clear & _CACHE`` is non-zero then cached
                   element values are deleted.
 
-                * If ``clear & _CFA`` is non-zero then the CFA write
-                  status is set to `False`.
+                * If ``clear & _CFA`` is non-zero then the aggregation
+                  write status is set to `False`.
 
                 By default *clear* is the ``_ALL`` integer-valued
                 constant, which results in all components being
@@ -1756,7 +1756,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             self._del_cached_elements()
 
         if clear & _CFA:
-            # Set the CFA write status to False
+            # Set the aggregation write status to False
             self.nc_del_aggregation_write_status()
 
     @classmethod
@@ -5204,7 +5204,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         dx = dx.reshape(shape)
 
         # Inserting a dimension doesn't affect the cached elements nor
-        # the CFA write status
+        # the aggregation write status
         d._set_dask(dx, clear=_ALL ^ _CACHE ^ _CFA)
 
         # Expand _axes
