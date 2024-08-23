@@ -653,6 +653,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         [0 2 4 6]
 
         """
+        original_shape = self.shape
         inplace = method[2] == "i"
         if inplace:
             d = self
@@ -662,6 +663,13 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         array = np.asanyarray(getattr(self.array, method)(other))
 
         d._set_Array(array, copy=False)
+
+        # Update the HDF5 chunking strategy
+        if (
+            isinstance(self.nc_hdf5_chunksizes(), tuple)
+            and d.shape != original_shape
+        ):
+            d.nc_clear_hdf5_chunksizes()
 
         return d
 
