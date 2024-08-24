@@ -2347,7 +2347,7 @@ class DataTest(unittest.TestCase):
 
         f = cfdm.example_field(0)
         cfdm.write(f, file_A)
-        a = cfdm.read(file_A, chunks=4)[0].data
+        a = cfdm.read(file_A, dask_chunks=4)[0].data
         self.assertEqual(a.data.get_filenames(), set([file_A]))
         a.persist(inplace=True)
         self.assertEqual(a.data.get_filenames(), set())
