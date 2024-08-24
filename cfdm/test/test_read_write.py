@@ -1011,6 +1011,52 @@ class read_writeTest(unittest.TestCase):
         )
         cfdm.write(f, tmpfile)
 
+    def test_read_dask_chunks(self):
+        """Test the 'dask_chunks' keyword of cfdm.read."""
+        f = cfdm.example_field(0)
+        f.coordinate("latitude").axis = "Y"
+        cfdm.write(f, tmpfile)
+
+        f = cfdm.read(tmpfile, dask_chunks={})[0]
+        self.assertEqual(f.data.chunks, ((5,), (8,)))
+
+        f = cfdm.read(tmpfile, dask_chunks=-1)[0]
+        self.assertEqual(f.data.chunks, ((5,), (8,)))
+
+        f = cfdm.read(tmpfile, dask_chunks=None)[0]
+        self.assertEqual(f.data.chunks, ((5,), (8,)))
+
+        f = cfdm.read(tmpfile, dask_chunks={"foo": 2, "bar": 3})[0]
+        self.assertEqual(f.data.chunks, ((5,), (8,)))
+
+        with cfdm.chunksize("200GB"):
+            f = cfdm.read(tmpfile)[0]
+            self.assertEqual(f.data.chunks, ((5,), (8,)))
+
+        with cfdm.chunksize("150B"):
+            f = cfdm.read(tmpfile)[0]
+            self.assertEqual(f.data.chunks, ((4, 1), (4, 4)))
+
+        f = cfdm.read(tmpfile, dask_chunks="150B")[0]
+        self.assertEqual(f.data.chunks, ((4, 1), (4, 4)))
+
+        f = cfdm.read(tmpfile, dask_chunks=3)[0]
+        self.assertEqual(f.data.chunks, ((3, 2), (3, 3, 2)))
+
+        y = f.construct("latitude")
+        self.assertEqual(y.data.chunks, ((3, 2),))
+
+        f = cfdm.read(tmpfile, dask_chunks={"ncdim%lon": 3})[0]
+        self.assertEqual(f.data.chunks, ((5,), (3, 3, 2)))
+
+        f = cfdm.read(tmpfile, dask_chunks={"longitude": 6, "Y": "150B"})[0]
+        self.assertEqual(f.data.chunks, ((5,), (6, 2)))
+
+        y = f.construct("latitude")
+        self.assertEqual(y.data.chunks, ((5,),))
+
+        # TODODASK: add test for dask_chunks="storage-exact"
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

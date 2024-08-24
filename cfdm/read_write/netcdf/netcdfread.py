@@ -914,7 +914,7 @@ class NetCDFRead(IORead):
         _file_systems=None,
         netcdf_backend=None,
         cache=True,
-        chunks="auto",
+        dask_chunks="auto",
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
 
@@ -980,7 +980,7 @@ class NetCDFRead(IORead):
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
-            chunks: `str`, `int`, `None`, or `dict`, optional
+            dask_chunks: `str`, `int`, `None`, or `dict`, optional
                 Specify the `dask` chunking of dimensions for data in
                 the input files. See `cfdm.read` for details
 
@@ -1118,7 +1118,7 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             # Dask
             # --------------------------------------------------------
-            "chunks": chunks,
+            "dask_chunks": dask_chunks,
         }
 
         g = self.read_vars
@@ -10412,21 +10412,29 @@ class NetCDFRead(IORead):
         >>> n._dask_chunks('tas')
         -1
         >>> n._dask_chunks('pr')
-        "auto"        
+        "auto"
         >>> n._dask_chunks('ua')
         [1, 73, "auto"]
 
         """
         g = self.read_vars
 
-
-        if chunks == "storage":
-            
-        
         default_chunks = "auto"
-        chunks = g.get("chunks", default_chunks)
+        chunks = g.get("dask_chunks", default_chunks)
+
+        if chunks == "storage-exact":
+            netcdf_chunks = self._netcdf_chunksizes(g["variables"][ncvar])
+            if netcdf_chunks is None:
+                # Use the default Dask chunking for contiguous
+                # variables
+                return default_chunks
+
+            # Set the Dask chunks to be exactly the storage chunks for
+            # chunked vaiables.
+            return netcdf_chunks
 
         if chunks is None:
+            # No Dask chunking
             return -1
 
         if isinstance(chunks, dict):
@@ -10642,17 +10650,15 @@ class NetCDFRead(IORead):
         >>> f.chunksizes(variable)
         [1, 324, 432]
 
+        >>> f.chunksizes(variable)
+        None
+
         """
         try:
             # netCDF4
             chunking = variable.chunking()
             if chunking == "contiguous":
-                chunking = None
+                return
         except AttributeError:
             # h5netcdf
-            chunking = variable.chunks
-            
-        if chunking is None:
-            return list(variable.shape)
-
-        return chunking
+            return variable.chunks

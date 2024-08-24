@@ -22,7 +22,7 @@ def read(
     netcdf_backend=None,
     storage_options=None,
     cache=True,
-    chunks="auto",
+    dask_chunks="auto",
     _implementation=_implementation,
 ):
     """Read field or domain constructs from a dataset.
@@ -342,36 +342,36 @@ def read(
 
             .. versionadded:: (cfdm) NEXTVERSION
 
-        chunks: `str`, `int`, `None`, or `dict`, optional
+        dask_chunks: `str`, `int`, `None`, or `dict`, optional
             Specify the `dask` chunking of dimensions for data in the
             input files.
 
             By default, ``'auto'`` is used to specify the array
-            chunking, which uses a chunk size in bytes defined by the
-            `cf.chunksize` function, preferring square-like chunk
-            shapes across all data dimensions.
+            chunking, which uses a `dask` size in bytes defined by the
+            `cf.chunksize` function, preferring square-like `dask`
+            chunk shapes across all data dimensions.
 
-            If *chunks* is a `str` then each data array uses this
-            chunk size in bytes, preferring square-like chunk shapes
-            across all data dimensions. Any string value accepted by
-            the *chunks* parameter of the `dask.array.from_array`
-            function is permitted.
+            If *dask_chunks* is a `str` then each data array uses this
+            chunk size in bytes, preferring square-like `dask` chunk
+            shapes across all data dimensions. Any string value
+            accepted by the *dask_chunks* parameter of the
+            `dask.array.from_array` function is permitted.
 
             *Parameter example:*
-              A chunksize of 2 MiB may be specified as ``'2097152'``
-              or ``'2 MiB'``.
+              A `dask` chunksize of 2 MiB may be specified as
+              ``'2097152'`` or ``'2 MiB'``.
 
-            If *chunks* is `-1` or `None` then for each there is no
-            chunking, i.e. every data array has one chunk regardless
-            of its size.
+            If *dask_chunks* is `-1` or `None` then for each there is
+            no `dask` chunking, i.e. every data array has one `dask`
+            chunk regardless of its size.
 
-            If *chunks* is a positive `int` then each data array
-            dimension has chunks with this number of elements.
+            If *dask_chunks* is a positive `int` then each data array
+            dimension has `dask` chunks with this number of elements.
 
-            If *chunks* is a `dict`, then each of its keys identifies
-            dimension in the file, with a value that defines the
-            chunking for that dimension whenever it is spanned by
-            data.
+            If *dask_chunks* is a `dict`, then each of its keys
+            identifies dimension in the file, with a value that
+            defines the `dask` chunking for that dimension whenever it
+            is spanned by data.
 
             Each dictionary key identifies a file dimension in one of
             three ways:
@@ -388,7 +388,7 @@ def read(
                (e.g. ``'Y'``).
 
             The dictionary values may be `str`, `int` or `None`, with
-            the same meanings as those types for the *chunks*
+            the same meanings as those types for the *dask_chunks*
             parameter itself, but applying only to the specified
             dimension. In addition, a dictionary value may be a
             `tuple` or `list` of integers that sum to the dimension
@@ -405,17 +405,18 @@ def read(
               ``lat`` and ``lon``, then ``{'ncdim%time': 12,
               'ncdim%lat', None, 'ncdim%lon': None}`` will ensure
               that, for all applicable data arrays, all ``time`` axes
-              have a chunksize of 12; all ``lat`` and ``lon`` axes are
-              not chunked; and all ``z`` axes are chunked to comply as
-              closely as possible with the default chunk size.
+              have a `dask` chunksize of 12; all ``lat`` and ``lon``
+              axes are not `dask` chunked; and all ``z`` axes are
+              `dask` chunked to comply as closely as possible with the
+              default `dask` chunk size.
 
               If the netCDF file also contains a ``time`` coordinate
               variable with a "standard_name" attribute of ``'time'``
-              and an "axis" attribute of ``'T'``, then the same
+              and an "axis" attribute of ``'T'``, then the same `dask`
               chunking could be specified with either ``{'time': 12,
               'ncdim%lat', None, 'ncdim%lon': None}`` or ``{'T': 12,
               'ncdim%lat', None, 'ncdim%lon': None}``.
-    
+
             .. versionadded:: (cfdm) NEXTVERSION
 
         _implementation: (subclass of) `CFDMImplementation`, optional
@@ -458,11 +459,13 @@ def read(
     elif isinstance(extra, str):
         extra = (extra,)
 
-    # Check chunks
-    if chunks is not None and not isinstance(chunks, (str, Integral, dict)):
+    # Check dask_chunks
+    if dask_chunks is not None and not isinstance(
+        dask_chunks, (str, Integral, dict)
+    ):
         raise ValueError(
-            "The 'chunks' keyword must be of type str, int, None or dict. "
-            f"Got: {chunks!r}"
+            "The 'dask_chunks' keyword must be of type str, int, None or "
+            f"dict. Got: {dask_chunks!r}"
         )
 
     filename = os.path.expanduser(os.path.expandvars(filename))
@@ -502,7 +505,7 @@ def read(
                 storage_options=storage_options,
                 netcdf_backend=netcdf_backend,
                 cache=bool(cache),
-                chunks=chunks,
+                dask_chunks=dask_chunks,
                 extra_read_vars=None,
             )
         except MaskError:
