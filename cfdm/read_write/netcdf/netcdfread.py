@@ -9,7 +9,7 @@ from ast import literal_eval
 from copy import deepcopy
 from dataclasses import dataclass, field
 from functools import reduce
-from math import nan, prod
+from math import log, nan, prod
 from typing import Any
 from urllib.parse import urlparse
 from uuid import uuid4
@@ -17,6 +17,7 @@ from uuid import uuid4
 import h5netcdf
 import netCDF4
 import numpy as np
+from dask.array.core import normalize_chunks
 from dask.base import tokenize
 from packaging.version import Version
 from s3fs import S3FileSystem
@@ -7575,6 +7576,7 @@ class NetCDFRead(IORead):
                 array = np.ma.where(array == "", np.ma.masked, array)
 
         # Set the dask chunking strategy
+        #        print ('array.shape', array.shape, type(array))
         chunks = self._dask_chunks(array, ncvar)
 
         data = self.implementation.initialise_Data(
@@ -10419,166 +10421,230 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        default_chunks = "auto"
-        chunks = g.get("dask_chunks", default_chunks)
+        #        default = "auto"
+        chunks = g.get("dask_chunks", "auto")
+
+        storage_chunks = self._netcdf_chunksizes(g["variables"][ncvar])
+        if storage_chunks is not None:
+            # Remove irrelevant trailing dimensions (e.g. as used by
+            # charchar data type variables)
+            storage_chunks = storage_chunks[: array.ndim]
 
         if chunks == "storage-aligned":
-            v = g["variables"].get(ncvar)
-            if ncvar is None:
-                return default_chunks 
-            
-            storage_chunks = self._netcdf_chunksizes(v)
-            if netcdf_chunks is None:
-                # Use the default Dask chunking for contiguous
-                # variables
-                return default_chunks
-            
-            dask_chunks = list(normalize_chunks("auto", shape=v.shape, dtype=v.dtype))
-            dask_chunks = [c[0] for c in dask_chunks]
+            if storage_chunks is None:
+                # Use "auto" Dask chunking for contiguous variables
+                return "auto"
+
+            print("   storage_chunks=", storage_chunks)
+            # --------------------------------------------------------
+            # Strategy for creating storage-aligned Dask chunks:
+            #
+            # 1) Initialise the Dask chunk as the Dask's "auto" shape.
+            #
+            # 2) Whilst there are Dask axis elements that are strictly
+            #    less than their corresponding storage axis elements,
+            #    iteratively increase the those Dask axis elements
+            #    whilst reducig the other Dask axis elements so that
+            #    the total number of Dask chunk elements is preserved.
+            #
+            # 3) When all Dask elements are greater than or equal to
+            #    their corresponding storage elements, replace each
+            #    Dask element with the largest multiple of the storage
+            #    element that doesn't exceed the current Dask element.
+            #
+            # If the number of elements in the storage chunk is less
+            # than or equal to the number of elements in the original
+            # Dask chunk, then the storage-aligned chunk also will
+            # also have an amount of elements that is less than or
+            # equal to the number of elements in the original Dask
+            # chunk. Otherwise, the storage-aligned chunk will have
+            # more elements than the original Dask chunk.
+            #
+            # E.g.
+            #                       Chunk shape              Elements
+            #                       -----------------------  ---------
+            #      storage:         (50, 100, 150, 20,   5)   75000000
+            #      original Dask:   (49, 101, 150,  5, 160)  593880000
+            #      storage-aligned: (50, 100, 150, 20,  35)  525000000
+            #
+            #      storage:         (50, 100, 150, 20,   5)   75000000
+            #      original Dask:   (5,   15, 150,  5, 160)    9000000
+            #      storage-aligned: (50, 100, 150, 20,   5)   75000000
+            # --------------------------------------------------------
+
+            # 1) Initialise the Dask chunk shape
+            dask_chunks = normalize_chunks(
+                "auto", shape=array.shape, dtype=array.dtype
+            )
+            dask_chunks = [chunks[0] for chunks in dask_chunks]
             n_dask_elements = prod(dask_chunks)
 
-            # While there are Dask axis elements that are smaller than
-            # storage axis elements, iteratively increase the those
-            # Dask axis elements, and reduce the other Dask axis
-            # elements so that the total number of Dask chunk elements
-            # is preserved.
-            #
-            # When all Dask elements are at least as large the storage
-            # elements, replace each Dask element with the largest
-            # multiple of the storage element that doesn't exceed the
-            # Dask element.
-            #
-            # E.g. if the storage chunk shape is        (50, 100, 150, 20,   5) and
-            #      original Dask chunk shape is         (49, 101, 150,  5, 160) then the
-            #                                           -----------------------
-            #      storage-aligned Dask chunks shape is (50, 100, 150, 20,  35)
+            # 2) While there are Dask axis elements that are strictly
+            #    less than their corresponding storage axis elements,
+            #    iteratively increase the those Dask axis elements
+            #    whilst reducig the other Dask axis elements so that
+            #    the total number of Dask chunk elements is preserved.
+            continue_iterating = True
+            while continue_iterating:
+                print("in 1) dask_chunks=", dask_chunks)
+                continue_iterating = False
 
-            carry_on = True
-            while carry_on:
-                print ('dask_chunks=', dask_chunks)
-                carry_on = False
-            
-                pp_storage_ge_dask = 1
-                pp_dask_gt_storage = 1
-            
+                # Index locations of Dask elements which are strictly
+                # greater than their corresponing storage elements
                 dask_gt_storage = []
-                for i, (sc, dc) in enumerate(zip(storage_chunks, dask_chunks[:])):
-                    if  dc <= sc:
+
+                # Product of Dask elements which are strictly greater
+                # than their corresponing storage element
+                p_dask_gt_storage = 1
+
+                # Product of storage elements which are less than or
+                # equal to their corresponing Dask element
+                p_storage_ge_dask = 1
+
+                for i, (sc, dc) in enumerate(
+                    zip(storage_chunks, dask_chunks[:])
+                ):
+                    if dc <= sc:
                         # Storage element is at least as large as the
                         # Dask element
-                        pp_storage_ge_dask *= sc
+                        p_storage_ge_dask *= sc
                     else:
                         # Dask element is strictly larger than the
                         # storage element
                         dask_gt_storage.append(i)
-                        pp_dask_gt_storage *= dc
-            
+                        p_dask_gt_storage *= dc
+
                 if not dask_gt_storage:
-                    # All Dask elements are no larger then their
-                    # corresponding storage elements
+                    # All Dask elements are now less than or equal to
+                    # their corresponding storage elements, so we can
+                    # stop the iteration.
                     break
-                
-                print(n_dask_elements/pp_storage_ge_dask, pp_dask_gt_storage)
+
                 # Calulate the x which preserves the Dask chunk size
                 # (i.e. the number of elements in the Dask chunk) when
                 #
-                # 1) all Dask elements that are smaller than their
-                #   corresponding storage axis elements have been
-                #   replaced with those correponding larger values,
-                #   and
-                # 
-                # 2) all other Dask elements have been reduced by
-                #    being raised to the power of x.
+                #  i) All Dask elements that are strictly less than
+                #     their corresponding storage axis elements have
+                #     been replaced with those correponding larger
+                #     values .
+                #
+                # ii) All other Dask elements have been reduced by
+                #     being raised to the power of x.
                 #
                 # I.e. x is such that
                 #
-                #      pp_storage_ge_dask * pp_dask_gt_storage**x = n_dask_elements
-                #  =>  x = log(n_dask_elements / pp_storage_ge_dask) / log(pp_dask_gt_storage)
-                #  
+                #      p_storage_ge_dask * p_dask_gt_storage**x = n_dask_elements
+                #  =>  x = log(n_dask_elements / p_storage_ge_dask) / log(p_dask_gt_storage)
+                #
                 # E.g. if the storage chunk shape is (40, 20, 15, 5)
                 #      and Dask chunk shape is (20, 25, 10, 30), then
                 #      x is such that
                 #
-                #      (40 * 15) * (25 * 30)**x = 20 * 10 * 25 * 30
-                #   => x = log(20 * 10 * 25 * 30 / (40 * 15)) / log(25 * 30)
+                #      (40 * 15) * (25 * 30)**x = 20 * 25 * 10 * 30
+                #   => 600 * 750**x = 150000
+                #   => x = log(150000 / 600) / log(750)
                 #   => x = 0.834048317232446
                 #
-                # Note: If we are here, then it must be the case that
-                #       pp_dask_gt_storage > 1 and pp_storage_ge_dask
-                #       < n_dask_elements. Therefore:
-                #        
-                #       a) log(pp_dask_gt_storage) > 0
+                # Note: If we are here calculating x, then it must be
+                #       the case that p_dask_gt_storage > 1 and
+                #       n_dask_elements >
+                #       p_storage_ge_dask. Therefore:
+                #
+                #       a) log(p_dask_gt_storage) > 0
                 #       b) x will be in the range (-inf, 1]
                 #       c) x will not be 0
-                x = log(n_dask_elements/pp_storage_ge_dask)/log(pp_dask_gt_storage)
-                print('x', x)
-            
-                # Adjust the Dask chunks
-                for  i, (sc, dc) in enumerate(zip(storage_chunks, dask_chunks[:])):
+                #       d) x will be 1 if no Dask element is less than
+                #          its corresponding storage element
+                #
+                # Note: There are other reasonable methods for
+                #       reducing the "other" Dask elements. With this
+                #       way (i.e. using a power of x that is <= 1),
+                #       however, larger values get reduced by a
+                #       greater factor than smaller values, thereby
+                #       promoting the Dask preference for square-like
+                #       chunk shapes.
+                x = log(n_dask_elements / p_storage_ge_dask) / log(
+                    p_dask_gt_storage
+                )
+                for i, (sc, dc) in enumerate(
+                    zip(storage_chunks, dask_chunks[:])
+                ):
                     if i in dask_gt_storage:
                         if x < 1:
-                            c = dc ** x
+                            c = dc**x
                             if c < sc:
-                                # The Dask element was larger than the
-                                # storage element, but became smaller
-                                # than it after being raised to the
-                                # power of x => we need to go round
-                                # again.
-                                carry_on = True
+                                # The Dask element is larger than the
+                                # storage element, but will become
+                                # smaller than it after being raised
+                                # to the power of x => we need to go
+                                # round the 2) iteration again,
+                                # because this new Dask element will
+                                # need increasing to its corresponding
+                                # storage element value.
+                                continue_iterating = True
+                        else:
+                            c = dc
                     else:
-                        # The Dask element is no larger than the
-                        # storage element, so replace it with the
+                        # The Dask element is less than or equal to
+                        # the storage element, so replace it with the
                         # storage element.
                         c = sc
-                        
-                    dask_chunks[i] = c
-                        
-            # All Dask elements are now at least as large the storage
-            # elements, so replace each Dask element with the largest
-            # multiple of the storage element that doesn't exceed the
-            # Dask element.
-            for  i, (sc, dc) in enumerate(zip(storage_chunks, dask_chunks[:])):
-                if i in dask_gt_storage:
-                    c =  divmod(int(dc), sc)[0] * sc
-                    if c < 1:
-                        c =1 
-                else:
-                    c = sc
-                    
-                dask_chunks[i] = c
-    
-            return dask_chunks            
 
+                    dask_chunks[i] = c
+
+            print("after 2) dask_chunks", dask_chunks)
+
+            # 3) All Dask elements are now greater than or equal to
+            #    their corresponding storage elements, so replace each
+            #    Dask element with the largest multiple of the storage
+            #    element that doesn't exceed the current Dask element.
+            #
+            # E.g. if the storage chunk is (12, 40, 40) and the
+            #      current Dask chunk is (12, 64, 128), then the Dask
+            #      chunk will be modified to be (12, 40, 120).
+            for i, (sc, dc) in enumerate(zip(storage_chunks, dask_chunks[:])):
+                if i in dask_gt_storage:
+                    c = divmod(int(dc), sc)[0] * sc
+                    if not c:
+                        # Analytically c must be >= 1, but it's
+                        # conceivable that rounding errors could
+                        # result in c being 0 instead of 1.
+                        c = 1
+
+                    dask_chunks[i] = c
+
+            print("after 3) dask_chunks", dask_chunks)
+
+            # Return the storage-aligned Dask chunks
+            return dask_chunks
 
         if chunks == "storage-exact":
-            netcdf_chunks = self._netcdf_chunksizes(g["variables"][ncvar])
-            if netcdf_chunks is None:
-                # Use the default Dask chunking for contiguous
-                # variables
-                return default_chunks
+            if storage_chunks is None:
+                # Use "auto" Dask chunking for contiguous variables
+                return "auto"
 
             # Set the Dask chunks to be exactly the storage chunks for
-            # chunked vaiables.
-            return netcdf_chunks
+            # chunked variables.
+            return storage_chunks
 
         if chunks is None:
             # No Dask chunking
             return -1
 
         if isinstance(chunks, dict):
-            if not chunks:
-                return default_chunks
-
             # For ncdimensions = ('t', 'lat'):
             #
-            # chunks={} -> ["auto", "auto"]
-            # chunks={'ncdim%t': 12} -> [12, "auto"]
-            # chunks={'ncdim%t': 12, 'ncdim%lat': 10000} -> [12, 10000]
-            # chunks={'ncdim%t': 12, 'ncdim%lat': "20MB"} -> [12, "20MB"]
-            # chunks={'ncdim%t': 12, 'latitude': -1} -> [12, -1]
-            # chunks={'ncdim%t': 12, 'Y': None} -> [12, None]
-            # chunks={'ncdim%t': 12, 'ncdim%lat': (30, 90)} -> [12, (30, 90)]
-            # chunks={'ncdim%t': 12, 'ncdim%lat': None, 'X': 5} -> [12, None]
+            # {}                                         -> ["auto", "auto"]
+            # {'ncdim%t': 12}                            -> [12, "auto"]
+            # {'ncdim%t': 12, 'ncdim%lat': 10000}        -> [12, 10000]
+            # {'ncdim%t': 12, 'ncdim%lat': "20MB"}       -> [12, "20MB"]
+            # {'ncdim%t': 12, 'latitude': -1}            -> [12, -1]
+            # {'ncdim%t': 12, 'Y': None}                 -> [12, None]
+            # {'ncdim%t': 12, 'ncdim%lat': (30, 90)}     -> [12, (30, 90)]
+            # {'ncdim%t': 12, 'ncdim%lat': None, 'X': 5} -> [12, None]
+            if not chunks:
+                return "auto"
+
             attributes = g["variable_attributes"]
             chunks2 = []
             for ncdim in g["variable_dimensions"][ncvar]:
@@ -10598,8 +10664,8 @@ class NetCDFRead(IORead):
                             break
 
                 if not found_coord_attr:
-                    # Use default chunks for this dimension
-                    chunks2.append(default_chunks)
+                    # Use "auto" chunks for this dimension
+                    chunks2.append("auto")
 
             chunks = chunks2
 
@@ -10784,9 +10850,11 @@ class NetCDFRead(IORead):
         """
         try:
             # netCDF4
-            chunking = variable.chunking()
-            if chunking == "contiguous":
-                return
+            chunks = variable.chunking()
+            if chunks == "contiguous":
+                chunks = None
         except AttributeError:
             # h5netcdf
-            return variable.chunks
+            chunks = variable.chunks
+
+        return chunks
