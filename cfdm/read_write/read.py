@@ -353,13 +353,15 @@ def read(
               `cfdm.chunksize`, favouring square-like chunk shapes,
               with the added restriction that the entirety of each
               storage chunk must also lie within exactly one Dask
-              chunk. When reading the data from disk, an entire
-              storage chunk could be read from disk once for each Dask
-              storage chunk that contains any part of it, so ensuring
-              that a storage chunk lies within only one Dask chunk can
-              increase performace by reducing the amount of disk
-              access (particulary when the data are stored remotely to
-              the client).
+              chunk.
+
+              When reading the data from disk, an entire storage chunk
+              could be read from disk once for each Dask storage chunk
+              that contains any part of it, so ensuring that a storage
+              chunk lies within only one Dask chunk can increase
+              performace by reducing the amount of disk access
+              (particulary when the data are stored remotely to the
+              client).
 
               For example, consider a file variable that has an array
               of 64-bit floats with shape (400, 300, 60) and a storage
@@ -387,6 +389,20 @@ def read(
                 60) and maximum size 3.96 MiB, if *dask_chunks* were
                 ``'auto'``.)
 
+              There are a some occasions when, for particular data
+              arrays in the file, the ``'auto'`` option will
+              automatically be used instead of storage-aligned Dask
+              chunks. This occurs when:
+
+              * The data array in the file is stored contiguously.
+
+              * The data array in the file is compressed by convention
+                (e.g. ragged array representations, compression by
+                gathering, subsampled coordinates, etc.). In this
+                case, the Dask chunks are for the uncompressed data,
+                and so cannot be aligned with the storage chunks of
+                the compressed array in the file.
+
             * ``'storage-exact'``
 
               Each Dask chunk will contain exactly one storage chunk
@@ -399,6 +415,20 @@ def read(
               chunks, each of size 0.23 MiB). Then the storage-exact
               Dask chunks will also have shape (100, 5, 60) giving 240
               Dask chunks with a maximum size of 0.23 MiB.
+
+              There are a some occasions when, for particular data
+              arrays in the file, the ``'auto'`` option will
+              automatically be used instead of storage-exact Dask
+              chunks. This occurs when:
+
+              * The data array in the file is stored contiguously.
+
+              * The data array in the file is compressed by convention
+                (e.g. ragged array representations, compression by
+                gathering, subsampled coordinates, etc.). In this
+                case, the Dask chunks are for the uncompressed data,
+                and so cannot be aligned with the storage chunks of
+                the compressed array in the file.
 
             * ``auto``
 

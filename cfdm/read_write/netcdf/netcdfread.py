@@ -2960,7 +2960,7 @@ class NetCDFRead(IORead):
 
         # The number of elements per instance. For the instances array
         # example above, the elements_per_instance array is [7, 5, 7].
-        elements_per_instance = count  # self._create_Data(array=count)
+        elements_per_instance = count
 
         instance_dimension_size = g["internal_dimension_sizes"][
             instance_dimension
@@ -6291,12 +6291,14 @@ class NetCDFRead(IORead):
         ):
             # The array is not compressed (or is not to be
             # uncompressed)
-            pass
+            compressed = False
 
         else:
             # The array might be compressed
+            compressed = False
 
             # Get the shape and ndim of the uncompressed data
+
             uncompressed_shape = tuple(
                 self._dimension_sizes(ncvar, parent_ncvar=parent_ncvar)
             )
@@ -6346,6 +6348,8 @@ class NetCDFRead(IORead):
                         compressed_dimensions=compressed_dimensions,
                         list_variable=c["list_variable"],
                     )
+                    compressed = True
+
                 elif "ragged_indexed_contiguous" in c:
                     # ------------------------------------------------
                     # Contiguous indexed ragged array
@@ -6371,6 +6375,7 @@ class NetCDFRead(IORead):
                         count_variable=c["count_variable"],
                         index_variable=c["index_variable"],
                     )
+                    compressed = True
 
                 elif "ragged_contiguous" in c:
                     # ------------------------------------------------
@@ -6393,6 +6398,7 @@ class NetCDFRead(IORead):
                         uncompressed_shape=uncompressed_shape,
                         count_variable=c["count_variable"],
                     )
+                    compressed = True
 
                 elif "ragged_indexed" in c:
                     # ------------------------------------------------
@@ -6415,6 +6421,7 @@ class NetCDFRead(IORead):
                         uncompressed_shape=uncompressed_shape,
                         index_variable=c["index_variable"],
                     )
+                    compressed = True
 
                 elif (
                     parent_ncvar is not None
@@ -6492,12 +6499,14 @@ class NetCDFRead(IORead):
                     interpolation_description=rec["interpolation_description"],
                     computational_precision=rec["computational_precision"],
                 )
+                compressed = True
 
         data = self._create_Data(
             array,
             units=units,
             calendar=calendar,
             ncvar=ncvar,
+            compressed=compressed,
         )
         data._original_filenames(define=filename)
 
@@ -7501,7 +7510,8 @@ class NetCDFRead(IORead):
         ncvar,
         units=None,
         calendar=None,
-        ncdimensions=(),
+        ncdimensions=None,
+        compressed=False,
         **kwargs,
     ):
         """Create a Data object from a netCDF variable.
@@ -7576,8 +7586,7 @@ class NetCDFRead(IORead):
                 array = np.ma.where(array == "", np.ma.masked, array)
 
         # Set the dask chunking strategy
-        #        print ('array.shape', array.shape, type(array))
-        chunks = self._dask_chunks(array, ncvar)
+        chunks = self._dask_chunks(array, ncvar, compressed)
 
         data = self.implementation.initialise_Data(
             array=array,
@@ -9261,6 +9270,7 @@ class NetCDFRead(IORead):
             units=properties.get("units"),
             calendar=properties.get("calendar"),
             ncvar=node_ncvar,
+            compressed=True,
         )
         self.implementation.set_data(bounds, bounds_data, copy=False)
 
@@ -9364,6 +9374,7 @@ class NetCDFRead(IORead):
                 units=attributes.get("units"),
                 calendar=attributes.get("calendar"),
                 ncvar=connectivity_ncvar,
+                compressed=True,
             )
         else:
             # Edge or face cells
@@ -9470,6 +9481,7 @@ class NetCDFRead(IORead):
             units=attributes.get("units"),
             calendar=attributes.get("calendar"),
             ncvar=connectivity_ncvar,
+            compressed=True,
         )
 
         # Initialise the cell connectivity construct
@@ -10393,15 +10405,24 @@ class NetCDFRead(IORead):
 
         return storage_options
 
-    def _dask_chunks(self, array, ncvar):
+    def _dask_chunks(self, array, ncvar, compressed):
         """Set the Dask chunking strategy for a netCDF variable.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
+            array:
+                The variable data. If the netCDF variable is
+                compressed by comvention, then *array* is in its
+                uncompressed form.
+
             ncvar: `str`
                 The name of the netCDF variable containing the array.
+
+            compressed: `bool`
+                Whether or not the netCDF variable is compressed by
+                convention.
 
         :Returns:
 
@@ -10409,33 +10430,34 @@ class NetCDFRead(IORead):
                 The chunks that are suitable for passing to a `Data`
                 object containing the variable's array.
 
-        **Examples**
-
-        >>> n._dask_chunks('tas')
-        -1
-        >>> n._dask_chunks('pr')
-        "auto"
-        >>> n._dask_chunks('ua')
-        [1, 73, "auto"]
-
         """
         g = self.read_vars
 
-        #        default = "auto"
-        chunks = g.get("dask_chunks", "auto")
+        dask_chunks = g.get("dask_chunks", "storage-aligned")
 
         storage_chunks = self._netcdf_chunksizes(g["variables"][ncvar])
-        if storage_chunks is not None:
+        ndim = array.ndim
+        if (
+            storage_chunks is not None
+            and not compressed
+            and len(storage_chunks) < ndim
+        ):
             # Remove irrelevant trailing dimensions (e.g. as used by
-            # charchar data type variables)
-            storage_chunks = storage_chunks[: array.ndim]
+            # char data-type variables)
+            storage_chunks = storage_chunks[:ndim]
 
-        if chunks == "storage-aligned":
-            if storage_chunks is None:
-                # Use "auto" Dask chunking for contiguous variables
+        # ------------------------------------------------------------
+        # storage-aligned
+        # ------------------------------------------------------------
+        if dask_chunks == "storage-aligned":
+            if compressed or storage_chunks is None:
+                # Use "auto" Dask chunking for contiguous variables,
+                # and variables compressed by convention. (In the
+                # latter case, the Dask chunks reflect the
+                # uncompressed data, rather than the compressed data
+                # found in the file.)
                 return "auto"
 
-            print("   storage_chunks=", storage_chunks)
             # --------------------------------------------------------
             # Strategy for creating storage-aligned Dask chunks:
             #
@@ -10462,11 +10484,11 @@ class NetCDFRead(IORead):
             #
             # E.g.
             #                       Chunk shape              Elements
-            #                       -----------------------  ---------
+            #      ---------------- -----------------------  ---------
             #      storage:         (50, 100, 150, 20,   5)   75000000
             #      original Dask:   (49, 101, 150,  5, 160)  593880000
             #      storage-aligned: (50, 100, 150, 20,  35)  525000000
-            #
+            #      ---------------- -----------------------  ---------
             #      storage:         (50, 100, 150, 20,   5)   75000000
             #      original Dask:   (5,   15, 150,  5, 160)    9000000
             #      storage-aligned: (50, 100, 150, 20,   5)   75000000
@@ -10476,25 +10498,26 @@ class NetCDFRead(IORead):
             dask_chunks = normalize_chunks(
                 "auto", shape=array.shape, dtype=array.dtype
             )
-            dask_chunks = [chunks[0] for chunks in dask_chunks]
+            dask_chunks = [sizes[0] for sizes in dask_chunks]
             n_dask_elements = prod(dask_chunks)
 
-            # 2) While there are Dask axis elements that are strictly
-            #    less than their corresponding storage axis elements,
+            # 2) While there are Dask axis elements that are less than
+            #    their corresponding storage axis elements,
             #    iteratively increase the those Dask axis elements
-            #    whilst reducig the other Dask axis elements so that
+            #    whilst reducing the other Dask axis elements so that
             #    the total number of Dask chunk elements is preserved.
             continue_iterating = True
             while continue_iterating:
-                print("in 1) dask_chunks=", dask_chunks)
+                #                print("in    1):", dask_chunks)
+
                 continue_iterating = False
 
-                # Index locations of Dask elements which are strictly
-                # greater than their corresponing storage elements
+                # Index locations of Dask elements which are greater
+                # than their corresponing storage elements
                 dask_gt_storage = []
 
-                # Product of Dask elements which are strictly greater
-                # than their corresponing storage element
+                # Product of Dask elements which are greater than
+                # their corresponing storage element
                 p_dask_gt_storage = 1
 
                 # Product of storage elements which are less than or
@@ -10504,15 +10527,15 @@ class NetCDFRead(IORead):
                 for i, (sc, dc) in enumerate(
                     zip(storage_chunks, dask_chunks[:])
                 ):
-                    if dc <= sc:
-                        # Storage element is at least as large as the
-                        # Dask element
-                        p_storage_ge_dask *= sc
-                    else:
-                        # Dask element is strictly larger than the
-                        # storage element
+                    if dc > sc:
+                        # Dask element is greater than the storage
+                        # element
                         dask_gt_storage.append(i)
                         p_dask_gt_storage *= dc
+                    else:
+                        # Dask element is less than or equal to the
+                        # storage element
+                        p_storage_ge_dask *= sc
 
                 if not dask_gt_storage:
                     # All Dask elements are now less than or equal to
@@ -10570,29 +10593,39 @@ class NetCDFRead(IORead):
                     zip(storage_chunks, dask_chunks[:])
                 ):
                     if i in dask_gt_storage:
-                        if x < 1:
+                        # The Dask element is greater than the storage
+                        # element => raise the Dask element to the
+                        # power of x.
+                        if x == 1:
+                            # After being raised to the power of x (=
+                            # 1), the Dask element will still be
+                            # greater than the storage element, so we
+                            # don't need to change it.
+                            c = dc
+                        else:
+                            # x < 1
                             c = dc**x
                             if c < sc:
-                                # The Dask element is larger than the
-                                # storage element, but will become
-                                # smaller than it after being raised
-                                # to the power of x => we need to go
-                                # round the 2) iteration again,
-                                # because this new Dask element will
-                                # need increasing to its corresponding
-                                # storage element value.
+                                # After being raised to the power of x
+                                # (< 1), the Dask element has become
+                                # less than the storage element => we
+                                # need to go round the 2) iteration
+                                # again, because this new Dask element
+                                # will need increasing to its
+                                # corresponding storage element value,
+                                # with the possibility of further
+                                # reductions of other Dask elements.
                                 continue_iterating = True
-                        else:
-                            c = dc
                     else:
                         # The Dask element is less than or equal to
                         # the storage element, so replace it with the
                         # storage element.
                         c = sc
 
+                    # Update the Dask chunk element
                     dask_chunks[i] = c
 
-            print("after 2) dask_chunks", dask_chunks)
+            #            print("after 2):", dask_chunks)
 
             # 3) All Dask elements are now greater than or equal to
             #    their corresponding storage elements, so replace each
@@ -10606,32 +10639,45 @@ class NetCDFRead(IORead):
                 if i in dask_gt_storage:
                     c = divmod(int(dc), sc)[0] * sc
                     if not c:
-                        # Analytically c must be >= 1, but it's
-                        # conceivable that rounding errors could
-                        # result in c being 0 instead of 1.
-                        c = 1
+                        # Analytically, c must be greater than or
+                        # equals to sc, but it's conceivable that
+                        # rounding errors could result in c being 0
+                        # when it should be sc.
+                        c = sc
 
                     dask_chunks[i] = c
 
-            print("after 3) dask_chunks", dask_chunks)
-
             # Return the storage-aligned Dask chunks
+            #            print("aligned:", dask_chunks)
             return dask_chunks
 
-        if chunks == "storage-exact":
-            if storage_chunks is None:
-                # Use "auto" Dask chunking for contiguous variables
+        # ------------------------------------------------------------
+        # storage-exact
+        # ------------------------------------------------------------
+        if dask_chunks == "storage-exact":
+            if compressed or storage_chunks is None:
+                # Use "auto" Dask chunking for contiguous variables,
+                # and variables compressed by convention. (In the
+                # latter case, the Dask chunks reflect the
+                # uncompressed data, rather than the compressed data
+                # found in the file.)
                 return "auto"
 
             # Set the Dask chunks to be exactly the storage chunks for
             # chunked variables.
             return storage_chunks
 
-        if chunks is None:
+        # ------------------------------------------------------------
+        # None
+        # ------------------------------------------------------------
+        if dask_chunks is None:
             # No Dask chunking
             return -1
 
-        if isinstance(chunks, dict):
+        # ------------------------------------------------------------
+        # dict
+        # ------------------------------------------------------------
+        if isinstance(dask_chunks, dict):
             # For ncdimensions = ('t', 'lat'):
             #
             # {}                                         -> ["auto", "auto"]
@@ -10642,15 +10688,15 @@ class NetCDFRead(IORead):
             # {'ncdim%t': 12, 'Y': None}                 -> [12, None]
             # {'ncdim%t': 12, 'ncdim%lat': (30, 90)}     -> [12, (30, 90)]
             # {'ncdim%t': 12, 'ncdim%lat': None, 'X': 5} -> [12, None]
-            if not chunks:
+            if not dask_chunks:
                 return "auto"
 
             attributes = g["variable_attributes"]
-            chunks2 = []
+            chunks = []
             for ncdim in g["variable_dimensions"][ncvar]:
                 key = f"ncdim%{ncdim}"
-                if key in chunks:
-                    chunks2.append(chunks[key])
+                if key in dask_chunks:
+                    chunks.append(dask_chunks[key])
                     continue
 
                 found_coord_attr = False
@@ -10658,18 +10704,21 @@ class NetCDFRead(IORead):
                 if dim_coord_attrs is not None:
                     for attr in ("standard_name", "axis"):
                         key = dim_coord_attrs.get(attr)
-                        if key in chunks:
+                        if key in dask_chunks:
                             found_coord_attr = True
-                            chunks2.append(chunks[key])
+                            chunks.append(dask_chunks[key])
                             break
 
                 if not found_coord_attr:
                     # Use "auto" chunks for this dimension
-                    chunks2.append("auto")
+                    chunks.append("auto")
 
-            chunks = chunks2
+            dask_chunks = chunks
 
-        return chunks
+        # ------------------------------------------------------------
+        # Return the Dask chunks
+        # ------------------------------------------------------------
+        return dask_chunks
 
     def _cache_data_elements(self, data, ncvar):
         """Cache selected element values.
