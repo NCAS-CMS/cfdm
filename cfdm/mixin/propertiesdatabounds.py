@@ -1452,7 +1452,7 @@ class PropertiesDataBounds(PropertiesData):
             if bounds is not None:
                 bounds.nc_set_hdf5_chunksizes(c)
 
-        # Set the interior_ring HDF5 chunks
+        # Set the  interior_ring HDF5 chunks
         if interior_ring:
             interior_ring = self.get_interior_ring(None)
             if interior_ring is not None:
