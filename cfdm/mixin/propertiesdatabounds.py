@@ -1432,7 +1432,7 @@ class PropertiesDataBounds(PropertiesData):
                 If True, the default, then apply the HDF5 chunking
                 strategy to the corresponding axis of a geometry
                 interior ring variable. If False then leave the
-                geometry interior ring variable chunking straegty
+                geometry interior ring variable chunking strategy
                 unchanged.
 
         :Returns:
