@@ -167,7 +167,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertIsNone(c.del_interior_ring(None))
 
     def test_AuxiliaryCoordinate_hdf5_chunksizes(self):
-        """Test the CiliaryCoordinate HDF5 chunksizes methods."""
+        """Test the AuxiliaryCoordinate HDF5 chunksizes methods."""
         c = self.aux1.copy()
         i = cfdm.InteriorRing(data=cfdm.Data(np.arange(26).reshape(13, 2)))
         c.set_interior_ring(i)

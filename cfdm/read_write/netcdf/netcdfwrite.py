@@ -5356,7 +5356,7 @@ class NetCDFWrite(IOWrite):
             return False, chunksizes
 
         # Still here? Then work out the chunking strategy from the
-        # hdf5_chunnks
+        # hdf5_chunks
         if hdf5_chunks == "contiguous":
             # Contiguous as defined by 'hdf_chunks'
             return True, None

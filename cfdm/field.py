@@ -2520,7 +2520,7 @@ class Field(
                 dictionary, if it evaluates to True then all metadata
                 constructs that have data are selected, and if it
                 evaluates to False (the default) then no metadata
-                constructs selected.
+                are constructs selected.
 
         :Returns:
 
@@ -2646,7 +2646,7 @@ class Field(
         >>> f.nc_set_hdf5_chunksizes([-1, None])
         >>> f.nc_hdf5_chunksizes()
         (5, 8)
-        >>> f.nc_set_hdf5_chunksizes(({'latitude': 999})
+        >>> f.nc_set_hdf5_chunksizes({'latitude': 999})
         >>> f.nc_hdf5_chunksizes()
         (5, 8)
 

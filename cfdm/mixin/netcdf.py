@@ -2612,7 +2612,8 @@ class NetCDFHDF5(NetCDF):
         >>> d.nc_set_hdf5_chunksizes({1: 24})
         >>> d.nc_hdf5_chunksizes()
         (1, 24, 73)
-        >>> d.nc_hdf5_chunksizes({0: None, 2: 50})
+        >>> d.nc_set_hdf5_chunksizes({0: None, 2: 50})
+        >>> d.nc_hdf5_chunksizes()
         (1, 24, 50)
 
         """

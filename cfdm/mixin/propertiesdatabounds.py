@@ -1383,7 +1383,7 @@ class PropertiesDataBounds(PropertiesData):
                 If True, the default, then clear the HDF5 chunking
                 strategy from a geometry interior ring variable. If
                 False then leave the geometry interior ring variable
-                chunking straegty unchanged.
+                chunking strategy unchanged.
 
         :Returns:
 

@@ -456,8 +456,8 @@ _docstring_substitution_definitions = {
                   defined. The chunking strategy will be determined at
                   write time by `{{package}}.write`.
 
-                * ``'contiguous'``: The data will written to the file
-                  contiguously, i.e. no chunking.
+                * ``'contiguous'``: The data will be written to the
+                  file contiguously, i.e. no chunking.
 
                 * `int` or `str`: The size in bytes of the HDF5
                   chunks. A string represents a quantity of byte

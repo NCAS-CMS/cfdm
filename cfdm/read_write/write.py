@@ -536,7 +536,7 @@ def write(
             to the file.
 
             If any data being written already stores its own chunking
-            stragey (i.e. its `nc_hdf5_chunksizes` method returns
+            strategy (i.e. its `nc_hdf5_chunksizes` method returns
             something other than `None`) then, for that data alone, it
             is used in preference to the strategy defined by the
             *hdf5_chunks* parameter.
@@ -576,8 +576,8 @@ def write(
             bytes).
 
             When the HDF5 chunk size is defined by a number of bytes
-            (taken either the *hdf5_chunks* parameter, or as stored by
-            the data itself), "square-like" HDF5 chunk shapes are
+            (taken either from the *hdf5_chunks* parameter, or as stored
+            by the data itself), "square-like" HDF5 chunk shapes are
             preferred that maximise the amount of chunks that are
             completely filled with data values. For example, with
             *hdf_chunks* of ``'4 MiB'``, a data array of 64-bit floats
