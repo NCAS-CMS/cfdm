@@ -1,3 +1,5 @@
+from numbers import Integral
+
 from dask.utils import parse_bytes
 
 from ..core.functions import deepcopy
@@ -2659,17 +2661,21 @@ class NetCDFHDF5(NetCDF):
 
                 c = []
                 for n, (i, j) in enumerate(zip(chunksizes, shape)):
+                    if not (
+                        i is None
+                        or (isinstance(i, Integral) and (i > 0 or i == -1))
+                    ):
+                        raise ValueError(
+                            f"Chunksize for dimension position {n} must be "
+                            f"None, -1, or a positive integer. Got {i!r}"
+                        )
+
                     if i is None or i == -1 or i > j:
                         # Set the chunk size to the dimension size
                         i = j
-                    elif i > 0:
+                    else:
                         # Make sure the chunk size is an integer
                         i = int(i)
-                    else:
-                        raise ValueError(
-                            f"Chunksize for dimension position {n} must be "
-                            f"None, -1, or a positive number. Got {i!r}"
-                        )
 
                     c.append(i)
 

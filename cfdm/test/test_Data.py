@@ -856,7 +856,13 @@ class DataTest(unittest.TestCase):
             self.assertEqual(d.nc_clear_hdf5_chunksizes(), 1024)
 
         # Bad chunk sizes
-        for chunksizes in ([2], [-99, 3, 4], "bad"):
+        for chunksizes in (
+            [2],
+            [-99, 3, 4],
+            [2, 3, 3.14],
+            [2, "bad", 4],
+            "bad",
+        ):
             with self.assertRaises(ValueError):
                 d.nc_set_hdf5_chunksizes(chunksizes)
 

@@ -416,14 +416,13 @@ _docstring_substitution_definitions = {
                   ``GiB``, ``TiB``, ``PiB``, ``KB``, ``MB``, ``GB``,
                   ``TB``, and ``PB``. Spaces in strings are optional.
 
-                * sequence: The maximum number of array elements in a
-                  chunk along each data axis, provided in the same
-                  order as the data axes. Values are automatically
-                  limited to the full size of their corresponding data
-                  axis; the special values `None` or ``-1`` may be
-                  used to indicate the full axis size; and floating
-                  point values are round down to the nearest
-                  integer. This chunking strategy may get
+                * sequence of `int` or `None`: The maximum number of
+                  array elements in a chunk along each data axis,
+                  provided in the same order as the data axes. Values
+                  are automatically limited to the full size of their
+                  corresponding data axis, but the special values
+                  `None` or ``-1`` may be used to indicate the full
+                  axis size. This chunking strategy may get
                   automatically modified by methods that change the
                   data shape (such as `insert_dimension`).
 
