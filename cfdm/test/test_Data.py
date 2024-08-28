@@ -652,19 +652,21 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data(9)
         self.assertTrue(d.equals(d.transpose()))
 
-    # def test_Data_unique(self):
-    #     """Test the unique Data method"""
-    #     d = cfdm.Data([[4, 2, 1], [1, 2, 3]], units="metre")
-    #     u = d.unique()
-    #     self.assertEqual(u.shape, (4,))
-    #     self.assertTrue(
-    #         (u.array == cfdm.Data([1, 2, 3, 4], "metre").array).all()
-    #     )
-    #
-    #     d[1, -1] = cfdm.masked
-    #     u = d.unique()
-    #     self.assertEqual(u.shape, (3,))
-    #     self.assertTrue((u.array == cfdm.Data([1, 2, 4], "metre").array).all())
+    def test_Data_unique(self):
+        """Test Data.unique."""
+        d = cfdm.Data([[4, 2, 1], [1, 2, 3]], units="metre")
+        u = d.unique()
+        self.assertEqual(u.shape, (4,))
+        self.assertTrue(
+            (u.array == cfdm.Data([1, 2, 3, 4], "metre").array).all()
+        )
+
+        d[1, -1] = cfdm.masked
+        u = d.unique()
+        self.assertEqual(u.shape, (4,))
+        self.assertTrue(
+            (u.array == np.ma.array([1, 2, 4, -99], mask=[0, 0, 0, 1])).all()
+        )
 
     def test_Data_equals(self):
         """Test the equality-testing Data method."""

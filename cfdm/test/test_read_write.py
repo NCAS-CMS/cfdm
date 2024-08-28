@@ -554,6 +554,7 @@ class read_writeTest(unittest.TestCase):
 
     def test_read_CDL(self):
         """Test the reading of files in CDL format."""
+        tmpfileh2 = "delme.nc"
         subprocess.run(
             " ".join(["ncdump", self.filename, ">", tmpfile]),
             shell=True,
