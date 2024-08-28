@@ -2527,7 +2527,7 @@ class NetCDFHDF5(NetCDF):
         if todict:
             if not isinstance(chunksizes, tuple):
                 raise ValueError(
-                    "Can only set todict=True when the HDF chunking strategy "
+                    "Can only set todict=True when the HDF5 chunking strategy "
                     "comprises the maximum number of array elements in a "
                     f"chunk along each data axis. Got: {chunksizes!r}"
                 )

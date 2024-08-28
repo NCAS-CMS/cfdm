@@ -440,13 +440,11 @@ _docstring_substitution_definitions = {
                   as `insert_dimension`).""",
     # hdf5 todict
     "{{hdf5 todict: `bool`, optional}}": """todict: `bool`, optional
-                If True then the HDF5 chunking strategy must comprise
-                the maximum number of array elements in a chunk along
-                each data axis, and these HDF chunk sizes are returned
-                in a `dict` keyed by axis positions. If False (the
-                default) then the HDF chunking strategy is returned
-                with any of the return options other than a `dict`, as
-                described below.""",
+                If True then the HDF5 chunk sizes are returned in a
+                `dict` keyed by their axis positions. If False (the
+                default) then the HDF5 chunking strategy is returned
+                in the same form that it was set (i.e. as `None`,
+                `int`, `str`, or `tuple`).""",
     # Returns nc_hdf5_chunksizes
     "{{Returns nc_hdf5_chunksizes}}": """`None` or `str` or `int` or `dict` or `tuple` of `int`
                 The current chunking strategy when writing to a
@@ -478,11 +476,11 @@ _docstring_substitution_definitions = {
                   methods that change the data shape (such as
                   `insert_dimension`).
 
-                * `dict`: The maximum number of array elements in a
-                  chunk along each axis. See the *todict* parameter
-                  for details. This chunking strategy may get
-                  automatically modified by methods that change the
-                  data shape (such as `insert_dimension`).""",
+                * `dict`: If *todict* is True, the maximum number of
+                  array elements in a chunk along each axis. This
+                  chunking strategy may get automatically modified by
+                  methods that change the data shape (such as
+                  `insert_dimension`).""",
     # init source
     "{{init compressed_dimensions: `dict`}}": """compressed_dimensions: `dict`
                 Mapping of compressed to uncompressed dimensions.
