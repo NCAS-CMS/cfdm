@@ -1430,7 +1430,7 @@ class PropertiesDataBounds(PropertiesData):
 
             interior_ring: `bool`
                 If True, the default, then apply the HDF5 chunking
-                strategy to the corresponding axes of a geometry
+                strategy to the corresponding axis of a geometry
                 interior ring variable. If False then leave the
                 geometry interior ring variable chunking straegty
                 unchanged.
