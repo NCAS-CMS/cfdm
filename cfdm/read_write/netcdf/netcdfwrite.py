@@ -2820,10 +2820,6 @@ class NetCDFWrite(IOWrite):
                 if value is not None
             ]
 
-            compressed = bool(
-                set(ncdimensions).intersection(g["sample_ncdim"].values())
-            )
-
             self._write_data(
                 data,
                 cfvar,
@@ -2831,7 +2827,7 @@ class NetCDFWrite(IOWrite):
                 ncdimensions,
                 domain_axes,
                 unset_values=unset_values,
-                compressed=compressed,
+                compressed=self._compressed_data(ncdimensions),
                 attributes=attributes,
                 construct_type=construct_type,
             )
@@ -2969,7 +2965,6 @@ class NetCDFWrite(IOWrite):
         g = self.write_vars
 
         if compressed:
-            # if set(ncdimensions).intersection(g['sample_ncdim'].values()):
             # Get the data as a compressed numpy array
             array = self.implementation.get_compressed_array(data)
         else:
@@ -5364,12 +5359,9 @@ class NetCDFWrite(IOWrite):
         # Still here? Then work out the chunks from both the
         # size-in-bytes given by hdf5_chunks (e.g. 1024, or '1 KiB'),
         # and the data shape (e.g. (12, 73, 96)).
-        compressed = bool(
-            set(ncdimensions).intersection(g["sample_ncdim"].values())
-        )
-        if compressed:
-            # Base the HDF5 chunks on the compressed
-            # data that is going into the file
+        if self._compressed_data(ncdimensions):
+            # Base the HDF5 chunks on the compressed data that is
+            # going into the file
             d = self.implementation.get_compressed_array(data)
         else:
             d = data
@@ -5390,3 +5382,29 @@ class NetCDFWrite(IOWrite):
             # The data is scalar, so 'chunksizes' is () => write the
             # data contiguously.
             return True, None
+
+    def _compressed_data(self, ncdimensions):
+        """Whether or not the data is being written in compreed form.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            ncdimensions: `sequence` of `str`
+                The ordered netCDF dimension names of the data. These
+                are the dimensions going into the file, and if the
+                data is compressed will differ from the dimensions
+                implied by the data in memory.
+
+        :Returns:
+
+            `bool`
+                `True` if the data is being in a compressed, for,
+                otherwise `False`.
+
+        """
+        return bool(
+            set(ncdimensions).intersection(
+                self.write_vars["sample_ncdim"].values()
+            )
+        )
