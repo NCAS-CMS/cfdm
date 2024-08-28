@@ -4716,7 +4716,8 @@ class NetCDFWrite(IOWrite):
                 .. versionadded:: (cfdm) 1.10.0.1
 
             hdf5_chunks: `str`, `int`, or `float`, optional
-                The HDF5 chunking strategy.
+                The HDF5 chunking strategy. The default
+                value is "4MiB".
 
                 See `cfdm.write` for details.
 
