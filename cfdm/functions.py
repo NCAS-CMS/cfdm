@@ -7,7 +7,9 @@ from numbers import Integral
 from urllib.parse import urlparse
 
 import numpy as np
+from dask import config as _config
 from dask.base import is_dask_collection
+from dask.utils import parse_bytes
 
 from . import __cf_version__, __file__, __version__, core
 from .constants import CONSTANTS, ValidLogLevels
@@ -28,7 +30,12 @@ _docstring_substitution_definitions = _subs
 del _subs
 
 
-def configuration(atol=None, rtol=None, log_level=None):
+def configuration(
+    atol=None,
+    rtol=None,
+    log_level=None,
+    chunksize=None,
+):
     """Views and sets constants in the project-wide configuration.
 
     The full list of global constants that are provided in a
@@ -37,6 +44,7 @@ def configuration(atol=None, rtol=None, log_level=None):
     * `atol`
     * `rtol`
     * `log_level`
+    * `chunksize`
 
     These are all constants that apply throughout `cfdm`, except for
     in specific functions only if overridden by the corresponding
@@ -53,7 +61,7 @@ def configuration(atol=None, rtol=None, log_level=None):
 
     .. versionadded:: (cfdm) 1.8.6
 
-    .. seealso:: `atol`, `rtol`, `log_level`
+    .. seealso:: `atol`, `rtol`, `log_level`, `chunksize`
 
     :Parameters:
 
@@ -77,6 +85,12 @@ def configuration(atol=None, rtol=None, log_level=None):
             * ``'DETAIL'`` (``3``);
             * ``'DEBUG'`` (``-1``).
 
+        chunksize: `float` or `Constant`, optional
+            The new chunksize in bytes. The default is to not change
+            the current behaviour.
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
     :Returns:
 
         `Configuration`
@@ -91,11 +105,13 @@ def configuration(atol=None, rtol=None, log_level=None):
     >>> cfdm.configuration()
     <{{repr}}Configuration: {'atol': 2.220446049250313e-16,
                      'rtol': 2.220446049250313e-16,
-                     'log_level': 'WARNING'}>
+                     'log_level': 'WARNING',
+                     'chunksize': 134217728}>
     >>> print(cfdm.configuration())
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
-     'log_level': 'WARNING'}
+     'log_level': 'WARNING',
+     'chunksize': 134217728}
 
     Make a change to one constant and see that it is reflected in the
     configuration:
@@ -105,7 +121,8 @@ def configuration(atol=None, rtol=None, log_level=None):
     >>> print(cfdm.configuration())
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
-     'log_level': 'DEBUG'}
+     'log_level': 'DEBUG',
+     'chunksize': 134217728}
 
     Access specific values by key querying, noting the equivalency to
     using its bespoke function:
@@ -120,23 +137,34 @@ def configuration(atol=None, rtol=None, log_level=None):
     >>> print(cfdm.configuration(atol=5e-14, log_level='INFO'))
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
-     'log_level': 'DEBUG'}
+     'log_level': 'DEBUG',
+     'chunksize': 134217728}
     >>> print(cfdm.configuration())
-    {'atol': 5e-14, 'rtol': 2.220446049250313e-16, 'log_level': 'INFO'}
+    {'atol': 5e-14,
+     'rtol': 2.220446049250313e-16,
+     'log_level': 'INFO',
+     'chunksize': 134217728}
 
     Set a single constant without using its bespoke function:
 
     >>> print(cfdm.configuration(rtol=1e-17))
-    {'atol': 5e-14, 'rtol': 2.220446049250313e-16, 'log_level': 'INFO'}
+    {'atol': 5e-14,
+     'rtol': 2.220446049250313e-16,
+     'log_level': 'INFO',
+     'chunksize': 134217728}
     >>> cfdm.configuration()
-    {'atol': 5e-14, 'rtol': 1e-17, 'log_level': 'INFO'}
+    {'atol': 5e-14,
+     'rtol': 1e-17,
+     'log_level': 'INFO',
+     'chunksize': 134217728}
 
     Use as a context manager:
 
     >>> print(cfdm.configuration())
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
-     'log_level': 'WARNING'}
+     'log_level': 'WARNING',
+     'chunksize': 134217728}
     >>> with cfdm.configuration(atol=9, rtol=10):
     ...     print(cfdm.configuration())
     ...
@@ -144,11 +172,16 @@ def configuration(atol=None, rtol=None, log_level=None):
     >>> print(cfdm.configuration())
     {'atol': 2.220446049250313e-16,
      'rtol': 2.220446049250313e-16,
-     'log_level': 'WARNING'}
+     'log_level': 'WARNING',
+     'chunksize': 134217728}
 
     """
     return _configuration(
-        Configuration, new_atol=atol, new_rtol=rtol, new_log_level=log_level
+        Configuration,
+        new_atol=atol,
+        new_rtol=rtol,
+        new_log_level=log_level,
+        new_chunksize=chunksize,
     )
 
 
@@ -193,6 +226,7 @@ def _configuration(_Configuration, **kwargs):
         "new_atol": atol,
         "new_rtol": rtol,
         "new_log_level": log_level,
+        "new_chunksize": chunksize,
     }
 
     old_values = {}
@@ -1444,6 +1478,80 @@ class rtol(ConstantAccess):
 
         """
         return float(arg)
+
+
+class chunksize(ConstantAccess):
+    """Set the default chunksize used by `dask` arrays.
+
+    If called without any arguments then the existing chunksize is
+    returned.
+
+    .. note:: Setting the chunk size will also change the `dask`
+              global configuration value ``'array.chunk-size'``. If
+              `chunksize` is used in context manager then the `dask`
+              configuration value is only altered within that context.
+              Setting the chunk size directly from the `dask`
+              configuration API will affect subsequent data creation,
+              but will *not* change the value of `chunksize`.
+
+    .. versionaddedd:: (cfdm) NEXTVERSION
+
+    :Parameters:
+
+        arg: number or `str` or `Constant`, optional
+            The chunksize in bytes. Any size accepted by
+            `dask.utils.parse_bytes` is accepted, for instance
+            ``100``, ``'100'``, ``'1e6'``, ``'100 MB'``, ``'100M'``,
+            ``'5kB'``, ``'5.4 kB'``, ``'1kiB'``, ``'1e6 kB'``, and
+            ``'MB'`` are all valid sizes.
+
+            Note that if *arg* is a `float`, or a string that implies
+            a non-integral amount of bytes, then the integer part
+            (rounded down) will be used.
+
+            *Parameter example:*
+               A chunksize of 2 MiB may be specified as ``'2097152'``
+               or ``'2 MiB'``
+
+            *Parameter example:*
+               Chunksizes of ``'2678.9'`` and ``'2.6789 KB'`` are both
+               equivalent to ``2678``.
+
+    :Returns:
+
+        `Constant`
+            The value prior to the change, or the current value if no
+            new value was specified.
+
+    **Examples**
+
+    >>> TODODASK
+
+    """
+
+    _name = "CHUNKSIZE"
+
+    def _parse(cls, arg):
+        """Parse a new constant value.
+
+        .. versionaddedd:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            cls:
+                This class.
+
+            arg:
+                The given new constant value.
+
+        :Returns:
+
+                A version of the new constant value suitable for insertion
+                into the `CONSTANTS` dictionary.
+
+        """
+        _config.set({"array.chunk-size": arg})
+        return parse_bytes(arg)
 
 
 class log_level(ConstantAccess):

@@ -55,7 +55,9 @@ def allclose(x, y, masked_equal=True, rtol=None, atol=None):
 
     """
     if rtol is None or atol is None:
-        raise ValueError("TODODASK")
+        raise ValueError(
+            "Must provide numeric values for the rtol and atol keywords"
+        )
 
     # Must pass rtol=rtol, atol=atol in as kwargs to allclose, rather than it
     # using those in local scope from the outer function arguments, because
@@ -93,6 +95,89 @@ def allclose(x, y, masked_equal=True, rtol=None, atol=None):
     return da.blockwise(
         allclose, "", x, axes, y, axes, dtype=bool, rtol=rtol, atol=atol
     )
+
+
+def collapse(
+    func,
+    d,
+    axis=None,
+    keepdims=True,
+    split_every=None,
+):
+    """Collapse data in-place using a given funcion.
+
+     .. versionadded:: (cfdm) NEXTVERSION
+
+    :Parameters:
+
+        func: callable
+            The function that collapses the underlying `dask` array of
+            *d*. Must have the minimum signature (parameters and
+            default values) ``func(dx, axis=None, keepdims=False,
+            mtol=None, split_every=None)``, where ``dx`` is a the dask
+            array contained in *d*.
+
+        d: `Data`
+            The data to be collapsed.
+
+        axis: (sequence of) int, optional
+            The axes to be collapsed. By default all axes are
+            collapsed, resulting in output with size 1. Each axis is
+            identified by its integer position. If *axes* is an empty
+            sequence then the collapse is applied to each scalar
+            element and the reuslt has the same shape as the input
+            data.
+
+        keepdims: `bool`, optional
+            By default, the axes which are collapsed are left in the
+            result as dimensions with size one, so that the result
+            will broadcast correctly against the input array. If set
+            to False then collapsed axes are removed from the data.
+
+        split_every: `int` or `dict`, optional
+            Determines the depth of the recursive aggregation. See
+            `dask.array.reduction` for details.
+
+    :Returns:
+
+        `Data`
+            The collapsed data.
+
+    """
+    dx = d.to_dask_array()
+    original_shape = dx.shape
+
+    # Parse the axes. By default flattened input is used.
+    if axis is None:
+        iaxes = tuple(range(dx.ndim))
+    else:
+        try:
+            iaxes = d._parse_axes(axis)
+        except ValueError as error:
+            raise ValueError(f"Can't min data: {error}")
+
+    dx = func(dx, axis=iaxes, keepdims=keepdims, split_every=split_every)
+    d._set_dask(dx)
+
+    # Remove collapsed axis identifiers
+    if iaxes and not keepdims:
+        d._axes = [axis for i, axis in enumerate(d._axes) if i not in iaxes]
+
+    # Update the HDF5 chunking strategy
+    chunksizes = d.nc_hdf5_chunksizes()
+    if (
+        chunksizes
+        and isinstance(chunksizes, tuple)
+        and dx.shape != original_shape
+    ):
+        if not keepdims:
+            chunksizes = [
+                size for i, size in enumerate(chunksizes) if i not in iaxes
+            ]
+
+        d.nc_set_hdf5_chunksizes(chunksizes)
+
+    return d
 
 
 def is_numeric_dtype(array):

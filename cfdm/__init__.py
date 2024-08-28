@@ -160,6 +160,7 @@ from .functions import (
     RTOL,
     abspath,
     atol,
+    chunksize,
     configuration,
     dirname,
     environment,

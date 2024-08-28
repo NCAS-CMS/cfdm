@@ -29,7 +29,6 @@ from ..mixin.container import Container
 from ..mixin.files import Files
 from ..mixin.netcdf import NetCDFAggregation, NetCDFHDF5
 
-# REVIEW: getitem: `data.py`: import asanyarray, filled
 from .abstract import Array
 # TODOCFA: this config thing might be good with subclasses ...?
 from .config import (
@@ -52,6 +51,7 @@ from .dask_utils import (
 )
 from .utils import (
     allclose,
+    collapse,
     convert_to_datetime,
     convert_to_reftime,
     first_non_missing_value,
@@ -331,7 +331,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 source=source, _use_array=_use_array and array is not None
             )
             if _use_array:
-                # REVIEW: getitem: `__init__`: set 'asanyarray'
                 try:
                     array = source.to_dask_array(asanyarray=False)
                 except (AttributeError, TypeError):
@@ -461,7 +460,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # deterministic name
         is_dask = is_dask_collection(array)
 
-        # REVIEW: getitem: `__init__`: Set whether or not to call `np.asanyarray` on chunks to convert them to numpy arrays.
         # Set whether or not to call `np.asanyarray` on chunks to
         # convert them to numpy arrays.
         if is_dask:
@@ -497,7 +495,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             # Reset the units
             self._Units = units
 
-        # REVIEW: getitem: `__init__`: set 'asanyarray'
         # Store the dask array
         self._set_dask(dx, clear=_NONE, asanyarray=None)
 
@@ -617,7 +614,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             return "{x:{f}}".format(x=self.first_element(), f=format_spec)
 
         raise ValueError(
-            f"Can't format Data array of size {n} with "
+            f"Can't format Data array of size {n} (greater than 1) with "
             f"format code {format_spec}"
         )
 
@@ -671,10 +668,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         if indices is Ellipsis:
             return self.copy()
 
-        shape = self.shape
+        original_shape = self.shape
         keepdims = self.__keepdims_indexing__
 
-        indices = parse_indices(shape, indices, keepdims=keepdims)
+        indices = parse_indices(original_shape, indices, keepdims=keepdims)
 
         new = self.copy()
         dx = self.to_dask_array(asanyarray=False)
@@ -721,7 +718,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 "Non-orthogonal indexing has not yet been implemented"
             )
 
-        # REVIEW: getitem: `__getitem__`: set 'asanyarray=True' because subspaced chunks might not be in memory
         # ------------------------------------------------------------
         # Set the subspaced dask array
         #
@@ -742,7 +738,17 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             ]
             new._axes = new_axes
 
-        # TODODASK: HDF5 chunks from branch hdf5-chunks
+        # Update the HDF5 chunking strategy
+        chunksizes = new.nc_hdf5_chunksizes()
+        if (
+            chunksizes
+            and isinstance(chunksizes, tuple)
+            and new.shape != original_shape
+        ):
+            if keepdims:
+                new.nc_set_hdf5_chunksizes(chunksizes)
+            else:
+                new.nc_clear_hdf5_chunksizes()
 
         return new
 
@@ -839,7 +845,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         TypeError: len() of unsized object
 
         """
-        # REVIEW: getitem: `__len__`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
@@ -911,30 +916,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                      `hardmask`
 
         """
-        shape = self.shape
-
-        # ancillary_mask = ()
-        # try:
-        #     arg = indices[0]
-        # except (IndexError, TypeError):
-        #     pass
-        # else:
-        #     if isinstance(arg, str) and arg == "mask":
-        #         # The indices include an ancillary mask that defines
-        #         # elements which are protected from assignment
-        #         original_self = self.copy()
-        #         ancillary_mask = indices[1]
-        #         indices = indices[2:]
-        #
-        # indices, roll = parse_indices(
-        #     shape,
-        #     indices,
-        #     cyclic=True,
-        #     keepdims=self.__keepdims_indexing__,
-        # )
+        original_shape = self.shape
 
         indices = parse_indices(
-            shape,
+            original_shape,
             indices,
             keepdims=self.__keepdims_indexing__,
         )
@@ -960,7 +945,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
                 index = np.array(index)
 
-                size = shape[i]
+                size = original_shape[i]
                 if index.dtype == bool:
                     # Convert True values to integers
                     index = np.arange(size)[index]
@@ -1424,7 +1409,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         else:
             return array.astype(dtype[0], copy=False)
 
-    # REVIEW: getitem: `__asanyarray__`: new property `__asanyarray__`
     @property
     def __asanyarray__(self):
         """Whether the chunks need conversion to a `numpy` array.
@@ -1643,14 +1627,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             other = type(self)(other)
 
-        # ------------------------------------------------------------
-        # Prepare data0 (i.e. self copied) and data1 (i.e. other)
-        # ------------------------------------------------------------
-        data0 = self.copy()
-
         # Cast as dask arrays
-        dx0 = data0.to_dask_array()
+        dx0 = self.to_dask_array()
         dx1 = other.to_dask_array()
+
+        original_shape = self.shape
+        original_ndim = self.ndim
 
         if inplace:
             # Find non-in-place equivalent operator (remove 'i')
@@ -1673,29 +1655,31 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         # Set axes when other has more dimensions than self
         axes = None
-        ndim0 = dx0.ndim
-        if not ndim0:
+        if not original_ndim:
             axes = other._axes
         else:
-            diff = dx1.ndim - ndim0
+            diff = dx1.ndim - original_ndim
             if diff > 0:
                 axes = list(self._axes)
                 for _ in range(diff):
                     axes.insert(0, new_axis_identifier(tuple(axes)))
 
-        if inplace:
-            self._set_dask(result)
-            if axes is not None:
-                self._axes = axes
+        d = self
+        if not inplace:
+            d = self.copy()
 
-            return self
+        d._set_dask(result)
+        if axes is not None:
+            d._axes = axes
 
-        else:
-            data0._set_dask(result)
-            if axes is not None:
-                data0._axes = axes
+        # Update the HDF5 chunking strategy
+        if (
+            isinstance(self.nc_hdf5_chunksizes(), tuple)
+            and d.shape != original_shape
+        ):
+            d.nc_clear_hdf5_chunksizes()
 
-            return data0
+        return d
 
     def _clear_after_dask_update(self, clear=_ALL):
         """Remove components invalidated by updating the `dask` array.
@@ -2124,7 +2108,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             dx = dx.copy()
 
         self._set_component("dask", dx, copy=False)
-        # REVIEW: getitem: `_set_dask`: set '__asanyarray__'
         if asanyarray is not None:
             self._set_component("__asanyarray__", bool(asanyarray), copy=False)
 
@@ -2446,14 +2429,15 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         elif not isinstance(a, np.ndarray):
             a = np.asanyarray(a)
 
-        if not a.size:
+        size = a.size
+        if not size:
             return a
 
         # Set cached elements
         items = [0, -1]
         if a.ndim == 2 and a.shape[-1] == 2:
             items.extend((1, -2))
-        elif a.size == 3:
+        elif size == 3:
             items.append(1)
 
         self._set_cached_elements({i: a.item(i) for i in items})
@@ -2665,7 +2649,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         [1 2 3]
 
         """
-        # REVIEW: getitem: `dtype`: set 'asanyarray'
         # This dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
@@ -2675,8 +2658,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def dtype(self, value):
         # Only change the data type if it's different to that of the
         # dask array
-        if self.dtype != value:
-            dx = self.to_dask_array()
+        dx = self.to_dask_array()
+        if dx.dtype != value:
             dx = dx.astype(value)
             self._set_dask(dx)
 
@@ -2827,7 +2810,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         24
 
         """
-        # REVIEW: getitem: `nbytes`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
@@ -2864,7 +2846,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         0
 
         """
-        # REVIEW: getitem: `ndim`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
@@ -2891,7 +2872,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         6
 
         """
-        # REVIEW: getitem: `npartitions`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
         return self.to_dask_array(asanyarray=False).npartitions
@@ -2917,7 +2897,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         6
 
         """
-        # REVIEW: getitem: `numblocks` set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
         return self.to_dask_array(asanyarray=False).numblocks
@@ -2950,7 +2929,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         ()
 
         """
-        # REVIEW: getitem: `shape`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
@@ -2992,7 +2970,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         1
 
         """
-        # REVIEW: getitem: `size` set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
@@ -3554,7 +3531,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
          ('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3])}
 
         """
-        # REVIEW: getitem: `cull_graph`: set 'asanyarray'
         dx = self.to_dask_array(asanyarray=False)
         dsk, _ = cull(dx.dask, dx.__dask_keys__())
         dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
@@ -4419,7 +4395,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                         f"data type {d.dtype.str!r}"
                     )
 
-        # REVIEW: getitem: `filled`: set 'asanyarray'
         # 'cfdm_filled' has its own call to 'cfdm_asanyarray', so we
         # can set 'asanyarray=False'.
         dx = d.to_dask_array(asanyarray=False)
@@ -4578,7 +4553,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         if len(axes) <= 1:
             return d
 
-        shape = self.shape
+        original_shape = self.shape
 
         # It is important that the first axis in the list is the
         # left-most flattened axis.
@@ -4595,20 +4570,29 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # E.g. if the *transposed* shape is (10, 20, 30, 50, 40, 60)
         #      and *transposed* axes [2, 3] are to be flattened then
         #      the new shape will be (10, 20, 1500, 40, 60)
-        new_shape = [n for i, n in enumerate(shape) if i not in axes]
-        new_shape.insert(axes[0], reduce(mul, [shape[i] for i in axes], 1))
+        new_shape = [n for i, n in enumerate(original_shape) if i not in axes]
+        new_shape.insert(
+            axes[0], reduce(mul, [original_shape[i] for i in axes], 1)
+        )
 
         dx = d.to_dask_array()
         dx = dx.reshape(new_shape)
         d._set_dask(dx)
 
+        # Update the axis names
         data_axes0 = d._axes
         data_axes = [
             axis for i, axis in enumerate(data_axes0) if i not in axes
         ]
         data_axes.insert(axes[0], new_axis_identifier(data_axes0))
         d._axes = data_axes
-        # TODODASK: HDF5 chunks from branch hdf5-chunks
+
+        # Update the HDF5 chunking strategy
+        if (
+            isinstance(d.nc_hdf5_chunksizes(), tuple)
+            and d.shape != original_shape
+        ):
+            d.nc_clear_hdf5_chunksizes()
 
         return d
 
@@ -4870,7 +4854,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """
         out = set()
 
-        # REVIEW: getitem: `get_filenames`: set 'asanyarray'
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
         for a in self.todict(asanyarray=False).values():
@@ -4878,8 +4861,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 out.update(a.get_filenames())
             except AttributeError:
                 pass
-
-        # TODODASK: HDF5 chunks from branch hdf5-chunks
 
         return out
 
@@ -5087,11 +5068,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         [1 -- 3]
 
         """
-        # REVIEW: getitem: `hardmask`: set 'asanyarray'
         # 'cfdm_harden_mask' has its own call to 'cfdm_asanyarray', so
         # we can set 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
-        dx = dx.map_blocks(cfdm_harden_mask, dtype=self.dtype)
+        dx = dx.map_blocks(cfdm_harden_mask, dtype=dx.dtype)
         self._set_dask(dx, clear=_NONE)
         self.hardmask = True
 
@@ -5183,6 +5163,16 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
+        >>> d.shape
+        (19, 73, 96)
+        >>> d.insert_dimension(0).shape
+        (1, 96, 73, 19)
+        >>> d.insert_dimension(3).shape
+        (19, 73, 96, 1)
+        >>> d.insert_dimension(-1, inplace=True)
+        >>> d.shape
+        (19, 73, 1, 96)
+
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
@@ -5190,19 +5180,20 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         if not isinstance(position, int):
             raise ValueError("Position parameter must be an integer")
 
-        ndim = d.ndim
-        if -ndim - 1 <= position < 0:
-            position += ndim + 1
-        elif not 0 <= position <= ndim:
+        original_ndim = self.ndim
+
+        if -original_ndim - 1 <= position < 0:
+            position += original_ndim + 1
+        elif not 0 <= position <= original_ndim:
             raise ValueError(
                 f"Can't insert dimension: Invalid position {position!r}"
             )
 
-        shape = list(d.shape)
-        shape.insert(position, 1)
+        new_shape = list(d.shape)
+        new_shape.insert(position, 1)
 
         dx = d.to_dask_array()
-        dx = dx.reshape(shape)
+        dx = dx.reshape(new_shape)
 
         # Inserting a dimension doesn't affect the cached elements nor
         # the aggregation write status
@@ -5214,7 +5205,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         data_axes.insert(position, axis)
         d._axes = data_axes
 
-        # TODODASK: HDF5 chunks from branch hdf5-chunks
+        # Update the HDF5 chunking strategy
+        chunksizes = d.nc_hdf5_chunksizes()
+        if chunksizes and isinstance(chunksizes, tuple):
+            chunksizes = list(chunksizes)
+            chunksizes.insert(position, 1)
+            d.nc_set_hdf5_chunksizes(chunksizes)
 
         return d
 
@@ -5371,26 +5367,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-
-        # Parse the axes. By default flattened input is used.
-        try:
-            iaxes = d._parse_axes(axes)
-        except ValueError as error:
-            raise ValueError(f"Can't max data: {error}")
-
-        keepdims = not squeeze
-        dx = d.to_dask_array()
-        dx = dx.max(axis=iaxes, keepdims=keepdims, split_every=split_every)
-        d._set_dask(dx)
-
-        # Remove collapsed axis identifiers
-        if iaxes and not keepdims:
-            d._axes = [
-                axis for i, axis in enumerate(d._axes) if i not in iaxes
-            ]
-
-        # TODODASK: HDF5 chunks from branch hdf5-chunks
-
+        d = collapse(
+            da.max,
+            d,
+            axis=axes,
+            keepdims=not squeeze,
+            split_every=split_every,
+        )
         return d
 
     @_inplace_enabled(default=False)
@@ -5440,26 +5423,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-
-        # Parse the axes. By default flattened input is used.
-        try:
-            iaxes = d._parse_axes(axes)
-        except ValueError as error:
-            raise ValueError(f"Can't min data: {error}")
-
-        keepdims = not squeeze
-        dx = d.to_dask_array()
-        dx = dx.min(axis=iaxes, keepdims=keepdims, split_every=split_every)
-        d._set_dask(dx)
-
-        # Remove collapsed axis identifiers
-        if iaxes and not keepdims:
-            d._axes = [
-                axis for i, axis in enumerate(d._axes) if i not in iaxes
-            ]
-
-        # TODODASK: HDF5 chunks from branch hdf5-chunks
-
+        d = collapse(
+            da.min,
+            d,
+            axis=axes,
+            keepdims=not squeeze,
+            split_every=split_every,
+        )
         return d
 
     @_inplace_enabled(default=False)
@@ -5818,16 +5788,18 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
+
+        original_ndim = self.ndim
+
         dx = d.to_dask_array()
         dx = dx.reshape(*shape, merge_chunks=merge_chunks, limit=limit)
 
         # Set axes when the new array has more dimensions than self
         axes = None
-        ndim0 = self.ndim
-        if not ndim0:
+        if not original_ndim:
             axes = generate_axis_identifiers(dx.ndim)
         else:
-            diff = dx.ndim - ndim0
+            diff = dx.ndim - original_ndim
             if diff > 0:
                 axes = list(self._axes)
                 for _ in range(diff):
@@ -5969,11 +5941,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         [  1 999   3]
 
         """
-        # REVIEW: getitem: `soften_mask`: set 'asanyarray'
         # 'cfdm_soften_mask' has its own call to 'cfdm_asanyarray', so
         # we can set 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
-        dx = dx.map_blocks(cfdm_soften_mask, dtype=self.dtype)
+        dx = dx.map_blocks(cfdm_soften_mask, dtype=dx.dtype)
         self._set_dask(dx, clear=_NONE)
         self.hardmask = False
 
@@ -6034,33 +6005,29 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         if not d.ndim:
             if axes or axes == 0:
-                raise ValueError(
-                    "Can't squeeze: Can't remove an axis from "
-                    f"scalar {d.__class__.__name__}"
-                )
+                raise ValueError("Can't squeeze axes from scalar data")
 
             if inplace:
                 d = None
 
             return d
 
-        shape = d.shape
+        original_shape = self.shape
 
         if axes is None:
-            iaxes = tuple([i for i, n in enumerate(shape) if n == 1])
+            iaxes = tuple([i for i, n in enumerate(original_shape) if n == 1])
         else:
             iaxes = d._parse_axes(axes)
-
-            # Check the squeeze axes
             for i in iaxes:
-                if shape[i] > 1:
+                if original_shape[i] > 1:
                     raise ValueError(
-                        f"Can't squeeze {d.__class__.__name__}: "
-                        f"Can't remove axis of size {shape[i]}"
+                        f"Can't squeeze axis in position {i} from data with "
+                        f"shape {original_shape}: Axis size is greater than 1"
                     )
 
         if not iaxes:
-            # Short circuit if the squeeze is a null operation
+            # Short circuit for a null operation (to avoid adding a
+            # null layer to the Dask graph).
             return d
 
         # Still here? Then the data array is not scalar and at least
@@ -6071,10 +6038,16 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # Squeezing a dimension doesn't affect the cached elements
         d._set_dask(dx, clear=_ALL ^ _CACHE)
 
-        # Remove the squeezed axes names
+        # Remove the squeezed axis names
         d._axes = [axis for i, axis in enumerate(d._axes) if i not in iaxes]
 
-        # TODODASK: HDF5 chunks from branch hdf5-chunks
+        # Update the HDF5 chunking strategy
+        chunksizes = d.nc_hdf5_chunksizes()
+        if chunksizes and isinstance(chunksizes, tuple):
+            chunksizes = [
+                size for i, size in enumerate(chunksizes) if i not in iaxes
+            ]
+            d.nc_set_hdf5_chunksizes(chunksizes)
 
         return d
 
@@ -6129,29 +6102,15 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-
-        # Parse the axes. By default flattened input is used.
-        try:
-            iaxes = d._parse_axes(axes)
-        except ValueError as error:
-            raise ValueError(f"Can't sum data: {error}")
-
-        keepdims = not squeeze
-        dx = d.to_dask_array()
-        dx = dx.sum(axis=iaxes, keepdims=keepdims, split_every=split_every)
-        d._set_dask(dx)
-
-        # Remove collapsed axis identifiers
-        if iaxes and not keepdims:
-            d._axes = [
-                axis for i, axis in enumerate(d._axes) if i not in iaxes
-            ]
-
-        # TODODASK: HDF5 chunks from branch hdf5-chunks
-
+        d = collapse(
+            da.sum,
+            d,
+            axis=axes,
+            keepdims=not squeeze,
+            split_every=split_every,
+        )
         return d
 
-    # REVIEW: getitem: `to_dask_array`: new keyword 'asanyarray'
     def to_dask_array(self, apply_mask_hardness=False, asanyarray=None):
         """Convert the data to a `dask` array.
 
@@ -6338,9 +6297,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         :Parameters:
 
             axes: (sequence of) `int`
-                The new axis order of the data array. By default the order
-                is reversed. Each axis of the new order is identified by
-                its original positive or negative integer position.
+                The new axis order of the data array. By default the
+                order is reversed. Each axis of the new order is
+                identified by its original positive or negative
+                integer position.
 
             {{inplace: `bool`, optional}}
 
@@ -6372,7 +6332,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             iaxes = d._parse_axes(axes)
 
         if iaxes == tuple(range(ndim)):
-            # Short circuit if the transpose is a null operation
+            # Short circuit for a null operation (to avoid adding a
+            # null layer to the Dask graph).
             return d
 
         data_axes = d._axes
@@ -6380,7 +6341,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         dx = d.to_dask_array()
         try:
-            dx = da.transpose(dx, axes=axes)
+            dx = da.transpose(dx, axes=iaxes)
         except ValueError:
             raise ValueError(
                 f"Can't transpose: Axes don't match array: {axes}"
@@ -6388,7 +6349,11 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         d._set_dask(dx)
 
-        # TODODASK: HDF5 chunks from branch hdf5-chunks
+        # Update the HDF5 chunking strategy
+        chunksizes = d.nc_hdf5_chunksizes()
+        if chunksizes and isinstance(chunksizes, tuple):
+            chunksizes = [chunksizes[i] for i in iaxes]
+            d.nc_set_hdf5_chunksizes(chunksizes)
 
         return d
 
@@ -6447,12 +6412,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `{{class}}`
-                The unique values in a 1-d array.
+            `{{class}}` or `None`
+                The unique values in a 1-d array, or `None` if the
+                operation was in-place.
 
         **Examples**
 
-        >>> d = {{package}}.{{class}}([[4, 2, 1], [1, 2, 3]], 'metre')
+        >>> d = {{package}}.{{class}}([[4, 2, 1], [1, 2, 3]], 'm')
         >>> print(d.array)
         [[4 2 1]
          [1 2 3]]
@@ -6469,10 +6435,24 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
+
+        original_shape = self.shape
+
         dx = d.to_dask_array()
         u = np.unique(dx.compute())
         dx = da.from_array(u, chunks=_DEFAULT_CHUNKS)
         d._set_dask(dx)
+
+        # Update the axis names
+        d._axes = generate_axis_identifiers(dx.ndim)
+
+        # Update the HDF5 chunking strategy
+        if (
+            isinstance(d.nc_hdf5_chunksizes(), tuple)
+            and d.shape != original_shape
+        ):
+            d.nc_clear_hdf5_chunksizes()
+
         return d
 
     # ----------------------------------------------------------------
