@@ -428,11 +428,10 @@ _docstring_substitution_definitions = {
 
                 * `dict`: The maximum number of array elements in a
                   chunk along the axes specified by the dictionary
-                  keys. Values are automatically limited to the full
-                  size of their corresponding data axis; the special
-                  values `None` or ``-1`` may be used to indicate the
-                  full axis size; and floating point values are round
-                  down to the nearest integer. The chunk size for an
+                  keys. Integer values are automatically limited to
+                  the full size of their corresponding data axis, and
+                  the special values `None` or ``-1`` may be used to
+                  indicate the full axis size. The chunk size for an
                   unspecified axis defaults to an existing chunk size
                   for that axis, if there is one, or else the axis
                   size. This chunking strategy may get automatically
