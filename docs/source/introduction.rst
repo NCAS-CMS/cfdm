@@ -79,7 +79,7 @@ The cfdm package can
   constructs <domain construct>` from netCDF and CDL datasets with a
   choice of netCDF backends,
 
-* full HDF5 chunking flexibility,
+* be fully flexible with respect to HDF5 chunking,
 
 * read files from OPeNDAP servers and S3 object stores,
  
