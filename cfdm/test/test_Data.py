@@ -862,6 +862,7 @@ class DataTest(unittest.TestCase):
             [2, 3, 3.14],
             [2, "bad", 4],
             "bad",
+            {2: 3.14},
         ):
             with self.assertRaises(ValueError):
                 d.nc_set_hdf5_chunksizes(chunksizes)
