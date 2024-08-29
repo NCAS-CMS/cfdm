@@ -368,29 +368,29 @@ def read(
               chunk shape of (100, 5, 60) (i.e. there are 240 storage
               chunks, each of size 0.23 MiB). Then:
 
-              * If `cfdm.chunksize` returns 134217728 (i.e. 128 MiB),
+              * If `cfdm.chunksize` returned 134217728 (i.e. 128 MiB),
                 then the storage-aligned Dask chunks will have shape
                 (400, 300, 60), giving 1 Dask chunk with size of 54.93
                 MiB. (Compare with a Dask chunk shape of (400, 300,
                 60) and size 54.93 MiB, if *dask_chunks* were
                 ``'auto'``.)
 
-              * If `cfdm.chunksize` returns 33554432 (i.e. 32 MiB),
+              * If `cfdm.chunksize` returned 33554432 (i.e. 32 MiB),
                 then the storage-aligned Dask chunks will have shape
                 (200, 260, 60), giving 4 Dask chunks with a maximum
                 size of 23.80 MiB. (Compare with a Dask chunk shape of
                 (264, 264, 60) and maximum size 31.90 MiB, if
                 *dask_chunks* were ``'auto'``.)
 
-              * If `cfdm.chunksize` returns 4194304 (i.e. 4 MiB), then
-                the storage-aligned Dask chunks will have shape (100,
-                85, 60), giving 16 Dask chunks with a maximum size of
-                3.89 MiB. (Compare with a Dask chunk shape of (93, 93,
-                60) and maximum size 3.96 MiB, if *dask_chunks* were
-                ``'auto'``.)
+              * If `cfdm.chunksize` returned 4194304 (i.e. 4 MiB),
+                then the storage-aligned Dask chunks will have shape
+                (100, 85, 60), giving 16 Dask chunks with a maximum
+                size of 3.89 MiB. (Compare with a Dask chunk shape of
+                (93, 93, 60) and maximum size 3.96 MiB, if
+                *dask_chunks* were ``'auto'``.)
 
-              There are a some occasions when, for particular data
-              arrays in the file, the ``'auto'`` option will
+              There are, however, some occasions when, for particular
+              data arrays in the file, the ``'auto'`` option will
               automatically be used instead of storage-aligned Dask
               chunks. This occurs when:
 
@@ -398,10 +398,10 @@ def read(
 
               * The data array in the file is compressed by convention
                 (e.g. ragged array representations, compression by
-                gathering, subsampled coordinates, etc.). In this
-                case, the Dask chunks are for the uncompressed data,
-                and so cannot be aligned with the storage chunks of
-                the compressed array in the file.
+                gathering, subsampled coordinates, etc.). In this case
+                the Dask chunks are for the uncompressed data, and so
+                cannot be aligned with the storage chunks of the
+                compressed array in the file.
 
             * ``'storage-exact'``
 
@@ -416,8 +416,8 @@ def read(
               Dask chunks will also have shape (100, 5, 60) giving 240
               Dask chunks with a maximum size of 0.23 MiB.
 
-              There are a some occasions when, for particular data
-              arrays in the file, the ``'auto'`` option will
+              There are, however, some occasions when, for particular
+              data arrays in the file, the ``'auto'`` option will
               automatically be used instead of storage-exact Dask
               chunks. This occurs when:
 
@@ -425,10 +425,10 @@ def read(
 
               * The data array in the file is compressed by convention
                 (e.g. ragged array representations, compression by
-                gathering, subsampled coordinates, etc.). In this
-                case, the Dask chunks are for the uncompressed data,
-                and so cannot be aligned with the storage chunks of
-                the compressed array in the file.
+                gathering, subsampled coordinates, etc.). In this case
+                the Dask chunks are for the uncompressed data, and so
+                cannot be aligned with the storage chunks of the
+                compressed array in the file.
 
             * ``auto``
 
