@@ -361,9 +361,10 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         out = self.copy(array=False)
         out._set_Array(array, copy=False)
 
-        if out.shape != self.shape:
-            # Delete hdf5 chunksizes
-            out.nc_clear_hdf5_chunksizes()
+        # Update the HDF5 chunking strategy
+        chunksizes = out.nc_hdf5_chunksizes()
+        if isinstance(chunksizes, tuple) and out.shape != self.shape:
+            out.nc_set_hdf5_chunksizes(chunksizes)
 
         return out
 
@@ -652,6 +653,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         [0 2 4 6]
 
         """
+        original_shape = self.shape
         inplace = method[2] == "i"
         if inplace:
             d = self
@@ -661,6 +663,13 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         array = np.asanyarray(getattr(self.array, method)(other))
 
         d._set_Array(array, copy=False)
+
+        # Update the HDF5 chunking strategy
+        if (
+            isinstance(self.nc_hdf5_chunksizes(), tuple)
+            and d.shape != original_shape
+        ):
+            d.nc_clear_hdf5_chunksizes()
 
         return d
 
@@ -1791,11 +1800,11 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         >>> d.shape
         (19, 73, 96)
-        >>> d.insert_dimension('domainaxis3').shape
+        >>> d.insert_dimension(0).shape
         (1, 96, 73, 19)
-        >>> d.insert_dimension('domainaxis3', position=3).shape
+        >>> d.insert_dimension(3).shape
         (19, 73, 96, 1)
-        >>> d.insert_dimension('domainaxis3', position=-1, inplace=True)
+        >>> d.insert_dimension(-1, inplace=True)
         >>> d.shape
         (19, 73, 1, 96)
 
@@ -1815,8 +1824,12 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         d._set_Array(array, copy=False)
 
-        # Delete hdf5 chunksizes
-        d.nc_clear_hdf5_chunksizes()
+        # Update the HDF5 chunking strategy
+        chunksizes = d.nc_hdf5_chunksizes()
+        if isinstance(chunksizes, tuple):
+            chunksizes = list(chunksizes)
+            chunksizes.insert(position, 1)
+            d.nc_set_hdf5_chunksizes(chunksizes)
 
         return d
 
@@ -2262,15 +2275,25 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         except ValueError as error:
             raise ValueError(f"Can't find maximum of data: {error}")
 
+        if axes is None:
+            axes = tuple(range(self.ndim))
+
+        keepdims = not squeeze
         array = self.array
-        array = np.amax(array, axis=axes, keepdims=not squeeze)
+        array = np.amax(array, axis=axes, keepdims=keepdims)
 
         out = self.copy(array=False)
         out._set_Array(array, copy=False)
 
-        if out.shape != self.shape:
-            # Delete hdf5 chunksizes
-            out.nc_clear_hdf5_chunksizes()
+        # Update the HDF5 chunking strategy
+        chunksizes = out.nc_hdf5_chunksizes()
+        if isinstance(chunksizes, tuple) and out.shape != self.shape:
+            if not keepdims:
+                chunksizes = [
+                    size for i, size in enumerate(chunksizes) if i not in axes
+                ]
+
+            out.nc_set_hdf5_chunksizes(chunksizes)
 
         return out
 
@@ -2334,15 +2357,25 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         except ValueError as error:
             raise ValueError(f"Can't find minimum of data: {error}")
 
+        if axes is None:
+            axes = tuple(range(self.ndim))
+
+        keepdims = True
         array = self.array
-        array = np.amin(array, axis=axes, keepdims=True)
+        array = np.amin(array, axis=axes, keepdims=keepdims)
 
         out = self.copy(array=False)
         out._set_Array(array, copy=False)
 
-        if out.shape != self.shape:
-            # Delete hdf5 chunksizes
-            out.nc_clear_hdf5_chunksizes()
+        # Update the HDF5 chunking strategy
+        chunksizes = out.nc_hdf5_chunksizes()
+        if isinstance(chunksizes, tuple) and out.shape != self.shape:
+            if not keepdims:
+                chunksizes = [
+                    size for i, size in enumerate(chunksizes) if i not in axes
+                ]
+
+            out.nc_set_hdf5_chunksizes(chunksizes)
 
         return out
 
@@ -2417,8 +2450,13 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         d._set_Array(array, copy=False)
 
-        # Delete hdf5 chunksizes
-        d.nc_clear_hdf5_chunksizes()
+        # Update the HDF5 chunking strategy
+        chunksizes = d.nc_hdf5_chunksizes()
+        if isinstance(chunksizes, tuple):
+            chunksizes = [
+                size for i, size in enumerate(chunksizes) if i not in axes
+            ]
+            d.nc_set_hdf5_chunksizes(chunksizes)
 
         return d
 
@@ -2488,15 +2526,25 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         except ValueError as error:
             raise ValueError(f"Can't sum data: {error}")
 
+        if axes is None:
+            axes = tuple(range(self.ndim))
+
+        keepdims = not squeeze
         array = self.array
-        array = np.sum(array, axis=axes, keepdims=not squeeze)
+        array = np.sum(array, axis=axes, keepdims=keepdims)
 
         d = self.copy(array=False)
         d._set_Array(array, copy=False)
 
-        if d.shape != self.shape:
-            # Delete hdf5 chunksizes
-            d.nc_clear_hdf5_chunksizes()
+        # Update the HDF5 chunking strategy
+        chunksizes = d.nc_hdf5_chunksizes()
+        if isinstance(chunksizes, tuple) and d.shape != self.shape:
+            if not keepdims:
+                chunksizes = [
+                    size for i, size in enumerate(chunksizes) if i not in axes
+                ]
+
+            d.nc_set_hdf5_chunksizes(chunksizes)
 
         return d
 
@@ -2565,6 +2613,12 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         array = np.transpose(array, axes=axes)
 
         d._set_Array(array, copy=False)
+
+        # Update the HDF5 chunking strategy
+        chunksizes = d.nc_hdf5_chunksizes()
+        if isinstance(chunksizes, tuple):
+            chunksizes = [chunksizes[i] for i in axes]
+            d.nc_set_hdf5_chunksizes(chunksizes)
 
         return d
 
@@ -3279,8 +3333,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         d = self.copy(array=False)
         d._set_Array(array, copy=False)
 
-        if d.shape != self.shape:
-            # Delete hdf5 chunksizes
+        # Update the HDF5 chunking strategy
+        if isinstance(d.nc_hdf5_chunksizes(), tuple) and d.shape != self.shape:
             d.nc_clear_hdf5_chunksizes()
 
         return d
@@ -3288,9 +3342,9 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
     # ----------------------------------------------------------------
     # Aliases
     # ----------------------------------------------------------------
-    def max(self, axes=None):
+    def max(self, axes=None, squeeze=False):
         """Alias for `maximum`."""
-        return self.maximum(axes=axes)
+        return self.maximum(axes=axes, squeeze=squeeze)
 
     def min(self, axes=None):
         """Alias for `minimum`."""

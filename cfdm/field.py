@@ -77,6 +77,8 @@ class Field(
 
     {{netCDF geometry group}}
 
+    {{netCDF HDF5 chunks}}
+
     Some components exist within multiple constructs, but when written
     to a netCDF dataset the netCDF names associated with such
     components will be arbitrarily taken from one of them. The netCDF
@@ -2440,6 +2442,312 @@ class Field(
                             )
 
         return f
+
+    def nc_hdf5_chunksizes(self, todict=False):
+        """Get the HDF5 chunking strategy for the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_hdf5_chunksizes`,
+                     `nc_set_hdf5_chunksizes`, `{{package}}.read`,
+                     `{{package}}.write`
+
+        :Parameters:
+
+            todict: `bool`, optional
+                If True then the HDF5 chunking strategy must comprise
+                the maximum number of array elements in a chunk along
+                each data axis, and these HDF chunk sizes are returned
+                in a `dict` keyed by domain axis identities. If False
+                (the default) then the HDF chunking strategy is
+                returned with any of the return options other than a
+                `dict`, as described below.
+
+        :Returns:
+
+            {{Returns nc_hdf5_chunksizes}}
+
+        """
+        chunksizes = super().nc_hdf5_chunksizes()
+
+        if todict:
+            if not isinstance(chunksizes, tuple):
+                raise ValueError(
+                    "Can only set todict=True when the HDF chunking strategy "
+                    "comprises the maximum number of array elements in a "
+                    f"chunk along each data axis. Got: {chunksizes!r}"
+                )
+
+            # Convert a tuple to a dict
+            data_axes = self.get_data_axes()
+            domain_axis_identity = self.constructs.domain_axis_identity
+            c = {
+                domain_axis_identity(axis): 1
+                for axis in self.domain_axes(todict=True)
+                if axis not in data_axes
+            }
+
+            for axis, value in zip(data_axes, chunksizes):
+                c[domain_axis_identity(axis)] = value
+
+            chunksizes = c
+
+        return chunksizes
+
+    def nc_clear_hdf5_chunksizes(self, constructs=False):
+        """Clear the HDF5 chunking strategy.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
+                     `{{package}}.read`, `{{package}}.write`
+
+        :Parameters:
+
+            constructs: `dict` or `bool`, optional
+                Also clear the HDF5 chunking strategy from selected
+                metadata constructs. The chunking strategies of
+                unselected metadata constructs are unchanged.
+
+                If *constructs* is a `dict` then the selected metadata
+                constructs are those that would be returned by
+                ``f.constructs.filter(**constructs,
+                filter_by_data=True)``. Note that an empty dictionary
+                will therefore select all metadata constructs that
+                have data. See `~Constructs.filter` for details.
+
+                For *constructs* being anything other than a
+                dictionary, if it evaluates to True then all metadata
+                constructs that have data are selected, and if it
+                evaluates to False (the default) then no metadata
+                are constructs selected.
+
+        :Returns:
+
+            `None` or `str` or `int` or `tuple` of `int`
+                The chunking strategy prior to being cleared, as would
+                be returned by `nc_hdf5_chunksizes`.
+
+        """
+        # Clear HDF5 chunksizes from the metadata
+        if isinstance(constructs, dict):
+            constructs = constructs.copy()
+        elif constructs:
+            constructs = {}
+        else:
+            constructs = None
+
+        if constructs is not None:
+            constructs["filter_by_data"] = True
+            constructs["todict"] = True
+            for key, construct in self.constructs.filter(**constructs).items():
+                construct.nc_clear_hdf5_chunksizes()
+
+        return super().nc_clear_hdf5_chunksizes()
+
+    def nc_set_hdf5_chunksizes(
+        self,
+        chunksizes,
+        ignore=False,
+        constructs=False,
+        **filter_kwargs,
+    ):
+        """Set the HDF5 chunking strategy.
+
+        .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
+                     `{{package}}.read`, `{{package}}.write`
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            {{hdf5 chunksizes}}
+                  Each dictionary key (``k``) specifies the unique
+                  axis that would be identified by ``f.domain_axis(k,
+                  **filter_kwargs)``, and it is allowed to specify a
+                  domain axis that is not spanned by the data
+                  array. See `domain_axis` for details.
+
+            constructs: `dict` or `bool`, optional
+                Also apply the HDF5 chunking strategy of the field
+                construct data to the applicable axes of selected
+                metadata constructs. The chunking strategies of
+                unselected metadata constructs are unchanged.
+
+                If *constructs* is a `dict` then the selected metadata
+                constructs are those that would be returned by
+                ``f.constructs.filter(**constructs,
+                filter_by_data=True)``. Note that an empty dictionary
+                will therefore select all metadata constructs that
+                have data. See `~Constructs.filter` for details.
+
+                For *constructs* being anything other than a
+                dictionary, if it evaluates to True then all metadata
+                constructs that have data are selected, and if it
+                evaluates to False (the default) then no metadata
+                constructs selected.
+
+            ignore: `bool`, optional
+                If True and *chunksizes* is a `dict` then ignore any
+                dictionary keys that do not identify a unique axis of
+                the field construct's data. If False, the default,
+                then an exception will be raised when such keys are
+                encountered.
+
+            filter_kwargs: optional
+                When *chunksizes* is a `dict`, provide additional
+                keyword arguments to `domain_axis` to customise axis
+                selection criteria.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> f = {{package}}.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> f.shape
+        (5, 8)
+        >>> print(f.nc_hdf5_chunksizes())
+        None
+        >>> f.nc_set_hdf5_chunksizes({'latitude': 1})
+        >>> f.nc_hdf5_chunksizes()
+        (1, 8)
+        >>> f.nc_set_hdf5_chunksizes({'longitude': 7})
+        >>> f.nc_hdf5_chunksizes()
+        (1, 7)
+        >>> f.nc_set_hdf5_chunksizes({'latitude': 4, 'longitude': 2})
+        >>> f.nc_hdf5_chunksizes()
+        (4, 2)
+        >>> f.nc_set_hdf5_chunksizes([1, 7])
+        >>> f.nc_hdf5_chunksizes()
+        (1, 7)
+        >>> f.nc_set_hdf5_chunksizes(64)
+        >>> f.nc_hdf5_chunksizes()
+        64
+        >>> f.nc_set_hdf5_chunksizes('128 B')
+        >>> f.nc_hdf5_chunksizes()
+        128
+        >>> f.nc_set_hdf5_chunksizes('contiguous')
+        >>> f.nc_hdf5_chunksizes()
+        'contiguous'
+        >>> f.nc_set_hdf5_chunksizes(None)
+        >>> print(f.nc_hdf5_chunksizes())
+        None
+
+        >>> f.nc_set_hdf5_chunksizes([-1, None])
+        >>> f.nc_hdf5_chunksizes()
+        (5, 8)
+        >>> f.nc_set_hdf5_chunksizes({'latitude': 999})
+        >>> f.nc_hdf5_chunksizes()
+        (5, 8)
+
+        >>> f.nc_set_hdf5_chunksizes({'latitude': 4, 'time': 1})
+        >>> f.nc_hdf5_chunksizes()
+        (4, 8)
+        >>> print(f.dimension_coordinate('time').nc_hdf5_chunksizes())
+        None
+        >>> print(f.dimension_coordinate('latitude').nc_hdf5_chunksizes())
+        None
+        >>> print(f.dimension_coordinate('longitude').nc_hdf5_chunksizes())
+        None
+
+        >>> f.nc_set_hdf5_chunksizes({'latitude': 4, 'time': 1}, constructs=True)
+        >>> f.dimension_coordinate('time').nc_hdf5_chunksizes()
+        (1,)
+        >>> f.dimension_coordinate('latitude').nc_hdf5_chunksizes()
+        (4,)
+        >>> f.dimension_coordinate('longitude').nc_hdf5_chunksizes()
+        (8,)
+        >>> f.nc_set_hdf5_chunksizes('contiguous', constructs={'filter_by_axis': ('longitude',)})
+        >>> f.nc_hdf5_chunksizes()
+        'contiguous'
+         >>> f.dimension_coordinate('time').nc_hdf5_chunksizes()
+        (1,)
+        >>> f.dimension_coordinate('latitude').nc_hdf5_chunksizes()
+        (4,)
+        >>> f.dimension_coordinate('longitude').nc_hdf5_chunksizes()
+        'contiguous'
+
+        >>> f.nc_set_hdf5_chunksizes({'height': 19, 'latitude': 3})
+        Traceback
+            ...
+        ValueError: Can't find unique 'height' axis. Consider setting ignore=True
+        >>> f.nc_set_hdf5_chunksizes({'height': 19, 'latitude': 3}, ignore=True)
+        >>> f.nc_hdf5_chunksizes(todict=True)
+        {'time': 1, 'latitude': 3, 'longitude': 8}
+
+        """
+        data_axes = self.get_data_axes()
+
+        chunksizes_keys = {}
+        if isinstance(chunksizes, dict):
+            # 'chunksizes' is a dictionary: Create a dictionary keyed
+            # by integer axis positions, and one keyed by domain axis
+            # identifiers.
+            chunksizes_positions = {}
+            for identity, value in chunksizes.items():
+                axis = self.domain_axis(identity, key=True, default=None)
+                if axis is None:
+                    if ignore:
+                        continue
+
+                    raise ValueError(
+                        f"Can't find unique {identity!r} axis. "
+                        "Consider setting ignore=True"
+                    )
+
+                chunksizes_keys[axis] = value
+                try:
+                    chunksizes_positions[data_axes.index(axis)] = value
+                except ValueError:
+                    pass
+
+            chunksizes = chunksizes_positions
+        elif constructs and not (
+            chunksizes is None or isinstance(chunksizes, (int, str))
+        ):
+            # 'chunksizes' is not None, not an integer, nor a string;
+            # so it must be a sequence => Create a dictionary keyed by
+            # domain axis identifiers for use with the metadata
+            # constructs.
+            chunksizes_keys = {
+                data_axes[n]: value for n, value in enumerate(chunksizes)
+            }
+
+        super().nc_set_hdf5_chunksizes(chunksizes)
+
+        # Set HDF5 chunksizes on the metadata
+        if isinstance(constructs, dict):
+            constructs = constructs.copy()
+        elif constructs:
+            constructs = {}
+        else:
+            constructs = None
+
+        if constructs is not None:
+            constructs["filter_by_data"] = True
+            constructs["todict"] = True
+            for key, construct in self.constructs.filter(**constructs).items():
+                if chunksizes_keys:
+                    construct_axes = self.get_data_axes(key)
+                    c = {
+                        n: chunksizes_keys[axis]
+                        for n, axis in enumerate(construct_axes)
+                        if axis in chunksizes_keys
+                    }
+                else:
+                    c = chunksizes
+
+                construct.nc_set_hdf5_chunksizes(c)
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):

@@ -20,6 +20,7 @@ def read(
     domain=False,
     netcdf_backend=None,
     storage_options=None,
+    store_hdf5_chunks=True,
     _implementation=_implementation,
 ):
     """Read field or domain constructs from a dataset.
@@ -56,7 +57,6 @@ def read(
     `~cfdm.DomainAxis.nc_set_unlimited` methods of a domain axis
     construct.
 
-
     **NetCDF hierarchical groups**
 
     Hierarchical groups in CF provide a mechanism to structure
@@ -69,7 +69,6 @@ def read(
     compliance to earlier versions of the CF conventions, the groups
     will be interpreted as per the latest release of the CF
     conventions.
-
 
     **CF-compliance**
 
@@ -328,6 +327,28 @@ def read(
 
             .. versionadded:: (cfdm) NEXTVERSION
 
+        store_hdf5_chunks: `bool`, optional
+            If True (the default) then store the HDF5 chunking
+            strategy for each returned data array. The HDF5 chunking
+            strategy is then accessible via an object's
+            `nc_hdf5_chunksizes` method. When the HDF5 chunking
+            strategy is stored, it will be used when the data is
+            written to a new netCDF4 file with `cfdm.write` (unless
+            the strategy was modified prior to writing).
+
+            If False, or if the file being read is not in netCDF4
+            format, then no HDF5 chunking strategy is stored.
+            (i.e. an `nc_hdf5_chunksizes` method will return `None`
+            for all `Data` objects). In this case, when the data is
+            written to a new netCDF4 file, the HDF5 chunking strategy
+            will be determined by `cfdm.write`.
+
+            See the `cfdm.write` *hdf5_chunks* parameter for details
+            on how the HDF5 chunking strategy is determined at the
+            time of writing.
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that provides the
             returned field constructs.
@@ -404,6 +425,7 @@ def read(
                 domain=domain,
                 storage_options=storage_options,
                 netcdf_backend=netcdf_backend,
+                store_hdf5_chunks=store_hdf5_chunks,
                 extra_read_vars=None,
             )
         except MaskError:
