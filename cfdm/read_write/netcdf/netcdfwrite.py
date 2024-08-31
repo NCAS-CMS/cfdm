@@ -5385,7 +5385,7 @@ class NetCDFWrite(IOWrite):
             return True, None
 
     def _compressed_data(self, ncdimensions):
-        """Whether or not the data is being written in compreed form.
+        """Whether or not the data is being written in compressed form.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
