@@ -23,6 +23,7 @@ def read(
     storage_options=None,
     cache=True,
     dask_chunks="storage-aligned",
+    store_hdf5_chunks=True,
     _implementation=_implementation,
 ):
     """Read field or domain constructs from a dataset.
@@ -59,7 +60,6 @@ def read(
     `~cfdm.DomainAxis.nc_set_unlimited` methods of a domain axis
     construct.
 
-
     **NetCDF hierarchical groups**
 
     Hierarchical groups in CF provide a mechanism to structure
@@ -72,7 +72,6 @@ def read(
     compliance to earlier versions of the CF conventions, the groups
     will be interpreted as per the latest release of the CF
     conventions.
-
 
     **CF-compliance**
 
@@ -516,6 +515,28 @@ def read(
                 None}`` or ``{'T': 12, 'ncdim%lat', None, 'ncdim%lon':
                 None}``.
 
+                .. versionadded:: (cfdm) NEXTVERSION
+
+        store_hdf5_chunks: `bool`, optional
+            If True (the default) then store the HDF5 chunking
+            strategy for each returned data array. The HDF5 chunking
+            strategy is then accessible via an object's
+            `nc_hdf5_chunksizes` method. When the HDF5 chunking
+            strategy is stored, it will be used when the data is
+            written to a new netCDF4 file with `cfdm.write` (unless
+            the strategy was modified prior to writing).
+
+            If False, or if the file being read is not in netCDF4
+            format, then no HDF5 chunking strategy is stored.
+            (i.e. an `nc_hdf5_chunksizes` method will return `None`
+            for all `Data` objects). In this case, when the data is
+            written to a new netCDF4 file, the HDF5 chunking strategy
+            will be determined by `cfdm.write`.
+
+            See the `cfdm.write` *hdf5_chunks* parameter for details
+            on how the HDF5 chunking strategy is determined at the
+            time of writing.
+
             .. versionadded:: (cfdm) NEXTVERSION
 
         _implementation: (subclass of) `CFDMImplementation`, optional
@@ -605,6 +626,7 @@ def read(
                 netcdf_backend=netcdf_backend,
                 cache=bool(cache),
                 dask_chunks=dask_chunks,
+                store_hdf5_chunks=store_hdf5_chunks,
                 extra_read_vars=None,
             )
         except MaskError:

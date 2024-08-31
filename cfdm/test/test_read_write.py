@@ -1013,6 +1013,64 @@ class read_writeTest(unittest.TestCase):
         )
         cfdm.write(f, tmpfile)
 
+    def test_write_hdf5_chunks(self):
+        """Test the 'hdf5_chunks' parameter to `cfdm.write`."""
+        f = cfdm.example_field(5)
+        f.nc_set_variable("data")
+
+        # Good hdf5_chunks values
+        for hdf5_chunks, chunking in zip(
+            ("4MiB", "8KiB", "5000", 314.159, 1, "contiguous"),
+            (
+                [118, 5, 8],
+                [25, 5, 8],
+                [15, 5, 8],
+                [3, 3, 3],
+                [1, 1, 1],
+                "contiguous",
+            ),
+        ):
+            cfdm.write(f, tmpfile, hdf5_chunks=hdf5_chunks)
+            nc = netCDF4.Dataset(tmpfile, "r")
+            self.assertEqual(nc.variables["data"].chunking(), chunking)
+            nc.close()
+
+        # Bad hdf5_chunks values
+        for hdf5_chunks in ("bad_value", None):
+            with self.assertRaises(ValueError):
+                cfdm.write(f, tmpfile, hdf5_chunks=hdf5_chunks)
+
+        # Check that user-set chunks are not overridden
+        for chunking in ([5, 4, 3], "contiguous"):
+            f.nc_set_hdf5_chunksizes(chunking)
+            for hdf5_chunks in ("4MiB", "contiguous"):
+                cfdm.write(f, tmpfile, hdf5_chunks=hdf5_chunks)
+                nc = netCDF4.Dataset(tmpfile, "r")
+                self.assertEqual(nc.variables["data"].chunking(), chunking)
+                nc.close()
+
+        f.nc_set_hdf5_chunksizes("120 B")
+        for hdf5_chunks in ("contiguous", "4MiB"):
+            cfdm.write(f, tmpfile, hdf5_chunks=hdf5_chunks)
+            nc = netCDF4.Dataset(tmpfile, "r")
+            self.assertEqual(nc.variables["data"].chunking(), [2, 2, 2])
+            nc.close()
+
+        # store_hdf5_chunks
+        f = cfdm.read(tmpfile)[0]
+        self.assertEqual(f.nc_hdf5_chunksizes(), (2, 2, 2))
+
+        f = cfdm.read(tmpfile, store_hdf5_chunks=False)[0]
+        self.assertIsNone(f.nc_hdf5_chunksizes())
+
+        # Scalar data is written contiguously
+        f = cfdm.example_field(0)
+        f = f[0, 0].squeeze()
+        cfdm.write(f, tmpfile)
+        nc = netCDF4.Dataset(tmpfile, "r")
+        self.assertEqual(nc.variables["q"].chunking(), "contiguous")
+        nc.close()
+
     def test_read_dask_chunks(self):
         """Test the 'dask_chunks' keyword of cfdm.read."""
         f = cfdm.example_field(0)
