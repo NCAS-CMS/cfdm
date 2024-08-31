@@ -5400,8 +5400,8 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             `bool`
-                `True` if the data is being in a compressed, for,
-                otherwise `False`.
+                `True` if the data is being written in a compressed
+                form, otherwise `False`.
 
         """
         return bool(
