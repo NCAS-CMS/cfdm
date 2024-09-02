@@ -10483,7 +10483,7 @@ class NetCDFRead(IORead):
 
             array:
                 The variable data. If the netCDF variable is
-                compressed by comvention, then *array* is in its
+                compressed by convention, then *array* is in its
                 uncompressed form.
 
             ncvar: `str`
@@ -10535,7 +10535,7 @@ class NetCDFRead(IORead):
             # 2) Whilst there are Dask axis elements that are strictly
             #    less than their corresponding storage axis elements,
             #    iteratively increase the those Dask axis elements
-            #    whilst reducig the other Dask axis elements so that
+            #    whilst reducing the other Dask axis elements so that
             #    the total number of Dask chunk elements is preserved.
             #
             # 3) When all Dask elements are greater than or equal to
@@ -10582,15 +10582,15 @@ class NetCDFRead(IORead):
                 continue_iterating = False
 
                 # Index locations of Dask elements which are greater
-                # than their corresponing storage elements
+                # than their corresponding storage elements
                 dask_gt_storage = []
 
                 # Product of Dask elements which are greater than
-                # their corresponing storage element
+                # their corresponding storage element
                 p_dask_gt_storage = 1
 
                 # Product of storage elements which are less than or
-                # equal to their corresponing Dask element
+                # equal to their corresponding Dask element
                 p_storage_ge_dask = 1
 
                 for i, (sc, dc) in enumerate(
@@ -10612,13 +10612,13 @@ class NetCDFRead(IORead):
                     # stop the iteration.
                     break
 
-                # Calulate the x which preserves the Dask chunk size
+                # Calculate the x that preserves the Dask chunk size
                 # (i.e. the number of elements in the Dask chunk) when
                 #
                 #  i) All Dask elements that are strictly less than
                 #     their corresponding storage axis elements have
-                #     been replaced with those correponding larger
-                #     values .
+                #     been replaced with those corresponding larger
+                #     values.
                 #
                 # ii) All other Dask elements have been reduced by
                 #     being raised to the power of x.
@@ -10637,9 +10637,9 @@ class NetCDFRead(IORead):
                 #   => x = log(150000 / 600) / log(750)
                 #   => x = 0.834048317232446
                 #
-                # Note: If we are here calculating x, then it must be
-                #       the case that p_dask_gt_storage > 1 and
-                #       n_dask_elements >
+                # Note: If we have reached here to calculate x, then
+                #       it must be the case that p_dask_gt_storage > 1
+                #       and n_dask_elements >
                 #       p_storage_ge_dask. Therefore:
                 #
                 #       a) log(p_dask_gt_storage) > 0
@@ -10654,7 +10654,9 @@ class NetCDFRead(IORead):
                 #       however, larger values get reduced by a
                 #       greater factor than smaller values, thereby
                 #       promoting the Dask preference for square-like
-                #       chunk shapes.
+                #       chunk shapes (although I suspect that in many
+                #       cases, different approaches will give the same
+                #       result).
                 x = log(n_dask_elements / p_storage_ge_dask) / log(
                     p_dask_gt_storage
                 )
@@ -10683,7 +10685,7 @@ class NetCDFRead(IORead):
                                 # will need increasing to its
                                 # corresponding storage element value,
                                 # with the possibility of further
-                                # reductions of other Dask elements.
+                                # reductions to other Dask elements.
                                 continue_iterating = True
                     else:
                         # The Dask element is less than or equal to
@@ -10708,8 +10710,8 @@ class NetCDFRead(IORead):
                 if i in dask_gt_storage:
                     c = divmod(int(dc), sc)[0] * sc
                     if not c:
-                        # Analytically, c must be greater than or
-                        # equals to sc, but it's conceivable that
+                        # Analytically, c must be a positive integer
+                        # multiple of sc, but it's conceivable that
                         # rounding errors could result in c being 0
                         # when it should be sc.
                         c = sc
