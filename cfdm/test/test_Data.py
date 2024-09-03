@@ -1485,8 +1485,8 @@ class DataTest(unittest.TestCase):
 
         self.assertTrue(d._get_cached_elements())
 
-        _ALL = cfdm.data.config._ALL
-        _CACHE = cfdm.data.config._CACHE
+        _ALL = cfdm.Data._ALL
+        _CACHE = cfdm.Data._CACHE
 
         d._set_dask(dx, clear=_ALL ^ _CACHE)
         self.assertTrue(d._get_cached_elements())
@@ -2075,6 +2075,12 @@ class DataTest(unittest.TestCase):
         b = d.array[0, [1, 3, 4], :][[True, False, True], ::-2]
         self.assertTrue((a == b).all())
 
+        # HDF5 chunks
+        d = cfdm.Data(np.arange(12).reshape(1, 4, 3))
+        d.nc_set_hdf5_chunksizes((1, 4, 3))
+        e = d[0, :2, :]
+        self.assertEqual(e.nc_hdf5_chunksizes(), (1, 2, 3))
+
     def test_Data_BINARY_AND_UNARY_OPERATORS(self):
         """Test arithmetic, logical and comparison operators on Data."""
         a = np.arange(3 * 4 * 5).reshape(3, 4, 5)
@@ -2459,15 +2465,41 @@ class DataTest(unittest.TestCase):
         d.nc_set_hdf5_chunksizes([-1, None, 999])
         self.assertEqual(d.nc_hdf5_chunksizes(), d.shape)
 
-    def test_Data__getitem__(self):
-        """Test Data.__getitem__"""
-        # TODOTEST: Add more cfdm.Data.__getitem__ tests
+    def test_Data_masked_where(self):
+        """Test Data.masked_where."""
+        array = np.array([[1, 2, 3], [4, 5, 6]])
+        d = cfdm.Data(array)
+        mask = [[0, 1, 0], [1, 0, 0]]
+        e = d.masked_where(mask)
+        ea = e.array
+        a = np.ma.masked_where(mask, array)
+        self.assertTrue((ea == a).all())
+        self.assertTrue((ea.mask == a.mask).all())
+        self.assertIsNone(d.masked_where(mask, inplace=True))
+        self.assertTrue(d.equals(e))
 
-        # HDF5 chunks
-        d = cfdm.Data(np.arange(12).reshape(1, 4, 3))
-        d.nc_set_hdf5_chunksizes((1, 4, 3))
-        e = d[0, :2, :]
-        self.assertEqual(e.nc_hdf5_chunksizes(), (1, 2, 3))
+    def test_Data_all(self):
+        """Test the `all` Data method."""
+        d = cfdm.Data([[1, 2], [3, 4]], "m")
+        self.assertTrue(d.all())
+        self.assertEqual(d.all(keepdims=False).shape, ())
+        self.assertEqual(d.all(axis=()).shape, d.shape)
+        self.assertTrue((d.all(axis=0).array == [True, True]).all())
+        self.assertTrue((d.all(axis=1).array == [True, True]).all())
+        self.assertEqual(d.all().Units, cfdm.Units())
+
+        d[0] = cfdm.masked
+        d[1, 0] = 0
+        self.assertTrue((d.all(axis=0).array == [False, True]).all())
+        self.assertTrue(
+            (
+                d.all(axis=1).array == np.ma.array([True, False], mask=[1, 0])
+            ).all()
+        )
+
+        d[...] = cfdm.masked
+        self.assertTrue(d.all())
+        self.assertFalse(d.all(keepdims=False))
 
 
 if __name__ == "__main__":

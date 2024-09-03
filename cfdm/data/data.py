@@ -1,22 +1,17 @@
 import logging
 import math
 import operator
-from functools import reduce
 from itertools import product, zip_longest
 from math import prod
 from numbers import Integral
-from operator import mul
 from os import sep
 
 import dask.array as da
 import numpy as np
-from dask import compute  # noqa: F401
 from dask.base import collections_to_dsk, is_dask_collection
 from dask.optimization import cull
 from netCDF4 import default_fillvals
 from scipy.sparse import issparse
-
-from cfdm import is_log_level_info
 
 from .. import core
 from ..constants import masked
@@ -25,21 +20,17 @@ from ..decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
-from ..functions import _numpy_allclose, abspath, parse_indices
+from ..functions import (
+    _numpy_allclose,
+    abspath,
+    is_log_level_info,
+    parse_indices,
+)
 from ..mixin.container import Container
 from ..mixin.files import Files
 from ..mixin.netcdf import NetCDFHDF5
+from ..units import Units
 from .abstract import Array
-from .config import (
-    _ALL,
-    _ARRAY,
-    _CACHE,
-    _CFA,
-    _DEFAULT_CHUNKS,
-    _DEFAULT_HARDMASK,
-    _NONE,
-    Units,
-)
 from .creation import to_dask
 from .dask_utils import (
     cfdm_asanyarray,
@@ -120,9 +111,23 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
       >>> d.shape
       (12, 19, 73, 96)
-      >>> d[..., d[0, 0, 0]>d[0, 0, 0].min()]
+      >>> d[..., d[0, 0, 0] > d[0, 0, 0].min()]
 
     """
+
+    # Constants used to specify which components should be cleared
+    # when a new dask array is set. See `clear_after_dask_update` for
+    # details. These must have values 2**N (N>0) except for _NONE
+    # which must be 0, and _ALL which must be the sum of other
+    # constants.
+    _NONE = 0  # =  0b000
+    _ARRAY = 1  # = 0b001
+    _CACHE = 2  # = 0b010
+    _CFA = 4  # =   0b100 TODOCFA: Placeholder
+    _ALL = 7  # =   0b111
+
+    # The default mask hardness
+    _DEFAULT_HARDMASK = True
 
     def __new__(cls, *args, **kwargs):
         """Store component classes."""
@@ -136,8 +141,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         units=None,
         calendar=None,
         fill_value=None,
-        hardmask=_DEFAULT_HARDMASK,
-        chunks=_DEFAULT_CHUNKS,
+        hardmask=True,
+        chunks="auto",
         dt=False,
         source=None,
         copy=True,
@@ -239,9 +244,9 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
                 .. versionadded:: (cfdm) 1.11.0.0
 
-            hardmask: `bool`, optional
-                If False then the mask is soft. By default the mask is
-                hard.
+            hardmask: `bool` or `None`, optional
+                If True (the default) then the mask is hard. If False
+                then the mask is soft.
 
             dt: `bool`, optional
                 If True then strings (such as ``'1990-12-01 12:00'``)
@@ -338,13 +343,13 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                     except (AttributeError, TypeError):
                         pass
                     else:
-                        self._set_dask(array, copy=copy, clear=_NONE)
+                        self._set_dask(array, copy=copy, clear=self._NONE)
                 else:
                     self._set_dask(
-                        array, copy=copy, clear=_NONE, asanyarray=None
+                        array, copy=copy, clear=self._NONE, asanyarray=None
                     )
             else:
-                self._del_dask(None, clear=_NONE)
+                self._del_dask(None, clear=self._NONE)
 
             # Units
             try:
@@ -362,7 +367,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                     pass
 
             # Mask hardness
-            self.hardmask = getattr(source, "hardmask", _DEFAULT_HARDMASK)
+            self.hardmask = getattr(source, "hardmask", self._DEFAULT_HARDMASK)
 
             # Indexing flags
             self.__keepdims_indexing__ = getattr(
@@ -489,7 +494,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             self._Units = units
 
         # Store the dask array
-        self._set_dask(dx, clear=_NONE, asanyarray=None)
+        self._set_dask(dx, clear=self._NONE, asanyarray=None)
 
         # Override the data type
         if dtype is not None:
@@ -498,20 +503,14 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         # Apply a mask
         if mask is not None:
             if sparse_array:
-                raise ValueError("Can't mask sparse array")
+                raise ValueError("Can't mask a sparse array")
 
-            try:
-                self.where(mask, masked, inplace=True)
-            except AttributeError:
-                array = self.array
-                array = cfdm_where(array, mask, masked, array, hardmask)
-                dx = da.from_array(array, chunks=chunks)
-                self._set_dask(dx)
+            self.masked_where(mask, inplace=True)
 
         # Apply masked values
         if mask_value is not None:
             if sparse_array:
-                raise ValueError("Can't mask sparse array")
+                raise ValueError("Can't mask a sparse array")
 
             self.masked_values(mask_value, inplace=True)
 
@@ -718,7 +717,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         #   so we set asanyarray=True to ensure that, if required,
         #   they are converted at compute time.
         # ------------------------------------------------------------
-        new._set_dask(dx, clear=_ALL, asanyarray=True)
+        new._set_dask(dx, clear=self._ALL, asanyarray=True)
 
         # ------------------------------------------------------------
         # Get the axis identifiers for the subspace
@@ -742,6 +741,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 new.nc_set_hdf5_chunksizes(chunksizes)
             else:
                 new.nc_clear_hdf5_chunksizes()
+
+        # CF-PYTHON: cyclic axes and ancillary masks
 
         return new
 
@@ -1676,7 +1677,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         return d
 
-    def _clear_after_dask_update(self, clear=_ALL):
+    def _clear_after_dask_update(self, clear=None):
         """Remove components invalidated by updating the `dask` array.
 
         Removes or modifies components that can't be guaranteed to be
@@ -1690,52 +1691,61 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         :Parameters:
 
-            clear: `int`, optional
+            clear: `int` or `None`, optional
+
                 Specify which components should be removed. Which
                 components are removed is determined by sequentially
-                combining *clear* with the ``_ARRAY``, ``_CACHE`` and
-                ``_CFA`` integer-valued contants, using the bitwise
-                AND operator:
+                combining an integer value of *clear* with
+                ``{{class}}._ARRAY``, ``{{class}}._CACHE`` and
+                ``{{class}}._CFA``, using the bitwise AND (&)
+                operator. If *clear* is `None` (the default) then the
+                value of ``{{class}}._ALL`` is used.
 
-                * If ``clear & _ARRAY`` is non-zero then a source
-                  array is deleted.
+                * If *clear* is `None` (the default) then all
+                  components are removed.
 
-                * If ``clear & _CACHE`` is non-zero then cached
-                  element values are deleted.
+                * If *clear* is ``{{class}}._ALL`` then all components
+                  are removed.
 
-                * If ``clear & _CFA`` is non-zero then the CFA write
-                  status is set to `False`.
+                * If *clear* is ``{{class}}._NONE`` then no components
+                  are removed.
 
-                By default *clear* is the ``_ALL`` integer-valued
-                constant, which results in all components being
-                removed.
+                * If ``clear & {{class}}._ARRAY`` is non-zero then a
+                  source array is deleted.
 
-                If *clear* is the ``_NONE`` integer-valued constant
-                then no components are removed.
+                * If ``clear & {{class}}._CACHE`` is non-zero then
+                  cached element values are deleted.
 
-                To retain a component and remove all others, use
-                ``_ALL`` with the bitwise OR operator. For instance,
-                if *clear* is ``_ALL ^ _CACHE`` then the cached
-                element values will be kept but all other components
-                will be removed.
+                * If ``clear & {{class}}._CFA`` is non-zero then the
+                  CFA write status is set to `False`.
+
+                To retain a component (or components) and remove all
+                others, use ``{{class}}._ALL`` with the bitwise OR (^)
+                operator. For instance, if *clear* is ``_ALL ^
+                _CACHE`` then this menas "all except cache", and
+                cached element values will be kept but all other
+                components will be removed.
 
         :Returns:
 
             `None`
 
         """
+        if clear is None:
+            clear = self._ALL
+
         if not clear:
             return
 
-        if clear & _ARRAY:
+        if clear & self._ARRAY:
             # Delete a source array
             self._del_Array(None)
 
-        if clear & _CACHE:
+        if clear & self._CACHE:
             # Delete cached element values
             self._del_cached_elements()
 
-        if clear & _CFA:
+        if clear & self._CFA:
             # Set the CFA write status to False
             self._cfa_del_write()
 
@@ -1772,7 +1782,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         self._del_component("cached_elements", None)
 
-    def _del_dask(self, default=ValueError(), clear=_ALL):
+    def _del_dask(self, default=ValueError(), clear=None):
         """Remove the dask array.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -2014,7 +2024,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         self._set_Array(array, copy=copy)
 
-    def _set_dask(self, dx, copy=False, clear=_ALL, asanyarray=False):
+    def _set_dask(self, dx, copy=False, clear=None, asanyarray=False):
         """Set the dask array.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -2680,7 +2690,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         [-1 -1 -1]
 
         """
-        return self._get_component("hardmask", _DEFAULT_HARDMASK)
+        return self._get_component("hardmask", self._DEFAULT_HARDMASK)
 
     @hardmask.setter
     def hardmask(self, value):
@@ -2692,6 +2702,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         The Boolean mask has True where the data array has missing data
         and False otherwise.
+
+        .. seealso:: `masked_values`, `masked_where`
 
         :Returns:
 
@@ -2715,7 +2727,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         mask_data_obj._set_dask(mask)
         mask_data_obj._Units = self._Units_class(None)
-        mask_data_obj.hardmask = _DEFAULT_HARDMASK
+        mask_data_obj.hardmask = self._DEFAULT_HARDMASK
 
         return mask_data_obj
 
@@ -2775,7 +2787,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         >>> d = {{package}}.{{class}}([3])
         >>> d.ndim
-        1
+        12
 
         >>> d = {{package}}.{{class}}(3)
         >>> d.ndim
@@ -2808,7 +2820,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
-        return self.to_dask_array(asanyarray=False).npartitions
+        dx = self.to_dask_array(asanyarray=False)
+        return dx.npartitions
 
     @property
     def numblocks(self):
@@ -2831,7 +2844,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
-        return self.to_dask_array(asanyarray=False).numblocks
+        dx = self.to_dask_array(asanyarray=False)
+        return dx.numblocks
 
     @property
     def shape(self):
@@ -2984,7 +2998,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         # CF-PYTHON: Override
         del self._Units
 
-    def compute(self):  # noqa: F811
+    def compute(self):
         """A view of the computed data.
 
         In-place changes to the returned array *might* affect the
@@ -3184,10 +3198,78 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         dx = self.to_dask_array(asanyarray=False)
         dsk, _ = cull(dx.dask, dx.__dask_keys__())
         dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
-        self._set_dask(dx, clear=_NONE, asanyarray=None)
+        self._set_dask(dx, clear=self._NONE, asanyarray=None)
+
+    def all(self, axis=None, keepdims=True, split_every=None):
+        """Test whether all data array elements evaluate to True.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `any`
+
+        :Parameters:
+
+            axis: (sequence of) `int`, optional
+                Axis or axes along which a logical AND reduction is
+                performed. The default (`None`) is to perform a
+                logical AND over all the dimensions of the input
+                array. *axis* may be negative, in which case it counts
+                from the last to the first axis.
+
+            {{collapse keepdims: `bool`, optional}}
+
+            {{split_every: `int` or `dict`, optional}}
+
+        :Returns:
+
+            `{{class}}`
+                Whether or not all data array elements evaluate to True.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([[1, 2], [3, 4]])
+        >>> d.all()
+        <{{repr}}Data(1, 1): [[True]]>
+        >>> d.all(keepdims=False)
+        <{{repr}}Data(1, 1): True>
+        >>> d.all(axis=0)
+        <{{repr}}Data(1, 2): [[True, True]]>
+        >>> d.all(axis=1)
+        <{{repr}}Data(2, 1): [[True, True]]>
+        >>> d.all(axis=())
+        <{{repr}}Data(2, 2): [[True, ..., True]]>
+
+        >>> d[0] = cf.masked
+        >>> d[1, 0] = 0
+        >>> print(d.array)
+        [[-- --]
+         [0 4]]
+        >>> d.all(axis=0)
+        <{{repr}}Data(1, 2): [[False, True]]>
+        >>> d.all(axis=1)
+        <{{repr}}Data(2, 1): [[--, False]]>
+
+        >>> d[...] = cf.masked
+        >>> d.all()
+        <{{repr}}Data(1, 1): [[--]]>
+        >>> bool(d.all())
+        True
+        >>> bool(d.all(keepdims=False))
+        False
+
+        """
+        d = self.copy(array=False)
+        dx = self.to_dask_array()
+        dx = da.all(dx, axis=axis, keepdims=keepdims, split_every=split_every)
+        d._set_dask(dx)
+        d.hardmask = self._DEFAULT_HARDMASK
+        d._Units = self._Units_class(None)
+        return d
 
     def any(self, axis=None, keepdims=True, split_every=None):
         """Test whether any data array elements evaluate to True.
+
+        .. seealso:: `all`
 
         :Parameters:
 
@@ -3243,7 +3325,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         dx = self.to_dask_array()
         dx = da.any(dx, axis=axis, keepdims=keepdims, split_every=split_every)
         d._set_dask(dx)
-        d.hardmask = _DEFAULT_HARDMASK
+        d.hardmask = self._DEFAULT_HARDMASK
         d._Units = self._Units_class(None)
         return d
 
@@ -3451,7 +3533,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         return d
 
     def chunk_indices(self):
-        """Return indices that define each dask compute chunk.
+        """Return indices that define each dask chunk.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -3587,7 +3669,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         if updated:
             dx = self.to_dask_array(asanyarray=False)
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
-            self._set_dask(dx, clear=_NONE, asanyarray=None)
+            self._set_dask(dx, clear=self._NONE, asanyarray=None)
 
         return location
 
@@ -3647,7 +3729,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         dtype=None,
         units=None,
         calendar=None,
-        chunks=_DEFAULT_CHUNKS,
+        chunks="auto",
     ):
         """Return a new array of given shape and type, without
         initialising entries.
@@ -4161,9 +4243,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         #      and *transposed* axes [2, 3] are to be flattened then
         #      the new shape will be (10, 20, 1500, 40, 60)
         new_shape = [n for i, n in enumerate(original_shape) if i not in axes]
-        new_shape.insert(
-            axes[0], reduce(mul, [original_shape[i] for i in axes], 1)
-        )
+        new_shape.insert(axes[0], prod([original_shape[i] for i in axes]))
 
         dx = d.to_dask_array()
         dx = dx.reshape(new_shape)
@@ -4662,7 +4742,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         # we can set 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
         dx = dx.map_blocks(cfdm_harden_mask, dtype=dx.dtype)
-        self._set_dask(dx, clear=_NONE)
+        self._set_dask(dx, clear=self._NONE)
         self.hardmask = True
 
     def has_calendar(self):
@@ -4787,7 +4867,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         # Inserting a dimension doesn't affect the cached elements nor
         # the CFA write status
-        d._set_dask(dx, clear=_ALL ^ _CACHE ^ _CFA)
+        d._set_dask(dx, clear=self._ALL ^ self._CACHE ^ self._CFA)
 
         # Expand _axes
         axis = new_axis_identifier(d._axes)
@@ -4859,7 +4939,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         .. versionadded:: (cfdm) 1.11.0.0
 
-        .. seealso:: `mask`
+        .. seealso:: `mask`, `masked_where`
 
         :Parameters:
 
@@ -4902,6 +4982,53 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         dx = d.to_dask_array()
         dx = da.ma.masked_values(dx, value, rtol=rtol, atol=atol)
         d._set_dask(dx)
+        return d
+
+    @_inplace_enabled(default=False)
+    def masked_where(self, condition, inplace=False):
+        """Mask the data where a condition is met.
+
+        **Performance**
+
+        `masked_where` causes all delayed operations to be executed.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `mask`, `masked_values`
+
+        :Parameters:
+
+            condition: array_like
+                The masking condition. The data is masked where
+                *condition* is True. Any masked values already in the
+                data are also masked in the result.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The result of masking the data, or `None` if the
+                operation was in-place.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([1, 2, 3, 4, 5])
+        >>> e = d.masked_where([0, 1, 0, 1, 0])
+        >>> print(e.array)
+        [1 -- 3 -- 5]
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        array = cfdm_where(d.array, condition, masked, None, d.hardmask)
+        dx = da.from_array(array, chunks=d.chunks)
+        d._set_dask(dx)
+
         return d
 
     @_inplace_enabled(default=False)
@@ -5167,13 +5294,13 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         d = _inplace_enabled_define_and_cleanup(self)
         dx = self.to_dask_array()
         dx = dx.persist()
-        d._set_dask(dx, clear=_ALL ^ _ARRAY ^ _CACHE)
+        d._set_dask(dx, clear=self._ALL ^ self._ARRAY ^ self._CACHE)
         return d
 
     @_inplace_enabled(default=False)
     def rechunk(
         self,
-        chunks=_DEFAULT_CHUNKS,
+        chunks="auto",
         threshold=None,
         block_size_limit=None,
         balance=False,
@@ -5219,7 +5346,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         >>> y = x.rechunk({0: 1000})
 
         Use the value ``-1`` to specify that you want a single chunk
-        along a dimension or the value ``"auto"`` to specify that dask
+        along a dimension or the value ``'auto'`` to specify that dask
         can freely rechunk a dimension to attain blocks of a uniform
         block size.
 
@@ -5247,7 +5374,9 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         # in `__gettem__`.
         dx = d.to_dask_array(asanyarray=False)
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
-        d._set_dask(dx, clear=_ALL ^ _ARRAY ^ _CACHE, asanyarray=True)
+        d._set_dask(
+            dx, clear=self._ALL ^ self._ARRAY ^ self._CACHE, asanyarray=True
+        )
 
         return d
 
@@ -5318,28 +5447,26 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        original_ndim = self.ndim
+        original_shape = self.shape
+        original_ndim = len(original_shape)
 
         dx = d.to_dask_array()
         dx = dx.reshape(*shape, merge_chunks=merge_chunks, limit=limit)
-
-        # Set axes when the new array has more dimensions than self
-        axes = None
-        if not original_ndim:
-            axes = generate_axis_identifiers(dx.ndim)
-        else:
-            diff = dx.ndim - original_ndim
-            if diff > 0:
-                axes = list(self._axes)
-                for _ in range(diff):
-                    axes.insert(0, new_axis_identifier(tuple(axes)))
-
-        if axes is not None:
-            d._axes = axes
-
         d._set_dask(dx)
 
-        # CF-PYTHON: override
+        # Set axis names for the reshaped data
+        if dx.ndim != original_ndim:
+            d._axes = generate_axis_identifiers(dx.ndim)
+
+        # Update the HDF5 chunking strategy
+        if (
+            isinstance(d.nc_hdf5_chunksizes(), tuple)
+            and d.shape != original_shape
+        ):
+            d.nc_clear_hdf5_chunksizes()
+
+        # CF-PYTHON: Need to clear cyclic axes, as we can't help but
+        #            lose them in this operation
 
         return d
 
@@ -5474,7 +5601,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         # we can set 'asanyarray=False'.
         dx = self.to_dask_array(asanyarray=False)
         dx = dx.map_blocks(cfdm_soften_mask, dtype=dx.dtype)
-        self._set_dask(dx, clear=_NONE)
+        self._set_dask(dx, clear=self._NONE)
         self.hardmask = False
 
     @_inplace_enabled(default=False)
@@ -5565,7 +5692,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         dx = dx.squeeze(axis=iaxes)
 
         # Squeezing a dimension doesn't affect the cached elements
-        d._set_dask(dx, clear=_ALL ^ _CACHE)
+        d._set_dask(dx, clear=self._ALL ^ self._CACHE)
 
         # Remove the squeezed axis names
         d._axes = [axis for i, axis in enumerate(d._axes) if i not in iaxes]
@@ -5969,7 +6096,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         dx = d.to_dask_array()
         u = np.unique(dx.compute())
-        dx = da.from_array(u, chunks=_DEFAULT_CHUNKS)
+        dx = da.from_array(u, chunks="auto")
         d._set_dask(dx)
 
         # Update the axis names

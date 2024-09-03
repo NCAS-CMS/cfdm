@@ -169,11 +169,16 @@ def cfdm_where(array, condition, x, y, hardmask):
             *x* and *y* must not both be `None`.
 
         hardmask: `bool`
-           Set the mask hardness for a returned masked array. If True
-           then a returned masked array will have a hardened mask, and
-           the mask of the input *array* (if there is one) will be
-           applied to the returned array, in addition to any masked
-           elements arising from assignments from *x* or *y*.
+           Set the mask hardness for a returned masked `numpy` array.
+
+           If False then a returned masked `numpy` array will have a
+           soft mask.
+
+           If True then mask of the input `numpy` *array* (if there is
+           one) will be applied to the returned `numpy` array, in
+           addition to any masked elements arising from assignments
+           from *x* or *y*; and the if the returned `numpy` array is
+           masked then it will have a hard mask.
 
     :Returns:
 
