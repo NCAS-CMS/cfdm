@@ -23,6 +23,7 @@ def read(
     storage_options=None,
     cache=True,
     dask_chunks="storage-aligned",
+    store_hdf5_chunks=True,
     cfa=None,
     _implementation=_implementation,
 ):
@@ -60,7 +61,6 @@ def read(
     `~cfdm.DomainAxis.nc_set_unlimited` methods of a domain axis
     construct.
 
-
     **NetCDF hierarchical groups**
 
     Hierarchical groups in CF provide a mechanism to structure
@@ -73,7 +73,6 @@ def read(
     compliance to earlier versions of the CF conventions, the groups
     will be interpreted as per the latest release of the CF
     conventions.
-
 
     **CF-compliance**
 
@@ -349,49 +348,47 @@ def read(
 
             * ``'storage-aligned'``
 
-              **This is the default**. The Dask chunk size in bytes
-              will be as close as possible that given by
-              `cfdm.chunksize`, favouring square-like chunk shapes,
-              with the added restriction that the entirety of each
-              storage chunk must also lie within exactly one Dask
-              chunk.
+              This is the default. The Dask chunk size in bytes will
+              be as close as possible that given by `cfdm.chunksize`,
+              favouring square-like chunk shapes, with the added
+              restriction that the entirety of each storage chunk must
+              also lie within exactly one Dask chunk.
 
               When reading the data from disk, an entire storage chunk
-              could be read from disk once for each Dask storage chunk
-              that contains any part of it, so ensuring that a storage
+              could be read once for each Dask storage chunk that
+              contains any part of it, so ensuring that a storage
               chunk lies within only one Dask chunk can increase
-              performace by reducing the amount of disk access
-              (particulary when the data are stored remotely to the
+              performance by reducing the amount of disk access
+              (particularly when the data are stored remotely to the
               client).
 
               For example, consider a file variable that has an array
               of 64-bit floats with shape (400, 300, 60) and a storage
               chunk shape of (100, 5, 60) (i.e. there are 240 storage
-              chunks, each of size 0.23 MiB). Then:
+              chunks, each of size 100*5*60*8 bytes = 0.23 MiB). Then:
 
-              * If `cfdm.chunksize` returns 134217728 (i.e. 128 MiB),
+              * If `cfdm.chunksize` returned 134217728 (i.e. 128 MiB),
                 then the storage-aligned Dask chunks will have shape
                 (400, 300, 60), giving 1 Dask chunk with size of 54.93
-                MiB. (Compare with a Dask chunk shape of (400, 300,
-                60) and size 54.93 MiB, if *dask_chunks* were
-                ``'auto'``.)
+                MiB (compare with a Dask chunk shape of (400, 300, 60)
+                and size 54.93 MiB, if *dask_chunks* were ``'auto'``.)
 
-              * If `cfdm.chunksize` returns 33554432 (i.e. 32 MiB),
+              * If `cfdm.chunksize` returned 33554432 (i.e. 32 MiB),
                 then the storage-aligned Dask chunks will have shape
                 (200, 260, 60), giving 4 Dask chunks with a maximum
-                size of 23.80 MiB. (Compare with a Dask chunk shape of
+                size of 23.80 MiB (compare with a Dask chunk shape of
                 (264, 264, 60) and maximum size 31.90 MiB, if
                 *dask_chunks* were ``'auto'``.)
 
-              * If `cfdm.chunksize` returns 4194304 (i.e. 4 MiB), then
-                the storage-aligned Dask chunks will have shape (100,
-                85, 60), giving 16 Dask chunks with a maximum size of
-                3.89 MiB. (Compare with a Dask chunk shape of (93, 93,
-                60) and maximum size 3.96 MiB, if *dask_chunks* were
-                ``'auto'``.)
+              * If `cfdm.chunksize` returned 4194304 (i.e. 4 MiB),
+                then the storage-aligned Dask chunks will have shape
+                (100, 85, 60), giving 16 Dask chunks with a maximum
+                size of 3.89 MiB (compare with a Dask chunk shape of
+                (93, 93, 60) and maximum size 3.96 MiB, if
+                *dask_chunks* were ``'auto'``.)
 
-              There are a some occasions when, for particular data
-              arrays in the file, the ``'auto'`` option will
+              There are, however, some occasions when, for particular
+              data arrays in the file, the ``'auto'`` option will
               automatically be used instead of storage-aligned Dask
               chunks. This occurs when:
 
@@ -399,10 +396,10 @@ def read(
 
               * The data array in the file is compressed by convention
                 (e.g. ragged array representations, compression by
-                gathering, subsampled coordinates, etc.). In this
-                case, the Dask chunks are for the uncompressed data,
-                and so cannot be aligned with the storage chunks of
-                the compressed array in the file.
+                gathering, subsampled coordinates, etc.). In this case
+                the Dask chunks are for the uncompressed data, and so
+                cannot be aligned with the storage chunks of the
+                compressed array in the file.
 
             * ``'storage-exact'``
 
@@ -417,8 +414,8 @@ def read(
               Dask chunks will also have shape (100, 5, 60) giving 240
               Dask chunks with a maximum size of 0.23 MiB.
 
-              There are a some occasions when, for particular data
-              arrays in the file, the ``'auto'`` option will
+              There are, however, some occasions when, for particular
+              data arrays in the file, the ``'auto'`` option will
               automatically be used instead of storage-exact Dask
               chunks. This occurs when:
 
@@ -426,10 +423,10 @@ def read(
 
               * The data array in the file is compressed by convention
                 (e.g. ragged array representations, compression by
-                gathering, subsampled coordinates, etc.). In this
-                case, the Dask chunks are for the uncompressed data,
-                and so cannot be aligned with the storage chunks of
-                the compressed array in the file.
+                gathering, subsampled coordinates, etc.). In this case
+                the Dask chunks are for the uncompressed data, and so
+                cannot be aligned with the storage chunks of the
+                compressed array in the file.
 
             * ``auto``
 
@@ -468,7 +465,7 @@ def read(
 
             * `dict`
 
-              Each of dictionay key identifies a file dimension, with
+              Each of dictionary key identifies a file dimension, with
               a value that defines the Dask chunking for that
               dimension whenever it is spanned by a data array. A file
               dimension is identified in one of three ways:
@@ -516,6 +513,28 @@ def read(
                 either ``{'time': 12, 'ncdim%lat', None, 'ncdim%lon':
                 None}`` or ``{'T': 12, 'ncdim%lat', None, 'ncdim%lon':
                 None}``.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+        store_hdf5_chunks: `bool`, optional
+            If True (the default) then store the HDF5 chunking
+            strategy for each returned data array. The HDF5 chunking
+            strategy is then accessible via an object's
+            `nc_hdf5_chunksizes` method. When the HDF5 chunking
+            strategy is stored, it will be used when the data is
+            written to a new netCDF4 file with `cfdm.write` (unless
+            the strategy was modified prior to writing).
+
+            If False, or if the file being read is not in netCDF4
+            format, then no HDF5 chunking strategy is stored.
+            (i.e. an `nc_hdf5_chunksizes` method will return `None`
+            for all `Data` objects). In this case, when the data is
+            written to a new netCDF4 file, the HDF5 chunking strategy
+            will be determined by `cfdm.write`.
+
+            See the `cfdm.write` *hdf5_chunks* parameter for details
+            on how the HDF5 chunking strategy is determined at the
+            time of writing.
 
             .. versionadded:: (cfdm) NEXTVERSION
 
@@ -652,6 +671,7 @@ def read(
                 netcdf_backend=netcdf_backend,
                 cache=bool(cache),
                 dask_chunks=dask_chunks,
+                store_hdf5_chunks=store_hdf5_chunks,
                 extra_read_vars=None,
                 cfa=cfa_config,
             )

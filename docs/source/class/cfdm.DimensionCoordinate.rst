@@ -211,6 +211,20 @@ Groups
    ~cfdm.DimensionCoordinate.nc_clear_variable_groups
    ~cfdm.DimensionCoordinate.nc_set_variable_groups
 
+HDF5 chunks
+^^^^^^^^^^^
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DimensionCoordinate.nc_hdf5_chunksizes
+   ~cfdm.DimensionCoordinate.nc_set_hdf5_chunksizes
+   ~cfdm.DimensionCoordinate.nc_clear_hdf5_chunksizes
+
 Special
 -------
 

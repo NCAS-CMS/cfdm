@@ -8,7 +8,7 @@ import dask.array as da
 import numpy as np
 from dask.core import flatten
 
-from .config import Units
+from ..units import Units
 
 _default_calendar = "standard"
 

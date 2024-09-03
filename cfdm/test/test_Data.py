@@ -678,6 +678,12 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data(9)
         self.assertTrue(d.equals(d.transpose()))
 
+        # HDF5 chunks
+        d = cfdm.Data(np.arange(12).reshape(1, 4, 3))
+        d.nc_set_hdf5_chunksizes((1, 4, 3))
+        d.transpose(inplace=True)
+        self.assertEqual(d.nc_hdf5_chunksizes(), (3, 4, 1))
+
     def test_Data_unique(self):
         """Test Data.unique."""
         d = cfdm.Data([[4, 2, 1], [1, 2, 3]], units="metre")
@@ -693,6 +699,12 @@ class DataTest(unittest.TestCase):
         self.assertTrue(
             (u.array == np.ma.array([1, 2, 4, -99], mask=[0, 0, 0, 1])).all()
         )
+
+        # HDF5 chunks
+        d = cfdm.Data(np.arange(12).reshape(1, 4, 3))
+        d.nc_set_hdf5_chunksizes((1, 4, 3))
+        e = d.unique()
+        self.assertIsNone(e.nc_hdf5_chunksizes())
 
     def test_Data_equals(self):
         """Test the equality-testing Data method."""
@@ -1097,6 +1109,22 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             d.max(axes=0)
 
+        # HDF5 chunks
+        d = cfdm.Data(np.arange(12).reshape(1, 4, 3))
+        d.nc_set_hdf5_chunksizes((1, 4, 3))
+        e = d.squeeze()
+        self.assertEqual(e.nc_hdf5_chunksizes(), (4, 3))
+        e = d.max(axes=1)
+        self.assertEqual(e.nc_hdf5_chunksizes(), (1, 1, 3))
+        e = d.min(axes=1)
+        self.assertEqual(e.nc_hdf5_chunksizes(), (1, 1, 3))
+        e = d.sum(axes=1)
+        self.assertEqual(e.nc_hdf5_chunksizes(), (1, 1, 3))
+        e = d.max(axes=1, squeeze=True)
+        self.assertEqual(e.nc_hdf5_chunksizes(), (1, 3))
+        e = d.sum(axes=1, squeeze=True)
+        self.assertEqual(e.nc_hdf5_chunksizes(), (1, 3))
+
     def test_Data_dtype_mask(self):
         """Test the dtype and mask Data methods."""
         a = np.ma.array(
@@ -1231,6 +1259,13 @@ class DataTest(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             d.insert_dimension(1000)
+
+        # HDF5 chunks
+        d.nc_set_hdf5_chunksizes((1, 4, 3))
+        d.insert_dimension(0, inplace=True)
+        self.assertEqual(d.nc_hdf5_chunksizes(), (1, 1, 4, 3))
+        d.insert_dimension(-1, inplace=True)
+        self.assertEqual(d.nc_hdf5_chunksizes(), (1, 1, 4, 3, 1))
 
     def test_Data_get_compressed_dimension(self):
         """Test Data.get_compressed_dimension."""
@@ -1476,8 +1511,8 @@ class DataTest(unittest.TestCase):
 
         self.assertTrue(d._get_cached_elements())
 
-        _ALL = cfdm.data.config._ALL
-        _CACHE = cfdm.data.config._CACHE
+        _ALL = cfdm.Data._ALL
+        _CACHE = cfdm.Data._CACHE
 
         d._set_dask(dx, clear=_ALL ^ _CACHE)
         self.assertTrue(d._get_cached_elements())
@@ -2066,6 +2101,12 @@ class DataTest(unittest.TestCase):
         b = d.array[0, [1, 3, 4], :][[True, False, True], ::-2]
         self.assertTrue((a == b).all())
 
+        # HDF5 chunks
+        d = cfdm.Data(np.arange(12).reshape(1, 4, 3))
+        d.nc_set_hdf5_chunksizes((1, 4, 3))
+        e = d[0, :2, :]
+        self.assertEqual(e.nc_hdf5_chunksizes(), (1, 2, 3))
+
     def test_Data_BINARY_AND_UNARY_OPERATORS(self):
         """Test arithmetic, logical and comparison operators on Data."""
         a = np.arange(3 * 4 * 5).reshape(3, 4, 5)
@@ -2397,6 +2438,94 @@ class DataTest(unittest.TestCase):
                 (slice(1, 3, None), slice(0, 9, None), slice(9, 15, None)),
             ],
         )
+
+    def test_Data_hdf5_chunksizes(self):
+        """Test Data.nc_hdf5_chunksizes."""
+        d = cfdm.Data(np.arange(24).reshape(2, 3, 4))
+        self.assertIsNone(d.nc_hdf5_chunksizes())
+        self.assertIsNone(d.nc_set_hdf5_chunksizes([2, 2, 2]))
+        self.assertEqual(d.nc_hdf5_chunksizes(), (2, 2, 2))
+        self.assertEqual(d.nc_clear_hdf5_chunksizes(), (2, 2, 2))
+        self.assertIsNone(d.nc_hdf5_chunksizes())
+
+        self.assertIsNone(d.nc_set_hdf5_chunksizes("contiguous"))
+        self.assertEqual(d.nc_hdf5_chunksizes(), "contiguous")
+        self.assertEqual(d.nc_clear_hdf5_chunksizes(), "contiguous")
+        self.assertIsNone(d.nc_hdf5_chunksizes())
+
+        self.assertIsNone(d.nc_set_hdf5_chunksizes(None))
+        self.assertIsNone(d.nc_hdf5_chunksizes())
+
+        d.nc_clear_hdf5_chunksizes()
+        d.nc_set_hdf5_chunksizes({1: 2})
+        self.assertEqual(d.nc_hdf5_chunksizes(), (2, 2, 4))
+        d.nc_set_hdf5_chunksizes({0: 1, 2: 3})
+        self.assertEqual(d.nc_hdf5_chunksizes(), (1, 2, 3))
+
+        for chunksizes in (1024, "1 KiB"):
+            self.assertIsNone(d.nc_set_hdf5_chunksizes(chunksizes))
+            self.assertEqual(d.nc_clear_hdf5_chunksizes(), 1024)
+
+        # Bad chunk sizes
+        for chunksizes in (
+            [2],
+            [-99, 3, 4],
+            [2, 3, 3.14],
+            [2, "bad", 4],
+            "bad",
+            {2: 3.14},
+        ):
+            with self.assertRaises(ValueError):
+                d.nc_set_hdf5_chunksizes(chunksizes)
+
+        # todict
+        d.nc_set_hdf5_chunksizes([2, 3, 4])
+        self.assertEqual(d.nc_hdf5_chunksizes(todict=True), {0: 2, 1: 3, 2: 4})
+
+        for chunksizes in (None, "contiguous", 1024):
+            d.nc_set_hdf5_chunksizes(chunksizes)
+            with self.assertRaises(ValueError):
+                d.nc_hdf5_chunksizes(todict=True)
+
+        # full axis size
+        d.nc_set_hdf5_chunksizes([-1, None, 999])
+        self.assertEqual(d.nc_hdf5_chunksizes(), d.shape)
+
+    def test_Data_masked_where(self):
+        """Test Data.masked_where."""
+        array = np.array([[1, 2, 3], [4, 5, 6]])
+        d = cfdm.Data(array)
+        mask = [[0, 1, 0], [1, 0, 0]]
+        e = d.masked_where(mask)
+        ea = e.array
+        a = np.ma.masked_where(mask, array)
+        self.assertTrue((ea == a).all())
+        self.assertTrue((ea.mask == a.mask).all())
+        self.assertIsNone(d.masked_where(mask, inplace=True))
+        self.assertTrue(d.equals(e))
+
+    def test_Data_all(self):
+        """Test the `all` Data method."""
+        d = cfdm.Data([[1, 2], [3, 4]], "m")
+        self.assertTrue(d.all())
+        self.assertEqual(d.all(keepdims=False).shape, ())
+        self.assertEqual(d.all(axis=()).shape, d.shape)
+        self.assertTrue((d.all(axis=0).array == [True, True]).all())
+        self.assertTrue((d.all(axis=1).array == [True, True]).all())
+        self.assertEqual(d.all().Units, cfdm.Units())
+
+        d[0] = cfdm.masked
+        d[1, 0] = 0
+        self.assertTrue((d.all(axis=0).array == [False, True]).all())
+        self.assertTrue(
+            (
+                d.all(axis=1).array == np.ma.array([True, False], mask=[1, 0])
+            ).all()
+        )
+
+        d[...] = cfdm.masked
+        self.assertTrue(d.all())
+        self.assertFalse(d.all(keepdims=False))
 
     def test_Data_concatenate(self):
         """Test Data.concatenate."""

@@ -68,6 +68,7 @@ inspecting it:
 The **cfdm** package can
 
 * read field and domain constructs from netCDF and CDL datasets with a choice of netCDF backends,
+* be fully flexible with respect to HDF5 chunking,
 * create new field and domain constructs in memory,
 * write and append field and domain constructs to netCDF datasets on disk,
 * read, write, and manipulate UGRID mesh topologies,
