@@ -244,7 +244,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
                 .. versionadded:: (cfdm) 1.11.0.0
 
-            hardmask: `bool` or `None`, optional
+            hardmask: `bool`, optional
                 If True (the default) then the mask is hard. If False
                 then the mask is soft.
 
