@@ -1119,13 +1119,16 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read(tmpfile, dask_chunks="150B")[0]
         self.assertEqual(f.data.chunks, ((4, 1), (4, 4)))
 
-        # TODODASK: add test for dask_chunks="storage-exact"
+        # storage-exact
+        f = cfdm.example_field(2)
+        f.data.nc_set_hdf5_chunksizes([7, 5, 4])
+        cfdm.write(f, tmpfile)
+        g = cfdm.read(tmpfile, dask_chunks="storage-exact")[0]
+        self.assertEqual(g.data.chunks, ((7, 7, 7, 7, 7, 1), (5,), (4, 4)))
 
-        # TODODASK: add test for dask_chunks="storage-aligned"
-
-        # storage-aligned
-        # f = cfdm.example_field(2)
-        # cfdm.write(f, tmpfile, )
+        # storage-aligned (the default)
+        g = cfdm.read(tmpfile)[0]
+        self.assertEqual(g.data.chunks, ((35, 1), (5,), (8,)))
 
 
 if __name__ == "__main__":

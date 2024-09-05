@@ -1126,7 +1126,7 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             # Dask
             # --------------------------------------------------------
-            "dask_chunks": dask_chunks,
+            "dask_chunk_strategy": dask_chunks,
             # --------------------------------------------------------
             # Whether or not to store HDF chunks
             # --------------------------------------------------------
@@ -10502,9 +10502,9 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        dask_chunks = g.get("dask_chunks", "storage-aligned")
-
+        dask_chunks = g.get("dask_chunk_strategy", "storage-aligned")
         storage_chunks = self._netcdf_chunksizes(g["variables"][ncvar])
+
         ndim = array.ndim
         if (
             storage_chunks is not None
@@ -10532,35 +10532,37 @@ class NetCDFRead(IORead):
             #
             # 1) Initialise the Dask chunk as the Dask's "auto" shape.
             #
-            # 2) Whilst there are Dask axis elements that are strictly
-            #    less than their corresponding storage axis elements,
-            #    iteratively increase the those Dask axis elements
-            #    whilst reducing the other Dask axis elements so that
-            #    the total number of Dask chunk elements is preserved.
+            # 2) Whilst there are Dask elements that are strictly less
+            #    than their corresponding storage elements,
+            #    iteratively increase those Dask axis elements whilst
+            #    reducing the other Dask axis elements in a manner
+            #    such that the total number of Dask chunk elements is
+            #    preserved.
             #
-            # 3) When all Dask elements are greater than or equal to
-            #    their corresponding storage elements, replace each
-            #    Dask element with the largest multiple of the storage
-            #    element that doesn't exceed the current Dask element.
+            # 3) When all Dask elements have become greater than or
+            #    equal to their corresponding storage elements,
+            #    replace each Dask element with the largest multiple
+            #    of the storage element that doesn't exceed the
+            #    current Dask element.
             #
-            # If the number of elements in the storage chunk is less
-            # than or equal to the number of elements in the original
-            # Dask chunk, then the storage-aligned chunk also will
-            # also have an amount of elements that is less than or
-            # equal to the number of elements in the original Dask
-            # chunk. Otherwise, the storage-aligned chunk will have
-            # more elements than the original Dask chunk.
+            # Note: If the number of elements in the storage chunk is
+            #       less than or equal to the number of elements in
+            #       the original Dask chunk, then the storage-aligned
+            #       chunk also will also have an amount of elements
+            #       that is less than or equal to the number of
+            #       elements in the original Dask chunk. Otherwise,
+            #       the storage-aligned chunk will have more elements
+            #       than the original Dask chunk:
             #
-            # E.g.
-            #                       Chunk shape              Elements
-            #      ---------------- -----------------------  ---------
-            #      storage:         (50, 100, 150, 20,   5)   75000000
-            #      original Dask:   (49, 101, 150,  5, 160)  593880000
-            #      storage-aligned: (50, 100, 150, 20,  35)  525000000
-            #      ---------------- -----------------------  ---------
-            #      storage:         (50, 100, 150, 20,   5)   75000000
-            #      original Dask:   (5,   15, 150,  5, 160)    9000000
-            #      storage-aligned: (50, 100, 150, 20,   5)   75000000
+            #                        Chunk shape              Elements
+            #       ---------------- ----------------------- ---------
+            #       storage:         (50, 100, 150, 20,   5)  75000000
+            #       original Dask:   (49, 101, 150,  5, 160) 593880000
+            #       storage-aligned: (50, 100, 150, 20,  35) 525000000
+            #       ---------------- ----------------------- ---------
+            #       storage:         (50, 100, 150, 20,   5)  75000000
+            #       original Dask:   (5,   15, 150,  5, 160)   9000000
+            #       storage-aligned: (50, 100, 150, 20,   5)  75000000
             # --------------------------------------------------------
 
             # 1) Initialise the Dask chunk shape
@@ -10651,11 +10653,11 @@ class NetCDFRead(IORead):
                 # Note: There are other reasonable methods for
                 #       reducing the "other" Dask elements. With this
                 #       way (i.e. using a power of x that is <= 1),
-                #       however, larger values get reduced by a
-                #       greater factor than smaller values, thereby
-                #       promoting the Dask preference for square-like
-                #       chunk shapes (although I suspect that in many
-                #       cases, different approaches will give the same
+                #       larger values get reduced by a greater factor
+                #       than smaller values, thereby promoting the
+                #       Dask preference for square-like chunk shapes
+                #       (although I suspect that in many cases,
+                #       different approaches will give the same
                 #       result).
                 x = log(n_dask_elements / p_storage_ge_dask) / log(
                     p_dask_gt_storage
