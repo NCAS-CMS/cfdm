@@ -10708,7 +10708,8 @@ class NetCDFRead(IORead):
             #      chunk will be modified to be (12, 40, 120).
             for i, (sc, dc) in enumerate(zip(storage_chunks, dask_chunks[:])):
                 if i in dask_gt_storage:
-                    c = divmod(int(dc), sc)[0] * sc
+                    dc = int(dc)
+                    c = dc - (dc % sc)
                     if not c:
                         # Analytically, c must be a positive integer
                         # multiple of sc, but it's conceivable that
