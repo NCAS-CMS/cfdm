@@ -122,7 +122,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     _NONE = 0  # =  0b000
     _ARRAY = 1  # = 0b001
     _CACHE = 2  # = 0b010
-    _CFA = 4  # =   0b100 TODOCFA: Placeholder
+    _CFA = 4  # =   0b100
     _ALL = 7  # =   0b111
 
     # The default mask hardness
