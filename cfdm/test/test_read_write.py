@@ -1107,15 +1107,6 @@ class read_writeTest(unittest.TestCase):
         y = f.construct("latitude")
         self.assertEqual(y.data.chunks, ((3, 2),))
 
-        # Byte string
-        with cfdm.chunksize("200GB"):
-            f = cfdm.read(tmpfile)[0]
-            self.assertEqual(f.data.chunks, ((5,), (8,)))
-
-        with cfdm.chunksize("150B"):
-            f = cfdm.read(tmpfile)[0]
-            self.assertEqual(f.data.chunks, ((4, 1), (4, 4)))
-
         f = cfdm.read(tmpfile, dask_chunks="150B")[0]
         self.assertEqual(f.data.chunks, ((4, 1), (4, 4)))
 
@@ -1129,6 +1120,18 @@ class read_writeTest(unittest.TestCase):
         # storage-aligned (the default)
         g = cfdm.read(tmpfile)[0]
         self.assertEqual(g.data.chunks, ((35, 1), (5,), (8,)))
+
+        with cfdm.chunksize(50000000):
+            g = cfdm.read(tmpfile)[0]
+            self.assertEqual(g.data.chunks, ((35, 1), (5,), (8,)))
+
+        with cfdm.chunksize(5000):
+            g = cfdm.read(tmpfile)[0]
+            self.assertEqual(g.data.chunks, ((14, 14, 8), (5,), (8,)))
+
+        with cfdm.chunksize(500):
+            g = cfdm.read(tmpfile)[0]
+            self.assertEqual(g.data.chunks, ((7, 7, 7, 7, 7, 1), (5,), (4, 4)))
 
 
 if __name__ == "__main__":

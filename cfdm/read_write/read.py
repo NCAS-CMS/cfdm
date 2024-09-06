@@ -348,23 +348,23 @@ def read(
             * ``'storage-aligned'``
 
               This is the default. The Dask chunk size in bytes will
-              be as close as possible that given by `cfdm.chunksize`,
-              favouring square-like chunk shapes, with the added
-              restriction that the entirety of each storage chunk must
-              also lie within exactly one Dask chunk.
+              be as close as possible the size given by
+              `cfdm.chunksize`, favouring square-like chunk shapes,
+              with the added restriction that the entirety of each
+              storage chunk must also lie within exactly one Dask
+              chunk.
 
               When reading the data from disk, an entire storage chunk
-              could be read once for each Dask storage chunk that
-              contains any part of it, so ensuring that a storage
-              chunk lies within only one Dask chunk can increase
-              performance by reducing the amount of disk access
-              (particularly when the data are stored remotely to the
-              client).
+              will be read once per Dask storage chunk that contains
+              any part of it, so ensuring that a storage chunk lies
+              within only one Dask chunk can increase performance by
+              reducing the amount of disk access (particularly when
+              the data are stored remotely to the client).
 
-              For example, consider a file variable that has an array
+              For instance, consider a file variable that has an array
               of 64-bit floats with shape (400, 300, 60) and a storage
-              chunk shape of (100, 5, 60) (i.e. there are 240 storage
-              chunks, each of size 100*5*60*8 bytes = 0.23 MiB). Then:
+              chunk shape of (100, 5, 60), giving 240 storage chunks
+              each of size 100*5*60*8 bytes = 0.23 MiB. Then:
 
               * If `cfdm.chunksize` returned 134217728 (i.e. 128 MiB),
                 then the storage-aligned Dask chunks will have shape
@@ -406,7 +406,7 @@ def read(
               and each storage chunk will lie within exactly one Dask
               chunk.
 
-              For example, consider a file variable that has an array
+              For instance, consider a file variable that has an array
               of 64-bit floats with shape (400, 300, 60) and a storage
               chunk shape of (100, 5, 60) (i.e. there are 240 storage
               chunks, each of size 0.23 MiB). Then the storage-exact
@@ -430,11 +430,11 @@ def read(
             * ``auto``
 
               The Dask chunk size in bytes will be as close as
-              possible that given by `cfdm.chunksize`, favouring
-              square-like chunk shapes. This may give similar Dask
-              chunk shapes as the ``'storage-aligned'`` option, but
-              without the guarantee that each storage chunk will lie
-              within exactly one Dask chunk.
+              possible to the size given by `cfdm.chunksize`,
+              favouring square-like chunk shapes. This may give
+              similar Dask chunk shapes as the ``'storage-aligned'``
+              option, but without the guarantee that each storage
+              chunk will lie within exactly one Dask chunk.
 
             * A byte-size given by a `str`
 
