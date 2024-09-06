@@ -2751,11 +2751,16 @@ class NetCDFWrite(IOWrite):
         if kwargs["datatype"] != str:
             kwargs.update(g["netcdf_compression"])
 
-        # Set keyword arguments for a scalar aggregation variable
-        if self._write_as_cfa(ncvar, cfvar, construct_type, domain_axes):
+        # Override dimensions and HDF5 chunking strategy keyword
+        # arguments when the data is being written as a scalar CF
+        # aggregation variable. This is necessary because the
+        # dimensions and HDF5 chunking strategy will otherwise reflect
+        # the aggregated data in memory, rather than the scalar
+        # variable in the file.
+        if self._cfa_write_status(ncvar, cfvar, construct_type, domain_axes):
             kwargs["dimensions"] = ()
+            kwargs["contiguous"] = True
             kwargs["chunksizes"] = None
-            # TODOCFA: contiguous/chunksizes (consider after merge of  hdf5-chunks)
 
         # Note: this is a trivial assignment in standalone cfdm, but
         # required for non-trivial customisation applied by subclasses
@@ -2964,7 +2969,7 @@ class NetCDFWrite(IOWrite):
         """
         g = self.write_vars
 
-        if self._write_as_cfa(ncvar, cfvar, construct_type, domain_axes):
+        if self._cfa_write_status(ncvar, cfvar, construct_type, domain_axes):
             # --------------------------------------------------------
             # Write the data as an aggregation variable
             # --------------------------------------------------------
@@ -4862,14 +4867,14 @@ class NetCDFWrite(IOWrite):
             # Do not write the data of the named construct types.
             "omit_data": omit_data,
             # --------------------------------------------------------
-            # Aggregation variables
+            # CF Aggregation variables
             # --------------------------------------------------------
             # Configuration options for writing aggregation variables
             "cfa": {} if cfa is None else cfa,
             # The directory of the aggregation file
             "aggregation_file_directory": None,
             # Cache the CF aggregation variable write status for each
-            # variable
+            # netCDF variable
             "cfa_write_status": {},
             # --------------------------------------------------------
             # HDF5 chunking stategy
@@ -5449,18 +5454,23 @@ class NetCDFWrite(IOWrite):
             )
         )
 
-    def _write_as_cfa(self, ncvar, cfvar, construct_type, domain_axes):
-        """Whether or not to write as a CF aggregation variable.
+    def _cfa_write_status(self, ncvar, cfvar, construct_type, domain_axes):
+        """The aggregation write status of the data.
+
+        Writing the data as aggregated data will only be allowed if
+        the write status is True.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
-            cfvar: cfdm instance that contains data
+            cfvar:
+                Construct (e.g. `DimensionCoordinate`), or construct
+                component e.g. (`Bounds`) contains the data.
 
             construct_type: `str`
-                The construct type of the *cfvar*, or its parent if
-                *cfvar* is not a construct.
+                The construct type of the *cfvar*, or of its parent if
+                *cfvar* is a construct component.
 
             domain_axes: `None`, or `tuple` of `str`
                 The domain axis construct identifiers for *cfvar*.
@@ -5500,10 +5510,9 @@ class NetCDFWrite(IOWrite):
         if "auto" in constructs:
             # In 'auto' mode, data will be written as an aggregation
             # variable if it:
-            #
-            # 1) has a write_status of True
-            # 2) has an aggregated_data definition
-            # 3) meets the number-of-dimensions criterion
+            # 1) has a write_status of True, and
+            # 2) has an aggregated_data definition, and
+            # 3) meets the number-of-dimensions criterion.
             cfa_write_status = data.nc_get_aggregation_write_status() and bool(
                 data.nc_get_aggregated_data()
             )
@@ -5535,15 +5544,17 @@ class NetCDFWrite(IOWrite):
                             f"Can't write {cfvar!r} as an aggregation "
                             "variable."
                             "\n\n"
-                            "Possible reasons for this include 1) there is "
-                            "more than one Dask chunk per fragment, and "
-                            "2) data values have been changed relative to "
-                            "those in a fragment file."
+                            "Possible reasons for this include 1) a fragment "
+                            "spans more than one Dask chunk, 2) data values "
+                            "have been changed relative to those in a "
+                            "fragment file."
                             "\n\n"
-                            "Consider setting the cfa keyword's 'strict' "
-                            "option to False, which will allow this variable "
-                            "to be written as a normal, non-aggregation "
-                            "variable."
+                            "Possible remedies include a) setting "
+                            "'chunks=None' in a previous call to the 'read' "
+                            "function, b) setting the 'strict' option to "
+                            "False in the 'cfa' keyword of the 'write' "
+                            "function (which will allow this variable to be "
+                            "written as a normal, non-aggregation variable)."
                         )
 
                     break
@@ -5918,7 +5929,7 @@ class NetCDFWrite(IOWrite):
 
         if data.nc_get_aggregation_fragment_type() == "location":
             # --------------------------------------------------------
-            # Create location and address arrays
+            # Create 'location' and 'address' arrays
             # --------------------------------------------------------
 
             # Size of the trailing dimension
@@ -6023,7 +6034,7 @@ class NetCDFWrite(IOWrite):
             out["address"] = type(data)(aggregation_address)
         else:
             # ------------------------------------------------------------
-            # Create a value array
+            # Create a 'value' array
             # ------------------------------------------------------------
             # Transform the data so that it spans the fragment
             # dimensions with one value per fragment. If a chunk has

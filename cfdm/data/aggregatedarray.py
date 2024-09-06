@@ -13,7 +13,7 @@ from .utils import chunk_locations, chunk_positions
 
 
 class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
-    """TODOCFA  Mixin class for a CFA array.
+    """An array stored in a CF aggregation variable.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
@@ -39,25 +39,23 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         dtype=None,
         mask=True,
         unpack=True,
-        instructions=None,
+        fragment_array=None,
         substitutions=None,
         attributes=None,
         storage_options=None,
         source=None,
         copy=True,
-        x=None,
     ):
         """**Initialisation**
 
         :Parameters:
 
-            filename: (sequence of) `str`, optional
-                The name of the CFA file containing the array. If a
-                sequence then it must contain one element.
+            filename: `str`, optional
+                The name of the aggregation file containing the
+                aaggregation variable.
 
-            address: (sequence of) `str`, optional
-                The name of the CFA aggregation variable for the
-                array. If a sequence then it must contain one element.
+            address: `str`, optional
+                The name of the aggregation variable for the array.
 
             dtype: `numpy.dtype`
                 The data type of the aggregated data array. May be
@@ -65,19 +63,23 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 be the case for some string types, for example).
 
             mask: `bool`
-                If True (the default) then mask by convention when
-                reading data from disk.
-
-                A array is masked depending on the values of any of
-                the variable attributes ``valid_min``, ``valid_max``,
-                ``valid_range``, ``_FillValue`` and ``missing_value``.
+                Must be True, to indicate that the aggregated data is
+                to be masked by convention.
 
             {{init unpack: `bool`, optional}}
 
-            instructions: `str`, optional
-                The ``aggregated_data`` attribute value as found on
-                the CFA variable. If set then this will be used to
-                improve the performance of `__dask_tokenize__`.
+            fragment_array: `dict`
+                A dictionary representation of the fragment array, in
+                "location" form::
+
+                   {'shape': <'shape' fragment array variable data>,
+                    'location': <'location' fragment array variable data>,
+                    'address': <'address' fragment array variable data>,}
+
+                or "value" form:
+
+                   {'shape': <'shape' fragment array variable data>,
+                    'value': <'value' fragment array data>}
 
             substitutions: `dict`, optional
                 A dictionary whose key/value pairs define text
@@ -130,14 +132,9 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 fragment_array_shape = None
 
             try:
-                instructions = source._get_component("instructions")
+                fragment_array = source.get_fragment_array(copy=False)
             except AttributeError:
-                instructions = None
-
-            try:
-                aggregated_data = source.get_aggregated_data(copy=False)
-            except AttributeError:
-                aggregated_data = {}
+                fragment_array = {}
 
             try:
                 substitutions = source.get_substitutions()
@@ -151,15 +148,16 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
         else:
             if filename is not None:
-                shape, fragment_array_shape, fragment_type, aggregated_data = (
-                    self._parse_cfa(filename, x, substitutions)
+                shape, fragment_array_shape, fragment_type, fragment_array = (
+                    self._parse_fragment_array(
+                        filename, fragment_array, substitutions
+                    )
                 )
             else:
                 shape = None
                 fragment_array_shape = None
-                aggregated_data = None
+                fragment_array = None
                 fragment_type = None
-                instructions = None
 
             super().__init__(
                 filename=filename,
@@ -171,11 +169,15 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 copy=copy,
             )
 
+        if not mask:
+            raise ValueError(
+                "The 'mask' keyword must be True when initialising "
+                f"{self.__class__.__name__}")
+            
         self._set_component(
             "fragment_array_shape", fragment_array_shape, copy=False
         )
-        self._set_component("aggregated_data", aggregated_data, copy=False)
-        self._set_component("instructions", instructions, copy=False)
+        self._set_component("fragment_array", fragment_array, copy=False)
         self._set_component("fragment_type", fragment_type, copy=False)
         if substitutions is not None:
             self._set_component(
@@ -193,19 +195,6 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         """
         return NotImplemented
 
-    def __dask_tokenize__(self):
-        """Used by `dask.base.tokenize`.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        """
-        out = super().__dask_tokenize__()
-        aggregated_data = self._get_component("instructions", None)
-        if aggregated_data is None:
-            aggregated_data = self.get_aggregated_data(copy=False)
-
-        return out + (aggregated_data,)
-
     @property
     def __asanyarray__(self):
         """True if the array is accessed by conversion to `numpy`.
@@ -219,8 +208,10 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         """
         return True
 
-    def _parse_cfa(self, aggregated_filename, x, substitutions):
-        """Parse the aggregated data instructions.
+    def _parse_fragment_array(
+        self, aggregated_filename, fragment_array, substitutions
+    ):
+        """Parse the fragment array dictionary.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -229,7 +220,18 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             aggregated_filename: `str`
                 The name of the aggregation file.
 
-            x: `dict` TODOCFA
+            fragment_array: `dict`
+               A dictionary representation of the fragment array, in
+               "location" form::
+
+                  {'shape': <'shape' fragment array variable data>,
+                   'location': <'location' fragment array variable data>,
+                   'address': <'address' fragment array variable data>,}
+
+               or "value" form:
+
+                  {'shape': <'shape' fragment array variable data>,
+                   'value': <'value' fragment array data>}
 
             substitutions: `dict` or `None`
                 A dictionary whose key/value pairs define text
@@ -248,9 +250,9 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 4. The parsed aggregation instructions.
 
         """
-        aggregated_data = {}
+        parsed_fragment_array = {}
 
-        shape = x["shape"]
+        shape = fragment_array["shape"]
         if shape.ndim:
             ndim = shape.shape[0]
             compressed = np.ma.compressed
@@ -264,14 +266,14 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         fragment_array_indices = chunk_positions(chunks)
         fragment_shapes = chunk_locations(chunks)
 
-        if "location" in x:
+        if "location" in fragment_array:
             # --------------------------------------------------------
             # Each fragment comprises file locations, rather than a
             # constant value.
             # --------------------------------------------------------
             fragment_type = "location"
-            a = x["address"]
-            f = x["location"]
+            a = fragment_array["address"]
+            f = fragment_array["location"]
 
             extra_dimension = f.ndim > ndim
             if extra_dimension:
@@ -300,7 +302,7 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                     else:
                         address = (a[index].item(),)
 
-                aggregated_data[index] = {
+                parsed_fragment_array[index] = {
                     "shape": shape,
                     "location": location,
                     "address": address,
@@ -325,7 +327,7 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             # Convert relative-path URI references to absolute URIs,
             # and apply string substitutions to the fragment
             # filenames.
-            for fragments in aggregated_data.values():
+            for fragments in parsed_fragment_array.values():
                 locations = []
                 for filename in fragments["location"]:
                     if substitutions:
@@ -357,9 +359,9 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             # file locations.
             # --------------------------------------------------------
             fragment_type = "value"
-            value = x["value"]
+            value = fragment_array["value"]
             fragment_array_shape = value.shape
-            aggregated_data = {
+            parsed_fragment_array = {
                 index: {
                     "shape": shape,
                     "value": value[index].item(),
@@ -373,7 +375,7 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             aggregated_shape,
             fragment_array_shape,
             fragment_type,
-            aggregated_data,
+            parsed_fragment_array,
         )
 
     @property
@@ -385,7 +387,7 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         """
         return self[...]
 
-    def get_aggregated_data(self, copy=True):
+    def get_fragment_array(self, copy=True):
         """Get the aggregation data dictionary.
 
         The aggregation data dictionary contains the definitions of
@@ -394,6 +396,10 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         e.g. ``(1, 0, 0 ,0)``.
 
         .. versionadded:: (cfdm) NEXTVERSION
+
+         .. seealso:: `get_fragment_type`,
+                      `get_fragment_array_shape`,
+                      `get_fragmented_dimensions`
 
         :Parameters:
 
@@ -418,7 +424,7 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         (12, 1, 73, 144)
         >>> a.get_fragment_array_shape()
         (2, 1, 1, 1)
-        >>> a.get_aggregated_data()
+        >>> a.get_fragment_array()
         {(0, 0, 0, 0): {
           'file': ('January-June.nc',),
           'address': ('temp',),
@@ -431,16 +437,61 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
           'location': [(6, 12), (0, 1), (0, 73), (0, 144)]}}
 
         """
-        aggregated_data = self._get_component("aggregated_data")
+        fragment_array = self._get_component("fragment_array")
         if copy:
-            aggregated_data = deepcopy(aggregated_data)
+            fragment_array = deepcopy(fragment_array)
 
-        return aggregated_data
+        return fragment_array
+
+    def get_fragment_array_shape(self):
+        """Get the sizes of the fragment dimensions.
+
+        The fragment dimension sizes are given in the same order as
+        the aggregated dimension sizes given by `shape`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+         .. seealso:: `get_fragment_array`,
+                      `get_fragment_type`,
+                      `get_fragmented_dimensions`
+
+        :Returns:
+
+            `tuple`
+                The shape of the fragment dimensions.
+
+        """
+        return self._get_component("fragment_array_shape")
+
+    def get_fragment_type(self):
+        """The type of fragments in the fragment array.
+
+        Either ``'location'`` to indicate that the fragments are
+        files, or else ``'value'`` to indicate that the represented by
+        their unique data value.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+         .. seealso:: `get_fragment_array`,
+                      `get_fragment_array_shape`,
+                      `get_fragmented_dimensions`
+
+        :Returns:
+
+            `str`
+                The fragment type.
+
+        """
+        return self._get_component("fragment_type", None)
 
     def get_fragmented_dimensions(self):
         """The positions of dimensions spanned by two or more fragments.
 
         .. versionadded:: (cfdm) NEXTVERSION
+
+         .. seealso:: `get_fragment_array`,
+                      `get_fragment_array_shape`,
+                      `get_fragment_type`
 
         :Returns:
 
@@ -465,35 +516,6 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             for i, size in enumerate(self.get_fragment_array_shape())
             if size > 1
         ]
-
-    def get_fragment_array_shape(self):
-        """Get the sizes of the fragment dimensions.
-
-        The fragment dimension sizes are given in the same order as
-        the aggregated dimension sizes given by `shape`.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Returns:
-
-            `tuple`
-                The shape of the fragment dimensions.
-
-        """
-        return self._get_component("fragment_array_shape")
-
-    def get_fragment_type(self):
-        """TODOCFA.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Returns:
-
-            `str`
-                TODOCFA
-
-        """
-        return self._get_component("fragment_type", None)
 
     def get_storage_options(self):
         """Return `s3fs.S3FileSystem` options for accessing files.
@@ -582,7 +604,7 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         f_dims = self.get_fragmented_dimensions()
 
         shape = self.shape
-        aggregated_data = self.get_aggregated_data(copy=False)
+        fragment_array = self.get_fragment_array(copy=False)
 
         # Create the base chunks.
         chunks = []
@@ -598,7 +620,7 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 index = [0] * ndim
                 for j in range(n_fragments):
                     index[dim] = j
-                    loc = aggregated_data[tuple(index)]["shape"][dim]
+                    loc = fragment_array[tuple(index)]["shape"][dim]
                     chunk_size = loc[1] - loc[0]
                     c.append(chunk_size)
 
@@ -811,7 +833,7 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         dtype = self.dtype
         units = self.get_units(None)
         calendar = self.get_calendar(None)
-        aggregated_data = self.get_aggregated_data(copy=False)
+        fragment_array = self.get_fragment_array(copy=False)
 
         # Set the chunk sizes for the dask array
         chunks = self.subarray_shapes(chunks)
@@ -836,7 +858,7 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             fragment_index,
             fragment_shape,
         ) in zip(*self.subarrays(chunks)):
-            kwargs = aggregated_data[fragment_index].copy()
+            kwargs = fragment_array[fragment_index].copy()
             kwargs.pop("shape", None)
 
             if fragment_type == "location":

@@ -7,7 +7,7 @@ from ..utils import chunk_locations, chunk_positions
 
 
 class CFAMixin:
-    """Mixin class for a fragment of aggregated data.
+    """Mixin class for an array stored in a CF aggregation variable.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
@@ -134,7 +134,8 @@ class CFAMixin:
                 instructions = None
 
             try:
-                aggregated_data = source.get_aggregated_data(copy=False)
+                #                aggregated_data = source.get_aggregated_data(copy=False)
+                aggregated_data = source.get_fragment_array(copy=False)
             except AttributeError:
                 aggregated_data = {}
 
@@ -179,7 +180,8 @@ class CFAMixin:
         self._set_component(
             "fragment_array_shape", fragment_array_shape, copy=False
         )
-        self._set_component("aggregated_data", aggregated_data, copy=False)
+        #        self._set_component("aggregated_data", aggregated_data, copy=False)
+        self._set_component("fragment_array", oaggregated_data, copy=False)
         self._set_component("instructions", instructions, copy=False)
         self._set_component("fragment_type", fragment_type, copy=False)
         if substitutions is not None:
@@ -308,7 +310,8 @@ class CFAMixin:
         out = super().__dask_tokenize__()
         aggregated_data = self._get_component("instructions", None)
         if aggregated_data is None:
-            aggregated_data = self.get_aggregated_data(copy=False)
+            #            aggregated_data = self.get_aggregated_data(copy=False)
+            aggregated_data = self.get_fragment_array(copy=False)
 
         return out + (aggregated_data,)
 
@@ -372,10 +375,103 @@ class CFAMixin:
 
         return aggregated_data
 
+    def get_fragment_array(self, copy=True):
+        """Get the aggregation data dictionary.
+
+        The aggregation data dictionary contains the definitions of
+        the fragments and the instructions on how to aggregate them.
+        The keys are indices of the fragment array dimensions,
+        e.g. ``(1, 0, 0 ,0)``.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            copy: `bool`, optional
+                Whether or not to return a copy of the aggregation
+                dictionary. By default a deep copy is returned.
+
+                .. warning:: If False then changing the returned
+                             dictionary in-place will change the
+                             aggregation dictionary stored in the
+                             {{class}} instance, **as well as in any
+                             copies of it**.
+
+        :Returns:
+
+            `dict`
+                The aggregation data dictionary.
+
+        **Examples**
+
+        >>> a.shape
+        (12, 1, 73, 144)
+        >>> a.get_fragment_array_shape()
+        (2, 1, 1, 1)
+        >>> a. get_fragment_array()
+        {(0, 0, 0, 0): {
+          'file': ('January-June.nc',),
+          'address': ('temp',),
+          'format': 'nc',
+          'location': [(0, 6), (0, 1), (0, 73), (0, 144)]},
+         (1, 0, 0, 0): {
+          'file': ('July-December.nc',),
+          'address': ('temp',),
+          'format': 'nc',
+          'location': [(6, 12), (0, 1), (0, 73), (0, 144)]}}
+
+        """
+        fragment_array = self._get_component("fragment_array")
+        if copy:
+            fragment_array = deepcopy(fragment_array)
+
+        return fragment_array
+
+    def get_fragment_array_shape(self):
+        """Get the sizes of the fragment dimensions.
+
+        The fragment dimension sizes are given in the same order as
+        the aggregated dimension sizes given by `shape`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+         .. seealso:: `get_fragment_type`,
+                      `get_fragmented_dimensions`,
+
+        :Returns:
+
+            `tuple`
+                The shape of the fragment dimensions.
+
+        """
+        return self._get_component("fragment_array_shape")
+
+    def get_fragment_type(self):
+        """The type of fragments in the fragment array.
+
+        Either ``'location'`` to indicate that the fragments are
+        files, or else ``'value'`` to indicate that the represented by
+        their unique data value.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+         .. seealso:: `get_fragment_array_shape`,
+                      `get_fragmented_dimensions`
+
+        :Returns:
+
+            `str`
+                The fragment type.
+
+        """
+        return self._get_component("fragment_type", None)
+
     def get_fragmented_dimensions(self):
         """The positions of dimensions spanned by two or more fragments.
 
         .. versionadded:: (cfdm) NEXTVERSION
+
+         .. seealso:: `get_fragment_array_shape`, `get_fragment_type`
 
         :Returns:
 
@@ -400,35 +496,6 @@ class CFAMixin:
             for i, size in enumerate(self.get_fragment_array_shape())
             if size > 1
         ]
-
-    def get_fragment_array_shape(self):
-        """Get the sizes of the fragment dimensions.
-
-        The fragment dimension sizes are given in the same order as
-        the aggregated dimension sizes given by `shape`.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Returns:
-
-            `tuple`
-                The shape of the fragment dimensions.
-
-        """
-        return self._get_component("fragment_array_shape")
-
-    def get_fragment_type(self):
-        """TODOCFA.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Returns:
-
-            `str`
-                TODOCFA
-
-        """
-        return self._get_component("fragment_type", None)
 
     def get_storage_options(self):
         """Return `s3fs.S3FileSystem` options for accessing files.
@@ -517,7 +584,8 @@ class CFAMixin:
         f_dims = self.get_fragmented_dimensions()
 
         shape = self.shape
-        aggregated_data = self.get_aggregated_data(copy=False)
+        # aggregated_data = self.get_aggregated_data(copy=False)
+        aggregated_data = self.get_fragment_array(copy=False)
 
         # Create the base chunks.
         chunks = []
@@ -747,7 +815,8 @@ class CFAMixin:
         dtype = self.dtype
         units = self.get_units(None)
         calendar = self.get_calendar(None)
-        aggregated_data = self.get_aggregated_data(copy=False)
+        #        aggregated_data = self.get_aggregated_data(copy=False)
+        aggregated_data = self.get_fragment_array(copy=False)
 
         # Set the chunk sizes for the dask array
         chunks = self.subarray_shapes(chunks)

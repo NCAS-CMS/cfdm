@@ -1259,6 +1259,14 @@ class NetCDFRead(IORead):
                 # Allow UGRID if it has been specified in Conventions,
                 # regardless of the version of CF.
                 g["UGRID_version"] = Version(c.replace("UGRID-", "", 1))
+            elif c.startswith("CFA-0.") or c == "CFA":
+                logger.warning(
+                    f"Obselete conventions {c} are being ignored in file "
+                    f"{g['filename']}. Note that cf-python version 3.16.2 "
+                    "can be used to read and write CFA-0.6.2 files, and "
+                    "cf-python version 3.13.1 can be used to read and "
+                    "write CFA-0.4 files."
+                )
 
         if file_version is None:
             if default_version is not None:
@@ -6277,22 +6285,25 @@ class NetCDFRead(IORead):
         # correctly by the AggregatedArray instance.
         kwargs.pop("shape", None)
 
+        # 'mask' must be True, to indicate that the aggregated data is
+        # to be masked by convention.
+        kwargs["mask"] = True
+ 
         fragment_array_variables = g["fragment_array_variables"]
         standardised_terms = ("shape", "location", "address", "value")
 
-        instructions = []
-        aggregation_instructions = {}
+        fragment_array = {}
         for term, term_ncvar in g["parsed_aggregated_data"][ncvar].items():
             if term not in standardised_terms:
                 logger.warning(
-                    "Ignoring invalid aggregated_data fragment array "
-                    f"feature: {term}"
+                    "Ignoring non-standardised fragment array feature found "
+                    "in the aggregated_data attribute of variable "
+                    f"{ncvar!r}: {term!r}"
                 )
                 continue
 
             fragment_array_variable = fragment_array_variables[term_ncvar]
-            aggregation_instructions[term] = fragment_array_variable
-            instructions.append(f"{term}: {term_ncvar}")
+            fragment_array[term] = fragment_array_variable
 
             if term == "location":
                 kwargs["substitutions"] = g["location_substitutions"].get(
@@ -6301,11 +6312,10 @@ class NetCDFRead(IORead):
             elif term == "value" and kwargs["dtype"] is None:
                 # This is a string-valued aggregation variable with a
                 # 'value' fragment array variable, so set the correct
-                # numpy data type
+                # numpy data type.
                 kwargs["dtype"] = fragment_array_variable.dtype
 
-        kwargs["x"] = aggregation_instructions
-        kwargs["instructions"] = " ".join(sorted(instructions))
+        kwargs["fragment_array"] = fragment_array
         if return_kwargs_only:
             return kwargs
 

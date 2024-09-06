@@ -3306,41 +3306,40 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         dx = da.concatenate(dxs, axis=axis)
 
         # ------------------------------------------------------------
-        # Set the aggregation write status
+        # Set the aggregation write status. IF this status is True then
         # ------------------------------------------------------------
         #
         # Assume at first that all input data instances have True
-        # status, but ...
-        cfa = cls._CFA
+        # status, but then ..
+        CFA = cls._CFA
         for d in processed_data:
             if not d.nc_get_aggregation_write_status():
-                # 1) The write status must be False when any input
-                #    data object has False status.
-                cfa = cls._NONE
+                # 1) The status must be False when any input data
+                #    object has False status.
+                CFA = cls._NONE
                 break
 
-        if cfa != cls._NONE:
+        if CFA != cls._NONE:
             non_concat_axis_chunks0 = list(data[0].chunks)
             non_concat_axis_chunks0.pop(axis)
             for d in processed_data[1:]:
                 non_concat_axis_chunks = list(d.chunks)
                 non_concat_axis_chunks.pop(axis)
                 if non_concat_axis_chunks != non_concat_axis_chunks0:
-                    # 2) The write status must be False when any two
-                    #    input data objects have different chunk
+                    # 2) The status must be False when any two input
+                    #    data objects have different Dask chunk
                     #    patterns for the non-concatenated axes.
-                    cfa = cls._NONE
+                    CFA = cls._NONE
                     break
 
-        if cfa != cls._NONE:
+        if CFA != cls._NONE:
             fragment_type = data[0].nc_get_aggregation_fragment_type()
             for d in processed_data[1:]:
                 if d.nc_get_aggregation_fragment_type() != fragment_type:
-                    # 3) The write status must be False when any two
-                    #    input Data objects have different fragment
-                    #    types.
+                    # 3) The status must be False when any two input
+                    #    Data objects have different fragment types.
                     data0._nc_del_aggregation_fragment_type()
-                    cfa = cls._NONE
+                    CFA = cls._NONE
                     break
 
         # ------------------------------------------------------------
@@ -3358,7 +3357,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # ------------------------------------------------------------
         # Set the concatenated dask array
         # ------------------------------------------------------------
-        data0._set_dask(dx, clear=cls._ALL ^ cfa, asanyarray=asanyarray)
+        data0._set_dask(dx, clear=cls._ALL ^ CFA, asanyarray=asanyarray)
 
         if data0.nc_get_aggregation_write_status():
             # Set the netCDF aggregated_data terms, giving precedence

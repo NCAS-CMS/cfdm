@@ -604,20 +604,46 @@ def write(
             Specify which netCDF variables, if any, should be written
             as CF aggregation variables.
 
-            If *cfa* is a string then it defines which types of
-            constructs are to be written as CF aggregation
-            variables. It may take any of the values, with the same
-            meanings, as allowed by the *omit_data* parameter
-            (e.g. ``'field'``, ``'auxiliary_coordinate'``, ``'all'``
-            etc.), or the special value ``'auto'``.
-
-            The special value ``'auto'`` (the default) means that any
-            data which are unchanged from having been previously read
-            from a CF-netCDF aggregation variable will be written as
-            an aggregation variable.
-
             If *cfa* is `None` then no aggregation variables will be
             created.
+
+            By default, *cfa* is the string ``'auto'`` (see the
+            table), and fragment file names are written as absolute
+            URIs with no text substitutions. Providing *cfa* as a
+            `dict` allows these defaults, as well as other options, to
+            be configured.
+
+            If *cfa* is a string then it defines which types of
+            constructs are to be written as CF aggregation variables:
+
+            ==========================  ===============================
+            String-valued *cfa*         Constructs
+            ==========================  ===============================
+            ``'auto'``                  **This is the default**. Any
+                                        construct whose data is
+                                        unchanged from having been
+                                        previously read from a
+                                        CF-netCDF aggregation
+                                        variable.
+
+            ``'field'``                 Field constructs
+
+            ``'field_ancillary'``       Field ancillary constructs
+
+            ``'domain_ancillary'``      Domain ancillary constructs
+
+            ``'dimension_coordinate'``  Dimension coordinate constructs
+
+            ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+
+            ``'cell_measure'``          Cell measure constructs
+
+            ``'domain_topology'``       Domain topology constructs
+
+            ``'cell_connectivity'``     Cell connectivity constructs
+
+            ``'all'``                   All constructs
+            ==========================  ===============================
 
             If *cfa* is a dictionary then it is used to explicitly
             configure the writing of aggregation variables. It may
@@ -626,14 +652,12 @@ def write(
             * ``'constructs'``: `None`, `dict` or `(sequence of) `str`
 
               The types of construct to be written as aggregation
-              variables. There is no default.
-
-              If the type is `None` then no aggregation variables will
-              be created.
+              variables. If this key is missing then no constructs
+              will be written as aggregation variables.
 
               The types may be given as a (sequence of) `str`, which
               may take any of the string values allowed by the *cfa*
-              parameter, with the same meanings (see above.
+              parameter, with the same meanings.
 
               The same string-valued types may be given as keys to a
               `dict` whose values specify the number of dimensions
@@ -641,44 +665,48 @@ def write(
               as an aggregation variable. A value of `None` means no
               restriction on the number of dimensions.
 
+              If the type is `None` (as opposed to a `str` or `dict`)
+              then no aggregation variables will be created.
+
               *Example:*
                 Equivalent ways to only write cell measure constructs
-                as aggregation variables: ``'cell_measure``,
-                ``['cell_measure']``, ``{'cell_measure': None}``.
+                as aggregation variables: ``{'constructs':
+                'cell_measure``, ``{'constructs': ['cell_measure']}``,
+                ``{'cell_measure': None}}``.
 
               *Example:*
                 Equivalent ways to only write field and auxiliary
                 coordinate constructs as aggregation variables:
-                ``('field', 'auxiliary_coordinate')`` and ``{'field':
-                None, 'auxiliary_coordinate': None}``.
+                ``{'constructs': ('field', 'auxiliary_coordinate')}``
+                and ``{'constructs': {'field': None,
+                'auxiliary_coordinate': None}}``.
 
               *Example:*
                 To only write two-dimensional auxiliary coordinate
-                constructs as aggregation variables:
-                ``{'auxiliary_coordinate': 2}``.
+                constructs as aggregation variables: ``{'constructs':
+                {'auxiliary_coordinate': 2}}``.
 
               *Example:*
                 Write auxiliary coordinate constructs with two
                 dimensions as aggregation variables, and also all
-                field constructs: ``{'field': None,
-                'auxiliary_coordinate': 2}``.
+                field constructs: ``{'constructs':
+                {'auxiliary_coordinate': 2, 'field': None}}``.
 
             * ``'absolute_uri'``: `bool`
 
               How to write fragment file names. Set to True (the
-              default) for them to be written as absolute URIs, or
-              else set to False for them to be written as
-              relative-path URI references, taken as being relative to
-              the location of *filename*, the aggregation file being
-              created.
+              default if this key is missing) for them to be written
+              as absolute URIs, or else set to False for them to be
+              written as relative-path URI references, taken as being
+              relative to the location of *filename*, the aggregation
+              file being created.
 
-            * ``'strict'``: `bool`
-
-              If True (the default) then an exception is raised if it
-              is not possible to create an aggregation variable from
-              data identified by the ``'constructs'`` option. If False
-              then a normal, non-aggregation variable will be written
-              in this case.
+              *Example:*
+                 To write any construct whose data is unchanged from
+                 having been previously read from a CF-netCDF
+                 aggregation variable, and with relative-path URI
+                 references: ``{'constructs': 'auto', 'absolute_uri':
+                 False}}``
 
             * ``'substitutions'``: `dict`
 
@@ -698,7 +726,15 @@ def write(
               array variable.
 
               *Example:*
-                ``{'base': 'file:///data/'}``
+                ``{'substitutions': {base': 'file:///data/'}}``
+
+            * ``'strict'``: `bool`
+
+              If True (the default if this key is missing) then an
+              exception is raised if it is not possible to create an
+              aggregation variable from any construct identified by
+              the ``'constructs'`` option. If False then a normal,
+              non-aggregation variable will be written in this case.
 
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that defines field
@@ -742,12 +778,6 @@ def write(
                 f"Valid keys are {keys}"
             )
 
-        if "constructs" not in cfa:
-            raise ValueError(
-                "When the 'cfa' keyword is a dictionary, it must have a "
-                f"'constructs' key. Got: {cfa!r}"
-            )
-
         cfa = cfa.copy()
     else:
         raise ValueError(
@@ -755,14 +785,16 @@ def write(
             "Should be a string, a dictionary, or None"
         )
 
+    cfa.setdefault("constructs", None)
     cfa.setdefault("absolute_uri", True)
-    cfa.setdefault("strict", True)
     cfa.setdefault("substitutions", {})
+    cfa.setdefault("strict", True)
 
     constructs = cfa["constructs"]
     if isinstance(constructs, dict):
         cfa["constructs"] = constructs.copy()
     elif constructs is not None:
+        # Convert a (sequence of) `str` to a `dict`
         if isinstance(constructs, str):
             constructs = (constructs,)
 

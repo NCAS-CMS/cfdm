@@ -4871,7 +4871,7 @@ class NetCDFAggregation(NetCDFMixin):
     def nc_del_aggregation_write_status(self):
         """Set the netCDF aggregation write status to `False`.
 
-        Writing the data as CF-netCDf aggregated data will only be
+        Writing the data as CF-netCDF aggregated data will only be
         allowed if the write status is True.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -4890,7 +4890,7 @@ class NetCDFAggregation(NetCDFMixin):
     def nc_get_aggregation_write_status(self):
         """Get the netCDF aggregation write status.
 
-        Writing the data as CF-netCDf aggregated data will only be
+        Writing the data as CF-netCDF aggregated data will only be
         allowed if the write status is True.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -4909,7 +4909,7 @@ class NetCDFAggregation(NetCDFMixin):
     def _nc_set_aggregation_write_status(self, status):
         """Set the netCDF aggregation write status.
 
-        Writing the data as CF-netCDf aggregated data will only be
+        Writing the data as CF-netCDF aggregated data will only be
         allowed if the write status is True.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -4935,7 +4935,7 @@ class NetCDFAggregation(NetCDFMixin):
     def nc_set_aggregation_write_status(self, status):
         """Set the netCDF aggregation write status.
 
-        Writing the data as CF-netCDf aggregated data will only be
+        Writing the data as CF-netCDF aggregated data will only be
         allowed if the write status is True.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -4964,7 +4964,7 @@ class NetCDFAggregation(NetCDFMixin):
         self._nc_set_aggregation_write_status(status)
 
     def nc_clear_aggregation_substitutions(self):
-        """Remove all neCDF aggregation substitution definitions.
+        """Remove all netCDF aggregation substitution definitions.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -5008,7 +5008,7 @@ class NetCDFAggregation(NetCDFMixin):
         return self._nc_del("aggregation_substitutions", {}).copy()
 
     def nc_del_aggregation_substitution(self, substitution):
-        """Remove a neCDF aggregation substitution definition.
+        """Remove a netCDF aggregation substitution definition.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -5071,7 +5071,7 @@ class NetCDFAggregation(NetCDFMixin):
         return out
 
     def nc_aggregation_substitutions(self):
-        """Return the neCDF aggregation substitution definitions.
+        """Return the netCDF aggregation substitution definitions.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -5121,7 +5121,8 @@ class NetCDFAggregation(NetCDFMixin):
         return {}
 
     def nc_has_aggregation_substitutions(self):
-        """Whether there are neCDF aggregation substitution definitions.
+        """Whether there are netCDF aggregation substitution
+        definitions.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -5168,7 +5169,7 @@ class NetCDFAggregation(NetCDFMixin):
         return self._nc_has("aggregation_substitutions")
 
     def nc_update_aggregation_substitutions(self, substitutions):
-        """Update the neCDF aggregation substitution definitions.
+        """Update the netCDF aggregation substitution definitions.
 
         .. versionadded:: (cfdm) NEXTVERSION
 

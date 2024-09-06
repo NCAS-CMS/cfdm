@@ -49,6 +49,10 @@ class CFATest(unittest.TestCase):
     netcdf4_fmts = ["NETCDF4", "NETCDF4_CLASSIC"]
     netcdf_fmts = netcdf3_fmts + netcdf4_fmts
 
+    aggregation_value = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "aggregation_value.nc"
+    )
+
     def test_CFA_fmt(self):
         """Test the cfdm.read 'fmt' keyword with cfa."""
         f = cfdm.example_field(0)
@@ -414,35 +418,42 @@ class CFATest(unittest.TestCase):
         self.assertTrue(h.equals(f))
 
     def test_CFA_value(self):
-        """Test the value aggregation variable."""
-        f = cfdm.read("aggregation_value.nc")
-        self.assertEqual(len(f), 1)
-        f = f[0]
-        fa = f.field_ancillary()
-        self.assertEqual(fa.shape, (12,))
+        """Test the value fragment array variable."""
+        write = True
+        for aggregation_value_file in (self.aggregation_value, cfa_file):
+            f = cfdm.read(aggregation_value_file)
+            self.assertEqual(len(f), 1)
+            f = f[0]
+            fa = f.field_ancillary()
+            self.assertEqual(fa.shape, (12,))
+            self.assertEqual(fa.data.chunks, ((3, 9),))
+            self.assertEqual(
+                fa.data.nc_get_aggregation_fragment_type(), "value"
+            )
+            self.assertEqual(
+                fa.data.nc_get_aggregated_data(),
+                {"shape": "fragment_shape_uid", "value": "fragment_value_uid"},
+            )
 
-        nc = netCDF4.Dataset("aggregation_value.nc", "r")
-        fragment_value_uid = nc.variables["fragment_value_uid"][...]
-        nc.close()
+            nc = netCDF4.Dataset(aggregation_value_file, "r")
+            fragment_value_uid = nc.variables["fragment_value_uid"][...]
+            nc.close()
 
-        self.assertTrue((fa[:3].array == fragment_value_uid[0]).all())
-        self.assertTrue((fa[3:].array == fragment_value_uid[1]).all())
-        cfa_file = "cfa_file.nc"
-        cfdm.write(
-            f, cfa_file, cfa={"constructs": ["field", "field_ancillary"]}
-        )
+            self.assertTrue((fa[:3].array == fragment_value_uid[0]).all())
+            self.assertTrue((fa[3:].array == fragment_value_uid[1]).all())
+
+            if write:
+                cfdm.write(f, cfa_file)
+                write = False
 
     def test_CFA_cfa(self):
         """Test the cfdm.write 'cfa' keyword."""
         f = cfdm.example_field(0)
-        #        f.del_construct('time')
         cfdm.write(f, tmpfile1)
         f = cfdm.read(tmpfile1)[0]
-        tmpfile2 = "tmpfile2.nc"
         cfdm.write(f, tmpfile2, cfa="field")
         g = cfdm.read(tmpfile2)[0]
 
-        cfa_file = "cfa_file1.nc"
         # Default of cfa="auto" - check that aggregation variable
         # gets written
         cfdm.write(g, cfa_file)
