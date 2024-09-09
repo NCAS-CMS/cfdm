@@ -2711,11 +2711,15 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.file_directories(), set((directory,)))
 
         # Replace directory
-        d.replace_file_directory(directory, "/new/path/")
+        self.assertEqual(
+            d.replace_file_directory(directory, "/new/path/"), "/new/path"
+        )
         self.assertEqual(d.file_directories(), set(("/new/path",)))
         self.assertEqual(
             d.get_filenames(), set((f"/new/path/{os.path.basename(file_A)}",))
         )
+        self.assertEqual(d.replace_file_directory("/new/", "/newer"), "/newer")
+        self.assertEqual(d.file_directories(), set(("/newer/path",)))
 
 
 if __name__ == "__main__":

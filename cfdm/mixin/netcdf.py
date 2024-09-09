@@ -4616,8 +4616,9 @@ class NetCDFAggregation(NetCDFMixin):
     def nc_del_aggregated_data(self):
         """Remove the netCDF aggregated_data terms.
 
-        The aggregation instructions are stored in the
-        ``aggregation_data`` attribute of a CF aggregation variable.
+        The aggregated data terms define the names of the fragment
+        array variables, and are stored in the a netCDF file in an
+        "aggregated_data" attribute.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -4628,7 +4629,7 @@ class NetCDFAggregation(NetCDFMixin):
         :Returns:
 
             `dict`
-                The removed netCDF aggregated_data terms in a
+                The removed netCDF aggregated_data elements in a
                 dictionary whose key/value pairs are the feature names
                 and their corresponding fragment array variable names.
 
@@ -4655,6 +4656,9 @@ class NetCDFAggregation(NetCDFMixin):
         {}
         >>> f.nc_get_aggregated_data()
         {}
+        >>> f.nc_set_aggregated_data(
+        ...     'shape: shape, location: location address: address'
+        ... )
 
         """
         out = self._nc_del("aggregated_data", None)
@@ -4664,10 +4668,11 @@ class NetCDFAggregation(NetCDFMixin):
         return out.copy()
 
     def nc_get_aggregated_data(self):
-        """Return the netCDF aggregated_data terms.
+        """Return the netCDF aggregated data terms.
 
-        The aggregation instructions are stored in the
-        ``aggregation_data`` attribute of a CF aggregation variable.
+        The aggregated data terms define the names of the fragment
+        array variables, and are stored in the a netCDF file in an
+        "aggregated_data" attribute.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -4705,6 +4710,9 @@ class NetCDFAggregation(NetCDFMixin):
         {}
         >>> f.nc_get_aggregated_data()
         {}
+        >>> f.nc_set_aggregated_data(
+        ...     'shape: shape, location: location address: address'
+        ... )
 
         """
         out = self._nc_get("aggregated_data", None)
@@ -4716,8 +4724,9 @@ class NetCDFAggregation(NetCDFMixin):
     def nc_has_aggregated_data(self):
         """Whether any netCDF aggregated_data terms have been set.
 
-        The aggregation instructions are stored in the
-        ``aggregation_data`` attribute of a CF aggregation variable.
+        The aggregated data terms define the names of the fragment
+        array variables, and are stored in the a netCDF file in an
+        "aggregated_data" attribute.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -4754,15 +4763,19 @@ class NetCDFAggregation(NetCDFMixin):
         {}
         >>> f.nc_get_aggregated_data()
         {}
+        >>> f.nc_set_aggregated_data(
+        ...     'shape: shape, location: location address: address'
+        ... )
 
         """
         return self._nc_has("aggregated_data")
 
     def nc_set_aggregated_data(self, value):
-        """Set the netCDF aggregated_data terms.
+        """Set the netCDF aggregated_data elements.
 
-        The aggregation instructions are stored in the
-        ``aggregation_data`` attribute of a CF aggregation variable.
+        The aggregated data terms define the names of the fragment
+        array variables, and are stored in the a netCDF file in an
+        "aggregated_data" attribute.
 
         If there are any ``/`` (slash) characters in the netCDF
         variable names then these act as delimiters for a group
@@ -4778,13 +4791,12 @@ class NetCDFAggregation(NetCDFMixin):
 
         :Parameters:
 
-            value: `str` or `dict`
-                The aggregation instruction terms and their TODOCFA
-                corresponding netCDF variable names. Either a
-                CFA-netCDF-compliant string value of an
-                ``aggregated_data`` attribute, or a dictionary whose
-                key/value pairs are the aggregation instruction terms
-                and their corresponding variable names.
+            value: `dict` or `str`
+                The netCDF aggregated_data terms in a dictionary whose
+                key/value pairs are the feature names and their
+                corresponding fragment array variable names; or else
+                an equivalent string formated with the the CF-netCDF
+                encoding.
 
         :Returns:
 
@@ -4813,6 +4825,9 @@ class NetCDFAggregation(NetCDFMixin):
         {}
         >>> f.nc_get_aggregated_data()
         {}
+        >>> f.nc_set_aggregated_data(
+        ...     'shape: shape, location: location address: address'
+        ... )
 
         """
         if not value:
@@ -4828,38 +4843,44 @@ class NetCDFAggregation(NetCDFMixin):
         self._get_component("netcdf")["aggregated_data"] = value
 
     def _nc_del_aggregation_fragment_type(self):
-        """TODOCFA.
+        """Remove the type of fragments in the aggregated data.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
-            TODOCFA
+            `str` or `None`
+                The removed fragment type, either ``'location'`` for
+                fragment files, or ``'value'`` for fragment unique
+                values, or `None` if no fragment type was set.
 
         """
         return self._nc_del("aggregation_fragment_type", None)
 
     def nc_get_aggregation_fragment_type(self):
-        """TODOCFA.
+        """The type of fragments in the aggregated data.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
-            TODOCFA
+            `str`
+                The fragment type, either ``'location'`` for fragment
+                files, or ``'value'`` for fragment unique values.
 
         """
         return self._nc_get("aggregation_fragment_type", None)
 
     def _nc_set_aggregation_fragment_type(self, value):
-        """TODOCFA.
+        """Set the type of fragments in the aggregated data.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
             value: `str`
-                TODOCFA
+                The fragment type, either ``'location'`` for fragment
+                files, or ``'value'`` for fragment unique values.
 
         :Returns:
 
@@ -5121,8 +5142,7 @@ class NetCDFAggregation(NetCDFMixin):
         return {}
 
     def nc_has_aggregation_substitutions(self):
-        """Whether there are netCDF aggregation substitution
-        definitions.
+        """Whether there are netCDF aggregation substitutions.
 
         .. versionadded:: (cfdm) NEXTVERSION
 

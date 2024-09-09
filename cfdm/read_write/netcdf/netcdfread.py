@@ -6288,7 +6288,7 @@ class NetCDFRead(IORead):
         # 'mask' must be True, to indicate that the aggregated data is
         # to be masked by convention.
         kwargs["mask"] = True
- 
+
         fragment_array_variables = g["fragment_array_variables"]
         standardised_terms = ("shape", "location", "address", "value")
 

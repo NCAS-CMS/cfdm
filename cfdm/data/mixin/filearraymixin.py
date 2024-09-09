@@ -1,11 +1,10 @@
 from copy import deepcopy
-from os import sep
-from os.path import basename, dirname, join
+from os.path import basename, join
 from urllib.parse import urlparse
 
 from s3fs import S3FileSystem
 
-from ...functions import abspath
+from ...functions import abspath, dirname
 
 
 class DeprecationError(Exception):
@@ -130,7 +129,7 @@ class FileArrayMixin:
         ('tas1', 'tas2')
 
         """
-        directory = abspath(directory).rstrip(sep)
+        directory = dirname(directory, isdir=True)
 
         filenames = self.get_filenames()
         addresses = self.get_addresses()
@@ -201,7 +200,8 @@ class FileArrayMixin:
         ('tas1',)
 
         """
-        directory = abspath(directory).rstrip(sep)
+        #        directory = abspath(directory).rstrip(sep)
+        directory = dirname(directory, isdir=True)
 
         new_filenames = []
         new_addresses = []
@@ -543,10 +543,10 @@ class FileArrayMixin:
         raise FileNotFoundError(f"No such files: {filenames}")
 
     def replace_file_directory(self, old_directory, new_directory):
-        """Add a new file directory, not in-place. TODOCFA.
+        """Replace a file directories in-place.
 
-        All existing files are additionally referenced from the given
-        directory.
+        Every file in *old_directory* that is referenced by the data
+        is redefined to be in *new_directory*.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -554,7 +554,10 @@ class FileArrayMixin:
 
         :Parameters:
 
-            directory: `str`
+            old_directory: `str`
+                The directory to be replaced.
+
+            new_directory: `str`
                 The new directory.
 
         :Returns:
@@ -566,48 +569,17 @@ class FileArrayMixin:
         **Examples**
 
         >>> a.get_filenames()
-        ('/data1/file1',)
-        >>> a.get_addresses()
-        ('tas',)
-        >>> b = a.add_file_directory('/home')
+        {'/data/file1.nc', '/home/file2.nc'}
+        >>> b = a.replace_file_directory('/data', '/new/data/path/')
         >>> b.get_filenames()
-        ('/data1/file1', '/home/file1')
-        >>> b.get_addresses()
-        ('tas', 'tas')
-
-        >>> a.get_filenames()
-        ('/data1/file1', '/data2/file2',)
-        >>> a.get_addresses()
-        ('tas', 'tas')
-        >>> b = a.add_file_directory('/home/')
-        >>> b = get_filenames()
-        ('/data1/file1', '/data2/file2', '/home/file1', '/home/file2')
-        >>> b.get_addresses()
-        ('tas', 'tas', 'tas', 'tas')
-
-        >>> a.get_filenames()
-        ('/data1/file1', '/data2/file1',)
-        >>> a.get_addresses()
-        ('tas1', 'tas2')
-        >>> b = a.add_file_directory('/home/')
-        >>> b.get_filenames()
-        ('/data1/file1', '/data2/file1', '/home/file1')
-        >>> b.get_addresses()
-        ('tas1', 'tas2', 'tas1')
-
-        >>> a.get_filenames()
-        ('/data1/file1', '/data2/file1',)
-        >>> a.get_addresses()
-        ('tas1', 'tas2')
-        >>> b = a.add_file_directory('/data1')
-        >>> b.get_filenames()
-        ('/data1/file1', '/data2/file1')
-        >>> b.get_addresses()
-        ('tas1', 'tas2')
+        {'/new/data/path/file1.nc', '/home/file2.nc'}
+        >>> c = b.replace_file_directory('/data', '/archive/location')
+        >>> c.get_filenames()
+        {'/archive/location/path/file1.nc', '/home/file2.nc'}
 
         """
-        old_directory = abspath(old_directory).rstrip(sep)
-        new_directory = abspath(new_directory).rstrip(sep)
+        old_directory = dirname(old_directory, isdir=True)
+        new_directory = dirname(new_directory, isdir=True)
 
         filenames = self.get_filenames()
         addresses = self.get_addresses()
@@ -617,8 +589,8 @@ class FileArrayMixin:
         new_filenames = []
         new_addresses = []
         for filename, address in zip(filenames, addresses):
-            if dirname(filename) == old_directory:
-                new_filename = join(new_directory, basename(filename))
+            if dirname(filename).startswith(old_directory):
+                new_filename = filename.replace(old_directory, new_directory)
                 if new_filename not in new_filenames:
                     new_filenames.append(new_filename)
                     new_addresses.append(address)

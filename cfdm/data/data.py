@@ -3645,7 +3645,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         {'/data/file1.nc', '/new/file1.nc', '/home/file2.nc', '/new/file2.nc'}
 
         """
-        directory = dirname(directory)
+        directory = dirname(directory, isdir=True)
 
         updated = False
 
@@ -4057,7 +4057,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         {'/home/file2.nc'}
 
         """
-        directory = dirname(directory)
+        directory = dirname(directory, isdir=True)
 
         updated = False
 
@@ -5820,10 +5820,14 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         '/new/data/path'
         >>> d.get_filenames()
         {'/new/data/path/file1.nc', '/home/file2.nc'}
+        >>> d.replace_file_directory('/new/data, '/archive/location')
+        '/archive/location'
+        >>> d.get_filenames()
+        {'/archive/location/path/file1.nc', '/home/file2.nc'}
 
         """
-        old_directory = dirname(old_directory)
-        new_directory = dirname(new_directory)
+        old_directory = dirname(old_directory, isdir=True)
+        new_directory = dirname(new_directory, isdir=True)
         updated = False
 
         # The Dask graph is never going to be computed, so we can set

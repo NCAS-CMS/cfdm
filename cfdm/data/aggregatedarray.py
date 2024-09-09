@@ -172,8 +172,9 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         if not mask:
             raise ValueError(
                 "The 'mask' keyword must be True when initialising "
-                f"{self.__class__.__name__}")
-            
+                f"{self.__class__.__name__}"
+            )
+
         self._set_component(
             "fragment_array_shape", fragment_array_shape, copy=False
         )
