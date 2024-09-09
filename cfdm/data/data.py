@@ -116,15 +116,15 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
     """
 
     # Constants used to specify which components should be cleared
-    # when a new dask array is set. See `clear_after_dask_update` for
+    # when a new dask array is set. See `_clear_after_dask_update` for
     # details. These must have values 2**N (N>0) except for _NONE
     # which must be 0, and _ALL which must be the sum of other
-    # constants.
-    _NONE = 0  # =  0b000
-    _ARRAY = 1  # = 0b001
-    _CACHE = 2  # = 0b010
-#    _CFA = 4  # =   0b100
-    _ALL = 7  # =   0b111
+    # constants. It is therefore convenient to define these constants
+    # in binary.
+    _NONE = 0b000
+    _ARRAY = 0b01
+    _CACHE = 0b10
+    _ALL = 0b11
 
     # The default mask hardness
     _DEFAULT_HARDMASK = True
@@ -1687,7 +1687,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `_del_Array`, `_del_cached_elements`,
-                     `_cfa_del_write`, `_set_dask`
+                     `_set_dask`
 
         :Parameters:
 
@@ -1726,27 +1726,6 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         if clear & self._CACHE:
             # Delete cached element values
             self._del_cached_elements()
-
-#        if clear & self._CFA:
-#            # Set the CFA write status to False
-#            self._cfa_del_write()
-#
-#    def _cfa_del_write(self):
-#        """Set the CFA write status of the data to `False`.
-#
-#        TODOCFA: Placeholder
-#
-#        .. versionadded:: (cfdm) NEXTVERSION
-#
-#        .. seealso:: `cfa_get_write`, `_cfa_set_write`
-#
-#        :Returns:
-#
-#            `bool`
-#                The CFA status prior to deletion.
-#
-#        """
-#        return self._del_component("cfa_write", False)
 
     def _del_cached_elements(self):
         """Delete any cached element values.
@@ -4847,9 +4826,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         dx = d.to_dask_array()
         dx = dx.reshape(new_shape)
 
-        # Inserting a dimension doesn't affect the cached elements or
-        # the CFA write status
-        # TODOCFA d._set_dask(dx, clear=self._ALL ^ self._CACHE ^ self._CFA)
+        # Inserting a dimension doesn't affect the cached elements
         d._set_dask(dx, clear=self._ALL ^ self._CACHE)
 
         # Expand _axes
