@@ -115,15 +115,16 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     """
 
     # Constants used to specify which components should be cleared
-    # when a new dask array is set. See `clear_after_dask_update` for
+    # when a new dask array is set. See `_clear_after_dask_update` for
     # details. These must have values 2**N (N>0) except for _NONE
     # which must be 0, and _ALL which must be the sum of other
-    # constants.
-    _NONE = 0  # =  0b000
-    _ARRAY = 1  # = 0b001
-    _CACHE = 2  # = 0b010
-    _CFA = 4  # =   0b100
-    _ALL = 7  # =   0b111
+    # constants. It is therefore convenient to define these constants
+    # in binary.
+    _NONE = 0b000
+    _ARRAY = 0b001
+    _CACHE = 0b010
+    _CFA = 0b100
+    _ALL = 0b111
 
     # The default mask hardness
     _DEFAULT_HARDMASK = True
@@ -1695,40 +1696,20 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         :Parameters:
 
             clear: `int` or `None`, optional
+                Specify which components to remove, determined by
+                sequentially combining an integer value of *clear*
+                with the relevant class-level constants (such as
+                ``{{class}}._ARRAY``), using the bitwise AND (&)
+                operator. If ``clear & <class-level constant>`` is
+                True then the corresponding component is cleared. The
+                default value of `None` is equivalent to *clear* being
+                set to ``{{class}}._ALL``.
 
-                Specify which components should be removed. Which
-                components are removed is determined by sequentially
-                combining an integer value of *clear* with
-                ``{{class}}._ARRAY``, ``{{class}}._CACHE`` and
-                ``{{class}}._CFA``, using the bitwise AND (&)
-                operator. If *clear* is `None` (the default) then the
-                value of ``{{class}}._ALL`` is used.
-
-                * If *clear* is `None` (the default) then all
-                  components are removed.
-
-                * If *clear* is ``{{class}}._ALL`` then all components
-                  are removed.
-
-                * If *clear* is ``{{class}}._NONE`` then no components
-                  are removed.
-
-                * If ``clear & {{class}}._ARRAY`` is non-zero then a
-                  source array is deleted.
-
-                * If ``clear & {{class}}._CACHE`` is non-zero then
-                  cached element values are deleted.
-
-                * If ``clear & {{class}}._CFA`` is non-zero then the
-                  CFA write status is set to `False`.
-
-                To retain a component (or components) and remove all
-                others, use ``{{class}}._ALL`` with the bitwise OR (^)
-                operator. For instance, if *clear* is ``_ALL ^
-                _CACHE`` then this menas "all except cache", and
-                cached element values will be kept but all other
-                components will be removed.
-
+                The bitwise OR (^) operator can be used to retain a
+                component (or components) but remove all others. For
+                instance, if *clear* is ``{{class}}._ALL ^
+                {{class}}._CACHE`` then all components except the
+                cached array values will be removed.
 
         :Returns:
 
@@ -1736,6 +1717,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         if clear is None:
+            # Clear all components
             clear = self._ALL
 
         if not clear:
@@ -5273,9 +5255,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         dx = d.to_dask_array()
         dx = dx.reshape(new_shape)
 
-        # Inserting a dimension doesn't affect the cached elements nor
+        # Inserting a dimension doesn't affect the cached elements or
         # the CFA write status
-        d._set_dask(dx, clear=self._ALL ^ self._CACHE ^ self._CFA)
+        # TODOCFA d._set_dask(dx, clear=self._ALL ^ self._CACHE ^ self._CFA)
+        d._set_dask(dx, clear=self._ALL ^ self._CACHE)
 
         # Expand _axes
         axis = new_axis_identifier(d._axes)
