@@ -5257,8 +5257,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         # Inserting a dimension doesn't affect the cached elements or
         # the CFA write status
-        # TODOCFA d._set_dask(dx, clear=self._ALL ^ self._CACHE ^ self._CFA)
-        d._set_dask(dx, clear=self._ALL ^ self._CACHE)
+        d._set_dask(dx, clear=self._ALL ^ self._CACHE ^ self._CFA)
 
         # Expand _axes
         axis = new_axis_identifier(d._axes)
