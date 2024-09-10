@@ -346,7 +346,10 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                         self._set_dask(array, copy=copy, clear=self._NONE)
                 else:
                     self._set_dask(
-                        array, copy=copy, clear=self._NONE, asanyarray=None
+                        array,
+                        copy=copy,
+                        clear=self._NONE,
+                        asanyarray=getattr(source, "__asanyarray__", None),
                     )
             else:
                 self._del_dask(None, clear=self._NONE)
@@ -376,6 +379,14 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             self.__orothogonal_indexing__ = getattr(
                 source, "__orthogonal_indexing__", True
             )
+
+            # __asanyarray__
+            try:
+                self._set_component(
+                    "__asanyarray__", source.__asanyarray__, copy=False
+                )
+            except AttributeError:
+                pass
 
             # File components
             self._initialise_netcdf(source)
@@ -717,7 +728,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         #   so we set asanyarray=True to ensure that, if required,
         #   they are converted at compute time.
         # ------------------------------------------------------------
-        new._set_dask(dx, clear=self._ALL, asanyarray=True)
+        new._set_dask(dx, clear=self._ALL, asanyarray=None)
 
         # ------------------------------------------------------------
         # Get the axis identifiers for the subspace
@@ -1758,13 +1769,14 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 dask array axes has not been set. If set to an
                 `Exception` instance then it will be raised instead.
 
-            clear: `int`, optional
-                Specify which components should be removed. By default
-                *clear* is the ``_ALL`` integer-valued constant, which
-                results in all components being removed. See
-                `_clear_after_dask_update` for details. If there is
-                no dask array then no components are removed,
-                regardless of the value of *clear*.
+            clear: `int` or None`, optional
+                Specify which components should be removed. The
+                default value of `None` is equivalent to *clear* being
+                set to ``{{class}}._ALL``, which results in all
+                components being removed. See
+                `_clear_after_dask_update` for details. If there is no
+                Dask array then no components are removed, regardless
+                of the value of *clear*.
 
         :Returns:
 
@@ -2002,15 +2014,16 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 If True then copy *array* before setting it. By
                 default it is not copied.
 
-            clear: `int`, optional
-                Specify which components should be removed. By default
-                *clear* is the ``_ALL`` integer-valued constant, which
-                results in all components being removed. See
+            clear: `int` or `None`, optional
+                Specify which components should be removed. The
+                default value of `None` is equivalent to *clear* being
+                set to ``{{class}}._ALL``, which results in all
+                components being removed. See
                 `_clear_after_dask_update` for details.
 
-            asanyarray: `bool` or `None`, optional
-                If `None` then do nothing. Otherwise set
-                `__asanyarray__` to the Boolean value of *asanyarray*.
+            asanyarray: `None` or `bool`, optional
+                If `None` then do not update `__asanyarray__`.
+                Otherwise set `__asanyarray__` to *asanyarray*.
 
         :Returns:
 
@@ -2959,208 +2972,6 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         # CF-PYTHON: Override
         del self._Units
 
-    def compute(self):
-        """A view of the computed data.
-
-        In-place changes to the returned array *might* affect the
-        underlying dask array, depending on how the dask array has
-        been defined, including any delayed operations.
-
-        The returned array has the same mask hardness and fill values
-        as the data.
-
-        Compare with `array`.
-
-        **Performance**
-
-        `compute` causes all delayed operations to be computed.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `persist`, `array`, `datetime_array`,
-                     `sparse_array`
-
-        :Returns:
-
-                An in-memory view of the data
-
-        **Examples**
-
-        >>> d = {{package}}.{{class}}([1, 2, 3.0], 'km')
-        >>> d.compute()
-        array([1., 2., 3.])
-
-        >>> from scipy.sparse import csr_array
-        >>> d = {{package}}.{{class}}(csr_array((2, 3)))
-        >>> d.compute()
-        <2x3 sparse array of type '<class 'numpy.float64'>'
-                with 0 stored elements in Compressed Sparse Row format>
-        >>>: d.array
-        array([[0., 0., 0.],
-               [0., 0., 0.]])
-        >>> d.compute().toarray()
-        array([[0., 0., 0.],
-               [0., 0., 0.]])
-
-        """
-        dx = self.to_dask_array()
-        a = dx.compute()
-
-        if np.ma.isMA(a) and a is not np.ma.masked:
-            a.set_fill_value(999)
-            if self.hardmask:
-                a.harden_mask()
-            else:
-                a.soften_mask()
-
-            a.set_fill_value(self.get_fill_value(None))
-
-        return a
-
-    def creation_commands(
-        self, name="data", namespace=None, indent=0, string=True
-    ):
-        """Return the commands that would create the data object.
-
-        .. versionadded:: (cfdm) 1.8.7.0
-
-        :Parameters:
-
-            name: `str` or `None`, optional
-                Set the variable name of `Data` object that the commands
-                create.
-
-            {{namespace: `str`, optional}}
-
-            {{indent: `int`, optional}}
-
-            {{string: `bool`, optional}}
-
-        :Returns:
-
-            {{returns creation_commands}}
-
-        **Examples**
-
-        >>> d = {{package}}.{{class}}([[0.0, 45.0], [45.0, 90.0]],
-        ...                           units='degrees_east')
-        >>> print(d.creation_commands())
-        data = {{package}}.{{class}}([[0.0, 45.0], [45.0, 90.0]], units='degrees_east', dtype='f8')
-
-        >>> d = {{package}}.{{class}}(['alpha', 'beta', 'gamma', 'delta'],
-        ...                           mask = [1, 0, 0, 0])
-        >>> d.creation_commands(name='d', namespace='', string=False)
-        ["d = Data(['', 'beta', 'gamma', 'delta'], dtype='U5', mask=Data([True, False, False, False], dtype='b1'))"]
-
-        """
-        namespace0 = namespace
-        if namespace is None:
-            namespace = self._package() + "."
-        elif namespace and not namespace.endswith("."):
-            namespace += "."
-
-        mask = self.mask
-        if mask.any():
-            if name == "mask":
-                raise ValueError(
-                    "When the data is masked, the 'name' parameter "
-                    "can not have the value 'mask'"
-                )
-            masked = True
-            array = self.filled().array.tolist()
-        else:
-            masked = False
-            array = self.array.tolist()
-
-        units = self.get_units(None)
-        if units is None:
-            units = ""
-        else:
-            units = f", units={units!r}"
-
-        calendar = self.get_calendar(None)
-        if calendar is None:
-            calendar = ""
-        else:
-            calendar = f", calendar={calendar!r}"
-
-        fill_value = self.get_fill_value(None)
-        if fill_value is None:
-            fill_value = ""
-        else:
-            fill_value = f", fill_value={fill_value}"
-
-        dtype = self.dtype.descr[0][1][1:]
-
-        if masked:
-            mask = mask.creation_commands(
-                name="mask", namespace=namespace0, indent=0, string=True
-            )
-            mask = mask.replace("mask = ", "mask=", 1)
-            mask = f", {mask}"
-        else:
-            mask = ""
-
-        if name is None:
-            name = ""
-        else:
-            name = name + " = "
-
-        out = []
-        out.append(
-            f"{name}{namespace}{self.__class__.__name__}({array}{units}"
-            f"{calendar}, dtype={dtype!r}{mask}{fill_value})"
-        )
-
-        if string:
-            indent = " " * indent
-            out[0] = indent + out[0]
-            out = ("\n" + indent).join(out)
-
-        return out
-
-    def cull_graph(self):
-        """Remove unnecessary tasks from the dask graph in-place.
-
-        **Performance**
-
-        An unnecessary task is one which does not contribute to the
-        computed result. Such tasks are always automatically removed
-        (culled) at compute time, but removing them beforehand might
-        improve performance by reducing the amount of work done in
-        later steps.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `dask.optimization.cull`
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> d = {{package}}.{{class}}([1, 2, 3, 4, 5], chunks=3)
-        >>> d = d[:2]
-        >>> dict(d.to_dask_array().dask)
-        {('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3]),
-         ('array-21ea057f160746a3d3f0943bba945460', 1): array([4, 5]),
-         ('getitem-3e4edac0a632402f6b45923a6b9d215f',
-          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-21ea057f160746a3d3f0943bba945460',
-           0), (slice(0, 2, 1),))}
-        >>> d.cull_graph()
-        >>> dict(d.to_dask_array().dask)
-        {('getitem-3e4edac0a632402f6b45923a6b9d215f',
-          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-21ea057f160746a3d3f0943bba945460',
-           0), (slice(0, 2, 1),)),
-         ('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3])}
-
-        """
-        dx = self.to_dask_array(asanyarray=False)
-        dsk, _ = cull(dx.dask, dx.__dask_keys__())
-        dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
-        self._set_dask(dx, clear=self._NONE, asanyarray=None)
-
     def all(self, axis=None, keepdims=True, split_every=None):
         """Test whether all data array elements evaluate to True.
 
@@ -3533,6 +3344,208 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         ]
         return product(*indices)
 
+    def compute(self):
+        """A view of the computed data.
+
+        In-place changes to the returned array *might* affect the
+        underlying dask array, depending on how the dask array has
+        been defined, including any delayed operations.
+
+        The returned array has the same mask hardness and fill values
+        as the data.
+
+        Compare with `array`.
+
+        **Performance**
+
+        `compute` causes all delayed operations to be computed.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `persist`, `array`, `datetime_array`,
+                     `sparse_array`
+
+        :Returns:
+
+                An in-memory view of the data
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([1, 2, 3.0], 'km')
+        >>> d.compute()
+        array([1., 2., 3.])
+
+        >>> from scipy.sparse import csr_array
+        >>> d = {{package}}.{{class}}(csr_array((2, 3)))
+        >>> d.compute()
+        <2x3 sparse array of type '<class 'numpy.float64'>'
+                with 0 stored elements in Compressed Sparse Row format>
+        >>>: d.array
+        array([[0., 0., 0.],
+               [0., 0., 0.]])
+        >>> d.compute().toarray()
+        array([[0., 0., 0.],
+               [0., 0., 0.]])
+
+        """
+        dx = self.to_dask_array()
+        a = dx.compute()
+
+        if np.ma.isMA(a) and a is not np.ma.masked:
+            a.set_fill_value(999)
+            if self.hardmask:
+                a.harden_mask()
+            else:
+                a.soften_mask()
+
+            a.set_fill_value(self.get_fill_value(None))
+
+        return a
+
+    def creation_commands(
+        self, name="data", namespace=None, indent=0, string=True
+    ):
+        """Return the commands that would create the data object.
+
+        .. versionadded:: (cfdm) 1.8.7.0
+
+        :Parameters:
+
+            name: `str` or `None`, optional
+                Set the variable name of `Data` object that the commands
+                create.
+
+            {{namespace: `str`, optional}}
+
+            {{indent: `int`, optional}}
+
+            {{string: `bool`, optional}}
+
+        :Returns:
+
+            {{returns creation_commands}}
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([[0.0, 45.0], [45.0, 90.0]],
+        ...                           units='degrees_east')
+        >>> print(d.creation_commands())
+        data = {{package}}.{{class}}([[0.0, 45.0], [45.0, 90.0]], units='degrees_east', dtype='f8')
+
+        >>> d = {{package}}.{{class}}(['alpha', 'beta', 'gamma', 'delta'],
+        ...                           mask = [1, 0, 0, 0])
+        >>> d.creation_commands(name='d', namespace='', string=False)
+        ["d = Data(['', 'beta', 'gamma', 'delta'], dtype='U5', mask=Data([True, False, False, False], dtype='b1'))"]
+
+        """
+        namespace0 = namespace
+        if namespace is None:
+            namespace = self._package() + "."
+        elif namespace and not namespace.endswith("."):
+            namespace += "."
+
+        mask = self.mask
+        if mask.any():
+            if name == "mask":
+                raise ValueError(
+                    "When the data is masked, the 'name' parameter "
+                    "can not have the value 'mask'"
+                )
+            masked = True
+            array = self.filled().array.tolist()
+        else:
+            masked = False
+            array = self.array.tolist()
+
+        units = self.get_units(None)
+        if units is None:
+            units = ""
+        else:
+            units = f", units={units!r}"
+
+        calendar = self.get_calendar(None)
+        if calendar is None:
+            calendar = ""
+        else:
+            calendar = f", calendar={calendar!r}"
+
+        fill_value = self.get_fill_value(None)
+        if fill_value is None:
+            fill_value = ""
+        else:
+            fill_value = f", fill_value={fill_value}"
+
+        dtype = self.dtype.descr[0][1][1:]
+
+        if masked:
+            mask = mask.creation_commands(
+                name="mask", namespace=namespace0, indent=0, string=True
+            )
+            mask = mask.replace("mask = ", "mask=", 1)
+            mask = f", {mask}"
+        else:
+            mask = ""
+
+        if name is None:
+            name = ""
+        else:
+            name = name + " = "
+
+        out = []
+        out.append(
+            f"{name}{namespace}{self.__class__.__name__}({array}{units}"
+            f"{calendar}, dtype={dtype!r}{mask}{fill_value})"
+        )
+
+        if string:
+            indent = " " * indent
+            out[0] = indent + out[0]
+            out = ("\n" + indent).join(out)
+
+        return out
+
+    def cull_graph(self):
+        """Remove unnecessary tasks from the dask graph in-place.
+
+        **Performance**
+
+        An unnecessary task is one which does not contribute to the
+        computed result. Such tasks are always automatically removed
+        (culled) at compute time, but removing them beforehand might
+        improve performance by reducing the amount of work done in
+        later steps.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `dask.optimization.cull`
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([1, 2, 3, 4, 5], chunks=3)
+        >>> d = d[:2]
+        >>> dict(d.to_dask_array().dask)
+        {('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3]),
+         ('array-21ea057f160746a3d3f0943bba945460', 1): array([4, 5]),
+         ('getitem-3e4edac0a632402f6b45923a6b9d215f',
+          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-21ea057f160746a3d3f0943bba945460',
+           0), (slice(0, 2, 1),))}
+        >>> d.cull_graph()
+        >>> dict(d.to_dask_array().dask)
+        {('getitem-3e4edac0a632402f6b45923a6b9d215f',
+          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-21ea057f160746a3d3f0943bba945460',
+           0), (slice(0, 2, 1),)),
+         ('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3])}
+
+        """
+        dx = self.to_dask_array(asanyarray=False)
+        dsk, _ = cull(dx.dask, dx.__dask_keys__())
+        dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
+        self._set_dask(dx, clear=self._NONE, asanyarray=None)
+
     def del_calendar(self, default=ValueError()):
         """Delete the calendar.
 
@@ -3814,8 +3827,17 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             )  # pragma: no cover
             return False
 
+        self_dx = self.to_dask_array()
+        other_dx = other.to_dask_array()
+
         # Check that each instance has the same data type
-        if not ignore_data_type and self.dtype != other.dtype:
+        self_is_numeric = is_numeric_dtype(self_dx)
+        other_is_numeric = is_numeric_dtype(other_dx)
+        if (
+            not ignore_data_type
+            and (self_is_numeric or other_is_numeric)
+            and self.dtype != other.dtype
+        ):
             logger.info(
                 f"{self.__class__.__name__}: Different data types: "
                 f"{self.dtype} != {other.dtype}"
@@ -3851,9 +3873,6 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             atol = self._atol
         else:
             atol = float(atol)
-
-        self_dx = self.to_dask_array()
-        other_dx = other.to_dask_array()
 
         # Return False if there are different cached elements. This
         # provides a possible short circuit for that case that two
@@ -3894,8 +3913,6 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         # We assume that all inputs are masked arrays. Note we compare the
         # data first as this may return False due to different dtype without
         # having to wait until the compute call.
-        self_is_numeric = is_numeric_dtype(self_dx)
-        other_is_numeric = is_numeric_dtype(other_dx)
         if self_is_numeric and other_is_numeric:
             data_comparison = allclose(
                 self_dx,
@@ -5838,20 +5855,16 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         >>> d = {{package}}.{{class}}([1, 2, 3, 4], chunks=2)
         >>> d.todict()
-        {('array-2f41b21b4cd29f757a7bfa932bf67832', 0): array([1, 2]),
-         ('array-2f41b21b4cd29f757a7bfa932bf67832', 1): array([3, 4])}
+        {('array-1bd38aa2a7096af2b1db281a4309854a', 0): array([1, 2]),
+         ('array-1bd38aa2a7096af2b1db281a4309854a', 1): array([3, 4])}
         >>> e = d[0]
         >>> e.todict()
-        {('getitem-153fd24082bc067cf438a0e213b41ce6',
-          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-2f41b21b4cd29f757a7bfa932bf67832',
-           0), (slice(0, 1, 1),)),
-         ('array-2f41b21b4cd29f757a7bfa932bf67832', 0): array([1, 2])}
+        {('getitem-bb4a18fba86eac0dd2c489748b2b3e2d', 0): (<function dask.array.chunk.getitem(obj, index)>, ('array-1bd38aa2a7096af2b1db281a4309854a', 0), (slice(0, 1, 1),)),
+         ('array-1bd38aa2a7096af2b1db281a4309854a', 0): array([1, 2])}
         >>> e.todict(optimize_graph=False)
-        {('array-2f41b21b4cd29f757a7bfa932bf67832', 0): array([1, 2]),
-         ('array-2f41b21b4cd29f757a7bfa932bf67832', 1): array([3, 4]),
-         ('getitem-153fd24082bc067cf438a0e213b41ce6',
-          0): (<function dask.array.chunk.getitem(obj, index)>, ('array-2f41b21b4cd29f757a7bfa932bf67832',
-           0), (slice(0, 1, 1),))}
+        {('array-1bd38aa2a7096af2b1db281a4309854a', 0): array([1, 2]),
+         ('array-1bd38aa2a7096af2b1db281a4309854a', 1): array([3, 4]),
+         ('getitem-bb4a18fba86eac0dd2c489748b2b3e2d', 0): (<function dask.array.chunk.getitem(obj, index)>, ('array-1bd38aa2a7096af2b1db281a4309854a', 0), (slice(0, 1, 1),))}
 
         """
         dx = self.to_dask_array(
