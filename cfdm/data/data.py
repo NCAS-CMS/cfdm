@@ -1804,6 +1804,32 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         return data1
 
+    @classmethod
+    def _concatenate_xxx(cls, data, processed_data):
+        """Check and conform the units of the data. TODOCFA
+
+        This method is a helper function for `concatenate` that may be
+        easily overridden in sublcasses.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `concatenate`
+
+        :Parameters:
+
+            data: `{{class}}`
+                TODOCFA
+
+        :Returns:
+
+            `{{class}}`
+                Returns *data1*, possibly modified TODOCFA so that it conforms
+                to *units0*. If *copy* is False then if *data1* is
+                modified, it is done so in-place.
+
+        """
+        return data
+
     def _del_cached_elements(self):
         """Delete any cached element values.
 
@@ -3306,7 +3332,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         dx = da.concatenate(dxs, axis=axis)
 
         # ------------------------------------------------------------
-        # Set the aggregation write status. IF this status is True then
+        # Set the aggregation write status
         # ------------------------------------------------------------
         #
         # Assume at first that all input data instances have True
@@ -3401,6 +3427,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         if cached_elements:
             data0._set_cached_elements(cached_elements)
 
+        # TODOCFA
+        data0 = cls._concatenate_xxx(data0, axis, processed_data)
+            
         # Return the concatenated data
         return data0
 
