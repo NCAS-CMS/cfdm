@@ -716,9 +716,10 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.equals(d))  # check equal to self
         self.assertTrue(d.equals(d.copy()))  # also do self-equality checks!
 
-        # Different but equivalent datatype, which should *fail* the equality
-        # test (i.e. equals return False) because we want equals to check
-        # for strict equality, including equality of data type.
+        # Different but equivalent datatype, which should *fail* the
+        # equality test (i.e. equals return False) because we want
+        # equals to check for strict equality, including equality of
+        # data type.
         d2 = cfdm.Data(a.astype(np.float32), "m", chunks=chunksize)
         self.assertTrue(d2.equals(d2.copy()))
         with self.assertLogs(level=-1) as catch:
@@ -802,7 +803,9 @@ class DataTest(unittest.TestCase):
             )
 
         # Test masked arrays
-        # 1. Example case where the masks differ only (data is identical)
+        #
+        # 1. Example case where the masks differ only (data is
+        #    identical)
         mask_test_chunksize = (2, 1)
         j1 = cfdm.Data(
             np.ma.array([1.0, 2.0, 3.0], mask=[1, 0, 0]),
@@ -824,7 +827,8 @@ class DataTest(unittest.TestCase):
                     for log_msg in catch.output
                 )
             )
-        # 2. Example case where the data differs only (masks are identical)
+        # 2. Example case where the data differs only (masks are
+        #    identical)
         j3 = cfdm.Data(
             np.ma.array([1.0, 2.0, 100.0], mask=[1, 0, 0]),
             "m",
@@ -853,14 +857,15 @@ class DataTest(unittest.TestCase):
                     for log_msg in catch.output
                 )
             )
-        # 4. Case where all the unmasked data is 'allclose' to other data but
-        # the data is not 'allclose' to it where it is masked, i.e. the data
-        # on its own (namely without considering the mask) is not equal to the
-        # other data on its own (e.g. note the 0-th element in below examples).
-        # This differs to case (2): there data differs *only where unmasked*.
-        # Note these *should* be considered equal inside cfdm.Data, and indeed
-        # np.ma.allclose and our own _da_ma_allclose methods also hold
-        # these to be 'allclose'.
+        # 4. Case where all the unmasked data is 'allclose' to other
+        #    data but the data is not 'allclose' to it where it is
+        #    masked, i.e. the data on its own (namely without
+        #    considering the mask) is not equal to the other data on
+        #    its own (e.g. note the 0-th element in below examples).
+        #    This differs to case (2): there data differs *only where
+        #    unmasked*.  Note these *should* be considered equal
+        #    inside cfdm.Data, and indeed np.ma.allclose and our own
+        #    _da_ma_allclose methods also hold these to be 'allclose'.
         j5 = cfdm.Data(
             np.ma.array([1.0, 2.0, 3.0], mask=[1, 0, 0]),
             "m",
@@ -883,12 +888,12 @@ class DataTest(unittest.TestCase):
         sa2_data = np.array(["one", "two", "four"], dtype="S4")
         sa2 = cfdm.Data(sa2_data, "m", chunks=(3,))
         self.assertTrue(sa2.equals(sa2.copy()))
-        # Unlike for numeric types, for string-like data as long as the data
-        # is the same consider the arrays equal, even if the dtype differs.
-        # TODODASK: this behaviour will be added via cfdm, test fails for now
-        # ## self.assertTrue(sa1.equals(sa2))
+        # Unlike for numeric types, for string-like data as long as
+        # the data is the same consider the arrays equal, even if the
+        # dtype differs.
         sa3_data = sa2_data.astype("S5")
         sa3 = cfdm.Data(sa3_data, "m", chunks=mask_test_chunksize)
+        self.assertTrue(sa2.equals(sa3, verbose=2))
         self.assertTrue(sa3.equals(sa3.copy()))
         with self.assertLogs(level=-1) as catch:
             self.assertFalse(sa1.equals(sa3, verbose=2))
@@ -1021,18 +1026,6 @@ class DataTest(unittest.TestCase):
             for j, i in itertools.product([1, 2], [1, 2, 3]):
                 e = cfdm.Data(np.arange(6).reshape(2, 3), "m", chunks=(j, i))
                 self.assertTrue(d.equals(e))
-
-    #    def test_Data_equals(self):
-    #        """Test the equality-testing Data method"""
-    #        a = np.ma.arange(10 * 15 * 19).reshape(10, 1, 15, 19)
-    #        a[0, 0, 2, 3] = np.ma.masked
-    #
-    #        d = cfdm.Data(a, units="days since 2000-2-2", calendar="noleap")
-    #        e = copy.deepcopy(d)
-    #
-    #        self.assertTrue(d.equals(d, verbose=3))
-    #        self.assertTrue(d.equals(e, verbose=3))
-    #        self.assertTrue(e.equals(d, verbose=3))
 
     def test_Data_max_min_sum_squeeze(self):
         """Test the max, min, sum and squeeze Data methods."""
@@ -1466,16 +1459,16 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data(9, "km")
         self.assertIsNone(d.persist(inplace=True))
 
-        d = cfdm.Data([1, 2, 3.0, 4], "km", chunks=2)
-        d = d.transpose()
-        self.assertGreater(len(d.to_dask_array().dask.layers), 1)
+        d = cfdm.Data([[1, 2, 3.0, 4]], "km", chunks=2)
+        self.assertEqual(len(d.to_dask_array().dask.layers), 1)
+        d.transpose(inplace=True)
+        self.assertEqual(len(d.to_dask_array().dask.layers), 2)
 
         e = d.persist()
         self.assertIsInstance(e, cfdm.Data)
         self.assertEqual(len(e.to_dask_array().dask.layers), 1)
-        self.assertEqual(
-            e.to_dask_array().npartitions, d.to_dask_array().npartitions
-        )
+        self.assertEqual(d.npartitions, 2)
+        self.assertEqual(e.npartitions, d.npartitions)
         self.assertTrue(e.equals(d))
 
     def test_Data_cull_graph(self):
