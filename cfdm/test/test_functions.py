@@ -596,10 +596,16 @@ class FunctionsTest(unittest.TestCase):
     def test_dirname(self):
         """Test cfdm.dirname."""
         self.assertEqual(cfdm.dirname("/model/data"), "/model")
+        self.assertEqual(
+            cfdm.dirname("/model/data", isdir=True), "/model/data"
+        )
         self.assertEqual(cfdm.dirname("/model/data/"), "/model/data")
         self.assertEqual(cfdm.dirname("/model/data/file.nc"), "/model/data")
         self.assertEqual(
             cfdm.dirname("file://model/data/"), "file://model/data"
+        )
+        self.assertEqual(
+            cfdm.dirname("file://model/data", isdir=True), "file://model/data"
         )
         self.assertEqual(
             cfdm.dirname("file:///model/data/"), "file:///model/data"

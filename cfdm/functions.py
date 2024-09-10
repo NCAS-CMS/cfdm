@@ -490,7 +490,7 @@ def abspath(filename):
     return filename
 
 
-def dirname(path):
+def dirname(path, isdir=False):
     """Return a normalised absolute version of a path directory.
 
     .. versionadded:: (cfdm) NEXTVERSION
@@ -527,11 +527,16 @@ def dirname(path):
     """
     u = urlparse(path)
     if u.scheme:
-        return os.path.dirname(u.geturl())
+        # Remote (or "file:")
+        u = u.geturl()
+        if isdir:
+            u += "/"
+
+        return os.path.dirname(u)
 
     # Local file
     u = u.path
-    if not os.path.isdir(u):
+    if not isdir and not os.path.isdir(u):
         u = os.path.dirname(u)
 
     return os.path.abspath(u)
