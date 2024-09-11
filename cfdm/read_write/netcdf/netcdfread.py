@@ -6265,6 +6265,7 @@ class NetCDFRead(IORead):
         }
 
         if not self._cfa_is_aggregation_variable(ncvar):
+            # Normal (non-aggregation) variable
             if return_kwargs_only:
                 return kwargs
 
