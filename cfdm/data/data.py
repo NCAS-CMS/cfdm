@@ -671,10 +671,13 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         if indices is Ellipsis:
             return self.copy()
 
+        original_indices = indices
         original_shape = self.shape
         keepdims = self.__keepdims_indexing__
 
-        indices = parse_indices(original_shape, indices, keepdims=keepdims)
+        indices = parse_indices(
+            original_shape, original_indices, keepdims=keepdims
+        )
 
         new = self.copy()
         dx = self.to_dask_array(asanyarray=False)
@@ -729,6 +732,12 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         #   they are converted at compute time.
         # ------------------------------------------------------------
         new._set_dask(dx, clear=self._ALL, asanyarray=None)
+
+        if 0 in new.shape:
+            raise IndexError(
+                f"Index [{original_indices}] selects no elements from "
+                f"data with shape {original_shape}"
+            )
 
         # ------------------------------------------------------------
         # Get the axis identifiers for the subspace
