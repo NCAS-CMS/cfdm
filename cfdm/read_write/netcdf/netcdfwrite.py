@@ -5606,13 +5606,15 @@ class NetCDFWrite(IOWrite):
         # Get the shape netCDF dimensions from the 'shape' fragment
         # array variable.
         shape_ncdimensions = []
+        dim = "y"
         for size in shape.shape:
-            l_ncdim = f"f_shape_{size}"
+            l_ncdim = f"f_shape_{dim}_{size}"
             if l_ncdim not in g["dimensions"]:
                 # Create a new location dimension
                 self._write_dimension(l_ncdim, None, size=size)
 
             shape_ncdimensions.append(l_ncdim)
+            dim = "x"
 
         shape_ncdimensions = tuple(shape_ncdimensions)
 
