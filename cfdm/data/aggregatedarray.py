@@ -227,9 +227,9 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
 
                   {'shape': <'shape' fragment array variable data>,
                    'location': <'location' fragment array variable data>,
-                   'address': <'address' fragment array variable data>,}
+                   'address': <'address' fragment array variable data>}
 
-               or "value" form:
+               or "value" form::
 
                   {'shape': <'shape' fragment array variable data>,
                    'value': <'value' fragment array data>}

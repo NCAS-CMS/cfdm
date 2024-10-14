@@ -5597,6 +5597,232 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         )
         return d
 
+    def nc_aggregation_substitutions(self):
+        """Return the netCDF aggregation substitution definitions.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_aggregation_substitutions`,
+                     `nc_del_aggregation_substitution`,
+                     `nc_update_aggregation_substitutions`
+
+        :Returns:
+
+            `dict`
+                {{Returns nc_aggregation_substitutions}}
+
+        **Examples**
+
+        >>> f.nc_aggregation_substitutions()
+        {}
+        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/'}
+        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': '/new/path/', '${base2}': '/home/data/'}
+        >>> f.nc_del_aggregation_substitution('${base}')
+        {'${base}': '/new/path/'}
+        >>> f.nc_clear_aggregation_substitutions()
+        {'${base2}': '/home/data/'}
+        >>> f.nc_aggregation_substitutions()
+        {}
+        >>> f.nc_clear_aggregation_substitutions()
+        {}
+        >>> print(f.nc_del_aggregation_substitution('base'))
+        None
+
+        """
+        out = self._nc_get("aggregation_substitutions", default=None)
+        if out is not None:
+            return out.copy()
+
+        return {}
+
+
+        # The Dask graph is never going to be computed, so we can set
+        # 'asanyarray=False'.
+        dsk = self.todict(asanyarray=False)
+        for key, a in dsk.items():
+            try:
+                out.update(a.get_substitutions(copy=False))
+            except AttributeError:
+                # This Dask chunk doesn't contain an aggregation
+                # fragment file array
+                pass
+
+        return out
+            
+    def nc_clear_aggregation_substitutions(self):
+        """Remove all netCDF aggregation substitution definitions.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_aggregation_substitution`,
+                     `nc_aggregation_substitutions`,
+                     `nc_update_aggregation_substitutions`
+
+        :Returns:
+
+            `dict`
+                {{Returns nc_clear_aggregation_substitutions}}
+
+        **Examples**
+
+        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/'}
+        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': '/new/path/', '${base2}': '/home/data/'}
+        >>> f.nc_del_aggregation_substitution('${base}')
+        {'${base}': '/new/path/'}
+        >>> f.nc_clear_aggregation_substitutions()
+        {'${base2}': '/home/data/'}
+        >>> f.nc_aggregation_substitutions()
+        {}
+        >>> f.nc_clear_aggregation_substitutions()
+        {}
+        >>> print(f.nc_del_aggregation_substitution('base'))
+        None
+
+        """
+        # The Dask graph is never going to be computed, so we can set
+        # 'asanyarray=False'.
+        dsk = self.todict(asanyarray=False)
+        for key, a in dsk.items():
+            try:
+                dsk[key] = a.clear_substitutions()
+            except AttributeError:
+                # This Dask chunk doesn't contain an aggregation
+                # fragment file array
+                pass
+
+
+    def nc_del_aggregation_substitution(self, base):
+        """Remove a netCDF aggregation substitution definition.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_aggregation_substitutions`,
+                     `nc_aggregation_substitutions`,
+                     `nc_update_aggregation_substitutions`
+
+        :Parameters:
+
+            {{cfa substitution: `str`}}
+
+        :Returns:
+
+            `dict`
+                {{Returns nc_del_aggregation_substitution}}
+
+        **Examples**
+
+        >>> f.nc_aggregation_substitutions()
+        {}
+        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/'}
+        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': '/new/path/', '${base2}': '/home/data/'}
+        >>> f.nc_del_aggregation_substitution('${base}')
+        {'${base}': '/new/path/'}
+        >>> f.nc_clear_aggregation_substitutions()
+        {'${base2}': '/home/data/'}
+        >>> f.nc_aggregation_substitutions()
+        {}
+        >>> f.nc_clear_aggregation_substitutions()
+        {}
+        >>> print(f.nc_del_aggregation_substitution('base'))
+        {}
+
+        """
+        if not (base.startswith("${") and base.endswith("}")):
+            base = f"${{{base}}}"
+
+        # The Dask graph is never going to be computed, so we can set
+        # 'asanyarray=False'.
+        dsk = self.todict(asanyarray=False)
+        for key, a in dsk.items():
+            try:
+                dsk[key] = a.del_substitution(base)
+            except AttributeError:
+                # This Dask chunk doesn't contain an aggregation
+                # fragment file array
+                pass
+
+    def nc_update_aggregation_substitutions(self, substitutions):
+        """Update the netCDF aggregation substitution definitions.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_aggregation_substitutions`,
+                     `nc_del_aggregation_substitution`,
+                     `nc_aggregation_substitutions`,
+
+        :Parameters:
+
+            {{cfa substitutions: `dict`}}
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d.nc_aggregation_substitutions()
+        {}
+        >>> d.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+        >>> d.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/'}
+        >>> d.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+        >>> d.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+        >>> d.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+        >>> d.nc_aggregation_substitutions()
+        {'${base}': '/new/path/', '${base2}': '/home/data/'}
+        >>> d.nc_del_aggregation_substitution('${base}')
+        {'${base}': '/new/path/'}
+        >>> d.nc_clear_aggregation_substitutions()
+        {'${base2}': '/home/data/'}
+        >>> d.nc_aggregation_substitutions()
+        {}
+        >>> d.nc_clear_aggregation_substitutions()
+        {}
+        >>> print(d.nc_del_aggregation_substitution('base'))
+        None
+
+        """
+        if not substitutions:
+            return
+
+        substitutions = substitutions.copy()
+        for base, sub in tuple(substitutions.items()):
+            if not (base.startswith("${") and base.endswith("}")):
+                substitutions[f"${{{base}}}"] = substitutions.pop(base)
+
+        # The Dask graph is never going to be computed, so we can set
+        # 'asanyarray=False'.
+        dsk = self.todict(asanyarray=False)
+        for key, a in dsk.items():
+            try:
+                dsk[key] = a.update_substitutions(substitutions)
+            except AttributeError:
+                # This Dask chunk doesn't contain an aggregation
+                # fragment file array
+                pass
+
     @_inplace_enabled(default=False)
     def pad_missing(self, axis, pad_width=None, to_size=None, inplace=False):
         """Pad an axis with missing data.

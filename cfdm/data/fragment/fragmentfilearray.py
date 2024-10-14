@@ -225,3 +225,50 @@ class FragmentFileArray(
 
         # Still here?
         raise OSError(f"Can't access any of the fragment files: {filenames}")
+   
+    def clear_substitutions(self):
+        """TODOCFA"""
+        a = self.copy()
+        substitutions = a.get_substitutions(copy=False)
+        substitutions.clear()
+        return a
+    
+    def del_substitution(self, base):
+        """TODOCFA"""
+        a = self.copy()
+        substitutions = a.get_substitutions(copy=False)
+        substitutions.pop(base, None)
+        return a
+    
+    def get_filenames(self):
+        """TODOCFA"""
+        filenames = super().get_filenames()
+                
+        substitutions = self.get_substitutions(copy=False)
+        if substitutions:
+            filenames2 = []
+            for filename in filenames:
+                for base, sub in substitutions.items():
+                    filenames.append(filename.replace(base, sub))
+
+            filenames = filenames2
+
+        return filenames
+                 
+    def get_substitutions(self, copy=True):
+        """TODOCFA"""
+        substitutions = self._get_component("substitutions", None)
+        if substitutions is None:
+            substitutions = {}
+            self._set_component("substitutions", substitutions, copy=False)
+        elif copy:
+             substitutions = substitutions.copy()
+
+        return substitutions
+        
+    def update_substitutions(self, substitutions):
+        """TODOCFA"""
+        a = self.copy()
+        old = a.get_substitutions(copy=False)
+        old.update(substitutions)
+        return a
