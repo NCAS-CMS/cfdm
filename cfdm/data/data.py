@@ -5636,13 +5636,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         None
 
         """
-        out = self._nc_get("aggregation_substitutions", default=None)
-        if out is not None:
-            return out.copy()
-
-        return {}
-
-
+        out = {}
+        
         # The Dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
         dsk = self.todict(asanyarray=False)

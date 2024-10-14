@@ -551,6 +551,12 @@ _docstring_substitution_definitions = {
                   'scaleway-secretkey...', 'endpoint_url':
                   'https://s3.fr-par.scw.cloud', 'client_kwargs':
                   {'region_name': 'fr-par'}}``""",
+    # init substitutions
+    "{{init substitutions: `dict`, optional}}": """substitutions: `dict`, optional
+                A dictionary whose key/value pairs define text
+                substitutions to be applied to fragment file
+                names. Each key must be specified with the ``${...}``
+                syntax, for instance ``{'${base}': 'sub'}``.""",
     # asanyarray
     "{{asanyarray: `bool` or `None`, optional}": """asanyarray: `bool` or `None`, optional
                 If True then add a final operation (not in-place) to
@@ -658,7 +664,7 @@ _docstring_substitution_definitions = {
                 so that any of the intermediate or final aggregation
                 steps operates on no more than ``split_every``
                 inputs. The depth of the aggregation graph will be
-                :math:`log_{split\_every}}(\textnormal{input chunks
+                :math:`log_{split\_every}(\textnormal{input chunks
                 along reduced axes})`. Setting to a low value can
                 reduce cache size and network transfers, at the cost
                 of more CPU and a larger dask graph.

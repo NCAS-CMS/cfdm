@@ -1,3 +1,6 @@
+from pathlib import Path
+from urllib.parse import ParseResult, urlparse
+
 from ..abstract import Array
 from ..mixin import FileArrayMixin, IndexMixin
 from .mixin import FragmentArrayMixin
@@ -40,10 +43,13 @@ class FragmentFileArray(
         address=None,
         dtype=None,
         shape=None,
+            substitutions=None,
         aggregated_units=False,
         aggregated_calendar=False,
         attributes=None,
         storage_options=None,
+            aggregation_file_directory=None,
+            aggregation_file_scheme='file',
         source=None,
         copy=True,
     ):
@@ -64,6 +70,8 @@ class FragmentFileArray(
 
             shape: `tuple`, optional
                 The shape of the fragment in its canonical form.
+
+            {{init substitutions: `dict`, optional}}
 
             {{init attributes: `dict` or `None`, optional}}
 
@@ -134,6 +142,11 @@ class FragmentFileArray(
             except AttributeError:
                 storage_options = None
 
+            try:
+                substitutions = source._get_component("substitutions", None)
+            except AttributeError:
+                substitutions  = None
+
         if filename is not None:
             if isinstance(filename, str):
                 filename = (filename,)
@@ -162,7 +175,11 @@ class FragmentFileArray(
         self._set_component(
             "aggregated_calendar", aggregated_calendar, copy=False
         )
-
+        if substitutions is not None:
+            self._set_component(
+                "substitutions", substitutions.copy(), copy=True
+            )
+            
         # By default, close the file after data array access
         self._set_component("close", True, copy=False)
 
@@ -227,47 +244,77 @@ class FragmentFileArray(
         raise OSError(f"Can't access any of the fragment files: {filenames}")
    
     def clear_substitutions(self):
-        """TODOCFA"""
+        """TODOCFA
+
+        .. versionadded:: (cfdm) NEXTVERSION
+        """
         a = self.copy()
         substitutions = a.get_substitutions(copy=False)
         substitutions.clear()
         return a
     
     def del_substitution(self, base):
-        """TODOCFA"""
+        """TODOCFA
+
+        .. versionadded:: (cfdm) NEXTVERSION
+        """
         a = self.copy()
         substitutions = a.get_substitutions(copy=False)
         substitutions.pop(base, None)
         return a
     
     def get_filenames(self):
-        """TODOCFA"""
-        filenames = super().get_filenames()
-                
+        """TODOCFA
+
+        .. versionadded:: (cfdm) NEXTVERSION
+        """
         substitutions = self.get_substitutions(copy=False)
-        if substitutions:
-            filenames2 = []
-            for filename in filenames:
-                for base, sub in substitutions.items():
-                    filenames.append(filename.replace(base, sub))
+        
+        parsed_filenames = []
+        for filename in super().get_filenames():
+            # Apply substitutions to the file name
+            for base, sub in substitutions.items():
+                filename = filename.replace(base, sub)
+                
+            if not urlparse(filename).scheme:
+                # File name is a relative-path URI reference, so
+                # replace it with an absolute URI.
+                filename = Path(
+                    self._get_component('aggregation_file_directory'),
+                    filename
+                ).resolve()
+                filename = ParseResult(
+                    scheme= self._get_component('aggregation_file_scheme'),
+                    netloc="",
+                    path=str(filename),
+                    params="",
+                    query="",
+                    fragment="",
+                ).geturl()
+                
+            parsed_filenames.append(filename)
 
-            filenames = filenames2
-
-        return filenames
+        return parsed_filenames
                  
     def get_substitutions(self, copy=True):
-        """TODOCFA"""
+        """TODOCFA
+
+        .. versionadded:: (cfdm) NEXTVERSION
+        """
         substitutions = self._get_component("substitutions", None)
         if substitutions is None:
             substitutions = {}
             self._set_component("substitutions", substitutions, copy=False)
         elif copy:
-             substitutions = substitutions.copy()
+            substitutions = substitutions.copy()
 
         return substitutions
         
     def update_substitutions(self, substitutions):
-        """TODOCFA"""
+        """TODOCFA
+
+        .. versionadded:: (cfdm) NEXTVERSION
+        """
         a = self.copy()
         old = a.get_substitutions(copy=False)
         old.update(substitutions)
