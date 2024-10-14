@@ -1,7 +1,7 @@
 import netCDF4
 
 from . import abstract
-from .locks import netcdf_lock
+from .locks import netcdf_c_lock
 from .mixin import FileArrayMixin, IndexMixin, NetCDFFileMixin
 from .netcdfindexer import netcdf_indexer
 
@@ -200,14 +200,10 @@ class NetCDF4Array(
 
     @property
     def _lock(self):
-        """Set the lock for use in `dask.array.from_array`.
+        """Return the lock used for netCDF file access.
 
-        Returns a lock object because concurrent reads are not
-        currently supported by the netCDF and HDF libraries. The lock
-        object will be the same for all `NetCDF4Array` and
-        `H5netcdfArray` instances, regardless of the dataset they
-        access, which means that access to all netCDF and HDF files
-        coordinates around the same lock.
+        Returns a lock object that prevents concurrent reads of netCDF
+        files, which are not currently supported by `netCDF4`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
