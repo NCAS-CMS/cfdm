@@ -4,152 +4,18 @@ import h5netcdf
 
 from . import abstract
 from .locks import netcdf_lock
-from .mixin import FileArrayMixin, IndexMixin, NetCDFFileMixin
+from .mixin import IndexMixin
 from .netcdfindexer import netcdf_indexer
 
 logger = logging.getLogger(__name__)
 
 
-class H5netcdfArray(
-    IndexMixin, NetCDFFileMixin, FileArrayMixin, abstract.Array
-):
+class H5netcdfArray(IndexMixin, abstract.NetCDFFileArray):
     """A netCDF array accessed with `h5netcdf`.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
     """
-
-    def __init__(
-        self,
-        filename=None,
-        address=None,
-        dtype=None,
-        shape=None,
-        mask=True,
-        unpack=True,
-        attributes=None,
-        storage_options=None,
-        source=None,
-        copy=True,
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            filename: (sequence of) `str`, optional
-                The name of the file(s) containing the array.
-
-            address: (sequence of) `str`, optional
-                The identity of the variable in each file defined by
-                *filename*. Must be a netCDF variable name.
-
-            dtype: `numpy.dtype`
-                The data type of the array in the file. May be `None`
-                if the numpy data-type is not known (which can be the
-                case for string types, for example).
-
-            shape: `tuple`
-                The array dimension sizes in the file.
-
-            {{init mask: `bool`, optional}}
-
-            {{init unpack: `bool`, optional}}
-
-            {{init attributes: `dict` or `None`, optional}}
-
-                If *attributes* is `None`, the default, then the
-                attributes will be set from the netCDF variable during
-                the first `__getitem__` call.
-
-                .. versionadded:: (cfdm) NEXTVERSION
-
-            {{init storage_options: `dict` or `None`, optional}}
-
-            {{init source: optional}}
-
-            {{init copy: `bool`, optional}}
-
-        """
-        super().__init__(source=source, copy=copy)
-
-        if source is not None:
-            try:
-                shape = source._get_component("shape", None)
-            except AttributeError:
-                shape = None
-
-            try:
-                filename = source._get_component("filename", None)
-            except AttributeError:
-                filename = None
-
-            try:
-                address = source._get_component("address", None)
-            except AttributeError:
-                address = None
-
-            try:
-                dtype = source._get_component("dtype", None)
-            except AttributeError:
-                dtype = None
-
-            try:
-                mask = source._get_component("mask", True)
-            except AttributeError:
-                mask = True
-
-            try:
-                unpack = source._get_component("unpack", True)
-            except AttributeError:
-                unpack = True
-
-            try:
-                attributes = source._get_component("attributes", None)
-            except AttributeError:
-                attributes = None
-
-            try:
-                storage_options = source._get_component(
-                    "storage_options", None
-                )
-            except AttributeError:
-                storage_options = None
-
-        if shape is not None:
-            self._set_component("shape", shape, copy=False)
-
-        if filename is not None:
-            if isinstance(filename, str):
-                filename = (filename,)
-            else:
-                filename = tuple(filename)
-
-            self._set_component("filename", filename, copy=False)
-
-        if address is not None:
-            if isinstance(address, (str, int)):
-                address = (address,)
-            else:
-                address = tuple(address)
-
-            self._set_component("address", address, copy=False)
-
-        self._set_component("dtype", dtype, copy=False)
-        self._set_component("mask", bool(mask), copy=False)
-        self._set_component("unpack", bool(unpack), copy=False)
-        self._set_component("storage_options", storage_options, copy=False)
-        self._set_component("attributes", attributes, copy=False)
-
-        # By default, close the file after data array access
-        self._set_component("close", True, copy=False)
-
-    def __dask_tokenize__(self):
-        """Return a value fully representative of the object.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        """
-        return super().__dask_tokenize__() + (self.get_mask(),)
 
     @property
     def _lock(self):
@@ -189,14 +55,6 @@ class H5netcdfArray(
 
         # Note: We need to lock because the netCDF file is about to be
         #       accessed.
-        #        self._lock.acquire()
-
-        # # Note: It's cfdm.H5netcdfArray.__getitem__ that we want to
-        # #       call here, but we use 'Container' in super because
-        # #       that comes immediately before cfdm.H5netcdfArray in
-        # #       the method resolution order.
-        # array = super(Container, self).__getitem__(index)
-
         with self._lock:
             dataset, address = self.open()
             dataset0 = dataset
@@ -225,8 +83,34 @@ class H5netcdfArray(
             self.close(dataset0)
             del dataset, dataset0
 
-        #        self._lock.release()
         return array
+
+    def _group(self, dataset, groups):
+        """Return the group object containing a variable.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            dataset: `h5netcdf.File`
+                The dataset containing the variable.
+
+            groups: sequence of `str`
+                The definition of which group the variable is in. For
+                instance, of the variable is in group
+                ``/forecast/model`` then *groups* would be
+                ``['forecast', 'model']``.
+
+        :Returns:
+
+            `h5netcdf.File` or `h5netcdf.Group`
+                The group object, which might be the root group.
+
+        """
+        for g in groups:
+            dataset = dataset.groups[g]
+
+        return dataset
 
     def _set_attributes(self, var):
         """Set the netCDF variable attributes.

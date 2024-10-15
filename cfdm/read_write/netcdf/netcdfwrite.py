@@ -5648,16 +5648,17 @@ class NetCDFWrite(IOWrite):
 
             fragment_array_ncdimensions = tuple(fragment_array_ncdimensions)
 
-            # Create a 'susbstutions' netCDF attribute for the
+            # Create a 'substitutions' netCDF attribute for the
             # 'location' fragment array variable
             substitutions = data.nc_aggregation_substitutions()
             substitutions.update(g["cfa"].get("substitutions", {}))
             if substitutions:
-                # Create the "substitutions" netCDF attribute
-                subs = []
-                for base, sub in substitutions.items():
-                    subs.append(f"{base}: {sub}")
-
+                #                subs = []
+                #                for base, sub in sorted(substitutions.items()):
+                #                    subs.append(f"{base}: {sub}")
+                subs = [
+                    f"{base}: {sub}" for base, sub in substitutions.items()
+                ]
                 attributes = {"substitutions": " ".join(sorted(subs))}
             else:
                 attributes = None
@@ -5845,10 +5846,9 @@ class NetCDFWrite(IOWrite):
         :Returns:
 
             `set` of 2-tuples
-                A set containing 3-tuples giving the file names,
-                the addresses in the files, and the file formats. If
-                no files are required to compute the data then
-                an empty `set` is returned.
+                A set containing 2-tuples giving the file names and
+                the addresses in the files. If no files are required
+                to compute the data then an empty `set` is returned.
 
         **Examples**
 
@@ -5860,7 +5860,9 @@ class NetCDFWrite(IOWrite):
         out_append = out.append
         for a in data.todict().values():
             try:
-                out_append((a.get_filenames(), a.get_addresses()))
+                out_append(
+                    (a.get_filenames(normalise=False), a.get_addresses())
+                )
             except AttributeError:
                 pass
 
@@ -5941,7 +5943,6 @@ class NetCDFWrite(IOWrite):
             aggregation_address = []
             for indices in data.chunk_indices():
                 file_details = self._cfa_get_file_details(data[indices])
-
                 if len(file_details) != 1:
                     if file_details:
                         raise ValueError(

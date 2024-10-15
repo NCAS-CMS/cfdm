@@ -538,10 +538,27 @@ def read(
 
             .. versionadded:: (cfdm) NEXTVERSION
 
-        cfa: `dict`, optional
-            Configure the reading of CF-netCDF aggregation files. The
+        cfa: `dict` or `str`, optional
+            Configure the reading of CF-netCDF aggregation files.
+
+            If *cfa* is the string ``'for_writing`None` then no aggregation variables will be
+            created.
+
+    
+            The
             dictionary may have any subset of the following key/value
             pairs to override the information read from the file:
+
+            * ``'for_writing'``: `bool`
+
+              Whether or not it is intended to write any of the file
+              contents as a CF-netCDF aggregation variables
+               
+
+              *Example:*
+                ``{'replacement': 'file:///data/'}``
+
+            .. versionadded:: (cfdm) NEXTVERSION
 
             * ``'substitutions'``: `dict`
 

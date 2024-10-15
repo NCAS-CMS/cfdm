@@ -2156,11 +2156,17 @@ class Field(
 
         return domain
 
-    def get_filenames(self):
+    def get_filenames(self, normalise=True):
         """Return the names of the files containing the data.
 
         The names of the files containing the data of the field
         constructs and of any metadata constructs are returned.
+
+        :Parameters:
+
+            {{normalise: `bool`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -2178,10 +2184,10 @@ class Field(
         {'temp_file.nc'}
 
         """
-        out = super().get_filenames()
+        out = super().get_filenames(normalise=normalise)
 
         for c in self.constructs.filter_by_data(todict=True).values():
-            out.update(c.get_filenames())
+            out.update(c.get_filenames(normalise=normalise))
 
         return out
 

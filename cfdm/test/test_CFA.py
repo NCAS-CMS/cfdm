@@ -12,7 +12,7 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
 
-n_tmpfiles = 4
+n_tmpfiles = 5
 tmpfiles = [
     tempfile.mkstemp("_test_CFA.nc", dir=os.getcwd())[1]
     for i in range(n_tmpfiles)
@@ -22,6 +22,7 @@ tmpfiles = [
     tmpfile2,
     nc_file,
     cfa_file,
+    cfa_file2,
 ) = tmpfiles
 
 
@@ -180,6 +181,8 @@ class CFATest(unittest.TestCase):
 
         cwd = os.getcwd()
 
+        cfa_file = "cfa_file.nc"
+
         f.data.nc_clear_aggregation_substitutions()
         f.data.nc_update_aggregation_substitutions({"base": cwd})
         cfdm.write(
@@ -261,7 +264,42 @@ class CFATest(unittest.TestCase):
 
         g = cfdm.read(cfa_file)
         self.assertEqual(len(g), 1)
-        self.assertTrue(f.equals(g[0]))
+        g = g[0]
+        self.assertTrue(f.equals(g))
+
+        self.assertEqual(
+            g.data.get_filenames(normalise=False),
+            set((f"file://${{base}}/{os.path.basename(tmpfile1)}",)),
+        )
+        g.data.nc_update_aggregation_substitutions({"base": "/new/location"})
+        self.assertEqual(
+            g.data.nc_aggregation_substitutions(),
+            {"${base2}": "/bad/location", "${base}": "/new/location"},
+        )
+        self.assertEqual(
+            g.data.get_filenames(normalise=False),
+            set((f"file://${{base}}/{os.path.basename(tmpfile1)}",)),
+        )
+
+        cfa_file2 = "cfa_file2.nc"
+        cfdm.write(
+            g,
+            cfa_file2,
+            cfa={
+                "constructs": "field",
+                "absolute_uri": True,
+            },
+        )
+        nc = netCDF4.Dataset(cfa_file2, "r")
+        cfa_location = nc.variables["cfa_location"]
+        self.assertEqual(
+            cfa_location.getncattr("substitutions"),
+            "${base2}: /bad/location ${base}: /new/location",
+        )
+        self.assertEqual(
+            cfa_location[...], f"file://${{base}}/{os.path.basename(tmpfile1)}"
+        )
+        nc.close()
 
     def test_CFA_absolute_uri(self):
         """Test aggregation 'absolute_uri' option to cfdm.write."""

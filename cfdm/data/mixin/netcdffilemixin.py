@@ -14,216 +14,216 @@ class NetCDFFileMixin:
 
     """
 
-    def __init__(
-        self,
-        filename=None,
-        address=None,
-        dtype=None,
-        shape=None,
-        mask=True,
-        unpack=True,
-        attributes=None,
-        storage_options=None,
-        source=None,
-        copy=True,
-    ):
-        """**Initialisation**
+    #    def __init__(
+    #        self,
+    #        filename=None,
+    #        address=None,
+    #        dtype=None,
+    #        shape=None,
+    #        mask=True,
+    #        unpack=True,
+    #        attributes=None,
+    #        storage_options=None,
+    #        source=None,
+    #        copy=True,
+    #    ):
+    #        """**Initialisation**
+    #
+    #        :Parameters:
+    #
+    #            filename: (sequence of) `str`, optional
+    #                The name of the netCDF file(s) containing the array.
+    #
+    #            address: (sequence of) `str` or `int`, optional
+    #                The identity of the netCDF variable in each file
+    #                defined by *filename*. Either a netCDF variable name
+    #                or an integer netCDF variable ID.
+    #
+    #                .. versionadded:: (cfdm) 1.10.1.0
+    #
+    #            dtype: `numpy.dtype`
+    #                The data type of the array in the netCDF file. May be
+    #                `None` if the numpy data-type is not known (which can be
+    #                the case for netCDF string types, for example).
+    #
+    #            shape: `tuple`
+    #                The array dimension sizes in the netCDF file.
+    #
+    #            {{init mask: `bool`, optional}}
+    #
+    #                .. versionadded:: (cfdm) 1.8.2
+    #
+    #            {{init unpack: `bool`, optional}}
+    #
+    #                .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #            {{init attributes: `dict` or `None`, optional}}
+    #
+    #                If *attributes* is `None`, the default, then the
+    #                attributes will be set from the netCDF variable during
+    #                the first `__getitem__` call.
+    #
+    #                .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #            {{init storage_options: `dict` or `None`, optional}}
+    #
+    #                .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #            {{init source: optional}}
+    #
+    #                .. versionadded:: (cfdm) 1.10.0.0
+    #
+    #            {{init copy: `bool`, optional}}
+    #
+    #                .. versionadded:: (cfdm) 1.10.0.0
+    #
+    #            missing_values: Deprecated at version NEXTVERSION
+    #                The missing value indicators defined by the netCDF
+    #                variable attributes. They may now be recorded via the
+    #                *attributes* parameter
+    #
+    #            ncvar:  Deprecated at version 1.10.1.0
+    #                Use the *address* parameter instead.
+    #
+    #            varid:  Deprecated at version 1.10.1.0
+    #                Use the *address* parameter instead.
+    #
+    #            group: Deprecated at version 1.10.1.0
+    #                Use the *address* parameter instead.
+    #
+    #            units: `str` or `None`, optional
+    #                Deprecated at version NEXTVERSION. Use the
+    #                *attributes* parameter instead.
+    #
+    #            calendar: `str` or `None`, optional
+    #                Deprecated at version NEXTVERSION. Use the
+    #                *attributes* parameter instead.
+    #
+    #        """
+    #        super().__init__(source=source, copy=copy)
+    #
+    #        if source is not None:
+    #            try:
+    #                shape = source._get_component("shape", None)
+    #            except AttributeError:
+    #                shape = None
+    #
+    #            try:
+    #                filename = source._get_component("filename", None)
+    #            except AttributeError:
+    #                filename = None
+    #
+    #            try:
+    #                address = source._get_component("address", None)
+    #            except AttributeError:
+    #                address = None
+    #
+    #            try:
+    #                dtype = source._get_component("dtype", None)
+    #            except AttributeError:
+    #                dtype = None
+    #
+    #            try:
+    #                mask = source._get_component("mask", True)
+    #            except AttributeError:
+    #                mask = True
+    #
+    #            try:
+    #                unpack = source._get_component("unpack", True)
+    #            except AttributeError:
+    #                unpack = True
+    #
+    #            try:
+    #                attributes = source._get_component("attributes", None)
+    #            except AttributeError:
+    #                attributes = None
+    #
+    #            try:
+    #                storage_options = source._get_component(
+    #                    "storage_options", None
+    #                )
+    #            except AttributeError:
+    #                storage_options = None
+    #
+    #        if shape is not None:
+    #            self._set_component("shape", shape, copy=False)
+    #
+    #        if filename is not None:
+    #            if isinstance(filename, str):
+    #                filename = (filename,)
+    #            else:
+    #                filename = tuple(filename)
+    #
+    #            self._set_component("filename", filename, copy=False)
+    #
+    #        if address is not None:
+    #            if isinstance(address, (str, int)):
+    #                address = (address,)
+    #            else:
+    #                address = tuple(address)
+    #
+    #            self._set_component("address", address, copy=False)
+    #
+    #        self._set_component("dtype", dtype, copy=False)
+    #        self._set_component("mask", bool(mask), copy=False)
+    #        self._set_component("unpack", bool(unpack), copy=False)
+    #        self._set_component("storage_options", storage_options, copy=False)
+    #        self._set_component("attributes", attributes, copy=False)
+    #
+    #        # By default, close the netCDF file after data array access
+    #        self._set_component("close", True, copy=False)
 
-        :Parameters:
+    # def _group(self, dataset, groups):
+    #    """Return the group object containing a variable.
+    #
+    #    .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #    :Parameters:
+    #
+    #        dataset: `netCDF4.Dataset` or `h5netcdf.File`
+    #            The dataset containing the variable.
+    #
+    #        groups: sequence of `str`
+    #            The definition of which group the variable is in. For
+    #            instance, of the variable is in group
+    #            ``/forecast/model`` then *groups* would be
+    #            ``['forecast', 'model']``.
+    #
+    #    :Returns:
+    #
+    #        `netCDF4.Dataset` or `netCDF4.Group`
+    #         or `h5netcdf.File` or `h5netcdf.Group`
+    #            The group object, which might be the root group.
+    #
+    #    """
+    #    for g in groups:
+    #        dataset = dataset.groups[g]
+    #
+    #    return dataset
 
-            filename: (sequence of) `str`, optional
-                The name of the netCDF file(s) containing the array.
-
-            address: (sequence of) `str` or `int`, optional
-                The identity of the netCDF variable in each file
-                defined by *filename*. Either a netCDF variable name
-                or an integer netCDF variable ID.
-
-                .. versionadded:: (cfdm) 1.10.1.0
-
-            dtype: `numpy.dtype`
-                The data type of the array in the netCDF file. May be
-                `None` if the numpy data-type is not known (which can be
-                the case for netCDF string types, for example).
-
-            shape: `tuple`
-                The array dimension sizes in the netCDF file.
-
-            {{init mask: `bool`, optional}}
-
-                .. versionadded:: (cfdm) 1.8.2
-
-            {{init unpack: `bool`, optional}}
-
-                .. versionadded:: (cfdm) NEXTVERSION
-
-            {{init attributes: `dict` or `None`, optional}}
-
-                If *attributes* is `None`, the default, then the
-                attributes will be set from the netCDF variable during
-                the first `__getitem__` call.
-
-                .. versionadded:: (cfdm) NEXTVERSION
-
-            {{init storage_options: `dict` or `None`, optional}}
-
-                .. versionadded:: (cfdm) NEXTVERSION
-
-            {{init source: optional}}
-
-                .. versionadded:: (cfdm) 1.10.0.0
-
-            {{init copy: `bool`, optional}}
-
-                .. versionadded:: (cfdm) 1.10.0.0
-
-            missing_values: Deprecated at version NEXTVERSION
-                The missing value indicators defined by the netCDF
-                variable attributes. They may now be recorded via the
-                *attributes* parameter
-
-            ncvar:  Deprecated at version 1.10.1.0
-                Use the *address* parameter instead.
-
-            varid:  Deprecated at version 1.10.1.0
-                Use the *address* parameter instead.
-
-            group: Deprecated at version 1.10.1.0
-                Use the *address* parameter instead.
-
-            units: `str` or `None`, optional
-                Deprecated at version NEXTVERSION. Use the
-                *attributes* parameter instead.
-
-            calendar: `str` or `None`, optional
-                Deprecated at version NEXTVERSION. Use the
-                *attributes* parameter instead.
-
-        """
-        super().__init__(source=source, copy=copy)
-
-        if source is not None:
-            try:
-                shape = source._get_component("shape", None)
-            except AttributeError:
-                shape = None
-
-            try:
-                filename = source._get_component("filename", None)
-            except AttributeError:
-                filename = None
-
-            try:
-                address = source._get_component("address", None)
-            except AttributeError:
-                address = None
-
-            try:
-                dtype = source._get_component("dtype", None)
-            except AttributeError:
-                dtype = None
-
-            try:
-                mask = source._get_component("mask", True)
-            except AttributeError:
-                mask = True
-
-            try:
-                unpack = source._get_component("unpack", True)
-            except AttributeError:
-                unpack = True
-
-            try:
-                attributes = source._get_component("attributes", None)
-            except AttributeError:
-                attributes = None
-
-            try:
-                storage_options = source._get_component(
-                    "storage_options", None
-                )
-            except AttributeError:
-                storage_options = None
-
-        if shape is not None:
-            self._set_component("shape", shape, copy=False)
-
-        if filename is not None:
-            if isinstance(filename, str):
-                filename = (filename,)
-            else:
-                filename = tuple(filename)
-
-            self._set_component("filename", filename, copy=False)
-
-        if address is not None:
-            if isinstance(address, (str, int)):
-                address = (address,)
-            else:
-                address = tuple(address)
-
-            self._set_component("address", address, copy=False)
-
-        self._set_component("dtype", dtype, copy=False)
-        self._set_component("mask", bool(mask), copy=False)
-        self._set_component("unpack", bool(unpack), copy=False)
-        self._set_component("storage_options", storage_options, copy=False)
-        self._set_component("attributes", attributes, copy=False)
-
-        # By default, close the netCDF file after data array access
-        self._set_component("close", True, copy=False)
-
-    def _group(self, dataset, groups):
-        """Return the group object containing a variable.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Parameters:
-
-            dataset: `netCDF4.Dataset` or `h5netcdf.File`
-                The dataset containing the variable.
-
-            groups: sequence of `str`
-                The definition of which group the variable is in. For
-                instance, of the variable is in group
-                ``/forecast/model`` then *groups* would be
-                ``['forecast', 'model']``.
-
-        :Returns:
-
-            `netCDF4.Dataset` or `netCDF4.Group`
-             or `h5netcdf.File` or `h5netcdf.Group`
-                The group object, which might be the root group.
-
-        """
-        for g in groups:
-            dataset = dataset.groups[g]
-
-        return dataset
-
-    def _set_attributes(self, var):
-        """Set the netCDF variable attributes.
-
-        These are set from the netCDF variable attributes, but only if
-        they have not already been defined, either during {{class}}
-        instantiation or by a previous call to `_set_attributes`.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Parameters:
-
-            var: `netCDF4.Variable` or `h5netcdf.Variable`
-                The netCDF variable.
-
-        :Returns:
-
-            `dict`
-                The attributes.
-
-        """
-        raise NotImplementedError(
-            f"Must implement {self.__class__.__name__}._set_attributes"
-        )  # pragma: no cover
+    # def _set_attributes(self, var):
+    #    """Set the netCDF variable attributes.
+    #
+    #    These are set from the netCDF variable attributes, but only if
+    #    they have not already been defined, either during {{class}}
+    #    instantiation or by a previous call to `_set_attributes`.
+    #
+    #    .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #    :Parameters:
+    #
+    #        var: `netCDF4.Variable` or `h5netcdf.Variable`
+    #            The netCDF variable.
+    #
+    #    :Returns:
+    #
+    #        `dict`
+    #            The attributes.
+    #
+    #    """
+    #    raise NotImplementedError(
+    #        f"Must implement {self.__class__.__name__}._set_attributes"
+    #    )  # pragma: no cover
 
     @property
     def array(self):
@@ -283,17 +283,17 @@ class NetCDFFileMixin:
         """
         return "nc"
 
-    def get_mask(self):
-        """Whether or not to automatically mask the data.
-
-        .. versionadded:: (cfdm) 1.8.2
-
-        **Examples**
-
-        >>> b = a.get_mask()
-
-        """
-        return self._get_component("mask")
+    #   def get_mask(self):
+    #       """Whether or not to automatically mask the data.
+    #
+    #       .. versionadded:: (cfdm) 1.8.2
+    #
+    #       **Examples**
+    #
+    #       >>> b = a.get_mask()
+    #
+    #       """
+    #       return self._get_component("mask")
 
     def get_missing_values(self, default=ValueError()):
         """The missing value indicators from the netCDF variable.

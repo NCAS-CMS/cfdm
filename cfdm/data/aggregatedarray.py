@@ -7,11 +7,12 @@ import numpy as np
 from ..functions import dirname
 from . import abstract
 from .fragment import FragmentFileArray, FragmentValueArray
-from .mixin import FileArrayMixin, NetCDFFileMixin
+
+# from .mixin import FileArrayMixin, NetCDFFileMixin
 from .utils import chunk_locations, chunk_positions
 
 
-class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
+class AggregatedArray(abstract.NetCDFFileArray):
     """An array stored in a CF aggregation variable.
 
     .. versionadded:: (cfdm) NEXTVERSION
@@ -118,8 +119,23 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             {{init copy: `bool`, optional}}
 
         """
+        super().__init__(
+            filename=filename,
+            address=address,
+            dtype=dtype,
+            mask=mask,
+            unpack=unpack,
+            attributes=attributes,
+            storage_options=storage_options,
+            source=source,
+            copy=copy,
+        )
+
         if source is not None:
-            super().__init__(source=source, copy=copy)
+            try:
+                shape = source.shape
+            except AttributeError:
+                shape = None
 
             try:
                 fragment_array_shape = source.get_fragment_array_shape()
@@ -132,21 +148,13 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 fragment_array = {}
 
             try:
-                substitutions = source._get_component("substitutions", None)
-            except AttributeError:
-                substitutions = None
-
-            try:
                 fragment_type = source.get_fragment_type()
             except AttributeError:
                 fragment_type = None
-
         else:
             if filename is not None:
                 shape, fragment_array_shape, fragment_type, fragment_array = (
-                    self._parse_fragment_array(
-                        filename, fragment_array #, substitutions
-                    )
+                    self._parse_fragment_array(filename, fragment_array)
                 )
             else:
                 shape = None
@@ -154,46 +162,12 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                 fragment_array = None
                 fragment_type = None
 
-            super().__init__(
-                filename=filename,
-                address=address,
-                shape=shape,
-                dtype=dtype,
-                attributes=attributes,
-                storage_options=storage_options,
-                copy=copy,
-            )
-
-        if not mask:
-            raise ValueError(
-                "The 'mask' keyword must be True when initialising "
-                f"{self.__class__.__name__}"
-            )
-
+        self._set_component("shape", shape, copy=False)
         self._set_component(
             "fragment_array_shape", fragment_array_shape, copy=False
         )
         self._set_component("fragment_array", fragment_array, copy=False)
         self._set_component("fragment_type", fragment_type, copy=False)
-        if substitutions is not None:
-            self._set_component(
-                "substitutions", substitutions.copy(), copy=True
-            )
-
-        # Store the aggregation file scheme, and its directory
-        # (omitting the scheme).
-        if filename is not None:
-            u = urlparse(filename)
-            aggregation_file_directory = dirname(u.path)
-            aggregation_file_scheme = u.scheme
-            if not aggregation_file_scheme:
-                aggregation_file_scheme = "file"
-                
-            self._set_component('aggregation_file_directory', aggregation_file_directory, copy=False)
-            self._set_component('aggregation_file_scheme', aggregation_file_scheme, copy=False)
-                        
-        self._set_component("mask", True, copy=False)
-        self._set_component("unpack", True, copy=False)
 
     def __getitem__(self, index):
         """Return a subspace.
@@ -217,7 +191,7 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         return True
 
     def _parse_fragment_array(
-        self, aggregated_filename, fragment_array #, substitutions
+        self, aggregated_filename, fragment_array  # , substitutions
     ):
         """Parse the fragment array dictionary.
 
@@ -315,52 +289,6 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
                     "location": location,
                     "address": address,
                 }
-
-#            # Get the aggregation file scheme, and its directory
-#            # (omitting the scheme).
-#            #
-#            # E.g. if the aggregation file is
-#            #      'http:///data/model/file.nc' then the scheme is
-#            #      'http' and the directory is '/data/model'.
-#            #
-#            # E.g. if the aggregation file is '/data/model/file.nc'
-#            #      then the scheme is 'file' and the directory is
-#            #      '/data/model'.
-#            u = urlparse(aggregated_filename)
-#            aggregation_file_directory = dirname(u.path)
-#            aggregation_file_scheme = u.scheme
-#            if not aggregation_file_scheme:
-#                aggregation_file_scheme = "file"
-#
-#            # Convert relative-path URI references to absolute
-#            # URIs. Note that substitutions are not applied to the
-#            # file names.
-#            for fragments in parsed_fragment_array.values():
-#                locations = []
-#                for filename in fragments["location"]:
-##                    if substitutions:
-##                        for base, sub in substitutions.items():
-##                            filename = filename.replace(base, sub)
-##
-##                    if not urlparse(filename).scheme:
-##                        # Fragment location is a relative-path URI
-##                        # reference, so replace it with an absolute
-##                        # URI.
-##                        filename = Path(
-##                            aggregation_file_directory, filename
-##                        ).resolve()
-##                        filename = ParseResult(
-##                            scheme=aggregation_file_scheme,
-##                            netloc="",
-##                            path=str(filename),
-##                            params="",
-##                            query="",
-##                            fragment="",
-##                        ).geturl()
-#
-#                    locations.append(filename)
-#
-#                fragments["location"] = locations
         else:
             # --------------------------------------------------------
             # Each fragment comprises a constant value, rather than
@@ -385,15 +313,6 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             fragment_type,
             parsed_fragment_array,
         )
-
-    @property
-    def array(self):
-        """A numpy array copy of the data.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        """
-        return self[...]
 
     def get_fragment_array(self, copy=True):
         """Get the aggregation data dictionary.
@@ -525,44 +444,6 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             if size > 1
         ]
 
-    def get_storage_options(self):
-        """Return `s3fs.S3FileSystem` options for accessing files.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Returns:
-
-            `dict` or `None`
-                The `s3fs.S3FileSystem` options.
-
-        **Examples**
-
-        >>> f.get_storage_options()
-        {}
-
-        >>> f.get_storage_options()
-        {'anon': True}
-
-        >>> f.get_storage_options()
-        {'key: 'scaleway-api-key...',
-         'secret': 'scaleway-secretkey...',
-         'endpoint_url': 'https://s3.fr-par.scw.cloud',
-         'client_kwargs': {'region_name': 'fr-par'}}
-
-        """
-        return super().get_storage_options(create_endpoint_url=False)
-
-    def get_substitutions(self, copy=True):
-        """TODOCFA"""
-        substitutions = self._get_component("substitutions", None)
-        if substitutions is None:
-            substitutions = {}
-            self._set_component("substitutions", substitutions, copy=False)
-        elif copy:
-            substitutions = substitutions.copy()
-
-        return substitutions
-        
     def subarray_shapes(self, shapes):
         """Create the subarray shapes.
 
@@ -856,8 +737,14 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
         substitutions = self.get_substitutions(copy=False)
         storage_options = self.get_storage_options()
         fragment_type = self.get_fragment_type()
-        aggregation_file_directory = self._get_component('aggregation_file_directory')
-        aggregation_file_scheme = self._get_component('aggregation_file_scheme')
+
+        if fragment_type == "location":
+            u = urlparse(self.get_filename())
+            aggregation_file_directory = dirname(u.path)
+            aggregation_file_scheme = u.scheme
+            if not aggregation_file_scheme:
+                aggregation_file_scheme = "file"
+
         # Set the chunk sizes for the dask array
         chunks = self.subarray_shapes(chunks)
 
@@ -884,15 +771,17 @@ class AggregatedArray(NetCDFFileMixin, FileArrayMixin, abstract.Array):
             if fragment_type == "location":
                 kwargs["filename"] = kwargs.pop("location")
                 kwargs["storage_options"] = storage_options
+                kwargs["substitutions"] = substitutions
+                kwargs["aggregation_file_directory"] = (
+                    aggregation_file_directory
+                )
+                kwargs["aggregation_file_scheme"] = aggregation_file_scheme
 
             fragment = FragmentArray(
                 dtype=dtype,
                 shape=fragment_shape,
-                substitutions=substitutions,
                 aggregated_units=units,
                 aggregated_calendar=calendar,
-                aggregation_file_directory =aggregation_file_directory,
-                aggregation_file_scheme = aggregation_file_scheme,
                 **kwargs,
             )
 

@@ -1347,19 +1347,27 @@ class CFDMImplementation(Implementation):
         """
         return field.get_data_axes()
 
-    def get_filenames(self, parent):
+    def get_filenames(self, parent, normalise=True):
         """Return the name of the file or files containing the data.
 
         :Parameters:
 
             parent:
 
+            normalise: `bool`, optional
+                If True (the default) then normalise the filenames by
+                applying any text substitutions and reslving the name
+                to an absolute path. If False then neither of these is
+                carried out.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
         :Returns:
 
             `set`
 
         """
-        return parent.get_filenames()
+        return parent.get_filenames(normalise=normalise)
 
     def get_data_max(self, parent):
         """Use `get_data_maximum` instead (since cfdm version 1.8.0)."""

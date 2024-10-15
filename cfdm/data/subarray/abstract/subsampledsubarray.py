@@ -603,13 +603,19 @@ class SubsampledSubarray(Subarray):
         """
         return self._get_component("subarea_indices")
 
-    def get_filenames(self):
+    def get_filenames(self, normalise=True):
         """Return the names of any files containing the data.
 
         Includes the names of files that contain any parameters and
         dependent tie points.
 
         .. versionadded:: (cfdm) 1.10.0.2
+
+        :Parameters:
+
+            {{normalise: `bool`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -619,13 +625,13 @@ class SubsampledSubarray(Subarray):
                 returned.
 
         """
-        filenames = super().get_filenames()
+        filenames = super().get_filenames(normalise=normalise)
 
         for x in tuple(self.parameters.values()) + tuple(
             self.dependent_tie_points.values()
         ):
             try:
-                filenames += x.get_filenames()
+                filenames += x.get_filenames(normalise=normalise)
             except AttributeError:
                 pass
 

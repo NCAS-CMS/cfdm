@@ -818,8 +818,14 @@ class PropertiesData(Properties):
 
         return set()
 
-    def get_filenames(self):
+    def get_filenames(self, normalise=True):
         """Return the name of the file or files containing the data.
+
+        :Parameters:
+
+            {{normalise: `bool`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -829,7 +835,7 @@ class PropertiesData(Properties):
         """
         data = self.get_data(None, _units=False, _fill_value=False)
         if data is not None:
-            return data.get_filenames()
+            return data.get_filenames(normalise=normalise)
 
         return set()
 

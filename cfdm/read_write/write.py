@@ -93,7 +93,7 @@ def write(
 
     HDF5 chunking is configured by the *hdf5_chunks* parameter, which
     defines the chunking strategy for all output data, including the
-    option of no chunking. However, this may be overridden for any
+    option of no chunking. However, this will be overridden for any
     data that defines its own chunking strategy. See
     `cfdm.Field.nc_set_hdf5_chunksizes`,
     `cfdm.Data.nc_set_hdf5_chunksizes`, and `cfdm.read`.
@@ -652,12 +652,14 @@ def write(
             * ``'constructs'``: `None`, `dict` or `(sequence of) `str`
 
               The types of construct to be written as aggregation
-              variables. If this key is missing then no constructs
-              will be written as aggregation variables.
+              variables.
 
               The types may be given as a (sequence of) `str`, which
               may take any of the string values allowed by the *cfa*
               parameter, with the same meanings.
+
+              If the ``'constructs'`` key is missing a type of
+              ``'auto'`` is assumed.
 
               The same string-valued types may be given as keys to a
               `dict` whose values specify the number of dimensions
@@ -785,7 +787,7 @@ def write(
             "Should be a string, a dictionary, or None"
         )
 
-    cfa.setdefault("constructs", None)
+    cfa.setdefault("constructs", "auto")
     cfa.setdefault("absolute_uri", True)
     cfa.setdefault("substitutions", {})
     cfa.setdefault("strict", True)

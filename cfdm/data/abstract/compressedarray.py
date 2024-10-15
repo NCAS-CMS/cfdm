@@ -439,10 +439,16 @@ class CompressedArray(Array):
         """
         return {"data": self.source().copy()}
 
-    def get_filenames(self):
+    def get_filenames(self, normalise=True):
         """Return the names of any files containing the compressed data.
 
         .. versionadded:: (cfdm) 1.10.0.2
+
+        :Parameters:
+
+            {{normalise: `bool`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -457,7 +463,7 @@ class CompressedArray(Array):
             return set()
 
         try:
-            return data.get_filenames()
+            return data.get_filenames(normalise=normalise)
         except AttributeError:
             return set()
 

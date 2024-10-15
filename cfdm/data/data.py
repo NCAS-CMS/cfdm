@@ -1983,6 +1983,46 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         return np.ma.masked
 
+    def _modify_dask_graph(
+        self, method, args=(), exceptions=(AttributeError,)
+    ):
+        """TODOCFA.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            method: `str`
+
+            args: `tuple`, optional
+
+            exceptions: `tuple`, optional
+
+        :Returns:
+
+            `None`
+
+        """
+        updated = False
+
+        dsk = self.todict(optimize_graph=True, asanyarray=False)
+        for key, a in dsk.items():
+            try:
+                dsk[key] = getattr(a, method)(*args)
+            except exceptions:
+                # This graph element could not be updated
+                pass
+            else:
+                # This graph element was successfully updated
+                updated = True
+
+        if updated:
+            # The Dask graph was updated, so recast the dictionary
+            # representation as a Dask array.
+            dx = self.to_dask_array(asanyarray=False)
+            dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
+            self._set_dask(dx, clear=self._NONE, asanyarray=None)
+
     def _parse_axes(self, axes):
         """Parses the data axes and returns valid non-duplicate axes.
 
@@ -3194,28 +3234,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         directory = dirname(directory, isdir=True)
-
-        updated = False
-
-        # The Dask graph is never going to be computed, so we can set
-        # 'asanyarray=False'.
-        dsk = self.todict(asanyarray=False)
-        for key, a in dsk.items():
-            try:
-                dsk[key] = a.add_file_directory(directory)
-            except AttributeError:
-                # This Dask chunk doesn't contain a file array
-                continue
-
-            # This Dask chunk contains a file array, and the Dask
-            # graph has been updated.
-            updated = True
-
-        if updated:
-            dx = self.to_dask_array(asanyarray=False)
-            dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
-            self._set_dask(dx, clear=self._NONE, asanyarray=None)
-
+        self._modify_dask_graph("add_file_directory", (directory,))
         return directory
 
     def any(self, axis=None, keepdims=True, split_every=None):
@@ -4094,28 +4113,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         directory = dirname(directory, isdir=True)
-
-        updated = False
-
-        # The dask graph is never going to be computed, so we can set
-        # 'asanyarray=False'.
-        dsk = self.todict(asanyarray=False)
-        for key, a in dsk.items():
-            try:
-                dsk[key] = a.del_file_directory(directory)
-            except AttributeError:
-                # This chunk doesn't contain a file array
-                continue
-
-            # This chunk contains a file array and the dask graph has
-            # been updated
-            updated = True
-
-        if updated:
-            dx = self.to_dask_array(asanyarray=False)
-            dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
-            self._set_dask(dx, clear=self._NONE, asanyarray=None)
-
+        self._modify_dask_graph("del_file_directory", (directory,))
         return directory
 
     def del_units(self, default=ValueError()):
@@ -4461,7 +4459,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             try:
                 out.extend(a.file_directories())
             except AttributeError:
-                # This chunk doesn't contain a file array
+                # This graph element doesn't contain a file array
                 pass
 
         return set(out)
@@ -4935,7 +4933,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 "tie point index variables",
             )
 
-    def get_filenames(self):
+    def get_filenames(self, normalise=True):
         """The names of files containing parts of the data array.
 
         Returns the names of any files that may be required to deliver
@@ -4950,6 +4948,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         assumed to reference data within a file if that chunk's array
         object has a callable `get_filenames` method, the output of
         which is added to the returned `set`.
+
+        :Parameters:
+
+            {{normalise: `bool`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -4970,17 +4974,17 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         {'file.nc'}
 
         """
-        out = set()
+        out = []
 
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
         for a in self.todict(asanyarray=False).values():
             try:
-                out.update(a.get_filenames())
+                out.extend(a.get_filenames(normalise=normalise))
             except AttributeError:
                 pass
 
-        return out
+        return set(out)
 
     def get_index(self, default=ValueError()):
         """Return the index variable for a compressed array.
@@ -5637,7 +5641,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         out = {}
-        
+
         # The Dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
         dsk = self.todict(asanyarray=False)
@@ -5645,12 +5649,11 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             try:
                 out.update(a.get_substitutions(copy=False))
             except AttributeError:
-                # This Dask chunk doesn't contain an aggregation
-                # fragment file array
+                # This graph node doesn't contain a file array
                 pass
 
         return out
-            
+
     def nc_clear_aggregation_substitutions(self):
         """Remove all netCDF aggregation substitution definitions.
 
@@ -5688,17 +5691,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         None
 
         """
-        # The Dask graph is never going to be computed, so we can set
-        # 'asanyarray=False'.
-        dsk = self.todict(asanyarray=False)
-        for key, a in dsk.items():
-            try:
-                dsk[key] = a.clear_substitutions()
-            except AttributeError:
-                # This Dask chunk doesn't contain an aggregation
-                # fragment file array
-                pass
-
+        self._modify_dask_graph("clear_substitutions")
 
     def nc_del_aggregation_substitution(self, base):
         """Remove a netCDF aggregation substitution definition.
@@ -5746,16 +5739,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         if not (base.startswith("${") and base.endswith("}")):
             base = f"${{{base}}}"
 
-        # The Dask graph is never going to be computed, so we can set
-        # 'asanyarray=False'.
-        dsk = self.todict(asanyarray=False)
-        for key, a in dsk.items():
-            try:
-                dsk[key] = a.del_substitution(base)
-            except AttributeError:
-                # This Dask chunk doesn't contain an aggregation
-                # fragment file array
-                pass
+        self._modify_dask_graph("del_substitution", (base,))
 
     def nc_update_aggregation_substitutions(self, substitutions):
         """Update the netCDF aggregation substitution definitions.
@@ -5807,16 +5791,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             if not (base.startswith("${") and base.endswith("}")):
                 substitutions[f"${{{base}}}"] = substitutions.pop(base)
 
-        # The Dask graph is never going to be computed, so we can set
-        # 'asanyarray=False'.
-        dsk = self.todict(asanyarray=False)
-        for key, a in dsk.items():
-            try:
-                dsk[key] = a.update_substitutions(substitutions)
-            except AttributeError:
-                # This Dask chunk doesn't contain an aggregation
-                # fragment file array
-                pass
+        self._modify_dask_graph("update_substitutions", (substitutions,))
 
     @_inplace_enabled(default=False)
     def pad_missing(self, axis, pad_width=None, to_size=None, inplace=False):
@@ -6089,29 +6064,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """
         old_directory = dirname(old_directory, isdir=True)
         new_directory = dirname(new_directory, isdir=True)
-        updated = False
-
-        # The Dask graph is never going to be computed, so we can set
-        # 'asanyarray=False'.
-        dsk = self.todict(asanyarray=False)
-        for key, a in dsk.items():
-            try:
-                dsk[key] = a.replace_file_directory(
-                    old_directory, new_directory
-                )
-            except AttributeError:
-                # This Dask chunk doesn't contain a file array
-                continue
-
-            # This Dask chunk contains a file array, and the Dask
-            # graph has been updated.
-            updated = True
-
-        if updated:
-            dx = self.to_dask_array(asanyarray=False)
-            dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
-            self._set_dask(dx, clear=self._NONE, asanyarray=None)
-
+        self._modify_dask_graph(
+            "replace_file_directory",
+            (
+                old_directory,
+                new_directory,
+            ),
+        )
         return new_directory
 
     @_inplace_enabled(default=False)

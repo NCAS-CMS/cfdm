@@ -2644,37 +2644,40 @@ class DataTest(unittest.TestCase):
     def test_Data_aggregation_substitutions(self):
         """Test Data CFA aggregation substitutions methods."""
         d = cfdm.Data(9)
-        self.assertFalse(d.nc_has_aggregation_substitutions())
+        self.assertEqual(d.nc_aggregation_substitutions(), {})
         self.assertIsNone(
             d.nc_update_aggregation_substitutions({"base": "file:///data/"})
         )
-        self.assertTrue(d.nc_has_aggregation_substitutions())
-        self.assertEqual(
-            d.nc_aggregation_substitutions(), {"${base}": "file:///data/"}
-        )
-
-        d.nc_update_aggregation_substitutions({"${base2}": "/home/data/"})
-        self.assertEqual(
-            d.nc_aggregation_substitutions(),
-            {"${base}": "file:///data/", "${base2}": "/home/data/"},
-        )
-
-        d.nc_update_aggregation_substitutions({"${base}": "/new/location/"})
-        self.assertEqual(
-            d.nc_aggregation_substitutions(),
-            {"${base}": "/new/location/", "${base2}": "/home/data/"},
-        )
-        self.assertEqual(
-            d.nc_del_aggregation_substitution("${base}"),
-            {"${base}": "/new/location/"},
-        )
-        self.assertEqual(
-            d.nc_clear_aggregation_substitutions(), {"${base2}": "/home/data/"}
-        )
-        self.assertFalse(d.nc_has_aggregation_substitutions())
+        # No files means no stored substitutions
         self.assertEqual(d.nc_aggregation_substitutions(), {})
-        self.assertEqual(d.nc_clear_aggregation_substitutions(), {})
-        self.assertEqual(d.nc_del_aggregation_substitution("base"), {})
+
+        # Create an data from an aggregation file
+        f = cfdm.example_field(0)
+        cfdm.write(f, file_A)
+        f = cfdm.read(file_A)[0]
+        cfdm.write(f, file_B, cfa="field")
+        f = cfdm.read(file_B)[0]
+        d = f.data
+
+        self.assertEqual(d.nc_aggregation_substitutions(), {})
+        d.nc_update_aggregation_substitutions({"${base}": "file:///data/"})
+        self.assertEqual(
+            d.nc_aggregation_substitutions(),
+            {"${base}": "file:///data/"},
+        )
+        d.nc_update_aggregation_substitutions({"${base2}": "/new/location/"})
+        self.assertEqual(
+            d.nc_aggregation_substitutions(),
+            {"${base}": "file:///data/", "${base2}": "/new/location/"},
+        )
+        self.assertIsNone(d.nc_del_aggregation_substitution("${base}"))
+        self.assertEqual(
+            d.nc_aggregation_substitutions(),
+            {"${base2}": "/new/location/"},
+        )
+        self.assertIsNone(d.nc_clear_aggregation_substitutions())
+        self.assertEqual(d.nc_aggregation_substitutions(), {})
+        self.assertIsNone(d.nc_del_aggregation_substitution("${base}"))
 
     def test_Data_file_directory(self):
         """Test `Data` file directory methods."""
@@ -2683,6 +2686,8 @@ class DataTest(unittest.TestCase):
         self.assertEqual(
             f.data.add_file_directory("/data/model/"), "/data/model"
         )
+        # No files means no stored directories
+        self.assertEqual(f.data.file_directories(), set())
 
         cfdm.write(f, file_A)
         d = cfdm.read(file_A, dask_chunks=4)[0].data

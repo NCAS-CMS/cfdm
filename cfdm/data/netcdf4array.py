@@ -2,201 +2,16 @@ import netCDF4
 
 from . import abstract
 from .locks import netcdf_lock
-from .mixin import FileArrayMixin, IndexMixin, NetCDFFileMixin
+from .mixin import IndexMixin
 from .netcdfindexer import netcdf_indexer
 
 
-class NetCDF4Array(
-    IndexMixin, NetCDFFileMixin, FileArrayMixin, abstract.Array
-):
+class NetCDF4Array(IndexMixin, abstract.NetCDFFileArray):
     """A netCDF array accessed with `netCDF4`.
 
     .. versionadded:: (cfdm) 1.7.0
 
     """
-
-    def __init__(
-        self,
-        filename=None,
-        address=None,
-        dtype=None,
-        shape=None,
-        mask=True,
-        unpack=True,
-        attributes=None,
-        storage_options=None,
-        source=None,
-        copy=True,
-    ):
-        """**Initialisation**
-
-        :Parameters:
-
-            filename: (sequence of) `str`, optional
-                The name of the netCDF file(s) containing the array.
-
-            address: (sequence of) `str` or `int`, optional
-                The identity of the netCDF variable in each file
-                defined by *filename*. Either a netCDF variable name
-                or an integer netCDF variable ID.
-
-                .. versionadded:: (cfdm) 1.10.1.0
-
-            dtype: `numpy.dtype`
-                The data type of the array in the netCDF file. May be
-                `None` if the numpy data-type is not known (which can be
-                the case for netCDF string types, for example).
-
-            shape: `tuple`
-                The array dimension sizes in the netCDF file.
-
-            {{init mask: `bool`, optional}}
-
-                .. versionadded:: (cfdm) 1.8.2
-
-            {{init unpack: `bool`, optional}}
-
-                .. versionadded:: (cfdm) NEXTVERSION
-
-            {{init attributes: `dict` or `None`, optional}}
-
-                If *attributes* is `None`, the default, then the
-                attributes will be set from the netCDF variable during
-                the first `__getitem__` call.
-
-                .. versionadded:: (cfdm) NEXTVERSION
-
-            {{init storage_options: `dict` or `None`, optional}}
-
-                .. versionadded:: (cfdm) NEXTVERSION
-
-            {{init source: optional}}
-
-                .. versionadded:: (cfdm) 1.10.0.0
-
-            {{init copy: `bool`, optional}}
-
-                .. versionadded:: (cfdm) 1.10.0.0
-
-            missing_values: Deprecated at version NEXTVERSION
-                The missing value indicators defined by the netCDF
-                variable attributes. They may now be recorded via the
-                *attributes* parameter
-
-            ncvar:  Deprecated at version 1.10.1.0
-                Use the *address* parameter instead.
-
-            varid:  Deprecated at version 1.10.1.0
-                Use the *address* parameter instead.
-
-            group: Deprecated at version 1.10.1.0
-                Use the *address* parameter instead.
-
-            units: `str` or `None`, optional
-                Deprecated at version NEXTVERSION. Use the
-                *attributes* parameter instead.
-
-            calendar: `str` or `None`, optional
-                Deprecated at version NEXTVERSION. Use the
-                *attributes* parameter instead.
-
-        """
-        super().__init__(source=source, copy=copy)
-
-        if source is not None:
-            try:
-                shape = source._get_component("shape", None)
-            except AttributeError:
-                shape = None
-
-            try:
-                filename = source._get_component("filename", None)
-            except AttributeError:
-                filename = None
-
-            try:
-                address = source._get_component("address", None)
-            except AttributeError:
-                address = None
-
-            try:
-                dtype = source._get_component("dtype", None)
-            except AttributeError:
-                dtype = None
-
-            try:
-                mask = source._get_component("mask", True)
-            except AttributeError:
-                mask = True
-
-            try:
-                unpack = source._get_component("unpack", True)
-            except AttributeError:
-                unpack = True
-
-            try:
-                attributes = source._get_component("attributes", None)
-            except AttributeError:
-                attributes = None
-
-            try:
-                storage_options = source._get_component(
-                    "storage_options", None
-                )
-            except AttributeError:
-                storage_options = None
-
-        if shape is not None:
-            self._set_component("shape", shape, copy=False)
-
-        if filename is not None:
-            if isinstance(filename, str):
-                filename = (filename,)
-            else:
-                filename = tuple(filename)
-
-            self._set_component("filename", filename, copy=False)
-
-        if address is not None:
-            if isinstance(address, (str, int)):
-                address = (address,)
-            else:
-                address = tuple(address)
-
-            self._set_component("address", address, copy=False)
-
-        self._set_component("dtype", dtype, copy=False)
-        self._set_component("mask", bool(mask), copy=False)
-        self._set_component("unpack", bool(unpack), copy=False)
-        self._set_component("storage_options", storage_options, copy=False)
-        self._set_component("attributes", attributes, copy=False)
-
-        # By default, close the netCDF file after data array access
-        self._set_component("close", True, copy=False)
-
-    def __repr__(self):
-        """Called by the `repr` built-in function.
-
-        x.__repr__() <==> repr(x)
-
-        """
-        return f"<{self.__class__.__name__}{self.shape}: {self}>"
-
-    def __str__(self):
-        """Called by the `str` built-in function.
-
-        x.__str__() <==> str(x)
-
-        """
-        return f"{self.get_filename(None)}, {self.get_address()}"
-
-    def __dask_tokenize__(self):
-        """Return a value fully representative of the object.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        """
-        return super().__dask_tokenize__() + (self.get_mask(),)
 
     @property
     def _lock(self):
@@ -207,7 +22,7 @@ class NetCDF4Array(
         object will be the same for all `NetCDF4Array` and
         `H5netcdfArray` instances, regardless of the dataset they
         access, which means that access to all netCDF and HDF files
-        coordinates around the same lock.
+        coordinates around the same lock. TODOCFA
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -230,8 +45,6 @@ class NetCDF4Array(
             then these indices work independently along each dimension
             (similar to the way vector subscripts work in Fortran).
 
-        .. versionadded:: (cfdm) 1.7.0
-
         .. versionadded:: NEXTVERSION
 
         .. seealso:: `__array__`, `index`
@@ -251,14 +64,6 @@ class NetCDF4Array(
 
         # Note: We need to lock because the netCDF file is about to be
         #       accessed.
-        #       self._lock.acquire()
-
-        # # Note: It's cfdm.NetCDFArray.__getitem__ that we want to call
-        # #       here, but we use 'Container' in super because that
-        # #       comes immediately before cfdm.NetCDFArray in the
-        # #       method resolution order.
-        # array = super(Container, self).__getitem__(index)
-
         with self._lock:
             netcdf, address = self.open()
             dataset = netcdf
@@ -301,6 +106,33 @@ class NetCDF4Array(
         #       self._lock.release()
         return array
 
+    def _group(self, dataset, groups):
+        """Return the group object containing a variable.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            dataset: `netCDF4.Dataset
+                The dataset containing the variable.
+
+            groups: sequence of `str`
+                The definition of which group the variable is in. For
+                instance, of the variable is in group
+                ``/forecast/model`` then *groups* would be
+                ``['forecast', 'model']``.
+
+        :Returns:
+
+            `netCDF4.Dataset` or `netCDF4.Group`
+                The group object, which might be the root group.
+
+        """
+        for g in groups:
+            dataset = dataset.groups[g]
+
+        return dataset
+
     def _set_attributes(self, var):
         """Set the netCDF variable attributes.
 
@@ -327,6 +159,24 @@ class NetCDF4Array(
 
         attributes = {attr: var.getncattr(attr) for attr in var.ncattrs()}
         self._set_component("attributes", attributes, copy=False)
+
+    def close(self, dataset):
+        """Close the dataset containing the data.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        :Parameters:
+
+            dataset:
+                The dataset to be closed.
+
+        :Returns:
+
+            `None`
+
+        """
+        if self._get_component("close"):
+            dataset.close()
 
     def get_groups(self, address):
         """The netCDF4 group structure of a netCDF variable.
@@ -372,24 +222,6 @@ class NetCDF4Array(
         out = address.split("/")[1:]
         return out[:-1], out[-1]
 
-    def close(self, dataset):
-        """Close the dataset containing the data.
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        :Parameters:
-
-            dataset: `netCDF4.Dataset`
-                The netCDF dataset to be closed.
-
-        :Returns:
-
-            `None`
-
-        """
-        if self._get_component("close"):
-            dataset.close()
-
     def open(self):
         """Return a dataset file object and address.
 
@@ -404,9 +236,4 @@ class NetCDF4Array(
                 address of the data within the file.
 
         """
-        #       try:
         return super().open(netCDF4.Dataset, mode="r")
-
-
-#       except Exception:
-#           self._lock.release()

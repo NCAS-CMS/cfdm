@@ -940,8 +940,14 @@ class Domain(
 
         return axes
 
-    def get_filenames(self):
+    def get_filenames(self, normalise=True):
         """Return the file names containing the metadata construct data.
+
+        :Parameters:
+
+            {{normalise: `bool`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -962,7 +968,7 @@ class Domain(
         out = set()
 
         for c in self.constructs.filter_by_data(todict=True).values():
-            out.update(c.get_filenames())
+            out.update(c.get_filenames(normalise=normalise))
 
         return out
 

@@ -242,6 +242,26 @@ class IndexMixin:
             f"Must implement {self.__class__.__name__}._get_array"
         )
 
+    @property
+    def array(self):
+        """Return an independent numpy array containing the data.
+
+        .. versionadded:: (cfdm) 1.7.0
+
+        :Returns:
+
+            `numpy.ndarray`
+                An independent numpy array of the data.
+
+        **Examples**
+
+        >>> n = numpy.asanyarray(a)
+        >>> isinstance(n, numpy.ndarray)
+        True
+
+        """
+        return self.__array__()
+
     def index(self, conform=True):
         """The index to be applied when converting to a `numpy` array.
 

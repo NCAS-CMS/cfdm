@@ -263,10 +263,16 @@ class Subarray(Array):
 
         return c.copy()
 
-    def get_filenames(self):
+    def get_filenames(self, normalise=True):
         """Return the names of any files containing the data.
 
         .. versionadded:: (cfdm) 1.10.0.2
+
+        :Parameters:
+
+            {{normalise: `bool`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -277,6 +283,6 @@ class Subarray(Array):
 
         """
         try:
-            return tuple(self.data.get_filenames())
+            return tuple(self.data.get_filenames(normalise=normalise))
         except AttributeError:
             return ()
