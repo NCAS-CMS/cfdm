@@ -538,27 +538,12 @@ def read(
 
             .. versionadded:: (cfdm) NEXTVERSION
 
-        cfa: `dict` or `str`, optional
+        cfa: `dict`, optional
             Configure the reading of CF-netCDF aggregation files.
 
-            If *cfa* is the string ``'for_writing`None` then no aggregation variables will be
-            created.
-
-    
-            The
-            dictionary may have any subset of the following key/value
-            pairs to override the information read from the file:
-
-            * ``'for_writing'``: `bool`
-
-              Whether or not it is intended to write any of the file
-              contents as a CF-netCDF aggregation variables
-               
-
-              *Example:*
-                ``{'replacement': 'file:///data/'}``
-
-            .. versionadded:: (cfdm) NEXTVERSION
+            The dictionary may have any subset of the following
+            key/value pairs to override the information read from the
+            file:
 
             * ``'substitutions'``: `dict`
 
@@ -567,17 +552,24 @@ def read(
               names. Each key may be specified with or without the
               ``${*}`` syntax (where `*` represents any amount of any
               characters). For instance, ``{'substitution':
-              'replacement'}`` and ``{'${substitution}' are equivalent
-              'replacement'}``. The substitutions are used in
-              conjunction with, and take precedence over, any that are
-              stored in the aggregation file by the ``substitutions``
-              attribute of a ``location`` fragement array variable.
+              'replacement'}`` and
+              ``{'${substitution}':'replacement'}`` are
+              equivalent. The substitutions are used in conjunction
+              with, and take precedence over, any that are stored in
+              the aggregation file by the ``substitutions`` attribute
+              of a ``location`` fragement array variable.
 
               *Example:*
-                ``{'replacement': 'file:///data/'}``
+                ``{'directory': 'file:///data/'}``
 
             .. versionadded:: (cfdm) NEXTVERSION
 
+        for_cfa_write: `bool`, optional
+
+            TODOCFA
+
+            .. versionadded:: (cfdm) NEXTVERSION
+       
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that provides the
             returned field constructs.
