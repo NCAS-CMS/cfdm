@@ -76,6 +76,7 @@ class FragmentArrayMixin:
                 array = array.reshape(self.original_shape)
                 array = array[index]
 
+        # TODOCFA array = self._unpack(array)
         array = self._conform_to_aggregated_units(array)
         return array
 
@@ -172,6 +173,13 @@ class FragmentArrayMixin:
 
         return
 
+    def _unpack(self, array):
+        """TODOCFA"""
+        if self.get_unpack(): # ??
+            array = netcdf_indxer(array, mask=False, unpack=True, attributes={}, copy=False)[...]
+
+        return array
+    
     @property
     def aggregated_Units(self):
         """The units of the aggregated data.

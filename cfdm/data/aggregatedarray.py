@@ -7,12 +7,13 @@ import numpy as np
 from ..functions import dirname
 from . import abstract
 from .fragment import FragmentFileArray, FragmentValueArray
+from .netcdfindexer import netcdf_indexer
 
 # from .mixin import FileArrayMixin, NetCDFFileMixin
 from .utils import chunk_locations, chunk_positions
 
 
-class AggregatedArray(abstract.NetCDFFileArray):
+class AggregatedArray(abstract.FileArray):
     """An array stored in a CF aggregation variable.
 
     .. versionadded:: (cfdm) NEXTVERSION
@@ -62,9 +63,7 @@ class AggregatedArray(abstract.NetCDFFileArray):
                 `None` if the numpy data-type is not known (which can
                 be the case for some string types, for example).
 
-            mask: `bool`
-                Must be True, to indicate that the aggregated data is
-                to be masked by convention.
+            {{init mask: `bool`, optional}}
 
             {{init unpack: `bool`, optional}}
 
@@ -123,7 +122,7 @@ class AggregatedArray(abstract.NetCDFFileArray):
             filename=filename,
             address=address,
             dtype=dtype,
-            mask=mask,
+            mask=True,
             unpack=unpack,
             attributes=attributes,
             storage_options=storage_options,
@@ -175,11 +174,20 @@ class AggregatedArray(abstract.NetCDFFileArray):
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        return NotImplemented
+        dx = netcdf_indexer(
+            self.to_dask_array(),
+            mask=True,
+            unpack=False,
+            always_masked_array=False,
+            orthogonal_indexing=True,
+            attributes=self.get_attributes(),
+            copy=False,
+        )
+        return dx[index].compute()
 
     @property
     def __asanyarray__(self):
-        """True if the array is accessed by conversion to `numpy`.
+        """True if the fragment arrays are accessed by conversion to `numpy`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -191,7 +199,7 @@ class AggregatedArray(abstract.NetCDFFileArray):
         return True
 
     def _parse_fragment_array(
-        self, aggregated_filename, fragment_array  # , substitutions
+        self, aggregated_filename, fragment_array
     ):
         """Parse the fragment array dictionary.
 
@@ -772,11 +780,11 @@ class AggregatedArray(abstract.NetCDFFileArray):
                 kwargs["filename"] = kwargs.pop("location")
                 kwargs["storage_options"] = storage_options
                 kwargs["substitutions"] = substitutions
+                kwargs["aggregation_file_scheme"] = aggregation_file_scheme
                 kwargs["aggregation_file_directory"] = (
                     aggregation_file_directory
                 )
-                kwargs["aggregation_file_scheme"] = aggregation_file_scheme
-
+                
             fragment = FragmentArray(
                 dtype=dtype,
                 shape=fragment_shape,

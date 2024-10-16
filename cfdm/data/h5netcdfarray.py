@@ -10,7 +10,7 @@ from .netcdfindexer import netcdf_indexer
 logger = logging.getLogger(__name__)
 
 
-class H5netcdfArray(IndexMixin, abstract.NetCDFFileArray):
+class H5netcdfArray(IndexMixin, abstract.FileArray):
     """A netCDF array accessed with `h5netcdf`.
 
     .. versionadded:: (cfdm) NEXTVERSION
@@ -26,7 +26,7 @@ class H5netcdfArray(IndexMixin, abstract.NetCDFFileArray):
         be the same for all `NetCDF4Array` and `H5netcdfArray`
         instances, regardless of the dataset they access, which means
         that access to all netCDF and HDF files coordinates around the
-        same lock.
+        same lock. TODOCFA
 
         .. versionadded:: (cfdm) NEXTVERSION
 

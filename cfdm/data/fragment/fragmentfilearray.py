@@ -14,8 +14,6 @@ class FragmentFileArray(
 ):
     """Fragment of aggregated data in a file.
 
-    Access will be with either `netCDF4` or `h5netcdf`.
-
     .. versionadded:: (cfdm) NEXTVERSION
 
     """
@@ -46,7 +44,7 @@ class FragmentFileArray(
         substitutions=None,
         aggregated_units=False,
         aggregated_calendar=False,
-        attributes=None,
+        aggregated_attributes=None,
         storage_options=None,
         aggregation_file_directory=None,
         aggregation_file_scheme="file",
@@ -58,10 +56,11 @@ class FragmentFileArray(
         :Parameters:
 
             filename: (sequence of `str`), optional
-                The locations fragment datasets containing the array.
+                The locations of fragment datasets containing the
+                array.
 
             address: (sequence of `str`), optional
-                How to find the fragments in the fragment datasets.
+                How to find the array in the fragment datasets.
 
             dtype: `numpy.dtype`, optional
                 The data type of the aggregated array. May be `None`
@@ -91,35 +90,43 @@ class FragmentFileArray(
 
         """
         super().__init__(
+            filename=filename,
+            address=address,
+            dtype=dtype,
+            shape=shape,
+            mask=True,
+            unpack=True,
+            attributes=None,
+            storage_options=storage_options,
             source=source,
             copy=copy,
         )
 
         if source is not None:
-            try:
-                shape = source._get_component("shape", None)
-            except AttributeError:
-                shape = None
+#            try:
+#                shape = source._get_component("shape", None)
+#            except AttributeError:
+#                shape = None
+#
+#            try:
+#                filename = source._get_component("filename", None)
+#            except AttributeError:
+#                filename = None
+#
+#            try:
+#                address = source._get_component("address", None)
+#            except AttributeError:
+#                address = None
+#
+#            try:
+#                dtype = source._get_component("dtype", None)
+#            except AttributeError:
+#                dtype = None
 
             try:
-                filename = source._get_component("filename", None)
+                aggregated_attributes = source._get_component("aggregated_attributes", None)
             except AttributeError:
-                filename = None
-
-            try:
-                address = source._get_component("address", None)
-            except AttributeError:
-                address = None
-
-            try:
-                dtype = source._get_component("dtype", None)
-            except AttributeError:
-                dtype = None
-
-            try:
-                attributes = source._get_component("attributes", None)
-            except AttributeError:
-                attributes = None
+                aggregated_attributes = None
 
             try:
                 aggregated_units = source._get_component(
@@ -135,17 +142,17 @@ class FragmentFileArray(
             except AttributeError:
                 aggregated_calendar = False
 
-            try:
-                storage_options = source._get_component(
-                    "storage_options", None
-                )
-            except AttributeError:
-                storage_options = None
-
-            try:
-                substitutions = source._get_component("substitutions", None)
-            except AttributeError:
-                substitutions = None
+#           try:
+#               storage_options = source._get_component(
+#                   "storage_options", None
+#               )
+#           except AttributeError:
+#               storage_options = None
+#
+#           try:
+#               substitutions = source._get_component("substitutions", None)
+#           except AttributeError:
+#               substitutions = None
 
             try:
                 aggregation_file_directory = source._get_component(
@@ -161,29 +168,29 @@ class FragmentFileArray(
             except AttributeError:
                 aggregation_file_scheme = None
 
-        if filename is not None:
-            if isinstance(filename, str):
-                filename = (filename,)
-            else:
-                filename = tuple(filename)
+#        if filename is not None:
+#            if isinstance(filename, str):
+#                filename = (filename,)
+#            else:
+#                filename = tuple(filename)
+#
+#            self._set_component("filename", filename, copy=False)
+#
+#        if address is not None:
+#            if isinstance(address, int):
+#                address = (address,)
+#            else:
+#                address = tuple(address)
+#
+#            self._set_component("address", address, copy=False)
 
-            self._set_component("filename", filename, copy=False)
+#        if storage_options is not None:
+#            self._set_component("storage_options", storage_options, copy=False)
 
-        if address is not None:
-            if isinstance(address, int):
-                address = (address,)
-            else:
-                address = tuple(address)
-
-            self._set_component("address", address, copy=False)
-
-        if storage_options is not None:
-            self._set_component("storage_options", storage_options, copy=False)
-
-        self._set_component("shape", shape, copy=False)
-        self._set_component("dtype", dtype, copy=False)
-        self._set_component("attributes", attributes, copy=False)
-        self._set_component("mask", True, copy=False)
+#        self._set_component("shape", shape, copy=False)
+#        self._set_component("dtype", dtype, copy=False)
+        self._set_component("aggregated_attributes", aggregated_attributes, copy=False)
+#        self._set_component("mask", True, copy=False)
         self._set_component("aggregated_units", aggregated_units, copy=False)
         self._set_component(
             "aggregated_calendar", aggregated_calendar, copy=False
@@ -196,13 +203,13 @@ class FragmentFileArray(
         self._set_component(
             "aggregation_file_scheme", aggregation_file_scheme, copy=False
         )
-        if substitutions is not None:
-            self._set_component(
-                "substitutions", substitutions.copy(), copy=False
-            )
+#        if substitutions is not None:
+#            self._set_component(
+#                "substitutions", substitutions.copy(), copy=False
+#            )
 
-        # By default, close the file after data array access
-        self._set_component("close", True, copy=False)
+#        # By default, close the file after data array access
+#        self._set_component("close", True, copy=False)
 
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
@@ -239,7 +246,7 @@ class FragmentFileArray(
             "shape": self.shape,
             "aggregated_units": self.get_aggregated_units(None),
             "aggregated_calendar": self.get_aggregated_calendar(None),
-            "attributes": self.get_attributes(None),
+#            "attributes": self.get_attributes(None),
             "copy": False,
         }
 
@@ -253,13 +260,26 @@ class FragmentFileArray(
                 create_endpoint_url=False
             )
 
-            # Loop round the fragment array backends until we find one
-            # that can open the file
+            # Loop round the fragment array backends, in the order
+            # given by the `_FragmentArrays` attribute (which is
+            # defined in `__new__`), until we find one that can open
+            # the file.
             for FragmentArray in self._FragmentArrays:
                 try:
-                    return FragmentArray(**kwargs)._get_array(index)
+                    array = FragmentArray(**kwargs)._get_array(index)
                 except Exception:
                     pass
+                else:
+#                    netcdf_indexer(
+#                        array
+#                        mask=False
+#                        unpack=True,
+#                        always_masked_array=False,
+#                        orthogonal_indexing=True,
+#                        attributes=self.get_attributes(),
+#                        copy=False,
+#                    )[...]
+                    return array
 
         # Still here?
         raise OSError(f"Can't access any of the fragment files: {filenames}")

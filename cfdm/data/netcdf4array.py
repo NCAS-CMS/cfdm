@@ -6,7 +6,7 @@ from .mixin import IndexMixin
 from .netcdfindexer import netcdf_indexer
 
 
-class NetCDF4Array(IndexMixin, abstract.NetCDFFileArray):
+class NetCDF4Array(IndexMixin, abstract.FileArray):
     """A netCDF array accessed with `netCDF4`.
 
     .. versionadded:: (cfdm) 1.7.0

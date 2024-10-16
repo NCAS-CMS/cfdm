@@ -1986,17 +1986,33 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def _modify_dask_graph(
         self, method, args=(), exceptions=(AttributeError,)
     ):
-        """TODOCFA.
+        """Modify the Dask graph.
+        
+        The value of each node of the Dask graph is replaced with the
+        result of calling its *method* method. If attempting to call
+        the method results in any of the exceptions given by
+        *exceptions*, then that node is unmodified. If attempting to
+        call the method results in an exception not given by
+        *exceptions*, then that exception is raised.
+
+        The `{{class}}` object is modified in-place, but the embedded
+        Dask graph is not.        
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
             method: `str`
+                The name of the callable method which returns a new
+                graph node value.
 
             args: `tuple`, optional
+                Arguments for the *method*. No arguments (the default)
+                are specified by an empty `tuple`.
 
-            exceptions: `tuple`, optional
+            exceptions: `tuple` of `Exception`, optional
+                Do not change graph node values if calling its
+                *method* results in any of the specified exceptions.
 
         :Returns:
 
@@ -2010,14 +2026,14 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             try:
                 dsk[key] = getattr(a, method)(*args)
             except exceptions:
-                # This graph element could not be updated
+                # This graph node could not be modified
                 pass
             else:
-                # This graph element was successfully updated
+                # This graph node was successfully modified
                 updated = True
 
         if updated:
-            # The Dask graph was updated, so recast the dictionary
+            # The Dask graph was modified, so recast the dictionary
             # representation as a Dask array.
             dx = self.to_dask_array(asanyarray=False)
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
