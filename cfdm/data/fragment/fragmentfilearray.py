@@ -42,8 +42,8 @@ class FragmentFileArray(
         dtype=None,
         shape=None,
         substitutions=None,
-        aggregated_units=False,
-        aggregated_calendar=False,
+#        aggregated_units=False,
+#        aggregated_calendar=False,
         aggregated_attributes=None,
         storage_options=None,
         aggregation_file_directory=None,
@@ -189,12 +189,11 @@ class FragmentFileArray(
 
 #        self._set_component("shape", shape, copy=False)
 #        self._set_component("dtype", dtype, copy=False)
-        self._set_component("aggregated_attributes", aggregated_attributes, copy=False)
 #        self._set_component("mask", True, copy=False)
-        self._set_component("aggregated_units", aggregated_units, copy=False)
-        self._set_component(
-            "aggregated_calendar", aggregated_calendar, copy=False
-        )
+#        self._set_component("aggregated_units", aggregated_units, copy=False)
+#        self._set_component(
+#            "aggregated_calendar", aggregated_calendar, copy=False
+#        )
         self._set_component(
             "aggregation_file_directory",
             aggregation_file_directory,
@@ -203,6 +202,9 @@ class FragmentFileArray(
         self._set_component(
             "aggregation_file_scheme", aggregation_file_scheme, copy=False
         )
+
+        if aggregated_attributes is not None:
+            self._set_component("aggregated_attributes", aggregated_attributes, copy=copy)
 #        if substitutions is not None:
 #            self._set_component(
 #                "substitutions", substitutions.copy(), copy=False
@@ -244,14 +246,16 @@ class FragmentFileArray(
         kwargs = {
             "dtype": self.dtype,
             "shape": self.shape,
-            "aggregated_units": self.get_aggregated_units(None),
-            "aggregated_calendar": self.get_aggregated_calendar(None),
+#            "aggregated_units": self.get_aggregated_units(None),
+#            "aggregated_calendar": self.get_aggregated_calendar(None),
 #            "attributes": self.get_attributes(None),
+            "aggregated_attributes": self.get_aggregated_attributes(),
             "copy": False,
         }
 
         # Loop round the files, returning as soon as we find one that
         # is accessible.
+        errors = []
         filenames = self.get_filenames()
         for filename, address in zip(filenames, self.get_addresses()):
             kwargs["filename"] = filename
@@ -267,22 +271,20 @@ class FragmentFileArray(
             for FragmentArray in self._FragmentArrays:
                 try:
                     array = FragmentArray(**kwargs)._get_array(index)
-                except Exception:
+                except Exception as error:
+                    errors.append(
+                        f"{FragmentArray().__class__.__name__}: {error}"
+                    )
                     pass
                 else:
-#                    netcdf_indexer(
-#                        array
-#                        mask=False
-#                        unpack=True,
-#                        always_masked_array=False,
-#                        orthogonal_indexing=True,
-#                        attributes=self.get_attributes(),
-#                        copy=False,
-#                    )[...]
                     return array
 
         # Still here?
-        raise OSError(f"Can't access any of the fragment files: {filenames}")
+        raise OSError(
+            f"Can't access any of the fragment files {filenames} "
+            "with the backends:\n"
+            f"{'\n'.join(errors)}"
+        )
 
     #    def clear_substitutions(self):
     #        """TODOCFA.

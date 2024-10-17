@@ -745,7 +745,8 @@ class AggregatedArray(abstract.FileArray):
         substitutions = self.get_substitutions(copy=False)
         storage_options = self.get_storage_options()
         fragment_type = self.get_fragment_type()
-
+        aggregated_attributes = self.get_attributes()
+                
         if fragment_type == "location":
             u = urlparse(self.get_filename())
             aggregation_file_directory = dirname(u.path)
@@ -784,13 +785,15 @@ class AggregatedArray(abstract.FileArray):
                 kwargs["aggregation_file_directory"] = (
                     aggregation_file_directory
                 )
-                
+            
             fragment = FragmentArray(
                 dtype=dtype,
                 shape=fragment_shape,
-                aggregated_units=units,
-                aggregated_calendar=calendar,
-                **kwargs,
+#                aggregated_units=units,
+#                aggregated_calendar=calendar,
+                aggregated_attributes=aggregated_attributes,
+                **kwargs,                
+
             )
 
             key = f"{fragment.__class__.__name__}-{tokenize(fragment)}"

@@ -16,6 +16,7 @@ class FragmentValueArray(FragmentArrayMixin, FullArray):
         shape=None,
         aggregated_units=False,
         aggregated_calendar=False,
+        aggregated_attributes=None,
         attributes=None,
         source=None,
         copy=True,
@@ -55,12 +56,17 @@ class FragmentValueArray(FragmentArrayMixin, FullArray):
             fill_value=value,
             dtype=dtype,
             shape=shape,
-            attributes=attributes,
+            attributes=None,
             source=source,
             copy=False,
         )
 
         if source is not None:
+            try:
+                aggregated_attributes = source._get_component("aggregated_attributes", None)
+            except AttributeError:
+                aggregated_attributes = None
+
             try:
                 aggregated_units = source._get_component(
                     "aggregated_units", False
@@ -79,3 +85,6 @@ class FragmentValueArray(FragmentArrayMixin, FullArray):
         self._set_component(
             "aggregated_calendar", aggregated_calendar, copy=False
         )
+
+        if aggregated_attributes is not None:
+            self._set_component("aggregated_attributes", aggregated_attributes, copy=copy)

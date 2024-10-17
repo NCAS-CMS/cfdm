@@ -175,8 +175,8 @@ class FragmentArrayMixin:
 
     def _unpack(self, array):
         """TODOCFA"""
-        if self.get_unpack(): # ??
-            array = netcdf_indxer(array, mask=False, unpack=True, attributes={}, copy=False)[...]
+        #if self.get_unpack(): # ??
+        #    array = netcdf_indxer(array, mask=False, unpack=True, attributes={}, copy=False)[...]
 
         return array
     
@@ -192,11 +192,22 @@ class FragmentArrayMixin:
                 The units of the aggregated data.
 
         """
-        return Units(
-            self.get_aggregated_units(), self.get_aggregated_calendar(None)
-        )
+        aggregated_attributes = self.get_aggregated_attributes(copy=False)
+        calendar = aggregated_attributes.get("calendar", None)
+        units = aggregated_attributes.get("units", None)
+#        if units is False:
+#            raise ValueError(
+#                f"{self.__class__.__name__} aggregated units have not "
+#                "been set"
+#            )
+#        print (repr(Units(units, calendar)), aggregated_attributes)
+        return Units(units, calendar)
 
-    def get_aggregated_calendar(self, default=ValueError()):
+        #return Units(units, calendar
+        #    self.get_aggregated_units(), self.get_aggregated_calendar(None)
+        #)
+
+    def get_aggregated_attributes(self, copy=True):
         """The calendar of the aggregated array.
 
         If the calendar is `None` then the CF default calendar is
@@ -217,51 +228,87 @@ class FragmentArrayMixin:
                 The calendar value.
 
         """
-        calendar = self._get_component("aggregated_calendar", False)
-        if calendar is False:
-            if default is None:
-                return
+        attributes = self._get_component("aggregated_attributes")
 
-            return self._default(
-                default,
-                f"{self.__class__.__name__} 'aggregated_calendar' has not "
-                "been set",
-            )
+#        if attributes is None:
+#            attributes = {}
+#            self._set_component(
+#                "aggregated_attributes", attributes, copy=False
+#            )
+     #
+     #   if copy:
+     #       attributes = attributes.copy()#
 
-        return calendar
+        return attributes.copy()
 
-    def get_aggregated_units(self, default=ValueError()):
-        """The units of the aggregated array.
-
-        If the units are `None` then the aggregated array has no
-        defined units.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `get_aggregated_calendar`
-
-        :Parameters:
-
-            default: optional
-                Return the value of the *default* parameter if the
-                aggregated units have not been set. If set to an
-                `Exception` instance then it will be raised instead.
-
-        :Returns:
-
-            `str` or `None`
-                The units value.
-
-        """
-        units = self._get_component("aggregated_units", False)
-        if units is False:
-            if default is None:
-                return
-
-            return self._default(
-                default,
-                f"{self.__class__.__name__} 'aggregated_units' have not "
-                "been set",
-            )
-
-        return units
+#    def get_aggregated_calendar(self, default=ValueError()):
+#        """The calendar of the aggregated array.
+#
+#        If the calendar is `None` then the CF default calendar is
+#        assumed, if applicable.
+#
+#        .. versionadded:: (cfdm) NEXTVERSION
+#
+#        :Parameters:
+#
+#            default: optional
+#                Return the value of the *default* parameter if the
+#                aggregated calendar has not been set. If set to an
+#                `Exception` instance then it will be raised instead.
+#
+#        :Returns:
+#
+#            `str` or `None`
+#                The calendar value.
+#
+#        """
+##        calendar = self._get_component("aggregated_calendar", False)
+#        calendar = self.get_aggregated_attributes(copy=False).get("calendar", None)
+#       #if calendar is False:
+#       #    if default is None:
+#       #        return
+#       #
+#       #    return self._default(
+#       #        default,
+#       #        f"{self.__class__.__name__} aggregated calendar has not "
+#       #        "been set",
+#       #    )
+#
+#        return calendar
+#
+#    def get_aggregated_units(self, default=ValueError()):
+#        """The units of the aggregated array.
+#
+#        If the units are `None` then the aggregated array has no
+#        defined units.
+#
+#        .. versionadded:: (cfdm) NEXTVERSION
+#
+#        .. seealso:: `get_aggregated_calendar`
+#
+#        :Parameters:
+#
+#            default: optional
+#                Return the value of the *default* parameter if the
+#                aggregated units have not been set. If set to an
+#                `Exception` instance then it will be raised instead.
+#
+#        :Returns:
+#
+#            `str` or `None`
+#                The units value.
+#
+#        """
+##        units = self._get_component("aggregated_units", False)
+#        units = self.get_aggregated_attributes(copy=False).get("units", None) #False)
+##        if units is False:
+##            if default is None:
+##                return
+##
+##            return self._default(
+##                default,
+##                f"{self.__class__.__name__} aggregated units have not "
+##                "been set",
+##            )
+#
+#        return units
