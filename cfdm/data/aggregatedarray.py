@@ -187,7 +187,7 @@ class AggregatedArray(abstract.FileArray):
 
     @property
     def __asanyarray__(self):
-        """True if the fragment arrays are accessed by conversion to `numpy`.
+        """True if the array is accessed by conversion to `numpy`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -198,9 +198,7 @@ class AggregatedArray(abstract.FileArray):
         """
         return True
 
-    def _parse_fragment_array(
-        self, aggregated_filename, fragment_array
-    ):
+    def _parse_fragment_array(self, aggregated_filename, fragment_array):
         """Parse the fragment array dictionary.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -739,14 +737,13 @@ class AggregatedArray(abstract.FileArray):
         name = (f"{self.__class__.__name__}-{tokenize(self)}",)
 
         dtype = self.dtype
-        units = self.get_units(None)
-        calendar = self.get_calendar(None)
         fragment_array = self.get_fragment_array(copy=False)
         substitutions = self.get_substitutions(copy=False)
         storage_options = self.get_storage_options()
         fragment_type = self.get_fragment_type()
         aggregated_attributes = self.get_attributes()
-                
+        unpack = self.get_unpack()
+
         if fragment_type == "location":
             u = urlparse(self.get_filename())
             aggregation_file_directory = dirname(u.path)
@@ -785,15 +782,13 @@ class AggregatedArray(abstract.FileArray):
                 kwargs["aggregation_file_directory"] = (
                     aggregation_file_directory
                 )
-            
+
             fragment = FragmentArray(
                 dtype=dtype,
                 shape=fragment_shape,
-#                aggregated_units=units,
-#                aggregated_calendar=calendar,
+                unpack_aggregated_data=unpack,
                 aggregated_attributes=aggregated_attributes,
-                **kwargs,                
-
+                **kwargs,
             )
 
             key = f"{fragment.__class__.__name__}-{tokenize(fragment)}"

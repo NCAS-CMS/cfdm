@@ -15,10 +15,8 @@ class FragmentH5netcdfArray(FragmentArrayMixin, H5netcdfArray):
         address=None,
         dtype=None,
         shape=None,
-#        aggregated_units=False,
-#        aggregated_calendar=False,
+        unpack_aggregated_data=True,
         aggregated_attributes=None,
-#        attributes=None,
         storage_options=None,
         source=None,
         copy=True,
@@ -70,7 +68,8 @@ class FragmentH5netcdfArray(FragmentArrayMixin, H5netcdfArray):
             address=address,
             dtype=dtype,
             shape=shape,
-            mask=True,unpack=True,
+            mask=True,
+            unpack=True,
             attributes=None,
             storage_options=storage_options,
             source=source,
@@ -78,27 +77,25 @@ class FragmentH5netcdfArray(FragmentArrayMixin, H5netcdfArray):
         )
 
         if source is not None:
-            #try:
-            #    aggregated_units = source._get_component(
-            #        "aggregated_units", False
-            #    )
-            #except AttributeError:
-            #    aggregated_units = False
-            #
-            #try:
-            #    aggregated_calendar = source._get_component(
-            #        "aggregated_calendar", False
-            #    )
-            #except AttributeError:
-            #    aggregated_calendar = False
-
             try:
-                aggregated_attributes = source._get_component("aggregated_attributes", None)
+                aggregated_attributes = source._get_component(
+                    "aggregated_attributes", None
+                )
             except AttributeError:
                 aggregated_attributes = None
 
-#        self._set_component("aggregated_units", aggregated_units, copy=False)
-#        self._set_component(
-#            "aggregated_calendar", aggregated_calendar, copy=False
-#        )
-        self._set_component("aggregated_attributes", aggregated_attributes, copy=False)
+            try:
+                unpack_aggregated_data = source._get_component(
+                    "unpack_aggregated_data", True
+                )
+            except AttributeError:
+                unpack_aggregated_data = True
+
+        self._set_component(
+            "unpack_aggregated_data",
+            unpack_aggregated_data,
+            copy=False,
+        )
+        self._set_component(
+            "aggregated_attributes", aggregated_attributes, copy=False
+        )

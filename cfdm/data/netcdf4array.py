@@ -17,12 +17,8 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
     def _lock(self):
         """Set the lock for use in `dask.array.from_array`.
 
-        Returns a lock object because concurrent reads are not
-        currently supported by the netCDF and HDF libraries. The lock
-        object will be the same for all `NetCDF4Array` and
-        `H5netcdfArray` instances, regardless of the dataset they
-        access, which means that access to all netCDF and HDF files
-        coordinates around the same lock. TODOCFA
+        Returns a lock object that prevents concurrent reads of netCDF
+        files.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -45,7 +41,7 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
             then these indices work independently along each dimension
             (similar to the way vector subscripts work in Fortran).
 
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `__array__`, `index`
 
