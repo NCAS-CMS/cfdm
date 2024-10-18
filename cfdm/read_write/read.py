@@ -544,8 +544,8 @@ def read(
             Configure the reading of CF-netCDF aggregation files.
 
             The dictionary may have any subset of the following
-            key/value pairs to override the information read from the
-            file:
+            key/value pairs that supplement or override the
+            information read from the file:
 
             * ``'substitutions'``: `dict`
 
@@ -562,35 +562,50 @@ def read(
               of a ``location`` fragement array variable.
 
               *Example:*
-                ``{'directory': 'file:///data/'}``
+                To TODOCFA: ``{'directory': 'file:///data/'}``.
 
             .. versionadded:: (cfdm) NEXTVERSION
 
         cfa_write: `bool`, optional
+            Register the intention for named construct types to be
+            subsequently written as CF-netCDF aggregation variables.
 
-            TODOCFA
+            This makes no difference to the logical content of any
+            construct, but ensures that the data of each of specified
+            constructs will have only one Dask chunk - a pre-requisite
+            for the creation CF-netCDF aggregation variables.
+
+            The *cfa_write* parameter may be one, or a sequence, of:
 
             ==========================  ===============================
-            String-valued *cfa*         Constructs
+            *cfa_write*                 Construct types
             ==========================  ===============================
             ``'field'``                 Field constructs
-
             ``'field_ancillary'``       Field ancillary constructs
-
             ``'domain_ancillary'``      Domain ancillary constructs
-
             ``'dimension_coordinate'``  Dimension coordinate constructs
-
             ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
-
             ``'cell_measure'``          Cell measure constructs
-
             ``'domain_topology'``       Domain topology constructs
-
             ``'cell_connectivity'``     Cell connectivity constructs
-
             ``'all'``                   All constructs
             ==========================  ===============================
+
+            .. note:: If the *dask_chunks* parameter is set to `None`
+                      or `-1` then the data of all constructs will
+                      already have only one Dask chunk, so in this
+                      case setting *cfa_write* will have no further
+                      effect.
+
+            *Example:*
+              To register field constructs to be written as CF-netCDF
+              aggregation variables: ``cfa_write='field'`` or
+              ``cfa_write=['field']``.
+
+            *Example:*
+              To register field and auxiliary coordinate constructs to
+              be written as CF-netCDF aggregation variables:
+              ``cfa_write=['field', 'auxiliary_coordinate']``.
 
             .. versionadded:: (cfdm) NEXTVERSION
 

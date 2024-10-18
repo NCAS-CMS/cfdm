@@ -1226,7 +1226,7 @@ class NetCDFRead(IORead):
         else:
             cfa = cfa.copy()
             keys = ("substitutions",)
-            if not set(cfa.issubset(keys)):
+            if not set(cfa).issubset(keys):
                 raise ValueError(
                     "Invalid dictionary key to the 'cfa' parameter."
                     f"Valid keys are {keys}. Got: {cfa}"
@@ -7749,8 +7749,8 @@ class NetCDFRead(IORead):
                 .. versionadded:: (cfdm) NEXTVERSION
 
             construct_type: `str` or `None`
-                The type of construct that contains *array*. Set to
-                `None` if the array does not belong to a construct.
+                The type of teh construct that contains *array*. Set
+                to `None` if the array does not belong to a construct.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -10694,8 +10694,8 @@ class NetCDFRead(IORead):
                 convention.
 
             construct_type: `str` or `None`
-                The type of construct that contains *array*. Set to
-                `None` if the array does not belong to a construct.
+                The type of the construct that contains *array*. Set
+                to `None` if the array does not belong to a construct.
 
         :Returns:
 
@@ -10713,6 +10713,10 @@ class NetCDFRead(IORead):
             and construct_type in cfa_write
             or "all" in cfa_write
         ):
+            # The intention is for this array to be written out as an
+            # aggregation variable, so set dask_chunks=None to ensure
+            # that each Dask chunk contains exactly one complete
+            # fragment.
             dask_chunks = None
         else:
             dask_chunks = g.get("dask_chunks", "storage-aligned")

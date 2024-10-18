@@ -141,7 +141,7 @@ class CFATest(unittest.TestCase):
 
     def test_CFA_substitutions_1(self):
         """Test aggregation substitution URI substitutions (1)."""
-        f = cfdm.example_field(0)
+        f = cfdm.example_field(0)        
         cfdm.write(f, tmpfile1)
         f = cfdm.read(tmpfile1)[0]
 
@@ -176,15 +176,20 @@ class CFATest(unittest.TestCase):
     def test_CFA_substitutions_2(self):
         """Test aggregation substitution URI substitutions (2)."""
         f = cfdm.example_field(0)
+
+        # TODOCFA: delete
+        tmpfile1 = "tmpfile1.nc"
+        
         cfdm.write(f, tmpfile1)
         f = cfdm.read(tmpfile1)[0]
 
         cwd = os.getcwd()
 
+        # TODOCFA: delete
         cfa_file = "cfa_file.nc"
 
         f.data.nc_clear_aggregation_substitutions()
-        f.data.nc_update_aggregation_substitutions({"base": cwd})
+        f.data.nc_update_aggregation_substitutions({"base": f"file://{cwd}/"})
         cfdm.write(
             f,
             cfa_file,
@@ -281,6 +286,7 @@ class CFATest(unittest.TestCase):
             set((f"file://${{base}}/{os.path.basename(tmpfile1)}",)),
         )
 
+        # TODOCFA: delete
         cfa_file2 = "cfa_file2.nc"
         cfdm.write(
             g,
