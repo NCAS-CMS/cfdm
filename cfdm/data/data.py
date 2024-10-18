@@ -1987,7 +1987,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         self, method, args=(), exceptions=(AttributeError,)
     ):
         """Modify the Dask graph.
-        
+
         The value of each node of the Dask graph is replaced with the
         result of calling its *method* method. If attempting to call
         the method results in any of the exceptions given by
@@ -1996,7 +1996,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         *exceptions*, then that exception is raised.
 
         The `{{class}}` object is modified in-place, but the embedded
-        Dask graph is not.        
+        Dask graph is not.
 
         .. versionadded:: (cfdm) NEXTVERSION
 

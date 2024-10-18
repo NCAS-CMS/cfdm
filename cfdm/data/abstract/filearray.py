@@ -98,7 +98,7 @@ class FileArray(Array):
                 unpack = source._get_component("unpack", True)
             except AttributeError:
                 unpack = True
-                
+
             try:
                 attributes = source._get_component("attributes", None)
             except AttributeError:
@@ -777,12 +777,13 @@ class FileArray(Array):
 
         Deprecated at version NEXTVERSION. Use `get_attributes` instead.
 
-        """        
+        """
+
         class DeprecationError(Exception):
             """Deprecation error."""
-            
+
             pass
-        
+
         raise DeprecationError(
             f"{self.__class__.__name__}.get_missing_values was deprecated "
             "at version NEXTVERSION and is no longer available. "
@@ -803,7 +804,7 @@ class FileArray(Array):
         from ..numpyarray import NumpyArray
 
         return NumpyArray(self.array)
-    
+
     def _set_attributes(self, var):
         """Set the netCDF variable attributes.
 
@@ -828,25 +829,25 @@ class FileArray(Array):
             f"Must implement {self.__class__.__name__}._set_attributes"
         )  # pragma: no cover
 
-#    def get_format(self):
-#        """The format of the files.
-#
-#        .. versionadded:: (cfdm) 1.10.1.0
-#
-#        .. seealso:: `get_address`, `get_filename`, `get_formats`
-#
-#        :Returns:
-#
-#            `str`
-#                The file format. Always ``'nc'``, signifying netCDF.
-#
-#        **Examples**
-#
-#        >>> a.get_format()
-#        'nc'
-#
-#        """
-#        return "nc"
+    #    def get_format(self):
+    #        """The format of the files.
+    #
+    #        .. versionadded:: (cfdm) 1.10.1.0
+    #
+    #        .. seealso:: `get_address`, `get_filename`, `get_formats`
+    #
+    #        :Returns:
+    #
+    #            `str`
+    #                The file format. Always ``'nc'``, signifying netCDF.
+    #
+    #        **Examples**
+    #
+    #        >>> a.get_format()
+    #        'nc'
+    #
+    #        """
+    #        return "nc"
 
     def get_unpack(self):
         """Whether or not to automatically unpack the data.

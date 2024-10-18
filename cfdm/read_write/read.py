@@ -25,6 +25,7 @@ def read(
     dask_chunks="storage-aligned",
     store_hdf5_chunks=True,
     cfa=None,
+    cfa_write=None,
     _implementation=_implementation,
 ):
     """Read field or domain constructs from a dataset.
@@ -564,12 +565,34 @@ def read(
 
             .. versionadded:: (cfdm) NEXTVERSION
 
-        for_cfa_write: `bool`, optional
+        cfa_write: `bool`, optional
 
             TODOCFA
 
+            ==========================  ===============================
+            String-valued *cfa*         Constructs
+            ==========================  ===============================
+            ``'field'``                 Field constructs
+
+            ``'field_ancillary'``       Field ancillary constructs
+
+            ``'domain_ancillary'``      Domain ancillary constructs
+
+            ``'dimension_coordinate'``  Dimension coordinate constructs
+
+            ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+
+            ``'cell_measure'``          Cell measure constructs
+
+            ``'domain_topology'``       Domain topology constructs
+
+            ``'cell_connectivity'``     Cell connectivity constructs
+
+            ``'all'``                   All constructs
+            ==========================  ===============================
+
             .. versionadded:: (cfdm) NEXTVERSION
-       
+
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that provides the
             returned field constructs.
@@ -604,43 +627,28 @@ def read(
     # Initialise a netCDF read object
     netcdf = NetCDFRead(_implementation)
 
-    # Parse the field parameter
-    if extra is None:
-        extra = ()
-    elif isinstance(extra, str):
-        extra = (extra,)
-
-    # Parse the 'cfa' parameter
-    if cfa is None:
-        cfa_config = {}
-    else:
-        cfa_config = cfa.copy()
-        keys = ("substitutions",)
-        if not set(cfa_config.issubset(keys)):
-            raise ValueError(
-                "Invalid dictionary key to the 'cfa' parameter."
-                f"Valid keys are {keys}. Got: {cfa_config}"
-            )
-
-    if "substitutions" in cfa_config:
-        substitutions = cfa_config["substitutions"].copy()
-        for base, sub in tuple(substitutions.items()):
-            if not (base.startswith("${") and base.endswith("}")):
-                # Add missing ${...}
-                substitutions[f"${{{base}}}"] = substitutions.pop(base)
-    else:
-        substitutions = {}
-
-    cfa_config["substitutions"] = substitutions
-
-    # Check dask_chunks
-    if dask_chunks is not None and not isinstance(
-        dask_chunks, (str, Integral, dict)
-    ):
-        raise ValueError(
-            "The 'dask_chunks' keyword must be of type str, int, None or "
-            f"dict. Got: {dask_chunks!r}"
-        )
+    #   # Parse the 'cfa' parameter
+    #   if cfa is None:
+    #       cfa_config = {}
+    #   else:
+    #       cfa_config = cfa.copy()
+    #       keys = ("substitutions",)
+    #       if not set(cfa_config.issubset(keys)):
+    #           raise ValueError(
+    #               "Invalid dictionary key to the 'cfa' parameter."
+    #               f"Valid keys are {keys}. Got: {cfa_config}"
+    #           )
+    #
+    #   if "substitutions" in cfa_config:
+    #       substitutions = cfa_config["substitutions"].copy()
+    #       for base, sub in tuple(substitutions.items()):
+    #           if not (base.startswith("${") and base.endswith("}")):
+    #               # Add missing ${...}
+    #               substitutions[f"${{{base}}}"] = substitutions.pop(base)
+    #   else:
+    #       substitutions = {}
+    #
+    #   cfa_config["substitutions"] = substitutions
 
     filename = os.path.expanduser(os.path.expandvars(filename))
 
@@ -682,7 +690,8 @@ def read(
                 dask_chunks=dask_chunks,
                 store_hdf5_chunks=store_hdf5_chunks,
                 extra_read_vars=None,
-                cfa=cfa_config,
+                cfa=cfa,
+                cfa_write=cfa_write,
             )
         except MaskError:
             # Some data required for field interpretation is missing,

@@ -1,12 +1,13 @@
 # from . import FileArray
 
 
-class NetCDFFileArray: #(FileArray):
+class NetCDFFileArray:  # (FileArray):
     """Abstract base class for an array in a netCDF file.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
     """
+
 
 #    def __init__(
 #        self,

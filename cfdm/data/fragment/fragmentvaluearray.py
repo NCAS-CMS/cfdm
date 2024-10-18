@@ -63,7 +63,9 @@ class FragmentValueArray(FragmentArrayMixin, FullArray):
 
         if source is not None:
             try:
-                aggregated_attributes = source._get_component("aggregated_attributes", None)
+                aggregated_attributes = source._get_component(
+                    "aggregated_attributes", None
+                )
             except AttributeError:
                 aggregated_attributes = None
 
@@ -87,4 +89,6 @@ class FragmentValueArray(FragmentArrayMixin, FullArray):
         )
 
         if aggregated_attributes is not None:
-            self._set_component("aggregated_attributes", aggregated_attributes, copy=copy)
+            self._set_component(
+                "aggregated_attributes", aggregated_attributes, copy=copy
+            )

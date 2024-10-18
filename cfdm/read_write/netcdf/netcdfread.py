@@ -10,6 +10,7 @@ from copy import deepcopy
 from dataclasses import dataclass, field
 from functools import reduce
 from math import log, nan, prod
+from numbers import Integral
 from typing import Any
 from urllib.parse import urlparse
 from uuid import uuid4
@@ -919,6 +920,7 @@ class NetCDFRead(IORead):
         dask_chunks="storage-aligned",
         store_hdf5_chunks=True,
         cfa=None,
+        cfa_write=(),
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
 
@@ -990,20 +992,26 @@ class NetCDFRead(IORead):
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
-             cfa: `dict`, optional
+            cfa: `dict`, optional
                 Configure the reading of CF-netCDF aggregation files.
-                See `cfdm.read` for detailsa
+                See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
-            _file_systems: `dict`, optional
-                Provide any already-open S3 file systems.
+            cfa_write: sequence of `str`, optional
+                Configure the reading of CF-netCDF aggregation files.
+                See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
             store_hdf_chunks: `bool`, optional
                  Storing the HDF5 chunking strategy. See `cfdm.read`
                  for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            _file_systems: `dict`, optional
+                Provide any already-open S3 file systems.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1141,6 +1149,8 @@ class NetCDFRead(IORead):
             "fragment_array_variables": {},
             # Aggregation configuration overrides
             "cfa": cfa if cfa else {},
+            # Dask chunking of aggregated data for selected constructs
+            "cfa_write": cfa_write,
             # --------------------------------------------------------
             # Whether or not to store HDF chunks
             # --------------------------------------------------------
@@ -1169,9 +1179,6 @@ class NetCDFRead(IORead):
         if extra_read_vars:
             g.update(deepcopy(extra_read_vars))
 
-        # ------------------------------------------------------------
-        # Parse field parameter
-        # ------------------------------------------------------------
         g["get_constructs"] = {
             "auxiliary_coordinate": self.implementation.get_auxiliary_coordinates,
             "cell_measure": self.implementation.get_cell_measures,
@@ -1179,6 +1186,15 @@ class NetCDFRead(IORead):
             "domain_ancillary": self.implementation.get_domain_ancillaries,
             "field_ancillary": self.implementation.get_field_ancillaries,
         }
+
+        # Check the 'dask_chunks' keyword parameter
+        if dask_chunks is not None and not isinstance(
+            dask_chunks, (str, Integral, dict)
+        ):
+            raise ValueError(
+                "The 'dask_chunks' keyword must be of type str, int, None or "
+                f"dict. Got: {dask_chunks!r}"
+            )
 
         # Parse the 'external' keyword parameter
         if external:
@@ -1199,8 +1215,43 @@ class NetCDFRead(IORead):
                     raise ValueError(
                         f"Can't read: Bad parameter value: extra={extra!r}"
                     )
+        else:
+            extra = ()
 
         g["extra"] = extra
+
+        # Parse the 'cfa' keyword parameter
+        if cfa is None:
+            cfa = {}
+        else:
+            cfa = cfa.copy()
+            keys = ("substitutions",)
+            if not set(cfa.issubset(keys)):
+                raise ValueError(
+                    "Invalid dictionary key to the 'cfa' parameter."
+                    f"Valid keys are {keys}. Got: {cfa}"
+                )
+
+        if "substitutions" in cfa:
+            substitutions = cfa["substitutions"].copy()
+            for base, sub in tuple(substitutions.items()):
+                if not (base.startswith("${") and base.endswith("}")):
+                    # Add missing ${...}
+                    substitutions[f"${{{base}}}"] = substitutions.pop(base)
+        else:
+            substitutions = {}
+
+        cfa["substitutions"] = substitutions
+        g["cfa"] = cfa
+
+        # Parse the 'cfa_write' keyword parameter
+        if cfa_write:
+            if isinstance(cfa_write, str):
+                cfa_write = (cfa_write,)
+        else:
+            cfa_write = ()
+
+        g["cfa_write"] = tuple(cfa_write)
 
         filename = os.path.expanduser(os.path.expandvars(filename))
 
@@ -6368,6 +6419,8 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
+        construct_type = self.implementation.get_construct_type(construct)
+
         netcdf_array, netcdf_kwargs = self._create_netcdfarray(
             ncvar,
             unpacked_dtype=unpacked_dtype,
@@ -6612,6 +6665,7 @@ class NetCDFRead(IORead):
             calendar=calendar,
             ncvar=ncvar,
             compressed=compressed,
+            construct_type=construct_type,
         )
         data._original_filenames(define=filename)
 
@@ -6622,7 +6676,7 @@ class NetCDFRead(IORead):
         if (
             not compression_index
             and g.get("cache")
-            and self.implementation.get_construct_type(construct) != "field"
+            and construct_type != "field"
             and not aggregation_variable
         ):
             # Only cache values from non-field data and
@@ -7665,6 +7719,7 @@ class NetCDFRead(IORead):
         calendar=None,
         ncdimensions=None,
         compressed=False,
+        construct_type=None,
         **kwargs,
     ):
         """Create a Data object from a netCDF variable.
@@ -7690,6 +7745,12 @@ class NetCDFRead(IORead):
 
             ncdimensions: sequence of `str`, optional
                 The netCDF dimensions spanned by the array.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            construct_type: `str` or `None`
+                The type of construct that contains *array*. Set to
+                `None` if the array does not belong to a construct.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -7726,7 +7787,7 @@ class NetCDFRead(IORead):
                 array = array.squeeze()
 
             if not string_type:
-                # A N-d (N>=1) netCDF string type variable comes out
+                # An N-d (N>=1) netCDF string type variable comes out
                 # as a numpy object array, so convert it to numpy
                 # string array.
                 array = array.astype("U", copy=False)
@@ -7734,7 +7795,9 @@ class NetCDFRead(IORead):
                 array = np.ma.where(array == "", np.ma.masked, array)
 
         # Set the dask chunking strategy
-        chunks = self._dask_chunks(array, ncvar, compressed)
+        chunks = self._dask_chunks(
+            array, ncvar, compressed, construct_type=construct_type
+        )
 
         data = self.implementation.initialise_Data(
             array=array,
@@ -7747,12 +7810,12 @@ class NetCDFRead(IORead):
 
         # Store the HDF5 chunking
         if self.read_vars["store_hdf5_chunks"] and ncvar is not None:
+            # Only store the HDF chunking if 'data' has the same shape
+            # as its netCDF variable. This may not be the case for
+            # variables compressed by convention (e.g. some DSG
+            # variables).
             chunks, shape = self._get_hdf5_chunks(ncvar)
             if shape == data.shape:
-                # Only store the HDF chunking if 'data' has the same
-                # shape as its netCDF variable. This may not be the
-                # case for variables compressed by convention
-                # (e.g. some DSG variables).
                 self.implementation.nc_set_hdf5_chunksizes(data, chunks)
 
         return data
@@ -10611,7 +10674,7 @@ class NetCDFRead(IORead):
 
         return chunks, var.shape
 
-    def _dask_chunks(self, array, ncvar, compressed):
+    def _dask_chunks(self, array, ncvar, compressed, construct_type=None):
         """Set the Dask chunking strategy for a netCDF variable.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -10630,6 +10693,10 @@ class NetCDFRead(IORead):
                 Whether or not the netCDF variable is compressed by
                 convention.
 
+            construct_type: `str` or `None`
+                The type of construct that contains *array*. Set to
+                `None` if the array does not belong to a construct.
+
         :Returns:
 
             `str` or `int` or `list`
@@ -10639,8 +10706,25 @@ class NetCDFRead(IORead):
         """
         g = self.read_vars
 
-        dask_chunks = g.get("dask_chunks", "storage-aligned")
+        cfa_write = g["cfa_write"]
+        if (
+            cfa_write
+            and construct_type is not None
+            and construct_type in cfa_write
+            or "all" in cfa_write
+        ):
+            dask_chunks = None
+        else:
+            dask_chunks = g.get("dask_chunks", "storage-aligned")
+
         storage_chunks = self._netcdf_chunksizes(g["variables"][ncvar])
+
+        # ------------------------------------------------------------
+        # None
+        # ------------------------------------------------------------
+        if dask_chunks is None:
+            # No Dask chunking
+            return -1
 
         ndim = array.ndim
         if (
@@ -10884,13 +10968,6 @@ class NetCDFRead(IORead):
             # Set the Dask chunks to be exactly the storage chunks for
             # chunked variables.
             return storage_chunks
-
-        # ------------------------------------------------------------
-        # None
-        # ------------------------------------------------------------
-        if dask_chunks is None:
-            # No Dask chunking
-            return -1
 
         # ------------------------------------------------------------
         # dict
