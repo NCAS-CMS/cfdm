@@ -562,7 +562,7 @@ def read(
               of a ``location`` fragement array variable.
 
               *Example:*
-                To TODOCFA: ``{'directory': 'file:///data/'}``.
+                ``{'directory': 'file:///data/'}``
 
             .. versionadded:: (cfdm) NEXTVERSION
 
@@ -642,29 +642,6 @@ def read(
     """
     # Initialise a netCDF read object
     netcdf = NetCDFRead(_implementation)
-
-    #   # Parse the 'cfa' parameter
-    #   if cfa is None:
-    #       cfa_config = {}
-    #   else:
-    #       cfa_config = cfa.copy()
-    #       keys = ("substitutions",)
-    #       if not set(cfa_config.issubset(keys)):
-    #           raise ValueError(
-    #               "Invalid dictionary key to the 'cfa' parameter."
-    #               f"Valid keys are {keys}. Got: {cfa_config}"
-    #           )
-    #
-    #   if "substitutions" in cfa_config:
-    #       substitutions = cfa_config["substitutions"].copy()
-    #       for base, sub in tuple(substitutions.items()):
-    #           if not (base.startswith("${") and base.endswith("}")):
-    #               # Add missing ${...}
-    #               substitutions[f"${{{base}}}"] = substitutions.pop(base)
-    #   else:
-    #       substitutions = {}
-    #
-    #   cfa_config["substitutions"] = substitutions
 
     filename = os.path.expanduser(os.path.expandvars(filename))
 
