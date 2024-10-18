@@ -344,7 +344,8 @@ def read(
             .. versionadded:: (cfdm) NEXTVERSION
 
         dask_chunks: `str`, `int`, `None`, or `dict`, optional
-            Specify the Dask chunking for data. May be one of the
+
+            Specify the Dask chunking for data. See the *cfa* parameter for notes on May be one of the
             following:
 
             * ``'storage-aligned'``

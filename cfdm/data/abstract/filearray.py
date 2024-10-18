@@ -829,26 +829,6 @@ class FileArray(Array):
             f"Must implement {self.__class__.__name__}._set_attributes"
         )  # pragma: no cover
 
-    #    def get_format(self):
-    #        """The format of the files.
-    #
-    #        .. versionadded:: (cfdm) 1.10.1.0
-    #
-    #        .. seealso:: `get_address`, `get_filename`, `get_formats`
-    #
-    #        :Returns:
-    #
-    #            `str`
-    #                The file format. Always ``'nc'``, signifying netCDF.
-    #
-    #        **Examples**
-    #
-    #        >>> a.get_format()
-    #        'nc'
-    #
-    #        """
-    #        return "nc"
-
     def get_unpack(self):
         """Whether or not to automatically unpack the data.
 

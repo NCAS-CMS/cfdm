@@ -21,12 +21,8 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
     def _lock(self):
         """Set the lock for use in `dask.array.from_array`.
 
-        Returns a lock object because concurrent reads are not
-        currently supported by the HDF5 library. The lock object will
-        be the same for all `NetCDF4Array` and `H5netcdfArray`
-        instances, regardless of the dataset they access, which means
-        that access to all netCDF and HDF files coordinates around the
-        same lock. TODOCFA
+        Returns a lock object that prevents concurrent reads of netCDF
+        files.
 
         .. versionadded:: (cfdm) NEXTVERSION
 

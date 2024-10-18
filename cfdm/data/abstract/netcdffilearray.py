@@ -1,14 +1,14 @@
 # from . import FileArray
-
-
-class NetCDFFileArray:  # (FileArray):
-    """Abstract base class for an array in a netCDF file.
-
-    .. versionadded:: (cfdm) NEXTVERSION
-
-    """
-
-
+#
+#
+# class NetCDFFileArray:  # (FileArray):
+#    """Abstract base class for an array in a netCDF file.
+#
+#    .. versionadded:: (cfdm) NEXTVERSION
+#
+#    """
+#
+#
 #    def __init__(
 #        self,
 #        filename=None,
@@ -34,21 +34,21 @@ class NetCDFFileArray:  # (FileArray):
 #        )
 #
 #        if source is not None:
-##            try:
-##                unpack = source._get_component("unpack", True)
-##            except AttributeError:
-##                unpack = True
+#            try:
+#                unpack = source._get_component("unpack", True)
+#            except AttributeError:
+#                unpack = True
 #
 #            try:
 #                attributes = source._get_component("attributes", None)
 #            except AttributeError:
 #                attributes = None
 #
-##        self._set_component("unpack", bool(unpack), copy=False)
+#        self._set_component("unpack", bool(unpack), copy=False)
 #        self._set_component("attributes", attributes, copy=False)
 #
 #    def __dask_tokenize__(self):
-#        """Return a value fully representative of the object.##
+#        """Return a value fully representative of the object.
 #
 #        .. versionadded:: (cfdm) NEXTVERSION
 #
