@@ -5965,24 +5965,35 @@ class NetCDFWrite(IOWrite):
                     n_trailing = len(filenames)
 
                 filenames2 = []
+                print("\n")
                 for filename in filenames:
+                    print(filename)
                     uri = urlparse(filename)
                     uri_scheme = uri.scheme
                     if not uri_scheme:
+                        print(' not uri_scheme:')
+                        # Need to work on regex
+                        starts_with_sub = bool(re.match(r"^\$\{.*\}", filename))
                         filename = abspath(join(cfa_dir, filename))
+                        print( "    0 ",filename)
                         if absolute_uri:
                             # Use an absolute URI
                             filename = PurePath(filename).as_uri()
+                            print( "    1 ",filename)
                         else:
                             # Use a relative-path URI reference
                             filename = relpath(filename, start=cfa_dir)
+                            print( "    2 ",filename)
                     elif not absolute_uri and uri_scheme == "file":
+                        print('uri_scheme and not absolute_uri and uri_scheme == "file":')
                         filename = relpath(uri.path, start=cfa_dir)
-
+                    print( "    A ",filename)
                     if substitutions:
+                        print('aplying subs', substitutions)
                         # Apply the location name susbstitutions
                         for base, sub in substitutions.items():
                             filename = filename.replace(sub, base)
+                        print( "    S ",filename)
 
                     filenames2.append(filename)
 
