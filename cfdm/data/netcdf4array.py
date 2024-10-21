@@ -208,7 +208,7 @@ class NetCDF4Array(
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        return netcdf_lock
+        return netcdf_c_lock
 
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
