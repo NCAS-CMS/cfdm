@@ -131,7 +131,7 @@ class CFATest(unittest.TestCase):
             f"${{base}}: {cwd}",
         )
         self.assertEqual(
-            cfa_location[...], f"file://${{base}}/{os.path.basename(tmpfile1)}"
+            cfa_location[...], f"${{base}}/{os.path.basename(tmpfile1)}"
         )
         nc.close()
 
@@ -141,7 +141,7 @@ class CFATest(unittest.TestCase):
 
     def test_CFA_substitutions_1(self):
         """Test aggregation substitution URI substitutions (1)."""
-        f = cfdm.example_field(0)        
+        f = cfdm.example_field(0)
         cfdm.write(f, tmpfile1)
         f = cfdm.read(tmpfile1)[0]
 
@@ -165,7 +165,7 @@ class CFATest(unittest.TestCase):
             )
             self.assertEqual(
                 cfa_location[...],
-                f"file://${{base}}/{os.path.basename(tmpfile1)}",
+                f"${{base}}/{os.path.basename(tmpfile1)}",
             )
             nc.close()
 
@@ -207,9 +207,7 @@ class CFATest(unittest.TestCase):
             cfa_location.getncattr("substitutions"),
             f"${{base2}}: /bad/location ${{base}}: {cwd}",
         )
-        self.assertEqual(
-            cfa_location[...], f"file://${{base}}/{basename}"
-        )
+        self.assertEqual(cfa_location[...], f"file://${{base}}/{basename}")
         nc.close()
 
         g = cfdm.read(cfa_file)
@@ -235,9 +233,7 @@ class CFATest(unittest.TestCase):
             cfa_location.getncattr("substitutions"),
             f"${{base}}: {cwd}",
         )
-        self.assertEqual(
-            cfa_location[...], f"file://${{base}}/{basename}"
-        )
+        self.assertEqual(cfa_location[...], f"file://${{base}}/{basename}")
         nc.close()
 
         g = cfdm.read(cfa_file)
@@ -318,7 +314,7 @@ class CFATest(unittest.TestCase):
         basename = os.path.basename(tmpfile1)
 
         f.data.nc_clear_aggregation_substitutions()
-        f.data.nc_update_aggregation_substitutions({"base": f"file://{cwd}/"})
+        f.data.nc_update_aggregation_substitutions({"base": f"{cwd}/"})
         cfdm.write(
             f,
             cfa_file,
@@ -331,16 +327,14 @@ class CFATest(unittest.TestCase):
         nc = netCDF4.Dataset(cfa_file, "r")
         cfa_location = nc.variables["cfa_location"]
         self.assertEqual(
-            cfa_location.getncattr("substitutions"), f"${{base}}: file://{cwd}/"
+            cfa_location.getncattr("substitutions"), f"${{base}}: {cwd}/"
         )
-        self.assertEqual(
-            cfa_location[...], f"${{base}}{basename}"
-        )
+        self.assertEqual(cfa_location[...], f"${{base}}{basename}")
         nc.close()
 
         # TODOCFA: delete
         cfa_file2 = "cfa_file2.nc"
-        
+
         g = cfdm.read(cfa_file)[0]
         self.assertTrue(f.equals(g))
         cfdm.write(
@@ -351,14 +345,14 @@ class CFATest(unittest.TestCase):
                 "absolute_uri": True,
             },
         )
-        
+
     def test_CFA_substitutions_4(self):
         """Test aggregation substitution URI substitutions (2)."""
         f = cfdm.example_field(0)
 
         # TODOCFA: delete
         tmpfile1 = "tmpfile1.nc"
-        
+
         cfdm.write(f, tmpfile1)
         f = cfdm.read(tmpfile1)[0]
 
@@ -368,7 +362,7 @@ class CFATest(unittest.TestCase):
         # TODOCFA: delete
         cfa_file = "cfa_file.nc"
 
-        replacement = f"file://{cwd}/"
+        replacement = f"{cwd}/"
         f.data.nc_clear_aggregation_substitutions()
         f.data.nc_update_aggregation_substitutions({"base": replacement})
         cfdm.write(
@@ -384,11 +378,26 @@ class CFATest(unittest.TestCase):
         cfa_location = nc.variables["cfa_location"]
         self.assertEqual(
             cfa_location.getncattr("substitutions"),
-            f"${{base}}: {replacement}"
+            f"${{base}}: {replacement}",
         )
+        self.assertEqual(cfa_location[...], basename)
+        nc.close()
+
+        cfdm.write(
+            f,
+            cfa_file,
+            cfa={
+                "constructs": "field",
+                "absolute_uri": True,
+            },
+        )
+        nc = netCDF4.Dataset(cfa_file, "r")
+        cfa_location = nc.variables["cfa_location"]
         self.assertEqual(
-            cfa_location[...], basename
+            cfa_location.getncattr("substitutions"),
+            f"${{base}}: {replacement}",
         )
+        self.assertEqual(cfa_location[...], f"file://${{base}}{basename}")
         nc.close()
 
     def test_CFA_absolute_uri(self):

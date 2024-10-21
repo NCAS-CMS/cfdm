@@ -311,10 +311,10 @@ class FileArray(Array):
         """
         a = self.copy()
         substitutions = a.get_substitutions(copy=False)
-        
+
         # Replace the substitutions
         filenames = a.get_filenames(normalise=True)
-        a.set_component("filename", filenames, copy=False)        
+        a.set_component("filename", filenames, copy=False)
 
         substitutions.clear()
         return a
@@ -405,7 +405,7 @@ class FileArray(Array):
                 ``${...}`` syntax. For instance, the following are
                 equivalent: ``'substitution'`` and
                 ``'${substitution}'``.
-   
+
         :Returns:
 
             `{{class}}`
@@ -427,7 +427,9 @@ class FileArray(Array):
         replacement = substitutions.pop(substitution, None)
         if replacement is not None:
             # Replace the deleted substitution
-            filenames = a.get_filenames(substitutions={substitution: replacement})
+            filenames = a.get_filenames(
+                substitutions={substitution: replacement}
+            )
             a.set_component("filename", filenames, copy=False)
 
         return a

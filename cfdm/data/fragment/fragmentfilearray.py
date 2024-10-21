@@ -1,5 +1,7 @@
 from pathlib import Path
-from urllib.parse import ParseResult, urlparse
+from urllib.parse import ParseResult  # , urlparse
+
+from uritools import isrelpath, uricompose, urijoin
 
 from ..abstract import FileArray
 from ..mixin import IndexMixin
@@ -248,21 +250,27 @@ class FragmentFileArray(
             for base, sub in substitutions.items():
                 filename = filename.replace(base, sub)
 
-            if not urlparse(filename).scheme:
+            # if not urlparse(filename).scheme:
+            if isrelpath(filename):
                 # File name is a relative-path URI reference, so
                 # replace it with an absolute URI.
                 filename = Path(
                     self._get_component("aggregation_file_directory"), filename
                 ).resolve()
-                filename = ParseResult(
+                # filename = ParseResult(
+                #    scheme=self._get_component("aggregation_file_scheme"),
+                #    netloc="",
+                #    path=str(filename),
+                #    params="",
+                #    query="",
+                #    fragment="",
+                # ).geturl()
+                filename = uricompose(
                     scheme=self._get_component("aggregation_file_scheme"),
-                    netloc="",
+                    authority="",
                     path=str(filename),
-                    params="",
-                    query="",
-                    fragment="",
-                ).geturl()
-
+                )
+            #                print (99999999999, filename)
             parsed_filenames.append(filename)
 
         return tuple(parsed_filenames)

@@ -10,6 +10,7 @@ from dask import config as dask_config
 from dask.array.core import normalize_chunks
 from dask.utils import parse_bytes
 from packaging.version import Version
+from uritools import uricompose, urisplit
 
 from ...data.dask_utils import cfdm_asanyarray
 from ...decorators import _manage_log_level_via_verbosity
@@ -5545,12 +5546,13 @@ class NetCDFWrite(IOWrite):
                             "variable."
                             "\n\n"
                             "Possible reasons for this include:"
-                            "* A fragment spans more than one Dask chunk."
+                            "* A fragment file spans more than one Dask "
+                            "chunk."
                             "* Data values in memory have been changed "
                             "relative to those in a fragment file."
                             "\n\n"
                             "Possible remedies include:"
-                            "* Setting the 'cfa_write' keyword in a previous "
+                            "* Setting 'cfa_write=True' in a previous "
                             "call to the 'read' function."
                             "* Setting the 'strict' option to False in the "
                             "'cfa' keyword of the 'write' function."
@@ -5945,18 +5947,19 @@ class NetCDFWrite(IOWrite):
                 if len(file_details) != 1:
                     if file_details:
                         raise ValueError(
-                            f"Can't write {cfvar!r} as a CF aggregation "
-                            "variable: Dask chunk defined by index "
-                            f"{indices} spans two or more fragments. "
-                            "If the data was created by 'read', then a "
-                            "possible fix for this is to set chunks=None "
-                            "as an argument to the 'read' function."
+                            f"Can't write {cfvar!r} as a CF.netCDF "
+                            "aggregation variable because a fragment file "
+                            "spans more than one Dask chunk."
+                            "\n\n"
+                            "Possible remedies include:"
+                            "* Setting 'cfa_write=True' in a previous "
+                            "call to the 'read' function."
                         )
 
                     raise ValueError(
-                        f"Can't write {cfvar!r} as a CF aggregation "
-                        f"variable: Dask chunk defined by index {indices} "
-                        "spans zero fragments."
+                        f"Can't write {cfvar!r} as a CF-netCDF aggregation "
+                        f"variable: Some Dask chunks do not contain a "
+                        "fragment file."
                     )
 
                 filenames, addresses = file_details.pop()
@@ -5965,35 +5968,60 @@ class NetCDFWrite(IOWrite):
                     n_trailing = len(filenames)
 
                 filenames2 = []
-                print("\n")
                 for filename in filenames:
-                    print(filename)
-                    uri = urlparse(filename)
-                    uri_scheme = uri.scheme
-                    if not uri_scheme:
-                        print(' not uri_scheme:')
-                        # Need to work on regex
-                        starts_with_sub = bool(re.match(r"^\$\{.*\}", filename))
-                        filename = abspath(join(cfa_dir, filename))
-                        print( "    0 ",filename)
-                        if absolute_uri:
-                            # Use an absolute URI
-                            filename = PurePath(filename).as_uri()
-                            print( "    1 ",filename)
-                        else:
-                            # Use a relative-path URI reference
-                            filename = relpath(filename, start=cfa_dir)
-                            print( "    2 ",filename)
-                    elif not absolute_uri and uri_scheme == "file":
-                        print('uri_scheme and not absolute_uri and uri_scheme == "file":')
-                        filename = relpath(uri.path, start=cfa_dir)
-                    print( "    A ",filename)
                     if substitutions:
-                        print('aplying subs', substitutions)
-                        # Apply the location name susbstitutions
+                        # Apply substitutions to the file name (by
+                        # replacing text in the file name with any
+                        # defined "${*}" strings)
                         for base, sub in substitutions.items():
                             filename = filename.replace(sub, base)
-                        print( "    S ",filename)
+
+                    if not re.match(r"^.*\$\{.*\}", filename):
+                        # The file path does not include text
+                        # substitutions, so we reformat the file name
+                        # to be either an absolute URI, or else a
+                        # relative-path URI reference relative to the
+                        # aggregation file.
+                        uri = urisplit(filename)
+                        #                        print(uri)
+                        if absolute_uri:
+                            # Convert the file name to an absolute URI
+                            if uri.isrelpath():
+                                # File name is a relative-path URI reference
+                                filename = uricompose(
+                                    scheme="file",
+                                    authority="",
+                                    path=abspath(join(cfa_dir, uri.path)),
+                                )
+                            elif uri.isabsuri():
+                                # File name is an absolute URI
+                                filename = uri.geturi()
+                            else:
+                                # File name is an absolute-path URI reference
+                                filename = uricompose(
+                                    scheme="file", authority="", path=uri.path
+                                )
+                        else:
+                            # Convert the file name to a relative-path
+                            # URI reference relative to the
+                            # aggregation file
+                            if uri.isrelpath():
+                                # File name is a relative-path URI
+                                # reference
+                                filename = relpath(
+                                    abspath(join(cfa_dir, uri.path)),
+                                    start=cfa_dir,
+                                )
+                            else:
+                                # File name is an absolute URI or
+                                # an absolute-path URI reference
+                                filename = relpath(uri.path, start=cfa_dir)
+
+                        if substitutions:
+                            # Apply substitutions to the modified file
+                            # name
+                            for base, sub in substitutions.items():
+                                filename = filename.replace(sub, base)
 
                     filenames2.append(filename)
 
