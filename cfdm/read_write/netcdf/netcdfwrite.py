@@ -14,7 +14,7 @@ from uritools import uricompose, urisplit
 
 from ...data.dask_utils import cfdm_asanyarray
 from ...decorators import _manage_log_level_via_verbosity
-from ...functions import integer_dtype
+from ...functions import dirname, integer_dtype
 from .. import IOWrite
 from .netcdfread import NetCDFRead
 
@@ -4871,7 +4871,7 @@ class NetCDFWrite(IOWrite):
             # CF Aggregation variables
             # --------------------------------------------------------
             # Configuration options for writing aggregation variables
-            "cfa": {} if cfa is None else cfa,
+            "cfa": cfa,
             # The directory of the aggregation file
             "aggregation_file_directory": None,
             # Cache the CF aggregation variable write status for each
@@ -4902,6 +4902,59 @@ class NetCDFWrite(IOWrite):
                     "Invalid value for the 'hdf5_chunks' keyword: "
                     f"{hdf5_chunks!r}."
                 )
+
+        # ------------------------------------------------------------
+        # Parse the cfa keyword
+        # ------------------------------------------------------------
+        if cfa is None:
+            cfa = {"constructs": None}
+        elif isinstance(cfa, str):
+            cfa = {"constructs": cfa}
+        elif isinstance(cfa, dict):
+            keys = ("constructs", "substitutions", "uri", "strict")
+            if not set(cfa).issubset(keys):
+                raise ValueError(
+                    f"Invalid dictionary key to the 'cfa' keyword: {cfa!r}. "
+                    f"Valid keys are {keys}"
+                )
+
+            cfa = cfa.copy()
+        else:
+            raise ValueError(
+                f"Invalid value for the 'cfa' keyword: {cfa!r}. "
+                "Should be a string, a dictionary, or None"
+            )
+
+        cfa.setdefault("constructs", "auto")
+        cfa.setdefault("uri", "absolute")
+        cfa.setdefault("substitutions", {})
+        cfa.setdefault("strict", True)
+
+        constructs = cfa["constructs"]
+        if isinstance(constructs, dict):
+            cfa["constructs"] = constructs.copy()
+        elif constructs is not None:
+            # Convert a (sequence of) `str` to a `dict`
+            if isinstance(constructs, str):
+                constructs = (constructs,)
+
+            cfa["constructs"] = {c: None for c in constructs}
+
+        substitutions = cfa["substitutions"]
+        if substitutions:
+            substitutions = substitutions.copy()
+            for base, sub in tuple(substitutions.items()):
+                if not (base.startswith("${") and base.endswith("}")):
+                    # Add missing ${...}
+                    substitutions[f"${{{base}}}"] = substitutions.pop(base)
+
+            cfa["substitutions"] = substitutions
+
+        cfa.setdefault("constructs", "auto")
+        cfa.setdefault("uri", "absolute")
+        cfa.setdefault("substitutions", {})
+        cfa.setdefault("strict", True)
+        self.write_vars["cfa"] = cfa
 
         effective_mode = mode  # actual mode to use for the first IO iteration
         effective_fields = fields
@@ -5898,8 +5951,6 @@ class NetCDFWrite(IOWrite):
 
         """
         from os.path import abspath, join, relpath
-        from pathlib import PurePath
-        from urllib.parse import urlparse
 
         g = self.write_vars
 
@@ -5909,11 +5960,18 @@ class NetCDFWrite(IOWrite):
         substitutions = data.nc_aggregation_substitutions()
         substitutions.update(g["cfa"].get("substitutions", {}))
 
-        absolute_uri = g["cfa"].get("absolute_uri", True)
+        absolute_uri = g["cfa"].get("uri", "absolute") == "absolute"
         cfa_dir = g["aggregation_file_directory"]
         if cfa_dir is None:
-            cfa_dir = PurePath(abspath(g["filename"])).parent
+            cfa_dir = dirname(g["filename"])
+            cfa_scheme = urisplit(g["filename"]).scheme
+            if cfa_scheme is None:
+                cfa_scheme = "file"
+
             g["aggregation_file_directory"] = cfa_dir
+            g["aggregation_file_scheme"] = cfa_scheme
+
+        cfa_scheme = g["aggregation_file_scheme"]
 
         # ------------------------------------------------------------
         # Create the shape array
@@ -5970,16 +6028,16 @@ class NetCDFWrite(IOWrite):
                 filenames2 = []
                 for filename in filenames:
                     if substitutions:
-                        # Apply substitutions to the file name (by
-                        # replacing text in the file name with any
-                        # defined "${*}" strings)
+                        # Apply substitutions to the file name by
+                        # replacing text in the file name with "${*}"
+                        # strings
                         for base, sub in substitutions.items():
                             filename = filename.replace(sub, base)
 
                     if not re.match(r"^.*\$\{.*\}", filename):
-                        # The file path does not include text
-                        # substitutions, so we reformat the file name
-                        # to be either an absolute URI, or else a
+                        # The file path does not include any "${*}"
+                        # strings, so we reformat the file name to be
+                        # either an absolute URI, or else a
                         # relative-path URI reference relative to the
                         # aggregation file.
                         uri = urisplit(filename)
@@ -5989,7 +6047,7 @@ class NetCDFWrite(IOWrite):
                             if uri.isrelpath():
                                 # File name is a relative-path URI reference
                                 filename = uricompose(
-                                    scheme="file",
+                                    scheme=cfa_scheme,
                                     authority="",
                                     path=abspath(join(cfa_dir, uri.path)),
                                 )
@@ -5999,7 +6057,9 @@ class NetCDFWrite(IOWrite):
                             else:
                                 # File name is an absolute-path URI reference
                                 filename = uricompose(
-                                    scheme="file", authority="", path=uri.path
+                                    scheme="file",
+                                    authority="",
+                                    path=uri.path,
                                 )
                         else:
                             # Convert the file name to a relative-path
@@ -6013,8 +6073,21 @@ class NetCDFWrite(IOWrite):
                                     start=cfa_dir,
                                 )
                             else:
-                                # File name is an absolute URI or
-                                # an absolute-path URI reference
+                                # File name is an absolute URI or an
+                                # absolte-path URI reference
+                                scheme = uri.scheme
+                                if not scheme:
+                                    scheme = "file"
+
+                                if scheme != cfa_scheme:
+                                    raise ValueError(
+                                        "Can't create relative-path URI "
+                                        "reference fragment location when "
+                                        "the fragment file and aggregation "
+                                        "file have different URI schemes: "
+                                        f"{scheme}, {cfa_scheme}"
+                                    )
+
                                 filename = relpath(uri.path, start=cfa_dir)
 
                         if substitutions:

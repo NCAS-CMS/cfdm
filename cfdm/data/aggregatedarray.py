@@ -1,15 +1,13 @@
 from copy import deepcopy
 from itertools import accumulate, product
-from urllib.parse import urlparse
 
 import numpy as np
+from uritools import urisplit
 
 from ..functions import dirname
 from . import abstract
 from .fragment import FragmentFileArray, FragmentValueArray
 from .netcdfindexer import netcdf_indexer
-
-# from .mixin import FileArrayMixin, NetCDFFileMixin
 from .utils import chunk_locations, chunk_positions
 
 
@@ -745,11 +743,10 @@ class AggregatedArray(abstract.FileArray):
         unpack = self.get_unpack()
 
         if fragment_type == "location":
-            u = urlparse(self.get_filename())
+            # Get the directory and scheme of aggregation file
+            u = urisplit(self.get_filename())
             aggregation_file_directory = dirname(u.path)
             aggregation_file_scheme = u.scheme
-            if not aggregation_file_scheme:
-                aggregation_file_scheme = "file"
 
         # Set the chunk sizes for the dask array
         chunks = self.subarray_shapes(chunks)

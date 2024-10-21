@@ -121,7 +121,7 @@ class CFATest(unittest.TestCase):
         cfdm.write(
             f,
             cfa_file,
-            cfa={"constructs": "field", "absolute_uri": True},
+            cfa={"constructs": "field", "uri": "absolute"},
         )
 
         nc = netCDF4.Dataset(cfa_file, "r")
@@ -152,7 +152,7 @@ class CFATest(unittest.TestCase):
                 cfa_file,
                 cfa={
                     "constructs": "field",
-                    "absolute_uri": True,
+                    "uri": "absolute",
                     "substitutions": {base: cwd},
                 },
             )
@@ -196,7 +196,7 @@ class CFATest(unittest.TestCase):
             cfa_file,
             cfa={
                 "constructs": "field",
-                "absolute_uri": True,
+                "uri": "absolute",
                 "substitutions": {"base2": "/bad/location"},
             },
         )
@@ -222,7 +222,7 @@ class CFATest(unittest.TestCase):
             cfa_file,
             cfa={
                 "constructs": "field",
-                "absolute_uri": True,
+                "uri": "absolute",
                 "substitutions": {"base": cwd},
             },
         )
@@ -248,7 +248,7 @@ class CFATest(unittest.TestCase):
             cfa_file,
             cfa={
                 "constructs": "field",
-                "absolute_uri": True,
+                "uri": "absolute",
                 "substitutions": {"base": cwd},
             },
         )
@@ -290,7 +290,7 @@ class CFATest(unittest.TestCase):
             cfa_file2,
             cfa={
                 "constructs": "field",
-                "absolute_uri": True,
+                "uri": "absolute",
             },
         )
         nc = netCDF4.Dataset(cfa_file2, "r")
@@ -320,7 +320,7 @@ class CFATest(unittest.TestCase):
             cfa_file,
             cfa={
                 "constructs": "field",
-                "absolute_uri": True,
+                "uri": "absolute",
             },
         )
 
@@ -342,7 +342,7 @@ class CFATest(unittest.TestCase):
             cfa_file2,
             cfa={
                 "constructs": "field",
-                "absolute_uri": True,
+                "uri": "absolute",
             },
         )
 
@@ -370,7 +370,7 @@ class CFATest(unittest.TestCase):
             cfa_file,
             cfa={
                 "constructs": "field",
-                "absolute_uri": False,
+                "uri": "relative",
             },
         )
 
@@ -386,10 +386,7 @@ class CFATest(unittest.TestCase):
         cfdm.write(
             f,
             cfa_file,
-            cfa={
-                "constructs": "field",
-                "absolute_uri": True,
-            },
+            cfa={"constructs": "field", "uri": "absolute"},
         )
         nc = netCDF4.Dataset(cfa_file, "r")
         cfa_location = nc.variables["cfa_location"]
@@ -400,14 +397,14 @@ class CFATest(unittest.TestCase):
         self.assertEqual(cfa_location[...], f"file://${{base}}{basename}")
         nc.close()
 
-    def test_CFA_absolute_uri(self):
-        """Test aggregation 'absolute_uri' option to cfdm.write."""
+    def test_CFA_uri(self):
+        """Test aggregation 'uri' option to cfdm.write."""
         f = cfdm.example_field(0)
         cfdm.write(f, tmpfile1)
         f = cfdm.read(tmpfile1)[0]
 
-        for absolute_uri, filename in zip(
-            (True, False),
+        for uri, filename in zip(
+            ("absolute", "relative"),
             (
                 PurePath(os.path.abspath(tmpfile1)).as_uri(),
                 os.path.basename(tmpfile1),
@@ -416,7 +413,7 @@ class CFATest(unittest.TestCase):
             cfdm.write(
                 f,
                 cfa_file,
-                cfa={"constructs": "field", "absolute_uri": absolute_uri},
+                cfa={"constructs": "field", "uri": uri},
             )
 
             nc = netCDF4.Dataset(cfa_file, "r")

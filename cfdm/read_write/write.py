@@ -658,8 +658,11 @@ def write(
               may take any of the string values allowed by the *cfa*
               parameter, with the same meanings.
 
-              If the ``'constructs'`` key is missing a type of
-              ``'auto'`` is assumed.
+              If the ``'constructs'`` key is missing then ``'auto'``
+              is assumed, meaning that any construct whose data is
+              unchanged from having been previously read from a
+              CF-netCDF aggregation variable will be written as an
+              aggregation variable.
 
               The same string-valued types may be given as keys to a
               `dict` whose values specify the number of dimensions
@@ -694,22 +697,6 @@ def write(
                 field constructs: ``{'constructs':
                 {'auxiliary_coordinate': 2, 'field': None}}``.
 
-            * ``'absolute_uri'``: `bool`
-
-              How to write fragment file names. Set to True (the
-              default if this key is missing) for them to be written
-              as absolute URIs, or else set to False for them to be
-              written as relative-path URI references, taken as being
-              relative to the location of *filename*, the aggregation
-              file being created.
-
-              *Example:*
-                 To write any construct whose data is unchanged from
-                 having been previously read from a CF-netCDF
-                 aggregation variable, and with relative-path URI
-                 references: ``{'constructs': 'auto', 'absolute_uri':
-                 False}}``
-
             * ``'substitutions'``: `dict`
 
               A dictionary whose key/value pairs define text
@@ -729,6 +716,23 @@ def write(
 
               *Example:*
                 ``{'substitutions': {base': 'file:///data/'}}``
+
+            * ``'uri'``: `str`
+
+              How to write fragment file names that do not contain any
+              text substitutions. Set to ``'absolute'`` (the default
+              if this key is missing) for them to be written as
+              absolute URIs, or else set to ``'relative'`` for them to
+              be written as relative-path URI references, taken as
+              being relative to the location of *filename* (i.e.  the
+              aggregation file being created).
+
+              If a fragment file name contains any text substitutions
+              (e.g. ``'file://${base}/file.nc'``,
+              ``'${base}file.nc'``, ``'./${base}/file.nc'``, etc.)
+              then the ``'uri'`` key is ignored for that fragment, and
+              its file name is written to the aggregation file
+              unmodified.
 
             * ``'strict'``: `bool`
 
@@ -760,58 +764,7 @@ def write(
     if not fields:
         return
 
-    # ----------------------------------------------------------------
-    # Initialise the netCDF write object
-    # ----------------------------------------------------------------
     netcdf = NetCDFWrite(_implementation)
-
-    # ----------------------------------------------------------------
-    # CF aggregation
-    # ----------------------------------------------------------------
-    if cfa is None:
-        cfa = {"constructs": None}
-    elif isinstance(cfa, str):
-        cfa = {"constructs": cfa}
-    elif isinstance(cfa, dict):
-        keys = ("constructs", "absolute_uri", "strict", "substitutions")
-        if not set(cfa).issubset(keys):
-            raise ValueError(
-                f"Invalid dictionary key to the 'cfa' keyword: {cfa!r}. "
-                f"Valid keys are {keys}"
-            )
-
-        cfa = cfa.copy()
-    else:
-        raise ValueError(
-            f"Invalid value for the 'cfa' keyword: {cfa!r}. "
-            "Should be a string, a dictionary, or None"
-        )
-
-    cfa.setdefault("constructs", "auto")
-    cfa.setdefault("absolute_uri", True)
-    cfa.setdefault("substitutions", {})
-    cfa.setdefault("strict", True)
-
-    constructs = cfa["constructs"]
-    if isinstance(constructs, dict):
-        cfa["constructs"] = constructs.copy()
-    elif constructs is not None:
-        # Convert a (sequence of) `str` to a `dict`
-        if isinstance(constructs, str):
-            constructs = (constructs,)
-
-        cfa["constructs"] = {c: None for c in constructs}
-
-    substitutions = cfa["substitutions"]
-    if substitutions:
-        substitutions = substitutions.copy()
-        for base, sub in tuple(substitutions.items()):
-            if not (base.startswith("${") and base.endswith("}")):
-                # Add missing ${...}
-                substitutions[f"${{{base}}}"] = substitutions.pop(base)
-
-        cfa["substitutions"] = substitutions
-
     netcdf.write(
         fields,
         filename,

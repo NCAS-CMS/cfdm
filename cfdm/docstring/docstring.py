@@ -723,7 +723,7 @@ _docstring_substitution_definitions = {
     # normalise
     "{{normalise: `bool`, optional}}": """normalise: `bool`, optional
                 If True (the default) then normalise the filenames by
-                applying any text substitutions and reslving the name
+                applying any text substitutions and resolving the name
                 to an absolute path. If False then neither of these is
                 carried out.""",
     # ----------------------------------------------------------------

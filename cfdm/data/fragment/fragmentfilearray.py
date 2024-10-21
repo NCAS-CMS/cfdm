@@ -1,8 +1,8 @@
-from pathlib import Path
-from urllib.parse import ParseResult  # , urlparse
+from os.path import join
 
-from uritools import isrelpath, uricompose, urijoin
+from uritools import isabspath, isabsuri, isrelpath, uricompose
 
+from ...functions import abspath
 from ..abstract import FileArray
 from ..mixin import IndexMixin
 from .mixin import FragmentArrayMixin
@@ -11,7 +11,6 @@ from .mixin import FragmentArrayMixin
 class FragmentFileArray(
     FragmentArrayMixin,
     IndexMixin,
-    #    FileArrayMixin,
     FileArray,
 ):
     """Fragment of aggregated data in a file.
@@ -48,7 +47,7 @@ class FragmentFileArray(
         aggregated_attributes=None,
         storage_options=None,
         aggregation_file_directory=None,
-        aggregation_file_scheme="file",
+        aggregation_file_scheme=None,
         source=None,
         copy=True,
     ):
@@ -131,6 +130,9 @@ class FragmentFileArray(
                 )
             except AttributeError:
                 aggregation_file_scheme = None
+
+        if aggregation_file_scheme is None:
+            aggregation_file_scheme = "file"
 
         self._set_component(
             "aggregation_file_directory",
@@ -227,7 +229,9 @@ class FragmentFileArray(
 
         :Parameters:
 
-            {{normalise: `bool`, optional}}
+            normalise: `bool`, optional
+
+                TODOCFA
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -238,39 +242,45 @@ class FragmentFileArray(
                 the data then an empty `set` is returned.
 
         """
-        filenames = self._get_component("filename", ())
+        filenames = super().get_filenames(normalise=False)
         if not normalise:
             return filenames
 
+        normalised_filenames = []
         substitutions = self.get_substitutions(copy=False)
-
-        parsed_filenames = []
         for filename in filenames:
             # Apply substitutions to the file name
             for base, sub in substitutions.items():
                 filename = filename.replace(base, sub)
 
-            # if not urlparse(filename).scheme:
+            # If the file name is not an absolute URi then replace it
+            # with an absolute URI.
             if isrelpath(filename):
-                # File name is a relative-path URI reference, so
-                # replace it with an absolute URI.
-                filename = Path(
-                    self._get_component("aggregation_file_directory"), filename
-                ).resolve()
-                # filename = ParseResult(
-                #    scheme=self._get_component("aggregation_file_scheme"),
-                #    netloc="",
-                #    path=str(filename),
-                #    params="",
-                #    query="",
-                #    fragment="",
-                # ).geturl()
+                # File name is a relative-path URI reference
+                filename = abspath(
+                    join(
+                        self._get_component("aggregation_file_directory"),
+                        filename,
+                    )
+                )
                 filename = uricompose(
                     scheme=self._get_component("aggregation_file_scheme"),
                     authority="",
-                    path=str(filename),
+                    path=filename,
                 )
-            #                print (99999999999, filename)
-            parsed_filenames.append(filename)
+            elif isabspath(filename):
+                filename = uricompose(
+                    scheme="file",
+                    authority="",
+                    path=filename,
+                )
+            elif not isabsuri(filename):
+                raise ValueError(
+                    "Fragment file location must be an absolute URI, "
+                    "relative-path URI reference, or absolute-path URI: "
+                    f"Got: {filename}"
+                )
 
-        return tuple(parsed_filenames)
+            normalised_filenames.append(filename)
+
+        return tuple(normalised_filenames)

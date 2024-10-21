@@ -1,5 +1,4 @@
 import os
-from numbers import Integral
 
 from numpy.ma.core import MaskError
 

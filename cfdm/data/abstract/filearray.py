@@ -312,9 +312,15 @@ class FileArray(Array):
         a = self.copy()
         substitutions = a.get_substitutions(copy=False)
 
-        # Replace the substitutions
-        filenames = a.get_filenames(normalise=True)
-        a.set_component("filename", filenames, copy=False)
+        # Replace the deleted substitutions
+        filenames2 = []
+        for f in a.get_filenames(normalise=False):
+            for substitution, replacement in substitutions.items():
+                f = f.replace(substitution, replacement)
+
+            filenames2.append(f)
+
+        a._set_component("filename", tuple(filenames2), copy=False)
 
         substitutions.clear()
         return a
@@ -409,7 +415,7 @@ class FileArray(Array):
         :Returns:
 
             `{{class}}`
-
+                TODOCFA
                 The removed CF-netCDF aggregation file location
                 substitution in a dictionary whose key/value pairs are
                 the location name part to be substituted and its
@@ -427,10 +433,11 @@ class FileArray(Array):
         replacement = substitutions.pop(substitution, None)
         if replacement is not None:
             # Replace the deleted substitution
-            filenames = a.get_filenames(
-                substitutions={substitution: replacement}
-            )
-            a.set_component("filename", filenames, copy=False)
+            filenames2 = [
+                f.replace(substitution, replacement)
+                for f in a.get_filenames(normalise=False)
+            ]
+            a._set_component("filename", tuple(filenames2), copy=False)
 
         return a
 
@@ -551,7 +558,7 @@ class FileArray(Array):
             default, f"{self.__class__.__name__} has no files"
         )
 
-    def get_filenames(self, normalise=True, substitutions=None):
+    def get_filenames(self, normalise=True):
         """Return the names of files containing the data.
 
         If multiple files are returned then it is assumed that any
@@ -569,12 +576,6 @@ class FileArray(Array):
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
-            substitutions: `dict`, optional
-
-                TODOCFA. Ignored if *normalise* is `True`.
-
-                .. versionadded:: (cfdm) NEXTVERSION
-
         :Returns:
 
             `tuple`
@@ -585,18 +586,16 @@ class FileArray(Array):
         if not normalise:
             return filenames
 
-        if not substitutions:
-            substitutions = self.get_substitutions(copy=False)
-
-        parsed_filenames = []
+        normalised_filenames = []
+        substitutions = self.get_substitutions(copy=False)
         for filename in filenames:
             # Apply substitutions to the file name
             for base, sub in substitutions.items():
                 filename = filename.replace(base, sub)
 
-            parsed_filenames.append(abspath(filename))
+            normalised_filenames.append(abspath(filename))
 
-        return tuple(parsed_filenames)
+        return tuple(normalised_filenames)
 
     def get_mask(self):
         """Whether or not to automatically mask the data.
