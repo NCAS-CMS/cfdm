@@ -336,7 +336,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             )
             if _use_array:
                 try:
-                    array = source.to_dask_array(asanyarray=False)
+                    array = source.to_dask_array(_apply_mask_hardness=False, asanyarray=False)
                 except (AttributeError, TypeError):
                     try:
                         array = source.to_dask_array()
@@ -680,7 +680,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         )
 
         new = self.copy()
-        dx = self.to_dask_array(asanyarray=False)
+        dx = self.to_dask_array(_apply_mask_hardness=False, asanyarray=False)
 
         # ------------------------------------------------------------
         # Subspace the dask array
@@ -861,7 +861,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
-        dx = self.to_dask_array(asanyarray=False)
+        dx = self.to_dask_array(_apply_mask_hardness=False, asanyarray=False)
         if math.isnan(dx.size):
             logger.debug("Computing data len: Performance may be degraded")
             dx.compute_chunk_sizes()
@@ -1012,7 +1012,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         # Missing values could be affected, so make sure that the mask
         # hardness has been applied.
-        dx = self.to_dask_array(apply_mask_hardness=True)
+        dx = self.to_dask_array() #_apply_mask_hardness=True)
 
         # Do the assignment
         self._set_subspace(dx, indices, value)
@@ -2419,7 +2419,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
-        return self.to_dask_array(asanyarray=False).chunks
+        return self.to_dask_array(_apply_mask_hardness=False, asanyarray=False).chunks
 
     @property
     def compressed_array(self):
@@ -2580,14 +2580,14 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         # This dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
-        dx = self.to_dask_array(asanyarray=False)
+        dx = self.to_dask_array(_apply_mask_hardness=False, asanyarray=False)
         return dx.dtype
 
     @dtype.setter
     def dtype(self, value):
         # Only change the data type if it's different to that of the
         # dask array
-        dx = self.to_dask_array()
+        dx = self.to_dask_array(_apply_mask_hardness=False)
         if dx.dtype != value:
             dx = dx.astype(value)
             self._set_dask(dx)
@@ -2743,7 +2743,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
-        dx = self.to_dask_array(asanyarray=False)
+        dx = self.to_dask_array(_apply_mask_hardness=False, asanyarray=False)
         if math.isnan(dx.size):
             logger.debug("Computing data nbytes: Performance may be degraded")
             dx.compute_chunk_sizes()
@@ -2779,7 +2779,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
-        dx = self.to_dask_array(asanyarray=False)
+        dx = self.to_dask_array(_apply_mask_hardness=False, asanyarray=False)
         return dx.ndim
 
     @property
@@ -2803,7 +2803,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
-        dx = self.to_dask_array(asanyarray=False)
+        dx = self.to_dask_array(_apply_mask_hardness=False, asanyarray=False)
         return dx.npartitions
 
     @property
@@ -2827,7 +2827,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
-        dx = self.to_dask_array(asanyarray=False)
+        dx = self.to_dask_array(_apply_mask_hardness=False, asanyarray=False)
         return dx.numblocks
 
     @property
@@ -2860,7 +2860,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
-        dx = self.to_dask_array(asanyarray=False)
+        dx = self.to_dask_array(_apply_mask_hardness=False, asanyarray=False)
         if math.isnan(dx.size):
             logger.debug("Computing data shape: Performance may be degraded")
             dx.compute_chunk_sizes()
@@ -2901,7 +2901,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         # The dask graph is never going to be computed, so we can set
         # 'asanyarray=False'.
-        dx = self.to_dask_array(asanyarray=False)
+        dx = self.to_dask_array(_apply_mask_hardness=False, asanyarray=False)
         size = dx.size
         if math.isnan(size):
             logger.debug("Computing data size: Performance may be degraded")
@@ -3550,7 +3550,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
          ('array-21ea057f160746a3d3f0943bba945460', 0): array([1, 2, 3])}
 
         """
-        dx = self.to_dask_array(asanyarray=False)
+        dx = self.to_dask_array(_apply_mask_hardness=False, asanyarray=False)
         dsk, _ = cull(dx.dask, dx.__dask_keys__())
         dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
         self._set_dask(dx, clear=self._NONE, asanyarray=None)
@@ -3650,7 +3650,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             updated = True
 
         if updated:
-            dx = self.to_dask_array(asanyarray=False)
+            dx = self.to_dask_array(_apply_mask_hardness=False, asanyarray=False)
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
             self._set_dask(dx, clear=self._NONE, asanyarray=None)
 
@@ -4057,7 +4057,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         # 'cfdm_filled' has its own call to 'cfdm_asanyarray', so we
         # can set 'asanyarray=False'.
-        dx = d.to_dask_array(asanyarray=False)
+        dx = d.to_dask_array(_apply_mask_hardness=False, asanyarray=False)
         dx = dx.map_blocks(cfdm_filled, fill_value=fill_value, dtype=d.dtype)
         d._set_dask(dx)
 
@@ -4727,7 +4727,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         # 'cfdm_harden_mask' has its own call to 'cfdm_asanyarray', so
         # we can set 'asanyarray=False'.
-        dx = self.to_dask_array(asanyarray=False)
+        dx = self.to_dask_array(_apply_mask_hardness=False, asanyarray=False)
         dx = dx.map_blocks(cfdm_harden_mask, dtype=dx.dtype)
         self._set_dask(dx, clear=self._NONE)
         self.hardmask = True
@@ -4849,7 +4849,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         new_shape = list(d.shape)
         new_shape.insert(position, 1)
 
-        dx = d.to_dask_array()
+        dx = d.to_dask_array(_apply_mask_hardness=False, )
         dx = dx.reshape(new_shape)
 
         # Inserting a dimension doesn't affect the cached elements
@@ -5278,7 +5278,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        dx = self.to_dask_array()
+        dx = self.to_dask_array(_apply_mask_hardness=False, )
         dx = dx.persist()
         d._set_dask(dx, clear=self._ALL ^ self._ARRAY ^ self._CACHE)
         return d
@@ -5358,7 +5358,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         # calls on the chunks, which means that we can use the same
         # 'asanyarray' and 'clear' keywords to `_set_dask` as are used
         # in `__gettem__`.
-        dx = d.to_dask_array(asanyarray=False)
+        dx = d.to_dask_array(_apply_mask_hardness=False, asanyarray=False)
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
         d._set_dask(
             dx, clear=self._ALL ^ self._ARRAY ^ self._CACHE, asanyarray=True
@@ -5436,7 +5436,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         original_shape = self.shape
         original_ndim = len(original_shape)
 
-        dx = d.to_dask_array()
+        dx = d.to_dask_array(_apply_mask_hardness=False, asanyarray=False)
         dx = dx.reshape(*shape, merge_chunks=merge_chunks, limit=limit)
         d._set_dask(dx)
 
@@ -5585,7 +5585,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         # 'cfdm_soften_mask' has its own call to 'cfdm_asanyarray', so
         # we can set 'asanyarray=False'.
-        dx = self.to_dask_array(asanyarray=False)
+        dx = self.to_dask_array(_apply_mask_hardness=False, asanyarray=False)
         dx = dx.map_blocks(cfdm_soften_mask, dtype=dx.dtype)
         self._set_dask(dx, clear=self._NONE)
         self.hardmask = False
@@ -5674,7 +5674,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         # Still here? Then the data array is not scalar and at least
         # one size 1 axis needs squeezing.
-        dx = d.to_dask_array()
+        dx = d.to_dask_array(_apply_mask_hardness=False)
         dx = dx.squeeze(axis=iaxes)
 
         # Squeezing a dimension doesn't affect the cached elements
@@ -5753,7 +5753,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         )
         return d
 
-    def to_dask_array(self, apply_mask_hardness=False, asanyarray=None):
+    def to_dask_array(self, _apply_mask_hardness=True, asanyarray=None):
         """Convert the data to a `dask` array.
 
         .. warning:: By default, the mask hardness of the returned
@@ -5773,7 +5773,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         :Parameters:
 
-            apply_mask_hardness: `bool`, optional
+            _apply_mask_hardness: `bool`, optional
                 If True then force the mask hardness of the returned
                 array to be that given by the `hardmask` attribute.
 
@@ -5805,7 +5805,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         if dx is None:
             raise ValueError(f"{self.__class__.__name__} object has no data")
 
-        if apply_mask_hardness:
+        if _apply_mask_hardness:
             if self.hardmask:
                 self.harden_mask()
             else:
@@ -5826,7 +5826,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         return dx
 
     def todict(
-        self, optimize_graph=True, apply_mask_hardness=False, asanyarray=None
+        self, optimize_graph=True, _apply_mask_hardness=False, asanyarray=None
     ):
         """Return a dictionary of the dask graph key/value pairs.
 
@@ -5842,7 +5842,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 chunks. Note that optimising the graph can add a
                 considerable performance overhead.
 
-            apply_mask_hardness: `bool`, optional
+            _apply_mask_hardness: `bool`, optional
                 If True then force the mask hardness of the returned
                 array to be that given by the `hardmask` attribute.
 
@@ -5877,7 +5877,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         """
         dx = self.to_dask_array(
-            apply_mask_hardness=apply_mask_hardness, asanyarray=asanyarray
+            _apply_mask_hardness=_apply_mask_hardness, asanyarray=asanyarray
         )
 
         if optimize_graph:
@@ -5977,7 +5977,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         data_axes = d._axes
         d._axes = [data_axes[i] for i in iaxes]
 
-        dx = d.to_dask_array()
+        dx = d.to_dask_array(_apply_mask_hardness=False, )
         try:
             dx = da.transpose(dx, axes=iaxes)
         except ValueError:
@@ -6076,7 +6076,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         original_shape = self.shape
 
-        dx = d.to_dask_array()
+        dx = d.to_dask_array(_apply_mask_hardness=False,)
         u = np.unique(dx.compute())
         dx = da.from_array(u, chunks="auto")
         d._set_dask(dx)
