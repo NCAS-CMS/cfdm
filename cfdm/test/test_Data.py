@@ -1403,7 +1403,7 @@ class DataTest(unittest.TestCase):
     def test_Data_todict(self):
         """Test Data.todict."""
         d = cfdm.Data([1, 2, 3, 4], chunks=2)
-        key = d.to_dask_array().name
+        key = d.to_dask_array(_apply_mask_hardness=False).name
 
         x = d.todict()
         self.assertIsInstance(x, dict)
@@ -1426,36 +1426,51 @@ class DataTest(unittest.TestCase):
         dx = d.to_dask_array()
         self.assertIsInstance(dx, da.Array)
         self.assertTrue((d.array == dx.compute()).all())
-        self.assertIs(da.asanyarray(d), dx)
 
     def test_Data_persist(self):
-        """Test Data.persist` Data method."""
+        """Test Data.persist."""
         d = cfdm.Data(9, "km")
         self.assertIsNone(d.persist(inplace=True))
 
         d = cfdm.Data([[1, 2, 3.0, 4]], "km", chunks=2)
-        self.assertEqual(len(d.to_dask_array().dask.layers), 1)
-        d.transpose(inplace=True)
         self.assertEqual(len(d.to_dask_array().dask.layers), 2)
+        d.transpose(inplace=True)
+        self.assertEqual(len(d.to_dask_array().dask.layers), 3)
 
         e = d.persist()
         self.assertIsInstance(e, cfdm.Data)
-        self.assertEqual(len(e.to_dask_array().dask.layers), 1)
+        self.assertEqual(len(e.to_dask_array().dask.layers), 2)
         self.assertEqual(d.npartitions, 2)
         self.assertEqual(e.npartitions, d.npartitions)
         self.assertTrue(e.equals(d))
 
     def test_Data_cull_graph(self):
-        """Test Data.cull."""
-        # Note: The number of layers in the culled graphs include a
-        #       `cfdm_asanyarray` layer
+        """Test Data.cull_graph."""
         d = cfdm.Data([1, 2, 3, 4, 5], chunks=3)
         d = d[:2]
-        self.assertEqual(len(dict(d.to_dask_array(asanyarray=False).dask)), 3)
+        self.assertEqual(
+            len(
+                dict(
+                    d.to_dask_array(
+                        _apply_mask_hardness=False, _asanyarray=False
+                    ).dask
+                )
+            ),
+            3,
+        )
 
         # Check that there are fewer keys after culling
         d.cull_graph()
-        self.assertEqual(len(dict(d.to_dask_array(asanyarray=False).dask)), 2)
+        self.assertEqual(
+            len(
+                dict(
+                    d.to_dask_array(
+                        _apply_mask_hardness=False, _asanyarray=False
+                    ).dask
+                )
+            ),
+            2,
+        )
 
     def test_Data_npartitions(self):
         """Test Data.npartitions."""
@@ -1787,8 +1802,6 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data([1, 2, 3])
         d.hardmask = True
         self.assertTrue(d.hardmask)
-        self.assertEqual(len(d.to_dask_array().dask.layers), 1)
-
         d[0] = cfdm.masked
         self.assertTrue((d.array.mask == [True, False, False]).all())
         d[...] = 999
@@ -1803,14 +1816,20 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data([1, 2, 3], hardmask=False)
         d.harden_mask()
         self.assertTrue(d.hardmask)
-        self.assertEqual(len(d.to_dask_array().dask.layers), 2)
+        d[0] = cfdm.masked
+        self.assertEqual(d[0].array, np.ma.masked)
+        d[0] = 99
+        self.assertEqual(d[0].array, np.ma.masked)
 
     def test_Data_soften_mask(self):
         """Test Data.soften_mask."""
         d = cfdm.Data([1, 2, 3], hardmask=True)
         d.soften_mask()
         self.assertFalse(d.hardmask)
-        self.assertEqual(len(d.to_dask_array().dask.layers), 2)
+        d[0] = cfdm.masked
+        self.assertEqual(d[0].array, np.ma.masked)
+        d[0] = 99
+        self.assertEqual(d[0].array, 99)
 
     def test_Data_get_data(self):
         """Test Data.get_data."""
@@ -2384,7 +2403,7 @@ class DataTest(unittest.TestCase):
         f = cfdm.example_field(0)
         cfdm.write(f, file_A)
         a = cfdm.read(file_A, dask_chunks=4)[0].data
-        self.assertEqual(a.data.get_filenames(), set([file_A]))
+        self.assertEqual(a.get_filenames(), set([file_A]))
         a.persist(inplace=True)
         self.assertEqual(a.data.get_filenames(), set())
 

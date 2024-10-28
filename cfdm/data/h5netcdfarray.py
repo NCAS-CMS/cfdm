@@ -3,7 +3,7 @@ import logging
 import h5netcdf
 
 from . import abstract
-from .locks import netcdf_c_lock
+from .locks import netcdf_lock
 from .mixin import FileArrayMixin, IndexMixin, NetCDFFileMixin
 from .netcdfindexer import netcdf_indexer
 
@@ -161,7 +161,7 @@ class H5netcdfArray(
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        return netcdf_c_lock
+        return netcdf_lock
 
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.

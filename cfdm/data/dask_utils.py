@@ -27,7 +27,6 @@ def cfdm_asanyarray(a):
             unchanged if ``a.__asanyarray__`` False.
 
     """
-    # REVIEW: getitem: `cfdm_asanyarray`: convert a to a usable array
     if getattr(a, "__asanyarray__", False):
         return np.asanyarray(a)
 
@@ -62,7 +61,6 @@ def cfdm_filled(a, fill_value=None):
     [[-999    2    3]]
 
     """
-    # REVIEW: getitem: `filled`: convert a to a usable array
     a = cfdm_asanyarray(a)
     return np.ma.filled(a, fill_value=fill_value)
 
@@ -85,7 +83,6 @@ def cfdm_harden_mask(a):
             The array with hardened mask.
 
     """
-    # REVIEW: getitem: `harden_mask`: convert a to a usable array
     a = cfdm_asanyarray(a)
     if np.ma.isMA(a):
         try:
@@ -116,9 +113,7 @@ def cfdm_soften_mask(a):
             The array with softened mask.
 
     """
-    # REVIEW: getitem: `soften_mask`: convert a to a usable array
     a = cfdm_asanyarray(a)
-
     if np.ma.isMA(a):
         try:
             a.soften_mask()

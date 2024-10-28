@@ -219,11 +219,11 @@ def is_numeric_dtype(array):
     dtype = array.dtype
 
     # This checks if the dtype is either a standard "numeric" type
-    # (i.e.  int types, floating point types or complex floating point
+    # (i.e. int types, floating point types or complex floating point
     # types) or Boolean, which are effectively a restricted int type
-    # (0 or 1).  We determine the former by seeing if it sits under
-    # the 'np.number' top-level dtype in the NumPy dtype hierarchy;
-    # see the 'Hierarchy of type objects' figure diagram under:
+    # (0 or 1). We determine the former by seeing if it sits under the
+    # 'np.number' top-level dtype in the NumPy dtype hierarchy; see
+    # the 'Hierarchy of type objects' figure diagram under:
     # https://numpy.org/doc/stable/reference/arrays.scalars.html#scalars
     return np.issubdtype(dtype, np.number) or np.issubdtype(dtype, np.bool_)
 
@@ -398,7 +398,7 @@ def first_non_missing_value(a, cached=None, method="index"):
 
             The ``'mask'`` method finds the first non-missing value of
             the flattened array as that which has the same location as
-            the first False element of the flattened array mask.
+            the first `False` element of the flattened array mask.
 
             It is considered likely that the ``'index'`` method is
             fastest for data for which the first element is not
