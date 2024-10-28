@@ -19,10 +19,10 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
 
     @property
     def _lock(self):
-        """Set the lock for use in `dask.array.from_array`.
+        """Return the lock used for netCDF file access.
 
         Returns a lock object that prevents concurrent reads of netCDF
-        files.
+        files, which are not currently supported by `h5netcdf`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 

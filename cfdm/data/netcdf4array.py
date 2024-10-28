@@ -15,10 +15,10 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
 
     @property
     def _lock(self):
-        """Set the lock for use in `dask.array.from_array`.
+        """Return the lock used for netCDF file access.
 
         Returns a lock object that prevents concurrent reads of netCDF
-        files.
+        files, which are not currently supported by `netCDF4`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -99,7 +99,6 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
             # Hmm netCDF4 has a thing for making scalar size 1, 1d
             array = array.squeeze()
 
-        #       self._lock.release()
         return array
 
     def _group(self, dataset, groups):

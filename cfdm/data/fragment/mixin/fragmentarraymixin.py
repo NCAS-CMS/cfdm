@@ -171,7 +171,6 @@ class FragmentArrayMixin:
         None
 
         """
-        # REVIEW: getitem: `_size_1_axis`: refactor to use `original_shape`
         original_shape = self.original_shape
         if original_shape.count(1):
             return original_shape.index(1)

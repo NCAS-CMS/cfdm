@@ -108,12 +108,12 @@ class PropertiesData(Properties):
 
     @property
     def data(self):
-        """Return the data.
+        """The data.
 
-        ``f.data`` is equivalent to ``f.get_data()``
+        ``f.data`` is equivalent to ``f.get_data()``.
 
-        Note that a `Data` instance is returned. Use its `array`
-        attribute to return the data as a `numpy` array.
+        Note that a `Data` instance is returned. Use the `array`
+        attribute to get the data as a `numpy` array.
 
         The units, calendar and fill value properties are, if set,
         inserted into the data.
@@ -142,6 +142,17 @@ class PropertiesData(Properties):
 
         """
         return self.get_data()
+
+    @data.setter
+    def data(self, value):
+        raise AttributeError(
+            "Can't set attribute 'data'. Use the 'set_data' method, "
+            "or assignment by indexing."
+        )
+
+    @data.deleter
+    def data(self):
+        self.del_data()
 
     @property
     def dtype(self):

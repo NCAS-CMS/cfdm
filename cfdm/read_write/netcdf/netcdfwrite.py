@@ -6154,7 +6154,7 @@ class NetCDFWrite(IOWrite):
             # dimensions with one value per fragment. If a chunk has
             # more than one unique value then the fragment's value is
             # missing data.
-            dx = data.to_dask_array(asanyarray=False)
+            dx = data.to_dask_array(_apply_mask_hardness=False, _asanyarray=False)
             dx_ind = tuple(range(dx.ndim))
             out_ind = dx_ind
             dx = da.blockwise(
