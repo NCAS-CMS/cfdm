@@ -4409,16 +4409,16 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         {'file.nc'}
 
         """
-        out = set()
+        out = []
         for a in self.todict(
             _apply_mask_hardness=False, _asanyarray=False
         ).values():
             try:
-                out.update(a.get_filenames())
+                out.extend(a.get_filenames())
             except AttributeError:
                 pass
 
-        return out
+        return set(out)
 
     def get_index(self, default=ValueError()):
         """Return the index variable for a compressed array.
