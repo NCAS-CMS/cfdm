@@ -10,6 +10,7 @@ from copy import deepcopy
 from dataclasses import dataclass, field
 from functools import reduce
 from math import log, nan, prod
+from numbers import Integral
 from typing import Any
 from urllib.parse import urlparse
 from uuid import uuid4
@@ -915,7 +916,7 @@ class NetCDFRead(IORead):
         _file_systems=None,
         netcdf_backend=None,
         cache=True,
-        dask_chunks="auto",
+        dask_chunks="storage-aligned",
         store_hdf5_chunks=True,
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
@@ -988,14 +989,14 @@ class NetCDFRead(IORead):
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
-            _file_systems: `dict`, optional
-                Provide any already-open S3 file systems.
-
-                .. versionadded:: (cfdm) NEXTVERSION
-
             store_hdf_chunks: `bool`, optional
                  Storing the HDF5 chunking strategy. See `cfdm.read`
                  for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            _file_systems: `dict`, optional
+                Provide any already-open S3 file systems.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1122,7 +1123,7 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             # Array element caching
             # --------------------------------------------------------
-            "cache": cache,
+            "cache": bool(cache),
             # --------------------------------------------------------
             # Dask
             # --------------------------------------------------------
@@ -1185,6 +1186,15 @@ class NetCDFRead(IORead):
                     raise ValueError(
                         f"Can't read: Bad parameter value: extra={extra!r}"
                     )
+
+        # Check dask_chunks
+        if dask_chunks is not None and not isinstance(
+            dask_chunks, (str, Integral, dict)
+        ):
+            raise ValueError(
+                "The 'dask_chunks' keyword must be of type str, int, None or "
+                f"dict. Got: {dask_chunks!r}"
+            )
 
         g["extra"] = extra
 

@@ -1,5 +1,4 @@
 import os
-from numbers import Integral
 
 from numpy.ma.core import MaskError
 
@@ -513,7 +512,7 @@ def read(
                 None}`` or ``{'T': 12, 'ncdim%lat', None, 'ncdim%lon':
                 None}``.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+              .. versionadded:: (cfdm) NEXTVERSION
 
         store_hdf5_chunks: `bool`, optional
             If True (the default) then store the HDF5 chunking
@@ -577,15 +576,6 @@ def read(
     elif isinstance(extra, str):
         extra = (extra,)
 
-    # Check dask_chunks
-    if dask_chunks is not None and not isinstance(
-        dask_chunks, (str, Integral, dict)
-    ):
-        raise ValueError(
-            "The 'dask_chunks' keyword must be of type str, int, None or "
-            f"dict. Got: {dask_chunks!r}"
-        )
-
     filename = os.path.expanduser(os.path.expandvars(filename))
 
     if netcdf.is_dir(filename):
@@ -622,7 +612,7 @@ def read(
                 domain=domain,
                 storage_options=storage_options,
                 netcdf_backend=netcdf_backend,
-                cache=bool(cache),
+                cache=cache,
                 dask_chunks=dask_chunks,
                 store_hdf5_chunks=store_hdf5_chunks,
                 extra_read_vars=None,
