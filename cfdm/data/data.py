@@ -4993,7 +4993,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     
             return set(out)
 
-        # TODO: Preserve order from each chunk? Yes - but only if cfa_write is True
+        # TODO: Preserve order from each chunk? Yes - but only if cfa_write is True nc_get_aggregation_write_status
         
         import numpy as np
         out = []
