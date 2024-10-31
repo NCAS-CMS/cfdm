@@ -6000,8 +6000,8 @@ class NetCDFWrite(IOWrite):
 
             aggregation_location = []
             aggregation_address = []
-            for indices in data.chunk_indices():
-                file_details = self._cfa_get_file_details(data[indices])
+            for index in data.chunk_indices():
+                file_details = self._cfa_get_file_details(data[index])
                 if len(file_details) != 1:
                     if file_details:
                         raise ValueError(

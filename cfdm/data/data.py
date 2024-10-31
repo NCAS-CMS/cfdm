@@ -4940,7 +4940,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 "tie point index variables",
             )
 
-    def get_filenames(self, normalise=True):
+    def get_filenames(self, normalise=True, hhh=False):
         """The names of files containing parts of the data array.
 
         Returns the names of any files that may be required to deliver
@@ -4981,16 +4981,43 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         {'file.nc'}
 
         """
-        out = []
-        for a in self.todict(
-            _apply_mask_hardness=False, _asanyarray=False
-        ).values():
-            try:
-                out.extend(a.get_filenames(normalise=normalise))
-            except AttributeError:
-                pass
+        if not hhh:
+            out = []
+            for a in self.todict(
+                _apply_mask_hardness=False, _asanyarray=False
+            ).values():
+                try:
+                    out.extend(a.get_filenames(normalise=normalise))
+                except AttributeError:
+                    pass
+    
+            return set(out)
 
-        return set(out)
+        # TODO: Preserve order from each chunk? Yes - but only if cfa_write is True
+        
+        import numpy as np
+        out = []
+        n_char = 1
+        n_files_per_chunk = 1
+        for index in data.chunk_indices():
+            filenames = tuple(data[index].get_filenames(normalise=normalise))
+            out.append((index, filenames))
+            if filenames:
+                n_char = max(n_char, *map(len, filenames))
+                n_files_per_chunk = max(n_files_per_chunk, len(filenames))
+            
+        if n_files_per_chunk == 1:
+            # TODO: always have the trailing dimension , even if it's size 1?
+            array = np.ma.masked_all(data.numblocks, dtype=f"U{n_char}")
+        else:
+            array = np.ma.masked_all(data.numblocks + (n_files_per_chunk,),
+                                     dtype=f"U{n_char}")
+
+        for index, filenames in out:
+            if filenames:
+                array[index] = filenames
+
+        return array
 
     def get_index(self, default=ValueError()):
         """Return the index variable for a compressed array.
