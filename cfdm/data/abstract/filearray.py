@@ -280,6 +280,7 @@ class FileArray(Array):
             tuple(new_addresses),
             copy=False,
         )
+        # TODO n_files += 1
         return a
 
     def clear_substitutions(self):
@@ -393,6 +394,7 @@ class FileArray(Array):
         a = self.copy()
         a._set_component("filename", tuple(new_filenames), copy=False)
         a._set_component("address", tuple(new_addresses), copy=False)
+        # TODO n_files = len(new_filenames)
         return a
 
     def del_substitution(self, substitution):
@@ -907,3 +909,24 @@ class FileArray(Array):
 
         """
         return self._get_component("unpack")
+
+    def replace_filenames(self, filenames):
+        filenames = np.asanyarray(filenames)
+        max_n_files = filenames.size
+
+        addresses = self.get_addresses()
+        old_n_files = len(addresses)
+        
+        filenames = tuple(filenames.compressed())
+        new_n_files = len(filenames)
+        
+        self._set_component("filename", filenames, copy=False)
+        addresses = self.get_addresses()
+        if new_n_files < old_n_files:
+            addresses = addresses[:nfiles]
+        elif new_n_files > old_n_files:           
+            addresses += (addresses[0],) * (new_n_files - old_n_files)
+
+        self._set_component("address", addresses, copy=False)
+
+        

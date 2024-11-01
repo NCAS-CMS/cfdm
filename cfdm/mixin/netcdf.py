@@ -4977,9 +4977,9 @@ class NetCDFAggregation(NetCDFMixin):
         if status:
             raise ValueError(
                 "'nc_set_aggregation_write_status' only allows the netCDF "
-                "aggregation write status to be set to False. (At your own "
+                "aggregation write status to be set to False. At your own "
                 "risk you may use '_nc_set_aggregation_write_status' to set "
-                "the status to True.)"
+                "the status to True."
             )
 
         self._nc_set_aggregation_write_status(status)

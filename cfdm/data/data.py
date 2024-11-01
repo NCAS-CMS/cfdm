@@ -4940,7 +4940,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 "tie point index variables",
             )
 
-    def get_filenames(self, normalise=True, per_chunk=False):
+    def get_filenames(self, normalise=True, per_chunk=False, n_files=1):
         """The names of files containing parts of the data array.
 
         Returns the names of any files that may be required to deliver
@@ -4981,69 +4981,96 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         >>> f = {{package}}.example_field(0)
         >>> {{package}}.write(f, "file.nc")
-        >>> d = {{package}}.read("file.nc")[0].data
+        >>> d = {{package}}.read("file.nc", dask_chunks'128 B')[0].data
         >>> d.get_filenames()
         {'file.nc'}
 
-        TODO (per_chunk)
+        >>> d.numblocks
+        (2, 2)
+        >>> filenames = d.get_filenames(per_chunk=True)
+        >>> filenames.shape
+        (2, 2, 1)
+        >>> print(filenames)
+        [[['file.nc']
+          ['file.nc']]
 
+         [['file.nc']
+          ['file.nc']]]
+        >>> filenames = d.get_filenames(per_chunk=True, n_files=0)
+        >>> filenames.shape
+        (2, 2)
+        >>> print(filenames)
+        [['file.nc' 'file.nc']
+         ['file.nc' 'file.nc']]
+        >>> filenames = d.get_filenames(per_chunk=True, n_files=3)
+        >>> filenames.shape
+        (2, 2, 3)
+        >>> print(filenames)
+        [[['file.nc' -- --]
+          ['file.nc' -- --]]
+
+         [['file.nc' -- --]
+          ['file.nc' -- --]]]
         """
         if per_chunk:
+            # --------------------------------------------------------
+            # Return filenames in a numpy array
+            # --------------------------------------------------------
             out = []
-            n_char = 1
-            n_files_per_chunk = 1
-            for index in data.chunk_indices():
+            append = out.append
 
-                if self.nc_get_aggregation_write_status()
-                for a in data[index].todict(
+            # Maximum number of characters in any file name
+            n_char = 1
+            # Maximum number of file names per chunk
+            n_files_per_chunk = n_files
+        
+            for index in self.chunk_indices():
+                for a in self[index].todict(
                         _apply_mask_hardness=False, _asanyarray=False
                 ).values():
                     try:
-                        out.extend(a.get_filenames(normalise=normalise))
+                        filenames = a.get_filenames(normalise=normalise)
                     except AttributeError:
-                        pass
-                    
-                return set(out)
-        
+                        continue
 
+                    append((index, filenames))                        
+                    if filenames:
+                        n_char = max(n_char, *map(len, filenames))
+                        n_files_per_chunk = max(
+                            n_files_per_chunk, len(filenames)
+                        )
 
+            if not n_files and n_files_per_chunk <= 1:
+                array = np.ma.masked_all(self.numblocks, dtype=f"U{n_char}")
+                for index, filenames in out:
+                    if filenames:
+                        array[index] = filenames                        
+            else:
+                array = np.ma.masked_all(
+                    self.numblocks + (n_files_per_chunk,), dtype=f"U{n_char}"
+                )                
+                for index, filenames in out:
+                    if filenames:
+                        array[index + (slice(0, len(filenames)),)] = filenames
 
-
-                
-                filenames = tuple(
-                    data[index].get_filenames(
-                        normalise=normalise, per_chunk=False
-                    )
-                )
-                out.append((index, filenames))
-                if filenames:
-                    n_char = max(n_char, *map(len, filenames))
-                    n_files_per_chunk = max(n_files_per_chunk, len(filenames))
-                
-            array = np.ma.masked_all(
-                data.numblocks + (n_files_per_chunk,), dtype=f"U{n_char}"
-            )
-            for index, filenames in out:
-                if filenames:
-                    array[index] = filenames
-    
+            array.set_fill_value("")
             return array
 
-        # Return all filenames in a set
+        # ------------------------------------------------------------
+        # Return filenames in a set
+        # ------------------------------------------------------------
         out = []
+        extend = out.extend
         for a in self.todict(
                 _apply_mask_hardness=False, _asanyarray=False
         ).values():
             try:
-                out.extend(a.get_filenames(normalise=normalise))
+                extend(a.get_filenames(normalise=normalise))
             except AttributeError:
                 pass
-            
+
         return set(out)
         
-        # TODO: Preserve order from each chunk? Yes - but only if cfa_write is True nc_get_aggregation_write_status
-        
-
     def get_index(self, default=ValueError()):
         """Return the index variable for a compressed array.
 
@@ -6289,6 +6316,79 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         self.Units = self._Units_class(self.get_units(default=None), calendar)
+
+
+    @_inplace_enabled(default=False)
+    def set_filenames(self, filenames, inplace=False):
+        """TODO
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+             filenames: array_like
+                 TODO
+
+        :Returns:
+
+            `{{class}}` or `None`
+                TODO
+
+        **Examples**
+
+        TODO
+
+        """
+        filenames = np.asanyarray(filenames)
+        filenames.set_fill_value("")
+        
+        ndim = self.ndim
+        if self.numblocks != filenames.shape[:ndim] or filenames.ndim != ndim + 1:
+            raise ValueError(
+                f"'filenames' shape {filenames.shape} is incompatible "
+                f"with the Dask chunks shape {self.numblocks}"
+            )
+
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        dsk = d.todict(
+            _apply_mask_hardness=False, _asanyarray=False
+        )
+
+        keys = {}
+        for index in d.chunk_indices():
+            updated = False
+            for key, a in d[index].todict(
+                    _apply_mask_hardness=False, _asanyarray=False
+            ).items():                
+                try:
+                    dsk[key] = a.replace_all_filenames(filenames[index])
+                except AttributeError:
+                    pass
+                else:
+                    if updated:                        
+                        raise ValueError(
+                            "Can't update the file locations for the Dask "
+                            f"chunk defined by {index!r}: "
+                            "The Dask chunk references two or more fragments"
+                        )
+                    
+                    if key in keys:
+                        raise ValueError(
+                            "Can't update the file locations for the Dask "
+                            f"chunk defined by {index!r}: "
+                            "The referenced fragment has already been "
+                            f"updated from Dask chunk {keys[key]!r}."
+                        )
+
+                    updated = True
+                    keys[key] = index
+
+        dx = d.to_dask_array(_apply_mask_hardness=False, _asanyarray=False)
+        dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
+        d._set_dask(dx, clear=_NONE, asanyarray=None)
+
+        return d
 
     def set_units(self, value):
         """Set the units.

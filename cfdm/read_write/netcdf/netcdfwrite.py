@@ -6041,7 +6041,6 @@ class NetCDFWrite(IOWrite):
                         # relative-path URI reference relative to the
                         # aggregation file.
                         uri = urisplit(filename)
-                        #                        print(uri)
                         if absolute_uri:
                             # Convert the file name to an absolute URI
                             if uri.isrelpath():
