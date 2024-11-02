@@ -911,22 +911,23 @@ class FileArray(Array):
         return self._get_component("unpack")
 
     def replace_filenames(self, filenames):
-        filenames = np.asanyarray(filenames)
-        max_n_files = filenames.size
-
         addresses = self.get_addresses()
         old_n_files = len(addresses)
+        if len(dict.fromkeys(addresses)) != 1:
+            raise ValueError("TODO can't replace file locations when existing locations  have diferring addresses")
         
+        filenames = np.asanyarray(filenames)
+        max_n_files = max(max_n_Files,  filenames.size)
+
         filenames = tuple(filenames.compressed())
         new_n_files = len(filenames)
         
-        self._set_component("filename", filenames, copy=False)
-        addresses = self.get_addresses()
         if new_n_files < old_n_files:
-            addresses = addresses[:nfiles]
+            addresses = addresses[:new_n_files]
         elif new_n_files > old_n_files:           
             addresses += (addresses[0],) * (new_n_files - old_n_files)
-
+            
         self._set_component("address", addresses, copy=False)
+        self._set_component("filename", filenames, copy=False)
 
         

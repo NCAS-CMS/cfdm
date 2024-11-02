@@ -4940,7 +4940,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 "tie point index variables",
             )
 
-    def get_filenames(self, normalise=True, per_chunk=False, n_files=1):
+    def get_filenames(self, normalise=True, per_chunk=False, n_files=1, extra=0):
         """The names of files containing parts of the data array.
 
         Returns the names of any files that may be required to deliver
@@ -5022,7 +5022,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             # Maximum number of characters in any file name
             n_char = 1
             # Maximum number of file names per chunk
-            n_files_per_chunk = n_files
+            n_files_per_chunk = 1 #n_files
         
             for index in self.chunk_indices():
                 for a in self[index].todict(
@@ -5031,27 +5031,39 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                     try:
                         filenames = a.get_filenames(normalise=normalise)
                     except AttributeError:
-                        continue
+                        pass
+                    else:
+                        append((index, filenames))                        
+                        if filenames:
+                            n_char = max(n_char, *map(len, filenames))
+                            n_files_per_chunk = max(
+                                n_files_per_chunk, len(filenames)
+                            )
 
-                    append((index, filenames))                        
-                    if filenames:
-                        n_char = max(n_char, *map(len, filenames))
-                        n_files_per_chunk = max(
-                            n_files_per_chunk, len(filenames)
-                        )
+            if extra:
+                n_files_per_chunk+= 1
 
-            if not n_files and n_files_per_chunk <= 1:
-                array = np.ma.masked_all(self.numblocks, dtype=f"U{n_char}")
-                for index, filenames in out:
-                    if filenames:
-                        array[index] = filenames                        
-            else:
-                array = np.ma.masked_all(
-                    self.numblocks + (n_files_per_chunk,), dtype=f"U{n_char}"
-                )                
-                for index, filenames in out:
-                    if filenames:
-                        array[index + (slice(0, len(filenames)),)] = filenames
+            array = np.ma.masked_all(
+                self.numblocks + (n_files_per_chunk,), dtype=f"U{n_char}"
+            )
+            array.set_fill_value("")
+            
+            for index, filenames in out:
+                if filenames:
+                    array[index + (slice(0, len(filenames)),)] = filenames
+                    
+#            if not n_files and n_files_per_chunk <= 1:
+#                array = np.ma.masked_all(self.numblocks, dtype=f"U{n_char}")
+#                for index, filenames in out:
+#                    if filenames:
+#                        array[index] = filenames                        
+#            else:
+#                array = np.ma.masked_all(
+#                    self.numblocks + (n_files_per_chunk,), dtype=f"U{n_char}"
+#                )                
+#                for index, filenames in out:
+#                    if filenames:
+#                        array[index + (slice(0, len(filenames)),)] = filenames
 
             array.set_fill_value("")
             return array
@@ -6341,14 +6353,19 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """
         filenames = np.asanyarray(filenames)
         filenames.set_fill_value("")
-        
+        filenames_shape = filenames.shape
+
         ndim = self.ndim
-        if self.numblocks != filenames.shape[:ndim] or filenames.ndim != ndim + 1:
+        if filenames.ndim == ndim:
+            filenames =  np.expand_dims(filenames, -1)
+        
+        if filenames.ndim != ndim + 1 or self.numblocks != filenames.shape[:ndim]:
             raise ValueError(
-                f"'filenames' shape {filenames.shape} is incompatible "
+                f"'filenames' shape {filenames_shape} is incompatible "
                 f"with the Dask chunks shape {self.numblocks}"
             )
 
+        filenames.shape
         d = _inplace_enabled_define_and_cleanup(self)
 
         dsk = d.todict(
