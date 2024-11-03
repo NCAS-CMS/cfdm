@@ -42,10 +42,11 @@ class FragmentFileArray(
         address=None,
         dtype=None,
         shape=None,
+        storage_options=None,
         substitutions=None,
+        n_file_versions=None,
         unpack_aggregated_data=True,
         aggregated_attributes=None,
-        storage_options=None,
         aggregation_file_directory=None,
         aggregation_file_scheme=None,
         source=None,
@@ -98,6 +99,8 @@ class FragmentFileArray(
             unpack=True,
             attributes=None,
             storage_options=storage_options,
+            substitutions=substitutions,
+            n_file_versions=n_file_versions,
             source=source,
             copy=copy,
         )
@@ -192,7 +195,7 @@ class FragmentFileArray(
         # Loop round the files, returning as soon as we find one that
         # is accessible.
         errors = []
-        filenames = self.get_filenames()
+        filenames = self.get_filenames(normalise=True)
         for filename, address in zip(filenames, self.get_addresses()):
             kwargs["filename"] = filename
             kwargs["address"] = address
@@ -217,8 +220,7 @@ class FragmentFileArray(
         # Still here?
         errors = "\n".join(errors)
         raise OSError(
-            f"Can't access any of the fragment files {filenames} "
-            "with the backends:\n"
+            f"Can't access any of the fragment files {filenames}:\n"
             f"{errors}"
         )
 

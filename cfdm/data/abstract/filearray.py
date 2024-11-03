@@ -26,6 +26,7 @@ class FileArray(Array):
         attributes=None,
         storage_options=None,
         substitutions=None,
+        n_file_versions=None,
         source=None,
         copy=True,
     ):
@@ -116,6 +117,13 @@ class FileArray(Array):
             except AttributeError:
                 substitutions = None
 
+            try:
+                n_file_versions = source._get_component(
+                    "n_file_versions", None
+                )
+            except AttributeError:
+                n_file_versions = None
+
         if shape is not None:
             self._set_component("shape", shape, copy=False)
 
@@ -146,6 +154,9 @@ class FileArray(Array):
                 "substitutions", substitutions.copy(), copy=False
             )
 
+        if n_file_versions is not None:
+            self._set_component("n_file_versions", n_file_versions, copy=False)
+
         # By default, close the netCDF file after data array access
         self._set_component("close", True, copy=False)
 
@@ -158,7 +169,7 @@ class FileArray(Array):
         return (
             self.__class__,
             self.shape,
-            self.get_filenames(),
+            self.get_filenames(normalise=True),
             self.get_addresses(),
             self.get_mask(),
             self.get_unpack(),
@@ -260,7 +271,7 @@ class FileArray(Array):
         """
         directory = dirname(directory, isdir=True)
 
-        filenames = self.get_filenames()
+        filenames = self.get_filenames()  # TODO normalise?
         addresses = self.get_addresses()
 
         # Note: It is assumed that each existing file name is either
@@ -379,7 +390,7 @@ class FileArray(Array):
         new_filenames = []
         new_addresses = []
         for filename, address in zip(
-            self.get_filenames(), self.get_addresses()
+            self.get_filenames(normalise=True), self.get_addresses()
         ):
             if dirname(filename) != directory:
                 new_filenames.append(filename)
@@ -473,7 +484,7 @@ class FileArray(Array):
         ('/data1', '/data2', '/data1')
 
         """
-        return tuple(map(dirname, self.get_filenames()))
+        return tuple(map(dirname, self.get_filenames(normalise=True)))
 
     def get_address(self, default=AttributeError()):
         """The name of the file containing the array.
@@ -735,7 +746,7 @@ class FileArray(Array):
         """
         # Loop round the files, returning as soon as we find one that
         # works.
-        filenames = self.get_filenames()
+        filenames = self.get_filenames(normalise=True)
         for filename, address in zip(filenames, self.get_addresses()):
             url = urlparse(filename)
             if url.scheme == "file":
@@ -803,7 +814,7 @@ class FileArray(Array):
         old_directory = dirname(old_directory, isdir=True)
         new_directory = dirname(new_directory, isdir=True)
 
-        filenames = self.get_filenames()
+        filenames = self.get_filenames()  # TODO normalise?
         addresses = self.get_addresses()
 
         # Note: It is assumed that each existing file name is either
@@ -914,20 +925,46 @@ class FileArray(Array):
         addresses = self.get_addresses()
         old_n_files = len(addresses)
         if len(dict.fromkeys(addresses)) != 1:
-            raise ValueError("TODO can't replace file locations when existing locations  have diferring addresses")
-        
+            raise ValueError(
+                "TODO can't replace file locations when existing locations  have diferring addresses"
+            )
+
         filenames = np.asanyarray(filenames)
-        max_n_files = max(max_n_Files,  filenames.size)
+        max_n_files = max(max_n_Files, filenames.size)
 
         filenames = tuple(filenames.compressed())
         new_n_files = len(filenames)
-        
+
         if new_n_files < old_n_files:
             addresses = addresses[:new_n_files]
-        elif new_n_files > old_n_files:           
+        elif new_n_files > old_n_files:
             addresses += (addresses[0],) * (new_n_files - old_n_files)
-            
+
         self._set_component("address", addresses, copy=False)
         self._set_component("filename", filenames, copy=False)
 
-        
+    def set_n_file_versions(self, n):
+        """TODO."""
+        a = self.copy()
+        a._set_component("n_file_versions", n, copy=False)
+        return a
+
+    def get_n_file_versions(self, n):
+        """TODO."""
+        return max(
+            self.get_filenames(normalise=False),
+            self._get_component("n_file_versions", 0),
+        )
+
+    def set_max_n_file_versions(self, n):
+        """TODO.""" 
+        a = self.copy()
+        a._set_component("max_n_file_versions", n, copy=False)
+        return a
+
+    def get_max_n_file_versions(self, n):
+        """TODO."""
+        return max(
+            self.get_filenames(normalise=False),
+            self._get_component("max_n_file_versions", 0),
+        )

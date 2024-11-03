@@ -150,9 +150,13 @@ class AggregatedArray(abstract.FileArray):
                 fragment_type = None
         else:
             if filename is not None:
-                shape, fragment_array_shape, fragment_type, fragment_array = (
-                    self._parse_fragment_array(filename, fragment_array)
-                )
+                (
+                    shape,
+                    fragment_array_shape,
+                    fragment_type,
+                    fragment_array,
+                    n_file_versions,
+                ) = self._parse_fragment_array(filename, fragment_array)
             else:
                 shape = None
                 fragment_array_shape = None
@@ -165,6 +169,7 @@ class AggregatedArray(abstract.FileArray):
         )
         self._set_component("fragment_array", fragment_array, copy=False)
         self._set_component("fragment_type", fragment_type, copy=False)
+        self._set_component("n_file_versions", n_file_versions, copy=False)
 
     def __getitem__(self, index):
         """Return a subspace.
@@ -265,8 +270,10 @@ class AggregatedArray(abstract.FileArray):
             if extra_dimension:
                 # There is an extra non-fragment dimension
                 fragment_array_shape = f.shape[:-1]
+                n_file_versions = f.shape[-1]
             else:
                 fragment_array_shape = f.shape
+                n_file_versions = 1
 
             if not a.ndim:
                 a = (a.item(),)
@@ -316,6 +323,7 @@ class AggregatedArray(abstract.FileArray):
             fragment_array_shape,
             fragment_type,
             parsed_fragment_array,
+            n_file_versions,
         )
 
     def get_fragment_array(self, copy=True):
@@ -739,6 +747,7 @@ class AggregatedArray(abstract.FileArray):
         substitutions = self.get_substitutions(copy=False)
         storage_options = self.get_storage_options()
         fragment_type = self.get_fragment_type()
+        n_file_versions = self.get_n_file_versions()
         aggregated_attributes = self.get_attributes()
         unpack = self.get_unpack()
 
@@ -775,6 +784,7 @@ class AggregatedArray(abstract.FileArray):
                 kwargs["filename"] = kwargs.pop("location")
                 kwargs["storage_options"] = storage_options
                 kwargs["substitutions"] = substitutions
+                kwargs["n_file_versions"] = n_file_versions
                 kwargs["aggregation_file_scheme"] = aggregation_file_scheme
                 kwargs["aggregation_file_directory"] = (
                     aggregation_file_directory

@@ -1993,7 +1993,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         return np.ma.masked
 
     def _modify_dask_graph(
-        self, method, args=(), exceptions=(AttributeError,)
+        self, method, args=(), kwargs=None, exceptions=(AttributeError,)
     ):
         """Modify the Dask graph.
 
@@ -2019,6 +2019,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 Arguments for the *method*. No arguments (the default)
                 are specified by an empty `tuple`.
 
+            kwargs: TODO, optional
+                TODO
+
             exceptions: `tuple` of `Exception`, optional
                 Do not change graph node values if calling its
                 *method* results in any of the specified exceptions.
@@ -2028,12 +2031,17 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             `None`
 
         """
+        if kwargs is None:
+            kwargs = {}
+
         updated = False
 
-        dsk = self.todict(optimize_graph=True, _apply_mask_hardness=False, _asanyarray=False)
+        dsk = self.todict(
+            optimize_graph=True, _apply_mask_hardness=False, _asanyarray=False
+        )
         for key, a in dsk.items():
             try:
-                dsk[key] = getattr(a, method)(*args)
+                dsk[key] = getattr(a, method)(*args, **kwargs)
             except exceptions:
                 # This graph node could not be modified
                 pass
@@ -2044,7 +2052,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         if updated:
             # The Dask graph was modified, so recast the dictionary
             # representation as a Dask array.
-            dx = self.to_dask_array(_apply_mask_hardness=False, _asanyarray=False)
+            dx = self.to_dask_array(
+                _apply_mask_hardness=False, _asanyarray=False
+            )
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
             self._set_dask(dx, clear=self._NONE, asanyarray=None)
 
@@ -2596,7 +2606,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         6
 
         """
-        return self.to_dask_array(_apply_mask_hardness=False, _asanyarray=False).chunksize
+        return self.to_dask_array(
+            _apply_mask_hardness=False, _asanyarray=False
+        ).chunksize
 
     @property
     def compressed_array(self):
@@ -3792,7 +3804,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # operation. We can set 'asanyarray=False' because at compute
         # time the concatenation operation does not need to access the
         # actual data.
-        dxs = [d.to_dask_array(_apply_mask_hardness=False, _asanyarray=False) for d in conformed_data]
+        dxs = [
+            d.to_dask_array(_apply_mask_hardness=False, _asanyarray=False)
+            for d in conformed_data
+        ]
         dx = da.concatenate(dxs, axis=axis)
 
         # ------------------------------------------------------------
@@ -4464,7 +4479,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         out = []
-        for key, a in self.todict(_apply_mask_hardness=False, _asanyarray=False).items():
+        for key, a in self.todict(
+            _apply_mask_hardness=False, _asanyarray=False
+        ).items():
             try:
                 out.extend(a.file_directories())
             except AttributeError:
@@ -4940,7 +4957,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 "tie point index variables",
             )
 
-    def get_filenames(self, normalise=True, per_chunk=False, n_files=1, extra=0):
+    def get_filenames(
+        self, normalise=True, per_chunk=False, n_files=1, extra=0
+    ):
         """The names of files containing parts of the data array.
 
         Returns the names of any files that may be required to deliver
@@ -5011,6 +5030,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
          [['file.nc' -- --]
           ['file.nc' -- --]]]
+
         """
         if per_chunk:
             # --------------------------------------------------------
@@ -5022,48 +5042,50 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             # Maximum number of characters in any file name
             n_char = 1
             # Maximum number of file names per chunk
-            n_files_per_chunk = 1 #n_files
-        
+            n_files_per_chunk = 1  # n_files
+
             for index in self.chunk_indices():
-                for a in self[index].todict(
-                        _apply_mask_hardness=False, _asanyarray=False
-                ).values():
+                for a in (
+                    self[index]
+                    .todict(_apply_mask_hardness=False, _asanyarray=False)
+                    .values()
+                ):
                     try:
                         filenames = a.get_filenames(normalise=normalise)
                     except AttributeError:
                         pass
                     else:
-                        append((index, filenames))                        
+                        append((index, filenames))
                         if filenames:
                             n_char = max(n_char, *map(len, filenames))
                             n_files_per_chunk = max(
-                                n_files_per_chunk, len(filenames)
+                                n_files_per_chunk, a.get_max()
                             )
 
             if extra:
-                n_files_per_chunk+= 1
+                n_files_per_chunk += 1
 
             array = np.ma.masked_all(
                 self.numblocks + (n_files_per_chunk,), dtype=f"U{n_char}"
             )
             array.set_fill_value("")
-            
+
             for index, filenames in out:
                 if filenames:
                     array[index + (slice(0, len(filenames)),)] = filenames
-                    
-#            if not n_files and n_files_per_chunk <= 1:
-#                array = np.ma.masked_all(self.numblocks, dtype=f"U{n_char}")
-#                for index, filenames in out:
-#                    if filenames:
-#                        array[index] = filenames                        
-#            else:
-#                array = np.ma.masked_all(
-#                    self.numblocks + (n_files_per_chunk,), dtype=f"U{n_char}"
-#                )                
-#                for index, filenames in out:
-#                    if filenames:
-#                        array[index + (slice(0, len(filenames)),)] = filenames
+
+            #            if not n_files and n_files_per_chunk <= 1:
+            #                array = np.ma.masked_all(self.numblocks, dtype=f"U{n_char}")
+            #                for index, filenames in out:
+            #                    if filenames:
+            #                        array[index] = filenames
+            #            else:
+            #                array = np.ma.masked_all(
+            #                    self.numblocks + (n_files_per_chunk,), dtype=f"U{n_char}"
+            #                )
+            #                for index, filenames in out:
+            #                    if filenames:
+            #                        array[index + (slice(0, len(filenames)),)] = filenames
 
             array.set_fill_value("")
             return array
@@ -5074,7 +5096,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         out = []
         extend = out.extend
         for a in self.todict(
-                _apply_mask_hardness=False, _asanyarray=False
+            _apply_mask_hardness=False, _asanyarray=False
         ).values():
             try:
                 extend(a.get_filenames(normalise=normalise))
@@ -5082,7 +5104,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 pass
 
         return set(out)
-        
+
     def get_index(self, default=ValueError()):
         """Return the index variable for a compressed array.
 
@@ -5416,7 +5438,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         # Inserting a dimension doesn't affect the cached elements or
         # the CFA write status
-        d._set_dask(dx, clear=self._ALL ^ self._CACHE ^ self._CFA, asanyarray=False)
+        d._set_dask(
+            dx, clear=self._ALL ^ self._CACHE ^ self._CFA, asanyarray=False
+        )
 
         # Expand _axes
         axis = new_axis_identifier(d._axes)
@@ -6329,10 +6353,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """
         self.Units = self._Units_class(self.get_units(default=None), calendar)
 
-
     @_inplace_enabled(default=False)
     def set_filenames(self, filenames, inplace=False):
-        """TODO
+        """TODO.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -6357,9 +6380,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         ndim = self.ndim
         if filenames.ndim == ndim:
-            filenames =  np.expand_dims(filenames, -1)
-        
-        if filenames.ndim != ndim + 1 or self.numblocks != filenames.shape[:ndim]:
+            filenames = np.expand_dims(filenames, -1)
+
+        if (
+            filenames.ndim != ndim + 1
+            or self.numblocks != filenames.shape[:ndim]
+        ):
             raise ValueError(
                 f"'filenames' shape {filenames_shape} is incompatible "
                 f"with the Dask chunks shape {self.numblocks}"
@@ -6368,28 +6394,28 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         filenames.shape
         d = _inplace_enabled_define_and_cleanup(self)
 
-        dsk = d.todict(
-            _apply_mask_hardness=False, _asanyarray=False
-        )
+        dsk = d.todict(_apply_mask_hardness=False, _asanyarray=False)
 
         keys = {}
         for index in d.chunk_indices():
             updated = False
-            for key, a in d[index].todict(
-                    _apply_mask_hardness=False, _asanyarray=False
-            ).items():                
+            for key, a in (
+                d[index]
+                .todict(_apply_mask_hardness=False, _asanyarray=False)
+                .items()
+            ):
                 try:
                     dsk[key] = a.replace_all_filenames(filenames[index])
                 except AttributeError:
                     pass
                 else:
-                    if updated:                        
+                    if updated:
                         raise ValueError(
                             "Can't update the file locations for the Dask "
                             f"chunk defined by {index!r}: "
                             "The Dask chunk references two or more fragments"
                         )
-                    
+
                     if key in keys:
                         raise ValueError(
                             "Can't update the file locations for the Dask "
@@ -6406,6 +6432,57 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         d._set_dask(dx, clear=_NONE, asanyarray=None)
 
         return d
+
+    @_inplace_enabled(default=False)
+    def set_n_file_versions(self, n):
+        """TODO.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+             n: TODO
+                 TODO
+
+        :Returns:
+
+            `{{class}}` or `None`
+                TODO
+
+        **Examples**
+
+        TODO
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+        d._modify_dask_graph("set_file_versions", n)
+        return d
+
+    def get_n_file_versions(self):
+        """TODO.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `int`
+                TODO
+
+        **Examples**
+
+        TODO
+
+        """
+        n = 0
+        for a in self.todict(
+            _apply_mask_hardness=False, _asanyarray=False
+        ).values():
+            try:
+                n = max(n, a.get_n_file_versions())
+            except AttributeError:
+                pass
+
+        return n
 
     def set_units(self, value):
         """Set the units.

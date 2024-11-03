@@ -15,9 +15,11 @@ class FragmentNetCDF4Array(FragmentArrayMixin, NetCDF4Array):
         address=None,
         dtype=None,
         shape=None,
+        storage_options=None,
+        substitutions=None,
+        n_file_versions=None,
         unpack_aggregated_data=True,
         aggregated_attributes=None,
-        storage_options=None,
         source=None,
         copy=True,
     ):
@@ -83,6 +85,8 @@ class FragmentNetCDF4Array(FragmentArrayMixin, NetCDF4Array):
             unpack=True,
             attributes=None,
             storage_options=storage_options,
+            substitutions=substitutions,
+            n_file_versions=n_file_versions,
             source=source,
             copy=copy,
         )
