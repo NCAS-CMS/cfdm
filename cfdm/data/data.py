@@ -4,7 +4,6 @@ import operator
 from itertools import product, zip_longest
 from math import prod
 from numbers import Integral
-from os import sep
 
 import dask.array as da
 import numpy as np
@@ -20,12 +19,7 @@ from ..decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
-from ..functions import (
-    _numpy_allclose,
-    abspath,
-    is_log_level_info,
-    parse_indices,
-)
+from ..functions import _numpy_allclose, is_log_level_info, parse_indices
 from ..mixin.container import Container
 from ..mixin.files import Files
 from ..mixin.netcdf import NetCDFHDF5
@@ -368,8 +362,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 self._Units = source.Units
             except (ValueError, AttributeError):
                 self._Units = self._Units_class(
-                    self.get_units(None),
-                    self.get_calendar(None)
+                    self.get_units(None), self.get_calendar(None)
                 )
 
             # Axis identifiers
