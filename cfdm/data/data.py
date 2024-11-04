@@ -368,8 +368,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 self._Units = source.Units
             except (ValueError, AttributeError):
                 self._Units = self._Units_class(
-                    self.get_units(None),
-                    self.get_calendar(None)
+                    self.get_units(None), self.get_calendar(None)
                 )
 
             # Axis identifiers
@@ -1595,7 +1594,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # CF-PYTHON: Override
         self._set_component("axes", tuple(value), copy=False)
 
-    def _binary_operation(self, other, method):
+    def _binary_operation(cls, data, other, method):
         """Implement binary arithmetic and comparison operations.
 
         It is called by the binary arithmetic and comparison
