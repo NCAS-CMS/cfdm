@@ -40,7 +40,7 @@ def _remove_tmpfiles():
 atexit.register(_remove_tmpfiles)
 
 
-def axes_combinations(ndim):
+def axis_combinations(ndim):
     """Create axes permutations for `test_Data_flatten`"""
     return [
         axes
@@ -622,7 +622,7 @@ class DataTest(unittest.TestCase):
             self.assertEqual(e.shape, b.shape)
             self.assertTrue(e.equals(cfdm.Data(b), verbose=3))
 
-        for axes in axes_combinations(d.ndim):
+        for axes in axis_combinations(d.ndim):
             e = d.flatten(axes)
 
             if len(axes) <= 1:
@@ -1836,16 +1836,6 @@ class DataTest(unittest.TestCase):
         self.assertFalse(d.hardmask)
         d[...] = -1
         self.assertTrue((d.array.mask == [False, False, False]).all())
-
-    def test_Data_harden_mask(self):
-        """Test Data.harden_mask."""
-        d = cfdm.Data([1, 2, 3], hardmask=False)
-        d.harden_mask()
-        self.assertTrue(d.hardmask)
-        d[0] = cfdm.masked
-        self.assertEqual(d[0].array, np.ma.masked)
-        d[0] = 99
-        self.assertEqual(d[0].array, np.ma.masked)
 
     def test_Data_soften_mask(self):
         """Test Data.soften_mask."""

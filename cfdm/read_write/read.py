@@ -515,7 +515,7 @@ def read(
                 None}`` or ``{'T': 12, 'ncdim%lat', None, 'ncdim%lon':
                 None}``.
 
-                .. versionadded:: (cfdm) NEXTVERSION
+              .. versionadded:: (cfdm) NEXTVERSION
 
         store_hdf5_chunks: `bool`, optional
             If True (the default) then store the HDF5 chunking
@@ -678,7 +678,7 @@ def read(
                 domain=domain,
                 storage_options=storage_options,
                 netcdf_backend=netcdf_backend,
-                cache=bool(cache),
+                cache=cache,
                 dask_chunks=dask_chunks,
                 store_hdf5_chunks=store_hdf5_chunks,
                 extra_read_vars=None,

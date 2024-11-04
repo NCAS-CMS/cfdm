@@ -992,6 +992,12 @@ class NetCDFRead(IORead):
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
+            store_hdf_chunks: `bool`, optional
+                 Storing the HDF5 chunking strategy. See `cfdm.read`
+                 for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
             cfa: `dict`, optional
                 Configure the reading of CF-netCDF aggregation files.
                 See `cfdm.read` for details.
@@ -1001,12 +1007,6 @@ class NetCDFRead(IORead):
             cfa_write: sequence of `str`, optional
                 Configure the reading of CF-netCDF aggregation files.
                 See `cfdm.read` for details.
-
-                .. versionadded:: (cfdm) NEXTVERSION
-
-            store_hdf_chunks: `bool`, optional
-                 Storing the HDF5 chunking strategy. See `cfdm.read`
-                 for details.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1134,7 +1134,7 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             # Array element caching
             # --------------------------------------------------------
-            "cache": cache,
+            "cache": bool(cache),
             # --------------------------------------------------------
             # Dask
             # --------------------------------------------------------
@@ -1217,6 +1217,15 @@ class NetCDFRead(IORead):
                     )
         else:
             extra = ()
+
+        # Check dask_chunks
+        if dask_chunks is not None and not isinstance(
+            dask_chunks, (str, Integral, dict)
+        ):
+            raise ValueError(
+                "The 'dask_chunks' keyword must be of type str, int, None or "
+                f"dict. Got: {dask_chunks!r}"
+            )
 
         g["extra"] = extra
 
