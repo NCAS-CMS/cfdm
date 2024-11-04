@@ -2423,6 +2423,18 @@ class DataTest(unittest.TestCase):
         a.persist(inplace=True)
         self.assertEqual(a.data.get_filenames(), set())
 
+        # Per chunk
+        a = cfdm.read(file_A, dask_chunks="128 B")[0].data
+        self.assertEqual(d.numblocks, (2, 2))
+        f = d.get_filenames(per_chunk=True)
+        self.assertEqual(f.shape, d.numblocks + (1,))
+        self.assertEqual(np.ma.count(f, 4))
+        self.assertEqual(np.unique(f), f[0,0,0])
+        f = d.get_filenames(per_chunk=True, extra=2)
+        self.assertEqual(f.shape, d.numblocks + (3,))
+        self.assertEqual(np.ma.count(f, 4))
+        self.assertEqual(np.unique(f.compressed()), f[0,0,0])
+        
     def test_Data_chunk_indices(self):
         """Test Data.chunk_indices."""
         d = cfdm.Data(
@@ -2747,6 +2759,19 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.get_n_file_versions(), 3)
 
 
+    def test_Data_replace_filenames(self):
+        """Test Data.replace_filenames."""
+        f = cfdm.example_field(0)
+        cfdm.write(f, file_A)
+        d = cfdm.read(file_A, dask_chunks="128 B")[0].data
+        self.assertEqual(d.get_n_file_versions(), 1)
+        f = d.get_filenames(per_chunk=True, extra=2)
+        self.assertIsNone(d.replace_filenames(f))
+        self.assertEqual(d.get_n_file_versions(), 3)
+        g = d.get_filenames(per_chunk=True)
+        self.assertTrue(g.shape, f.shape)
+        
+        
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
     cfdm.environment()
