@@ -1118,6 +1118,9 @@ class read_writeTest(unittest.TestCase):
         self.assertEqual(g.data.chunks, ((7, 7, 7, 7, 7, 1), (5,), (4, 4)))
 
         # storage-aligned (the default)
+        g = cfdm.read(tmpfile, dask_chunks="storage-aligned")[0]
+        self.assertEqual(g.data.chunks, ((35, 1), (5,), (8,)))
+
         g = cfdm.read(tmpfile)[0]
         self.assertEqual(g.data.chunks, ((35, 1), (5,), (8,)))
 
