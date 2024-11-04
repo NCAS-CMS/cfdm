@@ -148,6 +148,13 @@ class AggregatedArray(abstract.FileArray):
                 fragment_type = source.get_fragment_type()
             except AttributeError:
                 fragment_type = None
+
+            try:
+                n_file_versions = source._get__component(
+                    "n_file_versions", None
+                )
+            except AttributeError:
+                n_file_versions = None
         else:
             if filename is not None:
                 (
@@ -162,6 +169,7 @@ class AggregatedArray(abstract.FileArray):
                 fragment_array_shape = None
                 fragment_array = None
                 fragment_type = None
+                n_file_versions = None
 
         self._set_component("shape", shape, copy=False)
         self._set_component(
@@ -747,7 +755,7 @@ class AggregatedArray(abstract.FileArray):
         substitutions = self.get_substitutions(copy=False)
         storage_options = self.get_storage_options()
         fragment_type = self.get_fragment_type()
-        n_file_versions = self.get_n_file_versions()
+        n_file_versions = self._get__component("n_file_versions", None)
         aggregated_attributes = self.get_attributes()
         unpack = self.get_unpack()
 
@@ -784,7 +792,7 @@ class AggregatedArray(abstract.FileArray):
                 kwargs["filename"] = kwargs.pop("location")
                 kwargs["storage_options"] = storage_options
                 kwargs["substitutions"] = substitutions
-                kwargs["n_file_versions"] = n_file_versions
+                kwargs["min_file_versions"] = n_file_versions
                 kwargs["aggregation_file_scheme"] = aggregation_file_scheme
                 kwargs["aggregation_file_directory"] = (
                     aggregation_file_directory

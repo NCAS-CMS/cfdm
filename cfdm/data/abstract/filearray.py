@@ -26,7 +26,7 @@ class FileArray(Array):
         attributes=None,
         storage_options=None,
         substitutions=None,
-        n_file_versions=None,
+        min_file_versions=None,
         source=None,
         copy=True,
     ):
@@ -118,11 +118,11 @@ class FileArray(Array):
                 substitutions = None
 
             try:
-                n_file_versions = source._get_component(
-                    "n_file_versions", None
+                min_file_versions = source._get_component(
+                    "min_file_versions", None
                 )
             except AttributeError:
-                n_file_versions = None
+                min_file_versions = None
 
         if shape is not None:
             self._set_component("shape", shape, copy=False)
@@ -154,8 +154,10 @@ class FileArray(Array):
                 "substitutions", substitutions.copy(), copy=False
             )
 
-        if n_file_versions is not None:
-            self._set_component("n_file_versions", n_file_versions, copy=False)
+        if min_file_versions is not None:
+            self._set_component(
+                "min_file_versions", min_file_versions, copy=False
+            )
 
         # By default, close the netCDF file after data array access
         self._set_component("close", True, copy=False)
@@ -271,7 +273,7 @@ class FileArray(Array):
         """
         directory = dirname(directory, isdir=True)
 
-        filenames = self.get_filenames()  # TODO normalise?
+        filenames = self.get_filenames()  # TODOCFA normalise?
         addresses = self.get_addresses()
 
         # Note: It is assumed that each existing file name is either
@@ -291,7 +293,7 @@ class FileArray(Array):
             tuple(new_addresses),
             copy=False,
         )
-        # TODO n_files += 1
+        # TODOCFA n_files += 1
         return a
 
     def clear_substitutions(self):
@@ -307,9 +309,9 @@ class FileArray(Array):
 
             `{{class}}`
                 A new `{{class}}` with all substireference to files in
-                *directory* removed.
+                *directory* removed. TODOCFA
 
-
+            TODOCFA
             `dict`
                 The removed CF-netCDF file location substitutions in a
                 dictionary whose key/value pairs comprise a file
@@ -405,7 +407,7 @@ class FileArray(Array):
         a = self.copy()
         a._set_component("filename", tuple(new_filenames), copy=False)
         a._set_component("address", tuple(new_addresses), copy=False)
-        # TODO n_files = len(new_filenames)
+        # TODOCFA n_files = len(new_filenames)
         return a
 
     def del_substitution(self, substitution):
@@ -622,6 +624,34 @@ class FileArray(Array):
         """
         return self._get_component("mask")
 
+    def get_n_file_versions(self, n):
+        """The number of file versions.
+
+        The number of versions includes any unassigned versions, that
+        would be written to a CF-netCDF aggregation 'location'
+        variable as missing values.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `get_filenames`, `replace_filenames`,
+                     `set_min_file_versions`
+
+        :Returns:
+
+            `int`
+                "The number of file versions.
+
+        **Examples**
+
+        >>> a.get_n_file_versions()
+        1
+
+        """
+        return max(
+            len(self.get_filenames(normalise=False)),
+            self._get_component("min_file_versions", 0),
+        )
+
     def get_storage_options(
         self, create_endpoint_url=True, filename=None, parsed_filename=None
     ):
@@ -814,7 +844,7 @@ class FileArray(Array):
         old_directory = dirname(old_directory, isdir=True)
         new_directory = dirname(new_directory, isdir=True)
 
-        filenames = self.get_filenames()  # TODO normalise?
+        filenames = self.get_filenames()  # TODOCFA normalise?
         addresses = self.get_addresses()
 
         # Note: It is assumed that each existing file name is either
@@ -922,49 +952,59 @@ class FileArray(Array):
         return self._get_component("unpack")
 
     def replace_filenames(self, filenames):
+        """TODOCFA."""
+        import numpy as np
+
         addresses = self.get_addresses()
         old_n_files = len(addresses)
-        if len(dict.fromkeys(addresses)) != 1:
+        if old_n_files > 1 and len(set) > 1:
             raise ValueError(
-                "TODO can't replace file locations when existing locations  have diferring addresses"
+                "Can't replace a fragment's file locations when they have "
+                f"differing file identities.\n"
+                f"Locations: {self.get_filenames(normalise=False)}\n"
+                f"Identities: {addresses}"
             )
 
         filenames = np.asanyarray(filenames)
-        max_n_files = max(max_n_Files, filenames.size)
 
-        filenames = tuple(filenames.compressed())
+        self.set_min_file_versions(filenames.size)
+
+        filenames = tuple(np.ma.compressed(filenames))
         new_n_files = len(filenames)
 
-        if new_n_files < old_n_files:
-            addresses = addresses[:new_n_files]
-        elif new_n_files > old_n_files:
-            addresses += (addresses[0],) * (new_n_files - old_n_files)
-
-        self._set_component("address", addresses, copy=False)
         self._set_component("filename", filenames, copy=False)
 
-    def set_n_file_versions(self, n):
-        """TODO."""
+        if new_n_files != old_n_files:
+            self._set_component(
+                "address", (addresses[0],) * new_n_files, copy=False
+            )
+
+    def set_min_file_versions(self, n):
+        """Set the minimum number of file versions.
+
+        If the data containing this fragment is written to a CF-netCDF
+        aggregation 'location' variable, then the minimum number of
+        file equates to the minimum size of the extra trailing
+        dimension. The actual dimension size will be larger if there
+        are more file locations than this minimum amount.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `get_filenames`, `get_n_file_versions,
+                     `replace_filenames`
+
+        :Parameters:
+
+             n: `int`
+                The new minimum number.
+
+        :Returns:
+
+            `{{class}}`
+                A new `{{class}}` with the minimum number of file
+                versions updated.
+
+        """
         a = self.copy()
-        a._set_component("n_file_versions", n, copy=False)
+        a._set_component("min_file_versions", n, copy=False)
         return a
-
-    def get_n_file_versions(self, n):
-        """TODO."""
-        return max(
-            self.get_filenames(normalise=False),
-            self._get_component("n_file_versions", 0),
-        )
-
-    def set_max_n_file_versions(self, n):
-        """TODO.""" 
-        a = self.copy()
-        a._set_component("max_n_file_versions", n, copy=False)
-        return a
-
-    def get_max_n_file_versions(self, n):
-        """TODO."""
-        return max(
-            self.get_filenames(normalise=False),
-            self._get_component("max_n_file_versions", 0),
-        )

@@ -4957,9 +4957,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 "tie point index variables",
             )
 
-    def get_filenames(
-        self, normalise=True, per_chunk=False, n_files=1, extra=0
-    ):
+    def get_filenames(self, normalise=True, per_chunk=False, extra=0):
         """The names of files containing parts of the data array.
 
         Returns the names of any files that may be required to deliver
@@ -4975,6 +4973,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         object has a callable `get_filenames` method, the output of
         which is added to the returned `set`.
 
+        .. seealso:: `replace_filenames`
+
         :Parameters:
 
             {{normalise: `bool`, optional}}
@@ -4982,7 +4982,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 .. versionadded:: (cfdm) NEXTVERSION
 
             per_chunk: `bool`, optional
-                TODO
+                TODOCFA
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            extra: `int`, optional
+                TODOCFA
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -5015,13 +5020,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
          [['file.nc']
           ['file.nc']]]
-        >>> filenames = d.get_filenames(per_chunk=True, n_files=0)
-        >>> filenames.shape
-        (2, 2)
-        >>> print(filenames)
-        [['file.nc' 'file.nc']
-         ['file.nc' 'file.nc']]
-        >>> filenames = d.get_filenames(per_chunk=True, n_files=3)
+        >>> filenames = d.get_filenames(per_chunk=True, extra=2)
         >>> filenames.shape
         (2, 2, 3)
         >>> print(filenames)
@@ -5042,7 +5041,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             # Maximum number of characters in any file name
             n_char = 1
             # Maximum number of file names per chunk
-            n_files_per_chunk = 1  # n_files
+            n_files_per_chunk = 1
 
             for index in self.chunk_indices():
                 for a in (
@@ -5058,15 +5057,18 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                         append((index, filenames))
                         if filenames:
                             n_char = max(n_char, *map(len, filenames))
+                            try:
+                                n_file_versions = a.get_n_file_versions()
+                            except AttributeError:
+                                n_file_versions = n_files_per_chunk
+
                             n_files_per_chunk = max(
-                                n_files_per_chunk, a.get_max()
+                                n_files_per_chunk, n_file_versions
                             )
 
-            if extra:
-                n_files_per_chunk += 1
-
             array = np.ma.masked_all(
-                self.numblocks + (n_files_per_chunk,), dtype=f"U{n_char}"
+                self.numblocks + (n_files_per_chunk + extra,),
+                dtype=f"U{n_char}",
             )
             array.set_fill_value("")
 
@@ -5074,20 +5076,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 if filenames:
                     array[index + (slice(0, len(filenames)),)] = filenames
 
-            #            if not n_files and n_files_per_chunk <= 1:
-            #                array = np.ma.masked_all(self.numblocks, dtype=f"U{n_char}")
-            #                for index, filenames in out:
-            #                    if filenames:
-            #                        array[index] = filenames
-            #            else:
-            #                array = np.ma.masked_all(
-            #                    self.numblocks + (n_files_per_chunk,), dtype=f"U{n_char}"
-            #                )
-            #                for index, filenames in out:
-            #                    if filenames:
-            #                        array[index + (slice(0, len(filenames)),)] = filenames
-
-            array.set_fill_value("")
             return array
 
         # ------------------------------------------------------------
@@ -5209,6 +5197,51 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             return self._default(
                 default, f"{self.__class__.__name__!r} has no list variable"
             )
+
+    def get_n_file_versions(self):
+        """The maximum number of file versions per fragment.
+
+        A fragment is a part of the data array that is stored in a
+        file. If the data is written to a CF-netCDF aggregation
+        variable, then the maximum number of file versions per
+        fragment equates to the size of the trailing 'versions'
+        dimension of the 'location' variable. The number of versions
+        includes any unassigned versions, that would be written the
+        'location' variable as missing values.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `get_filenames`, `get_n_file_versions,
+                     `replace_filenames`
+
+        :Returns:
+
+            `int`
+                "The maximum number of file versions per fragment.
+
+        **Examples**
+
+        >>> d = {{package}}.{{class}}([1, 2, 3])
+        >>> d.get_max_file_versions()
+        0
+
+        >>> f = {{package}}.example_field(0)
+        >>> {{package}}.write(f, "file.nc")
+        >>> d = {{package}}.read("file.nc", dask_chunks'128 B')[0].data
+        >>> d.get_max_file_versions()
+        1
+
+        """
+        n = 0
+        for a in self.todict(
+            _apply_mask_hardness=False, _asanyarray=False
+        ).values():
+            try:
+                n = max(n, a.get_max_file_versions())
+            except AttributeError:
+                pass
+
+        return n
 
     def get_tie_point_indices(self, default=ValueError()):
         """Return the list variable for a compressed array.
@@ -6193,6 +6226,85 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         )
         return new_directory
 
+    def replace_filenames(self, filenames):
+        """Replace each fragment's file locations in-place.
+
+        TODOCFA
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `get_filenames`
+
+        :Parameters:
+
+             filenames: array_like
+                 TODOCFA. It must either have the same shape as the
+                 Dask chunks, or may also include an extra trailing
+                 dimension for diofferent file location versions.
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        TODOCFA
+
+        """
+        filenames = np.asanyarray(filenames)
+        filenames.set_fill_value("")
+        filenames_shape = filenames.shape
+
+        ndim = self.ndim
+        if filenames.ndim == ndim:
+            filenames = np.expand_dims(filenames, -1)
+
+        if (
+            filenames.ndim != ndim + 1
+            or self.numblocks != filenames.shape[:ndim]
+        ):
+            raise ValueError(
+                f"'filenames' shape {filenames_shape} is incompatible "
+                f"with the Dask chunks shape {self.numblocks}"
+            )
+
+        dsk = self.todict(_apply_mask_hardness=False, _asanyarray=False)
+
+        keys = {}
+        for index in self.chunk_indices():
+            updated = False
+            for key, a in (
+                self[index]
+                .todict(_apply_mask_hardness=False, _asanyarray=False)
+                .items()
+            ):
+                try:
+                    dsk[key] = a.replace_filenames(filenames[index])
+                except AttributeError:
+                    pass
+                else:
+                    if updated:
+                        raise ValueError(
+                            "Can't replace the file locations for the Dask "
+                            f"chunk defined by {index!r}: "
+                            "The Dask chunk references two or more fragments"
+                        )
+
+                    if key in keys:
+                        raise ValueError(
+                            "Can't replace the file locations for the Dask "
+                            f"chunk defined by {index!r}: "
+                            "The referenced fragment has already been "
+                            f"updated from Dask chunk {keys[key]!r}."
+                        )
+
+                    updated = True
+                    keys[key] = index
+
+        dx = self.to_dask_array(_apply_mask_hardness=False, _asanyarray=False)
+        dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
+        self._set_dask(dx, clear=self._NONE, asanyarray=None)
+
     @_inplace_enabled(default=False)
     def reshape(self, *shape, merge_chunks=True, limit=None, inplace=False):
         """Change the shape of the data without changing its values.
@@ -6353,136 +6465,35 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """
         self.Units = self._Units_class(self.get_units(default=None), calendar)
 
-    @_inplace_enabled(default=False)
-    def set_filenames(self, filenames, inplace=False):
-        """TODO.
+    def set_min_file_versions(self, n):
+        """Set the minimum number of file versions per fragment.
+
+        A fragment is a part of the data array that is stored in a
+        file. If the data is written to a CF-netCDF aggregation
+        variable, then the the minimum number of file versions per
+        fragment equates to a lower limit to the size of the trailing
+        'versions' dimension of the 'location' variable. The actual
+        dimension size will be larger if there are more file locations
+        than this minimum amount.
 
         .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `get_filenames`, `get_n_file_versions,
+                     `replace_filenames`
 
         :Parameters:
 
-             filenames: array_like
-                 TODO
+             n: `int`
+                The new minimum number.
 
         :Returns:
 
-            `{{class}}` or `None`
-                TODO
-
-        **Examples**
-
-        TODO
-
-        """
-        filenames = np.asanyarray(filenames)
-        filenames.set_fill_value("")
-        filenames_shape = filenames.shape
-
-        ndim = self.ndim
-        if filenames.ndim == ndim:
-            filenames = np.expand_dims(filenames, -1)
-
-        if (
-            filenames.ndim != ndim + 1
-            or self.numblocks != filenames.shape[:ndim]
-        ):
-            raise ValueError(
-                f"'filenames' shape {filenames_shape} is incompatible "
-                f"with the Dask chunks shape {self.numblocks}"
-            )
-
-        filenames.shape
-        d = _inplace_enabled_define_and_cleanup(self)
-
-        dsk = d.todict(_apply_mask_hardness=False, _asanyarray=False)
-
-        keys = {}
-        for index in d.chunk_indices():
-            updated = False
-            for key, a in (
-                d[index]
-                .todict(_apply_mask_hardness=False, _asanyarray=False)
-                .items()
-            ):
-                try:
-                    dsk[key] = a.replace_all_filenames(filenames[index])
-                except AttributeError:
-                    pass
-                else:
-                    if updated:
-                        raise ValueError(
-                            "Can't update the file locations for the Dask "
-                            f"chunk defined by {index!r}: "
-                            "The Dask chunk references two or more fragments"
-                        )
-
-                    if key in keys:
-                        raise ValueError(
-                            "Can't update the file locations for the Dask "
-                            f"chunk defined by {index!r}: "
-                            "The referenced fragment has already been "
-                            f"updated from Dask chunk {keys[key]!r}."
-                        )
-
-                    updated = True
-                    keys[key] = index
-
-        dx = d.to_dask_array(_apply_mask_hardness=False, _asanyarray=False)
-        dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
-        d._set_dask(dx, clear=_NONE, asanyarray=None)
-
-        return d
-
-    @_inplace_enabled(default=False)
-    def set_n_file_versions(self, n):
-        """TODO.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Parameters:
-
-             n: TODO
-                 TODO
-
-        :Returns:
-
-            `{{class}}` or `None`
-                TODO
-
-        **Examples**
-
-        TODO
+            `None`
 
         """
         d = _inplace_enabled_define_and_cleanup(self)
-        d._modify_dask_graph("set_file_versions", n)
+        d._modify_dask_graph("set_min_file_versions", n)
         return d
-
-    def get_n_file_versions(self):
-        """TODO.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Returns:
-
-            `int`
-                TODO
-
-        **Examples**
-
-        TODO
-
-        """
-        n = 0
-        for a in self.todict(
-            _apply_mask_hardness=False, _asanyarray=False
-        ).values():
-            try:
-                n = max(n, a.get_n_file_versions())
-            except AttributeError:
-                pass
-
-        return n
 
     def set_units(self, value):
         """Set the units.

@@ -2739,6 +2739,23 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.replace_file_directory("/new/", "/newer"), "/newer")
         self.assertEqual(d.file_directories(), set(("/newer/path",)))
 
+    def test_Data_get_file_versions(self):
+        """Test Data file_versions methods."""
+        # No files, no versions
+        d = cfdm.Data.empty((5, 8), float, chunks=4)
+        self.assertEqual(d.get_n_file_versions(), 0)
+        self.assertIsNone(d.set_min_file_versions(1))
+        self.assertEqual(d.get_n_file_versions(), 0)
+
+        f = cfdm.example_field(0)
+        cfdm.write(f, file_A)
+        d = cfdm.read(file_A, dask_chunks=4)[0].data
+        self.assertEqual(d.get_n_file_versions(), 1)
+        d.add_file_directory("/new/directory")
+        self.assertEqual(d.get_n_file_versions(), 2)
+        self.assertIsNone(d.set_min_file_versions(3))
+        self.assertEqual(d.get_n_file_versions(), 3)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
