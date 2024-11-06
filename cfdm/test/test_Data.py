@@ -2424,15 +2424,15 @@ class DataTest(unittest.TestCase):
         self.assertEqual(a.data.get_filenames(), set())
 
         # Per chunk
-        a = cfdm.read(file_A, dask_chunks="128 B")[0].data
+        d = cfdm.read(file_A, dask_chunks="128 B")[0].data
         self.assertEqual(d.numblocks, (2, 2))
         f = d.get_filenames(per_chunk=True)
         self.assertEqual(f.shape, d.numblocks + (1,))
-        self.assertEqual(np.ma.count(f, 4))
+        self.assertEqual(np.ma.count(f), 4)
         self.assertEqual(np.unique(f), f[0, 0, 0])
         f = d.get_filenames(per_chunk=True, extra=2)
         self.assertEqual(f.shape, d.numblocks + (3,))
-        self.assertEqual(np.ma.count(f, 4))
+        self.assertEqual(np.ma.count(f), 4)
         self.assertEqual(np.unique(f.compressed()), f[0, 0, 0])
 
     def test_Data_chunk_indices(self):
@@ -2761,15 +2761,24 @@ class DataTest(unittest.TestCase):
     def test_Data_replace_filenames(self):
         """Test Data.replace_filenames."""
         f = cfdm.example_field(0)
-        cfdm.write(f, file_A)
-        d = cfdm.read(file_A, dask_chunks="128 B")[0].data
-        self.assertEqual(d.get_n_file_versions(), 1)
-        f = d.get_filenames(per_chunk=True, extra=2)
-        self.assertIsNone(d.replace_filenames(f))
-        self.assertEqual(d.get_n_file_versions(), 3)
-        g = d.get_filenames(per_chunk=True)
-        self.assertTrue(g.shape, f.shape)
-
+        cfdm.write(f[:2], file_A)
+        cfdm.write(f[2:], file_B)
+        a = cfdm.read(file_A)[0]
+        b = cfdm.read(file_B)[0]
+        d = cfdm.Data.concatenate([a.data, b.data], axis=0)
+        import pprint
+        print (d.get_filenames(normalise=False, per_chunk=True))
+        self.assertEqual(d.get_filenames(), set([file_A, file_B]))
+        self.assertEqual(d.numblocks, (2, 1))
+        new_filenames = np.array([['a'], ['b']])
+        print (new_filenames.shape)
+        self.assertIsNone(d.replace_filenames(new_filenames))
+        self.assertEqual(d.numblocks, (2, 1))
+        print (d.get_filenames(normalise=False, per_chunk=True))
+        pprint.pprint ( d.todict())
+        self.assertEqual(d.get_filenames(normalise=False), set(['a', 'b']))
+        self.assertEqual(d.get_filenames(normalise=False, per_chunk=True),
+                         np.array([[['a']], [['b']]]))
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

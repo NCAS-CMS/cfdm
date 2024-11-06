@@ -150,7 +150,7 @@ class AggregatedArray(abstract.FileArray):
                 fragment_type = None
 
             try:
-                n_file_versions = source._get__component(
+                n_file_versions = source._get_component(
                     "n_file_versions", None
                 )
             except AttributeError:
@@ -755,7 +755,7 @@ class AggregatedArray(abstract.FileArray):
         substitutions = self.get_substitutions(copy=False)
         storage_options = self.get_storage_options()
         fragment_type = self.get_fragment_type()
-        n_file_versions = self._get__component("n_file_versions", None)
+        n_file_versions = self._get_component("n_file_versions", None)
         aggregated_attributes = self.get_attributes()
         unpack = self.get_unpack()
 

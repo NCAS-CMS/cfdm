@@ -624,7 +624,7 @@ class FileArray(Array):
         """
         return self._get_component("mask")
 
-    def get_n_file_versions(self, n):
+    def get_n_file_versions(self):
         """The number of file versions.
 
         The number of versions includes any unassigned versions, that
@@ -957,28 +957,29 @@ class FileArray(Array):
 
         addresses = self.get_addresses()
         old_n_files = len(addresses)
-        if old_n_files > 1 and len(set) > 1:
+        if old_n_files > 1 and len(set(addresses)) > 1:
             raise ValueError(
-                "Can't replace a fragment's file locations when they have "
-                f"differing file identities.\n"
+                "Can't replace a fragment's file locations when the "
+                "existing files have differing file addresses.\n"
                 f"Locations: {self.get_filenames(normalise=False)}\n"
-                f"Identities: {addresses}"
+                f"Addresses: {addresses}"
             )
 
+        a = self.copy()
         filenames = np.asanyarray(filenames)
-
-        self.set_min_file_versions(filenames.size)
+        a.set_min_file_versions(filenames.size)
 
         filenames = tuple(np.ma.compressed(filenames))
         new_n_files = len(filenames)
 
-        self._set_component("filename", filenames, copy=False)
+        a._set_component("filename", filenames, copy=False)
 
         if new_n_files != old_n_files:
-            self._set_component(
+            a._set_component(
                 "address", (addresses[0],) * new_n_files, copy=False
             )
 
+        return a 
     def set_min_file_versions(self, n):
         """Set the minimum number of file versions.
 

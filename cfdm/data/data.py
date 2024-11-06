@@ -1594,6 +1594,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # CF-PYTHON: Override
         self._set_component("axes", tuple(value), copy=False)
 
+    @classmethod
     def _binary_operation(cls, data, other, method):
         """Implement binary arithmetic and comparison operations.
 
@@ -2019,11 +2020,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 graph node value.
 
             args: `tuple`, optional
-                Arguments for the *method*. No arguments (the default)
-                are specified by an empty `tuple`.
+                Positional arguments for the *method*. No arguments
+                (the default) are specified by an empty `tuple`.
 
-            kwargs: TODO, optional
-                TODO
+            kwargs: `dict` or `None`, optional
+                Keyword arguments for the *method*. No arguments (the
+                default) are specified by an empty `dict` or `None`.
 
             exceptions: `tuple` of `Exception`, optional
                 Do not change graph node values if calling its
@@ -3570,6 +3572,47 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         ]
         return product(*indices)
 
+    def chunk_positions(self):
+        """Find the shape of each chunk.
+        
+        .. versionadded:: (cfdm) NEXTVERSION
+        
+        .. seealso:: `chunk_indices`, `chunk_positions`, `chunk_shapes`
+        
+        :Parameters:
+        
+            chunks: `tuple`
+
+                The chunk sizes along each dimension, as output by
+                `dask.array.Array.chunks`.
+
+        **Examples**
+    
+        >>> chunks = ((1, 2), (9,), (4, 5, 6))
+        >>> for location in cfdm.data.utils.chunk_locations(chunks):
+        ...     print(location)
+        ...
+        ((0, 1), (0, 9), (0, 4))
+        ((0, 1), (0, 9), (4, 9))
+        ((0, 1), (0, 9), (9, 15))
+        ((1, 3), (0, 9), (0, 4))
+        ((1, 3), (0, 9), (4, 9))
+        ((1, 3), (0, 9), (9, 15))
+    
+        """
+        PPp
+        from dask.utils import cached_cumsum
+        
+        chunks = self.chunks
+
+        cumdims = [cached_cumsum(bds, initial_zero=True) for bds in chunks]
+        locations = [
+            [(s, s + dim) for s, dim in zip(starts, shapes)]
+            for starts, shapes in zip(cumdims, chunks)
+        ]
+        return product(*locations)
+
+
     @_inplace_enabled(default=False)
     def compressed(self, inplace=False):
         """Return all non-masked values in a one dimensional data array.
@@ -4969,14 +5012,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         first instantiated, as could be the case after the data has
         been subspaced.
 
-        **Implementation**
-
-        A `dask` chunk that contributes to the computed array is
-        assumed to reference data within a file if that chunk's array
-        object has a callable `get_filenames` method, the output of
-        which is added to the returned `set`.
-
-        .. seealso:: `replace_filenames`
+        .. seealso:: `replace_filenames`, `get_n_file_versions`,
+                     `set_min_file_versions`
 
         :Parameters:
 
@@ -4985,12 +5022,22 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 .. versionadded:: (cfdm) NEXTVERSION
 
             per_chunk: `bool`, optional
-                TODOCFA
+                Return a `numpy` array that provides the file names
+                that contribute to each Dask chunk. This array will
+                have the same shape as the the Dask chunks (as
+                returned by the `numblocks` attribute) with the
+                addition of a trailing dimension whose size is given
+                by `get_n_file_versions`.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
             extra: `int`, optional
-                TODOCFA
+                If *per_chunk* is True then append this number
+                (greater than or equal to zero) of empty entries to
+                the trailing file names dimension of the returned
+                `numpy` array. By default *extra* is ``0``, meaning
+                that no extra entries are appended. Ignored if
+                *per_chunk* is False.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -5038,6 +5085,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             # --------------------------------------------------------
             # Return filenames in a numpy array
             # --------------------------------------------------------
+            extra = int(extra)
+            if extra < 0:
+                raise ValueError("'extra' must be a non-negative integer")
+                
             out = []
             append = out.append
 
@@ -5214,7 +5265,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `get_filenames`, `get_n_file_versions,
+        .. seealso:: `get_filenames`, `set_min_file_versions,
                      `replace_filenames`
 
         :Returns:
@@ -5240,7 +5291,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             _apply_mask_hardness=False, _asanyarray=False
         ).values():
             try:
-                n = max(n, a.get_max_file_versions())
+                n = max(n, a.get_n_file_versions())
             except AttributeError:
                 pass
 
@@ -6232,18 +6283,23 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def replace_filenames(self, filenames):
         """Replace each fragment's file locations in-place.
 
-        TODOCFA
+        A fragment is a part of the data array that is stored in a
+        file.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `get_filenames`
+        .. seealso:: `get_filenames`, `get_n_file_versions`,
+                     `set_min_file_versions`
 
         :Parameters:
 
              filenames: array_like
-                 TODOCFA. It must either have the same shape as the
-                 Dask chunks, or may also include an extra trailing
-                 dimension for diofferent file location versions.
+                 The replacement file names. It must either have the
+                 same shape as the Dask chunks (as returned by the
+                 `numblocks` attribute), or may also include an extra
+                 trailing dimension for different file location
+                 versions. Any output from the `get_filenames` method
+                 with ``per_chunk=True`` is guaranteed to work.
 
         :Returns:
 
@@ -6255,7 +6311,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         filenames = np.asanyarray(filenames)
-        filenames.set_fill_value("")
+        if np.ma.isMA(filenames):
+            filenames.set_fill_value("")
+            
         filenames_shape = filenames.shape
 
         ndim = self.ndim
@@ -6286,6 +6344,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 except AttributeError:
                     pass
                 else:
+                    print (index, filenames[index], key)
                     if updated:
                         raise ValueError(
                             "Can't replace the file locations for the Dask "
@@ -6487,16 +6546,19 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         :Parameters:
 
              n: `int`
-                The new minimum number.
+                The new minimum number (greater than or equal to
+                zero).
 
         :Returns:
 
             `None`
 
         """
-        d = _inplace_enabled_define_and_cleanup(self)
-        d._modify_dask_graph("set_min_file_versions", n)
-        return d
+        n = int(n)
+        if n < 0:
+            raise ValueError("'n' must be a non-negative integer")
+       
+        self._modify_dask_graph("set_min_file_versions", (n,))
 
     def set_units(self, value):
         """Set the units.

@@ -44,7 +44,7 @@ class FragmentFileArray(
         shape=None,
         storage_options=None,
         substitutions=None,
-        n_file_versions=None,
+        min_file_versions=None,
         unpack_aggregated_data=True,
         aggregated_attributes=None,
         aggregation_file_directory=None,
@@ -100,7 +100,7 @@ class FragmentFileArray(
             attributes=None,
             storage_options=storage_options,
             substitutions=substitutions,
-            n_file_versions=n_file_versions,
+            min_file_versions=min_file_versions,
             source=source,
             copy=copy,
         )
