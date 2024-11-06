@@ -213,22 +213,10 @@ class NetCDF4Array(
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
-        TODODASK
+        The subspace is defined by the `index` attributes, and is
+        applied with `cfdm.netcdf_indexer`.
 
-        The indices that define the subspace must be a sequence that
-        contains an index for each dimension.
-
-        Indexing is similar to numpy indexing. The only difference to
-        numpy indexing (given the restrictions on the type of indices
-        allowed) is:
-
-          * When two or more dimension's indices are sequences of integers
-            then these indices work independently along each dimension
-            (similar to the way vector subscripts work in Fortran).
-
-        .. versionadded:: (cfdm) 1.7.0
-
-        .. versionadded:: NEXTVERSION
+        .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `__array__`, `index`
 
@@ -245,15 +233,9 @@ class NetCDF4Array(
         if index is None:
             index = self.index()
 
-        # Note: We need to lock because the netCDF file is about to be
-        #       accessed.
+        # Note: We need to lock because netCDF-C is about to access
+        #       the file.
         self._lock.acquire()
-
-        # # Note: It's cfdm.NetCDFArray.__getitem__ that we want to call
-        # #       here, but we use 'Container' in super because that
-        # #       comes immediately before cfdm.NetCDFArray in the
-        # #       method resolution order.
-        # array = super(Container, self).__getitem__(index)
 
         netcdf, address = self.open()
         dataset = netcdf

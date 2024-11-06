@@ -88,25 +88,21 @@ class FunctionsTest(unittest.TestCase):
 
     def test_atol_rtol(self):
         """Test the atol and rtol functions."""
-        org = cfdm.RTOL()
-        self.assertEqual(cfdm.RTOL(1e-5), org)
-        self.assertEqual(cfdm.RTOL(), 1e-5)
-        self.assertEqual(cfdm.RTOL(org), 1e-5)
-        self.assertEqual(cfdm.RTOL(), org)
-
-        org = cfdm.ATOL()
-        self.assertEqual(cfdm.ATOL(1e-5), org)
-        self.assertEqual(cfdm.ATOL(), 1e-5)
-        self.assertEqual(cfdm.ATOL(org), 1e-5)
-        self.assertEqual(cfdm.ATOL(), org)
+        org = cfdm.rtol()
+        self.assertEqual(cfdm.rtol(1e-5), org)
+        self.assertEqual(cfdm.rtol(), 1e-5)
+        self.assertEqual(cfdm.rtol(org), 1e-5)
+        self.assertEqual(cfdm.rtol(), org)
 
         org = cfdm.atol()
-        self.assertTrue(org == cfdm.ATOL())  # check alias
+        self.assertEqual(cfdm.atol(1e-5), org)
+        self.assertEqual(cfdm.atol(), 1e-5)
+        self.assertEqual(cfdm.atol(org), 1e-5)
+        self.assertEqual(cfdm.atol(), org)
 
-        self.assertTrue(cfdm.atol(1e-5) == org)
-        self.assertTrue(cfdm.atol() == 1e-5)
-        self.assertTrue(cfdm.atol(org) == 1e-5)
-        self.assertTrue(cfdm.atol() == org)
+        # Check aliases
+        self.assertTrue(cfdm.atol() == cfdm.ATOL())
+        self.assertTrue(cfdm.rtol() == cfdm.RTOL())
 
     def test_log_level(self):
         """Test the `log_level` function."""
@@ -373,6 +369,10 @@ class FunctionsTest(unittest.TestCase):
             raise RuntimeError(
                 "A ValueError should have been raised, but wasn't"
             )
+
+        # Reset configuration
+        cfdm.configuration(**org)
+        self.assertEqual(cfdm.configuration(), org)
 
     def test_unique_constructs(self):
         """Test the `unique_constructs` function."""

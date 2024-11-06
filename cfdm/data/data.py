@@ -645,8 +645,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         If the shape of the data is unknown then it is calculated
         immediately by executing all delayed operations.
 
-        . seealso:: `__keepdims_indexing__`,
-                    `__orthogonal_indexing__`, `__setitem__`
+        .. seealso:: `__keepdims_indexing__`,
+                     `__orthogonal_indexing__`, `__setitem__`
 
         :Returns:
 
@@ -1399,7 +1399,6 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-
         >>> d = {{package}}.{{class}}([1, 2, 3])
         >>> a = numpy.array(d)
         >>> print(type(a))
@@ -1439,8 +1438,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
     @property
     def __keepdims_indexing__(self):
-        """Flag to indicate whether dimensions indexed with integers are
-        kept.
+        """Flag indicating if dimensions indexed with integers are kept.
 
         If set to True (the default) then providing a single integer
         as a single-axis index does *not* reduce the number of array
@@ -1585,11 +1583,11 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
     @classmethod
     def _binary_operation(cls, data, other, method):
-        """Implement binary arithmetic and comparison operations with
-        the numpy broadcasting rules.
+        """Binary arithmetic and comparison operations.
 
-        It is called by the binary arithmetic and comparison
-        methods, such as `__sub__`, `__imul__`, `__rdiv__`, `__lt__`, etc.
+        It is called by the binary (i.e. two operands) arithmetic and
+        comparison methods, such as `__sub__`, `__imul__`, `__rdiv__`,
+        `__lt__`, etc.
 
         .. seealso:: `_unary_operation`
 
@@ -1727,7 +1725,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `None`
+            `int` TODODASK
 
         """
         if clear is None:
@@ -1735,7 +1733,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
             clear = self._ALL
 
         if not clear:
-            return
+            return clear
 
         if clear & self._ARRAY:
             # Delete a source array
@@ -1744,6 +1742,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         if clear & self._CACHE:
             # Delete cached element values
             self._del_cached_elements()
+
+        return clear
 
     def _del_cached_elements(self):
         """Delete any cached element values.

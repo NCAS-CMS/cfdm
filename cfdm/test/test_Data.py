@@ -2323,15 +2323,15 @@ class DataTest(unittest.TestCase):
         """Test Data._atol."""
         d = cfdm.Data(1)
         self.assertEqual(d._atol, cfdm.atol())
-        cfdm.atol(0.001)
-        self.assertEqual(d._atol, 0.001)
+        with cfdm.atol(0.001):
+            self.assertEqual(d._atol, 0.001)
 
     def test_Data__rtol(self):
         """Test Data._rtol."""
         d = cfdm.Data(1)
         self.assertEqual(d._rtol, cfdm.rtol())
-        cfdm.rtol(0.001)
-        self.assertEqual(d._rtol, 0.001)
+        with cfdm.rtol(0.001):
+            self.assertEqual(d._rtol, 0.001)
 
     def test_Data_compressed_array(self):
         """Test Data.compressed_array."""

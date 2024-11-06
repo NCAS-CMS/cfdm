@@ -166,6 +166,9 @@ class H5netcdfArray(
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
+        The subspace is defined by the `index` attributes, and is
+        applied with `cfdm.netcdf_indexer`.
+
         .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `__array__`, `index`
@@ -183,15 +186,9 @@ class H5netcdfArray(
         if index is None:
             index = self.index()
 
-        # Note: We need to lock because the netCDF file is about to be
-        #       accessed.
+        # Note: We need to lock because HDF5 is about to access the
+        #       file.
         self._lock.acquire()
-
-        # # Note: It's cfdm.H5netcdfArray.__getitem__ that we want to
-        # #       call here, but we use 'Container' in super because
-        # #       that comes immediately before cfdm.H5netcdfArray in
-        # #       the method resolution order.
-        # array = super(Container, self).__getitem__(index)
 
         dataset, address = self.open()
         dataset0 = dataset

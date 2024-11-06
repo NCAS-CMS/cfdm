@@ -220,7 +220,10 @@ class IndexMixin:
         return True
 
     def _get_array(self, index=None):
-        """Returns a subspace of the data as a `numpy` array.
+        """Returns a subspace of the dataset variable.
+
+        The subspace is defined by the `index` attributes, and is
+        applied with `cfdm.netcdf_indexer`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -228,9 +231,7 @@ class IndexMixin:
 
         :Parameters:
 
-            index: `tuple` or `None`, optional
-                Provide the indices that define the subspace. If
-                `None` then the `index` attribute is used.
+            {{index: `tuple` or `None`, optional}}
 
         :Returns:
 

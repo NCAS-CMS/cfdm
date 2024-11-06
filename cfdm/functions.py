@@ -1478,7 +1478,19 @@ class chunksize(ConstantAccess):
 
     **Examples**
 
-    >>> TODODASK
+    >>> print(cfdm.chunksize())
+    134217728
+    >>> old = cfdm.chunksize(1000000)
+    >>> print(cfdm.chunksize(old))
+    1000000
+    >>> print(cfdm.chunksize())
+    134217728
+    >>> with cfdm.chunksize(314159):
+    ...     print(cfdm.chunksize())
+    ...
+    314159
+    >>> print(cfdm.chunksize())
+    134217728
 
     """
 
