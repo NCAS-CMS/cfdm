@@ -193,6 +193,7 @@ from .constructs import Constructs
 
 from .data import (
     Array,
+    AggregatedArray,
     BoundsFromNodesArray,
     CellConnectivityArray,
     CompressedArray,

@@ -882,6 +882,255 @@ class PropertiesData(Properties):
 
         return v
 
+    def nc_aggregation_substitutions(self):
+        """Return the netCDF aggregation substitution definitions.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_aggregation_substitutions`,
+                     `nc_del_aggregation_substitution`,
+                     `nc_update_aggregation_substitutions`
+
+        :Returns:
+
+            `dict`
+                {{Returns nc_aggregation_substitutions}}
+
+        **Examples**
+
+        >>> f.nc_aggregation_substitutions()
+        {}
+        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/'}
+        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': '/new/path/', '${base2}': '/home/data/'}
+        >>> f.nc_del_aggregation_substitution('${base}')
+        {'${base}': '/new/path/'}
+        >>> f.nc_clear_aggregation_substitutions()
+        {'${base2}': '/home/data/'}
+        >>> f.nc_aggregation_substitutions()
+        {}
+        >>> f.nc_clear_aggregation_substitutions()
+        {}
+        >>> print(f.nc_del_aggregation_substitution('base'))
+        None
+
+        """
+        data = self.get_data(None)
+        if data is None:
+            return {}
+
+        return data.nc_aggregation_substitutions()
+
+    def nc_clear_aggregation_substitutions(self):
+        """Remove all netCDF aggregation substitution definitions.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_aggregation_substitution`,
+                     `nc_aggregation_substitutions`,
+                     `nc_update_aggregation_substitutions`
+
+        :Returns:
+
+            `dict`
+                {{Returns nc_clear_aggregation_substitutions}}
+
+        **Examples**
+
+        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/'}
+        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': '/new/path/', '${base2}': '/home/data/'}
+        >>> f.nc_del_aggregation_substitution('${base}')
+        {'${base}': '/new/path/'}
+        >>> f.nc_clear_aggregation_substitutions()
+        {'${base2}': '/home/data/'}
+        >>> f.nc_aggregation_substitutions()
+        {}
+        >>> f.nc_clear_aggregation_substitutions()
+        {}
+        >>> print(f.nc_del_aggregation_substitution('base'))
+        None
+
+        """
+        data = self.get_data(None)
+        if data is None:
+            return {}
+
+        return data.nc_clear_aggregation_substitutions()
+
+    def nc_del_aggregation_substitution(self, base):
+        """Remove a netCDF aggregation substitution definition.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_aggregation_substitutions`,
+                     `nc_aggregation_substitutions`,
+                     `nc_update_aggregation_substitutions`
+
+        :Parameters:
+
+            {{cfa substitution: `str`}}
+
+        :Returns:
+
+            `dict`
+                {{Returns nc_del_aggregation_substitution}}
+
+        **Examples**
+
+        >>> f.nc_aggregation_substitutions()
+        {}
+        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/'}
+        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': '/new/path/', '${base2}': '/home/data/'}
+        >>> f.nc_del_aggregation_substitution('${base}')
+        {'${base}': '/new/path/'}
+        >>> f.nc_clear_aggregation_substitutions()
+        {'${base2}': '/home/data/'}
+        >>> f.nc_aggregation_substitutions()
+        {}
+        >>> f.nc_clear_aggregation_substitutions()
+        {}
+        >>> print(f.nc_del_aggregation_substitution('base'))
+        {}
+
+        """
+        data = self.get_data(None)
+        if data is None:
+            return {}
+
+        return data.nc_del_aggregation_substitution(base)
+
+    def nc_clear_hdf5_chunksizes(self):
+        """Clear the HDF5 chunking strategy for the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
+                     `{{package}}.read`, `{{package}}.write`
+
+        :Returns:
+
+            `None` or `str` or `int` or `tuple` of `int`
+                The chunking strategy prior to being cleared, as would
+                be returned by `nc_hdf5_chunksizes`.
+
+        """
+        data = self.get_data(None, _units=False, _fill_value=False)
+        if data is not None:
+            return data.nc_clear_hdf5_chunksizes()
+
+    def nc_hdf5_chunksizes(self, todict=False):
+        """Get the HDF5 chunking strategy for the data.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_hdf5_chunksizes`,
+                     `nc_set_hdf5_chunksizes`, `{{package}}.read`,
+                     `{{package}}.write`
+
+        :Parameters:
+
+            {{hdf5 todict: `bool`, optional}}
+
+        :Returns:
+
+            {{Returns nc_hdf5_chunksizes}}
+
+        """
+        data = self.get_data(None, _units=False, _fill_value=False)
+        if data is not None:
+            return data.nc_hdf5_chunksizes(todict=todict)
+
+    def nc_set_hdf5_chunksizes(self, chunksizes):
+        """Set the HDF5 chunking strategy.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
+                     `{{package}}.read`, `{{package}}.write`
+
+        :Parameters:
+
+            {{hdf5 chunksizes}}
+                  Each dictionary key is an integer that specifies an
+                  axis by its position in the data array.
+
+        :Returns:
+
+            `None`
+
+        """
+        data = self.get_data(None, _units=False, _fill_value=False)
+        if data is not None:
+            data.nc_set_hdf5_chunksizes(chunksizes)
+
+    def nc_update_aggregation_substitutions(self, substitutions):
+        """Update the netCDF aggregation substitution definitions.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_aggregation_substitutions`,
+                     `nc_del_aggregation_substitution`,
+                     `nc_aggregation_substitutions`,
+
+        :Parameters:
+
+            {{cfa substitutions: `dict`}}
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d.nc_aggregation_substitutions()
+        {}
+        >>> d.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+        >>> d.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/'}
+        >>> d.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+        >>> d.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+        >>> d.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+        >>> d.nc_aggregation_substitutions()
+        {'${base}': '/new/path/', '${base2}': '/home/data/'}
+        >>> d.nc_del_aggregation_substitution('${base}')
+        {'${base}': '/new/path/'}
+        >>> d.nc_clear_aggregation_substitutions()
+        {'${base2}': '/home/data/'}
+        >>> d.nc_aggregation_substitutions()
+        {}
+        >>> d.nc_clear_aggregation_substitutions()
+        {}
+        >>> print(d.nc_del_aggregation_substitution('base'))
+        None
+
+        """
+        data = self.get_data(None)
+        if data is None:
+            return
+
+        return data.nc_upate_aggregation_substitutions(substitutions)
+
     def replace_file_directory(self, old_directory, new_directory):
         """Replace a file directory in-place.
 
@@ -921,70 +1170,6 @@ class PropertiesData(Properties):
             return data.replace_file_directory(old_directory, new_directory)
 
         return dirname(new_directory)
-
-    def nc_hdf5_chunksizes(self, todict=False):
-        """Get the HDF5 chunking strategy for the data.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `nc_clear_hdf5_chunksizes`,
-                     `nc_set_hdf5_chunksizes`, `{{package}}.read`,
-                     `{{package}}.write`
-
-        :Parameters:
-
-            {{hdf5 todict: `bool`, optional}}
-
-        :Returns:
-
-            {{Returns nc_hdf5_chunksizes}}
-
-        """
-        data = self.get_data(None, _units=False, _fill_value=False)
-        if data is not None:
-            return data.nc_hdf5_chunksizes(todict=todict)
-
-    def nc_clear_hdf5_chunksizes(self):
-        """Clear the HDF5 chunking strategy for the data.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `nc_hdf5_chunksizes`, `nc_set_hdf5_chunksizes`,
-                     `{{package}}.read`, `{{package}}.write`
-
-        :Returns:
-
-            `None` or `str` or `int` or `tuple` of `int`
-                The chunking strategy prior to being cleared, as would
-                be returned by `nc_hdf5_chunksizes`.
-
-        """
-        data = self.get_data(None, _units=False, _fill_value=False)
-        if data is not None:
-            return data.nc_clear_hdf5_chunksizes()
-
-    def nc_set_hdf5_chunksizes(self, chunksizes):
-        """Set the HDF5 chunking strategy.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `nc_hdf5_chunksizes`, `nc_clear_hdf5_chunksizes`,
-                     `{{package}}.read`, `{{package}}.write`
-
-        :Parameters:
-
-            {{hdf5 chunksizes}}
-                  Each dictionary key is an integer that specifies an
-                  axis by its position in the data array.
-
-        :Returns:
-
-            `None`
-
-        """
-        data = self.get_data(None, _units=False, _fill_value=False)
-        if data is not None:
-            data.nc_set_hdf5_chunksizes(chunksizes)
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):

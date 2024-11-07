@@ -2980,7 +2980,7 @@ class NetCDFWrite(IOWrite):
                 if dims[ncdim].isunlimited():
                     raise ValueError(
                         f"Can't write aggregation variable {ncvar!r} with "
-                        f"unlimited agregated dimension {ncdim!r}"
+                        f"unlimited aggregated dimension {ncdim!r}"
                     )
 
             self._create_cfa_data(
@@ -5895,7 +5895,7 @@ class NetCDFWrite(IOWrite):
         :Parameters:
 
              data: `Data`
-                The data
+                The data.
 
         :Returns:
 
@@ -5917,7 +5917,11 @@ class NetCDFWrite(IOWrite):
         ).values():
             try:
                 out_append(
-                    (a.get_filenames(normalise=False), a.get_addresses())
+                    (
+                        a.get_filenames(normalise=False),
+                        a.get_addresses(),
+                        a.get_n_file_versions(),
+                    )
                 )
             except AttributeError:
                 pass
@@ -6022,10 +6026,10 @@ class NetCDFWrite(IOWrite):
                         "fragment file."
                     )
 
-                filenames, addresses = file_details.pop()
+                filenames, addresses, n_file_versions = file_details.pop()
 
-                if len(filenames) > n_trailing:
-                    n_trailing = len(filenames)
+                if n_file_versions > n_trailing:
+                    n_trailing = n_file_versions
 
                 filenames2 = []
                 for filename in filenames:
@@ -6140,6 +6144,7 @@ class NetCDFWrite(IOWrite):
                     np.ma.masked,
                     aggregation_location,
                 )
+                aggregation_location.set_filled_value("")
                 mask = aggregation_location.mask
                 aggregation_address = np.ma.array(
                     aggregation_address, mask=mask

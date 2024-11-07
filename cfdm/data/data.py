@@ -5134,9 +5134,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                             except AttributeError:
                                 n_file_versions = len(filenames)
 
-                            n_files_per_chunk = max(
-                                n_files_per_chunk, n_file_versions
-                            )
+                            if n_file_versions > n_files_per_chunk:
+                                n_files_per_chunk = n_file_versions
 
             array = np.ma.masked_all(
                 self.numblocks + (n_files_per_chunk + extra,),

@@ -1081,6 +1081,196 @@ class Domain(
 
         return out
 
+    def nc_aggregation_substitutions(self):
+        """Return the netCDF aggregation substitution definitions.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_aggregation_substitutions`,
+                     `nc_del_aggregation_substitution`,
+                     `nc_update_aggregation_substitutions`
+
+        :Returns:
+
+            `dict`
+                {{Returns nc_aggregation_substitutions}}
+
+        **Examples**
+
+        >>> f.nc_aggregation_substitutions()
+        {}
+        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/'}
+        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': '/new/path/', '${base2}': '/home/data/'}
+        >>> f.nc_del_aggregation_substitution('${base}')
+        {'${base}': '/new/path/'}
+        >>> f.nc_clear_aggregation_substitutions()
+        {'${base2}': '/home/data/'}
+        >>> f.nc_aggregation_substitutions()
+        {}
+        >>> f.nc_clear_aggregation_substitutions()
+        {}
+        >>> print(f.nc_del_aggregation_substitution('base'))
+        None
+
+        """
+        out = {}
+        for c in self.constructs.filter_by_data(todict=True).values():
+            out.update(c.nc_aggregation_substitutions())
+
+        return out
+
+    def nc_clear_aggregation_substitutions(
+        self,
+    ):
+        """Remove all netCDF aggregation substitution definitions.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_aggregation_substitution`,
+                     `nc_aggregation_substitutions`,
+                     `nc_update_aggregation_substitutions`
+
+        :Returns:
+
+            `dict`
+                {{Returns nc_clear_aggregation_substitutions}}
+
+        **Examples**
+
+        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/'}
+        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': '/new/path/', '${base2}': '/home/data/'}
+        >>> f.nc_del_aggregation_substitution('${base}')
+        {'${base}': '/new/path/'}
+        >>> f.nc_clear_aggregation_substitutions()
+        {'${base2}': '/home/data/'}
+        >>> f.nc_aggregation_substitutions()
+        {}
+        >>> f.nc_clear_aggregation_substitutions()
+        {}
+        >>> print(f.nc_del_aggregation_substitution('base'))
+        None
+
+        """
+        out = {}
+        for c in self.constructs.filter_by_data(todict=True).values():
+            out.update(c.nc_upate_aggregation_substitutions(substitutions))
+
+        return out
+
+    def nc_del_aggregation_substitution(
+        self,
+        base,
+    ):
+        """Remove a netCDF aggregation substitution definition.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_aggregation_substitutions`,
+                     `nc_aggregation_substitutions`,
+                     `nc_update_aggregation_substitutions`
+
+        :Parameters:
+
+            {{cfa substitution: `str`}}
+
+        :Returns:
+
+            `dict`
+                {{Returns nc_del_aggregation_substitution}}
+
+        **Examples**
+
+        >>> f.nc_aggregation_substitutions()
+        {}
+        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/'}
+        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': '/new/path/', '${base2}': '/home/data/'}
+        >>> f.nc_del_aggregation_substitution('${base}')
+        {'${base}': '/new/path/'}
+        >>> f.nc_clear_aggregation_substitutions()
+        {'${base2}': '/home/data/'}
+        >>> f.nc_aggregation_substitutions()
+        {}
+        >>> f.nc_clear_aggregation_substitutions()
+        {}
+        >>> print(f.nc_del_aggregation_substitution('base'))
+        {}
+
+        """
+        out = {}
+        for c in self.constructs.filter_by_data(todict=True).values():
+            out.update(c.nc_del_aggregation_substitution(base))
+
+        return out
+
+    def nc_update_aggregation_substitutions(
+        self,
+        substitutions,
+    ):
+        """Update the netCDF aggregation substitution definitions.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_aggregation_substitutions`,
+                     `nc_del_aggregation_substitution`,
+                     `nc_aggregation_substitutions`,
+
+        :Parameters:
+
+            {{cfa substitutions: `dict`}}
+
+        :Returns:
+
+            `None`
+
+        **Examples**
+
+        >>> d.nc_aggregation_substitutions()
+        {}
+        >>> d.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+        >>> d.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/'}
+        >>> d.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+        >>> d.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+        >>> d.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+        >>> d.nc_aggregation_substitutions()
+        {'${base}': '/new/path/', '${base2}': '/home/data/'}
+        >>> d.nc_del_aggregation_substitution('${base}')
+        {'${base}': '/new/path/'}
+        >>> d.nc_clear_aggregation_substitutions()
+        {'${base2}': '/home/data/'}
+        >>> d.nc_aggregation_substitutions()
+        {}
+        >>> d.nc_clear_aggregation_substitutions()
+        {}
+        >>> print(d.nc_del_aggregation_substitution('base'))
+        None
+
+        """
+        for c in self.constructs.filter_by_data(todict=True).values():
+            c.nc_upate_aggregation_substitutions(substitutions)
+
     @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
         """Uncompress the domain construct.
