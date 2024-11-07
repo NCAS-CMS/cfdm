@@ -2432,13 +2432,22 @@ class DataTest(unittest.TestCase):
             (f == [[[file_A], [file_A]], [[file_A], [file_A]]]).all()
         )
 
+        # Extra
         self.assertEqual(np.ma.count(f), 4)
         self.assertEqual(np.unique(f), f[0, 0, 0])
         f = d.get_filenames(per_chunk=True, extra=2)
         self.assertEqual(f.shape, d.numblocks + (3,))
         self.assertEqual(np.ma.count(f), 4)
         self.assertEqual(np.unique(f.compressed()), f[0, 0, 0])
-        # TODOCFA: test min_file_versions
+
+        # min_file_versions
+        f = d.get_filenames(per_chunk=True, min_file_versions=2)
+        self.assertEqual(f.shape, d.numblocks + (2,))
+        self.assertEqual(np.ma.count(f), 4)    
+        self.assertEqual(np.unique(f.compressed()), f[0, 0, 0])
+        
+        f = d.get_filenames(per_chunk=True, min_file_versions=2, extra=1)
+        self.assertEqual(f.shape, d.numblocks + (3,))
         
     def test_Data_chunk_indices(self):
         """Test Data.chunk_indices."""
