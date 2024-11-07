@@ -162,6 +162,26 @@ class FileArray(Array):
         # By default, close the netCDF file after data array access
         self._set_component("close", True, copy=False)
 
+    def __getitem__(self, indices):
+        """Return a subspace of the array.
+
+        x.__getitem__(indices) <==> x[indices]
+
+        Returns a subspace of the array as an independent numpy array.
+
+        """
+        raise NotImplementedError(
+            f"Must implement {self.__class__.__name__}.__getitem__"
+        )  # pragma: no cover
+
+    def __repr__(self):
+        """x.__repr__() <==> repr(x)"""
+        return f"<CF {self.__class__.__name__}{self.shape}: {self}>"
+
+    def __str__(self):
+        """x.__str__() <==> str(x)"""
+        return f"{self.get_filename()}, {self.get_address()}"
+
     def __dask_tokenize__(self):
         """Return a value fully representative of the object.
 

@@ -289,7 +289,7 @@ class PropertiesDataBounds(PropertiesData):
         return out
 
     def add_file_directory(self, directory):  # noqa: D102
-        # Docstring is inherited
+        """TODOCFA."""
         directory = super().add_file_directory(directory)
 
         bounds = self.get_bounds(None)
@@ -1700,7 +1700,7 @@ class PropertiesDataBounds(PropertiesData):
 
         """
         out = {}
-        
+
         # Bounds
         if bounds:
             bounds = self.get_bounds(None)

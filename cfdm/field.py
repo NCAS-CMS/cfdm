@@ -2850,7 +2850,7 @@ class Field(
         out = super().nc_clear_aggregation_substitutions()
 
         for c in self.constructs.filter_by_data(todict=True).values():
-            out.update(c.nc_upate_aggregation_substitutions(substitutions))
+            out.update(c.nc_clear_aggregation_substitutions())
 
         return out
 
