@@ -51,10 +51,6 @@ from .utils import (
     new_axis_identifier,
 )
 
-# from .utils import chunk_indices as utils_chunk_indices
-# rom .utils import chunk_positions as utils_chunk_positions#
-
-
 logger = logging.getLogger(__name__)
 
 
@@ -663,8 +659,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         If the shape of the data is unknown then it is calculated
         immediately by executing all delayed operations.
 
-        . seealso:: `__keepdims_indexing__`,
-                    `__orthogonal_indexing__`, `__setitem__`
+        .. seealso:: `__keepdims_indexing__`,
+                     `__orthogonal_indexing__`, `__setitem__`
 
         :Returns:
 
@@ -1417,7 +1413,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         **Examples**
 
-
         >>> d = {{package}}.{{class}}([1, 2, 3])
         >>> a = numpy.array(d)
         >>> print(type(a))
@@ -1602,10 +1597,11 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
     @classmethod
     def _binary_operation(cls, data, other, method):
-        """Implement binary arithmetic and comparison operations.
+        """Binary arithmetic and comparison operations.
 
-        It is called by the binary arithmetic and comparison
-        methods, such as `__sub__`, `__imul__`, `__rdiv__`, `__lt__`, etc.
+        It is called by the binary (i.e. two operands) arithmetic and
+        comparison methods, such as `__sub__`, `__imul__`, `__rdiv__`,
+        `__lt__`, etc.
 
         .. seealso:: `_unary_operation`
 
@@ -1743,7 +1739,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `None`
+            `int` TODODASK
 
         """
         if clear is None:
@@ -1751,7 +1747,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             clear = self._ALL
 
         if not clear:
-            return
+            return clear
 
         if clear & self._ARRAY:
             # Delete a source array
@@ -1764,6 +1760,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         if clear & self._CFA:
             # Set the aggregation write status to False
             self.nc_del_aggregation_write_status()
+
+        return clear
 
     @classmethod
     def _concatenate_conform_units(cls, data1, units0, relaxed_units, copy):
@@ -3569,17 +3567,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """
         return chunk_indices(self.chunks)
 
-    #        from dask.utils import cached_cumsum
-    #
-    #        chunks = self.chunks
-    #
-    #        cumdims = [cached_cumsum(bds, initial_zero=True) for bds in chunks]
-    #        indices = [
-    #            [slice(s, s + dim) for s, dim in zip(starts, shapes)]
-    #            for starts, shapes in zip(cumdims, chunks)
-    #        ]
-    #        return product(*indices)
-
     def chunk_positions(self):
         """Find the position of each chunk.
 
@@ -5003,7 +4990,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 "tie point index variables",
             )
 
-    def get_filenames(self, normalise=True, per_chunk=False, min_file_versions=1, extra=0):
+    def get_filenames(
+        self, normalise=True, per_chunk=False, min_file_versions=1, extra=0
+    ):
         """The names of files containing parts of the data array.
 
         Returns the names of any files that may be required to deliver
@@ -5097,7 +5086,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         >>> print(filenames)
         [[['file.nc' -- -- -- --]
           ['file.nc' -- -- -- --]]
-                                 
+
          [['file.nc' -- -- -- --]
           ['file.nc' -- -- -- --]]]
 

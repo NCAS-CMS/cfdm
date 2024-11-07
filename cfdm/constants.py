@@ -28,6 +28,9 @@ retrieve and set the values with the dedicated get-and-set functions.
       The minimal level of seriousness for which log messages are
       shown.  See `cfdm.log_level`.
 
+    CHUNKSIZE: `int`
+      The Dask chunk size (in bytes). See `cfdm.chunksize`.
+
 """
 CONSTANTS = {
     "ATOL": sys.float_info.epsilon,

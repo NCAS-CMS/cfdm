@@ -17,7 +17,7 @@ class FragmentH5netcdfArray(FragmentArrayMixin, H5netcdfArray):
         shape=None,
         storage_options=None,
         substitutions=None,
-        n_file_versions=None,
+        min_file_versions=None,
         unpack_aggregated_data=True,
         aggregated_attributes=None,
         source=None,
@@ -75,7 +75,7 @@ class FragmentH5netcdfArray(FragmentArrayMixin, H5netcdfArray):
             attributes=None,
             storage_options=storage_options,
             substitutions=substitutions,
-            n_file_versions=n_file_versions,
+            min_file_versions=min_file_versions,
             source=source,
             copy=copy,
         )

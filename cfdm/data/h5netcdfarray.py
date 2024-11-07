@@ -32,6 +32,9 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
+        The subspace is defined by the `index` attributes, and is
+        applied with `cfdm.netcdf_indexer`.
+
         .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `__array__`, `index`

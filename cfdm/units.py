@@ -23,10 +23,10 @@ class Units(metaclass=DocstringRewriteMeta):
     """
 
     def __new__(cls, *args, **kwargs):
-        """TODODASK."""
+        """Return a new new Units instance."""
         return cfUnits(*args, **kwargs)
 
     @staticmethod
     def conform(*args, **kwargs):
-        """TODODASK."""
+        """Conform values to equivalent values in a compatible unit."""
         return cfUnits.conform(*args, **kwargs)

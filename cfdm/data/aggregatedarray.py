@@ -325,6 +325,7 @@ class AggregatedArray(abstract.FileArray):
                     fragment_array_indices, fragment_shapes
                 )
             }
+            n_file_versions = None
 
         return (
             aggregated_shape,

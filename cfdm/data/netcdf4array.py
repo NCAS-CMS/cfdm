@@ -28,18 +28,8 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.
 
-        TODODASK
-
-        The indices that define the subspace must be a sequence that
-        contains an index for each dimension.
-
-        Indexing is similar to numpy indexing. The only difference to
-        numpy indexing (given the restrictions on the type of indices
-        allowed) is:
-
-          * When two or more dimension's indices are sequences of integers
-            then these indices work independently along each dimension
-            (similar to the way vector subscripts work in Fortran).
+        The subspace is defined by the `index` attributes, and is
+        applied with `cfdm.netcdf_indexer`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
