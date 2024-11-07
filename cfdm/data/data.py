@@ -5132,7 +5132,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                             try:
                                 n_file_versions = a.get_n_file_versions()
                             except AttributeError:
-                                n_file_versions = n_files_per_chunk
+                                n_file_versions = len(filenames)
 
                             n_files_per_chunk = max(
                                 n_files_per_chunk, n_file_versions

@@ -12,6 +12,8 @@ import cfdm
 
 
 class DataUtilsTest(unittest.TestCase):
+    """Test Data utilities."""
+
     def test_Data_utils_allclose(self):
         """TODO."""
         # Create a range of inputs to test against.  Note that 'a' and
