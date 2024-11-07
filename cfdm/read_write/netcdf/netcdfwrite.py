@@ -5912,7 +5912,9 @@ class NetCDFWrite(IOWrite):
         """
         out = []
         out_append = out.append
-        for a in data.todict().values():
+        for a in data.todict(
+            _apply_mask_hardness=False, _asanyarray=False
+        ).values():
             try:
                 out_append(
                     (a.get_filenames(normalise=False), a.get_addresses())

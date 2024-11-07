@@ -979,7 +979,8 @@ class FileArray(Array):
                 "address", (addresses[0],) * new_n_files, copy=False
             )
 
-        return a 
+        return a
+
     def set_min_file_versions(self, n):
         """Set the minimum number of file versions.
 

@@ -40,6 +40,8 @@ from .dask_utils import (
 )
 from .utils import (
     allclose,
+    chunk_indices,
+    chunk_positions,
     collapse,
     convert_to_datetime,
     convert_to_reftime,
@@ -48,6 +50,10 @@ from .utils import (
     is_numeric_dtype,
     new_axis_identifier,
 )
+
+# from .utils import chunk_indices as utils_chunk_indices
+# rom .utils import chunk_positions as utils_chunk_positions#
+
 
 logger = logging.getLogger(__name__)
 
@@ -3533,11 +3539,11 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         return d
 
     def chunk_indices(self):
-        """Return indices that define each dask chunk.
+        """Return indices of the data that define each dask chunk.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `chunks`
+        .. seealso:: `chunks`, `chunk_positions`
 
         :Returns:
 
@@ -3561,57 +3567,51 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         (slice(1, 3, None), slice(0, 9, None), slice(9, 15, None))
 
         """
-        from dask.utils import cached_cumsum
+        return chunk_indices(self.chunks)
 
-        chunks = self.chunks
-
-        cumdims = [cached_cumsum(bds, initial_zero=True) for bds in chunks]
-        indices = [
-            [slice(s, s + dim) for s, dim in zip(starts, shapes)]
-            for starts, shapes in zip(cumdims, chunks)
-        ]
-        return product(*indices)
+    #        from dask.utils import cached_cumsum
+    #
+    #        chunks = self.chunks
+    #
+    #        cumdims = [cached_cumsum(bds, initial_zero=True) for bds in chunks]
+    #        indices = [
+    #            [slice(s, s + dim) for s, dim in zip(starts, shapes)]
+    #            for starts, shapes in zip(cumdims, chunks)
+    #        ]
+    #        return product(*indices)
 
     def chunk_positions(self):
-        """Find the shape of each chunk.
-        
+        """Find the position of each chunk.
+
         .. versionadded:: (cfdm) NEXTVERSION
-        
-        .. seealso:: `chunk_indices`, `chunk_positions`, `chunk_shapes`
-        
+
+        .. seealso:: `chunks`, `chunk_indices`
+
         :Parameters:
-        
+
             chunks: `tuple`
 
                 The chunk sizes along each dimension, as output by
                 `dask.array.Array.chunks`.
 
         **Examples**
-    
-        >>> chunks = ((1, 2), (9,), (4, 5, 6))
-        >>> for location in cfdm.data.utils.chunk_locations(chunks):
-        ...     print(location)
+
+        >>> d = {{package}}.{{class}}(np.arange(405).reshape(3, 9, 15),
+        ...     chunks=((1, 2), (9,), (4, 5, 6)))
+        >>> d.npartitions
+        6
+        >>> for position in d.chunk_positions():
+        ...     print(position)
         ...
-        ((0, 1), (0, 9), (0, 4))
-        ((0, 1), (0, 9), (4, 9))
-        ((0, 1), (0, 9), (9, 15))
-        ((1, 3), (0, 9), (0, 4))
-        ((1, 3), (0, 9), (4, 9))
-        ((1, 3), (0, 9), (9, 15))
-    
+        (0, 0, 0)
+        (0, 0, 1)
+        (0, 0, 2)
+        (1, 0, 0)
+        (1, 0, 1)
+        (1, 0, 2)
+
         """
-        PPp
-        from dask.utils import cached_cumsum
-        
-        chunks = self.chunks
-
-        cumdims = [cached_cumsum(bds, initial_zero=True) for bds in chunks]
-        locations = [
-            [(s, s + dim) for s, dim in zip(starts, shapes)]
-            for starts, shapes in zip(cumdims, chunks)
-        ]
-        return product(*locations)
-
+        return chunk_positions(self.chunks)
 
     @_inplace_enabled(default=False)
     def compressed(self, inplace=False):
@@ -5003,7 +5003,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 "tie point index variables",
             )
 
-    def get_filenames(self, normalise=True, per_chunk=False, extra=0):
+    def get_filenames(self, normalise=True, per_chunk=False, min_file_versions=1, extra=0):
         """The names of files containing parts of the data array.
 
         Returns the names of any files that may be required to deliver
@@ -5028,6 +5028,16 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 returned by the `numblocks` attribute) with the
                 addition of a trailing dimension whose size is given
                 by `get_n_file_versions`.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            min_file_versions: `int`, optional
+                If *per_chunk* is True then *min_file_versions* is a
+                lower limit to size of the trailing dimension of the
+                returned `numpy` array. The trailing dimension may be
+                larger than the minimum size. By default
+                *min_file_versions* is ``1``. Ignored if *per_chunk*
+                is False.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -5079,25 +5089,44 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
          [['file.nc' -- --]
           ['file.nc' -- --]]]
+        >>> filenames = d.get_filenames(
+        ...     per_chunk=True, min_file_versions=2, extra=3
+        ...)
+        >>> filenames.shape
+        (2, 2, 5)
+        >>> print(filenames)
+        [[['file.nc' -- -- -- --]
+          ['file.nc' -- -- -- --]]
+                                 
+         [['file.nc' -- -- -- --]
+          ['file.nc' -- -- -- --]]]
 
         """
         if per_chunk:
             # --------------------------------------------------------
             # Return filenames in a numpy array
             # --------------------------------------------------------
+            min_file_versions = int(min_file_versions)
+            if min_file_versions < 1:
+                raise ValueError(
+                    "'min_file_versions' must be an positive integer"
+                )
+
             extra = int(extra)
             if extra < 0:
                 raise ValueError("'extra' must be a non-negative integer")
-                
+
             out = []
             append = out.append
 
             # Maximum number of characters in any file name
             n_char = 1
-            # Maximum number of file names per chunk
-            n_files_per_chunk = 1
+            # Maximum number of file versions per chunk
+            n_files_per_chunk = min_file_versions
 
-            for index in self.chunk_indices():
+            for index, position in zip(
+                self.chunk_indices(), self.chunk_positions()
+            ):
                 for a in (
                     self[index]
                     .todict(_apply_mask_hardness=False, _asanyarray=False)
@@ -5108,7 +5137,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                     except AttributeError:
                         pass
                     else:
-                        append((index, filenames))
+                        append((position, filenames))
                         if filenames:
                             n_char = max(n_char, *map(len, filenames))
                             try:
@@ -5126,9 +5155,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             )
             array.set_fill_value("")
 
-            for index, filenames in out:
+            for position, filenames in out:
                 if filenames:
-                    array[index + (slice(0, len(filenames)),)] = filenames
+                    array[position + (slice(0, len(filenames)),)] = filenames
 
             return array
 
@@ -6299,21 +6328,18 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                  `numblocks` attribute), or may also include an extra
                  trailing dimension for different file location
                  versions. Any output from the `get_filenames` method
-                 with ``per_chunk=True`` is guaranteed to work.
+                 with ``per_chunk=True`` is guaranteed to have an
+                 acceptable shape.
 
         :Returns:
 
             `None`
 
-        **Examples**
-
-        TODOCFA
-
         """
         filenames = np.asanyarray(filenames)
         if np.ma.isMA(filenames):
             filenames.set_fill_value("")
-            
+
         filenames_shape = filenames.shape
 
         ndim = self.ndim
@@ -6332,7 +6358,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         dsk = self.todict(_apply_mask_hardness=False, _asanyarray=False)
 
         keys = {}
-        for index in self.chunk_indices():
+        for index, position in zip(
+            self.chunk_indices(), self.chunk_positions()
+        ):
             updated = False
             for key, a in (
                 self[index]
@@ -6340,11 +6368,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 .items()
             ):
                 try:
-                    dsk[key] = a.replace_filenames(filenames[index])
+                    dsk[key] = a.replace_filenames(filenames[position])
                 except AttributeError:
                     pass
                 else:
-                    print (index, filenames[index], key)
                     if updated:
                         raise ValueError(
                             "Can't replace the file locations for the Dask "
@@ -6557,7 +6584,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         n = int(n)
         if n < 0:
             raise ValueError("'n' must be a non-negative integer")
-       
+
         self._modify_dask_graph("set_min_file_versions", (n,))
 
     def set_units(self, value):
