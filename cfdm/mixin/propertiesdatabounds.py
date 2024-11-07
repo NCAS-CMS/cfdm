@@ -288,7 +288,7 @@ class PropertiesDataBounds(PropertiesData):
 
         return out
 
-    def add_file_directory(self, directory):  # noqa: D102
+    def add_file_directory(self, directory):
         """TODOCFA."""
         directory = super().add_file_directory(directory)
 
@@ -624,8 +624,8 @@ class PropertiesDataBounds(PropertiesData):
 
         return out
 
-    def del_file_directory(self, directory):  # noqa: D102
-        # Docstring is inherited
+    def del_file_directory(self, directory):
+        """TODOCFA"""
         directory = super().add_file_directory(directory)
 
         bounds = self.get_bounds(None)
@@ -1028,8 +1028,8 @@ class PropertiesDataBounds(PropertiesData):
 
         return out
 
-    def file_directories(self):  # noqa: D102
-        # Docstring is inherited
+    def file_directories(self):
+        """TODOCFA"""
         out = super().file_directories()
 
         bounds = self.get_bounds(None)
@@ -1483,9 +1483,9 @@ class PropertiesDataBounds(PropertiesData):
         return c
 
     def replace_file_directory(
-        self, old_directory, new_directory
-    ):  # noqa: D102
-        # Docstring is inherited
+        self, old_directory, new_directory            
+    ):
+        """TODOCFA"""
         directory = super().replace_file_directory(
             old_directory, new_directory
         )
