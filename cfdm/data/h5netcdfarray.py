@@ -188,36 +188,36 @@ class H5netcdfArray(
 
         # Note: We need to lock because HDF5 is about to access the
         #       file.
-        self._lock.acquire()
+        #        self._lock.acquire()
+        with self._lock:
+            dataset, address = self.open()
+            dataset0 = dataset
 
-        dataset, address = self.open()
-        dataset0 = dataset
+            groups, address = self.get_groups(address)
+            if groups:
+                dataset = self._group(dataset, groups)
 
-        groups, address = self.get_groups(address)
-        if groups:
-            dataset = self._group(dataset, groups)
+            # Get the variable by netCDF name
+            variable = dataset.variables[address]
 
-        # Get the variable by netCDF name
-        variable = dataset.variables[address]
+            # Get the data, applying masking and scaling as required.
+            array = netcdf_indexer(
+                variable,
+                mask=self.get_mask(),
+                unpack=self.get_unpack(),
+                always_masked_array=False,
+                orthogonal_indexing=True,
+                copy=False,
+            )
+            array = array[index]
 
-        # Get the data, applying masking and scaling as required.
-        array = netcdf_indexer(
-            variable,
-            mask=self.get_mask(),
-            unpack=self.get_unpack(),
-            always_masked_array=False,
-            orthogonal_indexing=True,
-            copy=False,
-        )
-        array = array[index]
+            # Set the attributes, if they haven't been set already.
+            self._set_attributes(variable)
 
-        # Set the attributes, if they haven't been set already.
-        self._set_attributes(variable)
+            self.close(dataset0)
+            del dataset, dataset0
 
-        self.close(dataset0)
-        del dataset, dataset0
-
-        self._lock.release()
+        #        self._lock.release()
         return array
 
     def _set_attributes(self, var):
