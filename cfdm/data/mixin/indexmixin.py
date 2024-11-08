@@ -206,6 +206,14 @@ class IndexMixin:
             f"{self}{self.original_shape}>"
         )
 
+    def __dask_tokenize__(self):
+        """Return a value fully representative of the object.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        return super().__dask_tokenize__() + (self.original_shape, self.index)
+
     @property
     def __asanyarray__(self):
         """True if the array is accessed by conversion to `numpy`.

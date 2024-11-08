@@ -625,7 +625,7 @@ class PropertiesDataBounds(PropertiesData):
         return out
 
     def del_file_directory(self, directory):
-        """TODOCFA"""
+        """TODOCFA."""
         directory = super().add_file_directory(directory)
 
         bounds = self.get_bounds(None)
@@ -1029,7 +1029,7 @@ class PropertiesDataBounds(PropertiesData):
         return out
 
     def file_directories(self):
-        """TODOCFA"""
+        """TODOCFA."""
         out = super().file_directories()
 
         bounds = self.get_bounds(None)
@@ -1482,10 +1482,8 @@ class PropertiesDataBounds(PropertiesData):
 
         return c
 
-    def replace_file_directory(
-        self, old_directory, new_directory            
-    ):
-        """TODOCFA"""
+    def replace_file_directory(self, old_directory, new_directory):
+        """TODOCFA."""
         directory = super().replace_file_directory(
             old_directory, new_directory
         )

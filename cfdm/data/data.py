@@ -2556,19 +2556,39 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         elif not isinstance(a, np.ndarray):
             a = np.asanyarray(a)
 
+        ndim = a.ndim
+        shape = a.shape
         size = a.size
         if not size:
             return a
 
         # Set cached elements
         items = [0, -1]
-        if a.ndim == 2 and a.shape[-1] == 2:
+        indices = [(slice(0, 1, 1),) * ndim, (slice(-1, None, 1),) * ndim]
+        if ndim == 2 and shape[-1] == 2:
             items.extend((1, -2))
+            indices.extend(
+                (np.unravel_index(1, shape), np.unravel_index(size - 2, shape))
+            )
         elif size == 3:
             items.append(1)
+            indices.append(np.unravel_index(1, a.shape))
 
-        print ('array', a, {i: a.item(i) for i in items})
-        self._set_cached_elements({i: a.item(i) for i in items})
+        cache = {}
+        for i, index in zip(items, indices):
+            x = a[index]
+            if np.ma.isMA(x):
+                mask = x.mask
+                if mask is not np.ma.nomask and mask.item():
+                    x = np.ma.masked
+                else:
+                    x = x.item()
+            else:
+                x = x.item()
+
+            cache[i] = x
+
+        self._set_cached_elements(cache)
 
         return a
 
@@ -4403,7 +4423,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         else:
             atol = float(atol)
 
-        print (rtol, atol)
         # Return False if there are different cached elements. This
         # provides a possible short circuit for that case that two
         # arrays are not equal (but not in the case that they are).
@@ -4431,7 +4450,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                     b.append(value1)
 
                 if a and not _numpy_allclose(a, b, rtol=rtol, atol=atol):
-                    print(a, b)
                     if is_log_level_info(logger):
                         logger.info(
                             f"{self.__class__.__name__}: Different array "
@@ -4439,7 +4457,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                         )
 
                     return False
-        print(999)
+
         # Now check that corresponding elements are equal within a tolerance.
         # We assume that all inputs are masked arrays. Note we compare the
         # data first as this may return False due to different dtype without

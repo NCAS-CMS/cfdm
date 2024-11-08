@@ -146,8 +146,12 @@ class FileArray(Array):
         self._set_component("dtype", dtype, copy=False)
         self._set_component("mask", bool(mask), copy=False)
         self._set_component("unpack", bool(unpack), copy=False)
-        self._set_component("attributes", attributes, copy=False)
-        self._set_component("storage_options", storage_options, copy=False)
+
+        if storage_options is not None:
+            self._set_component("storage_options", storage_options, copy=copy)
+
+        if attributes is not None:
+            self._set_component("attributes", attributes, copy=copy)
 
         if substitutions is not None:
             self._set_component(
@@ -188,14 +192,26 @@ class FileArray(Array):
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        return (
-            self.__class__,
-            self.shape,
+        print(self.__dict__)
+        return super().__dask_tokenize__() + (
             self.get_filenames(normalise=True),
             self.get_addresses(),
             self.get_mask(),
             self.get_unpack(),
-        )
+            self.get_substitutions(copy=False),
+            self.get_storage_options(),
+            )
+#        return (
+#            self.__class__,
+#            self.shape,
+#            self.get_filenames(normalise=True),
+#            self.get_addresses(),
+#            self.get_mask(),
+#            self.get_unpack(),
+#            self.get_attributes(copy=False),
+#            self.get_substitutions(copy=False),
+#            self.get_storage_options(),
+#        )
 
     @property
     def array(self):

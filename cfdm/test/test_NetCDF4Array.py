@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import numpy as np
+from dask.base import tokenize
 
 import cfdm
 
@@ -49,7 +50,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
         # cfdm.log_level('DISABLE')
 
     def test_NetCDF4Array_get_addresses(self):
-        """Test `NetCDF4Array.get_addresses`"""
+        """Test NetCDF4Array.get_addresses."""
         a = cfdm.NetCDF4Array(address="tas")
         self.assertEqual(a.get_addresses(), ("tas",))
 
@@ -60,7 +61,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
         self.assertEqual(a.get_addresses(), ())
 
     def test_NetCDF4Array_get_filenames(self):
-        """Test `NetCDF4Array.get_filenames`"""
+        """Test NetCDF4Array.get_filenames."""
         a = cfdm.NetCDF4Array("/data1/file1")
         self.assertEqual(a.get_filenames(), ("/data1/file1",))
 
@@ -170,10 +171,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
         f = cfdm.example_field(0)
         cfdm.write(f, tmpfile)
         n = cfdm.NetCDF4Array(tmpfile, f.nc_get_variable(), shape=f.shape)
-        self.assertIsNone(n.get_attributes(None))
-
-        with self.assertRaises(ValueError):
-            n.get_attributes()
+        self.assertEquals(n.get_attributes(), {})
 
         # Set attributes via indexing
         n = n[...]
@@ -188,6 +186,137 @@ class NetCDF4ArrayTest(unittest.TestCase):
                 "units": "1",
             },
         )
+
+    def test_NetCDF4Array_del_file_directory(self):
+        a = cfdm.NetCDF4Array(
+            ("/data1/file1", "/data2/file2"), ("tas1", "tas2")
+        )
+        b = a.del_file_directory("/data1")
+        self.assertIsNot(b, a)
+        self.assertEqual(b.get_filenames(), ("/data2/file2",))
+        self.assertEqual(b.get_addresses(), ("tas2",))
+
+        a = cfdm.NetCDF4Array(
+            ("/data1/file1", "/data2/file1", "/data2/file2"),
+            ("tas1", "tas1", "tas2"),
+        )
+        b = a.del_file_directory("/data2")
+        self.assertEqual(b.get_filenames(), ("/data1/file1",))
+        self.assertEqual(b.get_addresses(), ("tas1",))
+
+        # Can't be left with no files
+        self.assertEqual(b.file_directories(), ("/data1",))
+        with self.assertRaises(ValueError):
+            b.del_file_directory("/data1/")
+
+    def test_NetCDF4Array_file_directories(self):
+        a = cfdm.NetCDF4Array("/data1/file1")
+        self.assertEqual(a.file_directories(), ("/data1",))
+
+        a = cfdm.NetCDF4Array(("/data1/file1", "/data2/file2"))
+        self.assertEqual(a.file_directories(), ("/data1", "/data2"))
+
+        a = cfdm.NetCDF4Array(("/data1/file1", "/data2/file2", "/data1/file2"))
+        self.assertEqual(a.file_directories(), ("/data1", "/data2", "/data1"))
+
+    def test_NetCDF4Array_add_file_directory(self):
+        a = cfdm.NetCDF4Array("/data1/file1", "tas")
+        b = a.add_file_directory("/home/user")
+        self.assertIsNot(b, a)
+        self.assertEqual(
+            b.get_filenames(), ("/data1/file1", "/home/user/file1")
+        )
+        self.assertEqual(b.get_addresses(), ("tas", "tas"))
+
+        a = cfdm.NetCDF4Array(
+            ("/data1/file1", "/data2/file2"), ("tas1", "tas2")
+        )
+        b = a.add_file_directory("/home/user")
+        self.assertEqual(
+            b.get_filenames(),
+            (
+                "/data1/file1",
+                "/data2/file2",
+                "/home/user/file1",
+                "/home/user/file2",
+            ),
+        )
+        self.assertEqual(b.get_addresses(), ("tas1", "tas2", "tas1", "tas2"))
+
+        a = cfdm.NetCDF4Array(
+            ("/data1/file1", "/data2/file1"), ("tas1", "tas2")
+        )
+        b = a.add_file_directory("/home/user")
+        self.assertEqual(
+            b.get_filenames(),
+            ("/data1/file1", "/data2/file1", "/home/user/file1"),
+        )
+        self.assertEqual(b.get_addresses(), ("tas1", "tas2", "tas1"))
+
+        a = cfdm.NetCDF4Array(
+            ("/data1/file1", "/data2/file1"), ("tas1", "tas2")
+        )
+        b = a.add_file_directory("/data1/")
+        self.assertEqual(b.get_filenames(), a.get_filenames())
+        self.assertEqual(b.get_addresses(), a.get_addresses())
+
+    def test_NetCDF4Array__dask_tokenize__(self):
+        a = cfdm.NetCDF4Array("/data1/file1", "tas", shape=(12, 2), mask=False)
+        self.assertEqual(tokenize(a), tokenize(a.copy()))
+
+        b = cfdm.NetCDF4Array("/home/file2", "tas", shape=(12, 2))
+        self.assertNotEqual(tokenize(a), tokenize(b))
+
+    def test_NetCDF4Array_multiple_files(self):
+        f = cfdm.example_field(0)
+        cfdm.write(f, tmpfile)
+
+        # Create instance with non-existent file
+        n = cfdm.NetCDF4Array(
+            filename=os.path.join("/bad/location", os.path.basename(tmpfile)),
+            address=f.nc_get_variable(),
+            shape=f.shape,
+            dtype=f.dtype,
+        )
+        # Add file that exists
+        n = n.add_file_directory(os.path.dirname(tmpfile))
+
+        self.assertEqual(len(n.get_filenames()), 2)
+        self.assertTrue((n[...] == f.array).all())
+
+    def test_NetCDF4Array_shape(self):
+        shape = (12, 73, 96)
+        a = cfdm.NetCDF4Array("/home/file2", "tas", shape=shape)
+        self.assertEqual(a.shape, shape)
+        self.assertEqual(a.original_shape, shape)
+        a = a[::2]
+        self.assertEqual(a.shape, (shape[0] // 2,) + shape[1:])
+        self.assertEqual(a.original_shape, shape)
+
+    def test_NetCDF4Array_index(self):
+        shape = (12, 73, 96)
+        a = cfdm.NetCDF4Array("/home/file2", "tas", shape=shape)
+        self.assertEqual(
+            a.index(),
+            (
+                slice(
+                    None,
+                ),
+            )
+            * len(shape),
+        )
+        a = a[8:7:-1, 10:19:3, [15, 1, 4, 12]]
+        a = a[[0], [True, False, True], ::-2]
+        self.assertEqual(a.shape, (1, 2, 2))
+        self.assertEqual(
+            a.index(),
+            (slice(8, 9, None), slice(10, 17, 6), slice(12, -1, -11)),
+        )
+
+        index = a.index(conform=False)
+        self.assertTrue((index[0] == [8]).all())
+        self.assertTrue((index[1] == [10, 16]).all())
+        self.assertTrue((index[2] == [12, 1]).all())
 
 
 if __name__ == "__main__":
