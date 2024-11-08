@@ -192,26 +192,17 @@ class FileArray(Array):
         .. versionadded:: (cfdm) NEXTVERSION
 
         """
-        print(self.__dict__)
-        return super().__dask_tokenize__() + (
+        return (
+            self.__class__,
+            self.shape,
             self.get_filenames(normalise=True),
             self.get_addresses(),
             self.get_mask(),
             self.get_unpack(),
+            self.get_attributes(copy=False),
             self.get_substitutions(copy=False),
             self.get_storage_options(),
-            )
-#        return (
-#            self.__class__,
-#            self.shape,
-#            self.get_filenames(normalise=True),
-#            self.get_addresses(),
-#            self.get_mask(),
-#            self.get_unpack(),
-#            self.get_attributes(copy=False),
-#            self.get_substitutions(copy=False),
-#            self.get_storage_options(),
-#        )
+        )
 
     @property
     def array(self):

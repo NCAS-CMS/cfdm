@@ -11162,16 +11162,18 @@ class NetCDFRead(IORead):
             if np.ma.is_masked(value):
                 value = np.ma.masked
             else:
-                try:
-                    value = value.item()
-                except (AttributeError, ValueError):
-                    # AttributeError: A netCDF string type scalar
-                    # variable comes out as Python str object, which
-                    # has no 'item' method.
-                    #
-                    # ValueError: A size-0 array can't be converted to
-                    # a Python scalar.
-                    pass
+                value = value.squeeze()
+#            else:
+#                try:
+#                    value = value.item()
+#                except (AttributeError, ValueError):
+#                    # AttributeError: A netCDF string type scalar
+#                    # variable comes out as Python str object, which
+#                    # has no 'item' method.
+#                    #
+#                    # ValueError: A size-0 array can't be converted to
+#                    # a Python scalar.
+#                    pass
 
             elements[index] = value
 

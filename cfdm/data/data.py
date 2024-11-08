@@ -1978,27 +1978,27 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         **Examples**
 
         >>> d = {{package}}.{{class}}([[1, 2, 3]], 'km')
-        >>> x = d._item((0, -1))
-        >>> print(x, type(x))
-        3 <class 'int'>
-        >>> x = d._item((0, 1))
-        >>> print(x, type(x))
-        2 <class 'int'>
+        >>> d._item((0, -1))
         >>> d[0, 1] = {{package}}.masked
         >>> d._item((slice(None), slice(1, 2)))
         masked
 
         """
-        array = self[index].array
+        array = self[index].array.squeeze()
+        if np.ma.is_masked(array):
+            array = np.ma.masked
 
-        if not np.ma.isMA(array):
-            return array.item()
+        return array
 
-        mask = array.mask
-        if mask is np.ma.nomask or not mask.item():
-            return array.item()
-
-        return np.ma.masked
+    #
+    #        if not np.ma.isMA(array):
+    #            return array.item()
+    #
+    #        mask = array.mask
+    #        if mask is np.ma.nomask or not mask.item():
+    #            return array.item()
+    #
+    #        return np.ma.masked
 
     def _modify_dask_graph(
         self, method, args=(), kwargs=None, exceptions=(AttributeError,)
@@ -2574,20 +2574,19 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             items.append(1)
             indices.append(np.unravel_index(1, a.shape))
 
-        cache = {}
-        for i, index in zip(items, indices):
-            x = a[index]
-            if np.ma.isMA(x):
-                mask = x.mask
-                if mask is not np.ma.nomask and mask.item():
-                    x = np.ma.masked
-                else:
-                    x = x.item()
-            else:
-                x = x.item()
-
-            cache[i] = x
-
+        cache = {i: a[index].squeeze() for i, index in zip(items, indices)}
+        #        for i, index in zip(items, indices):
+        #            x = a[index]
+        #            if np.ma.isMA(x):
+        #                mask = x.mask
+        #                if mask is not np.ma.nomask and mask.item():
+        #                    x = np.ma.masked
+        #                else:
+        #                    x = x.item()
+        #            else:
+        #                x = x.item()##
+        #
+        #            cache[i] = x
         self._set_cached_elements(cache)
 
         return a

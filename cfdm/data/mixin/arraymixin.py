@@ -79,18 +79,6 @@ class ArrayMixin:
         """
         return f"shape={self.shape}, dtype={self.dtype}"
 
-    def __dask_tokenize__(self):
-        """Return a value fully representative of the object.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        """
-        return (
-            self.__class__,
-            self.shape,
-            self.get_attributes(copy=False),
-        )
-
     def __docstring_package_depth__(self):
         """Returns the package depth for {{package}} substitutions.
 

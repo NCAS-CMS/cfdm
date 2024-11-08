@@ -171,7 +171,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
         f = cfdm.example_field(0)
         cfdm.write(f, tmpfile)
         n = cfdm.NetCDF4Array(tmpfile, f.nc_get_variable(), shape=f.shape)
-        self.assertEquals(n.get_attributes(), {})
+        self.assertEqual(n.get_attributes(), {})
 
         # Set attributes via indexing
         n = n[...]
