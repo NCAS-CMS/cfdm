@@ -2144,6 +2144,15 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         if not elements:
             return
 
+        elements = elements.copy()
+        for i, x in elements.items():
+            if np.ma.is_masked(x):
+                x = np.ma.masked
+            else:
+                x = np.squeeze(x)
+
+            elements[i] = x
+
         cache = self._get_component("cached_elements", None)
         if cache:
             cache = cache.copy()
@@ -2574,19 +2583,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             items.append(1)
             indices.append(np.unravel_index(1, a.shape))
 
-        cache = {i: a[index].squeeze() for i, index in zip(items, indices)}
-        #        for i, index in zip(items, indices):
-        #            x = a[index]
-        #            if np.ma.isMA(x):
-        #                mask = x.mask
-        #                if mask is not np.ma.nomask and mask.item():
-        #                    x = np.ma.masked
-        #                else:
-        #                    x = x.item()
-        #            else:
-        #                x = x.item()##
-        #
-        #            cache[i] = x
+        cache = {i: a[index] for i, index in zip(items, indices)}
         self._set_cached_elements(cache)
 
         return a
@@ -4429,8 +4426,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         if cache0:
             cache1 = other._get_cached_elements()
             if cache1 and sorted(cache0) == sorted(cache1):
-                a = []
-                b = []
                 for key, value0 in cache0.items():
                     value1 = cache1[key]
                     if value0 is np.ma.masked or value1 is np.ma.masked:
@@ -4438,24 +4433,16 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                         # determined elsewhere.
                         continue
 
-                    # Make sure strings are unicode
-                    try:
-                        value0 = value0.decode()
-                        value1 = value1.decode()
-                    except AttributeError:
-                        pass
+                    if not _numpy_allclose(
+                        value0, value1, rtol=rtol, atol=atol
+                    ):
+                        if is_log_level_info(logger):
+                            logger.info(
+                                f"{self.__class__.__name__}: Different array "
+                                f"values (atol={atol}, rtol={rtol})"
+                            )
 
-                    a.append(value0)
-                    b.append(value1)
-
-                if a and not _numpy_allclose(a, b, rtol=rtol, atol=atol):
-                    if is_log_level_info(logger):
-                        logger.info(
-                            f"{self.__class__.__name__}: Different array "
-                            f"values (atol={atol}, rtol={rtol})"
-                        )
-
-                    return False
+                        return False
 
         # Now check that corresponding elements are equal within a tolerance.
         # We assume that all inputs are masked arrays. Note we compare the
@@ -4642,7 +4629,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         except KeyError:
             item = self._item((slice(0, 1, 1),) * self.ndim)
             self._set_cached_elements({0: item})
-            return item
+            return self._get_cached_elements()[0]
 
     @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
@@ -5625,7 +5612,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         except KeyError:
             item = self._item((slice(-1, None, 1),) * self.ndim)
             self._set_cached_elements({-1: item})
-            return item
+            return self._get_cached_elements()[-1]
 
     @_inplace_enabled(default=False)
     def masked_values(self, value, rtol=None, atol=None, inplace=False):
@@ -6531,7 +6518,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         except KeyError:
             item = self._item(np.unravel_index(1, self.shape))
             self._set_cached_elements({1: item})
-            return item
+            return self._get_cached_elements()[1]
 
     def set_calendar(self, calendar):
         """Set the calendar.
