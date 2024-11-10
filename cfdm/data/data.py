@@ -1990,16 +1990,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         return array
 
-    #
-    #        if not np.ma.isMA(array):
-    #            return array.item()
-    #
-    #        mask = array.mask
-    #        if mask is np.ma.nomask or not mask.item():
-    #            return array.item()
-    #
-    #        return np.ma.masked
-
     def _modify_dask_graph(
         self, method, args=(), kwargs=None, exceptions=(AttributeError,)
     ):
