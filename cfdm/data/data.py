@@ -374,6 +374,12 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                 except AttributeError:
                     pass
 
+            # Cached elements
+            try:
+                self._set_cached_elements(source._get_cached_elements())
+            except AttributeError:
+                pass
+
             # Mask hardness
             self.hardmask = getattr(source, "hardmask", self._DEFAULT_HARDMASK)
 
@@ -1873,27 +1879,22 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         **Examples**
 
         >>> d = {{package}}.{{class}}([[1, 2, 3]], 'km')
-        >>> x = d._item((0, -1))
-        >>> print(x, type(x))
-        3 <class 'int'>
-        >>> x = d._item((0, 1))
-        >>> print(x, type(x))
-        2 <class 'int'>
+        >>> d._item((0, -1))
+
+
+
+
+
         >>> d[0, 1] = {{package}}.masked
         >>> d._item((slice(None), slice(1, 2)))
         masked
 
         """
-        array = self[index].array
+        array = self[index].array.squeeze()
+        if np.ma.is_masked(array):
+            array = np.ma.masked
 
-        if not np.ma.isMA(array):
-            return array.item()
-
-        mask = array.mask
-        if mask is np.ma.nomask or not mask.item():
-            return array.item()
-
-        return np.ma.masked
+        return array
 
     def _parse_axes(self, axes):
         """Parses the data axes and returns valid non-duplicate axes.
@@ -1971,6 +1972,16 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         """
         if not elements:
             return
+
+        # Parse the new elements
+        elements = elements.copy()
+        for i, x in elements.items():
+            if np.ma.is_masked(x):
+                x = np.ma.masked
+            else:
+                x = np.squeeze(x)
+
+            elements[i] = x
 
         cache = self._get_component("cached_elements", None)
         if cache:
@@ -2101,7 +2112,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         changed in-place.
 
         >>> a = np.arange(40).reshape(5, 8)
-        >>> {{package}}.Data._set_subspace(a, [[1, 4 ,3], [7, 6, 1]],
+        >>> {{package}}.{{class}}._set_subspace(a, [[1, 4 ,3], [7, 6, 1]],
         ...                    np.array([[-1, -2, -3]]))
         >>> print(a)
         [[ 0  1  2  3  4  5  6  7]
@@ -2111,7 +2122,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
          [32 -3 34 35 36 37 -2 -1]]
 
         >>> a = np.arange(40).reshape(5, 8)
-        >>> {{package}}.Data._set_subspace(a, [[1, 4 ,3], [7, 6, 1]],
+        >>> {{package}}.{{class}}._set_subspace(a, [[1, 4 ,3], [7, 6, 1]],
         ...                    np.array([[-1, -2, -3]]),
         ...                    orthogonal_indexing=False)
         >>> print(a)
@@ -2127,7 +2138,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         [[-1. -2. -3.]
          [-4. -5. -6.]
          [-7. -8. -9.]]
-        >>> {{package}}.Data._set_subspace(a, [[4, 4 ,1], [7, 6, 1]], value)
+        >>> {{package}}.{{class}}._set_subspace(a, [[4, 4 ,1], [7, 6, 1]], value)
         >>> print(a)
         [[ 0  1  2  3  4  5  6  7]
          [ 8 -9 10 11 12 13 -8 -7]
@@ -2388,14 +2399,23 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         if not size:
             return a
 
+        ndim = a.ndim
+        shape = a.shape
+
         # Set cached elements
         items = [0, -1]
-        if a.ndim == 2 and a.shape[-1] == 2:
+        indices = [(slice(0, 1, 1),) * ndim, (slice(-1, None, 1),) * ndim]
+        if ndim == 2 and shape[-1] == 2:
             items.extend((1, -2))
+            indices.extend(
+                (np.unravel_index(1, shape), np.unravel_index(size - 2, shape))
+            )
         elif size == 3:
             items.append(1)
+            indices.append(np.unravel_index(1, a.shape))
 
-        self._set_cached_elements({i: a.item(i) for i in items})
+        cache = {i: a[index] for i, index in zip(items, indices)}
+        self._set_cached_elements(cache)
 
         return a
 
@@ -3825,8 +3845,6 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         if cache0:
             cache1 = other._get_cached_elements()
             if cache1 and sorted(cache0) == sorted(cache1):
-                a = []
-                b = []
                 for key, value0 in cache0.items():
                     value1 = cache1[key]
                     if value0 is np.ma.masked or value1 is np.ma.masked:
@@ -3834,24 +3852,16 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
                         # determined elsewhere.
                         continue
 
-                    # Make sure strings are unicode
-                    try:
-                        value0 = value0.decode()
-                        value1 = value1.decode()
-                    except AttributeError:
-                        pass
+                    if not _numpy_allclose(
+                        value0, value1, rtol=rtol, atol=atol
+                    ):
+                        if is_log_level_info(logger):
+                            logger.info(
+                                f"{self.__class__.__name__}: Different array "
+                                f"values (atol={atol}, rtol={rtol})"
+                            )
 
-                    a.append(value0)
-                    b.append(value1)
-
-                if a and not _numpy_allclose(a, b, rtol=rtol, atol=atol):
-                    if is_log_level_info(logger):
-                        logger.info(
-                            f"{self.__class__.__name__}: Different array "
-                            f"values (atol={atol}, rtol={rtol})"
-                        )
-
-                    return False
+                        return False
 
         # Now check that corresponding elements are equal within a tolerance.
         # We assume that all inputs are masked arrays. Note we compare the
@@ -4005,7 +4015,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         except KeyError:
             item = self._item((slice(0, 1, 1),) * self.ndim)
             self._set_cached_elements({0: item})
-            return item
+            return self._get_cached_elements()[0]
 
     @_inplace_enabled(default=False)
     def flatten(self, axes=None, inplace=False):
@@ -4811,7 +4821,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         except KeyError:
             item = self._item((slice(-1, None, 1),) * self.ndim)
             self._set_cached_elements({-1: item})
-            return item
+            return self._get_cached_elements()[-1]
 
     @_inplace_enabled(default=False)
     def masked_values(self, value, rtol=None, atol=None, inplace=False):
@@ -5394,7 +5404,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         except KeyError:
             item = self._item(np.unravel_index(1, self.shape))
             self._set_cached_elements({1: item})
-            return item
+            return self._get_cached_elements()[1]
 
     def set_calendar(self, calendar):
         """Set the calendar.
@@ -5728,7 +5738,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         :Parameters:
 
-            `optimize_graph`: `bool`
+            optimize_graph: `bool`
                 If True, the default, then prior to being converted to
                 a dictionary, the graph is optimised to remove unused
                 chunks. Note that optimising the graph can add a
@@ -5966,9 +5976,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         original_shape = self.shape
 
-        dx = d.to_dask_array(
-            _apply_mask_hardness=False,
-        )
+        dx = d.to_dask_array(_apply_mask_hardness=False)
+
         u = np.unique(dx.compute())
         dx = da.from_array(u, chunks="auto")
         d._set_dask(dx, asanyarray=False)

@@ -7599,7 +7599,7 @@ class NetCDFRead(IORead):
                 array = array.squeeze()
 
             if not string_type:
-                # A N-d (N>=1) netCDF string type variable comes out
+                # An N-d (N>=1) netCDF string type variable comes out
                 # as a numpy object array, so convert it to numpy
                 # string array.
                 array = array.astype("U", copy=False)
@@ -7620,12 +7620,12 @@ class NetCDFRead(IORead):
 
         # Store the HDF5 chunking
         if self.read_vars["store_hdf5_chunks"] and ncvar is not None:
+            # Only store the HDF chunking if 'data' has the same shape
+            # as its netCDF variable. This may not be the case for
+            # variables compressed by convention (e.g. some DSG
+            # variables).
             chunks, shape = self._get_hdf5_chunks(ncvar)
             if shape == data.shape:
-                # Only store the HDF chunking if 'data' has the same
-                # shape as its netCDF variable. This may not be the
-                # case for variables compressed by convention
-                # (e.g. some DSG variables).
                 self.implementation.nc_set_hdf5_chunksizes(data, chunks)
 
         return data
@@ -10867,13 +10867,22 @@ class NetCDFRead(IORead):
         size = data.size
         ndim = data.ndim
 
-        char = False
-        if variable.ndim == ndim + 1:
-            dtype = variable.dtype
-            if dtype is not str and dtype.kind in "SU":
-                # This variable is a netCDF classic style char array
-                # with a trailing dimension that needs to be collapsed
-                char = True
+        # Whether or not this is an array of strings
+        dtype = variable.dtype
+        string = dtype == str
+        obj = not string and dtype.kind == "O"
+
+        # Whether or not this is an array of chars
+        if (
+            not (string or obj)
+            and dtype.kind in "SU"
+            and variable.ndim == ndim + 1
+        ):
+            # This variable is a netCDF classic style char array with
+            # a trailing dimension that needs to be collapsed
+            char = True
+        else:
+            char = False
 
         if ndim == 1:
             # Also cache the second element for 1-d data, on the
@@ -10928,12 +10937,17 @@ class NetCDFRead(IORead):
         # Create a dictionary of the element values
         elements = {}
         for index, value in zip(indices, values):
-            if char:
+            if obj:
+                value = value.astype(str)
+            elif string:
+                # Convert an array of objects to an array of strings
+                value = np.array(value, dtype="U")
+            elif char:
                 # Variable is a netCDF classic style char array, so
                 # collapse (by concatenation) the outermost (fastest
                 # varying) dimension. E.g. [['a','b','c']] becomes
                 # ['abc']
-                if value.dtype.kind == "U":
+                if dtype.kind == "U":
                     value = value.astype("S")
 
                 a = netCDF4.chartostring(value)
@@ -10941,20 +10955,6 @@ class NetCDFRead(IORead):
                 a = np.array([x.rstrip() for x in a.flat])
                 a = np.reshape(a, shape)
                 value = np.ma.masked_where(a == "", a)
-
-            if np.ma.is_masked(value):
-                value = np.ma.masked
-            else:
-                try:
-                    value = value.item()
-                except (AttributeError, ValueError):
-                    # AttributeError: A netCDF string type scalar
-                    # variable comes out as Python str object, which
-                    # has no 'item' method.
-                    #
-                    # ValueError: A size-0 array can't be converted to
-                    # a Python scalar.
-                    pass
 
             elements[index] = value
 
