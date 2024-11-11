@@ -165,6 +165,7 @@ from .functions import (
     environment,
     integer_dtype,
     log_level,
+    parse_indices,
     rtol,
     unique_constructs,
     _disable_logging,
