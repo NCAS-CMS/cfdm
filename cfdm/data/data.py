@@ -1979,6 +1979,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         >>> d = {{package}}.{{class}}([[1, 2, 3]], 'km')
         >>> d._item((0, -1))
+        array(3)
         >>> d[0, 1] = {{package}}.masked
         >>> d._item((slice(None), slice(1, 2)))
         masked
@@ -2134,6 +2135,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         if not elements:
             return
 
+        # Parse the new elements
         elements = elements.copy()
         for i, x in elements.items():
             if np.ma.is_masked(x):
@@ -2560,6 +2562,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         size = a.size
         if not size:
             return a
+
+        ndim = a.ndim
+        shape = a.shape
 
         # Set cached elements
         items = [0, -1]

@@ -48,8 +48,8 @@ class NetCDF4Array(IndexMixin, abstract.FileArray):
         if index is None:
             index = self.index()
 
-        # Note: We need to lock because the netCDF file is about to be
-        #       accessed.
+        # Note: We need to lock because netCDF-C is about to access
+        #       the file.
         with self._lock:
             netcdf, address = self.open()
             dataset = netcdf

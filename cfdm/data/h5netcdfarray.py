@@ -52,8 +52,8 @@ class H5netcdfArray(IndexMixin, abstract.FileArray):
         if index is None:
             index = self.index()
 
-        # Note: We need to lock because the netCDF file is about to be
-        #       accessed.
+        # Note: We need to lock because HDF5 is about to access the
+        #       file.
         with self._lock:
             dataset, address = self.open()
             dataset0 = dataset
