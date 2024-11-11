@@ -5917,7 +5917,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """
         self._modify_dask_graph("clear_substitutions")
 
-    def nc_del_aggregation_substitution(self, base):
+    def nc_del_aggregation_substitution(self, base, replace=True):
         """Remove a netCDF aggregation substitution definition.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -5929,6 +5929,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         :Parameters:
 
             {{cfa substitution: `str`}}
+
+            replace: `bool`, optional
+                If True (the default) then replace the removed
+                substutition with its value in all file names. If
+                False then the substutition is removed from the file
+                anmes with any replacement (i.e. this is equivalent to
+                it being replaced with an emty string).
 
         :Returns:
 
@@ -5963,7 +5970,65 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         if not (base.startswith("${") and base.endswith("}")):
             base = f"${{{base}}}"
 
-        self._modify_dask_graph("del_substitution", (base,))
+        self._modify_dask_graph("del_substitution", (base, replace))
+
+    def nc_switch_aggregation_substitution(self, old, new):
+        """Remove a netCDF aggregation substitution definition.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_clear_aggregation_substitutions`,
+                     `nc_aggregation_substitutions`,
+                     `nc_update_aggregation_substitutions`
+
+        :Parameters:
+
+            {{cfa substitution: `str`}}
+
+            replace: `bool`, optional
+                If True (the default) then replace the removed
+                substutition with its value in all file names. If
+                False then the substutition is removed from the file
+                anmes with any replacement (i.e. this is equivalent to
+                it being replaced with an emty string).
+
+        :Returns:
+
+            `dict`
+                {{Returns nc_del_aggregation_substitution}}
+
+        **Examples**
+
+        >>> f.nc_aggregation_substitutions()
+        {}
+        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/'}
+        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+        >>> f.nc_aggregation_substitutions()
+        {'${base}': '/new/path/', '${base2}': '/home/data/'}
+        >>> f.nc_del_aggregation_substitution('${base}')
+        {'${base}': '/new/path/'}
+        >>> f.nc_clear_aggregation_substitutions()
+        {'${base2}': '/home/data/'}
+        >>> f.nc_aggregation_substitutions()
+        {}
+        >>> f.nc_clear_aggregation_substitutions()
+        {}
+        >>> print(f.nc_del_aggregation_substitution('base'))
+        {}
+
+        """
+        if not (old.startswith("${") and old.endswith("}")):
+            old = f"${{{old}}}"
+
+        if not (new.startswith("${") and new.endswith("}")):
+            new = f"${{{new}}}"
+
+        self._modify_dask_graph("switch_substitution", (old, new))
 
     def nc_update_aggregation_substitutions(self, substitutions):
         """Update the netCDF aggregation substitution definitions.

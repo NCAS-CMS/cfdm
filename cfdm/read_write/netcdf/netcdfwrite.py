@@ -607,6 +607,8 @@ class NetCDFWrite(IOWrite):
                         )
 
                     raise RuntimeError(message)
+                else:
+                    g["unlimited_dimensions"].add(ncdim)
             else:
                 try:
                     parent_group.createDimension(ncdim, size)
@@ -2976,13 +2978,13 @@ class NetCDFWrite(IOWrite):
             # --------------------------------------------------------
             # Check that aggregated dimensions are not unlimited
             dims = g["netcdf"].dimensions
-            for ncdim in ncdimensions:
-                if dims[ncdim].isunlimited():
-                    raise ValueError(
-                        f"Can't write aggregation variable {ncvar!r} with "
-                        f"unlimited aggregated dimension {ncdim!r}"
-                    )
-
+#            for ncdim in ncdimensions:
+#                if dims[ncdim].isunlimited():
+#                    raise ValueError(
+#                        f"Can't write aggregation variable {ncvar!r} with "
+#                        f"unlimited aggregated dimension {ncdim!r}"
+#                    )
+#
             self._create_cfa_data(
                 ncvar,
                 ncdimensions,
@@ -4842,6 +4844,7 @@ class NetCDFWrite(IOWrite):
             "geometry_dimensions": set(),
             "dimensions_with_role": {},
             "dimensions": set(),
+            "unlimited_dimensions": set(),
             "latest_version": Version(self.implementation.get_cf_version()),
             "version": {},
             # Warn for the presence of out-of-range data with of
@@ -5665,7 +5668,9 @@ class NetCDFWrite(IOWrite):
             l_ncdim = f"f_shape_{dim}_{size}"
             if l_ncdim not in g["dimensions"]:
                 # Create a new location dimension
-                self._write_dimension(l_ncdim, None, size=size)
+                unlimited = dim == "x" and bool(g["unlimited_dimensions"].intersection(ncdimensions))
+                             
+                self._write_dimension(l_ncdim, None, unlimited=unlimited, size=size)
 
             shape_ncdimensions.append(l_ncdim)
             dim = "x"
@@ -5698,7 +5703,8 @@ class NetCDFWrite(IOWrite):
                 fragment_array_ncdimensions.append(f_ncdim)
                 if f_ncdim not in g["dimensions"]:
                     # Create a new fragment array dimension
-                    self._write_dimension(f_ncdim, None, size=size)
+                    unlimited = ncdim in g["unlimited_dimensions"]
+                    self._write_dimension(f_ncdim, None, unlimited=unlimited, size=size)
 
             fragment_array_ncdimensions = tuple(fragment_array_ncdimensions)
 
@@ -5707,9 +5713,6 @@ class NetCDFWrite(IOWrite):
             substitutions = data.nc_aggregation_substitutions()
             substitutions.update(g["cfa"].get("substitutions", {}))
             if substitutions:
-                #                subs = []
-                #                for base, sub in sorted(substitutions.items()):
-                #                    subs.append(f"{base}: {sub}")
                 subs = [
                     f"{base}: {sub}" for base, sub in substitutions.items()
                 ]
@@ -6033,12 +6036,12 @@ class NetCDFWrite(IOWrite):
 
                 filenames2 = []
                 for filename in filenames:
-                    if substitutions:
-                        # Apply substitutions to the file name by
-                        # replacing text in the file name with "${*}"
-                        # strings
-                        for base, sub in substitutions.items():
-                            filename = filename.replace(sub, base)
+                    #if substitutions:
+                    #    # Apply substitutions to the file name by
+                    #    # replacing text in the file name with "${*}"
+                    #    # strings
+                    #    for base, sub in substitutions.items():
+                    #        filename = filename.replace(sub, base)
 
                     if not re.match(r"^.*\$\{.*\}", filename):
                         # The file path does not include any "${*}"
@@ -6067,6 +6070,7 @@ class NetCDFWrite(IOWrite):
                                     path=uri.path,
                                 )
                         else:
+                            print ('REALTIVE')
                             # Convert the file name to a relative-path
                             # URI reference relative to the
                             # aggregation file
@@ -6077,6 +6081,7 @@ class NetCDFWrite(IOWrite):
                                     abspath(join(cfa_dir, uri.path)),
                                     start=cfa_dir,
                                 )
+                                print ('filename')
                             else:
                                 # File name is an absolute URI or an
                                 # absolte-path URI reference
@@ -6144,7 +6149,7 @@ class NetCDFWrite(IOWrite):
                     np.ma.masked,
                     aggregation_location,
                 )
-                aggregation_location.set_filled_value("")
+                aggregation_location.set_fill_value("")
                 mask = aggregation_location.mask
                 aggregation_address = np.ma.array(
                     aggregation_address, mask=mask

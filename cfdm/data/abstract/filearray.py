@@ -204,6 +204,30 @@ class FileArray(Array):
             self.get_storage_options(),
         )
 
+    def _get_array(self, index=None):
+        """Returns a subspace of the dataset variable.
+
+        The subspace is defined by the `index` attributes, and is
+        applied with `cfdm.netcdf_indexer`.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `__array__`, `index`
+
+        :Parameters:
+
+            {{index: `tuple` or `None`, optional}}
+
+        :Returns:
+
+            `numpy.ndarray`
+                The subspace.
+
+        """
+        raise NotImplementedError(
+            f"Must implement {self.__class__.__name__}._get_array"
+        )  # pragma: no cover
+
     @property
     def array(self):
         """Return an independent numpy array containing the data.
@@ -323,6 +347,52 @@ class FileArray(Array):
         # TODOCFA n_files += 1
         return a
 
+    def switch_substitution(self, old, new):
+        """Remove a netCDF aggregation substitution definition.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `clear_substitutions`, `substitutions`,
+                     `update_substitutions`
+
+        :Parameters:
+
+            substitution: `str`
+                The CF-netCDF file location substitution definition to
+                be removed. May be specified with or without the
+                ``${...}`` syntax. For instance, the following are
+                equivalent: ``'substitution'`` and
+                ``'${substitution}'``.
+
+        :Returns:
+
+            `{{class}}`
+                TODOCFA
+                The removed CF-netCDF aggregation file location
+                substitution in a dictionary whose key/value pairs are
+                the location name part to be substituted and its
+                corresponding replacement text. If the given
+                substitution was not defined then an empty dictionary
+                is returned.
+                {{Returns nc_del_aggregation_substitution}}
+
+        **Examples**
+        TODOCFA.
+
+        """
+        a = self.copy()
+        substitutions = a.get_substitutions(copy=False)
+        if old not in substitutions or new not in substitutions:
+            raise ValueError("TODO")
+
+        filenames2 = [
+            f.replace(old, new)
+            for f in a.get_filenames(normalise=False)
+        ]
+        a._set_component("filename", tuple(filenames2), copy=False)
+        
+        return a
+
     def clear_substitutions(self):
         """Remove all netCDF aggregation substitution definitions.
 
@@ -437,7 +507,7 @@ class FileArray(Array):
         # TODOCFA n_files = len(new_filenames)
         return a
 
-    def del_substitution(self, substitution):
+    def del_substitution(self, substitution, replace):
         """Remove a netCDF aggregation substitution definition.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -453,6 +523,13 @@ class FileArray(Array):
                 ``${...}`` syntax. For instance, the following are
                 equivalent: ``'substitution'`` and
                 ``'${substitution}'``.
+
+            replace: `bool`
+                If True then replace the removed substutition with its
+                value in all file names. If False then the
+                substutition is removed from the file anmes with any
+                replacement (i.e. this is equivalent to it being
+                replaced with an emty string).
 
         :Returns:
 
@@ -472,15 +549,18 @@ class FileArray(Array):
         """
         a = self.copy()
         substitutions = a.get_substitutions(copy=False)
-        replacement = substitutions.pop(substitution, None)
-        if replacement is not None:
-            # Replace the deleted substitution
-            filenames2 = [
-                f.replace(substitution, replacement)
-                for f in a.get_filenames(normalise=False)
-            ]
-            a._set_component("filename", tuple(filenames2), copy=False)
+        replacement = substitutions.pop(substitution, "")
+        if replacement:
+            replacement = ""
 
+        #if replacement is not None:
+        # Replace the deleted substitution
+        filenames2 = [
+            f.replace(substitution, replacement)
+            for f in a.get_filenames(normalise=False)
+        ]
+        a._set_component("filename", tuple(filenames2), copy=False)
+        
         return a
 
     def file_directories(self):
@@ -906,6 +986,17 @@ class FileArray(Array):
         a = self.copy()
         old = a.get_substitutions(copy=False)
         old.update(substitutions)
+
+        filenames = []
+        for f in a.get_filenames(normalise=False):
+            for base, value in substitutions.items():
+                if base not in f:
+                    f = f.replace(value, base)
+                    
+            filenames.append(f)
+
+        a._set_component("filename", tuple(filenames), copy=False)
+     
         return a
 
     def get_missing_values(self):

@@ -565,14 +565,15 @@ def read(
 
             .. versionadded:: (cfdm) NEXTVERSION
 
-        cfa_write: `bool`, optional
+        cfa_write: sequence of `str`, optional
             Register the intention for named construct types to be
             subsequently written as CF-netCDF aggregation variables.
 
             This makes no difference to the logical content of any
             construct, but ensures that the data of each of specified
-            constructs will have only one Dask chunk - a pre-requisite
-            for the creation CF-netCDF aggregation variables.
+            constructs will have only one Dask chunk, which is a
+            pre-requisite for the creation CF-netCDF aggregation
+            variables.
 
             The *cfa_write* parameter may be one, or a sequence, of:
 
@@ -591,7 +592,7 @@ def read(
             ==========================  ===============================
 
             .. note:: If the *dask_chunks* parameter is set to `None`
-                      or `-1` then the data of all constructs will
+                      or ``-1`` then the data of all constructs will
                       already have only one Dask chunk, so in this
                       case setting *cfa_write* will have no further
                       effect.

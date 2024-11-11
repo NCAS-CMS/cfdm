@@ -6342,6 +6342,15 @@ class NetCDFRead(IORead):
         # aggregation variable
         # ------------------------------------------------------------
 
+        # Only keep the relevant attributes
+        a = {}
+        for attr in ('units', 'calendar', 'add_offset', 'scale_factor'):
+            value = attributes.get(attr)
+            if value is not None:
+                a[attr] = value
+
+        kwargs['attributes'] = a
+
         # Get rid of the incorrect shape. This will end up getting set
         # correctly by the AggregatedArray instance.
         kwargs.pop("shape", None)

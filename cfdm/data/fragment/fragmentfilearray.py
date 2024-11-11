@@ -185,6 +185,9 @@ class FragmentFileArray(
                 The subspace.
 
         """
+        if index is None:
+            index = self.index()
+
         kwargs = {
             "dtype": self.dtype,
             "shape": self.shape,
