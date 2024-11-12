@@ -2740,14 +2740,14 @@ class DataTest(unittest.TestCase):
         self.assertGreater(d.npartitions, 1)
 
         e = d.copy()
-        directory = os.path.dirname(os.path.abspath(file_A))
+        directory = cfdm.dirname(file_A, uri=True)
 
-        self.assertEqual(d.file_directories(), set((directory,)))
+        self.assertEqual(d.file_directories(), set([directory]))
         self.assertEqual(d.add_file_directory("/data/model/"), "/data/model")
-        self.assertEqual(d.file_directories(), set((directory, "/data/model")))
+        self.assertEqual(d.file_directories(), set([directory, cfdm.dirname("/data/model/", uri=True)]))
 
         # Check that we haven't changed 'e'
-        self.assertEqual(e.file_directories(), set((directory,)))
+        self.assertEqual(e.file_directories(), set([directory]))
 
         self.assertEqual(d.del_file_directory("/data/model/"), "/data/model")
         self.assertEqual(d.file_directories(), set((directory,)))
@@ -2756,9 +2756,9 @@ class DataTest(unittest.TestCase):
 
         # Replace directory
         self.assertEqual(
-            d.replace_file_directory(directory, "/new/path/"), "/new/path"
+            d.replace_file_directory(directory, "/new/path/"), "file:///new/path"
         )
-        self.assertEqual(d.file_directories(), set(("/new/path",)))
+        self.assertEqual(d.file_directories(), set(("file:///new/path",)))
         self.assertEqual(
             d.get_filenames(), set((f"/new/path/{os.path.basename(file_A)}",))
         )

@@ -1,4 +1,6 @@
 from copy import deepcopy
+from functools import partial
+from os import sep
 from os.path import basename, join
 from urllib.parse import urlparse
 
@@ -589,7 +591,7 @@ class FileArray(Array):
         ('/data1', '/data2', '/data1')
 
         """
-        return tuple(map(dirname, self.get_filenames(normalise=True)))
+        return tuple(map(partial(dirname, uri=True), self.get_filenames(normalise=True)))
 
     def get_address(self, default=AttributeError()):
         """The name of the file containing the array.
@@ -971,31 +973,35 @@ class FileArray(Array):
         {'/archive/location/path/file1.nc', '/home/file2.nc'}
 
         """
-        old_directory = dirname(old_directory, isdir=True)
-        new_directory = dirname(new_directory, isdir=True)
-
-        filenames = self.get_filenames(normalise=True)
-        addresses = self.get_addresses()
-
-        new_filenames = []
-        new_addresses = []
-        for filename, address in zip(filenames, addresses):
-            if dirname(filename).startswith(old_directory):
-                new_filename = filename.replace(old_directory, new_directory)
-                if new_filename not in new_filenames:
-                    new_filenames.append(new_filename)
-                    new_addresses.append(address)
-            else:
-                new_filenames.append(filename)
-                new_addresses.append(address)
+        old_directory = dirname(old_directory, uri=True, isdir=True)
+        if new_directory:
+            new_directory = dirname(new_directory, uri=True, isdir=True)
+        else:
+            old_directory += sep
+            new_directory = ""
 
         a = self.copy()
+        
+        new_filenames = []
+        for filename in  a.get_filenames(normalise=True):
+            uri = isuri(filename)
+            old_directory = dirname(old_directory, uri=uri, isdir=True)
+            if not uri and isuri(old_directory):
+                old_directory = urisplit(old_directory).getpath()
+                
+            if new_directory:
+                new_directory = dirname(new_directory, uri=uri, isdir=True)
+            else:
+                old_directory += sep
+                new_directory = ""
+
+            if filename.startswith(old_directory):
+                new_filename = filename.replace(old_directory, new_directory)
+                new_filenames.append(new_filename)
+            else:
+                new_filenames.append(filename)
+
         a._set_component("filename", tuple(new_filenames), copy=False)
-        a._set_component(
-            "address",
-            tuple(new_addresses),
-            copy=False,
-        )
         return a
 
     def get_missing_values(self):

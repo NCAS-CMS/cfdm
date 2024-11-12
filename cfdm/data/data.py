@@ -4510,7 +4510,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         **Examples**
 
         >>> d.file_directories()
-        {'/home/data1', 'file:///data2'}
+        {'https:///data/1', 'file:///data2'}
 
         """
         out = []
@@ -6451,8 +6451,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         {'/archive/location/path/file1.nc', '/home/file2.nc'}
 
         """
-        old_directory = dirname(old_directory, isdir=True)
-        new_directory = dirname(new_directory, isdir=True)
+        old_directory = dirname(old_directory, uri=True, isdir=True)
+        if new_directory:
+            new_directory = dirname(new_directory, uri=True, isdir=True)
+
         self._modify_dask_graph(
             "replace_file_directory",
             (

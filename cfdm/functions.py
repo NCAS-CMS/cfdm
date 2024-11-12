@@ -5,6 +5,7 @@ from functools import total_ordering
 from math import isnan
 from numbers import Integral
 from urllib.parse import urlparse
+from uritools import uricompose
 
 import numpy as np
 from dask import config as _config
@@ -490,7 +491,7 @@ def abspath(filename):
     return filename
 
 
-def dirname(path, isdir=False):
+def dirname(path,  uri=False, isdir=False):
     """Return a normalised absolute version of a path directory.
 
     .. versionadded:: (cfdm) NEXTVERSION
@@ -533,6 +534,13 @@ def dirname(path, isdir=False):
     '/data/not_a_dir'
 
     """
+    if not path:
+        path = ""
+        if uri:
+            path = uricompose(scheme='file', authority="", path=path)
+        
+        return path
+    
     u = urlparse(path)
     if u.scheme:
         # Remote (or "file:")
@@ -547,7 +555,11 @@ def dirname(path, isdir=False):
     if not isdir and not os.path.isdir(u):
         u = os.path.dirname(u)
 
-    return os.path.abspath(u)
+    u = os.path.abspath(u)
+    if uri:
+        u = uricompose(scheme='file', authority="", path=u)
+        
+    return u #os.path.abspath(u)
 
 
 def unique_constructs(constructs, ignore_properties=None, copy=True):

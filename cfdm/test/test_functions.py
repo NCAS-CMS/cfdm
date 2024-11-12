@@ -614,6 +614,15 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(
             cfdm.dirname("file:///model/data/file.nc"), "file:///model/data"
         )
+        self.assertEqual(
+            cfdm.dirname("/model/data/file.nc", uri=True), "file:///model/data"
+        )
+        self.assertEqual(
+            cfdm.dirname(""), ""
+        )
+        self.assertEqual(
+            cfdm.dirname("", uri=True), "file://"
+        )
 
 
 if __name__ == "__main__":
