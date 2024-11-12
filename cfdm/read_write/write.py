@@ -18,7 +18,7 @@ def write(
     datatype=None,
     least_significant_digit=None,
     endian="native",
-    compress=4,
+    compress=0,
     fletcher32=False,
     shuffle=True,
     string=True,

@@ -1129,7 +1129,7 @@ class PropertiesData(Properties):
         if data is None:
             return
 
-        return data.nc_upate_aggregation_substitutions(substitutions)
+        return data.nc_update_aggregation_substitutions(substitutions)
 
     def replace_file_directory(self, old_directory, new_directory):
         """Replace a file directory in-place.

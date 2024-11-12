@@ -1810,19 +1810,21 @@ class PropertiesDataBounds(PropertiesData):
         None
 
         """
-        super().nc_upate_aggregation_substitutions(substitutions)
+        super().nc_update_aggregation_substitutions(substitutions)
 
         # Bounds
         if bounds:
             bounds = self.get_bounds(None)
             if bounds is not None:
-                bounds.nc_upate_aggregation_substitutions(substitutions)
+                bounds.nc_update_aggregation_substitutions(substitutions)
 
         # Interior ring
         if interior_ring:
             interior_ring = self.get_interior_ring(None)
             if interior_ring is not None:
-                interior_ring.nc_upate_aggregation_substitutions(substitutions)
+                interior_ring.nc_update_aggregation_substitutions(
+                    substitutions
+                )
 
     def set_node_count(self, node_count, copy=True):
         """Set the node count variable for geometry bounds.

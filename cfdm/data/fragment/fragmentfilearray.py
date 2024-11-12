@@ -1,6 +1,6 @@
 from os.path import join
 
-from uritools import isabspath, isabsuri, isrelpath, uricompose
+from uritools import uricompose, urisplit
 
 from ...functions import abspath
 from ..abstract import FileArray
@@ -48,7 +48,6 @@ class FragmentFileArray(
         unpack_aggregated_data=True,
         aggregated_attributes=None,
         aggregation_file_directory=None,
-        aggregation_file_scheme=None,
         source=None,
         copy=True,
     ):
@@ -127,23 +126,10 @@ class FragmentFileArray(
             except AttributeError:
                 aggregation_file_directory = None
 
-            try:
-                aggregation_file_scheme = source._get_component(
-                    "aggregation_file_scheme", None
-                )
-            except AttributeError:
-                aggregation_file_scheme = None
-
-        if aggregation_file_scheme is None:
-            aggregation_file_scheme = "file"
-
         self._set_component(
             "aggregation_file_directory",
             aggregation_file_directory,
             copy=False,
-        )
-        self._set_component(
-            "aggregation_file_scheme", aggregation_file_scheme, copy=False
         )
         self._set_component(
             "unpack_aggregated_data",
@@ -235,10 +221,10 @@ class FragmentFileArray(
         :Parameters:
 
             normalise: `bool`, optional
-
-                TODOCFA
-
-                .. versionadded:: (cfdm) NEXTVERSION
+                If True (the default) then normalise the file names to
+                absolute URIs. If False then the file names are
+                returned in the same form that they have in the
+                CF-netCDF aggregation file.
 
         :Returns:
 
@@ -252,15 +238,16 @@ class FragmentFileArray(
             return filenames
 
         normalised_filenames = []
-        substitutions = self.get_substitutions(copy=False)
+        #        substitutions = self.get_substitutions(copy=False)
         for filename in filenames:
             # Apply substitutions to the file name
-            for base, sub in substitutions.items():
-                filename = filename.replace(base, sub)
+            # for base, sub in substitutions.items():
+            #    filename = filename.replace(base, sub)
 
-            # If the file name is not an absolute URi then replace it
-            # with an absolute URI.
-            if isrelpath(filename):
+            uri = urisplit(filename)
+
+            # Convert the file name to an absolute URI
+            if uri.isrelpath():
                 # File name is a relative-path URI reference
                 filename = abspath(
                     join(
@@ -268,21 +255,17 @@ class FragmentFileArray(
                         filename,
                     )
                 )
-                filename = uricompose(
-                    scheme=self._get_component("aggregation_file_scheme"),
-                    authority="",
-                    path=filename,
-                )
-            elif isabspath(filename):
+            elif uri.isabspath():
+                # File name is an absolute-path URI reference
                 filename = uricompose(
                     scheme="file",
                     authority="",
                     path=filename,
                 )
-            elif not isabsuri(filename):
+            elif not uri.isabsuri():
                 raise ValueError(
-                    "Fragment file location must be an absolute URI, "
-                    "relative-path URI reference, or absolute-path URI: "
+                    "Fragment file location must be an absolute URI, a "
+                    "relative-path URI reference, or an absolute-path URI: "
                     f"Got: {filename}"
                 )
 

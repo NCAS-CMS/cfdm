@@ -324,11 +324,9 @@ class FileArray(Array):
         """
         directory = dirname(directory, isdir=True)
 
-        filenames = self.get_filenames()  # TODOCFA normalise?
+        filenames = self.get_filenames(normalise=True)
         addresses = self.get_addresses()
 
-        # Note: It is assumed that each existing file name is either
-        #       an absolute path or an absolute URI.
         new_filenames = list(filenames)
         new_addresses = list(addresses)
         for filename, address in zip(filenames, addresses):
@@ -386,11 +384,10 @@ class FileArray(Array):
             raise ValueError("TODO")
 
         filenames2 = [
-            f.replace(old, new)
-            for f in a.get_filenames(normalise=False)
+            f.replace(old, new) for f in a.get_filenames(normalise=False)
         ]
         a._set_component("filename", tuple(filenames2), copy=False)
-        
+
         return a
 
     def clear_substitutions(self):
@@ -483,7 +480,6 @@ class FileArray(Array):
         ('tas1',)
 
         """
-        #        directory = abspath(directory).rstrip(sep)
         directory = dirname(directory, isdir=True)
 
         new_filenames = []
@@ -553,14 +549,14 @@ class FileArray(Array):
         if replacement:
             replacement = ""
 
-        #if replacement is not None:
+        # if replacement is not None:
         # Replace the deleted substitution
         filenames2 = [
             f.replace(substitution, replacement)
             for f in a.get_filenames(normalise=False)
         ]
         a._set_component("filename", tuple(filenames2), copy=False)
-        
+
         return a
 
     def file_directories(self):
@@ -708,16 +704,20 @@ class FileArray(Array):
         if not normalise:
             return filenames
 
-        normalised_filenames = []
-        substitutions = self.get_substitutions(copy=False)
-        for filename in filenames:
-            # Apply substitutions to the file name
-            for base, sub in substitutions.items():
-                filename = filename.replace(base, sub)
+        filenames = [abspath(f) for f in filenames]
+        return tuple(filenames)
 
-            normalised_filenames.append(abspath(filename))
-
-        return tuple(normalised_filenames)
+    #        normalised_filenames = []
+    #        substitutions = self.get_substitutions(copy=False)
+    #        for filename in filenames:
+    #            # Apply substitutions to the file name
+    #            for base, sub in substitutions.items():
+    #                filename = filename.replace(base, sub)
+    #
+    #            # Convert the file name to an absolute path
+    #            normalised_filenames.append(abspath(filename))
+    #
+    #        return tuple(normalised_filenames)
 
     def get_mask(self):
         """Whether or not to automatically mask the data.
@@ -857,6 +857,29 @@ class FileArray(Array):
 
         return substitutions
 
+    def prepend_substitution(self, substitution):
+        """TODOCFA.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        if len(substitution) > 1:
+            raise ValueError("")
+
+        a = self.copy()
+        if not substitution:
+            return a
+
+        old = a.get_substitutions(copy=False)
+        old.update(substitution)
+
+        base = tuple(substitution.keys())[0]
+        filenames = [f"{base}{f}" for f in a.get_filenames(normalise=False)]
+
+        a._set_component("filename", tuple(filenames), copy=False)
+
+        return a
+
     def open(self, func, *args, **kwargs):
         """Return a dataset file object and address.
 
@@ -951,11 +974,9 @@ class FileArray(Array):
         old_directory = dirname(old_directory, isdir=True)
         new_directory = dirname(new_directory, isdir=True)
 
-        filenames = self.get_filenames()  # TODOCFA normalise?
+        filenames = self.get_filenames(normalise=True)
         addresses = self.get_addresses()
 
-        # Note: It is assumed that each existing file name is either
-        #       an absolute path or an absolute URI.
         new_filenames = []
         new_addresses = []
         for filename, address in zip(filenames, addresses):
@@ -975,28 +996,6 @@ class FileArray(Array):
             tuple(new_addresses),
             copy=False,
         )
-        return a
-
-    def update_substitutions(self, substitutions):
-        """TODOCFA.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        """
-        a = self.copy()
-        old = a.get_substitutions(copy=False)
-        old.update(substitutions)
-
-        filenames = []
-        for f in a.get_filenames(normalise=False):
-            for base, value in substitutions.items():
-                if base not in f:
-                    f = f.replace(value, base)
-                    
-            filenames.append(f)
-
-        a._set_component("filename", tuple(filenames), copy=False)
-     
         return a
 
     def get_missing_values(self):
@@ -1079,7 +1078,7 @@ class FileArray(Array):
             raise ValueError(
                 "Can't replace a fragment's file locations when the "
                 "existing files have differing file addresses.\n"
-                f"Locations: {self.get_filenames(normalise=False)}\n"
+                f"Locations: {self.get_filenames()}\n"
                 f"Addresses: {addresses}"
             )
 
@@ -1127,4 +1126,26 @@ class FileArray(Array):
         """
         a = self.copy()
         a._set_component("min_file_versions", n, copy=False)
+        return a
+
+    def update_substitutions(self, substitutions):
+        """TODOCFA.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
+        a = self.copy()
+        old = a.get_substitutions(copy=False)
+        old.update(substitutions)
+
+        filenames = []
+        for f in a.get_filenames(normalise=False):
+            for base, value in substitutions.items():
+                if base not in f:
+                    f = f.replace(value, base)
+
+            filenames.append(f)
+
+        a._set_component("filename", tuple(filenames), copy=False)
+
         return a

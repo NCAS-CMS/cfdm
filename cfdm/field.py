@@ -2962,10 +2962,10 @@ class Field(
         None
 
         """
-        super().nc_upate_aggregation_substitutions(substitutions)
+        super().nc_update_aggregation_substitutions(substitutions)
 
         for c in self.constructs.filter_by_data(todict=True).values():
-            c.nc_upate_aggregation_substitutions(substitutions)
+            c.nc_update_aggregation_substitutions(substitutions)
 
     def nc_hdf5_chunksizes(self, todict=False):
         """Get the HDF5 chunking strategy for the data.

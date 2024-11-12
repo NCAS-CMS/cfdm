@@ -2,7 +2,7 @@ from copy import deepcopy
 from itertools import accumulate, product
 
 import numpy as np
-from uritools import urisplit
+from uritools import isuri, uricompose
 
 from ..functions import dirname
 from . import abstract
@@ -761,10 +761,15 @@ class AggregatedArray(abstract.FileArray):
         unpack = self.get_unpack()
 
         if fragment_type == "location":
-            # Get the directory and scheme of aggregation file
-            u = urisplit(self.get_filename())
-            aggregation_file_directory = dirname(u.path)
-            aggregation_file_scheme = u.scheme
+            # Get the directory of the aggregation file as an absolute
+            # URI
+            aggregation_file_directory = dirname(self.get_filename())
+            if not isuri(aggregation_file_directory):
+                aggregation_file_directory = uricompose(
+                    scheme="file",
+                    authority="",
+                    path=aggregation_file_directory,
+                )
 
         # Set the chunk sizes for the dask array
         chunks = self.subarray_shapes(chunks)
@@ -794,7 +799,6 @@ class AggregatedArray(abstract.FileArray):
                 kwargs["storage_options"] = storage_options
                 kwargs["substitutions"] = substitutions
                 kwargs["min_file_versions"] = n_file_versions
-                kwargs["aggregation_file_scheme"] = aggregation_file_scheme
                 kwargs["aggregation_file_directory"] = (
                     aggregation_file_directory
                 )

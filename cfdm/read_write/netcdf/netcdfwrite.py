@@ -2751,6 +2751,13 @@ class NetCDFWrite(IOWrite):
         }
 
         # Add compression parameters (but not for vlen strings).
+        #
+        # From the NUG:
+        #
+        #   Compression is permitted but may not be effective for VLEN
+        #   data, because the compression is applied to structures
+        #   containing lengths and pointers to the data, rather than
+        #   the actual data.
         if kwargs["datatype"] != str:
             kwargs.update(g["netcdf_compression"])
 
@@ -2782,7 +2789,8 @@ class NetCDFWrite(IOWrite):
             error = str(error)
             message = (
                 f"Can't create variable in {g['netcdf'].file_format} file "
-                f"from {cfvar!r} ({error})"
+                f"from {cfvar!r}: {error}. "
+                f"netCDF4.createVariable arguments: {kwargs}"
             )
             if error == (
                 "NetCDF: Not a valid data type or _FillValue type mismatch"
@@ -2977,14 +2985,14 @@ class NetCDFWrite(IOWrite):
             # Write the data as an aggregation variable
             # --------------------------------------------------------
             # Check that aggregated dimensions are not unlimited
-            dims = g["netcdf"].dimensions
-#            for ncdim in ncdimensions:
-#                if dims[ncdim].isunlimited():
-#                    raise ValueError(
-#                        f"Can't write aggregation variable {ncvar!r} with "
-#                        f"unlimited aggregated dimension {ncdim!r}"
-#                    )
-#
+            #            dims = g["netcdf"].dimensions
+            #            for ncdim in ncdimensions:
+            #                if dims[ncdim].isunlimited():
+            #                    raise ValueError(
+            #                        f"Can't write aggregation variable {ncvar!r} with "
+            #                        f"unlimited aggregated dimension {ncdim!r}"
+            #                    )
+            #
             self._create_cfa_data(
                 ncvar,
                 ncdimensions,
@@ -3384,6 +3392,8 @@ class NetCDFWrite(IOWrite):
                     # The data array spans this domain axis, so write
                     # the dimension coordinate to the file as a
                     # coordinate variable.
+                    #                    import pprint
+                    #                    pprint.pprint(g)
                     ncvar = self._write_dimension_coordinate(
                         f, key, dim_coord, ncdim=ncdim, coordinates=coordinates
                     )
@@ -4929,7 +4939,7 @@ class NetCDFWrite(IOWrite):
             )
 
         cfa.setdefault("constructs", "auto")
-        cfa.setdefault("uri", "absolute")
+        cfa.setdefault("uri", "default")
         cfa.setdefault("substitutions", {})
         cfa.setdefault("strict", True)
 
@@ -4953,10 +4963,6 @@ class NetCDFWrite(IOWrite):
 
             cfa["substitutions"] = substitutions
 
-        cfa.setdefault("constructs", "auto")
-        cfa.setdefault("uri", "absolute")
-        cfa.setdefault("substitutions", {})
-        cfa.setdefault("strict", True)
         self.write_vars["cfa"] = cfa
 
         effective_mode = mode  # actual mode to use for the first IO iteration
@@ -5133,8 +5139,13 @@ class NetCDFWrite(IOWrite):
         self._customise_write_vars()
 
         compress = int(compress)
-        zlib = bool(compress)
+        if compress:
+            compression = "zlib"
+        else:
+            compression = None
 
+        #        zlib = bool(compress)
+        #
         netcdf3_fmts = (
             "NETCDF3_CLASSIC",
             "NETCDF3_64BIT",
@@ -5204,7 +5215,7 @@ class NetCDFWrite(IOWrite):
         # -------------------------------------------------------
         g["netcdf_compression"].update(
             {
-                "zlib": zlib,
+                "compression": compression,
                 "complevel": compress,
                 "fletcher32": bool(fletcher32),
                 "shuffle": bool(shuffle),
@@ -5668,9 +5679,13 @@ class NetCDFWrite(IOWrite):
             l_ncdim = f"f_shape_{dim}_{size}"
             if l_ncdim not in g["dimensions"]:
                 # Create a new location dimension
-                unlimited = dim == "x" and bool(g["unlimited_dimensions"].intersection(ncdimensions))
-                             
-                self._write_dimension(l_ncdim, None, unlimited=unlimited, size=size)
+                unlimited = dim == "x" and bool(
+                    g["unlimited_dimensions"].intersection(ncdimensions)
+                )
+
+                self._write_dimension(
+                    l_ncdim, None, unlimited=unlimited, size=size
+                )
 
             shape_ncdimensions.append(l_ncdim)
             dim = "x"
@@ -5704,7 +5719,9 @@ class NetCDFWrite(IOWrite):
                 if f_ncdim not in g["dimensions"]:
                     # Create a new fragment array dimension
                     unlimited = ncdim in g["unlimited_dimensions"]
-                    self._write_dimension(f_ncdim, None, unlimited=unlimited, size=size)
+                    self._write_dimension(
+                        f_ncdim, None, unlimited=unlimited, size=size
+                    )
 
             fragment_array_ncdimensions = tuple(fragment_array_ncdimensions)
 
@@ -5890,15 +5907,19 @@ class NetCDFWrite(IOWrite):
 
         return np.ma.masked_all(out_shape, dtype=a.dtype)
 
-    def _cfa_get_file_details(self, data):
+    def _cfa_get_file_details(self, data, normalise=True):
         """Get the details of all files referenced by the data.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
-             data: `Data`
+            data: `Data`
                 The data.
+
+            normalise: `bool`, optional
+                If True then normalise the file names, otherwise do
+                not.
 
         :Returns:
 
@@ -5921,7 +5942,7 @@ class NetCDFWrite(IOWrite):
             try:
                 out_append(
                     (
-                        a.get_filenames(normalise=False),
+                        a.get_filenames(normalise=normalise),
                         a.get_addresses(),
                         a.get_n_file_versions(),
                     )
@@ -5959,7 +5980,7 @@ class NetCDFWrite(IOWrite):
          'address': <Data(1, 1): [[q]]>}
 
         """
-        from os.path import abspath, join, relpath
+        from os.path import relpath
 
         g = self.write_vars
 
@@ -5968,19 +5989,6 @@ class NetCDFWrite(IOWrite):
         # provided by the cfa options.
         substitutions = data.nc_aggregation_substitutions()
         substitutions.update(g["cfa"].get("substitutions", {}))
-
-        absolute_uri = g["cfa"].get("uri", "absolute") == "absolute"
-        cfa_dir = g["aggregation_file_directory"]
-        if cfa_dir is None:
-            cfa_dir = dirname(g["filename"])
-            cfa_scheme = urisplit(g["filename"]).scheme
-            if cfa_scheme is None:
-                cfa_scheme = "file"
-
-            g["aggregation_file_directory"] = cfa_dir
-            g["aggregation_file_scheme"] = cfa_scheme
-
-        cfa_scheme = g["aggregation_file_scheme"]
 
         # ------------------------------------------------------------
         # Create the shape array
@@ -6003,6 +6011,34 @@ class NetCDFWrite(IOWrite):
             # --------------------------------------------------------
             # Create 'location' and 'address' arrays
             # --------------------------------------------------------
+            uri_default = g["cfa"].get("uri", "default") == "default"
+            uri_relative = (
+                not uri_default
+                and g["cfa"].get("uri", "relative") == "relative"
+            )
+            normalise = not uri_default
+
+            if uri_relative:
+                aggregation_file_directory = g["aggregation_file_directory"]
+                if aggregation_file_directory is None:
+                    uri = urisplit(dirname(g["filename"]))
+                    if uri.isuri():
+                        aggregation_file_scheme = uri.scheme
+                        aggregation_file_directory = uri.geturi()
+                    else:
+                        aggregation_file_scheme = "file"
+                        aggregation_file_directory = uricompose(
+                            scheme=aggregation_file_scheme,
+                            authority="",
+                            path=uri.path,
+                        )
+
+                    g["aggregation_file_directory"] = (
+                        aggregation_file_directory
+                    )
+                    g["aggregation_file_scheme"] = aggregation_file_scheme
+
+                aggregation_file_scheme = g["aggregation_file_scheme"]
 
             # Size of the trailing dimension
             n_trailing = 0
@@ -6010,7 +6046,9 @@ class NetCDFWrite(IOWrite):
             aggregation_location = []
             aggregation_address = []
             for index in data.chunk_indices():
-                file_details = self._cfa_get_file_details(data[index])
+                file_details = self._cfa_get_file_details(
+                    data[index], normalise=normalise
+                )
                 if len(file_details) != 1:
                     if file_details:
                         raise ValueError(
@@ -6036,78 +6074,113 @@ class NetCDFWrite(IOWrite):
 
                 filenames2 = []
                 for filename in filenames:
-                    #if substitutions:
+                    uri = urisplit(filename)
+                    if uri.isabspath():
+                        # File name is an absolute-path URI reference
+                        filename = uricompose(
+                            scheme="file",
+                            authority="",
+                            path=uri.path,
+                        )
+
+                    if uri_relative:
+                        scheme = uri.scheme
+                        if not scheme:
+                            scheme = "file"
+
+                        if scheme != aggregation_file_scheme:
+                            raise ValueError(
+                                "Can't create a relative-path URI "
+                                "reference fragment location when "
+                                "the fragment file and aggregation "
+                                "file have different URI schemes: "
+                                f"{scheme}, {aggregation_file_scheme}"
+                            )
+
+                        filename = relpath(
+                            filename, start=aggregation_file_directory
+                        )
+
+                    filenames2.append(filename)
+
+                    # if substitutions:
                     #    # Apply substitutions to the file name by
                     #    # replacing text in the file name with "${*}"
                     #    # strings
                     #    for base, sub in substitutions.items():
                     #        filename = filename.replace(sub, base)
-
-                    if not re.match(r"^.*\$\{.*\}", filename):
-                        # The file path does not include any "${*}"
-                        # strings, so we reformat the file name to be
-                        # either an absolute URI, or else a
-                        # relative-path URI reference relative to the
-                        # aggregation file.
-                        uri = urisplit(filename)
-                        if absolute_uri:
-                            # Convert the file name to an absolute URI
-                            if uri.isrelpath():
-                                # File name is a relative-path URI reference
-                                filename = uricompose(
-                                    scheme=cfa_scheme,
-                                    authority="",
-                                    path=abspath(join(cfa_dir, uri.path)),
-                                )
-                            elif uri.isabsuri():
-                                # File name is an absolute URI
-                                filename = uri.geturi()
-                            else:
-                                # File name is an absolute-path URI reference
-                                filename = uricompose(
-                                    scheme="file",
-                                    authority="",
-                                    path=uri.path,
-                                )
-                        else:
-                            print ('REALTIVE')
-                            # Convert the file name to a relative-path
-                            # URI reference relative to the
-                            # aggregation file
-                            if uri.isrelpath():
-                                # File name is a relative-path URI
-                                # reference
-                                filename = relpath(
-                                    abspath(join(cfa_dir, uri.path)),
-                                    start=cfa_dir,
-                                )
-                                print ('filename')
-                            else:
-                                # File name is an absolute URI or an
-                                # absolte-path URI reference
-                                scheme = uri.scheme
-                                if not scheme:
-                                    scheme = "file"
-
-                                if scheme != cfa_scheme:
-                                    raise ValueError(
-                                        "Can't create relative-path URI "
-                                        "reference fragment location when "
-                                        "the fragment file and aggregation "
-                                        "file have different URI schemes: "
-                                        f"{scheme}, {cfa_scheme}"
-                                    )
-
-                                filename = relpath(uri.path, start=cfa_dir)
-
-                        if substitutions:
-                            # Apply substitutions to the modified file
-                            # name
-                            for base, sub in substitutions.items():
-                                filename = filename.replace(sub, base)
-
-                    filenames2.append(filename)
-
+                #                    if not re.match(r"^.*\$\{.*\}", filename):
+                #                        # The file path does not include any "${*}"
+                #                        # strings, so we reformat the file name to be
+                #                        # either an absolute URI, or else a
+                #                        # relative-path URI reference relative to the
+                #                        # aggregation file.
+                #                        uri = urisplit(filename)
+                #
+                #                        if absolute_uri:
+                #                            pass
+                #                            # Convert the file name to an absolute URI
+                #                            if uri.isrelpath():
+                #                                # File name is an absolute-path URI reference
+                #                                filename = uricompose(
+                #                                    scheme="file",
+                #                                    authority="",
+                #                                    path=uri.path,
+                #                                )
+                #                               ## File name is a relative-path URI reference
+                #                               #filename = uricompose(
+                #                               #    scheme=cfa_scheme,
+                #                               #    authority="",
+                #                               #    path=abspath(join(cfa_dir, uri.path)),
+                #                               #)
+                #                            if uri.isabsuri():
+                #                                # File name is an absolute URI
+                #                                filename = uri.geturi()
+                #                            else:
+                #                                # File name is an absolute-path URI reference
+                #                                filename = uricompose(
+                #                                    scheme="file",
+                #                                    authority="",
+                #                                    path=uri.path,
+                #                                )
+                #                        else:
+                #                            # Convert the file name to a relative-path
+                #                            # URI reference relative to the
+                #                            # aggregation file
+                #                            if uri.isrelpath():
+                #                                pass
+                #                                # File name is a relative-path URI
+                #                                # reference
+                #                                filename = relpath(
+                #                                    abspath(join(cfa_dir, uri.path)),
+                #                                    start=cfa_dir,
+                #                                )
+                #                            else:
+                #                                # File name is an absolute URI or an
+                #                                # absolute-path URI reference
+                #                                scheme = uri.scheme
+                #                                if not scheme:
+                #                                    scheme = "file"
+                #
+                #                                if scheme != cfa_scheme:
+                #                                    raise ValueError(
+                #                                        "Can't create a relative-path URI "
+                #                                        "reference fragment location when "
+                #                                        "the fragment file and aggregation "
+                #                                        "file have different URI schemes: "
+                #                                        f"{scheme}, {cfa_scheme}"
+                #                                    )
+                #
+                #                                filename = relpath(uri.path, start=cfa_dir)
+                #
+                #                        if substitutions:
+                #                            # Apply substitutions to the modified file
+                #                            # name
+                #                            for base, sub in substitutions.items():
+                #                                filename = filename.replace(sub, base)
+                #
+                #                    filenames2.append(filename)
+                #
                 aggregation_location.append(tuple(filenames2))
                 aggregation_address.append(addresses)
 

@@ -500,6 +500,10 @@ def dirname(path, isdir=False):
         path: `str`
             The name of the path.
 
+        isdir: `bool`, optional
+            Set to True if *path* represents a directory that does not
+            exist.
+
     :Returns:
 
         `str`
@@ -523,6 +527,10 @@ def dirname(path, isdir=False):
     'http://data/archive'
     >>> cfdm.abspath('file://data/archive/file.nc')
     'file://data/archive'
+    >>> cfdm.dirname('/data/not_a_dir')
+    '/data'
+    >>> cfdm.dirname('/data/not_a_dir', isdir=True)
+    '/data/not_a_dir'
 
     """
     u = urlparse(path)
