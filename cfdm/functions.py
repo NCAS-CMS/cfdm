@@ -1,5 +1,7 @@
 import logging
 import os
+from  os import sep
+from  os.path import abspath as os_abspath
 from copy import deepcopy
 from functools import total_ordering
 from math import isnan
@@ -10,7 +12,7 @@ import numpy as np
 from dask import config as _config
 from dask.base import is_dask_collection
 from dask.utils import parse_bytes
-from uritools import uricompose
+from uritools import uricompose, urisplit
 
 from . import __cf_version__, __file__, __version__, core
 from .constants import CONSTANTS, ValidLogLevels
@@ -480,15 +482,18 @@ def abspath(filename):
     'http://data/archive/file.nc'
 
     """
-    u = urlparse(filename)
+    u = urisplit(filename)
     scheme = u.scheme
-    if not scheme:
-        return os.path.abspath(filename)
+    path = u.path
 
-    if scheme == "file":
-        return u.path
+    if scheme:
+        if path.startswith(sep):
+            return uricompose(scheme=scheme, authority="",
+                              path=os_abspath(path))
 
-    return filename
+        return u.geturi()
+
+    return os_abspath(path)
 
 
 def dirname(path, uri=False, isdir=False):

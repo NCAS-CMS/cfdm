@@ -261,8 +261,10 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(cfdm.abspath(filename), os.path.abspath(filename))
         filename = "http://test_file.nc"
         self.assertEqual(cfdm.abspath(filename), filename)
-        filename = "https://test_file.nc"
+        filename = "http:///test_file.nc"
         self.assertEqual(cfdm.abspath(filename), filename)
+        filename = "https:///home/../test_file.nc"
+        self.assertEqual(cfdm.abspath(filename), "https:///test_file.nc")
 
     def test_configuration(self):
         """Test the configuration function."""

@@ -14,7 +14,7 @@ from uritools import uricompose, urisplit
 
 from ...data.dask_utils import cfdm_asanyarray
 from ...decorators import _manage_log_level_via_verbosity
-from ...functions import dirname, integer_dtype
+from ...functions import dirname, integer_dtype, abspath
 from .. import IOWrite
 from .netcdfread import NetCDFRead
 
@@ -4781,6 +4781,7 @@ class NetCDFWrite(IOWrite):
 
         # Expand file name
         filename = os.path.expanduser(os.path.expandvars(filename))
+        filename = abspath(filename)
 
         # Parse the omit_data parameter
         if omit_data is None:
@@ -4924,7 +4925,8 @@ class NetCDFWrite(IOWrite):
         elif isinstance(cfa, str):
             cfa = {"constructs": cfa}
         elif isinstance(cfa, dict):
-            keys = ("constructs", "substitutions", "uri", "strict")
+#            keys = ("constructs", "substitutions", "uri", "strict")
+            keys = ("constructs", "uri", "strict")
             if not set(cfa).issubset(keys):
                 raise ValueError(
                     f"Invalid dictionary key to the 'cfa' keyword: {cfa!r}. "
@@ -4940,7 +4942,7 @@ class NetCDFWrite(IOWrite):
 
         cfa.setdefault("constructs", "auto")
         cfa.setdefault("uri", "default")
-        cfa.setdefault("substitutions", {})
+#        cfa.setdefault("substitutions", {})
         cfa.setdefault("strict", True)
 
         constructs = cfa["constructs"]
@@ -4953,15 +4955,15 @@ class NetCDFWrite(IOWrite):
 
             cfa["constructs"] = {c: None for c in constructs}
 
-        substitutions = cfa["substitutions"]
-        if substitutions:
-            substitutions = substitutions.copy()
-            for base, sub in tuple(substitutions.items()):
-                if not (base.startswith("${") and base.endswith("}")):
-                    # Add missing ${...}
-                    substitutions[f"${{{base}}}"] = substitutions.pop(base)
-
-            cfa["substitutions"] = substitutions
+#        substitutions = cfa["substitutions"]
+#        if substitutions:
+#            substitutions = substitutions.copy()
+#            for base, sub in tuple(substitutions.items()):
+#                if not (base.startswith("${") and base.endswith("}")):
+#                    # Add missing ${...}
+#                    substitutions[f"${{{base}}}"] = substitutions.pop(base)
+#
+#            cfa["substitutions"] = substitutions
 
         self.write_vars["cfa"] = cfa
 
@@ -5725,24 +5727,23 @@ class NetCDFWrite(IOWrite):
 
             fragment_array_ncdimensions = tuple(fragment_array_ncdimensions)
 
-            # Create a 'substitutions' netCDF attribute for the
-            # 'location' fragment array variable
-            substitutions = data.nc_aggregation_substitutions()
-            substitutions.update(g["cfa"].get("substitutions", {}))
-            if substitutions:
-                subs = [
-                    f"{base}: {sub}" for base, sub in substitutions.items()
-                ]
-                attributes = {"substitutions": " ".join(sorted(subs))}
-            else:
-                attributes = None
+#            # Create a 'substitutions' netCDF attribute for the
+#            # 'location' fragment array variable
+#            substitutions = data.nc_aggregation_substitutions()
+#            substitutions.update(g["cfa"].get("substitutions", {}))
+#            if substitutions:
+#                subs = [
+#                    f"{base}: {sub}" for base, sub in substitutions.items()
+#                ]
+#                attributes = {"substitutions": " ".join(sorted(subs))}
+#            else:
+#                attributes = None
 
             # Write the fragment array variable to the netCDF dataset
             feature_ncvar = self._cfa_write_fragment_array_variable(
-                location,  # cfa[feature],
+                location,
                 aggregated_data.get(feature, f"cfa_{feature}"),
                 fragment_array_ncdimensions,
-                attributes=attributes,
             )
             aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 
@@ -5984,11 +5985,11 @@ class NetCDFWrite(IOWrite):
 
         g = self.write_vars
 
-        # Define location fragment array variable susbstitutions,
-        # giving precedence over those set on the Data object to those
-        # provided by the cfa options.
-        substitutions = data.nc_aggregation_substitutions()
-        substitutions.update(g["cfa"].get("substitutions", {}))
+#        # Define location fragment array variable susbstitutions,
+#        # giving precedence over those set on the Data object to those
+#        # provided by the cfa options.
+#        substitutions = data.nc_aggregation_substitutions()
+#        substitutions.update(g["cfa"].get("substitutions", {}))
 
         # ------------------------------------------------------------
         # Create the shape array
@@ -6016,9 +6017,10 @@ class NetCDFWrite(IOWrite):
                 not uri_default
                 and g["cfa"].get("uri", "relative") == "relative"
             )
-            normalise = not uri_default
 
             if uri_relative:
+                # Get the aggregation file directory as an absolute
+                # URI
                 aggregation_file_directory = g["aggregation_file_directory"]
                 if aggregation_file_directory is None:
                     uri = urisplit(dirname(g["filename"]))
@@ -6047,7 +6049,7 @@ class NetCDFWrite(IOWrite):
             aggregation_address = []
             for index in data.chunk_indices():
                 file_details = self._cfa_get_file_details(
-                    data[index], normalise=normalise
+                    data[index], normalise=not uri_default
                 )
                 if len(file_details) != 1:
                     if file_details:
@@ -6075,13 +6077,17 @@ class NetCDFWrite(IOWrite):
                 filenames2 = []
                 for filename in filenames:
                     uri = urisplit(filename)
+
+                    if uri_relative and uri.isrelpath():
+                        filename = abspath(filename)
+                    
                     if uri.isabspath():
                         # File name is an absolute-path URI reference
                         filename = uricompose(
                             scheme="file",
                             authority="",
-                            path=uri.path,
-                        )
+                            path=abspath(uri.path),
+                        )                    
 
                     if uri_relative:
                         scheme = uri.scheme
