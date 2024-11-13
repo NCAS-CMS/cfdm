@@ -5,12 +5,12 @@ from functools import total_ordering
 from math import isnan
 from numbers import Integral
 from urllib.parse import urlparse
-from uritools import uricompose
 
 import numpy as np
 from dask import config as _config
 from dask.base import is_dask_collection
 from dask.utils import parse_bytes
+from uritools import uricompose
 
 from . import __cf_version__, __file__, __version__, core
 from .constants import CONSTANTS, ValidLogLevels
@@ -491,7 +491,7 @@ def abspath(filename):
     return filename
 
 
-def dirname(path,  uri=False, isdir=False):
+def dirname(path, uri=False, isdir=False):
     """Return a normalised absolute version of a path directory.
 
     .. versionadded:: (cfdm) NEXTVERSION
@@ -537,10 +537,10 @@ def dirname(path,  uri=False, isdir=False):
     if not path:
         path = ""
         if uri:
-            path = uricompose(scheme='file', authority="", path=path)
-        
+            path = uricompose(scheme="file", authority="", path=path)
+
         return path
-    
+
     u = urlparse(path)
     if u.scheme:
         # Remote (or "file:")
@@ -557,9 +557,9 @@ def dirname(path,  uri=False, isdir=False):
 
     u = os.path.abspath(u)
     if uri:
-        u = uricompose(scheme='file', authority="", path=u)
-        
-    return u #os.path.abspath(u)
+        u = uricompose(scheme="file", authority="", path=u)
+
+    return u  # os.path.abspath(u)
 
 
 def unique_constructs(constructs, ignore_properties=None, copy=True):

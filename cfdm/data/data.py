@@ -2019,8 +2019,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 (the default) are specified by an empty `tuple`.
 
             kwargs: `dict` or `None`, optional
-                Keyword arguments for the *method*. No arguments (the
-                default) are specified by an empty `dict` or `None`.
+                Keyword arguments for the *method*. No keyword
+                arguments (the default) is specified by an empty
+                `dict` or `None`.
 
             exceptions: `tuple` of `Exception`, optional
                 Do not change graph node values if calling its
@@ -6413,7 +6414,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         return d
 
-    def replace_file_directory(self, old_directory, new_directory):
+    def replace_file_directory(
+        self, old_directory, new_directory, normalise=True
+    ):
         """Replace a file directory in-place.
 
         Every file in *old_directory* that is referenced by the data
@@ -6426,43 +6429,45 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Parameters:
 
-            old_directory: `str`
-                The directory to be replaced.
+            old_directory: `str` or `None`
+                The directory to be replaced. If *normalise* is False and
+                *old_directory* is an empty string or `None`, then
+                *new_directory* is prepended to each file anme.
 
-            new_directory: `str`
-                The new directory.
+            new_directory: `str` or `None`
+                The new directory. If an empty string or `None` then
+                *old_directory* is replaced with an empty string.
+
+            normalise: `bool`, optional
+                If True (the default) then *old_directory*,
+                *new_directory*, and the file names are normalised to
+                absolute paths prior to the replacement. If False then
+                no normalisation is done.
 
         :Returns:
 
-            `str`
-                The new directory as an absolute path.
+            `None`
 
         **Examples**
 
         >>> d.get_filenames()
         {'/data/file1.nc', '/home/file2.nc'}
         >>> d.replace_file_directory('/data', '/new/data/path/')
-        '/new/data/path'
         >>> d.get_filenames()
         {'/new/data/path/file1.nc', '/home/file2.nc'}
         >>> d.replace_file_directory('/new/data, '/archive/location')
-        '/archive/location'
         >>> d.get_filenames()
         {'/archive/location/path/file1.nc', '/home/file2.nc'}
 
         """
-        old_directory = dirname(old_directory, uri=True, isdir=True)
-        if new_directory:
-            new_directory = dirname(new_directory, uri=True, isdir=True)
-
         self._modify_dask_graph(
             "replace_file_directory",
             (
                 old_directory,
                 new_directory,
             ),
+            {"normalise": normalise},
         )
-        return new_directory
 
     def replace_filenames(self, filenames):
         """Replace each fragment's file locations in-place.

@@ -1,10 +1,10 @@
 from copy import deepcopy
-from functools import partial
 from os import sep
 from os.path import basename, join
 from urllib.parse import urlparse
 
 from s3fs import S3FileSystem
+from uritools import isuri, urisplit
 
 from ...functions import abspath, dirname
 from . import Array
@@ -581,17 +581,16 @@ class FileArray(Array):
         ('/data1,)
 
         >>> a.get_filenames()
-        ('/data1/file1', '/data2/file2')
-        >>> a.file_directories()
-        ('/data1', '/data2')
-
-        >>> a.get_filenames()
         ('/data1/file1', '/data2/file2', '/data1/file2')
         >>> a.file_directories()
         ('/data1', '/data2', '/data1')
 
         """
-        return tuple(map(partial(dirname, uri=True), self.get_filenames(normalise=True)))
+        directories = [
+            dirname(filename, uri=isuri(filename))
+            for filename in self.get_filenames(normalise=True)
+        ]
+        return tuple(directories)
 
     def get_address(self, default=AttributeError()):
         """The name of the file containing the array.
@@ -937,8 +936,10 @@ class FileArray(Array):
 
         raise FileNotFoundError(f"No such files: {filenames}")
 
-    def replace_file_directory(self, old_directory, new_directory):
-        """Replace a file directories in-place.
+    def replace_file_directory(
+        self, old_directory, new_directory, normalise=True
+    ):
+        """Replace file directories in-place.
 
         Every file in *old_directory* that is referenced by the data
         is redefined to be in *new_directory*.
@@ -949,17 +950,25 @@ class FileArray(Array):
 
         :Parameters:
 
-            old_directory: `str`
-                The directory to be replaced.
+            old_directory: `str` or `None`
+                The directory to be replaced. If *normalise* is False and
+                *old_directory* is an empty string or `None`, then
+                *new_directory* is prepended to each file anme.
 
-            new_directory: `str`
-                The new directory.
+            new_directory: `str` or `None`
+                The new directory. If an empty string or `None` then
+                *old_directory* is replaced with an empty string.
+
+            normalise: `bool`, optional
+                If True (the default) then *old_directory*,
+                *new_directory*, and the file names are normalised to
+                absolute paths prior to the replacement. If False then
+                no normalisation is done.
 
         :Returns:
 
             `{{class}}`
-                A new {{class}} with all previous files additionally
-                referenced from *directory*.
+                A new `{{class}}` with modified file locations.
 
         **Examples**
 
@@ -971,35 +980,54 @@ class FileArray(Array):
         >>> c = b.replace_file_directory('/data', '/archive/location')
         >>> c.get_filenames()
         {'/archive/location/path/file1.nc', '/home/file2.nc'}
+        >>> c = b.replace_file_directory('/archive/location', None)
+        >>> c.get_filenames()
+        {'path/file1.nc', '/home/file2.nc'}
+        >>> c = b.replace_file_directory('path', '../new_path', normalise=False)
+        >>> c.get_filenames()
+        {'../new_path/file1.nc', '/home/file2.nc'}
+        >>> c = b.replace_file_directory(None, '/data')
+        >>> c.get_filenames()
+        {'/data/../new_path/file1.nc', '/home/file2.nc'}
+        >>> c = b.replace_file_directory('/data/../new_path/', None, normalise=False)
+        >>> c.get_filenames()
+        {'file1.nc', '/home/file2.nc'}
+        >>> c = b.replace_file_directory(None, '/base')
+        >>> c.get_filenames()
+        {'/base/file1.nc', '/base/home/file2.nc'}
 
         """
-        old_directory = dirname(old_directory, uri=True, isdir=True)
-        if new_directory:
-            new_directory = dirname(new_directory, uri=True, isdir=True)
-        else:
-            old_directory += sep
-            new_directory = ""
-
         a = self.copy()
-        
-        new_filenames = []
-        for filename in  a.get_filenames(normalise=True):
-            uri = isuri(filename)
-            old_directory = dirname(old_directory, uri=uri, isdir=True)
-            if not uri and isuri(old_directory):
-                old_directory = urisplit(old_directory).getpath()
-                
-            if new_directory:
-                new_directory = dirname(new_directory, uri=uri, isdir=True)
-            else:
-                old_directory += sep
-                new_directory = ""
 
-            if filename.startswith(old_directory):
-                new_filename = filename.replace(old_directory, new_directory)
-                new_filenames.append(new_filename)
+        new_filenames = []
+        for filename in a.get_filenames(normalise=normalise):
+            if normalise:
+                uri = isuri(filename)
+
+                if not old_directory:
+                    raise ValueError(
+                        "When 'normalise' is True you must set "
+                        "'old_directory' to a non-empty string"
+                    )
+                
+                old_directory = dirname(old_directory, uri=uri, isdir=True)
+                if not uri and isuri(old_directory):
+                    old_directory = urisplit(old_directory).getpath()
+                    
+                if new_directory:
+                    new_directory = dirname(new_directory, uri=uri, isdir=True)
+                else:
+                    new_directory = ""
+                    if old_directory:
+                        old_directory += sep
+
+            if old_directory:
+                if filename.startswith(old_directory):
+                    filename = filename.replace(old_directory, new_directory)
             else:
-                new_filenames.append(filename)
+                filename = join(new_directory, filename)
+
+            new_filenames.append(filename)
 
         a._set_component("filename", tuple(new_filenames), copy=False)
         return a
