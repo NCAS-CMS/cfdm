@@ -3392,8 +3392,6 @@ class NetCDFWrite(IOWrite):
                     # The data array spans this domain axis, so write
                     # the dimension coordinate to the file as a
                     # coordinate variable.
-                    #                    import pprint
-                    #                    pprint.pprint(g)
                     ncvar = self._write_dimension_coordinate(
                         f, key, dim_coord, ncdim=ncdim, coordinates=coordinates
                     )
@@ -5748,11 +5746,11 @@ class NetCDFWrite(IOWrite):
             aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 
             # --------------------------------------------------------
-            # Address
+            # Identifier
             # --------------------------------------------------------
-            feature = "address"
+            feature = "identifier"
 
-            # Attempt to reduce addresses to a common scalar value
+            # Attempt to reduce identifiers to a common scalar value
             u = cfa[feature].unique().compressed().persist()
             if u.size == 1:
                 cfa[feature] = u.squeeze()
@@ -5760,11 +5758,11 @@ class NetCDFWrite(IOWrite):
             else:
                 dimensions = fragment_array_ncdimensions
 
-            address = cfa[feature]
+            identifier = cfa[feature]
 
             # Write the fragment array variable to the netCDF dataset
             feature_ncvar = self._cfa_write_fragment_array_variable(
-                address,
+                identifier,
                 aggregated_data.get(feature, f"cfa_{feature}"),
                 dimensions,
             )
@@ -5943,9 +5941,11 @@ class NetCDFWrite(IOWrite):
             try:
                 out_append(
                     (
-                        a.get_filenames(normalise=normalise),
-                        a.get_addresses(),
-                        a.get_n_file_versions(),
+                        a.get_filename(normalise=normalise),
+                        a.get_address(),
+#                        a.get_filenames(normalise=normalise),
+#                        a.get_addresses(),
+#                        a.get_n_file_versions(),
                     )
                 )
             except AttributeError:
@@ -5978,7 +5978,7 @@ class NetCDFWrite(IOWrite):
         >>> n._cfa_aggregation_instructions(data, cfvar)
         {'shape': <Data(2, 1): [[5, 8]]>,
          'location': <Data(1, 1): [[file:///home/file.nc]]>,
-         'address': <Data(1, 1): [[q]]>}
+         'identifier': <Data(1, 1): [[q]]>}
 
         """
         from os.path import relpath
@@ -6010,7 +6010,7 @@ class NetCDFWrite(IOWrite):
 
         if data.nc_get_aggregation_fragment_type() == "location":
             # --------------------------------------------------------
-            # Create 'location' and 'address' arrays
+            # Create 'location' and 'identifier' arrays
             # --------------------------------------------------------
             uri_default = g["cfa"].get("uri", "default") == "default"
             uri_relative = (
@@ -6046,7 +6046,7 @@ class NetCDFWrite(IOWrite):
             n_trailing = 0
 
             aggregation_location = []
-            aggregation_address = []
+            aggregation_identifier = []
             for index in data.chunk_indices():
                 file_details = self._cfa_get_file_details(
                     data[index], normalise=not uri_default
@@ -6069,45 +6069,48 @@ class NetCDFWrite(IOWrite):
                         "fragment file."
                     )
 
-                filenames, addresses, n_file_versions = file_details.pop()
+#                filenames, addresses, n_file_versions = file_details.pop()
+                filename, address = file_details.pop()
 
-                if n_file_versions > n_trailing:
-                    n_trailing = n_file_versions
+#                if n_file_versions > n_trailing:
+#                    n_trailing = n_file_versions
 
-                filenames2 = []
-                for filename in filenames:
-                    uri = urisplit(filename)
+#                filenames2 = []
+#                for filename in filenames:
+                uri = urisplit(filename)
+                if uri_relative and uri.isrelpath():
+                    filename = abspath(filename)
 
-                    if uri_relative and uri.isrelpath():
-                        filename = abspath(filename)
+                if uri.isabspath():
+                    # File name is an absolute-path URI reference
+                    filename = uricompose(
+                        scheme="file",
+                        authority="",
+                        path=abspath(uri.path),
+                    )
 
-                    if uri.isabspath():
-                        # File name is an absolute-path URI reference
-                        filename = uricompose(
-                            scheme="file",
-                            authority="",
-                            path=abspath(uri.path),
+                if uri_relative:
+                    scheme = uri.scheme
+                    if not scheme:
+                        scheme = "file"
+
+                    if scheme != aggregation_file_scheme:
+                        raise ValueError(
+                            "Can't create a relative-path URI "
+                            "reference fragment location when "
+                            "the fragment file and aggregation "
+                            "file have different URI schemes: "
+                            f"{scheme}, {aggregation_file_scheme}"
                         )
 
-                    if uri_relative:
-                        scheme = uri.scheme
-                        if not scheme:
-                            scheme = "file"
+                    filename = relpath(
+                        filename, start=aggregation_file_directory
+                    )
 
-                        if scheme != aggregation_file_scheme:
-                            raise ValueError(
-                                "Can't create a relative-path URI "
-                                "reference fragment location when "
-                                "the fragment file and aggregation "
-                                "file have different URI schemes: "
-                                f"{scheme}, {aggregation_file_scheme}"
-                            )
+                aggregation_location.append(filename)
+                aggregation_identifier.append(address)
 
-                        filename = relpath(
-                            filename, start=aggregation_file_directory
-                        )
-
-                    filenames2.append(filename)
+#                    filenames2.append(filename)
 
                     # if substitutions:
                     #    # Apply substitutions to the file name by
@@ -6187,29 +6190,29 @@ class NetCDFWrite(IOWrite):
                 #
                 #                    filenames2.append(filename)
                 #
-                aggregation_location.append(tuple(filenames2))
-                aggregation_address.append(addresses)
-
-            # Pad each value of the aggregation instruction arrays so
-            # that it has 'n_trailing' elements
-            pad = None
-            if n_trailing > 1:
-                a_shape += (n_trailing,)
-
-                # Pad the ...
-                for i, (filenames, addresses) in enumerate(
-                    zip(aggregation_location, aggregation_address)
-                ):
-                    n = n_trailing - len(filenames)
-                    if n:
-                        # This chunk has fewer fragment files than
-                        # some others, so some padding is required.
-                        pad = ("",) * n
-                        aggregation_location[i] = filenames + pad
-                        if isinstance(addresses[0], int):
-                            pad = (-1,) * n
-
-                        aggregation_address[i] = addresses + pad
+#                aggregation_location.append(tuple(filenames2))
+#                aggregation_identifier.append(addresses)
+#
+#            # Pad each value of the aggregation instruction arrays so
+#            # that it has 'n_trailing' elements
+#            pad = None
+#            if n_trailing > 1:
+#                a_shape += (n_trailing,)
+#
+#                # Pad the ...
+#                for i, (filenames, identifiers) in enumerate(
+#                    zip(aggregation_location, aggregation_identifier)
+#                ):
+#                    n = n_trailing - len(filenames)
+#                    if n:
+#                        # This chunk has fewer fragment files than
+#                        # some others, so some padding is required.
+#                        pad = ("",) * n
+#                        aggregation_location[i] = filenames + pad
+#                        if isinstance(identifiers[0], int):
+#                            pad = (-1,) * n
+#
+#                        aggregation_identifier[i] = identifiers + pad
 
             # Reshape the 1-d aggregation instruction arrays to span
             # the data dimensions, plus the extra trailing dimension
@@ -6217,25 +6220,25 @@ class NetCDFWrite(IOWrite):
             aggregation_location = np.array(aggregation_location).reshape(
                 a_shape
             )
-            aggregation_address = np.array(aggregation_address).reshape(
+            aggregation_identifier = np.array(aggregation_identifier).reshape(
                 a_shape
             )
 
-            # Mask any padded elements
-            if pad:
-                aggregation_location = np.ma.where(
-                    aggregation_location == "",
-                    np.ma.masked,
-                    aggregation_location,
-                )
-                aggregation_location.set_fill_value("")
-                mask = aggregation_location.mask
-                aggregation_address = np.ma.array(
-                    aggregation_address, mask=mask
-                )
-
+#            # Mask any padded elements
+#            if pad:
+#                aggregation_location = np.ma.where(
+#                    aggregation_location == "",
+#                    np.ma.masked,
+#                    aggregation_location,
+#                )
+#                aggregation_location.set_fill_value("")
+#                mask = aggregation_location.mask
+#                aggregation_identifier = np.ma.array(
+#                    aggregation_identifier, mask=mask
+#                )
+#
             out["location"] = type(data)(aggregation_location)
-            out["address"] = type(data)(aggregation_address)
+            out["identifier"] = type(data)(aggregation_identifier)
         else:
             # ------------------------------------------------------------
             # Create a 'value' array

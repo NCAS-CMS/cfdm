@@ -17,6 +17,7 @@ class AggregatedArray(abstract.FileArray):
     .. versionadded:: (cfdm) NEXTVERSION
 
     """
+
     def __new__(cls, *args, **kwargs):
         """Store fragment array classes.
 
@@ -70,7 +71,7 @@ class AggregatedArray(abstract.FileArray):
 
                    {'shape': <'shape' fragment array variable data>,
                     'location': <'location' fragment array variable data>,
-                    'address': <'address' fragment array variable data>,}
+                    'identifier': <'identifier' fragment array variable data>,}
 
                 or "value" form:
 
@@ -224,7 +225,7 @@ class AggregatedArray(abstract.FileArray):
 
                   {'shape': <'shape' fragment array variable data>,
                    'location': <'location' fragment array variable data>,
-                   'address': <'address' fragment array variable data>}
+                   'identifier': <'identifier' fragment array variable data>}
 
                or "value" form::
 
@@ -270,7 +271,7 @@ class AggregatedArray(abstract.FileArray):
             # constant value.
             # --------------------------------------------------------
             fragment_type = "location"
-            a = fragment_array["address"]
+            a = fragment_array["identifier"]
             f = fragment_array["location"]
 
             extra_dimension = f.ndim > ndim
@@ -284,28 +285,28 @@ class AggregatedArray(abstract.FileArray):
 
             if not a.ndim:
                 a = (a.item(),)
-                scalar_address = True
+                scalar_identifier = True
             else:
-                scalar_address = False
+                scalar_identifier = False
 
             for index, shape in zip(fragment_array_indices, fragment_shapes):
                 if extra_dimension:
                     location = compressed(f[index]).tolist()
-                    if scalar_address:
-                        address = a * len(location)
+                    if scalar_identifier:
+                        identifier = a * len(location)
                     else:
-                        address = compressed(a[index].tolist())
+                        identifier = compressed(a[index].tolist())
                 else:
                     location = (f[index].item(),)
-                    if scalar_address:
-                        address = a
+                    if scalar_identifier:
+                        identifier = a
                     else:
-                        address = (a[index].item(),)
+                        identifier = (a[index].item(),)
 
                 parsed_fragment_array[index] = {
                     "shape": shape,
                     "location": location,
-                    "address": address,
+                    "identifier": identifier,
                 }
         else:
             # --------------------------------------------------------
@@ -374,12 +375,12 @@ class AggregatedArray(abstract.FileArray):
         >>> a.get_fragment_array()
         {(0, 0, 0, 0): {
           'file': ('January-June.nc',),
-          'address': ('temp',),
+          'identifier': ('temp',),
           'format': 'nc',
           'location': [(0, 6), (0, 1), (0, 73), (0, 144)]},
          (1, 0, 0, 0): {
           'file': ('July-December.nc',),
-          'address': ('temp',),
+          'identifier': ('temp',),
           'format': 'nc',
           'location': [(6, 12), (0, 1), (0, 73), (0, 144)]}}
 
@@ -795,6 +796,7 @@ class AggregatedArray(abstract.FileArray):
 
             if fragment_type == "location":
                 kwargs["filename"] = kwargs.pop("location")
+                kwargs["address"] = kwargs.pop("identifier")
                 kwargs["storage_options"] = storage_options
                 #                kwargs["substitutions"] = substitutions
                 kwargs["min_file_versions"] = n_file_versions

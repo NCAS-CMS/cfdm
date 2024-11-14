@@ -644,7 +644,7 @@ class FileArray(Array):
         """
         return self._get_component("address", ())
 
-    def get_filename(self, default=AttributeError()):
+    def get_filename(self, normalise=True, default=AttributeError()):
         """The name of the file containing the array.
 
         If there are multiple files then an `AttributeError` is
@@ -666,7 +666,7 @@ class FileArray(Array):
                 The file name.
 
         """
-        filenames = self._get_component("filename", ())
+        filenames = self.get_filenames(normalise=normalise)
         if len(filenames) == 1:
             return filenames[0]
 
@@ -827,7 +827,7 @@ class FileArray(Array):
             if parsed_filename is None:
                 if filename is None:
                     try:
-                        filename = self.get_filename()
+                        filename = self.get_filename(normalise=False)
                     except AttributeError:
                         pass
                     else:
@@ -950,14 +950,15 @@ class FileArray(Array):
 
         :Parameters:
 
-            old_directory: `str` or `None`
-                The directory to be replaced. If *normalise* is False and
-                *old_directory* is an empty string or `None`, then
-                *new_directory* is prepended to each file anme.
+            old_directory: `str` or `None`, optional
+                The directory to be replaced. If `None` (the default)
+                an empty string, and *normalise* is False, then
+                *new_directory* is prepended to each file name.
 
-            new_directory: `str` or `None`
-                The new directory. If an empty string or `None` then
-                *old_directory* is replaced with an empty string.
+            new_directory: `str` or `None`, optional
+                The new directory. If `None` (the default) or an empty
+                string, then *old_directory* is replaced with an empty
+                string.
 
             normalise: `bool`, optional
                 If True (the default) then *old_directory*,
@@ -1006,8 +1007,8 @@ class FileArray(Array):
 
                 if not old_directory:
                     raise ValueError(
-                        "When 'normalise' is True you must set "
-                        "'old_directory' to a non-empty string"
+                        "When 'normalise' is True, 'old_directory' "
+                        "must be a non-empty string"
                     )
 
                 old_directory = dirname(old_directory, uri=uri, isdir=True)
@@ -1024,7 +1025,7 @@ class FileArray(Array):
             if old_directory:
                 if filename.startswith(old_directory):
                     filename = filename.replace(old_directory, new_directory)
-            else:
+            elif new_directory:
                 filename = join(new_directory, filename)
 
             new_filenames.append(filename)

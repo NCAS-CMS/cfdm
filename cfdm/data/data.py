@@ -4,6 +4,7 @@ import operator
 from itertools import product, zip_longest
 from math import prod
 from numbers import Integral
+from os.path import commonprefix
 
 import dask.array as da
 import numpy as np
@@ -6415,7 +6416,11 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         return d
 
     def replace_file_directory(
-        self, old_directory, new_directory, normalise=True
+        self,
+        old_directory=None,
+        new_directory=None,
+        normalise=True,
+        common=False,
     ):
         """Replace a file directory in-place.
 
@@ -6429,20 +6434,25 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Parameters:
 
-            old_directory: `str` or `None`
-                The directory to be replaced. If *normalise* is False and
-                *old_directory* is an empty string or `None`, then
-                *new_directory* is prepended to each file anme.
+            old_directory: `str` or `None`, optional
+                The directory to be replaced. If `None` (the default)
+                an empty string, and *normalise* is False, then
+                *new_directory* is prepended to each file name.
 
-            new_directory: `str` or `None`
-                The new directory. If an empty string or `None` then
-                *old_directory* is replaced with an empty string.
+            new_directory: `str` or `None`, optional
+                The new directory. If `None` (the default) or an empty
+                string, then *old_directory* is replaced with an empty
+                string.
 
             normalise: `bool`, optional
                 If True (the default) then *old_directory*,
                 *new_directory*, and the file names are normalised to
                 absolute paths prior to the replacement. If False then
                 no normalisation is done.
+
+            common: `bool`, optional
+                If True then replace the common prefix of each file
+                name with *new_directory*.
 
         :Returns:
 
@@ -6460,6 +6470,17 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         {'/archive/location/path/file1.nc', '/home/file2.nc'}
 
         """
+        if common:
+            if not normalise:
+                raise ValueError("TODOCFA")
+
+            if old_directory is not None:
+                raise ValueError("TODOCFA")
+
+            old_directory = commonprefix(tuple(self.file_directories()))
+            if new_directory and not old_directory:
+                raise ValueError("TODOCFA")
+
         self._modify_dask_graph(
             "replace_file_directory",
             (

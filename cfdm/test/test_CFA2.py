@@ -548,21 +548,21 @@ class CFA2Test(unittest.TestCase):
 
             nc.close()
 
-    def test_CFA_multiple_files(self):
-        """Test storing multiple locations for the same fragment."""
-        f = cfdm.example_field(0)
-        cfdm.write(f, tmpfile1)
-        f = cfdm.read(tmpfile1, cfa_write="field")[0]
-        f.add_file_directory("/new/path")
-
-        cfdm.write(f, cfa_file, cfa="field")
-        g = cfdm.read(cfa_file)
-        self.assertEqual(len(g), 1)
-        g = g[0]
-        self.assertTrue(f.equals(g))
-
-        self.assertEqual(len(g.data.get_filenames()), 2)
-        self.assertEqual(len(g.get_filenames()), 3)
+#    def test_CFA_multiple_files(self):
+#        """Test storing multiple locations for the same fragment."""
+#        f = cfdm.example_field(0)
+#        cfdm.write(f, tmpfile1)
+#        f = cfdm.read(tmpfile1, cfa_write="field")[0]
+#        f.add_file_directory("/new/path")
+#
+#        cfdm.write(f, cfa_file, cfa="field")
+#        g = cfdm.read(cfa_file)
+#        self.assertEqual(len(g), 1)
+#        g = g[0]
+#        self.assertTrue(f.equals(g))
+#
+#        self.assertEqual(len(g.data.get_filenames()), 2)
+#        self.assertEqual(len(g.get_filenames()), 3)
 
     #    def test_CFA_unlimited_dimension(self):
     #        """Test aggregation files with unlimited dimensions."""

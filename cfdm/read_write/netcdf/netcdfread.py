@@ -6361,7 +6361,7 @@ class NetCDFRead(IORead):
         kwargs["mask"] = True
 
         fragment_array_variables = g["fragment_array_variables"]
-        standardised_terms = ("shape", "location", "address", "value")
+        standardised_terms = ("shape", "location", "identifier", "value")
 
         fragment_array = {}
         for term, term_ncvar in g["parsed_aggregated_data"][ncvar].items():

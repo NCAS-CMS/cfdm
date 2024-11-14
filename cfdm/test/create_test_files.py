@@ -2254,7 +2254,7 @@ def _make_aggregation_value(filename):
     temperature.cell_methods = "time: mean"
     temperature.ancillary_variables = "uid"
     temperature.aggregated_dimensions = "time level latitude longitude"
-    temperature.aggregated_data = "location: fragment_location address: fragment_address shape: fragment_shape"
+    temperature.aggregated_data = "location: fragment_location identifier: fragment_identifier shape: fragment_shape"
 
     uid = n.createVariable("uid", str, ())
     uid.long_name = "Fragment dataset unique identifiers"
@@ -2287,8 +2287,8 @@ def _make_aggregation_value(filename):
     fragment_location[0, 0, 0, 0] = "January-March.nc"
     fragment_location[1, 0, 0, 0] = "April-December.nc"
 
-    fragment_address = n.createVariable("fragment_address", str, ())
-    fragment_address[...] = "temperature"
+    fragment_identifier = n.createVariable("fragment_identifier", str, ())
+    fragment_identifier[...] = "temperature"
 
     fragment_shape = n.createVariable("fragment_shape", "i4", ("j", "i"))
     fragment_shape[...] = [[3, 9], [1, -1], [73, -1], [144, -1]]
