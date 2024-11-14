@@ -205,16 +205,7 @@ class FragmentArrayMixin:
         aggregated_attributes = self.get_aggregated_attributes(copy=False)
         calendar = aggregated_attributes.get("calendar", None)
         units = aggregated_attributes.get("units", None)
-        #        if units is False:
-        #            raise ValueError(
-        #                f"{self.__class__.__name__} aggregated units have not "
-        #                "been set"
-        #            )
         return Units(units, calendar)
-
-        # return Units(units, calendar
-        #    self.get_aggregated_units(), self.get_aggregated_calendar(None)
-        # )
 
     def get_aggregated_attributes(self, copy=True):
         """The calendar of the aggregated array.

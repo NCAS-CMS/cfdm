@@ -27,7 +27,7 @@ class FileArray(Array):
         unpack=True,
         attributes=None,
         storage_options=None,
-#        substitutions=None,
+        #        substitutions=None,
         min_file_versions=None,
         source=None,
         copy=True,
@@ -114,10 +114,10 @@ class FileArray(Array):
             except AttributeError:
                 storage_options = None
 
-#            try:
-#                substitutions = source._get_component("substitutions", None)
-#            except AttributeError:
-#                substitutions = None
+            #            try:
+            #                substitutions = source._get_component("substitutions", None)
+            #            except AttributeError:
+            #                substitutions = None
 
             try:
                 min_file_versions = source._get_component(
@@ -155,10 +155,10 @@ class FileArray(Array):
         if attributes is not None:
             self._set_component("attributes", attributes, copy=copy)
 
-#        if substitutions is not None:
-#            self._set_component(
-#                "substitutions", substitutions.copy(), copy=False
-#            )
+        #        if substitutions is not None:
+        #            self._set_component(
+        #                "substitutions", substitutions.copy(), copy=False
+        #            )
 
         if min_file_versions is not None:
             self._set_component(
@@ -202,7 +202,7 @@ class FileArray(Array):
             self.get_mask(),
             self.get_unpack(),
             self.get_attributes(copy=False),
-#            self.get_substitutions(copy=False),
+            #            self.get_substitutions(copy=False),
             self.get_storage_options(),
         )
 
@@ -347,93 +347,93 @@ class FileArray(Array):
         # TODOCFA n_files += 1
         return a
 
-#    def switch_substitution(self, old, new):
-#        """Remove a netCDF aggregation substitution definition.
-#
-#        .. versionadded:: (cfdm) NEXTVERSION
-#
-#        .. seealso:: `clear_substitutions`, `substitutions`,
-#                     `update_substitutions`
-#
-#        :Parameters:
-#
-#            substitution: `str`
-#                The CF-netCDF file location substitution definition to
-#                be removed. May be specified with or without the
-#                ``${...}`` syntax. For instance, the following are
-#                equivalent: ``'substitution'`` and
-#                ``'${substitution}'``.
-#
-#        :Returns:
-#
-#            `{{class}}`
-#                TODOCFA
-#                The removed CF-netCDF aggregation file location
-#                substitution in a dictionary whose key/value pairs are
-#                the location name part to be substituted and its
-#                corresponding replacement text. If the given
-#                substitution was not defined then an empty dictionary
-#                is returned.
-#                {{Returns nc_del_aggregation_substitution}}
-#
-#        **Examples**
-#        TODOCFA.
-#
-#        """
-#        a = self.copy()
-#        substitutions = a.get_substitutions(copy=False)
-#        if old not in substitutions or new not in substitutions:
-#            raise ValueError("TODO")
-#
-#        filenames2 = [
-#            f.replace(old, new) for f in a.get_filenames(normalise=False)
-#        ]
-#        a._set_component("filename", tuple(filenames2), copy=False)
-#
-#        return a
-#
-#    def clear_substitutions(self):
-#        """Remove all netCDF aggregation substitution definitions.
-#
-#        .. versionadded:: (cfdm) NEXTVERSION
-#
-#        .. seealso:: `del_substitution`,
-#                     `substitutions`,
-#                     `update_aggregation_substitutions`
-#
-#        :Returns:
-#
-#            `{{class}}`
-#                A new `{{class}}` with all substireference to files in
-#                *directory* removed. TODOCFA
-#
-#            TODOCFA
-#            `dict`
-#                The removed CF-netCDF file location substitutions in a
-#                dictionary whose key/value pairs comprise a file
-#                location part to be substituted and its corresponding
-#                replacement text.
-#
-#        .. versionadded:: (cfdm) NEXTVERSION
-#
-#         TODOCFA.
-#
-#        """
-#        a = self.copy()
-#        substitutions = a.get_substitutions(copy=False)
-#
-#        # Replace the deleted substitutions
-#        filenames2 = []
-#        for f in a.get_filenames(normalise=False):
-#            for substitution, replacement in substitutions.items():
-#                f = f.replace(substitution, replacement)
-#
-#            filenames2.append(f)
-#
-#        a._set_component("filename", tuple(filenames2), copy=False)
-#
-#        substitutions.clear()
-#        return a
+    #    def switch_substitution(self, old, new):
+    #        """Remove a netCDF aggregation substitution definition.
+    #
+    #        .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #        .. seealso:: `clear_substitutions`, `substitutions`,
+    #                     `update_substitutions`
+    #
+    #        :Parameters:
+    #
+    #            substitution: `str`
+    #                The CF-netCDF file location substitution definition to
+    #                be removed. May be specified with or without the
+    #                ``${...}`` syntax. For instance, the following are
+    #                equivalent: ``'substitution'`` and
+    #                ``'${substitution}'``.
+    #
+    #        :Returns:
+    #
+    #            `{{class}}`
+    #                TODOCFA
+    #                The removed CF-netCDF aggregation file location
+    #                substitution in a dictionary whose key/value pairs are
+    #                the location name part to be substituted and its
+    #                corresponding replacement text. If the given
+    #                substitution was not defined then an empty dictionary
+    #                is returned.
+    #                {{Returns nc_del_aggregation_substitution}}
+    #
+    #        **Examples**
+    #        TODOCFA.
+    #
+    #        """
+    #        a = self.copy()
+    #        substitutions = a.get_substitutions(copy=False)
+    #        if old not in substitutions or new not in substitutions:
+    #            raise ValueError("TODO")
+    #
+    #        filenames2 = [
+    #            f.replace(old, new) for f in a.get_filenames(normalise=False)
+    #        ]
+    #        a._set_component("filename", tuple(filenames2), copy=False)
+    #
+    #        return a
+    #
+    #    def clear_substitutions(self):
+    #        """Remove all netCDF aggregation substitution definitions.
+    #
+    #        .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #        .. seealso:: `del_substitution`,
+    #                     `substitutions`,
+    #                     `update_aggregation_substitutions`
+    #
+    #        :Returns:
+    #
+    #            `{{class}}`
+    #                A new `{{class}}` with all substireference to files in
+    #                *directory* removed. TODOCFA
+    #
+    #            TODOCFA
+    #            `dict`
+    #                The removed CF-netCDF file location substitutions in a
+    #                dictionary whose key/value pairs comprise a file
+    #                location part to be substituted and its corresponding
+    #                replacement text.
+    #
+    #        .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #         TODOCFA.
+    #
+    #        """
+    #        a = self.copy()
+    #        substitutions = a.get_substitutions(copy=False)
+    #
+    #        # Replace the deleted substitutions
+    #        filenames2 = []
+    #        for f in a.get_filenames(normalise=False):
+    #            for substitution, replacement in substitutions.items():
+    #                f = f.replace(substitution, replacement)
+    #
+    #            filenames2.append(f)
+    #
+    #        a._set_component("filename", tuple(filenames2), copy=False)
+    #
+    #        substitutions.clear()
+    #        return a
 
     def close(self, dataset):
         """Close the dataset containing the data."""
@@ -505,61 +505,61 @@ class FileArray(Array):
         # TODOCFA n_files = len(new_filenames)
         return a
 
-#    def del_substitution(self, substitution, replace):
-#        """Remove a netCDF aggregation substitution definition.
-#
-#        .. versionadded:: (cfdm) NEXTVERSION
-#
-#        .. seealso:: `clear_substitutions`, `substitutions`,
-#                     `update_substitutions`
-#
-#        :Parameters:
-#
-#            substitution: `str`
-#                The CF-netCDF file location substitution definition to
-#                be removed. May be specified with or without the
-#                ``${...}`` syntax. For instance, the following are
-#                equivalent: ``'substitution'`` and
-#                ``'${substitution}'``.
-#
-#            replace: `bool`
-#                If True then replace the removed substutition with its
-#                value in all file names. If False then the
-#                substutition is removed from the file anmes with any
-#                replacement (i.e. this is equivalent to it being
-#                replaced with an emty string).
-#
-#        :Returns:
-#
-#            `{{class}}`
-#                TODOCFA
-#                The removed CF-netCDF aggregation file location
-#                substitution in a dictionary whose key/value pairs are
-#                the location name part to be substituted and its
-#                corresponding replacement text. If the given
-#                substitution was not defined then an empty dictionary
-#                is returned.
-#                {{Returns nc_del_aggregation_substitution}}
-#
-#        **Examples**
-#        TODOCFA.
-#
-#        """
-#        a = self.copy()
-#        substitutions = a.get_substitutions(copy=False)
-#        replacement = substitutions.pop(substitution, "")
-#        if replacement:
-#            replacement = ""
-#
-#        # if replacement is not None:
-#        # Replace the deleted substitution
-#        filenames2 = [
-#            f.replace(substitution, replacement)
-#            for f in a.get_filenames(normalise=False)
-#        ]
-#        a._set_component("filename", tuple(filenames2), copy=False)
-#
-#        return a
+    #    def del_substitution(self, substitution, replace):
+    #        """Remove a netCDF aggregation substitution definition.
+    #
+    #        .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #        .. seealso:: `clear_substitutions`, `substitutions`,
+    #                     `update_substitutions`
+    #
+    #        :Parameters:
+    #
+    #            substitution: `str`
+    #                The CF-netCDF file location substitution definition to
+    #                be removed. May be specified with or without the
+    #                ``${...}`` syntax. For instance, the following are
+    #                equivalent: ``'substitution'`` and
+    #                ``'${substitution}'``.
+    #
+    #            replace: `bool`
+    #                If True then replace the removed substutition with its
+    #                value in all file names. If False then the
+    #                substutition is removed from the file anmes with any
+    #                replacement (i.e. this is equivalent to it being
+    #                replaced with an emty string).
+    #
+    #        :Returns:
+    #
+    #            `{{class}}`
+    #                TODOCFA
+    #                The removed CF-netCDF aggregation file location
+    #                substitution in a dictionary whose key/value pairs are
+    #                the location name part to be substituted and its
+    #                corresponding replacement text. If the given
+    #                substitution was not defined then an empty dictionary
+    #                is returned.
+    #                {{Returns nc_del_aggregation_substitution}}
+    #
+    #        **Examples**
+    #        TODOCFA.
+    #
+    #        """
+    #        a = self.copy()
+    #        substitutions = a.get_substitutions(copy=False)
+    #        replacement = substitutions.pop(substitution, "")
+    #        if replacement:
+    #            replacement = ""
+    #
+    #        # if replacement is not None:
+    #        # Replace the deleted substitution
+    #        filenames2 = [
+    #            f.replace(substitution, replacement)
+    #            for f in a.get_filenames(normalise=False)
+    #        ]
+    #        a._set_component("filename", tuple(filenames2), copy=False)
+    #
+    #        return a
 
     def file_directories(self):
         """The file directories.
@@ -843,43 +843,43 @@ class FileArray(Array):
 
         return storage_options
 
-#    def get_substitutions(self, copy=True):
-#        """TODOCFA.
-#
-#        .. versionadded:: (cfdm) NEXTVERSION
-#
-#        """
-#        substitutions = self._get_component("substitutions", None)
-#        if substitutions is None:
-#            substitutions = {}
-#            self._set_component("substitutions", substitutions, copy=False)
-#        elif copy:
-#            substitutions = substitutions.copy()
-#
-#        return substitutions
-#
-#    def prepend_substitution(self, substitution):
-#        """TODOCFA.
-#
-#        .. versionadded:: (cfdm) NEXTVERSION
-#
-#        """
-#        if len(substitution) > 1:
-#            raise ValueError("")
-#
-#        a = self.copy()
-#        if not substitution:
-#            return a
-#
-#        old = a.get_substitutions(copy=False)
-#        old.update(substitution)
-#
-#        base = tuple(substitution.keys())[0]
-#        filenames = [f"{base}{f}" for f in a.get_filenames(normalise=False)]
-#
-#        a._set_component("filename", tuple(filenames), copy=False)
-#
-#        return a
+    #    def get_substitutions(self, copy=True):
+    #        """TODOCFA.
+    #
+    #        .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #        """
+    #        substitutions = self._get_component("substitutions", None)
+    #        if substitutions is None:
+    #            substitutions = {}
+    #            self._set_component("substitutions", substitutions, copy=False)
+    #        elif copy:
+    #            substitutions = substitutions.copy()
+    #
+    #        return substitutions
+    #
+    #    def prepend_substitution(self, substitution):
+    #        """TODOCFA.
+    #
+    #        .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #        """
+    #        if len(substitution) > 1:
+    #            raise ValueError("")
+    #
+    #        a = self.copy()
+    #        if not substitution:
+    #            return a
+    #
+    #        old = a.get_substitutions(copy=False)
+    #        old.update(substitution)
+    #
+    #        base = tuple(substitution.keys())[0]
+    #        filenames = [f"{base}{f}" for f in a.get_filenames(normalise=False)]
+    #
+    #        a._set_component("filename", tuple(filenames), copy=False)
+    #
+    #        return a
 
     def open(self, func, *args, **kwargs):
         """Return a dataset file object and address.
@@ -1161,6 +1161,7 @@ class FileArray(Array):
         a = self.copy()
         a._set_component("min_file_versions", n, copy=False)
         return a
+
 
 #    def update_substitutions(self, substitutions):
 #        """TODOCFA.

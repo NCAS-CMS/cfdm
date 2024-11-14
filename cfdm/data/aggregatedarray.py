@@ -17,7 +17,6 @@ class AggregatedArray(abstract.FileArray):
     .. versionadded:: (cfdm) NEXTVERSION
 
     """
-
     def __new__(cls, *args, **kwargs):
         """Store fragment array classes.
 
@@ -39,7 +38,7 @@ class AggregatedArray(abstract.FileArray):
         mask=True,
         unpack=True,
         fragment_array=None,
-#        substitutions=None,
+        #        substitutions=None,
         attributes=None,
         storage_options=None,
         source=None,
@@ -753,7 +752,7 @@ class AggregatedArray(abstract.FileArray):
 
         dtype = self.dtype
         fragment_array = self.get_fragment_array(copy=False)
-#        substitutions = self.get_substitutions(copy=False)
+        #        substitutions = self.get_substitutions(copy=False)
         storage_options = self.get_storage_options()
         fragment_type = self.get_fragment_type()
         n_file_versions = self._get_component("n_file_versions", None)
@@ -797,7 +796,7 @@ class AggregatedArray(abstract.FileArray):
             if fragment_type == "location":
                 kwargs["filename"] = kwargs.pop("location")
                 kwargs["storage_options"] = storage_options
-#                kwargs["substitutions"] = substitutions
+                #                kwargs["substitutions"] = substitutions
                 kwargs["min_file_versions"] = n_file_versions
                 kwargs["aggregation_file_directory"] = (
                     aggregation_file_directory

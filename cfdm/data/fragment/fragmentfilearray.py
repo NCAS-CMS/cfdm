@@ -43,7 +43,7 @@ class FragmentFileArray(
         dtype=None,
         shape=None,
         storage_options=None,
-#        substitutions=None,
+        #        substitutions=None,
         min_file_versions=None,
         unpack_aggregated_data=True,
         aggregated_attributes=None,
@@ -98,7 +98,7 @@ class FragmentFileArray(
             unpack=True,
             attributes=None,
             storage_options=storage_options,
-#            substitutions=substitutions,
+            #            substitutions=substitutions,
             min_file_versions=min_file_versions,
             source=source,
             copy=copy,
@@ -178,6 +178,7 @@ class FragmentFileArray(
             "dtype": self.dtype,
             "shape": self.shape,
             "aggregated_attributes": self.get_aggregated_attributes(),
+            "unpack_aggregated_data": self.get_unpack_aggregated_data(),
             "copy": False,
         }
 
@@ -190,7 +191,7 @@ class FragmentFileArray(
             kwargs["address"] = address
             kwargs["storage_options"] = self.get_storage_options(
                 create_endpoint_url=False
-            )
+            )  # TODOCFA: move setting storage_options to outside loop?
 
             # Loop round the fragment array backends, in the order
             # given by the `_FragmentArrays` attribute (which is
@@ -249,17 +250,12 @@ class FragmentFileArray(
             # Convert the file name to an absolute URI
             if uri.isrelpath():
                 # File name is a relative-path URI reference
-                print( self._get_component("aggregation_file_directory"), join(
-                        self._get_component("aggregation_file_directory"),
-                        filename,
-                    ))
                 filename = abspath(
                     join(
                         self._get_component("aggregation_file_directory"),
                         filename,
                     )
                 )
-                print(filename)
             elif uri.isabspath():
                 # File name is an absolute-path URI reference
                 filename = uricompose(

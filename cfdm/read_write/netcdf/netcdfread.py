@@ -25,7 +25,7 @@ from s3fs import S3FileSystem
 
 from ...data.netcdfindexer import netcdf_indexer
 from ...decorators import _manage_log_level_via_verbosity
-from ...functions import is_log_level_debug, is_log_level_detail, abspath
+from ...functions import abspath, is_log_level_debug, is_log_level_detail
 from .. import IORead
 from .flatten import netcdf_flatten
 from .flatten.config import (
@@ -919,7 +919,7 @@ class NetCDFRead(IORead):
         cache=True,
         dask_chunks="storage-aligned",
         store_hdf5_chunks=True,
-#        cfa=None,
+        #        cfa=None,
         cfa_write=(),
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
@@ -1144,11 +1144,11 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             "parsed_aggregated_data": {},
             # URI substitutions for location fragment array variables
-#            "location_substitutions": {},
+            #            "location_substitutions": {},
             # fragment_array_variables as numpy arrays
             "fragment_array_variables": {},
             # Aggregation configuration overrides
-#            "cfa": cfa if cfa else {},
+            #            "cfa": cfa if cfa else {},
             # Dask chunking of aggregated data for selected constructs
             "cfa_write": cfa_write,
             # --------------------------------------------------------
@@ -1229,29 +1229,29 @@ class NetCDFRead(IORead):
 
         g["extra"] = extra
 
-#        # Parse the 'cfa' keyword parameter
-#        if cfa is None:
-#            cfa = {}
-#        else:
-#            cfa = cfa.copy()
-#            keys = ("substitutions",)
-#            if not set(cfa).issubset(keys):
-#                raise ValueError(
-#                    "Invalid dictionary key to the 'cfa' parameter."
-#                    f"Valid keys are {keys}. Got: {cfa}"
-#                )
-#
-#        if "substitutions" in cfa:
-#            substitutions = cfa["substitutions"].copy()
-#            for base, sub in tuple(substitutions.items()):
-#                if not (base.startswith("${") and base.endswith("}")):
-#                    # Add missing ${...}
-#                    substitutions[f"${{{base}}}"] = substitutions.pop(base)
-#        else:
-#            substitutions = {}
-#
-#        cfa["substitutions"] = substitutions
-#        g["cfa"] = cfa
+        #        # Parse the 'cfa' keyword parameter
+        #        if cfa is None:
+        #            cfa = {}
+        #        else:
+        #            cfa = cfa.copy()
+        #            keys = ("substitutions",)
+        #            if not set(cfa).issubset(keys):
+        #                raise ValueError(
+        #                    "Invalid dictionary key to the 'cfa' parameter."
+        #                    f"Valid keys are {keys}. Got: {cfa}"
+        #                )
+        #
+        #        if "substitutions" in cfa:
+        #            substitutions = cfa["substitutions"].copy()
+        #            for base, sub in tuple(substitutions.items()):
+        #                if not (base.startswith("${") and base.endswith("}")):
+        #                    # Add missing ${...}
+        #                    substitutions[f"${{{base}}}"] = substitutions.pop(base)
+        #        else:
+        #            substitutions = {}
+        #
+        #        cfa["substitutions"] = substitutions
+        #        g["cfa"] = cfa
 
         # Parse the 'cfa_write' keyword parameter
         if cfa_write:
@@ -1264,7 +1264,7 @@ class NetCDFRead(IORead):
 
         filename = os.path.expanduser(os.path.expandvars(filename))
         filename = abspath(filename)
-        
+
         if self.is_dir(filename):
             raise IOError(f"Can't read directory {filename}")
 
@@ -6378,9 +6378,9 @@ class NetCDFRead(IORead):
 
             if term == "location":
                 pass
-#                kwargs["substitutions"] = g["location_substitutions"].get(
-#                    term_ncvar
-#                )
+            #                kwargs["substitutions"] = g["location_substitutions"].get(
+            #                    term_ncvar
+            #                )
             elif term == "value" and kwargs["dtype"] is None:
                 # This is a string-valued aggregation variable with a
                 # 'value' fragment array variable, so set the correct
@@ -6744,10 +6744,10 @@ class NetCDFRead(IORead):
 
             data._nc_set_aggregation_write_status(cfa_write_status)
 
-#            # Store the file substitutions
-#            data.nc_update_aggregation_substitutions(
-#                netcdf_kwargs.get("substitutions", {})
-#            )
+            #            # Store the file substitutions
+            #            data.nc_update_aggregation_substitutions(
+            #                netcdf_kwargs.get("substitutions", {})
+            #            )
 
             # Store the fragment type
             data._nc_set_aggregation_fragment_type(
@@ -11303,28 +11303,28 @@ class NetCDFRead(IORead):
             )
             fragment_array_variables[term_ncvar] = array[...]
 
-#            if term == "location":
-#                # Find any URI substitutions stored in the location
-#                # fragment array variable's "substitutions" attribute
-#                subs = attributes.get("substitutions")
-#                override_subs = g["cfa"].get("substitutions", {})
-#                if subs:
-#                    # Convert the string "substitution: replacement"
-#                    # to the dictionary {"substitution":
-#                    # "replacement"}
-#                    s = subs.split()
-#                    subs = {
-#                        base[:-1]: sub for base, sub in zip(s[::2], s[1::2])
-#                    }
-#
-#                    # Apply user-defined URI substitutions, which take
-#                    # precedence over those defined on the location
-#                    # fragment array variable.
-#                    subs.update(override_subs)
-#                else:
-#                    subs = override_subs
-#
-#                g["location_substitutions"][term_ncvar] = subs
+        #            if term == "location":
+        #                # Find any URI substitutions stored in the location
+        #                # fragment array variable's "substitutions" attribute
+        #                subs = attributes.get("substitutions")
+        #                override_subs = g["cfa"].get("substitutions", {})
+        #                if subs:
+        #                    # Convert the string "substitution: replacement"
+        #                    # to the dictionary {"substitution":
+        #                    # "replacement"}
+        #                    s = subs.split()
+        #                    subs = {
+        #                        base[:-1]: sub for base, sub in zip(s[::2], s[1::2])
+        #                    }
+        #
+        #                    # Apply user-defined URI substitutions, which take
+        #                    # precedence over those defined on the location
+        #                    # fragment array variable.
+        #                    subs.update(override_subs)
+        #                else:
+        #                    subs = override_subs
+        #
+        #                g["location_substitutions"][term_ncvar] = subs
 
         g["parsed_aggregated_data"][ncvar] = out
         return out

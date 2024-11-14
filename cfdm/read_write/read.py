@@ -23,7 +23,7 @@ def read(
     cache=True,
     dask_chunks="storage-aligned",
     store_hdf5_chunks=True,
-#    cfa=None,
+    #    cfa=None,
     cfa_write=None,
     _implementation=_implementation,
 ):
@@ -683,7 +683,7 @@ def read(
                 dask_chunks=dask_chunks,
                 store_hdf5_chunks=store_hdf5_chunks,
                 extra_read_vars=None,
-#                cfa=cfa,
+                #                cfa=cfa,
                 cfa_write=cfa_write,
             )
         except MaskError:

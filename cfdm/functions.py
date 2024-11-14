@@ -1,11 +1,11 @@
 import logging
 import os
-from  os import sep
-from  os.path import abspath as os_abspath
 from copy import deepcopy
 from functools import total_ordering
 from math import isnan
 from numbers import Integral
+from os import sep
+from os.path import abspath as os_abspath
 from urllib.parse import urlparse
 
 import numpy as np
@@ -488,8 +488,9 @@ def abspath(filename):
 
     if scheme:
         if path.startswith(sep):
-            return uricompose(scheme=scheme, authority="",
-                              path=os_abspath(path))
+            return uricompose(
+                scheme=scheme, authority="", path=os_abspath(path)
+            )
 
         return u.geturi()
 

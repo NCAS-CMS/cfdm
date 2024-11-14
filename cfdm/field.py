@@ -2749,223 +2749,223 @@ class Field(
 
         return new_directory
 
-#    def nc_aggregation_substitutions(self, constructs=True):
-#        """Return the CF-netCDF aggregation substitution definitions.
-#
-#        .. versionadded:: (cfdm) NEXTVERSION
-#
-#        .. seealso:: `nc_clear_aggregation_substitutions`,
-#                     `nc_del_aggregation_substitution`,
-#                     `nc_update_aggregation_substitutions`
-#
-#        :Parameters:
-#
-#            constructs: `bool`, optional
-#                If True (the default) then the metadata constructs
-#                also updated.
-#
-#        :Returns:
-#
-#            `dict`
-#                {{Returns nc_aggregation_substitutions}}
-#
-#        **Examples**
-#
-#        >>> f.nc_aggregation_substitutions()
-#        {}
-#        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
-#        >>> f.nc_aggregation_substitutions()
-#        {'${base}': 'file:///data/'}
-#        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
-#        >>> f.nc_aggregation_substitutions()
-#        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-#        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
-#        >>> f.nc_aggregation_substitutions()
-#        {'${base}': '/new/path/', '${base2}': '/home/data/'}
-#        >>> f.nc_del_aggregation_substitution('${base}')
-#        {'${base}': '/new/path/'}
-#        >>> f.nc_clear_aggregation_substitutions()
-#        {'${base2}': '/home/data/'}
-#        >>> f.nc_aggregation_substitutions()
-#        {}
-#        >>> f.nc_clear_aggregation_substitutions()
-#        {}
-#        >>> print(f.nc_del_aggregation_substitution('base'))
-#        None
-#
-#        """
-#        out = super().nc_aggregation_substitutions()
-#
-#        for c in self.constructs.filter_by_data(todict=True).values():
-#            out.update(c.nc_aggregation_substitutions())
-#
-#        return out
-#
-#    def nc_clear_aggregation_substitutions(
-#        self,
-#        constructs=True,
-#    ):
-#        """Remove all netCDF aggregation substitution definitions.
-#
-#        .. versionadded:: (cfdm) NEXTVERSION
-#
-#        .. seealso:: `nc_del_aggregation_substitution`,
-#                     `nc_aggregation_substitutions`,
-#                     `nc_update_aggregation_substitutions`
-#
-#        :Parameters:
-#
-#            constructs: `bool`, optional
-#                If True (the default) then the metadata constructs
-#                also updated.
-#
-#        :Returns:
-#
-#            `dict`
-#                {{Returns nc_clear_aggregation_substitutions}}
-#
-#        **Examples**
-#
-#        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
-#        >>> f.nc_aggregation_substitutions()
-#        {'${base}': 'file:///data/'}
-#        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
-#        >>> f.nc_aggregation_substitutions()
-#        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-#        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
-#        >>> f.nc_aggregation_substitutions()
-#        {'${base}': '/new/path/', '${base2}': '/home/data/'}
-#        >>> f.nc_del_aggregation_substitution('${base}')
-#        {'${base}': '/new/path/'}
-#        >>> f.nc_clear_aggregation_substitutions()
-#        {'${base2}': '/home/data/'}
-#        >>> f.nc_aggregation_substitutions()
-#        {}
-#        >>> f.nc_clear_aggregation_substitutions()
-#        {}
-#        >>> print(f.nc_del_aggregation_substitution('base'))
-#        None
-#
-#        """
-#        out = super().nc_clear_aggregation_substitutions()
-#
-#        for c in self.constructs.filter_by_data(todict=True).values():
-#            out.update(c.nc_clear_aggregation_substitutions())
-#
-#        return out
-#
-#    def nc_del_aggregation_substitution(
-#        self,
-#        base,
-#        constructs=True,
-#    ):
-#        """Remove a netCDF aggregation substitution definition.
-#
-#        .. versionadded:: (cfdm) NEXTVERSION
-#
-#        .. seealso:: `nc_clear_aggregation_substitutions`,
-#                     `nc_aggregation_substitutions`,
-#                     `nc_update_aggregation_substitutions`
-#
-#        :Parameters:
-#
-#            {{cfa substitution: `str`}}
-#
-#            constructs: `bool`, optional
-#                If True (the default) then the metadata constructs
-#                also updated.
-#
-#        :Returns:
-#
-#            `dict`
-#                {{Returns nc_del_aggregation_substitution}}
-#
-#        **Examples**
-#
-#        >>> f.nc_aggregation_substitutions()
-#        {}
-#        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
-#        >>> f.nc_aggregation_substitutions()
-#        {'${base}': 'file:///data/'}
-#        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
-#        >>> f.nc_aggregation_substitutions()
-#        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-#        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
-#        >>> f.nc_aggregation_substitutions()
-#        {'${base}': '/new/path/', '${base2}': '/home/data/'}
-#        >>> f.nc_del_aggregation_substitution('${base}')
-#        {'${base}': '/new/path/'}
-#        >>> f.nc_clear_aggregation_substitutions()
-#        {'${base2}': '/home/data/'}
-#        >>> f.nc_aggregation_substitutions()
-#        {}
-#        >>> f.nc_clear_aggregation_substitutions()
-#        {}
-#        >>> print(f.nc_del_aggregation_substitution('base'))
-#        {}
-#
-#        """
-#        out = super().nc_del_aggregation_substitution(base)
-#
-#        for c in self.constructs.filter_by_data(todict=True).values():
-#            c.nc_del_aggregation_substitution(base)
-#
-#        return out
-#
-#    def nc_update_aggregation_substitutions(
-#        self,
-#        substitutions,
-#        constructs=True,
-#    ):
-#        """Update the netCDF aggregation substitution definitions.
-#
-#        .. versionadded:: (cfdm) NEXTVERSION
-#
-#        .. seealso:: `nc_clear_aggregation_substitutions`,
-#                     `nc_del_aggregation_substitution`,
-#                     `nc_aggregation_substitutions`,
-#
-#        :Parameters:
-#
-#            {{cfa substitutions: `dict`}}
-#
-#            constructs: `bool`, optional
-#                If True (the default) then the metadata constructs
-#                also updated.
-#
-#        :Returns:
-#
-#            `None`
-#
-#        **Examples**
-#
-#        >>> d.nc_aggregation_substitutions()
-#        {}
-#        >>> d.nc_update_aggregation_substitutions({'base': 'file:///data/'})
-#        >>> d.nc_aggregation_substitutions()
-#        {'${base}': 'file:///data/'}
-#        >>> d.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
-#        >>> d.nc_aggregation_substitutions()
-#        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-#        >>> d.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
-#        >>> d.nc_aggregation_substitutions()
-#        {'${base}': '/new/path/', '${base2}': '/home/data/'}
-#        >>> d.nc_del_aggregation_substitution('${base}')
-#        {'${base}': '/new/path/'}
-#        >>> d.nc_clear_aggregation_substitutions()
-#        {'${base2}': '/home/data/'}
-#        >>> d.nc_aggregation_substitutions()
-#        {}
-#        >>> d.nc_clear_aggregation_substitutions()
-#        {}
-#        >>> print(d.nc_del_aggregation_substitution('base'))
-#        None
-#
-#        """
-#        super().nc_update_aggregation_substitutions(substitutions)
-#
-#        for c in self.constructs.filter_by_data(todict=True).values():
-#            c.nc_update_aggregation_substitutions(substitutions)
+    #    def nc_aggregation_substitutions(self, constructs=True):
+    #        """Return the CF-netCDF aggregation substitution definitions.
+    #
+    #        .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #        .. seealso:: `nc_clear_aggregation_substitutions`,
+    #                     `nc_del_aggregation_substitution`,
+    #                     `nc_update_aggregation_substitutions`
+    #
+    #        :Parameters:
+    #
+    #            constructs: `bool`, optional
+    #                If True (the default) then the metadata constructs
+    #                also updated.
+    #
+    #        :Returns:
+    #
+    #            `dict`
+    #                {{Returns nc_aggregation_substitutions}}
+    #
+    #        **Examples**
+    #
+    #        >>> f.nc_aggregation_substitutions()
+    #        {}
+    #        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+    #        >>> f.nc_aggregation_substitutions()
+    #        {'${base}': 'file:///data/'}
+    #        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+    #        >>> f.nc_aggregation_substitutions()
+    #        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+    #        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+    #        >>> f.nc_aggregation_substitutions()
+    #        {'${base}': '/new/path/', '${base2}': '/home/data/'}
+    #        >>> f.nc_del_aggregation_substitution('${base}')
+    #        {'${base}': '/new/path/'}
+    #        >>> f.nc_clear_aggregation_substitutions()
+    #        {'${base2}': '/home/data/'}
+    #        >>> f.nc_aggregation_substitutions()
+    #        {}
+    #        >>> f.nc_clear_aggregation_substitutions()
+    #        {}
+    #        >>> print(f.nc_del_aggregation_substitution('base'))
+    #        None
+    #
+    #        """
+    #        out = super().nc_aggregation_substitutions()
+    #
+    #        for c in self.constructs.filter_by_data(todict=True).values():
+    #            out.update(c.nc_aggregation_substitutions())
+    #
+    #        return out
+    #
+    #    def nc_clear_aggregation_substitutions(
+    #        self,
+    #        constructs=True,
+    #    ):
+    #        """Remove all netCDF aggregation substitution definitions.
+    #
+    #        .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #        .. seealso:: `nc_del_aggregation_substitution`,
+    #                     `nc_aggregation_substitutions`,
+    #                     `nc_update_aggregation_substitutions`
+    #
+    #        :Parameters:
+    #
+    #            constructs: `bool`, optional
+    #                If True (the default) then the metadata constructs
+    #                also updated.
+    #
+    #        :Returns:
+    #
+    #            `dict`
+    #                {{Returns nc_clear_aggregation_substitutions}}
+    #
+    #        **Examples**
+    #
+    #        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+    #        >>> f.nc_aggregation_substitutions()
+    #        {'${base}': 'file:///data/'}
+    #        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+    #        >>> f.nc_aggregation_substitutions()
+    #        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+    #        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+    #        >>> f.nc_aggregation_substitutions()
+    #        {'${base}': '/new/path/', '${base2}': '/home/data/'}
+    #        >>> f.nc_del_aggregation_substitution('${base}')
+    #        {'${base}': '/new/path/'}
+    #        >>> f.nc_clear_aggregation_substitutions()
+    #        {'${base2}': '/home/data/'}
+    #        >>> f.nc_aggregation_substitutions()
+    #        {}
+    #        >>> f.nc_clear_aggregation_substitutions()
+    #        {}
+    #        >>> print(f.nc_del_aggregation_substitution('base'))
+    #        None
+    #
+    #        """
+    #        out = super().nc_clear_aggregation_substitutions()
+    #
+    #        for c in self.constructs.filter_by_data(todict=True).values():
+    #            out.update(c.nc_clear_aggregation_substitutions())
+    #
+    #        return out
+    #
+    #    def nc_del_aggregation_substitution(
+    #        self,
+    #        base,
+    #        constructs=True,
+    #    ):
+    #        """Remove a netCDF aggregation substitution definition.
+    #
+    #        .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #        .. seealso:: `nc_clear_aggregation_substitutions`,
+    #                     `nc_aggregation_substitutions`,
+    #                     `nc_update_aggregation_substitutions`
+    #
+    #        :Parameters:
+    #
+    #            {{cfa substitution: `str`}}
+    #
+    #            constructs: `bool`, optional
+    #                If True (the default) then the metadata constructs
+    #                also updated.
+    #
+    #        :Returns:
+    #
+    #            `dict`
+    #                {{Returns nc_del_aggregation_substitution}}
+    #
+    #        **Examples**
+    #
+    #        >>> f.nc_aggregation_substitutions()
+    #        {}
+    #        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+    #        >>> f.nc_aggregation_substitutions()
+    #        {'${base}': 'file:///data/'}
+    #        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+    #        >>> f.nc_aggregation_substitutions()
+    #        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+    #        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+    #        >>> f.nc_aggregation_substitutions()
+    #        {'${base}': '/new/path/', '${base2}': '/home/data/'}
+    #        >>> f.nc_del_aggregation_substitution('${base}')
+    #        {'${base}': '/new/path/'}
+    #        >>> f.nc_clear_aggregation_substitutions()
+    #        {'${base2}': '/home/data/'}
+    #        >>> f.nc_aggregation_substitutions()
+    #        {}
+    #        >>> f.nc_clear_aggregation_substitutions()
+    #        {}
+    #        >>> print(f.nc_del_aggregation_substitution('base'))
+    #        {}
+    #
+    #        """
+    #        out = super().nc_del_aggregation_substitution(base)
+    #
+    #        for c in self.constructs.filter_by_data(todict=True).values():
+    #            c.nc_del_aggregation_substitution(base)
+    #
+    #        return out
+    #
+    #    def nc_update_aggregation_substitutions(
+    #        self,
+    #        substitutions,
+    #        constructs=True,
+    #    ):
+    #        """Update the netCDF aggregation substitution definitions.
+    #
+    #        .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #        .. seealso:: `nc_clear_aggregation_substitutions`,
+    #                     `nc_del_aggregation_substitution`,
+    #                     `nc_aggregation_substitutions`,
+    #
+    #        :Parameters:
+    #
+    #            {{cfa substitutions: `dict`}}
+    #
+    #            constructs: `bool`, optional
+    #                If True (the default) then the metadata constructs
+    #                also updated.
+    #
+    #        :Returns:
+    #
+    #            `None`
+    #
+    #        **Examples**
+    #
+    #        >>> d.nc_aggregation_substitutions()
+    #        {}
+    #        >>> d.nc_update_aggregation_substitutions({'base': 'file:///data/'})
+    #        >>> d.nc_aggregation_substitutions()
+    #        {'${base}': 'file:///data/'}
+    #        >>> d.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
+    #        >>> d.nc_aggregation_substitutions()
+    #        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
+    #        >>> d.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
+    #        >>> d.nc_aggregation_substitutions()
+    #        {'${base}': '/new/path/', '${base2}': '/home/data/'}
+    #        >>> d.nc_del_aggregation_substitution('${base}')
+    #        {'${base}': '/new/path/'}
+    #        >>> d.nc_clear_aggregation_substitutions()
+    #        {'${base2}': '/home/data/'}
+    #        >>> d.nc_aggregation_substitutions()
+    #        {}
+    #        >>> d.nc_clear_aggregation_substitutions()
+    #        {}
+    #        >>> print(d.nc_del_aggregation_substitution('base'))
+    #        None
+    #
+    #        """
+    #        super().nc_update_aggregation_substitutions(substitutions)
+    #
+    #        for c in self.constructs.filter_by_data(todict=True).values():
+    #            c.nc_update_aggregation_substitutions(substitutions)
 
     def nc_hdf5_chunksizes(self, todict=False):
         """Get the HDF5 chunking strategy for the data.
