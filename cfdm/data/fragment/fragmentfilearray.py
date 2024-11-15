@@ -44,7 +44,7 @@ class FragmentFileArray(
         shape=None,
         storage_options=None,
         #        substitutions=None,
-        min_file_versions=None,
+        #        min_file_versions=None,
         unpack_aggregated_data=True,
         aggregated_attributes=None,
         aggregation_file_directory=None,
@@ -99,7 +99,7 @@ class FragmentFileArray(
             attributes=None,
             storage_options=storage_options,
             #            substitutions=substitutions,
-            min_file_versions=min_file_versions,
+            #            min_file_versions=min_file_versions,
             source=source,
             copy=copy,
         )
@@ -171,50 +171,54 @@ class FragmentFileArray(
                 The subspace.
 
         """
-        if index is None:
-            index = self.index()
-
-        kwargs = {
-            "dtype": self.dtype,
-            "shape": self.shape,
-            "aggregated_attributes": self.get_aggregated_attributes(),
-            "unpack_aggregated_data": self.get_unpack_aggregated_data(),
-            "copy": False,
-        }
+        #        filename =  self.get_filename(normalise=True)
+        #        kwargs = {
+        #            "dtype": self.dtype,
+        #            "shape": self.shape,
+        #            "aggregated_attributes": self.get_aggregated_attributes(),
+        #            "unpack_aggregated_data": self.get_unpack_aggregated_data(),
+        #            "filename" : filename,
+        #            "address" : self.get_address(),
+        #            "storage_options": self.get_storage_options(create_endpoint_url=False),
+        #            "copy": False,
+        #        }
 
         # Loop round the files, returning as soon as we find one that
         # is accessible.
-        errors = []
-        filenames = self.get_filenames(normalise=True)
-        for filename, address in zip(filenames, self.get_addresses()):
-            kwargs["filename"] = filename
-            kwargs["address"] = address
-            kwargs["storage_options"] = self.get_storage_options(
-                create_endpoint_url=False
-            )  # TODOCFA: move setting storage_options to outside loop?
+        #        errors = []
+        #        filenames = self.get_filenames(normalise=True)
+        #        for filename, address in zip(filenames, self.get_addresses()):
+        #            kwargs["filename"] = filename
+        #            kwargs["address"] = address
+        #            kwargs["storage_options"] = self.get_storage_options(
+        #                create_endpoint_url=False
+        #            )  # TODOCFA: move setting storage_options to outside loop?
 
-            # Loop round the fragment array backends, in the order
-            # given by the `_FragmentArrays` attribute (which is
-            # defined in `__new__`), until we find one that can open
-            # the file.
-            for FragmentArray in self._FragmentArrays:
-                try:
-                    array = FragmentArray(**kwargs)._get_array(index)
-                except Exception as error:
-                    errors.append(
-                        f"{FragmentArray().__class__.__name__}: {error}"
-                    )
-                else:
-                    return array
+        # Loop round the fragment array backends, in the order
+        # given by the `_FragmentArrays` attribute (which is
+        # defined in `__new__`), until we find one that can open
+        # the file.
+        if index is None:
+            index = self.index()
+
+        for FragmentArray in self._FragmentArrays:
+            try:
+                array = FragmentArray(source=self, copy=False)._get_array(
+                    index
+                )
+            except Exception as error:
+                errors.append(f"{FragmentArray().__class__.__name__}: {error}")
+            else:
+                return array
 
         # Still here?
         errors = "\n".join(errors)
         raise OSError(
-            f"Can't access any of the fragment files {filenames}:\n"
-            f"{errors}"
+            f"Can't access array index {index} from fragment file "
+            f"{filename}:\n{errors}"
         )
 
-    def get_filenames(self, normalise=True):
+    def get_filename(self, normalise=True, default=AttributeError()):
         """TODOCFA.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -234,17 +238,16 @@ class FragmentFileArray(
                 the data then an empty `set` is returned.
 
         """
-        filenames = super().get_filenames(normalise=False)
-        if not normalise:
-            return filenames
+        filename = super().get_filename(normalise=False, default=None)
+        if filename is None:
+            if default is None:
+                return
 
-        normalised_filenames = []
-        #        substitutions = self.get_substitutions(copy=False)
-        for filename in filenames:
-            # Apply substitutions to the file name
-            # for base, sub in substitutions.items():
-            #    filename = filename.replace(base, sub)
+            return self._default(
+                default, f"{self.__class__.__name__} has no file name"
+            )
 
+        if normalise:
             uri = urisplit(filename)
 
             # Convert the file name to an absolute URI
@@ -270,6 +273,65 @@ class FragmentFileArray(
                     f"Got: {filename}"
                 )
 
-            normalised_filenames.append(filename)
+        return filename
 
-        return tuple(normalised_filenames)
+
+#    def get_filenames(self, normalise=True):
+#        """TODOCFA.
+#
+#        .. versionadded:: (cfdm) NEXTVERSION
+#
+#        :Parameters:
+#
+#            normalise: `bool`, optional
+#                If True (the default) then normalise the file names to
+#                absolute URIs. If False then the file names are
+#                returned in the same form that they have in the
+#                CF-netCDF aggregation file.
+#
+#        :Returns:
+#
+#            `set`
+#                The file names. If no files are required to compute
+#                the data then an empty `set` is returned.
+#
+#        """
+#        filenames = super().get_filenames(normalise=False)
+#        if not normalise:
+#            return filenames
+#
+#        normalised_filenames = []
+#        #        substitutions = self.get_substitutions(copy=False)
+#        for filename in filenames:
+#            # Apply substitutions to the file name
+#            # for base, sub in substitutions.items():
+#            #    filename = filename.replace(base, sub)
+#
+#            uri = urisplit(filename)
+#
+#            # Convert the file name to an absolute URI
+#            if uri.isrelpath():
+#                # File name is a relative-path URI reference
+#                filename = abspath(
+#                    join(
+#                        self._get_component("aggregation_file_directory"),
+#                        filename,
+#                    )
+#                )
+#            elif uri.isabspath():
+#                # File name is an absolute-path URI reference
+#                filename = uricompose(
+#                    scheme="file",
+#                    authority="",
+#                    path=filename,
+#                )
+#            elif not uri.isabsuri():
+#                raise ValueError(
+#                    "Fragment file location must be an absolute URI, a "
+#                    "relative-path URI reference, or an absolute-path URI: "
+#                    f"Got: {filename}"
+#                )
+#
+#            normalised_filenames.append(filename)
+#
+#        return tuple(normalised_filenames)

@@ -28,7 +28,7 @@ class FileArray(Array):
         attributes=None,
         storage_options=None,
         #        substitutions=None,
-        min_file_versions=None,
+        #        min_file_versions=None,
         source=None,
         copy=True,
     ):
@@ -119,30 +119,30 @@ class FileArray(Array):
             #            except AttributeError:
             #                substitutions = None
 
-            try:
-                min_file_versions = source._get_component(
-                    "min_file_versions", None
-                )
-            except AttributeError:
-                min_file_versions = None
+        #            try:
+        #                min_file_versions = source._get_component(
+        #                    "min_file_versions", None
+        #                )
+        #            except AttributeError:
+        #                min_file_versions = None
 
         if shape is not None:
             self._set_component("shape", shape, copy=False)
 
         if filename is not None:
-            if isinstance(filename, str):
-                filename = (filename,)
-            else:
-                filename = tuple(filename)
-
+            # if isinstance(filename, str):
+            #    filename = (filename,)
+            # else:
+            #    filename = tuple(filename)
+            #
             self._set_component("filename", filename, copy=False)
 
         if address is not None:
-            if isinstance(address, (str, int)):
-                address = (address,)
-            else:
-                address = tuple(address)
-
+            # if isinstance(address, (str, int)):
+            #    address = (address,)
+            # else:
+            #    address = tuple(address)
+            #
             self._set_component("address", address, copy=False)
 
         self._set_component("dtype", dtype, copy=False)
@@ -160,10 +160,10 @@ class FileArray(Array):
         #                "substitutions", substitutions.copy(), copy=False
         #            )
 
-        if min_file_versions is not None:
-            self._set_component(
-                "min_file_versions", min_file_versions, copy=False
-            )
+        #        if min_file_versions is not None:
+        #            self._set_component(
+        #                "min_file_versions", min_file_versions, copy=False
+        #            )
 
         # By default, close the netCDF file after data array access
         self._set_component("close", True, copy=False)
@@ -197,7 +197,7 @@ class FileArray(Array):
         return (
             self.__class__,
             self.shape,
-            self.get_filenames(normalise=True),
+            self.get_filename(normalise=True, default=None),
             self.get_addresses(),
             self.get_mask(),
             self.get_unpack(),
@@ -260,92 +260,92 @@ class FileArray(Array):
         """Shape of the array."""
         return self._get_component("shape")
 
-    def add_file_directory(self, directory):
-        """Add a new file directory, not in-place.
-
-        All existing files are additionally referenced from the given
-        directory.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `del_file_directory`, `file_directories`
-
-        :Parameters:
-
-            directory: `str`
-                The new directory.
-
-        :Returns:
-
-            `{{class}}`
-                A new {{class}} with all previous files additionally
-                referenced from *directory*.
-
-        **Examples**
-
-        >>> a.get_filenames()
-        ('/data1/file1',)
-        >>> a.get_addresses()
-        ('tas',)
-        >>> b = a.add_file_directory('/home')
-        >>> b.get_filenames()
-        ('/data1/file1', '/home/file1')
-        >>> b.get_addresses()
-        ('tas', 'tas')
-
-        >>> a.get_filenames()
-        ('/data1/file1', '/data2/file2',)
-        >>> a.get_addresses()
-        ('tas', 'tas')
-        >>> b = a.add_file_directory('/home/')
-        >>> b = get_filenames()
-        ('/data1/file1', '/data2/file2', '/home/file1', '/home/file2')
-        >>> b.get_addresses()
-        ('tas', 'tas', 'tas', 'tas')
-
-        >>> a.get_filenames()
-        ('/data1/file1', '/data2/file1',)
-        >>> a.get_addresses()
-        ('tas1', 'tas2')
-        >>> b = a.add_file_directory('/home/')
-        >>> b.get_filenames()
-        ('/data1/file1', '/data2/file1', '/home/file1')
-        >>> b.get_addresses()
-        ('tas1', 'tas2', 'tas1')
-
-        >>> a.get_filenames()
-        ('/data1/file1', '/data2/file1',)
-        >>> a.get_addresses()
-        ('tas1', 'tas2')
-        >>> b = a.add_file_directory('/data1')
-        >>> b.get_filenames()
-        ('/data1/file1', '/data2/file1')
-        >>> b.get_addresses()
-        ('tas1', 'tas2')
-
-        """
-        directory = dirname(directory, isdir=True)
-
-        filenames = self.get_filenames(normalise=True)
-        addresses = self.get_addresses()
-
-        new_filenames = list(filenames)
-        new_addresses = list(addresses)
-        for filename, address in zip(filenames, addresses):
-            new_filename = join(directory, basename(filename))
-            if new_filename not in new_filenames:
-                new_filenames.append(new_filename)
-                new_addresses.append(address)
-
-        a = self.copy()
-        a._set_component("filename", tuple(new_filenames), copy=False)
-        a._set_component(
-            "address",
-            tuple(new_addresses),
-            copy=False,
-        )
-        # TODOCFA n_files += 1
-        return a
+    #    def add_file_directory(self, directory):
+    #        """Add a new file directory, not in-place.
+    #
+    #        All existing files are additionally referenced from the given
+    #        directory.
+    #
+    #        .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #        .. seealso:: `del_file_directory`, `file_directories`
+    #
+    #        :Parameters:
+    #
+    #            directory: `str`
+    #                The new directory.
+    #
+    #        :Returns:
+    #
+    #            `{{class}}`
+    #                A new {{class}} with all previous files additionally
+    #                referenced from *directory*.
+    #
+    #        **Examples**
+    #
+    #        >>> a.get_filenames()
+    #        ('/data1/file1',)
+    #        >>> a.get_addresses()
+    #        ('tas',)
+    #        >>> b = a.add_file_directory('/home')
+    #        >>> b.get_filenames()
+    #        ('/data1/file1', '/home/file1')
+    #        >>> b.get_addresses()
+    #        ('tas', 'tas')
+    #
+    #        >>> a.get_filenames()
+    #        ('/data1/file1', '/data2/file2',)
+    #        >>> a.get_addresses()
+    #        ('tas', 'tas')
+    #        >>> b = a.add_file_directory('/home/')
+    #        >>> b = get_filenames()
+    #        ('/data1/file1', '/data2/file2', '/home/file1', '/home/file2')
+    #        >>> b.get_addresses()
+    #        ('tas', 'tas', 'tas', 'tas')
+    #
+    #        >>> a.get_filenames()
+    #        ('/data1/file1', '/data2/file1',)
+    #        >>> a.get_addresses()
+    #        ('tas1', 'tas2')
+    #        >>> b = a.add_file_directory('/home/')
+    #        >>> b.get_filenames()
+    #        ('/data1/file1', '/data2/file1', '/home/file1')
+    #        >>> b.get_addresses()
+    #        ('tas1', 'tas2', 'tas1')
+    #
+    #        >>> a.get_filenames()
+    #        ('/data1/file1', '/data2/file1',)
+    #        >>> a.get_addresses()
+    #        ('tas1', 'tas2')
+    #        >>> b = a.add_file_directory('/data1')
+    #        >>> b.get_filenames()
+    #        ('/data1/file1', '/data2/file1')
+    #        >>> b.get_addresses()
+    #        ('tas1', 'tas2')
+    #
+    #        """
+    #        directory = dirname(directory, isdir=True)
+    #
+    #        filenames = self.get_filenames(normalise=True)
+    #        addresses = self.get_addresses()
+    #
+    #        new_filenames = list(filenames)
+    #        new_addresses = list(addresses)
+    #        for filename, address in zip(filenames, addresses):
+    #            new_filename = join(directory, basename(filename))
+    #            if new_filename not in new_filenames:
+    #                new_filenames.append(new_filename)
+    #                new_addresses.append(address)
+    #
+    #        a = self.copy()
+    #        a._set_component("filename", tuple(new_filenames), copy=False)
+    #        a._set_component(
+    #            "address",
+    #            tuple(new_addresses),
+    #            copy=False,
+    #        )
+    #        # TODOCFA n_files += 1
+    #        return a
 
     #    def switch_substitution(self, old, new):
     #        """Remove a netCDF aggregation substitution definition.
@@ -441,69 +441,69 @@ class FileArray(Array):
             f"Must implement {self.__class__.__name__}.close"
         )  # pragma: no cover
 
-    def del_file_directory(self, directory):
-        """Remove a file directory, not in-place.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `add_file_directory`, `file_directories`
-
-        :Parameters:
-
-            directory: `str`
-                 The file directory to remove.
-
-        :Returns:
-
-            `{{class}}`
-                A new `{{class}}` with reference to files in
-                *directory* removed.
-
-        **Examples**
-
-        >>> a.get_filenames()
-        ('/data1/file1', '/data2/file2')
-        >>> a.get_addresses()
-        ('tas1', 'tas2')
-        >>> b = a.del_file_directory('/data1')
-        >>> b = get_filenames()
-        ('/data2/file2',)
-        >>> b.get_addresses()
-        ('tas2',)
-
-        >>> a.get_filenames()
-        ('/data1/file1', '/data2/file1', '/data2/file2')
-        >>> a.get_addresses()
-        ('tas1', 'tas1', 'tas2')
-        >>> b = a.del_file_directory('/data2')
-        >>> b.get_filenames()
-        ('/data1/file1',)
-        >>> b.get_addresses()
-        ('tas1',)
-
-        """
-        directory = dirname(directory, isdir=True)
-
-        new_filenames = []
-        new_addresses = []
-        for filename, address in zip(
-            self.get_filenames(normalise=True), self.get_addresses()
-        ):
-            if dirname(filename) != directory:
-                new_filenames.append(filename)
-                new_addresses.append(address)
-
-        if not new_filenames:
-            raise ValueError(
-                "Can't delete a file directory when it results in there "
-                "being no files"
-            )
-
-        a = self.copy()
-        a._set_component("filename", tuple(new_filenames), copy=False)
-        a._set_component("address", tuple(new_addresses), copy=False)
-        # TODOCFA n_files = len(new_filenames)
-        return a
+    #    def del_file_directory(self, directory):
+    #        """Remove a file directory, not in-place.
+    #
+    #        .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #        .. seealso:: `add_file_directory`, `file_directories`
+    #
+    #        :Parameters:
+    #
+    #            directory: `str`
+    #                 The file directory to remove.
+    #
+    #        :Returns:
+    #
+    #            `{{class}}`
+    #                A new `{{class}}` with reference to files in
+    #                *directory* removed.
+    #
+    #        **Examples**
+    #
+    #        >>> a.get_filenames()
+    #        ('/data1/file1', '/data2/file2')
+    #        >>> a.get_addresses()
+    #        ('tas1', 'tas2')
+    #        >>> b = a.del_file_directory('/data1')
+    #        >>> b = get_filenames()
+    #        ('/data2/file2',)
+    #        >>> b.get_addresses()
+    #        ('tas2',)
+    #
+    #        >>> a.get_filenames()
+    #        ('/data1/file1', '/data2/file1', '/data2/file2')
+    #        >>> a.get_addresses()
+    #        ('tas1', 'tas1', 'tas2')
+    #        >>> b = a.del_file_directory('/data2')
+    #        >>> b.get_filenames()
+    #        ('/data1/file1',)
+    #        >>> b.get_addresses()
+    #        ('tas1',)
+    #
+    #        """
+    #        directory = dirname(directory, isdir=True)
+    #
+    #        new_filenames = []
+    #        new_addresses = []
+    #        for filename, address in zip(
+    #            self.get_filenames(normalise=True), self.get_addresses()
+    #        ):
+    #            if dirname(filename) != directory:
+    #                new_filenames.append(filename)
+    #                new_addresses.append(address)
+    #
+    #        if not new_filenames:
+    #            raise ValueError(
+    #                "Can't delete a file directory when it results in there "
+    #                "being no files"
+    #            )
+    #
+    #        a = self.copy()
+    #        a._set_component("filename", tuple(new_filenames), copy=False)
+    #        a._set_component("address", tuple(new_addresses), copy=False)
+    #        # TODOCFA n_files = len(new_filenames)
+    #        return a
 
     #    def del_substitution(self, substitution, replace):
     #        """Remove a netCDF aggregation substitution definition.
@@ -586,11 +586,59 @@ class FileArray(Array):
         ('/data1', '/data2', '/data1')
 
         """
-        directories = [
-            dirname(filename, uri=isuri(filename))
-            for filename in self.get_filenames(normalise=True)
-        ]
-        return tuple(directories)
+        directory = self.file_directory(default=None)
+        if directory is None:
+            return ()
+
+        return (directory,)
+
+    #        directories = [
+    #            dirname(filename, uri=isuri(filename))
+    #           for filename in self.get_filenames(normalise=True)
+    #       ]
+    #       return tuple(directories)
+
+    def file_directory(self, default=AttributeError()):
+        """The file directory.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `tuple`
+                The file directory names, one for each file, as
+                absolute paths with no trailing path name component
+                separator.
+
+        **Examples**
+
+        >>> a.get_filenames()
+        ('/data1/file1',)
+        >>> a.file_directories()
+        ('/data1,)
+
+        >>> a.get_filenames()
+        ('/data1/file1', '/data2/file2', '/data1/file2')
+        >>> a.file_directories()
+        ('/data1', '/data2', '/data1')
+
+        """
+        filename = self.get_filename(normalise=True, default=None)
+        if filename is None:
+            if default is None:
+                return
+
+            return self._default(
+                default, f"{self.__class__.__name__} has no file name"
+            )
+
+        return dirname(filename, uri=isuri(filename))
+
+    #        directories = [
+    #           dirname(filename, uri=isuri(filename))
+    #          for filename in self.get_filenames(normalise=True)
+    #     ]
+    #      return tuple(directories)
 
     def get_address(self, default=AttributeError()):
         """The name of the file containing the array.
@@ -614,20 +662,32 @@ class FileArray(Array):
                 The file name.
 
         """
-        addresses = self.get_addresses()
-        n = len(addresses)
-        if n == 1:
-            return addresses[0]
+        address = self._get_component("address", None)
+        if address is None:
+            if default is None:
+                return
 
-        if default is None:
-            return
+            return self._default(
+                default, f"{self.__class__.__name__} has no address"
+            )
 
-        return self._default(
-            default, f"{self.__class__.__name__} has no unique file address"
-        )
+        return address
+
+    #
+    #        addresses = self.get_addresses()
+    #        n = len(addresses)
+    #        if n == 1:
+    #            return addresses[0]
+    #
+    #        if default is None:
+    #            return
+    #
+    #        return self._default(
+    #            default, f"{self.__class__.__name__} has no unique file address"
+    #        )
 
     def get_addresses(self):
-        """Return the names of the data addresses in the files.
+        """Return the name of the data address in the file.
 
         If there are multiple addresses then they correspond, in
         order, to the files returned by `get_filenames`
@@ -638,11 +698,15 @@ class FileArray(Array):
 
         :Returns:
 
-            `tuple`
-                The addresses.
+           1-`tuple`
+                The address.
 
         """
-        return self._get_component("address", ())
+        address = self.get_address(default=None)
+        if address is None:
+            return ()
+
+        return (address,)
 
     def get_filename(self, normalise=True, default=AttributeError()):
         """The name of the file containing the array.
@@ -666,16 +730,19 @@ class FileArray(Array):
                 The file name.
 
         """
-        filenames = self.get_filenames(normalise=normalise)
-        if len(filenames) == 1:
-            return filenames[0]
+        filename = self._get_component("filename", None)
+        if filename is None:
+            if default is None:
+                return
 
-        if default is None:
-            return
+            return self._default(
+                default, f"{self.__class__.__name__} has no file name"
+            )
 
-        return self._default(
-            default, f"{self.__class__.__name__} has no files"
-        )
+        if normalise:
+            filename = abspath(filename)
+
+        return filename
 
     def get_filenames(self, normalise=True):
         """Return the names of files containing the data.
@@ -701,12 +768,18 @@ class FileArray(Array):
                 The filenames, in absolute form.
 
         """
-        filenames = self._get_component("filename", ())
-        if not normalise:
-            return filenames
+        filename = self.get_filename(normalise=normalise, default=None)
+        if filename is None:
+            return ()
 
-        filenames = [abspath(f) for f in filenames]
-        return tuple(filenames)
+        return (filename,)
+
+    #        filenames = self._get_component("filename", ())
+    #        if not normalise:
+    #            return filenames
+    #
+    #        filenames = [abspath(f) for f in filenames]
+    #        return tuple(filenames)
 
     #        normalised_filenames = []
     #        substitutions = self.get_substitutions(copy=False)
@@ -732,33 +805,33 @@ class FileArray(Array):
         """
         return self._get_component("mask")
 
-    def get_n_file_versions(self):
-        """The number of file versions.
-
-        The number of versions includes any unassigned versions, that
-        would be written to a CF-netCDF aggregation 'location'
-        variable as missing values.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `get_filenames`, `replace_filenames`,
-                     `set_min_file_versions`
-
-        :Returns:
-
-            `int`
-                "The number of file versions.
-
-        **Examples**
-
-        >>> a.get_n_file_versions()
-        1
-
-        """
-        return max(
-            len(self.get_filenames(normalise=False)),
-            self._get_component("min_file_versions", 0),
-        )
+    #    def get_n_file_versions(self):
+    #        """The number of file versions.
+    #
+    #        The number of versions includes any unassigned versions, that
+    #        would be written to a CF-netCDF aggregation 'location'
+    #        variable as missing values.
+    #
+    #        .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #        .. seealso:: `get_filenames`, `replace_filenames`,
+    #                     `set_min_file_versions`
+    #
+    #        :Returns:
+    #
+    #            `int`
+    #                "The number of file versions.
+    #
+    #        **Examples**
+    #
+    #        >>> a.get_n_file_versions()
+    #        1
+    #
+    #        """
+    #        return max(
+    #            len(self.get_filenames(normalise=False)),
+    #            self._get_component("min_file_versions", 0),
+    #        )
 
     def get_storage_options(
         self, create_endpoint_url=True, filename=None, parsed_filename=None
@@ -905,40 +978,63 @@ class FileArray(Array):
                 the data within the file.
 
         """
+        ## Loop round the files, returning as soon as we find one that
+        ## works.
+        # filenames = self.get_filenames(normalise=True)
+        # for filename, address in zip(filenames, self.get_addresses()):
+        #    url = urlparse(filename)
+        #    if url.scheme == "file":
+        #        # Convert a file URI into an absolute path
+        #        filename = url.path
+        #    elif url.scheme == "s3":
+        #        # Create an openable S3 file object
+        #        storage_options = self.get_storage_options(
+        #            create_endpoint_url=True, parsed_filename=url
+        #        )
+        #        fs = S3FileSystem(**storage_options)
+        #        filename = fs.open(url.path[1:], "rb")
+        #
+        #    try:
+        #        dataset = func(filename, *args, **kwargs)
+        #    except FileNotFoundError:
+        #        continue
+        #    except RuntimeError as error:
+        #        raise RuntimeError(f"{error}: {filename}")
+        #
+        #    # Successfully opened a dataset, so return.
+        #    return dataset, address
+        #
+        # if len(filenames) == 1:
+        #    raise FileNotFoundError(f"No such file: {filenames[0]}")
+        #
+        # raise FileNotFoundError(f"No such files: {filenames}")
+
         # Loop round the files, returning as soon as we find one that
         # works.
-        filenames = self.get_filenames(normalise=True)
-        for filename, address in zip(filenames, self.get_addresses()):
-            url = urlparse(filename)
-            if url.scheme == "file":
-                # Convert a file URI into an absolute path
-                filename = url.path
-            elif url.scheme == "s3":
-                # Create an openable S3 file object
-                storage_options = self.get_storage_options(
-                    create_endpoint_url=True, parsed_filename=url
-                )
-                fs = S3FileSystem(**storage_options)
-                filename = fs.open(url.path[1:], "rb")
+        filename = self.get_filename(normalise=True)
+        url = urlparse(filename)
+        if url.scheme == "file":
+            # Convert a file URI into an absolute path
+            filename = url.path
+        elif url.scheme == "s3":
+            # Create an openable S3 file object
+            storage_options = self.get_storage_options(
+                create_endpoint_url=True, parsed_filename=url
+            )
+            fs = S3FileSystem(**storage_options)
+            filename = fs.open(url.path[1:], "rb")
 
-            try:
-                dataset = func(filename, *args, **kwargs)
-            except FileNotFoundError:
-                continue
-            except RuntimeError as error:
-                raise RuntimeError(f"{error}: {filename}")
+        try:
+            dataset = func(filename, *args, **kwargs)
+        except FileNotFoundError:
+            raise FileNotFoundError(f"No such file: {filename}")
+        except RuntimeError as error:
+            raise RuntimeError(f"{error}: {filename}")
 
-            # Successfully opened a dataset, so return.
-            return dataset, address
+        # Successfully opened a dataset, so return.
+        return dataset, self.get_address()
 
-        if len(filenames) == 1:
-            raise FileNotFoundError(f"No such file: {filenames[0]}")
-
-        raise FileNotFoundError(f"No such files: {filenames}")
-
-    def replace_file_directory(
-        self, old_directory, new_directory, normalise=True
-    ):
+    def replace_directory(self, old, new, normalise=True):
         """Replace file directories in-place.
 
         Every file in *old_directory* that is referenced by the data
@@ -950,21 +1046,23 @@ class FileArray(Array):
 
         :Parameters:
 
-            old_directory: `str` or `None`, optional
-                The directory to be replaced. If `None` (the default)
-                an empty string, and *normalise* is False, then
-                *new_directory* is prepended to each file name.
+            old: `str` or `None`, optional
+                The base directory structure to be replaced by
+                *new*. If `None` (the default) or an empty string, and
+                *normalise* is False, then *new* is prepended to each
+                file name.
 
-            new_directory: `str` or `None`, optional
-                The new directory. If `None` (the default) or an empty
-                string, then *old_directory* is replaced with an empty
-                string.
+            new: `str` or `None`, optional
+                The new directory that replaces the base directory
+                structure identified by *old*. If `None` (the default)
+                or an empty string, then *old* is replaced with an
+                empty string. Otherwise,
 
             normalise: `bool`, optional
-                If True (the default) then *old_directory*,
-                *new_directory*, and the file names are normalised to
-                absolute paths prior to the replacement. If False then
-                no normalisation is done.
+                If True then *old*, *new*, and the file names are
+                normalised to absolute paths prior to the
+                replacement. If False (the default) then no
+                normalisation is done.
 
         :Returns:
 
@@ -1000,37 +1098,40 @@ class FileArray(Array):
         """
         a = self.copy()
 
-        new_filenames = []
-        for filename in a.get_filenames(normalise=normalise):
-            if normalise:
-                uri = isuri(filename)
+        #        new_filenames = []
 
-                if not old_directory:
-                    raise ValueError(
-                        "When 'normalise' is True, 'old_directory' "
-                        "must be a non-empty string"
-                    )
+        #        for filename in a.get_filenames(normalise=normalise):
 
-                old_directory = dirname(old_directory, uri=uri, isdir=True)
-                if not uri and isuri(old_directory):
-                    old_directory = urisplit(old_directory).getpath()
+        filename = a.get_filename(normalise=normalise)
+        if normalise:
+            uri = isuri(filename)
 
-                if new_directory:
-                    new_directory = dirname(new_directory, uri=uri, isdir=True)
-                else:
-                    new_directory = ""
-                    if old_directory:
-                        old_directory += sep
+            if not old:
+                raise ValueError(
+                    "When 'normalise' is True, 'old_directory' "
+                    "must be a non-empty string"
+                )
 
-            if old_directory:
-                if filename.startswith(old_directory):
-                    filename = filename.replace(old_directory, new_directory)
-            elif new_directory:
-                filename = join(new_directory, filename)
+            old = dirname(old, uri=uri, isdir=True)
+            if not uri and isuri(old):
+                old = urisplit(old).getpath()
 
-            new_filenames.append(filename)
+            if new:
+                new = dirname(new, uri=uri, isdir=True)
+            else:
+                new = ""
+                if old:
+                    old += sep
 
-        a._set_component("filename", tuple(new_filenames), copy=False)
+        if old:
+            if filename.startswith(old):
+                filename = filename.replace(old, new)
+        elif new:
+            filename = join(new, filename)
+
+        #        new_filenames.append(filename)
+
+        a._set_component("filename", filename, copy=False)
         return a
 
     def get_missing_values(self):
@@ -1103,65 +1204,96 @@ class FileArray(Array):
         """
         return self._get_component("unpack")
 
-    def replace_filenames(self, filenames):
+    #    def replace_filenames(self, filenames):
+    #        """TODOCFA."""
+    #        import numpy as np
+    #
+    #        addresses = self.get_addresses()
+    #        old_n_files = len(addresses)
+    #        if old_n_files > 1 and len(set(addresses)) > 1:
+    #            raise ValueError(
+    #                "Can't replace a fragment's file locations when the "
+    #                "existing files have differing file addresses.\n"
+    #                f"Locations: {self.get_filenames()}\n"
+    #                f"Addresses: {addresses}"
+    #            )
+    #
+    #        a = self.copy()
+    #        filenames = np.asanyarray(filenames)
+    ##        a.set_min_file_versions(filenames.size)
+    #
+    #        filenames = tuple(np.ma.compressed(filenames))
+    #        new_n_files = len(filenames)
+    #
+    #        a._set_component("filename", filenames, copy=False)
+    #
+    #        if new_n_files != old_n_files:
+    #            a._set_component(
+    #                "address", (addresses[0],) * new_n_files, copy=False
+    #            )
+    #
+    #        return a
+
+    def replace_filename(self, filename):
         """TODOCFA."""
-        import numpy as np
-
-        addresses = self.get_addresses()
-        old_n_files = len(addresses)
-        if old_n_files > 1 and len(set(addresses)) > 1:
-            raise ValueError(
-                "Can't replace a fragment's file locations when the "
-                "existing files have differing file addresses.\n"
-                f"Locations: {self.get_filenames()}\n"
-                f"Addresses: {addresses}"
-            )
-
+        #        import numpy as np
+        #
+        #        addresses = self.get_addresses()
+        #        old_n_files = len(addresses)
+        #        if old_n_files > 1 and len(set(addresses)) > 1:
+        #            raise ValueError(
+        #                "Can't replace a fragment's file locations when the "
+        #                "existing files have differing file addresses.\n"
+        #                f"Locations: {self.get_filenames()}\n"
+        #                f"Addresses: {addresses}"
+        #            )
+        #
         a = self.copy()
-        filenames = np.asanyarray(filenames)
-        a.set_min_file_versions(filenames.size)
+        #        filenames = np.asanyarray(filenames)
+        ##        a.set_min_file_versions(filenames.size)
+        #
+        #        filenames = tuple(np.ma.compressed(filenames))
+        #        new_n_files = len(filenames)
 
-        filenames = tuple(np.ma.compressed(filenames))
-        new_n_files = len(filenames)
+        a._set_component("filename", filename, copy=False)
 
-        a._set_component("filename", filenames, copy=False)
-
-        if new_n_files != old_n_files:
-            a._set_component(
-                "address", (addresses[0],) * new_n_files, copy=False
-            )
+        #        if new_n_files != old_n_files:
+        #            a._set_component(
+        #                "address", (addresses[0],) * new_n_files, copy=False
+        #            )
 
         return a
 
-    def set_min_file_versions(self, n):
-        """Set the minimum number of file versions.
 
-        If the data containing this fragment is written to a CF-netCDF
-        aggregation 'location' variable, then the minimum number of
-        file equates to the minimum size of the extra trailing
-        dimension. The actual dimension size will be larger if there
-        are more file locations than this minimum amount.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `get_filenames`, `get_n_file_versions,
-                     `replace_filenames`
-
-        :Parameters:
-
-             n: `int`
-                The new minimum number.
-
-        :Returns:
-
-            `{{class}}`
-                A new `{{class}}` with the minimum number of file
-                versions updated.
-
-        """
-        a = self.copy()
-        a._set_component("min_file_versions", n, copy=False)
-        return a
+#    def set_min_file_versions(self, n):
+#        """Set the minimum number of file versions.
+#
+#        If the data containing this fragment is written to a CF-netCDF
+#        aggregation 'location' variable, then the minimum number of
+#        file equates to the minimum size of the extra trailing
+#        dimension. The actual dimension size will be larger if there
+#        are more file locations than this minimum amount.
+#
+#        .. versionadded:: (cfdm) NEXTVERSION
+#
+#        .. seealso:: `get_filenames`, `get_n_file_versions,
+#                     `replace_filenames`
+#
+#        :Parameters:
+#
+#             n: `int`
+#                The new minimum number.
+#
+#        :Returns:
+#
+#            `{{class}}`
+#                A new `{{class}}` with the minimum number of file
+#                versions updated.
+#
+#        """
+#        a = self.copy()
+#        a._set_component("min_file_versions", n, copy=False)
+#        return a
 
 
 #    def update_substitutions(self, substitutions):

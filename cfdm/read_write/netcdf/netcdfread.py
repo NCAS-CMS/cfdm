@@ -919,7 +919,7 @@ class NetCDFRead(IORead):
         cache=True,
         dask_chunks="storage-aligned",
         store_hdf5_chunks=True,
-        #        cfa=None,
+        cfa=None,
         cfa_write=(),
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
@@ -1148,7 +1148,7 @@ class NetCDFRead(IORead):
             # fragment_array_variables as numpy arrays
             "fragment_array_variables": {},
             # Aggregation configuration overrides
-            #            "cfa": cfa if cfa else {},
+            "cfa": None,
             # Dask chunking of aggregated data for selected constructs
             "cfa_write": cfa_write,
             # --------------------------------------------------------
@@ -1253,6 +1253,23 @@ class NetCDFRead(IORead):
         #        cfa["substitutions"] = substitutions
         #        g["cfa"] = cfa
 
+        # Parse the 'cfa' keyword parameter
+        if cfa is None:
+            cfa = {}
+        else:
+            cfa = cfa.copy()
+            keys = ("replace_directory",)
+            if not set(cfa).issubset(keys):
+                raise ValueError(
+                    "Invalid dictionary key to the 'cfa' parameter."
+                    f"Valid keys are {keys}. Got: {cfa}"
+                )
+
+            if not isinstance(cfa.get("replace_directory", {}), dict):
+                raise ValueError("TODOCFA")
+
+        g["cfa"] = cfa
+
         # Parse the 'cfa_write' keyword parameter
         if cfa_write:
             if isinstance(cfa_write, str):
@@ -1320,14 +1337,14 @@ class NetCDFRead(IORead):
                 # Allow UGRID if it has been specified in Conventions,
                 # regardless of the version of CF.
                 g["UGRID_version"] = Version(c.replace("UGRID-", "", 1))
-            elif c.startswith("CFA-0.") or c == "CFA":
-                logger.warning(
-                    f"Obselete conventions {c} are being ignored in file "
-                    f"{g['filename']}. Note that cf-python version 3.16.2 "
-                    "can be used to read and write CFA-0.6.2 files, and "
-                    "cf-python version 3.13.1 can be used to read and "
-                    "write CFA-0.4 files."
-                )
+        #            elif c.startswith("CFA-0.") or c == "CFA":
+        #                logger.warning(
+        #                    f"Obselete conventions {c} are being ignored in file "
+        #                    f"{g['filename']}. Note that cf-python version 3.16.2 "
+        #                    "can be used to read and write CFA-0.6.2 files, and "
+        #                    "cf-python version 3.13.1 can be used to read and "
+        #                    "write CFA-0.4 files."
+        #                )
 
         if file_version is None:
             if default_version is not None:
@@ -6381,6 +6398,7 @@ class NetCDFRead(IORead):
             #                kwargs["substitutions"] = g["location_substitutions"].get(
             #                    term_ncvar
             #                )
+
             elif term == "value" and kwargs["dtype"] is None:
                 # This is a string-valued aggregation variable with a
                 # 'value' fragment array variable, so set the correct
@@ -6753,6 +6771,11 @@ class NetCDFRead(IORead):
             data._nc_set_aggregation_fragment_type(
                 netcdf_array.get_fragment_type()
             )
+
+            # TODOCFA
+            replace_directory = g["cfa"].get("replace_directory")
+            if replace_directory:
+                data.replace_directory(**replace_directory)
 
         # Return the data object
         return data

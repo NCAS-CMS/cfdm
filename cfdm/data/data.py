@@ -3249,40 +3249,40 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         d._Units = self._Units_class(None)
         return d
 
-    def add_file_directory(self, directory):
-        """Add a new file directory in-place.
-
-        Another version of every file referenced by the data is
-        provided in the given directory.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `del_file_directory`, `file_directories`,
-                     `replace_file_directory`
-
-        :Parameters:
-
-            directory: `str`
-                The new directory.
-
-        :Returns:
-
-            `str`
-                The new directory as an absolute path.
-
-        **Examples**
-
-        >>> d.get_filenames()
-        {'/data/file1.nc', '/home/file2.nc'}
-        >>> d.add_file_directory('/new/')
-        '/new'
-        >>> d.get_filenames()
-        {'/data/file1.nc', '/new/file1.nc', '/home/file2.nc', '/new/file2.nc'}
-
-        """
-        directory = dirname(directory, isdir=True)
-        self._modify_dask_graph("add_file_directory", (directory,))
-        return directory
+    #    def add_file_directory(self, directory):
+    #        """Add a new file directory in-place.
+    #
+    #        Another version of every file referenced by the data is
+    #        provided in the given directory.
+    #
+    #        .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #        .. seealso:: `del_file_directory`, `file_directories`,
+    #                     `replace_file_directory`
+    #
+    #        :Parameters:
+    #
+    #            directory: `str`
+    #                The new directory.
+    #
+    #        :Returns:
+    #
+    #            `str`
+    #                The new directory as an absolute path.
+    #
+    #        **Examples**
+    #
+    #        >>> d.get_filenames()
+    #        {'/data/file1.nc', '/home/file2.nc'}
+    #        >>> d.add_file_directory('/new/')
+    #        '/new'
+    #        >>> d.get_filenames()
+    #        {'/data/file1.nc', '/new/file1.nc', '/home/file2.nc', '/new/file2.nc'}
+    #
+    #        """
+    #        directory = dirname(directory, isdir=True)
+    #        self._modify_dask_graph("add_file_directory", (directory,))
+    #        return directory
 
     def any(self, axis=None, keepdims=True, split_every=None):
         """Test whether any data array elements evaluate to True.
@@ -4154,41 +4154,41 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         self._Units = self._Units_class(self.get_units(None), None)
         return calendar
 
-    def del_file_directory(self, directory):
-        """Remove a file directory in-place.
-
-        Every file in *directory* that is referenced by the data is
-        removed. If this results in part of the data being undefined
-        then an exception is raised.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `add_file_directory`, `file_directories`,
-                     `replace_file_directory`
-
-        :Parameters:
-
-            directory: `str`
-                 The file directory to remove.
-
-        :Returns:
-
-            `str`
-                The removed directory as an absolute path.
-
-        **Examples**
-
-        >>> d.get_filenames()
-        {'/data/file1.nc', '/home/file2.nc'}
-        >>> d.del_file_directory('/data/')
-        '/data'
-        >>> d.get_filenames()
-        {'/home/file2.nc'}
-
-        """
-        directory = dirname(directory, isdir=True)
-        self._modify_dask_graph("del_file_directory", (directory,))
-        return directory
+    #    def del_file_directory(self, directory):
+    #        """Remove a file directory in-place.
+    #
+    #        Every file in *directory* that is referenced by the data is
+    #        removed. If this results in part of the data being undefined
+    #        then an exception is raised.
+    #
+    #        .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #        .. seealso:: `add_file_directory`, `file_directories`,
+    #                     `replace_file_directory`
+    #
+    #        :Parameters:
+    #
+    #            directory: `str`
+    #                 The file directory to remove.
+    #
+    #        :Returns:
+    #
+    #            `str`
+    #                The removed directory as an absolute path.
+    #
+    #        **Examples**
+    #
+    #        >>> d.get_filenames()
+    #        {'/data/file1.nc', '/home/file2.nc'}
+    #        >>> d.del_file_directory('/data/')
+    #        '/data'
+    #        >>> d.get_filenames()
+    #        {'/home/file2.nc'}
+    #
+    #        """
+    #        directory = dirname(directory, isdir=True)
+    #        self._modify_dask_graph("del_file_directory", (directory,))
+    #        return directory
 
     def del_units(self, default=ValueError()):
         """Delete the units.
@@ -4516,13 +4516,14 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         out = []
+        append = out.append
         for key, a in self.todict(
             _apply_mask_hardness=False, _asanyarray=False
         ).items():
             try:
-                out.extend(a.file_directories())
+                append(a.file_directory())
             except AttributeError:
-                # This graph element doesn't contain a file array
+                # This graph element doesn't contain a file name
                 pass
 
         return set(out)
@@ -4995,7 +4996,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             )
 
     def get_filenames(
-        self, normalise=True, per_chunk=False, min_file_versions=1, extra=0
+        self, normalise=True, per_chunk=False  # , min_file_versions=1, extra=0
     ):
         """The names of files containing parts of the data array.
 
@@ -5099,15 +5100,15 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             # --------------------------------------------------------
             # Return filenames in a numpy array
             # --------------------------------------------------------
-            min_file_versions = int(min_file_versions)
-            if min_file_versions < 1:
-                raise ValueError(
-                    "'min_file_versions' must be an positive integer"
-                )
-
-            extra = int(extra)
-            if extra < 0:
-                raise ValueError("'extra' must be a non-negative integer")
+            #            min_file_versions = int(min_file_versions)
+            #            if min_file_versions < 1:
+            #                raise ValueError(
+            #                    "'min_file_versions' must be an positive integer"
+            #                )
+            #
+            #            extra = int(extra)
+            #            if extra < 0:
+            #                raise ValueError("'extra' must be a non-negative integer")
 
             out = []
             append = out.append
@@ -5115,7 +5116,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             # Maximum number of characters in any file name
             n_char = 1
             # Maximum number of file versions per chunk
-            n_files_per_chunk = min_file_versions
+            #            n_files_per_chunk = min_file_versions
 
             for index, position in zip(
                 self.chunk_indices(), self.chunk_positions()
@@ -5126,30 +5127,33 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                     .values()
                 ):
                     try:
-                        filenames = a.get_filenames(normalise=normalise)
+                        filename = a.get_filename(
+                            normalise=normalise, default=None
+                        )
                     except AttributeError:
                         pass
                     else:
-                        append((position, filenames))
-                        if filenames:
-                            n_char = max(n_char, *map(len, filenames))
-                            try:
-                                n_file_versions = a.get_n_file_versions()
-                            except AttributeError:
-                                n_file_versions = len(filenames)
-
-                            if n_file_versions > n_files_per_chunk:
-                                n_files_per_chunk = n_file_versions
+                        if filename:
+                            append((position, filename))
+                            n_char = max(n_char, len(filename))
+            #                           try:
+            #                               n_file_versions = a.get_n_file_versions()
+            #                           except AttributeError:
+            #                               n_file_versions = len(filenames)
+            #
+            #                           if n_file_versions > n_files_per_chunk:
+            #                               n_files_per_chunk = n_file_versions
 
             array = np.ma.masked_all(
-                self.numblocks + (n_files_per_chunk + extra,),
+                self.numblocks,  # + (n_files_per_chunk + extra,),
                 dtype=f"U{n_char}",
             )
             array.set_fill_value("")
 
-            for position, filenames in out:
-                if filenames:
-                    array[position + (slice(0, len(filenames)),)] = filenames
+            for position, filename in out:
+                if filename:
+                    #                    array[position + (slice(0, len(filenames)),)] = filenames
+                    array[position] = filename
 
             return array
 
@@ -6415,44 +6419,42 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         return d
 
-    def replace_file_directory(
+    def replace_directory(
         self,
-        old_directory=None,
-        new_directory=None,
-        normalise=True,
+        old=None,
+        new=None,
+        normalise=False,
         common=False,
     ):
-        """Replace a file directory in-place.
-
-        Every file in *old_directory* that is referenced by the data
-        is redefined to be in *new_directory*.
+        """Replace a file directories in-place.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `add_file_directory`, `del_file_directory`,
-                     `file_directories`
+        .. seealso:: `file_directories`, `get_filenames`
 
         :Parameters:
 
-            old_directory: `str` or `None`, optional
-                The directory to be replaced. If `None` (the default)
-                an empty string, and *normalise* is False, then
-                *new_directory* is prepended to each file name.
+            old: `str` or `None`, optional
+                The base directory structure to be replaced by
+                *new*. If `None` (the default) or an empty string, and
+                *normalise* is False, then *new* is prepended to each
+                file name.
 
-            new_directory: `str` or `None`, optional
-                The new directory. If `None` (the default) or an empty
-                string, then *old_directory* is replaced with an empty
-                string.
+            new: `str` or `None`, optional
+                The new directory that replaces the base directory
+                structure identified by *old*. If `None` (the default)
+                or an empty string, then *old* is replaced with an
+                empty string. Otherwise,
 
             normalise: `bool`, optional
-                If True (the default) then *old_directory*,
-                *new_directory*, and the file names are normalised to
-                absolute paths prior to the replacement. If False then
-                no normalisation is done.
+                If True then *old*, *new*, and the file names are
+                normalised to absolute paths prior to the
+                replacement. If False (the default) then no
+                normalisation is done.
 
             common: `bool`, optional
-                If True then replace the common prefix of each file
-                name with *new_directory*.
+                If True the base directory structure that is common to
+                all files with *new*.
 
         :Returns:
 
@@ -6462,31 +6464,35 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         >>> d.get_filenames()
         {'/data/file1.nc', '/home/file2.nc'}
-        >>> d.replace_file_directory('/data', '/new/data/path/')
+        >>> d.replace_directory('/data', '/new/data/path/')
         >>> d.get_filenames()
         {'/new/data/path/file1.nc', '/home/file2.nc'}
-        >>> d.replace_file_directory('/new/data, '/archive/location')
+        >>> d.replace_directory('/new/data, '/archive/location')
         >>> d.get_filenames()
         {'/archive/location/path/file1.nc', '/home/file2.nc'}
 
         """
+        if not old and not new and not normalise:
+            return
+
         if common:
             if not normalise:
                 raise ValueError("TODOCFA")
 
-            if old_directory is not None:
-                raise ValueError("TODOCFA")
+            if old is not None:
+                raise ValueError(
+                    "When 'common' is True, 'old' must be None "
+                    "(because 'old' is going to be determined "
+                    "automatically)"
+                )
 
-            old_directory = commonprefix(tuple(self.file_directories()))
-            if new_directory and not old_directory:
+            old = commonprefix(tuple(self.file_directories()))
+            if new and not old:
                 raise ValueError("TODOCFA")
 
         self._modify_dask_graph(
-            "replace_file_directory",
-            (
-                old_directory,
-                new_directory,
-            ),
+            "replace_directory",
+            (old, new),
             {"normalise": normalise},
         )
 
@@ -6521,19 +6527,20 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         if np.ma.isMA(filenames):
             filenames.set_fill_value("")
 
-        filenames_shape = filenames.shape
-
-        ndim = self.ndim
-        if filenames.ndim == ndim:
-            filenames = np.expand_dims(filenames, -1)
+        #        filenames_shape = filenames.shape
+        #
+        #        ndim = self.ndim
+        #        if filenames.ndim == ndim:
+        #            filenames = np.expand_dims(filenames, -1)
 
         if (
-            filenames.ndim != ndim + 1
-            or self.numblocks != filenames.shape[:ndim]
+            #            filenames.ndim != ndim + 1 or
+            self.numblocks
+            != filenames.shape  # [:ndim]
         ):
             raise ValueError(
-                f"'filenames' shape {filenames_shape} is incompatible "
-                f"with the Dask chunks shape {self.numblocks}"
+                f"'filenames' shape {filenames.shape} should be the same "
+                f"as the Dask chunks shape {self.numblocks}"
             )
 
         dsk = self.todict(_apply_mask_hardness=False, _asanyarray=False)
@@ -6549,22 +6556,22 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 .items()
             ):
                 try:
-                    dsk[key] = a.replace_filenames(filenames[position])
+                    dsk[key] = a.replace_filename(filenames[position])
                 except AttributeError:
                     pass
                 else:
                     if updated:
                         raise ValueError(
-                            "Can't replace the file locations for the Dask "
+                            "Can't replace the file location for the Dask "
                             f"chunk defined by {index!r}: "
                             "The Dask chunk references two or more fragments"
                         )
 
                     if key in keys:
                         raise ValueError(
-                            "Can't replace the file locations for the Dask "
+                            "Can't replace the file location for the Dask "
                             f"chunk defined by {index!r}: "
-                            "The referenced fragment has already been "
+                            "The fragment has already been "
                             f"updated from Dask chunk {keys[key]!r}."
                         )
 

@@ -2427,27 +2427,25 @@ class DataTest(unittest.TestCase):
         d = cfdm.read(file_A, dask_chunks="128 B")[0].data
         self.assertEqual(d.numblocks, (2, 2))
         f = d.get_filenames(per_chunk=True)
-        self.assertEqual(f.shape, d.numblocks + (1,))
-        self.assertTrue(
-            (f == [[[file_A], [file_A]], [[file_A], [file_A]]]).all()
-        )
+        self.assertEqual(f.shape, d.numblocks)
+        self.assertTrue((f == [[file_A, file_A], [file_A, file_A]]).all())
 
-        # Extra
-        self.assertEqual(np.ma.count(f), 4)
-        self.assertEqual(np.unique(f), f[0, 0, 0])
-        f = d.get_filenames(per_chunk=True, extra=2)
-        self.assertEqual(f.shape, d.numblocks + (3,))
-        self.assertEqual(np.ma.count(f), 4)
-        self.assertEqual(np.unique(f.compressed()), f[0, 0, 0])
-
-        # min_file_versions
-        f = d.get_filenames(per_chunk=True, min_file_versions=2)
-        self.assertEqual(f.shape, d.numblocks + (2,))
-        self.assertEqual(np.ma.count(f), 4)
-        self.assertEqual(np.unique(f.compressed()), f[0, 0, 0])
-
-        f = d.get_filenames(per_chunk=True, min_file_versions=2, extra=1)
-        self.assertEqual(f.shape, d.numblocks + (3,))
+    #        # Extra
+    #        self.assertEqual(np.ma.count(f), 4)
+    #        self.assertEqual(np.unique(f), f[0, 0, 0])
+    #        f = d.get_filenames(per_chunk=True, extra=2)
+    #        self.assertEqual(f.shape, d.numblocks + (3,))
+    #        self.assertEqual(np.ma.count(f), 4)
+    #        self.assertEqual(np.unique(f.compressed()), f[0, 0, 0])
+    #
+    #        # min_file_versions
+    #        f = d.get_filenames(per_chunk=True, min_file_versions=2)
+    #        self.assertEqual(f.shape, d.numblocks + (2,))
+    #        self.assertEqual(np.ma.count(f), 4)
+    #        self.assertEqual(np.unique(f.compressed()), f[0, 0, 0])
+    #
+    #        f = d.get_filenames(per_chunk=True, min_file_versions=2, extra=1)
+    #        self.assertEqual(f.shape, d.numblocks + (3,))
 
     def test_Data_chunk_indices(self):
         """Test Data.chunk_indices."""
@@ -2725,13 +2723,10 @@ class DataTest(unittest.TestCase):
     #        self.assertEqual(d.nc_aggregation_substitutions(), {})
     #        self.assertIsNone(d.nc_del_aggregation_substitution("${base}"))
 
-    def test_Data_file_directory(self):
-        """Test `Data` file directory methods."""
+    def test_Data_replace_directory(self):
+        """Test Data.replace_directory."""
         f = cfdm.example_field(0)
 
-        self.assertEqual(
-            f.data.add_file_directory("/data/model/"), "/data/model"
-        )
         # No files means no stored directories
         self.assertEqual(f.data.file_directories(), set())
 
@@ -2743,45 +2738,18 @@ class DataTest(unittest.TestCase):
         directory = cfdm.dirname(file_A)
 
         self.assertEqual(d.file_directories(), set([directory]))
-        self.assertEqual(d.add_file_directory("/data/model/"), "/data/model")
+        self.assertIsNone(d.replace_directory())
+        d.replace_directory(directory, "/new/path")
         self.assertEqual(
             d.file_directories(),
-            set([directory, "/data/model"]),
+            set(["/new/path"]),
+        )
+        self.assertEqual(
+            d.get_filenames(), set((f"/new/path/{os.path.basename(file_A)}",))
         )
 
         # Check that we haven't changed 'e'
         self.assertEqual(e.file_directories(), set([directory]))
-
-        self.assertEqual(d.del_file_directory("/data/model/"), "/data/model")
-        self.assertEqual(d.file_directories(), set((directory,)))
-        d.del_file_directory("/invalid")
-        self.assertEqual(d.file_directories(), set((directory,)))
-
-        # Replace directory
-        self.assertIsNone(d.replace_file_directory(directory, "/new/path/"))
-        self.assertEqual(d.file_directories(), set(["/new/path"]))
-        self.assertEqual(
-            d.get_filenames(), set((f"/new/path/{os.path.basename(file_A)}",))
-        )
-        self.assertIsNone(d.replace_file_directory("/new/", "/newer"))
-        self.assertEqual(d.file_directories(), set(("/newer/path",)))
-
-    def test_Data_get_file_versions(self):
-        """Test Data file_versions methods."""
-        # No files, no versions
-        d = cfdm.Data.empty((5, 8), float, chunks=4)
-        self.assertEqual(d.get_n_file_versions(), 0)
-        self.assertIsNone(d.set_min_file_versions(1))
-        self.assertEqual(d.get_n_file_versions(), 0)
-
-        f = cfdm.example_field(0)
-        cfdm.write(f, file_A)
-        d = cfdm.read(file_A, dask_chunks=4)[0].data
-        self.assertEqual(d.get_n_file_versions(), 1)
-        d.add_file_directory("/new/directory")
-        self.assertEqual(d.get_n_file_versions(), 2)
-        self.assertIsNone(d.set_min_file_versions(3))
-        self.assertEqual(d.get_n_file_versions(), 3)
 
     def test_Data_replace_filenames(self):
         """Test Data.replace_filenames."""
@@ -2795,17 +2763,17 @@ class DataTest(unittest.TestCase):
         self.assertEqual(d.get_filenames(), set([file_A, file_B]))
         self.assertEqual(d.numblocks, (2, 1))
 
-        for new_filenames in ([["a"], ["b"]], [[["a"]], [["b"]]]):
-            self.assertIsNone(d.replace_filenames(new_filenames))
-            self.assertEqual(d.numblocks, (2, 1))
+        new_filenames = [["a"], ["b"]]
+        self.assertIsNone(d.replace_filenames(new_filenames))
+        self.assertEqual(d.numblocks, np.shape(new_filenames))
 
-            self.assertEqual(d.get_filenames(normalise=False), set(["a", "b"]))
-            self.assertTrue(
-                (
-                    d.get_filenames(normalise=False, per_chunk=True)
-                    == [[["a"]], [["b"]]]
-                ).all()
-            )
+        self.assertEqual(d.get_filenames(normalise=False), set(["a", "b"]))
+        self.assertTrue(
+            (
+                d.get_filenames(normalise=False, per_chunk=True)
+                == new_filenames
+            ).all()
+        )
 
 
 if __name__ == "__main__":

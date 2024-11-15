@@ -149,12 +149,12 @@ class AggregatedArray(abstract.FileArray):
             except AttributeError:
                 fragment_type = None
 
-            try:
-                n_file_versions = source._get_component(
-                    "n_file_versions", None
-                )
-            except AttributeError:
-                n_file_versions = None
+        #            try:
+        #                n_file_versions = source._get_component(
+        #                    "n_file_versions", None
+        #                )
+        #            except AttributeError:
+        #                n_file_versions = None
         else:
             if filename is not None:
                 (
@@ -162,14 +162,14 @@ class AggregatedArray(abstract.FileArray):
                     fragment_array_shape,
                     fragment_type,
                     fragment_array,
-                    n_file_versions,
+                    #                    n_file_versions,
                 ) = self._parse_fragment_array(filename, fragment_array)
             else:
                 shape = None
                 fragment_array_shape = None
                 fragment_array = None
                 fragment_type = None
-                n_file_versions = None
+        #                n_file_versions = None
 
         self._set_component("shape", shape, copy=False)
         self._set_component(
@@ -177,7 +177,8 @@ class AggregatedArray(abstract.FileArray):
         )
         self._set_component("fragment_array", fragment_array, copy=False)
         self._set_component("fragment_type", fragment_type, copy=False)
-        self._set_component("n_file_versions", n_file_versions, copy=False)
+
+    #        self._set_component("n_file_versions", n_file_versions, copy=False)
 
     def __getitem__(self, index):
         """Return a subspace.
@@ -274,38 +275,41 @@ class AggregatedArray(abstract.FileArray):
             a = fragment_array["identifier"]
             f = fragment_array["location"]
 
-            extra_dimension = f.ndim > ndim
-            if extra_dimension:
-                # There is an extra non-fragment dimension
-                fragment_array_shape = f.shape[:-1]
-                n_file_versions = f.shape[-1]
-            else:
-                fragment_array_shape = f.shape
-                n_file_versions = 1
+            #            extra_dimension = f.ndim > ndim
+            #            if extra_dimension:
+            #                # There is an extra non-fragment dimension
+            #                fragment_array_shape = f.shape[:-1]
+            #                n_file_versions = f.shape[-1]
+            #            else:
+            fragment_array_shape = f.shape
+            #            n_file_versions = 1
 
             if not a.ndim:
-                a = (a.item(),)
+                #                a = (a.item(),)
+                a = a.item()
                 scalar_identifier = True
             else:
                 scalar_identifier = False
 
             for index, shape in zip(fragment_array_indices, fragment_shapes):
-                if extra_dimension:
-                    location = compressed(f[index]).tolist()
-                    if scalar_identifier:
-                        identifier = a * len(location)
-                    else:
-                        identifier = compressed(a[index].tolist())
+                #                if extra_dimension:
+                #                    location = compressed(f[index]).tolist()
+                #                    if scalar_identifier:
+                #                        identifier = a * len(location)
+                #                    else:
+                #                        identifier = compressed(a[index].tolist())
+                #                else:
+                #                location = (f[index].item(),)
+                #                location = f[index].item()
+                if scalar_identifier:
+                    identifier = a
                 else:
-                    location = (f[index].item(),)
-                    if scalar_identifier:
-                        identifier = a
-                    else:
-                        identifier = (a[index].item(),)
+                    #                    identifier = (a[index].item(),)
+                    identifier = a[index].item()
 
                 parsed_fragment_array[index] = {
                     "shape": shape,
-                    "location": location,
+                    "location": f[index].item(),  # location,
                     "identifier": identifier,
                 }
         else:
@@ -325,14 +329,14 @@ class AggregatedArray(abstract.FileArray):
                     fragment_array_indices, fragment_shapes
                 )
             }
-            n_file_versions = None
+        #            n_file_versions = None
 
         return (
             aggregated_shape,
             fragment_array_shape,
             fragment_type,
             parsed_fragment_array,
-            n_file_versions,
+            #            n_file_versions,
         )
 
     def get_fragment_array(self, copy=True):
@@ -756,7 +760,7 @@ class AggregatedArray(abstract.FileArray):
         #        substitutions = self.get_substitutions(copy=False)
         storage_options = self.get_storage_options()
         fragment_type = self.get_fragment_type()
-        n_file_versions = self._get_component("n_file_versions", None)
+        #        n_file_versions = self._get_component("n_file_versions", None)
         aggregated_attributes = self.get_attributes()
         unpack = self.get_unpack()
 
@@ -799,7 +803,7 @@ class AggregatedArray(abstract.FileArray):
                 kwargs["address"] = kwargs.pop("identifier")
                 kwargs["storage_options"] = storage_options
                 #                kwargs["substitutions"] = substitutions
-                kwargs["min_file_versions"] = n_file_versions
+                #                kwargs["min_file_versions"] = n_file_versions
                 kwargs["aggregation_file_directory"] = (
                     aggregation_file_directory
                 )

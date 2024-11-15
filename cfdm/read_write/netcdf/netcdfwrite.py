@@ -5934,18 +5934,18 @@ class NetCDFWrite(IOWrite):
 
         """
         out = []
-        out_append = out.append
+        append = out.append
         for a in data.todict(
             _apply_mask_hardness=False, _asanyarray=False
         ).values():
             try:
-                out_append(
+                append(
                     (
                         a.get_filename(normalise=normalise),
                         a.get_address(),
-#                        a.get_filenames(normalise=normalise),
-#                        a.get_addresses(),
-#                        a.get_n_file_versions(),
+                        #                        a.get_filenames(normalise=normalise),
+                        #                        a.get_addresses(),
+                        #                        a.get_n_file_versions(),
                     )
                 )
             except AttributeError:
@@ -6069,14 +6069,14 @@ class NetCDFWrite(IOWrite):
                         "fragment file."
                     )
 
-#                filenames, addresses, n_file_versions = file_details.pop()
+                #                filenames, addresses, n_file_versions = file_details.pop()
                 filename, address = file_details.pop()
 
-#                if n_file_versions > n_trailing:
-#                    n_trailing = n_file_versions
+                #                if n_file_versions > n_trailing:
+                #                    n_trailing = n_file_versions
 
-#                filenames2 = []
-#                for filename in filenames:
+                #                filenames2 = []
+                #                for filename in filenames:
                 uri = urisplit(filename)
                 if uri_relative and uri.isrelpath():
                     filename = abspath(filename)
@@ -6110,109 +6110,109 @@ class NetCDFWrite(IOWrite):
                 aggregation_location.append(filename)
                 aggregation_identifier.append(address)
 
-#                    filenames2.append(filename)
+            #                    filenames2.append(filename)
 
-                    # if substitutions:
-                    #    # Apply substitutions to the file name by
-                    #    # replacing text in the file name with "${*}"
-                    #    # strings
-                    #    for base, sub in substitutions.items():
-                    #        filename = filename.replace(sub, base)
-                #                    if not re.match(r"^.*\$\{.*\}", filename):
-                #                        # The file path does not include any "${*}"
-                #                        # strings, so we reformat the file name to be
-                #                        # either an absolute URI, or else a
-                #                        # relative-path URI reference relative to the
-                #                        # aggregation file.
-                #                        uri = urisplit(filename)
-                #
-                #                        if absolute_uri:
-                #                            pass
-                #                            # Convert the file name to an absolute URI
-                #                            if uri.isrelpath():
-                #                                # File name is an absolute-path URI reference
-                #                                filename = uricompose(
-                #                                    scheme="file",
-                #                                    authority="",
-                #                                    path=uri.path,
-                #                                )
-                #                               ## File name is a relative-path URI reference
-                #                               #filename = uricompose(
-                #                               #    scheme=cfa_scheme,
-                #                               #    authority="",
-                #                               #    path=abspath(join(cfa_dir, uri.path)),
-                #                               #)
-                #                            if uri.isabsuri():
-                #                                # File name is an absolute URI
-                #                                filename = uri.geturi()
-                #                            else:
-                #                                # File name is an absolute-path URI reference
-                #                                filename = uricompose(
-                #                                    scheme="file",
-                #                                    authority="",
-                #                                    path=uri.path,
-                #                                )
-                #                        else:
-                #                            # Convert the file name to a relative-path
-                #                            # URI reference relative to the
-                #                            # aggregation file
-                #                            if uri.isrelpath():
-                #                                pass
-                #                                # File name is a relative-path URI
-                #                                # reference
-                #                                filename = relpath(
-                #                                    abspath(join(cfa_dir, uri.path)),
-                #                                    start=cfa_dir,
-                #                                )
-                #                            else:
-                #                                # File name is an absolute URI or an
-                #                                # absolute-path URI reference
-                #                                scheme = uri.scheme
-                #                                if not scheme:
-                #                                    scheme = "file"
-                #
-                #                                if scheme != cfa_scheme:
-                #                                    raise ValueError(
-                #                                        "Can't create a relative-path URI "
-                #                                        "reference fragment location when "
-                #                                        "the fragment file and aggregation "
-                #                                        "file have different URI schemes: "
-                #                                        f"{scheme}, {cfa_scheme}"
-                #                                    )
-                #
-                #                                filename = relpath(uri.path, start=cfa_dir)
-                #
-                #                        if substitutions:
-                #                            # Apply substitutions to the modified file
-                #                            # name
-                #                            for base, sub in substitutions.items():
-                #                                filename = filename.replace(sub, base)
-                #
-                #                    filenames2.append(filename)
-                #
-#                aggregation_location.append(tuple(filenames2))
-#                aggregation_identifier.append(addresses)
-#
-#            # Pad each value of the aggregation instruction arrays so
-#            # that it has 'n_trailing' elements
-#            pad = None
-#            if n_trailing > 1:
-#                a_shape += (n_trailing,)
-#
-#                # Pad the ...
-#                for i, (filenames, identifiers) in enumerate(
-#                    zip(aggregation_location, aggregation_identifier)
-#                ):
-#                    n = n_trailing - len(filenames)
-#                    if n:
-#                        # This chunk has fewer fragment files than
-#                        # some others, so some padding is required.
-#                        pad = ("",) * n
-#                        aggregation_location[i] = filenames + pad
-#                        if isinstance(identifiers[0], int):
-#                            pad = (-1,) * n
-#
-#                        aggregation_identifier[i] = identifiers + pad
+            # if substitutions:
+            #    # Apply substitutions to the file name by
+            #    # replacing text in the file name with "${*}"
+            #    # strings
+            #    for base, sub in substitutions.items():
+            #        filename = filename.replace(sub, base)
+            #                    if not re.match(r"^.*\$\{.*\}", filename):
+            #                        # The file path does not include any "${*}"
+            #                        # strings, so we reformat the file name to be
+            #                        # either an absolute URI, or else a
+            #                        # relative-path URI reference relative to the
+            #                        # aggregation file.
+            #                        uri = urisplit(filename)
+            #
+            #                        if absolute_uri:
+            #                            pass
+            #                            # Convert the file name to an absolute URI
+            #                            if uri.isrelpath():
+            #                                # File name is an absolute-path URI reference
+            #                                filename = uricompose(
+            #                                    scheme="file",
+            #                                    authority="",
+            #                                    path=uri.path,
+            #                                )
+            #                               ## File name is a relative-path URI reference
+            #                               #filename = uricompose(
+            #                               #    scheme=cfa_scheme,
+            #                               #    authority="",
+            #                               #    path=abspath(join(cfa_dir, uri.path)),
+            #                               #)
+            #                            if uri.isabsuri():
+            #                                # File name is an absolute URI
+            #                                filename = uri.geturi()
+            #                            else:
+            #                                # File name is an absolute-path URI reference
+            #                                filename = uricompose(
+            #                                    scheme="file",
+            #                                    authority="",
+            #                                    path=uri.path,
+            #                                )
+            #                        else:
+            #                            # Convert the file name to a relative-path
+            #                            # URI reference relative to the
+            #                            # aggregation file
+            #                            if uri.isrelpath():
+            #                                pass
+            #                                # File name is a relative-path URI
+            #                                # reference
+            #                                filename = relpath(
+            #                                    abspath(join(cfa_dir, uri.path)),
+            #                                    start=cfa_dir,
+            #                                )
+            #                            else:
+            #                                # File name is an absolute URI or an
+            #                                # absolute-path URI reference
+            #                                scheme = uri.scheme
+            #                                if not scheme:
+            #                                    scheme = "file"
+            #
+            #                                if scheme != cfa_scheme:
+            #                                    raise ValueError(
+            #                                        "Can't create a relative-path URI "
+            #                                        "reference fragment location when "
+            #                                        "the fragment file and aggregation "
+            #                                        "file have different URI schemes: "
+            #                                        f"{scheme}, {cfa_scheme}"
+            #                                    )
+            #
+            #                                filename = relpath(uri.path, start=cfa_dir)
+            #
+            #                        if substitutions:
+            #                            # Apply substitutions to the modified file
+            #                            # name
+            #                            for base, sub in substitutions.items():
+            #                                filename = filename.replace(sub, base)
+            #
+            #                    filenames2.append(filename)
+            #
+            #                aggregation_location.append(tuple(filenames2))
+            #                aggregation_identifier.append(addresses)
+            #
+            #            # Pad each value of the aggregation instruction arrays so
+            #            # that it has 'n_trailing' elements
+            #            pad = None
+            #            if n_trailing > 1:
+            #                a_shape += (n_trailing,)
+            #
+            #                # Pad the ...
+            #                for i, (filenames, identifiers) in enumerate(
+            #                    zip(aggregation_location, aggregation_identifier)
+            #                ):
+            #                    n = n_trailing - len(filenames)
+            #                    if n:
+            #                        # This chunk has fewer fragment files than
+            #                        # some others, so some padding is required.
+            #                        pad = ("",) * n
+            #                        aggregation_location[i] = filenames + pad
+            #                        if isinstance(identifiers[0], int):
+            #                            pad = (-1,) * n
+            #
+            #                        aggregation_identifier[i] = identifiers + pad
 
             # Reshape the 1-d aggregation instruction arrays to span
             # the data dimensions, plus the extra trailing dimension
@@ -6224,19 +6224,19 @@ class NetCDFWrite(IOWrite):
                 a_shape
             )
 
-#            # Mask any padded elements
-#            if pad:
-#                aggregation_location = np.ma.where(
-#                    aggregation_location == "",
-#                    np.ma.masked,
-#                    aggregation_location,
-#                )
-#                aggregation_location.set_fill_value("")
-#                mask = aggregation_location.mask
-#                aggregation_identifier = np.ma.array(
-#                    aggregation_identifier, mask=mask
-#                )
-#
+            #            # Mask any padded elements
+            #            if pad:
+            #                aggregation_location = np.ma.where(
+            #                    aggregation_location == "",
+            #                    np.ma.masked,
+            #                    aggregation_location,
+            #                )
+            #                aggregation_location.set_fill_value("")
+            #                mask = aggregation_location.mask
+            #                aggregation_identifier = np.ma.array(
+            #                    aggregation_identifier, mask=mask
+            #                )
+            #
             out["location"] = type(data)(aggregation_location)
             out["identifier"] = type(data)(aggregation_identifier)
         else:

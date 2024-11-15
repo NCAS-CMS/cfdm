@@ -199,6 +199,7 @@ from .data import (
     CellConnectivityArray,
     CompressedArray,
     Data,
+    FullArray,
     GatheredArray,
     H5netcdfArray,
     NetCDFArray,
