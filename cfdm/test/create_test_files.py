@@ -2254,12 +2254,12 @@ def _make_aggregation_value(filename):
     temperature.cell_methods = "time: mean"
     temperature.ancillary_variables = "uid"
     temperature.aggregated_dimensions = "time level latitude longitude"
-    temperature.aggregated_data = "location: fragment_location identifier: fragment_identifier shape: fragment_shape"
+    temperature.aggregated_data = "location: fragment_location identifier: fragment_identifier map: fragment_map"
 
     uid = n.createVariable("uid", str, ())
     uid.long_name = "Fragment dataset unique identifiers"
     uid.aggregated_dimensions = "time"
-    uid.aggregated_data = "value: fragment_value_uid shape: fragment_shape_uid"
+    uid.aggregated_data = "value: fragment_value_uid map: fragment_map_uid"
 
     time = n.createVariable("time", "f4", ("time",))
     time.standard_name = "time"
@@ -2290,9 +2290,9 @@ def _make_aggregation_value(filename):
     fragment_identifier = n.createVariable("fragment_identifier", str, ())
     fragment_identifier[...] = "temperature"
 
-    fragment_shape = n.createVariable("fragment_shape", "i4", ("j", "i"))
-    fragment_shape[...] = [[3, 9], [1, -1], [73, -1], [144, -1]]
-    fragment_shape[1:, 1] = np.ma.masked
+    fragment_map = n.createVariable("fragment_map", "i4", ("j", "i"))
+    fragment_map[...] = [[3, 9], [1, -1], [73, -1], [144, -1]]
+    fragment_map[1:, 1] = np.ma.masked
 
     fragment_value_uid = n.createVariable(
         "fragment_value_uid", str, ("f_time",)
@@ -2300,10 +2300,10 @@ def _make_aggregation_value(filename):
     fragment_value_uid[0] = "04b9-7eb5-4046-97b-0bf8"
     fragment_value_uid[1] = "05ee0-a183-43b3-a67-1eca"
 
-    fragment_shape_uid = n.createVariable(
-        "fragment_shape_uid", "i4", ("j_uid", "i")
+    fragment_map_uid = n.createVariable(
+        "fragment_map_uid", "i4", ("j_uid", "i")
     )
-    fragment_shape_uid[...] = [3, 9]
+    fragment_map_uid[...] = [3, 9]
 
     n.close()
     return filename

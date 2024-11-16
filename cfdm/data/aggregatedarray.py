@@ -39,7 +39,6 @@ class AggregatedArray(abstract.FileArray):
         mask=True,
         unpack=True,
         fragment_array=None,
-        #        substitutions=None,
         attributes=None,
         storage_options=None,
         source=None,
@@ -69,16 +68,14 @@ class AggregatedArray(abstract.FileArray):
                 A dictionary representation of the fragment array, in
                 "location" form::
 
-                   {'shape': <'shape' fragment array variable data>,
+                   {'map': <'map' fragment array variable data>,
                     'location': <'location' fragment array variable data>,
                     'identifier': <'identifier' fragment array variable data>,}
 
                 or "value" form:
 
-                   {'shape': <'shape' fragment array variable data>,
+                   {'mnap': <'map' fragment array variable data>,
                     'value': <'value' fragment array data>}
-
-            {{init substitutions: `dict`, optional}}
 
             storage_options: `dict` or `None`, optional
                 Key/value pairs to be passed on to the creation of
@@ -148,13 +145,6 @@ class AggregatedArray(abstract.FileArray):
                 fragment_type = source.get_fragment_type()
             except AttributeError:
                 fragment_type = None
-
-        #            try:
-        #                n_file_versions = source._get_component(
-        #                    "n_file_versions", None
-        #                )
-        #            except AttributeError:
-        #                n_file_versions = None
         else:
             if filename is not None:
                 (
@@ -162,14 +152,12 @@ class AggregatedArray(abstract.FileArray):
                     fragment_array_shape,
                     fragment_type,
                     fragment_array,
-                    #                    n_file_versions,
                 ) = self._parse_fragment_array(filename, fragment_array)
             else:
                 shape = None
                 fragment_array_shape = None
                 fragment_array = None
                 fragment_type = None
-        #                n_file_versions = None
 
         self._set_component("shape", shape, copy=False)
         self._set_component(
@@ -177,8 +165,6 @@ class AggregatedArray(abstract.FileArray):
         )
         self._set_component("fragment_array", fragment_array, copy=False)
         self._set_component("fragment_type", fragment_type, copy=False)
-
-    #        self._set_component("n_file_versions", n_file_versions, copy=False)
 
     def __getitem__(self, index):
         """Return a subspace.
@@ -224,21 +210,14 @@ class AggregatedArray(abstract.FileArray):
                A dictionary representation of the fragment array, in
                "location" form::
 
-                  {'shape': <'shape' fragment array variable data>,
+                  {'map': <'map' fragment array variable data>,
                    'location': <'location' fragment array variable data>,
                    'identifier': <'identifier' fragment array variable data>}
 
                or "value" form::
 
-                  {'shape': <'shape' fragment array variable data>,
+                  {'map': <'map' fragment array variable data>,
                    'value': <'value' fragment array data>}
-
-            substitutions: `dict` or `None`
-                A dictionary whose key/value pairs define text
-                substitutions to be applied to fragment file
-                names. Each key must be specified with the ``${...}``
-                syntax, for instance ``{'${base}': 'sub'}``. `None` is
-                equivalent to an empty dictionary.
 
         :Returns:
 
@@ -252,14 +231,12 @@ class AggregatedArray(abstract.FileArray):
         """
         parsed_fragment_array = {}
 
-        shape = fragment_array["shape"]
-        if shape.ndim:
-            ndim = shape.shape[0]
+        fa_map = fragment_array["map"]
+        if fa_map.ndim:
             compressed = np.ma.compressed
-            chunks = [compressed(i).tolist() for i in shape]
+            chunks = [compressed(i).tolist() for i in fa_map]
         else:
-            # Scalar 'shape' fragment array variable
-            ndim = 0
+            # Scalar 'map' fragment array variable
             chunks = []
 
         aggregated_shape = tuple([sum(c) for c in chunks])
@@ -272,44 +249,25 @@ class AggregatedArray(abstract.FileArray):
             # constant value.
             # --------------------------------------------------------
             fragment_type = "location"
-            a = fragment_array["identifier"]
-            f = fragment_array["location"]
+            fa_identifier = fragment_array["identifier"]
+            fa_location = fragment_array["location"]
+            fragment_array_shape = fa_location.shape
 
-            #            extra_dimension = f.ndim > ndim
-            #            if extra_dimension:
-            #                # There is an extra non-fragment dimension
-            #                fragment_array_shape = f.shape[:-1]
-            #                n_file_versions = f.shape[-1]
-            #            else:
-            fragment_array_shape = f.shape
-            #            n_file_versions = 1
-
-            if not a.ndim:
-                #                a = (a.item(),)
-                a = a.item()
+            if not fa_identifier.ndim:
+                fa_identifier = fa_identifier.item()
                 scalar_identifier = True
             else:
                 scalar_identifier = False
 
             for index, shape in zip(fragment_array_indices, fragment_shapes):
-                #                if extra_dimension:
-                #                    location = compressed(f[index]).tolist()
-                #                    if scalar_identifier:
-                #                        identifier = a * len(location)
-                #                    else:
-                #                        identifier = compressed(a[index].tolist())
-                #                else:
-                #                location = (f[index].item(),)
-                #                location = f[index].item()
                 if scalar_identifier:
-                    identifier = a
+                    identifier = fa_identifier
                 else:
-                    #                    identifier = (a[index].item(),)
-                    identifier = a[index].item()
+                    identifier = fa_identifier[index].item()
 
                 parsed_fragment_array[index] = {
-                    "shape": shape,
-                    "location": f[index].item(),  # location,
+                    "map": shape,
+                    "location": fa_location[index].item(),
                     "identifier": identifier,
                 }
         else:
@@ -318,25 +276,23 @@ class AggregatedArray(abstract.FileArray):
             # file locations.
             # --------------------------------------------------------
             fragment_type = "value"
-            value = fragment_array["value"]
-            fragment_array_shape = value.shape
+            fa_value = fragment_array["value"]
+            fragment_array_shape = fa_value.shape
             parsed_fragment_array = {
                 index: {
-                    "shape": shape,
-                    "value": value[index].item(),
+                    "map": shape,
+                    "value": fa_value[index].item(),
                 }
                 for index, shape in zip(
                     fragment_array_indices, fragment_shapes
                 )
             }
-        #            n_file_versions = None
 
         return (
             aggregated_shape,
             fragment_array_shape,
             fragment_type,
             parsed_fragment_array,
-            #            n_file_versions,
         )
 
     def get_fragment_array(self, copy=True):
@@ -545,7 +501,7 @@ class AggregatedArray(abstract.FileArray):
                 index = [0] * ndim
                 for j in range(n_fragments):
                     index[dim] = j
-                    loc = fragment_array[tuple(index)]["shape"][dim]
+                    loc = fragment_array[tuple(index)]["map"][dim]
                     chunk_size = loc[1] - loc[0]
                     c.append(chunk_size)
 
@@ -757,10 +713,8 @@ class AggregatedArray(abstract.FileArray):
 
         dtype = self.dtype
         fragment_array = self.get_fragment_array(copy=False)
-        #        substitutions = self.get_substitutions(copy=False)
         storage_options = self.get_storage_options()
         fragment_type = self.get_fragment_type()
-        #        n_file_versions = self._get_component("n_file_versions", None)
         aggregated_attributes = self.get_attributes()
         unpack = self.get_unpack()
 
@@ -796,14 +750,12 @@ class AggregatedArray(abstract.FileArray):
             fragment_shape,
         ) in zip(*self.subarrays(chunks)):
             kwargs = fragment_array[fragment_index].copy()
-            kwargs.pop("shape", None)
+            kwargs.pop("map", None)
 
             if fragment_type == "location":
                 kwargs["filename"] = kwargs.pop("location")
                 kwargs["address"] = kwargs.pop("identifier")
                 kwargs["storage_options"] = storage_options
-                #                kwargs["substitutions"] = substitutions
-                #                kwargs["min_file_versions"] = n_file_versions
                 kwargs["aggregation_file_directory"] = (
                     aggregation_file_directory
                 )

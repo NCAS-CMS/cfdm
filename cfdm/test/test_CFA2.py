@@ -600,7 +600,7 @@ class CFA2Test(unittest.TestCase):
             )
             self.assertEqual(
                 fa.data.nc_get_aggregated_data(),
-                {"shape": "fragment_shape_uid", "value": "fragment_value_uid"},
+                {"map": "fragment_map_uid", "value": "fragment_value_uid"},
             )
 
             nc = netCDF4.Dataset(aggregation_value_file, "r")

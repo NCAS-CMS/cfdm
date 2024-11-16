@@ -1,3 +1,7 @@
+from os.path import join
+
+from uritools import uricompose, urisplit
+
 from .fragmentarraymixin import FragmentArrayMixin
 
 
@@ -15,7 +19,6 @@ class FragmentFileArrayMixin(FragmentArrayMixin):
         dtype=None,
         shape=None,
         storage_options=None,
-        #        min_file_versions=None,
         unpack_aggregated_data=True,
         aggregated_attributes=None,
         source=None,
@@ -66,7 +69,6 @@ class FragmentFileArrayMixin(FragmentArrayMixin):
             unpack=True,
             attributes=None,
             storage_options=storage_options,
-            #            min_file_versions=min_file_versions,
             source=source,
             copy=copy,
         )

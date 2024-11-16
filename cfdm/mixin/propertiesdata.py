@@ -248,43 +248,6 @@ class PropertiesData(Properties):
 
         return data.datetime_array
 
-    def add_file_directory(self, directory):
-        """Add a new file directory in-place.
-
-        Another version of every file referenced by the data is
-        provided in the given *directory*.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `del_file_directory`, `file_directories`,
-                     `replace_file_directory`
-
-        :Parameters:
-
-            directory: `str`
-                The new directory.
-
-        :Returns:
-
-            `str`
-                The new directory as an absolute path.
-
-        **Examples**
-
-        >>> f.get_filenames()
-        {'/data/file1.nc', '/home/file2.nc'}
-        >>> f.add_file_directory('/new/')
-        '/new'
-        >>> f.get_filenames()
-        {'/data/file1.nc', '/new/file1.nc', '/home/file2.nc', '/new/file2.nc'}
-
-        """
-        data = self.get_data(None, _fill_value=False, _units=False)
-        if data is not None:
-            return data.add_file_directory(directory)
-
-        return dirname(directory)
-
     @_inplace_enabled(default=False)
     def apply_masking(self, inplace=False):
         """Apply masking as defined by the CF conventions.
@@ -529,44 +492,6 @@ class PropertiesData(Properties):
 
         return out
 
-    def del_file_directory(self, directory):
-        """Remove a file directory in-place.
-
-        Every file in *directory* that is referenced by the data is
-        removed. If this results in part of the data being undefined
-        then an exception is raised.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `add_file_directory`, `file_directories`,
-                     `replace_file_directory`
-
-        :Parameters:
-
-            directory: `str`
-                 The file directory to remove.
-
-        :Returns:
-
-            `str`
-                The removed directory as an absolute path.
-
-        **Examples**
-
-        >>> f.get_filenames()
-        {'/data/file1.nc', '/home/file2.nc'}
-        >>> f.del_file_directory('/data/')
-        '/data'
-        >>> f.get_filenames()
-        {'/home/file2.nc'}
-
-        """
-        data = self.get_data(None, _fill_value=False, _units=False)
-        if data is not None:
-            return data.del_file_directory(directory)
-
-        return dirname(directory)
-
     @_display_or_return
     def dump(
         self,
@@ -791,8 +716,7 @@ class PropertiesData(Properties):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `add_file_directory`, `del_file_directory`,
-                     `replace_file_directory`
+        .. seealso:: `get_filenames`, `replace_directory`
 
         :Returns:
 
@@ -882,143 +806,6 @@ class PropertiesData(Properties):
 
         return v
 
-    def nc_aggregation_substitutions(self):
-        """Return the netCDF aggregation substitution definitions.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `nc_clear_aggregation_substitutions`,
-                     `nc_del_aggregation_substitution`,
-                     `nc_update_aggregation_substitutions`
-
-        :Returns:
-
-            `dict`
-                {{Returns nc_aggregation_substitutions}}
-
-        **Examples**
-
-        >>> f.nc_aggregation_substitutions()
-        {}
-        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
-        >>> f.nc_aggregation_substitutions()
-        {'${base}': 'file:///data/'}
-        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
-        >>> f.nc_aggregation_substitutions()
-        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
-        >>> f.nc_aggregation_substitutions()
-        {'${base}': '/new/path/', '${base2}': '/home/data/'}
-        >>> f.nc_del_aggregation_substitution('${base}')
-        {'${base}': '/new/path/'}
-        >>> f.nc_clear_aggregation_substitutions()
-        {'${base2}': '/home/data/'}
-        >>> f.nc_aggregation_substitutions()
-        {}
-        >>> f.nc_clear_aggregation_substitutions()
-        {}
-        >>> print(f.nc_del_aggregation_substitution('base'))
-        None
-
-        """
-        data = self.get_data(None)
-        if data is None:
-            return {}
-
-        return data.nc_aggregation_substitutions()
-
-    def nc_clear_aggregation_substitutions(self):
-        """Remove all netCDF aggregation substitution definitions.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `nc_del_aggregation_substitution`,
-                     `nc_aggregation_substitutions`,
-                     `nc_update_aggregation_substitutions`
-
-        :Returns:
-
-            `dict`
-                {{Returns nc_clear_aggregation_substitutions}}
-
-        **Examples**
-
-        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
-        >>> f.nc_aggregation_substitutions()
-        {'${base}': 'file:///data/'}
-        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
-        >>> f.nc_aggregation_substitutions()
-        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
-        >>> f.nc_aggregation_substitutions()
-        {'${base}': '/new/path/', '${base2}': '/home/data/'}
-        >>> f.nc_del_aggregation_substitution('${base}')
-        {'${base}': '/new/path/'}
-        >>> f.nc_clear_aggregation_substitutions()
-        {'${base2}': '/home/data/'}
-        >>> f.nc_aggregation_substitutions()
-        {}
-        >>> f.nc_clear_aggregation_substitutions()
-        {}
-        >>> print(f.nc_del_aggregation_substitution('base'))
-        None
-
-        """
-        data = self.get_data(None)
-        if data is None:
-            return {}
-
-        return data.nc_clear_aggregation_substitutions()
-
-    def nc_del_aggregation_substitution(self, base):
-        """Remove a netCDF aggregation substitution definition.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `nc_clear_aggregation_substitutions`,
-                     `nc_aggregation_substitutions`,
-                     `nc_update_aggregation_substitutions`
-
-        :Parameters:
-
-            {{cfa substitution: `str`}}
-
-        :Returns:
-
-            `dict`
-                {{Returns nc_del_aggregation_substitution}}
-
-        **Examples**
-
-        >>> f.nc_aggregation_substitutions()
-        {}
-        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
-        >>> f.nc_aggregation_substitutions()
-        {'${base}': 'file:///data/'}
-        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
-        >>> f.nc_aggregation_substitutions()
-        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
-        >>> f.nc_aggregation_substitutions()
-        {'${base}': '/new/path/', '${base2}': '/home/data/'}
-        >>> f.nc_del_aggregation_substitution('${base}')
-        {'${base}': '/new/path/'}
-        >>> f.nc_clear_aggregation_substitutions()
-        {'${base2}': '/home/data/'}
-        >>> f.nc_aggregation_substitutions()
-        {}
-        >>> f.nc_clear_aggregation_substitutions()
-        {}
-        >>> print(f.nc_del_aggregation_substitution('base'))
-        {}
-
-        """
-        data = self.get_data(None)
-        if data is None:
-            return {}
-
-        return data.nc_del_aggregation_substitution(base)
-
     def nc_clear_hdf5_chunksizes(self):
         """Clear the HDF5 chunking strategy for the data.
 
@@ -1083,55 +870,13 @@ class PropertiesData(Properties):
         if data is not None:
             data.nc_set_hdf5_chunksizes(chunksizes)
 
-    def nc_update_aggregation_substitutions(self, substitutions):
-        """Update the netCDF aggregation substitution definitions.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `nc_clear_aggregation_substitutions`,
-                     `nc_del_aggregation_substitution`,
-                     `nc_aggregation_substitutions`,
-
-        :Parameters:
-
-            {{cfa substitutions: `dict`}}
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> d.nc_aggregation_substitutions()
-        {}
-        >>> d.nc_update_aggregation_substitutions({'base': 'file:///data/'})
-        >>> d.nc_aggregation_substitutions()
-        {'${base}': 'file:///data/'}
-        >>> d.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
-        >>> d.nc_aggregation_substitutions()
-        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> d.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
-        >>> d.nc_aggregation_substitutions()
-        {'${base}': '/new/path/', '${base2}': '/home/data/'}
-        >>> d.nc_del_aggregation_substitution('${base}')
-        {'${base}': '/new/path/'}
-        >>> d.nc_clear_aggregation_substitutions()
-        {'${base2}': '/home/data/'}
-        >>> d.nc_aggregation_substitutions()
-        {}
-        >>> d.nc_clear_aggregation_substitutions()
-        {}
-        >>> print(d.nc_del_aggregation_substitution('base'))
-        None
-
-        """
-        data = self.get_data(None)
-        if data is None:
-            return
-
-        return data.nc_update_aggregation_substitutions(substitutions)
-
-    def replace_file_directory(self, old_directory, new_directory):
+    def replace_directory(
+        self,
+        old=None,
+        new=None,
+        normalise=False,
+        common=False,
+    ):
         """Replace a file directory in-place.
 
         Every file in *old_directory* that is referenced by the data
@@ -1139,8 +884,7 @@ class PropertiesData(Properties):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `add_file_directory`, `del_file_directory`,
-                     `file_directories`
+        .. seealso:: `file_directories`, `get_filenames`
 
         :Parameters:
 
@@ -1152,14 +896,14 @@ class PropertiesData(Properties):
 
         :Returns:
 
-            `str`
+            `str` TODOCFA
                 The new directory as an absolute path.
 
         **Examples**
 
         >>> d.get_filenames()
         {'/data/file1.nc', '/home/file2.nc'}
-        >>> d.replace_file_directory('/data', '/new/data/path/')
+        >>> d.replace_directory('/data', '/new/data/path/')
         '/new/data/path'
         >>> d.get_filenames()
         {'/new/data/path/file1.nc', '/home/file2.nc'}
@@ -1167,9 +911,9 @@ class PropertiesData(Properties):
         """
         data = self.get_data(None, _fill_value=False, _units=False)
         if data is not None:
-            return data.replace_file_directory(old_directory, new_directory)
-
-        return dirname(new_directory)
+            return data.replace_directory(
+                old=old, new=new, normalise=normalise, common=common
+            )
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):

@@ -288,20 +288,6 @@ class PropertiesDataBounds(PropertiesData):
 
         return out
 
-    def add_file_directory(self, directory):
-        """TODOCFA."""
-        directory = super().add_file_directory(directory)
-
-        bounds = self.get_bounds(None)
-        if bounds is not None:
-            bounds.add_file_directory(directory)
-
-        interior_ring = self.get_interior_ring(None)
-        if interior_ring is not None:
-            interior_ring.add_file_directory(directory)
-
-        return directory
-
     @_inplace_enabled(default=False)
     def apply_masking(self, bounds=True, inplace=False):
         """Apply masking as defined by the CF conventions.
@@ -623,20 +609,6 @@ class PropertiesDataBounds(PropertiesData):
             out = ("\n" + indent).join(out)
 
         return out
-
-    def del_file_directory(self, directory):
-        """TODOCFA."""
-        directory = super().add_file_directory(directory)
-
-        bounds = self.get_bounds(None)
-        if bounds is not None:
-            bounds.del_file_directory(directory)
-
-        interior_ring = self.get_interior_ring(None)
-        if interior_ring is not None:
-            interior_ring.del_file_directory(directory)
-
-        return directory
 
     def del_node_count(self, default=ValueError()):
         """Remove the node count variable for geometry bounds.
@@ -1482,133 +1454,31 @@ class PropertiesDataBounds(PropertiesData):
 
         return c
 
-    def replace_file_directory(self, old_directory, new_directory):
+    def replace_directory(
+        self,
+        old=None,
+        new=None,
+        normalise=False,
+        common=False,
+    ):
         """TODOCFA."""
-        directory = super().replace_file_directory(
-            old_directory, new_directory
+        directory = super().replace_directory(
+            old=old, new=new, normalise=normalise, common=common
         )
 
         bounds = self.get_bounds(None)
         if bounds is not None:
-            bounds.replace_file_directory(old_directory, new_directory)
+            bounds.replace_directory(
+                old=old, new=new, normalise=normalise, common=common
+            )
 
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
-            interior_ring.replace_file_directory(old_directory, new_directory)
+            interior_ring.replace_directory(
+                old=old, new=new, normalise=normalise, common=common
+            )
 
         return directory
-
-    def nc_aggregation_substitutions(self, bounds=True, interior_ring=True):
-        """Return the netCDF aggregation substitution definitions.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `nc_clear_aggregation_substitutions`,
-                     `nc_del_aggregation_substitution`,
-                     `nc_update_aggregation_substitutions`
-
-        :Returns:
-
-            `dict`
-                {{Returns nc_aggregation_substitutions}}
-
-        **Examples**
-
-        >>> f.nc_aggregation_substitutions()
-        {}
-        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
-        >>> f.nc_aggregation_substitutions()
-        {'${base}': 'file:///data/'}
-        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
-        >>> f.nc_aggregation_substitutions()
-        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
-        >>> f.nc_aggregation_substitutions()
-        {'${base}': '/new/path/', '${base2}': '/home/data/'}
-        >>> f.nc_del_aggregation_substitution('${base}')
-        {'${base}': '/new/path/'}
-        >>> f.nc_clear_aggregation_substitutions()
-        {'${base2}': '/home/data/'}
-        >>> f.nc_aggregation_substitutions()
-        {}
-        >>> f.nc_clear_aggregation_substitutions()
-        {}
-        >>> print(f.nc_del_aggregation_substitution('base'))
-        None
-
-        """
-        out = super().nc_aggregation_substitutions()
-
-        # Bounds
-        if bounds:
-            bounds = self.get_bounds(None)
-            if bounds is not None:
-                out.update(bounds.nc_aggregation_substitutions())
-
-        # Interior ring
-        if interior_ring:
-            interior_ring = self.get_interior_ring(None)
-            if interior_ring is not None:
-                out.update(interior_ring.nc_aggregation_substitutions())
-
-        return out
-
-    def nc_clear_aggregation_substitutions(
-        self, bounds=True, interior_ring=True
-    ):
-        """Remove all netCDF aggregation substitution definitions.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `nc_del_aggregation_substitution`,
-                     `nc_aggregation_substitutions`,
-                     `nc_update_aggregation_substitutions`
-
-        :Returns:
-
-            `dict`
-                {{Returns nc_clear_aggregation_substitutions}}
-
-        **Examples**
-
-        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
-        >>> f.nc_aggregation_substitutions()
-        {'${base}': 'file:///data/'}
-        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
-        >>> f.nc_aggregation_substitutions()
-        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
-        >>> f.nc_aggregation_substitutions()
-        {'${base}': '/new/path/', '${base2}': '/home/data/'}
-        >>> f.nc_del_aggregation_substitution('${base}')
-        {'${base}': '/new/path/'}
-        >>> f.nc_clear_aggregation_substitutions()
-        {'${base2}': '/home/data/'}
-        >>> f.nc_aggregation_substitutions()
-        {}
-        >>> f.nc_clear_aggregation_substitutions()
-        {}
-        >>> print(f.nc_del_aggregation_substitution('base'))
-        None
-
-        """
-        out = {}
-
-        # Bounds
-        if bounds:
-            bounds = self.get_bounds(None)
-            if bounds is not None:
-                out.update(bounds.nc_clear_aggregation_substitutions())
-
-        # Interior ring
-        if interior_ring:
-            interior_ring = self.get_interior_ring(None)
-            if interior_ring is not None:
-                out.update(interior_ring.nc_clear_aggregation_substitutions())
-
-        out.update(super().nc_clear_aggregation_substitutions())
-
-        return out
 
     def nc_clear_hdf5_chunksizes(self, bounds=True, interior_ring=True):
         """Clear the HDF5 chunking strategy for the data.
@@ -1651,68 +1521,6 @@ class PropertiesDataBounds(PropertiesData):
             interior_ring = self.get_interior_ring(None)
             if interior_ring is not None:
                 interior_ring.nc_clear_hdf5_chunksizes()
-
-    def nc_del_aggregation_substitution(
-        self, base, bounds=True, interior_ring=True
-    ):
-        """Remove a netCDF aggregation substitution definition.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `nc_clear_aggregation_substitutions`,
-                     `nc_aggregation_substitutions`,
-                     `nc_update_aggregation_substitutions`
-
-        :Parameters:
-
-            {{cfa substitution: `str`}}
-
-        :Returns:
-
-            `dict`
-                {{Returns nc_del_aggregation_substitution}}
-
-        **Examples**
-
-        >>> f.nc_aggregation_substitutions()
-        {}
-        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
-        >>> f.nc_aggregation_substitutions()
-        {'${base}': 'file:///data/'}
-        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
-        >>> f.nc_aggregation_substitutions()
-        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
-        >>> f.nc_aggregation_substitutions()
-        {'${base}': '/new/path/', '${base2}': '/home/data/'}
-        >>> f.nc_del_aggregation_substitution('${base}')
-        {'${base}': '/new/path/'}
-        >>> f.nc_clear_aggregation_substitutions()
-        {'${base2}': '/home/data/'}
-        >>> f.nc_aggregation_substitutions()
-        {}
-        >>> f.nc_clear_aggregation_substitutions()
-        {}
-        >>> print(f.nc_del_aggregation_substitution('base'))
-        {}
-
-        """
-        out = {}
-
-        # Bounds
-        if bounds:
-            bounds = self.get_bounds(None)
-            if bounds is not None:
-                out.update(bounds.nc_del_aggregation_substitution(base))
-
-        # Interior ring
-        if interior_ring:
-            interior_ring = self.get_interior_ring(None)
-            if interior_ring is not None:
-                interior_ring.nc_del_aggregation_substitution(base)
-
-        out.udpate(super().nc_del_aggregation_substitution(base))
-        return out
 
     def nc_set_hdf5_chunksizes(
         self, chunksizes, bounds=True, interior_ring=True
@@ -1765,66 +1573,6 @@ class PropertiesDataBounds(PropertiesData):
             interior_ring = self.get_interior_ring(None)
             if interior_ring is not None:
                 interior_ring.nc_set_hdf5_chunksizes(c)
-
-    def nc_update_aggregation_substitutions(
-        self, substitutions, bounds=True, interior_ring=True
-    ):
-        """Update the netCDF aggregation substitution definitions.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `nc_clear_aggregation_substitutions`,
-                     `nc_del_aggregation_substitution`,
-                     `nc_aggregation_substitutions`,
-
-        :Parameters:
-
-            {{cfa substitutions: `dict`}}
-
-        :Returns:
-
-            `None`
-
-        **Examples**
-
-        >>> d.nc_aggregation_substitutions()
-        {}
-        >>> d.nc_update_aggregation_substitutions({'base': 'file:///data/'})
-        >>> d.nc_aggregation_substitutions()
-        {'${base}': 'file:///data/'}
-        >>> d.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
-        >>> d.nc_aggregation_substitutions()
-        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-        >>> d.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
-        >>> d.nc_aggregation_substitutions()
-        {'${base}': '/new/path/', '${base2}': '/home/data/'}
-        >>> d.nc_del_aggregation_substitution('${base}')
-        {'${base}': '/new/path/'}
-        >>> d.nc_clear_aggregation_substitutions()
-        {'${base2}': '/home/data/'}
-        >>> d.nc_aggregation_substitutions()
-        {}
-        >>> d.nc_clear_aggregation_substitutions()
-        {}
-        >>> print(d.nc_del_aggregation_substitution('base'))
-        None
-
-        """
-        super().nc_update_aggregation_substitutions(substitutions)
-
-        # Bounds
-        if bounds:
-            bounds = self.get_bounds(None)
-            if bounds is not None:
-                bounds.nc_update_aggregation_substitutions(substitutions)
-
-        # Interior ring
-        if interior_ring:
-            interior_ring = self.get_interior_ring(None)
-            if interior_ring is not None:
-                interior_ring.nc_update_aggregation_substitutions(
-                    substitutions
-                )
 
     def set_node_count(self, node_count, copy=True):
         """Set the node count variable for geometry bounds.

@@ -4923,7 +4923,6 @@ class NetCDFWrite(IOWrite):
         elif isinstance(cfa, str):
             cfa = {"constructs": cfa}
         elif isinstance(cfa, dict):
-            #            keys = ("constructs", "substitutions", "uri", "strict")
             keys = ("constructs", "uri", "strict")
             if not set(cfa).issubset(keys):
                 raise ValueError(
@@ -4940,7 +4939,6 @@ class NetCDFWrite(IOWrite):
 
         cfa.setdefault("constructs", "auto")
         cfa.setdefault("uri", "default")
-        #        cfa.setdefault("substitutions", {})
         cfa.setdefault("strict", True)
 
         constructs = cfa["constructs"]
@@ -4952,16 +4950,6 @@ class NetCDFWrite(IOWrite):
                 constructs = (constructs,)
 
             cfa["constructs"] = {c: None for c in constructs}
-
-        #        substitutions = cfa["substitutions"]
-        #        if substitutions:
-        #            substitutions = substitutions.copy()
-        #            for base, sub in tuple(substitutions.items()):
-        #                if not (base.startswith("${") and base.endswith("}")):
-        #                    # Add missing ${...}
-        #                    substitutions[f"${{{base}}}"] = substitutions.pop(base)
-        #
-        #            cfa["substitutions"] = substitutions
 
         self.write_vars["cfa"] = cfa
 
@@ -5668,7 +5656,7 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Shape
         # ------------------------------------------------------------
-        feature = "shape"
+        feature = "map"
         shape = cfa[feature]
 
         # Get the shape netCDF dimensions from the 'shape' fragment
@@ -5724,18 +5712,6 @@ class NetCDFWrite(IOWrite):
                     )
 
             fragment_array_ncdimensions = tuple(fragment_array_ncdimensions)
-
-            #            # Create a 'substitutions' netCDF attribute for the
-            #            # 'location' fragment array variable
-            #            substitutions = data.nc_aggregation_substitutions()
-            #            substitutions.update(g["cfa"].get("substitutions", {}))
-            #            if substitutions:
-            #                subs = [
-            #                    f"{base}: {sub}" for base, sub in substitutions.items()
-            #                ]
-            #                attributes = {"substitutions": " ".join(sorted(subs))}
-            #            else:
-            #                attributes = None
 
             # Write the fragment array variable to the netCDF dataset
             feature_ncvar = self._cfa_write_fragment_array_variable(
@@ -5985,14 +5961,8 @@ class NetCDFWrite(IOWrite):
 
         g = self.write_vars
 
-        #        # Define location fragment array variable susbstitutions,
-        #        # giving precedence over those set on the Data object to those
-        #        # provided by the cfa options.
-        #        substitutions = data.nc_aggregation_substitutions()
-        #        substitutions.update(g["cfa"].get("substitutions", {}))
-
         # ------------------------------------------------------------
-        # Create the shape array
+        # Create the 'map' array
         # ------------------------------------------------------------
         a_shape = data.numblocks
         if a_shape:
@@ -6006,7 +5976,7 @@ class NetCDFWrite(IOWrite):
             # Scalar 'shape' fragment array variable
             aggregation_shape = np.ones((), dtype=np.dtype("int32"))
 
-        out = {"shape": type(data)(aggregation_shape)}
+        out = {"map": type(data)(aggregation_shape)}
 
         if data.nc_get_aggregation_fragment_type() == "location":
             # --------------------------------------------------------
@@ -6042,8 +6012,8 @@ class NetCDFWrite(IOWrite):
 
                 aggregation_file_scheme = g["aggregation_file_scheme"]
 
-            # Size of the trailing dimension
-            n_trailing = 0
+            #            # Size of the trailing dimension
+            #            n_trailing = 0
 
             aggregation_location = []
             aggregation_identifier = []
@@ -6110,110 +6080,6 @@ class NetCDFWrite(IOWrite):
                 aggregation_location.append(filename)
                 aggregation_identifier.append(address)
 
-            #                    filenames2.append(filename)
-
-            # if substitutions:
-            #    # Apply substitutions to the file name by
-            #    # replacing text in the file name with "${*}"
-            #    # strings
-            #    for base, sub in substitutions.items():
-            #        filename = filename.replace(sub, base)
-            #                    if not re.match(r"^.*\$\{.*\}", filename):
-            #                        # The file path does not include any "${*}"
-            #                        # strings, so we reformat the file name to be
-            #                        # either an absolute URI, or else a
-            #                        # relative-path URI reference relative to the
-            #                        # aggregation file.
-            #                        uri = urisplit(filename)
-            #
-            #                        if absolute_uri:
-            #                            pass
-            #                            # Convert the file name to an absolute URI
-            #                            if uri.isrelpath():
-            #                                # File name is an absolute-path URI reference
-            #                                filename = uricompose(
-            #                                    scheme="file",
-            #                                    authority="",
-            #                                    path=uri.path,
-            #                                )
-            #                               ## File name is a relative-path URI reference
-            #                               #filename = uricompose(
-            #                               #    scheme=cfa_scheme,
-            #                               #    authority="",
-            #                               #    path=abspath(join(cfa_dir, uri.path)),
-            #                               #)
-            #                            if uri.isabsuri():
-            #                                # File name is an absolute URI
-            #                                filename = uri.geturi()
-            #                            else:
-            #                                # File name is an absolute-path URI reference
-            #                                filename = uricompose(
-            #                                    scheme="file",
-            #                                    authority="",
-            #                                    path=uri.path,
-            #                                )
-            #                        else:
-            #                            # Convert the file name to a relative-path
-            #                            # URI reference relative to the
-            #                            # aggregation file
-            #                            if uri.isrelpath():
-            #                                pass
-            #                                # File name is a relative-path URI
-            #                                # reference
-            #                                filename = relpath(
-            #                                    abspath(join(cfa_dir, uri.path)),
-            #                                    start=cfa_dir,
-            #                                )
-            #                            else:
-            #                                # File name is an absolute URI or an
-            #                                # absolute-path URI reference
-            #                                scheme = uri.scheme
-            #                                if not scheme:
-            #                                    scheme = "file"
-            #
-            #                                if scheme != cfa_scheme:
-            #                                    raise ValueError(
-            #                                        "Can't create a relative-path URI "
-            #                                        "reference fragment location when "
-            #                                        "the fragment file and aggregation "
-            #                                        "file have different URI schemes: "
-            #                                        f"{scheme}, {cfa_scheme}"
-            #                                    )
-            #
-            #                                filename = relpath(uri.path, start=cfa_dir)
-            #
-            #                        if substitutions:
-            #                            # Apply substitutions to the modified file
-            #                            # name
-            #                            for base, sub in substitutions.items():
-            #                                filename = filename.replace(sub, base)
-            #
-            #                    filenames2.append(filename)
-            #
-            #                aggregation_location.append(tuple(filenames2))
-            #                aggregation_identifier.append(addresses)
-            #
-            #            # Pad each value of the aggregation instruction arrays so
-            #            # that it has 'n_trailing' elements
-            #            pad = None
-            #            if n_trailing > 1:
-            #                a_shape += (n_trailing,)
-            #
-            #                # Pad the ...
-            #                for i, (filenames, identifiers) in enumerate(
-            #                    zip(aggregation_location, aggregation_identifier)
-            #                ):
-            #                    n = n_trailing - len(filenames)
-            #                    if n:
-            #                        # This chunk has fewer fragment files than
-            #                        # some others, so some padding is required.
-            #                        pad = ("",) * n
-            #                        aggregation_location[i] = filenames + pad
-            #                        if isinstance(identifiers[0], int):
-            #                            pad = (-1,) * n
-            #
-            #                        aggregation_identifier[i] = identifiers + pad
-
             # Reshape the 1-d aggregation instruction arrays to span
             # the data dimensions, plus the extra trailing dimension
             # if there is one.
@@ -6224,19 +6090,6 @@ class NetCDFWrite(IOWrite):
                 a_shape
             )
 
-            #            # Mask any padded elements
-            #            if pad:
-            #                aggregation_location = np.ma.where(
-            #                    aggregation_location == "",
-            #                    np.ma.masked,
-            #                    aggregation_location,
-            #                )
-            #                aggregation_location.set_fill_value("")
-            #                mask = aggregation_location.mask
-            #                aggregation_identifier = np.ma.array(
-            #                    aggregation_identifier, mask=mask
-            #                )
-            #
             out["location"] = type(data)(aggregation_location)
             out["identifier"] = type(data)(aggregation_identifier)
         else:

@@ -1143,8 +1143,6 @@ class NetCDFRead(IORead):
             # Aggregation
             # --------------------------------------------------------
             "parsed_aggregated_data": {},
-            # URI substitutions for location fragment array variables
-            #            "location_substitutions": {},
             # fragment_array_variables as numpy arrays
             "fragment_array_variables": {},
             # Aggregation configuration overrides
@@ -1229,30 +1227,6 @@ class NetCDFRead(IORead):
 
         g["extra"] = extra
 
-        #        # Parse the 'cfa' keyword parameter
-        #        if cfa is None:
-        #            cfa = {}
-        #        else:
-        #            cfa = cfa.copy()
-        #            keys = ("substitutions",)
-        #            if not set(cfa).issubset(keys):
-        #                raise ValueError(
-        #                    "Invalid dictionary key to the 'cfa' parameter."
-        #                    f"Valid keys are {keys}. Got: {cfa}"
-        #                )
-        #
-        #        if "substitutions" in cfa:
-        #            substitutions = cfa["substitutions"].copy()
-        #            for base, sub in tuple(substitutions.items()):
-        #                if not (base.startswith("${") and base.endswith("}")):
-        #                    # Add missing ${...}
-        #                    substitutions[f"${{{base}}}"] = substitutions.pop(base)
-        #        else:
-        #            substitutions = {}
-        #
-        #        cfa["substitutions"] = substitutions
-        #        g["cfa"] = cfa
-
         # Parse the 'cfa' keyword parameter
         if cfa is None:
             cfa = {}
@@ -1266,7 +1240,11 @@ class NetCDFRead(IORead):
                 )
 
             if not isinstance(cfa.get("replace_directory", {}), dict):
-                raise ValueError("TODOCFA")
+                raise ValueError(
+                    "The 'replace_directory' key of the 'cfa' keyword must "
+                    "have a dictionary value. "
+                    f"Got: {cfa['replace_directory']!r}"
+                )
 
         g["cfa"] = cfa
 
@@ -6378,7 +6356,7 @@ class NetCDFRead(IORead):
         kwargs["mask"] = True
 
         fragment_array_variables = g["fragment_array_variables"]
-        standardised_terms = ("shape", "location", "identifier", "value")
+        standardised_terms = ("map", "location", "identifier", "value")
 
         fragment_array = {}
         for term, term_ncvar in g["parsed_aggregated_data"][ncvar].items():
@@ -6393,13 +6371,7 @@ class NetCDFRead(IORead):
             fragment_array_variable = fragment_array_variables[term_ncvar]
             fragment_array[term] = fragment_array_variable
 
-            if term == "location":
-                pass
-            #                kwargs["substitutions"] = g["location_substitutions"].get(
-            #                    term_ncvar
-            #                )
-
-            elif term == "value" and kwargs["dtype"] is None:
+            if term == "value" and kwargs["dtype"] is None:
                 # This is a string-valued aggregation variable with a
                 # 'value' fragment array variable, so set the correct
                 # numpy data type.
@@ -6762,20 +6734,23 @@ class NetCDFRead(IORead):
 
             data._nc_set_aggregation_write_status(cfa_write_status)
 
-            #            # Store the file substitutions
-            #            data.nc_update_aggregation_substitutions(
-            #                netcdf_kwargs.get("substitutions", {})
-            #            )
-
             # Store the fragment type
-            data._nc_set_aggregation_fragment_type(
-                netcdf_array.get_fragment_type()
-            )
+            fragment_type = netcdf_array.get_fragment_type()
+            data._nc_set_aggregation_fragment_type(fragment_type)
 
-            # TODOCFA
-            replace_directory = g["cfa"].get("replace_directory")
-            if replace_directory:
-                data.replace_directory(**replace_directory)
+            # Replace the directories of fragment locations
+            if fragment_type == "location":
+                replace_directory = g["cfa"].get("replace_directory")
+                if replace_directory:
+                    try:
+                        data.replace_directory(**replace_directory)
+                    except TypeError:
+                        raise TypeError(
+                            "The 'replace_directory' key of the 'cfa' "
+                            "keyword must provide valid parameters to the "
+                            "'Data.replace_directory' method. "
+                            f"Got: {replace_directory!r}"
+                        )
 
         # Return the data object
         return data
@@ -11325,29 +11300,6 @@ class NetCDFRead(IORead):
                 copy=False,
             )
             fragment_array_variables[term_ncvar] = array[...]
-
-        #            if term == "location":
-        #                # Find any URI substitutions stored in the location
-        #                # fragment array variable's "substitutions" attribute
-        #                subs = attributes.get("substitutions")
-        #                override_subs = g["cfa"].get("substitutions", {})
-        #                if subs:
-        #                    # Convert the string "substitution: replacement"
-        #                    # to the dictionary {"substitution":
-        #                    # "replacement"}
-        #                    s = subs.split()
-        #                    subs = {
-        #                        base[:-1]: sub for base, sub in zip(s[::2], s[1::2])
-        #                    }
-        #
-        #                    # Apply user-defined URI substitutions, which take
-        #                    # precedence over those defined on the location
-        #                    # fragment array variable.
-        #                    subs.update(override_subs)
-        #                else:
-        #                    subs = override_subs
-        #
-        #                g["location_substitutions"][term_ncvar] = subs
 
         g["parsed_aggregated_data"][ncvar] = out
         return out

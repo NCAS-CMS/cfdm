@@ -697,26 +697,6 @@ def write(
                 field constructs: ``{'constructs':
                 {'auxiliary_coordinate': 2, 'field': None}}``.
 
-            * ``'substitutions'``: `dict`
-
-              A dictionary whose key/value pairs define text
-              substitutions to be applied to the fragment file
-              names. Each key may be specified with or without the
-              ``${...}`` syntax. For instance, the following are
-              equivalent: ``{'base': 'sub'}``, ``{'${base}': 'sub'}``.
-              The substitutions are used in conjunction with, and take
-              precedence over, any that are also defined on individual
-              constructs (see
-              `cfdm.Data.nc_update_aggregated_substitutions` for
-              details).
-
-              Substitutions are stored in the output file by the
-              ``substitutions`` attribute of the "location" fragment
-              array variable.
-
-              *Example:*
-                ``{'substitutions': {base': 'file:///data/'}}``
-
             * ``'uri'``: `str`
 
               How to write fragment file names that do not contain any

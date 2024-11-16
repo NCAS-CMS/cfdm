@@ -565,7 +565,7 @@ def dirname(path, uri=False, isdir=False):
     if uri:
         u = uricompose(scheme="file", authority="", path=u)
 
-    return u  # os.path.abspath(u)
+    return u
 
 
 def unique_constructs(constructs, ignore_properties=None, copy=True):

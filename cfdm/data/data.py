@@ -20,9 +20,8 @@ from ..decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
-from ..functions import (
+from ..functions import (  # dirname,
     _numpy_allclose,
-    dirname,
     is_log_level_info,
     parse_indices,
 )
@@ -3249,41 +3248,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         d._Units = self._Units_class(None)
         return d
 
-    #    def add_file_directory(self, directory):
-    #        """Add a new file directory in-place.
-    #
-    #        Another version of every file referenced by the data is
-    #        provided in the given directory.
-    #
-    #        .. versionadded:: (cfdm) NEXTVERSION
-    #
-    #        .. seealso:: `del_file_directory`, `file_directories`,
-    #                     `replace_file_directory`
-    #
-    #        :Parameters:
-    #
-    #            directory: `str`
-    #                The new directory.
-    #
-    #        :Returns:
-    #
-    #            `str`
-    #                The new directory as an absolute path.
-    #
-    #        **Examples**
-    #
-    #        >>> d.get_filenames()
-    #        {'/data/file1.nc', '/home/file2.nc'}
-    #        >>> d.add_file_directory('/new/')
-    #        '/new'
-    #        >>> d.get_filenames()
-    #        {'/data/file1.nc', '/new/file1.nc', '/home/file2.nc', '/new/file2.nc'}
-    #
-    #        """
-    #        directory = dirname(directory, isdir=True)
-    #        self._modify_dask_graph("add_file_directory", (directory,))
-    #        return directory
-
     def any(self, axis=None, keepdims=True, split_every=None):
         """Test whether any data array elements evaluate to True.
 
@@ -3927,16 +3891,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             data0.nc_set_aggregated_data(aggregated_data)
 
-        #            # Set the aggregation substitutions by combining them from
-        #            # all of the input data instances, giving precedence to
-        #            # those towards the left hand side of the input list.
-        #            substitutions = {}
-        #            for d in conformed_data[:0:-1]:
-        #                substitutions.update(d.nc_aggregation_substitutions())
-        #
-        #            if substitutions:
-        #                data0.nc_update_aggregation_substitutions(substitutions)
-
         # Set appropriate cached elements (after '_set_dask' has just
         # cleared them from data0).
         cached_elements = {}
@@ -4153,42 +4107,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         self._Units = self._Units_class(self.get_units(None), None)
         return calendar
-
-    #    def del_file_directory(self, directory):
-    #        """Remove a file directory in-place.
-    #
-    #        Every file in *directory* that is referenced by the data is
-    #        removed. If this results in part of the data being undefined
-    #        then an exception is raised.
-    #
-    #        .. versionadded:: (cfdm) NEXTVERSION
-    #
-    #        .. seealso:: `add_file_directory`, `file_directories`,
-    #                     `replace_file_directory`
-    #
-    #        :Parameters:
-    #
-    #            directory: `str`
-    #                 The file directory to remove.
-    #
-    #        :Returns:
-    #
-    #            `str`
-    #                The removed directory as an absolute path.
-    #
-    #        **Examples**
-    #
-    #        >>> d.get_filenames()
-    #        {'/data/file1.nc', '/home/file2.nc'}
-    #        >>> d.del_file_directory('/data/')
-    #        '/data'
-    #        >>> d.get_filenames()
-    #        {'/home/file2.nc'}
-    #
-    #        """
-    #        directory = dirname(directory, isdir=True)
-    #        self._modify_dask_graph("del_file_directory", (directory,))
-    #        return directory
 
     def del_units(self, default=ValueError()):
         """Delete the units.
@@ -4501,8 +4419,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `add_file_directory`, `del_file_directory`,
-                     `replace_file_directory`
+        .. seealso:: `replace_directory`
 
         :Returns:
 
@@ -5115,9 +5032,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             # Maximum number of characters in any file name
             n_char = 1
-            # Maximum number of file versions per chunk
-            #            n_files_per_chunk = min_file_versions
 
+            filenames = {}
             for index, position in zip(
                 self.chunk_indices(), self.chunk_positions()
             ):
@@ -5134,26 +5050,24 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                         pass
                     else:
                         if filename:
-                            append((position, filename))
+                            if position in filenames:
+                                raise ValueError(
+                                    f"The Dask chunk in position {position} "
+                                    f"(defined by {index!r}) has multiple "
+                                    "file locations"
+                                )
+
+                            filenames[position] = filename
                             n_char = max(n_char, len(filename))
-            #                           try:
-            #                               n_file_versions = a.get_n_file_versions()
-            #                           except AttributeError:
-            #                               n_file_versions = len(filenames)
-            #
-            #                           if n_file_versions > n_files_per_chunk:
-            #                               n_files_per_chunk = n_file_versions
 
             array = np.ma.masked_all(
-                self.numblocks,  # + (n_files_per_chunk + extra,),
+                self.numblocks,
                 dtype=f"U{n_char}",
             )
             array.set_fill_value("")
 
-            for position, filename in out:
-                if filename:
-                    #                    array[position + (slice(0, len(filenames)),)] = filenames
-                    array[position] = filename
+            for position, filename in filenames.items():
+                array[position] = filename
 
             return array
 
@@ -5834,358 +5748,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         )
         return d
 
-    #    def nc_aggregation_substitutions(self):
-    #        """Return the netCDF aggregation substitution definitions.
-    #
-    #        .. versionadded:: (cfdm) NEXTVERSION
-    #
-    #        .. seealso:: `nc_clear_aggregation_substitutions`,
-    #                     `nc_del_aggregation_substitution`,
-    #                     `nc_update_aggregation_substitutions`
-    #
-    #        :Returns:
-    #
-    #            `dict`
-    #                {{Returns nc_aggregation_substitutions}}
-    #
-    #        **Examples**
-    #
-    #        >>> f.nc_aggregation_substitutions()
-    #        {}
-    #        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
-    #        >>> f.nc_aggregation_substitutions()
-    #        {'${base}': 'file:///data/'}
-    #        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
-    #        >>> f.nc_aggregation_substitutions()
-    #        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-    #        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
-    #        >>> f.nc_aggregation_substitutions()
-    #        {'${base}': '/new/path/', '${base2}': '/home/data/'}
-    #        >>> f.nc_del_aggregation_substitution('${base}')
-    #        {'${base}': '/new/path/'}
-    #        >>> f.nc_clear_aggregation_substitutions()
-    #        {'${base2}': '/home/data/'}
-    #        >>> f.nc_aggregation_substitutions()
-    #        {}
-    #        >>> f.nc_clear_aggregation_substitutions()
-    #        {}
-    #        >>> print(f.nc_del_aggregation_substitution('base'))
-    #        None
-    #
-    #        """
-    #        out = {}
-    #        dsk = self.todict(_apply_mask_hardness=False, _asanyarray=False)
-    #        for key, a in dsk.items():
-    #            try:
-    #                out.update(a.get_substitutions(copy=False))
-    #            except AttributeError:
-    #                # This graph node doesn't contain a file array
-    #                pass
-    #
-    #        return out
-    #
-    #    def nc_clear_aggregation_substitutions(self):
-    #        """Remove all netCDF aggregation substitution definitions.
-    #
-    #        .. versionadded:: (cfdm) NEXTVERSION
-    #
-    #        .. seealso:: `nc_del_aggregation_substitution`,
-    #                     `nc_aggregation_substitutions`,
-    #                     `nc_update_aggregation_substitutions`
-    #
-    #        :Returns:
-    #
-    #            `dict`
-    #                {{Returns nc_clear_aggregation_substitutions}}
-    #
-    #        **Examples**
-    #
-    #        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
-    #        >>> f.nc_aggregation_substitutions()
-    #        {'${base}': 'file:///data/'}
-    #        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
-    #        >>> f.nc_aggregation_substitutions()
-    #        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-    #        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
-    #        >>> f.nc_aggregation_substitutions()
-    #        {'${base}': '/new/path/', '${base2}': '/home/data/'}
-    #        >>> f.nc_del_aggregation_substitution('${base}')
-    #        {'${base}': '/new/path/'}
-    #        >>> f.nc_clear_aggregation_substitutions()
-    #        {'${base2}': '/home/data/'}
-    #        >>> f.nc_aggregation_substitutions()
-    #        {}
-    #        >>> f.nc_clear_aggregation_substitutions()
-    #        {}
-    #        >>> print(f.nc_del_aggregation_substitution('base'))
-    #        None
-    #
-    #        """
-    #        self._modify_dask_graph("clear_substitutions")
-    #
-    #    def nc_del_aggregation_substitution(self, base, replace=True):
-    #        """Remove a netCDF aggregation substitution definition.
-    #
-    #        .. versionadded:: (cfdm) NEXTVERSION
-    #
-    #        .. seealso:: `nc_clear_aggregation_substitutions`,
-    #                     `nc_aggregation_substitutions`,
-    #                     `nc_update_aggregation_substitutions`
-    #
-    #        :Parameters:
-    #
-    #            {{cfa substitution: `str`}}
-    #
-    #            replace: `bool`, optional
-    #                If True (the default) then replace the removed
-    #                substutition with its value in all file names. If
-    #                False then the substutition is removed from the file
-    #                anmes with any replacement (i.e. this is equivalent to
-    #                it being replaced with an emty string).
-    #
-    #        :Returns:
-    #
-    #            `dict`
-    #                {{Returns nc_del_aggregation_substitution}}
-    #
-    #        **Examples**
-    #
-    #        >>> f.nc_aggregation_substitutions()
-    #        {}
-    #        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
-    #        >>> f.nc_aggregation_substitutions()
-    #        {'${base}': 'file:///data/'}
-    #        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
-    #        >>> f.nc_aggregation_substitutions()
-    #        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-    #        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
-    #        >>> f.nc_aggregation_substitutions()
-    #        {'${base}': '/new/path/', '${base2}': '/home/data/'}
-    #        >>> f.nc_del_aggregation_substitution('${base}')
-    #        {'${base}': '/new/path/'}
-    #        >>> f.nc_clear_aggregation_substitutions()
-    #        {'${base2}': '/home/data/'}
-    #        >>> f.nc_aggregation_substitutions()
-    #        {}
-    #        >>> f.nc_clear_aggregation_substitutions()
-    #        {}
-    #        >>> print(f.nc_del_aggregation_substitution('base'))
-    #        {}
-    #
-    #        """
-    #        if not (base.startswith("${") and base.endswith("}")):
-    #            base = f"${{{base}}}"
-    #
-    #        self._modify_dask_graph("del_substitution", (base, replace))
-    #
-    #    def nc_prepend_aggregation_substitution(self, substitution):
-    #        """Remove all netCDF aggregation substitution definitions.
-    #
-    #        .. versionadded:: (cfdm) NEXTVERSION
-    #
-    #        .. seealso:: `nc_del_aggregation_substitution`,
-    #                     `nc_aggregation_substitutions`,
-    #                     `nc_update_aggregation_substitutions`
-    #
-    #        :Returns:
-    #
-    #            `dict`
-    #                {{Returns nc_clear_aggregation_substitutions}}
-    #
-    #        **Examples**
-    #
-    #        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
-    #        >>> f.nc_aggregation_substitutions()
-    #        {'${base}': 'file:///data/'}
-    #        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
-    #        >>> f.nc_aggregation_substitutions()
-    #        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-    #        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
-    #        >>> f.nc_aggregation_substitutions()
-    #        {'${base}': '/new/path/', '${base2}': '/home/data/'}
-    #        >>> f.nc_del_aggregation_substitution('${base}')
-    #        {'${base}': '/new/path/'}
-    #        >>> f.nc_clear_aggregation_substitutions()
-    #        {'${base2}': '/home/data/'}
-    #        >>> f.nc_aggregation_substitutions()
-    #        {}
-    #        >>> f.nc_clear_aggregation_substitutions()
-    #        {}
-    #        >>> print(f.nc_del_aggregation_substitution('base'))
-    #        None
-    #
-    #        """
-    #        substitution = substitution.copy()
-    #        for base, sub in tuple(substitution.items()):
-    #            if not (base.startswith("${") and base.endswith("}")):
-    #                substitution[f"${{{base}}}"] = substitution.pop(base)
-    #
-    #        self._modify_dask_graph("prepend_substitution", (substitution,))
-    #
-    #    def nc_switch_aggregation_substitution(self, old, new):
-    #        """Remove a netCDF aggregation substitution definition.
-    #
-    #        .. versionadded:: (cfdm) NEXTVERSION
-    #
-    #        .. seealso:: `nc_clear_aggregation_substitutions`,
-    #                     `nc_aggregation_substitutions`,
-    #                     `nc_update_aggregation_substitutions`
-    #
-    #        :Parameters:
-    #
-    #            {{cfa substitution: `str`}}
-    #
-    #            replace: `bool`, optional
-    #                If True (the default) then replace the removed
-    #                substutition with its value in all file names. If
-    #                False then the substutition is removed from the file
-    #                anmes with any replacement (i.e. this is equivalent to
-    #                it being replaced with an emty string).
-    #
-    #        :Returns:
-    #
-    #            `dict`
-    #                {{Returns nc_del_aggregation_substitution}}
-    #
-    #        **Examples**
-    #
-    #        >>> f.nc_aggregation_substitutions()
-    #        {}
-    #        >>> f.nc_update_aggregation_substitutions({'base': 'file:///data/'})
-    #        >>> f.nc_aggregation_substitutions()
-    #        {'${base}': 'file:///data/'}
-    #        >>> f.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
-    #        >>> f.nc_aggregation_substitutions()
-    #        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-    #        >>> f.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
-    #        >>> f.nc_aggregation_substitutions()
-    #        {'${base}': '/new/path/', '${base2}': '/home/data/'}
-    #        >>> f.nc_del_aggregation_substitution('${base}')
-    #        {'${base}': '/new/path/'}
-    #        >>> f.nc_clear_aggregation_substitutions()
-    #        {'${base2}': '/home/data/'}
-    #        >>> f.nc_aggregation_substitutions()
-    #        {}
-    #        >>> f.nc_clear_aggregation_substitutions()
-    #        {}
-    #        >>> print(f.nc_del_aggregation_substitution('base'))
-    #        {}
-    #
-    #        """
-    #        if not (old.startswith("${") and old.endswith("}")):
-    #            old = f"${{{old}}}"
-    #
-    #        if not (new.startswith("${") and new.endswith("}")):
-    #            new = f"${{{new}}}"
-    #
-    #        self._modify_dask_graph("switch_substitution", (old, new))
-    #
-    #    def nc_update_aggregation_substitutions(self, substitutions):
-    #        """Update the netCDF aggregation substitution definitions.
-    #
-    #        .. versionadded:: (cfdm) NEXTVERSION
-    #
-    #        .. seealso:: `nc_clear_aggregation_substitutions`,
-    #                     `nc_del_aggregation_substitution`,
-    #                     `nc_aggregation_substitutions`,
-    #
-    #        :Parameters:
-    #
-    #            {{cfa substitutions: `dict`}}
-    #
-    #        :Returns:
-    #
-    #            `None`
-    #
-    #        **Examples**
-    #
-    #        >>> d.nc_aggregation_substitutions()
-    #        {}
-    #        >>> d.nc_update_aggregation_substitutions({'base': 'file:///data/'})
-    #        >>> d.nc_aggregation_substitutions()
-    #        {'${base}': 'file:///data/'}
-    #        >>> d.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
-    #        >>> d.nc_aggregation_substitutions()
-    #        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-    #        >>> d.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
-    #        >>> d.nc_aggregation_substitutions()
-    #        {'${base}': '/new/path/', '${base2}': '/home/data/'}
-    #        >>> d.nc_del_aggregation_substitution('${base}')
-    #        {'${base}': '/new/path/'}
-    #        >>> d.nc_clear_aggregation_substitutions()
-    #        {'${base2}': '/home/data/'}
-    #        >>> d.nc_aggregation_substitutions()
-    #        {}
-    #        >>> d.nc_clear_aggregation_substitutions()
-    #        {}
-    #        >>> print(d.nc_del_aggregation_substitution('base'))
-    #        None
-    #
-    #        """
-    #        if not substitutions:
-    #            return
-    #
-    #        substitutions = substitutions.copy()
-    #        for base, sub in tuple(substitutions.items()):
-    #            if not (base.startswith("${") and base.endswith("}")):
-    #                substitutions[f"${{{base}}}"] = substitutions.pop(base)
-    #
-    #        self._modify_dask_graph("update_substitutions", (substitutions,))
-    #
-    #    def nc_insert_aggregation_substitution(self, substitution, position=0):
-    #        """Update the netCDF aggregation substitution definitions.
-    #
-    #        TODO
-    #
-    #        .. versionadded:: (cfdm) NEXTVERSION
-    #
-    #        .. seealso:: `nc_clear_aggregation_substitutions`,
-    #                     `nc_del_aggregation_substitution`,
-    #                     `nc_aggregation_substitutions`,
-    #
-    #        :Parameters:
-    #
-    #            {{cfa substitutions: `dict`}}
-    #
-    #        :Returns:
-    #
-    #            `None`
-    #
-    #        **Examples**
-    #
-    #        >>> d.nc_aggregation_substitutions()
-    #        {}
-    #        >>> d.nc_update_aggregation_substitutions({'base': 'file:///data/'})
-    #        >>> d.nc_aggregation_substitutions()
-    #        {'${base}': 'file:///data/'}
-    #        >>> d.nc_update_aggregation_substitutions({'${base2}': '/home/data/'})
-    #        >>> d.nc_aggregation_substitutions()
-    #        {'${base}': 'file:///data/', '${base2}': '/home/data/'}
-    #        >>> d.nc_update_aggregation_substitutions({'${base}': '/new/path/'})
-    #        >>> d.nc_aggregation_substitutions()
-    #        {'${base}': '/new/path/', '${base2}': '/home/data/'}
-    #        >>> d.nc_del_aggregation_substitution('${base}')
-    #        {'${base}': '/new/path/'}
-    #        >>> d.nc_clear_aggregation_substitutions()
-    #        {'${base2}': '/home/data/'}
-    #        >>> d.nc_aggregation_substitutions()
-    #        {}
-    #        >>> d.nc_clear_aggregation_substitutions()
-    #        {}
-    #        >>> print(d.nc_del_aggregation_substitution('base'))
-    #        None
-    #
-    #        """
-    #        if not substitutions:
-    #            return
-    #
-    #        substitutions = substitutions.copy()
-    #        for base, sub in tuple(substitutions.items()):
-    #            if not (base.startswith("${") and base.endswith("}")):
-    #                substitutions[f"${{{base}}}"] = substitutions.pop(base)
-    #
-    #        self._modify_dask_graph("insert_substitution", (substitution, 0))
-
     @_inplace_enabled(default=False)
     def pad_missing(self, axis, pad_width=None, to_size=None, inplace=False):
         """Pad an axis with missing data.
@@ -6407,10 +5969,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        # Dask rechunking is essentially a wrapper for __getitem__
+        # Dask rechunking is essentially a wrapper for `__getitem__`
         # calls on the chunks, which means that we can use the same
         # 'asanyarray' and 'clear' keywords to `_set_dask` as are used
-        # in `__gettem__`.
+        # in `__getitem__`.
         dx = d.to_dask_array(_apply_mask_hardness=False, _asanyarray=False)
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
         d._set_dask(
@@ -6490,11 +6052,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             if new and not old:
                 raise ValueError("TODOCFA")
 
-        self._modify_dask_graph(
-            "replace_directory",
-            (old, new),
-            {"normalise": normalise},
-        )
+        self._modify_dask_graph("replace_directory", (old, new, normalise))
 
     def replace_filenames(self, filenames):
         """Replace each fragment's file locations in-place.
@@ -6523,60 +6081,56 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             `None`
 
         """
-        filenames = np.asanyarray(filenames)
-        if np.ma.isMA(filenames):
-            filenames.set_fill_value("")
-
-        #        filenames_shape = filenames.shape
-        #
-        #        ndim = self.ndim
-        #        if filenames.ndim == ndim:
-        #            filenames = np.expand_dims(filenames, -1)
-
-        if (
-            #            filenames.ndim != ndim + 1 or
-            self.numblocks
-            != filenames.shape  # [:ndim]
-        ):
+        filenames = np.ma.filled(filenames, "")
+        if self.numblocks != filenames.shape:
             raise ValueError(
-                f"'filenames' shape {filenames.shape} should be the same "
+                f"'filenames' shape {filenames.shape} must be the same "
                 f"as the Dask chunks shape {self.numblocks}"
             )
 
         dsk = self.todict(_apply_mask_hardness=False, _asanyarray=False)
 
-        keys = {}
+        updated_keys = {}
         for index, position in zip(
             self.chunk_indices(), self.chunk_positions()
         ):
-            updated = False
+            filename = filenames[position]
+            if not filename:
+                # Don't replace the filename with an empty string, but
+                # still consider this chunk as have being updated.
+                updated_keys[key] = (position, index)
+                continue
+
+            chunk_updated = False
             for key, a in (
                 self[index]
                 .todict(_apply_mask_hardness=False, _asanyarray=False)
                 .items()
             ):
                 try:
-                    dsk[key] = a.replace_filename(filenames[position])
+                    dsk[key] = a.replace_filename(filename)
                 except AttributeError:
                     pass
                 else:
-                    if updated:
+                    if chunk_updated:
                         raise ValueError(
-                            "Can't replace the file location for the Dask "
-                            f"chunk defined by {index!r}: "
-                            "The Dask chunk references two or more fragments"
+                            f"The Dask chunk in position {position} "
+                            f"(defined by {index!r}) has multiple "
+                            "file locations"
                         )
 
-                    if key in keys:
+                    if key in updated_keys:
                         raise ValueError(
-                            "Can't replace the file location for the Dask "
-                            f"chunk defined by {index!r}: "
-                            "The fragment has already been "
-                            f"updated from Dask chunk {keys[key]!r}."
+                            f"The Dask chunk in position {position} "
+                            f"(defined by {index!r}) references a file "
+                            "location that has already been replaced within "
+                            "the Dask chunk in position "
+                            f"{updated_keys[key][0]!r} (defined by "
+                            f"{updated_keys[key][1]!r})"
                         )
 
-                    updated = True
-                    keys[key] = index
+                    chunk_updated = True
+                    updated_keys[key] = (position, index)
 
         dx = self.to_dask_array(_apply_mask_hardness=False, _asanyarray=False)
         dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
