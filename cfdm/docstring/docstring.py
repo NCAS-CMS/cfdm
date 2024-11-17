@@ -213,7 +213,7 @@ _docstring_substitution_definitions = {
             If True then print warnings when an output field construct
             is incomplete due to structural non-compliance of the
             dataset. By default such warnings are not displayed.""",
-    #read warn_valid
+    # read warn_valid
     "{{read warn_valid: `bool`, optional}}": """warn_valid: `bool`, optional
             If True then print a warning for the presence of
             ``valid_min``, ``valid_max`` or ``valid_range`` properties
@@ -585,7 +585,6 @@ _docstring_substitution_definitions = {
               To register field and auxiliary coordinate constructs to
               be written as CF-netCDF aggregation variables:
               ``cfa_write=['field', 'auxiliary_coordinate']``.""",
-
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentation)
     # ------------------------1----------------------------------------

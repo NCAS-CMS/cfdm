@@ -657,6 +657,8 @@ class NetCDFWrite(IOWrite):
         data_axes = self.implementation.get_construct_data_axes(f, key)
         axis = data_axes[0]
 
+        coord = self._change_reference_datetime(f, coord)
+
         already_in_file = self._already_in_file(coord)
 
         create = False
@@ -2062,6 +2064,9 @@ class NetCDFWrite(IOWrite):
             extra = {}
 
         g = self.write_vars
+
+        coord_1d = self._change_reference_datetime(f, coord_1d)
+
         scalar_coord = self.implementation.squeeze(coord_1d, axes=0)
 
         if not self._already_in_file(scalar_coord, ()):
@@ -2127,6 +2132,8 @@ class NetCDFWrite(IOWrite):
 
         # The netCDF dimensions for the auxiliary coordinate variable
         ncdimensions = self._netcdf_dimensions(f, key, coord)
+
+        coord = self._change_reference_datetime(f, coord)
 
         already_in_file = self._already_in_file(coord, ncdimensions)
 
@@ -4528,6 +4535,7 @@ class NetCDFWrite(IOWrite):
         omit_data=None,
         hdf5_chunks="4MiB",
         cfa=None,
+        reference_datetime=None,
     ):
         """Write field and domain constructs to a netCDF file.
 
@@ -4879,6 +4887,8 @@ class NetCDFWrite(IOWrite):
             "post_dry_run": False,
             # Do not write the data of the named construct types.
             "omit_data": omit_data,
+            # Change the units of a reference date-time.
+            "reference_datetime": reference_datetime,
             # --------------------------------------------------------
             # CF Aggregation variables
             # --------------------------------------------------------
@@ -5117,7 +5127,7 @@ class NetCDFWrite(IOWrite):
         # ------------------------------------------------------------
         # Set possible versions
         # ------------------------------------------------------------
-        for version in ("1.6", "1.7", "1.8", "1.9", "1.10", "1.11"):
+        for version in ("1.6", "1.7", "1.8", "1.9", "1.10", "1.11", "1.12"):
             g["CF-" + version] = Version(version)
 
         if extra_write_vars:
@@ -5509,6 +5519,45 @@ class NetCDFWrite(IOWrite):
                 self.write_vars["sample_ncdim"].values()
             )
         )
+
+    def _change_reference_datetime(self, f, coord):
+        """Change the units of a reference date-time.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Parameters:
+
+            f: `Field` or `Domain`
+                The field/domain containing the time coordinates.
+
+            coord: `Coordinate`
+                The time coordinates.
+
+        :Returns:
+
+                A new coordinate construct with changed units.
+
+        """
+        reference_datetime = self.write_vars["reference_datetime"]
+        if not reference_datetime or not coord.Units.isreftime:
+            return coord
+
+        if not hasattr(coord, "reference_datatime"):
+            raise ValueError(
+                "Can't override time coordinate reference date-time "
+                f"for {f.__class__} objects."
+            )
+
+        coord = coord.copy()
+        try:
+            coord.reference_datetime = reference_datetime
+        except ValueError:
+            raise ValueError(
+                "Can't override time coordinate reference date-time "
+                f"{coord.reference_datetime!r} with {reference_datetime!r}"
+            )
+        else:
+            return coord
 
     def _cfa_write_status(self, ncvar, cfvar, construct_type, domain_axes):
         """The aggregation write status of the data.

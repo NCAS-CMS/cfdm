@@ -5,7 +5,6 @@ from numpy.ma.core import MaskError
 from ..cfdmimplementation import implementation
 from ..core import DocstringRewriteMeta
 from ..docstring import _docstring_substitution_definitions
-
 from .netcdf import NetCDFRead
 
 
@@ -116,17 +115,9 @@ class read(metaclass=DocstringRewriteMeta):
 
         {{read warn_valid: `bool`, optional}}
 
-            See
-            https://ncas-cms.github.io/cfdm/tutorial.html#data-mask
-            for details.
-
             .. versionadded:: (cfdm) 1.8.3
 
         {{read mask: `bool`, optional}}
-
-            See
-            https://ncas-cms.github.io/cfdm/tutorial.html#data-mask
-            for details.
 
             .. versionadded:: (cfdm) 1.8.2
 
@@ -214,6 +205,7 @@ class read(metaclass=DocstringRewriteMeta):
         store_hdf5_chunks=True,
         cfa=None,
         cfa_write=None,
+        extra_read_vars=None,
     ):
         """TODOCFA."""
         # Initialise a netCDF read object
@@ -255,9 +247,9 @@ class read(metaclass=DocstringRewriteMeta):
                     cache=cache,
                     dask_chunks=dask_chunks,
                     store_hdf5_chunks=store_hdf5_chunks,
-                    extra_read_vars=None,
                     cfa=cfa,
                     cfa_write=cfa_write,
+                    extra_read_vars=extra_read_vars,
                 )
             except MaskError:
                 # Some data required for field interpretation is
@@ -316,6 +308,7 @@ class read(metaclass=DocstringRewriteMeta):
 
         """
         return 0
+
 
 # import os
 #
