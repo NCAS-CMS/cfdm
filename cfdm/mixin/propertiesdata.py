@@ -8,7 +8,6 @@ from ..decorators import (
     _manage_log_level_via_verbosity,
     _test_decorator_args,
 )
-from ..functions import dirname
 from . import Properties
 
 logger = logging.getLogger(__name__)
@@ -896,8 +895,7 @@ class PropertiesData(Properties):
 
         :Returns:
 
-            `str` TODOCFA
-                The new directory as an absolute path.
+            `None`
 
         **Examples**
 

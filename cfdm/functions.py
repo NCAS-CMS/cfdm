@@ -6,6 +6,8 @@ from math import isnan
 from numbers import Integral
 from os import sep
 from os.path import abspath as os_abspath
+from os.path import dirname as os_dirname
+from os.path import join
 from urllib.parse import urlparse
 
 import numpy as np
@@ -497,8 +499,8 @@ def abspath(filename):
     return os_abspath(path)
 
 
-def dirname(path, uri=False, isdir=False):
-    """Return a normalised absolute version of a path directory.
+def dirname(path, normalise=False, uri=False, isdir=False, sep=False):
+    """Return the directory of a path.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
@@ -507,9 +509,24 @@ def dirname(path, uri=False, isdir=False):
         path: `str`
             The name of the path.
 
+        normalise: `bool`, optional
+            If True then normalise the path by resolving it to an
+            absolute path. If False (the default) then no
+            normalisation is done.
+
+        uri: `bool`, optional
+            If True then the directory is normalised and returned as
+            an absolute URI (a URI that begins with a scheme component
+            followed by a ``:`` character, such as
+            file://data/file.nc, https://remote.host/data/file.nc,
+            etc.). If False (the default) an absolute URI is only
+            returned for a *path* that is already an absolute URI. NO TODOCFA
+
         isdir: `bool`, optional
-            Set to True if *path* represents a directory that does not
-            exist.
+            Set to True if *path* represents a directory, rather than
+            a file.
+
+        TODOCFA
 
     :Returns:
 
@@ -522,50 +539,106 @@ def dirname(path, uri=False, isdir=False):
     >>> import os
     >>> os.getcwd()
     '/data/archive'
+
+    >>> cfdm.dirname('file.nc')
+    ''
+    >>> cfdm.dirname('file.nc', normalise=True)
+    '/data/archive'
+    >>> cfdm.dirname('file.nc', normalise=True, uri=True)
+    'file:///data/archive'
+    >>> cfdm.dirname('file.nc', normalise=True, uri=True, sep=True)
+    'file:///data/archive/'
+
+    >>> cfdm.dirname('model/file.nc')
+    'model'
+    >>> cfdm.dirname('model/file.nc', normalise=True)
+    '/data/archive/model'
+    >>> cfdm.dirname('model/file.nc', normalise=True, uri=True)
+    'file:///data/archive/model'
+    >>> cfdm.dirname('model/file.nc', normalise=True, uri=True, sep=True)
+    'file:///data/archive/model/'
+
+    >>> cfdm.dirname('../file.nc')
+    '..'
+    >>> cfdm.dirname('../file.nc', normalise=True)
+    '/data'
+    >>> cfdm.dirname('../file.nc', normalise=True, uri=True)
+    'file:///data'
+    >>> cfdm.dirname('../file.nc', normalise=True, uri=True, sep=True)
+    'file:///data/'
+
     >>> cfdm.dirname('/data/archive/file.nc')
     '/data/archive'
-    >>> cfdm.dirname('/data/archive/')
+    >>> cfdm.dirname('/data/archive/file.nc', normalise=True)
     '/data/archive'
-    >>> cfdm.dirname('/data/archive')
-    '/data/archive'
-    >>> cfdm.dirname'..//archive///file.nc')
-    '/data/archive'
-    >>> cfdm.abspath('http://data/archive/file.nc')
-    'http://data/archive'
-    >>> cfdm.abspath('file://data/archive/file.nc')
-    'file://data/archive'
-    >>> cfdm.dirname('/data/not_a_dir')
-    '/data'
-    >>> cfdm.dirname('/data/not_a_dir', isdir=True)
-    '/data/not_a_dir'
+    >>> cfdm.dirname('/data/archive/file.nc', normalise=True, uri=True)
+    'file:///data/archive'
+    >>> cfdm.dirname('/data/archive/file.nc', normalise=True, uri=True, sep=True)
+    'file:///data/archive/'
+
+    >>> cfdm.dirname('https:///data/archive/file.nc')
+    'https:///data/archive'
+    >>> cfdm.dirname('https:///data/archive/file.nc', normalise=True)
+    'https:///data/archive'
+    >>> cfdm.dirname('https:///data/archive/file.nc', normalise=True, uri=True)
+    'https:///data/archive'
+    >>> cfdm.dirname('https:///data/archive/file.nc', normalise=True, uri=True, sep=True)
+    'https:///data/archive/'
+
+    >>> cfdm.dirname('file:///data/archive/file.nc')
+    'file:///data/archive'
+    >>> cfdm.dirname('file:///data/archive/file.nc', normalise=True)
+    'file:///data/archive'
+    >>> cfdm.dirname('file:///data/archive/file.nc', normalise=True, uri=True)
+    'file:///data/archive'
+    >>> cfdm.dirname('file:///data/archive/file.nc', normalise=True, uri=True, sep=True)
+    'file:///data/archive/'
+
+    >>> cfdm.dirname('file:///data/archive/../file.nc')
+    'file:///data'
+    >>> cfdm.dirname('file:///data/archive/../file.nc', normalise=True)
+    'file:///data'
+    >>> cfdm.dirname('file:///data/archive/../file.nc', normalise=True, uri=True)
+    'file:///data'
+    >>> cfdm.dirname('file:///data/archive/../file.nc', normalise=True, uri=True, sep=True)
+    'file:///data/'
 
     """
-    if not path:
-        path = ""
-        if uri:
-            path = uricompose(scheme="file", authority="", path=path)
+    u = urlparse(path)
+    scheme = u.scheme
+    path = u.path
+    if scheme:
+        # Remote (or "file:")
+        if normalise:
+            path = os_abspath(path)
+            
+        if isdir:
+            path = join(path, "")
+
+        path = uricompose(
+            scheme=scheme,
+            authority="",
+            path=os_dirname(path),
+        )
+        if sep:
+            path = join(path, "")
 
         return path
 
-    u = urlparse(path)
-    if u.scheme:
-        # Remote (or "file:")
-        u = u.geturl()
-        if isdir:
-            u += "/"
-
-        return os.path.dirname(u)
-
     # Local file
-    u = u.path
-    if not isdir and not os.path.isdir(u):
-        u = os.path.dirname(u)
+    if not isdir and not os.path.isdir(path):
+        path = os_dirname(path)
 
-    u = os.path.abspath(u)
+    if normalise:
+        path = os_abspath(path)
+
     if uri:
-        u = uricompose(scheme="file", authority="", path=u)
+        path = uricompose(scheme="file", authority="", path=path)
 
-    return u
+    if sep:
+        path = join(path, "")
+
+    return path
 
 
 def unique_constructs(constructs, ignore_properties=None, copy=True):

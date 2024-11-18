@@ -1,7 +1,3 @@
-from os.path import join
-
-from uritools import uricompose, urisplit
-
 from .fragmentarraymixin import FragmentArrayMixin
 
 

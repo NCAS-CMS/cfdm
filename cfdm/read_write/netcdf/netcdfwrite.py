@@ -657,7 +657,7 @@ class NetCDFWrite(IOWrite):
         data_axes = self.implementation.get_construct_data_axes(f, key)
         axis = data_axes[0]
 
-        coord = self._change_reference_datetime(f, coord)
+        coord = self._change_reference_datetime(coord)
 
         already_in_file = self._already_in_file(coord)
 
@@ -2065,7 +2065,7 @@ class NetCDFWrite(IOWrite):
 
         g = self.write_vars
 
-        coord_1d = self._change_reference_datetime(f, coord_1d)
+        coord_1d = self._change_reference_datetime(coord_1d)
 
         scalar_coord = self.implementation.squeeze(coord_1d, axes=0)
 
@@ -2133,7 +2133,7 @@ class NetCDFWrite(IOWrite):
         # The netCDF dimensions for the auxiliary coordinate variable
         ncdimensions = self._netcdf_dimensions(f, key, coord)
 
-        coord = self._change_reference_datetime(f, coord)
+        coord = self._change_reference_datetime(coord)
 
         already_in_file = self._already_in_file(coord, ncdimensions)
 
@@ -2597,6 +2597,7 @@ class NetCDFWrite(IOWrite):
         data_variable=False,
         domain_variable=False,
         construct_type=None,
+        chunking=None,
     ):
         """Creates a new netCDF variable for a construct.
 
@@ -2714,7 +2715,9 @@ class NetCDFWrite(IOWrite):
             lsd = None
 
         # Set the HDF5 chunk strategy
-        contiguous, chunksizes = self._chunking_parameters(data, ncdimensions)
+        contiguous, chunksizes = self._chunking_parameters(
+            data, ncdimensions, override=chunking
+        )
         logger.debug(
             f"      HDF5 chunksizes: {chunksizes}\n"
             f"      HDF5 contiguous: {contiguous}"
@@ -5417,7 +5420,7 @@ class NetCDFWrite(IOWrite):
         """
         pass
 
-    def _chunking_parameters(self, data, ncdimensions):
+    def _chunking_parameters(self, data, ncdimensions, override=None):
         """Set chunking parameters for `netCDF4.createVariable`.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -5430,6 +5433,10 @@ class NetCDFWrite(IOWrite):
             ncdimensions: `tuple`
                 The data netCDF dimensions.
 
+            override: `tuple`, optional
+                Return this 2-`tuple` instead of deducing the
+                chunking.
+
         :Returns:
 
             2-tuple
@@ -5437,6 +5444,9 @@ class NetCDFWrite(IOWrite):
                 `netCDF4.createVariable`.
 
         """
+        if override:
+            return override
+
         if data is None:
             return False, None
 
@@ -5520,15 +5530,12 @@ class NetCDFWrite(IOWrite):
             )
         )
 
-    def _change_reference_datetime(self, f, coord):
+    def _change_reference_datetime(self, coord):
         """Change the units of a reference date-time.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
-
-            f: `Field` or `Domain`
-                The field/domain containing the time coordinates.
 
             coord: `Coordinate`
                 The time coordinates.
@@ -5542,10 +5549,10 @@ class NetCDFWrite(IOWrite):
         if not reference_datetime or not coord.Units.isreftime:
             return coord
 
-        if not hasattr(coord, "reference_datatime"):
+        if not hasattr(coord, "reference_datetime"):
             raise ValueError(
                 "Can't override time coordinate reference date-time "
-                f"for {f.__class__} objects."
+                f"for {coord.__class__} objects."
             )
 
         coord = coord.copy()
@@ -5713,7 +5720,7 @@ class NetCDFWrite(IOWrite):
         shape_ncdimensions = []
         dim = "y"
         for size in shape.shape:
-            l_ncdim = f"f_shape_{dim}_{size}"
+            l_ncdim = f"f_map_{dim}_{size}"
             if l_ncdim not in g["dimensions"]:
                 # Create a new location dimension
                 unlimited = dim == "x" and bool(
@@ -5734,6 +5741,7 @@ class NetCDFWrite(IOWrite):
             shape,
             aggregated_data.get(feature, f"cfa_{feature}"),
             shape_ncdimensions,
+            #            chunking=(False, (shape.shape[0], shape.shape[1] * 780)),
         )
         aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 
@@ -5767,6 +5775,10 @@ class NetCDFWrite(IOWrite):
                 location,
                 aggregated_data.get(feature, f"cfa_{feature}"),
                 fragment_array_ncdimensions,
+                #                chunking=(
+                #                    False,
+                #                    (location.shape[0] * 780,) + location.shape[1:],
+                #                ),
             )
             aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 
@@ -5855,7 +5867,7 @@ class NetCDFWrite(IOWrite):
         return array
 
     def _cfa_write_fragment_array_variable(
-        self, data, ncvar, ncdimensions, attributes=None
+        self, data, ncvar, ncdimensions, attributes=None, chunking=None
     ):
         """Write an aggregation fragment array variable.
 
@@ -5885,10 +5897,16 @@ class NetCDFWrite(IOWrite):
         create = not self._already_in_file(data, ncdimensions)
 
         if create:
-            # Create a new fragment array variable in the file
+            # Create a new fragment array variable in the file, with
+            # 'contiguous' chunking
             ncvar = self._netcdf_name(ncvar)
             self._write_netcdf_variable(
-                ncvar, ncdimensions, data, None, extra=attributes
+                ncvar,
+                ncdimensions,
+                data,
+                None,
+                extra=attributes,
+                chunking=chunking,
             )
         else:
             # This fragment array variable has already been written to

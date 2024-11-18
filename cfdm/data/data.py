@@ -20,11 +20,7 @@ from ..decorators import (
     _inplace_enabled_define_and_cleanup,
     _manage_log_level_via_verbosity,
 )
-from ..functions import (  # dirname,
-    _numpy_allclose,
-    is_log_level_info,
-    parse_indices,
-)
+from ..functions import _numpy_allclose, is_log_level_info, parse_indices
 from ..mixin.container import Container
 from ..mixin.files import Files
 from ..mixin.netcdf import NetCDFAggregation, NetCDFHDF5
@@ -4412,7 +4408,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         else:
             return True
 
-    def file_directories(self):
+    def file_directories(self, normalise=False):
         """The directories of files containing parts of the data.
 
         Returns the locations of any files referenced by the data.
@@ -4438,7 +4434,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             _apply_mask_hardness=False, _asanyarray=False
         ).items():
             try:
-                append(a.file_directory())
+                append(a.file_directory(normalise=normalise))
             except AttributeError:
                 # This graph element doesn't contain a file name
                 pass
@@ -4912,9 +4908,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 "tie point index variables",
             )
 
-    def get_filenames(
-        self, normalise=True, per_chunk=False  # , min_file_versions=1, extra=0
-    ):
+    def get_filenames(self, normalise=False, per_chunk=False):
         """The names of files containing parts of the data array.
 
         Returns the names of any files that may be required to deliver
@@ -4939,26 +4933,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 returned by the `numblocks` attribute) with the
                 addition of a trailing dimension whose size is given
                 by `get_n_file_versions`.
-
-                .. versionadded:: (cfdm) NEXTVERSION
-
-            min_file_versions: `int`, optional
-                If *per_chunk* is True then *min_file_versions* is a
-                lower limit to size of the trailing dimension of the
-                returned `numpy` array. The trailing dimension may be
-                larger than the minimum size. By default
-                *min_file_versions* is ``1``. Ignored if *per_chunk*
-                is False.
-
-                .. versionadded:: (cfdm) NEXTVERSION
-
-            extra: `int`, optional
-                If *per_chunk* is True then append this number
-                (greater than or equal to zero) of empty entries to
-                the trailing file names dimension of the returned
-                `numpy` array. By default *extra* is ``0``, meaning
-                that no extra entries are appended. Ignored if
-                *per_chunk* is False.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -5026,9 +5000,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             #            extra = int(extra)
             #            if extra < 0:
             #                raise ValueError("'extra' must be a non-negative integer")
-
-            out = []
-            append = out.append
 
             # Maximum number of characters in any file name
             n_char = 1
@@ -5988,7 +5959,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         normalise=False,
         common=False,
     ):
-        """Replace a file directories in-place.
+        """Replace file directories in-place.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -6009,8 +5980,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 empty string. Otherwise,
 
             normalise: `bool`, optional
-                If True then *old*, *new*, and the file names are
-                normalised to absolute paths prior to the
+                If True then *old* and *new* directories, and the file
+                names, are normalised to absolute paths prior to the
                 replacement. If False (the default) then no
                 normalisation is done.
 
@@ -6034,13 +6005,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         {'/archive/location/path/file1.nc', '/home/file2.nc'}
 
         """
-        if not old and not new and not normalise:
+        if not old and not new and not normalise and not common:
             return
 
         if common:
-            if not normalise:
-                raise ValueError("TODOCFA")
-
             if old is not None:
                 raise ValueError(
                     "When 'common' is True, 'old' must be None "
@@ -6048,11 +6016,15 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                     "automatically)"
                 )
 
-            old = commonprefix(tuple(self.file_directories()))
-            if new and not old:
-                raise ValueError("TODOCFA")
+            old = commonprefix(
+                tuple(self.file_directories(normalise=normalise))
+            )
 
-        self._modify_dask_graph("replace_directory", (old, new, normalise))
+        self._modify_dask_graph(
+            "replace_directory",
+            (),
+            {"old": old, "new": new, "normalise": normalise},
+        )
 
     def replace_filenames(self, filenames):
         """Replace each fragment's file locations in-place.
@@ -6096,9 +6068,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         ):
             filename = filenames[position]
             if not filename:
-                # Don't replace the filename with an empty string, but
-                # still consider this chunk as have being updated.
-                updated_keys[key] = (position, index)
+                # Don't replace the filename(s) for this chunk
                 continue
 
             chunk_updated = False
@@ -6115,7 +6085,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                     if chunk_updated:
                         raise ValueError(
                             f"The Dask chunk in position {position} "
-                            f"(defined by {index!r}) has multiple "
+                            f"(defined by {index!r}) references multiple "
                             "file locations"
                         )
 

@@ -520,11 +520,31 @@ class read_writeTest(unittest.TestCase):
             datatype={np.dtype(float): np.dtype("float32")},
         )
         g = cfdm.read(tmpfile)[0]
-        self.assertEqual(
-            g.data.dtype,
-            np.dtype("float32"),
-            "datatype read in is " + str(g.data.dtype),
-        )
+        self.assertEqual(g.data.dtype, np.dtype("float32"))
+
+        # Keyword single
+        f = cfdm.read(self.filename)[0]
+        self.assertEqual(f.dtype, np.dtype(float))
+        cfdm.write(f, tmpfile, fmt="NETCDF4", single=True)
+        g = cfdm.read(tmpfile)[0]
+        self.assertEqual(g.dtype, np.dtype("float32"))
+
+        # Keyword double
+        f = g
+        self.assertEqual(f.dtype, np.dtype("float32"))
+        cfdm.write(f, tmpfile1, fmt="NETCDF4", double=True)
+        g = cfdm.read(tmpfile1)[0]
+        self.assertEqual(g.dtype, np.dtype(float))
+
+        with self.assertRaises(Exception):
+            cfdm.write(g, double=True, single=True)
+
+        datatype = {np.dtype(float): np.dtype("float32")}
+        with self.assertRaises(Exception):
+            cfdm.write(g, datatype=datatype, single=True)
+
+        with self.assertRaises(Exception):
+            cfdm.write(g, datatype=datatype, double=True)
 
     def test_read_write_unlimited(self):
         """Test reading and writing with an unlimited dimension."""

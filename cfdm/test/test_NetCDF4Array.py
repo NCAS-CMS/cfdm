@@ -206,38 +206,6 @@ class NetCDF4ArrayTest(unittest.TestCase):
             },
         )
 
-    #    def test_NetCDF4Array_del_file_directory(self):
-    #        a = cfdm.NetCDF4Array(
-    #            ("/data1/file1", "/data2/file2"), ("tas1", "tas2")
-    #        )
-    #        b = a.del_file_directory("/data1")
-    #        self.assertIsNot(b, a)
-    #        self.assertEqual(b.get_filenames(), ("/data2/file2",))
-    #        self.assertEqual(b.get_addresses(), ("tas2",))
-    #
-    #        a = cfdm.NetCDF4Array(
-    #            ("/data1/file1", "/data2/file1", "/data2/file2"),
-    #            ("tas1", "tas1", "tas2"),
-    #        )
-    #        b = a.del_file_directory("/data2")
-    #        self.assertEqual(b.get_filenames(), ("/data1/file1",))
-    #        self.assertEqual(b.get_addresses(), ("tas1",))
-    #
-    #        # Can't be left with no files
-    #        self.assertEqual(b.file_directories(), ("/data1",))
-    #        with self.assertRaises(ValueError):
-    #            b.del_file_directory("/data1/")
-
-    #    def test_NetCDF4Array_file_directories(self):
-    #        a = cfdm.NetCDF4Array("/data1/file1")
-    #        self.assertEqual(a.file_directories(), ("/data1",))
-    #
-    #        a = cfdm.NetCDF4Array(("/data1/file1", "/data2/file2"))
-    #        self.assertEqual(a.file_directories(), ("/data1", "/data2"))
-    #
-    #        a = cfdm.NetCDF4Array(("/data1/file1", "/data2/file2", "/data1/file2"))
-    #        self.assertEqual(a.file_directories(), ("/data1", "/data2", "/data1"))
-
     def test_NetCDF4Array_file_directory(self):
         a = cfdm.NetCDF4Array("/data1/file1")
         self.assertEqual(a.file_directory(), "/data1")
@@ -245,70 +213,12 @@ class NetCDF4ArrayTest(unittest.TestCase):
         a = cfdm.NetCDF4Array()
         self.assertIsNone(a.file_directory(default=None))
 
-    #    def test_NetCDF4Array_add_file_directory(self):
-    #        a = cfdm.NetCDF4Array("/data1/file1", "tas")
-    #        b = a.add_file_directory("/home/user")
-    #        self.assertIsNot(b, a)
-    #        self.assertEqual(
-    #            b.get_filenames(), ("/data1/file1", "/home/user/file1")
-    #        )
-    #        self.assertEqual(b.get_addresses(), ("tas", "tas"))
-    #
-    #        a = cfdm.NetCDF4Array(
-    #            ("/data1/file1", "/data2/file2"), ("tas1", "tas2")
-    #        )
-    #        b = a.add_file_directory("/home/user")
-    #        self.assertEqual(
-    #            b.get_filenames(),
-    #            (
-    #                "/data1/file1",
-    #                "/data2/file2",
-    #                "/home/user/file1",
-    #                "/home/user/file2",
-    #            ),
-    #        )
-    #        self.assertEqual(b.get_addresses(), ("tas1", "tas2", "tas1", "tas2"))
-    #
-    #        a = cfdm.NetCDF4Array(
-    #            ("/data1/file1", "/data2/file1"), ("tas1", "tas2")
-    #        )
-    #        b = a.add_file_directory("/home/user")
-    #        self.assertEqual(
-    #            b.get_filenames(),
-    #            ("/data1/file1", "/data2/file1", "/home/user/file1"),
-    #        )
-    #        self.assertEqual(b.get_addresses(), ("tas1", "tas2", "tas1"))
-    #
-    #        a = cfdm.NetCDF4Array(
-    #            ("/data1/file1", "/data2/file1"), ("tas1", "tas2")
-    #        )
-    #        b = a.add_file_directory("/data1/")
-    #        self.assertEqual(b.get_filenames(), a.get_filenames())
-    #        self.assertEqual(b.get_addresses(), a.get_addresses())
-
     def test_NetCDF4Array__dask_tokenize__(self):
         a = cfdm.NetCDF4Array("/data1/file1", "tas", shape=(12, 2), mask=False)
         self.assertEqual(tokenize(a), tokenize(a.copy()))
 
         b = cfdm.NetCDF4Array("/home/file2", "tas", shape=(12, 2))
         self.assertNotEqual(tokenize(a), tokenize(b))
-
-    #    def test_NetCDF4Array_multiple_files(self):
-    #        f = cfdm.example_field(0)
-    #        cfdm.write(f, tmpfile)
-    #
-    #        # Create instance with non-existent file
-    #        n = cfdm.NetCDF4Array(
-    #            filename=os.path.join("/bad/location", os.path.basename(tmpfile)),
-    #            address=f.nc_get_variable(),
-    #            shape=f.shape,
-    #            dtype=f.dtype,
-    #        )
-    #        # Add file that exists
-    #        n = n.add_file_directory(os.path.dirname(tmpfile))
-    #
-    #        self.assertEqual(len(n.get_filenames()), 2)
-    #        self.assertTrue((n[...] == f.array).all())
 
     def test_NetCDF4Array_shape(self):
         shape = (12, 73, 96)
@@ -343,6 +253,36 @@ class NetCDF4ArrayTest(unittest.TestCase):
         self.assertTrue((index[0] == [8]).all())
         self.assertTrue((index[1] == [10, 16]).all())
         self.assertTrue((index[2] == [12, 1]).all())
+
+    def test_NetCDF4Array_replace_directory(self):
+        """Test NetCDF4Array.replace_directory."""
+        cwd = os.getcwd()
+
+        n = cfdm.NetCDF4Array("basename.nc")
+        m = n.replace_directory()
+        self.assertEqual(m.get_filename(), "basename.nc")
+        m = n.replace_directory(new="data")
+        self.assertEqual(m.get_filename(), "data/basename.nc")
+        m = n.replace_directory(normalise=True)
+        self.assertEqual(m.get_filename(), os.path.join(cwd, "basename.nc"))
+
+        n = cfdm.NetCDF4Array("data/basename.nc")
+        m = n.replace_directory()
+        self.assertEqual(m.get_filename(), "data/basename.nc")
+        m = n.replace_directory(new="/home")
+        self.assertEqual(m.get_filename(), "/home/data/basename.nc")
+        m = n.replace_directory(old="data")
+        self.assertEqual(m.get_filename(), "basename.nc")
+        m = n.replace_directory(old="data", new="home")
+        self.assertEqual(m.get_filename(), "home/basename.nc")
+        m = n.replace_directory(normalise=True)
+        self.assertEqual(
+            m.get_filename(), os.path.join(cwd, "data/basename.nc")
+        )
+        m = n.replace_directory(old=cwd, new="new", normalise=True)
+        self.assertEqual(
+            m.get_filename(), os.path.join(cwd, "new/data/basename.nc")
+        )
 
 
 if __name__ == "__main__":

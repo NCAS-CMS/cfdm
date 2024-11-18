@@ -229,7 +229,7 @@ class FileArray(Array):
             f"Must implement {self.__class__.__name__}.close"
         )  # pragma: no cover
 
-    def file_directories(self):
+    def file_directories(self, normalise=False):
         """The file directories.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -254,13 +254,13 @@ class FileArray(Array):
         ('/data1', '/data2', '/data1')
 
         """
-        directory = self.file_directory(default=None)
+        directory = self.file_directory(normalise=normalise, default=None)
         if directory is None:
             return ()
 
         return (directory,)
 
-    def file_directory(self, default=AttributeError()):
+    def file_directory(self, normalise=False, default=AttributeError()):
         """The file directory.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -285,7 +285,7 @@ class FileArray(Array):
         ('/data1', '/data2', '/data1')
 
         """
-        filename = self.get_filename(normalise=True, default=None)
+        filename = self.get_filename(normalise=normalise, default=None)
         if filename is None:
             if default is None:
                 return
@@ -351,7 +351,7 @@ class FileArray(Array):
 
         return (address,)
 
-    def get_filename(self, normalise=True, default=AttributeError()):
+    def get_filename(self, normalise=False, default=AttributeError()):
         """The name of the file containing the array.
 
         If there are multiple files then an `AttributeError` is
@@ -360,6 +360,10 @@ class FileArray(Array):
         .. versionadded:: (cfdm) 1.10.0.2
 
         :Parameters:
+
+            {{normalise: `bool`, optional}}
+
+                .. versionadded:: (cfdm) NEXTVERSION
 
             default: optional
                 Return the value of the *default* parameter if there
@@ -387,7 +391,7 @@ class FileArray(Array):
 
         return filename
 
-    def get_filenames(self, normalise=True):
+    def get_filenames(self, normalise=False):
         """Return the names of files containing the data.
 
         If multiple files are returned then it is assumed that any
@@ -559,7 +563,7 @@ class FileArray(Array):
         # Successfully opened a dataset, so return.
         return dataset, self.get_address()
 
-    def replace_directory(self, old=None, new=None, normalise=True):
+    def replace_directory(self, old=None, new=None, normalise=False):
         """Replace file directories in-place.
 
         Every file in *old* that is referenced by the data is
@@ -633,19 +637,21 @@ class FileArray(Array):
                     )
 
                 uri = isuri(filename)
-                old = dirname(old, uri=uri, isdir=True)
-                if not uri and isuri(old):
-                    old = urisplit(old).getpath()
+                old = dirname(old, normalise=True, uri=uri, isdir=True)
+                u = urisplit(old)
+                if not uri and u.scheme == "file":
+                    old = u.getpath()
 
                 if new:
-                    new = dirname(new, uri=uri, isdir=True)
-                else:
-                    new = ""
-                    if old:
-                        old += sep
+                    new = dirname(new, normalise=True, uri=uri, isdir=True)
 
             if old:
                 if filename.startswith(old):
+                    if not new:
+                        new = ""
+                        if old:
+                            old += sep
+
                     filename = filename.replace(old, new)
             elif new:
                 filename = join(new, filename)

@@ -2618,7 +2618,7 @@ class Field(
         """Replace a file directory in-place.
 
         Every file in *old_directory* that is referenced by the data
-        is redefined to be in *new_directory*.
+        is redefined to be in *new*.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -2639,8 +2639,7 @@ class Field(
 
         :Returns:
 
-            `str` TODOCFA
-                The new directory as an absolute path.
+            `None`
 
         **Examples**
 
@@ -2652,7 +2651,7 @@ class Field(
         {'/new/data/path/file1.nc', '/home/file2.nc'}
 
         """
-        new_directory = super().replace_directory(
+        super().replace_directory(
             old=old, new=new, normalise=normalise, common=common
         )
         if constructs:

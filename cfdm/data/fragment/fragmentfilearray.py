@@ -187,26 +187,22 @@ class FragmentFileArray(
         errors = "\n".join(errors)
         raise OSError(
             f"Can't access array index {index} from fragment file "
-            f"{self.get_filename(normalise=True)}:\n{errors}"
+            f"{self.get_filename()}:\n{errors}"
         )
 
-    def get_filename(self, normalise=True, default=AttributeError()):
+    def get_filename(self, normalise=False, default=AttributeError()):
         """TODOCFA.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
-            normalise: `bool`, optional
-                If True (the default) then normalise the file names to
-                absolute URIs. If False then the file names are
-                returned in the same form that they have in the
-                CF-netCDF aggregation file.
+            {{normalise: `bool`, optional}}
 
         :Returns:
 
             `set`
-                The file names. If no files are required to compute
+                TODOCFA The file names. If no files are required to compute
                 the data then an empty `set` is returned.
 
         """
