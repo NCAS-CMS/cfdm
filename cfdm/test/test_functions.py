@@ -255,16 +255,54 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(len(cfdm.example_fields(0, 2)), 2)
         self.assertEqual(len(cfdm.example_fields(0, 2, 0)), 3)
 
-    def test_abspath(self):
-        """Test the abspath function."""
-        filename = "test_file.nc"
-        self.assertEqual(cfdm.abspath(filename), os.path.abspath(filename))
-        filename = "http://test_file.nc"
-        self.assertEqual(cfdm.abspath(filename), filename)
-        filename = "http:///test_file.nc"
-        self.assertEqual(cfdm.abspath(filename), filename)
-        filename = "https:///home/../test_file.nc"
-        self.assertEqual(cfdm.abspath(filename), "https:///test_file.nc")
+    def test_zzzabspath(self):
+        """Test cfdm.abspath."""
+        cwd = os.getcwd()
+        cwd_m1 = os.path.dirname(cwd)
+
+        self.assertEqual(cfdm.abspath("file.nc"), f"{cwd}/file.nc")
+        self.assertEqual(cfdm.abspath("../file.nc"), f"{cwd_m1}/file.nc")
+        self.assertEqual(cfdm.abspath("file:///file.nc"), "file:///file.nc")
+        self.assertEqual(cfdm.abspath("file://file.nc"), f"file://{cwd}")
+        self.assertEqual(cfdm.abspath("file:/file.nc"), "file:///file.nc")
+        self.assertEqual(cfdm.abspath("http:///file.nc"), "http:///file.nc")
+        self.assertEqual(cfdm.abspath("http://file.nc"), "http://")
+        self.assertEqual(cfdm.abspath("http:/file.nc"), "http:///file.nc")
+
+        self.assertEqual(
+            cfdm.abspath("file.nc", uri=True), f"file://{cwd}/file.nc"
+        )
+        self.assertEqual(
+            cfdm.abspath("../file.nc", uri=True), f"file://{cwd_m1}/file.nc"
+        )
+        self.assertEqual(
+            cfdm.abspath("file:///file.nc", uri=True), "file:///file.nc"
+        )
+        self.assertEqual(
+            cfdm.abspath("file://file.nc", uri=True), f"file://{cwd}"
+        )
+        self.assertEqual(
+            cfdm.abspath("file:/file.nc", uri=True), "file:///file.nc"
+        )
+        self.assertEqual(
+            cfdm.abspath("http:///file.nc", uri=True), "http:///file.nc"
+        )
+        self.assertEqual(cfdm.abspath("http://file.nc", uri=True), "http://")
+        self.assertEqual(
+            cfdm.abspath("http:/file.nc", uri=True), "http:///file.nc"
+        )
+
+        self.assertEqual(cfdm.abspath("file.nc", uri=False), f"{cwd}/file.nc")
+        self.assertEqual(
+            cfdm.abspath("../file.nc", uri=False), f"{cwd_m1}/file.nc"
+        )
+        self.assertEqual(
+            cfdm.abspath("file:///file.nc", uri=False), "/file.nc"
+        )
+        self.assertEqual(cfdm.abspath("file://file.nc", uri=False), cwd)
+        self.assertEqual(cfdm.abspath("file:/file.nc", uri=False), "/file.nc")
+        with self.assertRaises(ValueError):
+            cfdm.abspath("http:///file.nc", uri=False)
 
     def test_configuration(self):
         """Test the configuration function."""
@@ -597,30 +635,123 @@ class FunctionsTest(unittest.TestCase):
 
     def test_dirname(self):
         """Test cfdm.dirname."""
-        self.assertEqual(cfdm.dirname("/model/data"), "/model")
+        cwd = os.getcwd()
+        cwd_m1 = os.path.dirname(cwd)
+
+        self.assertEqual(cfdm.dirname("file.nc"), "")
+        self.assertEqual(cfdm.dirname("file.nc", normalise=True), cwd)
         self.assertEqual(
-            cfdm.dirname("/model/data", isdir=True), "/model/data"
-        )
-        self.assertEqual(cfdm.dirname("/model/data/"), "/model/data")
-        self.assertEqual(cfdm.dirname("/model/data/file.nc"), "/model/data")
-        self.assertEqual(
-            cfdm.dirname("file://model/data/"), "file://model/data"
-        )
-        self.assertEqual(
-            cfdm.dirname("file://model/data", isdir=True), "file://model/data"
+            cfdm.dirname("file.nc", normalise=True, uri=True), f"file://{cwd}"
         )
         self.assertEqual(
-            cfdm.dirname("file:///model/data/"), "file:///model/data"
+            cfdm.dirname("file.nc", normalise=True, uri=False), cwd
+        )
+        self.assertEqual(
+            cfdm.dirname("file.nc", normalise=True, sep=True), f"{cwd}/"
+        )
+
+        self.assertEqual(cfdm.dirname("model/file.nc"), "model")
+        self.assertEqual(
+            cfdm.dirname("model/file.nc", normalise=True), f"{cwd}/model"
+        )
+        self.assertEqual(
+            cfdm.dirname("model/file.nc", normalise=True, uri=True),
+            f"file://{cwd}/model",
+        )
+        self.assertEqual(
+            cfdm.dirname("model/file.nc", normalise=True, uri=False),
+            f"{cwd}/model",
+        )
+
+        self.assertEqual(cfdm.dirname("../file.nc"), "..")
+        self.assertEqual(cfdm.dirname("../file.nc", normalise=True), cwd_m1)
+        self.assertEqual(
+            cfdm.dirname("../file.nc", normalise=True, uri=True),
+            f"file://{cwd_m1}",
+        )
+        self.assertEqual(
+            cfdm.dirname("../file.nc", normalise=True, uri=False), cwd_m1
+        )
+
+        self.assertEqual(cfdm.dirname("/model/file.nc"), "/model")
+        self.assertEqual(
+            cfdm.dirname("/model/file.nc", normalise=True), "/model"
+        )
+        self.assertEqual(
+            cfdm.dirname("/model/file.nc", normalise=True, uri=True),
+            "file:///model",
+        )
+        self.assertEqual(
+            cfdm.dirname("/model/file.nc", normalise=True, uri=False), "/model"
+        )
+
+        self.assertEqual(cfdm.dirname(""), "")
+        self.assertEqual(cfdm.dirname("", normalise=True), cwd)
+        self.assertEqual(
+            cfdm.dirname("", normalise=True, uri=True), f"file://{cwd}"
+        )
+        self.assertEqual(cfdm.dirname("", normalise=True, uri=False), cwd)
+
+        self.assertEqual(
+            cfdm.dirname("https:///data/archive/file.nc"),
+            "https:///data/archive",
+        )
+        self.assertEqual(
+            cfdm.dirname("https:///data/archive/file.nc", normalise=True),
+            "https:///data/archive",
+        )
+        self.assertEqual(
+            cfdm.dirname(
+                "https:///data/archive/file.nc", normalise=True, uri=True
+            ),
+            "https:///data/archive",
+        )
+        with self.assertRaises(ValueError):
+            cfdm.dirname(
+                "https:///data/archive/file.nc", normalise=True, uri=False
+            )
+
+        self.assertEqual(
+            cfdm.dirname("file:///data/archive/file.nc"),
+            "file:///data/archive",
+        )
+        self.assertEqual(
+            cfdm.dirname("file:///data/archive/file.nc", normalise=True),
+            "file:///data/archive",
+        )
+        self.assertEqual(
+            cfdm.dirname(
+                "file:///data/archive/file.nc", normalise=True, uri=True
+            ),
+            "file:///data/archive",
+        )
+        self.assertEqual(
+            cfdm.dirname(
+                "file:///data/archive/file.nc", normalise=True, uri=False
+            ),
+            "/data/archive",
         )
 
         self.assertEqual(
-            cfdm.dirname("file:///model/data/file.nc"), "file:///model/data"
+            cfdm.dirname("file:///data/archive/../file.nc"),
+            "file:///data/archive/..",
         )
         self.assertEqual(
-            cfdm.dirname("/model/data/file.nc", uri=True), "file:///model/data"
+            cfdm.dirname("file:///data/archive/../file.nc", normalise=True),
+            "file:///data",
         )
-        self.assertEqual(cfdm.dirname(""), "")
-        self.assertEqual(cfdm.dirname("", uri=True), "file://")
+        self.assertEqual(
+            cfdm.dirname(
+                "file:///data/archive/../file.nc", normalise=True, uri=True
+            ),
+            "file:///data",
+        )
+        self.assertEqual(
+            cfdm.dirname(
+                "file:///data/archive/../file.nc", normalise=True, uri=False
+            ),
+            "/data",
+        )
 
 
 if __name__ == "__main__":

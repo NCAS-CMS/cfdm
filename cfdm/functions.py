@@ -4,11 +4,10 @@ from copy import deepcopy
 from functools import total_ordering
 from math import isnan
 from numbers import Integral
-from os import sep
+from os import sep as os_sep
 from os.path import abspath as os_abspath
 from os.path import dirname as os_dirname
 from os.path import join
-from urllib.parse import urlparse
 
 import numpy as np
 from dask import config as _config
@@ -447,33 +446,42 @@ def CF():
     **Examples**
 
     >>> CF()
-    '1.11'
+    '1.12'
 
     """
     return __cf_version__
 
 
-def abspath(filename):
-    """Return a normalised absolute version of a file name.
-
-    If a string containing URL is provided then it is returned
-    unchanged.
+def abspath(path, uri=None):
+    """Return a normalised absolute version of a path.
 
     .. versionadded:: (cfdm) 1.7.0
 
     :Parameters:
 
-        filename: `str`
-            The name of the file.
+        path: `str`
+            The file or directory path.
+
+        uri: `None` or `bool`, optional
+            If True then the returned path will begin with a URI
+            scheme component followed by a ``:`` character, such as
+            ``file://data/file.nc``, ``https://remote/data/file.nc``,
+            etc.). If False then the returned path will not begin with
+            a URI scheme component. If `None` (the default) then the
+            returned path will begin with a URI scheme component if
+            the input *path* does.
+
+            .. versionadded:: (cfdm) NEXTVERSION
 
     :Returns:
 
         `str`
-            The normalised absolutised version of *filename*.
+            The normalised absolutised version of the path.
 
     **Examples**
 
     >>> import os
+    TODOCFA
     >>> os.getcwd()
     '/data/archive'
     >>> cfdm.abspath('file.nc')
@@ -484,22 +492,28 @@ def abspath(filename):
     'http://data/archive/file.nc'
 
     """
-    u = urisplit(filename)
+    u = urisplit(path)
     scheme = u.scheme
     path = u.path
-
     if scheme:
-        if path.startswith(sep):
-            return uricompose(
-                scheme=scheme, authority="", path=os_abspath(path)
-            )
+        if scheme == "file" or path.startswith(os_sep):
+            path = os_abspath(path)
 
-        return u.geturi()
+        if uri or uri is None:
+            path = uricompose(scheme=scheme, authority="", path=path)
+        elif scheme != "file":
+            raise ValueError(f"Can't set uri=False for path={u.geturi()!r}")
 
-    return os_abspath(path)
+        return path
+
+    path = os_abspath(path)
+    if uri:
+        path = uricompose(scheme="file", authority="", path=path)
+
+    return path
 
 
-def dirname(path, normalise=False, uri=False, isdir=False, sep=False):
+def dirname(path, normalise=False, uri=None, isdir=False, sep=False):
     """Return the directory of a path.
 
     .. versionadded:: (cfdm) NEXTVERSION
@@ -514,25 +528,27 @@ def dirname(path, normalise=False, uri=False, isdir=False, sep=False):
             absolute path. If False (the default) then no
             normalisation is done.
 
-        uri: `bool`, optional
-            If True then the directory is normalised and returned as
-            an absolute URI (a URI that begins with a scheme component
-            followed by a ``:`` character, such as
-            file://data/file.nc, https://remote.host/data/file.nc,
-            etc.). If False (the default) an absolute URI is only
-            returned for a *path* that is already an absolute URI. NO TODOCFA
+        uri: `None` or `bool`, optional
+            If True then the returned directory will begin with a URI
+            scheme component followed by a ``:`` character, such as
+            ``file://data/file.nc``, ``https://remote/data/file.nc``,
+            etc.). If False then the returned directory will not begin
+            with a URI scheme component. If `None` (the default) then
+            the returned directory will begin with a URI scheme
+            component if the input *path* does.
 
         isdir: `bool`, optional
             Set to True if *path* represents a directory, rather than
             a file.
 
-        TODOCFA
+        sep: `bool`, optional
+            Set to True to add a trailing path seperator to the
+            returned directory.
 
     :Returns:
 
         `str`
-            The normalised absolutised version of the directory of
-            *path*.
+            The directory of the path.
 
     **Examples**
 
@@ -541,92 +557,103 @@ def dirname(path, normalise=False, uri=False, isdir=False, sep=False):
     '/data/archive'
 
     >>> cfdm.dirname('file.nc')
-    ''
+    /data/archive
     >>> cfdm.dirname('file.nc', normalise=True)
-    '/data/archive'
+    /data/archive
     >>> cfdm.dirname('file.nc', normalise=True, uri=True)
-    'file:///data/archive'
-    >>> cfdm.dirname('file.nc', normalise=True, uri=True, sep=True)
-    'file:///data/archive/'
+    file:///data/archive
+    >>> cfdm.dirname('file.nc', normalise=True, uri=False)
+    /data/archive
+    >>> cfdm.dirname('file.nc', normalise=True, sep=True)
+    /data/archive/
 
     >>> cfdm.dirname('model/file.nc')
-    'model'
+    model
     >>> cfdm.dirname('model/file.nc', normalise=True)
-    '/data/archive/model'
+    /data/archive/model
     >>> cfdm.dirname('model/file.nc', normalise=True, uri=True)
-    'file:///data/archive/model'
-    >>> cfdm.dirname('model/file.nc', normalise=True, uri=True, sep=True)
-    'file:///data/archive/model/'
+    file:///data/archive/model
+    >>> cfdm.dirname('model/file.nc', normalise=True, uri=False)
+    /data/archive/model
 
     >>> cfdm.dirname('../file.nc')
-    '..'
+    ..
     >>> cfdm.dirname('../file.nc', normalise=True)
-    '/data'
+    /data
     >>> cfdm.dirname('../file.nc', normalise=True, uri=True)
-    'file:///data'
-    >>> cfdm.dirname('../file.nc', normalise=True, uri=True, sep=True)
-    'file:///data/'
+    file:///data
+    >>> cfdm.dirname('../file.nc', normalise=True, uri=False)
+    /data
 
-    >>> cfdm.dirname('/data/archive/file.nc')
-    '/data/archive'
-    >>> cfdm.dirname('/data/archive/file.nc', normalise=True)
-    '/data/archive'
-    >>> cfdm.dirname('/data/archive/file.nc', normalise=True, uri=True)
-    'file:///data/archive'
-    >>> cfdm.dirname('/data/archive/file.nc', normalise=True, uri=True, sep=True)
-    'file:///data/archive/'
+    >>> cfdm.dirname('/model/file.nc')
+    /model
+    >>> cfdm.dirname('/model/file.nc', normalise=True)
+    /model
+    >>> cfdm.dirname('/model/file.nc', normalise=True, uri=True)
+    file:///model
+    >>> cfdm.dirname('/model/file.nc', normalise=True, uri=False)
+    /model
+
+    >>> cfdm.dirname('')
+
+    >>> cfdm.dirname('', normalise=True)
+    /data/archive
+    >>> cfdm.dirname('', normalise=True, uri=True)
+    file:///data/archive
+    >>> cfdm.dirname('', normalise=True, uri=False)
+    /data/archive
 
     >>> cfdm.dirname('https:///data/archive/file.nc')
-    'https:///data/archive'
+    https:///data/archive
     >>> cfdm.dirname('https:///data/archive/file.nc', normalise=True)
-    'https:///data/archive'
+    https:///data/archive
     >>> cfdm.dirname('https:///data/archive/file.nc', normalise=True, uri=True)
-    'https:///data/archive'
-    >>> cfdm.dirname('https:///data/archive/file.nc', normalise=True, uri=True, sep=True)
-    'https:///data/archive/'
+    https:///data/archive
+    >>> cfdm.dirname('https:///data/archive/file.nc', normalise=True, uri=False)
+    ValueError: Can't set uri=False for path='https:///data/archive/file.nc'
 
     >>> cfdm.dirname('file:///data/archive/file.nc')
-    'file:///data/archive'
+    file:///data/archive
     >>> cfdm.dirname('file:///data/archive/file.nc', normalise=True)
-    'file:///data/archive'
+    file:///data/archive
     >>> cfdm.dirname('file:///data/archive/file.nc', normalise=True, uri=True)
-    'file:///data/archive'
-    >>> cfdm.dirname('file:///data/archive/file.nc', normalise=True, uri=True, sep=True)
-    'file:///data/archive/'
+    file:///data/archive
+    >>> cfdm.dirname('file:///data/archive/file.nc', normalise=True, uri=False)
+    /data/archive
 
     >>> cfdm.dirname('file:///data/archive/../file.nc')
-    'file:///data'
+    file:///data/archive/..
     >>> cfdm.dirname('file:///data/archive/../file.nc', normalise=True)
-    'file:///data'
+    file::///data
     >>> cfdm.dirname('file:///data/archive/../file.nc', normalise=True, uri=True)
-    'file:///data'
-    >>> cfdm.dirname('file:///data/archive/../file.nc', normalise=True, uri=True, sep=True)
-    'file:///data/'
+    file::///data
+    >>> cfdm.dirname('file:///data/archive/../file.nc', normalise=True, uri=False)
+    /data
 
     """
-    u = urlparse(path)
+    u = urisplit(path)
     scheme = u.scheme
     path = u.path
     if scheme:
         # Remote (or "file:")
-        if normalise:
+        if normalise and (scheme == "file" or path.startswith(os_sep)):
             path = os_abspath(path)
-            
-        if isdir:
-            path = join(path, "")
 
-        path = uricompose(
-            scheme=scheme,
-            authority="",
-            path=os_dirname(path),
-        )
+        if not isdir:
+            path = os_dirname(path)
+
         if sep:
             path = join(path, "")
+
+        if uri or uri is None:
+            path = uricompose(scheme=scheme, authority="", path=path)
+        elif scheme != "file":
+            raise ValueError(f"Can't set uri=False for path={u.geturi()!r}")
 
         return path
 
     # Local file
-    if not isdir and not os.path.isdir(path):
+    if not isdir:
         path = os_dirname(path)
 
     if normalise:

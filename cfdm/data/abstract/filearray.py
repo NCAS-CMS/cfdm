@@ -294,7 +294,7 @@ class FileArray(Array):
                 default, f"{self.__class__.__name__} has no file name"
             )
 
-        return dirname(filename, uri=isuri(filename))
+        return dirname(filename)
 
     def get_address(self, default=AttributeError()):
         """The name of the file containing the array.
@@ -637,20 +637,27 @@ class FileArray(Array):
                     )
 
                 uri = isuri(filename)
-                old = dirname(old, normalise=True, uri=uri, isdir=True)
+                try:
+                    old = dirname(old, normalise=True, uri=uri, isdir=True)
+                except ValueError:
+                    old = dirname(old, normalise=True, isdir=True)
+
                 u = urisplit(old)
                 if not uri and u.scheme == "file":
                     old = u.getpath()
 
                 if new:
-                    new = dirname(new, normalise=True, uri=uri, isdir=True)
+                    try:
+                        new = dirname(new, normalise=True, uri=uri, isdir=True)
+                    except ValueError:
+                        new = dirname(new, normalise=True, isdir=True)
 
             if old:
                 if filename.startswith(old):
                     if not new:
                         new = ""
                         if old:
-                            old += sep
+                            old = join(old, sep)
 
                     filename = filename.replace(old, new)
             elif new:
