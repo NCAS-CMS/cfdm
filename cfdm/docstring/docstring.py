@@ -544,7 +544,7 @@ _docstring_substitution_definitions = {
                 ``/data`, wherever it occurs: ``{'replace_directory':
                 {'old': '/data', 'normalise': True}}``.""",
     # read cfa_write
-    "{{read cfa_write: sequence of `str`, optional}}": """cfa_write: sequence of `str`, optional
+    "{{read cfa_write: (sequence of) `str`, optional}}": """cfa_write: (sequence of) `str`, optional
             Register the intention for named construct types to be
             subsequently written as CF-netCDF aggregation variables.
 
@@ -585,6 +585,36 @@ _docstring_substitution_definitions = {
               To register field and auxiliary coordinate constructs to
               be written as CF-netCDF aggregation variables:
               ``cfa_write=['field', 'auxiliary_coordinate']``.""",
+    # read to_memory
+    "{{read to_memory: (sequence of) `str`, optional}}": """to_memory: (sequence of) `str`, optional
+            Read all data arrays of the named construct types into
+            memory. By default, lazy loading is employed for all data
+            arrays.
+
+            The *to_memory* parameter may be one, or a sequence, of:
+
+            ==========================  ===============================
+            *to_memory*                 Construct types
+            ==========================  ===============================
+            ``'all'``                   All constructs
+            ``'field'``                 Field constructs
+            ``'field_ancillary'``       Field ancillary constructs
+            ``'domain_ancillary'``      Domain ancillary constructs
+            ``'dimension_coordinate'``  Dimension coordinate constructs
+            ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+            ``'cell_measure'``          Cell measure constructs
+            ``'domain_topology'``       Domain topology constructs
+            ``'cell_connectivity'``     Cell connectivity constructs
+            ==========================  ===============================
+
+            *Example:*
+              To read field construct data arrays into memory:
+              ``to_memory='field'`` or ``to_memory=['field']``.
+
+            *Example:*
+              To read field and auxiliary coordinate construct data
+              arrays into memory: ``to_memory=['field',
+              'auxiliary_coordinate']``.""",
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentation)
     # ------------------------1----------------------------------------

@@ -687,13 +687,11 @@ class FileArray(Array):
 
         :Returns:
 
-            `NumpyArray`
-                The new array with all of its data in memory.
+            `numpy.ndarray`
+                The new array.
 
         """
-        from ..numpyarray import NumpyArray
-
-        return NumpyArray(self.array)
+        return self.array
 
     def _set_attributes(self, var):
         """Set the netCDF variable attributes.

@@ -450,8 +450,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 "for compressed input arrays"
             )
 
-        # Bring the compressed data into memory without
-        # decompressing it
+        # Bring data into memory (compressed data is not decompressed)
         if to_memory:
             try:
                 array = array.to_memory()

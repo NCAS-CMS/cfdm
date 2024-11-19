@@ -338,7 +338,10 @@ class CompressedArray(Array):
         if ca is None:
             raise ValueError("There is no underlying compressed array")
 
-        return ca.array
+        try:
+            return ca.array
+        except AttributeError:
+            return ca
 
     def get_compressed_axes(self):
         """Return axes that are compressed in the underlying array.

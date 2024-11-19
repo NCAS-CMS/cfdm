@@ -82,7 +82,7 @@ class read(metaclass=DocstringRewriteMeta):
     Descriptive properties are always read into memory, but lazy
     loading is employed for all data arrays, which means that no data
     is read into memory until the data is required for inspection or
-    to modify the array contents. This maximises the number of field
+    to modify the array contents. TODOCFA This maximises the number of field
     constructs that may be read within a session, and makes the read
     operation fast.
 
@@ -153,7 +153,11 @@ class read(metaclass=DocstringRewriteMeta):
 
             .. versionadded:: (cfdm) NEXTVERSION
 
-        {{read cfa_write: sequence of `str`, optional}}
+        {{read cfa_write: (sequence of) `str`, optional}}
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
+        {{read to_memory: (sequence of) `str`, optional}}
 
             .. versionadded:: (cfdm) NEXTVERSION
 
@@ -205,6 +209,7 @@ class read(metaclass=DocstringRewriteMeta):
         store_hdf5_chunks=True,
         cfa=None,
         cfa_write=None,
+        to_memory=False,
         extra_read_vars=None,
     ):
         """TODOCFA."""
@@ -250,6 +255,7 @@ class read(metaclass=DocstringRewriteMeta):
                     store_hdf5_chunks=store_hdf5_chunks,
                     cfa=cfa,
                     cfa_write=cfa_write,
+                    to_memory=to_memory,
                     extra_read_vars=extra_read_vars,
                 )
             except MaskError:

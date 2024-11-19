@@ -921,6 +921,7 @@ class NetCDFRead(IORead):
         store_hdf5_chunks=True,
         cfa=None,
         cfa_write=(),
+        to_memory=(),
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
 
@@ -1007,6 +1008,12 @@ class NetCDFRead(IORead):
             cfa_write: sequence of `str`, optional
                 Configure the reading of CF-netCDF aggregation files.
                 See `cfdm.read` for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            to_memory: (sequence) of `str`, optional
+                Whether or not to bring data arrays into memory.  See
+                `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1153,6 +1160,10 @@ class NetCDFRead(IORead):
             # Whether or not to store HDF chunks
             # --------------------------------------------------------
             "store_hdf5_chunks": bool(store_hdf5_chunks),
+            # --------------------------------------------------------
+            # TODOCFA
+            # --------------------------------------------------------
+            "to_memory": to_memory,
         }
 
         g = self.read_vars
@@ -1256,6 +1267,15 @@ class NetCDFRead(IORead):
             cfa_write = ()
 
         g["cfa_write"] = tuple(cfa_write)
+
+        # Parse the 'to_memory' keyword parameter
+        if to_memory:
+            if isinstance(to_memory, str):
+                to_memory = (to_memory,)
+        else:
+            to_memory = ()
+
+        g["to_memory"] = tuple(to_memory)
 
         filename = os.path.expanduser(os.path.expandvars(filename))
         filename = abspath(filename)
@@ -7766,8 +7786,8 @@ class NetCDFRead(IORead):
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
-            construct_type: `str` or `None`
-                The type of teh construct that contains *array*. Set
+            construct_type: `str` or `None`, optional
+                The type of the construct that contains *array*. Set
                 to `None` if the array does not belong to a construct.
 
                 .. versionadded:: (cfdm) NEXTVERSION
@@ -7817,11 +7837,15 @@ class NetCDFRead(IORead):
             array, ncvar, compressed, construct_type=construct_type
         )
 
+        to_memory = self.read_vars["to_memory"]
+        to_memory = "all" in to_memory or construct_type in to_memory
+
         data = self.implementation.initialise_Data(
             array=array,
             units=units,
             calendar=calendar,
             chunks=chunks,
+            to_memory=to_memory,
             copy=False,
             **kwargs,
         )

@@ -1155,6 +1155,33 @@ class read_writeTest(unittest.TestCase):
             g = cfdm.read(tmpfile)[0]
             self.assertEqual(g.data.chunks, ((7, 7, 7, 7, 7, 1), (5,), (4, 4)))
 
+    def test_read_to_memory(self):
+        """Test the 'to_memory' parameter to cfdm.read."""
+        f = cfdm.example_field(0)
+        cfdm.write(f, tmpfile)
+
+        f = cfdm.read(tmpfile)[0]
+        for d in (f.data.todict(), f.coordinate("longitude").data.todict()):
+            on_disk = False
+            for v in d.values():
+                if isinstance(v, cfdm.NetCDF4Array):
+                    on_disk = True
+
+            self.assertTrue(on_disk)
+
+        for to_memory in ("all", ("field", "dimension_coordinate")):
+            f = cfdm.read(tmpfile, to_memory=to_memory)[0]
+            for d in (
+                f.data.todict(),
+                f.coordinate("longitude").data.todict(),
+            ):
+                in_memory = False
+                for v in d.values():
+                    if isinstance(v, np.ndarray):
+                        in_memory = True
+
+                self.assertTrue(in_memory)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())
