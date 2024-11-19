@@ -49,41 +49,26 @@ class NetCDF4ArrayTest(unittest.TestCase):
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
 
-    #    def test_NetCDF4Array_get_addresses(self):
-    #        """Test NetCDF4Array.get_addresses."""
-    #        a = cfdm.NetCDF4Array(address="tas")
-    #        self.assertEqual(a.get_addresses(), ("tas",))
-    #
-    #        a = cfdm.NetCDF4Array(address=("tas1", "tas1"))
-    #        self.assertEqual(a.get_addresses(), ("tas1", "tas1"))
-    #
-    #        a = cfdm.NetCDF4Array()
-    #        self.assertEqual(a.get_addresses(), ())
+    def test_NetCDF4Array_get_addresses(self):
+        """Test NetCDF4Array.get_addresses."""
+        a = cfdm.NetCDF4Array(address="tas")
+        self.assertEqual(a.get_addresses(), ("tas",))
 
     def test_NetCDF4Array_get_address(self):
         """Test NetCDF4Array.get_address."""
         a = cfdm.NetCDF4Array(address="tas")
         self.assertEqual(a.get_address(), "tas")
 
-        #        a = cfdm.NetCDF4Array(address=("tas1", "tas1"))
-        #        self.assertEqual(a.get_addresses(), ("tas1", "tas1"))
-
         a = cfdm.NetCDF4Array()
         self.assertIsNone(a.get_address(default=None))
 
-    #   def test_NetCDF4Array_get_filenames(self):
-    #       """Test NetCDF4Array.get_filenames."""
-    #       a = cfdm.NetCDF4Array("/data1/file1")
-    #       self.assertEqual(a.get_filenames(), ("/data1/file1",))
-    #
-    #       a = cfdm.NetCDF4Array(("/data1/file1",))
-    #       self.assertEqual(a.get_filenames(), ("/data1/file1",))
-    #
-    #       a = cfdm.NetCDF4Array(("/data1/file1", "/data2/file2"))
-    #       self.assertEqual(a.get_filenames(), ("/data1/file1", "/data2/file2"))
-    #
-    #       a = cfdm.NetCDF4Array()
-    #       self.assertEqual(a.get_filenames(), ())
+    def test_NetCDF4Array_get_filenames(self):
+        """Test NetCDF4Array.get_filenames."""
+        a = cfdm.NetCDF4Array("/data1/file1")
+        self.assertEqual(a.get_filenames(), ("/data1/file1",))
+
+        a = cfdm.NetCDF4Array()
+        self.assertEqual(a.get_filenames(), ())
 
     def test_NetCDF4Array_get_filename(self):
         """Test NetCDF4Array.get_filename."""
@@ -259,6 +244,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
         cwd = os.getcwd()
 
         n = cfdm.NetCDF4Array("basename.nc")
+
         m = n.replace_directory()
         self.assertEqual(m.get_filename(), "basename.nc")
         m = n.replace_directory(new="data")
@@ -267,6 +253,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
         self.assertEqual(m.get_filename(), os.path.join(cwd, "basename.nc"))
 
         n = cfdm.NetCDF4Array("data/basename.nc")
+
         m = n.replace_directory()
         self.assertEqual(m.get_filename(), "data/basename.nc")
         m = n.replace_directory(new="/home")

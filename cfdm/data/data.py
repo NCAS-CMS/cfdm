@@ -1735,7 +1735,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `int` TODODASK
+            `int`
+                The integer value of *clear*.
 
         """
         if clear is None:
@@ -6027,7 +6028,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         )
 
     def replace_filenames(self, filenames):
-        """Replace each fragment's file locations in-place.
+        """Replace file locations in-place.
 
         A fragment is a part of the data array that is stored in a
         file.

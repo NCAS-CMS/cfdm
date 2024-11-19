@@ -234,12 +234,14 @@ class FileArray(Array):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
+        :Parameters:
+
+            {{normalise: `bool`, optional}}
+
         :Returns:
 
             `tuple`
-                The file directory names, one for each file, as
-                absolute paths with no trailing path name component
-                separator.
+                The file directory names, one for each file,
 
         **Examples**
 
@@ -247,11 +249,6 @@ class FileArray(Array):
         ('/data1/file1',)
         >>> a.file_directories()
         ('/data1,)
-
-        >>> a.get_filenames()
-        ('/data1/file1', '/data2/file2', '/data1/file2')
-        >>> a.file_directories()
-        ('/data1', '/data2', '/data1')
 
         """
         directory = self.file_directory(normalise=normalise, default=None)
@@ -265,6 +262,10 @@ class FileArray(Array):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
+        :Parameters:
+
+            {{normalise: `bool`, optional}}
+
         :Returns:
 
             `tuple`
@@ -274,15 +275,10 @@ class FileArray(Array):
 
         **Examples**
 
-        >>> a.get_filenames()
-        ('/data1/file1',)
-        >>> a.file_directories()
-        ('/data1,)
-
-        >>> a.get_filenames()
-        ('/data1/file1', '/data2/file2', '/data1/file2')
-        >>> a.file_directories()
-        ('/data1', '/data2', '/data1')
+        >>> a.get_filename()
+        '/data1/file1'
+        >>> a.file_directory()
+        '/data1'
 
         """
         filename = self.get_filename(normalise=normalise, default=None)
@@ -412,7 +408,7 @@ class FileArray(Array):
         :Returns:
 
             `tuple`
-                The filenames, in absolute form.
+                The file names.
 
         """
         filename = self.get_filename(normalise=normalise, default=None)
@@ -657,7 +653,7 @@ class FileArray(Array):
                     if not new:
                         new = ""
                         if old:
-                            old = join(old, sep)
+                            old += sep
 
                     filename = filename.replace(old, new)
             elif new:
@@ -737,7 +733,24 @@ class FileArray(Array):
         return self._get_component("unpack")
 
     def replace_filename(self, filename):
-        """TODOCFA."""
+        """Replace the file location.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `file_directory`, `get_filename`,
+                     `replace_directory`
+
+        :Parameters:
+
+            filename: `str`
+                The new file location.
+
+        :Returns:
+
+            `{{class}}`
+                A new `{{class}}` with modified file name.
+
+        """
         a = self.copy()
         a._set_component("filename", filename, copy=False)
         return a

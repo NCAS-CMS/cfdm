@@ -1,6 +1,6 @@
 from os.path import join
 
-from uritools import uricompose, urisplit
+from uritools import urisplit
 
 from ...functions import abspath
 from ..abstract import FileArray
@@ -216,33 +216,21 @@ class FragmentFileArray(
             )
 
         if normalise:
-           uri = urisplit(filename)
+            uri = urisplit(filename)
 
-           # Convert the file name to an absolute URI
-           if uri.isrelpath():
-               # File name is a relative-path URI reference
-               filename =   join(
-                       self._get_component("aggregation_file_directory"),
-                       filename)
-           elif uri.isabsuri() or uri.isabspath():
-               # File name is an absolute URI or absolute-path URI
-               # reference
-               filename = abspath(filename, uri=True)
-#               filename = uricompose(
-#                   scheme="file",
-#                   authority="",
-#                   path=abspath(filename),
-#               )
-#           elif uri.isabsuri():
-#               # File name is an absolute-path URI reference
-#               filename = abspath(filename)
-           else:
-               raise ValueError(
-                   "Fragment file location must be an absolute URI, a "
-                   "relative-path URI reference, or an absolute-path URI: "
-                   f"Got: {filename!r}"
-               )
-           
-           filename = abspath(filename, uri=True)
+            # Convert the file name to an absolute URI
+            if uri.isrelpath():
+                # File name is a relative-path URI reference
+                filename = join(
+                    self._get_component("aggregation_file_directory"), filename
+                )
+            elif not (uri.isabsuri() or uri.isabspath()):
+                raise ValueError(
+                    "Fragment file location must be an absolute URI, a "
+                    "relative-path URI reference, or an absolute-path URI: "
+                    f"Got: {filename!r}"
+                )
+
+            filename = abspath(filename, uri=True)
 
         return filename

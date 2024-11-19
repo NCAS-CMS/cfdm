@@ -1163,9 +1163,8 @@ _docstring_substitution_definitions = {
                 faster.""",
     # normalise
     "{{normalise: `bool`, optional}}": """normalise: `bool`, optional
-                If True then normalise the filenames by resolving the
-                name to an absolute path. If False (the default) then
-                no normalisation is done.""",
+                If True then normalise to an absolute path. If False
+                (the default) then no normalisation is done.""",
     # ----------------------------------------------------------------
     # Method description substitutions (4 levels of indentation)
     # ----------------------------------------------------------------
