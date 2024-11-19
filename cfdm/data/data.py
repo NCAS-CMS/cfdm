@@ -296,7 +296,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
                 * ``'first_non_missing_value'``: Provide keyword
                   arguments to the
-                  `{{package}}.data.utils.first_non_missing_value`
+                  `cfdm.data.utils.first_non_missing_value`
                   function. This is used when the input array contains
                   date-time strings or objects, and may affect
                   performance.
@@ -991,53 +991,11 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
                 indices[i] = index
 
-        # DASK: needs to be in cf-python
-        # Roll axes with cyclic slices
-        # if roll:
-        #     # For example, if assigning to slice(-2, 3) has been
-        #     # requested on a cyclic axis (and we're not using numpy
-        #     # indexing), then we roll that axis by two points and
-        #     # assign to slice(0, 5) instead. The axis is then unrolled
-        #     # by two points afer the assignment has been made.
-        #     axes = self._axes
-        #     if not self._cyclic.issuperset([axes[i] for i in roll]):
-        #         raise IndexError(
-        #             "Can't do a cyclic assignment to a non-cyclic axis"
-        #         )
-        #
-        #     roll_axes = tuple(roll.keys())
-        #     shifts = tuple(roll.values())
-        #     self.roll(shift=shifts, axis=roll_axes, inplace=True)
-
-        # DASK: needs to be in cf-python
-        # Make sure that the units of value are the same as self
-        # value = conform_units(value, self.Units)
-
         dx = self.to_dask_array()
 
         # Do the assignment
         self._set_subspace(dx, indices, value)
         self._set_dask(dx, asanyarray=False)
-
-        # DASK: needs to be in cf-python
-        # Unroll any axes that were rolled to enable a cyclic
-        # assignment
-        # if roll:
-        #     shifts = [-shift for shift in shifts]
-        #     self.roll(shift=shifts, axis=roll_axes, inplace=True)
-
-        # DASK: nneds to be in cf-python
-        # Reset the original array values at locations that are
-        # excluded from the assignment by True values in any ancillary
-        # masks
-        # if ancillary_mask:
-        #     indices = tuple(indices)
-        #     original_self = original_self[indices]
-        #     reset = self[indices]
-        #     for mask in ancillary_mask:
-        #         reset.where(mask, original_self, inplace=True)
-        #
-        #     self[indices] = reset
 
         return
 
