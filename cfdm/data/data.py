@@ -1731,7 +1731,8 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
 
         :Returns:
 
-            `int` TODODASK
+            `int`
+                 The integer value of *clear*.
 
         """
         if clear is None:
