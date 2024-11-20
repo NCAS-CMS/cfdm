@@ -1028,6 +1028,51 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(Exception):
             g = cfdm.Field.concatenate([], axis=0)
 
+    def test_Field_persist(self):
+        """Test Field.persist."""
+        f = cfdm.example_field(0)
+        cfdm.write(f, tmpfile)
+        f = cfdm.read(tmpfile)[0]
+
+        for d in (f.data.todict(), f.coordinate("longitude").data.todict()):
+            on_disk = False
+            for v in d.values():
+                if isinstance(v, cfdm.NetCDF4Array):
+                    on_disk = True
+
+            self.assertTrue(on_disk)
+
+        g = f.persist()
+        d = g.data.todict()
+        in_memory = False
+        for v in d.values():
+            if isinstance(v, np.ndarray):
+                in_memory = True
+
+        self.assertTrue(in_memory)
+
+        d = g.coordinate("longitude").data.todict()
+        on_disk = False
+        for v in d.values():
+            if isinstance(v, cfdm.NetCDF4Array):
+                on_disk = True
+
+        self.assertTrue(on_disk)
+
+        # In-place and metdata
+        f = cfdm.read(tmpfile)[0]
+        self.assertIsNone(f.persist(metadata=True, inplace=True))
+        for d in (
+            f.data.todict(),
+            f.coordinate("longitude").data.todict(),
+        ):
+            in_memory = False
+            for v in d.values():
+                if isinstance(v, np.ndarray):
+                    in_memory = True
+
+            self.assertTrue(in_memory)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

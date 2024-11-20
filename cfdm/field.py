@@ -2607,6 +2607,81 @@ class Field(
 
         return f
 
+    @_inplace_enabled(default=False)
+    def persist(self, metadata=False, inplace=False):
+        """Persist the data into memory.
+
+        This turns the underlying lazy dask array into an equivalent
+        chunked dask array, but now with the results fully computed
+        and in memory. This can avoid the expense of re-reading the
+        data from disk, or re-computing it, when the data is accessed
+        on multiple occassions.
+
+        **Performance**
+
+        `persist` causes delayed operations to be computed.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `persist_metadata`, `array`, `datetime_array`,
+                     `{{package}}.Data.persist`
+
+        :Parameters:
+
+            metadata: `bool`
+                If True then also persist the metadata constructs. By
+                default, metadata constructs are not changed.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Field` or `None`
+                The field construct with persisted. If the operation
+                was in-place then `None` is returned.
+
+        """
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        super(Field, f).persist(inplace=True)
+        if metadata:
+            f.persist_metadata(inplace=True)
+
+        return f
+
+    @_inplace_enabled(default=False)
+    def persist_metadata(self, inplace=False):
+        """Persist the data of metadata constructs into memory.
+
+        {{persist description}}
+
+        **Performance**
+
+        `persist_metadata` causes delayed operations to be computed.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `persist`, `array`, `datetime_array`,
+                     `dask.array.Array.persist`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Field` or `None`
+                The field construct with persisted metadata. If the
+                operation was in-place then `None` is returned.
+
+        """
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        for c in f.constructs.filter_by_data(todict=True).values():
+            c.persist(inplace=True)
+
+        return f
+
     def replace_directory(
         self,
         old=None,

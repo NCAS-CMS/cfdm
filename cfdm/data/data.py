@@ -5784,20 +5784,15 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
     @_inplace_enabled(default=False)
     def persist(self, inplace=False):
-        """Persist the underlying dask array into memory.
+        """Persist data into memory.
 
-        This turns an underlying lazy dask array into a equivalent
-        chunked dask array, but now with the results fully computed.
-
-        `persist` is particularly useful when using distributed
-        systems, because the results will be kept in distributed
-        memory, rather than returned to the local process.
+        {{persist description}}
 
         Compare with `compute` and `array`.
 
         **Performance**
 
-        `persist` causes all delayed operations to be computed.
+        `persist` causes delayed operations to be computed.
 
         .. versionadded:: (cfdm) NEXTVERSION
 

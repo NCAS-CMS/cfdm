@@ -615,6 +615,12 @@ _docstring_substitution_definitions = {
               To read field and auxiliary coordinate construct data
               arrays into memory: ``to_memory=['field',
               'auxiliary_coordinate']``.""",
+    # persist
+    "{{persist description}}": """Persisting turns an underlying lazy dask array into an
+        equivalent chunked dask array, but now with the results fully
+        computed and in memory. This can avoid the expense of
+        re-reading the data from disk, or re-computing it, when the
+        data is accessed on multiple occassions.""",
     # ----------------------------------------------------------------
     # Method description substitutions (3 levels of indentation)
     # ------------------------1----------------------------------------

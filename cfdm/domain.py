@@ -1082,6 +1082,38 @@ class Domain(
         return out
 
     @_inplace_enabled(default=False)
+    def persist(self, inplace=False):
+        """"Persist data into memory.
+
+        {{persist description}}
+
+        **Performance**
+
+        `persist` causes delayed operations to be computed.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `{{package}}.Data.persist`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The domain construct with persisted metadata. If the
+                operation was in-place then `None` is returned.
+
+        """
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        for c in d.constructs.filter_by_data(todict=True).values():
+            c.persist(inplace=True)
+
+        return d
+
+    @_inplace_enabled(default=False)
     def uncompress(self, inplace=False):
         """Uncompress the domain construct.
 

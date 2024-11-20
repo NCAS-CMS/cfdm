@@ -80,11 +80,8 @@ class read(metaclass=DocstringRewriteMeta):
     **Performance**
 
     Descriptive properties are always read into memory, but lazy
-    loading is employed for all data arrays, which means that no data
-    is read into memory until the data is required for inspection or
-    to modify the array contents. TODOCFA This maximises the number of field
-    constructs that may be read within a session, and makes the read
-    operation fast.
+    loading is employed for all data arrays, unless the *to_memory*
+    parameter has been set.
 
     .. versionadded:: (cfdm) 1.7.0
 
@@ -212,7 +209,7 @@ class read(metaclass=DocstringRewriteMeta):
         to_memory=False,
         extra_read_vars=None,
     ):
-        """TODOCFA."""
+        """Read field or domain constructs from a dataset."""
         # Initialise a netCDF read object
         netcdf = NetCDFRead(cls.implementation)
         cls.netcdf = netcdf

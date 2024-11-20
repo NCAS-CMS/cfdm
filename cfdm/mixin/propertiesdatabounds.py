@@ -1454,6 +1454,51 @@ class PropertiesDataBounds(PropertiesData):
 
         return c
 
+    @_inplace_enabled(default=False)
+    def persist(self, bounds=True, inplace=False):
+        """Persist data into memory.
+
+        {{persist description}}
+
+        **Performance**
+
+        `persist` causes delayed operations to be computed.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `array`, `datetime_array`,
+                     `{{package}}.Data.persist`
+
+        :Parameters:
+
+            bounds: `bool`, optional
+                If False then do not persist any bounds data. By
+                default any bounds data are also persisted.
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with persisted data. If the operation
+                was in-place then `None` is returned.
+
+        """
+        c = _inplace_enabled_define_and_cleanup(self)
+        super(PropertiesDataBounds, c).persist(inplace=True)
+
+        # Bounds
+        bounds = c.get_bounds(None)
+        if bounds is not None:
+            bounds.persist(inplace=True)
+
+        # Interior_ring
+        interior_ring = c.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.persist(inplace=True)
+
+        return c
+
     def replace_directory(
         self,
         old=None,
@@ -1461,7 +1506,41 @@ class PropertiesDataBounds(PropertiesData):
         normalise=False,
         common=False,
     ):
-        """TODOCFA."""
+        """Replace file directories in-place.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `file_directories`, `get_filenames`
+
+        :Parameters:
+
+            old: `str` or `None`, optional
+                The base directory structure to be replaced by
+                *new*. If `None` (the default) or an empty string, and
+                *normalise* is False, then *new* is prepended to each
+                file name.
+
+            new: `str` or `None`, optional
+                The new directory that replaces the base directory
+                structure identified by *old*. If `None` (the default)
+                or an empty string, then *old* is replaced with an
+                empty string. Otherwise,
+
+            normalise: `bool`, optional
+                If True then *old* and *new* directories, and the file
+                names, are normalised to absolute paths prior to the
+                replacement. If False (the default) then no
+                normalisation is done.
+
+            common: `bool`, optional
+                If True the base directory structure that is common to
+                all files with *new*.
+
+        :Returns:
+
+            `None`
+
+        """
         directory = super().replace_directory(
             old=old, new=new, normalise=normalise, common=common
         )

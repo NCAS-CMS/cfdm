@@ -1161,7 +1161,7 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             "store_hdf5_chunks": bool(store_hdf5_chunks),
             # --------------------------------------------------------
-            # TODOCFA
+            # Constructs to read into memory
             # --------------------------------------------------------
             "to_memory": to_memory,
         }

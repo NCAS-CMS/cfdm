@@ -869,6 +869,40 @@ class PropertiesData(Properties):
         if data is not None:
             data.nc_set_hdf5_chunksizes(chunksizes)
 
+    @_inplace_enabled(default=False)
+    def persist(self, inplace=False):
+        """Persist data into memory.
+
+        {{persist description}}
+
+        **Performance**
+
+        `persist` causes delayed operations to be computed.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `array`, `datetime_array`,
+                     `{{package}}.Data.persist`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `{{class}}` or `None`
+                The construct with persisted data. If the operation
+                was in-place then `None` is returned.
+
+        """
+        v = _inplace_enabled_define_and_cleanup(self)
+
+        data = v.get_data(None)
+        if data is not None:
+            data.persist(inplace=True)
+
+        return v
+
     def replace_directory(
         self,
         old=None,
@@ -878,33 +912,37 @@ class PropertiesData(Properties):
     ):
         """Replace a file directory in-place.
 
-        Every file in *old_directory* that is referenced by the data
-        is redefined to be in *new_directory*.
-
         .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `file_directories`, `get_filenames`
 
         :Parameters:
 
-            old_directory: `str`
-                The new directory to be replaced.
+            old: `str` or `None`, optional
+                The base directory structure to be replaced by
+                *new*. If `None` (the default) or an empty string, and
+                *normalise* is False, then *new* is prepended to each
+                file name.
 
-            new_directory: `str`
-                The new directory.
+            new: `str` or `None`, optional
+                The new directory that replaces the base directory
+                structure identified by *old*. If `None` (the default)
+                or an empty string, then *old* is replaced with an
+                empty string. Otherwise,
+
+            normalise: `bool`, optional
+                If True then *old* and *new* directories, and the file
+                names, are normalised to absolute paths prior to the
+                replacement. If False (the default) then no
+                normalisation is done.
+
+            common: `bool`, optional
+                If True the base directory structure that is common to
+                all files with *new*.
 
         :Returns:
 
             `None`
-
-        **Examples**
-
-        >>> d.get_filenames()
-        {'/data/file1.nc', '/home/file2.nc'}
-        >>> d.replace_directory('/data', '/new/data/path/')
-        '/new/data/path'
-        >>> d.get_filenames()
-        {'/new/data/path/file1.nc', '/home/file2.nc'}
 
         """
         data = self.get_data(None, _fill_value=False, _units=False)
