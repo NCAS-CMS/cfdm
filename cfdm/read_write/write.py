@@ -757,6 +757,7 @@ class write(metaclass=DocstringRewriteMeta):
         cfa="auto",
         extra_write_vars=None,
     ):
+        """Write field and domain constructs to a netCDF file."""
         # Flatten the sequence of intput fields
         fields = tuple(cls._flat(fields))
         if not fields:

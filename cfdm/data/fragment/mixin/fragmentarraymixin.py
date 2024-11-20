@@ -178,7 +178,11 @@ class FragmentArrayMixin:
         return
 
     def _unpack_aggregated_data(self, array):
-        """TODOCFA."""
+        """Unpack the canonical data, if requested.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        """
         if self.get_unpack_aggregated_data():
             array = netcdf_indexer(
                 array,
@@ -232,7 +236,11 @@ class FragmentArrayMixin:
         return attributes.copy()
 
     def get_unpack_aggregated_data(self):
-        """Whether or not to automatically unpack the aggregated data.
+        """Whether or not to unpack the canonical data.
+
+        If `True` and there are aggregated variable packing
+        attributes, then the array is unpacked according to those
+        attributes.
 
         .. versionadded:: (cfdm) NEXTVERSION
 

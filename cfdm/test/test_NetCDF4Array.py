@@ -192,6 +192,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
         )
 
     def test_NetCDF4Array_file_directory(self):
+        """Test NetCDF4Array.file_directory."""
         a = cfdm.NetCDF4Array("/data1/file1")
         self.assertEqual(a.file_directory(), "/data1")
 
@@ -199,6 +200,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
         self.assertIsNone(a.file_directory(default=None))
 
     def test_NetCDF4Array__dask_tokenize__(self):
+        """Test NetCDF4Array.__dask_tokenize__"""
         a = cfdm.NetCDF4Array("/data1/file1", "tas", shape=(12, 2), mask=False)
         self.assertEqual(tokenize(a), tokenize(a.copy()))
 
@@ -206,6 +208,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
         self.assertNotEqual(tokenize(a), tokenize(b))
 
     def test_NetCDF4Array_shape(self):
+        """Test NetCDF4Array.shape."""
         shape = (12, 73, 96)
         a = cfdm.NetCDF4Array("/home/file2", "tas", shape=shape)
         self.assertEqual(a.shape, shape)
@@ -215,6 +218,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
         self.assertEqual(a.original_shape, shape)
 
     def test_NetCDF4Array_index(self):
+        """Test NetCDF4Array.index."""
         shape = (12, 73, 96)
         a = cfdm.NetCDF4Array("/home/file2", "tas", shape=shape)
         self.assertEqual(

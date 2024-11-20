@@ -1083,7 +1083,7 @@ class Domain(
 
     @_inplace_enabled(default=False)
     def persist(self, inplace=False):
-        """"Persist data into memory.
+        """Persist data into memory.
 
         {{persist description}}
 

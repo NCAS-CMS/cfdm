@@ -260,6 +260,7 @@ class FunctionsTest(unittest.TestCase):
         cwd = os.getcwd()
         cwd_m1 = os.path.dirname(cwd)
 
+        self.assertEqual(cfdm.abspath(""), cwd)
         self.assertEqual(cfdm.abspath("file.nc"), f"{cwd}/file.nc")
         self.assertEqual(cfdm.abspath("../file.nc"), f"{cwd_m1}/file.nc")
         self.assertEqual(cfdm.abspath("file:///file.nc"), "file:///file.nc")

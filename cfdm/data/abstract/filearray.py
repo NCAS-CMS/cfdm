@@ -144,12 +144,10 @@ class FileArray(Array):
             f"Must implement {self.__class__.__name__}.__getitem__"
         )  # pragma: no cover
 
-    def __repr__(self):
-        """x.__repr__() <==> repr(x)"""
+    def __repr__(self):  # noqa: D105
         return f"<CF {self.__class__.__name__}{self.shape}: {self}>"
 
-    def __str__(self):
-        """x.__str__() <==> str(x)"""
+    def __str__(self):  # noqa: D105
         return f"{self.get_filename()}, {self.get_address()}"
 
     def __dask_tokenize__(self):
@@ -350,9 +348,6 @@ class FileArray(Array):
     def get_filename(self, normalise=False, default=AttributeError()):
         """The name of the file containing the array.
 
-        If there are multiple files then an `AttributeError` is
-        raised by default.
-
         .. versionadded:: (cfdm) 1.10.0.2
 
         :Parameters:
@@ -363,7 +358,7 @@ class FileArray(Array):
 
             default: optional
                 Return the value of the *default* parameter if there
-                is no file or there is more than one file.
+                is no file name.
 
                 {{default Exception}}
 

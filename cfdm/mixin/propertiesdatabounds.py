@@ -1001,7 +1001,23 @@ class PropertiesDataBounds(PropertiesData):
         return out
 
     def file_directories(self):
-        """TODOCFA."""
+        """The directories of files containing parts of the data.
+
+        Returns the locations of any files referenced by the data.
+
+        .. seealso:: `get_filenames`, `replace_directory`
+
+        :Returns:
+
+            `set`
+                The unique set of file directories as absolute paths.
+
+        **Examples**
+
+        >>> d.file_directories()
+        {'https:///data/1', 'file:///data2'}
+
+        """
         out = super().file_directories()
 
         bounds = self.get_bounds(None)

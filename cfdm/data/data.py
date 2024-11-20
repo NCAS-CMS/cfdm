@@ -4373,7 +4373,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `replace_directory`
+        .. seealso:: `get_filenames`, `replace_directory`
 
         :Returns:
 

@@ -191,7 +191,7 @@ class FragmentFileArray(
         )
 
     def get_filename(self, normalise=False, default=AttributeError()):
-        """TODOCFA.
+        """The name of the file containing the fragment.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -199,11 +199,16 @@ class FragmentFileArray(
 
             {{normalise: `bool`, optional}}
 
+            default: optional
+                Return the value of the *default* parameter if there
+                is no file name.
+
+                {{default Exception}}
+
         :Returns:
 
-            `set`
-                TODOCFA The file names. If no files are required to compute
-                the data then an empty `set` is returned.
+            `str`
+                The file name.
 
         """
         filename = super().get_filename(normalise=False, default=None)

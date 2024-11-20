@@ -2,7 +2,7 @@ from .fragmentarraymixin import FragmentArrayMixin
 
 
 class FragmentFileArrayMixin(FragmentArrayMixin):
-    """Mixin class TODOCFA for a fragment of aggregated data.
+    """Mixin class for a fragment of aggregated data in a file.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
