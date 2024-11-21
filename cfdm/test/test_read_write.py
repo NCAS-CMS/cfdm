@@ -443,21 +443,26 @@ class read_writeTest(unittest.TestCase):
                 f[0].nc_global_attributes(), g_new.nc_global_attributes()
             )
 
-    def test_read_write_netCDF4_compress_shuffle(self):
+    def test_aaa_read_write_compress_shuffle(self):
         """Test the `compress` and `shuffle` parameters to `write`."""
-        f = cfdm.read(self.filename)[0]
-        for fmt in self.netcdf4_fmts:
-            for shuffle in (True,):
-                for compress in (4,):  # range(10):
+        f = cfdm.example_field(0)
+        f.data.nc_set_hdf5_chunksizes("contiguous")
+        y = f.domain_axis("latitude")
+        y.nc_set_unlimited(True)
+
+        for fmt in ("NETCDF3_CLASSIC", "NETCDF4"):
+            for shuffle in (
+                False,
+                True,
+            ):
+                for compress in (0, 1):
                     cfdm.write(
                         f, tmpfile, fmt=fmt, compress=compress, shuffle=shuffle
                     )
                     g = cfdm.read(tmpfile)[0]
-                    self.assertTrue(
-                        f.equals(g, verbose=3),
-                        "Bad read/write with lossless compression: "
-                        f"{fmt}, {compress}, {shuffle}",
-                    )
+                    self.assertTrue(f.equals(g))
+
+            y.nc_set_unlimited(False)
 
     def test_read_write_missing_data(self):
         """Test reading and writing of netCDF with missing data."""

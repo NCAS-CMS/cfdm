@@ -594,14 +594,14 @@ class NetCDFWrite(IOWrite):
                 except RuntimeError as error:
                     message = (
                         "Can't create unlimited dimension "
-                        f"in {g['netcdf'].file_format} file ({error})."
+                        f"in {g['netcdf'].data_model} file ({error})."
                     )
 
                     error = str(error)
                     if error == "NetCDF: NC_UNLIMITED size already in use":
                         raise RuntimeError(
                             message
-                            + f" In a {g['netcdf'].file_format} file only one "
+                            + f" In a {g['netcdf'].data_model} file only one "
                             "unlimited dimension is allowed. Consider using "
                             "a netCDF4 format."
                         )
@@ -615,7 +615,7 @@ class NetCDFWrite(IOWrite):
                 except RuntimeError as error:
                     raise RuntimeError(
                         f"Can't create size {size} dimension {ncdim!r} in "
-                        f"{g['netcdf'].file_format} file ({error})"
+                        f"{g['netcdf'].data_model} file ({error})"
                     )
 
         g["dimensions"].add(ncdim)
@@ -2481,9 +2481,7 @@ class NetCDFWrite(IOWrite):
 
         """
         g = self.write_vars
-
         ncvar = kwargs["varname"]
-
         g["nc"][ncvar] = g["netcdf"].createVariable(**kwargs)
 
     def _write_grid_mapping(self, f, ref, multiple_grid_mappings):
@@ -2772,17 +2770,6 @@ class NetCDFWrite(IOWrite):
             "fill_value": fill_value,
         }
 
-        # Add compression parameters (but not for vlen strings).
-        #
-        # From the NUG:
-        #
-        #   Compression is permitted but may not be effective for VLEN
-        #   data, because the compression is applied to structures
-        #   containing lengths and pointers to the data, rather than
-        #   the actual data.
-        if kwargs["datatype"] != str:
-            kwargs.update(g["netcdf_compression"])
-
         # Override dimensions and HDF5 chunking strategy keyword
         # arguments when the data is being written as a scalar CF
         # aggregation variable. This is necessary because the
@@ -2794,9 +2781,20 @@ class NetCDFWrite(IOWrite):
             kwargs["contiguous"] = True
             kwargs["chunksizes"] = None
 
+        # Add compression parameters (but not for scalars or vlen
+        # strings).
+        #
+        # From the NUG:
+        #
+        #   Compression is permitted but may not be effective for VLEN
+        #   data, because the compression is applied to structures
+        #   containing lengths and pointers to the data, rather than
+        #   the actual data.
+        if kwargs["dimensions"] and kwargs["datatype"] != str:
+            kwargs.update(g["netcdf_compression"])
+
         # Note: this is a trivial assignment in standalone cfdm, but
-        # required for non-trivial customisation applied by subclasses
-        # e.g. in cf-python
+        # allows for non-trivial customisation applied by subclasses.
         kwargs = self._customise_createVariable(
             cfvar, construct_type, domain_axes, kwargs
         )
@@ -2805,12 +2803,34 @@ class NetCDFWrite(IOWrite):
             f"        to netCDF variable: {ncvar}({', '.join(ncdimensions)})"
         )  # pragma: no cover
 
+        # Adjust createVariable arguments for contiguous variables
+        if kwargs["contiguous"]:
+            if g["netcdf"].data_model.startswith("NETCDF4"):
+                # NETCDF4 contiguous variables can't span unlimited
+                # dimensions
+                unlimited_dimensions = g["unlimited_dimensions"].intersection(
+                    kwargs["dimensions"]
+                )
+                if unlimited_dimensions:
+                    data_model = g["netcdf"].data_model
+                    raise ValueError(
+                        f"Can't create variable in {data_model} file from "
+                        f"{cfvar!r}: In {data_model} it is not allowed to "
+                        "write contiguous (as opposed to chunked) data that "
+                        "spans one or more unlimited dimensions: "
+                        f"{unlimited_dimensions}"
+                    )
+
+                # NETCDF4 contiguous variables can't be compressed
+                kwargs["compression"] = None
+                kwargs["complevel"] = 0
+
         try:
             self._createVariable(**kwargs)
         except RuntimeError as error:
             error = str(error)
             message = (
-                f"Can't create variable in {g['netcdf'].file_format} file "
+                f"Can't create variable in {g['netcdf'].data_model} file "
                 f"from {cfvar!r}: {error}. "
                 f"netCDF4.createVariable arguments: {kwargs}"
             )
@@ -2819,13 +2839,13 @@ class NetCDFWrite(IOWrite):
             ):
                 raise ValueError(
                     f"Can't write {cfvar.data.dtype.name} data from {cfvar!r} "
-                    f"to a {g['netcdf'].file_format} file. "
+                    f"to a {g['netcdf'].data_model} file. "
                     "Consider using a netCDF4 format, or use the 'datatype' "
                     "parameter, or change the datatype before writing."
                 )
             elif error == "NetCDF: NC_UNLIMITED in the wrong index":
                 raise RuntimeError(
-                    f"{message}. In a {g['netcdf'].file_format} file the "
+                    f"{message}. In a {g['netcdf'].data_model} file the "
                     "unlimited dimension must be the first (leftmost) "
                     "dimension of the variable. "
                     "Consider using a netCDF4 format."
@@ -4537,7 +4557,7 @@ class NetCDFWrite(IOWrite):
         datatype=None,
         least_significant_digit=None,
         endian="native",
-        compress=0,
+        compress=4,
         fletcher32=False,
         shuffle=True,
         scalar=True,
@@ -4955,6 +4975,13 @@ class NetCDFWrite(IOWrite):
                     f"Valid keys are {keys}"
                 )
 
+            valid_uri = ("default", "absolute", "relative")
+            if cfa.get("uri", "default") not in valid_uri:
+                raise ValueError(
+                    "Invalid value for the 'uri' keyword of the 'cfa' "
+                    f"parameter: {cfa!r}. Expected one of {valid_uri}"
+                )
+
             cfa = cfa.copy()
         else:
             raise ValueError(
@@ -5157,8 +5184,6 @@ class NetCDFWrite(IOWrite):
         else:
             compression = None
 
-        #        zlib = bool(compress)
-        #
         netcdf3_fmts = (
             "NETCDF3_CLASSIC",
             "NETCDF3_64BIT",

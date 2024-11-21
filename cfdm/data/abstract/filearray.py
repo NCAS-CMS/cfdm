@@ -647,7 +647,7 @@ class FileArray(Array):
                 if filename.startswith(old):
                     if not new:
                         new = ""
-                        if old:
+                        if old and not old.endswith(sep):
                             old += sep
 
                     filename = filename.replace(old, new)

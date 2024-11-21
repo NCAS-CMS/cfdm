@@ -351,18 +351,14 @@ class write(metaclass=DocstringRewriteMeta):
               ``endian='big'``
 
         compress: `int`, optional
-            Regulate the speed and efficiency of compression. Must be
-            an integer between ``0`` and ``9``. ``0`` means no
-            compression; ``1`` is the fastest, but has the lowest
-            compression ratio; ``9`` is the slowest but best
-            compression ratio. The default value is ``0``. An error is
-            raised if compression is requested for a netCDF3 output
-            file format. See the `netCDF4 package
-            <http://unidata.github.io/netcdf4-python>`_ for more
-            details.
+            Regulate the speed and efficiency of zlib
+            compression. Must be an integer between ``0`` and
+            ``9``. ``0`` means no compression; ``1`` is the fastest,
+            but has the lowest compression ratio; ``9`` is the slowest
+            but best compression ratio. The default value is ``4``.
 
             *Parameter example:*
-              ``compress=4``
+              ``compress=0``
 
         least_significant_digit: `int`, optional
             Truncate the input field construct data arrays, but not
@@ -607,23 +603,14 @@ class write(metaclass=DocstringRewriteMeta):
                                         previously read from a
                                         CF-netCDF aggregation
                                         variable.
-
             ``'field'``                 Field constructs
-
             ``'field_ancillary'``       Field ancillary constructs
-
             ``'domain_ancillary'``      Domain ancillary constructs
-
             ``'dimension_coordinate'``  Dimension coordinate constructs
-
             ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
-
             ``'cell_measure'``          Cell measure constructs
-
             ``'domain_topology'``       Domain topology constructs
-
             ``'cell_connectivity'``     Cell connectivity constructs
-
             ``'all'``                   All constructs
             ==========================  ===============================
 
@@ -687,14 +674,7 @@ class write(metaclass=DocstringRewriteMeta):
               absolute URIs, or else set to ``'relative'`` for them to
               be written as relative-path URI references, taken as
               being relative to the location of *filename* (i.e.  the
-              aggregation file being created).
-
-              If a fragment file name contains any text substitutions
-              (e.g. ``'file://${base}/file.nc'``,
-              ``'${base}file.nc'``, ``'./${base}/file.nc'``, etc.)
-              then the ``'uri'`` key is ignored for that fragment, and
-              its file name is written to the aggregation file
-              unmodified.
+              aggregation file being created). TODOCFA (default)
 
             * ``'strict'``: `bool`
 
@@ -743,7 +723,7 @@ class write(metaclass=DocstringRewriteMeta):
         double=False,
         least_significant_digit=None,
         endian="native",
-        compress=0,
+        compress=4,
         fletcher32=False,
         shuffle=True,
         reference_datetime=None,
