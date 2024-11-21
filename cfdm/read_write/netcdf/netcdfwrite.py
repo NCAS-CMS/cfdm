@@ -2641,6 +2641,14 @@ class NetCDFWrite(IOWrite):
 
                 .. versionadded:: (cfdm) 1.10.1.0
 
+            chunking: sequence of `int`, optional
+                Set `netCDF4.createVariable` 'contiguous' and
+                `chunksizes` parameters (in that order). If not set
+                (the default), then these parameters are inferred from
+                the data.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
         :Returns:
 
             `None`
@@ -2715,9 +2723,13 @@ class NetCDFWrite(IOWrite):
             lsd = None
 
         # Set the HDF5 chunk strategy
-        contiguous, chunksizes = self._chunking_parameters(
-            data, ncdimensions, override=chunking
-        )
+        if chunking:
+            contiguous, chunksizes = chunking
+        else:
+            contiguous, chunksizes = self._chunking_parameters(
+                data, ncdimensions
+            )
+
         logger.debug(
             f"      HDF5 chunksizes: {chunksizes}\n"
             f"      HDF5 contiguous: {contiguous}"
@@ -4896,7 +4908,7 @@ class NetCDFWrite(IOWrite):
             # CF Aggregation variables
             # --------------------------------------------------------
             # Configuration options for writing aggregation variables
-            "cfa": cfa,
+            "cfa": None,
             # The directory of the aggregation file
             "aggregation_file_directory": None,
             # Cache the CF aggregation variable write status for each
@@ -5420,7 +5432,7 @@ class NetCDFWrite(IOWrite):
         """
         pass
 
-    def _chunking_parameters(self, data, ncdimensions, override=None):
+    def _chunking_parameters(self, data, ncdimensions):
         """Set chunking parameters for `netCDF4.createVariable`.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -5433,10 +5445,6 @@ class NetCDFWrite(IOWrite):
             ncdimensions: `tuple`
                 The data netCDF dimensions.
 
-            override: `tuple`, optional
-                Return this 2-`tuple` instead of deducing the
-                chunking.
-
         :Returns:
 
             2-tuple
@@ -5444,9 +5452,6 @@ class NetCDFWrite(IOWrite):
                 `netCDF4.createVariable`.
 
         """
-        if override:
-            return override
-
         if data is None:
             return False, None
 
@@ -5653,18 +5658,18 @@ class NetCDFWrite(IOWrite):
                             os.remove(g["filename"])
 
                         raise ValueError(
-                            f"Can't write {cfvar!r} as an aggregation "
-                            "variable."
+                            f"Can't write {cfvar!r} as a CF-netCDF "
+                            "aggregation variable."
                             "\n\n"
-                            "Possible reasons for this include:"
+                            "Possible reasons:\n"
                             "* A fragment file spans more than one Dask "
-                            "chunk."
+                            "chunk.\n"
                             "* Data values in memory have been changed "
                             "relative to those in a fragment file."
                             "\n\n"
-                            "Possible remedies include:"
-                            "* Setting 'cfa_write=True' in a previous "
-                            "call to the 'read' function."
+                            "Possible remedies:\n"
+                            "* Setting 'cfa_write' keyword in a previous "
+                            "call to the 'read' function.\n"
                             "* Setting the 'strict' option to False in the "
                             "'cfa' keyword of the 'write' function."
                         )
@@ -5699,8 +5704,6 @@ class NetCDFWrite(IOWrite):
         """
         g = self.write_vars
 
-        ndim = data.ndim
-
         cfa = self._cfa_aggregation_instructions(data, cfvar)
 
         # ------------------------------------------------------------
@@ -5710,16 +5713,16 @@ class NetCDFWrite(IOWrite):
         aggregated_data_attr = []
 
         # ------------------------------------------------------------
-        # Shape
+        # Map variable
         # ------------------------------------------------------------
         feature = "map"
-        shape = cfa[feature]
+        f_map = cfa[feature]
 
-        # Get the shape netCDF dimensions from the 'shape' fragment
+        # Get the shape netCDF dimensions from the 'map' fragment
         # array variable.
-        shape_ncdimensions = []
+        map_ncdimensions = []
         dim = "y"
-        for size in shape.shape:
+        for size in f_map.shape:
             l_ncdim = f"f_map_{dim}_{size}"
             if l_ncdim not in g["dimensions"]:
                 # Create a new location dimension
@@ -5731,34 +5734,30 @@ class NetCDFWrite(IOWrite):
                     l_ncdim, None, unlimited=unlimited, size=size
                 )
 
-            shape_ncdimensions.append(l_ncdim)
+            map_ncdimensions.append(l_ncdim)
             dim = "x"
 
-        shape_ncdimensions = tuple(shape_ncdimensions)
+        map_ncdimensions = tuple(map_ncdimensions)
 
         # Write the fragment array variable to the netCDF dataset
         feature_ncvar = self._cfa_write_fragment_array_variable(
-            shape,
+            f_map,
             aggregated_data.get(feature, f"cfa_{feature}"),
-            shape_ncdimensions,
-            #            chunking=(False, (shape.shape[0], shape.shape[1] * 780)),
+            map_ncdimensions,
         )
         aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 
         if "location" in cfa:
             # --------------------------------------------------------
-            # Location
+            # Location variable
             # --------------------------------------------------------
             feature = "location"
-            location = cfa[feature]
+            f_location = cfa[feature]
 
             # Get the fragment array netCDF dimensions from the
             # 'location' fragment array variable.
             fragment_array_ncdimensions = []
-            for ncdim, size in zip(
-                ncdimensions + ("extra",) * (location.ndim - ndim),
-                location.shape,
-            ):
+            for ncdim, size in zip(ncdimensions, f_location.shape):
                 f_ncdim = f"f_{ncdim}"
                 fragment_array_ncdimensions.append(f_ncdim)
                 if f_ncdim not in g["dimensions"]:
@@ -5772,18 +5771,14 @@ class NetCDFWrite(IOWrite):
 
             # Write the fragment array variable to the netCDF dataset
             feature_ncvar = self._cfa_write_fragment_array_variable(
-                location,
+                f_location,
                 aggregated_data.get(feature, f"cfa_{feature}"),
                 fragment_array_ncdimensions,
-                #                chunking=(
-                #                    False,
-                #                    (location.shape[0] * 780,) + location.shape[1:],
-                #                ),
             )
             aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 
             # --------------------------------------------------------
-            # Identifier
+            # Identifier variable
             # --------------------------------------------------------
             feature = "identifier"
 
@@ -5795,26 +5790,26 @@ class NetCDFWrite(IOWrite):
             else:
                 dimensions = fragment_array_ncdimensions
 
-            identifier = cfa[feature]
+            f_identifier = cfa[feature]
 
             # Write the fragment array variable to the netCDF dataset
             feature_ncvar = self._cfa_write_fragment_array_variable(
-                identifier,
+                f_identifier,
                 aggregated_data.get(feature, f"cfa_{feature}"),
                 dimensions,
             )
             aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
         else:
             # --------------------------------------------------------
-            # Value
+            # Value variable
             # --------------------------------------------------------
             feature = "value"
-            value = cfa[feature]
+            f_value = cfa[feature]
 
             # Get the fragment array netCDF dimensions from the
             # 'value' fragment array variable.
             fragment_array_ncdimensions = []
-            for ncdim, size in zip(ncdimensions, value.shape):
+            for ncdim, size in zip(ncdimensions, f_value.shape):
                 f_ncdim = f"f_{ncdim}"
                 fragment_array_ncdimensions.append(f_ncdim)
                 if f_ncdim not in g["dimensions"]:
@@ -5825,7 +5820,7 @@ class NetCDFWrite(IOWrite):
 
             # Write the fragment array variable to the netCDF dataset
             feature_ncvar = self._cfa_write_fragment_array_variable(
-                value,
+                f_value,
                 aggregated_data.get(feature, f"cfa_{feature}"),
                 fragment_array_ncdimensions,
             )
@@ -5886,6 +5881,12 @@ class NetCDFWrite(IOWrite):
 
             attributes: `dict`, optional
                 Any attributes to attach to the variable.
+
+            chunking: sequence of `int`, optional
+                Set `netCDF4.createVariable` 'contiguous' and
+                `chunksizes` parameters (in that order) for the
+                fragment array variable. If not set (the default),
+                then these parameters are inferred from the data.
 
         :Returns:
 
@@ -5986,9 +5987,6 @@ class NetCDFWrite(IOWrite):
                     (
                         a.get_filename(normalise=normalise),
                         a.get_address(),
-                        #                        a.get_filenames(normalise=normalise),
-                        #                        a.get_addresses(),
-                        #                        a.get_n_file_versions(),
                     )
                 )
             except AttributeError:
@@ -6091,13 +6089,13 @@ class NetCDFWrite(IOWrite):
                 if len(file_details) != 1:
                     if file_details:
                         raise ValueError(
-                            f"Can't write {cfvar!r} as a CF.netCDF "
+                            f"Can't write {cfvar!r} as a CF-netCDF "
                             "aggregation variable because a fragment file "
                             "spans more than one Dask chunk."
                             "\n\n"
-                            "Possible remedies include:"
-                            "* Setting 'cfa_write=True' in a previous "
-                            "call to the 'read' function."
+                            "Possible remedies include:\n"
+                            "* Setting the 'cfa_write' keyword in a "
+                            "previous call to the 'read' function."
                         )
 
                     raise ValueError(
@@ -6106,14 +6104,8 @@ class NetCDFWrite(IOWrite):
                         "fragment file."
                     )
 
-                #                filenames, addresses, n_file_versions = file_details.pop()
                 filename, address = file_details.pop()
 
-                #                if n_file_versions > n_trailing:
-                #                    n_trailing = n_file_versions
-
-                #                filenames2 = []
-                #                for filename in filenames:
                 uri = urisplit(filename)
                 if uri_relative and uri.isrelpath():
                     filename = abspath(filename)

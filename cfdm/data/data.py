@@ -1021,14 +1021,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         try:
             first = self.first_element()
         except Exception:
-            raise
-            out = ""
-            if units and not isreftime:
-                out += f" {units}"
-            if calendar:
-                out += f" {calendar}"
-
-            return out
+            first = "??"
 
         size = self.size
         shape = self.shape
@@ -1049,12 +1042,16 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                     first = type(self)(
                         np.ma.array(first, mask=mask[0]), units, calendar
                     ).datetime_array
-                except (ValueError, OverflowError):
+                except Exception:
                     first = "??"
 
             out = f"{open_brackets}{first}{close_brackets}"
         else:
-            last = self.last_element()
+            try:
+                last = self.last_element()
+            except Exception:
+                last = "??"
+
             if isreftime:
                 if last is np.ma.masked:
                     last = 0
@@ -1067,13 +1064,17 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                         units,
                         calendar,
                     ).datetime_array
-                except (ValueError, OverflowError):
+                except Exception:
                     first, last = ("??", "??")
 
             if size > 3:
                 out = f"{open_brackets}{first}, ..., {last}{close_brackets}"
             elif shape[-1:] == (3,):
-                middle = self.second_element()
+                try:
+                    middle = self.second_element()
+                except Exception:
+                    last = "??"
+
                 if isreftime:
                     # Convert reference time to date-time
                     if middle is np.ma.masked:

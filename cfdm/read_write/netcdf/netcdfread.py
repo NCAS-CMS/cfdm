@@ -1155,7 +1155,7 @@ class NetCDFRead(IORead):
             # Aggregation configuration overrides
             "cfa": None,
             # Dask chunking of aggregated data for selected constructs
-            "cfa_write": cfa_write,
+            "cfa_write": None,
             # --------------------------------------------------------
             # Whether or not to store HDF chunks
             # --------------------------------------------------------
@@ -1163,7 +1163,7 @@ class NetCDFRead(IORead):
             # --------------------------------------------------------
             # Constructs to read into memory
             # --------------------------------------------------------
-            "to_memory": to_memory,
+            "to_memory": None,
         }
 
         g = self.read_vars
