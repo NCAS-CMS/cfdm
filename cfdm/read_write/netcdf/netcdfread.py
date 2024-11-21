@@ -10831,11 +10831,11 @@ class NetCDFRead(IORead):
             #       original Dask:   (5,   15, 150,  5, 160)   9000000
             #       storage-aligned: (50, 100, 150, 20,   5)  75000000
             # --------------------------------------------------------
-
             # 1) Initialise the Dask chunk shape
             dask_chunks = normalize_chunks(
                 "auto", shape=array.shape, dtype=array.dtype
             )
+
             dask_chunks = [sizes[0] for sizes in dask_chunks]
             n_dask_elements = prod(dask_chunks)
 
