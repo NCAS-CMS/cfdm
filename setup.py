@@ -7,13 +7,13 @@ from setuptools import setup, find_packages
 # from setuptools import setup
 
 
-def find_package_data_files(directory):
-    """TODO."""
-    for root, dirs, files in os.walk(directory):
-        for basename in files:
-            if fnmatch.fnmatch(basename, "*"):
-                filename = os.path.join(root, basename)
-                yield filename.replace("cfdm/", "", 1)
+#def find_package_data_files(directory):
+#    """TODO."""
+#    for root, dirs, files in os.walk(directory):
+#        for basename in files:
+#            if fnmatch.fnmatch(basename, "*"):
+#                filename = os.path.join(root, basename)
+#                yield filename.replace("cfdm/", "", 1)
 
 
 def _read(fname):
