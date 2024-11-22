@@ -1,19 +1,7 @@
-import fnmatch
 import os
 import re
 
-from setuptools import setup, find_packages
-
-# from setuptools import setup
-
-
-#def find_package_data_files(directory):
-#    """TODO."""
-#    for root, dirs, files in os.walk(directory):
-#        for basename in files:
-#            if fnmatch.fnmatch(basename, "*"):
-#                filename = os.path.join(root, basename)
-#                yield filename.replace("cfdm/", "", 1)
+from setuptools import find_packages, setup
 
 
 def _read(fname):
@@ -179,31 +167,6 @@ setup(
         "Programming Language :: Python :: 3.11",
     ],
     packages=find_packages(),
-#        "cfdm",
-#        "cfdm.abstract",
-#        "cfdm.core",
-#        "cfdm.core.abstract",
-#        "cfdm.core.data",
-#        "cfdm.core.data.abstract",
-#        "cfdm.core.docstring",
-#        "cfdm.core.meta",
-#        "cfdm.core.mixin",
-#        "cfdm.docstring",
-#        "cfdm.data",
-#        "cfdm.data.abstract",
-#        "cfdm.data.fragment",
-#        "cfdm.data.fragment.mixin",
-#        "cfdm.data.mixin",
-#        "cfdm.data.subarray",
-#        "cfdm.data.subarray.abstract",
-#        "cfdm.data.subarray.mixin",
-#        "cfdm.mixin",
-#        "cfdm.read_write",
-#        "cfdm.read_write.abstract",
-#        "cfdm.read_write.netcdf",
-#        "cfdm.read_write.netcdf.flatten",
-#        "cfdm.test",
-#    ],
     scripts=["scripts/cfdump"],
     python_requires=">=3.8",
     install_requires=install_requires,
@@ -211,5 +174,3 @@ setup(
     extras_require=extras_require,
     include_package_data=True,
 )
-
-print(find_packages())
