@@ -443,7 +443,7 @@ class read_writeTest(unittest.TestCase):
                 f[0].nc_global_attributes(), g_new.nc_global_attributes()
             )
 
-    def test_aaa_read_write_compress_shuffle(self):
+    def test_read_write_compress_shuffle(self):
         """Test the `compress` and `shuffle` parameters to `write`."""
         f = cfdm.example_field(0)
         f.data.nc_set_hdf5_chunksizes("contiguous")
