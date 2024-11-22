@@ -191,6 +191,8 @@ setup(
         "cfdm.docstring",
         "cfdm.data",
         "cfdm.data.abstract",
+        "cfdm.data.fragment",
+        "cfdm.data.fragment.mixin",
         "cfdm.data.mixin",
         "cfdm.data.subarray",
         "cfdm.data.subarray.abstract",
