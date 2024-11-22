@@ -2,7 +2,7 @@ import fnmatch
 import os
 import re
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 # from setuptools import setup
 
@@ -178,32 +178,32 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
     ],
-    packages=[
-        "cfdm",
-        "cfdm.abstract",
-        "cfdm.core",
-        "cfdm.core.abstract",
-        "cfdm.core.data",
-        "cfdm.core.data.abstract",
-        "cfdm.core.docstring",
-        "cfdm.core.meta",
-        "cfdm.core.mixin",
-        "cfdm.docstring",
-        "cfdm.data",
-        "cfdm.data.abstract",
-        "cfdm.data.fragment",
-        "cfdm.data.fragment.mixin",
-        "cfdm.data.mixin",
-        "cfdm.data.subarray",
-        "cfdm.data.subarray.abstract",
-        "cfdm.data.subarray.mixin",
-        "cfdm.mixin",
-        "cfdm.read_write",
-        "cfdm.read_write.abstract",
-        "cfdm.read_write.netcdf",
-        "cfdm.read_write.netcdf.flatten",
-        "cfdm.test",
-    ],
+    packages=find_packages(),
+#        "cfdm",
+#        "cfdm.abstract",
+#        "cfdm.core",
+#        "cfdm.core.abstract",
+#        "cfdm.core.data",
+#        "cfdm.core.data.abstract",
+#        "cfdm.core.docstring",
+#        "cfdm.core.meta",
+#        "cfdm.core.mixin",
+#        "cfdm.docstring",
+#        "cfdm.data",
+#        "cfdm.data.abstract",
+#        "cfdm.data.fragment",
+#        "cfdm.data.fragment.mixin",
+#        "cfdm.data.mixin",
+#        "cfdm.data.subarray",
+#        "cfdm.data.subarray.abstract",
+#        "cfdm.data.subarray.mixin",
+#        "cfdm.mixin",
+#        "cfdm.read_write",
+#        "cfdm.read_write.abstract",
+#        "cfdm.read_write.netcdf",
+#        "cfdm.read_write.netcdf.flatten",
+#        "cfdm.test",
+#    ],
     scripts=["scripts/cfdump"],
     python_requires=">=3.8",
     install_requires=install_requires,
@@ -211,3 +211,5 @@ setup(
     extras_require=extras_require,
     include_package_data=True,
 )
+
+print(find_packages())
