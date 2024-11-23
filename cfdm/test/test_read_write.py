@@ -1187,6 +1187,26 @@ class read_writeTest(unittest.TestCase):
 
                 self.assertTrue(in_memory)
 
+        for to_memory in ("metadata", "dimension_coordinate"):
+            f = cfdm.read(tmpfile, to_memory=to_memory)[0]
+            for i, d in enumerate(
+                (
+                    f.coordinate("longitude").data.todict(),
+                    f.data.todict(),
+                )
+            ):
+                in_memory = False
+                for v in d.values():
+                    if isinstance(v, np.ndarray):
+                        in_memory = True
+
+                if not i:
+                    # Metadata
+                    self.assertTrue(in_memory)
+                else:
+                    # Field
+                    self.assertFalse(in_memory)
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

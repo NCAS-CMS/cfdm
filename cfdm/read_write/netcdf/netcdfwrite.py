@@ -4569,7 +4569,7 @@ class NetCDFWrite(IOWrite):
         coordinates=False,
         omit_data=None,
         hdf5_chunks="4MiB",
-        cfa=None,
+        cfa="auto",
         reference_datetime=None,
     ):
         """Write field and domain constructs to a netCDF file.

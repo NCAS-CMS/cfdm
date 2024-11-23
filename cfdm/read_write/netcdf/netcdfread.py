@@ -920,8 +920,8 @@ class NetCDFRead(IORead):
         dask_chunks="storage-aligned",
         store_hdf5_chunks=True,
         cfa=None,
-        cfa_write=(),
-        to_memory=(),
+        cfa_write=None,
+        to_memory=None,
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
 
@@ -1272,6 +1272,19 @@ class NetCDFRead(IORead):
         if to_memory:
             if isinstance(to_memory, str):
                 to_memory = (to_memory,)
+
+            if "metadata" in to_memory:
+                to_memory = tuple(to_memory) + (
+                    "field_ancillary",
+                    "domain_ancillary",
+                    "dimension_coordinate",
+                    "auxiliary_coordinate",
+                    "cell_measure",
+                    "domain_topology",
+                    "cell_connectivity",
+                )
+                to_memory = set(to_memory)
+                to_memory.remove("metadata")
         else:
             to_memory = ()
 

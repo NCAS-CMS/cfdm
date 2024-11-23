@@ -515,87 +515,101 @@ class write(metaclass=DocstringRewriteMeta):
             The HDF5 chunking strategy for data arrays being written
             to the file.
 
-            If any data being written already stores its own chunking
-            strategy (i.e. its `nc_hdf5_chunksizes` method returns
-            something other than `None`) then, for that data alone, it
-            is used in preference to the strategy defined by the
-            *hdf5_chunks* parameter.
+            By default, *hdf5_chunks* is ``'4 MiB'``, i.e. 4194304
+            bytes.
 
-            .. note:: By default, a data array returned by
-                      `{{package}}.read` stores its HDF5 chunking
-                      strategy from the file being read. When this
-                      happens, that same HDF5 chunking strategy will
-                      be used when the data is written to an output
-                      netCDF4 file (unless the strategy was modified
-                      or removed prior to writing). To prevent the
-                      HDF5 chunking strategy from the original file
-                      being stored, see the *store_hdf5_chunks*
-                      parameter to `{{package}}.read`.
+            If any `Data` being written already stores its own
+            chunking strategy (i.e. its `Data.nc_hdf5_chunksizes`
+            method returns something other than `None`) then, for that
+            data array alone, it is used in preference to the strategy
+            defined by the *hdf5_chunks* parameter.
 
             Ignored for netCDF3 output formats, for which all data is
             always written out contiguously.
 
+            .. note:: By default, a data array returned by
+                      `{{package}}.read` stores its HDF5 chunking
+                      strategy from the file being read. When this
+                      happens that same HDF5 chunking strategy will be
+                      used when the data is written to a new netCDF4
+                      file, unless the strategy was modified or
+                      removed prior to writing. To prevent the HDF5
+                      chunking strategy from the original file being
+                      stored, see the *store_hdf5_chunks* parameter to
+                      `{{package}}.read`.
+
             The *hdf5_chunks* parameter may be one of:
 
-            * ``'contiguous'``: The data will written to the file
-              contiguously, i.e. no chunking.
+            * ``'contiguous'``
 
-            * `int` or `float` or `str`: The size in bytes of the HDF5
-              chunks. A floating point value is rounded down to the
-              nearest integer, and a string represents a quantity of
-              byte units. "Square-like" chunk shapes are preferred,
+              The data will written to the file contiguously, i.e. no
+              chunking.
+
+            * `int` or `float` or `str`
+
+              The size in bytes of the HDF5 chunks. A floating point
+              value is rounded down to the nearest integer, and a
+              string represents a quantity of byte
+              units. "Square-like" chunk shapes are preferred,
               maximising the amount of chunks that are completely
               filled with data values. For instance a chunksize of
               1024 bytes may be specified with any of ``1024``,
               ``1024.9``, ``'1024'``, ``'1024.9'``, ``'1024 B'``, ``'1
-              KiB'``, ``'0.0009765625 MiB'``, etc. Recognised byte
-              units are (case insensitive): ``B``, ``KiB``, ``MiB``,
+              KiB'``, ``'0.001024 MB'``, etc. Recognised byte units
+              are (case insensitive): ``B``, ``KiB``, ``MiB``,
               ``GiB``, ``TiB``, ``PiB``, ``KB``, ``MB``, ``GB``,
               ``TB``, and ``PB``. Spaces in strings are optional.
 
-            By default, *hdf5_chunks* is ``'4 MiB'`` (i.e. 4194304
-            bytes).
-
-            When the HDF5 chunk size is defined by a number of bytes
-            (taken either from the *hdf5_chunks* parameter, or as stored
-            by the data itself), "square-like" HDF5 chunk shapes are
-            preferred that maximise the amount of chunks that are
-            completely filled with data values. For example, with
-            *hdf_chunks* of ``'4 MiB'``, a data array of 64-bit floats
-            with shape (400, 300, 60) will be written with 20 HDF5
-            chunks, each of which contains 3.9592 MiB: the first axis
-            is split across 5 chunks containing 93, 93, 93, 93, and 28
-            elements; the second axis across 4 chunks containing 93,
-            93, 93, and 21 elements; and the third axis across 1 chunk
-            containing 60 elements. 12 of these chunks are completely
-            filled with 93*93*60 data values (93*93*60*8 B = 3.9592
-            MiB), whilst the remaining 8 chunks at the "edges" of the
-            array contain only 93*21*60, 28*93*60, or 28*21*60 data
-            values. The shape of the HDF5 chunks is based only on the
-            shape of the data aray and its data type. The use of
-            native compression (see the *compress* parameter) does not
-            affect the HDF5 chunk size.
+            .. note:: When the HDF5 chunk size is defined by a number
+                      of bytes (taken either from the *hdf5_chunks*
+                      parameter, or as stored by the data itself),
+                      "square-like" HDF5 chunk shapes are preferred
+                      that maximise the amount of chunks that are
+                      completely filled with data values. For example,
+                      with *hdf_chunks* of ``'4 MiB'``, a data array
+                      of 64-bit floats with shape (400, 300, 60) will
+                      be written with 20 HDF5 chunks, each of which
+                      contians (93, 93, 60) elements. The first axis
+                      is split across 5 chunks, the second axis across
+                      4 chunks, and the third axis across 1 chunk
+                      containing 60 elements. 12 of these chunks are
+                      completely filled with 93*93*60 data values
+                      (93*93*60*8 B = 3.9592 MiB), whilst the
+                      remaining 8 chunks at the "edges" of the array
+                      contain only 93*21*60, 28*93*60, or 28*21*60
+                      data values. The shape of the HDF5 chunks is
+                      based on the shape of the data aray and its data
+                      type, and is calculated internally with the
+                      `dask.array.core.bormalize_chunks` function. The
+                      use of native compression (see the *compress*
+                      parameter) does not affect the HDF5 chunk size.
 
             .. versionadded:: (cfdm) NEXTVERSION
 
         cfa: `str` or `dict` or `None`, optional
             Specify which netCDF variables, if any, should be written
-            as CF aggregation variables.
+            as CF-netCDF aggregation variables.
 
-            If *cfa* is `None` then no aggregation variables will be
-            created.
+            By default, *cfa* is the string ``'auto'``, meaning that
+            only constructs whose data is unchanged from having been
+            previously read from a CF-netCDF aggregation variables
+            will be written as aggregation variables. This default, as
+            well as other options, can be configured by setting *cfa*
+            to a dictionary.
 
-            By default, *cfa* is the string ``'auto'`` (see the
-            table), and fragment file names are written as absolute
-            URIs with no text substitutions. Providing *cfa* as a
-            `dict` allows these defaults, as well as other options, to
-            be configured.
+            .. note:: If the intention is to create aggregation
+                      variables from fields read from disk, then the
+                      it is strongly advised to use the *cfa_write*
+                      parameter to `{{package}}.read`, in order to
+                      guarantee that that aggregation encoding is
+                      possible.
 
-            If *cfa* is a string then it defines which types of
-            constructs are to be written as CF aggregation variables:
+            If *cfa* is a (sequence of) `str` or `None` then it
+            defines which types of constructs are to be written as CF
+            aggregation variables:
 
             ==========================  ===============================
-            String-valued *cfa*         Constructs
+            *cfa*                       Constructs
             ==========================  ===============================
             ``'auto'``                  **This is the default**. Any
                                         construct whose data is
@@ -603,6 +617,10 @@ class write(metaclass=DocstringRewriteMeta):
                                         previously read from a
                                         CF-netCDF aggregation
                                         variable.
+
+            `None`                      No aggregation variables will
+                                        be created.
+
             ``'field'``                 Field constructs
             ``'field_ancillary'``       Field ancillary constructs
             ``'domain_ancillary'``      Domain ancillary constructs
@@ -618,29 +636,23 @@ class write(metaclass=DocstringRewriteMeta):
             configure the writing of aggregation variables. It may
             have some or all of the following keys:
 
-            * ``'constructs'``: `None`, `dict` or `(sequence of) `str`
+            * ``'constructs'``: `None`, `dict` or (sequence of) `str`
 
               The types of construct to be written as aggregation
               variables.
 
-              The types may be given as a (sequence of) `str`, which
-              may take any of the string values allowed by the *cfa*
-              parameter, with the same meanings.
+              If the value is a (sequence of) `str` or `None` then the
+              types are the same if the *cfa* parameter itself was set
+              to that value (see the table above). If the
+              ``'constructs'`` key is missing then ``'auto'`` is
+              assumed.
 
-              If the ``'constructs'`` key is missing then ``'auto'``
-              is assumed, meaning that any construct whose data is
-              unchanged from having been previously read from a
-              CF-netCDF aggregation variable will be written as an
-              aggregation variable.
-
-              The same string-valued types may be given as keys to a
-              `dict` whose values specify the number of dimensions
-              that a construct must also have if it is to be written
-              as an aggregation variable. A value of `None` means no
-              restriction on the number of dimensions.
-
-              If the type is `None` (as opposed to a `str` or `dict`)
-              then no aggregation variables will be created.
+              If the value is a `dict` then its keys must be taken
+              from the string-values in the table above, with values
+              that specify the number of dimensions that a construct
+              must also have if it is to be written as an aggregation
+              variable. A value of `None` means no restriction on the
+              number of dimensions.
 
               *Example:*
                 Equivalent ways to only write cell measure constructs
@@ -668,13 +680,18 @@ class write(metaclass=DocstringRewriteMeta):
 
             * ``'uri'``: `str`
 
-              How to write fragment file names that do not contain any
-              text substitutions. Set to ``'absolute'`` (the default
-              if this key is missing) for them to be written as
-              absolute URIs, or else set to ``'relative'`` for them to
-              be written as relative-path URI references, taken as
-              being relative to the location of *filename* (i.e.  the
-              aggregation file being created). TODOCFA (default)
+              Specify the URI format of the fragment file names.
+
+              If ``'default'`` (the default) then the fragment file
+              names will be written with the same URI formats that
+              they had when read from input files. For file names
+              originating from reading normal non-aggregation
+              variables, this will result in absolute URIs. If
+              ``'absolute'`` then all fragment file names will be
+              written as absolute URIs. If ``'relative'`` then all
+              fragment file names will be written as relative-path URI
+              references URIs, relative to the location of the
+              aggregation file.
 
             * ``'strict'``: `bool`
 
@@ -683,6 +700,8 @@ class write(metaclass=DocstringRewriteMeta):
               aggregation variable from any construct identified by
               the ``'constructs'`` option. If False then a normal,
               non-aggregation variable will be written in this case.
+
+            .. versionadded:: (cfdm) NEXTVERSION
 
         _implementation: (subclass of) `CFDMImplementation`, optional
             Define the CF data model implementation that defines field
