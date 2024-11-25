@@ -4824,7 +4824,7 @@ class NetCDFWrite(IOWrite):
         filename = os.path.expanduser(os.path.expandvars(filename))
         filename = abspath(filename)
 
-        # Parse the omit_data parameter
+        # Parse the 'omit_data' parameter
         if omit_data is None:
             omit_data = ()
         elif isinstance(omit_data, str):
@@ -4950,7 +4950,7 @@ class NetCDFWrite(IOWrite):
 
         self.write_vars["mode"] = mode
 
-        # Parse hdf5_chunks
+        # Parse the 'hdf5_chunks' parameter
         if hdf5_chunks != "contiguous":
             try:
                 self.write_vars["hdf5_chunks"] = parse_bytes(hdf5_chunks)
@@ -4961,7 +4961,7 @@ class NetCDFWrite(IOWrite):
                 )
 
         # ------------------------------------------------------------
-        # Parse the cfa keyword
+        # Parse the 'cfa' keyword
         # ------------------------------------------------------------
         if cfa is None:
             cfa = {"constructs": None}
@@ -5652,9 +5652,9 @@ class NetCDFWrite(IOWrite):
         if "auto" in constructs:
             # In 'auto' mode, data will be written as an aggregation
             # variable if it:
-            # 1) has a write_status of True, and
-            # 2) has an aggregated_data definition, and
-            # 3) meets the number-of-dimensions criterion.
+            #   1) has a write_status of True, and
+            #   2) has an aggregated_data definition, and
+            #   3) meets the number-of-dimensions criterion.
             cfa_write_status = data.nc_get_aggregation_write_status() and bool(
                 data.nc_get_aggregated_data()
             )

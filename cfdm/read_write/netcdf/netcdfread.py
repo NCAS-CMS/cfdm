@@ -7850,6 +7850,7 @@ class NetCDFRead(IORead):
             array, ncvar, compressed, construct_type=construct_type
         )
 
+        # Set whether or not to read the data into memory
         to_memory = self.read_vars["to_memory"]
         to_memory = "all" in to_memory or construct_type in to_memory
 

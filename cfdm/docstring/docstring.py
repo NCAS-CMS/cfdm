@@ -596,6 +596,11 @@ _docstring_substitution_definitions = {
             ==========================  ===============================
             *to_memory*                 Construct types
             ==========================  ===============================
+            ``'all'``                   All constructs
+            ``'metadata'``              All metadata constructs (i.e.
+                                        all constructs except Field
+                                        constructs)
+
             ``'field'``                 Field constructs
             ``'field_ancillary'``       Field ancillary constructs
             ``'domain_ancillary'``      Domain ancillary constructs
@@ -604,11 +609,6 @@ _docstring_substitution_definitions = {
             ``'cell_measure'``          Cell measure constructs
             ``'domain_topology'``       Domain topology constructs
             ``'cell_connectivity'``     Cell connectivity constructs
-
-            ``'all'``                   All constructs
-            ``'metadata'``              All metadata constructs
-                                        (i.e. all except Field
-                                        constructs)
             ==========================  ===============================
 
             *Example:*

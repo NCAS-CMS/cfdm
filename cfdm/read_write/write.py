@@ -598,13 +598,13 @@ class write(metaclass=DocstringRewriteMeta):
             to a dictionary.
 
             .. note:: If the intention is to create aggregation
-                      variables from fields read from disk, then the
-                      it is strongly advised to use the *cfa_write*
-                      parameter to `{{package}}.read`, in order to
-                      guarantee that that aggregation encoding is
-                      possible.
+                      variables from fields read from disk, then it is
+                      strongly recommended to use the *cfa_write*
+                      parameter to `{{package}}.read`, in order to set
+                      up the conditions in which a CF-netCDF
+                      aggregation encoding is possible.
 
-            If *cfa* is a (sequence of) `str` or `None` then it
+            If *cfa* is `None` or a (sequence of) `str` then it
             defines which types of constructs are to be written as CF
             aggregation variables:
 
@@ -641,18 +641,18 @@ class write(metaclass=DocstringRewriteMeta):
               The types of construct to be written as aggregation
               variables.
 
-              If the value is a (sequence of) `str` or `None` then the
-              types are the same if the *cfa* parameter itself was set
-              to that value (see the table above). If the
+              If the value is `None` or a (sequence of) `str` then the
+              types are the same as if the *cfa* parameter itself was
+              set to that value (see the table above). If the
               ``'constructs'`` key is missing then ``'auto'`` is
               assumed.
 
-              If the value is a `dict` then its keys must be taken
-              from the string-values in the table above, with values
-              that specify the number of dimensions that a construct
-              must also have if it is to be written as an aggregation
-              variable. A value of `None` means no restriction on the
-              number of dimensions.
+              If the value is a `dict` then each of its keys defines a
+              construct type (see the table above), with a value that
+              specifies the number of dimensions that a construct of
+              that type must also have if it is to be written as an
+              aggregation variable. A value of `None` means no
+              restriction on the number of dimensions.
 
               *Example:*
                 Equivalent ways to only write cell measure constructs
@@ -673,10 +673,16 @@ class write(metaclass=DocstringRewriteMeta):
                 {'auxiliary_coordinate': 2}}``.
 
               *Example:*
-                Write auxiliary coordinate constructs with two
-                dimensions as aggregation variables, and also all
-                field constructs: ``{'constructs':
-                {'auxiliary_coordinate': 2, 'field': None}}``.
+                Write two-dimensionsal auxiliary coordinate constructs
+                as aggregation variables, and also all field
+                constructs: ``{'constructs': {'auxiliary_coordinate':
+                2, 'field': None}}``.
+
+              *Example:*
+                 Write any three-dimensionsal construct whose data is
+                 unchanged from having been previously read from a
+                 CF-netCDF aggregation variable: ``{'constructs':
+                 {'auto': 3}}``.
 
             * ``'uri'``: `str`
 
@@ -684,9 +690,9 @@ class write(metaclass=DocstringRewriteMeta):
 
               If ``'default'`` (the default) then the fragment file
               names will be written with the same URI formats that
-              they had when read from input files. For file names
-              originating from reading normal non-aggregation
-              variables, this will result in absolute URIs. If
+              they had when read from input files (for file names
+              originating from the reading of normal non-aggregation
+              variables, this will result in absolute URIs). If
               ``'absolute'`` then all fragment file names will be
               written as absolute URIs. If ``'relative'`` then all
               fragment file names will be written as relative-path URI
