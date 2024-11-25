@@ -171,11 +171,6 @@ class DataTest(unittest.TestCase):
             for element in elements:
                 self.assertIn(element, cache)
 
-            #            d += 0
-            #            cache = d._get_cached_elements()
-            #            for element in elements:
-            #                self.assertNotIn(element, cache)
-
             self.assertEqual(str(d), str(array))
             cache = d._get_cached_elements()
             for element in elements:
@@ -1339,14 +1334,6 @@ class DataTest(unittest.TestCase):
         mask = [[0, 0, 1], [0, 0, 0], [0, 0, 0]]
         with self.assertRaises(ValueError):
             cfdm.Data(s, mask=mask)
-
-        # # Providing a mask in __init__ forces the sparse array to
-        # # become dense
-        # mask = [[0, 0, 1], [0, 0, 0], [0, 0, 0]]
-        # d = cfdm.Data(s, mask=mask)
-        # self.assertTrue((d.array == np.ma.array(s.toarray(), mask=mask)).all())
-        # with self.assertRaises(AttributeError):
-        #     d.sparse_array
 
     def test_Data_masked_values(self):
         """Test Data.masked_values."""

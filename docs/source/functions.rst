@@ -33,7 +33,7 @@ Mathematical operations
 
    cf.atol
    cf.rtol
-   
+
 Resource management
 -------------------
 
