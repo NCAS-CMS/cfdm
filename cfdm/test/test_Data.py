@@ -2418,10 +2418,10 @@ class DataTest(unittest.TestCase):
 
         f = cfdm.example_field(0)
         cfdm.write(f, file_A)
-        a = cfdm.read(file_A, dask_chunks=4)[0].data
-        self.assertEqual(a.get_filenames(), set([file_A]))
-        a.persist(inplace=True)
-        self.assertEqual(a.data.get_filenames(), set())
+        d = cfdm.read(file_A, dask_chunks=4)[0].data
+        self.assertEqual(d.get_filenames(), set([file_A]))
+        d.persist(inplace=True)
+        self.assertEqual(d.data.get_filenames(), set())
 
         # Per chunk
         d = cfdm.read(file_A, dask_chunks="128 B")[0].data
@@ -2429,23 +2429,6 @@ class DataTest(unittest.TestCase):
         f = d.get_filenames(per_chunk=True)
         self.assertEqual(f.shape, d.numblocks)
         self.assertTrue((f == [[file_A, file_A], [file_A, file_A]]).all())
-
-    #        # Extra
-    #        self.assertEqual(np.ma.count(f), 4)
-    #        self.assertEqual(np.unique(f), f[0, 0, 0])
-    #        f = d.get_filenames(per_chunk=True, extra=2)
-    #        self.assertEqual(f.shape, d.numblocks + (3,))
-    #        self.assertEqual(np.ma.count(f), 4)
-    #        self.assertEqual(np.unique(f.compressed()), f[0, 0, 0])
-    #
-    #        # min_file_versions
-    #        f = d.get_filenames(per_chunk=True, min_file_versions=2)
-    #        self.assertEqual(f.shape, d.numblocks + (2,))
-    #        self.assertEqual(np.ma.count(f), 4)
-    #        self.assertEqual(np.unique(f.compressed()), f[0, 0, 0])
-    #
-    #        f = d.get_filenames(per_chunk=True, min_file_versions=2, extra=1)
-    #        self.assertEqual(f.shape, d.numblocks + (3,))
 
     def test_Data_chunk_indices(self):
         """Test Data.chunk_indices."""
@@ -2684,44 +2667,6 @@ class DataTest(unittest.TestCase):
         self.assertFalse(d.nc_has_aggregated_data())
         self.assertEqual(d.nc_get_aggregated_data(), {})
         self.assertEqual(d.nc_del_aggregated_data(), {})
-
-    #    def test_Data_aggregation_substitutions(self):
-    #        """Test Data CFA aggregation substitutions methods."""
-    #        d = cfdm.Data(9)
-    #        self.assertEqual(d.nc_aggregation_substitutions(), {})
-    #        self.assertIsNone(
-    #            d.nc_update_aggregation_substitutions({"base": "file:///data/"})
-    #        )
-    #        # No files means no stored substitutions
-    #        self.assertEqual(d.nc_aggregation_substitutions(), {})
-    #
-    #        # Create an data from an aggregation file
-    #        f = cfdm.example_field(0)
-    #        cfdm.write(f, file_A)
-    #        f = cfdm.read(file_A)[0]
-    #        cfdm.write(f, file_B, cfa="field")
-    #        f = cfdm.read(file_B)[0]
-    #        d = f.data
-    #
-    #        self.assertEqual(d.nc_aggregation_substitutions(), {})
-    #        d.nc_update_aggregation_substitutions({"${base}": "file:///data/"})
-    #        self.assertEqual(
-    #            d.nc_aggregation_substitutions(),
-    #            {"${base}": "file:///data/"},
-    #        )
-    #        d.nc_update_aggregation_substitutions({"${base2}": "/new/location/"})
-    #        self.assertEqual(
-    #            d.nc_aggregation_substitutions(),
-    #            {"${base}": "file:///data/", "${base2}": "/new/location/"},
-    #        )
-    #        self.assertIsNone(d.nc_del_aggregation_substitution("${base}"))
-    #        self.assertEqual(
-    #            d.nc_aggregation_substitutions(),
-    #            {"${base2}": "/new/location/"},
-    #        )
-    #        self.assertIsNone(d.nc_clear_aggregation_substitutions())
-    #        self.assertEqual(d.nc_aggregation_substitutions(), {})
-    #        self.assertIsNone(d.nc_del_aggregation_substitution("${base}"))
 
     def test_Data_replace_directory(self):
         """Test Data.replace_directory."""

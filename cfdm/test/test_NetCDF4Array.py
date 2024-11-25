@@ -49,11 +49,6 @@ class NetCDF4ArrayTest(unittest.TestCase):
         # < ... test code ... >
         # cfdm.log_level('DISABLE')
 
-    def test_NetCDF4Array_get_addresses(self):
-        """Test NetCDF4Array.get_addresses."""
-        a = cfdm.NetCDF4Array(address="tas")
-        self.assertEqual(a.get_addresses(), ("tas",))
-
     def test_NetCDF4Array_get_address(self):
         """Test NetCDF4Array.get_address."""
         a = cfdm.NetCDF4Array(address="tas")
@@ -61,14 +56,6 @@ class NetCDF4ArrayTest(unittest.TestCase):
 
         a = cfdm.NetCDF4Array()
         self.assertIsNone(a.get_address(default=None))
-
-    def test_NetCDF4Array_get_filenames(self):
-        """Test NetCDF4Array.get_filenames."""
-        a = cfdm.NetCDF4Array("/data1/file1")
-        self.assertEqual(a.get_filenames(), ("/data1/file1",))
-
-        a = cfdm.NetCDF4Array()
-        self.assertEqual(a.get_filenames(), ())
 
     def test_NetCDF4Array_get_filename(self):
         """Test NetCDF4Array.get_filename."""

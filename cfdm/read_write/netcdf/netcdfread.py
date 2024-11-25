@@ -1348,14 +1348,6 @@ class NetCDFRead(IORead):
                 # Allow UGRID if it has been specified in Conventions,
                 # regardless of the version of CF.
                 g["UGRID_version"] = Version(c.replace("UGRID-", "", 1))
-        #            elif c.startswith("CFA-0.") or c == "CFA":
-        #                logger.warning(
-        #                    f"Obselete conventions {c} are being ignored in file "
-        #                    f"{g['filename']}. Note that cf-python version 3.16.2 "
-        #                    "can be used to read and write CFA-0.6.2 files, and "
-        #                    "cf-python version 3.13.1 can be used to read and "
-        #                    "write CFA-0.4 files."
-        #                )
 
         if file_version is None:
             if default_version is not None:

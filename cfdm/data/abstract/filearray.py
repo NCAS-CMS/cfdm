@@ -160,7 +160,7 @@ class FileArray(Array):
             self.__class__,
             self.shape,
             self.get_filename(normalise=True, default=None),
-            self.get_addresses(),
+            self.get_address(),
             self.get_mask(),
             self.get_unpack(),
             self.get_attributes(copy=False),
@@ -227,69 +227,6 @@ class FileArray(Array):
             f"Must implement {self.__class__.__name__}.close"
         )  # pragma: no cover
 
-    def file_directories(self, normalise=False):
-        """The file directories.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Parameters:
-
-            {{normalise: `bool`, optional}}
-
-        :Returns:
-
-            `tuple`
-                The file directory names, one for each file,
-
-        **Examples**
-
-        >>> a.get_filenames()
-        ('/data1/file1',)
-        >>> a.file_directories()
-        ('/data1,)
-
-        """
-        directory = self.file_directory(normalise=normalise, default=None)
-        if directory is None:
-            return ()
-
-        return (directory,)
-
-    def file_directory(self, normalise=False, default=AttributeError()):
-        """The file directory.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Parameters:
-
-            {{normalise: `bool`, optional}}
-
-        :Returns:
-
-            `tuple`
-                The file directory names, one for each file, as
-                absolute paths with no trailing path name component
-                separator.
-
-        **Examples**
-
-        >>> a.get_filename()
-        '/data1/file1'
-        >>> a.file_directory()
-        '/data1'
-
-        """
-        filename = self.get_filename(normalise=normalise, default=None)
-        if filename is None:
-            if default is None:
-                return
-
-            return self._default(
-                default, f"{self.__class__.__name__} has no file name"
-            )
-
-        return dirname(filename)
-
     def get_address(self, default=AttributeError()):
         """The name of the file containing the array.
 
@@ -323,27 +260,40 @@ class FileArray(Array):
 
         return address
 
-    def get_addresses(self):
-        """Return the name of the data address in the file.
+    def file_directory(self, normalise=False, default=AttributeError()):
+        """The file directory.
 
-        If there are multiple addresses then they correspond, in
-        order, to the files returned by `get_filenames`
+        .. versionadded:: (cfdm) NEXTVERSION
 
-        .. versionadded:: (cfdm) 1.10.0.2
+        :Parameters:
 
-        .. seealso:: `get_filenames`
+            {{normalise: `bool`, optional}}
 
         :Returns:
 
-           1-`tuple`
-                The address.
+            `tuple` TODOCFA
+                The file directory names, one for each file, as
+                absolute paths with no trailing path name component
+                separator.
+
+        **Examples**
+
+        >>> a.get_filename()
+        '/data1/file1'
+        >>> a.file_directory()
+        '/data1'
 
         """
-        address = self.get_address(default=None)
-        if address is None:
-            return ()
+        filename = self.get_filename(normalise=normalise, default=None)
+        if filename is None:
+            if default is None:
+                return
 
-        return (address,)
+            return self._default(
+                default, f"{self.__class__.__name__} has no file name"
+            )
+
+        return dirname(filename)
 
     def get_filename(self, normalise=False, default=AttributeError()):
         """The name of the file containing the array.
@@ -381,36 +331,6 @@ class FileArray(Array):
             filename = abspath(filename)
 
         return filename
-
-    def get_filenames(self, normalise=False):
-        """Return the names of files containing the data.
-
-        If multiple files are returned then it is assumed that any
-        one of them may contain the data, and when the data are
-        requested an attempt to open file is made, in order, and the
-        data is read from the first success.
-
-        .. versionadded:: (cfdm) 1.10.0.2
-
-        .. seealso:: `get_addresses`
-
-        :Parameters:
-
-            {{normalise: `bool`, optional}}
-
-                .. versionadded:: (cfdm) NEXTVERSION
-
-        :Returns:
-
-            `tuple`
-                The file names.
-
-        """
-        filename = self.get_filename(normalise=normalise, default=None)
-        if filename is None:
-            return ()
-
-        return (filename,)
 
     def get_mask(self):
         """Whether or not to automatically mask the data.
@@ -555,9 +475,9 @@ class FileArray(Array):
         return dataset, self.get_address()
 
     def replace_directory(self, old=None, new=None, normalise=False):
-        """Replace file directories in-place.
+        """Replace the file directory in-place.
 
-        Every file in *old* that is referenced by the data is
+        TODOCFA Every file in *old* that is referenced by the data is
         redefined to be in *new*.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -579,7 +499,7 @@ class FileArray(Array):
                 empty string. Otherwise,
 
             normalise: `bool`, optional
-                If True then *old*, *new*, and the file names are
+                If True then *old*, *new*, and the file name are
                 normalised to absolute paths prior to the
                 replacement. If False (the default) then no
                 normalisation is done.
@@ -591,7 +511,7 @@ class FileArray(Array):
 
         **Examples**
 
-        >>> a.get_filenames()
+        >>> a.get_filenames() TODOCFA
         {'/data/file1.nc', '/home/file2.nc'}
         >>> b = a.replace_directory('/data', '/new/data/path/')
         >>> b.get_filenames()

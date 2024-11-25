@@ -5693,10 +5693,10 @@ class NetCDFWrite(IOWrite):
                             "relative to those in a fragment file."
                             "\n\n"
                             "Possible remedies:\n"
-                            "* Setting 'cfa_write' keyword in a previous "
-                            "call to the 'read' function.\n"
-                            "* Setting the 'strict' option to False in the "
-                            "'cfa' keyword of the 'write' function."
+                            "* Setting  the 'cfa_write' parameter in a "
+                            "previous call to the 'read' function.\n"
+                            "* Setting the 'strict' keyword to False in the "
+                            "'cfa' parameter of the 'write' function."
                         )
 
                     break
@@ -5778,7 +5778,6 @@ class NetCDFWrite(IOWrite):
             # --------------------------------------------------------
             feature = "location"
             f_location = cfa[feature]
-
             # Get the fragment array netCDF dimensions from the
             # 'location' fragment array variable.
             fragment_array_ncdimensions = []

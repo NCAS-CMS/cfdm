@@ -79,7 +79,7 @@ class FieldTest(unittest.TestCase):
         """Test the Field constructor and source keyword."""
         cfdm.Field(source="qwerty")
 
-    def test_Field___getitem__(self):
+    def test_Field__getitem__(self):
         """Test the access of field subspsaces from Field."""
         f = self.f1
         f = f.squeeze()
@@ -156,57 +156,16 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(IndexError):
             f[..., [False] * f.shape[-1]]
 
-    #    def test_Field___setitem__(self):
-    #        f = self.f.squeeze()
-    #
-    #        f[...] = 0
-    #        self.assertTrue((f.data.array == 0).all())
-    #
-    #        f[:, :] = 0
-    #        self.assertTrue((f.data.array == 0).all())
-    #
-    #
-    #        for indices in [
-    #                (slice(None)    , slice(None)),
-    #                (slice(3, 7)    , slice(None)),
-    #                (slice(None)    , slice(2, 5)),
-    #                (slice(3, 7)    , slice(2, 5)),
-    #                (slice(6, 2, -1), slice(4, 1, -1)),
-    #                (slice(2, 6)    , slice(4, 1, -1)),
-    #                ([0, 3, 8]      , [1, 7, 8]),
-    #                ([7, 4, 1]      , slice(6, 8)),
-    #        ]:
-    #            f[...] = 0
-    #            f[indices] = -1
-    #            array = f[indices].data.array
-    #            self.assertTrue((array == -1).all())
-    #
-    #            values, counts = np.unique(f.data.array, return_counts=True)
-    #            self.assertEqual(counts[0], array.size)
+    def test_Field_get_filenames(self):
+        """Test Field.get_filenames."""
+        cfdm.write(self.f0, tmpfile)
+        f = cfdm.read(tmpfile)[0]
 
-    #    def test_Field_get_filenames(self):
-    #        """Test the `get_filenames` Field method."""
-    #        cfdm.write(self.f0, tmpfile)
-    #        g = cfdm.read(tmpfile)[0]
-    #
-    #        abspath_tmpfile = os.path.abspath(tmpfile)
-    #        self.assertEqual(g.get_filenames(), set([abspath_tmpfile]))
-    #
-    #        g.data[...] = -99
-    #        self.assertEqual(g.get_filenames(), set([abspath_tmpfile]))
-    #
-    #        for c in g.constructs.filter_by_data().values():
-    #            c.data[...] = -99
-    #
-    #        self.assertEqual(g.get_filenames(), set([abspath_tmpfile]))
-    #
-    #        for c in g.constructs.filter_by_data().values():
-    #            if c.has_bounds():
-    #                c.bounds.data[...] = -99
-    #
-    #        self.assertEqual(g.get_filenames(), set())
-    #
-    #        os.remove(tmpfile)
+        abspath_tmpfile = os.path.abspath(tmpfile)
+        self.assertEqual(f.get_filenames(), set([abspath_tmpfile]))
+
+        f.persist(inplace=True, metadata=True)
+        self.assertEqual(f.get_filenames(), set())
 
     def test_Field_apply_masking(self):
         """Test the `apply_masking` Field method."""

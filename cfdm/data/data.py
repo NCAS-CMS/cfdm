@@ -4876,8 +4876,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         first instantiated, as could be the case after the data has
         been subspaced.
 
-        .. seealso:: `replace_filenames`, `get_n_file_versions`,
-                     `set_min_file_versions`
+        .. seealso:: `replace_filenames, `replace_directory`
 
         :Parameters:
 
@@ -4888,10 +4887,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             per_chunk: `bool`, optional
                 Return a `numpy` array that provides the file names
                 that contribute to each Dask chunk. This array will
-                have the same shape as the the Dask chunks (as
-                returned by the `numblocks` attribute) with the
-                addition of a trailing dimension whose size is given
-                by `get_n_file_versions`.
+                have the same shape as the Dask chunks (as returned by
+                the `numblocks` attribute).
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -4904,7 +4901,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         **Examples**
 
         >>> d = {{package}}.{{class}}.empty((5, 8), 1, chunks=4)
-        >>> d.get_filenames()
+        >>> d.get_filenames() TODOCFA
         set()
 
         >>> f = {{package}}.example_field(0)
@@ -4948,17 +4945,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """
         if per_chunk:
             # --------------------------------------------------------
-            # Return filenames in a numpy array
+            # Return the filenames in a numpy array
             # --------------------------------------------------------
-            #            min_file_versions = int(min_file_versions)
-            #            if min_file_versions < 1:
-            #                raise ValueError(
-            #                    "'min_file_versions' must be an positive integer"
-            #                )
-            #
-            #            extra = int(extra)
-            #            if extra < 0:
-            #                raise ValueError("'extra' must be a non-negative integer")
 
             # Maximum number of characters in any file name
             n_char = 1
@@ -4982,7 +4970,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                         if filename:
                             if position in filenames:
                                 raise ValueError(
-                                    f"The Dask chunk in position {position} "
+                                    f"Can't return 'pre_chunk' file names: "
+                                    "The Dask chunk in position {position} "
                                     f"(defined by {index!r}) has multiple "
                                     "file locations"
                                 )
@@ -5002,15 +4991,15 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             return array
 
         # ------------------------------------------------------------
-        # Return filenames in a set
+        # Return the filenames in a set
         # ------------------------------------------------------------
         out = []
-        extend = out.extend
+        append = out.append
         for a in self.todict(
             _apply_mask_hardness=False, _asanyarray=False
         ).values():
             try:
-                extend(a.get_filenames(normalise=normalise))
+                append(a.get_filename(normalise=normalise))
             except AttributeError:
                 pass
 
@@ -5120,51 +5109,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             return self._default(
                 default, f"{self.__class__.__name__!r} has no list variable"
             )
-
-    def get_n_file_versions(self):
-        """The maximum number of file versions per fragment.
-
-        A fragment is a part of the data array that is stored in a
-        file. If the data is written to a CF-netCDF aggregation
-        variable, then the maximum number of file versions per
-        fragment equates to the size of the trailing 'versions'
-        dimension of the 'location' variable. The number of versions
-        includes any unassigned versions, that would be written the
-        'location' variable as missing values.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `get_filenames`, `set_min_file_versions,
-                     `replace_filenames`
-
-        :Returns:
-
-            `int`
-                "The maximum number of file versions per fragment.
-
-        **Examples**
-
-        >>> d = {{package}}.{{class}}([1, 2, 3])
-        >>> d.get_max_file_versions()
-        0
-
-        >>> f = {{package}}.example_field(0)
-        >>> {{package}}.write(f, "file.nc")
-        >>> d = {{package}}.read("file.nc", dask_chunks'128 B')[0].data
-        >>> d.get_max_file_versions()
-        1
-
-        """
-        n = 0
-        for a in self.todict(
-            _apply_mask_hardness=False, _asanyarray=False
-        ).values():
-            try:
-                n = max(n, a.get_n_file_versions())
-            except AttributeError:
-                pass
-
-        return n
 
     def get_tie_point_indices(self, default=ValueError()):
         """Return the list variable for a compressed array.
@@ -5989,8 +5933,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `get_filenames`, `get_n_file_versions`,
-                     `set_min_file_versions`
+        .. seealso:: `get_filenames`
 
         :Parameters:
 
@@ -6220,39 +6163,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         self.Units = self._Units_class(self.get_units(default=None), calendar)
-
-    def set_min_file_versions(self, n):
-        """Set the minimum number of file versions per fragment.
-
-        A fragment is a part of the data array that is stored in a
-        file. If the data is written to a CF-netCDF aggregation
-        variable, then the the minimum number of file versions per
-        fragment equates to a lower limit to the size of the trailing
-        'versions' dimension of the 'location' variable. The actual
-        dimension size will be larger if there are more file locations
-        than this minimum amount.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        .. seealso:: `get_filenames`, `get_n_file_versions,
-                     `replace_filenames`
-
-        :Parameters:
-
-             n: `int`
-                The new minimum number (greater than or equal to
-                zero).
-
-        :Returns:
-
-            `None`
-
-        """
-        n = int(n)
-        if n < 0:
-            raise ValueError("'n' must be a non-negative integer")
-
-        self._modify_dask_graph("set_min_file_versions", (n,))
 
     def set_units(self, value):
         """Set the units.
