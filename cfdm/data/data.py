@@ -3628,8 +3628,7 @@ class Data(Container, NetCDFHDF5, Files, core.Data):
         calendar=None,
         chunks="auto",
     ):
-        """Return a new array of given shape and type, without
-        initialising entries.
+        """Return a new array, without initialising entries.
 
         :Parameters:
 

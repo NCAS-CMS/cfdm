@@ -266,8 +266,7 @@ def convert_to_datetime(a, units):
 
 
 def convert_to_reftime(a, units=None, first_value=None):
-    """Convert a dask array of string or object date-times to floating
-    point reference times.
+    """Convert date-times to floating point reference times.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
@@ -276,6 +275,7 @@ def convert_to_reftime(a, units=None, first_value=None):
     :Parameters:
 
         a: `dask.array.Array`
+            An array of string or object date-times
 
         units: `Units`, optional
              Specify the units for the output reference time

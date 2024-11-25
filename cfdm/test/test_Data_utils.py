@@ -12,8 +12,10 @@ import cfdm
 
 
 class DataUtilsTest(unittest.TestCase):
+    """Test `Data` utility functions."""
+
     def test_Data_utils_allclose(self):
-        """TODO."""
+        """Test allclose."""
         # Create a range of inputs to test against.  Note that 'a' and
         # 'a2' should be treated as 'allclose' for this method, the
         # same result as np.ma.allclose would give because all of the
@@ -82,8 +84,8 @@ class DataUtilsTest(unittest.TestCase):
         b2 = a / 10000
         self.assertTrue(allclose(b1, b2, atol=1e-05, rtol=rtol).compute())
 
-    def test_Data_Utils_is_numeric_dtype(self):
-        """TODO."""
+    def test_Data_utils_is_numeric_dtype(self):
+        """Test is_numeric_dtype."""
         is_numeric_dtype = cfdm.data.utils.is_numeric_dtype
         for a in [
             np.array([0, 1, 2]),
@@ -99,8 +101,8 @@ class DataUtilsTest(unittest.TestCase):
         ]:
             self.assertFalse(is_numeric_dtype(b))
 
-    def test_Data_Utils_convert_to_datetime(self):
-        """TODO."""
+    def test_Data_utils_convert_to_datetime(self):
+        """Test convert_to_datetime."""
         a = cftime.DatetimeGregorian(2000, 12, 3, 12)
         for x in (2.5, [2.5]):
             d = da.from_array(x)
@@ -121,8 +123,8 @@ class DataUtilsTest(unittest.TestCase):
             )
             self.assertTrue((e.compute() == a).all())
 
-    def test_Data_Utils_convert_to_reftime(self):
-        """TODO."""
+    def test_Data_utils_convert_to_reftime(self):
+        """Test convert_to_reftime."""
         a = cftime.DatetimeGregorian(2000, 12, 3, 12)
         d = da.from_array(np.array(a, dtype=object))
 
@@ -177,8 +179,8 @@ class DataUtilsTest(unittest.TestCase):
         self.assertEqual(d.Units, cfdm.Units("days since 2004-02-29"))
         self.assertTrue((d.array == [0, 1]).all())
 
-    def test_Data_Utils_first_non_missing_value(self):
-        """TODO."""
+    def test_Data_utils_first_non_missing_value(self):
+        """Test first_non_missing_value."""
         for method in ("index", "mask"):
             # Scalar data
             d = da.from_array(0)
