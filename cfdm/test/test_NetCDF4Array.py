@@ -208,15 +208,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
         """Test NetCDF4Array.index."""
         shape = (12, 73, 96)
         a = cfdm.NetCDF4Array("/home/file2", "tas", shape=shape)
-        self.assertEqual(
-            a.index(),
-            (
-                slice(
-                    None,
-                ),
-            )
-            * len(shape),
-        )
+        self.assertEqual(list(a.index()), [slice(0, n) for n in shape])
         a = a[8:7:-1, 10:19:3, [15, 1, 4, 12]]
         a = a[[0], [True, False, True], ::-2]
         self.assertEqual(a.shape, (1, 2, 2))

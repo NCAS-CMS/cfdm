@@ -11,6 +11,7 @@ import netCDF4
 faulthandler.enable()  # to debug seg faults and timeouts
 
 import cfdm
+from cfdm.read_write.netcdf.netcdfwrite import AggregationError
 
 n_tmpfiles = 5
 tmpfiles = [
@@ -91,9 +92,10 @@ class CFATest(unittest.TestCase):
         """Test 'strict' option to the cfdm.write 'cfa' keyword."""
         f = cfdm.example_field(0)
 
+        cfa_file = "cfa_file.nc"
         # By default, can't write in-memory arrays as aggregation
         # variables
-        with self.assertRaises(ValueError):
+        with self.assertRaises(AggregationError):
             cfdm.write(f, cfa_file, cfa="field")
 
         # The previous line should have deleted the output file
@@ -121,7 +123,6 @@ class CFATest(unittest.TestCase):
         for uri, filename in zip(
             ("absolute", "relative"), (absuri_filename, reluri_filename)
         ):
-            print(uri)
             cfdm.write(
                 f,
                 cfa_file,
@@ -296,7 +297,7 @@ class CFATest(unittest.TestCase):
             self.assertTrue((fa[3:].array == fragment_value_uid[1]).all())
 
             if write:
-                cfdm.write(f, cfa_file)  # , cfa={'uri': 'relative'})
+                cfdm.write(f, cfa_file)
                 write = False
 
     def test_CFA_cfa(self):
@@ -318,6 +319,7 @@ class CFATest(unittest.TestCase):
 
         cfdm.write(g, cfa_file, cfa={"constructs": {"auto": 2}})
         nc = netCDF4.Dataset(cfa_file, "r")
+
         self.assertIsNotNone(
             getattr(nc.variables["q"], "aggregated_data", None)
         )

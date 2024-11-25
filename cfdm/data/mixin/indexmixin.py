@@ -314,9 +314,10 @@ class IndexMixin:
         if ind is None:
             # No indices have been applied yet, so define indices that
             # are equivalent to Ellipsis, and set the original shape.
-            ind = (slice(None),) * self.ndim
+            shape = self.shape
+            ind = tuple([slice(0, n) for n in shape])
             self._custom["index"] = ind
-            self._custom["original_shape"] = self.shape
+            self._custom["original_shape"] = shape
             return ind
 
         if not conform:

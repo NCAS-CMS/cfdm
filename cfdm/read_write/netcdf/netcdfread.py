@@ -6772,8 +6772,8 @@ class NetCDFRead(IORead):
                     except TypeError:
                         raise TypeError(
                             "The 'replace_directory' key of the 'cfa' "
-                            "keyword must provide valid parameters to the "
-                            "'Data.replace_directory' method. "
+                            "parameter must provide valid parameters to "
+                            "the 'Data.replace_directory' method. "
                             f"Got: {replace_directory!r}"
                         )
 

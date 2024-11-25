@@ -590,10 +590,12 @@ class write(metaclass=DocstringRewriteMeta):
             Specify which netCDF variables, if any, should be written
             as CF-netCDF aggregation variables.
 
-            By default, *cfa* is the string ``'auto'``, meaning that
-            only constructs whose data is unchanged from having been
-            previously read from a CF-netCDF aggregation variables
-            will be written as aggregation variables. This default, as
+            By default, *cfa* is the string ``'auto'``, meaning that a
+            construct that was previously read from a CF-netCDF
+            aggregation variable will be written as an aggregation
+            variable, provided that its data have not been changed in
+            ways which prevent the encoding, in which case a normal
+            non-aggregation variable will be written. This default, as
             well as other options, can be configured by setting *cfa*
             to a dictionary.
 

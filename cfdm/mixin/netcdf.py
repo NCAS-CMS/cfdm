@@ -4878,9 +4878,10 @@ class NetCDFAggregation(NetCDFMixin):
 
         :Parameters:
 
-            value: `str`
+            value: `str` or `None`
                 The fragment type, either ``'location'`` for fragment
-                files, or ``'value'`` for fragment unique values.
+                files, ``'value'`` for fragment unique values, or
+                `None` for an unspecified fragment type.
 
         :Returns:
 
@@ -4888,6 +4889,8 @@ class NetCDFAggregation(NetCDFMixin):
 
         """
         self._get_component("netcdf")["aggregation_fragment_type"] = value
+        if value == "value":
+            self._nc_set_aggregation_write_status(True)
 
     def nc_del_aggregation_write_status(self):
         """Set the netCDF aggregation write status to `False`.
@@ -4925,7 +4928,12 @@ class NetCDFAggregation(NetCDFMixin):
                 The netCDF aggregation write status.
 
         """
-        return self._nc_get("aggregation_write_status", False)
+        status = self._nc_get("aggregation_write_status", False)
+        if not status and self.nc_get_aggregation_fragment_type() == "value":
+            status = True
+            self._nc_set_aggregation_write_status(status)
+
+        return status
 
     def _nc_set_aggregation_write_status(self, status):
         """Set the netCDF aggregation write status.

@@ -739,7 +739,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # ------------------------------------------------------------
         # Set the subspaced dask array
         # ------------------------------------------------------------
-        new._set_dask(dx, clear=self._ALL, asanyarray=None)
+        new._set_dask(dx, clear=self._ALL ^ self._CFA, asanyarray=None)
 
         if 0 in new.shape:
             raise IndexError(
@@ -769,8 +769,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 new.nc_set_hdf5_chunksizes(chunksizes)
             else:
                 new.nc_clear_hdf5_chunksizes()
-
-        # CF-PYTHON: __getitem__: cyclic axes and ancillary masks
 
         return new
 
@@ -998,7 +996,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         # Do the assignment
         self._set_subspace(dx, indices, value)
-        self._set_dask(dx, asanyarray=False)
+
+        if self.nc_get_aggregation_fragment_type() == "value":
+            CFA = self._CFA
+        else:
+            CFA = self._NONE
+
+        self._set_dask(dx, clear=self._ALL ^ CFA, asanyarray=False)
 
         return
 
@@ -1713,8 +1717,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             self._del_cached_elements()
 
         if clear & self._CFA:
-            # Set the aggregation write status to False
-            self.nc_del_aggregation_write_status()
+            # Set the aggregation write status to False (under certain
+            # TODOCFA circumstances)
+            # self.nc_del_aggregation_write_status()
+            self._del_nc_aggregation_write_status()
 
         return clear
 
@@ -1808,7 +1814,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     def _del_cached_elements(self):
         """Delete any cached element values.
 
-        Updates *data* in-place to remove the cached element values.
+        Updates the data in-place to remove the cached element values.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1820,6 +1826,27 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         self._del_component("cached_elements", None)
+
+    def _del_nc_aggregation_write_status(self):
+        """Set the aggregation write status to False.
+
+        Updates the data in-place to set the aggregation write status
+        to `False`, but only if the fragment type is not ``'value'``.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `nc_del_aggregation_write_status`,
+                     `nc_get_aggregation_fragment_type`
+
+        :Returns:
+
+            `None`
+
+        """
+        if self.nc_get_aggregation_fragment_type() == "value":
+            return
+
+        self.nc_del_aggregation_write_status()
 
     def _del_dask(self, default=ValueError(), clear=None):
         """Remove the dask array.
@@ -3462,10 +3489,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             else:
                 mask |= dx > valid_max
 
+        CFA = self._NONE
         if mask is not None:
             dx = da.ma.masked_where(mask, dx)
+        elif self.nc_get_aggregation_fragment_type() == "value":
+            CFA = self._CFA
 
-        d._set_dask(dx, asanyarray=False)
+        d._set_dask(dx, clear=self._ALL ^ CFA, asanyarray=False)
 
         return d
 
@@ -3590,7 +3620,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             meta=np.array((), dtype=dx.dtype),
         )
 
-        d._set_dask(dx)
+        if self.nc_get_aggregation_fragment_type() == "value":
+            CFA = self._CFA
+        else:
+            CFA = self._NONE
+
+        d._set_dask(dx, clear=self._ALL ^ CFA, asanyarray=False)
         return d
 
     def compute(self):
@@ -3803,12 +3838,20 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                     CFA = cls._NONE
                     break
 
+        # ------------------------------------------------------------
+        # Set the aggregation fragment type
+        # ------------------------------------------------------------
         if CFA != cls._NONE:
-            fragment_type = data[0].nc_get_aggregation_fragment_type()
+            fragment_type0 = data[0].nc_get_aggregation_fragment_type()
             for d in conformed_data[1:]:
-                if d.nc_get_aggregation_fragment_type() != fragment_type:
+                fragment_type1 = d.nc_get_aggregation_fragment_type()
+                if fragment_type1 != fragment_type0 and "location" in (
+                    fragment_type1,
+                    fragment_type0,
+                ):
                     # 3) The status must be False when any two input
-                    #    Data objects have different fragment types.
+                    #    Data objects have different fragment types,
+                    #    onew of which is 'location'.
                     data0._nc_del_aggregation_fragment_type()
                     CFA = cls._NONE
                     break
@@ -3820,7 +3863,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         for d in conformed_data[1:]:
             if d.__asanyarray__ != asanyarray:
                 # If and only if any two input Data objects have
-                # different __asanyarray__ values, then set
+                # different __asanyarray__ valuesq, then set
                 # asanyarray=True for the concatenation.
                 asanyarray = True
                 break
@@ -3830,6 +3873,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # ------------------------------------------------------------
         data0._set_dask(dx, clear=cls._ALL ^ CFA, asanyarray=asanyarray)
 
+        # ------------------------------------------------------------
+        # Set the aggregation 'aggregated_data' terms
+        # ------------------------------------------------------------
         if data0.nc_get_aggregation_write_status():
             # Set the netCDF aggregated_data terms, giving precedence
             # to those towards the left hand side of the input
@@ -3846,8 +3892,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             data0.nc_set_aggregated_data(aggregated_data)
 
-        # Set appropriate cached elements (after '_set_dask' has just
-        # cleared them from data0).
+        # ------------------------------------------------------------
+        # Re-set appropriate cached elements (after '_set_dask' has
+        # just cleared them from data0)
+        # ------------------------------------------------------------
         cached_elements = {}
         i = 0
         element = data0_cached_elements.get(i)
@@ -4451,7 +4499,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         dx = d.to_dask_array(_apply_mask_hardness=False, _asanyarray=False)
         dx = dx.map_blocks(cfdm_filled, fill_value=fill_value, dtype=d.dtype)
-        d._set_dask(dx, asanyarray=False)
+
+        if self.nc_get_aggregation_fragment_type() == "value":
+            CFA = self._CFA
+        else:
+            CFA = self._NONE
+
+        d._set_dask(dx, clear=self._ALL ^ CFA, asanyarray=False)
 
         return d
 
@@ -4627,7 +4681,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         dx = d.to_dask_array()
         dx = dx.reshape(new_shape)
-        d._set_dask(dx, asanyarray=False)
+
+        if self.nc_get_aggregation_fragment_type() == "value":
+            CFA = self._CFA
+        else:
+            CFA = self._NONE
+
+        d._set_dask(dx, clear=self._ALL ^ CFA, asanyarray=False)
 
         # Update the axis names
         data_axes0 = d._axes
@@ -5454,7 +5514,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         dx = d.to_dask_array()
         dx = da.ma.masked_values(dx, value, rtol=rtol, atol=atol)
-        d._set_dask(dx, asanyarray=False)
+
+        if self.nc_get_aggregation_fragment_type() == "value":
+            CFA = self._CFA
+        else:
+            CFA = self._NONE
+
+        d._set_dask(dx, clear=self._ALL ^ CFA, asanyarray=False)
         return d
 
     @_inplace_enabled(default=False)
@@ -5500,7 +5566,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         array = cfdm_where(d.array, condition, masked, None, d.hardmask)
         dx = da.from_array(array, chunks=d.chunks)
-        d._set_dask(dx, asanyarray=False)
+
+        if self.nc_get_aggregation_fragment_type() == "value":
+            CFA = self._CFA
+        else:
+            CFA = self._NONE
+
+        d._set_dask(dx, clear=self._ALL ^ CFA, asanyarray=False)
 
         return d
 
@@ -5762,8 +5834,16 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         d = _inplace_enabled_define_and_cleanup(self)
         dx = self.to_dask_array(_apply_mask_hardness=False)
         dx = dx.persist()
+
+        if self.nc_get_aggregation_fragment_type() == "value":
+            CFA = self._CFA
+        else:
+            CFA = self._NONE
+
         d._set_dask(
-            dx, clear=self._ALL ^ self._ARRAY ^ self._CACHE, asanyarray=False
+            dx,
+            clear=self._ALL ^ self._ARRAY ^ self._CACHE ^ CFA,
+            asanyarray=False,
         )
         return d
 
@@ -5838,14 +5918,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        # Dask rechunking is essentially a wrapper for `__getitem__`
-        # calls on the chunks, which means that we can use the same
-        # 'asanyarray' and 'clear' keywords to `_set_dask` as are used
-        # in `__getitem__`.
         dx = d.to_dask_array(_apply_mask_hardness=False, _asanyarray=False)
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
+
         d._set_dask(
-            dx, clear=self._ALL ^ self._ARRAY ^ self._CACHE, asanyarray=None
+            dx,
+            clear=self._ALL ^ self._ARRAY ^ self._CACHE ^ self._CFA,
+            asanyarray=None,
         )
 
         return d
@@ -5983,14 +6062,14 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                     if chunk_updated:
                         raise ValueError(
                             f"The Dask chunk in position {position} "
-                            f"(defined by {index!r}) references multiple "
+                            f"(defined by data index {index!r}) references multiple "
                             "file locations"
                         )
 
                     if key in updated_keys:
                         raise ValueError(
                             f"The Dask chunk in position {position} "
-                            f"(defined by {index!r}) references a file "
+                            f"(defined by data index {index!r}) references a file "
                             "location that has already been replaced within "
                             "the Dask chunk in position "
                             f"{updated_keys[key][0]!r} (defined by "
@@ -6313,8 +6392,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         dx = d.to_dask_array(_apply_mask_hardness=False)
         dx = dx.squeeze(axis=iaxes)
 
-        # Squeezing a dimension doesn't affect the cached elements
-        d._set_dask(dx, clear=self._ALL ^ self._CACHE, asanyarray=False)
+        if self.nc_get_aggregation_fragment_type() == "value":
+            CFA = self._CFA
+        else:
+            CFA = self._NONE
+
+        d._set_dask(dx, clear=self._ALL ^ self._CACHE ^ CFA, asanyarray=False)
 
         # Remove the squeezed axis names
         d._axes = [axis for i, axis in enumerate(d._axes) if i not in iaxes]
