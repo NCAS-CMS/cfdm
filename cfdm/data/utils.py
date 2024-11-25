@@ -275,14 +275,13 @@ def convert_to_reftime(a, units=None, first_value=None):
     :Parameters:
 
         a: `dask.array.Array`
-            An array of data-time objects, or of ISO 860 date-time
-            strings.
+            An array of string or object date-times
 
         units: `Units`, optional
-             Specify the units for the output reference time
-             values. By default the units are inferred from the first
-             non-missing value in the array, or set to ``<Units: days
-             since 1970-01-01 gregorian>`` if all values are missing.
+            Specify the units for the output reference time values. By
+            default the units are inferred from the first non-missing
+            value in the array, or set to ``<Units: days since
+            1970-01-01 gregorian>`` if all values are missing.
 
         first_value: optional
             If set, then assumed to be equal to the first non-missing

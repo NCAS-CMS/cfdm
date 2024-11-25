@@ -4121,7 +4121,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         calendar=None,
         chunks="auto",
     ):
-        """Return a new array xwithout initialising entries.
+        """Return a new array, without initialising entries.
 
         :Parameters:
 
