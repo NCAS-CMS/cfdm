@@ -6129,6 +6129,7 @@ class NetCDFWrite(IOWrite):
                 not uri_default
                 and g["cfa"].get("uri", "relative") == "relative"
             )
+            normalise = not uri_default
 
             if uri_relative:
                 # Get the aggregation file directory as an absolute
@@ -6159,33 +6160,53 @@ class NetCDFWrite(IOWrite):
             for index, position in zip(
                 data.chunk_indices(), data.chunk_positions()
             ):
-                file_details = self._cfa_get_file_details(
-                    data[index], normalise=not uri_default
-                )
-                if len(file_details) != 1:
-                    if file_details:
-                        raise AggregationError(
-                            f"Can't write {cfvar!r} as a CF-netCDF "
-                            "aggregation variable: "
-                            f"The Dask chunk in position {position} "
-                            f"(defined by data index {index!r}) references "
-                            "more than one fragment file. This is probably "
-                            "because some fragment values have been changed "
-                            "relative to those in the fragment files, or a "
-                            "rechunking has occured."
-                        )
-
+                fragment = data[index].compute(_asanyarray=False)
+                try:
+                    filename, address, f_index, original_shape = (
+                        fragment.get_filename(normalise=normalise),
+                        fragment.get_address(),
+                        fragment.index(),
+                        fragment.original_shape,
+                    )
+                except (AttributeError, TypeError):
                     raise AggregationError(
                         f"Can't write {cfvar!r} as a CF-netCDF "
                         "aggregation variable: "
                         f"The Dask chunk in position {position} "
-                        f"(defined by data index {index!r}) references "
-                        "zero fragment files."
+                        f"(defined by data index {index!r}) does not "
+                        "reference a unique fragment file. This is could be "
+                        "because some fragment values have been changed "
+                        "relative to those in the fragment files, or a "
+                        "Dask rechunking has occured."
                     )
 
-                fragment, filename, address, f_index, original_shape = (
-                    file_details.pop()
-                )
+                #                file_details = self._cfa_get_file_details(
+                #                    data[index], normalise=not uri_default
+                #                )
+                #                if len(file_details) != 1:
+                #                    if file_details:
+                #                        raise AggregationError(
+                #                            f"Can't write {cfvar!r} as a CF-netCDF "
+                #                            "aggregation variable: "
+                #                            f"The Dask chunk in position {position} "
+                #                            f"(defined by data index {index!r}) references "
+                #                            "more than one fragment file. This is probably "
+                #                            "because some fragment values have been changed "
+                #                            "relative to those in the fragment files, or a "
+                #                            "rechunking has occured."
+                #                        )
+                #
+                #                    raise AggregationError(
+                #                        f"Can't write {cfvar!r} as a CF-netCDF "
+                #                        "aggregation variable: "
+                #                        f"The Dask chunk in position {position} "
+                #                        f"(defined by data index {index!r}) references "
+                #                        "zero fragment files."
+                #                    )
+                #
+                #                fragment, filename, address, f_index, original_shape = (
+                #                    file_details.pop()
+                #                )
 
                 if f_index != tuple([slice(0, n) for n in original_shape]):
                     raise AggregationError(
@@ -6193,7 +6214,8 @@ class NetCDFWrite(IOWrite):
                         "aggregation variable: "
                         f"The Dask chunk in position {position} "
                         f"(defined by data index {index!r}) only references "
-                        f"a subspace of the fragment file {fragment!r}"
+                        f"a subspace of the fragment file {fragment!r}: "
+                        f"{f_index}"
                     )
 
                 uri = urisplit(filename)

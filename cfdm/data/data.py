@@ -996,13 +996,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         # Do the assignment
         self._set_subspace(dx, indices, value)
-
-        if self.nc_get_aggregation_fragment_type() == "value":
-            CFA = self._CFA
-        else:
-            CFA = self._NONE
-
-        self._set_dask(dx, clear=self._ALL ^ CFA, asanyarray=False)
+        self._set_dask(dx, clear=self._ALL ^ self._CFA, asanyarray=False)
 
         return
 
@@ -1843,10 +1837,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             `None`
 
         """
-        if self.nc_get_aggregation_fragment_type() == "value":
-            return
-
-        self.nc_del_aggregation_write_status()
+        if self.nc_get_aggregation_fragment_type() != "value":
+            self.nc_del_aggregation_write_status()
 
     def _del_dask(self, default=ValueError(), clear=None):
         """Remove the dask array.
@@ -3489,11 +3481,12 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             else:
                 mask |= dx > valid_max
 
-        CFA = self._NONE
         if mask is not None:
             dx = da.ma.masked_where(mask, dx)
-        elif self.nc_get_aggregation_fragment_type() == "value":
+            # No need to update aggregation write status
             CFA = self._CFA
+        else:
+            CFA = self._NONE
 
         d._set_dask(dx, clear=self._ALL ^ CFA, asanyarray=False)
 
@@ -3620,15 +3613,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             meta=np.array((), dtype=dx.dtype),
         )
 
-        if self.nc_get_aggregation_fragment_type() == "value":
-            CFA = self._CFA
-        else:
-            CFA = self._NONE
-
-        d._set_dask(dx, clear=self._ALL ^ CFA, asanyarray=False)
+        d._set_dask(dx, clear=self._ALL, asanyarray=False)
         return d
 
-    def compute(self):
+    def compute(self, _asanyarray=True):
         """A view of the computed data.
 
         In-place changes to the returned array *might* affect the
@@ -3672,7 +3660,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                [0., 0., 0.]])
 
         """
-        dx = self.to_dask_array(_apply_mask_hardness=False)
+        dx = self.to_dask_array(
+            _apply_mask_hardness=False, _asanyarray=_asanyarray
+        )
         a = dx.compute()
 
         if np.ma.isMA(a) and a is not np.ma.masked:
@@ -4499,13 +4489,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         dx = d.to_dask_array(_apply_mask_hardness=False, _asanyarray=False)
         dx = dx.map_blocks(cfdm_filled, fill_value=fill_value, dtype=d.dtype)
-
-        if self.nc_get_aggregation_fragment_type() == "value":
-            CFA = self._CFA
-        else:
-            CFA = self._NONE
-
-        d._set_dask(dx, clear=self._ALL ^ CFA, asanyarray=False)
+        d._set_dask(dx, clear=self._ALL, asanyarray=False)
 
         return d
 
@@ -4682,12 +4666,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         dx = d.to_dask_array()
         dx = dx.reshape(new_shape)
 
-        if self.nc_get_aggregation_fragment_type() == "value":
-            CFA = self._CFA
-        else:
-            CFA = self._NONE
-
-        d._set_dask(dx, clear=self._ALL ^ CFA, asanyarray=False)
+        d._set_dask(dx, clear=self._ALL, asanyarray=False)
 
         # Update the axis names
         data_axes0 = d._axes
@@ -5515,12 +5494,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         dx = d.to_dask_array()
         dx = da.ma.masked_values(dx, value, rtol=rtol, atol=atol)
 
-        if self.nc_get_aggregation_fragment_type() == "value":
-            CFA = self._CFA
-        else:
-            CFA = self._NONE
-
-        d._set_dask(dx, clear=self._ALL ^ CFA, asanyarray=False)
+        d._set_dask(dx, clear=self._ALL, asanyarray=False)
         return d
 
     @_inplace_enabled(default=False)
@@ -5566,13 +5540,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         array = cfdm_where(d.array, condition, masked, None, d.hardmask)
         dx = da.from_array(array, chunks=d.chunks)
-
-        if self.nc_get_aggregation_fragment_type() == "value":
-            CFA = self._CFA
-        else:
-            CFA = self._NONE
-
-        d._set_dask(dx, clear=self._ALL ^ CFA, asanyarray=False)
+        d._set_dask(dx, clear=self._ALL, asanyarray=False)
 
         return d
 
@@ -5834,15 +5802,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         d = _inplace_enabled_define_and_cleanup(self)
         dx = self.to_dask_array(_apply_mask_hardness=False)
         dx = dx.persist()
-
-        if self.nc_get_aggregation_fragment_type() == "value":
-            CFA = self._CFA
-        else:
-            CFA = self._NONE
-
         d._set_dask(
             dx,
-            clear=self._ALL ^ self._ARRAY ^ self._CACHE ^ CFA,
+            clear=self._ALL ^ self._ARRAY ^ self._CACHE,
             asanyarray=False,
         )
         return d
@@ -6391,13 +6353,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # one size 1 axis needs squeezing.
         dx = d.to_dask_array(_apply_mask_hardness=False)
         dx = dx.squeeze(axis=iaxes)
-
-        if self.nc_get_aggregation_fragment_type() == "value":
-            CFA = self._CFA
-        else:
-            CFA = self._NONE
-
-        d._set_dask(dx, clear=self._ALL ^ self._CACHE ^ CFA, asanyarray=False)
+        d._set_dask(
+            dx, clear=self._ALL ^ self._CACHE ^ self._CFA, asanyarray=False
+        )
 
         # Remove the squeezed axis names
         d._axes = [axis for i, axis in enumerate(d._axes) if i not in iaxes]
