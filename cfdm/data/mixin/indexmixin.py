@@ -106,6 +106,8 @@ class IndexMixin:
         new_indices = []
         new_shape = []
 
+        new_axes = []
+
         i = 0
         for ind0, original_size in zip(index0, original_shape):
             if isinstance(ind0, Integral):
@@ -118,6 +120,11 @@ class IndexMixin:
                 new_indices.append(ind0)
                 continue
 
+            if ind1 is None:
+                 new_indices.append(ind0)
+                 new_axes.append(i)
+                 continue
+            
             ind1 = index1[i]
             size0 = shape0[i]
             i += 1
@@ -315,7 +322,7 @@ class IndexMixin:
             # No indices have been applied yet, so define indices that
             # are equivalent to Ellipsis, and set the original shape.
             shape = self.shape
-            ind = tuple([slice(0, n) for n in shape])
+            ind = tuple([slice(0, n, 1) for n in shape])
             self._custom["index"] = ind
             self._custom["original_shape"] = shape
             return ind
@@ -384,3 +391,8 @@ class IndexMixin:
             self._custom["original_shape"] = out
 
         return out
+
+    def ccc(self):
+        ok = self.index() == tuple([slice(0, n, 1) for n in self.original_shape])
+        return ok
+        

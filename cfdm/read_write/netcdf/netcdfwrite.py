@@ -2839,10 +2839,10 @@ class NetCDFWrite(IOWrite):
                 if unlimited_dimensions:
                     data_model = g["netcdf"].data_model
                     raise ValueError(
-                        f"Can't create variable in {data_model} file from "
-                        f"{cfvar!r}: In {data_model} it is not allowed to "
-                        "write contiguous (as opposed to chunked) data that "
-                        "spans one or more unlimited dimensions: "
+                        f"Can't create variable {ncvar!r} in {data_model} "
+                        f"file from {cfvar!r}: In {data_model} it is not "
+                        "allowed to write contiguous (as opposed to chunked) "
+                        "data that spans one or more unlimited dimensions: "
                         f"{unlimited_dimensions}"
                     )
 
@@ -3100,7 +3100,6 @@ class NetCDFWrite(IOWrite):
                 meta=np.array((), dx.dtype),
             )
 
-        #        print (ncvar, g["nc"][ncvar].shape)
         da.store(dx, g["nc"][ncvar], compute=True, return_stored=False)
 
     def _check_valid(self, array, cfvar=None, attributes=None):
@@ -5797,6 +5796,7 @@ class NetCDFWrite(IOWrite):
             f_map,
             aggregated_data.get(feature, f"cfa_{feature}"),
             map_ncdimensions,
+            chunking=(False, (f_map.shape[0], f_map.shape[1]*780))
         )
         aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 
@@ -5827,6 +5827,7 @@ class NetCDFWrite(IOWrite):
                 f_location,
                 aggregated_data.get(feature, f"cfa_{feature}"),
                 fragment_array_ncdimensions,
+                chunking=(False, ((780,) + f_location.shape[1:]))
             )
             aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 
@@ -5938,7 +5939,7 @@ class NetCDFWrite(IOWrite):
             attributes: `dict`, optional
                 Any attributes to attach to the variable.
 
-            chunking: sequence of `int`, optional
+            chunking: sequence, optional
                 Set `netCDF4.createVariable` 'contiguous' and
                 `chunksizes` parameters (in that order) for the
                 fragment array variable. If not set (the default),
@@ -6162,11 +6163,11 @@ class NetCDFWrite(IOWrite):
             ):
                 fragment = data[index].compute(_asanyarray=False)
                 try:
-                    filename, address, f_index, original_shape = (
+                    filename, address, f_index, original_shape, ccc = (
                         fragment.get_filename(normalise=normalise),
                         fragment.get_address(),
                         fragment.index(),
-                        fragment.original_shape,
+                        fragment.original_shape, fragment.ccc()
                     )
                 except (AttributeError, TypeError):
                     raise AggregationError(
@@ -6208,14 +6209,15 @@ class NetCDFWrite(IOWrite):
                 #                    file_details.pop()
                 #                )
 
-                if f_index != tuple([slice(0, n) for n in original_shape]):
+                if not ccc: #f_index != tuple([slice(0, n, 1) for n in original_shape]):
                     raise AggregationError(
                         f"Can't write {cfvar!r} as a CF-netCDF "
                         "aggregation variable: "
                         f"The Dask chunk in position {position} "
                         f"(defined by data index {index!r}) only references "
                         f"a subspace of the fragment file {fragment!r}: "
-                        f"{f_index}"
+                        f"{f_index}\n\n"# TODOCFA
+                        f"{ccc}" # TODOCFA
                     )
 
                 uri = urisplit(filename)
