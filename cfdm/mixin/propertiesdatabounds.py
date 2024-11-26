@@ -1501,6 +1501,7 @@ class PropertiesDataBounds(PropertiesData):
 
         """
         c = _inplace_enabled_define_and_cleanup(self)
+
         super(PropertiesDataBounds, c).persist(inplace=True)
 
         # Bounds

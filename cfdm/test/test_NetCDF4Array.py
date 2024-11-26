@@ -208,7 +208,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
         """Test NetCDF4Array.index."""
         shape = (12, 73, 96)
         a = cfdm.NetCDF4Array("/home/file2", "tas", shape=shape)
-        self.assertEqual(list(a.index()), [slice(0, n) for n in shape])
+        self.assertEqual(list(a.index()), [slice(0, n, 1) for n in shape])
         a = a[8:7:-1, 10:19:3, [15, 1, 4, 12]]
         a = a[[0], [True, False, True], ::-2]
         self.assertEqual(a.shape, (1, 2, 2))
@@ -221,6 +221,61 @@ class NetCDF4ArrayTest(unittest.TestCase):
         self.assertTrue((index[0] == [8]).all())
         self.assertTrue((index[1] == [10, 16]).all())
         self.assertTrue((index[2] == [12, 1]).all())
+
+        # New dimensions
+        a = cfdm.NetCDF4Array("/home/file2", "tas", shape=shape)
+
+        b = a[:2, None, ...]
+        self.assertEqual(
+            b.index(), (slice(0, 2, 1), None, slice(0, 73, 1), slice(0, 96, 1))
+        )
+        self.assertEqual(b.shape, (2, 1, 73, 96))
+        self.assertEqual(b.reference_shape, (12, 1, 73, 96))
+
+        b = b[...]
+        self.assertEqual(
+            b.index(), (slice(0, 2, 1), None, slice(0, 73, 1), slice(0, 96, 1))
+        )
+        self.assertEqual(b.shape, (2, 1, 73, 96))
+        self.assertEqual(b.reference_shape, (12, 1, 73, 96))
+
+        b = b[..., :4]
+        self.assertEqual(
+            b.index(), (slice(0, 2, 1), None, slice(0, 73, 1), slice(0, 4, 1))
+        )
+        self.assertEqual(b.shape, (2, 1, 73, 4))
+        self.assertEqual(b.reference_shape, (12, 1, 73, 96))
+
+        b = b[..., None, :]
+        self.assertEqual(
+            b.index(),
+            (slice(0, 2, 1), None, slice(0, 73, 1), None, slice(0, 4, 1)),
+        )
+        self.assertEqual(b.shape, (2, 1, 73, 1, 4))
+        self.assertEqual(b.reference_shape, (12, 1, 73, 1, 96))
+
+        b = b[..., None]
+        self.assertEqual(
+            b.index(),
+            (
+                slice(0, 2, 1),
+                None,
+                slice(0, 73, 1),
+                None,
+                slice(0, 4, 1),
+                None,
+            ),
+        )
+        self.assertEqual(b.shape, (2, 1, 73, 1, 4, 1))
+        self.assertEqual(b.reference_shape, (12, 1, 73, 1, 96, 1))
+
+        b = b[:, 1, :, 1, :, 1]
+        self.assertEqual(
+            b.index(), (slice(0, 2, 1), slice(0, 73, 1), slice(0, 4, 1))
+        )
+        self.assertEqual(b.shape, (2, 73, 4))
+        self.assertEqual(b.original_shape, shape)
+        self.assertEqual(b.reference_shape, shape)
 
     def test_NetCDF4Array_replace_directory(self):
         """Test NetCDF4Array.replace_directory."""

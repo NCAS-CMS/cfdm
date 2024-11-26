@@ -44,7 +44,7 @@ class FragmentArrayMixin:
             # variable has fewer than 'self.ndim' dimensions (we know
             # that this is the case because 'index' has 'self.ndim'
             # elements).
-            axis = self._size_1_axis(index)
+            axis = self._size_1_axis()  # index)
             if axis is not None:
                 # There is a unique size 1 index that must correspond
                 # to the missing dimension => Remove it from the
@@ -134,7 +134,7 @@ class FragmentArrayMixin:
 
         return array
 
-    def _size_1_axis(self, indices):
+    def _size_1_axis(self):  # , indices):
         """Find the position of a unique size 1 index.
 
         .. versionadded:: (cfdm) NEXTVERSION

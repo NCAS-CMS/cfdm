@@ -92,7 +92,6 @@ class CFATest(unittest.TestCase):
         """Test 'strict' option to the cfdm.write 'cfa' keyword."""
         f = cfdm.example_field(0)
 
-        cfa_file = "cfa_file.nc"
         # By default, can't write in-memory arrays as aggregation
         # variables
         with self.assertRaises(AggregationError):
@@ -345,6 +344,32 @@ class CFATest(unittest.TestCase):
         for cfa in (False, True, (), []):
             with self.assertRaises(ValueError):
                 cfdm.write(g, cfa_file, cfa=cfa)
+
+    def test_CFA_subspace(self):
+        """Test the writing subspaces of aggregations."""
+        f = cfdm.example_field(0)
+
+        cfdm.write(f[:2], tmpfile1)
+        cfdm.write(f[2:], tmpfile2)
+
+        a = cfdm.read(tmpfile1, cfa_write="field")[0]
+        b = cfdm.read(tmpfile2, cfa_write="field")[0]
+        c = cfdm.Field.concatenate([a, b], axis=0)
+
+        cfdm.write(c, cfa_file, cfa="field")
+
+        f = cfdm.read(cfa_file, cfa_write="field")[0]
+        cfdm.write(f[:2], cfa_file2, cfa="field")
+        g = cfdm.read(cfa_file2)[0]
+        self.assertTrue(g.equals(a))
+
+        cfdm.write(f[2:], cfa_file2, cfa="field")
+        g = cfdm.read(cfa_file2)[0]
+        self.assertTrue(g.equals(b))
+
+        # Can't straddle Dask chunks
+        with self.assertRaises(AggregationError):
+            cfdm.write(f[1:3], cfa_file2, cfa="field")
 
 
 if __name__ == "__main__":

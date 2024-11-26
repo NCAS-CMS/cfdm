@@ -2163,7 +2163,16 @@ def indices_shape(indices, full_shape, keepdims=True):
 
     """
     shape = []
+    #    i = 0
     for index, full_size in zip(indices, full_shape):
+        #    for index in indices:
+        if index is None:
+            shape.append(1)
+            continue
+
+        #        full_size = full_shape[i]
+        #        i += 1
+
         if isinstance(index, slice):
             start, stop, step = index.indices(full_size)
             if (stop - start) * step < 0:
@@ -2256,22 +2265,32 @@ def parse_indices(shape, indices, keepdims=True):
     length = len(indices)
     n = len(shape)
     ndim = n
-    for index in indices:
+    for i, index in enumerate(indices):
         if index is Ellipsis:
             m = n - length + 1
+            try:
+                if indices[i + 1] is None:
+                    m += 1
+            except IndexError:
+                pass
+
             parsed_indices.extend([slice(None)] * m)
             n -= m
         else:
             parsed_indices.append(index)
-            n -= 1
+            if index is None:
+                # `None` signifies a new size 1 axis
+                ndim += 1
+                length += 1
+            else:
+                n -= 1
 
         length -= 1
 
     len_parsed_indices = len(parsed_indices)
-
     if ndim and len_parsed_indices > ndim:
         raise IndexError(
-            f"Invalid indices {parsed_indices} for array with shape {shape}"
+            f"Invalid indices {indices!r} for array with shape {shape}"
         )
 
     if len_parsed_indices < ndim:

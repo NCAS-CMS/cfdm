@@ -5796,7 +5796,7 @@ class NetCDFWrite(IOWrite):
             f_map,
             aggregated_data.get(feature, f"cfa_{feature}"),
             map_ncdimensions,
-            chunking=(False, (f_map.shape[0], f_map.shape[1]*780))
+            #            chunking=(False, (f_map.shape[0], f_map.shape[1] * 780)),
         )
         aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 
@@ -5827,7 +5827,7 @@ class NetCDFWrite(IOWrite):
                 f_location,
                 aggregated_data.get(feature, f"cfa_{feature}"),
                 fragment_array_ncdimensions,
-                chunking=(False, ((780,) + f_location.shape[1:]))
+                #                chunking=(False, ((780,) + f_location.shape[1:])),
             )
             aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 
@@ -6011,58 +6011,58 @@ class NetCDFWrite(IOWrite):
 
         return np.ma.masked_all(out_shape, dtype=a.dtype)
 
-    def _cfa_get_file_details(self, data, normalise=True):
-        """Get the details of all files referenced by the data.
-
-        .. versionadded:: (cfdm) NEXTVERSION
-
-        :Parameters:
-
-            data: `Data`
-                The data.
-
-            normalise: `bool`, optional
-                If True then normalise the file names, otherwise do
-                not.
-
-        :Returns:
-
-            `set` of 5-tuples
-                Each `tuple` comprises the fragment file array object,
-                its file name, its file address, the index defined on
-                the file array, and its original shape. If no files
-                are required to compute the data then an empty `set`
-                is returned.
-
-        **Examples**
-
-        >>> n._cfa_get_file_details(data):
-        {(<CF NetCDF4Array(5, 8): fragment_file.nc, q(5, 8)>,
-          'fragment_file.nc',
-          'q',
-          (slice(0, 5, None), slice(0, 8, None)),
-          (5, 8))}
-
-        """
-        out = []
-        append = out.append
-        for a in data.todict(
-            _apply_mask_hardness=False, _asanyarray=False
-        ).values():
-            try:
-                append(
-                    (
-                        a,
-                        a.get_filename(normalise=normalise),
-                        a.get_address(),
-                        a.index(),
-                        a.original_shape,
-                    )
-                )
-            except AttributeError:
-                pass
-
-        return set(out)
+    #    def _cfa_get_file_details(self, data, normalise=True):
+    #        """Get the details of all files referenced by the data.
+    #
+    #        .. versionadded:: (cfdm) NEXTVERSION
+    #
+    #        :Parameters:
+    #
+    #            data: `Data`
+    #                The data.
+    #
+    #            normalise: `bool`, optional
+    #                If True then normalise the file names, otherwise do
+    #                not.
+    #
+    #        :Returns:
+    #
+    #            `set` of 5-tuples
+    #                Each `tuple` comprises the fragment file array object,
+    #                its file name, its file address, the index defined on
+    #                the file array, and its original shape. If no files
+    #                are required to compute the data then an empty `set`
+    #                is returned.
+    #
+    #        **Examples**
+    #
+    #        >>> n._cfa_get_file_details(data):
+    #        {(<CF NetCDF4Array(5, 8): fragment_file.nc, q(5, 8)>,
+    #          'fragment_file.nc',
+    #          'q',
+    #          (slice(0, 5, None), slice(0, 8, None)),
+    #          (5, 8))}
+    #
+    #        """
+    #        out = []
+    #        append = out.append
+    #        for a in data.todict(
+    #            _apply_mask_hardness=False, _asanyarray=False
+    #        ).values():
+    #            try:
+    #                append(
+    #                    (
+    #                        a,
+    #                        a.get_filename(normalise=normalise),
+    #                        a.get_address(),
+    #                        a.index(),
+    #                        a.original_shape,
+    #                    )
+    #                )
+    #            except AttributeError:
+    #                pass
+    #
+    #        return set(out)
 
     def _cfa_aggregation_instructions(self, data, cfvar):
         """Convert data to aggregated_data terms.
@@ -6161,15 +6161,19 @@ class NetCDFWrite(IOWrite):
             for index, position in zip(
                 data.chunk_indices(), data.chunk_positions()
             ):
+                # Try to get this Dask chunk's data as a reference to
+                # fragment file
                 fragment = data[index].compute(_asanyarray=False)
                 try:
-                    filename, address, f_index, original_shape, ccc = (
+                    filename, address, is_subspace, f_index = (
                         fragment.get_filename(normalise=normalise),
                         fragment.get_address(),
+                        fragment.is_subspace(),
                         fragment.index(),
-                        fragment.original_shape, fragment.ccc()
                     )
                 except (AttributeError, TypeError):
+                    # This Dask chunk's data is not a reference to
+                    # fragment file
                     raise AggregationError(
                         f"Can't write {cfvar!r} as a CF-netCDF "
                         "aggregation variable: "
@@ -6178,46 +6182,19 @@ class NetCDFWrite(IOWrite):
                         "reference a unique fragment file. This is could be "
                         "because some fragment values have been changed "
                         "relative to those in the fragment files, or a "
-                        "Dask rechunking has occured."
+                        "Dask rechunking has occured, etc."
                     )
 
-                #                file_details = self._cfa_get_file_details(
-                #                    data[index], normalise=not uri_default
-                #                )
-                #                if len(file_details) != 1:
-                #                    if file_details:
-                #                        raise AggregationError(
-                #                            f"Can't write {cfvar!r} as a CF-netCDF "
-                #                            "aggregation variable: "
-                #                            f"The Dask chunk in position {position} "
-                #                            f"(defined by data index {index!r}) references "
-                #                            "more than one fragment file. This is probably "
-                #                            "because some fragment values have been changed "
-                #                            "relative to those in the fragment files, or a "
-                #                            "rechunking has occured."
-                #                        )
-                #
-                #                    raise AggregationError(
-                #                        f"Can't write {cfvar!r} as a CF-netCDF "
-                #                        "aggregation variable: "
-                #                        f"The Dask chunk in position {position} "
-                #                        f"(defined by data index {index!r}) references "
-                #                        "zero fragment files."
-                #                    )
-                #
-                #                fragment, filename, address, f_index, original_shape = (
-                #                    file_details.pop()
-                #                )
-
-                if not ccc: #f_index != tuple([slice(0, n, 1) for n in original_shape]):
+                if is_subspace:
+                    # This Dask chunk's data is a reference to
+                    # fragment file, but only to a subspace of it.
                     raise AggregationError(
                         f"Can't write {cfvar!r} as a CF-netCDF "
                         "aggregation variable: "
                         f"The Dask chunk in position {position} "
-                        f"(defined by data index {index!r}) only references "
-                        f"a subspace of the fragment file {fragment!r}: "
-                        f"{f_index}\n\n"# TODOCFA
-                        f"{ccc}" # TODOCFA
+                        f"(defined by data index {index!r}) references "
+                        f"a subspace ({f_index!r}) of the fragment file "
+                        f"{fragment!r}"
                     )
 
                 uri = urisplit(filename)
@@ -6246,7 +6223,7 @@ class NetCDFWrite(IOWrite):
                             "referenced by the Dask chunk in position "
                             f"{position} (defined by data index {index!r}), "
                             "but the aggregation file URI scheme "
-                            f"({aggregation_file_scheme}) is incompatible."
+                            f"({aggregation_file_scheme}:) is incompatible."
                         )
 
                     filename = relpath(

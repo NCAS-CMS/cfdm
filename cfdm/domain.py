@@ -1109,6 +1109,7 @@ class Domain(
         d = _inplace_enabled_define_and_cleanup(self)
 
         for c in d.constructs.filter_by_data(todict=True).values():
+            print(repr(c))
             c.persist(inplace=True)
 
         return d

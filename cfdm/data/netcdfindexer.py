@@ -225,9 +225,30 @@ class netcdf_indexer:
         # ------------------------------------------------------------
         # Index the variable
         # ------------------------------------------------------------
-        data = self._index(index)
+        try:
+            data = self._index(index)
+        except (IndexError, AttributeError):
+            # Assume we are here because we have one or more `None`
+            # values in 'index', which signifying new axes, and the
+            # variable doesn't support that type of indexing. It is
+            # known that `netCDF4` raises an IndexError and h5netcdf
+            # raises an AttributeError.
 
-        # Reset a netCDF4 variable's scale and mask behaviour
+            # Subspace the variable with the `None`s removed
+            index1 = [i for i in index if i is not None]
+            data = self._index(tuple(index1))
+
+            # Now subspace the result (which we're assuming is
+            # something that likes `None` indices) with the `None`s
+            # reinstated.
+            index2 = [i if i is None else slice(None) for i in index]
+            data = data[tuple(index2)]
+
+            # E.g. index : (1, None, slice(1, 5))
+            #      index1: (1, slice(1, 5))
+            #      index2: (slice(None), None, slice(None))
+
+        # Reset a netCDF4 variabln_none's scale and mask behaviour
         if netCDF4_scale:
             variable.set_auto_scale(True)
 
@@ -753,6 +774,24 @@ class netcdf_indexer:
                 data = data.astype(np.array(add_offset).dtype)
 
         return data
+
+    def _size_1_axis(self):
+        """Find the position of a unique size 1 index.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        :Returns:
+
+            `int` or `None`
+                The position of the unique size 1 index, or `None` if
+                there are zero or at least two of them.
+
+        """
+        shape = self.shape
+        if shape.count(1):
+            return shape.index(1)
+
+        return
 
     @property
     def dtype(self):
