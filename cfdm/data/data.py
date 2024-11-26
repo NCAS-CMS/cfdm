@@ -1712,8 +1712,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         if clear & self._CFA:
             # Set the aggregation write status to False (under certain
-            # TODOCFA circumstances)
-            # self.nc_del_aggregation_write_status()
+            # circumstances)
             self._del_nc_aggregation_write_status()
 
         return clear
@@ -1826,6 +1825,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         Updates the data in-place to set the aggregation write status
         to `False`, but only if the fragment type is not ``'value'``.
+
+        A necessary (but not sufficient) condition for writing the
+        data as CF-netCDF aggregated data is that the write status is
+        True.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -3483,7 +3486,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         if mask is not None:
             dx = da.ma.masked_where(mask, dx)
-            # No need to update aggregation write status
             CFA = self._CFA
         else:
             CFA = self._NONE
@@ -5374,16 +5376,13 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         index = [slice(None)] * dx.ndim
         index.insert(position, None)
         dx = dx[tuple(index)]
-        #        print ('INSERT', index)
-
-        #        dx = dx.reshape(new_shape)
 
         # Inserting a dimension doesn't affect the cached elements or
         # the CFA write status
         d._set_dask(
             dx,
             clear=self._ALL ^ self._CACHE ^ self._CFA,
-            asanyarray=None,  # False
+            asanyarray=None,
         )
 
         # Expand _axes
@@ -6349,16 +6348,16 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                         f"shape {original_shape}: Axis size is greater than 1"
                     )
 
-        #        if not iaxes:
-        #            # Short circuit for a null operation (to avoid adding a
-        #            # null layer to the Dask graph).
-        #            return d
+        if not iaxes:
+            # Short circuit for a null operation (to avoid adding a
+            # null layer to the Dask graph).
+            return d
 
         # Still here? Then the data array is not scalar and at least
         # one size 1 axis needs squeezing.
         dx = d.to_dask_array(_apply_mask_hardness=False)
         dx = dx.squeeze(axis=iaxes)
-        #        print ('SQUEEZE')
+
         d._set_dask(
             dx, clear=self._ALL ^ self._CACHE ^ self._CFA, asanyarray=False
         )

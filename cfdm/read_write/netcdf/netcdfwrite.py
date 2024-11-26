@@ -5692,47 +5692,6 @@ class NetCDFWrite(IOWrite):
         g["cfa_write_status"][ncvar] = False
         return False
 
-    #        cfa_write_status = False
-    #        for ctype, ndim in constructs.items():
-    #            # Write as an aggregation variable if it has an
-    #            # appropriate construct type ...
-    #            if ctype in (construct_type, "all"):
-    #                # ... and then only if it satisfies the
-    #                # number-of-dimensions criterion, and the data is
-    #                # flagged as OK.
-    #                if ndim is None or ndim == len(domain_axes):
-    #                    return False
-    #
-    #
-    #                    cfa_write_status = data.nc_get_aggregation_write_status()
-    #                    if not cfa_write_status and cfa.get("strict", True):
-    #                        if g["mode"] == "w":
-    #                            os.remove(g["filename"])
-    #
-    #                        raise ValueError(
-    #                            f"Can't write {cfvar!r} as a CF-netCDF "
-    #                            "aggregation variable."
-    #                            "\n\n"
-    #                            "Possible reasons:\n"
-    #                            "* A fragment file spans more than one Dask "
-    #                            "chunk.\n"
-    #                            "* Data values in memory have been changed "
-    #                            "relative to those in a fragment file."
-    #                            "\n\n"
-    #                            "Possible remedies:\n"
-    #                            "* Setting  the 'cfa_write' parameter in a "
-    #                            "previous call to the 'read' function.\n"
-    #                            "* Setting the 'strict' keyword to False in the "
-    #                            "'cfa' parameter of the 'write' function."
-    #                        )
-    #
-    #                    break#
-    #
-    #                break
-    #
-    #        g["cfa_write_status"][ncvar] = cfa_write_status
-    #        return cfa_write_status
-
     def _create_cfa_data(self, cfa, ncvar, ncdimensions, data, cfvar):
         """Write an aggregation variable to the netCDF file.
 
@@ -6007,62 +5966,9 @@ class NetCDFWrite(IOWrite):
             return a.reshape(out_shape)
 
         if strict:
-            raise AggregationError("TODOCFA 89627323")
+            raise AggregationError(str(a))
 
         return np.ma.masked_all(out_shape, dtype=a.dtype)
-
-    #    def _cfa_get_file_details(self, data, normalise=True):
-    #        """Get the details of all files referenced by the data.
-    #
-    #        .. versionadded:: (cfdm) NEXTVERSION
-    #
-    #        :Parameters:
-    #
-    #            data: `Data`
-    #                The data.
-    #
-    #            normalise: `bool`, optional
-    #                If True then normalise the file names, otherwise do
-    #                not.
-    #
-    #        :Returns:
-    #
-    #            `set` of 5-tuples
-    #                Each `tuple` comprises the fragment file array object,
-    #                its file name, its file address, the index defined on
-    #                the file array, and its original shape. If no files
-    #                are required to compute the data then an empty `set`
-    #                is returned.
-    #
-    #        **Examples**
-    #
-    #        >>> n._cfa_get_file_details(data):
-    #        {(<CF NetCDF4Array(5, 8): fragment_file.nc, q(5, 8)>,
-    #          'fragment_file.nc',
-    #          'q',
-    #          (slice(0, 5, None), slice(0, 8, None)),
-    #          (5, 8))}
-    #
-    #        """
-    #        out = []
-    #        append = out.append
-    #        for a in data.todict(
-    #            _apply_mask_hardness=False, _asanyarray=False
-    #        ).values():
-    #            try:
-    #                append(
-    #                    (
-    #                        a,
-    #                        a.get_filename(normalise=normalise),
-    #                        a.get_address(),
-    #                        a.index(),
-    #                        a.original_shape,
-    #                    )
-    #                )
-    #            except AttributeError:
-    #                pass
-    #
-    #        return set(out)
 
     def _cfa_aggregation_instructions(self, data, cfvar):
         """Convert data to aggregated_data terms.
@@ -6194,7 +6100,8 @@ class NetCDFWrite(IOWrite):
                         f"The Dask chunk in position {position} "
                         f"(defined by data index {index!r}) references "
                         f"a subspace ({f_index!r}) of the fragment file "
-                        f"{fragment!r}"
+                        f"{fragment!r}. This might be fixable by setting "
+                        "the 'cfa_write' parameter to the 'read' function."
                     )
 
                 uri = urisplit(filename)
@@ -6264,15 +6171,22 @@ class NetCDFWrite(IOWrite):
                 dx,
                 dx_ind,
                 adjust_chunks={i: 1 for i in out_ind},
-                meta=np.array([], dx.dtype),
+                meta=np.array((), dx.dtype),
                 strict=g["cfa"]["strict"],
             )
             d = type(data)(dx)
 
             try:
                 d.persist(inplace=True)
-            except AggregationError:
-                raise
+            except AggregationError as error:
+                raise AggregationError(
+                    f"Can't write {cfvar!r} as a CF-netCDF aggregation "
+                    "variable. "
+                    "At least one Dask chunk has more than one unique value: "
+                    f"{error}. "
+                    "Set the 'strict' keyword of the 'cfa' parameter to True "
+                    "to use a unique value of missing data in this case."
+                )
 
             out["value"] = d
 

@@ -4895,8 +4895,9 @@ class NetCDFAggregation(NetCDFMixin):
     def nc_del_aggregation_write_status(self):
         """Set the netCDF aggregation write status to `False`.
 
-        Writing the data as CF-netCDF aggregated data will only be
-        allowed if the write status is True.
+        A necessary (but not sufficient) condition for writing the
+        data as CF-netCDF aggregated data is that the write status is
+        True.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -4914,8 +4915,9 @@ class NetCDFAggregation(NetCDFMixin):
     def nc_get_aggregation_write_status(self):
         """Get the netCDF aggregation write status.
 
-        Writing the data as CF-netCDF aggregated data will only be
-        allowed if the write status is True.
+        A necessary (but not sufficient) condition for writing the
+        data as CF-netCDF aggregated data is that the write status is
+        True.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -4938,8 +4940,9 @@ class NetCDFAggregation(NetCDFMixin):
     def _nc_set_aggregation_write_status(self, status):
         """Set the netCDF aggregation write status.
 
-        Writing the data as CF-netCDF aggregated data will only be
-        allowed if the write status is True.
+        A necessary (but not sufficient) condition for writing the
+        data as CF-netCDF aggregated data is that the write status is
+        True.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -4964,8 +4967,9 @@ class NetCDFAggregation(NetCDFMixin):
     def nc_set_aggregation_write_status(self, status):
         """Set the netCDF aggregation write status.
 
-        Writing the data as CF-netCDF aggregated data will only be
-        allowed if the write status is True.
+        A necessary (but not sufficient) condition for writing the
+        data as CF-netCDF aggregated data is that the write status is
+        True.
 
         .. versionadded:: (cfdm) NEXTVERSION
 

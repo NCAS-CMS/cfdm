@@ -107,6 +107,8 @@ class IndexMixin:
         new_shape = []
 
         if len(index1) > len(index0):
+            # Take `None`s out of 'index1' for now. We'll put them
+            # back later.
             none_positions = [
                 i for i, ind1 in enumerate(index1) if ind1 is None
             ]
@@ -213,23 +215,10 @@ class IndexMixin:
         new._custom["index"] = tuple(new_indices)
         new._custom["reference_shape"] = tuple(reference_shape)
 
-        #        print ('new_axes=', new_axes)
-        # if new_axes:
-        #    ref = reference_shape
-        #    for axis in new_axes:
-        #        ref.insert(axis, 1)
-        #
-        #    reference_shape = tuple(ref)
-        #    new._custom["reference_shape"] = reference_shape
-        #    new._custom["new_axes"] = tuple(new_axes)
-        #        new._custom["new_axes"] = tuple(new_axes)
         # Find the shape defined by the new index
-        #        print( new_indices, reference_shape)
         new_shape = indices_shape(new_indices, reference_shape, keepdims=False)
         new._set_component("shape", tuple(new_shape), copy=False)
 
-        #        print (repr(new))
-        #        print (new.__dict__)
         return new
 
     def __repr__(self):
@@ -405,14 +394,15 @@ class IndexMixin:
 
     @property
     def reference_shape(self):
-        """The TODOCFA original shape of the data, before any.
+        """The shape of the data in the file with added dimensions.
 
-        The `shape` is defined by the result of subspacing the data in
-        its original shape with the indices given by `index`.
+        This is the same as `original_shape`, but with added size 1
+        dimensions if `index` has has new dimensions added with index
+        values of `None`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
-        .. seealso:: `index`, `shape`
+        .. seealso:: `index`, `shape`, `original_shape`
 
         """
         out = self._custom.get("reference_shape")
@@ -425,7 +415,7 @@ class IndexMixin:
 
     @property
     def original_shape(self):
-        """The original shape of the data, before any subspacing.
+        """The shape of the data in the file.
 
         The `shape` is defined by the result of subspacing the data in
         its original shape with the indices given by `index`.
@@ -444,6 +434,15 @@ class IndexMixin:
         return out
 
     def is_subspace(self):
-        """TODDOCFA."""
+        """True if the index represents a subspace of the data.
+
+        The presence of added size 1 dimensions in `index` will not,
+        on their own cause `is_subspace` to return `False`
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `index`, `shape`
+
+        """
         index = [ind for ind in self.index() if ind is not None]
         return index != [slice(0, n, 1) for n in self.original_shape]

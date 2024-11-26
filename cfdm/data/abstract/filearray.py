@@ -271,17 +271,13 @@ class FileArray(Array):
 
         :Returns:
 
-            `tuple` TODOCFA
-                The file directory names, one for each file, as
-                absolute paths with no trailing path name component
-                separator.
+            `str`
+                The file directory name.
 
         **Examples**
 
         >>> a.get_filename()
         '/data1/file1'
-        >>> a.file_directory()
-        '/data1'
 
         """
         filename = self.get_filename(normalise=normalise, default=None)
