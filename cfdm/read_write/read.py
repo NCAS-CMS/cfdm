@@ -22,6 +22,7 @@ def read(
     storage_options=None,
     store_hdf5_chunks=True,
     _implementation=_implementation,
+    _scan_only=False,
 ):
     """Read field or domain constructs from a dataset.
 
@@ -427,6 +428,7 @@ def read(
                 netcdf_backend=netcdf_backend,
                 store_hdf5_chunks=store_hdf5_chunks,
                 extra_read_vars=None,
+                _scan_only=_scan_only,
             )
         except MaskError:
             # Some data required for field interpretation is missing,
