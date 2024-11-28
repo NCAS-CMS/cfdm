@@ -2,8 +2,8 @@ from ..fullarray import FullArray
 from .mixin import FragmentArrayMixin
 
 
-class FragmentValueArray(FragmentArrayMixin, FullArray):
-    """A fragment of aggregated data that has a constant value.
+class FragmentUniqueValueArray(FragmentArrayMixin, FullArray):
+    """A fragment of aggregated data that has a single unique value.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
@@ -11,7 +11,7 @@ class FragmentValueArray(FragmentArrayMixin, FullArray):
 
     def __init__(
         self,
-        value=None,
+        unique_value=None,
         dtype=None,
         shape=None,
         unpack_aggregated_data=True,
@@ -24,8 +24,8 @@ class FragmentValueArray(FragmentArrayMixin, FullArray):
 
         :Parameters:
 
-            value: scalar
-                The constant value for the fragment.
+            unique_value: scalar
+                The unique value for the fragment.
 
             dtype: `numpy.dtype`
                 The data type of the aggregated array. May be `None`
@@ -52,7 +52,7 @@ class FragmentValueArray(FragmentArrayMixin, FullArray):
 
         """
         super().__init__(
-            fill_value=value,
+            fill_value=unique_value,
             dtype=dtype,
             shape=shape,
             attributes=None,

@@ -1840,7 +1840,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             `None`
 
         """
-        if self.nc_get_aggregation_fragment_type() != "value":
+        if self.nc_get_aggregation_fragment_type() != "unique_value":
             self.nc_del_aggregation_write_status()
 
     def _del_dask(self, default=ValueError(), clear=None):
@@ -4912,10 +4912,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """The names of files containing parts of the data array.
 
         Returns the names of any files that may be required to deliver
-        the computed data array. This set may contain fewer names than
-        the collection of file names that defined the data when it was
-        first instantiated, as could be the case after the data has
-        been subspaced.
+        the computed data array.
 
         .. seealso:: `replace_filenames, `replace_directory`
 
@@ -4926,8 +4923,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 .. versionadded:: (cfdm) NEXTVERSION
 
             per_chunk: `bool`, optional
-                Return a `numpy` array that provides the file names
-                that contribute to each Dask chunk. This array will
+                Return a `numpy` array that provides the file name
+                that contributes to each Dask chunk. This array will
                 have the same shape as the Dask chunks (as returned by
                 the `numblocks` attribute).
 
@@ -4942,7 +4939,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         **Examples**
 
         >>> d = {{package}}.{{class}}.empty((5, 8), 1, chunks=4)
-        >>> d.get_filenames() TODOCFA
+        >>> d.get_filenames()
         set()
 
         >>> f = {{package}}.example_field(0)
@@ -4955,33 +4952,10 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         (2, 2)
         >>> filenames = d.get_filenames(per_chunk=True)
         >>> filenames.shape
-        (2, 2, 1)
+        (2, 2)
         >>> print(filenames)
-        [[['file.nc']
-          ['file.nc']]
-
-         [['file.nc']
-          ['file.nc']]]
-        >>> filenames = d.get_filenames(per_chunk=True, extra=2)
-        >>> filenames.shape
-        (2, 2, 3)
-        >>> print(filenames)
-        [[['file.nc' -- --]
-          ['file.nc' -- --]]
-
-         [['file.nc' -- --]
-          ['file.nc' -- --]]]
-        >>> filenames = d.get_filenames(
-        ...     per_chunk=True, min_file_versions=2, extra=3
-        ...)
-        >>> filenames.shape
-        (2, 2, 5)
-        >>> print(filenames)
-        [[['file.nc' -- -- -- --]
-          ['file.nc' -- -- -- --]]
-
-         [['file.nc' -- -- -- --]
-          ['file.nc' -- -- -- --]]]
+        [['file.nc' 'file.nc']
+         ['file.nc' 'file.nc']]
 
         """
         if per_chunk:
@@ -5011,7 +4985,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                         if filename:
                             if position in filenames:
                                 raise ValueError(
-                                    f"Can't return 'pre_chunk' file names: "
+                                    f"Can't return 'per_chunk' file names: "
                                     "The Dask chunk in position {position} "
                                     f"(defined by {index!r}) has multiple "
                                     "file locations"
@@ -5904,6 +5878,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
     ):
         """Replace file directories in-place.
 
+        Modifies the names of files that are be required to deliver
+        the computed data array.
+
         .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `file_directories`, `get_filenames`
@@ -5946,6 +5923,9 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         >>> d.replace_directory('/new/data, '/archive/location')
         >>> d.get_filenames()
         {'/archive/location/path/file1.nc', '/home/file2.nc'}
+        >>> d.replace_directory('/home')
+        >>> d.get_filenames()
+        {'/archive/location/path/file1.nc', 'file2.nc'}
 
         """
         if not old and not new and not normalise and not common:

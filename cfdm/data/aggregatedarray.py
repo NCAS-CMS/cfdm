@@ -6,7 +6,7 @@ from uritools import isuri, uricompose
 
 from ..functions import dirname
 from . import abstract
-from .fragment import FragmentFileArray, FragmentValueArray
+from .fragment import FragmentFileArray, FragmentUniqueValueArray
 from .netcdfindexer import netcdf_indexer
 from .utils import chunk_locations, chunk_positions
 
@@ -27,7 +27,7 @@ class AggregatedArray(abstract.FileArray):
         instance = super().__new__(cls)
         instance._FragmentArray = {
             "location": FragmentFileArray,
-            "value": FragmentValueArray,
+            "unique_value": FragmentUniqueValueArray,
         }
         return instance
 
@@ -72,10 +72,10 @@ class AggregatedArray(abstract.FileArray):
                     'location': <'location' fragment array variable data>,
                     'identifier': <'identifier' fragment array variable data>,}
 
-                or "value" form:
+                or "unique_value" form:
 
-                   {'mnap': <'map' fragment array variable data>,
-                    'value': <'value' fragment array data>}
+                   {'map': <'map' fragment array variable data>,
+                    'unique_value': <'unique_value' fragment array data>}
 
             storage_options: `dict` or `None`, optional
                 Key/value pairs to be passed on to the creation of
@@ -214,18 +214,18 @@ class AggregatedArray(abstract.FileArray):
                    'location': <'location' fragment array variable data>,
                    'identifier': <'identifier' fragment array variable data>}
 
-               or "value" form::
+               or "unique_value" form::
 
                   {'map': <'map' fragment array variable data>,
-                   'value': <'value' fragment array data>}
+                   'unique_value': <'unique_value' fragment array data>}
 
         :Returns:
 
             4-`tuple`
                 1. The shape of the aggregated data.
                 2. The shape of the array of fragments.
-                3. The type of the fragments (either ``'value'`` or
-                   ``'location'``).
+                3. The type of the fragments (either
+                   ``'unique_value'`` or ``'location'``).
                 4. The parsed aggregation instructions.
 
         """
@@ -246,7 +246,7 @@ class AggregatedArray(abstract.FileArray):
         if "location" in fragment_array:
             # --------------------------------------------------------
             # Each fragment comprises file locations, rather than a
-            # constant value.
+            # unique value.
             # --------------------------------------------------------
             fragment_type = "location"
             fa_identifier = fragment_array["identifier"]
@@ -275,13 +275,13 @@ class AggregatedArray(abstract.FileArray):
             # Each fragment comprises a constant value, rather than
             # file locations.
             # --------------------------------------------------------
-            fragment_type = "value"
-            fa_value = fragment_array["value"]
-            fragment_array_shape = fa_value.shape
+            fragment_type = "unique_value"
+            fa_unique_value = fragment_array["unique_value"]
+            fragment_array_shape = fa_unique_value.shape
             parsed_fragment_array = {
                 index: {
                     "map": shape,
-                    "value": fa_value[index].item(),
+                    "unique_value": fa_unique_value[index].item(),
                 }
                 for index, shape in zip(
                     fragment_array_indices, fragment_shapes
@@ -375,8 +375,8 @@ class AggregatedArray(abstract.FileArray):
         """The type of fragments in the fragment array.
 
         Either ``'location'`` to indicate that the fragments are
-        files, or else ``'value'`` to indicate that the represented by
-        their unique data value.
+        files, or else ``'unique_value'`` to indicate that the they
+        are represented by their unique data values.
 
         .. versionadded:: (cfdm) NEXTVERSION
 

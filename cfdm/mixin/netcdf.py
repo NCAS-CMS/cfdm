@@ -4889,7 +4889,7 @@ class NetCDFAggregation(NetCDFMixin):
 
         """
         self._get_component("netcdf")["aggregation_fragment_type"] = value
-        if value == "value":
+        if value == "unique_value":
             self._nc_set_aggregation_write_status(True)
 
     def nc_del_aggregation_write_status(self):
@@ -4931,7 +4931,10 @@ class NetCDFAggregation(NetCDFMixin):
 
         """
         status = self._nc_get("aggregation_write_status", False)
-        if not status and self.nc_get_aggregation_fragment_type() == "value":
+        if (
+            not status
+            and self.nc_get_aggregation_fragment_type() == "unique_value"
+        ):
             status = True
             self._nc_set_aggregation_write_status(status)
 

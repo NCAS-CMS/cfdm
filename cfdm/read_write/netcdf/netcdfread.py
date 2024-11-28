@@ -6381,7 +6381,7 @@ class NetCDFRead(IORead):
         kwargs["mask"] = True
 
         fragment_array_variables = g["fragment_array_variables"]
-        standardised_terms = ("map", "location", "identifier", "value")
+        standardised_terms = ("map", "location", "identifier", "unique_value")
 
         fragment_array = {}
         for term, term_ncvar in g["parsed_aggregated_data"][ncvar].items():
@@ -6396,7 +6396,7 @@ class NetCDFRead(IORead):
             fragment_array_variable = fragment_array_variables[term_ncvar]
             fragment_array[term] = fragment_array_variable
 
-            if term == "value" and kwargs["dtype"] is None:
+            if term == "unique_value" and kwargs["dtype"] is None:
                 # This is a string-valued aggregation variable with a
                 # 'value' fragment array variable, so set the correct
                 # numpy data type.

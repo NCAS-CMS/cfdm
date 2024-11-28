@@ -309,6 +309,10 @@ class NetCDF4ArrayTest(unittest.TestCase):
             m.get_filename(), os.path.join(cwd, "new/data/basename.nc")
         )
 
+        n = cfdm.NetCDF4Array("/data/../new_path/basename.nc")
+        m = n.replace_directory("/new_path/", normalise=True)
+        self.assertEqual(m.get_filename(), "basename.nc")
+
 
 if __name__ == "__main__":
     print("Run date:", datetime.datetime.now())

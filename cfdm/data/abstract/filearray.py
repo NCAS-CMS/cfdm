@@ -471,10 +471,9 @@ class FileArray(Array):
         return dataset, self.get_address()
 
     def replace_directory(self, old=None, new=None, normalise=False):
-        """Replace the file directory in-place.
+        """Replace the file directory.
 
-        TODOCFA Every file in *old* that is referenced by the data is
-        redefined to be in *new*.
+        Modifies the name of the file.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -507,29 +506,23 @@ class FileArray(Array):
 
         **Examples**
 
-        >>> a.get_filenames() TODOCFA
-        {'/data/file1.nc', '/home/file2.nc'}
+        >>> a.get_filename()
+        '/data/file1.nc'
         >>> b = a.replace_directory('/data', '/new/data/path/')
-        >>> b.get_filenames()
-        {'/new/data/path/file1.nc', '/home/file2.nc'}
-        >>> c = b.replace_directory('/data', '/archive/location')
-        >>> c.get_filenames()
-        {'/archive/location/path/file1.nc', '/home/file2.nc'}
-        >>> c = b.replace_directory('/archive/location', None)
-        >>> c.get_filenames()
-        {'path/file1.nc', '/home/file2.nc'}
+        >>> b.get_filename()
+        '/new/data/path/file1.nc'
+        >>> c = b.replace_directory('/new/data', None)
+        >>> c.get_filename()
+        'path/file1.nc'
         >>> c = b.replace_directory('path', '../new_path', normalise=False)
-        >>> c.get_filenames()
-        {'../new_path/file1.nc', '/home/file2.nc'}
+        >>> c.get_filename()
+        '../new_path/file1.nc'
         >>> c = b.replace_directory(None, '/data')
-        >>> c.get_filenames()
-        {'/data/../new_path/file1.nc', '/home/file2.nc'}
-        >>> c = b.replace_directory('/data/../new_path/', None, normalise=False)
-        >>> c.get_filenames()
-        {'file1.nc', '/home/file2.nc'}
-        >>> c = b.replace_directory(None, '/base')
-        >>> c.get_filenames()
-        {'/base/file1.nc', '/base/home/file2.nc'}
+        >>> c.get_filename()
+        '/data/../new_path/file1.nc'
+        >>> c = b.replace_directory('/new_path/', None, normalise=True)
+        >>> c.get_filename()
+        'file1.nc'
 
         """
         a = self.copy()

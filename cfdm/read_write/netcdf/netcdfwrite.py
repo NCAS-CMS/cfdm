@@ -2780,10 +2780,18 @@ class NetCDFWrite(IOWrite):
             "fill_value": fill_value,
         }
 
+        # ------------------------------------------------------------
+        # For aggregation variables, create a dictionary containing
+        # the fragment array variables' data.
+        #
+        # E.g. {'map': <Data(2, 1): [[5, 8]]>,
+        #       'location': <Data(1, 1): [[data/file.nc.nc]]>,
+        #       'identifier': <Data(1, 1): [[q]]>}
+        # ------------------------------------------------------------
         cfa = None
         if self._cfa_write_status(ncvar, cfvar, construct_type, domain_axes):
             try:
-                cfa = self._cfa_aggregation_instructions(data, cfvar)
+                cfa = self._cfa_fragment_array_variables(data, cfvar)
             except AggregationError:
                 if g["cfa"].get("strict", True):
                     # Raise the exception in 'strict' mode
@@ -3043,7 +3051,8 @@ class NetCDFWrite(IOWrite):
                 .. versionadded:: (cfdm) 1.10.1.0
 
             cfa: `dict`, optional
-                TODOCFA
+                For aggregation variables, a dictionary containing the
+                fragment array variables' data.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -3058,7 +3067,7 @@ class NetCDFWrite(IOWrite):
             # --------------------------------------------------------
             # Write the data as an aggregation variable
             # --------------------------------------------------------
-            self._create_cfa_data(cfa, ncvar, ncdimensions, data, cfvar)
+            self._cfa_create_data(cfa, ncvar, ncdimensions, data, cfvar)
             return
 
         # ------------------------------------------------------------
@@ -5692,14 +5701,16 @@ class NetCDFWrite(IOWrite):
         g["cfa_write_status"][ncvar] = False
         return False
 
-    def _create_cfa_data(self, cfa, ncvar, ncdimensions, data, cfvar):
+    def _cfa_create_data(self, cfa, ncvar, ncdimensions, data, cfvar):
         """Write an aggregation variable to the netCDF file.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Parameters:
 
-            cfa: `dict` TODOCFA
+            cfa: `dict`
+                A dictionary containing the fragment array variables'
+                data.
 
             ncvar: `str`
                 The netCDF name for the variable.
@@ -5816,7 +5827,7 @@ class NetCDFWrite(IOWrite):
             # --------------------------------------------------------
             # Value variable
             # --------------------------------------------------------
-            feature = "value"
+            feature = "unique_value"
             f_value = cfa[feature]
 
             # Get the fragment array netCDF dimensions from the
@@ -5970,7 +5981,7 @@ class NetCDFWrite(IOWrite):
 
         return np.ma.masked_all(out_shape, dtype=a.dtype)
 
-    def _cfa_aggregation_instructions(self, data, cfvar):
+    def _cfa_fragment_array_variables(self, data, cfvar):
         """Convert data to aggregated_data terms.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -5992,7 +6003,7 @@ class NetCDFWrite(IOWrite):
 
         **Examples**
 
-        >>> n._cfa_aggregation_instructions(data, cfvar)
+        >>> n._cfa_fragment_array_variables(data, cfvar)
         {'shape': <Data(2, 1): [[5, 8]]>,
          'location': <Data(1, 1): [[file:///home/file.nc]]>,
          'identifier': <Data(1, 1): [[q]]>}
@@ -6188,7 +6199,7 @@ class NetCDFWrite(IOWrite):
                     "to use a unique value of missing data in this case."
                 )
 
-            out["value"] = d
+            out["unique_value"] = d
 
         # Return the dictionary of Data objects
         return out

@@ -2696,6 +2696,28 @@ class DataTest(unittest.TestCase):
         # Check that we haven't changed 'e'
         self.assertEqual(e.file_directories(), set([directory]))
 
+        d.replace_directory(new="/newer/path", common=True)
+        self.assertEqual(
+            d.file_directories(),
+            set(["/newer/path"]),
+        )
+        self.assertEqual(
+            d.get_filenames(),
+            set((f"/newer/path/{os.path.basename(file_A)}",)),
+        )
+
+        with self.assertRaises(ValueError):
+            d.replace_directory(old="something", common=True)
+
+        d.replace_directory("/newer/path")
+        self.assertEqual(
+            d.file_directories(),
+            set([""]),
+        )
+        self.assertEqual(
+            d.get_filenames(), set((f"{os.path.basename(file_A)}",))
+        )
+
     def test_Data_replace_filenames(self):
         """Test Data.replace_filenames."""
         f = cfdm.example_field(0)

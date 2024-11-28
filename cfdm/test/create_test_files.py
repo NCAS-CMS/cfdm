@@ -2259,7 +2259,9 @@ def _make_aggregation_value(filename):
     uid = n.createVariable("uid", str, ())
     uid.long_name = "Fragment dataset unique identifiers"
     uid.aggregated_dimensions = "time"
-    uid.aggregated_data = "value: fragment_value_uid map: fragment_map_uid"
+    uid.aggregated_data = (
+        "unique_value: fragment_value_uid map: fragment_map_uid"
+    )
 
     time = n.createVariable("time", "f4", ("time",))
     time.standard_name = "time"
