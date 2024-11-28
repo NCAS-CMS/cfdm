@@ -106,13 +106,14 @@ class IndexMixin:
         new_indices = []
         new_shape = []
 
+        newaxis = np.newaxis
         if len(index1) > len(index0):
-            # Take `None`s out of 'index1' for now. We'll put them
+            # Take new axes out of 'index1' for now. We'll put them
             # back later.
             none_positions = [
-                i for i, ind1 in enumerate(index1) if ind1 is None
+                i for i, ind1 in enumerate(index1) if ind1 is newaxis
             ]
-            index1 = [ind1 for ind1 in index1 if ind1 is not None]
+            index1 = [ind1 for ind1 in index1 if ind1 is not newaxis]
         else:
             none_positions = []
 
@@ -133,8 +134,16 @@ class IndexMixin:
             size0 = shape0[i]
 
             i += 1
-            if ind0 is None:
+            if ind0 is newaxis:
                 if isinstance(ind1, Integral):
+                    # A previously introduced new axis is being
+                    # removed by an integer index
+                    if ind1 not in (0, -1):
+                        raise IndexError(
+                            f"index {ind1} is out of bounds for axis {i-1} "
+                            "with size 1"
+                        )
+
                     reference_shape.pop(i - 1 - j)
                     j += 1
                 else:
@@ -209,7 +218,7 @@ class IndexMixin:
 
         if none_positions:
             for i in none_positions:
-                new_indices.insert(i, None)
+                new_indices.insert(i, newaxis)
                 reference_shape.insert(i, 1)
 
         new._custom["index"] = tuple(new_indices)
@@ -398,7 +407,7 @@ class IndexMixin:
 
         This is the same as `original_shape`, but with added size 1
         dimensions if `index` has has new dimensions added with index
-        values of `None`.
+        values of `numpy.newaxis`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -436,13 +445,15 @@ class IndexMixin:
     def is_subspace(self):
         """True if the index represents a subspace of the data.
 
-        The presence of added size 1 dimensions in `index` will not,
-        on their own cause `is_subspace` to return `False`
+        The presence of `numpy.newaxis` (i.e. added size 1 dimensions)
+        in `index` will not, on their own cause `is_subspace` to
+        return `False`
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         .. seealso:: `index`, `shape`
 
         """
-        index = [ind for ind in self.index() if ind is not None]
+        newaxis = np.newaxis
+        index = [ind for ind in self.index() if ind is not newaxis]
         return index != [slice(0, n, 1) for n in self.original_shape]

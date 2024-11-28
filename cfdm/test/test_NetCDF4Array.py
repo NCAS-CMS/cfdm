@@ -269,7 +269,11 @@ class NetCDF4ArrayTest(unittest.TestCase):
         self.assertEqual(b.shape, (2, 1, 73, 1, 4, 1))
         self.assertEqual(b.reference_shape, (12, 1, 73, 1, 96, 1))
 
-        b = b[:, 1, :, 1, :, 1]
+        with self.assertRaises(IndexError):
+            # index 4 is out of bounds for axis 5 with size 1
+            b[..., 4]
+
+        b = b[:, 0, :, -1, :, 0]
         self.assertEqual(
             b.index(), (slice(0, 2, 1), slice(0, 73, 1), slice(0, 4, 1))
         )

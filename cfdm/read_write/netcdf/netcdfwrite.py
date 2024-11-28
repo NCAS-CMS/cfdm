@@ -5740,33 +5740,38 @@ class NetCDFWrite(IOWrite):
         feature = "map"
         f_map = cfa[feature]
 
+        chunking = None
+            
         # Get the shape netCDF dimensions from the 'map' fragment
         # array variable.
         map_ncdimensions = []
         dim = "y"
         for size in f_map.shape:
-            l_ncdim = f"f_map_{dim}_{size}"
+            l_ncdim = f"f_map{dim}_{size}"
+            if g["unlimited_dimensions"].intersection(ncdimensions):
+                l_ncdim += "u"
+                
             if l_ncdim not in g["dimensions"]:
                 # Create a new location dimension
-                unlimited = dim == "x" and bool(
-                    g["unlimited_dimensions"].intersection(ncdimensions)
-                )
-
+                unlimited = dim == "x" and l_ncdim.endswith('u')
                 self._write_dimension(
                     l_ncdim, None, unlimited=unlimited, size=size
                 )
-
             map_ncdimensions.append(l_ncdim)
             dim = "x"
 
         map_ncdimensions = tuple(map_ncdimensions)
 
         # Write the fragment array variable to the netCDF dataset
+        if ncdimensions[0].startswith('time'):            
+            chunking=(False, (f_map.shape[0], f_map.shape[1] * 85*12))
+
+        print (ncvar, chunking, ncdimensions, g["unlimited_dimensions"])
         feature_ncvar = self._cfa_write_fragment_array_variable(
             f_map,
             aggregated_data.get(feature, f"cfa_{feature}"),
             map_ncdimensions,
-            #            chunking=(False, (f_map.shape[0], f_map.shape[1] * 780)),
+            chunking=chunking
         )
         aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 
@@ -5777,6 +5782,8 @@ class NetCDFWrite(IOWrite):
             feature = "location"
             f_location = cfa[feature]
 
+            chunking = None
+            
             # Get the fragment array netCDF dimensions from the
             # 'location' fragment array variable.
             fragment_array_ncdimensions = []
@@ -5785,19 +5792,25 @@ class NetCDFWrite(IOWrite):
                 fragment_array_ncdimensions.append(f_ncdim)
                 if f_ncdim not in g["dimensions"]:
                     # Create a new fragment array dimension
-                    unlimited = ncdim in g["unlimited_dimensions"]
+#                    unlimited = ncdim in g["unlimited_dimensions"]
+                    unlimited = ncdim in g["unlimited_dimensions"] and ncdim.startswith('time')
                     self._write_dimension(
                         f_ncdim, None, unlimited=unlimited, size=size
                     )
-
+                    
             fragment_array_ncdimensions = tuple(fragment_array_ncdimensions)
 
             # Write the fragment array variable to the netCDF dataset
+            if ncdimensions[0].startswith('time'):
+                chunking = (False, ((85*12,) + f_location.shape[1:]))
+            else:
+                chunking = None
+            print(ncvar, chunking)
             feature_ncvar = self._cfa_write_fragment_array_variable(
                 f_location,
                 aggregated_data.get(feature, f"cfa_{feature}"),
                 fragment_array_ncdimensions,
-                #                chunking=(False, ((780,) + f_location.shape[1:])),
+                chunking=chunking
             )
             aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 

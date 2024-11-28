@@ -228,25 +228,26 @@ class netcdf_indexer:
         try:
             data = self._index(index)
         except (IndexError, AttributeError):
-            # Assume we are here because we have one or more `None`
-            # values in 'index', which signifying new axes, and the
-            # variable doesn't support that type of indexing. It is
-            # known that `netCDF4` raises an IndexError and h5netcdf
-            # raises an AttributeError.
+            # Assume we are here because we have one or more
+            # np.newaxis values in 'index', and the variable doesn't
+            # support that type of indexing. It is known that
+            # `netCDF4` raises an IndexError and h5netcdf raises an
+            # AttributeError.
 
-            # Subspace the variable with the `None`s removed
-            index1 = [i for i in index if i is not None]
+            # Subspace the variable with the np.newax`None`s removed
+            newaxis = np.newaxis
+            index1 = [i for i in index if i is not newaxis]
             data = self._index(tuple(index1))
 
             # Now subspace the result (which we're assuming is
-            # something that likes `None` indices) with the `None`s
-            # reinstated.
-            index2 = [i if i is None else slice(None) for i in index]
+            # something that likes np.newaxis indices) with the
+            # np.newaxis indices reinstated.
+            index2 = [i if i is newaxis else slice(None) for i in index]
             data = data[tuple(index2)]
 
-            # E.g. index : (1, None, slice(1, 5))
-            #      index1: (1, slice(1, 5))
-            #      index2: (slice(None), None, slice(None))
+            # E.g.     index : (1, np.newaxis, slice(1, 5))
+            #      =>  index1: (1, slice(1, 5))
+            #      and index2: (slice(None), np.newaxis, slice(None))
 
         # Reset a netCDF4 variabln_none's scale and mask behaviour
         if netCDF4_scale:
