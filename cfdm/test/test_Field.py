@@ -499,25 +499,31 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.has_construct(""))
 
     def test_Field_squeeze(self):
-        """Test Field.squeeze"""
+        """Test Field.squeeze."""
         f = self.f1
-        
-        for axes in (None, 'atmosphere_hybrid_height_coordinate'):
+
+        for axes in (None, "atmosphere_hybrid_height_coordinate"):
             g = f.squeeze(axes)
             self.assertEqual(g.data.shape, f.data.shape[1:])
-            self.assertEqual(   g.get_data_axes(),  f.get_data_axes()[1:])
-        
+            self.assertEqual(g.get_data_axes(), f.get_data_axes()[1:])
+
         self.assertIsNone(g.squeeze(inplace=True))
 
     def test_Field_transpose(self):
-        """Test Field.transpose"""
+        """Test Field.transpose."""
         f = self.f1
 
         g = f.transpose()
         self.assertEqual(g.data.shape, f.data.shape[::-1])
         self.assertEqual(g.get_data_axes(), f.get_data_axes()[::-1])
 
-        g = g.transpose(['atmosphere_hybrid_height_coordinate', 'grid_latitude', 'grid_longitude'])
+        g = g.transpose(
+            [
+                "atmosphere_hybrid_height_coordinate",
+                "grid_latitude",
+                "grid_longitude",
+            ]
+        )
         self.assertEqual(g.shape, f.shape)
         self.assertEqual(g.get_data_axes(), f.get_data_axes())
 
