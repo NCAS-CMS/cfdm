@@ -70,7 +70,7 @@ class AggregatedArray(abstract.FileArray):
 
                    {'map': <'map' fragment array variable data>,
                     'location': <'location' fragment array variable data>,
-                    'identifier': <'identifier' fragment array variable data>,}
+                    'variable': <'variable' fragment array variable data>,}
 
                 or "unique_value" form:
 
@@ -212,7 +212,7 @@ class AggregatedArray(abstract.FileArray):
 
                   {'map': <'map' fragment array variable data>,
                    'location': <'location' fragment array variable data>,
-                   'identifier': <'identifier' fragment array variable data>}
+                   'variable': <'variable' fragment array variable data>}
 
                or "unique_value" form::
 
@@ -236,7 +236,7 @@ class AggregatedArray(abstract.FileArray):
             compressed = np.ma.compressed
             chunks = [compressed(i).tolist() for i in fa_map]
         else:
-            # Scalar 'map' fragment array variable
+            # Scalar 'map' variable
             chunks = []
 
         aggregated_shape = tuple([sum(c) for c in chunks])
@@ -245,35 +245,35 @@ class AggregatedArray(abstract.FileArray):
 
         if "location" in fragment_array:
             # --------------------------------------------------------
-            # Each fragment comprises file locations, rather than a
+            # Each fragment is in a file, rather than given by a
             # unique value.
             # --------------------------------------------------------
             fragment_type = "location"
-            fa_identifier = fragment_array["identifier"]
+            fa_variable = fragment_array["variable"]
             fa_location = fragment_array["location"]
             fragment_array_shape = fa_location.shape
 
-            if not fa_identifier.ndim:
-                fa_identifier = fa_identifier.item()
-                scalar_identifier = True
+            if not fa_variable.ndim:
+                fa_variable = fa_variable.item()
+                scalar = True
             else:
-                scalar_identifier = False
+                scalar = False
 
             for index, shape in zip(fragment_array_indices, fragment_shapes):
-                if scalar_identifier:
-                    identifier = fa_identifier
+                if scalar:
+                    variable = fa_variable
                 else:
-                    identifier = fa_identifier[index].item()
+                    variable = fa_variable[index].item()
 
                 parsed_fragment_array[index] = {
                     "map": shape,
                     "location": fa_location[index].item(),
-                    "identifier": identifier,
+                    "variable": variable,
                 }
         else:
             # --------------------------------------------------------
-            # Each fragment comprises a constant value, rather than
-            # file locations.
+            # Each fragment comprises a unique value, rather than
+            # being in a file.
             # --------------------------------------------------------
             fragment_type = "unique_value"
             fa_unique_value = fragment_array["unique_value"]
@@ -335,12 +335,12 @@ class AggregatedArray(abstract.FileArray):
         >>> a.get_fragment_array()
         {(0, 0, 0, 0): {
           'file': ('January-June.nc',),
-          'identifier': ('temp',),
+          'variable': ('temp',),
           'format': 'nc',
           'location': [(0, 6), (0, 1), (0, 73), (0, 144)]},
          (1, 0, 0, 0): {
           'file': ('July-December.nc',),
-          'identifier': ('temp',),
+          'variable': ('temp',),
           'format': 'nc',
           'location': [(6, 12), (0, 1), (0, 73), (0, 144)]}}
 
@@ -754,7 +754,7 @@ class AggregatedArray(abstract.FileArray):
 
             if fragment_type == "location":
                 kwargs["filename"] = kwargs.pop("location")
-                kwargs["address"] = kwargs.pop("identifier")
+                kwargs["address"] = kwargs.pop("variable")
                 kwargs["storage_options"] = storage_options
                 kwargs["aggregation_file_directory"] = (
                     aggregation_file_directory

@@ -2786,7 +2786,7 @@ class NetCDFWrite(IOWrite):
         #
         # E.g. {'map': <Data(2, 1): [[5, 8]]>,
         #       'location': <Data(1, 1): [[data/file.nc.nc]]>,
-        #       'identifier': <Data(1, 1): [[q]]>}
+        #       'variable': <Data(1, 1): [[q]]>}
         # ------------------------------------------------------------
         cfa = None
         if self._cfa_write_status(ncvar, cfvar, construct_type, domain_axes):
@@ -5734,132 +5734,145 @@ class NetCDFWrite(IOWrite):
         aggregated_data = data.nc_get_aggregated_data()
         aggregated_data_attr = []
 
+        all_dimensions = g["dimensions"]
+        all_unlimited_dimensions = g["unlimited_dimensions"]
+
         # ------------------------------------------------------------
-        # Map variable
+        # Map
         # ------------------------------------------------------------
         feature = "map"
         f_map = cfa[feature]
 
         chunking = None
-            
+
         # Get the shape netCDF dimensions from the 'map' fragment
         # array variable.
         map_ncdimensions = []
-        dim = "y"
+        dim = "j"
         for size in f_map.shape:
-            l_ncdim = f"f_map{dim}_{size}"
-            if g["unlimited_dimensions"].intersection(ncdimensions):
-                l_ncdim += "u"
-                
-            if l_ncdim not in g["dimensions"]:
+            cfa_ncdim = f"a_map_{dim}{size}"
+            if dim == "i" and all_unlimited_dimensions.intersection(
+                ncdimensions
+            ):
+                unlimited = True
+                # Append a "u" to the dimension name to allow there to
+                # fixed and unlimited dimensions with the same size
+                cfa_ncdim += "u"
+            else:
+                unlimited = False
+
+            if cfa_ncdim not in all_dimensions:
                 # Create a new location dimension
-                unlimited = dim == "x" and l_ncdim.endswith('u')
                 self._write_dimension(
-                    l_ncdim, None, unlimited=unlimited, size=size
+                    cfa_ncdim, None, unlimited=unlimited, size=size
                 )
-            map_ncdimensions.append(l_ncdim)
-            dim = "x"
+
+            map_ncdimensions.append(cfa_ncdim)
+            dim = "i"
 
         map_ncdimensions = tuple(map_ncdimensions)
 
-        # Write the fragment array variable to the netCDF dataset
-        if ncdimensions[0].startswith('time'):            
-            chunking=(False, (f_map.shape[0], f_map.shape[1] * 85*12))
+        #        # Write the fragment array variable to the netCDF dataset
+        #        if ncdimensions[0].startswith('time'):
+        #            chunking=(False, (f_map.shape[0], f_map.shape[1] * 85*12))
 
-        print (ncvar, chunking, ncdimensions, g["unlimited_dimensions"])
         feature_ncvar = self._cfa_write_fragment_array_variable(
             f_map,
             aggregated_data.get(feature, f"cfa_{feature}"),
             map_ncdimensions,
-            chunking=chunking
+            chunking=chunking,
         )
         aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 
         if "location" in cfa:
             # --------------------------------------------------------
-            # Location variable
+            # Location
             # --------------------------------------------------------
             feature = "location"
             f_location = cfa[feature]
 
             chunking = None
-            
+
             # Get the fragment array netCDF dimensions from the
             # 'location' fragment array variable.
-            fragment_array_ncdimensions = []
+            location_ncdimensions = []
             for ncdim, size in zip(ncdimensions, f_location.shape):
-                f_ncdim = f"f_{ncdim}"
-                fragment_array_ncdimensions.append(f_ncdim)
-                if f_ncdim not in g["dimensions"]:
+                cfa_ncdim = f"a_{ncdim}"
+                if cfa_ncdim not in all_dimensions:
                     # Create a new fragment array dimension
-#                    unlimited = ncdim in g["unlimited_dimensions"]
-                    unlimited = ncdim in g["unlimited_dimensions"] and ncdim.startswith('time')
+                    unlimited = ncdim in all_unlimited_dimensions
+                    # unlimited = ncdim in g[
+                    #    "unlimited_dimensions"
+                    # ] and ncdim.startswith("time")
                     self._write_dimension(
-                        f_ncdim, None, unlimited=unlimited, size=size
+                        cfa_ncdim, None, unlimited=unlimited, size=size
                     )
-                    
-            fragment_array_ncdimensions = tuple(fragment_array_ncdimensions)
 
-            # Write the fragment array variable to the netCDF dataset
-            if ncdimensions[0].startswith('time'):
-                chunking = (False, ((85*12,) + f_location.shape[1:]))
-            else:
-                chunking = None
-            print(ncvar, chunking)
+                location_ncdimensions.append(cfa_ncdim)
+
+            location_ncdimensions = tuple(location_ncdimensions)
+
+            #            # Write the fragment array variable to the netCDF dataset
+            #            if ncdimensions[0].startswith('time'):
+            #                chunking = (False, ((85*12,) + f_location.shape[1:]))
+            #            else:
+            chunking = None
             feature_ncvar = self._cfa_write_fragment_array_variable(
                 f_location,
                 aggregated_data.get(feature, f"cfa_{feature}"),
-                fragment_array_ncdimensions,
-                chunking=chunking
+                location_ncdimensions,
+                chunking=chunking,
             )
             aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 
             # --------------------------------------------------------
-            # Identifier variable
+            # Variable
             # --------------------------------------------------------
-            feature = "identifier"
+            feature = "variable"
 
-            # Attempt to reduce identifiers to a common scalar value
+            # Attempt to reduce variable names to a common scalar
+            # value
             u = cfa[feature].unique().compressed().persist()
             if u.size == 1:
                 cfa[feature] = u.squeeze()
-                dimensions = ()
+                variable_ncdimensions = ()
             else:
-                dimensions = fragment_array_ncdimensions
+                variable_ncdimensions = location_ncdimensions
 
-            f_identifier = cfa[feature]
+            f_variable = cfa[feature]
 
             # Write the fragment array variable to the netCDF dataset
             feature_ncvar = self._cfa_write_fragment_array_variable(
-                f_identifier,
+                f_variable,
                 aggregated_data.get(feature, f"cfa_{feature}"),
-                dimensions,
+                variable_ncdimensions,
             )
             aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
         else:
             # --------------------------------------------------------
-            # Value variable
+            # Unique value
             # --------------------------------------------------------
             feature = "unique_value"
-            f_value = cfa[feature]
+            f_unique_value = cfa[feature]
 
             # Get the fragment array netCDF dimensions from the
             # 'value' fragment array variable.
-            fragment_array_ncdimensions = []
-            for ncdim, size in zip(ncdimensions, f_value.shape):
-                f_ncdim = f"f_{ncdim}"
-                fragment_array_ncdimensions.append(f_ncdim)
-                if f_ncdim not in g["dimensions"]:
+            unique_value_ncdimensions = []
+            for ncdim, size in zip(ncdimensions, f_unique_value.shape):
+                cfa_ncdim = f"a_{ncdim}"
+                if cfa_ncdim not in g["dimensions"]:
                     # Create a new fragment array dimension
-                    self._write_dimension(f_ncdim, None, size=size)
+                    self._write_dimension(cfa_ncdim, None, size=size)
 
-            fragment_array_ncdimensions = tuple(fragment_array_ncdimensions)
+                unique_value_ncdimensions.append(cfa_ncdim)
+
+            unique_value_ncdimensions = tuple(unique_value_ncdimensions)
 
             # Write the fragment array variable to the netCDF dataset
             feature_ncvar = self._cfa_write_fragment_array_variable(
-                f_value,
+                f_unique_value,
                 aggregated_data.get(feature, f"cfa_{feature}"),
-                fragment_array_ncdimensions,
+                unique_value_ncdimensions,
             )
             aggregated_data_attr.append(f"{feature}: {feature_ncvar}")
 
@@ -6019,7 +6032,7 @@ class NetCDFWrite(IOWrite):
         >>> n._cfa_fragment_array_variables(data, cfvar)
         {'shape': <Data(2, 1): [[5, 8]]>,
          'location': <Data(1, 1): [[file:///home/file.nc]]>,
-         'identifier': <Data(1, 1): [[q]]>}
+         'variable': <Data(1, 1): [[q]]>}
 
         """
         from os.path import relpath
@@ -6053,7 +6066,7 @@ class NetCDFWrite(IOWrite):
 
         if data.nc_get_aggregation_fragment_type() == "location":
             # --------------------------------------------------------
-            # Create 'location' and 'identifier' arrays
+            # Create 'location' and 'variable' arrays
             # --------------------------------------------------------
             uri_default = g["cfa"].get("uri", "default") == "default"
             uri_relative = (
@@ -6087,7 +6100,7 @@ class NetCDFWrite(IOWrite):
                 aggregation_file_scheme = g["aggregation_file_scheme"]
 
             aggregation_location = []
-            aggregation_identifier = []
+            aggregation_variable = []
             for index, position in zip(
                 data.chunk_indices(), data.chunk_positions()
             ):
@@ -6162,7 +6175,7 @@ class NetCDFWrite(IOWrite):
                     )
 
                 aggregation_location.append(filename)
-                aggregation_identifier.append(address)
+                aggregation_variable.append(address)
 
             # Reshape the 1-d aggregation instruction arrays to span
             # the data dimensions, plus the extra trailing dimension
@@ -6170,12 +6183,12 @@ class NetCDFWrite(IOWrite):
             aggregation_location = np.array(aggregation_location).reshape(
                 a_shape
             )
-            aggregation_identifier = np.array(aggregation_identifier).reshape(
+            aggregation_variable = np.array(aggregation_variable).reshape(
                 a_shape
             )
 
             out["location"] = type(data)(aggregation_location)
-            out["identifier"] = type(data)(aggregation_identifier)
+            out["variable"] = type(data)(aggregation_variable)
         else:
             # ------------------------------------------------------------
             # Create a 'value' array

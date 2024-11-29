@@ -234,14 +234,15 @@ class netcdf_indexer:
             # `netCDF4` raises an IndexError and h5netcdf raises an
             # AttributeError.
 
-            # Subspace the variable with the np.newax`None`s removed
+            # Subspace the variable with the np.newaxis elements
+            # removed
             newaxis = np.newaxis
             index1 = [i for i in index if i is not newaxis]
             data = self._index(tuple(index1))
 
             # Now subspace the result (which we're assuming is
             # something that likes np.newaxis indices) with the
-            # np.newaxis indices reinstated.
+            # np.newaxis elements reinstated.
             index2 = [i if i is newaxis else slice(None) for i in index]
             data = data[tuple(index2)]
 
@@ -249,7 +250,7 @@ class netcdf_indexer:
             #      =>  index1: (1, slice(1, 5))
             #      and index2: (slice(None), np.newaxis, slice(None))
 
-        # Reset a netCDF4 variabln_none's scale and mask behaviour
+        # Reset a netCDF4 variable's scale and mask behaviour
         if netCDF4_scale:
             variable.set_auto_scale(True)
 

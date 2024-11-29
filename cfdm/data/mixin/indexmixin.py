@@ -100,7 +100,7 @@ class IndexMixin:
         index0 = self.index(conform=False)
         reference_shape = list(self.reference_shape)
 
-        index1 = parse_indices(shape0, index, keepdims=False)
+        index1 = parse_indices(shape0, index, keepdims=False, newaxis=True)
 
         new = self.copy()
         new_indices = []

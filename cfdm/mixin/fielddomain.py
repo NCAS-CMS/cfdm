@@ -244,11 +244,11 @@ class FieldDomain:
             ]
 
         args = ", ".join(identities + filter_kwargs)
-
+        construct_type = _method.replace('_', ' ')
+        
         return self._default(
             default,
-            f"{self.__class__.__name__}.{_method}({args}) can only return "
-            f"1 construct, but {n} were found",
+            f"No {construct_type} constructs found with identity {args}"
         )
 
     def _filter_interface(

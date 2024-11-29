@@ -5314,6 +5314,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         :Returns:
 
             `{{class}}` or `None`
+                The new data with expanded data axes, or `None` if
+                the operation was in-place.
 
         **Examples**
 
@@ -5942,7 +5944,6 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             old = commonprefix(
                 tuple(self.file_directories(normalise=normalise))
             )
-            print("common old=", old)
 
         self._modify_dask_graph(
             "replace_directory",

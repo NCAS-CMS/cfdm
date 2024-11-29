@@ -498,23 +498,30 @@ class FieldTest(unittest.TestCase):
         f.set_construct(cfdm.DomainAxis(0), key="")
         self.assertTrue(f.has_construct(""))
 
-    def test_Field_squeeze_transpose(self):
-        """Test squeeze and transpose methods."""
+    def test_Field_squeeze(self):
+        """Test Field.squeeze"""
+        f = self.f1
+        
+        for axes in (None, 'atmosphere_hybrid_height_coordinate'):
+            g = f.squeeze(axes)
+            self.assertEqual(g.data.shape, f.data.shape[1:])
+            self.assertEqual(   g.get_data_axes(),  f.get_data_axes()[1:])
+        
+        self.assertIsNone(g.squeeze(inplace=True))
+
+    def test_Field_transpose(self):
+        """Test Field.transpose"""
         f = self.f1
 
         g = f.transpose()
         self.assertEqual(g.data.shape, f.data.shape[::-1])
         self.assertEqual(g.get_data_axes(), f.get_data_axes()[::-1])
 
-        g = f.squeeze()
-        self.assertEqual(g.data.shape, f.data.shape[1:])
-        self.assertEqual(
-            g.get_data_axes(),
-            f.get_data_axes()[1:],
-            (g.get_data_axes(), f.get_data_axes()),
-        )
+        g = g.transpose(['atmosphere_hybrid_height_coordinate', 'grid_latitude', 'grid_longitude'])
+        self.assertEqual(g.shape, f.shape)
+        self.assertEqual(g.get_data_axes(), f.get_data_axes())
 
-    def test_Field_insert_dimension(self):
+    def test_Field_AAAinsert_dimension(self):
         """Test cfdm.Field.insert_dimension method."""
         f = self.f1
         g = f.copy()
@@ -532,6 +539,14 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(g.cell_measure().ndim, 2)
         h = g.insert_dimension(None, constructs=True)
         self.assertEqual(h.cell_measure().ndim, 3)
+
+        f = f.squeeze()
+        array = f.array
+        for i in tuple(range(f.ndim + 1)) + tuple(range(-1, -f.ndim - 2, -1)):
+            self.assertEqual(
+                f.insert_dimension(None, i).shape,
+                np.expand_dims(array, i).shape,
+            )
 
     def test_Field_compress_uncompress(self):
         """Test the compress and uncompress Field methods."""

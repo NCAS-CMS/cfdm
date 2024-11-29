@@ -2217,7 +2217,7 @@ def indices_shape(indices, full_shape, keepdims=True):
     return shape
 
 
-def parse_indices(shape, indices, keepdims=True):
+def parse_indices(shape, indices, keepdims=True, newaxis=False):
     """Parse indices for array access and assignment.
 
     .. versionadded:: (cfdm) NEXTVERSION
@@ -2233,6 +2233,11 @@ def parse_indices(shape, indices, keepdims=True):
         keepdims: `bool`, optional
             If True then an integral index is converted to a
             slice. For instance, ``3`` would become ``slice(3, 4)``.
+
+        newaxis: `bool`, optional
+            If True then allow *indices* to include one or more
+            `numpy.newaxis` elements. If False (the default) then
+            these elements are not allowed.
 
     :Returns:
 
@@ -2269,7 +2274,7 @@ def parse_indices(shape, indices, keepdims=True):
         if index is Ellipsis:
             m = n - length + 1
             try:
-                if indices[i + 1] is None:
+                if indices[i + 1] is np.newaxis:
                     m += 1
             except IndexError:
                 pass
@@ -2278,8 +2283,7 @@ def parse_indices(shape, indices, keepdims=True):
             n -= m
         else:
             parsed_indices.append(index)
-            if index is None:
-                # `None` signifies a new size 1 axis
+            if index is np.newaxis:
                 ndim += 1
                 length += 1
             else:
@@ -2302,6 +2306,12 @@ def parse_indices(shape, indices, keepdims=True):
         )
 
     for i, (index, size) in enumerate(zip(parsed_indices, shape)):
+        if not newaxis and index is np.newaxis:
+            raise IndexError(
+                "Invalid indices {indices!r} for array with shape {shape}: "
+                "New axis indices are not allowed"
+            )
+
         if keepdims and isinstance(index, Integral):
             # Convert an integral index to a slice
             if index == -1:

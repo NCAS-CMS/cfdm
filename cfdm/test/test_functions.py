@@ -255,7 +255,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual(len(cfdm.example_fields(0, 2)), 2)
         self.assertEqual(len(cfdm.example_fields(0, 2, 0)), 3)
 
-    def test_zzzabspath(self):
+    def test_abspath(self):
         """Test cfdm.abspath."""
         cwd = os.getcwd()
         cwd_m1 = os.path.dirname(cwd)

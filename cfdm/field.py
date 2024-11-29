@@ -1406,7 +1406,7 @@ class Field(
     def concatenate(
         cls, fields, axis, cull_graph=False, relaxed_units=False, copy=True
     ):
-        """Join a together sequence of '{{class}}`.
+        """Join together a sequence of Field constricts`.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1438,7 +1438,7 @@ class Field(
 
         """
         if isinstance(fields, cls):
-            raise ValueError("Must provied a sequence of Field objects")
+            raise ValueError("Must provide a sequence of Field constructs")
 
         fields = tuple(fields)
         field0 = fields[0]
@@ -2286,36 +2286,27 @@ class Field(
     ):
         """Expand the shape of the data array.
 
-        Inserts a new size 1 axis, corresponding to an existing domain
-        axis construct, into the data array.
-
         .. versionadded:: (cfdm) 1.7.0
 
         .. seealso:: `squeeze`, `transpose`
 
         :Parameters:
 
-            axis: `str`
-                The identifier of the domain axis construct
-                corresponding to the inserted axis.
+            axis:
+                Select the domain axis to insert, generally defined by that
+                which would be selected by passing the given axis description
+                to a call of the field construct's `domain_axis` method. For
+                example, for a value of ``'time'``, the domain axis construct
+                returned by ``f.domain_axis('time')`` is selected.
 
                 If *axis* is `None` then a new domain axis construct
-                will be created for the inserted dimension.
-
-                *Parameter example:*
-                  ``axis='domainaxis2'``
+                will created for the inserted dimension.
 
             position: `int`, optional
                 Specify the position that the new axis will have in
                 the data array. By default the new axis has position
                 0, the slowest varying position. Negative integers
                 counting from the last position are allowed.
-
-                *Parameter example:*
-                  ``position=2``
-
-                *Parameter example:*
-                  ``position=-1``
 
             constructs: `bool`
                 If True then also insert the new axis into all
@@ -2328,24 +2319,43 @@ class Field(
 
         :Returns:
 
-            `Field` or `None`
-                The new field construct with expanded data axes. If
-                the operation was in-place then `None` is returned.
+            `{{class}}` or `None`
+                The field construct with expanded data, or `None` if the
+                operation was in-place.
 
         **Examples**
 
-        >>> f.data.shape
-        (19, 73, 96)
-        >>> f.insert_dimension('domainaxis3').data.shape
-        (1, 96, 73, 19)
-        >>> f.insert_dimension('domainaxis3', position=3).data.shape
-        (19, 73, 96, 1)
-        >>> f.insert_dimension('domainaxis3', position=-1, inplace=True)
-        (19, 73, 1, 96)
-        >>> f.data.shape
-        (19, 73, 1, 96)
-        >>> f.insert_dimension(None, 1).data.shape
-        (19, 1, 73, 1, 96)
+        >>> f = {{package}}.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> g = f.insert_dimension('time', 0)
+        >>> print(g)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(time(1), latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+
+        A previously non-existent size 1 axis must be created prior to
+        insertion:
+
+        >>> f.insert_dimension(None, 1, inplace=True)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(time(1), key%domainaxis3(1), latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
 
         """
         f = _inplace_enabled_define_and_cleanup(self)
@@ -2364,6 +2374,9 @@ class Field(
                     f"Can only insert axis of size 1. Axis {axis!r} has size "
                     f"{domain_axis.get_size()}"
                 )
+
+        if position < 0:
+            position = position + f.ndim + 1
 
         data_axes = f.get_data_axes(default=None)
         if data_axes is not None:
@@ -3043,10 +3056,13 @@ class Field(
 
     @_inplace_enabled(default=False)
     def squeeze(self, axes=None, inplace=False):
-        """Remove size one axes from the data.
+        """Remove size 1 axes from the data.
 
         By default all size one axes are removed, but particular size
         one axes may be selected for removal.
+
+        Squeezed domain axis constructs are not removed from the metadata
+        constructs, nor from the domain of the field construct.
 
         .. versionadded:: (cfdm) 1.7.0
 
@@ -3054,48 +3070,59 @@ class Field(
 
         :Parameters:
 
-            axes: (sequence of) `int`, optional
-                The positions of the size one axes to be removed. By
-                default all size one axes are removed.
+            axes:
+                Select the domain axes to squeeze, defined by the
+                domain axes that would be selected by passing each
+                given axis description to a call of the field
+                construct's `domain_axis` method. For example, for a
+                value of ``'time'``, the domain axis construct
+                returned by ``f.domain_axis('time')`` is selected.
 
-                {{axes int examples}}
+                If *axes* is `None` (the default) then all size 1 axes
+                are removed.
 
             {{inplace: `bool`, optional}}
 
         :Returns:
 
-            `Field` or `None`
-                The field construct with removed data axes. If the
-                operation was in-place then `None` is returned.
+            `{{class}}` or `None`
+                The field construct with squeezed data, or `None` if the
+                operation was in-place.
 
         **Examples**
 
-        >>> f.data.shape
-        (1, 73, 1, 96)
-        >>> f.squeeze().data.shape
-        (73, 96)
-        >>> f.squeeze(0).data.shape
-        (73, 1, 96)
-        >>> f.squeeze([-3, 2], inplace=True)
-        >>> f.data.shape
-        (73, 96)
+        >>> g = f.squeeze()
+        >>> g = f.squeeze('time')
+        >>> g = f.squeeze(1)
+        >>> g = f.squeeze(['time', 1, 'dim2'])
+        >>> f.squeeze(['dim2'], inplace=True)
 
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        if axes is None:
-            iaxes = [i for i, n in enumerate(f.data.shape) if n == 1]
-        else:
-            try:
-                iaxes = f.data._parse_axes(axes)
-            except ValueError as error:
-                raise ValueError(f"Can't squeeze data: {error}")
-
         data_axes = f.get_data_axes(default=None)
-        if data_axes is not None:
-            new_data_axes = [
-                data_axes[i] for i in range(f.data.ndim) if i not in iaxes
+        if data_axes is None:
+            return f
+
+        if axes is None:
+            domain_axes = f.domain_axes(todict=True)
+            axes = [
+                axis
+                for axis in data_axes
+                if domain_axes[axis].get_size(None) == 1
             ]
+        else:
+            if isinstance(axes, (str, int)):
+                axes = (axes,)
+
+            axes = [f.domain_axis(x, key=True) for x in axes]
+            axes = set(axes).intersection(data_axes)
+
+        iaxes = [data_axes.index(axis) for axis in axes]
+
+        new_data_axes = [
+            data_axes[i] for i in range(f.data.ndim) if i not in iaxes
+        ]
 
         # Squeeze the field's data array
         super(Field, f).squeeze(iaxes, inplace=True)
@@ -3115,10 +3142,17 @@ class Field(
 
         :Parameters:
 
-            axes: (sequence of) `int`, optional
-                The new axis order. By default the order is reversed.
+            axes: sequence or `None`
+                Select the domain axis order, defined by the domain
+                axes that would be selected by passing each given axis
+                description to a call of the field construct's
+                `domain_axis` method. For example, for a value of
+                ``'time'``, the domain axis construct returned by
+                ``f.domain_axis('time')`` is selected.
 
-                {{axes int examples}}
+                Each dimension of the field construct's data must be
+                provided, or if *axes* is `None` (the default) then
+                the axis order is reversed.
 
             constructs: `bool`
                 If True then transpose the metadata constructs to have
@@ -3149,13 +3183,22 @@ class Field(
         """
         f = _inplace_enabled_define_and_cleanup(self)
 
-        try:
-            iaxes = f.data._parse_axes(axes)
-        except ValueError as error:
-            raise ValueError(f"Can't transpose data: {error}")
-
-        if iaxes is None:
+        if axes is None:
             iaxes = tuple(range(f.data.ndim - 1, -1, -1))
+        else:
+            data_axes = self.get_data_axes(default=())
+            if isinstance(axes, (str, int)):
+                axes = (axes,)
+
+            axes2 = [f.domain_axis(axis, key=True) for axis in axes]
+
+            if sorted(axes2) != sorted(data_axes):
+                raise ValueError(
+                    f"Can't transpose {self.__class__.__name__}: "
+                    f"Bad axis specification: {axes!r}"
+                )
+
+            iaxes = [data_axes.index(axis) for axis in axes2]
 
         data_axes = f.get_data_axes(default=None)
 

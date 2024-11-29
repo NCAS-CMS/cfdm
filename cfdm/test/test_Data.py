@@ -1260,6 +1260,13 @@ class DataTest(unittest.TestCase):
         d.insert_dimension(-1, inplace=True)
         self.assertEqual(d.nc_hdf5_chunksizes(), (1, 1, 4, 3, 1))
 
+        array = np.arange(12).reshape(3, 4)
+        d = cfdm.Data(array)
+        for i in (0, 1, 2, -3, -2, -1):
+            self.assertEqual(
+                d.insert_dimension(i).shape, np.expand_dims(array, i).shape
+            )
+
     def test_Data_get_compressed_dimension(self):
         """Test Data.get_compressed_dimension."""
         d = cfdm.Data([[281, 279, 278, 279]])
