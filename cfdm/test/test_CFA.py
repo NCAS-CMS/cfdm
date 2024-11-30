@@ -54,10 +54,11 @@ class CFATest(unittest.TestCase):
     aggregation_value = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "aggregation_value.nc"
     )
+    f0 = cfdm.example_field(0)
 
     def test_CFA_fmt(self):
         """Test the cfdm.read 'fmt' keyword with cfa."""
-        f = cfdm.example_field(0)
+        f = self.f0
         cfdm.write(f, tmpfile1)
         f = cfdm.read(tmpfile1, cfa_write="field")[0]
 
@@ -69,7 +70,7 @@ class CFATest(unittest.TestCase):
 
     def test_CFA_multiple_fragments(self):
         """Test aggregation variables with more than one fragment."""
-        f = cfdm.example_field(0)
+        f = self.f0
 
         cfdm.write(f[:2], tmpfile1)
         cfdm.write(f[2:], tmpfile2)
@@ -90,7 +91,7 @@ class CFATest(unittest.TestCase):
 
     def test_CFA_strict(self):
         """Test 'strict' option to the cfdm.write 'cfa' keyword."""
-        f = cfdm.example_field(0)
+        f = self.f0
 
         # By default, can't write in-memory arrays as aggregation
         # variables
@@ -112,7 +113,7 @@ class CFATest(unittest.TestCase):
 
     def test_CFA_uri_0(self):
         """Test aggregation 'uri' option to cfdm.write."""
-        f = cfdm.example_field(0)
+        f = self.f0
         cfdm.write(f, tmpfile1)
         f = cfdm.read(tmpfile1, cfa_write="field")[0]
 
@@ -143,7 +144,7 @@ class CFATest(unittest.TestCase):
 
     def test_CFA_uri_1(self):
         """Test aggregation 'uri=default' option to cfdm.write."""
-        f = cfdm.example_field(0)
+        f = self.f0
         cfdm.write(f, tmpfile1)
         f = cfdm.read(tmpfile1, cfa_write="field")[0]
 
@@ -262,7 +263,7 @@ class CFATest(unittest.TestCase):
 
     def test_CFA_scalar(self):
         """Test scalar aggregation variable."""
-        f = cfdm.example_field(0)
+        f = self.f0
         f = f[0, 0].squeeze()
         cfdm.write(f, tmpfile1)
         g = cfdm.read(tmpfile1, cfa_write="field")[0]
@@ -304,7 +305,7 @@ class CFATest(unittest.TestCase):
 
     def test_CFA_cfa(self):
         """Test the cfdm.write 'cfa' keyword."""
-        f = cfdm.example_field(0)
+        f = self.f0
         cfdm.write(f, tmpfile1)
         f = cfdm.read(tmpfile1, cfa_write="field")[0]
         cfdm.write(f, tmpfile2, cfa="field")
@@ -350,7 +351,7 @@ class CFATest(unittest.TestCase):
 
     def test_CFA_subspace(self):
         """Test the writing subspaces of aggregations."""
-        f = cfdm.example_field(0)
+        f = self.f0
 
         cfdm.write(f[:2], tmpfile1)
         cfdm.write(f[2:], tmpfile2)

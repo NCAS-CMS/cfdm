@@ -52,6 +52,8 @@ def axis_combinations(ndim):
 class DataTest(unittest.TestCase):
     """Unit test for the Data class."""
 
+    f0 = cfdm.example_field(0)
+
     def setUp(self):
         """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
@@ -2423,7 +2425,7 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data.empty((5, 8), float, chunks=4)
         self.assertEqual(d.get_filenames(), set())
 
-        f = cfdm.example_field(0)
+        f = self.f0
         cfdm.write(f, file_A)
         d = cfdm.read(file_A, dask_chunks=4)[0].data
         self.assertEqual(d.get_filenames(), set([file_A]))
@@ -2677,7 +2679,7 @@ class DataTest(unittest.TestCase):
 
     def test_Data_replace_directory(self):
         """Test Data.replace_directory."""
-        f = cfdm.example_field(0)
+        f = self.f0
 
         # No files means no stored directories
         self.assertEqual(f.data.file_directories(), set())
@@ -2727,7 +2729,7 @@ class DataTest(unittest.TestCase):
 
     def test_Data_replace_filenames(self):
         """Test Data.replace_filenames."""
-        f = cfdm.example_field(0)
+        f = self.f0
         cfdm.write(f[:2], file_A)
         cfdm.write(f[2:], file_B)
         a = cfdm.read(file_A)[0]

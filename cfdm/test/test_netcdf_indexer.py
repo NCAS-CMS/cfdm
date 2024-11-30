@@ -37,6 +37,8 @@ netcdf_backends = ("netCDF4", "h5netcdf")
 class netcdf_indexerTest(unittest.TestCase):
     """Test the masking and scaling of netCDF data."""
 
+    f0 = cfdm.example_field(0)
+
     def test_netcdf_indexer_shape(self):
         """Test netcdf_indexer shape."""
         n = np.ma.arange(9)
@@ -48,7 +50,7 @@ class netcdf_indexerTest(unittest.TestCase):
 
     def test_netcdf_indexer_mask(self):
         """Test netcdf_indexer for masking."""
-        f0 = cfdm.example_field(0)
+        f0 = self.f0.copy()
         f0.del_property("missing_value", None)
         f0.del_property("_FillValue", None)
         fields = [f0.copy()]
@@ -97,7 +99,7 @@ class netcdf_indexerTest(unittest.TestCase):
 
     def test_netcdf_indexer_unpack(self):
         """Test netcdf_indexer for unpacking."""
-        f = cfdm.example_field(0)
+        f = self.f0.copy()
 
         array = np.ma.arange(40, dtype="int32").reshape(f.shape)
         array[1, :] = np.ma.masked

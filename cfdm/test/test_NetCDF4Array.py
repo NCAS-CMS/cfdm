@@ -36,6 +36,8 @@ atexit.register(_remove_tmpfiles)
 class NetCDF4ArrayTest(unittest.TestCase):
     """Unit test for the NetCDF4Array class."""
 
+    f0 = cfdm.example_field(0)
+
     def setUp(self):
         """Preparations called immediately before each test method."""
         # Disable log messages to silence expected warnings
@@ -67,7 +69,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
 
     def test_NetCDF4Array_mask(self):
         """Test NetCDF4Array masking."""
-        f = cfdm.example_field(0)
+        f = self.f0
         f.data[0] = np.ma.masked
         cfdm.write(f, tmpfile)
         array = f.array
@@ -89,7 +91,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
         add_offset = 10.0
         scale_factor = 3.14
 
-        f = cfdm.example_field(0)
+        f = self.f0.copy()
         f.data[0] = np.ma.masked
         array0 = f.array
         array1 = (array0 - add_offset) / scale_factor
@@ -159,7 +161,7 @@ class NetCDF4ArrayTest(unittest.TestCase):
 
     def test_NetCDF4Array_get_attributes(self):
         """Test NetCDF4Array get_attributes."""
-        f = cfdm.example_field(0)
+        f = self.f0
         cfdm.write(f, tmpfile)
         n = cfdm.NetCDF4Array(tmpfile, f.nc_get_variable(), shape=f.shape)
         self.assertEqual(n.get_attributes(), {})

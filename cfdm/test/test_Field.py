@@ -615,8 +615,8 @@ class FieldTest(unittest.TestCase):
                     self.assertTrue(f.equals(c, verbose=3), message)
 
     def test_Field_creation_commands(self):
-        """Test the `creation_commands` Field method."""
-        for i in range(7):
+        """Test the Field.creation_commands."""
+        for i in range(12):
             f = cfdm.example_field(i)
 
         f = self.f1
@@ -634,7 +634,7 @@ class FieldTest(unittest.TestCase):
             f.creation_commands(namespace=ns)
 
     def test_Field_has_geometry(self):
-        """Test the `creation_commands` Field method."""
+        """Test Field.has_geometry."""
         f = self.f1
         self.assertFalse(f.has_geometry())
 
@@ -643,7 +643,7 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_climatological_time_axes(self):
         """Test the `climatological_time_axes` method of Field."""
-        f = cfdm.example_field(0)
+        f = self.f0.copy()
         self.assertEqual(f.climatological_time_axes(), set())
 
         f.set_construct(
@@ -661,7 +661,7 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_bounds(self):
         """Test that Field instances do not have cell bounds."""
-        f = cfdm.example_field(0)
+        f = self.f0
         self.assertFalse(f.has_bounds())
 
     def test_Field_auxiliary_coordinate(self):
@@ -806,7 +806,7 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_indices(self):
         """Test Field.indices."""
-        f = cfdm.example_field(0)
+        f = self.f0
 
         g = f[f.indices(longitude=112.5)]
         self.assertEqual(g.shape, (5, 1))
@@ -842,7 +842,7 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_get_original_filenames(self):
         """Test Field.orignal_filenames."""
-        f = cfdm.example_field(0)
+        f = self.f0
         f._original_filenames(define=["file1.nc", "file2.nc"])
         x = f.coordinate("longitude")
         x._original_filenames(define=["file1.nc", "file3.nc"])
@@ -885,7 +885,7 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_hdf5_chunksizes(self):
         """Test the HDF5 chunk size methods of a Field."""
-        f = cfdm.example_field(0)
+        f = self.f0.copy()
 
         f.nc_set_hdf5_chunksizes({"latitude": 1})
         self.assertEqual(f.nc_hdf5_chunksizes(), (1, 8))
