@@ -140,7 +140,7 @@ class IndexMixin:
                     # removed by an integer index
                     if ind1 not in (0, -1):
                         raise IndexError(
-                            f"index {ind1} is out of bounds for axis {i-1} "
+                            f"index {ind1} is out of bounds for axis {i - 1} "
                             "with size 1"
                         )
 

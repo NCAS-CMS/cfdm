@@ -922,6 +922,8 @@ class NetCDFRead(IORead):
         cfa=None,
         cfa_write=None,
         to_memory=None,
+        squeeze=False,
+        unsqueeze=False,
     ):
         """Reads a netCDF dataset from file or OPenDAP URL.
 
@@ -972,24 +974,24 @@ class NetCDFRead(IORead):
                 .. versionadded:: (cfdm) 1.9.0.0
 
             storage_options: `bool`, optional
-                See `cfdm.read` for details
+                See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
             netcdf_backend: `None` or `str`, optional
-                See `cfdm.read` for details
+                See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
             cache: `bool`, optional
                 Control array element caching. See `cfdm.read` for
-                details
+                details.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
             dask_chunks: `str`, `int`, `None`, or `dict`, optional
                 Specify the `dask` chunking of dimensions for data in
-                the input files. See `cfdm.read` for details
+                the input files. See `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) NEXTVERSION
 
@@ -1013,6 +1015,19 @@ class NetCDFRead(IORead):
 
             to_memory: (sequence) of `str`, optional
                 Whether or not to bring data arrays into memory.  See
+                `cfdm.read` for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            squeeze: `bool`, optional
+                Whether or not to remove all size 1 axes from field
+                construct data arrays. See `cfdm.read` for details.
+
+                .. versionadded:: (cfdm) NEXTVERSION
+
+            unsqueeze: `bool`, optional
+                Whether or not to ensure that all size 1 axes are
+                spanned by field construct data arrays. See
                 `cfdm.read` for details.
 
                 .. versionadded:: (cfdm) NEXTVERSION
@@ -1164,6 +1179,11 @@ class NetCDFRead(IORead):
             # Constructs to read into memory
             # --------------------------------------------------------
             "to_memory": None,
+            # --------------------------------------------------------
+            # Squeeze/unsqueeze fields
+            # --------------------------------------------------------
+            "squeeze": bool(squeeze),
+            "unsqueeze": bool(unsqueeze),
         }
 
         g = self.read_vars
@@ -1196,16 +1216,9 @@ class NetCDFRead(IORead):
             "field_ancillary": self.implementation.get_field_ancillaries,
         }
 
-        # Check the 'dask_chunks' keyword parameter
-        if dask_chunks is not None and not isinstance(
-            dask_chunks, (str, Integral, dict)
-        ):
-            raise ValueError(
-                "The 'dask_chunks' keyword must be of type str, int, None or "
-                f"dict. Got: {dask_chunks!r}"
-            )
-
+        # ------------------------------------------------------------
         # Parse the 'external' keyword parameter
+        # ------------------------------------------------------------
         if external:
             if isinstance(external, str):
                 external = (external,)
@@ -1214,7 +1227,9 @@ class NetCDFRead(IORead):
 
         g["external_files"] = set(external)
 
+        # ------------------------------------------------------------
         # Parse 'extra' keyword parameter
+        # ------------------------------------------------------------
         if extra:
             if isinstance(extra, str):
                 extra = (extra,)
@@ -1227,7 +1242,11 @@ class NetCDFRead(IORead):
         else:
             extra = ()
 
-        # Check dask_chunks
+        g["extra"] = extra
+
+        # ------------------------------------------------------------
+        # Parse 'dask_chunks' keyword parameter
+        # ------------------------------------------------------------
         if dask_chunks is not None and not isinstance(
             dask_chunks, (str, Integral, dict)
         ):
@@ -1236,9 +1255,9 @@ class NetCDFRead(IORead):
                 f"dict. Got: {dask_chunks!r}"
             )
 
-        g["extra"] = extra
-
+        # ------------------------------------------------------------
         # Parse the 'cfa' keyword parameter
+        # ------------------------------------------------------------
         if cfa is None:
             cfa = {}
         else:
@@ -1252,14 +1271,16 @@ class NetCDFRead(IORead):
 
             if not isinstance(cfa.get("replace_directory", {}), dict):
                 raise ValueError(
-                    "The 'replace_directory' key of the 'cfa' keyword must "
-                    "have a dictionary value. "
+                    "The 'replace_directory' key of the 'cfa' parameter "
+                    "must have a dictionary value. "
                     f"Got: {cfa['replace_directory']!r}"
                 )
 
         g["cfa"] = cfa
 
+        # ------------------------------------------------------------
         # Parse the 'cfa_write' keyword parameter
+        # ------------------------------------------------------------
         if cfa_write:
             if isinstance(cfa_write, str):
                 cfa_write = (cfa_write,)
@@ -1268,7 +1289,9 @@ class NetCDFRead(IORead):
 
         g["cfa_write"] = tuple(cfa_write)
 
+        # ------------------------------------------------------------
         # Parse the 'to_memory' keyword parameter
+        # ------------------------------------------------------------
         if to_memory:
             if isinstance(to_memory, str):
                 to_memory = (to_memory,)
@@ -1289,6 +1312,12 @@ class NetCDFRead(IORead):
             to_memory = ()
 
         g["to_memory"] = tuple(to_memory)
+
+        # Parse the 'squeeze' and 'unsqueeze' keyword parameters
+        if g["squeeze"] and g["unsqueeze"]:
+            raise ValueError(
+                "The 'squeeze' and 'unsqueeze' can not both be True"
+            )
 
         filename = os.path.expanduser(os.path.expandvars(filename))
         filename = abspath(filename)
@@ -2128,6 +2157,17 @@ class NetCDFRead(IORead):
         # Close all opened netCDF files
         # ------------------------------------------------------------
         self.file_close()
+
+        # ------------------------------------------------------------
+        # Squeeze/unsqueeze size 1 axes in field constructs
+        # ------------------------------------------------------------
+        if not g["domain"]:
+            if g["unsqueeze"]:
+                for f in out:
+                    self.implementation.unsqueeze(f, inplace=True)
+            elif g["squeeze"]:
+                for f in out:
+                    self.implementation.squeeze(f, inplace=True)
 
         # ------------------------------------------------------------
         # Return the fields/domains

@@ -158,6 +158,14 @@ class read(metaclass=DocstringRewriteMeta):
 
             .. versionadded:: (cfdm) NEXTVERSION
 
+        {{read squeeze: `bool`, optional}}
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
+        {{read unsqueeze: `bool`, optional}}
+
+            .. versionadded:: (cfdm) NEXTVERSION
+
     :Returns:
 
         `list` of `Field` or `Domain`
@@ -207,6 +215,8 @@ class read(metaclass=DocstringRewriteMeta):
         cfa=None,
         cfa_write=None,
         to_memory=False,
+        squeeze=False,
+        unsqueeze=False,
         extra_read_vars=None,
     ):
         """Read field or domain constructs from a dataset."""
@@ -253,6 +263,8 @@ class read(metaclass=DocstringRewriteMeta):
                     cfa=cfa,
                     cfa_write=cfa_write,
                     to_memory=to_memory,
+                    squeeze=squeeze,
+                    unsqueeze=unsqueeze,
                     extra_read_vars=extra_read_vars,
                 )
             except MaskError:

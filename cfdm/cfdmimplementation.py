@@ -3683,21 +3683,54 @@ class CFDMImplementation(Implementation):
         """
         return parent.has_property(prop)
 
-    def squeeze(self, construct, axes=None):
+    def squeeze(self, construct, axes=None, inplace=False):
         """Remove size 1 axes from construct data.
 
         :Parameters:
 
             construct:
+                The construct.
 
             axes: optional
+                The axes to squeeze. If `None` then all size 1 axes
+                are removed from the data.
+
+            inplace: `bool`, optional
+                If True then do the operation in-place and return
+                `None`.
+
+                .. versionadded:: (Cfdm) NEXTVERSION
 
         :Returns:
 
-                The construct with removed axes.
+                The construct with removed axes, or `None` if the
+                operation was in-place.
 
         """
-        return construct.squeeze(axes=axes)
+        return construct.squeeze(axes=axes, inplace=inplace)
+
+    def unsqueeze(self, field, inplace=False):
+        """Insert size 1 axes into the field data array.
+
+        .. versionadded:: (Cfdm) NEXTVERSION
+
+        :Parameters:
+
+            field: `Field`
+                The field construct.
+
+            inplace: `bool`, optional
+                If True then do the operation in-place and return
+                `None`.
+
+        :Returns:
+
+            `Field` or `None`
+                The field with inserted axes, or `None` if the
+                operation was in-place.
+
+        """
+        return field.unsqueeze(inplace=inplace)
 
 
 _implementation = CFDMImplementation(

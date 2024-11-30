@@ -619,6 +619,20 @@ _docstring_substitution_definitions = {
               To read field and auxiliary coordinate construct data
               arrays into memory: ``to_memory=['field',
               'auxiliary_coordinate']``.""",
+    # read squeeze
+    "{{read squeeze: `bool`, optional}}": """read squeeze: `bool`, optional
+            If True then remove all size 1 dimensions from field
+            construct data arrays, regardless of how the data are
+            stored in the dataset. If False (the default) then the
+            presence or not of size 1 dimensions is determined by how
+            the data are stored in its dataset.""",
+    # read unsqueeze
+    "{{read unsqueeze: `bool`, optional}}": """read unsqueeze: `bool`, optional
+            If True then ensure that field construct data arrays span
+            all of the size 1 dimensions, regardless of how the data
+            are stored in the dataset. If False (the default) then the
+            presence or not of size 1 dimensions is determined by how
+            the data are stored in its dataset.""",
     # persist
     "{{persist description}}": """Persisting turns an underlying lazy dask array into an
         equivalent chunked dask array, but now with the results fully

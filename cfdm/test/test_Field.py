@@ -1010,7 +1010,7 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_persist(self):
         """Test Field.persist."""
-        f = cfdm.example_field(0)
+        f = self.f0.copy()
         cfdm.write(f, tmpfile)
         f = cfdm.read(tmpfile)[0]
 
@@ -1052,6 +1052,15 @@ class FieldTest(unittest.TestCase):
                     in_memory = True
 
             self.assertTrue(in_memory)
+
+    def test_Field_unsqueeze(self):
+        """Test Field.unsqueeze."""
+        f = self.f0.copy()
+        self.assertEqual(f.shape, (5, 8))
+        g = f.unsqueeze()
+        self.assertEqual(g.shape, (1, 5, 8))
+        self.assertIsNone(g.unsqueeze(inplace=True))
+        self.assertEqual(g.shape, (1, 5, 8))
 
 
 if __name__ == "__main__":

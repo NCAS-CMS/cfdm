@@ -3318,3 +3318,56 @@ class Field(
             c.uncompress(inplace=True)
 
         return f
+
+    @_inplace_enabled(default=False)
+    def unsqueeze(self, inplace=None):
+        """Insert size 1 axes into the data array.
+
+        All size 1 domain axes which are not spanned by the field
+        construct's data are inserted.
+
+        The axes are inserted into the slowest varying data array positions.
+
+        .. versionadded:: (cfdm) NEXTVERSION
+
+        .. seealso:: `insert_dimension`, `squeeze`, `transpose`
+
+        :Parameters:
+
+            {{inplace: `bool`, optional}}
+
+        :Returns:
+
+            `Field` or `None`
+                The field construct with size-1 axes inserted in its
+                data, or `None` if the operation was in-place.
+
+        **Examples**
+
+        >>> f = {{package}}.example_field(0)
+        >>> print(f)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+        >>> g = f.unsqueeze()
+        >>> print(g)
+        Field: specific_humidity (ncvar%q)
+        ----------------------------------
+        Data            : specific_humidity(time(1), latitude(5), longitude(8)) 1
+        Cell methods    : area: mean
+        Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                        : longitude(8) = [22.5, ..., 337.5] degrees_east
+                        : time(1) = [2019-01-01 00:00:00]
+
+        """
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        size_1_axes = self.domain_axes(filter_by_size=(1,), todict=True)
+        for axis in set(size_1_axes).difference(self.get_data_axes()):
+            f.insert_dimension(axis, position=0, inplace=True)
+
+        return f
