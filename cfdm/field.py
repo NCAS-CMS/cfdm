@@ -2288,7 +2288,7 @@ class Field(
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `squeeze`, `transpose`
+        .. seealso:: `squeeze`, `transpose`, `unsqueeze`
 
         :Parameters:
 
@@ -3066,7 +3066,7 @@ class Field(
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `insert_dimension`, `transpose`
+        .. seealso:: `insert_dimension`, `transpose`, `unsqueeze`
 
         :Parameters:
 
@@ -3138,7 +3138,7 @@ class Field(
 
         .. versionadded:: (cfdm) 1.7.0
 
-        .. seealso:: `insert_dimension`, `squeeze`
+        .. seealso:: `insert_dimension`, `squeeze`, `unsqueeze`
 
         :Parameters:
 
