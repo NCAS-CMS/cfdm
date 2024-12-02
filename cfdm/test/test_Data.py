@@ -95,7 +95,7 @@ class DataTest(unittest.TestCase):
             )
 
     def test_Data__init__basic(self):
-        """Test basic Datea.__init__"""
+        """Test basic Data.__init__"""
         # Most __init__ parameters are covered by the various other
         # tests, so this is mainly to check trivial cases.
         cfdm.Data(0, "s")
@@ -221,7 +221,7 @@ class DataTest(unittest.TestCase):
             self.assertNotIn(element, d._get_cached_elements())
 
     def test_Data__setitem__(self):
-        """Test the assignment of data items on Data."""
+        """Test Data.__setitem__"""
         for hardmask in (False, True):
             a = np.ma.arange(90).reshape(9, 10)
             if hardmask:
@@ -704,7 +704,7 @@ class DataTest(unittest.TestCase):
         self.assertIsNone(e.nc_hdf5_chunksizes())
 
     def test_Data_equals(self):
-        """Test the equality-testing Data method."""
+        """Test Data.equals."""
         shape = 3, 4
         chunksize = 2, 6
         a = np.arange(12).reshape(*shape)
@@ -1474,7 +1474,7 @@ class DataTest(unittest.TestCase):
             len(
                 dict(
                     d.to_dask_array(
-                        _force_mask_hardness=False, _force_in_memory=False
+                        _force_mask_hardness=False, _force_to_memory=False
                     ).dask
                 )
             ),
@@ -1487,7 +1487,7 @@ class DataTest(unittest.TestCase):
             len(
                 dict(
                     d.to_dask_array(
-                        _force_mask_hardness=False, _force_in_memory=False
+                        _force_mask_hardness=False, _force_to_memory=False
                     ).dask
                 )
             ),
@@ -2000,7 +2000,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.mask.array == np.ma.getmaskarray(a)).all())
 
     def test_Data__getitem__(self):
-        """Test the access of data elements from Data."""
+        """Test Data.__getitem__"""
         d = cfdm.Data(np.ma.arange(450).reshape(9, 10, 5), chunks=(4, 5, 1))
 
         for indices in (
@@ -2410,7 +2410,7 @@ class DataTest(unittest.TestCase):
 
     def test_Data_get_filenames(self):
         """Test Data.get_filenames."""
-        d = cfdm.Data.empty((5, 8), float, chunks="auto")  # 4)
+        d = cfdm.Data.empty((5, 8), float, chunks=4)
         self.assertEqual(d.get_filenames(), set())
 
         f = self.f0
@@ -2523,7 +2523,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.equals(e))
 
     def test_Data_all(self):
-        """Test the `all` Data method."""
+        """Test Data.all."""
         d = cfdm.Data([[1, 2], [3, 4]], "m")
         self.assertTrue(d.all())
         self.assertEqual(d.all(keepdims=False).shape, ())

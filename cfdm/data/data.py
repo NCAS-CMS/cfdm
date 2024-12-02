@@ -337,7 +337,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             if _use_array:
                 try:
                     array = source.to_dask_array(
-                        _force_mask_hardness=False, _force_in_memory=False
+                        _force_mask_hardness=False, _force_to_memory=False
                     )
                 except (AttributeError, TypeError):
                     try:
@@ -676,7 +676,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         new = self.copy()
         dx = self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         )
 
         # ------------------------------------------------------------
@@ -851,7 +851,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         dx = self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         )
         if math.isnan(dx.size):
             logger.debug("Computing data len: Performance may be degraded")
@@ -974,7 +974,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 indices[i] = index
 
         dx = self.to_dask_array(
-            _force_mask_hardness=True, _force_in_memory=True
+            _force_mask_hardness=True, _force_to_memory=True
         )
 
         # Do the assignment
@@ -2001,7 +2001,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         dsk = self.todict(
             optimize_graph=True,
             _force_mask_hardness=False,
-            _force_in_memory=False,
+            _force_to_memory=False,
         )
         for key, a in dsk.items():
             try:
@@ -2017,7 +2017,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             # The Dask graph was modified, so recast the dictionary
             # representation as a Dask array.
             dx = self.to_dask_array(
-                _force_mask_hardness=False, _force_in_memory=False
+                _force_mask_hardness=False, _force_to_memory=False
             )
             dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
             self._set_dask(dx, clear=self._NONE, in_memory=None)
@@ -2467,7 +2467,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         out = self.copy(array=False)
 
         dx = self.to_dask_array(
-            _force_mask_hardness=True, _force_in_memory=True
+            _force_mask_hardness=True, _force_to_memory=True
         )
         dx = getattr(operator, operation)(dx)
 
@@ -2569,7 +2569,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         return self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         ).chunks
 
     @property
@@ -2594,7 +2594,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         return self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         ).chunksize
 
     @property
@@ -2755,7 +2755,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         dx = self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         )
         return dx.dtype
 
@@ -2764,7 +2764,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         # Only change the data type if it's different to that of the
         # dask array
         dx = self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=True
+            _force_mask_hardness=False, _force_to_memory=True
         )
         if dx.dtype != value:
             dx = dx.astype(value)
@@ -2884,7 +2884,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         mask_data_obj = self.copy(array=False)
 
         dx = self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=True
+            _force_mask_hardness=False, _force_to_memory=True
         )
         mask = da.ma.getmaskarray(dx)
 
@@ -2922,7 +2922,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         dx = self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         )
         if math.isnan(dx.size):
             logger.debug("Computing data nbytes: Performance may be degraded")
@@ -2958,7 +2958,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         dx = self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         )
         return dx.ndim
 
@@ -2984,7 +2984,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         dx = self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         )
         return dx.npartitions
 
@@ -3010,7 +3010,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         dx = self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         )
         return dx.numblocks
 
@@ -3043,7 +3043,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         dx = self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         )
         if math.isnan(dx.size):
             logger.debug("Computing data shape: Performance may be degraded")
@@ -3084,7 +3084,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         dx = self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         )
         size = dx.size
         if math.isnan(size):
@@ -3225,7 +3225,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """
         d = self.copy(array=False)
         dx = self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=True
+            _force_mask_hardness=False, _force_to_memory=True
         )
         dx = da.all(dx, axis=axis, keepdims=keepdims, split_every=split_every)
         d._set_dask(dx, in_memory=True)
@@ -3290,7 +3290,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """
         d = self.copy(array=False)
         dx = self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=True
+            _force_mask_hardness=False, _force_to_memory=True
         )
         dx = da.any(dx, axis=axis, keepdims=keepdims, split_every=split_every)
         d._set_dask(dx, in_memory=True)
@@ -3474,7 +3474,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         d = _inplace_enabled_define_and_cleanup(self)
 
         dx = self.to_dask_array(
-            _force_mask_hardness=True, _force_in_memory=True
+            _force_mask_hardness=True, _force_to_memory=True
         )
 
         mask = None
@@ -3616,7 +3616,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
 
-        dx = d.to_dask_array(_force_mask_hardness=True, _force_in_memory=True)
+        dx = d.to_dask_array(_force_mask_hardness=True, _force_to_memory=True)
         dx = da.blockwise(
             np.ma.compressed,
             "i",
@@ -3630,7 +3630,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         d._set_dask(dx, clear=self._ALL, in_memory=True)
         return d
 
-    def compute(self, _force_in_memory=True):
+    def compute(self, _force_to_memory=True):
         """A view of the computed data.
 
         In-place changes to the returned array *might* affect the
@@ -3677,7 +3677,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         dx = self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=_force_in_memory
+            _force_mask_hardness=False, _force_to_memory=_force_to_memory
         )
         a = dx.compute()
 
@@ -3809,7 +3809,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         # Get data as dask arrays and apply concatenation operation
         dxs = [
-            d.to_dask_array(_force_mask_hardness=False, _force_in_memory=False)
+            d.to_dask_array(_force_mask_hardness=False, _force_to_memory=False)
             for d in conformed_data
         ]
         dx = da.concatenate(dxs, axis=axis)
@@ -4061,7 +4061,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         dx = self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         )
         dsk, _ = cull(dx.dask, dx.__dask_keys__())
         dx = da.Array(dsk, name=dx.name, chunks=dx.chunks, dtype=dx.dtype)
@@ -4443,7 +4443,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         out = []
         append = out.append
         for key, a in self.todict(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         ).items():
             try:
                 append(a.file_directory(normalise=normalise))
@@ -4503,7 +4503,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                     )
 
         dx = d.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         )
         dx = dx.map_blocks(cfdm_filled, fill_value=fill_value, dtype=d.dtype)
         d._set_dask(dx, clear=self._ALL, in_memory=True)
@@ -4680,7 +4680,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         new_shape = [n for i, n in enumerate(original_shape) if i not in axes]
         new_shape.insert(axes[0], prod([original_shape[i] for i in axes]))
 
-        dx = d.to_dask_array(_force_mask_hardness=True, _force_in_memory=True)
+        dx = d.to_dask_array(_force_mask_hardness=True, _force_to_memory=True)
         dx = dx.reshape(new_shape)
         d._set_dask(dx, clear=self._ALL, in_memory=True)
 
@@ -4986,7 +4986,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             ):
                 for a in (
                     self[index]
-                    .todict(_force_mask_hardness=False, _force_in_memory=False)
+                    .todict(_force_mask_hardness=False, _force_to_memory=False)
                     .values()
                 ):
                     try:
@@ -5025,7 +5025,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         out = []
         append = out.append
         for a in self.todict(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         ).values():
             try:
                 append(a.get_filename(normalise=normalise))
@@ -5239,7 +5239,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         dx = self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         )
         dx = dx.map_blocks(cfdm_harden_mask, dtype=dx.dtype)
         self._set_dask(dx, clear=self._NONE, in_memory=True)
@@ -5365,7 +5365,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         #        new_shape.insert(position, 1)
 
         dx = d.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         )
         index = [slice(None)] * dx.ndim
         index.insert(position, np.newaxis)
@@ -5487,7 +5487,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         else:
             atol = float(atol)
 
-        dx = d.to_dask_array(_force_mask_hardness=True, _force_in_memory=True)
+        dx = d.to_dask_array(_force_mask_hardness=True, _force_to_memory=True)
         dx = da.ma.masked_values(dx, value, rtol=rtol, atol=atol)
         d._set_dask(dx, clear=self._ALL, in_memory=True)
 
@@ -5745,7 +5745,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         d = _inplace_enabled_define_and_cleanup(self)
 
-        dx = d.to_dask_array(_force_mask_hardness=True, _force_in_memory=True)
+        dx = d.to_dask_array(_force_mask_hardness=True, _force_to_memory=True)
         mask0 = da.ma.getmaskarray(dx)
 
         pad = [(0, 0)] * dx.ndim
@@ -5797,7 +5797,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """
         d = _inplace_enabled_define_and_cleanup(self)
         dx = self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=True
+            _force_mask_hardness=False, _force_to_memory=True
         )
         dx = dx.persist()
         d._set_dask(
@@ -5877,7 +5877,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         d = _inplace_enabled_define_and_cleanup(self)
 
         dx = d.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         )
         dx = dx.rechunk(chunks, threshold, block_size_limit, balance)
         d._set_dask(
@@ -6001,7 +6001,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                 f"as the Dask chunks shape {self.numblocks}"
             )
 
-        dsk = self.todict(_force_mask_hardness=False, _force_in_memory=False)
+        dsk = self.todict(_force_mask_hardness=False, _force_to_memory=False)
 
         updated_keys = {}
         for index, position in zip(
@@ -6015,7 +6015,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             chunk_updated = False
             for key, a in (
                 self[index]
-                .todict(_force_mask_hardness=False, _force_in_memory=False)
+                .todict(_force_mask_hardness=False, _force_to_memory=False)
                 .items()
             ):
                 try:
@@ -6044,7 +6044,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
                     updated_keys[key] = (position, index)
 
         dx = self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         )
         dx = da.Array(dsk, dx.name, dx.chunks, dx.dtype, dx._meta)
         self._set_dask(dx, clear=self._NONE, in_memory=None)
@@ -6120,7 +6120,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         original_ndim = len(original_shape)
 
         dx = d.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         )
         dx = dx.reshape(*shape, merge_chunks=merge_chunks, limit=limit)
         d._set_dask(dx, in_memory=None)
@@ -6269,7 +6269,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         """
         dx = self.to_dask_array(
-            _force_mask_hardness=False, _force_in_memory=False
+            _force_mask_hardness=False, _force_to_memory=False
         )
         dx = dx.map_blocks(cfdm_soften_mask, dtype=dx.dtype)
         self._set_dask(dx, clear=self._NONE, in_memory=True)
@@ -6359,7 +6359,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         # Still here? Then the data array is not scalar and at least
         # one size 1 axis needs squeezing.
-        dx = d.to_dask_array(_force_mask_hardness=False, _force_in_memory=True)
+        dx = d.to_dask_array(_force_mask_hardness=False, _force_to_memory=True)
         dx = dx.squeeze(axis=iaxes)
 
         # Squeezing a dimension doesn't affect the cached elements
@@ -6440,7 +6440,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         )
         return d
 
-    def to_dask_array(self, _force_mask_hardness=True, _force_in_memory=True):
+    def to_dask_array(self, _force_mask_hardness=True, _force_to_memory=True):
         """Convert the data to a `dask` array.
 
         .. versionadded:: (cfdm) NEXTVERSION
@@ -6449,7 +6449,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             {{_force_mask_hardness: `bool`, optional}}
 
-            {{_force_in_memory: `bool`, optional}}
+            {{_force_to_memory: `bool`, optional}}
 
         :Returns:
 
@@ -6487,7 +6487,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
             # Note: The mask hardness functions have their own calls
             #       to 'cfdm_to_memory', so we don't need to set
             #       another one.
-        elif _force_in_memory and not self.__in_memory__:
+        elif _force_to_memory and not self.__in_memory__:
             dx = dx.map_blocks(cfdm_to_memory, dtype=dx.dtype)
 
         return dx
@@ -6496,7 +6496,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         self,
         optimize_graph=True,
         _force_mask_hardness=True,
-        _force_in_memory=True,
+        _force_to_memory=True,
     ):
         """Return a dictionary of the dask graph key/value pairs.
 
@@ -6514,7 +6514,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
             {{_force_mask_hardness: `bool`, optional}}
 
-            {{_force_in_memory: `bool`, optional}}
+            {{_force_to_memory: `bool`, optional}}
 
         :Returns:
 
@@ -6539,7 +6539,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         """
         dx = self.to_dask_array(
             _force_mask_hardness=_force_mask_hardness,
-            _force_in_memory=_force_in_memory,
+            _force_to_memory=_force_to_memory,
         )
 
         if optimize_graph:
@@ -6639,7 +6639,7 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         data_axes = d._axes
         d._axes = [data_axes[i] for i in iaxes]
 
-        dx = d.to_dask_array(_force_mask_hardness=False, _force_in_memory=True)
+        dx = d.to_dask_array(_force_mask_hardness=False, _force_to_memory=True)
         try:
             dx = da.transpose(dx, axes=iaxes)
         except ValueError:
@@ -6738,7 +6738,8 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
 
         original_shape = self.shape
 
-        dx = d.to_dask_array(_force_mask_hardness=False, _force_in_memory=True)
+        dx = d.to_dask_array(_force_mask_hardness=False, _force_to_memory=True)
+
         u = np.unique(dx.compute())
         dx = da.from_array(u, chunks="auto")
         d._set_dask(dx, in_memory=True)

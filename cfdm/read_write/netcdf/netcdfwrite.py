@@ -6106,7 +6106,7 @@ class NetCDFWrite(IOWrite):
             ):
                 # Try to get this Dask chunk's data as a reference to
                 # fragment file
-                fragment = data[index].compute(_force_in_memory=False)
+                fragment = data[index].compute(_force_to_memory=False)
                 try:
                     filename, address, is_subspace, f_index = (
                         fragment.get_filename(normalise=normalise),
@@ -6198,7 +6198,7 @@ class NetCDFWrite(IOWrite):
             # more than one unique value then the fragment's value is
             # missing data.
             dx = data.to_dask_array(
-                _force_mask_hardness=False, _force_in_memory=False
+                _force_mask_hardness=False, _force_to_memory=False
             )
             dx_ind = tuple(range(dx.ndim))
             out_ind = dx_ind

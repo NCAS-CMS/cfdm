@@ -1074,8 +1074,8 @@ _docstring_substitution_definitions = {
                 state of the Dask graph, or is to add to the returned
                 Dask graph further operations to which can correctly
                 manage the mask hardness.""",
-    # _force_in_memory
-    "{{_force_in_memory: `bool`, optional}}": """_force_in_memory: `bool`, optional
+    # _force_to_memory
+    "{{_force_to_memory: `bool`, optional}}": """_force_to_memory: `bool`, optional
                 If True (the default) then force the data resulting
                 from computing the returned Dask graph to be in
                 memory. If False then the data resulting from

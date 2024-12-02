@@ -60,7 +60,7 @@ def to_dask(array, chunks, **from_array_options):
         except TypeError:
             try:
                 return array.to_dask_array(
-                    _force_mask_hardness=False, _force_in_memory=False
+                    _force_mask_hardness=False, _force_to_memory=False
                 )
             except TypeError:
                 return array.to_dask_array()
