@@ -207,17 +207,17 @@ class IndexMixin:
         )
 
     @property
-    def __asanyarray__(self):
-        """True if the array is accessed by conversion to `numpy`.
+    def __in_memory__(self):
+        """True if the array data is in memory.
 
         .. versionadded:: (cfdm) NEXTVERSION
 
         :Returns:
 
-            `True`
+            `False`
 
         """
-        return True
+        return False
 
     def _get_array(self, index=None):
         """Returns a subspace of the dataset variable.

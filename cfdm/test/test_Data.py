@@ -1390,7 +1390,7 @@ class DataTest(unittest.TestCase):
     def test_Data_todict(self):
         """Test Data.todict."""
         d = cfdm.Data([1, 2, 3, 4], chunks=2)
-        key = d.to_dask_array(_apply_mask_hardness=False).name
+        key = d.to_dask_array(_force_mask_hardness=False).name
 
         x = d.todict()
         self.assertIsInstance(x, dict)
@@ -1422,6 +1422,7 @@ class DataTest(unittest.TestCase):
         d = cfdm.Data([[1, 2, 3.0, 4]], "km", chunks=2)
         self.assertEqual(len(d.to_dask_array().dask.layers), 2)
         d.transpose(inplace=True)
+        dx = d.to_dask_array(_force_mask_hardness=False)
         self.assertEqual(len(d.to_dask_array().dask.layers), 3)
 
         e = d.persist()
@@ -1439,7 +1440,7 @@ class DataTest(unittest.TestCase):
             len(
                 dict(
                     d.to_dask_array(
-                        _apply_mask_hardness=False, _asanyarray=False
+                        _force_mask_hardness=False, _force_in_memory=False
                     ).dask
                 )
             ),
@@ -1452,7 +1453,7 @@ class DataTest(unittest.TestCase):
             len(
                 dict(
                     d.to_dask_array(
-                        _apply_mask_hardness=False, _asanyarray=False
+                        _force_mask_hardness=False, _force_in_memory=False
                     ).dask
                 )
             ),
@@ -2374,12 +2375,12 @@ class DataTest(unittest.TestCase):
 
     def test_Data_get_filenames(self):
         """Test Data.get_filenames."""
-        d = cfdm.Data.empty((5, 8), float, chunks=4)
+        d = cfdm.Data.empty((5, 8), float, chunks="auto")  # 4)
         self.assertEqual(d.get_filenames(), set())
 
         f = cfdm.example_field(0)
         cfdm.write(f, file_A)
-        a = cfdm.read(file_A, dask_chunks=4)[0].data
+        a = cfdm.read(file_A, dask_chunks="auto")[0].data
         self.assertEqual(a.get_filenames(), set([file_A]))
         a.persist(inplace=True)
         self.assertEqual(a.data.get_filenames(), set())

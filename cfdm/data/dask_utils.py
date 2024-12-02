@@ -8,11 +8,8 @@ instance, as would be passed to `dask.array.map_blocks`.
 import numpy as np
 
 
-def cfdm_asanyarray(a):
-    """Convert to a `numpy` array.
-
-    Only do this is the input *a* has an `__asanyarray__` attribute
-    with value True.
+def cfdm_to_memory(a):
+    """Return an in-memory version of *a*.
 
     .. versionadded:: (cfdm) NEXTVERSION
 
@@ -23,11 +20,12 @@ def cfdm_asanyarray(a):
 
     :Returns:
 
-            The array converted to a `numpy` array, or the input array
-            unchanged if ``a.__asanyarray__`` False.
+            If *a* has an `__in_memory__` attribute that is False then
+            ``np.asanyarray(a)`` will be returned. Otherwise *a* will
+            be returned unchanged.
 
     """
-    if getattr(a, "__asanyarray__", False):
+    if not getattr(a, "__in_memory__", True):
         return np.asanyarray(a)
 
     return a
@@ -61,7 +59,7 @@ def cfdm_filled(a, fill_value=None):
     [[-999    2    3]]
 
     """
-    a = cfdm_asanyarray(a)
+    a = cfdm_to_memory(a)
     return np.ma.filled(a, fill_value=fill_value)
 
 
@@ -83,7 +81,7 @@ def cfdm_harden_mask(a):
             The array with hardened mask.
 
     """
-    a = cfdm_asanyarray(a)
+    a = cfdm_to_memory(a)
     if np.ma.isMA(a):
         try:
             a.harden_mask()
@@ -113,7 +111,7 @@ def cfdm_soften_mask(a):
             The array with softened mask.
 
     """
-    a = cfdm_asanyarray(a)
+    a = cfdm_to_memory(a)
     if np.ma.isMA(a):
         try:
             a.soften_mask()
@@ -183,13 +181,13 @@ def cfdm_where(array, condition, x, y, hardmask):
             elsewhere.
 
     """
-    array = cfdm_asanyarray(array)
-    condition = cfdm_asanyarray(condition)
+    array = cfdm_to_memory(array)
+    condition = cfdm_to_memory(condition)
     if x is not None:
-        x = cfdm_asanyarray(x)
+        x = cfdm_to_memory(x)
 
     if y is not None:
-        y = cfdm_asanyarray(y)
+        y = cfdm_to_memory(y)
 
     mask = None
 
