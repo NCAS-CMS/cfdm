@@ -12,7 +12,6 @@ from functools import reduce
 from math import log, nan, prod
 from numbers import Integral
 from typing import Any
-from urllib.parse import urlparse
 from uuid import uuid4
 
 import h5netcdf
@@ -22,6 +21,7 @@ from dask.array.core import normalize_chunks
 from dask.base import tokenize
 from packaging.version import Version
 from s3fs import S3FileSystem
+from uritools import urisplit
 
 from ...data.netcdfindexer import netcdf_indexer
 from ...decorators import _manage_log_level_via_verbosity
@@ -511,12 +511,14 @@ class NetCDFRead(IORead):
         netcdf = False
         hdf = False
         netcdf_backend = g["netcdf_backend"]
+        cdl_filename = None
 
-        # Deal with a file in an S3 object store
-        u = urlparse(filename)
+        u = urisplit(filename)
         storage_options = self._get_storage_options(filename, u)
 
         if u.scheme == "s3":
+            # A file in an S3 object store
+
             # Create an openable S3 file object
             fs_key = tokenize(("s3", storage_options))
             file_systems = g["file_systems"]
@@ -536,40 +538,46 @@ class NetCDFRead(IORead):
                 logger.detail(
                     f"    S3: s3fs.S3FileSystem options: {storage_options}\n"
                 )  # pragma: no cover
+        elif u.scheme in (None, "file") and self.is_cdl_file(filename):
+            # A CDL file
+            cdl_filename = filename
+            filename = self.cdl_to_netcdf(filename)
+            g["filename"] = filename
+
+        # Map backend names to file-open functions
+        file_open_function = {
+            "h5netcdf": self._open_h5netcdf,
+            "netCDF4": self._open_netCDF4,
+        }
 
         if netcdf_backend is None:
-            try:
-                # Try opening the file with netCDF4
-                nc = self._open_netCDF4(filename)
-                netcdf = True
-            except Exception:
-                # The file could not be read by netCDF4 so try opening
-                # it with h5netcdf
-                try:
-                    nc = self._open_h5netcdf(filename)
-                    hdf = True
-                except Exception as error:
-                    raise error
+            # By default, try backends in this order:
+            netcdf_backend = ("h5netcdf", "netCDF4")
+        elif isinstance(netcdf_backend, str):
+            netcdf_backend = (netcdf_backend,)
 
-        elif netcdf_backend == "netCDF4":
+        # Loop around backend until we successfully open the file
+        errors = []
+        for backend in netcdf_backend:
             try:
-                nc = self._open_netCDF4(filename)
-                netcdf = True
+                nc = file_open_function[backend](filename)
+            except KeyError:
+                errors.append(f"{backend}: Unknown netCDF backend name")
             except Exception as error:
-                raise error
+                errors.append(f"{backend}: {error}")
+            else:
+                errors = None
+                break
 
-        elif netcdf_backend == "h5netcdf":
-            try:
-                nc = self._open_h5netcdf(filename)
-                hdf = True
-            except Exception as error:
-                raise error
+        if errors:
+            if cdl_filename is not None:
+                filename = f"{filename} (created from CDL file {cdl_filename})"
 
-        else:
-            raise ValueError(f"Unknown netCDF backend: {netcdf_backend!r}")
-
-        g["original_h5netcdf"] = hdf
-        g["original_netCDF4"] = netcdf
+            raise OSError(
+                f"Can't open file {filename} with any of the netCDF backends "
+                f"{netcdf_backend!r}:\n"
+                f"{'\n'.join(errors)}"
+            )
 
         # ------------------------------------------------------------
         # If the file has a group structure then flatten it (CF>=1.8)
@@ -627,7 +635,9 @@ class NetCDFRead(IORead):
             `netCDF4.Dataset`
 
         """
-        return netCDF4.Dataset(filename, "r")
+        nc = netCDF4.Dataset(filename, "r")
+        self.read_vars["file_opened_with"] = "netCDF4"
+        return nc
 
     def _open_h5netcdf(self, filename):
         """Return an open `h5netcdf.File`.
@@ -650,7 +660,7 @@ class NetCDFRead(IORead):
             `h5netcdf.File`
 
         """
-        return h5netcdf.File(
+        nc = h5netcdf.File(
             filename,
             "r",
             decode_vlen_strings=True,
@@ -658,6 +668,8 @@ class NetCDFRead(IORead):
             rdcc_w0=0.75,
             rdcc_nslots=4133,
         )
+        self.read_vars["file_opened_with"] = "h5netcdf"
+        return nc
 
     @classmethod
     def cdl_to_netcdf(cls, filename):
@@ -748,16 +760,13 @@ class NetCDFRead(IORead):
         except Exception:
             pass
 
-        if magic_number in (
+        return magic_number in (
             21382211,
             1128547841,
             1178880137,
             38159427,
             88491075,
-        ):
-            return True
-        else:
-            return False
+        )
 
     def is_cdl_file(cls, filename):
         """True if the file is in CDL format.
@@ -821,8 +830,8 @@ class NetCDFRead(IORead):
     def is_file(cls, filename):
         """Return `True` if *filename* is a file.
 
-        Note that a remote URL starting with ``http://`` or
-        ``https://`` is always considered as a file.
+        Note that a file that starts with ``http:``, ``https:``,
+        ``s3:``, or ``file:`` is always considered as a file.
 
         .. versionadded:: (cfdm) 1.10.1.1
 
@@ -847,8 +856,8 @@ class NetCDFRead(IORead):
 
         """
         # Assume that URLs are files
-        u = urlparse(filename)
-        if u.scheme in ("http", "https", "s3"):
+        u = urisplit(filename)
+        if u.scheme in ("http", "https", "s3", "file"):
             return True
 
         return os.path.isfile(filename)
@@ -1319,16 +1328,18 @@ class NetCDFRead(IORead):
                 "The 'squeeze' and 'unsqueeze' can not both be True"
             )
 
-        filename = os.path.expanduser(os.path.expandvars(filename))
-        filename = abspath(filename)
+        try:
+            filename = abspath(filename, uri=False)
+        except ValueError:
+            filename = abspath(filename)
+
+        g["filename"] = filename
 
         if self.is_dir(filename):
             raise IOError(f"Can't read directory {filename}")
 
         if not self.is_file(filename):
             raise IOError(f"Can't read non-existent file {filename}")
-
-        g["filename"] = filename
 
         # ------------------------------------------------------------
         # Open the netCDF file to be read
@@ -6390,10 +6401,10 @@ class NetCDFRead(IORead):
             if return_kwargs_only:
                 return kwargs
 
-            if g["original_netCDF4"]:
+            file_opened_with = g["file_opened_with"]
+            if file_opened_with == "netCDF4":
                 array = self.implementation.initialise_NetCDF4Array(**kwargs)
-            else:
-                # h5netcdf
+            elif file_opened_with == "h5netcdf":
                 array = self.implementation.initialise_H5netcdfArray(**kwargs)
 
             return array, kwargs
@@ -10688,9 +10699,8 @@ class NetCDFRead(IORead):
             filename: `str`
                 The name of the file.
 
-            parsed_filename: `urllib.parse.ParseResult`
-                The parsed file name, as returned by
-                ``urllib.parse.urlparse(filename)``.
+            parsed_filename: `uritools.SplitResultString`
+                The parsed file name.
 
         :Returns:
 
@@ -10706,9 +10716,15 @@ class NetCDFRead(IORead):
             "endpoint_url" not in storage_options
             and "endpoint_url" not in client_kwargs
         ):
-            storage_options["endpoint_url"] = (
-                f"https://{parsed_filename.netloc}"
-            )
+            authority = parsed_filename.authority
+            if not authority:
+                authority = ""
+
+            storage_options["endpoint_url"] = f"https://{authority}"
+
+        #            storage_options["endpoint_url"] = (
+        #                f"https://{parsed_filename.netloc}"
+        #            )
 
         g["file_system_storage_options"].setdefault(filename, storage_options)
 

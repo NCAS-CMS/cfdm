@@ -261,14 +261,14 @@ _docstring_substitution_definitions = {
                >>> ud = {{package}}.unique_constructs(d)
                >>> f = {{package}}.read('file.nc')
                >>> ufd = {{package}}.unique_constructs(x.domain for x in f)""",
-    # read netcdf_engine
-    "{{read netcdf_engine: `None` or `str`, optional}": """netcdf_engine: `None` or `str`, optional
-            Specify which library to use for opening and reading
-            netCDF files. By default, or if `None`, then the first one
-            of `netCDF4` and `h5netcdf` to successfully open the
-            netCDF file is used. Setting *netcdf_backend* to one of
-            ``'netCDF4'`` and ``'h5netcdf'`` will force the use of
-            that library.""",
+    # read netcdf_backend
+    "{{read netcdf_backend: `None` or (sequence of) `str`, optional}": """netcdf_backend: `None` or (sequence of) `str`, optional
+            Specify which library, or libraries, to use for opening
+            and reading netCDF files. By default, or if `None`, then
+            the first one of `h5netcdf` and `netCDF4` to successfully
+            open the netCDF file is used. The libraries will be used
+            in the order given, until a file is successfully
+            opened.""",
     # read  storage_options
     "{{read storage_options: `dict` or `None`, optional}}": """storage_options: `dict` or `None`, optional
             Pass parameters to the backend file system driver, such as

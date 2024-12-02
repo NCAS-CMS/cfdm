@@ -231,7 +231,7 @@ class DomainTest(unittest.TestCase):
 
         on_disk = False
         for v in f.coordinate("longitude").data.todict().values():
-            if isinstance(v, cfdm.NetCDF4Array):
+            if isinstance(v, cfdm.data.abstract.FileArray):
                 on_disk = True
 
         self.assertTrue(on_disk)

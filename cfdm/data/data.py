@@ -3651,7 +3651,14 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         .. seealso:: `persist`, `array`, `datetime_array`,
                      `sparse_array`
 
-        TODODASK
+        :Parameters:
+
+            _force_to_memory: `bool`, optional
+                If True (the default) then force the data resulting
+                from computing the returned Dask graph to be in
+                memory. If False then the data resulting from
+                computing the Dask graph may or may not be in memory,
+                depending on the nature of the stack
 
         :Returns:
 
@@ -3674,6 +3681,18 @@ class Data(Container, NetCDFAggregation, NetCDFHDF5, Files, core.Data):
         >>> d.compute().toarray()
         array([[0., 0., 0.],
                [0., 0., 0.]])
+
+        >>> f = {{package}}.example_field(0)
+        >>> {{package}}.write(f, 'file.nc')
+        >>> f = {{package}}.read('file.nc')[0]
+        >>> print(f.data.compute())
+        [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+         [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+         [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+         [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+         [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+        >>> f.data.compute(_force_to_memory=False)
+        <{{repr}}NetCDF4Array(5, 8): file.nc, q(5, 8)>
 
         """
         dx = self.to_dask_array(

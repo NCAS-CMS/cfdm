@@ -5038,7 +5038,7 @@ class NetCDFWrite(IOWrite):
         if mode == "a":
             # First read in the fields from the existing file:
             effective_fields = self._NetCDFRead(self.implementation).read(
-                filename
+                filename, netcdf_backend="netCDF4"
             )
 
             # Read rather than append for the first iteration to ensure nothing

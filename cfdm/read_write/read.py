@@ -5,6 +5,7 @@ from numpy.ma.core import MaskError
 from ..cfdmimplementation import implementation
 from ..core import DocstringRewriteMeta
 from ..docstring import _docstring_substitution_definitions
+from ..functions import abspath
 from .netcdf import NetCDFRead
 
 
@@ -126,7 +127,7 @@ class read(metaclass=DocstringRewriteMeta):
 
             .. versionadded:: (cfdm) 1.9.0.0
 
-        {{read netcdf_engine: `None` or `str`, optional}}
+        {{read netcdf_backend: `None` or (sequence of) `str`, optional}}
 
             .. versionadded:: (cfdm) NEXTVERSION
 
@@ -224,72 +225,47 @@ class read(metaclass=DocstringRewriteMeta):
         netcdf = NetCDFRead(cls.implementation)
         cls.netcdf = netcdf
 
+        #        filename = os.path.expanduser(os.path.expandvars(filename))
+        #
+        #        if netcdf.is_dir(filename):
+        #            raise IOError(f"Can't read directory {filename}")
+        #
+        #        if not netcdf.is_file(filename):
+        #            raise IOError(f"Can't read non-existent file {filename}")
+
         filename = os.path.expanduser(os.path.expandvars(filename))
-
-        if netcdf.is_dir(filename):
-            raise IOError(f"Can't read directory {filename}")
-
-        if not netcdf.is_file(filename):
-            raise IOError(f"Can't read non-existent file {filename}")
-
-        cdl = False
-        if netcdf.is_cdl_file(filename):
-            # Create a temporary netCDF file from input CDL
-            cdl = True
-            cdl_filename = filename
-            filename = netcdf.cdl_to_netcdf(filename)
-
-        if netcdf.is_netcdf_file(filename):
-            # See https://github.com/NCAS-CMS/cfdm/issues/128 for
-            # context on the try/except here, which acts as a
-            # temporary fix pending decisions on the best way to
-            # handle CDL with only header or coordinate info.
-            try:
-                fields = netcdf.read(
-                    filename,
-                    external=external,
-                    extra=extra,
-                    verbose=verbose,
-                    warnings=warnings,
-                    warn_valid=warn_valid,
-                    mask=mask,
-                    unpack=unpack,
-                    domain=domain,
-                    storage_options=storage_options,
-                    netcdf_backend=netcdf_backend,
-                    cache=cache,
-                    dask_chunks=dask_chunks,
-                    store_hdf5_chunks=store_hdf5_chunks,
-                    cfa=cfa,
-                    cfa_write=cfa_write,
-                    to_memory=to_memory,
-                    squeeze=squeeze,
-                    unsqueeze=unsqueeze,
-                    extra_read_vars=extra_read_vars,
-                )
-            except MaskError:
-                # Some data required for field interpretation is
-                # missing, manifesting downstream as a NumPy
-                # MaskError.
-                if cdl:
-                    raise ValueError(
-                        "Unable to convert CDL without data to field "
-                        "construct(s) because there is insufficient "
-                        "information provided by the header and/or "
-                        "coordinates alone in this case."
-                    )
-                else:
-                    raise ValueError(
-                        "Unable to convert netCDF to field construct(s) "
-                        "because there is missing data."
-                    )
-        elif cdl:
-            raise IOError(
-                f"Can't determine format of file {filename} "
-                f"generated from CDL file {cdl_filename}"
+        try:
+            fields = netcdf.read(
+                filename,
+                external=external,
+                extra=extra,
+                verbose=verbose,
+                warnings=warnings,
+                warn_valid=warn_valid,
+                mask=mask,
+                unpack=unpack,
+                domain=domain,
+                storage_options=storage_options,
+                netcdf_backend=netcdf_backend,
+                cache=cache,
+                dask_chunks=dask_chunks,
+                store_hdf5_chunks=store_hdf5_chunks,
+                cfa=cfa,
+                cfa_write=cfa_write,
+                to_memory=to_memory,
+                squeeze=squeeze,
+                unsqueeze=unsqueeze,
+                extra_read_vars=extra_read_vars,
             )
-        else:
-            raise IOError(f"Can't determine format of file {filename}")
+        except MaskError:
+            # Some data required for field interpretation is
+            # missing, manifesting downstream as a NumPy
+            # MaskError.
+            raise ValueError(
+                f"Unable to read {filename} because some netCDF "
+                "variable arrays that are required for construct "
+                "creation contain missing values when they shouldn't"
+            )
 
         # Return the field or domain constructs
         return fields
@@ -305,7 +281,7 @@ class read(metaclass=DocstringRewriteMeta):
 
         See `_docstring_substitutions` for details.
 
-        .. versionaddedd:: (cfdm) 1.8.8.0
+        .. versionaddedd:: (cfdm) NEXTVERSION
 
         :Returns:
 
@@ -320,7 +296,7 @@ class read(metaclass=DocstringRewriteMeta):
 
         See `_docstring_package_depth` for details.
 
-        .. versionaddedd:: (cfdm) 1.8.8.0
+        .. versionaddedd:: (cfdm) NEXTVERSION
 
         """
         return 0

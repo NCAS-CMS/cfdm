@@ -1017,7 +1017,7 @@ class FieldTest(unittest.TestCase):
         for d in (f.data.todict(), f.coordinate("longitude").data.todict()):
             on_disk = False
             for v in d.values():
-                if isinstance(v, cfdm.NetCDF4Array):
+                if isinstance(v, cfdm.data.abstract.FileArray):
                     on_disk = True
 
             self.assertTrue(on_disk)
@@ -1034,7 +1034,7 @@ class FieldTest(unittest.TestCase):
         d = g.coordinate("longitude").data.todict()
         on_disk = False
         for v in d.values():
-            if isinstance(v, cfdm.NetCDF4Array):
+            if isinstance(v, cfdm.data.abstract.FileArray):
                 on_disk = True
 
         self.assertTrue(on_disk)

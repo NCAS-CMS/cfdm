@@ -467,9 +467,9 @@ def abspath(path, uri=None):
             scheme component followed by a ``:`` character, such as
             ``file://data/file.nc``, ``https://remote/data/file.nc``,
             etc.). If False then the returned path will not begin with
-            a URI scheme component. If `None` (the default) then the
-            returned path will begin with a URI scheme component if
-            the input *path* does.
+            a URI scheme component only if the input *path* does. If
+            `None` (the default) then the returned path will begin
+            with a URI scheme component if the input *path* does.
 
             .. versionadded:: (cfdm) NEXTVERSION
 
@@ -494,12 +494,14 @@ def abspath(path, uri=None):
     'file:///data/archive'
     >>> cfdm.abspath('file:/file.nc')
     'file:///file.nc'
+
     >>> cfdm.abspath('http:///file.nc')
     'http:///file.nc'
     >>> cfdm.abspath('http://file.nc')
     'http://'
     >>> cfdm.abspath('http:/file.nc')
     'http:///file.nc'
+
     >>> cfdm.abspath('file.nc', uri=True)
     'file:///data/archive/file.nc'
     >>> cfdm.abspath('../file.nc', uri=True)
@@ -510,14 +512,17 @@ def abspath(path, uri=None):
     'file:///data/archive'
     >>> cfdm.abspath('file:/file.nc', uri=True)
     'file:///file.nc'
+
     >>> cfdm.abspath('http:///file.nc', uri=True)
     'http:///file.nc'
     >>> cfdm.abspath('http://file.nc', uri=True)
     'http://'
     >>> cfdm.abspath('http:/file.nc', uri=True)
     'http:///file.nc'
+
     >>> cfdm.abspath('file.nc', uri=False)
     '/data/archive/file.nc'
+
     >>> cfdm.abspath('../file.nc', uri=False)
     '/data/file.nc'
     >>> cfdm.abspath('file:///file.nc', uri=False)
@@ -526,6 +531,7 @@ def abspath(path, uri=None):
     '/data/archive'
     >>> cfdm.abspath('file:/file.nc', uri=False)
     '/file.nc'
+
     >>> cfdm.abspath('')
     '/data/archive"
 
